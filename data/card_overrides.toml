@@ -8420,3 +8420,7 @@ note = "destroys the targeted opposing creature (the AI aims it at creatures), o
 ["Erode"]
 status = "Full"
 note = "destroys the targeted opposing creature or planeswalker; its controller then fetches a basic land onto the battlefield tapped and shuffles (always, the 'may' is taken)"
+
+["Soul Partition"]
+status = "Partial"
+note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"

@@ -334,3 +334,26 @@ fn erode_destroys_the_creature_and_ramps_its_controller_tapped() {
     assert_eq!(g.player(P0).lands.len(), mine, "the caster gets nothing");
     assert!(in_gy(&g, P0, "Erode"));
 }
+
+// ======================================================== Soul Partition
+#[test]
+fn soul_partition_exiles_and_the_owner_gets_the_card_back_to_play() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = perm(&mut g, P1, "Baneslayer Angel");
+    cast_free(&mut g, P0, "Soul Partition", sim_core::state::Ctx { target: Some(t), ..Default::default() });
+    assert!(!g.perm(t).on_bf);
+    assert!(in_hand(&g, P1, "Baneslayer Angel"));
+    assert!(in_gy(&g, P0, "Soul Partition"));
+}
+
+#[test]
+fn soul_partition_removes_a_token_for_good() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = token(&mut g, P1, 3);
+    let hand_before = g.player(P1).hand.len();
+    cast_free(&mut g, P0, "Soul Partition", sim_core::state::Ctx { target: Some(t), ..Default::default() });
+    assert!(!g.perm(t).on_bf);
+    assert_eq!(g.player(P1).hand.len(), hand_before);
+}

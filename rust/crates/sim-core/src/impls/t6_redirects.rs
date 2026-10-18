@@ -449,6 +449,27 @@ fn erode_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+
+// ================================================================== Soul Partition
+/// Soul Partition: exile target nonland permanent; for as long as that card remains exiled its owner may play it, and
+/// a spell an opponent of the caster casts that way costs {2} more. Modeled as exile, then the owner's card returns to
+/// the owner's hand (a token is gone for good): the owner replays it at normal cost, since the engine has no
+/// "play from exile" zone or cost tax (engine need).
+fn soul_partition_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) else { return Ok("gy") };
+    let (owner, card, token) = (g.perm(t).owner, g.perm(t).cd, g.perm(t).token);
+    apply_removal(g, Some(p), t, "exile", Some(c))?;
+    if let Some(card) = card.filter(|_| !token && !g.perm(t).on_bf)
+        && g.player(owner).exile.contains(&card)
+    {
+        let pl = g.player_mut(owner);
+        remove_card(&mut pl.exile, card);
+        pl.hand.push(card);
+        crate::glog!(g, "    {} may play {} again (Soul Partition)", pname(g, owner), cname(g, card));
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
@@ -458,5 +479,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Eldrazi Confluence")?.resolve = Some(confluence_resolve);
     r.card(db, "Get Lost")?.resolve = Some(get_lost_resolve);
     r.card(db, "Erode")?.resolve = Some(erode_resolve);
+    r.card(db, "Soul Partition")?.resolve = Some(soul_partition_resolve);
     Ok(())
 }

@@ -37,3 +37,9 @@ Needs: (1) noncreature artifact tokens with an activated ability (Map: {1},{T}, 
 Where it would hook: `engine/zones.rs` `make_tokens` (tokens are always creatures today), `engine/removal.rs` `legal_targets` (new `tgt` such as "cep").
 Card side done: `get_lost_resolve` (destroy the chosen creature, else the best opposing enchantment or planeswalker).
 Test to add once the engine has it: Get Lost on an opposing creature gives its controller two Map tokens.
+
+## Soul Partition
+Needs: "may play from exile" as a lasting permission (a per-card marker on the exiled card, read by `castable` / the cast options for hand-like zones) with a cost tax for an opponent of the caster ({2} more).
+Where it would hook: `engine/cast.rs` `castable` and `cost_of`, plus the AI's cast options in `ai/brain.rs`.
+Card side done: `soul_partition_resolve` (exile, then the card returns to its owner's hand as a stand-in; tokens vanish).
+Test to add once the engine has it: after Soul Partition on an opposing creature, the creature stays in exile, can be cast by its owner for {2} more, and cannot be cast for less.
