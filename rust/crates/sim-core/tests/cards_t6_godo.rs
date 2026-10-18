@@ -8,6 +8,8 @@ use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
+const P2: PlayerId = PlayerId(2);
+const P3: PlayerId = PlayerId(3);
 
 fn tbl() -> Game {
     table(&["godo", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
@@ -399,4 +401,33 @@ fn squelcher_makes_its_controllers_spells_uncounterable() {
 fn squelcher_itself_cant_be_countered() {
     let g = tbl();
     assert!(g.db.get(card(&g, "Hexing Squelcher")).tag(sim_core::tag::Tag::Unc));
+}
+
+// ======================================================== Blood Moon
+fn units(g: &Game, p: PlayerId) -> Vec<(String, u32)> {
+    sim_core::engine::mana::mana_units(g, p, false).iter().map(|u| (format!("{:?}", u.cols), u.amt)).collect()
+}
+
+#[test]
+fn blood_moon_makes_nonbasic_lands_tap_for_one_red() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Ancient Tomb", 1, false);
+    lands(&mut g, P1, "Island", 1, false);
+    let before = sim_core::engine::mana::total_mana(&g, P1, false);
+    assert_eq!(before, 3, "Tomb {{C}}{{C}} and an Island");
+    perm(&mut g, P0, "Blood Moon");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P1, false), 2, "Tomb makes one mana, the Island is basic");
+    assert!(sim_core::engine::mana::can_pay(&g, P1, 0, "R", false), "the Tomb taps for R");
+    assert!(sim_core::engine::mana::can_pay(&g, P1, 0, "U", false), "a basic Island still taps for U");
+    let _ = units;
+}
+
+#[test]
+fn blood_moon_is_cast_against_nonbasic_heavy_tables_only() {
+    let mut g = tbl();
+    assert_eq!(prio(&g, P0, "Blood Moon"), 0);
+    lands(&mut g, P1, "Ancient Tomb", 1, false);
+    lands(&mut g, P2, "City of Traitors", 1, false);
+    lands(&mut g, P3, "Cavern of Souls", 1, false);
+    assert!(prio(&g, P0, "Blood Moon") > 0);
 }

@@ -531,6 +531,37 @@ fn squelcher_unc(g: &Game, src: Src, p: PlayerId, _c: CardId) -> bool {
     live(g, src) && owner(g, src) == p
 }
 
+// ================================================================== Blood Moon
+fn is_basic(g: &Game, cd: CardId) -> bool {
+    crate::engine::mana::BASIC_NAMES.contains(&&*g.db.get(cd).name)
+}
+
+/// **Blood Moon** ({2}{R} enchantment): nonbasic lands are Mountains. The engine's `blood_moon` slot makes nonbasic
+/// lands tap for {R}; a land that made two mana (Ancient Tomb, City of Traitors) makes one (`moon_amt`, through the
+/// `land_mana` slot). The AI casts it when the opponents' nonbasic lands outnumber its own by three or more.
+/// Missing, as engine needs: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, Command
+/// Beacon, manlands) and the Mountain land type.
+fn moon_on(g: &Game, src: Src) -> bool {
+    live(g, src)
+}
+
+fn moon_amt(g: &Game, src: Src, p: PlayerId, l: crate::ids::LandId) -> i32 {
+    let cd = g.land(l).cd;
+    if !live(g, src) || is_basic(g, cd) || g.land(l).owner != p {
+        return 0;
+    }
+    1 - g.db.get(cd).tags.int(Tag::Amt).unwrap_or(1).max(1)
+}
+
+fn nonbasic_lands(g: &Game, p: PlayerId) -> i32 {
+    g.player(p).lands.iter().filter(|&&l| !is_basic(g, g.land(l).cd)).count() as i32
+}
+
+fn moon_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    let theirs: i32 = g.opps(p).map(|q| nonbasic_lands(g, q)).sum();
+    if theirs - nonbasic_lands(g, p) >= 3 { 55 } else { 0 }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -546,6 +577,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Party Thrasher")?.main1 = Some(thrasher_main1);
     r.card(db, "Vexing Bauble")?.can_cast = Some(bauble_can_cast);
     r.card(db, "Hexing Squelcher")?.uncounterable = Some(squelcher_unc);
+    let c = r.card(db, "Blood Moon")?;
+    c.blood_moon = Some(moon_on);
+    c.land_mana = Some(moon_amt);
+    c.prio = Some(moon_prio);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

@@ -8489,3 +8489,7 @@ note = "{1},{T}, sacrifice: draw a card; the counter clause is a lock: while it 
 ["Hexing Squelcher"]
 status = "Partial"
 note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
+
+["Blood Moon"]
+status = "Partial"
+note = "nonbasic lands tap for {R} only, and a two-mana land (Ancient Tomb, City of Traitors) makes one; the AI casts it when opponents have three more nonbasic lands than it; missing: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, manlands) and become Mountains (rust/agents/engine-needs-godo.md)"
