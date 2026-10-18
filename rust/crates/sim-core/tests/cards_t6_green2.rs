@@ -101,3 +101,40 @@ fn cloud_of_faeries_cannot_cycle_without_two_mana() {
     let f = g.registry.get(c).and_then(|i| i.hand_options).unwrap();
     assert!(f(&mut g, c, P0, None).unwrap().is_empty());
 }
+
+// ======================================================== Noxious Revival
+fn top_is(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).library.last().is_some_and(|&c| &*g.db.get(c).name == name)
+}
+
+#[test]
+fn noxious_revival_puts_the_best_graveyard_card_on_top_of_the_library() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Oboro Breezecaller", "Noxious Revival"]);
+    sim_core::engine::zones::discard_cards(&mut g, P0, &[c[0]]).unwrap();
+    let lib = g.player(P0).library.len();
+    cast::cast_card(&mut g, P0, c[1], "hand", Ctx::default()).unwrap();
+    assert!(top_is(&g, P0, "Oboro Breezecaller"), "on top of its owner's library");
+    assert_eq!(g.player(P0).library.len(), lib + 1);
+    assert!(!in_gy(&g, P0, "Oboro Breezecaller"));
+    assert!(in_gy(&g, P0, "Noxious Revival"));
+}
+
+#[test]
+fn noxious_revival_costs_g_or_two_life() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Noxious Revival"])[0];
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c).0, 0);
+    assert_eq!(sim_core::engine::mana::phyrexian_life(&g, c, ""), 2, "unpaid {{G/P}} is 2 life");
+    assert_eq!(sim_core::engine::mana::phyrexian_life(&g, c, "G"), 0);
+}
+
+#[test]
+fn noxious_revival_with_an_empty_graveyard_just_goes_to_the_graveyard() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Noxious Revival"])[0];
+    let lib = g.player(P0).library.len();
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P0).library.len(), lib);
+    assert!(in_gy(&g, P0, "Noxious Revival"));
+}

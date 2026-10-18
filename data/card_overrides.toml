@@ -8514,3 +8514,7 @@ note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast bef
 ["Cloud of Faeries"]
 status = "Full"
 note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cycling {2} is a hand option the AI uses in an opponent's end step or after combat with the mana to spare (t6_green2)"
+
+["Noxious Revival"]
+status = "Full"
+note = "{G/P} (the engine pays 2 life when no green mana is free); puts a graveyard card on top of its owner's library: the AI takes the best nonland card of its own graveyard (a creature first) and casts it only when one is there (t6_green2)"
