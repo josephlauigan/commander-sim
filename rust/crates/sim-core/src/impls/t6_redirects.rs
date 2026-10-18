@@ -434,6 +434,21 @@ fn get_lost_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym>
     Ok("gy")
 }
 
+
+// ================================================================== Erode
+/// Erode: destroy target creature or planeswalker; its controller may search for a basic land, put it onto the
+/// battlefield tapped, then shuffle (the AI always searches)
+fn erode_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) else { return Ok("gy") };
+    let owner = g.perm(t).owner;
+    apply_removal(g, Some(p), t, "destroy", Some(c))?;
+    crate::engine::zones::land_ramp(g, owner, 1, true)?;
+    let mut lib = std::mem::take(&mut g.player_mut(owner).library);
+    g.rng.shuffle(&mut lib);
+    g.player_mut(owner).library = lib;
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
@@ -442,5 +457,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Kozilek's Command")?.resolve = Some(kozilek_resolve);
     r.card(db, "Eldrazi Confluence")?.resolve = Some(confluence_resolve);
     r.card(db, "Get Lost")?.resolve = Some(get_lost_resolve);
+    r.card(db, "Erode")?.resolve = Some(erode_resolve);
     Ok(())
 }

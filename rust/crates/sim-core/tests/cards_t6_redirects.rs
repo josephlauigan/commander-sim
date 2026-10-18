@@ -318,3 +318,19 @@ fn get_lost_takes_an_enchantment_when_no_creature_is_chosen() {
     cast_free(&mut g, P0, "Get Lost", sim_core::state::Ctx::default());
     assert!(!g.perm(e).on_bf);
 }
+
+// ======================================================== Erode
+#[test]
+fn erode_destroys_the_creature_and_ramps_its_controller_tapped() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = perm(&mut g, P1, "Baneslayer Angel");
+    let (mine, theirs) = (g.player(P0).lands.len(), g.player(P1).lands.len());
+    cast_free(&mut g, P0, "Erode", sim_core::state::Ctx { target: Some(t), ..Default::default() });
+    assert!(!g.perm(t).on_bf);
+    assert_eq!(g.player(P1).lands.len(), theirs + 1, "the creature's controller fetched a basic");
+    let l = *g.player(P1).lands.last().unwrap();
+    assert!(g.land(l).tapped, "it enters tapped");
+    assert_eq!(g.player(P0).lands.len(), mine, "the caster gets nothing");
+    assert!(in_gy(&g, P0, "Erode"));
+}

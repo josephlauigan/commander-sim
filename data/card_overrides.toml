@@ -8416,3 +8416,7 @@ note = "three choices: +3/-3 on the opposing creatures worth the most per choice
 ["Get Lost"]
 status = "Partial"
 note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"
+
+["Erode"]
+status = "Full"
+note = "destroys the targeted opposing creature or planeswalker; its controller then fetches a basic land onto the battlefield tapped and shuffles (always, the 'may' is taken)"

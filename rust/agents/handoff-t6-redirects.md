@@ -13,3 +13,4 @@ Oracle text fetch, build cardgen, first card.
 - Kozilek's Command: done (Full; tags tokx rem=exile tgt=c draw=1).
 - Eldrazi Confluence: done (Full; tags rem=shrink3 tgt=c). Note: Titan blink_value=2 so the AI does not blink it; tests use Ravenous Chupacabra. Toughness<=0 is not an SBA in check_state: kill with die(g,m,"sba").
 - Get Lost: done (Partial; Maps not modeled).
+- Erode: done (Full).
