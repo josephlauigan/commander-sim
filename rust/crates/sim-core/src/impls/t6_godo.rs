@@ -303,7 +303,7 @@ fn welder_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     Ok(vec![ability(6.0, "Goblin Welder swap", src, welder_go)])
 }
 
-fn welder_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn welder_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || g.perm(src).sick {
         return Ok(false);
     }

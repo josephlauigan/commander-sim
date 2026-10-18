@@ -72,6 +72,7 @@ pub enum StepKind {
 }
 
 /// one step of a combo's line (see `Combo::steps`): an answered step stops the combo
+#[derive(Clone, Copy)]
 pub struct Step {
     pub label: &'static str,
     pub kind: StepKind,
@@ -100,7 +101,10 @@ pub fn done(_g: &mut Game, _p: PlayerId) -> Res<bool> {
 /// exports `pub static COMBOS: [Combo; N]` and is chained here (the index of a combo is its place in this list)
 pub fn all() -> &'static [&'static Combo] {
     static ALL: LazyLock<Vec<&'static Combo>> =
-        LazyLock::new(|| BASE.iter().chain(super::t6_combos_godo::COMBOS.iter()).collect());
+        LazyLock::new(|| BASE.iter()
+            .chain(super::t6_combos_godo::COMBOS.iter())
+            .chain(super::t6_combos_extra::COMBOS.iter())
+            .collect());
     &ALL
 }
 
@@ -152,7 +156,7 @@ pub static BASE: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
-        steps: &[],
+        steps: &super::t6_combos_extra::KINNAN_BASALT_STEPS,
     },
     Combo {
         name: "Kinnan + Freed from the Real / Pemmin's Aura",
@@ -186,9 +190,9 @@ pub static BASE: [Combo; 14] = [
         groups: &[&["Thassa's Oracle"], &["Demonic Consultation", "Tainted Pact"]],
         ready: oracle,
         mana: (0, ""),
-        finish: None,
+        finish: Some(super::t6_combos_extra::oracle_finish),
         xcost: &[],
-        steps: &[],
+        steps: &super::t6_combos_extra::ORACLE_STEPS,
     },
     Combo {
         name: "Helm of the Host + Combat Celebrant",
@@ -833,10 +837,11 @@ fn power_artifact(g: &Game, p: PlayerId) -> Ready {
     (true, vec![pa, mono], vec![])
 }
 
-/// infinite colourless mana; Kinnan's activation finds a winner
+/// infinite colourless mana; Kinnan's activation (its {U}{G} paid from real sources) finds a winner. Without {U}{G} the
+/// Thrasios / Mirage Mirror outlets (t6_combos_extra) take over
 fn kinnan_basalt(g: &Game, p: PlayerId) -> Ready {
     match (on_bf(g, p, "Kinnan, Bonder Prodigy"), on_bf(g, p, "Basalt Monolith")) {
-        (Some(k), Some(b)) => (true, vec![k, b], vec![]),
+        (Some(k), Some(b)) if super::t6_combos_extra::can_pay_ug(g, p) => (true, vec![k, b], vec![]),
         _ => NOT_READY(),
     }
 }

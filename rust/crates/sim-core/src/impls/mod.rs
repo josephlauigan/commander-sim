@@ -65,6 +65,7 @@ pub mod t6_dack;
 pub mod t6_stax;
 pub mod t6_blue;
 pub mod t6_combos_godo;
+pub mod t6_combos_extra;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
