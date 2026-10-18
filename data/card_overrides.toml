@@ -8868,3 +8868,63 @@ note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter o
 ["Deadpool, Trading Card"]
 status = "Partial"
 note = "5/3; upkeep: lose 3 life (compiled); {3}, sacrifice: each other player draws (AI uses it at 6 life or less); missing: the as-enters text box exchange with another creature (t6_legends1.rs)"
+["Borne Upon a Wind"]
+status = "Partial"
+note = "draws a card and sets the caster's one-turn flash flag (t6_blue::flash_turn_grant); missing: the engine does not read the flag yet, so spells still wait for their normal timing (engine need: cast spells as though they had flash)"
+
+["Mnemonic Betrayal"]
+status = "Partial"
+note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); missing: cards left uncast should return to their owners' graveyards at the next end step, but the end-step clean-up exiles them (engine need: delayed end-step return)"
+
+["Timetwister"]
+status = "Full"
+note = "each player shuffles hand and graveyard into the library and draws seven (cards held from an opponent go to their owner's library); Timetwister then goes to the graveyard (t6_blue.rs, tested)"
+
+["Demonic Counsel"]
+status = "Full"
+note = "searches for the Demon with the most worth, or any card (the deck's tutor pick) with delirium (4+ card types in the graveyard), then shuffles (t6_blue.rs, tested)"
+
+["Rain of Filth"]
+status = "Partial"
+note = "resolving sets the caster's one-turn flag (t6_blue::rain_of_filth_active); missing: the lands' 'Sacrifice this land: Add {B}' mana ability (engine need: a sacrifice-a-land mana source), so the AI never casts it"
+
+["Sevinne's Reclamation"]
+status = "Full"
+note = "returns the best permanent card with mana value 3 or less from the graveyard (a land enters like a played one, without the land drop); cast with flashback {4}{W} it is copied (the AI picks a second target) and exiled (t6_blue.rs, tested)"
+
+["Exhibition Tidecaller"]
+dsl = []
+status = "Partial"
+note = "Opus on the cast hook: whenever you cast an instant or sorcery the best opposing player mills three, or ten when the spell's mana value plus X is 5 or more; missing: the engine records no real mana-spent total, so a cost reduction (or a cheaper alternative cost other than the flagged ones) is not seen (engine need)"
+
+["Voice of Victory"]
+status = "Full"
+note = "Mobilize 2 on the attack hook (two tapped and attacking 1/1 red Warriors, sacrificed at the next end step) and a can_cast lock: opponents cannot cast spells during its controller's turn (t6_blue.rs, tested)"
+
+["High Fae Trickster"]
+status = "Partial"
+note = "4/2 flash flyer; the static 'you may cast spells as though they had flash' is exposed as t6_blue::static_flash; missing: the engine does not read it yet, so spells still wait for their normal timing (engine need: permanent-based flash grant)"
+
+["Drift of Phantasms"]
+status = "Full"
+note = "0/5 flying defender; Transmute {1}{U}{U} as a sorcery-speed hand option for the best card with the same mana value (3), then shuffle (t6_blue.rs, tested)"
+
+["Emrakul, the Promised End"]
+status = "Partial"
+note = "13/13 flying trample that costs {1} less per card type in the graveyard (self_cost, tested); missing: the cast trigger (control of target opponent's next turn, then that player takes an extra turn), and protection from instants (the engine has no turn control, extra turns, or protection from a card type)"
+
+["Rograkh, Son of Rohgahh"]
+status = "Full"
+note = "{0} 0/1 with first strike, menace and trample (card data, tested); partner is the engine's (the deck's commander pair)"
+
+["Silas Renn, Seeker Adept"]
+status = "Full"
+note = "2/2 deathtouch artifact creature; its own combat damage to a player marks the best artifact card in the graveyard for the turn and the AI casts it from the graveyard in a main phase if it can pay; partner is the engine's (t6_blue.rs, tested)"
+
+["Hidden Strings"]
+status = "Partial"
+note = "tap or untap up to two targets: the AI untaps two of its tapped mana sources (rocks and dorks first, then lands) or else taps down the two best opposing creatures, and casts it when three or more mana sources are tapped; missing: cipher (encoding the card on a creature for a free copy on combat damage) -- the card goes to the graveyard (engine need)"
+
+["Valley Floodcaller"]
+status = "Partial"
+note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otters and Rats get +1/+1 until end of turn and untap (tested); the 'cast noncreature spells as though they had flash' static is t6_blue::static_flash; missing: the engine does not read it yet (engine need: permanent-based flash grant)"
