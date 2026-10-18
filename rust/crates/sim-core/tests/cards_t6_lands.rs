@@ -470,3 +470,46 @@ fn shatterskull_the_hammer_pass_is_played_as_a_land_that_taps_for_r() {
     g.land_mut(l).tapped = false;
     assert!(mana::mana_units(&g, P0, false).iter().any(|x| x.src == mana::Source::Land(l) && x.cols.has('R')));
 }
+
+// ------------------------------------------------------------------ Talon Gates of Madara
+#[test]
+fn talon_gates_phases_out_the_best_opposing_creature_when_it_enters() {
+    let mut g = pod();
+    let k = perm(&mut g, P1, "Kaalia of the Vast");
+    let e = perm(&mut g, P1, "Llanowar Elves");
+    lands(&mut g, P0, "City of Traitors", 1, false);
+    play_land(&mut g, P0, "Talon Gates of Madara");
+    assert!(g.perm(k).phased && !g.perm(e).phased, "up to one target creature phases out");
+    assert_eq!(names(&g, P0), ["Talon Gates of Madara"], "the City of Traitors check still runs");
+}
+
+#[test]
+fn talon_gates_put_onto_the_battlefield_for_four_costs_no_land_drop() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Talon Gates of Madara"])[0];
+    lands(&mut g, P0, "Forest", 4, false);
+    let k = perm(&mut g, P1, "Kaalia of the Vast");
+    assert!(hand_opts(&mut g, P0, Some(false)).is_empty(), "the land drop is still open: play it normally");
+    g.player_mut(P0).lands_played = 1;
+    let o = hand_opts(&mut g, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.player(P0).hand.contains(&c) && g.player(P0).lands.len() == 5);
+    assert!(g.player(P0).lands.iter().take(4).all(|&l| g.land(l).tapped), "{{4}} paid");
+    assert!(g.perm(k).phased);
+    assert_eq!(g.player(P0).lands_played, 1, "not a land play");
+}
+
+#[test]
+fn talon_gates_phases_a_big_attacker_out_of_the_attack_for_four() {
+    let mut g = pod();
+    let c = hand(&mut g, P0, &["Talon Gates of Madara"])[0];
+    lands(&mut g, P0, "Forest", 4, false);
+    let k = perm(&mut g, P1, "Kaalia of the Vast");
+    let e = perm(&mut g, P1, "Llanowar Elves");
+    let mut atk = vec![k, e];
+    sim_core::cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut vec![]).unwrap();
+    assert!(g.perm(k).phased && atk == [e]);
+    assert!(!g.player(P0).hand.contains(&c) && g.player(P0).lands.len() == 5);
+}

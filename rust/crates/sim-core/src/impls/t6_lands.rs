@@ -843,6 +843,91 @@ fn smash_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+// ================================================================== Talon Gates of Madara
+/// **Talon Gates of Madara**: when it enters, up to one target creature phases out (the AI phases out the most
+/// valuable opposing creature, worth at least 3: it is gone until its controller's next untap). {T}: Add {C}.
+/// {1},{T}: any colour (`any_filter_cols`). {4}: put it from your hand onto the battlefield (instant speed): the AI
+/// does it in its own main phase when the land drop is spent (to phase out a creature before combat), and as the
+/// defender against an attacker worth at least 5 (phasing it out of the attack)
+fn gates_phase(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<PermId>> {
+    let Some(t) = super::common::best_opp_creature(g, p, |m| pval(g, m) >= 3.0) else { return Ok(None) };
+    if ability_window_card(g, p, g.land(l).cd, "target creature phases out", None, Some(t))? && g.perm(t).on_bf {
+        g.perm_mut(t).phased = true;
+        g.bf_ver += 1;
+        crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(t).name);
+        return Ok(Some(t));
+    }
+    Ok(None)
+}
+
+/// played from hand (the land drop): the City of Traitors check and the enter trigger
+fn gates_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    traitors_check(g, p, l)?;
+    gates_phase(g, p, l)?;
+    Ok(())
+}
+
+/// {4}: put Gates onto the battlefield (not a land play: no land drop, no "play another land" trigger); its enter trigger
+/// phases out `target` when it is still the best choice, else the best opposing creature
+fn gates_put(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<PermId>> {
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 4, "", false) || !pay(g, p, 4, "", false)? {
+        return Ok(None);
+    }
+    let i = g.player(p).hand.iter().position(|&x| x == c).unwrap();
+    g.player_mut(p).hand.remove(i);
+    let l = g.add_land(p, c, false);
+    crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(p).name);
+    let t = gates_phase(g, p, l)?;
+    crate::engine::zones::landfall(g, p)?;
+    Ok(t)
+}
+
+fn gates_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let pl = g.player(p);
+    let allowed = 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now;
+    if post != Some(false) || g.active != Some(p) || pl.lands_played < allowed || !pl.hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    if !can_pay(g, p, 4, "", false) || super::common::best_opp_creature(g, p, |m| pval(g, m) >= 3.0).is_none() {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt { utility: 1.0, label: "put Talon Gates onto the battlefield".into(), act: Some(Action::Plan { f: gates_put_go, arg: c.0 as i64 }) }])
+}
+
+fn gates_put_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    Ok(gates_put(g, p, CardId(arg as u16))?.is_some() || !g.player(p).hand.contains(&CardId(arg as u16)))
+}
+
+fn gates_defend(
+    g: &mut Game,
+    c: CardId,
+    d: PlayerId,
+    p: PlayerId,
+    atk: &mut Vec<PermId>,
+    _assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    if !g.player(d).hand.contains(&c) || !can_pay(g, d, 4, "", false) {
+        return Ok(());
+    }
+    let mine: Vec<PermId> = atk.iter().copied().filter(|&a| g.perm(a).owner == p && g.perm(a).on_bf && !untargetable(g, a)).collect();
+    let Some(big) = max_by(&mine, |a| pval(g, a)).filter(|&a| pval(g, a) >= 5.0) else { return Ok(()) };
+    if !pay(g, d, 4, "", false)? {
+        return Ok(());
+    }
+    let i = g.player(d).hand.iter().position(|&x| x == c).unwrap();
+    g.player_mut(d).hand.remove(i);
+    let l = g.add_land(d, c, false);
+    crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(d).name);
+    if ability_window_card(g, d, c, "target creature phases out", None, Some(big))? && g.perm(big).on_bf {
+        g.perm_mut(big).phased = true;
+        g.bf_ver += 1;
+        atk.retain(|&a| a != big);
+        crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(big).name);
+    }
+    let _ = l;
+    crate::engine::zones::landfall(g, d)
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -885,6 +970,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         s.hand_options = Some(smash_options);
         s.resolve = Some(smash_resolve);
     }
+    let tg = r.card(db, "Talon Gates of Madara")?;
+    tg.land_etb = Some(gates_etb);
+    tg.hand_options = Some(gates_options);
+    tg.hand_defend = Some(gates_defend);
     // REGISTER-HERE
     Ok(())
 }
