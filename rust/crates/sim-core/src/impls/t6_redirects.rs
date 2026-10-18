@@ -527,6 +527,31 @@ fn emerald_charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
     Ok("gy")
 }
 
+
+// ================================================================== Sunscour
+/// the white cards in p's hand other than `card` (Sunscour exiles two instead of paying {5}{W}{W})
+pub fn white_pitch(g: &Game, p: PlayerId, card: CardId) -> Vec<CardId> {
+    g.player(p).hand.iter().copied().filter(|&x| x != card && g.db.get(x).pips.contains('W')).collect()
+}
+
+/// Sunscour's alternative cost: exile two white cards from p's hand (the two least useful). False, nothing paid, if p
+/// has fewer than two. The destroy-all-creatures effect is the card's `wipe=destroy` tag.
+pub fn pay_sunscour_pitch(g: &mut Game, p: PlayerId, card: CardId) -> Res<bool> {
+    let mut pitch = white_pitch(g, p, card);
+    if pitch.len() < 2 {
+        return Ok(false);
+    }
+    for _ in 0..2 {
+        let x = crate::engine::zones::min_by(&pitch, |c| crate::engine::tutors::card_worth(g, p, c, false)).unwrap();
+        remove_card(&mut pitch, x);
+        let pl = g.player_mut(p);
+        remove_card(&mut pl.hand, x);
+        pl.exile.push(x);
+        crate::glog!(g, "    {} exiles {} (Sunscour)", pname(g, p), cname(g, x));
+    }
+    Ok(true)
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);

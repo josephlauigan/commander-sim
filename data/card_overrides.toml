@@ -8432,3 +8432,7 @@ note = "exiles all graveyards and itself, and sets the turn lock t6_redirects::n
 ["Emerald Charm"]
 status = "Partial"
 note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"
+
+["Sunscour"]
+status = "Partial"
+note = "destroys all creatures (the wipe=destroy tag); the pitch cost (exile two white cards from hand) is t6_redirects::pay_sunscour_pitch; missing: the engine casts it only for {5}{W}{W} (alternative-cost hook)"

@@ -17,3 +17,4 @@ Oracle text fetch, build cardgen, first card.
 - Soul Partition: done (Partial; stand-in returns card to hand).
 - Calamity's Wake: done (Partial; lock flag unread).
 - Emerald Charm: done (Partial; lose-flying mode missing).
+- Sunscour: done (Partial; pitch cost fn only).

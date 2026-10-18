@@ -399,3 +399,30 @@ fn emerald_charm_untaps_a_land_when_there_is_no_enchantment() {
     let up = ls.iter().filter(|&&l| !g.land(l).tapped).count();
     assert_eq!(up, 1);
 }
+
+// ======================================================== Sunscour
+#[test]
+fn sunscour_destroys_every_creature() {
+    let mut g = game();
+    g.active = Some(P0);
+    let a = token(&mut g, P0, 2);
+    let b = token(&mut g, P1, 3);
+    let c = perm(&mut g, P1, "Baneslayer Angel");
+    cast_free(&mut g, P0, "Sunscour", sim_core::state::Ctx::default());
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf && !g.perm(c).on_bf);
+    assert!(in_gy(&g, P0, "Sunscour"));
+}
+
+#[test]
+fn sunscour_alternative_cost_exiles_two_white_cards() {
+    let mut g = game();
+    hand(&mut g, P0, &["Sunscour", "Swords to Plowshares", "Island"]);
+    let c = card(&g, "Sunscour");
+    assert!(!t6::pay_sunscour_pitch(&mut g, P0, c).unwrap(), "one white card is not enough");
+    assert_eq!(g.player(P0).exile.len(), 0);
+    hand(&mut g, P0, &["Path to Exile"]);
+    assert_eq!(t6::white_pitch(&g, P0, c).len(), 2);
+    assert!(t6::pay_sunscour_pitch(&mut g, P0, c).unwrap());
+    assert_eq!(g.player(P0).exile.len(), 2);
+    assert!(in_hand(&g, P0, "Sunscour") && in_hand(&g, P0, "Island"));
+}
