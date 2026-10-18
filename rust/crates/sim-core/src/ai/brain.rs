@@ -1117,6 +1117,17 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
         }
         g.tick()?;
         let opts = main_options(g, p, post)?;
+        if crate::impls::t6_plans::is_t6(g, p)
+            && let Some(i) = super::t6_table::must_option(g, p, &opts)
+            && let Some(a) = &opts[i].act
+        {
+            // Tier 6: the plan's must-do play comes before the look-ahead
+            let lbl = format!("{} [must]", opts[i].label);
+            if act::perform(g, p, a)? {
+                explain(g, p, &labels(&opts), &lbl, "decides");
+                continue;
+            }
+        }
         if opts.len() >= 2
             && search::enabled(g, p)
             && let Some(i) = search::choose(g, p, post, &opts)

@@ -248,3 +248,39 @@ pub fn is_ramp(g: &Game, c: CardId) -> bool {
     let d = g.db.get(c);
     d.land || d.tag(Tag::Rock) || d.tag(Tag::Fastmana) || d.types.has(Types::LAND)
 }
+
+/// A plan's priority at or above this on a cast is a "do it now" play (see `must_option`).
+pub const MUST_PRIO: f64 = 90.0;
+
+/// Tier 6 "must-do" plays, taken before the look-ahead (which kept voting them down: `Sisay: Mount Doom 100%` lost to
+/// "stop (hold mana)", Chord over Kinnan, Dack scored and not cast). Returns the index in `opts` of the play to make:
+/// the highest-priority cast whose plan priority (`t6_plans::prio`) is at least `MUST_PRIO` (commanders, fast mana,
+/// the protection pre-cast), a card that would complete one of the player's lines (`combos::piece_gain` >= 1.0), or
+/// Sisay's fetch. None while the plan's `hold_up` slot asks to pass with the mana up.
+pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
+    use crate::hooks::Action;
+    if t6_plans::hold_up(g, p).is_some_and(|x| x > 0.0) {
+        return None;
+    }
+    let mut best: Option<(f64, f64, usize)> = None;
+    for (i, o) in opts.iter().enumerate() {
+        let score = match &o.act {
+            Some(Action::Cast { card, zone: None }) => {
+                let pr = t6_plans::prio(g, p, *card);
+                if pr.is_some_and(|x| x >= MUST_PRIO) {
+                    pr.unwrap_or(0.0)
+                } else if pr.is_none_or(|x| x > 0.0) && !g.db.get(*card).land && combos::piece_gain(g, p, &g.db.get(*card).name) >= 1.0 {
+                    89.0
+                } else {
+                    continue;
+                }
+            }
+            Some(Action::Ability { .. }) if g.player(p).key == "sisay-legends-toolbox" && o.label.starts_with("Sisay: ") => 91.0,
+            _ => continue,
+        };
+        if best.is_none_or(|b| (score, o.utility) > (b.0, b.1)) {
+            best = Some((score, o.utility, i));
+        }
+    }
+    best.map(|b| b.2)
+}
