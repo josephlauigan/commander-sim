@@ -17,3 +17,9 @@ Needs: the AI's "cast as though it had flash" check reads a one-turn grant from 
 Where it would hook: impls/t0_captain.rs `as_flash` (read by the AI's end-of-turn window for creature spells): also return true when `player.flag_turn[intern("as_flash_turn")] == g.turn_stamp()` (t6_lands::FLASH_FLAG).
 Card side done: {1},{T}, sacrifice cost and the flag (t6_lands.rs emergence_go, tested); the option is not offered until the engine reads the flag (const EMERGENCE_LIVE = false in t6_lands.rs; set it true when as_flash reads the flag).
 Test to add once the engine has it: Emergence Zone used on an opponent's end step lets the AI cast a creature from hand that turn.
+
+## Petrified Hamlet
+Needs: a "can't activate abilities of sources with this name, except mana abilities" static (per-name activation lock), and a rule that lands with the chosen name also have "{T}: Add {C}".
+Where it would hook: cardcode::land_options / the permanents' activated-ability options (ai/act.rs perform, engine/stack.rs ability_window*); read `t6_lands::hamlet_names(g)` (the chosen card names) and drop the options of those cards.
+Card side done: the name is chosen when it enters (the opponents' land with the most non-mana abilities) and kept on the Hamlet (`DataKey::Imprint`, `Val::Card`); `hamlet_names` returns them; its own {T}: {C}; the City of Traitors check still runs.
+Test to add once the engine has it: with Mutavault named, its animate option is gone; Mutavault still taps for {C}.

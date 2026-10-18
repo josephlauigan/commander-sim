@@ -222,3 +222,25 @@ fn forbidden_orchard_gives_an_opponent_a_spirit_each_time_it_is_tapped_for_mana(
     assert!(g.perm(s).ttypes.contains(&sim_core::sym::intern("spirit")));
     assert!(g.player(P0).perms.iter().all(|&m| !g.perm(m).token), "the tapper gets nothing");
 }
+
+// ------------------------------------------------------------------ Petrified Hamlet
+#[test]
+fn petrified_hamlet_names_the_opponents_utility_land() {
+    use sim_core::impls::t6_lands as t6;
+    let mut g = pod();
+    lands(&mut g, P1, "Forest", 2, false);
+    lands(&mut g, P1, "Mutavault", 1, false);
+    play_land(&mut g, P0, "Petrified Hamlet");
+    assert_eq!(t6::hamlet_names(&g), [card(&g, "Mutavault")]);
+}
+
+#[test]
+fn petrified_hamlet_names_nothing_without_a_land_with_abilities_and_still_sacrifices_a_city() {
+    use sim_core::impls::t6_lands as t6;
+    let mut g = pod();
+    lands(&mut g, P1, "Forest", 2, false);
+    lands(&mut g, P0, "City of Traitors", 1, false);
+    play_land(&mut g, P0, "Petrified Hamlet");
+    assert!(t6::hamlet_names(&g).is_empty());
+    assert_eq!(names(&g, P0), ["Petrified Hamlet"], "playing the Hamlet sacrifices the City");
+}

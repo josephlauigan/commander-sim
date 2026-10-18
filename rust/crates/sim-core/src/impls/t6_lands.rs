@@ -20,7 +20,7 @@ use crate::engine::zones::{Tokens, make_tokens, min_by};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{LandId, PlayerId};
-use crate::state::{DataKey, Game};
+use crate::state::{DataKey, Game, Val};
 
 fn name_of(g: &Game, l: LandId) -> &str {
     &g.db.get(g.land(l).cd).name
@@ -386,6 +386,51 @@ fn orchard_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
     Ok(())
 }
 
+// ================================================================== Petrified Hamlet
+/// **Petrified Hamlet**: when it enters, choose a land card name. Activated abilities of sources with that name can't
+/// be activated unless they are mana abilities; lands with that name have "{T}: Add {C}". The AI names the land of
+/// an opponent's that has the most activated abilities of its own (a land with card code in its `land_options`, or a
+/// utility land), most copies first. The chosen card is kept on the Hamlet (`DataKey::Imprint`, a `Val::Card`).
+/// Nothing yet stops the named lands' abilities, or gives them {T}: Add {C}: engine-needs-lands.md
+fn hamlet_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    traitors_check(g, p, l)?;
+    let mut seen: Vec<(CardId, u32)> = vec![];
+    for q in g.opps(p).collect::<Vec<_>>() {
+        for &x in &g.player(q).lands {
+            let cd = g.land(x).cd;
+            if g.registry.get(cd).is_some_and(|i| i.land_options.is_some() || i.land_defend.is_some() || i.land_upkeep.is_some()) {
+                match seen.iter_mut().find(|s| s.0 == cd) {
+                    Some(s) => s.1 += 1,
+                    None => seen.push((cd, 1)),
+                }
+            }
+        }
+    }
+    let Some(c) = max_by(&seen, |s| s.1 as f64).map(|s| s.0) else { return Ok(()) };
+    g.land_mut(l).data.set(DataKey::Imprint, Val::Card(c));
+    crate::glog!(g, "    Petrified Hamlet names {}", g.db.get(c).name);
+    Ok(())
+}
+
+/// the land card name p's Petrified Hamlets have chosen (activated abilities of sources with that name can't be
+/// activated unless mana abilities), for the engine to read
+pub fn hamlet_names(g: &Game) -> Vec<CardId> {
+    let mut v = vec![];
+    for pl in &g.players {
+        if !pl.alive {
+            continue;
+        }
+        for &l in &pl.lands {
+            if name_of(g, l) == "Petrified Hamlet"
+                && let Some(Val::Card(c)) = g.land(l).data.get(DataKey::Imprint)
+            {
+                v.push(*c);
+            }
+        }
+    }
+    v
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -411,6 +456,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Minamo, School at Water's Edge")?.land_options = Some(minamo);
     r.card(db, "Emergence Zone")?.land_options = Some(emergence);
     r.card(db, "Forbidden Orchard")?.on_tap_land = Some(orchard_tap);
+    r.card(db, "Petrified Hamlet")?.land_etb = Some(hamlet_etb);
     // REGISTER-HERE
     Ok(())
 }
