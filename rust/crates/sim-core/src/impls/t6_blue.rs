@@ -3,6 +3,7 @@
 //! rust/agents/engine-needs-blue.md.
 //!
 //! - Borne Upon a Wind: draw, and the one-turn "cast spells as though they had flash" flag (`t6_lands::FLASH_FLAG`).
+//! - Mnemonic Betrayal: opponents' graveyards are exiled and their nonland cards held in hand (any mana type) for the turn.
 
 use crate::cards::CardDb;
 use crate::engine::zones::draw;
@@ -31,8 +32,31 @@ fn borne_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     Ok("gy")
 }
 
+// ================================================================== Mnemonic Betrayal
+/// Mnemonic Betrayal: exile every opponent's graveyard; p may cast spells from among those cards this turn with mana
+/// of any type (the cards are held in p's hand like Opposition Agent's, `yshtola::take_card`, and listed in
+/// `impulse` so the end step clears what was not cast); Betrayal itself is exiled.
+/// Missing: what remains goes back to its owner's graveyard (the end-step cleanup exiles it with p's own impulse cards).
+fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    for q in g.opps(p).collect::<Vec<_>>() {
+        let gy = std::mem::take(&mut g.player_mut(q).gy);
+        let n = gy.len();
+        for c in gy {
+            if g.db.get(c).land {
+                g.player_mut(q).exile.push(c); // a land can't be cast
+            } else {
+                crate::impls::yshtola::take_card(g, p, c, q, "Mnemonic Betrayal");
+                g.player_mut(p).impulse.push(c);
+            }
+        }
+        crate::glog!(g, "    Mnemonic Betrayal exiles {} card(s) from {}'s graveyard", n, g.player(q).name);
+    }
+    Ok("exile")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Borne Upon a Wind")?.resolve = Some(borne_resolve);
+    r.card(db, "Mnemonic Betrayal")?.resolve = Some(betrayal_resolve);
     Ok(())
 }

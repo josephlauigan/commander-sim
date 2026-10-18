@@ -37,3 +37,27 @@ fn borne_upon_a_wind_draws_and_grants_flash_this_turn() {
     assert!(t6::flash_turn_grant(&g, P0));
     assert!(!t6::flash_turn_grant(&g, P1), "only the caster");
 }
+
+// ======================================================== Mnemonic Betrayal
+fn put_gy(g: &mut Game, p: PlayerId, name: &str) -> CardId {
+    let c = take(g, p, name);
+    g.player_mut(p).gy.push(c);
+    c
+}
+
+#[test]
+fn mnemonic_betrayal_takes_opposing_graveyards_for_the_turn() {
+    let mut g = game();
+    let bolt = put_gy(&mut g, P1, "Lightning Bolt");
+    let land = put_gy(&mut g, P1, "Island");
+    let mine = put_gy(&mut g, P0, "Opt");
+    cast_free(&mut g, P0, "Mnemonic Betrayal");
+    assert!(g.player(P1).gy.is_empty(), "the opposing graveyard is exiled");
+    assert!(g.player(P1).exile.contains(&land), "a land can't be cast: it stays in exile");
+    assert!(g.player(P0).hand.contains(&bolt), "the spell can be cast from among them");
+    assert!(g.player(P0).agent_ids.contains(&bolt), "with mana of any type");
+    assert_eq!(g.player(P0).stolen.get(&bolt), Some(&P1), "it still belongs to its owner");
+    assert!(g.player(P0).impulse.contains(&bolt), "only this turn");
+    assert!(g.player(P0).gy.contains(&mine), "own graveyard untouched");
+    assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Mnemonic Betrayal"), "Betrayal is exiled");
+}
