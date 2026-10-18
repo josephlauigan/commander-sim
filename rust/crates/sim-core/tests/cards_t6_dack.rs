@@ -155,3 +155,67 @@ fn a_donated_solar_still_counts_creatures_that_entered_before_the_donation() {
     let late = perm(&mut g, P0, "Grave Titan");
     assert!(!sim_core::impls::t6_dack::controlled_when(&g, solar, P0, late), "entered after the donation");
 }
+
+// ======================================================== Preston, the Vanisher
+fn illusions_of(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && g.perm(m).token && g.perm(m).ttypes.contains(&"illusion"))
+        .collect()
+}
+
+#[test]
+fn preston_copies_a_creature_that_was_not_cast_as_a_0_1_white_illusion() {
+    let mut g = game();
+    let _preston = perm(&mut g, P0, "Preston, the Vanisher");
+    let titan = perm(&mut g, P0, "Serra Angel");
+    let ill = illusions_of(&g, P0);
+    assert_eq!(ill.len(), 1, "perm() puts it onto the battlefield without casting it");
+    assert!(g.perm(ill[0]).token);
+    assert_eq!((g.perm(ill[0]).pow, g.perm(ill[0]).tgh), (0, 1));
+    assert!(g.perm(ill[0]).colors.has('W'));
+    assert!(g.perm(titan).on_bf);
+}
+
+#[test]
+fn preston_ignores_tokens_cast_creatures_and_opponents() {
+    let mut g = game();
+    let _preston = perm(&mut g, P0, "Preston, the Vanisher");
+    let _t = token(&mut g, P0, 2);
+    let _o = perm(&mut g, P1, "Grave Titan");
+    assert!(illusions_of(&g, P0).is_empty());
+    // a cast creature
+    lands(&mut g, P0, "Plains", 4, false);
+    let c = hand(&mut g, P0, &["Serra Angel"])[0];
+    sim_core::engine::cast::cast_card(&mut g, P0, c, sim_core::sym::intern("hand"), Default::default()).unwrap();
+    assert!(illusions_of(&g, P0).is_empty(), "a cast creature isn't copied");
+}
+
+#[test]
+fn preston_copy_enters_trigger_fires() {
+    let mut g = game();
+    let _preston = perm(&mut g, P0, "Preston, the Vanisher");
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    // Fiend Hunter enters uncast: its Illusion copy also exiles (a second banisher aimed at the same opposing board)
+    let _fh = perm(&mut g, P0, "Fiend Hunter");
+    assert!(!g.perm(theirs).on_bf, "the original (or its copy) exiled the Titan");
+    assert_eq!(illusions_of(&g, P0).len(), 1);
+}
+
+#[test]
+fn preston_sacrifices_five_illusions_to_exile_a_nonland_permanent() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 2, false);
+    let preston = perm(&mut g, P0, "Preston, the Vanisher");
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    assert!(!sim_core::impls::t6_dack::preston_exile(&mut g, preston, P0, theirs).unwrap(), "no Illusions yet");
+    for _ in 0..5 {
+        perm(&mut g, P0, "Serra Angel");
+    }
+    assert_eq!(illusions_of(&g, P0).len(), 5);
+    assert!(sim_core::impls::t6_dack::preston_exile(&mut g, preston, P0, theirs).unwrap());
+    assert!(illusions_of(&g, P0).is_empty());
+    assert!(!g.perm(theirs).on_bf);
+}

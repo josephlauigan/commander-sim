@@ -8592,3 +8592,8 @@ note = "ETB exiles the best opposing artifact or creature until it leaves; Chann
 ["Radiant Solar"]
 status = "Partial"
 note = "only Lost Mine of Phandelver is ever entered (no dungeon choice, no dungeon state in the engine); venture whenever it or another nontoken creature you control enters (Lost Mine of Phandelver always: scry, Goblin, Dark Pool drain, draw); {W}, discard: venture and gain 3 life"
+
+["Preston, the Vanisher"]
+dsl = []
+status = "Partial"
+note = "another nontoken creature you control that wasn't cast gets a 0/1 white Illusion token copy (its enters trigger fires); {1}{W}, sacrifice five Illusions: exile target nonland permanent; the copy keeps the copied creature's other types"

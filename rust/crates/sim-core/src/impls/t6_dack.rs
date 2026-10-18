@@ -4,6 +4,7 @@
 //! - Fiend Hunter, All-Fates Stalker: banishers built on `common::oring_exile` / `oring_return`.
 //! - Touch the Spirit Realm: the same, plus Channel (`touch_channel`).
 //! - Radiant Solar: venture (Lost Mine of Phandelver only) and its hand ability; Dack marks donated creatures.
+//! - Preston, the Vanisher: Illusion token copies of creatures that entered without being cast; the five-Illusion exile.
 //!
 //!
 //! The banishers' enter hooks read "you" from the enter call's `p` (the player the creature entered under), not from
@@ -18,7 +19,7 @@ use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{pval, untargetable};
-use crate::engine::zones::{Tokens, discard_cards, draw, exile_perm, make_tokens, max_by};
+use crate::engine::zones::{Tokens, die, discard_cards, draw, enter_token_copy, exile_perm, make_tokens, max_by};
 use crate::sym::intern;
 use crate::impls::t2::flicker_worth;
 use crate::flow::Res;
@@ -310,6 +311,111 @@ fn solar_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
     }])
 }
 
+// ================================================================== Preston, the Vanisher
+/// the creature type Illusion on a creature of p's (a token copy made by Preston, or any Illusion)
+fn illusions(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && crate::engine::values::subtypes(g, m).contains(&"illusion"))
+        .collect()
+}
+
+/// Whenever another nontoken creature you control enters, if it wasn't cast, create a token that's a copy of that
+/// creature, except it's a 0/1 white Illusion. The copy's own enters trigger fires (it is a copy); Preston doesn't
+/// trigger for tokens. Preston counts creatures that entered under its controller in the same resolution it was
+/// donated in (`controlled_when`). The token keeps the copied card's creature types as well (engine need: copy
+/// exceptions that replace types).
+fn preston_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    let copy_born = g.player(p).grudge.get(&intern("preston_copy_born")).copied().unwrap_or(0.0);
+    if m == src
+        || g.perm(m).token
+        || f64::from(g.perm(m).born) == copy_born
+        || !g.is_creature(m)
+        || g.last_cast_etb
+        || !controlled_when(g, src, p, m)
+    {
+        return Ok(());
+    }
+    let Some(cd) = g.perm(m).cd else { return Ok(()) };
+    let label = format!("create a token copy of {}", g.db.get(cd).name);
+    if !trigger_window(g, p, Some(src), &label, Some(4.0))? {
+        return Ok(());
+    }
+    // the copy is not marked as a token until it has entered: remember its entry number so it never triggers Preston
+    let born_key = intern("preston_copy_born");
+    let next = g.enter_no as f64 + 1.0;
+    g.player_mut(p).grudge.insert(born_key, next);
+    let made = enter_token_copy(g, p, cd);
+    g.player_mut(p).grudge.insert(born_key, 0.0);
+    if let Some(t) = made? {
+        let x = g.perm_mut(t);
+        x.pow = 0;
+        x.tgh = 1;
+        x.plus = 0;
+        x.colors = Colors::from_letters("W");
+        if !x.ttypes.contains(&"illusion") {
+            x.ttypes.push(intern("illusion"));
+        }
+        g.bf_ver += 1;
+        crate::glog!(g, "    Preston makes a 0/1 Illusion copy of {}", g.db.get(cd).name);
+    }
+    Ok(())
+}
+
+/// {1}{W}, sacrifice five Illusions: exile target nonland permanent
+pub fn preston_exile(g: &mut Game, src: PermId, p: PlayerId, target: PermId) -> Res<bool> {
+    let tgt_ok = {
+        let x = g.perm(target);
+        x.on_bf && !x.phased && !untargetable(g, target) && !g.db.get(x.cd.unwrap_or(CardId(0))).land
+    };
+    let ills = illusions(g, p);
+    if !g.perm(src).on_bf || ills.len() < 5 || !tgt_ok || !can_pay(g, p, 1, "W", false) {
+        return Ok(false);
+    }
+    pay(g, p, 1, "W", false)?;
+    // sacrifice the least valuable five
+    let mut ills = ills;
+    ills.sort_by(|&a, &b| pval(g, a).partial_cmp(&pval(g, b)).unwrap_or(std::cmp::Ordering::Equal));
+    for &m in ills.iter().take(5) {
+        die(g, m, "sac")?;
+    }
+    crate::glog!(g, "    Preston exiles {}", g.perm(target).name);
+    if g.perm(target).on_bf {
+        apply_removal(g, Some(p), target, "exile", g.perm(src).cd)?;
+    }
+    Ok(true)
+}
+
+fn preston_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    preston_exile(g, src, p, PermId(arg as u32))
+}
+
+fn preston_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(src).owner != p || illusions(g, p).len() < 5 || !can_pay(g, p, 1, "W", false) {
+        return Ok(vec![]);
+    }
+    let cands: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| {
+            let x = g.perm(m);
+            !x.phased && !untargetable(g, m) && x.cd.is_some_and(|c| !g.db.get(c).land)
+        })
+        .collect();
+    let Some(t) = max_by(&cands, |m| pval(g, m)) else { return Ok(vec![]) };
+    let v = pval(g, t);
+    if v < 3.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: v.min(8.0),
+        label: format!("Preston: sacrifice five Illusions, exile {}", g.perm(t).name),
+        act: Some(Action::Ability { src, f: preston_go, arg: t.0 as i64 }),
+    }])
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Fiend Hunter")?;
@@ -327,6 +433,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     crate::impls::partials::at_once(c, crate::hooks::Event::Leaves, true);
     c.prio = Some(touch_prio);
     c.hand_options = Some(touch_hand);
+    let c = r.card(db, "Preston, the Vanisher")?;
+    c.etb = Some(preston_etb);
+    c.options = Some(preston_options);
     let c = r.card(db, "Radiant Solar")?;
     c.etb = Some(solar_etb);
     c.hand_options = Some(solar_hand);
