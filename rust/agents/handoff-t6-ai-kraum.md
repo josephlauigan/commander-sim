@@ -9,3 +9,5 @@ tests written; waiting for before-run (~10 min) before building the plan
 before-run done; building plan + tests
 plan v1 + 9 tests pass, committed; after-run -> /tmp/claude-1000/t6ai-kraum/after1.txt
 v1 after: 22.6/20.0% (before 29.7/32.8), mull 36% (was 48). v2: looser keep (counter-only 3-4 land keeps), stop_chance .3; rerun after2.txt
+v2 after: 24.6/24.6%, mull 35%. next: t3 lock, full tests, warnings, report
+DONE: lock identical, full tests pass, 0 warnings, report written
