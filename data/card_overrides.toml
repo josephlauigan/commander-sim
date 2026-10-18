@@ -8615,7 +8615,7 @@ note = "can't be countered itself and spells you control can't be countered; mis
 
 ["Blood Moon"]
 status = "Full"
-note = "nonbasic lands are plain Mountains (engine::mana::moon_land): they tap for {R} only (one mana, Ancient Tomb and City of Traitors included) and lose every ability and other land type (no Tomb damage, no manland or utility ability, Urza's Saga keeps no chapters and, no longer a Saga, stays as a Mountain, no enters-tapped or enters triggers, a fetch land cannot crack); the AI casts it when opponents have three more nonbasic lands than it"
+note = "nonbasic lands are plain Mountains (engine::mana::moon_land): they tap for {R} only (one mana, Ancient Tomb and City of Traitors included) and lose every ability and other land type (no Tomb damage, no manland or utility ability, Urza's Saga loses its chapters and is sacrificed as a state-based action (still a Saga with final chapter 0), no enters-tapped or enters triggers, a fetch land cannot crack); the AI casts it when opponents have three more nonbasic lands than it"
 
 ["Defense Grid"]
 status = "Full"

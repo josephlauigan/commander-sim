@@ -119,19 +119,16 @@ fn magus_of_the_moon_does_the_same() {
 }
 
 #[test]
-fn blood_moon_urza_s_saga_loses_its_chapters_and_stays() {
+fn blood_moon_urza_s_saga_loses_its_chapters_and_is_sacrificed() {
     let mut g = tbl();
     let saga = lands(&mut g, P1, "Urza's Saga", 1, false)[0];
     g.player_mut(P1).sagas.push((saga, 1));
     perm(&mut g, P0, "Blood Moon");
-    cardcode::land_etb(&mut g, P1, saga).unwrap();
-    for _ in 0..3 {
-        sim_core::impls::common::saga_step(&mut g, P1).unwrap();
-    }
-    assert!(g.player(P1).lands.contains(&saga), "no longer a Saga (the subtype is gone): not sacrificed");
-    assert_eq!(g.player(P1).sagas, [(saga, 1)], "no lore counters are added");
     assert!(cardcode::land_options(&mut g, P1, Some(true)).unwrap().is_empty(), "no Construct ability");
-    assert!(can_pay(&g, P1, 0, "R", false));
+    check_state(&mut g).unwrap();
+    assert!(!g.player(P1).lands.contains(&saga), "still a Saga with no chapters: final chapter 0, sacrificed (704.5s)");
+    assert!(g.player(P1).sagas.is_empty());
+    assert!(g.player(P1).gy.iter().any(|&c| &*g.db.get(c).name == "Urza's Saga"));
 }
 
 #[test]

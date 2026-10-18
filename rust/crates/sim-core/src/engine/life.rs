@@ -133,6 +133,7 @@ pub fn check_state(g: &mut Game) -> Res {
     }
     sba_toughness(g)?;
     sba_legend(g)?;
+    sba_moon_saga(g)?;
     if g.over {
         return Ok(());
     }
@@ -234,6 +235,25 @@ fn sba_legend(g: &mut Game) -> Res {
                     crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
                     crate::engine::zones::die(g, n, "sba")?;
                 }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// 704.5s with Blood Moon: a Saga land (Urza's Saga) loses its chapter abilities (it is a Mountain now) but keeps the
+/// Saga subtype, so its final chapter number is 0 and its lore counters are at least that: it is sacrificed.
+fn sba_moon_saga(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if g.players[i].sagas.is_empty() {
+            continue;
+        }
+        let p = PlayerId(i as u8);
+        for (l, _) in g.players[i].sagas.clone() {
+            if g.players[i].lands.contains(&l) && crate::engine::mana::moon_land(g, l) {
+                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", g.db.get(g.land(l).cd).name);
+                crate::impls::lands::sac_land(g, p, l)?;
+                g.players[i].sagas.retain(|x| x.0 != l);
             }
         }
     }

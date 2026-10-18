@@ -5,6 +5,6 @@ Mechanism
 - Damping Sphere: new Event `LandColorless` (hooks.rs, sorted, EVENTS len 82), engine/hooks.rs `land_colorless`, asked in mana_units after all bonuses: amt>=2 -> one {C}. t6_stax `sphere_land` now uses it.
 Cards: Blood Moon, Magus of the Moon, Damping Sphere -> Full.
 Tests: tests/engine_t6_legend.rs (13). Full suite and build pass, no warnings.
-Rules note: Urza's Saga under Blood Moon is NOT sacrificed (it loses the Saga subtype, so 704.5s does not apply): it stays as a plain Mountain.
+Rules note: Urza's Saga under Blood Moon IS sacrificed at the next SBA (sba_moon_saga: still a Saga, no chapters, final chapter 0).
 Affected decks: legend rule: every deck with a copier/duplicate of a legendary (Godo, Kraum/Tymna blue, Sheoldred/Seph clones, Helm tokens stay). Blood Moon/Magus: decks running them (godo, Magus owners) and opponents with nonbasic lands (Ancient Tomb, Saga, manlands). Sphere: decks with bouncelands/two-mana lands.
 Not done: legendary lands (two Cradles) are not under the legend rule.
