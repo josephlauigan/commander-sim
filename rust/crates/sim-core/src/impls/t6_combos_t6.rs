@@ -8,6 +8,8 @@
 //!   `t6_dack::PRESTON_CAP` was hit this turn: the loop is unbounded and only the cap stopped it). The cap stays: real
 //!   play (a Dack flip) reaches the loop without this combo. Steps: the three pieces (Permanent), the flicker spell
 //!   (Spell), the first Felidar trigger (Trigger).
+//! - **Dack first flip**: a resolved Dack flips three of the seven creatures; a table of the 35 piles (`pile_wins`) decides
+//!   whether the turn is won (see the section "Dack: the first flip").
 //! - **Sisay**: Ioreth + Marvin + a legend that taps for mana (the DDR line; Shang-Chi or Tyvar give the pieces
 //!   haste), and Derevi + Emiel + Gaea's Cradle / a rainbow Bloom Tender (the Flash Unicorn line); both finish with
 //!   Mount Doom pings. Ioreth's own cap `t6_legends1b::UNTAP_CAP` (6 untaps a turn) stays for the same reason.
@@ -35,6 +37,7 @@ const PRESTON: &str = "Preston, the Vanisher";
 const FELIDAR: &str = "Felidar Guardian";
 const SOLAR: &str = "Radiant Solar";
 const FLICKERS: &[&str] = &["Cloudshift", "Ephemerate"];
+const DACK: &str = "Dack Fayden, Helping Hand";
 
 const IORETH: &str = "Ioreth of the Healing House";
 const MARVIN: &str = "Marvin, Murderous Mimic";
@@ -221,6 +224,184 @@ const S_DACK_LOOP: Step = trigger(
     "Felidar's flicker trigger: each token copy flickers the real Felidar, Solar ventures every time",
     felidar_src,
 );
+
+// ================================================================== Dack: the first flip (35 piles)
+// A resolved Dack Fayden flips three of the deck's seven creatures and gives them away. What the hand traces found for
+// each of the 35 possible piles (audit/t6/dack-fayden-white-stax/flips-*.md, SPEC.md "First-flip trace") is a table here:
+// the real engine plays Dack's enters trigger (with its trigger window: Ertai, Louisoix and Tidebinder can counter it),
+// `t6_dack::record_first_flip` notes the pile and the creature the next flip would leave in the library, and this quiet
+// combo then decides from the table whether the banisher / Felidar / Preston lines win the turn. Loops are not played out.
+
+pub const AB: usize = 0;
+pub const ST: usize = 1;
+pub const FH: usize = 2;
+pub const SO: usize = 3;
+pub const WF: usize = 4;
+pub const PR: usize = 5;
+pub const FE: usize = 6;
+
+/// the three creatures of a pile as a bit set
+pub const fn bits(a: usize, b: usize, c: usize) -> u32 {
+    (1 << a) | (1 << b) | (1 << c)
+}
+
+/// pile numbers 1..=35 as in the traces: 1-5 Preston + Felidar + one of Ab/St/FH/So/Wf; 6-15 Felidar + a pair of those
+/// five (Ab-St, Ab-FH, Ab-So, Ab-Wf, St-FH, St-So, St-Wf, FH-So, FH-Wf, So-Wf); 16-25 Preston + a pair; 26-35 three of the five
+pub fn pile_number(pile: u32) -> Option<u32> {
+    let five = [AB, ST, FH, SO, WF];
+    let mut pairs = vec![];
+    for i in 0..5 {
+        for j in i + 1..5 {
+            pairs.push((five[i], five[j]));
+        }
+    }
+    let mut all: Vec<u32> = five.iter().map(|&x| bits(PR, FE, x)).collect();
+    all.extend(pairs.iter().map(|&(a, b)| bits(FE, a, b)));
+    all.extend(pairs.iter().map(|&(a, b)| bits(PR, a, b)));
+    for i in 0..5 {
+        for j in i + 1..5 {
+            for k in j + 1..5 {
+                all.push(bits(five[i], five[j], five[k]));
+            }
+        }
+    }
+    all.iter().position(|&b| b == pile).map(|i| i as u32 + 1)
+}
+
+/// what a winning pile needs besides the board: a flicker spell on Dack, and {1}{W} for Preston's sacrifice ability
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct DackLine {
+    pub spell: bool,
+    pub fetch: bool,
+}
+
+/// Does `left` (the creature a second flip would leave in the library, None if unknown) let pile `n` win, with or
+/// without a flicker spell on Dack? The outcomes are the traces' summaries (SPEC.md "First-flip trace"):
+/// - 1-5, 16, 17, 19, 20, 22, 24: win whatever the second flip is (Felidar or the banisher tokens make it themselves).
+/// - 6-15 (Felidar, no Preston): the second flip is certain (Felidar flickers Dack) and wins unless Preston is the one
+///   left in the library; piles 10, 12 and 14 only for the cards listed in their traces.
+/// - 18, 21, 23, 25: no win without a spell; with one, 23 wins always, 21 and 25 when Abdel or Fiend Hunter is left,
+///   18 when Felidar is not left (18's trace: "WIN+1 in most flips, not fully traced"; the no-Felidar flip is unverified).
+/// - 26-31: win unless Preston is left; 32-35: only when Felidar or Abdel is left (Preston and the third banisher
+///   or Solar both flip). With a spell all of 26-35 win (the "lap trick" and "spend the banishers first" lines).
+/// Doubts flagged in the traces stay as traced: "no line found" is a loss here, not a proof.
+pub fn pile_wins(n: u32, left: Option<usize>, spell: bool) -> bool {
+    let any = |l: &[usize]| left.is_some_and(|x| l.contains(&x));
+    let not_pr = left.is_some_and(|x| x != PR);
+    match n {
+        1..=5 | 16 | 17 | 19 | 20 | 22 | 24 => true,
+        6..=9 | 11 | 13 | 15 => not_pr,
+        10 | 14 => any(if spell { &[SO, AB] } else { &[SO] }),
+        12 => any(&[SO, AB]),
+        18 => spell && left.is_some_and(|x| x != FE),
+        21 | 25 => spell && any(&[AB, FH]),
+        23 => spell,
+        26..=31 => spell || not_pr,
+        32..=35 => spell || any(&[FE, AB]),
+        _ => false,
+    }
+}
+
+/// the line for a pile and a card left in the library: without a spell if that wins, else with one if `spell_ok`
+pub fn dack_line(pile: u32, left: Option<usize>, spell_ok: bool) -> Option<DackLine> {
+    let n = pile_number(pile)?;
+    let spell = if pile_wins(n, left, false) {
+        false
+    } else if spell_ok && pile_wins(n, left, true) {
+        true
+    } else {
+        return None;
+    };
+    // Solar was donated (in the pile) or is the last one left: the trace takes it back with Preston's {1}{W} ability.
+    // Only the Felidar-without-Preston piles (6-15) do; the others make a Solar token or have none to need.
+    let fetch = (6..=15).contains(&n) && (pile & (1 << SO) != 0 || left == Some(SO));
+    Some(DackLine { spell, fetch })
+}
+
+/// this turn's first flip: (pile bits, card left in the library)
+fn dack_flip(g: &Game, p: PlayerId) -> Option<(u32, Option<usize>)> {
+    let stamp = (g.round as f64) * 8.0 + g.active.map_or(0.0, |a| a.0 as f64);
+    let pl = g.player(p);
+    if pl.grudge.get(&intern(super::t6_dack::FLIP_STAMP_KEY)).copied() != Some(stamp) {
+        return None;
+    }
+    let v = pl.grudge.get(&intern(super::t6_dack::FLIP_KEY)).copied()? as u32;
+    let left = (v >> 7) as usize;
+    Some((v & 0x7f, left.checked_sub(1)))
+}
+
+/// the line Dack's first flip gives right now (Dack still out); `spell_ok`: a flicker spell may be used
+fn current_line(g: &Game, p: PlayerId, spell_ok: bool) -> Option<DackLine> {
+    bf(g, p, DACK)?;
+    let (pile, left) = dack_flip(g, p)?;
+    dack_line(pile, left, spell_ok)
+}
+
+fn ready_dack_flip(g: &Game, p: PlayerId) -> Ready {
+    let spell = flicker_spell(g, p);
+    let Some(line) = current_line(g, p, spell.is_some()) else { return ready_with(false) };
+    let ok = match (line.spell, spell) {
+        (true, Some(c)) => {
+            let (gn, pips) = cost_of(g, p, c);
+            let (gn, pips) = if line.fetch { (gn + 1, format!("{pips}W")) } else { (gn, pips) };
+            can_pay(g, p, gn, &pips, false)
+        }
+        (true, None) => false,
+        (false, _) => !line.fetch || can_pay(g, p, 1, "W", false),
+    };
+    (ok, flip_keys(g, p), vec![])
+}
+
+/// the pile creatures that are still out (their holders are opponents) and matter to a line: Preston, Felidar and the banishers
+fn flip_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    let Some((pile, _)) = dack_flip(g, p) else { return vec![] };
+    let want: Vec<&str> =
+        [PR, FE, ST, FH, WF].iter().filter(|&&i| pile & (1 << i) != 0).map(|&i| super::t6_dack::SEVEN[i]).collect();
+    g.players
+        .iter()
+        .flat_map(|pl| pl.perms.iter().copied())
+        .filter(|&m| live(g, m) && g.perm(m).orig == p && !g.perm(m).token && want.contains(&nm(g, m)))
+        .collect()
+}
+
+fn cast_flip_spell(g: &mut Game, p: PlayerId) -> Res<bool> {
+    match current_line(g, p, true) {
+        Some(DackLine { spell: true, .. }) => cast_flicker(g, p),
+        Some(_) => Ok(true),
+        None => Ok(false),
+    }
+}
+
+fn preston_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    flip_keys(g, p).into_iter().find(|&m| nm(g, m) == PRESTON)
+}
+
+fn preston_fetch(g: &mut Game, p: PlayerId) -> Res<bool> {
+    match current_line(g, p, true) {
+        Some(DackLine { fetch: true, .. }) => {
+            if !can_pay(g, p, 1, "W", false) {
+                return Ok(false);
+            }
+            pay(g, p, 1, "W", false)?;
+            let src = preston_src(g, p);
+            ability_window(g, p, src, "Preston's ability takes Radiant Solar back", Some(6.0), None)
+        }
+        Some(_) => Ok(true),
+        None => Ok(false),
+    }
+}
+
+/// the first flicker trigger: Felidar's (donated, still out) or, without it, Dack's own re-entry
+fn flip_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    flip_keys(g, p).into_iter().find(|&m| nm(g, m) == FELIDAR).or_else(|| bf(g, p, DACK))
+}
+
+const S_FLIP_PIECES: Step = pieces("the flipped Preston, Felidar and banishers stay out", flip_keys);
+const S_FLIP_SPELL: Step = step("a flicker spell on Dack when the pile needs it", StepKind::Spell, cast_flip_spell);
+const S_FLIP_FETCH: Step =
+    step("Preston's {1}{W} ability takes Solar back when the pile needs it", StepKind::Engine, preston_fetch);
+const S_FLIP_LOOP: Step = trigger("the first flicker trigger (Felidar's, or Dack's re-entry)", flip_src);
+
 
 // ================================================================== Sisay
 fn is_legend_creature(g: &Game, c: CardId) -> bool {
@@ -633,7 +814,7 @@ fn b_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 // ================================================================== the combos
 /// the Tier 6 combos of this module (chained after the Godo ones by `combos::all`)
-pub static COMBOS: [Combo; 6] = [
+pub static COMBOS: [Combo; 7] = [
     combo(
         "Preston + Felidar Guardian + Radiant Solar (flicker spell)",
         &[QUIET, &[PRESTON], &[FELIDAR], &[SOLAR], FLICKERS],
@@ -645,6 +826,12 @@ pub static COMBOS: [Combo; 6] = [
         &[QUIET, &[PRESTON], &[FELIDAR], &[SOLAR]],
         ready_dack_running,
         &[S_DACK_PIECES, S_DACK_LOOP],
+    ),
+    combo(
+        "Dack Fayden: the first flip wins the turn (35 piles)",
+        &[QUIET, &[DACK]],
+        ready_dack_flip,
+        &[S_FLIP_PIECES, S_FLIP_SPELL, S_FLIP_FETCH, S_FLIP_LOOP],
     ),
     combo(
         "Ioreth + Marvin + a legend that taps for mana (DDR)",

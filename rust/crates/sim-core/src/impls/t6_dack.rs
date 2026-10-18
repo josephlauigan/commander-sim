@@ -463,11 +463,13 @@ fn flip_and_donate_inner(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
         found.len(),
         found.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ")
     );
+    let flipped = found.clone();
     let mut pile = vec![];
     for c in found {
         pile.push(enter(g, p, c, Enter::default())?);
     }
     shuffle_library(g, p);
+    record_first_flip(g, p, &flipped);
     // the most valuable creature goes to the least threatening opponent; each opponent gets at most one
     let mut order: Vec<PermId> = pile.iter().copied().filter(|&m| g.perm(m).on_bf).collect();
     order.sort_by(|&a, &b| pval(g, b).partial_cmp(&pval(g, a)).unwrap_or(std::cmp::Ordering::Equal));
@@ -487,6 +489,58 @@ fn flip_and_donate_inner(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
         }
     }
     Ok(pile)
+}
+
+
+// ------------------------------------------------------------------ the first flip of the turn, for the combo shortcut
+/// the seven creatures of the Dack deck, in the order of the first-flip trace's notation: Abdel, Stalker, Fiend Hunter,
+/// Solar, Werefox, Preston, Felidar (`audit/t6/dack-fayden-white-stax/SPEC.md`, "First-flip trace")
+pub const SEVEN: [&str; 7] = [
+    "Abdel Adrian, Gorion's Ward",
+    "All-Fates Stalker",
+    "Fiend Hunter",
+    "Radiant Solar",
+    "Werefox Bodyguard",
+    "Preston, the Vanisher",
+    "Felidar Guardian",
+];
+
+/// grudge keys: the first flip of the turn as `pile bits | (card left in the library + 1) << 7`, and its turn stamp
+pub const FLIP_KEY: &str = "dack_first_flip";
+pub const FLIP_STAMP_KEY: &str = "dack_first_flip_turn";
+
+fn seven_index(g: &Game, c: CardId) -> Option<usize> {
+    let n = &*g.db.get(c).name;
+    SEVEN.iter().position(|s| *s == n)
+}
+
+/// Records the first Dack flip of this turn when it is exactly three of the seven: which three, and which creature the
+/// next flip would leave in the library (the top three creature cards of the shuffled library are the next flip; the
+/// fourth is left; none if the library doesn't hold exactly the other four). `t6_combos_t6` decides from it.
+fn record_first_flip(g: &mut Game, p: PlayerId, found: &[CardId]) {
+    let stamp = (g.round as f64) * 8.0 + g.active.map_or(0.0, |a| a.0 as f64);
+    let (kf, ks) = (intern(FLIP_KEY), intern(FLIP_STAMP_KEY));
+    if g.player(p).grudge.get(&ks).copied() == Some(stamp) || found.len() != 3 {
+        return;
+    }
+    let mut bits = 0u32;
+    for &c in found {
+        match seven_index(g, c) {
+            Some(i) => bits |= 1 << i,
+            None => return,
+        }
+    }
+    let creatures: Vec<usize> = g
+        .player(p)
+        .library
+        .iter()
+        .rev()
+        .filter(|&&c| g.db.get(c).creature)
+        .map(|&c| seven_index(g, c).unwrap_or(7))
+        .collect();
+    let left = if creatures.len() == 4 && creatures.iter().all(|&i| i < 7) { creatures[3] as u32 + 1 } else { 0 };
+    g.player_mut(p).grudge.insert(kf, f64::from(bits | (left << 7)));
+    g.player_mut(p).grudge.insert(ks, stamp);
 }
 
 // ================================================================== Gideon of the Trials
