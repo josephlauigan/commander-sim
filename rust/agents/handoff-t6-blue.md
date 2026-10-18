@@ -11,8 +11,9 @@ Test deck seat 0 = rograkh-silas-turbo-breach, seat 1 = seph. Oracle text: scrat
 - Exhibition Tidecaller (Partial)
 - Voice of Victory (Full)
 - High Fae Trickster (Partial)
+- Drift of Phantasms (Full)
 ## Next (order)
-Drift of Phantasms, Emrakul, Rograkh, Silas Renn, Hidden Strings, Valley Floodcaller
+Emrakul, Rograkh, Silas Renn, Hidden Strings, Valley Floodcaller
 ## Gotchas
 - `resolve` slot overrides the DSL; return "gy" / "exile" / "handled".
 - Cards taken from opponents: yshtola::take_card (agent_ids = any mana type, stolen = owner for gy).

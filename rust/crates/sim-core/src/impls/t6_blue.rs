@@ -10,13 +10,15 @@
 //! - Sevinne's Reclamation: the best permanent card of mana value 3 or less returns; from the graveyard it is copied.
 //! - Exhibition Tidecaller: Opus on the cast hook; the old compiled mill-3 trigger is removed (dsl = []).
 //! - Voice of Victory: Mobilize 2 on its attack hook (the tokens carry `EotSac`); opponents' casts refused on its controller's turn (`can_cast`).
+//! - Drift of Phantasms: Transmute {1}{U}{U} as a hand option (sorcery speed); defender, flying and the 0/5 body are data.
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
+use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::trigger_window;
-use crate::engine::zones::{Enter, Tokens, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
+use crate::engine::zones::{Enter, Tokens, discard_cards, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
 use crate::flow::Res;
-use crate::hooks::{Registry, Src};
+use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
@@ -284,8 +286,68 @@ pub fn static_flash(g: &Game, p: PlayerId, creature_spell: bool) -> bool {
 }
 
 
+// ================================================================== Drift of Phantasms
+/// the card with mana value 3 in p's library the AI transmutes for: the best by `card_worth` (no land: a land has
+/// mana value 0); None if there is none
+fn transmute_pick(g: &Game, p: PlayerId, mv: u32) -> Option<CardId> {
+    let cs: Vec<CardId> =
+        searchable(g, p).into_iter().filter(|&c| !g.db.get(c).land && g.db.get(c).cmc == mv).collect();
+    max_by(&cs, |c| card_worth(g, p, c, false))
+}
+
+/// Transmute {1}{U}{U} (sorcery speed, from the hand): the AI does it in its own main phase when a card with the same
+/// mana value is worth more than the 0/5 wall
+fn drift_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) || !g.stack.is_empty() || !g.player(p).hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    if !can_pay(g, p, 1, "UU", false) {
+        return Ok(vec![]);
+    }
+    let mv = g.db.get(c).cmc;
+    let Some(t) = transmute_pick(g, p, mv) else { return Ok(vec![]) };
+    let v = card_worth(g, p, t, false) / 10.0 + 0.2;
+    if v < 0.6 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: v,
+        label: "transmute Drift of Phantasms".into(),
+        act: Some(Action::Plan { f: drift_transmute, arg: c.0 as i64 }),
+    }])
+}
+
+fn drift_transmute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "UU", false) {
+        return Ok(false);
+    }
+    pay(g, p, 1, "UU", false)?;
+    crate::glog!(g, "  {} transmutes Drift of Phantasms", g.player(p).name);
+    discard_cards(g, p, &[c])?;
+    let mv = g.db.get(c).cmc;
+    if let Some(t) = transmute_pick(g, p, mv) {
+        let lib = &mut g.player_mut(p).library;
+        let i = lib.iter().position(|&x| x == t).unwrap();
+        lib.remove(i);
+        if let Some(a) = agent_for(g, p) {
+            agent_take(g, a, p, t);
+        } else {
+            let pl = g.player_mut(p);
+            pl.hand.push(t);
+            pl.stat("tutored", 1);
+            pl.seen.insert(t);
+            crate::glog!(g, "    {} reveals {} (transmute)", g.player(p).name, g.db.get(t).name);
+        }
+    }
+    shuffle_library(g, p);
+    Ok(true)
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Drift of Phantasms")?.hand_options = Some(drift_options);
     let c = r.card(db, "Voice of Victory")?;
     c.attack = Some(voice_attack);
     c.can_cast = Some(voice_can_cast);

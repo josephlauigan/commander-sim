@@ -249,3 +249,36 @@ fn high_fae_trickster_grants_flash_to_every_spell_of_its_controller() {
     g.perm_mut(t).phased = true;
     assert!(!t6::static_flash(&g, P0, false), "not while phased out");
 }
+
+// ======================================================== Drift of Phantasms
+#[test]
+fn drift_of_phantasms_transmutes_for_a_card_of_the_same_mana_value() {
+    let mut g = game();
+    g.player_mut(P0).library.clear();
+    lands(&mut g, P0, "Island", 3, false);
+    let c = hand(&mut g, P0, &["Drift of Phantasms"])[0];
+    let three = lib_with(&mut g, P0, "Mnemonic Betrayal"); // mana value 3
+    let two = lib_with(&mut g, P0, "Brainstorm"); // mana value 1: not a match
+    let f = g.registry.get(c).and_then(|i| i.hand_options).expect("transmute option");
+    let opts = f(&mut g, c, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1);
+    let n = g.player(P0).hand.len();
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(in_gy(&g, P0, "Drift of Phantasms"), "discarded");
+    assert!(g.player(P0).hand.contains(&three), "found the mana value 3 card");
+    assert!(!g.player(P0).hand.contains(&two));
+    assert_eq!(g.player(P0).hand.len(), n, "one out, one in");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 0, "{{1}}{{U}}{{U}} paid");
+}
+
+#[test]
+fn drift_of_phantasms_transmutes_only_at_sorcery_speed() {
+    let mut g = game();
+    lands(&mut g, P0, "Island", 3, false);
+    let c = hand(&mut g, P0, &["Drift of Phantasms"])[0];
+    lib_with(&mut g, P0, "Mnemonic Betrayal");
+    let f = g.registry.get(c).and_then(|i| i.hand_options).unwrap();
+    assert!(f(&mut g, c, P0, None).unwrap().is_empty(), "not in the end-of-turn window");
+    g.active = Some(P1);
+    assert!(f(&mut g, c, P0, Some(false)).unwrap().is_empty(), "not on the opponent's turn");
+}
