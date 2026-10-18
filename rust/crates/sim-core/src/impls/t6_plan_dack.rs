@@ -344,22 +344,20 @@ fn white_source(g: &Game, c: CardId) -> bool {
 /// mana, or Ancient Tomb / City of Traitors with a mox, keep; no white source, all-land and all-free-mana hands ship.
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let hand = &g.player(p).hand;
-    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
-    let fast = hand.iter().filter(|&&c| !g.db.get(c).land && FAST.contains(&nm(g, c))).count();
-    let free = hand.iter().filter(|&&c| matches!(nm(g, c), "Lotus Petal" | "Lion's Eye Diamond")).count();
-    let tomb =
-        hand.iter().filter(|&&c| matches!(nm(g, c), "Ancient Tomb" | "City of Traitors" | "Gemstone Caverns")).count();
-    let spells = hand.len() - lands - fast - free;
+    // mana by turn 2 from this hand (Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land)
+    let m = crate::impls::t6_keep::mana(g, p);
     let white = hand.iter().any(|&c| white_source(g, c));
-    let sources = lands + fast;
-    if lands == 0 || lands >= 6 || spells == 0 || (!white && sources < 5) {
+    if m.lands == 0 || m.lands >= 6 || m.spells == 0 || (!white && m.eff < 6.0) {
         return Some(false);
     }
-    // three sources, or two with fast mana / Tomb / City / a Petal: the deck keeps on speed, not on land count
-    // two sources and cheap plays to make with them (protection, removal, a lock piece): enough for a 7-card hand
+    // a 1-lander lives on its rocks: land + at least 2.5 more mana from the hand, and something to cast with it
+    if m.lands == 1 {
+        return Some(white && m.eff >= m.need_one_lander() && m.spells >= 2);
+    }
+    // three mana, or two with cheap plays to make with them (protection, removal, a lock piece)
     let cheap =
         hand.iter().filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc <= 3 && !FAST.contains(&nm(g, c))).count();
-    Some(sources >= 3 || (sources == 2 && (fast >= 1 || tomb >= 1 || free >= 1 || cheap >= 3)))
+    Some(m.eff >= 3.0 || (m.eff >= 2.0 && cheap >= 3))
 }
 
 /// extra value of passing with mana up: the first turns are for developing; a held protection spell with Dack

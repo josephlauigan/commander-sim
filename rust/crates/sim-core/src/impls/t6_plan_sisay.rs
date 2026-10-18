@@ -39,17 +39,6 @@ fn creatures(g: &Game, p: PlayerId) -> usize {
     g.player(p).perms.iter().filter(|&&m| !g.perm(m).phased && g.is_creature(m)).count()
 }
 
-/// a card that makes mana for the opening-hand count (lands excluded)
-fn mana_maker(g: &Game, c: CardId) -> bool {
-    let d = g.db.get(c);
-    !d.land
-        && (d.tag(Tag::Rock)
-            || d.tag(Tag::Dork)
-            || d.tag(Tag::Fastmana)
-            || d.tag(Tag::Lr)
-            || matches!(&*d.name, "Lotus Petal" | "Elvish Spirit Guide" | "Mana Vault" | "Mox Amber"))
-}
-
 /// How much the line wants this card (0 = nothing). The deck's lines: Derevi + Emiel + Cradle / Bloom Tender + Mount
 /// Doom (Flash Unicorn); Marvin + Ioreth + a legend that taps for mana + Mount Doom (DDR).
 fn want(g: &Game, p: PlayerId, name: &str) -> f64 {
@@ -165,17 +154,24 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
 /// nothing else.
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let hand = &g.player(p).hand;
-    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
-    let makers = hand.iter().filter(|&&c| mana_maker(g, c)).count();
+    // mana by turn 2 from this hand: Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land,
+    // a dork is summoning sick
+    let m = crate::impls::t6_keep::mana(g, p);
+    if m.settle() {
+        return Some(true);
+    }
+    let lands = m.lands;
+    let makers = m.n_mana;
     let tutors = hand.iter().filter(|&&c| g.db.get(c).tag(Tag::Tut)).count();
     let spells = hand.len() - lands;
-    let sources = lands + makers;
     let ok = if lands == 0 {
         false
     } else if lands >= 5 {
         spells >= 3 && makers >= 1
+    } else if lands == 1 {
+        m.eff >= m.need_one_lander() && spells >= 3
     } else {
-        (sources >= 3 && spells >= 2) || (lands >= 2 && sources >= 2 && (makers >= 1 || tutors >= 1) && spells >= 2)
+        (m.eff >= 3.0 && spells >= 2) || (m.eff >= 2.0 && (makers >= 1 || tutors >= 1) && spells >= 2)
     };
     Some(ok)
 }

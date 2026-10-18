@@ -20,22 +20,6 @@ const MASTERMIND: &str = "Faerie Mastermind";
 const THRASIOS: &str = "Thrasios, Triton Hero";
 const ROGRAKH: &str = "Rograkh, Son of Rohgahh";
 
-/// fast mana and mana creatures: what lets a 1-2 land hand work
-const ACCEL: [&str; 13] = [
-    "Sol Ring",
-    "Mana Vault",
-    "Mox Amber",
-    "Mox Diamond",
-    "Chrome Mox",
-    "Lotus Petal",
-    "Birds of Paradise",
-    "Elvish Spirit Guide",
-    "Springleaf Drum",
-    "Badgermole Cub",
-    "Wild Growth",
-    "Ancient Tomb",
-    "Gemstone Caverns",
-];
 /// ways to get Cradle or the engine going
 const ENGINE: [&str; 9] = [
     "Crop Rotation",
@@ -161,8 +145,13 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let hand = &g.player(p).hand;
     let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
     let names: Vec<&str> = hand.iter().map(|&c| name(g, c)).collect();
-    let accel = names.iter().filter(|n| ACCEL.contains(n) && !g.db.id(n).is_some_and(|c| g.db.get(c).land)).count();
-    let accel = accel + usize::from(names.contains(&"Ancient Tomb"));
+    // mana by turn 2 from this hand: Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land,
+    // a dork is summoning sick
+    let m = crate::impls::t6_keep::mana(g, p);
+    if m.settle() {
+        return Some(true);
+    }
+    let accel = m.n_mana + usize::from(names.contains(&"Ancient Tomb"));
     let engine = names.iter().filter(|n| ENGINE.contains(n)).count();
     let reactive = names.iter().filter(|n| REACTIVE.contains(n)).count();
     // Ancient Tomb counts as a land and as acceleration, so the sum can pass the hand size
@@ -174,11 +163,9 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     if lands >= 2 && accel >= 1 {
         return Some(true); // "at least two lands and a piece of acceleration"
     }
-    if lands >= 1 && lands + accel >= 3 {
-        return Some(true); // fast mana and a free commander replace lands (a 1-lander needs two pieces)
-    }
-    if lands == 1 && accel >= 1 && reactive < 2 && other >= 3 {
-        return Some(true); // one land, one accelerant and a hand full of cheap plays
+    if lands == 1 {
+        // fast mana and a free commander replace lands, but a 1-lander needs 2.5 more mana from the hand
+        return Some(m.eff >= m.need_one_lander() && reactive < 2 && other >= 2);
     }
     // two or more lands and something to do (an engine card, or three other plays) without two dead reactive cards
     if lands >= 2 && reactive < 2 && (engine >= 1 || other >= 3) {

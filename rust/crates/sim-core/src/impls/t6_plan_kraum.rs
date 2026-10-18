@@ -215,20 +215,22 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
 /// ship; go low). Lands include Ancient Tomb, Gemstone Caverns and City of Traitors.
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let hand = &g.player(p).hand;
-    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    // mana by turn 2 from this hand: Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land
+    let m = crate::impls::t6_keep::mana(g, p);
+    if m.settle() {
+        return Some(true);
+    }
+    let lands = m.lands;
     let names: Vec<&str> = hand.iter().filter(|&&c| !g.db.get(c).land).map(|&c| nm(g, c)).collect();
-    // Mox Diamond needs a land to discard
-    let makers = names.iter().filter(|&&n| fast_mana(n) && (n != "Mox Diamond" || lands >= 2)).count();
+    let makers = m.n_mana;
     let engines = names.iter().filter(|&&n| engine(n)).count();
     let tutors = names.iter().filter(|&&n| tutor(n)).count();
     let pay = names.iter().filter(|&&n| payoff(n)).count();
     let free = names.iter().filter(|&&n| free_counter(n)).count();
-    let fast_lands =
-        hand.iter().filter(|&&c| matches!(nm(g, c), "Ancient Tomb" | "Gemstone Caverns" | "City of Traitors")).count();
     let action = makers + engines + tutors + pay;
     let ok = match lands {
         0 => false,
-        1 => makers + fast_lands >= 2 || (makers >= 1 && engines + tutors >= 1),
+        1 => m.eff >= m.need_one_lander() && (engines + tutors + pay >= 1),
         2 => action >= 2 || (action >= 1 && free >= 1) || free >= 3,
         3 | 4 => action >= 1 || free >= 1,
         5 => action >= 1 && action + free >= 2,

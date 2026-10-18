@@ -1004,7 +1004,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
             crate::glog!(g, "    Mox Diamond goes to the graveyard (no land to discard)");
             return Ok(g.new_perm(p, Some(cd), "Token", 0, 0)); // never on the battlefield
         }
-        let x = min_by(&lands, |c| mox_discard_key(g, c)).unwrap();
+        let x = min_by(&lands, |c| mox_discard_key(g, p, c)).unwrap();
         let pl = g.player_mut(p);
         let i = pl.hand.iter().position(|&c| c == x).unwrap();
         pl.hand.remove(i);
@@ -1131,11 +1131,35 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     Ok(m)
 }
 
-/// which land Mox Diamond discards: the one making the fewest colours, a tapped land first
-fn mox_discard_key(g: &Game, c: CardId) -> f64 {
+/// which land Mox Diamond discards (the lowest key): the one making the fewest colours, a tapped land first.
+/// A Tier 6 player also keeps the only source of a colour its hand needs (a 2-land hand lost its Plains, g6) and the
+/// lands that make two mana or do a job (Ancient Tomb, City of Traitors, Gaea's Cradle).
+pub fn mox_discard_key(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let t = &g.db.get(c).tags;
-    let cols = t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64;
-    cols * 2.0 - if t.has(Tag::T) { 1.0 } else { 0.0 }
+    let mine = t.str(Tag::C).unwrap_or("");
+    let mut key = mine.chars().count() as f64 * 2.0 - if t.has(Tag::T) { 1.0 } else { 0.0 };
+    if !crate::impls::t6_plans::is_t6(g, p) {
+        return key;
+    }
+    if matches!(g.db.get(c).name.as_ref(), "Ancient Tomb" | "City of Traitors" | "Gaea's Cradle" | "Gemstone Caverns") {
+        key += 20.0;
+    }
+    let pl = g.player(p);
+    let others: Vec<CardId> = pl
+        .hand
+        .iter()
+        .copied()
+        .filter(|&x| x != c && g.db.get(x).land)
+        .chain(pl.lands.iter().map(|&l| g.land(l).cd))
+        .collect();
+    let covered = |ch: char| others.iter().any(|&o| g.db.get(o).tags.str(Tag::C).is_some_and(|s| s.contains(ch)));
+    let needed = |ch: char| pl.hand.iter().any(|&x| !g.db.get(x).land && g.db.get(x).pips.contains(ch));
+    for ch in mine.chars() {
+        if !covered(ch) {
+            key += if needed(ch) { 6.0 } else { 1.5 };
+        }
+    }
+    key
 }
 
 /// a token that's a copy of card cd (Scute Swarm, Kiki-Jiki, Helm of the Host ...)

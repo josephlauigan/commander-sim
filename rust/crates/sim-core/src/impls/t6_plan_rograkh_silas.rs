@@ -8,28 +8,14 @@
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 
-const FAST: [&str; 13] = [
-    "Lotus Petal",
-    "Mox Amber",
-    "Chrome Mox",
-    "Mox Diamond",
-    "Sol Ring",
-    "Mana Vault",
+const RITUALS: [&str; 7] = [
     "Dark Ritual",
     "Cabal Ritual",
-    "Simian Spirit Guide",
+    "Culling the Weak",
     "Rite of Flame",
     "Jeska's Will",
-    "Culling the Weak",
     "Infernal Plunge",
-];
-const SLOW: [&str; 6] = [
-    "Mox Opal",
-    "Grim Monolith",
-    "Arcane Signet",
-    "Talisman of Dominance",
-    "Talisman of Indulgence",
-    "Springleaf Drum",
+    "Simian Spirit Guide",
 ];
 const TUTORS: [&str; 11] = [
     "Demonic Tutor",
@@ -92,9 +78,15 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let hand = &g.player(p).hand;
     let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
-    let fast = count_in(g, p, &FAST) as f64;
-    let slow = count_in(g, p, &SLOW) as f64 * 0.5;
-    let mana = lands as f64 + fast + slow;
+    // mana by turn 2 from this hand: Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land
+    let m = crate::impls::t6_keep::mana(g, p);
+    if m.settle() {
+        return Some(true);
+    }
+    // rituals and spirit guides are one-shot mana for the payoff turn (spec scenario 11: Chrome Mox + Culling the Weak)
+    let rituals = count_in(g, p, &RITUALS);
+    let fast = (m.n_mana + rituals) as f64;
+    let mana = m.eff + rituals as f64;
     let tutors = count_in(g, p, &TUTORS);
     let payoffs = count_in(g, p, &PAYOFFS);
     let engines = if fast >= 1.0 { count_in(g, p, &ENGINES) } else { 0 }; // Rhystic/Remora alone do not win
@@ -105,7 +97,10 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     }
     if lands == 0 {
         // no colours from lands: only with three fast mana pieces and a tutor or payoff to cast
-        return Some(fast >= 3.0 && tutors + payoffs >= 1);
+        return Some(m.n_mana + rituals >= 3 && tutors + payoffs >= 1);
+    }
+    if lands == 1 && (mana < m.need_one_lander() || action == 0) {
+        return Some(false); // a 1-lander needs 2.0 more mana (rituals count) from the hand and a payoff or tutor to spend it on
     }
     if mana < 2.0 || (action == 0 && fast < 2.0) {
         return Some(false); // lands-and-spells hands with no payoff or tutor, or no mana to cast it

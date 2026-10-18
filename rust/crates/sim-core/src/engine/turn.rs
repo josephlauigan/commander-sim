@@ -1066,7 +1066,12 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
             pl.hand.push(c);
         }
     };
-    let ok = |g: &Game| {
+    // Tier 6 keeps get to know which draw this is (0 = the first seven): a later, smaller hand is kept more easily
+    let ok = |g: &mut Game, tries: i64| {
+        if g.player(p).t6 {
+            g.player_mut(p).stats.insert("mull_try", tries);
+        }
+        let g = &*g;
         let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
         if g.player(p).key == "cloud" {
             return crate::impls::cloud::keep_hand(g, p);
@@ -1077,17 +1082,17 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
         (2..=5).contains(&n)
     };
     draw7(g, rng);
-    if ok(g) {
+    if ok(g, 0) {
         return;
     }
     draw7(g, rng);
-    if ok(g) {
+    if ok(g, 1) {
         g.player_mut(p).stats.insert("mull_n", 1);
         return;
     }
     for bottom in [1, 2] {
         draw7(g, rng);
-        if ok(g) || bottom == 2 {
+        if ok(g, bottom + 1) || bottom == 2 {
             for _ in 0..bottom {
                 let hand = g.player(p).hand.clone();
                 let lands: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
