@@ -12,3 +12,4 @@ Goblin Engineer: DONE (Full), committed.
 Tezzeret: DONE (Partial, -7 emblem engine need), committed.
 Party Thrasher: DONE (Partial, convoke engine need), committed.
 Vexing Bauble: DONE (Partial, engine need), committed.
+Hexing Squelcher: DONE (Partial, ward engine need), committed.

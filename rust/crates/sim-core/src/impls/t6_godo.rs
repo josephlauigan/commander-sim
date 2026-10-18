@@ -523,6 +523,14 @@ fn bauble_can_cast(g: &Game, src: Src, p: PlayerId, c: CardId, _zone: Sym) -> bo
     gn > 0 || !pips.is_empty()
 }
 
+// ================================================================== Hexing Squelcher
+/// **Hexing Squelcher** ({1}{R}, 2/2): this spell can't be countered (the `unc` tag); spells you control can't be
+/// countered (the `uncounterable` slot, read for the caster); ward--pay 2 life, for itself and for the other
+/// creatures you control: missing, the engine's ward is mana only (rust/agents/engine-needs-godo.md).
+fn squelcher_unc(g: &Game, src: Src, p: PlayerId, _c: CardId) -> bool {
+    live(g, src) && owner(g, src) == p
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -537,6 +545,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Tezzeret, Cruel Captain")?.etb = Some(tez_etb);
     r.card(db, "Party Thrasher")?.main1 = Some(thrasher_main1);
     r.card(db, "Vexing Bauble")?.can_cast = Some(bauble_can_cast);
+    r.card(db, "Hexing Squelcher")?.uncounterable = Some(squelcher_unc);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

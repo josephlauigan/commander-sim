@@ -29,3 +29,9 @@ Needs: a counter-on-cast hook: a permanent that counters a spell as it is cast w
 Where it would hook: `engine/cast.rs` `cast_card` right after `on_cast` (the Jin-Gitaxias counter), reading a new `Event::CastCounter` slot.
 Card side done: the draw ability (compiled) and a stand-in lock in `impls/t6_godo.rs` using the existing `can_cast` slot (`engine/hooks.rs::allowed`): nobody casts a spell whose cost is {0}. Differences: the countered card stays in hand instead of the graveyard, and free alternative costs (Daze-style, "without paying") are not caught.
 Test to add once the engine has it: casting Mox Amber with the Bauble out puts it in the graveyard; a spell cast for {0} by an alternative cost is countered; Sol Ring resolves.
+
+## Hexing Squelcher
+Needs: ward with a non-mana cost (pay life, here 2; Sauron's sacrifice-a-legend ward is a special case), and ward granted by a static ability ("other creatures you control have ward"): `CardData::ward` is a mana number, and `cardcode::aura_ward` only reads Auras.
+Where it would hook: `engine/removal.rs` (ward check ~line 179, and the targeting filter ~line 100, which both read `d.ward` and `aura_ward`): a ward cost enum (mana n / life n / sacrifice) and a static-ward slot on `CardImpl`.
+Card side done: can't be countered (its `unc` tag), and spells you control can't be countered (the `uncounterable` slot) in `impls/t6_godo.rs`.
+Test to add once the engine has it: a removal spell targeting a creature you control with the Squelcher out costs its caster 2 life or is countered; the ward does not apply to your own spells.

@@ -383,3 +383,20 @@ fn bauble_draws_for_one_when_sacrificed() {
     let c = card(&g, "Vexing Bauble");
     assert!(g.db.get(c).has_dsl());
 }
+
+// ======================================================== Hexing Squelcher
+#[test]
+fn squelcher_makes_its_controllers_spells_uncounterable() {
+    let mut g = tbl();
+    let c = card(&g, "Godo, Bandit Warlord");
+    assert!(!sim_core::engine::hooks::any_uncounterable(&g, P0, c));
+    perm(&mut g, P0, "Hexing Squelcher");
+    assert!(sim_core::engine::hooks::any_uncounterable(&g, P0, c), "spells you control can't be countered");
+    assert!(!sim_core::engine::hooks::any_uncounterable(&g, P1, card(&g, "Sol Ring")), "an opponent's spells can");
+}
+
+#[test]
+fn squelcher_itself_cant_be_countered() {
+    let g = tbl();
+    assert!(g.db.get(card(&g, "Hexing Squelcher")).tag(sim_core::tag::Tag::Unc));
+}
