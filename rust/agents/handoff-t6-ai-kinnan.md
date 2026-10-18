@@ -6,3 +6,5 @@ Worktree .claude/worktrees/t6-ai-kinnan, branch t6-ai-kinnan. Plan file impls/t6
 3. [ ] tests, after run, t3 lock, full tests, report
 ## Notes
 - plan file written (keep/prio/wish/hold_up/go_now), needs build; before binary at /tmp/claude-1000/-home-joseph-projects-mtg-sims/ca30944f-e06c-4aa9-9c35-c9fae50d3a2b/scratchpad/cs-before (built from stub); before run -> /tmp/claude-1000/-home-joseph-projects-mtg-sims/ca30944f-e06c-4aa9-9c35-c9fae50d3a2b/scratchpad/before.txt (running)
+- tests written (tests/ai_t6_kinnan.rs); building+testing
+- tests pass (7). next: release build, after run -> scratchpad after.txt, compare
