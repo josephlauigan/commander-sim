@@ -6,6 +6,7 @@
 //! - Radiant Solar: venture (Lost Mine of Phandelver only) and its hand ability; Dack marks donated creatures.
 //! - Preston, the Vanisher: Illusion token copies of creatures that entered without being cast; the five-Illusion exile.
 //! - Dack Fayden, Helping Hand: the flip, shuffle, donation and goad.
+//! - Gideon of the Trials: the walker framework (+1 prevent via Dovin's lock, 0 animate, 0 emblem).
 //!
 //!
 //! The banishers' enter hooks read "you" from the enter call's `p` (the player the creature entered under), not from
@@ -28,7 +29,7 @@ use crate::impls::t2::flicker_worth;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::impls::common::{oring_exile, oring_return};
+use crate::impls::common::{WalkerAb, best_opp_creature, oring_exile, oring_return, walker};
 use crate::state::{Ctx, DataKey, Game, Val};
 
 
@@ -504,6 +505,83 @@ fn flip_and_donate_inner(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
     Ok(pile)
 }
 
+// ================================================================== Gideon of the Trials
+/// +1: until your next turn, prevent all damage target permanent would deal. Modeled with Dovin's lock
+/// (`DataKey::Dovin`, read by combat): the target's combat damage as an attacker is prevented until its next turn.
+fn gideon_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    if let Some(t) = best_opp_creature(g, p, |_| true) {
+        let turns = g.player(p).turns as i64;
+        g.perm_mut(t).data.set(DataKey::Dovin, Val::List(vec![Val::Player(p), Val::Int(turns)]));
+        crate::glog!(g, "    Gideon: damage {} would deal is prevented until {}'s next turn", g.perm(t).name, pname(g, p));
+    }
+    Ok(())
+}
+
+fn gideon_plus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    match best_opp_creature(g, p, |_| true) {
+        Some(t) if pval(g, t) >= 3.0 => Some(2.2),
+        _ => Some(0.9),
+    }
+}
+
+/// 0: until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker.
+/// (The damage-prevention clause is not modeled: indestructible keeps him alive; `gideon_end` undoes it.)
+fn gideon_animate(g: &mut Game, _p: PlayerId, src: PermId) -> Res {
+    let x = g.perm_mut(src);
+    x.data.set(DataKey::Anim, Val::Bool(true));
+    x.data.set(DataKey::Indestr, Val::Bool(true));
+    x.pow = 4;
+    x.tgh = 4;
+    for t in ["human", "soldier"] {
+        if !x.ttypes.contains(&t) {
+            x.ttypes.push(intern(t));
+        }
+    }
+    g.bf_ver += 1;
+    crate::glog!(g, "    Gideon becomes a 4/4 indestructible creature until end of turn");
+    Ok(())
+}
+
+fn gideon_animate_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    let x = g.perm(src);
+    if x.sick || x.data.truthy(DataKey::Anim) || g.opps(p).next().is_none() {
+        return None;
+    }
+    Some(1.6)
+}
+
+/// end of turn: Gideon stops being a creature
+fn gideon_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
+    if g.perm(src).data.truthy(DataKey::Anim) {
+        let x = g.perm_mut(src);
+        x.data.remove(DataKey::Anim);
+        x.data.remove(DataKey::Indestr);
+        x.pow = 0;
+        x.tgh = 0;
+        x.ttypes.retain(|t| *t != "human" && *t != "soldier");
+        g.bf_ver += 1;
+    }
+    Ok(())
+}
+
+/// 0: you get an emblem with "As long as you control a Gideon planeswalker, you can't lose the game and your
+/// opponents can't win the game." The emblem is recorded; the lose-the-game check does not read it (engine need).
+fn gideon_emblem(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    g.player_mut(p).emblems.push("gideon_trials");
+    crate::glog!(g, "    {} gets the Gideon emblem", pname(g, p));
+    Ok(())
+}
+
+fn gideon_emblem_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    (!g.player(p).emblems.contains(&"gideon_trials")).then_some(0.5)
+}
+
+const GIDEON: [WalkerAb; 3] = [
+    WalkerAb { delta: 1, label: "prevent a permanent's damage", val: gideon_plus_val, eff: gideon_plus },
+    WalkerAb { delta: 0, label: "becomes a 4/4 creature", val: gideon_animate_val, eff: gideon_animate },
+    WalkerAb { delta: 0, label: "emblem: can't lose", val: gideon_emblem_val, eff: gideon_emblem },
+];
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Fiend Hunter")?;
@@ -522,6 +600,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(touch_prio);
     c.hand_options = Some(touch_hand);
     r.card(db, "Dack Fayden, Helping Hand")?.etb = Some(dack_etb);
+    walker(r, db, "Gideon of the Trials", &GIDEON)?;
+    r.card(db, "Gideon of the Trials")?.end_step = Some(gideon_end);
     let c = r.card(db, "Preston, the Vanisher")?;
     c.etb = Some(preston_etb);
     c.options = Some(preston_options);

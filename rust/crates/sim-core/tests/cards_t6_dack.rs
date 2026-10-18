@@ -285,3 +285,71 @@ fn dack_pile_solar_and_preston_see_each_other_before_the_donation() {
     let ill = g.players.iter().flat_map(|pl| pl.perms.iter()).filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
     assert!(ill >= 1, "Preston copies the creatures that entered with it");
 }
+
+// ======================================================== Gideon of the Trials
+#[test]
+fn gideon_plus_locks_the_best_opposing_creatures_damage_and_gains_loyalty() {
+    let mut g = game();
+    let titan = perm(&mut g, P1, "Grave Titan");
+    let gideon = perm(&mut g, P0, "Gideon of the Trials");
+    assert_eq!(g.perm(gideon).loyalty, Some(3));
+    let ab = sim_core::impls::common::walker_options(&mut g, gideon, P0, Some(false)).unwrap();
+    let plus = ab.iter().find(|o| o.label.ends_with("+1")).expect("a +1 option");
+    if let Some(sim_core::hooks::Action::Ability { src, f, arg }) = &plus.act {
+        assert!(f(&mut g, *src, P0, *arg).unwrap());
+    } else {
+        panic!("not an ability")
+    }
+    assert_eq!(g.perm(gideon).loyalty, Some(4));
+    assert!(sim_core::cardcode::dovin_blocked(&g, titan), "Grave Titan's combat damage is prevented");
+}
+
+#[test]
+fn gideon_zero_makes_him_a_4_4_indestructible_creature_until_end_of_turn() {
+    let mut g = game();
+    let gideon = perm(&mut g, P0, "Gideon of the Trials");
+    g.perm_mut(gideon).sick = false;
+    let opts = sim_core::impls::common::walker_options(&mut g, gideon, P0, Some(false)).unwrap();
+    let animate = opts.iter().find(|o| o.label.ends_with("+0")).expect("a 0 option");
+    // there are two 0 abilities: pick the animation by running each and checking
+    let mut animated = false;
+    for o in opts.iter().filter(|o| o.label.ends_with("+0") || o.label.ends_with("0")) {
+        let _ = animate;
+        if let Some(sim_core::hooks::Action::Ability { src, f, arg }) = &o.act {
+            let mut h = g.clone();
+            f(&mut h, *src, P0, *arg).unwrap();
+            if h.is_creature(gideon) {
+                animated = true;
+                assert_eq!((h.perm(gideon).pow, h.perm(gideon).tgh), (4, 4));
+                assert!(sim_core::engine::values::indestructible(&h, gideon));
+            }
+        }
+    }
+    assert!(animated, "one of the 0 abilities animates him");
+}
+
+#[test]
+fn gideon_stops_being_a_creature_at_end_of_turn_and_the_other_zero_makes_an_emblem() {
+    let mut g = game();
+    let gideon = perm(&mut g, P0, "Gideon of the Trials");
+    g.perm_mut(gideon).sick = false;
+    let opts = sim_core::impls::common::walker_options(&mut g, gideon, P0, Some(false)).unwrap();
+    let (mut ended, mut emblem) = (false, false);
+    for o in opts.iter().filter(|o| o.label.ends_with("0")) {
+        if let Some(sim_core::hooks::Action::Ability { src, f, arg }) = &o.act {
+            let mut h = g.clone();
+            f(&mut h, *src, P0, *arg).unwrap();
+            if h.is_creature(gideon) {
+                let cd = h.perm(gideon).cd.unwrap();
+                let end = h.registry.get(cd).unwrap().end_step.unwrap();
+                end(&mut h, gideon, P0).unwrap();
+                ended = !h.is_creature(gideon) && !sim_core::engine::values::indestructible(&h, gideon);
+            }
+            if h.player(P0).emblems.contains(&"gideon_trials") {
+                emblem = true;
+            }
+        }
+    }
+    assert!(ended, "back to a plain planeswalker");
+    assert!(emblem, "the other 0 ability gives the emblem");
+}

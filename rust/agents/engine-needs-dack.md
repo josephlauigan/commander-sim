@@ -38,3 +38,9 @@ Needs: a first-class "gain control" with a duration and controller-change events
 Where it would hook: `engine/zones.rs` (a control-change fn that also fires leaves/enters-control hooks and clears attachments / hooks bookkeeping).
 Card side done: `marchesa::steal(g, opp, m, false)` is used; ETB triggers of the donated creatures use the entering player as "you" (hook argument `p`), `mark_donated` / `controlled_when` for Preston and Radiant Solar.
 Test to add once the engine has it: the donated creature's queued enters trigger is still the giver's.
+
+## Gideon of the Trials
+Needs: (1) "can't lose the game / opponents can't win" granted by an emblem or a condition (emblem + "as long as you control a Gideon planeswalker"); (2) prevention of all damage dealt by a permanent for a duration (any damage, not just an attacker's combat damage) and of all damage dealt to a permanent this turn.
+Where it would hook: (1) `engine/life.rs::check_state` uses `t0_giada::cant_lose` (Herald of Eternal Dawn by name): make it read a player-level "can't lose" source list; (2) `engine/combat.rs` ~l.593 (`dovin_blocked` only zeroes an attacking creature's damage) and the damage-to-permanent paths.
+Card side done: walker abilities in `t6_dack.rs`; +1 uses `DataKey::Dovin`; the animation sets `Anim` + `Indestr` and `gideon_end` undoes it; the emblem is pushed on `Player::emblems` as "gideon_trials".
+Test to add once the engine has it: with the emblem and a Gideon, a player at 0 life stays in the game; damage dealt by the +1 target (blocking or burn) is prevented.
