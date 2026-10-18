@@ -46,3 +46,6 @@ Test to add once the engine has it: a removal spell can target the Drake, an act
 Clever Impersonator, Phantasmal Image and Flesh Duplicate carry 1/1 in data/card_overrides.toml so they survive
 long enough for their enter hook to copy. Once the engine has an "as this enters, it becomes a copy" replacement,
 restore their printed 0/0 and drop the stand-in (and Clever Impersonator's stand-in firing its own enter triggers).
+
+## Engine pass t6-e-copies (done)
+The `enter_copy` slot + `CopyExc` mechanism (see report-t6-e-copies.md) covers the clones' replacement effect, the 0/0 restore, Mockingbird (Bird, flying), Copy Artifact (enchantment), Molten Duplication (artifact). Still open: Phantasmal Image's becomes-target sacrifice, Flesh Duplicate's vanishing 3, Imposter Mech, Peter Parker's Camera, Volatile Stormdrake.

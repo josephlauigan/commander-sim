@@ -19,7 +19,7 @@ use crate::engine::stack::{ability_window, ability_window_card, counter_window, 
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, die, discard_cards, discard_index, draw, edict, enter, enter_token_copy, exile_perm,
+    Enter, Tokens, die, discard_cards, discard_index, draw, edict, enter, enter_token_copy_with, exile_perm,
     make_artifact_tokens, make_tokens, max_by, min_by, searchable,
 };
 use crate::flow::Res;
@@ -27,7 +27,7 @@ use crate::human::{choices, human_of};
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
-use crate::state::{Ctx, DataKey, Game, PermData, TurnStamp, Val};
+use crate::state::{Ctx, CopyExc, DataKey, Game, PermData, TurnStamp, Val};
 use crate::sym::{Sym, intern};
 
 // ------------------------------------------------------------------ helpers (shared with rules.rs and rules2.rs)
@@ -922,7 +922,9 @@ fn helm(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     }
     let Some(a) = host(g) else { return Ok(vec![]) };
     let name = g.perm(a).name; // the copy can make the legend rule remove the equipped original
-    let Some(t) = enter_token_copy(g, p, g.perm(a).cd.unwrap())? else { return Ok(vec![]) };
+    // the token is a copy except it isn't legendary
+    let exc = CopyExc { not_legendary: true, ..CopyExc::default() };
+    let Some(t) = enter_token_copy_with(g, p, g.perm(a).cd.unwrap(), Some(exc))? else { return Ok(vec![]) };
     g.perm_mut(t).sick = false;
     crate::glog!(g, "    Helm of the Host copies {name}");
     // a token that entered tapped (Blind Obedience, Spider-Woman) has haste but can't attack

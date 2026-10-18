@@ -11,7 +11,7 @@ use crate::engine::values::*;
 use crate::flow::Res;
 use crate::hooks::{Call, Event, Sacrificed, TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{DataKey, Game, PermData, Val};
+use crate::state::{CopyExc, CopyOf, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -981,11 +981,13 @@ pub struct Enter {
     pub was_cast: bool,
     pub undying: bool,
     pub plus: i32,
+    /// the copy exceptions of a token copy ("except it's a 0/1 white Illusion"); a clone's come from its `enter_copy`
+    pub exc: Option<CopyExc>,
 }
 
 impl Default for Enter {
     fn default() -> Enter {
-        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0 }
+        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None }
     }
 }
 
@@ -1008,8 +1010,13 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         pl.hand.remove(i);
         pl.gy.push(x);
     }
+    // "enters as a copy of ...": a replacement effect, applied as the permanent is created (no 0/0 stand-in, no
+    // enters triggers of the clone itself: the copied card's are the ones that fire)
     let mut phys = None;
-    if g.db.get(cd).tag(Tag::Clone) {
+    let mut exc = how.exc;
+    let copy = if let Some(f) = g.registry.get(cd).and_then(|i| i.enter_copy) {
+        f(g, p, cd)
+    } else if g.db.get(cd).tag(Tag::Clone) {
         // Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         let cands: Vec<PermId> = g
             .players
@@ -1026,10 +1033,14 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
                 })
             })
             .collect();
-        if let Some(b) = max_by(&cands, |x| pval(g, x)) {
-            phys = Some(cd);
-            cd = g.perm(b).cd.unwrap();
-        }
+        max_by(&cands, |x| pval(g, x)).map(|b| CopyOf { cd: g.perm(b).cd.unwrap(), exc: CopyExc::default() })
+    } else {
+        None
+    };
+    if let Some(c) = copy {
+        phys = Some(cd);
+        cd = c.cd;
+        exc = exc.or(Some(c.exc));
     }
     let m = g.new_perm(p, Some(cd), "Token", 0, 0);
     g.enter_no += 1;
@@ -1057,6 +1068,17 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     }
     if plus != 0 {
         x.plus = v_plus; // enters with counters (persist: -1)
+    }
+    if let Some(e) = exc {
+        x.exc = e;
+        if let Some((pw, th)) = e.pt {
+            (x.pow, x.tgh) = (pw, th);
+        }
+        x.fly |= e.fly;
+        x.sick = x.sick && !e.haste;
+        if let Some(s) = e.add_subtype.or(e.only_subtype) {
+            x.ttypes.push(s);
+        }
     }
     x.on_bf = true;
     if has_dsl {
@@ -1118,11 +1140,17 @@ fn mox_discard_key(g: &Game, c: CardId) -> f64 {
 
 /// a token that's a copy of card cd (Scute Swarm, Kiki-Jiki, Helm of the Host ...)
 pub fn enter_token_copy(g: &mut Game, p: PlayerId, cd: CardId) -> Res<Option<PermId>> {
+    enter_token_copy_with(g, p, cd, None)
+}
+
+/// a token copy with exceptions ("except it's a 0/1 white Illusion", "it's an artifact in addition"): they apply as it
+/// enters, so its own enters triggers see them
+pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<CopyExc>) -> Res<Option<PermId>> {
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
     if have >= TOKEN_CAP {
         return Ok(None);
     }
-    let m = enter(g, p, cd, Enter::default())?;
+    let m = enter(g, p, cd, Enter { exc, ..Enter::default() })?;
     g.perm_mut(m).token = true;
     note_tokens(g, p, 1);
     Ok(Some(m))

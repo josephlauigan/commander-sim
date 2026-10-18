@@ -1,10 +1,12 @@
 //! Tier 6, batch `copies`: the copy cards (clones, token-copy sorceries, spell copiers, Peter Parker's Camera,
-//! Volatile Stormdrake). Cards only: no shared engine code is changed here (see rust/agents/engine-needs-copies.md).
+//! Volatile Stormdrake).
 //!
-//! - **Clones** (Clever Impersonator, Phantasmal Image, Flesh Duplicate, Copy Artifact, Mirrormade, Sculpting Steel):
-//!   the enters hook swaps the permanent for a copy of the best legal target, keeping the clone's own card in `phys`
-//!   (so it goes to the graveyard as the clone), the way Copy Enchantment and Spark Double do. The AI casts one only
-//!   when something worth copying is out (`clone_prio`). **Mockingbird** is cast through an option that picks X.
+//! - **Clones** (Clever Impersonator, Phantasmal Image, Flesh Duplicate, Copy Artifact, Mirrormade, Sculpting Steel,
+//!   Mockingbird): the `enter_copy` slot (engine/zones.rs `enter`) names the best legal target and the exceptions
+//!   (`CopyExc`: Bird and flying, enchantment in addition, Illusion) as the permanent is created; the clone's own card
+//!   stays in `phys` (so it goes to the graveyard as the clone) and the copied card's enters effects are the ones that
+//!   fire. The AI casts one only when something worth copying is out (`clone_prio`). **Mockingbird** is cast through an
+//!   option that picks X and the target (`Ctx::target`, read back from `cast_target`).
 //! - **Token-copy sorceries** (Heat Shimmer, Molten Duplication, Electroduplicate, Flash Photography): `resolve` +
 //!   `prio`; flashback is the `fb=` tag.
 //! - **Twincast, Flare of Duplication**: cast from hand in response to a worthwhile instant or sorcery, as Dualcaster
@@ -17,11 +19,11 @@ use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::counter_window;
 use crate::engine::values::{epow, pval, untargetable};
-use crate::engine::zones::{Enter, die, enter, enter_token_copy, leave, max_by};
+use crate::engine::zones::{die, enter_token_copy_with, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, Val};
+use crate::state::{CopyExc, CopyOf, Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -63,10 +65,10 @@ fn copyable(g: &Game, p: PlayerId, x: PermId, kind: Kind) -> bool {
     if !pm.on_bf || pm.phased || pm.token || g.players.iter().any(|q| q.is_commander(cd)) {
         return false;
     }
-    let d = g.db.get(cd);
     let creature = g.is_creature(x);
-    let art = d.types.has(Types::ARTIFACT);
-    let ench = d.types.has(Types::ENCHANTMENT);
+    let ty = crate::engine::values::ptypes(g, x); // a copy may have types in addition
+    let art = ty.has(Types::ARTIFACT);
+    let ench = ty.has(Types::ENCHANTMENT);
     let mine = pm.owner == p;
     let ok = match kind {
         Kind::Any => true,
@@ -116,32 +118,29 @@ fn name_of(g: &Game, c: CardId) -> &str {
 }
 
 // ------------------------------------------------------------------ clones
-/// the clone `src` becomes a copy of permanent `t` (the card goes to the graveyard as the clone when it dies)
-fn become_copy(g: &mut Game, src: PermId, t: PermId) -> Res<PermId> {
-    let o = g.perm(src).owner;
-    let cd = g.perm(t).cd.unwrap();
-    let me = g.perm(src).cd;
-    leave(g, src)?;
-    let n = enter(g, o, cd, Enter::default())?;
-    g.perm_mut(n).phys = me;
-    crate::glog!(g, "    {} enters as a copy of {}", me.map_or("a clone", |c| name_of(g, c)), name_of(g, cd));
-    Ok(n)
+/// the exceptions of a clone card's copy
+fn clone_exc(name: &str) -> CopyExc {
+    match name {
+        "Mockingbird" => CopyExc { add_subtype: Some("bird"), fly: true, ..CopyExc::default() },
+        "Copy Artifact" => CopyExc { add_types: Types::ENCHANTMENT, ..CopyExc::default() },
+        // Illusion in addition; the sacrifice when it becomes the target of a spell or ability needs that event
+        "Phantasmal Image" => CopyExc { add_subtype: Some("illusion"), ..CopyExc::default() },
+        _ => CopyExc::default(),
+    }
 }
 
-/// You may have this enter as a copy of a permanent: the best legal one (the Oracle text's kind of target)
-fn clone_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m != src || !g.perm(src).on_bf {
-        return Ok(());
-    }
-    let o = g.perm(src).owner;
-    let kind = kind_of(g.perm(src).name);
-    // Copy Artifact makes an enchantment in addition: not modeled (a copied creature is a creature)
-    if let Some((t, _)) = best_copy(g, o, kind, Some(src), None) {
-        become_copy(g, src, t)?;
-    } else if g.is_creature(src) {
-        die(g, src, "sba")?; // printed 0/0 (the card carries 1/1 so that it is still there when this hook runs)
-    }
-    Ok(())
+/// You may have this enter as a copy of a permanent: the best legal one (the Oracle text's kind of target). Mockingbird's
+/// is the creature chosen as it was cast. With nothing to copy it enters as itself (a printed 0/0 dies).
+fn clone_copy(g: &mut Game, p: PlayerId, c: CardId) -> Option<CopyOf> {
+    let name = name_of(g, c);
+    let t = if name == MOCKINGBIRD {
+        g.cast_target.filter(|&t| copyable(g, p, t, Kind::Creature))?
+    } else {
+        best_copy(g, p, kind_of(name), None, None)?.0
+    };
+    let exc = clone_exc(name);
+    crate::glog!(g, "    {} enters as a copy of {}", name, g.perm(t).name);
+    Some(CopyOf { cd: g.perm(t).cd?, exc })
 }
 
 /// the AI casts a clone only when something worth copying is out
@@ -195,16 +194,8 @@ fn mockingbird_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let Some((x, t, _)) = mockingbird_plan(g, p, c) else { return Ok(false) };
     pay(g, p, x, "U", false)?;
-    if !cast_card(g, p, c, "hand", Ctx { x: x as i32, ..Ctx::default() })? {
-        return Ok(true); // countered
-    }
-    let bird = g.player(p).perms.iter().rev().copied().find(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(c));
-    if let Some(b) = bird
-        && copyable(g, p, t, Kind::Creature)
-    {
-        let n = become_copy(g, b, t)?;
-        g.perm_mut(n).fly = true; // it's a Bird in addition to its other types and it has flying
-    }
+    // it enters as a copy of the creature chosen as it was cast (`clone_copy`)
+    cast_card(g, p, c, "hand", Ctx { x: x as i32, target: Some(t), ..Ctx::default() })?;
     Ok(true)
 }
 
@@ -262,7 +253,9 @@ fn token_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     };
     let cd = g.perm(t).cd.unwrap();
     crate::glog!(g, "    {n}: a token copy of {}", g.perm(t).name);
-    if let Some(m) = enter_token_copy(g, p, cd)?
+    // Molten Duplication's token is an artifact in addition to its other types
+    let exc = (n == "Molten Duplication").then(|| CopyExc { add_types: Types::ARTIFACT, ..CopyExc::default() });
+    if let Some(m) = enter_token_copy_with(g, p, cd, exc)?
         && g.perm(m).on_bf
     {
         if !lasting {
@@ -456,11 +449,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         ["Clever Impersonator", "Phantasmal Image", "Flesh Duplicate", "Copy Artifact", "Mirrormade", "Sculpting Steel"]
     {
         let c = r.card(db, n)?;
-        c.etb = Some(clone_etb);
+        c.enter_copy = Some(clone_copy);
         c.prio = Some(clone_prio);
-        at_once(c, Event::Etb, true);
     }
     let c = r.card(db, MOCKINGBIRD)?;
+    c.enter_copy = Some(clone_copy);
     c.hand_options = Some(mockingbird_options);
     c.prio = Some(zero_prio);
     for n in ["Heat Shimmer", "Molten Duplication", "Electroduplicate", PHOTO] {

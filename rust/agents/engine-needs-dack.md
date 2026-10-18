@@ -59,3 +59,6 @@ copies it again; Radiant Solar ventures each time). In the engine it yields 2 co
 does not happen yet. The engine pass must add it as a combo in impls/combos.rs (pieces: Preston + Felidar under your
 control + Radiant Solar or a Solar copy, all under your control; with answer windows), and the Dack 35-pile engine test
 (audit/t6/dack-fayden-white-stax/flips-*.md) checks it end to end.
+
+## Engine pass t6-e-copies: Preston's Illusion exceptions done
+Preston's token copy is created with `CopyExc` (0/1, white, only Illusion) through `enter_token_copy_with`. The Felidar loop combo is still open.

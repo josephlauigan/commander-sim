@@ -162,7 +162,7 @@ fn illusions_of(g: &Game, p: PlayerId) -> Vec<PermId> {
         .perms
         .iter()
         .copied()
-        .filter(|&m| g.perm(m).on_bf && g.perm(m).token && g.perm(m).ttypes.contains(&"illusion"))
+        .filter(|&m| g.perm(m).on_bf && g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"])
         .collect()
 }
 
@@ -175,7 +175,7 @@ fn preston_copies_a_creature_that_was_not_cast_as_a_0_1_white_illusion() {
     assert_eq!(ill.len(), 1, "perm() puts it onto the battlefield without casting it");
     assert!(g.perm(ill[0]).token);
     assert_eq!((g.perm(ill[0]).pow, g.perm(ill[0]).tgh), (0, 1));
-    assert!(g.perm(ill[0]).colors.has('W'));
+    assert!(sim_core::engine::values::colors_of(&g, ill[0]).has('W'));
     assert!(g.perm(titan).on_bf);
 }
 
@@ -290,7 +290,7 @@ fn dack_pile_solar_and_preston_see_each_other_before_the_donation() {
         .players
         .iter()
         .flat_map(|pl| pl.perms.iter())
-        .filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion"))
+        .filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"])
         .count();
     assert!(ill >= 1, "Preston copies the creatures that entered with it");
 }
@@ -414,10 +414,10 @@ fn preston_with_felidar_guardian_is_capped_instead_of_overflowing() {
     g.player_mut(P0).grudge.insert(intern("preston_cap_round"), stamp);
     g.player_mut(P0).grudge.insert(intern("preston_cap_n"), cap);
     let before =
-        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
+        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"]).count();
     let _x = perm(&mut g, P0, "Serra Angel");
     let after =
-        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
+        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"]).count();
     assert_eq!(before, after, "capped: no more copies this turn");
 }
 
@@ -478,4 +478,16 @@ fn dacks_donated_creatures_stay_goaded_after_two_of_his_turns() {
         }
     }
     assert_eq!(n, 3);
+}
+
+#[test]
+fn preston_copy_of_a_human_wizard_is_only_an_illusion() {
+    let mut g = game();
+    let _preston = perm(&mut g, P0, "Preston, the Vanisher");
+    let _a = perm(&mut g, P0, "Archaeomancer");
+    let ill = illusions_of(&g, P0);
+    assert_eq!(ill.len(), 1);
+    assert!(!sim_core::engine::values::has_type(&g, ill[0], "human"), "not a Human");
+    assert!(!sim_core::engine::values::has_type(&g, ill[0], "wizard"), "not a Wizard");
+    assert!(sim_core::engine::values::has_type(&g, ill[0], "illusion"));
 }
