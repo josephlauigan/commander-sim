@@ -12,17 +12,19 @@
 //! - Voice of Victory: Mobilize 2 on its attack hook (the tokens carry `EotSac`); opponents' casts refused on its controller's turn (`can_cast`).
 //! - Drift of Phantasms: Transmute {1}{U}{U} as a hand option (sorcery speed); defender, flying and the 0/5 body are data.
 //! - Emrakul, the Promised End: costs {1} less per card type in your graveyard (`self_cost`); control of an opponent's turn, the extra turn and protection from instants are engine needs.
+//! - Silas Renn: the combat damage trigger marks the best artifact card in the graveyard for the turn (a per-player turn flag); an option casts it from the graveyard in a main phase.
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::cast::{cast_card, castable};
+use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
 use crate::engine::zones::{Enter, Tokens, discard_cards, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
-use crate::sym::Sym;
+use crate::sym::{Sym, intern};
 
 fn set_turn_flag(g: &mut Game, p: PlayerId, key: Sym) {
     let stamp = g.turn_stamp();
@@ -376,8 +378,93 @@ fn emrakul_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 
+// ================================================================== Silas Renn, Seeker Adept
+fn silas_key(c: CardId) -> Sym {
+    intern(&format!("silas_{}", c.0))
+}
+
+/// has Silas Renn chosen artifact card c in p's graveyard this turn ("you may cast that card this turn")?
+pub fn silas_chosen(g: &Game, p: PlayerId, c: CardId) -> bool {
+    g.player(p).flag_turn.get(silas_key(c)) == Some(&g.turn_stamp()) && g.player(p).gy.contains(&c)
+}
+
+/// how much the AI wants an artifact card from p's graveyard cast again (the deck's priority, then the card's worth)
+fn silas_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    crate::ai::decks::deck_prio_f(g, p, c) / 10.0 + 0.3 * card_worth(g, p, c, true) / 10.0
+}
+
+/// Silas Renn: whenever it deals combat damage to a player, choose target artifact card in your graveyard; you may
+/// cast that card this turn. The AI picks the artifact card it values most and marks it for the turn; `silas_options`
+/// casts it from the graveyard in a main phase (artifacts are sorcery speed).
+fn silas_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
+    if a != src || g.perm(src).owner != p {
+        return Ok(());
+    }
+    let cands: Vec<CardId> = g
+        .player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).land)
+        .collect();
+    let Some(c) = max_by(&cands, |c| silas_value(g, p, c)) else { return Ok(()) };
+    if !trigger_window(g, p, Some(src), "choose an artifact card in your graveyard to cast", Some(3.0))? {
+        return Ok(());
+    }
+    let st = g.turn_stamp();
+    g.player_mut(p).flag_turn.insert(silas_key(c), st);
+    crate::glog!(g, "    Silas Renn: {} may cast {} from the graveyard this turn", g.player(p).name, g.db.get(c).name);
+    Ok(())
+}
+
+fn silas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) || g.perm(src).owner != p || !g.stack.is_empty() {
+        return Ok(vec![]);
+    }
+    let mut out = vec![];
+    for c in g.player(p).gy.clone() {
+        if !silas_chosen(g, p, c) || !castable(g, p, c, "gy") {
+            continue;
+        }
+        let (gn, pips) = cost_of(g, p, c);
+        if !can_pay(g, p, gn, &pips, false) {
+            continue;
+        }
+        let v = silas_value(g, p, c);
+        if v <= 0.4 {
+            continue;
+        }
+        out.push(Opt {
+            utility: v,
+            label: format!("Silas Renn: cast {} from the graveyard", g.db.get(c).name),
+            act: Some(Action::Plan { f: silas_cast, arg: c.0 as i64 }),
+        });
+    }
+    Ok(out)
+}
+
+fn silas_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let (gn, pips) = cost_of(g, p, c);
+    if !silas_chosen(g, p, c) || !can_pay(g, p, gn, &pips, false) {
+        return Ok(false);
+    }
+    g.player_mut(p).flag_turn.shift_remove(silas_key(c));
+    g.pay_for = Some(c);
+    let r = pay(g, p, gn, &pips, false);
+    g.pay_for = None;
+    r?;
+    crate::glog!(g, "  {} casts {} from the graveyard (Silas Renn)", g.player(p).name, g.db.get(c).name);
+    cast_card(g, p, c, "mgy", Ctx::default())?;
+    Ok(true)
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "Silas Renn, Seeker Adept")?;
+    c.combat_damage = Some(silas_damage);
+    c.options = Some(silas_options);
     r.card(db, "Emrakul, the Promised End")?.self_cost = Some(emrakul_cost);
     r.card(db, "Drift of Phantasms")?.hand_options = Some(drift_options);
     let c = r.card(db, "Voice of Victory")?;

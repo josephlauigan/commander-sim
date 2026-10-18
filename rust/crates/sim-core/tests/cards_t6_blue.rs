@@ -316,3 +316,37 @@ fn rograkh_is_a_partner_commander_with_first_strike_menace_and_trample() {
     }
     assert_eq!(g.db.get(g.perm(m).cd.unwrap()).cmc, 0);
 }
+
+// ======================================================== Silas Renn, Seeker Adept
+#[test]
+fn silas_renn_marks_an_artifact_card_and_casts_it_from_the_graveyard_this_turn() {
+    let mut g = game();
+    let silas = perm(&mut g, P0, "Silas Renn, Seeker Adept");
+    let ring = put_gy(&mut g, P0, "Sol Ring");
+    put_gy(&mut g, P0, "Opt");
+    lands(&mut g, P0, "Island", 1, false);
+    let imp = *g.registry.get(card(&g, "Silas Renn, Seeker Adept")).unwrap();
+    let dmg = imp.combat_damage.expect("combat damage hook");
+    dmg(&mut g, silas, P0, silas, P1, 2).unwrap();
+    assert!(t6::silas_chosen(&g, P0, ring), "the artifact card is chosen");
+    let opts = (imp.options.unwrap())(&mut g, silas, P0, Some(true)).unwrap();
+    assert_eq!(opts.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(on_bf(&g, P0, "Sol Ring"), "cast from the graveyard");
+    assert!(!g.player(P0).gy.contains(&ring));
+}
+
+#[test]
+fn silas_renn_only_triggers_for_its_own_damage_and_the_choice_lasts_one_turn() {
+    let mut g = game();
+    let silas = perm(&mut g, P0, "Silas Renn, Seeker Adept");
+    let other = perm(&mut g, P0, "Grave Titan");
+    let ring = put_gy(&mut g, P0, "Sol Ring");
+    let dmg = g.registry.get(card(&g, "Silas Renn, Seeker Adept")).unwrap().combat_damage.unwrap();
+    dmg(&mut g, silas, P0, other, P1, 6).unwrap();
+    assert!(!t6::silas_chosen(&g, P0, ring), "another creature's damage does nothing");
+    dmg(&mut g, silas, P0, silas, P1, 2).unwrap();
+    assert!(t6::silas_chosen(&g, P0, ring));
+    g.round += 1; // a new turn
+    assert!(!t6::silas_chosen(&g, P0, ring), "only this turn");
+}

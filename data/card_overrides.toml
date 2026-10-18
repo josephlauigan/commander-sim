@@ -8717,3 +8717,7 @@ note = "13/13 flying trample that costs {1} less per card type in the graveyard 
 ["Rograkh, Son of Rohgahh"]
 status = "Full"
 note = "{0} 0/1 with first strike, menace and trample (card data, tested); partner is the engine's (the deck's commander pair)"
+
+["Silas Renn, Seeker Adept"]
+status = "Full"
+note = "2/2 deathtouch artifact creature; its own combat damage to a player marks the best artifact card in the graveyard for the turn and the AI casts it from the graveyard in a main phase if it can pay; partner is the engine's (t6_blue.rs, tested)"
