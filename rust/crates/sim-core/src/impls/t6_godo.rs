@@ -3,18 +3,21 @@
 //! card's doc comment says how it is modeled and what is left out; what needs the shared engine is in
 //! rust/agents/engine-needs-godo.md). Helm of the Host itself is already modeled (`t3::helm`, `combat_start`).
 
-use crate::cards::CardDb;
-use crate::engine::stack::trigger_window;
+use crate::cards::{CardDb, Types};
+use crate::engine::mana::{can_pay, pay};
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::once_per_turn;
 use crate::engine::values::epow;
-use crate::engine::zones::{Enter, enter, max_by};
+use crate::engine::zones::{Enter, die, enter, max_by, min_by};
 use crate::flow::Res;
-use crate::hooks::{Registry, Src};
+use crate::hooks::{Action, Opt, Registry, Src};
 use crate::human::human_of;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
+use crate::tag::Tag;
+use super::t5::is_artifact;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
     g.perm(m).owner
@@ -217,6 +220,92 @@ fn sting_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     Ok(vec![])
 }
 
+// ================================================================== Goblin Welder / Goblin Engineer
+fn is_artifact_card(g: &Game, c: CardId) -> bool {
+    g.db.get(c).types.has(Types::ARTIFACT)
+}
+
+/// how much the AI wants an artifact card on the battlefield: its mana value, plus a lot for the two Equipment the
+/// Godo loop is built on
+fn art_value(g: &Game, c: CardId) -> f64 {
+    let d = g.db.get(c);
+    d.cmc as f64 + if matches!(&*d.name, "Helm of the Host" | "Hammer of Nazahn") { 5.0 } else { 0.0 }
+}
+
+/// the artifact p should give up: the cheapest, a tapped (spent) one first; None if p has none
+fn sac_candidate(g: &Game, p: PlayerId) -> Option<PermId> {
+    let xs: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && is_artifact(g, m)).collect();
+    min_by(&xs, |m| g.perm(m).cd.map_or(0.0, |c| art_value(g, c)) - if g.perm(m).tapped { 1.0 } else { 0.0 })
+}
+
+/// the best artifact card in p's graveyard to bring back (mana value at most `max`; not a legend p already has)
+fn gy_pick(g: &Game, p: PlayerId, max: Option<u32>) -> Option<CardId> {
+    let cs: Vec<CardId> = g
+        .player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| {
+            let d = g.db.get(c);
+            is_artifact_card(g, c)
+                && max.is_none_or(|k| d.cmc <= k)
+                && !(d.tag(Tag::Leg) && on_bf_named(g, p, &d.name))
+        })
+        .collect();
+    max_by(&cs, |c| art_value(g, c))
+}
+
+/// the swap worth making: (artifact to give up, artifact card to bring back), when the card is worth at least 3
+/// more than the artifact
+fn swap_plan(g: &Game, p: PlayerId, max: Option<u32>) -> Option<(PermId, CardId)> {
+    let (s, c) = (sac_candidate(g, p)?, gy_pick(g, p, max)?);
+    (art_value(g, c) - g.perm(s).cd.map_or(0.0, |x| art_value(g, x)) >= 3.0).then_some((s, c))
+}
+
+fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn) -> Opt {
+    Opt { utility, label: label.into(), act: Some(Action::Ability { src, f, arg: 0 }) }
+}
+
+/// sacrifice artifact s and put artifact card c from the graveyard onto the battlefield, if both are still there
+fn swap(g: &mut Game, p: PlayerId, s: PermId, c: CardId) -> Res {
+    if !live(g, s) || !g.player(p).gy.contains(&c) {
+        return Ok(());
+    }
+    crate::glog!(g, "    {} sacrifices {} and returns {}", g.player(p).name, g.perm(s).name, g.db.get(c).name);
+    die(g, s, "sac")?;
+    let gy = &mut g.player_mut(p).gy;
+    if let Some(i) = gy.iter().position(|&x| x == c) {
+        gy.remove(i);
+        enter(g, p, c, Enter::default())?;
+    }
+    Ok(())
+}
+
+/// **Goblin Welder** ({R}, 1/1): {T}: choose target artifact a player controls and target artifact card in that
+/// player's graveyard; if both are still legal, that player sacrifices the artifact and returns the card to the
+/// battlefield. The AI uses it only on its own artifacts, when the card is worth three or more than the artifact
+/// (a spent rock for Helm of the Host or Hammer of Nazahn); opponents' artifacts and graveyards are not targeted.
+fn welder_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || !live(g, src) || owner(g, src) != p || g.perm(src).tapped || g.perm(src).sick {
+        return Ok(vec![]);
+    }
+    let Some((s, c)) = swap_plan(g, p, None) else { return Ok(vec![]) };
+    let _ = (s, c);
+    Ok(vec![ability(6.0, "Goblin Welder swap", src, welder_go)])
+}
+
+fn welder_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || g.perm(src).sick {
+        return Ok(false);
+    }
+    let Some((s, c)) = swap_plan(g, p, None) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    if ability_window(g, p, Some(src), "swap an artifact with an artifact card in the graveyard", Some(6.0), Some(s))? {
+        swap(g, p, s, c)?;
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -226,5 +315,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.resolve = Some(theft_resolve);
     c.prio = Some(theft_prio);
     r.card(db, "Sting, the Glinting Dagger")?.combat_start = Some(sting_combat);
+    r.card(db, "Goblin Welder")?.options = Some(welder_options);
     Ok(())
 }

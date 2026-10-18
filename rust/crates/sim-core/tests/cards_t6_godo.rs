@@ -180,3 +180,46 @@ fn sting_unattached_does_nothing() {
     combat_start(&mut g, s, P0);
     assert!(g.perm(t).tapped);
 }
+
+// ======================================================== Goblin Welder
+fn welder_swap(g: &mut Game, w: PermId) -> bool {
+    let o = options(g, w, P0, Some(false));
+    if o.is_empty() {
+        return false;
+    }
+    sim_core::ai::act::perform(g, P0, o[0].act.as_ref().unwrap()).unwrap()
+}
+
+fn to_gy(g: &mut Game, p: PlayerId, name: &str) {
+    let c = take(g, p, name);
+    g.player_mut(p).gy.push(c);
+}
+
+#[test]
+fn welder_swaps_a_spent_rock_for_helm_in_the_graveyard() {
+    let mut g = tbl();
+    let w = perm(&mut g, P0, "Goblin Welder");
+    let rock = perm(&mut g, P0, "Sol Ring");
+    to_gy(&mut g, P0, "Helm of the Host");
+    assert!(welder_swap(&mut g, w));
+    assert!(g.perm(w).tapped, "{{T}}");
+    assert!(!g.perm(rock).on_bf, "the artifact was sacrificed");
+    assert!(g.player(P0).gy.contains(&card(&g, "Sol Ring")));
+    assert!(on(&g, P0, "Helm of the Host"), "returned to the battlefield");
+    assert!(!g.player(P0).gy.contains(&card(&g, "Helm of the Host")));
+}
+
+#[test]
+fn welder_wont_trade_down_or_when_summoning_sick() {
+    let mut g = tbl();
+    let w = perm(&mut g, P0, "Goblin Welder");
+    perm(&mut g, P0, "Helm of the Host");
+    to_gy(&mut g, P0, "Sol Ring");
+    assert!(options(&mut g, w, P0, Some(false)).is_empty(), "Sol Ring is not worth Helm");
+    let mut g = tbl();
+    let c = take(&mut g, P0, "Goblin Welder");
+    let sick = sim_core::engine::zones::enter(&mut g, P0, c, Default::default()).unwrap();
+    perm(&mut g, P0, "Sol Ring");
+    to_gy(&mut g, P0, "Helm of the Host");
+    assert!(options(&mut g, sick, P0, Some(false)).is_empty(), "summoning sick: {{T}} is a cost");
+}

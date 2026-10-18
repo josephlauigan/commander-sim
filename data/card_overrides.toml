@@ -8463,3 +8463,7 @@ note = "attach target Equipment to target creature, free: the AI moves one of it
 ["Sting, the Glinting Dagger"]
 status = "Partial"
 note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of its controller's combat; missing: the untap at opponents' combats, and first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
+
+["Goblin Welder"]
+status = "Full"
+note = "{T}: sacrifice an artifact you control and return an artifact card from your graveyard to the battlefield, when the card is worth at least 3 more than the artifact (a spent rock for Helm of the Host or Hammer of Nazahn); the AI never targets an opponent's artifact or graveyard"

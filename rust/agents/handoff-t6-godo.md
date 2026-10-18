@@ -7,3 +7,4 @@ Godo: DONE (Partial, engine cap on combats), committed.
 Hammer: DONE (Full), committed.
 Magnetic Theft: DONE (Full), committed.
 Sting: DONE (Partial, engine needs), committed.
+Goblin Welder: DONE (Full), committed.
