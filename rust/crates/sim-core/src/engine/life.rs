@@ -139,7 +139,18 @@ pub fn check_state(g: &mut Game) -> Res {
     }
     for i in 0..g.players.len() {
         let pl = &g.players[i];
-        if pl.alive && ((pl.life <= 0 && !crate::impls::tymna_cards::unlife(g, PlayerId(i as u8))) || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8)) {
+        let dying = pl.alive
+            && ((pl.life <= 0 && !crate::impls::tymna_cards::unlife(g, PlayerId(i as u8)))
+                || pl.decked
+                || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21)
+                || pl.poison >= 10);
+        if dying && crate::impls::t6_plans::is_t6(g, PlayerId(i as u8)) && !crate::impls::t6_stax::grace_active(g, PlayerId(i as u8)) {
+            crate::ai::t6_table::grace_save(g, PlayerId(i as u8)); // Angel's Grace, if it holds one and {W} is open
+        }
+        if dying
+            && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8))
+            && !crate::impls::t6_stax::grace_active(g, PlayerId(i as u8))
+        {
             eliminate(g, PlayerId(i as u8));
         }
     }

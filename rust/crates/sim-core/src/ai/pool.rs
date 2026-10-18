@@ -372,6 +372,9 @@ pub fn card_threat_value(g: &Game, c: CardId) -> f64 {
 
 /// cardimpl.spell_importance: how much opponents want to counter spell c (0-9; 6-7 is the usual threshold)
 pub fn spell_importance(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if g.db.get(c).tag(Tag::Adnaus) && crate::impls::t6_plans::is_t6(g, p) {
+        return 8.0; // Tier 6: Ad Nauseam is a win spell like any other, a counter target
+    }
     let imp = g.registry.get(c);
     if let Some(f) = imp.and_then(|i| i.spell_imp) {
         return f(g, p, c);

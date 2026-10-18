@@ -1196,6 +1196,8 @@ pub struct Game {
     pub animated: Vec<(PlayerId, PermId, LandId)>,
     /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
     pub combo_spell: bool,
+    /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
+    pub t6_going: Option<PlayerId>,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
     /// Coat of Arms has entered (partials.coat_bonus applies)
@@ -1344,6 +1346,7 @@ impl Game {
             search_work: 0,
             animated: vec![],
             combo_spell: false,
+            t6_going: None,
             lattice_lock: None,
             coat: false,
             lineage: false,

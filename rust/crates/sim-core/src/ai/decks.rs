@@ -69,6 +69,9 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 /// ais.deck_prio as Python returns it: a float where a deck's priority isn't whole (Y'shtola's for a card taken from
 /// an opponent: its ability-language value)
 pub fn deck_prio_f(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if let Some(v) = crate::impls::t6_plans::prio(g, p, c) {
+        return v; // a Tier 6 deck's own plan slot
+    }
     match g.player(p).key {
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c),
         _ => deck_prio(g, p, c) as f64,

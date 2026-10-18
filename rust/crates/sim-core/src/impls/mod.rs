@@ -67,6 +67,14 @@ pub mod t6_blue;
 pub mod t6_combos_godo;
 pub mod t6_combos_t6;
 pub mod t6_combos_extra;
+pub mod t6_plans;
+pub mod t6_plan_dack;
+pub mod t6_plan_godo;
+pub mod t6_plan_kinnan;
+pub mod t6_plan_kraum;
+pub mod t6_plan_rograkh_silas;
+pub mod t6_plan_rograkh_thrasios;
+pub mod t6_plan_sisay;
 pub mod smaug;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,

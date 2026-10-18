@@ -136,7 +136,11 @@ impl Situation {
     pub fn new(g: &Game, p: PlayerId) -> Situation {
         let pl = g.player(p);
         let opps: Vec<PlayerId> = g.opps(p).collect();
-        let threat: Vec<(PlayerId, f64)> = opps.iter().map(|&q| (q, threat(g, p, q))).collect();
+        let t6 = crate::impls::t6_plans::is_t6(g, p);
+        let threat: Vec<(PlayerId, f64)> = opps
+            .iter()
+            .map(|&q| (q, threat(g, p, q) + if t6 { super::t6_table::threat_bonus(g, q) } else { 0.0 }))
+            .collect();
         let leader = max_by(&threat, |x| x.1).map(|x| x.0);
         let max_threat =
             if threat.is_empty() { 0.0 } else { threat.iter().map(|x| x.1).fold(f64::NEG_INFINITY, f64::max) };
@@ -151,7 +155,8 @@ impl Situation {
             }
         }
         let has_q = |q: PlayerId, t: Tag| has(g, q, t);
-        let combo_near = opps.iter().any(|&q| {
+        let combo_near = t6 && super::t6_table::archenemy(g, p).is_some_and(|a| a.1 >= super::t6_table::NEAR)
+            || opps.iter().any(|&q| {
             let k = g.player(q).key;
             (k == "veyran" && has_q(q, Tag::Vkitten) && has_q(q, Tag::Vfire))
                 || (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
@@ -226,12 +231,15 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     (Some(c), v)
 }
 
-fn reserve_penalty(g: &Game, p: PlayerId, c: CardId, hold: Option<CardId>, hold_v: f64) -> f64 {
+fn reserve_penalty(g: &Game, p: PlayerId, c: CardId, hold: Option<CardId>, hold_v: f64, near: bool) -> f64 {
     let Some(h) = hold.filter(|&h| h != c) else { return 0.0 };
     let (cg, cp) = cost_of(g, p, c);
     let hd = g.db.get(h);
     if can_pay(g, p, cg + hd.generic, &format!("{cp}{}", hd.pips), false) {
         return 0.0;
+    }
+    if near && !super::t6_table::is_ramp(g, c) {
+        return 8.0f64.max(0.7 * hold_v); // Tier 6, an opponent is close: the answer stays up, no tapping out for value
     }
     0.7 * hold_v
 }
@@ -560,11 +568,25 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
             continue;
         }
         let (rk, tgt, mv4) = rem_spec(g, c);
-        let tg = legal_targets(g, p, rk, tgt, mv4, Some(c));
+        let mut tg = legal_targets(g, p, rk, tgt, mv4, Some(c));
+        if !main && s.combo_near && crate::impls::t6_plans::is_t6(g, p) {
+            // Tier 6: with an opponent close to winning, the answer goes to its pieces
+            let on_arch: Vec<PermId> = tg.iter().copied().filter(|&m| Some(g.perm(m).owner) == s.leader).collect();
+            if !on_arch.is_empty() {
+                tg = on_arch;
+            }
+        }
         let Some(best) = max_by(&tg, |m| pval(g, m)) else { continue };
         let mut v = pval(g, best);
         if Some(g.perm(best).owner) == s.leader {
             v *= 1.25;
+        }
+        if !main && crate::impls::t6_plans::is_t6(g, p) {
+            if s.combo_near && Some(g.perm(best).owner) == s.leader {
+                v += 3.0; // Tier 6: answers are spent on the archenemy's engine
+            } else if d.instant && !s.combo_near && v < 4.5 {
+                continue; // Tier 6: held for the win attempt, not fired at the first creature
+            }
         }
         if s.combo_near && pval(g, best) >= 8.0 {
             v += 2.0;
@@ -1023,7 +1045,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         if !ok {
             continue;
         }
-        u -= reserve_penalty(g, p, c, hold_card, hold_v);
+        u -= reserve_penalty(g, p, c, hold_card, hold_v, s.combo_near && crate::impls::t6_plans::is_t6(g, p));
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
         {
@@ -1068,6 +1090,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     opts.extend(hook_options(g, p, &s, Some(post))?);
     gandalf_hold(g, p, &s, &mut opts);
     let mut stop_u = if hold_card.is_some() { hold_v } else { -3.0 };
+    if let Some(u) = crate::impls::t6_plans::hold_up(g, p) {
+        stop_u += u; // a Tier 6 deck's plan slot: pass with the mana up (or develop)
+    }
     if rsv.is_some() {
         stop_u = stop_u.max(4.5); // ninjutsu window: go to combat, cast after
     }
@@ -1149,6 +1174,9 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     let mut items: Vec<(f64, PlayerId)> = vec![];
     for &q in &opps {
         let mut u = 0.25 * threat(g, p, q);
+        if crate::impls::t6_plans::is_t6(g, p) {
+            u += 0.25 * super::t6_table::threat_bonus(g, q); // Tier 6: hit whoever is about to win
+        }
         if my as f64 >= g.player(q).life as f64 * 0.8 {
             u += 4.0 + 2.0 * aggr; // go for the kill
         }

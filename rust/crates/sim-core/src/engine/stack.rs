@@ -613,6 +613,19 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             thr += 1.5 * altcost::lost(g, q, pk, Some(c)); // cards given up for the alternative cost
         }
     }
+        // Tier 6: the table rules decide (archenemy, win steps), not the look-ahead
+    if crate::impls::t6_plans::is_t6(g, q) {
+        use ai::t6_table::Verdict;
+        match ai::t6_table::counter_verdict(g, q, &top, val, thr, nc) {
+            Verdict::Counter => {}
+            Verdict::Pass => return Ok(()),
+            Verdict::Roll(v, t) => {
+                if g.rng.random() > ai::wants_counter(v, t, nc) {
+                    return Ok(());
+                }
+            }
+        }
+    } else {
     // the look-ahead decides counters to the active player's spell in their main phase
     match ai::search_counter(g, q, top.controller, c, top.generic) {
         Some(false) => return Ok(()),
@@ -622,6 +635,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
                 return Ok(());
             }
         }
+    }
     }
     if top.imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
         g.bounced_spell = true;
