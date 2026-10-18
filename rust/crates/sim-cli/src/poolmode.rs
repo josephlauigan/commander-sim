@@ -683,9 +683,10 @@ fn card_infos(sim: &Sim, cards: &[String]) -> Vec<CardInfo> {
         .collect()
 }
 
-/// poolmode.trace: a play-by-play of one pool game (seed = --seed + GAME)
+/// poolmode.trace: a play-by-play of one pool game (seed = --seed + GAME); without --deck, a game of four decks of
+/// the --pool tier seated as `--calibrate within` seats them
 pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
-    let deck = a.deck.as_deref().ok_or("--trace needs --deck")?;
+    let Some(deck) = a.deck.as_deref() else { return trace_pool(sim, a) };
     let prof = a.profiles[0].clone();
     let st = sim.settings(profile(&prof)?);
     // no tier (or all): the deck's first tier; a tier outside the deck's own needs --any-tier
@@ -712,6 +713,28 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+/// `--pool tN --trace GAME` without --deck: one within-tier game (the seats `--calibrate within` draws for that seed)
+fn trace_pool(sim: &Sim, a: &Args) -> Result<(), String> {
+    let tier = match a.pool.as_deref() {
+        Some("all") | None => return Err("--trace needs --deck, or --pool with one tier".into()),
+        Some(t) => t,
+    };
+    let prof = a.profiles[0].clone();
+    let st = sim.settings(profile(&prof)?);
+    let game = a.trace.unwrap();
+    let seed = a.seed + game;
+    let seats = sim.seats_for(seed, None, None, &sim.pool_keys(tier), 4);
+    let g = crate::play::catch_game(|| GameOut::from_game(&sim.play(seed, &seats, &st, true), false))?;
+    println!(
+        "Play-by-play of within-tier game {game} (seed {seed}): {}, {prof} profile, {} AI",
+        tier_label(tier),
+        ai_name(sim.opts.ai)
+    );
+    println!("{}", g.log.clone().unwrap_or_default().join("\n"));
+    let winner = g.winner.map_or("none".to_string(), |w| sim.name_of(g.players[w].key));
+    println!("Winner: {winner} ({})", g.wintype.unwrap_or("None"));
+    Ok(())
+}
 #[cfg(test)]
 mod tier_tests {
     use super::*;

@@ -70,7 +70,13 @@ const OPTS: [Opt; 22] = [
     opt("--profiles", false, &[], "LIST", "AI interaction profiles to run (default conservative,loose)"),
     opt("--profile", false, &[], "NAME", "run one profile only (conservative or loose)"),
     opt("--analyze", true, &[], "", "deep report: how the deck wins and loses, plan timing, card report"),
-    opt("--trace", false, &[], "GAME", "print a play-by-play log of one game (seed offset) and exit"),
+    opt(
+        "--trace",
+        false,
+        &[],
+        "GAME",
+        "print a play-by-play log of one game (seed offset) and exit; with --calibrate within --pool tN, a game of that tier",
+    ),
     opt("--cards", true, &[], "", "list every card in --deck with its tags, source and unmodeled text"),
     opt("--brief", true, &[], "", "skip the per-axis breakdown"),
     opt(
