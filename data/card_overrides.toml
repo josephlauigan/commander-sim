@@ -1119,7 +1119,7 @@ note = "when it blocks, at end of combat, it and the creature it blocked are des
 
 ["Deflecting Swat"]
 status = "Full"
-note = "free while you control your commander: changes the target of a removal spell aimed at your permanent to one of the caster's (Veyran's AI casts it in response)"
+note = "free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response)"
 
 ["Delighted Halfling"]
 pool_add_tags = ["dork=C"]
@@ -8285,25 +8285,25 @@ status = "Full"
 note = "exile target spell, and every other opposing spell on the stack; cast for {2}{U}{U}, or for free (plus cost increases) when an opponent has cast three or more spells this turn (alternative-cost slot); the AI takes the free mode whenever it is open"
 
 ["Misdirection"]
+status = "Full"
+note = "change the target of a spell with a single target: the AI casts it (mana, or exiling a blue card) at a spell aimed at its key permanent and aims it at the caster's own best permanent (engine/stack.rs ai_respond -> t6_counters::stack_response)"
 types = "I"
 tags = ""
 dsl = []
-status = "Partial"
-note = "not cast by the AI yet: t6_counters::misdirect changes a single target of a spell on the stack; its pitch cost (exile a blue card) is wired into the alternative-cost slot (engine/altcost.rs); missing: the engine casting a non-counter card in response to a spell"
 
 ["Commandeer"]
+status = "Full"
+note = "gain control of a noncreature spell, new targets chosen, and it resolves under the new controller (cast_card uses the stack item's controller; the card still goes to its owner's zones); cast for {5}{U}{U} or by exiling two blue cards (alternative-cost slot); the AI takes a noncreature permanent spell worth 3 or more, or removal aimed at it"
 types = "I"
 tags = ""
 dsl = []
-status = "Partial"
-note = "not cast by the AI yet: t6_counters::commandeer takes control of a noncreature spell on the stack with new targets; its pitch cost (two blue cards) is wired into the alternative-cost slot (engine/altcost.rs); missing: casting in response, and a stolen spell resolving under its new controller"
 
 ["Sudden Substitution"]
+status = "Full"
+note = "split second: exchange control of a noncreature spell and a creature; the spell resolves under its new controller; the AI gives up its cheapest creature for a noncreature permanent spell worth more, or for removal aimed at it"
 types = "I"
 tags = ""
 dsl = []
-status = "Partial"
-note = "not cast by the AI yet: t6_counters::substitute exchanges control of a noncreature spell and a creature; missing: casting in response (split second is real: cast::split_second_up), and a spell resolving under its new controller"
 
 ["Bilbo's Gambit"]
 types = "I"
@@ -8449,15 +8449,15 @@ note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an oppo
 
 ["Redirect Lightning"]
 status = "Partial"
-note = "t6_redirects::redirect_removal answers removal aimed at the owner's key permanent like Deflecting Swat: pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: the engine does not call it yet, and it cannot change the target of an ability or of a spell on the stack (engine needs)"
+note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it): pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: it cannot change the target of an ability"
 
 ["Ricochet Trap"]
-status = "Partial"
-note = "t6_redirects::redirect_removal aims removal at the owner's key permanent back at the caster's best permanent, paying {R} if an opponent cast a blue spell this turn (read from the turn's cast list) else {3}{R}; missing: the engine does not call it yet, and it cannot re-aim a spell on the stack (engine needs)"
+status = "Full"
+note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it) and aims it at the caster's best permanent, paying {R} if an opponent cast a blue spell this turn (read from the turn's cast list) else {3}{R}"
 
 ["Untimely Malfunction"]
 status = "Partial"
-note = "destroys the targeted opposing artifact, else (no artifact chosen) up to two of the opponents' best untapped creatures can't block this turn; the redirect mode is t6_redirects::redirect_removal (like Redirect Lightning, {1}{R}); missing: the engine does not call it yet and cannot re-aim an ability or a spell on the stack, and the AI only casts it at an artifact (engine needs)"
+note = "destroys the targeted opposing artifact, else up to two of the opponents' best untapped creatures can't block this turn; the redirect mode ({1}{R}) answers removal aimed at the owner's key permanent in the removal-response hook; missing: the AI only casts it at an artifact (it never picks the can't-block mode), and it cannot re-aim an ability"
 
 ["Pyrokinesis"]
 tags = "rem=dmg4 tgt=c"

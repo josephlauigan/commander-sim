@@ -54,3 +54,6 @@ Test to add once the engine has it: a 2/2 flyer loses flying and is blocked by a
 `check_state` doesn't kill a creature whose toughness drops to 0 or less after it entered (zones.rs checks only on
 entering). Eldrazi Confluence calls `die(.., "sba")` itself. Make it a real state-based check in the engine pass:
 Dismember on Godo (indestructible from Hammer of Nazahn) depends on it, as do all -X/-X effects.
+
+## t6-e-stack DONE (2026-10-17)
+Redirect Lightning, Ricochet Trap, Untimely Malfunction (redirect mode) and Deflecting Swat are called by `ai::decks::redirect_response` (first in `protect_response`, after Tymna's) for any deck holding them. Still open: re-aiming an ability on the stack (Redirect Lightning, Untimely Malfunction), and the can't-block mode choice for Untimely Malfunction.

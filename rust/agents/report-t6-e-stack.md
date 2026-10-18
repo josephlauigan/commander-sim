@@ -1,0 +1,5 @@
+# Report t6-e-stack
+Mechanism: `stack::stack_window_item` returns the item as it left the stack; `cast::cast_card` resolves under its controller and copies target/face/owner back (the card still goes to its owner's zones via `ctx.owner`). `t6_counters::stack_response` (called from `stack::ai_respond`, only when the hand holds Misdirection / Commandeer / Sudden Substitution) casts them. `ai::decks::redirect_response` (first in `protect_response`) calls `t6_redirects::redirect_removal` and `mine::deflecting_swat` (split out of `veyran_protect`) for any deck holding them (Veyran/Kefka keep their own Swat order).
+Flipped to Full: Deflecting Swat, Misdirection, Commandeer, Sudden Substitution, Ricochet Trap. Partial: Redirect Lightning (no ability re-aim), Untimely Malfunction (AI never picks can't-block; no ability re-aim).
+Other decks: only decks holding these cards change (no change otherwise). Tests: tests/engine_t6_stack.rs (6; Godo with Redirect Lightning / Swat, Misdirection, Commandeer, Substitution).
+Needs found: re-aiming an ability on the stack; stealing spells cast by card code (counter_window); Snapback.

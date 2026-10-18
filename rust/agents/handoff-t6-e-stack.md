@@ -1,3 +1,2 @@
 # Handoff t6-e-stack
-Done (uncommitted->commit soon): stack_window_item + cast_card resolves under item controller/ctx; t6_counters::stack_response (Misdirection/Commandeer/Sudden Substitution) called from ai_respond; decks::redirect_response (redirect cards + Swat for all decks), mine::deflecting_swat.
-Next: build, tests (cards_t6_counters, cards_t6_redirects, new engine_t6_stack), card_overrides status, export, report.
+Engine + tests committed (engine_t6_stack.rs, 6 tests pass). Overrides edited, docs noted. Remaining: wait for cargo build --all-targets, cardgen export --offline, full cargo test --release, commit, report-t6-e-stack.md.
