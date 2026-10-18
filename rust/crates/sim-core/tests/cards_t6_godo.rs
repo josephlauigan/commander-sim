@@ -323,3 +323,39 @@ fn tezzeret_has_no_minus_seven_yet() {
     g.perm_mut(t).loyalty = Some(9);
     assert!(walker_opts(&mut g, t).iter().all(|o| !o.label.contains("-7")), "the emblem is an engine need");
 }
+
+// ======================================================== Party Thrasher
+fn main1(g: &mut Game, src: PermId, p: PlayerId) {
+    let c = g.perm(src).cd.unwrap();
+    g.registry.get(c).unwrap().main1.unwrap()(g, src, p).unwrap();
+}
+
+#[test]
+fn thrasher_discards_a_spare_card_and_lets_you_play_one_of_the_top_two() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Party Thrasher");
+    hand(&mut g, P0, &["Mountain", "Mountain", "Sol Ring"]);
+    let (hand_before, lib_before, gy_before) = (g.player(P0).hand.len(), g.player(P0).library.len(), g.player(P0).gy.len());
+    main1(&mut g, t, P0);
+    assert_eq!(g.player(P0).gy.len(), gy_before + 1, "discarded a card");
+    assert_eq!(g.player(P0).library.len(), lib_before - 2, "two cards exiled");
+    assert_eq!(g.player(P0).hand.len(), hand_before - 1 + 1, "one discarded, one chosen");
+    assert_eq!(g.player(P0).impulse.len(), 1, "playable this turn only");
+    assert_eq!(g.player(P0).exile.len(), 1, "the other stays exiled");
+    let c = g.player(P0).impulse[0];
+    assert!(g.player(P0).hand.contains(&c));
+}
+
+#[test]
+fn thrasher_does_nothing_without_a_spare_card_or_on_an_opponents_turn() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Party Thrasher");
+    hand(&mut g, P0, &["Sol Ring"]);
+    let lib = g.player(P0).library.len();
+    main1(&mut g, t, P0);
+    assert_eq!(g.player(P0).library.len(), lib, "may discard: the AI declines without a spare card");
+    hand(&mut g, P0, &["Mountain", "Mountain"]);
+    let lib = g.player(P0).library.len();
+    main1(&mut g, t, P1);
+    assert_eq!(g.player(P0).library.len(), lib, "only on its controller's first main phase");
+}

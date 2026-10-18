@@ -5,6 +5,7 @@
 
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::cast::discard_worst;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::once_per_turn;
@@ -472,6 +473,42 @@ fn tez_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== Party Thrasher
+/// is there a card in p's hand the AI is glad to lose: a second land, or a spell too expensive to ever cast
+fn thrasher_spare(g: &Game, p: PlayerId) -> bool {
+    let hand = &g.player(p).hand;
+    hand.iter().filter(|&&c| g.db.get(c).land).count() >= 2 || hand.iter().any(|&c| !g.db.get(c).land && g.db.get(c).cmc >= 7)
+}
+
+/// **Party Thrasher** ({1}{R}, 1/4): at the beginning of your first main phase, you may discard a card; if you do,
+/// exile the top two cards of your library, choose one of them, and you may play it this turn (the card goes to the
+/// hand and into the impulse list, which the end of turn empties; the other card stays exiled). The AI discards only
+/// a spare card (`thrasher_spare`) and keeps the card it wants most (`topdeck::desire`). Missing: "noncreature spells
+/// you cast from exile have convoke" (rust/agents/engine-needs-godo.md).
+fn thrasher_main1(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if owner(g, src) != p || !live(g, src) || g.player(p).library.len() < 2 || !thrasher_spare(g, p) {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "discard a card, exile the top two, play one", Some(3.0))? {
+        return Ok(());
+    }
+    discard_worst(g, p, 1)?;
+    let top: Vec<CardId> = (0..2).filter_map(|_| g.player_mut(p).library.pop()).collect();
+    let best = max_by(&top, |c| crate::ai::topdeck::desire(g, p, c));
+    for &c in &top {
+        if Some(c) == best {
+            let pl = g.player_mut(p);
+            pl.hand.push(c);
+            pl.impulse.push(c);
+            pl.seen.insert(c);
+            crate::glog!(g, "    Party Thrasher: {} may be played this turn", g.db.get(c).name);
+        } else {
+            g.player_mut(p).exile.push(c);
+        }
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -484,6 +521,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Goblin Welder")?.options = Some(welder_options);
     super::common::walker(r, db, "Tezzeret, Cruel Captain", &TEZZERET)?;
     r.card(db, "Tezzeret, Cruel Captain")?.etb = Some(tez_etb);
+    r.card(db, "Party Thrasher")?.main1 = Some(thrasher_main1);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

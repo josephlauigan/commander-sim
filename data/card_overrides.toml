@@ -8477,3 +8477,7 @@ note = "enters: search for an artifact and put it into the graveyard (Helm, then
 dsl = []
 status = "Partial"
 note = "enters with 4 loyalty; whenever an artifact you control enters, +1 loyalty; 0: untap a spent mana rock (or tapped creature), +1/+1 counter if it is an artifact creature; -3: search for an artifact with mana value 1 or less into the hand; missing: the -7 emblem (rust/agents/engine-needs-godo.md)"
+
+["Party Thrasher"]
+status = "Partial"
+note = "first main phase: the AI discards a spare card (a second land or a spell of mana value 7+), exiles the top two, may play the better one this turn (the other stays exiled); missing: convoke for noncreature spells cast from exile (rust/agents/engine-needs-godo.md)"
