@@ -591,6 +591,7 @@ fn splendor_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    register_alt_costs(r, db)?;
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
     r.card(db, "Pyrokinesis")?.resolve = Some(pyro_resolve);
     r.card(db, "Scout's Warning")?.resolve = Some(scout_resolve);
@@ -604,5 +605,36 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Gleaming Splendor")?;
     c.draw = Some(splendor_draw);
     c.options = Some(splendor_options);
+    Ok(())
+}
+
+// ================================================================== alternative costs (engine/altcost.rs)
+fn pyro_alt_ok(g: &Game, p: PlayerId, card: CardId, _spell: Option<CardId>) -> bool {
+    !red_pitch(g, p, card).is_empty()
+}
+
+fn pyro_alt_pay(g: &mut Game, p: PlayerId, card: CardId, _spell: Option<CardId>) -> Res<bool> {
+    pay_pyro_pitch(g, p, card)
+}
+
+fn sunscour_alt_ok(g: &Game, p: PlayerId, card: CardId, _spell: Option<CardId>) -> bool {
+    white_pitch(g, p, card).len() >= 2
+}
+
+fn sunscour_alt_pay(g: &mut Game, p: PlayerId, card: CardId, _spell: Option<CardId>) -> Res<bool> {
+    pay_sunscour_pitch(g, p, card)
+}
+
+/// Pyrokinesis gives up one card, Sunscour two
+fn pitch_lost(g: &Game, _p: PlayerId, card: CardId, _spell: Option<CardId>) -> f64 {
+    if &*g.db.get(card).name == "Sunscour" { 2.0 } else { 1.0 }
+}
+
+/// the alternative-cost slots of Pyrokinesis and Sunscour (set in `register`)
+pub fn register_alt_costs(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Pyrokinesis")?.alt_cost =
+        Some(crate::hooks::AltCost { ok: pyro_alt_ok, pay: pyro_alt_pay, lost: pitch_lost });
+    r.card(db, "Sunscour")?.alt_cost =
+        Some(crate::hooks::AltCost { ok: sunscour_alt_ok, pay: sunscour_alt_pay, lost: pitch_lost });
     Ok(())
 }

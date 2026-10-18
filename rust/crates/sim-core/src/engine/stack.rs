@@ -6,6 +6,7 @@
 //! player priority on it and says whether it was countered.
 
 use crate::ai;
+use crate::engine::altcost;
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::run_hook;
@@ -510,6 +511,8 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         let (cg, cp) = counter_cost(g, pk, Some(c), Some(q));
         if g.db.get(pk).tag(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
             thr += 1.5;
+        } else if altcost::use_alt(g, q, pk, Some(c), cg, &cp) {
+            thr += 1.5 * altcost::lost(g, q, pk, Some(c)); // cards given up for the alternative cost
         }
     }
     // the look-ahead decides counters to the active player's spell in their main phase
@@ -550,6 +553,9 @@ pub fn counter_ok(g: &Game, ctr: CardId, c: CardId) -> bool {
         Some("cre2") => d.creature && (d.pow <= 2 || d.tgh <= 2), // Stern Scolding
         Some("blue") => d.pips.contains('U'),                     // Pyroblast / Red Elemental Blast
         Some("crleg") => d.creature || d.tag(Tag::Leg),           // Icy Reception: creature or legendary spell
+        // Disrupting Shoal counters a spell only if its mana value is X. The AI always chooses X equal to the spell's
+        // mana value (`counter_cost`; the pitch needs a blue card of that value, `t6_counters::shoal_pitch`).
+        Some("mvx") => true,
         _ => false,
     }
 }
@@ -560,6 +566,11 @@ pub fn counter_cost(g: &Game, ctr: CardId, spell: Option<CardId>, q: Option<Play
     let d = g.db.get(ctr);
     if d.tag(Tag::Brushoff) && spell.is_some_and(|s| g.db.get(s).instant || g.db.get(s).sorcery) {
         return (1, "U".into());
+    }
+    if &*d.name == "Disrupting Shoal"
+        && let Some(s) = spell
+    {
+        return (g.db.get(s).cmc, d.pips.to_string()); // {X}{U}{U}, X = the spell's mana value
     }
     if &*d.name == "Phantom Interference" {
         return (1, "U".into()); // spree: the counter mode costs {1} more (the Spirit mode: bulk_blue::spree_extra)
@@ -580,6 +591,7 @@ fn blue_in_hand(g: &Game, q: PlayerId, except: CardId) -> Vec<CardId> {
 /// the counterspell q would use against c, if any
 pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     let mut best: Option<CardId> = None;
+    let mut loose = false; // best is a pitch (Force of Will) or alternative-cost pick: any counter paid in mana beats it
     let cheaper = |best: Option<CardId>, ctr: CardId| best.is_none_or(|b| g.db.get(ctr).cmc < g.db.get(b).cmc);
     for &ctr in &g.player(q).hand {
         let d = g.db.get(ctr);
@@ -600,27 +612,43 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         if !g.hooks.is_empty() && !castable(g, q, ctr, "hand") {
             continue;
         }
-        if t.has(Tag::Fierce) && commander_out(g, q) {
+        // the free modes pay the cost increases (Defense Grid) in mana: `altcost::tax`, 0 when nothing taxes spells
+        let taxed_ok = altcost::tax_payable(g, q, ctr);
+        if t.has(Tag::Fierce) && commander_out(g, q) && taxed_ok {
             return Some(ctr); // Fierce Guardianship: free with your commander out
         }
-        if t.has(Tag::Pact) && g.player(q).lands.len() >= 5 {
+        if t.has(Tag::Pact) && g.player(q).lands.len() >= 5 && taxed_ok {
             return Some(ctr); // Pact of Negation: free now, {3}{U}{U} next upkeep
         }
-        if t.has(Tag::Misstep) && g.player(q).life > 10 {
+        if t.has(Tag::Misstep) && g.player(q).life > 10 && taxed_ok {
             return Some(ctr); // Mental Misstep: 2 life
         }
-        if t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty() {
+        if t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty() && taxed_ok {
             return Some(ctr); // Force of Negation: free on others' turns
         }
         let (cg, cp) = counter_cost(g, ctr, Some(c), Some(q));
         if t.has(Tag::Free) {
-            if (!blue_in_hand(g, q, ctr).is_empty() || can_pay(g, q, cg, &cp, false)) && best.is_none() {
+            if ((!blue_in_hand(g, q, ctr).is_empty() && taxed_ok) || can_pay(g, q, cg, &cp, false)) && best.is_none() {
                 best = Some(ctr);
+                loose = true;
             }
             continue;
         }
-        if can_pay(g, q, cg, &cp, false) && (cheaper(best, ctr) || best.is_some_and(|b| g.db.get(b).tag(Tag::Free))) {
+        if altcost::use_alt(g, q, ctr, Some(c), cg, &cp) {
+            // an alternative cost (Daze, Flare of Denial, Disrupting Shoal, Mindbreak Trap): taken at once when it gives
+            // up nothing, else (the mana cost can't be paid) like a Force of Will pitch
+            if altcost::lost(g, q, ctr, Some(c)) <= 0.0 {
+                return Some(ctr);
+            }
+            if best.is_none() {
+                best = Some(ctr);
+                loose = true;
+            }
+            continue;
+        }
+        if can_pay(g, q, cg, &cp, false) && (cheaper(best, ctr) || loose) {
             best = Some(ctr);
+            loose = false;
         }
     }
     best
@@ -630,7 +658,12 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
 /// while q controls its commander
 pub fn free_counter(g: &Game, q: PlayerId, c: CardId) -> bool {
     let t = &g.db.get(c).tags;
-    t.has(Tag::Free) || (t.has(Tag::Fierce) && commander_out(g, q))
+    t.has(Tag::Free)
+        || (t.has(Tag::Fierce) && commander_out(g, q))
+        || (altcost::slot(g, c).is_some()
+            && altcost::tax(g, q, c) == 0
+            && altcost::lost(g, q, c, None) <= 0.0
+            && altcost::available(g, q, c, None)) // Mindbreak Trap's free mode
 }
 
 /// pay counterspell ctr's cost (or its alternative cost) against spell; true if paid
@@ -639,6 +672,14 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
         return Ok(true); // practice mode: paid from the person's pool
     }
     let t = g.db.get(ctr).tags.clone();
+    // a cast without paying the mana cost still pays the cost increases (Defense Grid): `altcost::tax`
+    let tax_free_cast = (t.has(Tag::Fierce) && commander_out(g, q))
+        || t.has(Tag::Pact)
+        || (t.has(Tag::Misstep) && g.player(q).life > 10)
+        || (t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty());
+    if tax_free_cast && !altcost::pay_tax(g, q, ctr)? {
+        return Ok(false);
+    }
     if t.has(Tag::Fierce) && commander_out(g, q) {
         return Ok(true); // cast without paying its mana cost
     }
@@ -671,12 +712,15 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     let (cg, cp) = counter_cost(g, ctr, spell, Some(q));
     if t.has(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
         let blues = blue_in_hand(g, q, ctr);
-        if blues.is_empty() {
+        if blues.is_empty() || !altcost::pay_tax(g, q, ctr)? {
             return Ok(false);
         }
         pitch(g, blues)?;
         lose_life(g, q, 1, Some(q), "other", None)?;
         return Ok(true);
+    }
+    if altcost::use_alt(g, q, ctr, spell, cg, &cp) {
+        return altcost::pay_alt(g, q, ctr, spell); // Daze, Flare of Denial, Disrupting Shoal, Mindbreak Trap
     }
     pay(g, q, cg, &cp, false)
 }
@@ -793,6 +837,9 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
         if desert {
             it.ctx.desert_to = Some(q); // Desertion: the countered artifact or creature is q's
         }
+    }
+    if &*g.db.get(ctr).name == "Mindbreak Trap" {
+        crate::impls::t6_counters::mindbreak_exile(g, q)?; // "exile any number of target spells": all the others
     }
     Ok(())
 }

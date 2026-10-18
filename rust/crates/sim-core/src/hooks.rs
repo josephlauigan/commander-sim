@@ -360,6 +360,16 @@ pub type SagaLoreFn = fn(&mut Game, PlayerId, PermId) -> Res;
 /// Python passes the copy's effect as a closure; here it is the card code's own number for it (impls::mine).
 pub type CopycastFn = fn(&mut Game, Src, PlayerId, u8) -> Res;
 
+/// A card's alternative cost (engine/altcost.rs). `ok(g, p, card, spell)`: can p pay it now (`spell` is the spell the card
+/// answers, if any); `pay` pays it (false, nothing paid, if it can't be); `lost` is the cards' worth of value it gives up,
+/// which the AI weighs against the mana saved.
+#[derive(Debug, Clone, Copy)]
+pub struct AltCost {
+    pub ok: fn(&Game, PlayerId, CardId, Option<CardId>) -> bool,
+    pub pay: fn(&mut Game, PlayerId, CardId, Option<CardId>) -> Res<bool>,
+    pub lost: fn(&Game, PlayerId, CardId, Option<CardId>) -> f64,
+}
+
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct CardImpl {
@@ -377,6 +387,8 @@ pub struct CardImpl {
     pub attack: Option<AttackFn>,
     pub combat_damage: Option<CombatDamageFn>,
     pub options: Option<OptionsFn>,
+    /// the card's alternative cost for a spell cast from hand (engine/altcost.rs): Daze, pitch spells
+    pub alt_cost: Option<AltCost>,
     pub cost: Option<CostFn>,
     pub can_cast: Option<CanCastFn>,
     pub attack_tax: Option<AttackLimitFn>,
