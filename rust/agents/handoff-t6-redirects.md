@@ -18,3 +18,4 @@ Oracle text fetch, build cardgen, first card.
 - Calamity's Wake: done (Partial; lock flag unread).
 - Emerald Charm: done (Partial; lose-flying mode missing).
 - Sunscour: done (Partial; pitch cost fn only).
+- Gleaming Splendor: done (Full; tags cleared because treas tag gave a Treasure on entering). Remaining: final checks (rustfmt, full cargo test, build warnings), report.

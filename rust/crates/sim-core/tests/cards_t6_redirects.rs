@@ -426,3 +426,44 @@ fn sunscour_alternative_cost_exiles_two_white_cards() {
     assert_eq!(g.player(P0).exile.len(), 2);
     assert!(in_hand(&g, P0, "Sunscour") && in_hand(&g, P0, "Island"));
 }
+
+// ======================================================== Gleaming Splendor
+fn treasures(g: &Game, p: PlayerId) -> u32 {
+    g.player(p).treasures as u32
+}
+
+#[test]
+fn gleaming_splendor_makes_a_treasure_on_an_opponents_second_draw() {
+    let mut g = game();
+    g.active = Some(P1);
+    perm(&mut g, P0, "Gleaming Splendor");
+    sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
+    assert_eq!(treasures(&g, P0), 0, "the first draw gives nothing");
+    sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
+    assert_eq!(treasures(&g, P0), 1, "the second does");
+    sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
+    assert_eq!(treasures(&g, P0), 1, "only the second");
+    // the owner's own draws never count
+    sim_core::engine::zones::draw(&mut g, P0, 2, false).unwrap();
+    assert_eq!(treasures(&g, P0), 1);
+}
+
+#[test]
+fn gleaming_splendor_ability_draws_for_two_players_and_the_ai_uses_it_after_their_first_draw() {
+    let mut g = game();
+    g.active = Some(P1);
+    let s = perm(&mut g, P0, "Gleaming Splendor");
+    lands(&mut g, P0, "Plains", 3, false);
+    // before the opponent has drawn: not worth it
+    let opts = t6::splendor_options(&mut g, s, P0, None).unwrap();
+    assert!(opts.is_empty());
+    sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
+    let opts = t6::splendor_options(&mut g, s, P0, None).unwrap();
+    assert_eq!(opts.len(), 1);
+    let (h0, h1) = (g.player(P0).hand.len(), g.player(P1).hand.len());
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert_eq!(g.player(P0).hand.len(), h0 + 1);
+    assert_eq!(g.player(P1).hand.len(), h1 + 1);
+    assert_eq!(treasures(&g, P0), 1, "their second card of the turn");
+    assert_eq!(untapped(&g, P0), 0);
+}

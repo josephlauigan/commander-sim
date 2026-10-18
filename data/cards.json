@@ -42498,9 +42498,7 @@
    "types": "E",
    "generic": 1,
    "pips": "W",
-   "tags": {
-    "treas": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -42514,10 +42512,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{2}{W}: Two target players each draw a card."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

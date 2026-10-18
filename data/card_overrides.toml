@@ -8436,3 +8436,8 @@ note = "destroys the best opposing non-Aura enchantment (the chosen target first
 ["Sunscour"]
 status = "Partial"
 note = "destroys all creatures (the wipe=destroy tag); the pitch cost (exile two white cards from hand) is t6_redirects::pay_sunscour_pitch; missing: the engine casts it only for {5}{W}{W} (alternative-cost hook)"
+
+["Gleaming Splendor"]
+tags = ""
+status = "Full"
+note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: you and one opponent each draw a card, which the AI uses in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure)"

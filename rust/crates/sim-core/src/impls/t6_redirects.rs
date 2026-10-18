@@ -15,7 +15,7 @@ use crate::engine::values::{epow, etgh};
 use crate::engine::zones::{die, max_by};
 use crate::state::Ctx;
 use crate::flow::Res;
-use crate::hooks::Registry;
+use crate::hooks::{Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::cards::CardDb;
 use crate::state::Game;
@@ -552,6 +552,50 @@ pub fn pay_sunscour_pitch(g: &mut Game, p: PlayerId, card: CardId) -> Res<bool> 
     Ok(true)
 }
 
+
+// ================================================================== Gleaming Splendor
+/// Gleaming Splendor: whenever an opponent draws their second card each turn, you create a Treasure
+fn splendor_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = g.perm(src).owner;
+    if p != o && g.perm(src).on_bf && !g.perm(src).phased && g.player(p).draw_n == 2 && g.player(o).alive {
+        crate::glog!(g, "    {} draws a second card: {} creates a Treasure (Gleaming Splendor)", pname(g, p), pname(g, o));
+        crate::engine::zones::add_treasure(g, o, 1)?;
+    }
+    Ok(())
+}
+
+/// {2}{W}: two target players each draw a card. The AI uses it in the end step of an opponent's turn, once that
+/// opponent has drawn exactly one card (their card from this ability is then their second: a Treasure), when it has
+/// the mana to spare.
+pub fn splendor_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || crate::human::is_human(g, p) || g.perm(src).owner != p || !g.perm(src).on_bf {
+        return Ok(vec![]);
+    }
+    let Some(q) = g.active.filter(|&q| q != p && g.player(q).alive) else { return Ok(vec![]) };
+    if g.player(q).draw_st != Some(g.turn_stamp()) || g.player(q).draw_n != 1 || !can_pay(g, p, 2, "W", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 2.2,
+        label: "Gleaming Splendor: two players draw".into(),
+        act: Some(crate::hooks::Action::Ability { src, f: splendor_go, arg: q.0 as i64 }),
+    }])
+}
+
+fn splendor_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let q = PlayerId(arg as u8);
+    if !g.perm(src).on_bf || !g.player(q).alive || !can_pay(g, p, 2, "W", false) {
+        return Ok(false);
+    }
+    pay(g, p, 2, "W", false)?;
+    if !crate::engine::stack::ability_window(g, p, Some(src), "two target players each draw a card", Some(3.0), None)? {
+        return Ok(true);
+    }
+    crate::engine::zones::draw(g, p, 1, false)?;
+    crate::engine::zones::draw(g, q, 1, false)?;
+    Ok(true)
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
@@ -564,5 +608,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Soul Partition")?.resolve = Some(soul_partition_resolve);
     r.card(db, "Calamity's Wake")?.resolve = Some(calamity_resolve);
     r.card(db, "Emerald Charm")?.resolve = Some(emerald_charm_resolve);
+    let c = r.card(db, "Gleaming Splendor")?;
+    c.draw = Some(splendor_draw);
+    c.options = Some(splendor_options);
     Ok(())
 }
