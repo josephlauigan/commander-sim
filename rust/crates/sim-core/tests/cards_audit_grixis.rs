@@ -176,3 +176,15 @@ fn kefka_tutors_fetch_the_crawler_for_a_flipped_kefka_else_the_breach_line() {
     hand(&mut g, P0, &["Psychosis Crawler"]);
     assert_eq!(nm(&g), "Underworld Breach", "the Crawler is the win: back to the Breach line");
 }
+
+#[test]
+fn kefka_counts_mana_leak_into_open_mana_as_a_weak_counter() {
+    let mut g = table(&["kefka", "veyran"]);
+    let leak = card(&g, "Mana Leak");
+    let denial = card(&g, "Arcane Denial");
+    let p1 = PlayerId(1);
+    assert_eq!(sim_core::engine::stack::soft_counter_factor(&g, P0, p1, leak), 1.0, "no mana: they cannot pay");
+    lands(&mut g, p1, "Island", 4, false);
+    assert!(sim_core::engine::stack::soft_counter_factor(&g, P0, p1, leak) < 0.5);
+    assert_eq!(sim_core::engine::stack::soft_counter_factor(&g, P0, p1, denial), 1.0, "a hard counter is unchanged");
+}
