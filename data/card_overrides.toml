@@ -8635,3 +8635,7 @@ note = "the extra turn and the loss at its end step need engine extra turns; the
 ["Disruptor Flute"]
 status = "Full"
 note = "flash; the AI names the card that hurts opponents most as it enters (ai::flute_pick); spells with that name cost {3} more for every player (mana::cost_of) and its activated abilities are off except mana abilities (values::stopped)"
+
+["Silence"]
+status = "Partial"
+note = "opponents can't cast spells this turn: modeled as no noncreature spells (Player::hope_lock) plus the turn flag t6_stax::cast_lock; creature (flash) spells need the engine's cast lock (rust/agents/engine-needs-stax.md); the AI never casts it"
