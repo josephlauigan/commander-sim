@@ -70,10 +70,11 @@ pub fn is_main(key: &str) -> bool {
 
 /// one of JD's twelve decks (data/my_decks.toml): their own priority functions decide what is held, so a 0 is never
 /// replaced by the generic ability value
+/// JD's own ten decks (the 10/18 AI audit scope; Avery's Alela and Galadriel are not included)
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "seph" | "veyran" | "sauron" | "yshtola" | "galadriel" | "alela" | "kefka" | "titania" | "sheoldred" | "cloud" | "kraum" | "sephfs"
+        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "titania" | "sheoldred" | "cloud" | "kraum" | "sephfs"
     )
 }
 
