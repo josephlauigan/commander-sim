@@ -492,6 +492,41 @@ fn calamity_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
     Ok("exile")
 }
 
+
+// ================================================================== Emerald Charm
+fn non_aura_enchantment(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| {
+        let d = g.db.get(c);
+        d.types.has(crate::cards::Types::ENCHANTMENT) && !d.has_subtype("aura")
+    })
+}
+
+/// Emerald Charm (choose one): destroy target non-Aura enchantment (the best opposing one, the chosen target first),
+/// else untap target permanent (one of the caster's own: a land, else its best tapped permanent). The third mode, a
+/// creature loses flying until end of turn, is not chosen (engine need: no way to remove a keyword for a turn).
+fn emerald_charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let ench = ctx
+        .target
+        .filter(|&t| g.perm(t).on_bf && g.perm(t).owner != p && non_aura_enchantment(g, t))
+        .or_else(|| best_opposing(g, p, non_aura_enchantment));
+    if let Some(t) = ench {
+        apply_removal(g, Some(p), t, "destroy", Some(c))?;
+        return Ok("gy");
+    }
+    if let Some(l) = g.player(p).lands.iter().copied().find(|&l| g.land(l).tapped) {
+        g.land_mut(l).tapped = false;
+        crate::glog!(g, "    {} untaps a land (Emerald Charm)", pname(g, p));
+        return Ok("gy");
+    }
+    let tapped: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).tapped).collect();
+    if let Some(m) = max_by(&tapped, |m| pval(g, m)) {
+        g.perm_mut(m).tapped = false;
+        crate::glog!(g, "    {} untaps {} (Emerald Charm)", pname(g, p), g.perm(m).name);
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
@@ -503,5 +538,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Erode")?.resolve = Some(erode_resolve);
     r.card(db, "Soul Partition")?.resolve = Some(soul_partition_resolve);
     r.card(db, "Calamity's Wake")?.resolve = Some(calamity_resolve);
+    r.card(db, "Emerald Charm")?.resolve = Some(emerald_charm_resolve);
     Ok(())
 }

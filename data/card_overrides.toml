@@ -8428,3 +8428,7 @@ note = "exiles the targeted nonland permanent, then its owner's card goes back t
 ["Calamity's Wake"]
 status = "Partial"
 note = "exiles all graveyards and itself, and sets the turn lock t6_redirects::noncreature_lock (players can't cast noncreature spells this turn); missing: the engine's cast check does not read the lock yet (engine need)"
+
+["Emerald Charm"]
+status = "Partial"
+note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"

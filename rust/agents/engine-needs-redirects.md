@@ -49,3 +49,9 @@ Needs: "players can't cast noncreature spells this turn" in the cast check (the 
 Where it would hook: `engine/cast.rs` `castable` (and the counter / response casting in `engine/stack.rs`).
 Card side done: graveyards and the Wake exiled, `noncreature_lock` (true for the rest of the turn).
 Test to add once the engine has it: after the Wake, an opponent holding Lightning Bolt cannot cast it that turn but can cast a creature.
+
+## Emerald Charm
+Needs: removing a keyword from a creature until end of turn (the `eot_kw` list only adds keywords); a `tgt` code for "enchantment" alone so the AI aims the destroy mode (today it uses `tgt=nl`).
+Where it would hook: `dsl::has_kw` / `Perm::fly` readers in `engine/combat.rs` (a "loses flying" eot list), `engine/removal.rs` `legal_targets`.
+Card side done: `emerald_charm_resolve` (destroy a non-Aura enchantment, else untap a land or the best tapped permanent).
+Test to add once the engine has it: a 2/2 flyer loses flying and is blocked by a ground creature that turn.

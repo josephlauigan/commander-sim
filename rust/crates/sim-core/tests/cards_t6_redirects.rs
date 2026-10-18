@@ -378,3 +378,24 @@ fn calamitys_wake_exiles_every_graveyard_and_itself_and_locks_noncreature_spells
     assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Grave Titan"));
     assert!(t6::noncreature_lock(&g));
 }
+
+// ======================================================== Emerald Charm
+#[test]
+fn emerald_charm_destroys_a_non_aura_enchantment() {
+    let mut g = game();
+    g.active = Some(P0);
+    let e = perm(&mut g, P1, "Rhystic Study");
+    cast_free(&mut g, P0, "Emerald Charm", sim_core::state::Ctx::default());
+    assert!(!g.perm(e).on_bf);
+    assert!(in_gy(&g, P0, "Emerald Charm"));
+}
+
+#[test]
+fn emerald_charm_untaps_a_land_when_there_is_no_enchantment() {
+    let mut g = game();
+    g.active = Some(P0);
+    let ls = lands(&mut g, P0, "Forest", 2, true);
+    cast_free(&mut g, P0, "Emerald Charm", sim_core::state::Ctx::default());
+    let up = ls.iter().filter(|&&l| !g.land(l).tapped).count();
+    assert_eq!(up, 1);
+}
