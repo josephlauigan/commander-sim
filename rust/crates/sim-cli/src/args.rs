@@ -24,6 +24,8 @@ pub struct Args {
     pub jobs: usize,
     pub any_tier: bool,
     pub no_explain: bool,
+    pub no_preflight: bool,
+    pub preflight_only: bool,
 }
 
 struct Opt {
@@ -44,7 +46,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 22] = [
+const OPTS: [Opt; 24] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -81,6 +83,20 @@ const OPTS: [Opt; 22] = [
         "with --swap: skip the paired breakdown (the swapped cards' model status before the run; their drawn / cast / stuck numbers and the game shape of both lists after it). It is on by default and costs no extra games",
     ),
     opt(
+        "--no-preflight",
+        true,
+        &[],
+        "",
+        "with --swap: skip the two-step preflight that runs before the long run: (1) the AI-rule check (does the deck's priority function rank each swapped-in card above 0, or is it an instant or removal the AI casts as a response) and (2) a quick adaptive dry run (200 games per profile on the first tier) that stops with exit code 3 when a swapped-in card was drawn in 20+ games and cast in under 5% of them.",
+    ),
+    opt(
+        "--preflight-only",
+        true,
+        &[],
+        "",
+        "with --swap: run the preflight (AI-rule check and dry run), print it and exit without the main run",
+    ),
+    opt(
         "--ai",
         false,
         &["lookahead", "adaptive"],
@@ -98,7 +114,8 @@ const OPTS: [Opt; 22] = [
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
-     \x20                    [--cards] [--brief] [--ai {lookahead,adaptive}] [--temp T] [--quiet] [--jobs N]\n\
+     \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
+     \x20                    [--temp T] [--quiet] [--jobs N]\n\
      \x20      commander-sim swaptest | searchtest | pools ...   (commander-sim swaptest --help)"
 }
 
@@ -174,6 +191,8 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         jobs: 0,
         any_tier: false,
         no_explain: false,
+        no_preflight: false,
+        preflight_only: false,
     };
     let (mut games, mut n, mut profiles, mut profile, mut jobs) = (None, None, None, None, None);
     let mut i = 0;
@@ -215,6 +234,8 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--all-decks" => a.all_decks = true,
             "--any-tier" => a.any_tier = true,
             "--no-explain" => a.no_explain = true,
+            "--no-preflight" => a.no_preflight = true,
+            "--preflight-only" => a.preflight_only = true,
             "--calibrate" => a.calibrate = Some(val),
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
@@ -346,5 +367,23 @@ mod explain_flag_tests {
         // --n still means --games, and a prefix of --no-explain works
         assert_eq!(p(&["--n", "50"]).unwrap().games, 50);
         assert!(p(&["--no-ex"]).unwrap().no_explain);
+    }
+}
+
+#[cfg(test)]
+mod preflight_flag_tests {
+    use super::*;
+
+    fn p(a: &[&str]) -> Result<Args, Exit> {
+        parse(&a.iter().map(|s| s.to_string()).collect::<Vec<_>>())
+    }
+
+    #[test]
+    fn preflight_is_on_by_default_and_the_flags_turn_it_off_or_stop_after_it() {
+        let a = p(&["--deck", "kefka", "--swap", "A=>B"]).unwrap();
+        assert!(!a.no_preflight && !a.preflight_only);
+        assert!(p(&["--deck", "kefka", "--swap", "A=>B", "--no-preflight"]).unwrap().no_preflight);
+        assert!(p(&["--deck", "kefka", "--swap", "A=>B", "--preflight-only"]).unwrap().preflight_only);
+        assert!(help().contains("--no-preflight") && help().contains("--preflight-only"));
     }
 }
