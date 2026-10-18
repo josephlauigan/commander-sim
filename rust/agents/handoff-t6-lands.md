@@ -1,5 +1,5 @@
 # Handoff t6-lands
-Done: City of Brass, City of Traitors (commits). Tests in tests/cards_t6_lands.rs, code impls/t6_lands.rs.
+Done: City of Brass, City of Traitors, Gemstone Caverns (Partial, engine-needs-lands.md).
 Next (order): Gemstone Caverns, Abstergo, Eiganjo, Deserted Temple, Minamo, Emergence Zone, Forbidden Orchard, Petrified Hamlet, Mycosynth Gardens, Fomori Vault, Mount Doom, Shatterskull Smashing, Talon Gates, Razorgrass Ambush.
 Gotchas: lands are LandIds (not perms); no new DataKey (state.rs is shared): land.data uses existing keys (Counters, ChosenColor ...). Filter-ish "{1},{T}: any colour" lands = land_cols returning ident only if another untapped non-group land exists (count of mana stays right). Oracle in scratchpad o.json. Razorgrass Ambush // Field not in Scryfall collection by that name: use cards/named?exact=Razorgrass+Ambush.
 Run: cd rust; CARGO_BUILD_JOBS=2 nice -n 19 systemd-run --user --scope -q -p MemoryMax=12G -p MemorySwapMax=0 cargo test --release -p sim-core --test cards_t6_lands

@@ -9,7 +9,7 @@ use crate::engine::life::lose_life;
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{LandId, PlayerId};
-use crate::state::Game;
+use crate::state::{DataKey, Game};
 
 fn name_of(g: &Game, l: LandId) -> &str {
     &g.db.get(g.land(l).cd).name
@@ -41,6 +41,16 @@ fn traitors_check(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     Ok(())
 }
 
+// ================================================================== Gemstone Caverns
+/// **Gemstone Caverns**: {T}: Add {C}; with a luck counter on it, one mana of any colour instead. The opening-hand
+/// clause (begin the game with it on the battlefield with a luck counter, exiling a card) needs the engine: see
+/// engine-needs-lands.md. The luck counter is `DataKey::Counters` (an Int) on the land.
+fn caverns_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
+    if g.land(l).data.int(DataKey::Counters) > 0 { g.player(p).ident } else { Colors::NONE }
+}
+
+// CODE-HERE
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "City of Brass")?.on_tap_land = Some(brass_tap);
     // City of Traitors: land_etb on every land that has none yet (the City itself included: playing a second City
@@ -52,6 +62,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
             c.land_etb = Some(traitors_check);
         }
     }
-    let _ = Colors::NONE;
+    r.card(db, "Gemstone Caverns")?.land_cols = Some(caverns_cols);
+    // REGISTER-HERE
     Ok(())
 }

@@ -2,7 +2,7 @@
 
 use sim_core::engine::{mana, turn};
 use sim_core::ids::PlayerId;
-use sim_core::state::Game;
+use sim_core::state::{DataKey, Game, Val};
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
@@ -46,4 +46,18 @@ fn city_of_traitors_is_sacrificed_when_you_play_another_land() {
     assert_eq!(names(&g, P0), ["Forest", "City of Traitors"]);
     play_land(&mut g, P1, "Island");
     assert_eq!(names(&g, P0), ["Forest", "City of Traitors"]);
+}
+
+// ------------------------------------------------------------------ Gemstone Caverns
+#[test]
+fn gemstone_caverns_makes_colourless_unless_it_has_a_luck_counter() {
+    let mut g = pod();
+    let l = lands(&mut g, P0, "Gemstone Caverns", 1, false)[0];
+    let u = mana::mana_units(&g, P0, false);
+    assert_eq!(u.len(), 1);
+    assert!(u[0].cols.is_empty(), "{{T}}: Add {{C}}");
+    g.land_mut(l).data.set(DataKey::Counters, Val::Int(1)); // a luck counter
+    let u = mana::mana_units(&g, P0, false);
+    assert_eq!(u[0].cols, g.player(P0).ident, "with a luck counter: one mana of any colour");
+    assert_eq!(u[0].amt, 1);
 }

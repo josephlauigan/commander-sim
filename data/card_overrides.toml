@@ -8244,3 +8244,7 @@ note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 d
 ["City of Traitors"]
 status = "Full"
 note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md)"
+
+["Gemstone Caverns"]
+status = "Partial"
+note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (start on the battlefield with a luck counter when not the starting player, exile a card) is not modeled"
