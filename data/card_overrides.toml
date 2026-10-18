@@ -8412,3 +8412,7 @@ note = "X = all spare mana; takes the best two of four modes: exile the best opp
 tags = "rem=shrink3 tgt=c"
 status = "Full"
 note = "three choices: +3/-3 on the opposing creatures worth the most per choice (two or three choices for a bigger creature, toughness 0 dies), then each left over exiles and returns tapped a different own permanent with an enters effect worth 3 or more, else makes a 1/1 Eldrazi Scion; cast when an opposing creature of toughness 3 or less can be killed (the {C}{C} in the cost is paid as any two mana)"
+
+["Get Lost"]
+status = "Partial"
+note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"

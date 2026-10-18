@@ -403,6 +403,37 @@ fn confluence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<
     Ok("gy")
 }
 
+
+// ================================================================== removal with a price
+/// the best opposing permanent of one of these types (creature, enchantment, planeswalker ...) p may target
+fn best_opposing(g: &Game, p: PlayerId, ok: impl Fn(&Game, PermId) -> bool) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && !untargetable(g, m) && ok(g, m))
+        .collect();
+    max_by(&cs, |m| pval(g, m))
+}
+
+fn has_type(g: &Game, m: PermId, t: crate::cards::Types) -> bool {
+    g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(t))
+}
+
+// ================================================================== Get Lost
+/// Get Lost: destroy target creature, enchantment, or planeswalker. The engine aims it at a creature (its `tgt=c`
+/// tag); with none chosen it takes the best opposing enchantment or planeswalker. (The two Map tokens its controller
+/// creates are not modeled: the engine has no noncreature artifact tokens or explore-on-Map.)
+fn get_lost_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    use crate::cards::Types;
+    let t = ctx.target.filter(|&t| g.perm(t).on_bf).or_else(|| {
+        best_opposing(g, p, |g, m| has_type(g, m, Types::ENCHANTMENT) || has_type(g, m, Types::PLANESWALKER))
+    });
+    if let Some(t) = t {
+        apply_removal(g, Some(p), t, "destroy", Some(c))?;
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
@@ -410,5 +441,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Scout's Warning")?.resolve = Some(scout_resolve);
     r.card(db, "Kozilek's Command")?.resolve = Some(kozilek_resolve);
     r.card(db, "Eldrazi Confluence")?.resolve = Some(confluence_resolve);
+    r.card(db, "Get Lost")?.resolve = Some(get_lost_resolve);
     Ok(())
 }

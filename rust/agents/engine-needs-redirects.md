@@ -31,3 +31,9 @@ Needs: "play this creature card as though it had flash" as a per-player turn gra
 Where it would hook: `engine/cast.rs` `castable` (the timing test) and the AI's end-of-turn / in-response creature casting in `ai/`.
 Card side done: the draw and the turn flag (`scout_resolve`, `scout_flash_active`, `scout_flash_used`).
 Test to add once the engine has it: after the Warning, a creature card in hand is cast in the opponent's end step and the grant is spent.
+
+## Get Lost
+Needs: (1) noncreature artifact tokens with an activated ability (Map: {1},{T}, sacrifice: target creature you control explores, sorcery speed; likewise Treasure/Clue/Food-style tokens made by a spell for an opponent); (2) a `tgt` code for "creature, enchantment, or planeswalker" in `legal_targets` so the AI can aim removal at the latter two.
+Where it would hook: `engine/zones.rs` `make_tokens` (tokens are always creatures today), `engine/removal.rs` `legal_targets` (new `tgt` such as "cep").
+Card side done: `get_lost_resolve` (destroy the chosen creature, else the best opposing enchantment or planeswalker).
+Test to add once the engine has it: Get Lost on an opposing creature gives its controller two Map tokens.

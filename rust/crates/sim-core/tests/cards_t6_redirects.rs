@@ -298,3 +298,23 @@ fn confluence_blinks_its_own_enters_effect_permanent_tapped() {
     assert!(g.perm(titan).tapped);
     assert_eq!(count_named(&g, P0, "scion"), 2, "the other two choices are Scions");
 }
+
+// ======================================================== Get Lost
+#[test]
+fn get_lost_destroys_the_targeted_creature() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = perm(&mut g, P1, "Baneslayer Angel");
+    cast_free(&mut g, P0, "Get Lost", sim_core::state::Ctx { target: Some(t), ..Default::default() });
+    assert!(!g.perm(t).on_bf);
+    assert!(in_gy(&g, P0, "Get Lost"));
+}
+
+#[test]
+fn get_lost_takes_an_enchantment_when_no_creature_is_chosen() {
+    let mut g = game();
+    g.active = Some(P0);
+    let e = perm(&mut g, P1, "Rhystic Study");
+    cast_free(&mut g, P0, "Get Lost", sim_core::state::Ctx::default());
+    assert!(!g.perm(e).on_bf);
+}
