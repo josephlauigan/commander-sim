@@ -210,7 +210,19 @@ fn a_counterspell_on_a_loop_spell_stops_the_breach_line() {
         g.active = Some(P0);
         lands(&mut g, P0, "Mountain", 1, false);
         lands(&mut g, P0, "Island", 1, false);
-        hand(&mut g, P0, &["Underworld Breach", "Lion's Eye Diamond", "Brain Freeze", "Brainstorm", "Ponder", "Preordain", "Thassa's Oracle"]);
+        hand(
+            &mut g,
+            P0,
+            &[
+                "Underworld Breach",
+                "Lion's Eye Diamond",
+                "Brain Freeze",
+                "Brainstorm",
+                "Ponder",
+                "Preordain",
+                "Thassa's Oracle",
+            ],
+        );
         lands(&mut g, P1, "Island", 2, false);
         hand(&mut g, P1, &["Counterspell"]);
         go(&mut g, BREACH_O);
@@ -340,4 +352,229 @@ fn two_rocks_that_dont_pair_are_no_loop() {
     perm(&mut g, P0, "Lotus Petal");
     hand(&mut g, P0, &["Fellwar Stone"]);
     assert!(not_ready(&g, HORROR), "Petal and Stone are both in the second list");
+}
+
+// ============================================================ Godo: Welder + Engineer, the rebuild, Basalt + a copied Kinnan
+fn godo_tbl() -> Game {
+    tbl(&["godo", "seph"])
+}
+
+fn mountains(g: &mut Game, n: usize) {
+    lands(g, P0, "Mountain", n, false);
+}
+
+fn worn_by_godo(g: &Game) -> bool {
+    let (Some(h), Some(_)) = (on_bf(g, P0, "Helm of the Host"), on_bf(g, P0, "Godo, Bandit Warlord")) else {
+        return false;
+    };
+    g.perm(h).attached.is_some_and(|t| &*g.perm(t).name == "Godo, Bandit Warlord")
+}
+
+const WELDER: &str = "Goblin Welder + Goblin Engineer";
+
+fn welder_table() -> Game {
+    let mut g = godo_tbl();
+    let w = perm(&mut g, P0, "Goblin Welder");
+    g.perm_mut(w).sick = false;
+    let rock = perm(&mut g, P0, "Sol Ring");
+    g.perm_mut(rock).tapped = true; // a spent rock to give up
+    hand(&mut g, P0, &["Goblin Engineer"]);
+    mountains(&mut g, 7);
+    g
+}
+
+#[test]
+fn welder_and_engineer_put_hammer_and_helm_out_then_godo_wins() {
+    let mut g = welder_table();
+    assert!(not_ready(&g, WELDER), "Engineer {{1}}{{R}} and Godo {{5}}{{R}} are eight");
+    mountains(&mut g, 1);
+    go(&mut g, WELDER);
+    assert_eq!(g.winner, Some(P0));
+    assert!(worn_by_godo(&g), "Godo fetched Hammer, the Welder returned Helm, Hammer attached it");
+    assert!(on_bf(&g, P0, "Hammer of Nazahn").is_some());
+    assert!(on_bf(&g, P0, "Sol Ring").is_none(), "the spent rock was given up");
+}
+
+#[test]
+fn welder_line_needs_the_welder_untapped_and_a_spare_artifact() {
+    let mut g = welder_table();
+    mountains(&mut g, 1);
+    let w = on_bf(&g, P0, "Goblin Welder").unwrap();
+    g.perm_mut(w).tapped = true;
+    assert!(not_ready(&g, WELDER));
+    let mut g = welder_table();
+    mountains(&mut g, 1);
+    let r = on_bf(&g, P0, "Sol Ring").unwrap();
+    sim_core::engine::zones::die(&mut g, r, "sac").unwrap();
+    assert!(not_ready(&g, WELDER), "nothing to sacrifice");
+}
+
+#[test]
+fn a_tidebinder_on_an_enter_trigger_stops_the_welder_line() {
+    let mut g = welder_table();
+    mountains(&mut g, 1);
+    blue_black(&mut g, P1);
+    hand(&mut g, P1, &["Tishana's Tidebinder"]);
+    go(&mut g, WELDER);
+    assert_eq!(g.winner, None);
+    assert!(on_bf(&g, P0, "Goblin Engineer").is_some());
+    assert!(on_bf(&g, P0, "Helm of the Host").is_none(), "an enter trigger was countered: no Helm came out");
+}
+
+#[test]
+fn a_guildmage_on_the_welders_ability_stops_the_line_after_godo() {
+    let mut g = welder_table();
+    mountains(&mut g, 1);
+    lands(&mut g, P1, "Island", 3, false);
+    perm(&mut g, P1, "Azorius Guildmage");
+    go(&mut g, WELDER);
+    assert_eq!(g.winner, None);
+    assert!(on_bf(&g, P0, "Godo, Bandit Warlord").is_some());
+    assert!(on_bf(&g, P0, "Helm of the Host").is_none(), "the swap was countered");
+}
+
+// ---- the rebuild with Godo already out
+/// Godo and Hammer out, Helm back in the library (the first trigger was answered)
+fn rebuild_table() -> Game {
+    let mut g = godo_tbl();
+    perm(&mut g, P0, "Hammer of Nazahn");
+    perm(&mut g, P0, "Godo, Bandit Warlord"); // his enter trigger fetches Helm ...
+    let helm = on_bf(&g, P0, "Helm of the Host").unwrap();
+    sim_core::engine::zones::die(&mut g, helm, "sac").unwrap(); // ... which is put back
+    let c = g.player(P0).gy.iter().copied().find(|&c| &*g.db.get(c).name == "Helm of the Host").unwrap();
+    g.player_mut(P0).gy.retain(|&x| x != c);
+    g.player_mut(P0).library.push(c);
+    g
+}
+
+#[test]
+fn rebuild_with_cursed_mirror_or_sculpting_steel() {
+    let mut g = rebuild_table();
+    hand(&mut g, P0, &["Cursed Mirror"]);
+    mountains(&mut g, 3);
+    go(&mut g, "Godo already out, Hammer out: Cursed Mirror");
+    assert_eq!(g.winner, Some(P0));
+    assert!(worn_by_godo(&g));
+    let mut g = rebuild_table();
+    perm(&mut g, P0, "Cursed Mirror");
+    hand(&mut g, P0, &["Sculpting Steel"]);
+    mountains(&mut g, 3);
+    go(&mut g, "Godo already out, Hammer out: Cursed Mirror");
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn rebuild_with_jaxis_and_with_a_copy_spell() {
+    let mut g = rebuild_table();
+    hand(&mut g, P0, &["Jaxis, the Troublemaker"]);
+    mountains(&mut g, 3);
+    go(&mut g, "Jaxis blitzes a copy of Godo");
+    assert_eq!(g.winner, Some(P0));
+    let mut g = rebuild_table();
+    hand(&mut g, P0, &["Twinflame"]);
+    mountains(&mut g, 2);
+    go(&mut g, "a token copy spell on Godo");
+    assert_eq!(g.winner, Some(P0));
+    assert!(worn_by_godo(&g));
+}
+
+#[test]
+fn the_rebuild_needs_godo_out_and_hammer_out() {
+    let mut g = godo_tbl();
+    hand(&mut g, P0, &["Cursed Mirror"]);
+    mountains(&mut g, 3);
+    assert!(not_ready(&g, "Godo already out, Hammer out: Cursed Mirror"), "no Godo on the battlefield");
+}
+
+#[test]
+fn ertai_on_the_copys_enter_trigger_stops_the_rebuild() {
+    let mut g = rebuild_table();
+    hand(&mut g, P0, &["Cursed Mirror"]);
+    mountains(&mut g, 3);
+    blue_black(&mut g, P1);
+    hand(&mut g, P1, &["Tishana's Tidebinder"]);
+    go(&mut g, "Godo already out, Hammer out: Cursed Mirror");
+    assert_eq!(g.winner, None);
+    assert!(on_bf(&g, P0, "Helm of the Host").is_none());
+}
+
+// ---- Basalt Monolith + a copied Kinnan
+const KCOPY: &str = "Godo + Basalt Monolith + a copied Kinnan";
+
+fn kinnan_copy_table() -> Game {
+    let mut g = tbl(&["godo", "kinnan-bonder-mana-combo"]);
+    perm(&mut g, P0, "Basalt Monolith");
+    perm(&mut g, P1, "Kinnan, Bonder Prodigy");
+    hand(&mut g, P0, &["Heat Shimmer"]);
+    mountains(&mut g, 3);
+    g
+}
+
+#[test]
+fn heat_shimmer_on_an_opposing_kinnan_with_basalt_funds_godo() {
+    let mut g = kinnan_copy_table();
+    go(&mut g, KCOPY);
+    assert_eq!(g.winner, Some(P0));
+    assert!(worn_by_godo(&g), "equipped from the loop's mana");
+}
+
+#[test]
+fn the_kinnan_copy_needs_a_kinnan_across_the_table_and_a_copier() {
+    let mut g = kinnan_copy_table();
+    let k = on_bf(&g, P1, "Kinnan, Bonder Prodigy").unwrap();
+    sim_core::engine::zones::die(&mut g, k, "sac").unwrap();
+    assert!(not_ready(&g, KCOPY));
+    let mut g = kinnan_copy_table();
+    g.player_mut(P0).hand.clear();
+    assert!(not_ready(&g, KCOPY));
+}
+
+#[test]
+fn cursed_mirror_also_copies_the_kinnan() {
+    let mut g = kinnan_copy_table();
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Cursed Mirror"]);
+    go(&mut g, KCOPY);
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn removal_on_the_kinnan_copy_stops_the_loop() {
+    let mut stopped = 0;
+    for seed in 0..8u64 {
+        let mut g = table_with(&["godo", "kinnan-bonder-mana-combo"], seed, 40);
+        g.active = Some(P0);
+        perm(&mut g, P0, "Basalt Monolith");
+        perm(&mut g, P1, "Kinnan, Bonder Prodigy");
+        hand(&mut g, P0, &["Heat Shimmer"]);
+        mountains(&mut g, 3);
+        lands(&mut g, P1, "Plains", 1, false);
+        hand(&mut g, P1, &["Swords to Plowshares"]);
+        go(&mut g, KCOPY);
+        if g.winner.is_none() {
+            stopped += 1;
+        }
+    }
+    assert!(stopped >= 5, "instant-speed removal on the copy stops the line ({stopped}/8)");
+}
+
+#[test]
+fn a_counterspell_on_heat_shimmer_stops_the_kinnan_copy() {
+    let mut countered = 0;
+    for seed in 0..16u64 {
+        let mut g = table_with(&["godo", "kinnan-bonder-mana-combo"], seed, 40);
+        g.active = Some(P0);
+        perm(&mut g, P0, "Basalt Monolith");
+        perm(&mut g, P1, "Kinnan, Bonder Prodigy");
+        hand(&mut g, P0, &["Heat Shimmer"]);
+        mountains(&mut g, 3);
+        lands(&mut g, P1, "Island", 2, false);
+        hand(&mut g, P1, &["Counterspell"]);
+        go(&mut g, KCOPY);
+        if g.winner.is_none() {
+            countered += 1;
+            assert!(on_bf(&g, P0, "Godo, Bandit Warlord").is_none());
+        }
+    }
+    assert!(countered >= 1);
 }

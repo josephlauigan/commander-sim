@@ -213,7 +213,12 @@ const THRASIOS_STEPS: [Step; 2] = [
 
 const MIRAGE_STEPS: [Step; 3] = [
     held("Kinnan, Basalt Monolith and Mirage Mirror stay in play", mirage_keys),
-    trig("Mirage Mirror copies a dual land, then Basalt Monolith: infinite {U}{G}", StepKind::Ability, mirage_src, done),
+    trig(
+        "Mirage Mirror copies a dual land, then Basalt Monolith: infinite {U}{G}",
+        StepKind::Ability,
+        mirage_src,
+        done,
+    ),
     trig("Kinnan's ability puts every creature onto the battlefield", StepKind::Ability, kinnan_src, done),
 ];
 
@@ -389,7 +394,11 @@ const BREACH_OPEN: [Step; 5] = [
     held("Underworld Breach stays in play (enchantment removal before the first escape)", breach_keys),
     step("cast Lion's Eye Diamond", StepKind::Spell, cast_led),
     step("crack Lion's Eye Diamond, escape Brain Freeze on yourself", StepKind::Spell, first_freeze),
-    step("Lion's Eye Diamond and Brain Freeze escape again until the library is empty", StepKind::Spell, self_loop_empty),
+    step(
+        "Lion's Eye Diamond and Brain Freeze escape again until the library is empty",
+        StepKind::Spell,
+        self_loop_empty,
+    ),
 ];
 
 const BREACH_ORACLE_STEPS: [Step; 7] = [
@@ -459,10 +468,13 @@ fn ad_finish(_g: &mut Game, _p: PlayerId) -> Res {
 // ================================================================== Hullbreaker Horror + two rocks
 /// rocks that make mana when cast between each other with the Horror out (the NBC primer's list)
 const LOOP_A: &[&str] = &["Mox Opal", "Mox Amber", "Sol Ring", "Grim Monolith", "Mana Vault"];
-const LOOP_B: &[&str] = &["Basalt Monolith", "Chrome Mox", "Lotus Petal", "Fellwar Stone", "Arcane Signet", "Talisman of Curiosity"];
+const LOOP_B: &[&str] =
+    &["Basalt Monolith", "Chrome Mox", "Lotus Petal", "Fellwar Stone", "Arcane Signet", "Talisman of Curiosity"];
 
 fn loop_pair(a: &str, b: &str) -> bool {
-    a != b && ((LOOP_A.contains(&a) && (LOOP_A.contains(&b) || LOOP_B.contains(&b))) || (LOOP_A.contains(&b) && LOOP_B.contains(&a)))
+    a != b
+        && ((LOOP_A.contains(&a) && (LOOP_A.contains(&b) || LOOP_B.contains(&b)))
+            || (LOOP_A.contains(&b) && LOOP_B.contains(&a)))
 }
 
 /// (the rock on the battlefield, the rock in hand that is cast and bounces it)
@@ -517,7 +529,12 @@ const HORROR_STEPS: [Step; 5] = [
     step("cast Hullbreaker Horror (flash, can't be countered)", StepKind::Spell, horror_in),
     held("Kinnan and Hullbreaker Horror stay in play", horror_keys),
     step("cast the first rock (a counter on any loop spell ends the loop)", StepKind::Spell, cast_loop_rock),
-    trig("Hullbreaker Horror's trigger returns the other rock to its owner's hand", StepKind::Trigger, horror_src, done),
+    trig(
+        "Hullbreaker Horror's trigger returns the other rock to its owner's hand",
+        StepKind::Trigger,
+        horror_src,
+        done,
+    ),
     trig("Kinnan's ability puts the winner onto the battlefield (infinite mana)", StepKind::Ability, kinnan_src, done),
 ];
 
@@ -528,7 +545,10 @@ fn is_art(g: &Game, m: PermId) -> bool {
 
 /// an artifact the Welder can give up that is not one of the two Equipment
 fn spare_artifact(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| live(g, m) && is_art(g, m) && !matches!(nm(g, m), "Helm of the Host" | "Hammer of Nazahn"))
+    g.player(p)
+        .perms
+        .iter()
+        .any(|&m| live(g, m) && is_art(g, m) && !matches!(nm(g, m), "Helm of the Host" | "Hammer of Nazahn"))
 }
 
 fn welder_ready_piece(g: &Game, p: PlayerId) -> Option<PermId> {
@@ -581,7 +601,10 @@ const WELDER_STEPS: [Step; 7] = [
 /// Godo is on the battlefield with Hammer of Nazahn, Helm still in the library (his first trigger was answered): a copy
 /// of Godo has an enter trigger of its own that fetches Helm
 fn rebuild_base(g: &Game, p: PlayerId) -> bool {
-    bf(g, p, gd::GODO).is_some() && bf(g, p, gd::HAMMER).is_some() && bf(g, p, gd::HELM).is_none() && in_lib(g, p, gd::HELM)
+    bf(g, p, gd::GODO).is_some()
+        && bf(g, p, gd::HAMMER).is_some()
+        && bf(g, p, gd::HELM).is_none()
+        && in_lib(g, p, gd::HELM)
 }
 
 fn ready_rebuild_mirror(g: &Game, p: PlayerId) -> Ready {
@@ -739,4 +762,3 @@ pub static COMBOS: [Combo; 11] = [
 const REBUILD_MIRROR: [Step; 5] = [gd::S_MIRROR, gd::S_MIRROR_TRIGGER, gd::S_WORN, gd::S_COMBAT, gd::S_LOOP];
 const REBUILD_JAXIS: [Step; 5] = [gd::S_JAXIS_IN, gd::S_JAXIS_COPY, gd::S_WORN, gd::S_COMBAT, gd::S_LOOP];
 const REBUILD_SPELL: [Step; 4] = [gd::S_COPY_SPELL, gd::S_WORN, gd::S_COMBAT, gd::S_LOOP];
-
