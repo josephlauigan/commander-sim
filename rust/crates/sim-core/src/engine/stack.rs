@@ -703,6 +703,18 @@ fn blue_in_hand(g: &Game, q: PlayerId, except: CardId) -> Vec<CardId> {
     g.player(q).hand.iter().copied().filter(|&x| x != except && g.db.get(x).pips.contains('U')).collect()
 }
 
+/// Pact of Negation is only free if {3}{U}{U} (for each pact still owed) can be paid at the next upkeep. Tier 0-5: five
+/// lands, as always. Tier 6: also two lands that make blue, and five lands per pact (a lost game to a missed upkeep
+/// was the single biggest leak of the cEDH decks that run it).
+fn pact_affordable(g: &Game, q: PlayerId) -> bool {
+    let lands = g.player(q).lands.len();
+    if !crate::impls::t6_plans::is_t6(g, q) {
+        return lands >= 5;
+    }
+    let blue = g.player(q).lands.iter().filter(|&&l| crate::engine::mana::land_colors_now(g, q, l).has('U')).count();
+    lands >= 5 * (1 + g.player(q).pacts as usize) && blue >= 2
+}
+
 /// the counterspell q would use against c, if any
 pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     let mut best: Option<CardId> = None;
@@ -732,7 +744,7 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         if t.has(Tag::Fierce) && commander_out(g, q) && taxed_ok {
             return Some(ctr); // Fierce Guardianship: free with your commander out
         }
-        if t.has(Tag::Pact) && g.player(q).lands.len() >= 5 && taxed_ok {
+        if t.has(Tag::Pact) && pact_affordable(g, q) && taxed_ok {
             return Some(ctr); // Pact of Negation: free now, {3}{U}{U} next upkeep
         }
         if t.has(Tag::Misstep) && g.player(q).life > 10 && taxed_ok {
