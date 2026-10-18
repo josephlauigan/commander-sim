@@ -33306,7 +33306,7 @@
   {
    "name": "Fblthp, Knows the Way",
    "types": "C",
-   "generic": 0,
+   "generic": 1,
    "pips": "GG",
    "tags": {
     "leg": true,
@@ -33347,12 +33347,12 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [
     "Domain — ~'s power is equal to the number of basic land types among lands you control."
    ],
    "derived": {
-    "cmc": 2,
+    "cmc": 3,
     "land": false,
     "creature": true,
     "instant": false,
@@ -79663,26 +79663,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "opp"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flash",
@@ -79697,7 +79678,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -86631,7 +86612,7 @@
     "pow": "1",
     "tgh": "3",
     "reach": true,
-    "dork": "C",
+    "dork": "G",
     "noatk": true
    },
    "pow": 1,

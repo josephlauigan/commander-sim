@@ -478,6 +478,57 @@ fn necro_pt(g: &Game, _p: PlayerId, m: PermId) -> (i32, i32) {
     (k, k)
 }
 
+// ------------------------------------------------------------------ Rooftop Assassin
+const ROOFTOP: &str = "Rooftop Assassin";
+
+/// the opposing creatures p could destroy with Rooftop Assassin: dealt damage this turn, and targetable
+fn rooftop_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+    opp_creatures(g, p)
+        .into_iter()
+        .filter(|&m| on_bf(g, m) && g.was_damaged_now(m) && !untargetable(g, m))
+        .collect()
+}
+
+/// flash, flying, lifelink: it is removal only for a creature that already took damage this turn (after combat or a
+/// burn spell), so it is cast for that; otherwise it is a plain 2/2 flyer body
+fn rooftop_prio(g: &Game, p: PlayerId) -> i32 {
+    if rooftop_targets(g, p).iter().any(|&m| pval(g, m) >= 2.0) { 82 } else { 46 }
+}
+
+/// Rooftop Assassin: when it enters, destroy target creature an opponent controls that was dealt damage this turn
+fn rooftop_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let p = owner(g, src);
+    let Some(t) = rooftop_targets(g, p).into_iter().max_by(|&a, &b| {
+        pval(g, a).partial_cmp(&pval(g, b)).unwrap_or(std::cmp::Ordering::Equal)
+    }) else {
+        return Ok(());
+    };
+    if !trigger_window(g, p, Some(src), "destroy a damaged creature", Some(pval(g, t)))? || !on_bf(g, t) {
+        return Ok(());
+    }
+    apply_removal(g, Some(p), t, "destroy", None)
+}
+
+/// Necrosquito: grows with every other creature or artifact of ours that goes to the graveyard and every token or
+/// Treasure sacrificed, so it is worth more with a sacrifice outlet (Carnage Altar, Deadly Dispute) or fodder around
+fn necro_prio(g: &Game, p: PlayerId) -> i32 {
+    let pl = g.player(p);
+    let outlet = |n: &str| count_named(g, p, n) > 0 || pl.hand.iter().any(|&c| name_of(g, c) == n);
+    let engine = outlet("Carnage Altar") || outlet("Deadly Dispute") || outlet("Blood Artist");
+    let fodder = pl
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            x.on_bf && (x.token || (x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).creature)))
+        })
+        .count() as i32;
+    (55 + 3 * fodder.min(3) + if engine { 6 } else { 0 }).min(70)
+}
+
 // ------------------------------------------------------------------ Callous Inspector
 /// when it dies it deals 1 damage to you and you create a Clue
 fn inspector_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
@@ -1355,6 +1406,8 @@ pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             if kill { 66 } else { 34 }
         }
         "Perigee Beckoner" => 52,
+        "Necrosquito" => necro_prio(g, p),
+        ROOFTOP => rooftop_prio(g, p),
         SEIZAN => seizan_prio(g, p),
         "Underworld Dreams" => 90,
         _ if pkg2_prio(g, p, &d.name).is_some() => pkg2_prio(g, p, &d.name).unwrap(),
@@ -1568,6 +1621,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(crawler_etb);
     c.hand_options = Some(crawler_options);
     r.card(db, "Mabel, Bitter Recluse")?.etb = Some(mabel_etb);
+    let c = r.card(db, ROOFTOP)?;
+    c.etb = Some(rooftop_etb);
     r.card(db, "Vault Plunderer")?.etb = Some(plunderer_etb);
     r.card(db, "Seymour Flux")?.upkeep = Some(seymour_upkeep);
     let c = r.card(db, "Al Bhed Salvagers")?;
@@ -1757,7 +1812,7 @@ fn deal_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     // each card an opponent redraws costs them 2; keep it for when they hold plenty and we hold little
     let mine = g.player(p).hand.len().saturating_sub(1);
     let theirs = opp_hand_total(g, p);
-    if !sheoldred_out(g, p) || theirs < 4 || mine > 2 {
+    if !sheoldred_out(g, p) || theirs < 4 || mine > 3 {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -1775,7 +1830,7 @@ fn deal_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// high and we are far behind on cards
 fn seizan_prio(g: &Game, p: PlayerId) -> i32 {
     let pl = g.player(p);
-    if sheoldred_out(g, p) {
+    if draw_toll(g, p) > 0 {
         return 80;
     }
     let max_opp = g.opps(p).filter(|&q| g.player(q).alive).map(|q| g.player(q).hand.len()).max().unwrap_or(0);
