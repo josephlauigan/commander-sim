@@ -8667,3 +8667,7 @@ note = "chooses a card name as it enters (the one Disruptor Flute would name) an
 ["Chalice of the Void"]
 status = "Partial"
 note = "X is fixed at 1 (costs {2}, one charge counter); the counter is a lock like Vexing Bauble's: nobody can cast a nonland spell with mana value 1 (the card stays in hand; no cast triggers, free costs not caught); needs the engine's counter-on-cast hook and an X choice (rust/agents/engine-needs-stax.md)"
+
+["Void Mirror"]
+status = "Partial"
+note = "a lock like Vexing Bauble's: free spells, and generic-only spells when the caster has no untapped coloured source, can't be cast (the real card lets them be cast and counters them by the mana actually spent; free alternative costs not caught; needs the counter-on-cast hook, rust/agents/engine-needs-stax.md)"

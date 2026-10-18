@@ -259,3 +259,21 @@ fn chalice_stops_spells_with_mana_value_equal_to_its_counters_for_everyone() {
     g.perm_mut(m).on_bf = false;
     assert!(can_cast(&g, P1, "Sol Ring"), "gone with the Chalice");
 }
+
+// ======================================================== Void Mirror
+#[test]
+fn mirror_refuses_free_spells_and_generic_spells_paid_without_coloured_mana() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Ancient Tomb", 2, false);
+    assert!(can_cast(&g, P1, "Sol Ring"));
+    assert!(can_cast(&g, P1, "Mox Diamond"));
+    let m = perm(&mut g, P0, "Void Mirror");
+    assert!(!can_cast(&g, P1, "Sol Ring"), "Sol Ring paid from Tombs: no coloured mana");
+    assert!(!can_cast(&g, P1, "Mox Diamond"), "mana value 0: nothing spent");
+    assert!(can_cast(&g, P1, "Lightning Bolt"), "a red spell spends coloured mana");
+    lands(&mut g, P1, "Plains", 1, false);
+    assert!(can_cast(&g, P1, "Sol Ring"), "with a Plains it can pay in white");
+    assert!(!can_cast(&g, P1, "Mox Diamond"), "a free spell is still countered");
+    g.perm_mut(m).on_bf = false;
+    assert!(can_cast(&g, P1, "Mox Diamond"), "gone with the Mirror");
+}

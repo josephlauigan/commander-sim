@@ -326,6 +326,27 @@ fn chalice_can_cast(g: &Game, src: Src, _p: PlayerId, c: CardId, _zone: Sym) -> 
     d.cmc as i32 != chalice_counters(g, src)
 }
 
+
+// ================================================================== Void Mirror
+/// **Void Mirror** ({2} artifact): whenever a player casts a spell, if no coloured mana was spent to cast it, counter
+/// that spell. Modeled as a lock like Vexing Bauble's (`can_cast`): a spell with a coloured mana symbol in its cost
+/// always spends coloured mana and is allowed; a spell that costs nothing spends none and is refused; a spell with
+/// only generic mana is refused when the caster has no untapped source of coloured mana (Sol Ring paid from Ancient
+/// Tomb and City of Traitors), and allowed when it has one (it can pay with coloured mana; the engine's payment may
+/// still use colourless sources, which the real card would counter). Partial: the real card lets the spell be cast and
+/// counters it by the mana actually spent, and catches free alternative costs: needs the counter-on-cast hook
+/// (engine-needs-stax.md).
+fn mirror_can_cast(g: &Game, src: Src, p: PlayerId, c: CardId, _zone: Sym) -> bool {
+    if !g.perm(src).on_bf || g.db.get(c).land {
+        return true;
+    }
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    if pips.chars().any(|ch| "WUBRG".contains(ch)) {
+        return true;
+    }
+    gn > 0 && "WUBRG".chars().any(|ch| can_pay(g, p, 0, &ch.to_string(), false))
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
@@ -356,5 +377,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     *c = c.at_once(Event::Etb);
     c.can_cast = Some(chalice_can_cast);
     c.self_cost = Some(chalice_cost);
+    r.card(db, "Void Mirror")?.can_cast = Some(mirror_can_cast);
     Ok(())
 }
