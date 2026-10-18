@@ -8,6 +8,8 @@
 //! - Sowing Mycospawn: the cast trigger fetches a land; the kicked exile is `mycospawn_kicked` (needs engine kicker).
 //! - Endurance: flash is the card's tag; the enters effect and evoke (exile a green card, sacrificed) are here.
 //! - Enduring Vitality: every creature taps for any colour (extra_mana); dies as a creature: back as an enchantment.
+//! - The Cabbage Merchant: Food on opposing noncreature casts, Food sacrificed on combat damage to you, two Foods tap for
+//!   one mana (the tapped count lives on the Merchant, DataKey::Burden, reset at its controller's upkeep).
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
@@ -16,11 +18,12 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::trigger_window;
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
+use crate::engine::zones::{Enter, die, discard_cards, draw, enter, make_artifact_tokens, max_by, min_by};
 use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::impls::common::sac_food;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -308,6 +311,80 @@ fn vitality_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     Ok(())
 }
 
+// ================================================================== The Cabbage Merchant
+const MERCHANT: &str = "The Cabbage Merchant";
+
+/// the Foods tapped for mana so far (kept on the Merchant; the engine counts Foods only as `Player::foods`)
+fn foods_tapped(g: &Game, m: PermId) -> u32 {
+    g.perm(m).data.get(DataKey::Burden).map_or(0, Val::int).max(0) as u32
+}
+
+/// the Foods p could tap now
+pub fn foods_untapped(g: &Game, m: PermId) -> u32 {
+    g.player(g.perm(m).owner).foods.saturating_sub(foods_tapped(g, m))
+}
+
+/// Whenever an opponent casts a noncreature spell, create a Food token.
+fn merchant_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    let d = g.db.get(c);
+    if caster == o || d.creature || d.land || !g.perm(src).on_bf {
+        return Ok(());
+    }
+    if trigger_window(g, o, Some(src), "create a Food", Some(2.0))? {
+        make_artifact_tokens(g, o, "Food", 1)?;
+    }
+    Ok(())
+}
+
+/// Whenever a creature deals combat damage to you, sacrifice a Food token (not optional; nothing happens without
+/// one).
+fn merchant_damage(g: &mut Game, src: Src, _p: PlayerId, _a: PermId, d: PlayerId, dmg: i32) -> Res {
+    let o = g.perm(src).owner;
+    if d != o || dmg <= 0 || !g.perm(src).on_bf || g.player(o).foods == 0 {
+        return Ok(());
+    }
+    if trigger_window(g, o, Some(src), "sacrifice a Food", Some(2.0))? {
+        sac_food(g, o, 1)?;
+        let t = foods_tapped(g, src).min(g.player(o).foods);
+        g.perm_mut(src).data.set(DataKey::Burden, Val::Int(t as i64));
+    }
+    Ok(())
+}
+
+/// Tap two untapped Foods you control: Add one mana of any color. Offered as a source of mana worth one per pair of
+/// untapped Foods. The engine pays through the Merchant (it is the source the unit names), so `merchant_tapped` taps the
+/// Foods and gives the Merchant its untap back: the ability does not tap it.
+fn merchant_mana(g: &Game, src: Src, p: PlayerId, _units: &[Unit]) -> Vec<Unit> {
+    if g.perm(src).owner != p || !g.perm(src).on_bf || g.perm(src).phased || g.perm(src).tapped {
+        return vec![];
+    }
+    let pairs = foods_untapped(g, src) / 2;
+    if pairs == 0 {
+        return vec![];
+    }
+    vec![Unit { src: Source::Perm(src), cols: Colors::from_letters("WUBRG"), amt: pairs }]
+}
+
+fn merchant_tapped(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {
+    if used == 0 || foods_untapped(g, m) < 2 * used {
+        return Ok(()); // tapped some other way (convoke): not the Food ability
+    }
+    let t = foods_tapped(g, m) + 2 * used;
+    g.perm_mut(m).data.set(DataKey::Burden, Val::Int(t as i64));
+    g.perm_mut(m).tapped = false;
+    crate::glog!(g, "    {} taps {} Foods for mana (The Cabbage Merchant)", pname(g, p), 2 * used);
+    Ok(())
+}
+
+/// the Foods untap with everything else
+fn merchant_untap(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if g.perm(src).owner == p {
+        g.perm_mut(src).data.set(DataKey::Burden, Val::Int(0));
+    }
+    Ok(())
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Chatterstorm")?.self_cast = Some(chatterstorm_cast);
@@ -324,5 +401,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, VITALITY)?;
     c.extra_mana = Some(vitality_mana);
     c.self_dies = Some(vitality_dies);
+    let c = r.card(db, MERCHANT)?;
+    c.cast = Some(merchant_cast);
+    c.combat_damage = Some(merchant_damage);
+    c.extra_mana = Some(merchant_mana);
+    c.on_tap_perm = Some(merchant_tapped);
+    c.upkeep = Some(merchant_untap);
     Ok(())
 }

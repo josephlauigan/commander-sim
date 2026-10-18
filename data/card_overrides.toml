@@ -8530,3 +8530,7 @@ note = "3/4 flash reach; when it enters, a graveyard goes to the bottom of its o
 ["Enduring Vitality"]
 status = "Partial"
 note = "3/3 vigilance; every untapped, non-summoning-sick creature you control taps for one mana of any colour (extra_mana hook); when it dies as a creature it returns to the battlefield (once); missing: the returned permanent is an enchantment, not a creature, but the engine still counts it as a creature (Gaea's Cradle count, attacks, blocks, creature removal)"
+
+["The Cabbage Merchant"]
+status = "Full"
+note = "an opponent's noncreature spell makes you a Food; a creature's combat damage to you sacrifices a Food; two untapped Foods tap for one mana of any colour (a source worth one mana per pair; the tapped Foods are counted on the Merchant and untap at your upkeep, the Merchant itself is not tapped). Approximation: the engine keeps Foods as a count, so a tapped Food can still be eaten with {2},{T}, sacrifice (t6_green2)"

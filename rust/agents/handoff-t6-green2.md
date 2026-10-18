@@ -10,8 +10,9 @@ After override edit: rust/target/release/cardgen audit --deck rograkh-thrasios-c
 - Sowing Mycospawn: Partial (kicker missing; fetch via self_cast; engine-needs-green2.md written). Fetch picks fetchlands fine (engine cracks)
 - Endurance: Full (etb bottoms a graveyard; evoke via hand_options like rules2 Solitude; flash tag already handled by AI)
 - Enduring Vitality: Partial (extra_mana hook gives any-colour mana to all creatures; returns once, marked DataKey::Final; non-creature override is an engine need)
+- The Cabbage Merchant: Full (cast+combat_damage hooks; Food mana via extra_mana + on_tap_perm, tapped foods in DataKey::Burden, reset at upkeep)
 ## Next (order)
-Cabbage Merchant, Shifting Woodland, Invasion of Ikoria // Zilortha, then report + full cargo test
+Shifting Woodland, Invasion of Ikoria // Zilortha, then report + full cargo test
 ## Gotchas
 - "cast trigger" = self_cast hook; storm_copies reusable. Engine needs go to rust/agents/engine-needs-green2.md
 - cast_card in tests doesn't pay mana; hand() removes the card from the library; glog needs g.log=Some(vec![]) to inspect

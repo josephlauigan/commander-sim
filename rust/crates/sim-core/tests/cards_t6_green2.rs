@@ -297,3 +297,60 @@ fn vitality_returns_as_an_enchantment_when_it_dies_and_still_gives_the_mana() {
     assert!(on_bf(&g, P0, "Enduring Vitality").is_none());
     assert!(in_gy(&g, P0, "Enduring Vitality"));
 }
+
+// ======================================================== The Cabbage Merchant
+#[test]
+fn merchant_makes_a_food_when_an_opponent_casts_a_noncreature_spell() {
+    let mut g = game();
+    perm(&mut g, P0, "The Cabbage Merchant");
+    cast_spell(&mut g, P1, "Opt");
+    assert_eq!(g.player(P0).foods, 1);
+    cast_spell(&mut g, P1, "Grave Titan"); // a creature spell: no Food
+    assert_eq!(g.player(P0).foods, 1);
+    cast_spell(&mut g, P0, "Ponder"); // our own spell: no Food
+    assert_eq!(g.player(P0).foods, 1);
+}
+
+#[test]
+fn merchant_sacrifices_a_food_when_a_creature_deals_combat_damage_to_us() {
+    let mut g = game();
+    let m = perm(&mut g, P0, "The Cabbage Merchant");
+    g.player_mut(P0).foods = 2;
+    let a = perm(&mut g, P1, "Grave Titan");
+    let f = g.registry.get(g.perm(m).cd.unwrap()).and_then(|i| i.combat_damage).unwrap();
+    f(&mut g, m, P1, a, P0, 6).unwrap();
+    assert_eq!(g.player(P0).foods, 1);
+    f(&mut g, m, P1, a, P1, 6).unwrap(); // damage to someone else: nothing
+    assert_eq!(g.player(P0).foods, 1);
+}
+
+#[test]
+fn merchant_taps_two_foods_for_one_mana_of_any_colour() {
+    let mut g = game();
+    let m = perm(&mut g, P0, "The Cabbage Merchant");
+    g.player_mut(P0).foods = 1;
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "U", false), "one Food is not enough");
+    g.player_mut(P0).foods = 4;
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "U", false));
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "UW", false), "two pairs: two mana");
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "UWB", false));
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 0, "UW", false).unwrap());
+    assert_eq!(g.player(P0).foods, 4, "tapped, not sacrificed");
+    assert!(!g.perm(m).tapped, "the ability does not tap the Merchant");
+    assert_eq!(t6::foods_untapped(&g, m), 0);
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "U", false), "no untapped Foods left");
+}
+
+#[test]
+fn merchant_foods_untap_at_its_controllers_upkeep() {
+    let mut g = game();
+    let m = perm(&mut g, P0, "The Cabbage Merchant");
+    g.player_mut(P0).foods = 2;
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 0, "G", false).unwrap());
+    assert_eq!(t6::foods_untapped(&g, m), 0);
+    let f = g.registry.get(g.perm(m).cd.unwrap()).and_then(|i| i.upkeep).unwrap();
+    f(&mut g, m, P1).unwrap();
+    assert_eq!(t6::foods_untapped(&g, m), 0, "the opponent's upkeep does not untap them");
+    f(&mut g, m, P0).unwrap();
+    assert_eq!(t6::foods_untapped(&g, m), 2);
+}
