@@ -8701,3 +8701,7 @@ note = "Opus on the cast hook: whenever you cast an instant or sorcery the best 
 ["Voice of Victory"]
 status = "Full"
 note = "Mobilize 2 on the attack hook (two tapped and attacking 1/1 red Warriors, sacrificed at the next end step) and a can_cast lock: opponents cannot cast spells during its controller's turn (t6_blue.rs, tested)"
+
+["High Fae Trickster"]
+status = "Partial"
+note = "4/2 flash flyer; the static 'you may cast spells as though they had flash' is exposed as t6_blue::static_flash; missing: the engine does not read it yet, so spells still wait for their normal timing (engine need: permanent-based flash grant)"

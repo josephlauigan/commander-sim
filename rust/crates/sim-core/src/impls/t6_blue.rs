@@ -264,6 +264,26 @@ fn voice_can_cast(g: &Game, src: Src, p: PlayerId, _c: CardId, _zone: Sym) -> bo
 }
 
 
+// ================================================================== High Fae Trickster / Valley Floodcaller: flash
+/// may p cast a spell as though it had flash because of a permanent (High Fae Trickster: every spell; Valley
+/// Floodcaller: noncreature spells), or the one-turn grant of Borne Upon a Wind? `creature_spell` says whether the
+/// spell is a creature. The engine's cast-timing check and the AI's end-of-turn / in-response casting should read
+/// this (engine-needs-blue.md).
+pub fn static_flash(g: &Game, p: PlayerId, creature_spell: bool) -> bool {
+    flash_turn_grant(g, p)
+        || g.player(p).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && !x.phased
+                && match x.cd.map(|c| &*g.db.get(c).name) {
+                    Some("High Fae Trickster") => true,
+                    Some("Valley Floodcaller") => !creature_spell,
+                    _ => false,
+                }
+        })
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Voice of Victory")?;

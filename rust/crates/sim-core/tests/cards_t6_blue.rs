@@ -236,3 +236,16 @@ fn voice_of_victory_stops_opponents_casting_on_its_controllers_turn_only() {
     g.active = Some(P1);
     assert!(cast::castable(&g, P1, bolt, "hand"), "on their own turn they can");
 }
+
+// ======================================================== High Fae Trickster
+#[test]
+fn high_fae_trickster_grants_flash_to_every_spell_of_its_controller() {
+    let mut g = game();
+    assert!(!t6::static_flash(&g, P0, true) && !t6::static_flash(&g, P0, false));
+    let t = perm(&mut g, P0, "High Fae Trickster");
+    assert!(t6::static_flash(&g, P0, true), "creature spells too");
+    assert!(t6::static_flash(&g, P0, false));
+    assert!(!t6::static_flash(&g, P1, false), "only its controller");
+    g.perm_mut(t).phased = true;
+    assert!(!t6::static_flash(&g, P0, false), "not while phased out");
+}

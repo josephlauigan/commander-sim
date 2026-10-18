@@ -25,3 +25,9 @@ Needs: the real amount of mana spent to cast a spell, recorded when it is paid (
 Where it would hook: `engine/cast.rs` `cast_card` / the payment functions (`mana::pay`), stored on `g.cur_cast`'s `Ctx` (e.g. `Ctx::mana_spent`).
 Card side done: `impls/t6_blue.rs` Opus on the cast hook: a cast instant or sorcery makes the best opposing player mill three, or ten when the spell's mana value plus X is 5 or more (0 when an alternative cost was paid: `Ctx::paid_otherwise`); the compiled mill-3 trigger is removed (`dsl = []`).
 Test to add once the engine has it: a mana-value-6 sorcery cast for {3} (cost reduction) mills three, not ten; a mana-value-3 spell with X-style extra payment reaching five mills ten.
+
+## High Fae Trickster (and Valley Floodcaller, Borne Upon a Wind)
+Needs: the permanent-based "you may cast spells as though they had flash" (all spells for the Trickster, noncreature spells for the Floodcaller), alongside the one-turn grant above; for a permanent the AI should then hold sorceries and artifacts for the end of an opponent's turn and cast them in response windows.
+Where it would hook: impls/t0_captain.rs `as_flash` (read at `ai/brain.rs` ~line 1264, which only looks at permanent cards, not instants/sorceries or creatures) and `engine/cast.rs` `castable` for the timing test; return `t6_blue::static_flash(g, p, creature_spell)`.
+Card side done: flash and flying (data), `t6_blue::static_flash` (Trickster, Floodcaller, Borne's turn flag).
+Test to add once the engine has it: with the Trickster out, a sorcery in hand is cast in the opponent's end step.
