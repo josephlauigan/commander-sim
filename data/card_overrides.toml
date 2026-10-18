@@ -8722,8 +8722,8 @@ status = "Full"
 note = "ETB exiles the best opposing artifact or creature until it leaves; Channel ({1}{W}, discard) exiles one and returns it under its owner's control at the next end step (the AI channels to flicker its best ETB creature)"
 
 ["Radiant Solar"]
-status = "Partial"
-note = "only Lost Mine of Phandelver is ever entered (no dungeon choice, no dungeon state in the engine); venture whenever it or another nontoken creature you control enters (Lost Mine of Phandelver always: scry, Goblin, Dark Pool drain, draw); {W}, discard: venture and gain 3 life"
+status = "Full"
+note = "venture whenever it or another nontoken creature you control enters, through the engine dungeon system (engine/dungeon.rs: Lost Mine of Phandelver, Tomb of Annihilation, Dungeon of the Mad Mage; the AI picks Lost Mine, Goblin Lair, Dark Pool: each opponent loses 1, you gain 1); {W}, discard: venture and gain 3 life"
 
 ["Preston, the Vanisher"]
 dsl = []
