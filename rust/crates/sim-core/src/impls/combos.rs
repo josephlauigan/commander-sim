@@ -376,6 +376,25 @@ pub fn ready(g: &Game, p: PlayerId, i: usize) -> bool {
 
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
+    if !crate::impls::t6_plans::is_t6(g, p) {
+        return attempt_run(g, p, i);
+    }
+    // Tier 6: protection first (Silence / Orim's Chant), then every spell and ability of the line is a win step the
+    // table answers with everything it has
+    let cmb = all()[i as usize];
+    let (ok, _, casts) = (cmb.ready)(g, p);
+    let turns = g.player(p).turns;
+    if ok && affordable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
+        let need = mana_need(g, p, cmb, &casts);
+        crate::ai::t6_table::protect_before_go(g, p, need)?;
+    }
+    g.t6_going = Some(p);
+    let r = attempt_run(g, p, i);
+    g.t6_going = None;
+    r
+}
+
+fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     let cmb = all()[i as usize];
     let (ok, keys, casts) = (cmb.ready)(g, p);
     if !ok || !affordable(g, p, cmb, &casts) {
@@ -577,8 +596,8 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         if !ok || !affordable(g, p, cmb, &casts) {
             continue;
         }
-        if crate::impls::t6_plans::go_now(g, p, cmb.name) == Some(false) {
-            continue; // a Tier 6 plan slot says wait
+        if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            continue; // Tier 6: the table can still stop it (or the plan slot says wait)
         }
         let risk = if casts.is_empty() { 0.0 } else { ctr_risk };
         out.push(Opt {
@@ -1132,4 +1151,37 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     oracle.prio = Some(oracle_prio);
     *oracle = oracle.at_once(crate::hooks::Event::Etb); // no trigger window: it runs as it enters
     Ok(())
+}
+
+// ------------------------------------------------------------------ Tier 6 table reading (ai/t6_table.rs)
+/// How far q's best modeled line is: (the largest fraction of its piece groups already on the battlefield, whether
+/// some line is `ready` right now). Only lines whose every group is somewhere in q's cards count; quiet lines don't.
+pub fn line_progress(g: &Game, q: PlayerId) -> (f64, bool) {
+    let deck: std::collections::HashSet<&str> = full_deck_names(g, q).into_iter().collect();
+    let (mut best, mut ready) = (0.0f64, false);
+    for cmb in all() {
+        if quiet(cmb) || cmb.groups.is_empty() || !cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n))) {
+            continue;
+        }
+        let on = cmb.groups.iter().filter(|grp| grp.iter().any(|n| on_bf(g, q, n).is_some())).count();
+        best = best.max(on as f64 / cmb.groups.len() as f64);
+        if !ready && cmb.groups.iter().all(|grp| has_piece(g, q, grp)) && (cmb.ready)(g, q).0 {
+            ready = true;
+        }
+    }
+    (best, ready)
+}
+
+/// the mana p needs for combo `cmb` (the loop's mana plus the spells still to cast): (generic, pips)
+pub fn mana_need(g: &Game, _p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, String) {
+    (cmb.mana.0 + cast_generic(g, cmb, casts), cast_pips(g, cmb, casts))
+}
+
+/// how many answerable steps the line has: its declared steps that are not plain permanents, else its spells to cast
+pub fn answerable_steps(cmb: &Combo, casts: &[CardId]) -> usize {
+    if cmb.steps.is_empty() {
+        casts.len().max(1)
+    } else {
+        cmb.steps.iter().filter(|s| s.kind != StepKind::Engine).count().max(1)
+    }
 }
