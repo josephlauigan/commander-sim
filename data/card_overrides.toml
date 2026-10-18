@@ -8786,3 +8786,42 @@ note = "evoke {R/G}{R/G} from hand, sacrificed on entry: the AI pays {R}{R} for 
 ["Springheart Nantuko"]
 status = "Partial"
 note = "1/1 body; landfall creates a 1/1 green Insect (the unattached branch); missing: bestow {1}{G} (+1/+1) and the {1}{G} token copy of the enchanted creature (the Eternal Witness loop), see rust/agents/engine-needs-green1.md"
+["Disruptor Flute"]
+status = "Full"
+note = "flash; the AI names the card that hurts opponents most as it enters (ai::flute_pick); spells with that name cost {3} more for every player (mana::cost_of) and its activated abilities are off except mana abilities (values::stopped)"
+
+["Silence"]
+status = "Partial"
+note = "opponents can't cast spells this turn: modeled as no noncreature spells (Player::hope_lock) plus the turn flag t6_stax::cast_lock; creature (flash) spells need the engine's cast lock (rust/agents/engine-needs-stax.md); the AI never casts it"
+
+["Orim's Chant"]
+status = "Partial"
+note = "target player can't cast spells: modeled as no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; the kicker (cost choice) and 'creatures can't attack' need the engine (the kicked effect sets t6_stax::attack_lock); the AI never casts it (rust/agents/engine-needs-stax.md)"
+
+["Mandate of Peace"]
+status = "Partial"
+note = "opponents can't cast spells: no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; 'end the combat phase' stood in for by a fog (no combat damage the rest of the turn); 'only during combat' not enforced; the AI never casts it (rust/agents/engine-needs-stax.md)"
+
+["Angel's Grace"]
+status = "Partial"
+note = "resolving sets the turn flag t6_stax::grace_active / grace_floor (can't lose, damage leaves you at 1) but the engine does not read it, and split second is not modeled; the AI never casts it (rust/agents/engine-needs-stax.md)"
+
+["Blind Obedience"]
+status = "Partial"
+note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures are tapped right after they enter (etb and tokens_enter hooks) instead of entering tapped: no replacement effect in the engine (rust/agents/engine-needs-stax.md); Treasure/Food/Clue tokens are counters here and are not tapped"
+
+["Damping Sphere"]
+status = "Partial"
+note = "the {1}-more tax per other spell the caster cast this turn is exact; lands that tap for two or more make one mana, but keep their colour instead of making {C} (no land colour override in card code; rust/agents/engine-needs-stax.md)"
+
+["Pithing Needle"]
+status = "Partial"
+note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it; the engine's activation checks do not ask the Needle yet, so no ability is stopped (rust/agents/engine-needs-stax.md)"
+
+["Chalice of the Void"]
+status = "Partial"
+note = "X is fixed at 1 (costs {2}, one charge counter); the counter is a lock like Vexing Bauble's: nobody can cast a nonland spell with mana value 1 (the card stays in hand; no cast triggers, free costs not caught); needs the engine's counter-on-cast hook and an X choice (rust/agents/engine-needs-stax.md)"
+
+["Void Mirror"]
+status = "Partial"
+note = "a lock like Vexing Bauble's: free spells, and generic-only spells when the caster has no untapped coloured source, can't be cast (the real card lets them be cast and counters them by the mana actually spent; free alternative costs not caught; needs the counter-on-cast hook, rust/agents/engine-needs-stax.md)"
