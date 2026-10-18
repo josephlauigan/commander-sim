@@ -707,3 +707,35 @@ fn the_cards_of_her_list_her_rules_dont_name() {
     ];
     assert_eq!(unnamed, want);
 }
+
+// ------------------------------------------------------------------ Teferi's Protection is the real card
+#[test]
+fn teferis_protection_answers_a_wipe_with_the_whole_card() {
+    let mut g = two();
+    let y = ysh(&mut g, P0);
+    perm(&mut g, P0, "Thief of Sanity");
+    perm(&mut g, P0, "Gonti, Lord of Luxury");
+    hand(&mut g, P0, &["Teferi's Protection"]);
+    lands(&mut g, P0, "Plains", 4, false);
+    assert_eq!(decks::wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("all"));
+    let pl = g.player(P0);
+    assert!(pl.life_locked && pl.ring_prot, "life locked, protection from everything");
+    assert!(g.perm(y).phased);
+    assert!(pl.exile.iter().any(|&c| &*g.db.get(c).name == "Teferi's Protection"), "exiles itself, not the graveyard");
+    assert!(pl.gy.iter().all(|&c| &*g.db.get(c).name != "Teferi's Protection"));
+}
+
+#[test]
+fn teferis_protection_is_not_spent_on_one_removal_spell() {
+    let mut g = two();
+    ysh(&mut g, P0);
+    let big = perm(&mut g, P0, "Thief of Sanity");
+    perm(&mut g, P0, "Gonti, Lord of Luxury");
+    perm(&mut g, P0, "Grave Titan");
+    perm(&mut g, P0, "Consecrated Sphinx");
+    hand(&mut g, P0, &["Teferi's Protection"]);
+    lands(&mut g, P0, "Plains", 4, false);
+    let saved = decks::protect_response(&mut g, P0, big, "destroy".into(), Some(P1), None).unwrap();
+    assert!(!saved && !g.player(P0).life_locked, "one small piece of a big board: kept for the wipe");
+    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Teferi's Protection"));
+}

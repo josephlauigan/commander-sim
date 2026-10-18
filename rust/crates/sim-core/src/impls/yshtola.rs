@@ -1307,8 +1307,8 @@ pub fn yshtola_protect(
 }
 
 /// yshtola.yshtola_wipe_response (zur.zur_wipe_response)
-pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym) -> Res<Option<Sym>> {
-    zur::zur_wipe_response(g, q, kind)
+pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
+    zur::zur_wipe_response(g, q, kind, caster)
 }
 
 // ======================================================== registration

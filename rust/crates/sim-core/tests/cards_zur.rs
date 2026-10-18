@@ -238,7 +238,7 @@ fn rootborn_defenses_against_a_wipe() {
     let y = cmd(&mut g, P0);
     perm(&mut g, P0, "Restoration Angel");
     hand(&mut g, P0, &["Rootborn Defenses"]);
-    assert_eq!(zur::zur_wipe_response(&mut g, P0, "destroy").unwrap(), Some("indes"));
+    assert_eq!(zur::zur_wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("indes"));
     assert!(values::indestructible(&g, y));
 }
 
