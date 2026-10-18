@@ -139,3 +139,15 @@ fn the_flip_goes_without_waiting_and_the_early_turns_develop() {
     g.player_mut(P0).turns = 2;
     assert!(t6_plans::hold_up(&g, P0).is_some_and(|u| u < 0.0));
 }
+
+#[test]
+fn a_banisher_the_plan_holds_is_not_cast_on_its_dsl_value() {
+    // round 3, no threat at the table: the plan says 0 for Fiend Hunter; the shared AI used to cast it anyway on its
+    // DSL value (about 100 casts per 200 games)
+    let mut g = opening(&["Fiend Hunter", "Plains", "Plains", "Plains"]);
+    lands(&mut g, P0, "Plains", 3, false);
+    assert_eq!(t6_plans::prio(&g, P0, card(&g, "Fiend Hunter")), Some(0.0));
+    let fh = g.player(P0).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Fiend Hunter").unwrap();
+    let s = sim_core::ai::brain::Situation::new(&g, P0);
+    assert_eq!(sim_core::ai::brain::card_utility(&g, P0, &s, fh), None);
+}

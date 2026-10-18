@@ -285,6 +285,9 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if d.tag(Tag::Adnaus) && !super::plans::adnaus_cast_now(g, p) {
         return None; // Ad Nauseam waits for the end of the turn before yours, with room in the hand
     }
+    if base <= 0.0 && crate::impls::t6_plans::prio(g, p, c).is_some() {
+        return None; // a Tier 6 deck plan set this card to 0: it waits (no DSL-value fallback)
+    }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
     if base <= 0.0 && d.has_dsl() && !hand_written {
