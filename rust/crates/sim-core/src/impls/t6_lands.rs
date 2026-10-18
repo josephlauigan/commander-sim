@@ -10,9 +10,12 @@ use crate::engine::stack::ability_window_card;
 use crate::engine::tutors::card_worth;
 use crate::engine::zones::max_by;
 use crate::hooks::{Action, Opt};
-use crate::ids::CardId;
+use crate::ids::{CardId, PermId};
 use crate::tag::Tag;
 use crate::engine::life::lose_life;
+use crate::engine::mana::{can_pay, pay};
+use crate::engine::removal::apply_removal;
+use crate::engine::values::{etgh, pval, untargetable};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{LandId, PlayerId};
@@ -119,6 +122,88 @@ fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Eiganjo, Seat of the Empire (and Razorgrass Ambush)
+/// The damage-to-an-attacker-or-blocker answers from hand (Eiganjo's channel, Razorgrass Ambush): the best creature in
+/// `targets` that `dmg` kills and that is worth at least 4 (pval), or None
+fn shot_target(g: &Game, who: PlayerId, targets: &[PermId], dmg: i32) -> Option<PermId> {
+    let cs: Vec<PermId> = targets
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && x.owner != who && g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= dmg
+        })
+        .collect();
+    max_by(&cs, |m| pval(g, m)).filter(|&m| pval(g, m) >= 4.0)
+}
+
+/// **Eiganjo, Seat of the Empire**: Channel, {2}{W}, discard it: 4 damage to target attacking or blocking creature;
+/// {1} less for each legendary creature you control. The AI channels it at an attacker of an opponent's attack on it
+/// (after blocks) or at a blocker of its own attack, when 4 damage kills a creature worth at least 4
+pub fn eiganjo_cost(g: &Game, p: PlayerId) -> u32 {
+    let leg = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| g.is_creature(m) && !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg)))
+        .count() as u32;
+    2u32.saturating_sub(leg)
+}
+
+/// pay and discard Eiganjo; false when it can't be done (the caller then does nothing)
+fn eiganjo_channel(g: &mut Game, c: CardId, who: PlayerId, t: PermId) -> Res<bool> {
+    let gn = eiganjo_cost(g, who);
+    if !g.player(who).hand.contains(&c) || !can_pay(g, who, gn, "W", false) || !pay(g, who, gn, "W", false)? {
+        return Ok(false);
+    }
+    let i = g.player(who).hand.iter().position(|&x| x == c).unwrap();
+    g.player_mut(who).hand.remove(i);
+    g.player_mut(who).gy.push(c);
+    crate::glog!(g, "  {} channels Eiganjo: 4 damage to {}", g.player(who).name, g.perm(t).name);
+    if ability_window_card(g, who, c, "4 damage to an attacking or blocking creature", None, Some(t))? && g.perm(t).on_bf {
+        apply_removal(g, Some(who), t, "dmg4", None)?;
+    }
+    Ok(true)
+}
+
+fn eiganjo_defend(
+    g: &mut Game,
+    c: CardId,
+    d: PlayerId,
+    p: PlayerId,
+    atk: &mut Vec<PermId>,
+    _assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    if !can_pay(g, d, eiganjo_cost(g, d), "W", false) {
+        return Ok(());
+    }
+    let mine: Vec<PermId> = atk.iter().copied().filter(|&a| g.perm(a).owner == p).collect();
+    let Some(t) = shot_target(g, d, &mine, 4) else { return Ok(()) };
+    if eiganjo_channel(g, c, d, t)? && !g.perm(t).on_bf {
+        atk.retain(|&a| a != t);
+    }
+    Ok(())
+}
+
+fn eiganjo_blocks(
+    g: &mut Game,
+    c: CardId,
+    p: PlayerId,
+    _atk: &[PermId],
+    _d: PlayerId,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    if !can_pay(g, p, eiganjo_cost(g, p), "W", false) {
+        return Ok(());
+    }
+    let blockers: Vec<PermId> = assign.iter().map(|x| x.1).collect();
+    let Some(t) = shot_target(g, p, &blockers, 4) else { return Ok(()) };
+    if eiganjo_channel(g, c, p, t)? && !g.perm(t).on_bf {
+        assign.retain(|x| x.1 != t);
+    }
+    Ok(())
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -137,6 +222,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         r.card(db, n)?.land_cols = Some(any_filter_cols);
     }
     r.card(db, "Abstergo Entertainment")?.land_options = Some(abstergo);
+    let e = r.card(db, "Eiganjo, Seat of the Empire")?;
+    e.hand_defend = Some(eiganjo_defend);
+    e.hand_blocks = Some(eiganjo_blocks);
     // REGISTER-HERE
     Ok(())
 }

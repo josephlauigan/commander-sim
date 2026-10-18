@@ -8252,3 +8252,7 @@ note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand
 ["Abstergo Entertainment"]
 status = "Full"
 note = "{T}: {C}; {1},{T}: any colour (any colour only when another untapped land pays the {1}); {3},{T}, exile it: a historic card from your graveyard to hand, then all graveyards exiled (t6_lands.rs; the AI needs a card worth 30+)"
+
+["Eiganjo, Seat of the Empire"]
+status = "Full"
+note = "{T}: {W}; Channel {2}{W} (less per legendary creature you control), discard: 4 damage to an attacking creature (when attacked) or a blocking creature (its own attack), used when it kills a creature worth 4+ (t6_lands.rs)"

@@ -96,3 +96,46 @@ fn abstergo_exiles_itself_returns_a_historic_card_and_exiles_all_graveyards() {
     assert!(g.player(P0).exile.contains(&bear) && g.player(P1).exile.contains(&junk));
     assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "{{3}} paid");
 }
+
+// ------------------------------------------------------------------ Eiganjo, Seat of the Empire
+#[test]
+fn eiganjo_channel_deals_four_to_an_attacker_and_costs_one_less_per_legendary_creature() {
+    let mut g = pod();
+    let e = hand(&mut g, P0, &["Eiganjo, Seat of the Empire"])[0];
+    lands(&mut g, P0, "Plains", 3, false);
+    let a = perm(&mut g, P1, "Craterhoof Behemoth"); // 5/5: 4 damage doesn't kill it
+    let b = perm(&mut g, P1, "Llanowar Elves"); // too small to be worth it
+    let big = perm(&mut g, P1, "Kaalia of the Vast"); // 2 toughness, pval 7
+    let mut atk = vec![a, b, big];
+    let mut assign = vec![];
+    for &m in &atk {
+        g.perm_mut(m).tapped = true;
+    }
+    sim_core::cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut assign).unwrap();
+    assert!(g.perm(a).on_bf && g.perm(b).on_bf, "too big / too small to be worth 4 damage");
+    assert!(!g.perm(big).on_bf && !atk.contains(&big), "Kaalia is killed and leaves the attack");
+    assert!(!g.player(P0).hand.contains(&e) && g.player(P0).gy.contains(&e), "discarded as the cost");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "{{2}}{{W}}");
+}
+
+#[test]
+fn eiganjo_costs_one_less_for_each_legendary_creature() {
+    let mut g = pod();
+    assert_eq!(sim_core::impls::t6_lands::eiganjo_cost(&g, P0), 2);
+    perm(&mut g, P0, "Isshin, Two Heavens as One");
+    assert_eq!(sim_core::impls::t6_lands::eiganjo_cost(&g, P0), 1);
+}
+
+#[test]
+fn eiganjo_channel_also_hits_a_blocker_of_its_own_attack() {
+    let mut g = pod();
+    let e = hand(&mut g, P0, &["Eiganjo, Seat of the Empire"])[0];
+    lands(&mut g, P0, "Plains", 3, false);
+    let atk = perm(&mut g, P0, "Craterhoof Behemoth");
+    let blk = perm(&mut g, P1, "Kaalia of the Vast");
+    let mut assign = vec![(atk, blk)];
+    let mut a = vec![atk];
+    sim_core::cardcode::defend_hooks(&mut g, P0, &mut a, P1, &mut assign).unwrap();
+    assert!(!g.perm(blk).on_bf && assign.is_empty(), "the blocker takes 4 damage and is removed from the blocks");
+    assert!(g.player(P0).gy.contains(&e));
+}
