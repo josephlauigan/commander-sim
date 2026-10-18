@@ -191,3 +191,18 @@ fn minamo_does_nothing_when_the_untap_does_not_pay_for_itself() {
     lands(&mut g, P0, "Gaea's Cradle", 1, true); // no creatures: it makes nothing
     assert!(sim_core::cardcode::land_options(&mut g, P0, None).unwrap().is_empty());
 }
+
+// ------------------------------------------------------------------ Emergence Zone
+#[test]
+fn emergence_zone_sacrifices_itself_and_marks_the_turn_for_flash() {
+    use sim_core::impls::t6_lands as t6;
+    let mut g = pod();
+    let z = lands(&mut g, P0, "Emergence Zone", 1, false)[0];
+    lands(&mut g, P0, "Forest", 1, false);
+    assert!(t6::emergence_go(&mut g, P0, z.0 as i64).unwrap());
+    assert!(!g.player(P0).lands.contains(&z), "sacrificed");
+    assert!(g.player(P0).gy.contains(&card(&g, "Emergence Zone")));
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 1, "the {{1}} came from the Forest");
+    let flag = sim_core::sym::intern(t6::FLASH_FLAG);
+    assert_eq!(g.player(P0).flag_turn.get(&flag), Some(&g.turn_stamp()), "flash this turn");
+}

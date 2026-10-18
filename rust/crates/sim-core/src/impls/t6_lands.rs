@@ -331,6 +331,49 @@ fn minamo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Emergence Zone
+/// the player's one-turn flag that "you may cast spells this turn as though they had flash" (Emergence Zone); the AI's
+/// end-of-turn casting must read it (`t0_captain::as_flash` does not yet: see engine-needs-lands.md)
+pub const FLASH_FLAG: &str = "as_flash_turn";
+
+/// Until the engine reads `FLASH_FLAG`, the land is not offered (sacrificing it would buy nothing)
+const EMERGENCE_LIVE: bool = false;
+
+/// **Emergence Zone**: {T}: Add {C}. {1},{T}, sacrifice it: you may cast spells this turn as though they had flash.
+/// The AI uses it at the end of an opponent's turn when it holds a creature spell it can pay for after the cost
+fn emergence(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !EMERGENCE_LIVE || post.is_some() || g.active == Some(p) || g.land(l).tapped || !can_pay_without(g, p, l, 1, "") {
+        return Ok(vec![]);
+    }
+    let spare = total_mana(g, p, false).saturating_sub(2);
+    let has = g.player(p).hand.iter().any(|&c| {
+        let d = g.db.get(c);
+        d.creature && !d.land && {
+            let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+            gn + pips.chars().count() as u32 <= spare
+        }
+    });
+    if !has {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt { utility: 1.0, label: "Emergence Zone".into(), act: Some(Action::Plan { f: emergence_go, arg: l.0 as i64 }) }])
+}
+
+pub fn emergence_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 1, "")? {
+        return Ok(false);
+    }
+    let cd = g.land(l).cd;
+    super::lands::sac_land(g, p, l)?; // {T} and sacrifice are costs
+    crate::glog!(g, "  {} sacrifices Emergence Zone: spells can be cast as though they had flash", g.player(p).name);
+    if ability_window_card(g, p, cd, "cast spells as though they had flash", None, None)? {
+        let st = g.turn_stamp();
+        g.player_mut(p).flag_turn.insert(crate::sym::intern(FLASH_FLAG), st);
+    }
+    Ok(true)
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -354,6 +397,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     e.hand_blocks = Some(eiganjo_blocks);
     r.card(db, "Deserted Temple")?.land_options = Some(temple);
     r.card(db, "Minamo, School at Water's Edge")?.land_options = Some(minamo);
+    r.card(db, "Emergence Zone")?.land_options = Some(emergence);
     // REGISTER-HERE
     Ok(())
 }

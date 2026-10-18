@@ -8264,3 +8264,7 @@ note = "{T}: {C}; {1},{T}: untap target land, used when the land untapped gives 
 ["Minamo, School at Water's Edge"]
 status = "Full"
 note = "{T}: {U}; {U},{T}: untap target legendary land or permanent, used when it gives 3+ more mana (the {U} and Minamo's own mana are the cost; t6_lands.rs)"
+
+["Emergence Zone"]
+status = "Partial"
+note = "{T}: {C}; {1},{T}, sacrifice: sets the one-turn flash flag (t6_lands.rs, tested), but the AI does not read it yet so the option is switched off (engine-needs-lands.md)"
