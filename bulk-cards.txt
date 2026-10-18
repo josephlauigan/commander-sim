@@ -170,7 +170,6 @@
 2x Death Cultist (roe)
 1x Deathcap Glade (sos)
 1x Decimate (fic)
-1x Decorum Dissertation
 3x Dedicated Commons (fra)
 1x Deepcavern Imp (mma)
 2x Deepglow Skate (cmm)
@@ -725,6 +724,7 @@
 1x Spectator Seating (msc)
 1x Spectral Lynx (dmr)
 1x Speed, Young Avenger (msh)
+1x Spell Pierce
 2x Spellbook Seeker (sos)
 1x Spellgorger Weird (war)
 1x Sphinx of New Prahv (rvr)

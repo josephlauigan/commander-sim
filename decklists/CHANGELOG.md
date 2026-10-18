@@ -63,6 +63,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Bitter Triumph. In: Decorum Dissertation. Matched to the physical deck (JD's list, 2026-10-18): Decorum Dissertation back in for Bitter Triumph; the 10/14 swap was never made physically.
 - **2026-10-18.** Out: Demonic Tutor, Mystical Tutor, Vampiric Tutor. In: Expressive Iteration, Mana Leak, Sleight of Hand. Band calibration 10/18 (JD approved): Demonic Tutor=>Mana Leak;Vampiric Tutor=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
 - **2026-10-14.** Out: Decorum Dissertation. In: Bitter Triumph, Shivan Reef, Sulfurous Springs. Decorum Dissertation (to bulk) for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef (all three from the binder, the retired Jodah deck's leftovers). Measured -1.9 over all tiers (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); within noise; JD's choice to apply it. A pool run is pending.
 - **2026-10-13 (package A, Yawgmoth's Will storm turn).** Out: Disintegrate, Kaervek's Purge, Twinflame. In: Mystical Tutor, Vampiric Tutor, Yawgmoth's Will. Twinflame, Kaervek's Purge and Disintegrate went to bulk; Yawgmoth's Will (JD's spare copy), Vampiric Tutor and Mystical Tutor (binder, from the retired Jodah deck) came in. Measured +1.0 over all tiers (T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Six Game Changers, still Bracket 4. Jin-Gitaxias stays (JD).
@@ -93,6 +94,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Spell Pierce. In: Urza, Lord High Artificer. Matched to the physical deck (JD's list, 2026-10-18): Urza, Lord High Artificer in for Spell Pierce (tested +0.5, noise, on branch adnaus).
 - **2026-10-18.** Out: Slaughter Pact. In: Force of Will. Band calibration 10/18 (JD approved): Slaughter Pact=>Force of Will
 - **2026-10-13 (package C).** Out: Bedevil. In: Sheoldred, the Apocalypse. JD's package C: Bedevil out (to bulk), Sheoldred, the Apocalypse in (JD's own spare copy): every opponent draw from Jace's Archivist's wheel costs 2 life. Measured +2.7 over all tiers (T1 +5.0, T2 +4.8, T3 +0.6, T4 +2.8, T5 +0.2; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Not a Game Changer: still two, Bracket 3.
 - **2026-10-13 (Swords).** Out: Sword of Feast and Famine, Sword of Hearth and Home. In: Chaos Warp, Spell Pierce. JD's choice: both Swords go to the Cloud deck; Chaos Warp and Spell Pierce come back from bulk (both had been cut earlier on 10-13) as answers. Paired test, look-ahead, 500 games per tier: -1.7 over four tiers (t1 +1.6, t2 -3.4, t3 -1.2, t5 -3.6; t4 was blocked by a Conspicuous Snoop crash, since fixed); `audit/cloud/2026-10-13/screen/D1-*`. The Sword of Feast and Famine + Aggravated Assault infinite-combat combo (made 09-22) is gone. Game Changers unchanged (2).
@@ -614,6 +616,7 @@ Deck key `galadriel`, `decklists/Avery/galadriel-bant-rebels.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Dragonlord Dromoka. In: Flicker. Matched to the physical deck (Avery's list, 2026-10-18): Flicker back in for Dragonlord Dromoka; the 10/14 swap was never made physically.
 - **2026-10-14.** Out: Flicker. In: Dragonlord Dromoka. Flicker (back to Avery) for Dragonlord Dromoka (JD's, from his
   binder, the retired Jodah deck's leftovers). Measured +1.1 over all tiers (T1 +0.8, T2 +3.0, T3 -0.8, T4 +2.2,
   T5 +0.4; `audit/leftovers/2026-10-14/README.md`; look-ahead, loose, 500 paired games per tier). Within noise.

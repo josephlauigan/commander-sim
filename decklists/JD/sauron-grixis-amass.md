@@ -135,10 +135,13 @@ Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an o
 cards), **Night's Whisper**, **Bloodsoaked Insight // Sanguine Morass** (an exile-and-play spell that is cheaper for
 each life your opponents have lost this turn, or a land that taps for {B} or {R}), Cost of Brilliance and Iron Man.
 Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet, Relic of Legends,
-Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. Spot removal: **Bitter Triumph**,
+Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. **Urza, Lord High Artificer** brings a
+Construct that grows with every artifact you control and taps your non-mana artifacts (The Ozolith, Lightning Greaves,
+Whispersilk Cloak, the Construct itself) for {U}; the rocks already make mana, so he adds little there. Late, {5}
+exiles the top card of your library, which you may play free this turn. Spot removal: **Bitter Triumph**,
 **Bloodchief's Thirst**, **Go for the Throat**, **Infernal Grasp**, **Terminate** and **Chaos
 Warp**. Counters: **Counterspell**, **Arcane Denial**, **Undermine** (the countered spell's controller loses 3 life),
-**Disdainful Stroke** (mana value 4 or more), **Spell Pierce** (a noncreature spell unless they pay {2}) and **Force of
+**Disdainful Stroke** (mana value 4 or more) and **Force of
 Will** (counter anything: exile a blue card from hand and pay 1 life, or pay {3}{U}{U}; the deck has plenty of blue cards
 to pitch, but it costs two cards, so keep it for a spell that would end the game or wreck the Army).
 **Not of This World** ({7}) counters a spell or ability that targets one of your permanents; it costs only {0}
@@ -176,7 +179,7 @@ Wurm, Ral or Inferno Titan clear blockers first.
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Eleven rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Relic of Legends (any colour, or tap a legendary creature for one more), Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern.
+The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Eleven rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Relic of Legends (any colour, or tap a legendary creature for one more), Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern. Urza, Lord High Artificer adds {U} from the non-mana artifacts.
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -187,7 +190,7 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 Dual lands: the shocklands Blood Crypt and Steam Vents; the check lands Drowned Catacomb and Sulfur Falls; Shivan Reef (a painland); Frostboil Snarl and Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Crumbling Necropolis (all three colours), Izzet Boilerworks (bounces a land), Treno, Dark City and Path of Ancestry.
 
-**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk and Vraska; six counters (Counterspell, Arcane Denial, Undermine, Spell Pierce, Force of Will and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
+**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, Force of Will and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
 
 ## Tutor targets by board state
 
@@ -226,7 +229,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (18).** Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (19).** Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Planeswalkers (1).** Vraska Betrayal's Sting
 
@@ -234,7 +237,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (14).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Relic of Legends, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (26).** Arcane Denial, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Force of Will, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Spell Pierce, Terminate, Undermine, Vandalblast
+**Instants and sorceries (25).** Arcane Denial, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Force of Will, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Terminate, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -308,7 +311,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Sol Ring
-1 Spell Pierce
 1 Steam Vents
 1 Sulfur Falls
 1 Talisman of Creativity
@@ -320,6 +322,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Treno, Dark City
 1 Undermine
 1 Urabrask, Heretic Praetor
+1 Urza, Lord High Artificer
 1 Vandalblast
 1 Vision, Synthezoid Avenger
 1 Vraska, Betrayal's Sting
