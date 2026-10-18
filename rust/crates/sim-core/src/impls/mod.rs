@@ -42,6 +42,7 @@ pub mod sweepers;
 pub mod bulk_blue;
 pub mod bulk_white;
 pub mod t6_lands;
+pub mod t6_legends1;
 pub mod t0_zurgo;
 pub mod t0_stella;
 pub mod t0_captain;
@@ -110,5 +111,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t6_mana::register(&mut r, db)?;
     t6_redirects::register(&mut r, db)?;
     t6_lands::register(&mut r, db)?;
+    t6_legends1::register(&mut r, db)?;
     Ok(r)
 }
