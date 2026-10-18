@@ -2517,8 +2517,9 @@ note = "ward {4}; +1/+1 and unblockable this turn when an artifact enters"
 
 ["Karlach, Fury of Avernus"]
 tags = "leg pow=5 tgh=4"
+dsl = []
 status = "Full"
-note = "first combat: attackers untap and gain first strike; additional combat"
+note = "first combat: attackers untap and gain first strike; additional combat (hand code in impls/t1.rs only; the compiled \"attack: extra_combat\" had no first-combat condition and doubled up with Isshin, fixed 2026-10-18)"
 
 ["Karmic Justice"]
 types = "E"

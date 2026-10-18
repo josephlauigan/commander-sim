@@ -55954,29 +55954,7 @@
    "pow": 5,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "first strike",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      },
-      {
-       "do": "extra_combat"
-      }
-     ],
-     "event": "attack",
-     "source": "you_any"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "choose a background"
