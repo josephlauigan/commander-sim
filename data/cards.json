@@ -36846,26 +36846,7 @@
    "pow": 1,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "other": true
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -36876,10 +36857,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ leaves the battlefield, return the exiled card to the battlefield under its owner's control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
