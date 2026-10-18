@@ -17551,30 +17551,11 @@
    "types": "A",
    "generic": 1,
    "pips": "",
-   "tags": {
-    "rock": "1:A"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "add_mana",
-       "n": 1
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -17582,10 +17563,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ is put into a graveyard from the battlefield, draw a card."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

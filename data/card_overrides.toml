@@ -8236,3 +8236,10 @@ note = "gain X life, X 1/1 colourless Phyrexian Mite artifact creature tokens wi
 dsl = []
 status = "Full"
 note = "you don't lose for 0 or less life (check_state); at 0 or less life damage to you is dealt as poison counters (lose_life), ten poison still lose; the AI casts it once at 20 life or less"
+
+["Chromatic Star"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "{1},{T}, sacrifice: one mana of any colour (floating, from the AI's end-of-turn / second-main window); drawing a card when it goes to a graveyard from the battlefield (sacrificed or destroyed); no longer a free mana rock"

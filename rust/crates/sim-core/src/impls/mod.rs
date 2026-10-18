@@ -50,6 +50,7 @@ pub mod zur;
 pub mod threats;
 pub mod tymna_cards;
 pub mod tymna_partners;
+pub mod t6_mana;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -100,5 +101,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     garland_cards::register_more(&mut r, db)?;
     sephfs_cards::register(&mut r, db)?;
     sephfs::register(&mut r, db)?;
+    t6_mana::register(&mut r, db)?;
     Ok(r)
 }
