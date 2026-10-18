@@ -178,7 +178,7 @@ fn opp_creatures(g: &Game, q: PlayerId) -> usize {
 }
 
 fn counters_likely(g: &Game, p: PlayerId) -> bool {
-    g.opps(p).any(|q| crate::ai::brain::prob_holding(g, q, |c| g.db.get(c).tag(Tag::Ctr)) >= 0.4)
+    1.0 - g.opps(p).map(|q| 1.0 - crate::ai::brain::prob_holding(g, q, |c| g.db.get(c).tag(Tag::Ctr))).product::<f64>() >= 0.4
 }
 
 /// free-spell decks at the table (Force, Pacts, Misstep, Swan Song): what Void Mirror and Bauble hit
