@@ -1065,6 +1065,9 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
         if g.player(p).key == "cloud" {
             return crate::impls::cloud::keep_hand(g, p);
         }
+        if let Some(k) = crate::impls::t6_plans::keep(g, p) {
+            return k;
+        }
         (2..=5).contains(&n)
     };
     draw7(g, rng);

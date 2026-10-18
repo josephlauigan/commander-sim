@@ -1068,6 +1068,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     opts.extend(hook_options(g, p, &s, Some(post))?);
     gandalf_hold(g, p, &s, &mut opts);
     let mut stop_u = if hold_card.is_some() { hold_v } else { -3.0 };
+    if let Some(u) = crate::impls::t6_plans::hold_up(g, p) {
+        stop_u += u; // a Tier 6 deck's plan slot: pass with the mana up (or develop)
+    }
     if rsv.is_some() {
         stop_u = stop_u.max(4.5); // ninjutsu window: go to combat, cast after
     }

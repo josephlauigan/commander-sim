@@ -577,6 +577,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         if !ok || !affordable(g, p, cmb, &casts) {
             continue;
         }
+        if crate::impls::t6_plans::go_now(g, p, cmb.name) == Some(false) {
+            continue; // a Tier 6 plan slot says wait
+        }
         let risk = if casts.is_empty() { 0.0 } else { ctr_risk };
         out.push(Opt {
             utility: 14.0 - 6.0 * risk,
