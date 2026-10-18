@@ -8268,3 +8268,8 @@ note = "{T}: {C}; tapping an untapped legendary permanent untaps it, making anot
 tags = "pow=1 tgh=2 dork=C noatk"
 status = "Full"
 note = "{T}: {C}{C} for each artifact card in hand (a mana creature: summoning sick the turn it arrives); reveal is automatic"
+
+["Treasonous Ogre"]
+dsl = []
+status = "Full"
+note = "dethrone (keyword); pay 3 life: add {R} as a mana unit of red (3 life per mana while above 10 life, lands first, only while untapped); no pointless floating-mana activations"

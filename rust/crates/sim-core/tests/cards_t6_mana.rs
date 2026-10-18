@@ -198,3 +198,44 @@ fn metalworker_is_summoning_sick_like_any_creature() {
     assert!(g.perm(m).sick);
     assert_eq!(total_mana(&g, P0, false), 0);
 }
+
+// ======================================================== Treasonous Ogre
+#[test]
+fn treasonous_ogre_pays_three_life_per_red_mana_after_lands() {
+    use sim_core::engine::mana::{can_pay, pay, total_mana};
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let ogre = perm(&mut g, P0, "Treasonous Ogre");
+    assert_eq!(g.player(P0).life, 40);
+    assert_eq!(total_mana(&g, P0, false), 2 + 10, "two lands and ten payments of 3 life (40 down to 10)");
+    // a small cost ({1}{R}) is paid by the two lands: no life lost
+    assert!(pay(&mut g, P0, 1, "R", false).unwrap());
+    assert_eq!(g.player(P0).life, 40);
+    // both Mountains are tapped now ({1}{R}): RRR is all the Ogre
+    assert!(can_pay(&g, P0, 0, "RRR", false));
+    assert!(pay(&mut g, P0, 0, "RRR", false).unwrap());
+    assert_eq!(g.player(P0).life, 40 - 3 * 3, "three mana from the Ogre");
+    assert!(!g.perm(ogre).tapped, "paying life does not tap the Ogre");
+}
+
+#[test]
+fn treasonous_ogre_stops_paying_near_the_life_floor_and_gives_no_colour_but_red() {
+    use sim_core::engine::mana::{can_pay, total_mana};
+    let mut g = tbl();
+    perm(&mut g, P0, "Treasonous Ogre");
+    g.player_mut(P0).life = 12;
+    assert_eq!(total_mana(&g, P0, false), 0, "12 life is below the floor of 10 plus one payment");
+    g.player_mut(P0).life = 19;
+    assert_eq!(total_mana(&g, P0, false), 3);
+    assert!(can_pay(&g, P0, 0, "RRR", false));
+    assert!(!can_pay(&g, P0, 0, "U", false), "only red");
+}
+
+#[test]
+fn treasonous_ogre_has_no_proactive_floating_mana_ability() {
+    use sim_core::dsl;
+    let mut g = tbl();
+    perm(&mut g, P0, "Treasonous Ogre");
+    let o = dsl::ability_options(&mut g, P0, true).unwrap();
+    assert!(o.iter().all(|x| !x.label.contains("Treasonous")), "no pay-3-life option for the AI");
+}

@@ -110423,22 +110423,7 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "life": 3
-     },
-     "effects": [
-      {
-       "do": "add_mana",
-       "n": 1
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "dethrone"
@@ -110451,10 +110436,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Dethrone"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

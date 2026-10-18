@@ -4,7 +4,9 @@
 //! rust/agents/engine-needs-mana.md).
 
 use super::partials::at_once;
-use crate::cards::{CardDb, Types};
+use crate::cards::{CardDb, Colors, Types};
+use crate::engine::life::lose_life;
+use crate::engine::mana::{Source, Unit};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{epow, pval};
@@ -225,6 +227,35 @@ fn metalworker_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
     2 * g.player(p).hand.iter().filter(|&&c| g.db.get(c).types.has(Types::ARTIFACT)).count() as u32
 }
 
+// ================================================================== Treasonous Ogre
+/// the AI never pays life for Treasonous Ogre's mana below this life total
+const OGRE_LIFE_FLOOR: i32 = 10;
+
+/// **Treasonous Ogre** ({3}{R}, 2/3): dethrone (the engine's keyword); pay 3 life: add {R}. The mana ability is an
+/// extra mana unit of red whose count is the number of 3-life payments above `OGRE_LIFE_FLOOR` (at most ten); the
+/// payment planner takes lands and rocks first (the unit makes several mana, so it ranks last for small costs) and
+/// paying with it costs 3 life per mana (`ogre_tap`). Offered only while the Ogre is untapped (an attacking Ogre
+/// does not offer it). The compiled "pay 3 life: floating mana" ability is dropped by the data override, so the AI
+/// no longer burns life for mana nobody is waiting to spend.
+fn ogre_mana(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
+    if !live(g, src) || g.perm(src).tapped {
+        return vec![];
+    }
+    let k = ((g.player(p).life - OGRE_LIFE_FLOOR) / 3).clamp(0, 10) as u32;
+    if k == 0 {
+        return vec![];
+    }
+    vec![Unit { src: Source::Perm(src), cols: Colors::from_letters("R"), amt: k }]
+}
+
+/// the Ogre's mana was used: 3 life per mana (the Ogre does not tap)
+fn ogre_tap(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {
+    g.perm_mut(m).tapped = false;
+    lose_life(g, p, 3 * used as i32, Some(p), "other", Some(true))?;
+    crate::glog!(g, "    {} pays {} life for Treasonous Ogre's mana", g.player(p).name, 3 * used);
+    Ok(())
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -262,6 +293,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.dyn_mana_perm = Some(shaku_mana);
     c.on_tap_perm = Some(shaku_tap);
     r.card(db, "Metalworker")?.dyn_mana_perm = Some(metalworker_mana);
+    let c = r.card(db, "Treasonous Ogre")?;
+    c.extra_mana = Some(ogre_mana);
+    c.on_tap_perm = Some(ogre_tap);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);
