@@ -36,7 +36,8 @@ feature, its worktree and branch are in the prompt that started you. Work only i
 
 - Create `rust/agents/handoff-t6-e-<feature>.md` FIRST; update it after each step (done / next / gotchas), and BEFORE
   any long build. A lead checks on an agent silent for 12 minutes and restarts one silent for ~20.
-- Commit after each working piece (engine change + its test; then each card wired), standalone commits, no
+- Commit after each working piece (engine change + its test; then each card wired) with `git add -A rust data`
+  (code AND data AND new test files; check `git status` is clean after), standalone commits, no
   Co-Authored-By.
 - Timebox: if one sub-part resists for ~15 minutes, commit what works, write the gap in the report, move on.
 
