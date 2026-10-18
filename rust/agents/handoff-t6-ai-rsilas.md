@@ -17,3 +17,4 @@ Squelcher cast before Oracle line + go_now true with Squelcher out. Next: run3, 
 before final commit) variants "", k, kw, kwp, then full -> /tmp/claude-1000/ab_*.txt. Then tests, lock, report.
 ## Step 5: A/B result: k alone 25.0/21.4 (good), +w same, +p (prio) 15.3/15.3 (bad). Bisecting prio by flags a(commander) m(amber) i(rituals) c(static) -> ab_kwp?.txt
 ## Step 6: per lead: kept keep+wish only; prio/hold_up/go_now None; search.rs hook reverted; running final script /tmp/claude-1000/fin.sh (tests, t6 run, t3 lock, build, full tests)
+## DONE: report written

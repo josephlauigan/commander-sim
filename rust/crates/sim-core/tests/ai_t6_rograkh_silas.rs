@@ -86,7 +86,7 @@ fn all_land_and_no_land_hands_are_shipped() {
     assert!(!keeps(&[
         "Lotus Petal",
         "Sol Ring",
-        "Dark Ritual",
+        "Gitaxian Probe",
         "Demonic Tutor",
         "Ad Nauseam",
         "Force of Will",
@@ -104,4 +104,9 @@ fn tutors_look_for_the_missing_half_of_the_oracle_line() {
     hand(&mut g, P0, &["Tainted Pact"]);
     let w = t6_plans::wish(&g, P0).unwrap();
     assert_eq!(&*g.db.get(w[0]).name, "Thassa's Oracle");
+}
+
+#[test]
+fn a_no_land_hand_is_kept_only_with_three_fast_mana_and_a_tutor() {
+    assert!(keeps(&["Lotus Petal", "Sol Ring", "Dark Ritual", "Demonic Tutor", "Ad Nauseam", "Force of Will", "Daze"]));
 }
