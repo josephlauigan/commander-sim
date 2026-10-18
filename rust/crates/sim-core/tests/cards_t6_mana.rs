@@ -266,3 +266,35 @@ fn ignoble_hierarch_taps_for_b_r_or_g_and_has_exalted() {
     assert!(!can_pay(&g, P0, 0, "W", false) && !can_pay(&g, P0, 0, "U", false));
     assert!(g.db.get(c).has_kw("exalted"), "exalted is the engine's keyword (cardcode::keyword_attack)");
 }
+
+// ======================================================== Jeweled Amulet
+#[test]
+fn jeweled_amulet_stores_a_mana_of_the_noted_type_for_later() {
+    use sim_core::engine::mana::{can_pay, pay, total_mana};
+    use sim_core::state::{DataKey, Val};
+    let mut g = tbl();
+    lands(&mut g, P0, "Plains", 2, false);
+    let am = perm(&mut g, P0, "Jeweled Amulet");
+    assert_eq!(total_mana(&g, P0, false), 2, "an uncharged Amulet makes no mana");
+    assert!(options(&mut g, am, P0, Some(false)).is_empty(), "second main or end of turn only");
+    let o = options(&mut g, am, P0, None);
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.perm(am).tapped);
+    assert!(matches!(g.perm(am).data.get(DataKey::Charge), Some(Val::Str(s)) if &**s == "W"), "noted white");
+    assert_eq!(total_mana(&g, P0, false), 1, "one Plains paid {{1}}");
+    assert!(options(&mut g, am, P0, None).is_empty(), "no second counter, and it is tapped");
+    // next turn: everything untaps, and the Amulet makes {W}
+    g.perm_mut(am).tapped = false;
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = false;
+    }
+    assert_eq!(total_mana(&g, P0, false), 3, "two Plains and the Amulet");
+    assert!(pay(&mut g, P0, 2, "", false).unwrap(), "the lands pay first");
+    assert!(!g.perm(am).tapped);
+    assert!(can_pay(&g, P0, 0, "W", false), "the Amulet's own {{W}} is left");
+    assert!(pay(&mut g, P0, 0, "W", false).unwrap());
+    assert!(g.perm(am).tapped);
+    assert!(!matches!(g.perm(am).data.get(DataKey::Charge), Some(Val::Str(_))), "the counter is gone");
+    assert!(!can_pay(&g, P0, 0, "W", false));
+}

@@ -6,7 +6,8 @@
 use super::partials::at_once;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{Source, Unit};
+use crate::engine::mana::{Source, Unit, mana_units, plan_pay};
+use crate::sym::intern;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{epow, pval};
@@ -276,6 +277,77 @@ fn goblin_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== Jeweled Amulet
+/// the colour of the mana the Amulet noted ("C" for colourless), if it holds a charge counter
+fn amulet_noted(g: &Game, m: PermId) -> Option<Sym> {
+    match g.perm(m).data.get(DataKey::Charge) {
+        Some(Val::Str(s)) => Some(*s),
+        _ => None,
+    }
+}
+
+/// **Jeweled Amulet** ({0} artifact): {1}, {T}: put a charge counter on it and note the type of mana spent (only with
+/// no charge counter); {T}, remove a charge counter: add one mana of the last noted type. The charge is kept in the
+/// permanent's data as the noted type (a colour letter, or "C"); the mana is a unit of that colour that the payment
+/// planner can use while the Amulet is untapped and charged. The data override drops the old free colourless `rock`
+/// tag. The AI charges it in the second main phase or the end-of-turn window with a spare {1}, spending a source of
+/// the colour it wants noted (the one the payment planner would tap).
+fn amulet_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false)
+        || !live(g, src)
+        || owner(g, src) != p
+        || g.perm(src).tapped
+        || amulet_noted(g, src).is_some()
+        || !can_pay(g, p, 1, "", false)
+    {
+        return Ok(vec![]);
+    }
+    Ok(vec![ability(0.8, "charge Jeweled Amulet", src, amulet_charge, 0)])
+}
+
+/// the type of the mana the planner would spend on one generic: its colour letter, or "C"
+fn spent_type(g: &Game, p: PlayerId) -> Option<&'static str> {
+    let u = mana_units(g, p, false);
+    let (used, _) = plan_pay(g, &u, 1, "")?;
+    let w = u.iter().zip(used).find(|x| x.1 > 0)?.0;
+    Some(["W", "U", "B", "R", "G"].into_iter().find(|c| w.cols.has(c.chars().next().unwrap())).unwrap_or("C"))
+}
+
+fn amulet_charge(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || amulet_noted(g, src).is_some() {
+        return Ok(false);
+    }
+    let Some(kind) = spent_type(g, p) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    if !pay(g, p, 1, "", false)? {
+        g.perm_mut(src).tapped = false;
+        return Ok(false);
+    }
+    g.perm_mut(src).data.set(DataKey::Charge, Val::Str(intern(kind)));
+    crate::glog!(g, "  {} charges Jeweled Amulet (noting {})", g.player(p).name, kind);
+    Ok(true)
+}
+
+/// the charged, untapped Amulet makes one mana of the noted type
+fn amulet_mana(g: &Game, src: Src, _p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
+    if !live(g, src) || g.perm(src).tapped {
+        return vec![];
+    }
+    match amulet_noted(g, src) {
+        Some(s) => {
+            let cols = if &*s == "C" { Colors::NONE } else { Colors::from_letters(&s) };
+            vec![Unit { src: Source::Perm(src), cols, amt: 1 }]
+        }
+        None => vec![],
+    }
+}
+
+/// tapped for its mana: the charge counter is removed
+fn amulet_tap(g: &mut Game, _p: PlayerId, m: PermId, _used: u32) -> Res {
+    g.perm_mut(m).data.set(DataKey::Charge, Val::None);
+    Ok(())
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -317,6 +389,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.extra_mana = Some(ogre_mana);
     c.on_tap_perm = Some(ogre_tap);
     r.card(db, "_____ Goblin")?.etb = Some(goblin_etb);
+    let c = r.card(db, "Jeweled Amulet")?;
+    c.options = Some(amulet_options);
+    c.extra_mana = Some(amulet_mana);
+    c.on_tap_perm = Some(amulet_tap);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);

@@ -8281,3 +8281,8 @@ note = "when it enters, adds RRRR (the primer's guaranteed four unique vowels; t
 ["Ignoble Hierarch"]
 status = "Full"
 note = "{T}: {B}, {R} or {G} (dork tag); exalted is the engine's keyword"
+
+["Jeweled Amulet"]
+tags = ""
+status = "Full"
+note = "{1},{T}: a charge counter noting the colour of the mana spent (when it has none); {T}, remove it: one mana of that type later; the AI charges it in the second main phase or the end-of-turn window; no longer a free colourless rock"
