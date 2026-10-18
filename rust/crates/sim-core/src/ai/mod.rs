@@ -68,6 +68,15 @@ pub fn is_main(key: &str) -> bool {
     MAIN_STYLES.iter().any(|x| x.0 == key)
 }
 
+/// one of JD's twelve decks (data/my_decks.toml): their own priority functions decide what is held, so a 0 is never
+/// replaced by the generic ability value
+pub fn jd_deck(key: &str) -> bool {
+    matches!(
+        key,
+        "seph" | "veyran" | "sauron" | "yshtola" | "galadriel" | "alela" | "kefka" | "titania" | "sheoldred" | "cloud" | "kraum" | "sephfs"
+    )
+}
+
 /// brain.style: your deck's style, or the outside deck's configured one
 pub fn style(_g: &Game, key: &str) -> Style {
     match MAIN_STYLES.iter().find(|x| x.0 == key) {
