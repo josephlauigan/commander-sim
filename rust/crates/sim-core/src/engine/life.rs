@@ -131,6 +131,10 @@ pub fn check_state(g: &mut Game) -> Res {
             crate::engine::zones::lands_entered(g, q)?; // a land put onto the battlefield without landfall's path
         }
     }
+    sba_toughness(g)?;
+    if g.over {
+        return Ok(());
+    }
     for i in 0..g.players.len() {
         let pl = &g.players[i];
         if pl.alive && ((pl.life <= 0 && !crate::impls::tymna_cards::unlife(g, PlayerId(i as u8))) || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8)) {
@@ -143,6 +147,39 @@ pub fn check_state(g: &mut Game) -> Res {
         g.winner = alive.first().copied();
         if g.wintype.is_none() {
             g.wintype = Some("damage");
+        }
+    }
+    Ok(())
+}
+
+/// 704.5f: a creature with toughness 0 or less is put into its owner's graveyard, at every check (not only as it
+/// enters). `die(.., "sba")` ignores indestructible and regeneration. Cheap: the full `etgh` runs only for a creature
+/// whose stored toughness (base + counters + until-end-of-turn bonus) is below 6, since static effects shift it by
+/// a few points at most. Armies (amass) are skipped as on entering.
+fn sba_toughness(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if !g.players[i].alive {
+            continue;
+        }
+        let doomed: Vec<_> = g.players[i]
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                x.on_bf
+                    && !x.phased
+                    && !x.army
+                    && x.tgh + x.plus + x.eot_pt.1 < 6
+                    && g.is_creature(m)
+                    && crate::engine::values::etgh(g, m) <= 0
+            })
+            .collect();
+        for m in doomed {
+            if g.perm(m).on_bf {
+                crate::glog!(g, "    {} has toughness 0 or less and dies", g.perm(m).name);
+                crate::engine::zones::die(g, m, "sba")?;
+            }
         }
     }
     Ok(())
