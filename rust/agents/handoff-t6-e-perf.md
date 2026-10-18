@@ -20,3 +20,4 @@
   t3 300 games jobs 12 CPU: branch 1236 s vs mainbase 1094 s (+13%, box shared with another session, load ~8).
 - Next: merge t6-cedh (Karlach fix), re-save lock, more profile rounds (sampler: scratchpad mk.sh; stats via awk on mine.log).
 - Merged t6-cedh (data-only change); lock re-saved post-merge (perf-lock-t3.txt). CPU branch 1232s vs base 1094s (+12.6%).
+- Opt 3 steelshaper reorder, Opt 4 combo_options held-name set (both lock-identical). CPU 1120s vs base 1094s (different load). Next: cargo test, final back-to-back timing at 1500 games, report.

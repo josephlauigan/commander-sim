@@ -561,9 +561,16 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         return Ok(vec![]); // g.combo_decks: the outside decks
     }
     let mut out = vec![];
+    // the names of p's cards in hand and on the battlefield, built once: the same test as `has_piece` for every combo
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
     for (i, cmb) in all().iter().enumerate() {
         // a line that starts from the command zone or the library (Godo) has no piece in hand to gate on: ask `ready`
-        if !cmb.groups.iter().any(|grp| has_piece(g, p, grp)) && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0) {
+        if !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0) {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
