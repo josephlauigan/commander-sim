@@ -373,6 +373,12 @@ pub fn ability_window(
     imp: Option<f64>,
     target: Option<PermId>,
 ) -> Res<bool> {
+    // Tier 6: an activation that works on a piece of a modeled line is a win step the table may answer
+    if let Some(m) = src
+        && crate::impls::combos::normal_play_window(g, p, m)?
+    {
+        return Ok(false);
+    }
     if g.over || !abilities_answered(g, Some(p)) {
         return Ok(true);
     }

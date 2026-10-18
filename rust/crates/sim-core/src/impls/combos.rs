@@ -1264,3 +1264,41 @@ pub fn answerable_steps(cmb: &Combo, casts: &[CardId]) -> usize {
         cmb.steps.iter().filter(|s| s.kind != StepKind::Engine).count().max(1)
     }
 }
+
+// ------------------------------------------------------------------ windows for lines played out by normal actions
+/// A Tier 6 player's action with `acting` (an equip, an activation, a trigger such as Helm of the Host's) that works on a
+/// piece of one of its modeled lines whose every piece group is already on the battlefield is a win step like any step
+/// of `attempt`: each opponent may answer a piece of the line with instant-speed removal or bounce. Normal play never
+/// goes through `attempt`, so without this nobody could answer Godo + Helm of the Host played out turn by turn.
+/// True: the line was stopped, the action does not happen. Not used while the player is in `attempt` (its steps have
+/// their own windows).
+pub fn normal_play_window(g: &mut Game, p: PlayerId, acting: PermId) -> Res<bool> {
+    if g.over || g.trig_probe || g.t6_going == Some(p) || !crate::impls::t6_plans::is_t6(g, p) || !g.perm(acting).on_bf {
+        return Ok(false);
+    }
+    let Some(cd) = g.perm(acting).cd else { return Ok(false) };
+    let an = name_of(g, cd).to_string();
+    let mut found: Option<(&'static str, Vec<PermId>)> = None;
+    for i in lines_of(g, p).iter().copied() {
+        let grps = real_groups(all()[i]);
+        if !grps.iter().any(|grp| grp.contains(&an.as_str())) {
+            continue;
+        }
+        let keys: Vec<PermId> = grps.iter().filter_map(|grp| grp.iter().find_map(|n| on_bf(g, p, n))).collect();
+        if keys.len() == grps.len() {
+            found = Some((all()[i].name, keys));
+            break;
+        }
+    }
+    let Some((line, keys)) = found else { return Ok(false) };
+    crate::glog!(g, "  {}: {} works on {} (a piece of {})", g.player(p).name, an, line, line);
+    g.last_counter = None;
+    if interrupted(g, p, &keys)? {
+        crate::glog!(g, "    ...{} is stopped", line);
+        g.player_mut(p).stat("combo_stopped", 1);
+        let by = crate::t6stats::last_counter_name(g);
+        crate::t6stats::combo_stop(g, p, line, &by);
+        return Ok(true);
+    }
+    Ok(false)
+}

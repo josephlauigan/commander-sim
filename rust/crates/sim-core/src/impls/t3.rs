@@ -917,6 +917,9 @@ fn helm(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     }
     let Some(a) = host(g) else { return Ok(vec![]) };
     let name = format!("create a token copy of {}", g.perm(a).name);
+    if crate::impls::combos::normal_play_window(g, p, src)? {
+        return Ok(vec![]);
+    }
     if !trigger_window(g, p, Some(src), &name, Some(6.0))? {
         return Ok(vec![]);
     }
