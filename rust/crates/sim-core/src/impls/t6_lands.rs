@@ -15,7 +15,8 @@ use crate::tag::Tag;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
-use crate::engine::values::{etgh, pval, untargetable};
+use crate::engine::values::{etgh, pval, threat, untargetable};
+use crate::engine::zones::{Tokens, make_tokens, min_by};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{LandId, PlayerId};
@@ -374,6 +375,17 @@ pub fn emergence_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Forbidden Orchard
+/// **Forbidden Orchard**: {T}: one mana of any colour (tag c=A). Whenever you tap it for mana, target opponent creates a
+/// 1/1 colorless Spirit creature token: the AI gives it to the opponent who threatens it least
+fn orchard_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+    let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive).collect();
+    let Some(q) = min_by(&opps, |q| threat(g, p, q)) else { return Ok(()) };
+    crate::glog!(g, "    Forbidden Orchard: {} creates a 1/1 Spirit", g.player(q).name);
+    make_tokens(g, q, Tokens { color: Some(Colors::NONE), types: vec!["spirit".into()], ..Tokens::new(1, 1) })?;
+    Ok(())
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -398,6 +410,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Deserted Temple")?.land_options = Some(temple);
     r.card(db, "Minamo, School at Water's Edge")?.land_options = Some(minamo);
     r.card(db, "Emergence Zone")?.land_options = Some(emergence);
+    r.card(db, "Forbidden Orchard")?.on_tap_land = Some(orchard_tap);
     // REGISTER-HERE
     Ok(())
 }

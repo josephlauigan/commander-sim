@@ -8268,3 +8268,7 @@ note = "{T}: {U}; {U},{T}: untap target legendary land or permanent, used when i
 ["Emergence Zone"]
 status = "Partial"
 note = "{T}: {C}; {1},{T}, sacrifice: sets the one-turn flash flag (t6_lands.rs, tested), but the AI does not read it yet so the option is switched off (engine-needs-lands.md)"
+
+["Forbidden Orchard"]
+status = "Full"
+note = "{T}: any colour of the identity; whenever tapped for mana the opponent who threatens least creates a 1/1 colorless Spirit (t6_lands.rs)"

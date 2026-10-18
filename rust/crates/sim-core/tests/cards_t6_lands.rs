@@ -206,3 +206,19 @@ fn emergence_zone_sacrifices_itself_and_marks_the_turn_for_flash() {
     let flag = sim_core::sym::intern(t6::FLASH_FLAG);
     assert_eq!(g.player(P0).flag_turn.get(&flag), Some(&g.turn_stamp()), "flash this turn");
 }
+
+// ------------------------------------------------------------------ Forbidden Orchard
+#[test]
+fn forbidden_orchard_gives_an_opponent_a_spirit_each_time_it_is_tapped_for_mana() {
+    let mut g = pod();
+    lands(&mut g, P0, "Forbidden Orchard", 1, false);
+    let before = g.player(P1).perms.len();
+    assert!(mana::pay(&mut g, P0, 1, "", false).unwrap());
+    let toks: Vec<_> = g.player(P1).perms.iter().copied().filter(|&m| g.perm(m).token).collect();
+    assert_eq!(g.player(P1).perms.len(), before + 1);
+    let s = toks[0];
+    assert_eq!((g.perm(s).pow, g.perm(s).tgh), (1, 1));
+    assert!(g.perm(s).colors.is_empty(), "colorless");
+    assert!(g.perm(s).ttypes.contains(&sim_core::sym::intern("spirit")));
+    assert!(g.player(P0).perms.iter().all(|&m| !g.perm(m).token), "the tapper gets nothing");
+}
