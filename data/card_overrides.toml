@@ -8256,3 +8256,7 @@ note = "{T}: {C}; {1},{T}: any colour (any colour only when another untapped lan
 ["Eiganjo, Seat of the Empire"]
 status = "Full"
 note = "{T}: {W}; Channel {2}{W} (less per legendary creature you control), discard: 4 damage to an attacking creature (when attacked) or a blocking creature (its own attack), used when it kills a creature worth 4+ (t6_lands.rs)"
+
+["Deserted Temple"]
+status = "Full"
+note = "{T}: {C}; {1},{T}: untap target land, used when the land untapped gives 3+ more mana (the {1} and the Temple's own mana are the cost; t6_lands.rs)"

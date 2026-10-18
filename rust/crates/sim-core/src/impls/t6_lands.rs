@@ -13,7 +13,7 @@ use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId};
 use crate::tag::Tag;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{etgh, pval, untargetable};
 use crate::flow::Res;
@@ -204,6 +204,74 @@ fn eiganjo_blocks(
     Ok(())
 }
 
+// ================================================================== Deserted Temple
+/// What untapping this (tapped) land adds to p's mana: total mana with it untapped minus now
+fn land_untap_gain(g: &mut Game, p: PlayerId, t: LandId) -> i32 {
+    let before = total_mana(g, p, false) as i32;
+    g.land_mut(t).tapped = false;
+    let after = total_mana(g, p, false) as i32;
+    g.land_mut(t).tapped = true;
+    after - before
+}
+
+/// the same for a tapped permanent
+fn perm_untap_gain(g: &mut Game, p: PlayerId, m: PermId) -> i32 {
+    let before = total_mana(g, p, false) as i32;
+    g.perm_mut(m).tapped = false;
+    let after = total_mana(g, p, false) as i32;
+    g.perm_mut(m).tapped = true;
+    after - before
+}
+
+/// **Deserted Temple**: {T}: Add {C}. {1},{T}: untap target land. A mana engine: the AI untaps a tapped land when that
+/// gives at least 3 more mana (the {1} and the Temple's own mana are the cost), e.g. Gaea's Cradle or City of Traitors
+fn temple(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.land(l).tapped || !can_pay_without(g, p, l, 1, "") {
+        return Ok(vec![]);
+    }
+    let mut best: Option<(LandId, i32)> = None;
+    for t in g.player(p).lands.clone() {
+        if t == l || !g.land(t).tapped {
+            continue;
+        }
+        let d = land_untap_gain(g, p, t);
+        if d >= 3 && best.is_none_or(|b| d > b.1) {
+            best = Some((t, d));
+        }
+    }
+    let Some((t, d)) = best else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 0.5 * (d - 2) as f64,
+        label: format!("Deserted Temple untaps {}", name_of(g, t)),
+        act: Some(Action::Plan { f: temple_go, arg: pack(l.0, t.0) }),
+    }])
+}
+
+fn pack(a: u32, b: u32) -> i64 {
+    ((b as i64) << 32) | a as i64
+}
+
+fn unpack(arg: i64) -> (u32, u32) {
+    ((arg & 0xffff_ffff) as u32, (arg >> 32) as u32)
+}
+
+fn temple_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (l, t) = unpack(arg);
+    let (l, t) = (LandId(l), LandId(t));
+    if !g.player(p).lands.contains(&l) || !g.player(p).lands.contains(&t) || g.land(l).tapped || !g.land(t).tapped {
+        return Ok(false);
+    }
+    if !pay_without(g, p, l, 1, "")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    crate::glog!(g, "  {} uses Deserted Temple: untaps {}", g.player(p).name, name_of(g, t));
+    if ability_window_card(g, p, g.land(l).cd, "untap a land", None, None)? && g.player(p).lands.contains(&t) {
+        g.land_mut(t).tapped = false;
+    }
+    Ok(true)
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -225,6 +293,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let e = r.card(db, "Eiganjo, Seat of the Empire")?;
     e.hand_defend = Some(eiganjo_defend);
     e.hand_blocks = Some(eiganjo_blocks);
+    r.card(db, "Deserted Temple")?.land_options = Some(temple);
     // REGISTER-HERE
     Ok(())
 }

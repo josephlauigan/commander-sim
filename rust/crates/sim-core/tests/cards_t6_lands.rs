@@ -139,3 +139,28 @@ fn eiganjo_channel_also_hits_a_blocker_of_its_own_attack() {
     assert!(!g.perm(blk).on_bf && assign.is_empty(), "the blocker takes 4 damage and is removed from the blocks");
     assert!(g.player(P0).gy.contains(&e));
 }
+
+// ------------------------------------------------------------------ Deserted Temple
+#[test]
+fn deserted_temple_untaps_a_land_that_makes_enough_mana_to_pay_for_it() {
+    let mut g = pod();
+    let t = lands(&mut g, P0, "Deserted Temple", 1, false)[0];
+    lands(&mut g, P0, "Forest", 1, false);
+    let c = lands(&mut g, P0, "City of Traitors", 1, true)[0]; // {C}{C}, tapped
+    let o = sim_core::cardcode::land_options(&mut g, P0, None).unwrap();
+    assert!(o.is_empty(), "untapping the City nets 2 - 1 - 1 = 0 mana: not worth it");
+    lands(&mut g, P0, "Forest", 1, false);
+    let _ = (t, c);
+    // a land worth 3: City of Traitors is only 2, so use a tapped Gaea's Cradle with three creatures
+    let cradle = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    for _ in 0..3 {
+        token(&mut g, P0, 1);
+    }
+    let o = sim_core::cardcode::land_options(&mut g, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Deserted Temple untaps Gaea's Cradle");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.land(cradle).tapped, "the Cradle is untapped");
+    assert!(g.land(t).tapped, "{{T}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "Temple + the {{1}} + the City");
+}
