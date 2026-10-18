@@ -8708,3 +8708,39 @@ note = "6/5 flying, ward {2} (card data); both channels from the hand through ha
 ["Wan Shi Tong, Librarian"]
 status = "Partial"
 note = "flash, flying, vigilance 1/1; cast with X by a hand option in the end-of-turn window for all spare mana (X = mana - 2, 2 or more): X +1/+1 counters, then draw half X; the AI never casts it for X = 0 (t6_legends2.rs). The opponent-searches trigger (a counter and a card) is written (wan_shi_tong_searched, tested) but the engine has no search event to call it (engine-needs-legends2.md)"
+
+["Fiend Hunter"]
+dsl = []
+status = "Full"
+note = "exiles the best opposing creature (the AI never takes its own); the card returns under its owner's control when Fiend Hunter leaves"
+
+["All-Fates Stalker"]
+dsl = []
+status = "Partial"
+note = "exiles the best opposing non-Assassin creature until it leaves; Warp is coded but not offered (casting from exile is not modeled)"
+
+["Touch the Spirit Realm"]
+dsl = []
+status = "Full"
+note = "ETB exiles the best opposing artifact or creature until it leaves; Channel ({1}{W}, discard) exiles one and returns it under its owner's control at the next end step (the AI channels to flicker its best ETB creature)"
+
+["Radiant Solar"]
+status = "Partial"
+note = "only Lost Mine of Phandelver is ever entered (no dungeon choice, no dungeon state in the engine); venture whenever it or another nontoken creature you control enters (Lost Mine of Phandelver always: scry, Goblin, Dark Pool drain, draw); {W}, discard: venture and gain 3 life"
+
+["Preston, the Vanisher"]
+dsl = []
+status = "Partial"
+note = "another nontoken creature you control that wasn't cast gets a 0/1 white Illusion token copy (its enters trigger fires); {1}{W}, sacrifice five Illusions: exile target nonland permanent; the copy keeps the copied creature's other types"
+
+["Dack Fayden, Helping Hand"]
+status = "Partial"
+note = "reveals creature cards equal to the opponents, puts them onto the battlefield (their enters triggers are Dack's controller's), shuffles, hands one to each opponent (best creature to the least threatening one) and goads them; goad lasts only until Dack's controller's next turn, not the rest of the game"
+
+["Gideon of the Trials"]
+status = "Partial"
+note = "+1 stops the opposing creature's combat damage until your next turn (Dovin's lock); 0: 4/4 indestructible creature until end of turn (damage to him is not prevented); 0: emblem is recorded but the can't-lose rule is not read by the engine"
+
+["Paladin Class"]
+status = "Partial"
+note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries; level 3 pumps your best attacker +1/+1 per other attacker and gives double strike; the level 2 +1/+1 for your creatures is not applied"

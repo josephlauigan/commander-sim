@@ -2044,25 +2044,7 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": true
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "warp"
@@ -2075,10 +2057,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Warp {1}{W}"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -36808,26 +36788,7 @@
    "pow": 1,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "other": true
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -36838,10 +36799,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ leaves the battlefield, return the exiled card to the battlefield under its owner's control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -78618,29 +78577,7 @@
    "pow": 2,
    "tgh": 5,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1W",
-      "sac": "permanent"
-     },
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "nonland"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -78651,10 +78588,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever another nontoken creature you control enters, if it wasn't cast, create a token that's a copy of that creature, except it's a 0/1 white Illusion."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -109626,46 +109561,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "ac"
-        },
-        "upto": true
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1W",
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "ac"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "channel"
@@ -109675,10 +109571,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Channel — {1}{W}, Discard ~: Exile target artifact or creature. Return it to the battlefield under its owner's control at the beginning of the next end step.   [partly: return it to the battlefield under its owner's control at the beginning of the next end step]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
