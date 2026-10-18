@@ -147,12 +147,15 @@ fn a_tutor_moves_one_card_from_library_to_hand() {
 
 #[test]
 fn sauron_tutors_for_the_missing_half_of_the_combo() {
-    // Sword of Feast and Famine out, Aggravated Assault in the library: the tutor finds the Assault
+    // Sauron out and no Ozolith yet (the list has no Sword any more): the tutor finds the Ozolith, not the Assault
     let mut g = table(&["sauron", "veyran"]);
-    perm(&mut g, P0, "Sword of Feast and Famine");
-    let assault = card(&g, "Aggravated Assault");
-    assert!(g.player(P0).library.contains(&assault));
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(assault));
+    lands(&mut g, P0, "Island", 6, false);
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    perm(&mut g, P0, "Sauron, the Dark Lord");
+    let ozolith = card(&g, "The Ozolith");
+    assert!(g.player(P0).library.contains(&ozolith));
+    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(ozolith));
 }
 
 // ------------------------------------------------------------------ test_rules.TeferisProtection (the AI's half)
