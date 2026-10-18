@@ -121,3 +121,17 @@ fn mandate_is_not_castable_outside_combat() {
     let g = tbl();
     assert!(!sim_core::impls::t6_stax::in_combat_now(&g));
 }
+
+// ======================================================== Angel's Grace
+#[test]
+fn grace_sets_the_turn_flag_and_the_life_floor_for_its_caster_only() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    assert_eq!(sim_core::impls::t6_stax::grace_floor(&g, P0, -3), -3);
+    resolve(&mut g, P0, "Angel's Grace");
+    assert!(sim_core::impls::t6_stax::grace_active(&g, P0));
+    assert!(!sim_core::impls::t6_stax::grace_active(&g, P1));
+    assert_eq!(sim_core::impls::t6_stax::grace_floor(&g, P0, -3), 1, "damage leaves you at 1");
+    assert_eq!(sim_core::impls::t6_stax::grace_floor(&g, P0, 12), 12, "above 1 is unchanged");
+    assert_eq!(sim_core::impls::t6_stax::grace_floor(&g, P1, -3), -3);
+}

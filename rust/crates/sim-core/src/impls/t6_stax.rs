@@ -110,6 +110,30 @@ fn mandate_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
+
+// ================================================================== Angel's Grace
+/// Angel's Grace is in force for p this turn: p can't lose the game and p's opponents can't win it (the engine's
+/// `check_state` should skip eliminating p, as it does for Herald of Eternal Dawn via `t0_giada::cant_lose`)
+pub fn grace_active(g: &Game, p: PlayerId) -> bool {
+    flag_now(g, p, "stax_grace")
+}
+
+/// life total after damage under Angel's Grace: damage that would reduce p's life total to less than 1 reduces it to 1
+/// instead (the engine's `lose_life` for damage should clamp with this)
+pub fn grace_floor(g: &Game, p: PlayerId, life_after: i32) -> i32 {
+    if grace_active(g, p) { life_after.max(1) } else { life_after }
+}
+
+/// **Angel's Grace** ({W} instant, split second): you can't lose the game this turn, your opponents can't win this
+/// turn, and damage can't take you below 1 life this turn. Partial: resolving it sets the turn flag
+/// (`grace_active`, `grace_floor`) but the engine does not read it yet, and split second needs the engine too
+/// (engine-needs-stax.md). The AI never casts it (priority 0): a card that does nothing today is not worth casting.
+fn grace_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    set_flag(g, p, "stax_grace");
+    crate::glog!(g, "    {} can't lose the game this turn (Angel's Grace)", pname(g, p));
+    Ok("gy")
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
@@ -119,6 +143,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(never_prio);
     let c = r.card(db, "Mandate of Peace")?;
     c.resolve = Some(mandate_resolve);
+    c.prio = Some(never_prio);
+    let c = r.card(db, "Angel's Grace")?;
+    c.resolve = Some(grace_resolve);
     c.prio = Some(never_prio);
     Ok(())
 }

@@ -17,3 +17,9 @@ Needs: "end the combat phase" (remove all attackers and blockers from combat, sk
 Where it would hook: `engine/combat.rs` (the combat loop, `g.in_combat`) and `engine/cast.rs::castable` (a per-card cast-timing check; `impls::t6_stax::in_combat_now` answers it).
 Card side done: opponents locked (stand-in above) and `Game::fog = this turn` (no combat damage) as the combat ending.
 Test to add once the engine has it: cast after attackers are declared, the attackers are out of combat, no damage is dealt, and the opponents cannot cast creature spells either.
+
+## Angel's Grace
+Needs: (1) split second (no responses, no spells or non-mana abilities while it is on the stack: the same item `engine-needs-counters.md` lists for Sudden Substitution), (2) a "can't lose / opponents can't win this turn" player flag read by `check_state` (the Herald of Eternal Dawn check, `t0_giada::cant_lose`, is battlefield-only), and (3) the damage floor: damage that would put you below 1 leaves you at 1 this turn.
+Where it would hook: `engine/stack.rs` `take_priority` / `ai_respond`; `engine/life.rs::check_state` and `lose_life` (damage branch), reading `impls::t6_stax::grace_active` / `grace_floor`.
+Card side done: resolving sets the turn flag; `grace_active` and `grace_floor` answer both rules. The AI never casts it (priority 0).
+Test to add once the engine has it: at 3 life, Angel's Grace in response to lethal damage leaves the player at 1 and alive; no response can be cast while it is on the stack.
