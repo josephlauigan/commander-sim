@@ -534,20 +534,12 @@ fn is_basic(g: &Game, cd: CardId) -> bool {
 }
 
 /// **Blood Moon** ({2}{R} enchantment): nonbasic lands are Mountains. The engine's `blood_moon` slot makes nonbasic
-/// lands tap for {R}; a land that made two mana (Ancient Tomb, City of Traitors) makes one (`moon_amt`, through the
-/// `land_mana` slot). The AI casts it when the opponents' nonbasic lands outnumber its own by three or more.
-/// Missing, as engine needs: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, Command
-/// Beacon, manlands) and the Mountain land type.
+/// lands plain Mountains (`engine::mana::moon_land`): they tap for {R} only, make one mana (Ancient Tomb and City of
+/// Traitors included, no damage), and lose every ability: land options (manlands, Urza's Saga's Construct, Command
+/// Beacon ...), enters and upkeep abilities, saga chapters, fetch cracking, enters-tapped rules. The AI casts it when
+/// the opponents' nonbasic lands outnumber its own by three or more. Full.
 fn moon_on(g: &Game, src: Src) -> bool {
     live(g, src)
-}
-
-fn moon_amt(g: &Game, src: Src, p: PlayerId, l: crate::ids::LandId) -> i32 {
-    let cd = g.land(l).cd;
-    if !live(g, src) || is_basic(g, cd) || g.land(l).owner != p {
-        return 0;
-    }
-    1 - g.db.get(cd).tags.int(Tag::Amt).unwrap_or(1).max(1)
 }
 
 fn nonbasic_lands(g: &Game, p: PlayerId) -> i32 {
@@ -631,7 +623,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Hexing Squelcher")?.uncounterable = Some(squelcher_unc);
     let c = r.card(db, "Blood Moon")?;
     c.blood_moon = Some(moon_on);
-    c.land_mana = Some(moon_amt);
     c.prio = Some(moon_prio);
     r.card(db, "Defense Grid")?.cost = Some(grid_tax);
     let c = r.card(db, "Final Fortune")?;

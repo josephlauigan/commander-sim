@@ -33,7 +33,7 @@ Where it would hook: `engine/zones.rs::enter` (before `new_perm`) and `make_toke
 Card side done: extort (pay {W}, else {B}, with spare mana as Crypt Ghast's does; each opponent loses 1, the controller gains the total) and the tap right after entering through `etb` (cards and artifacts) and `tokens_enter` (creature tokens), `impls/t6_stax.rs`; the same stand-in as Thalia, Heretic Cathar (`common.rs::thalia_hc`).
 Test to add once the engine has it: an opposing creature with "when this enters, untap it" ends untapped never (it enters tapped, then the trigger untaps it); a Soul Warden-style enters trigger sees `tapped` already true.
 
-## Damping Sphere
+## Damping Sphere (DONE: t6-e-legend, Event::LandColorless)
 Needs: a colour override for a land's mana from card code ("produces {C} instead of any other type"): `land_cols` in `engine/mana.rs` only has the Blood Moon, Lantern and Dryad cases, and `land_mana` slots change only the amount. The same hook would serve Blood Moon's "nonbasic lands are Mountains" (`engine-needs-godo.md`).
 Where it would hook: `engine/mana.rs::land_cols` (next to `moon`), a `land_colors` slot on `CardImpl` returning an override for a land.
 Card side done: `impls/t6_stax.rs`: the amount of any land that taps for two or more is cut to one (`land_mana` slot; only the earliest Sphere acts), and the spell tax of {1} per other spell the caster cast this turn (`cost` slot, exact).

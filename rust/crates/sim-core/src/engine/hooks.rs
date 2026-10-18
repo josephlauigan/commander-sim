@@ -82,6 +82,11 @@ pub fn total_land_mana(g: &Game, p: PlayerId, l: crate::ids::LandId) -> i32 {
     hooked(g, Event::LandMana).iter().map(|(src, imp)| (imp.land_mana.unwrap())(g, *src, p, l)).sum()
 }
 
+/// land_colorless(g, src, p, land, n): does a land making n mana make one {C} instead (Damping Sphere)
+pub fn land_colorless(g: &Game, p: PlayerId, l: crate::ids::LandId, n: u32) -> bool {
+    hooked(g, Event::LandColorless).iter().any(|(src, imp)| (imp.land_colorless.unwrap())(g, *src, p, l, n))
+}
+
 /// trigger_copies summed for p's triggered abilities of this kind (Panharmonicon, Teysa, Ancient Greenwarden)
 pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Option<PermId>) -> i32 {
     if g.hooks.is_empty() {

@@ -29,6 +29,9 @@ fn cards_named(g: &Game, p: PlayerId, names: &[&str]) -> bool {
 pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
     let d = g.db.get(cd);
     let t = &d.tags;
+    if crate::engine::mana::moon_card(g, cd) {
+        return false; // Blood Moon: a Mountain with no "enters tapped" of its own (not a fetch land either)
+    }
     if t.has(Tag::F) {
         return true;
     }
@@ -49,16 +52,21 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
     false
 }
 
+/// the basic land types of a land on the battlefield: under Blood Moon a nonbasic land is only a Mountain
+fn land_types(g: &Game, l: LandId) -> crate::cards::Colors {
+    if crate::engine::mana::moon_land(g, l) { crate::cards::Colors::from_letters("R") } else { g.db.get(g.land(l).cd).land_types }
+}
+
 fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool {
     let pl = g.player(p);
     let lt = |l: LandId| g.db.get(g.land(l).cd);
     match rule {
-        EnterRule::Control(ts) => pl.lands.iter().any(|&l| lt(l).land_types.intersects(ts)),
+        EnterRule::Control(ts) => pl.lands.iter().any(|&l| land_types(g, l).intersects(ts)),
         EnterRule::Fewer(n) => pl.lands.len() as u32 <= n,
         EnterRule::More(n) => pl.lands.len() as u32 >= n,
         EnterRule::Basics(n) => pl.lands.iter().filter(|&&l| lt(l).basic).count() as u32 >= n,
         EnterRule::Opponents(n) => g.opps(p).count() as u32 >= n,
-        EnterRule::TypesMore(t, n) => pl.lands.iter().filter(|&&l| lt(l).land_types.intersects(t)).count() as u32 >= n,
+        EnterRule::TypesMore(t, n) => pl.lands.iter().filter(|&&l| land_types(g, l).intersects(t)).count() as u32 >= n,
         EnterRule::Reveal(ts) => {
             pl.hand.iter().any(|&c| c != cd && g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
         }
@@ -200,7 +208,8 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     let rule = g.db.get(c).enters_rule;
     let l = match rule {
         Some(EnterRule::Pay(n))
-            if !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
+            if !crate::engine::mana::moon_card(g, c)
+                && !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
         {
             let paid = if crate::human::is_human(g, p) {
                 let prompt = format!("{}: pay {n} life so it enters untapped?", g.db.get(c).name);
@@ -224,7 +233,8 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     cardcode::land_etb(g, p, l)?; // CI.LAND_ETB (Bojuka Bog ...)
     g.player_mut(p).lands_played += 1;
     crate::glog!(g, "  {} {} {}", g.player(p).name, how, g.db.get(c).name);
-    let t = g.db.get(c).tags.clone();
+    // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
+    let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
     if t.has(Tag::Chasm) {
         // Glacial Chasm: when it enters, sacrifice a land
         g.player_mut(p).chasm_age = 0;
@@ -286,6 +296,9 @@ fn true_fetch(name: &str) -> Option<&'static str> {
 
 /// pool games: a fetch land is sacrificed at once for a land (a second landfall, a land in the graveyard)
 pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    if crate::engine::mana::moon_land(g, l) {
+        return Ok(()); // Blood Moon: a fetch land has no ability
+    }
     let name = g.db.get(g.land(l).cd).name.to_string();
     let kinds = true_fetch(&name);
     let basics = ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"];

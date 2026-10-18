@@ -36,7 +36,7 @@ Where it would hook: `engine/removal.rs` (ward check ~line 179, and the targetin
 Card side done: can't be countered (its `unc` tag), and spells you control can't be countered (the `uncounterable` slot) in `impls/t6_godo.rs`.
 Test to add once the engine has it: a removal spell targeting a creature you control with the Squelcher out costs its caster 2 life or is countered; the ward does not apply to your own spells.
 
-## Blood Moon
+## Blood Moon (DONE: t6-e-legend, engine::mana::moon_land)
 Needs: "nonbasic lands are Mountains" as a layer effect: such lands lose all abilities and other land types (no Ancient Tomb damage, Urza's Saga without chapters and its tutor ability, no manland or other activated abilities, no "enters tapped" read later) and gain the Mountain type. The engine's `blood_moon` slot only changes the colour a nonbasic land taps for (`engine/mana.rs` `land_cols`).
 Where it would hook: `engine/mana.rs` (`Tag::Tomb`/`Tag::Pain` damage, lines ~117, 264, 382), `impls/lands.rs` land options and land abilities (`land_options`, `land_etb`), reading `cardcode::blood_moon(g)`.
 Card side done: the existing `blood_moon` slot (colour R), `land_mana` slot cutting two-mana lands to one, and an AI cast priority (`impls/t6_godo.rs`).

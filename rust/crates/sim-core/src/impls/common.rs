@@ -3077,6 +3077,9 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
             g.player_mut(p).sagas.remove(i);
             continue;
         }
+        if crate::engine::mana::moon_land(g, l) {
+            continue; // Blood Moon: no longer a Saga (it loses the subtype), no lore counters, not sacrificed
+        }
         let lore = g.player(p).sagas[i].1 + 1;
         g.player_mut(p).sagas[i].1 = lore;
         if lore == 2 {
