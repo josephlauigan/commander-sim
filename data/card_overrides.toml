@@ -8697,3 +8697,7 @@ note = "returns the best permanent card with mana value 3 or less from the grave
 dsl = []
 status = "Partial"
 note = "Opus on the cast hook: whenever you cast an instant or sorcery the best opposing player mills three, or ten when the spell's mana value plus X is 5 or more; missing: the engine records no real mana-spent total, so a cost reduction (or a cheaper alternative cost other than the flagged ones) is not seen (engine need)"
+
+["Voice of Victory"]
+status = "Full"
+note = "Mobilize 2 on the attack hook (two tapped and attacking 1/1 red Warriors, sacrificed at the next end step) and a can_cast lock: opponents cannot cast spells during its controller's turn (t6_blue.rs, tested)"

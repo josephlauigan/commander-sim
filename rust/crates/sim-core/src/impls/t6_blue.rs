@@ -9,15 +9,16 @@
 //! - Rain of Filth: sets the one-turn flag (`rain_of_filth_active`); the sacrifice-a-land mana source is an engine need.
 //! - Sevinne's Reclamation: the best permanent card of mana value 3 or less returns; from the graveyard it is copied.
 //! - Exhibition Tidecaller: Opus on the cast hook; the old compiled mill-3 trigger is removed (dsl = []).
+//! - Voice of Victory: Mobilize 2 on its attack hook (the tokens carry `EotSac`); opponents' casts refused on its controller's turn (`can_cast`).
 
-use crate::cards::CardDb;
+use crate::cards::{CardDb, Colors};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::stack::trigger_window;
-use crate::engine::zones::{Enter, agent_for, agent_take, draw, enter, max_by, mill, searchable};
+use crate::engine::zones::{Enter, Tokens, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
-use crate::ids::{CardId, PlayerId};
-use crate::state::{Ctx, Game};
+use crate::ids::{CardId, PermId, PlayerId};
+use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 
 fn set_turn_flag(g: &mut Game, p: PlayerId, key: Sym) {
@@ -228,8 +229,46 @@ fn tidecaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 }
 
 
+// ================================================================== Voice of Victory
+/// Voice of Victory (Mobilize 2): whenever it attacks, two tapped and attacking 1/1 red Warrior tokens, sacrificed at
+/// the beginning of the next end step (`DataKey::EotSac`, as Zurgo's, `t0_zurgo::zurgo_attack`)
+fn voice_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
+    if g.perm(src).owner != p || !atk.contains(&src) || !g.perm(src).on_bf {
+        return Ok(vec![]);
+    }
+    if !trigger_window(g, p, Some(src), "mobilize 2: two tapped and attacking Warriors", Some(4.0))? {
+        return Ok(vec![]);
+    }
+    let dd = g.atk_targets.iter().find(|x| x.0 == src).map_or(d, |x| x.1);
+    let spec = Tokens {
+        attacking: true,
+        sick: false,
+        warrior: true,
+        color: Some(Colors::from_letters("R")),
+        types: vec!["warrior"],
+        ..Tokens::new(2, 1)
+    };
+    crate::glog!(g, "    {} mobilizes: two tapped and attacking Warriors", g.perm(src).name);
+    let toks = make_tokens(g, p, spec)?;
+    for &t in &toks {
+        g.perm_mut(t).data.set(DataKey::EotSac, Val::Bool(true));
+        g.atk_targets.push((t, dd));
+    }
+    Ok(toks)
+}
+
+/// Voice of Victory: your opponents can't cast spells during your turn
+fn voice_can_cast(g: &Game, src: Src, p: PlayerId, _c: CardId, _zone: Sym) -> bool {
+    let o = g.perm(src).owner;
+    !(p != o && g.active == Some(o) && g.perm(src).on_bf && !g.perm(src).phased)
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "Voice of Victory")?;
+    c.attack = Some(voice_attack);
+    c.can_cast = Some(voice_can_cast);
     r.card(db, "Exhibition Tidecaller")?.cast = Some(tidecaller_cast);
     r.card(db, "Sevinne's Reclamation")?.resolve = Some(reclamation_resolve);
     r.card(db, "Rain of Filth")?.resolve = Some(rain_resolve);

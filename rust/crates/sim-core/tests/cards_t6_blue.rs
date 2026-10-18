@@ -203,3 +203,36 @@ fn tidecaller_ignores_creature_spells_and_opposing_spells() {
     assert_eq!(lib_len(&g, P0), a);
     assert!(b - lib_len(&g, P1) < 3, "only Opt's own scry/draw touched the library");
 }
+
+// ======================================================== Voice of Victory
+#[test]
+fn voice_of_victory_mobilizes_two_warriors_that_go_at_the_end_step() {
+    use sim_core::engine::combat;
+    use sim_core::state::DataKey;
+    let mut g = game();
+    let v = perm(&mut g, P0, "Voice of Victory");
+    g.atk_targets = vec![(v, P1)];
+    g.perm_mut(v).tapped = true;
+    g.in_combat = vec![v];
+    let new = combat::attack_triggers(&mut g, P0, &[v], P1).unwrap();
+    assert_eq!(new.len(), 2, "mobilize 2");
+    for &w in &new {
+        assert!(g.perm(w).token && g.perm(w).tapped && g.perm(w).warrior);
+        assert_eq!((g.perm(w).pow, g.perm(w).tgh), (1, 1));
+        assert!(g.perm(w).data.truthy(DataKey::EotSac), "sacrificed at the next end step");
+        assert_eq!(g.atk_targets.iter().find(|x| x.0 == w).map(|x| x.1), Some(P1));
+    }
+}
+
+#[test]
+fn voice_of_victory_stops_opponents_casting_on_its_controllers_turn_only() {
+    let mut g = game();
+    perm(&mut g, P0, "Voice of Victory");
+    let bolt = hand(&mut g, P1, &["Lightning Bolt"])[0];
+    let opt = hand(&mut g, P0, &["Opt"])[0];
+    g.active = Some(P0);
+    assert!(!cast::castable(&g, P1, bolt, "hand"), "opponents can't cast spells during my turn");
+    assert!(cast::castable(&g, P0, opt, "hand"), "I can");
+    g.active = Some(P1);
+    assert!(cast::castable(&g, P1, bolt, "hand"), "on their own turn they can");
+}
