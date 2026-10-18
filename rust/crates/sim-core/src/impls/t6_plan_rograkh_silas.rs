@@ -8,6 +8,15 @@
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 
+const RITUALS: [&str; 7] = [
+    "Dark Ritual",
+    "Cabal Ritual",
+    "Culling the Weak",
+    "Rite of Flame",
+    "Jeska's Will",
+    "Infernal Plunge",
+    "Simian Spirit Guide",
+];
 const TUTORS: [&str; 11] = [
     "Demonic Tutor",
     "Vampiric Tutor",
@@ -74,8 +83,10 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     if m.settle() {
         return Some(true);
     }
-    let fast = m.n_mana as f64;
-    let mana = m.eff;
+    // rituals and spirit guides are one-shot mana for the payoff turn (spec scenario 11: Chrome Mox + Culling the Weak)
+    let rituals = count_in(g, p, &RITUALS);
+    let fast = (m.n_mana + rituals) as f64;
+    let mana = m.eff + rituals as f64;
     let tutors = count_in(g, p, &TUTORS);
     let payoffs = count_in(g, p, &PAYOFFS);
     let engines = if fast >= 1.0 { count_in(g, p, &ENGINES) } else { 0 }; // Rhystic/Remora alone do not win
@@ -86,10 +97,10 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     }
     if lands == 0 {
         // no colours from lands: only with three fast mana pieces and a tutor or payoff to cast
-        return Some(m.free >= 3 && tutors + payoffs >= 1);
+        return Some(m.n_mana + rituals >= 3 && tutors + payoffs >= 1);
     }
     if lands == 1 && (mana < m.need_one_lander() || action == 0) {
-        return Some(false); // a 1-lander needs 2.5 more mana from the hand and a payoff or tutor to spend it on
+        return Some(false); // a 1-lander needs 2.0 more mana (rituals count) from the hand and a payoff or tutor to spend it on
     }
     if mana < 2.0 || (action == 0 && fast < 2.0) {
         return Some(false); // lands-and-spells hands with no payoff or tutor, or no mana to cast it

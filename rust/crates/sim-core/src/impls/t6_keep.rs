@@ -71,6 +71,8 @@ pub fn mana(g: &Game, p: PlayerId) -> Mana {
     let spells = hand.len() - lands - pieces.len();
     let mut eff = lands as f64;
     let mut free = 0;
+    // a zero-cost piece (Lotus Petal) pays for a Sol Ring or a 1-mana rock without any land
+    let starts = pieces.iter().any(|&c| g.db.get(c).cmc == 0 && nm(g, c) == "Lotus Petal");
     let mut n_mana = 0;
     for &c in hand.iter().filter(|&&c| g.db.get(c).land) {
         if matches!(nm(g, c), "Ancient Tomb" | "City of Traitors") {
@@ -110,7 +112,7 @@ pub fn mana(g: &Game, p: PlayerId) -> Mana {
             }
             "Mox Opal" => 0.0, // metalcraft: three artifacts
             "Sol Ring" => {
-                if lands >= 1 {
+                if lands >= 1 || starts {
                     2.0
                 } else {
                     0.0

@@ -87,7 +87,8 @@ fn line_a_goes_with_cover_in_hand() {
 
 #[test]
 fn opening_hands_are_kept_like_a_cedh_deck_keeps() {
-    // 7-card hands from shuffled libraries: the plan keeps about 3 in 4 (1.9 lands a hand: the rest are 0-1 landers without fast mana)
+    // 7-card hands from shuffled libraries: the plan keeps about 3 in 5 (1.9 lands a hand: 40% are 0-1 landers, and a
+    // 1-lander now needs 3 mana from its own hand: Mox Diamond, Chrome Mox and a lone Sol Ring do not count; t6-ai-keeps)
     let (mut kept, mut n) = (0, 0);
     for seed in 0..300u64 {
         let mut g = table_with(&[RT, KRAUM], seed, 40);
@@ -102,7 +103,7 @@ fn opening_hands_are_kept_like_a_cedh_deck_keeps() {
         }
     }
     eprintln!("kept {kept} of {n}");
-    assert!(kept * 100 >= n * 70, "kept only {kept} of {n}");
+    assert!(kept * 100 >= n * 55, "kept only {kept} of {n}");
 }
 
 #[test]

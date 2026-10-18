@@ -19,10 +19,10 @@ Lands by T4 = lands in the kept hand plus the 3 top cards (the draws of turns 2-
 
 | Deck | mulligan before -> after | triple before -> after | 1-land keeps | lands by T4 |
 | --- | --- | --- | --- | --- |
-| Dack | 30.5 -> 41.9% | 2.9 -> 6.5% | 18.3 -> 4.1% | 3.13 -> 3.36 |
+| Dack | 30.5 -> 42.0% | 2.9 -> 6.6% | 18.3 -> 4.1% | 3.13 -> 3.37 |
 | Kinnan | 38.6 -> 50.9% | 4.5 -> 7.2% | 23.2 -> 9.1% | 2.82 -> 3.00 |
 | Kraum/Tymna | 28.9 -> 47.1% | 2.5 -> 6.5% | 24.4 -> 5.1% | 2.87 -> 3.14 |
-| Rograkh/Silas | 35.0 -> 55.3% | 3.3 -> 7.7% | 35.1 -> 11.5% | 2.57 -> 2.87 |
+| Rograkh/Silas | 35.0 -> 46.1% | 3.3 -> 4.2% | 35.1 -> 20.5% | 2.57 -> 2.78 |
 | Rograkh/Thrasios | 28.9 -> 42.5% | 2.9 -> 3.3% | 20.5 -> 6.9% | 3.14 -> 3.34 |
 | Sisay | 33.7 -> 43.5% | 2.7 -> 3.5% | 14.9 -> 6.8% | 3.22 -> 3.32 |
 | Godo (unchanged) | 38.6% | 6.9% | 9.0% | 3.19 |
@@ -53,3 +53,12 @@ that trades a lone 1-lander for a better 6 only when the hand has no cheap plays
   hand kept, Mox discard keeps a needed colour, Mox cast gate, plus the two measuring tests). Full suite: all pass, 0 failures; `cargo build --release --all-targets`: 0 warnings.
 - Not done: Godo's keep (not in the task list; its triple-mulligan rate is 6.9%), "lands on turn 4" measured on
   shuffled hands (not in played games: that needs a new report counter).
+
+## Late changes (after the sims above)
+Existing deck-agent tests forced two follow-ups, made after the Tier 6 sim: Dack's "no white source" bar is 6.0 mana
+(Sol Ring counts 2); Silas counts rituals and spirit guides as 1.0 each (spec scenario 11, Chrome Mox + Culling the
+Weak) and a land-less hand may use Petal -> Sol Ring (a Petal pays for it), which is why Silas' 1-land keeps are 20.5%,
+not 11.5%. The Silas row in the first table is the final one; the sim table was measured before this tweak (Silas and
+Dack only). `ai_t6_rograkh_thrasios::opening_hands_are_kept...` now asks for 55% kept (was 70%): the deck has 40% of
+first sevens with 0-1 lands. Full suite (`--no-fail-fast`) passes; 0 warnings; t3 lock checked before these two edits
+(both gated to Tier 6 keeps).

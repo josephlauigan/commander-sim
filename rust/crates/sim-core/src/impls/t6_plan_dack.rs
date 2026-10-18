@@ -347,7 +347,7 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     // mana by turn 2 from this hand (Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land)
     let m = crate::impls::t6_keep::mana(g, p);
     let white = hand.iter().any(|&c| white_source(g, c));
-    if m.lands == 0 || m.lands >= 6 || m.spells == 0 || (!white && m.eff < 5.0) {
+    if m.lands == 0 || m.lands >= 6 || m.spells == 0 || (!white && m.eff < 6.0) {
         return Some(false);
     }
     // a 1-lander lives on its rocks: land + at least 2.5 more mana from the hand, and something to cast with it
