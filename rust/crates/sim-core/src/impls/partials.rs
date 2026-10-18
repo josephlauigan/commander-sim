@@ -574,7 +574,7 @@ fn jaxis_blitz(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
     }])
 }
 
-fn jaxis_blitz_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub fn jaxis_blitz_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
         return Ok(false);

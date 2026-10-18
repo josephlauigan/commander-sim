@@ -22,11 +22,13 @@ use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::tag::Tag;
+use crate::engine::stack::{ability_window, trigger_window};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 /// what a combo's `ready` finds: (ready, its key permanents, the cards still to cast from hand)
-type Ready = (bool, Vec<PermId>, Vec<CardId>);
+pub type Ready = (bool, Vec<PermId>, Vec<CardId>);
 
 const NOT_READY: fn() -> Ready = || (false, vec![], vec![]);
 
@@ -36,16 +38,70 @@ const NOT_READY: fn() -> Ready = || (false, vec![], vec![]);
 pub struct Combo {
     pub name: &'static str,
     pub groups: &'static [&'static [&'static str]],
-    ready: fn(&Game, PlayerId) -> Ready,
-    mana: (u32, &'static str),
-    finish: Option<fn(&mut Game, PlayerId) -> Res>,
-    xcost: &'static [(&'static str, u32)],
+    pub ready: fn(&Game, PlayerId) -> Ready,
+    pub mana: (u32, &'static str),
+    pub finish: Option<fn(&mut Game, PlayerId) -> Res>,
+    pub xcost: &'static [(&'static str, u32)],
+    /// the steps of the line, each with its own answer window (empty: the old single window at the end)
+    pub steps: &'static [Step],
 }
 
 impl Combo {
     fn x_for(&self, name: &str) -> u32 {
         self.xcost.iter().find(|x| x.0 == name).map_or(0, |x| x.1)
     }
+}
+
+
+/// how the opponents may answer a step of a combo
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum StepKind {
+    /// a spell: `run` casts it (normal counter window, as any spell); false if it was countered or can't be cast
+    Spell,
+    /// a triggered ability: its cost is paid, it goes on the stack with `src` as its source (the ability-answer
+    /// path: Ertai, Louisoix, Tidebinder, Stifle-likes), and `run` is its effect if it resolves
+    Trigger,
+    /// an activated ability: as Trigger (`ability_window`)
+    Ability,
+    /// a permanent that must survive: `run` happens, then each opponent may remove or bounce one of `keys` at instant
+    /// speed (`interrupted`)
+    Permanent,
+    /// something the real engine does with its own windows (a cast Godo's enter trigger, a copy's enters effect):
+    /// `run` makes it happen and answers whether it came out as the line needs
+    Engine,
+}
+
+/// one step of a combo's line (see `Combo::steps`): an answered step stops the combo
+pub struct Step {
+    pub label: &'static str,
+    pub kind: StepKind,
+    /// Trigger / Ability: the permanent the ability belongs to
+    pub src: fn(&Game, PlayerId) -> Option<PermId>,
+    /// Trigger / Ability: the cost, paid before the ability goes on the stack
+    pub pay: (u32, &'static str),
+    pub run: fn(&mut Game, PlayerId) -> Res<bool>,
+    /// Permanent: what opponents may answer, looked up after `run`
+    pub keys: fn(&Game, PlayerId) -> Vec<PermId>,
+}
+
+pub fn no_src(_g: &Game, _p: PlayerId) -> Option<PermId> {
+    None
+}
+
+pub fn no_keys(_g: &Game, _p: PlayerId) -> Vec<PermId> {
+    vec![]
+}
+
+pub fn done(_g: &mut Game, _p: PlayerId) -> Res<bool> {
+    Ok(true)
+}
+
+/// every modeled combo, in order: `BASE` (Python's), then each Tier 6 module's slice. A new `t6_combos_*.rs` module
+/// exports `pub static COMBOS: [Combo; N]` and is chained here (the index of a combo is its place in this list)
+pub fn all() -> &'static [&'static Combo] {
+    static ALL: LazyLock<Vec<&'static Combo>> =
+        LazyLock::new(|| BASE.iter().chain(super::t6_combos_godo::COMBOS.iter()).collect());
+    &ALL
 }
 
 // ------------------------------------------------------------------ the pieces
@@ -61,7 +117,7 @@ const UNDYING_LOOP: &[&str] =
 const STAFF_OUTLETS: &[&str] = &["Skirk Prospector", "Goblin Bombardment", "Ashnod's Altar", "Phyrexian Altar"];
 
 /// combos.COMBOS, in Python's order
-pub static COMBOS: [Combo; 14] = [
+pub static BASE: [Combo; 14] = [
     Combo {
         name: "Kiki-Jiki + Zealous Conscripts / Felidar / Resto",
         groups: &[&[KIKI, FABLE], KIKI_TARGETS],
@@ -69,6 +125,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Isochron Scepter + Dramatic Reversal",
@@ -77,6 +134,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Power Artifact / Rings of Brighthearth + Monolith",
@@ -85,6 +143,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Kinnan + Basalt Monolith",
@@ -93,6 +152,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Kinnan + Freed from the Real / Pemmin's Aura",
@@ -101,6 +161,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Aluren + Chulane + a bouncing creature",
@@ -109,6 +170,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Sanguine Bond + Exquisite Blood",
@@ -117,6 +179,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Thassa's Oracle + Demonic Consultation / Tainted Pact",
@@ -125,6 +188,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Helm of the Host + Combat Celebrant",
@@ -133,6 +197,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Gravecrawler + Phyrexian Altar + a Zombie + a death payoff",
@@ -141,6 +206,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Yawgmoth + undying loop + a death payoff",
@@ -149,6 +215,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: Some(yawg_finish),
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Krenko + Thornbite Staff + a sacrifice outlet",
@@ -157,6 +224,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Karn, the Great Creator + Mycosynth Lattice",
@@ -165,6 +233,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: Some(lock_lattice),
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Heliod, Sun-Crowned + Walking Ballista",
@@ -173,18 +242,19 @@ pub static COMBOS: [Combo; 14] = [
         mana: (1, "W"),
         finish: None,
         xcost: &[("Walking Ballista", 2)],
+        steps: &[],
     },
 ];
 
 /// combos.PIECES: is this card name a piece of a modeled combo?
 pub fn is_piece_name(name: &str) -> bool {
-    COMBOS.iter().any(|c| c.groups.iter().any(|grp| grp.contains(&name)))
+    all().iter().any(|c| c.groups.iter().any(|grp| grp.contains(&name)))
 }
 
 /// combos.PIECES as card ids (the names in the card database)
 pub fn pieces(g: &Game) -> Vec<CardId> {
     let mut out = vec![];
-    for cmb in &COMBOS {
+    for cmb in all() {
         for grp in cmb.groups {
             for n in grp.iter() {
                 if let Some(c) = g.db.id(n)
@@ -273,17 +343,17 @@ fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
 /// the index in COMBOS of the first combo whose name contains `part` (tests: Python's
 /// `next(c for c in COMBOS if part in c.name)`)
 pub fn combo_index(part: &str) -> Option<usize> {
-    COMBOS.iter().position(|c| c.name.contains(part))
+    all().iter().position(|c| c.name.contains(part))
 }
 
 /// COMBOS[i].ready(g, p)[0]: p has everything COMBOS[i] needs
 pub fn ready(g: &Game, p: PlayerId, i: usize) -> bool {
-    (COMBOS[i].ready)(g, p).0
+    (all()[i].ready)(g, p).0
 }
 
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
-    let cmb = &COMBOS[i as usize];
+    let cmb = all()[i as usize];
     let (ok, keys, casts) = (cmb.ready)(g, p);
     if !ok || !affordable(g, p, cmb, &casts) {
         return Ok(false);
@@ -297,6 +367,9 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     pl.stat("combo_attempt", 1);
     pl.milestone.entry("combo").or_insert(turns);
     crate::glog!(g, "  {} goes for {}", g.player(p).name, cmb.name);
+    if !cmb.steps.is_empty() {
+        return run_steps(g, p, cmb);
+    }
     for (i, &c) in casts.iter().enumerate() {
         // the last pieces are cast normally: they can be countered
         let (gn, pips) = (g.db.get(c).generic, g.db.get(c).pips.to_string());
@@ -334,6 +407,59 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     match cmb.finish {
         Some(f) => f(g, p)?,
         None => crate::ai::win(g, p, "combo", Some(!cmb.name.contains("Oracle")))?, // Oracle: an alternate win
+    }
+    Ok(true)
+}
+
+/// a combo with declared steps: each step is answerable in its own way (`StepKind`); an answered step stops the combo
+/// (the pieces already played stay, and p may go for another line later), and once the last one passes the loop is
+/// executed abstractly
+fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
+    let (gn, pips) = cmb.mana;
+    if gn > 0 || !pips.is_empty() {
+        pay(g, p, gn, pips, false)?;
+    }
+    for (n, st) in cmb.steps.iter().enumerate() {
+        let ok = match st.kind {
+            StepKind::Spell | StepKind::Engine => (st.run)(g, p)?,
+            StepKind::Trigger | StepKind::Ability => {
+                let (cg, cp) = st.pay;
+                if !can_pay(g, p, cg, cp, false) {
+                    false
+                } else {
+                    if cg > 0 || !cp.is_empty() {
+                        pay(g, p, cg, cp, false)?;
+                    }
+                    let src = (st.src)(g, p);
+                    let resolved = if st.kind == StepKind::Trigger {
+                        trigger_window(g, p, src, st.label, Some(6.0))?
+                    } else {
+                        ability_window(g, p, src, st.label, Some(6.0), None)?
+                    };
+                    if resolved && !g.over { (st.run)(g, p)? } else { resolved }
+                }
+            }
+            StepKind::Permanent => {
+                if !(st.run)(g, p)? {
+                    false
+                } else {
+                    let keys: Vec<PermId> = (st.keys)(g, p).into_iter().filter(|&k| g.perm(k).on_bf).collect();
+                    !interrupted(g, p, &keys)?
+                }
+            }
+        };
+        if g.over {
+            return Ok(true);
+        }
+        if !ok {
+            crate::glog!(g, "    ...{} stops at step {} ({})", cmb.name, n + 1, st.label);
+            g.player_mut(p).stat("combo_stopped", 1);
+            return Ok(true);
+        }
+    }
+    match cmb.finish {
+        Some(f) => f(g, p)?,
+        None => crate::ai::win(g, p, "combo", Some(true))?,
     }
     Ok(true)
 }
@@ -412,8 +538,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         return Ok(vec![]); // g.combo_decks: the outside decks
     }
     let mut out = vec![];
-    for (i, cmb) in COMBOS.iter().enumerate() {
-        if !cmb.groups.iter().any(|grp| has_piece(g, p, grp)) {
+    for (i, cmb) in all().iter().enumerate() {
+        // a line that starts from the command zone or the library (Godo) has no piece in hand to gate on: ask `ready`
+        if !cmb.groups.iter().any(|grp| has_piece(g, p, grp)) && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0) {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
@@ -432,7 +559,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
 
 /// any modeled combo is ready (Ad Nauseam stops there)
 pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
-    COMBOS.iter().any(|cmb| (cmb.ready)(g, p).0)
+    all().iter().any(|cmb| (cmb.ready)(g, p).0)
 }
 
 /// combos.full_deck_names: the cards of p's deck in its library, hand, graveyard and on the battlefield (lands
@@ -449,7 +576,7 @@ fn full_deck_names(g: &Game, p: PlayerId) -> Vec<&str> {
 pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
     let deck = full_deck_names(g, p);
     let mut best: Option<(usize, Vec<&str>)> = None;
-    for cmb in &COMBOS {
+    for cmb in all() {
         if !cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n))) {
             continue;
         }
@@ -478,7 +605,7 @@ pub fn piece_threat(g: &Game, m: PermId) -> f64 {
         return 0.0;
     }
     let p = g.perm(m).owner;
-    for cmb in &COMBOS {
+    for cmb in all() {
         if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
@@ -500,7 +627,7 @@ pub fn combo_imp(g: &Game, p: PlayerId, c: CardId) -> f64 {
     if !is_piece_name(name) {
         return 0.0;
     }
-    for cmb in &COMBOS {
+    for cmb in all() {
         if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
@@ -530,7 +657,7 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
     let pl = g.player(q);
     let mut names: Vec<&str> = pl.deck_names.iter().map(|&c| name_of(g, c)).collect();
     names.extend(pl.commanders().map(|c| name_of(g, c))); // `| {q.cmd.name}`
-    let v: Vec<usize> = COMBOS
+    let v: Vec<usize> = all()
         .iter()
         .enumerate()
         .filter(|(_, c)| c.groups.iter().all(|grp| grp.iter().any(|n| names.contains(n))))
@@ -561,7 +688,7 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
     }
     let mut best = f64::NEG_INFINITY;
     for i in cmbs {
-        let c = &COMBOS[i];
+        let c = all()[i];
         let n = c.groups.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
         best = best.max(n as f64 / c.groups.len() as f64);
     }

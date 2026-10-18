@@ -46,7 +46,9 @@ fn first_attack_key(src: PermId) -> Sym {
 
 // ================================================================== Godo, Bandit Warlord
 /// the copy cards that make Godo's second fetch worth Hammer first (the spec's line 3): on the battlefield or in hand
-const COPIERS: [&str; 6] = [
+pub(crate) const COPIERS: [&str; 8] = [
+    "Jaxis, the Troublemaker",
+    "Sculpting Steel",
     "Peter Parker's Camera",
     "Twinflame",
     "Molten Duplication",
@@ -57,7 +59,7 @@ const COPIERS: [&str; 6] = [
 
 /// which Equipment Godo fetches: Hammer of Nazahn first when a copier is available (the copy then fetches Helm and
 /// Hammer attaches it free), else Helm of the Host, else Hammer, else the AI's usual pick (None)
-fn godo_wants(g: &Game, p: PlayerId) -> Option<&'static str> {
+pub(crate) fn godo_wants(g: &Game, p: PlayerId) -> Option<&'static str> {
     let lib = |n: &str| g.player(p).library.iter().any(|&c| &*g.db.get(c).name == n);
     let copier = COPIERS.iter().any(|n| {
         on_bf_named(g, p, n) || g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == *n)
@@ -88,6 +90,12 @@ fn godo_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), "search for an Equipment, put it onto the battlefield", Some(6.0))? {
         return Ok(());
     }
+    godo_fetch(g, o)
+}
+
+/// Godo's enters effect once the trigger resolves: search for an Equipment and put it onto the battlefield (also
+/// run by the combo framework for a Godo copy whose trigger it has already put on the stack)
+pub fn godo_fetch(g: &mut Game, o: PlayerId) -> Res {
     let want = godo_wants(g, o);
     let pred = move |g: &Game, c: CardId| match want {
         Some(n) => &*g.db.get(c).name == n,
