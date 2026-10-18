@@ -1403,6 +1403,19 @@ pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         return if kefka_out(g, p) { 84 } else { 70 };
     }
+    if name == "Fiery Emancipation" {
+        // triple damage: every Crawler / Niv ping is 3 to each opponent, and the flipped Kefka draws off all of it
+        let pl = g.player(p);
+        let pinger = |n: &str| {
+            pl.perms.iter().any(|&m| crate::engine::values::card_name(g, m) == Some(n))
+                || pl.hand.iter().any(|&x| cname(g, x) == n)
+        };
+        return if pinger(CRAWLER) || pinger(NIV) || flipped(g, p) { 78 } else { 45 };
+    }
+    if name == "Bribery" {
+        // the best creature from an opponent's library: a bomb on Kefka's side (card code: galadriel.rs)
+        return 62;
+    }
     if let Some(v) = crate::ai::decks::breach_hold_prio(g, p, c) {
         return v; // the Breach line holds Breach, the storm cards and the rituals for itself
     }
