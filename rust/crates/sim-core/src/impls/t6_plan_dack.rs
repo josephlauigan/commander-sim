@@ -351,7 +351,9 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
         return Some(false);
     }
     // three sources, or two with fast mana / Tomb / City / a Petal: the deck keeps on speed, not on land count
-    Some(sources >= 3 || (sources == 2 && (fast >= 1 || tomb >= 1 || free >= 1)))
+    // two sources and cheap plays to make with them (protection, removal, a lock piece): enough for a 7-card hand
+    let cheap = hand.iter().filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc <= 3 && !FAST.contains(&nm(g, c))).count();
+    Some(sources >= 3 || (sources == 2 && (fast >= 1 || tomb >= 1 || free >= 1 || cheap >= 3)))
 }
 
 /// extra value of passing with mana up: the first turns are for developing; a held protection spell with Dack
