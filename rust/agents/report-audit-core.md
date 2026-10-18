@@ -25,3 +25,8 @@ finishers, --cards stale lines, JD zero-priority hold.
 4. yshtola::tutor_pick offers the X drains to "is" tutors as well as "any" (Greaves stays "any" only). Y'shtola-only.
 5. cardgen sources.rs: an override with status Full clears the card's `unparsed` lines; data/cards.json re-exported
    (only the `unparsed` arrays changed). Venat, Static Net, Kraum, Black Widow, Smaug, Gilgamesh now print none.
+
+Checks: build --all-targets no warnings; `cargo test --release --no-fail-fast` all pass (RUST_TEST_THREADS=2). Pool check
+`--calibrate within --pool t3 --games 40 --ai adaptive --jobs 2`: output identical to the ai-audit binary (Teferi's
+change is Y'shtola-only; pool decks already used the full card in ai/pool.rs, so no pool difference).
+Note: first version of item 1 broke cards_jd_pkg (Kefka's Dark Ritual under Yawgmoth's Will); rituals are now exempt.
