@@ -1,0 +1,462 @@
+//! Engine feature `combo2`: the Dack, Sisay and Rograkh & Thrasios combos (impls/t6_combos_t6.rs; the specs' "Combo
+//! tests": Dack 3 and 4, Sisay 1/2/3/7/8, Rograkh A, B, E and F). Seat 0 plays the combo deck; seat 1 holds the answers.
+
+use sim_core::ids::{CardId, PermId, PlayerId};
+use sim_core::impls::combos;
+use sim_core::state::Game;
+use sim_core::sym::intern;
+use sim_core::testkit::*;
+
+const P0: PlayerId = PlayerId(0);
+const P1: PlayerId = PlayerId(1);
+
+fn tbl(key: &str) -> Game {
+    let mut g = table(&[key, "seph"]);
+    g.active = Some(P0);
+    g
+}
+
+fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
+    g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && &*g.perm(m).name == name)
+}
+
+fn go(g: &mut Game, part: &str) {
+    g.log = Some(vec![]);
+    let i = combos::combo_index(part).unwrap_or_else(|| panic!("no combo {part}"));
+    assert!(combos::ready(g, P0, i), "{part} is ready");
+    combos::attempt(g, P0, i as i64).unwrap();
+    if std::env::var("COMBO_LOG").is_ok() {
+        eprintln!("{}", g.log.clone().unwrap_or_default().join("\n"));
+    }
+}
+
+fn ready(g: &Game, part: &str) -> bool {
+    combos::ready(g, P0, combos::combo_index(part).unwrap_or_else(|| panic!("no combo {part}")))
+}
+
+/// the card in p's library (moved there from the hand or made up), so that a tutor-like step finds it
+fn to_library(g: &mut Game, p: PlayerId, name: &str) -> CardId {
+    let c = card(g, name);
+    g.player_mut(p).hand.retain(|&x| x != c);
+    if !g.player(p).library.contains(&c) {
+        g.player_mut(p).library.push(c);
+    }
+    c
+}
+
+/// over a few seeds, with a Counterspell for the opponent: whether the AI counters is a roll; when it did, nobody won
+/// (the combo stopped at the spell). Returns how many runs were countered.
+fn countered_runs(key: &str, part: &str, setup: fn(&mut Game)) -> usize {
+    let mut countered = 0;
+    for seed in 0..16u64 {
+        let mut g = table_with(&[key, "seph"], seed, 40);
+        g.active = Some(P0);
+        setup(&mut g);
+        lands(&mut g, P1, "Island", 2, false);
+        hand(&mut g, P1, &["Counterspell"]);
+        go(&mut g, part);
+        if g.player(P1).gy.contains(&card(&g, "Counterspell")) {
+            countered += 1;
+            assert_eq!(g.winner, None, "{part}: countered, so the combo stopped");
+        }
+    }
+    countered
+}
+
+// ============================================================ Dack: Preston + Felidar Guardian + Radiant Solar
+const DACK: &str = "dack-fayden-white-stax";
+const DACK_COMBO: &str = "Felidar Guardian + Radiant Solar (flicker";
+
+/// the three pieces, entered in an order that starts no loop (Felidar first: nothing to flicker; Preston last)
+fn dack_board(g: &mut Game) {
+    perm(g, P0, "Felidar Guardian");
+    perm(g, P0, "Radiant Solar");
+    perm(g, P0, "Preston, the Vanisher");
+    lands(g, P0, "Plains", 2, false);
+}
+
+#[test]
+fn spec_3_a_flicker_spell_on_preston_felidar_and_solar_wins() {
+    for spell in ["Cloudshift", "Ephemerate"] {
+        let mut g = tbl(DACK);
+        dack_board(&mut g);
+        assert!(!ready(&g, DACK_COMBO), "no flicker spell yet");
+        hand(&mut g, P0, &[spell]);
+        go(&mut g, DACK_COMBO);
+        assert_eq!(g.winner, Some(P0), "{spell}");
+        assert!(g.player(P0).gy.contains(&card(&g, spell)));
+    }
+}
+
+#[test]
+fn a_missing_piece_means_no_combo() {
+    let mut g = tbl(DACK);
+    perm(&mut g, P0, "Felidar Guardian");
+    perm(&mut g, P0, "Preston, the Vanisher");
+    lands(&mut g, P0, "Plains", 2, false);
+    hand(&mut g, P0, &["Cloudshift"]);
+    assert!(!ready(&g, DACK_COMBO), "Radiant Solar is missing");
+    perm(&mut g, P0, "Radiant Solar");
+    assert!(ready(&g, DACK_COMBO));
+}
+
+#[test]
+fn spec_4_swords_on_preston_stops_the_loop() {
+    let mut stopped = 0;
+    for seed in 0..8u64 {
+        let mut g = table_with(&[DACK, "seph"], seed, 40);
+        g.active = Some(P0);
+        dack_board(&mut g);
+        hand(&mut g, P0, &["Cloudshift"]);
+        lands(&mut g, P1, "Plains", 1, false);
+        hand(&mut g, P1, &["Swords to Plowshares"]);
+        go(&mut g, DACK_COMBO);
+        if g.winner.is_none() {
+            stopped += 1;
+            assert!(
+                on_bf(&g, P0, "Preston, the Vanisher").is_none()
+                    || on_bf(&g, P0, "Felidar Guardian").is_none()
+                    || on_bf(&g, P0, "Radiant Solar").is_none(),
+                "a key piece is gone"
+            );
+        }
+    }
+    assert!(stopped >= 6, "instant-speed removal on a piece stops the combo ({stopped}/8)");
+}
+
+#[test]
+fn a_counterspell_on_the_flicker_spell_stops_the_combo() {
+    let n = countered_runs(DACK, DACK_COMBO, |g| {
+        dack_board(g);
+        hand(g, P0, &["Cloudshift"]);
+    });
+    assert!(n >= 1, "the AI counters the flicker spell sometimes");
+}
+
+#[test]
+fn the_loop_that_hit_the_engines_cap_is_a_combo_without_a_spell() {
+    let mut g = tbl(DACK);
+    dack_board(&mut g);
+    assert!(!ready(&g, "(loop running)"), "the cap was not hit");
+    let stamp = (g.round as f64) * 8.0 + 0.0;
+    g.player_mut(P0).grudge.insert(intern("preston_cap_round"), stamp);
+    g.player_mut(P0).grudge.insert(intern("preston_cap_n"), 31.0);
+    go(&mut g, "(loop running)");
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn the_preston_cap_still_stops_the_real_loop() {
+    // the real engine loop (no combo): Preston + an uncast Felidar copies until the cap, no stack overflow
+    let mut g = tbl(DACK);
+    perm(&mut g, P0, "Felidar Guardian");
+    perm(&mut g, P0, "Radiant Solar");
+    perm(&mut g, P0, "Preston, the Vanisher");
+    let fel = on_bf(&g, P0, "Felidar Guardian").unwrap();
+    let cd = g.perm(fel).cd.unwrap();
+    sim_core::engine::zones::enter_token_copy(&mut g, P0, cd).unwrap();
+    let n = g.player(P0).grudge.get(&intern("preston_cap_n")).copied().unwrap_or(0.0);
+    assert!(n >= 1.0, "Preston copied at least once");
+}
+
+// ============================================================ Sisay
+const SISAY: &str = "sisay-legends-toolbox";
+
+fn doom(g: &mut Game) {
+    lands(g, P0, "Mount Doom", 1, false);
+}
+
+fn ddr_board(g: &mut Game) {
+    perm(g, P0, "Ioreth of the Healing House");
+    perm(g, P0, "Marvin, Murderous Mimic");
+    perm(g, P0, "Selvala, Heart of the Wilds");
+    doom(g);
+}
+
+#[test]
+fn spec_3_marvin_ioreth_and_selvala_win_with_mount_doom() {
+    let mut g = tbl(SISAY);
+    ddr_board(&mut g);
+    go(&mut g, "(DDR)");
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn ddr_needs_pieces_free_of_summoning_sickness_or_a_haste_source() {
+    let mut g = tbl(SISAY);
+    ddr_board(&mut g);
+    let marvin = on_bf(&g, P0, "Marvin, Murderous Mimic").unwrap();
+    g.perm_mut(marvin).sick = true;
+    assert!(!ready(&g, "(DDR)"), "Marvin is summoning sick");
+    perm(&mut g, P0, "Shang-Chi, Master of Kung Fu");
+    assert!(ready(&g, "(DDR)"), "Shang-Chi lets abilities ignore summoning sickness");
+}
+
+#[test]
+fn spec_8_ddr_cast_the_same_turn_with_shang_chi_and_vitality() {
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Shang-Chi, Master of Kung Fu");
+    perm(&mut g, P0, "Enduring Vitality");
+    doom(&mut g);
+    hand(&mut g, P0, &["Ioreth of the Healing House", "Marvin, Murderous Mimic"]);
+    assert!(!ready(&g, "(DDR)"), "5 mana is missing");
+    lands(&mut g, P0, "Island", 5, false);
+    // Shang-Chi is the legend that taps (Vitality makes his mana unrestricted)
+    go(&mut g, "(DDR)");
+    assert_eq!(g.winner, Some(P0));
+    assert!(
+        on_bf(&g, P0, "Ioreth of the Healing House").is_some() && on_bf(&g, P0, "Marvin, Murderous Mimic").is_some()
+    );
+}
+
+#[test]
+fn ddr_without_a_legend_that_taps_for_mana_is_no_combo() {
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Ioreth of the Healing House");
+    perm(&mut g, P0, "Marvin, Murderous Mimic");
+    perm(&mut g, P0, "Shang-Chi, Master of Kung Fu"); // his mana only pays creature abilities
+    doom(&mut g);
+    assert!(!ready(&g, "(DDR)"));
+}
+
+#[test]
+fn removal_on_ioreth_stops_ddr() {
+    let mut stopped = 0;
+    for seed in 0..8u64 {
+        let mut g = table_with(&[SISAY, "seph"], seed, 40);
+        g.active = Some(P0);
+        ddr_board(&mut g);
+        lands(&mut g, P1, "Plains", 1, false);
+        hand(&mut g, P1, &["Swords to Plowshares"]);
+        go(&mut g, "(DDR)");
+        if g.winner.is_none() {
+            stopped += 1;
+        }
+    }
+    assert!(stopped >= 6, "instant-speed removal on a piece stops the loop ({stopped}/8)");
+}
+
+#[test]
+fn a_counterspell_on_a_cast_piece_stops_ddr() {
+    let n = countered_runs(SISAY, "(DDR)", |g| {
+        perm(g, P0, "Marvin, Murderous Mimic");
+        perm(g, P0, "Selvala, Heart of the Wilds");
+        perm(g, P0, "Shang-Chi, Master of Kung Fu");
+        doom(g);
+        hand(g, P0, &["Ioreth of the Healing House"]);
+        lands(g, P0, "Island", 3, false);
+    });
+    assert!(n >= 1, "the AI counters Ioreth sometimes");
+}
+
+fn unicorn_board(g: &mut Game) {
+    perm(g, P0, "Derevi, Empyrial Tactician");
+    perm(g, P0, "Emiel the Blessed");
+    token(g, P0, 1);
+    token(g, P0, 1);
+    lands(g, P0, "Gaea's Cradle", 1, false);
+    doom(g);
+}
+
+#[test]
+fn spec_1_and_7_derevi_emiel_and_cradle_win_with_mount_doom() {
+    let mut g = tbl(SISAY);
+    unicorn_board(&mut g);
+    go(&mut g, "Flash Unicorn");
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn flash_unicorn_needs_four_creatures_for_cradle() {
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Derevi, Empyrial Tactician");
+    perm(&mut g, P0, "Emiel the Blessed");
+    token(&mut g, P0, 1);
+    lands(&mut g, P0, "Gaea's Cradle", 1, false);
+    doom(&mut g);
+    assert!(!ready(&g, "Flash Unicorn"), "3 G a tap pays the {{3}} blink with nothing over");
+    token(&mut g, P0, 1);
+    assert!(ready(&g, "Flash Unicorn"));
+}
+
+#[test]
+fn flash_unicorn_casts_derevi_and_emiel_from_hand() {
+    let mut g = tbl(SISAY);
+    token(&mut g, P0, 1);
+    token(&mut g, P0, 1);
+    lands(&mut g, P0, "Gaea's Cradle", 1, false);
+    doom(&mut g);
+    hand(&mut g, P0, &["Derevi, Empyrial Tactician", "Emiel the Blessed"]);
+    lands(&mut g, P0, "Plains", 4, false);
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Forest", 4, false);
+    assert!(ready(&g, "Flash Unicorn"));
+    go(&mut g, "Flash Unicorn");
+    assert_eq!(g.winner, Some(P0));
+    assert!(on_bf(&g, P0, "Derevi, Empyrial Tactician").is_some() && on_bf(&g, P0, "Emiel the Blessed").is_some());
+}
+
+#[test]
+fn ertai_counters_the_derevi_trigger_of_the_unicorn_loop() {
+    let mut g = tbl(SISAY);
+    unicorn_board(&mut g);
+    lands(&mut g, P1, "Island", 2, false);
+    lands(&mut g, P1, "Swamp", 2, false);
+    hand(&mut g, P1, &["Ertai Resurrected"]);
+    go(&mut g, "Flash Unicorn");
+    assert_eq!(g.winner, None, "the ability answer path stopped the loop");
+    assert!(on_bf(&g, P1, "Ertai Resurrected").is_some());
+}
+
+#[test]
+fn the_finisher_must_be_there_mount_doom_missing_means_no_combo() {
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Derevi, Empyrial Tactician");
+    perm(&mut g, P0, "Emiel the Blessed");
+    token(&mut g, P0, 1);
+    token(&mut g, P0, 1);
+    lands(&mut g, P0, "Gaea's Cradle", 1, false);
+    assert!(!ready(&g, "Flash Unicorn"));
+    hand(&mut g, P0, &["Mount Doom"]);
+    assert!(ready(&g, "Flash Unicorn"), "Mount Doom in hand with the land drop open");
+}
+
+// ============================================================ Rograkh & Thrasios
+const ROG: &str = "rograkh-thrasios-creature-combo";
+const PLAN_A: &str = "Talon Gates of Madara";
+const PLAN_B: &str = "Eternal Witness + Snap";
+
+/// Rograkh, Thrasios, Birds, a token, Oboro and a sixth creature, Cradle, Island, Gates in hand, Finale in the library
+fn plan_a_board(g: &mut Game) {
+    perm(g, P0, "Rograkh, Son of Rohgahh");
+    perm(g, P0, "Thrasios, Triton Hero");
+    perm(g, P0, "Birds of Paradise");
+    token(g, P0, 1);
+    token(g, P0, 1);
+    perm(g, P0, "Oboro Breezecaller");
+    lands(g, P0, "Gaea's Cradle", 1, false);
+    lands(g, P0, "Island", 1, false);
+    lands(g, P0, "Forest", 5, false);
+    hand(g, P0, &["Talon Gates of Madara"]);
+    to_library(g, P0, "Finale of Devastation");
+}
+
+#[test]
+fn rograkh_plan_a_oboro_cradle_and_gates_win_through_thrasios_and_finale() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    // opposing creatures phase out with the loop
+    let blocker = token(&mut g, P1, 3);
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+    assert!(g.perm(blocker).phased, "Talon Gates phased out the table's creatures");
+    assert!(g.player(P0).gy.contains(&card(&g, "Finale of Devastation")), "Thrasios found Finale and it was cast");
+    assert!(on_bf(&g, P0, "Talon Gates of Madara").is_none(), "Gates is a land, not a permanent card on perms");
+}
+
+#[test]
+fn rograkh_plan_a_needs_six_creatures() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let toks: Vec<PermId> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).token).collect();
+    sim_core::engine::zones::die(&mut g, toks[0], "destroy").unwrap();
+    assert!(!ready(&g, PLAN_A), "five creatures make Cradle break even at best");
+}
+
+#[test]
+fn rograkh_plan_a_casts_oboro_from_hand_and_a_counterspell_stops_it() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let oboro = on_bf(&g, P0, "Oboro Breezecaller").unwrap();
+    sim_core::engine::zones::die(&mut g, oboro, "destroy").unwrap();
+    let ob = card(&g, "Oboro Breezecaller");
+    g.player_mut(P0).gy.retain(|&c| c != ob);
+    hand(&mut g, P0, &["Oboro Breezecaller"]);
+    assert!(ready(&g, PLAN_A), "Oboro is cast first: six creatures after it");
+    lands(&mut g, P1, "Island", 2, false);
+    hand(&mut g, P1, &["Counterspell"]);
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, None, "Oboro Breezecaller was countered");
+}
+
+#[test]
+fn removal_on_oboro_stops_plan_a() {
+    let mut stopped = 0;
+    for seed in 0..8u64 {
+        let mut g = table_with(&[ROG, "seph"], seed, 40);
+        g.active = Some(P0);
+        plan_a_board(&mut g);
+        lands(&mut g, P1, "Plains", 1, false);
+        hand(&mut g, P1, &["Swords to Plowshares"]);
+        go(&mut g, PLAN_A);
+        if g.winner.is_none() {
+            stopped += 1;
+        }
+    }
+    assert!(stopped >= 6, "removal on Oboro or a creature breaks the loop ({stopped}/8)");
+}
+
+#[test]
+fn rograkh_plan_a_finishes_with_faerie_mastermind_and_green_suns_zenith() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    for n in ["Finale of Devastation", "Faerie Mastermind", "Green Sun's Zenith"] {
+        let c = card(&g, n);
+        g.player_mut(P0).library.retain(|&x| x != c);
+        g.player_mut(P0).hand.retain(|&x| x != c);
+    }
+    assert!(!ready(&g, PLAN_A), "no finisher in reach");
+    to_library(&mut g, P0, "Faerie Mastermind");
+    to_library(&mut g, P0, "Green Sun's Zenith");
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+    assert!(on_bf(&g, P0, "Faerie Mastermind").is_some(), "Mastermind was cast and its draw ability used");
+}
+
+#[test]
+fn a_counterspell_on_finale_stops_the_finish() {
+    let n = countered_runs(ROG, PLAN_A, plan_a_board);
+    assert!(n >= 1, "the AI counters Finale sometimes");
+}
+
+fn plan_b_board(g: &mut Game) {
+    perm(g, P0, "Rograkh, Son of Rohgahh");
+    perm(g, P0, "Thrasios, Triton Hero");
+    perm(g, P0, "Birds of Paradise");
+    token(g, P0, 1);
+    token(g, P0, 1);
+    lands(g, P0, "Gaea's Cradle", 1, false);
+    lands(g, P0, "Island", 2, false);
+    lands(g, P0, "Forest", 3, false);
+    hand(g, P0, &["Eternal Witness", "Snap"]);
+    to_library(g, P0, "Finale of Devastation");
+}
+
+#[test]
+fn spec_b_eternal_witness_snap_and_cradle_win() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    go(&mut g, PLAN_B);
+    assert_eq!(g.winner, Some(P0));
+    assert!(g.player(P0).gy.contains(&card(&g, "Snap")) || g.player(P0).hand.contains(&card(&g, "Snap")));
+}
+
+#[test]
+fn witness_and_snap_need_cradle_at_five_and_the_pieces() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).unwrap();
+    sim_core::engine::zones::die(&mut g, t, "destroy").unwrap();
+    assert!(!ready(&g, PLAN_B), "four creatures: Cradle is too small");
+    token(&mut g, P0, 1);
+    assert!(ready(&g, PLAN_B));
+    let snap = card(&g, "Snap");
+    g.player_mut(P0).hand.retain(|&c| c != snap);
+    assert!(!ready(&g, PLAN_B), "Snap is missing");
+}
+
+#[test]
+fn a_counterspell_on_witness_or_snap_stops_the_loop() {
+    let n = countered_runs(ROG, PLAN_B, plan_b_board);
+    assert!(n >= 1, "the AI counters a spell of the loop sometimes");
+}

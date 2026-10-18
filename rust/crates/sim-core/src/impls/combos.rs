@@ -14,6 +14,7 @@ use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::legal_targets;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{has_type, untargetable};
 use crate::engine::zones::{Enter, die, draw, enter, max_by};
@@ -22,7 +23,6 @@ use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::tag::Tag;
-use crate::engine::stack::{ability_window, trigger_window};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -51,7 +51,6 @@ impl Combo {
         self.xcost.iter().find(|x| x.0 == name).map_or(0, |x| x.1)
     }
 }
-
 
 /// how the opponents may answer a step of a combo
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -99,8 +98,9 @@ pub fn done(_g: &mut Game, _p: PlayerId) -> Res<bool> {
 /// every modeled combo, in order: `BASE` (Python's), then each Tier 6 module's slice. A new `t6_combos_*.rs` module
 /// exports `pub static COMBOS: [Combo; N]` and is chained here (the index of a combo is its place in this list)
 pub fn all() -> &'static [&'static Combo] {
-    static ALL: LazyLock<Vec<&'static Combo>> =
-        LazyLock::new(|| BASE.iter().chain(super::t6_combos_godo::COMBOS.iter()).collect());
+    static ALL: LazyLock<Vec<&'static Combo>> = LazyLock::new(|| {
+        BASE.iter().chain(super::t6_combos_godo::COMBOS.iter()).chain(super::t6_combos_t6::COMBOS.iter()).collect()
+    });
     &ALL
 }
 
@@ -922,7 +922,13 @@ fn oracle_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let x = oracle_devotion(g, p);
     if x >= g.player(p).library.len() {
         // the win is a triggered ability on the stack (importance 9): the table can counter it
-        if !crate::engine::stack::trigger_window(g, p, Some(src), "look at the top cards: win with an empty library", Some(9.0))? {
+        if !crate::engine::stack::trigger_window(
+            g,
+            p,
+            Some(src),
+            "look at the top cards: win with an empty library",
+            Some(9.0),
+        )? {
             return Ok(());
         }
         return crate::ai::win(g, p, "combo", Some(false));

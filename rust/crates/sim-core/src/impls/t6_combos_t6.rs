@@ -1,0 +1,714 @@
+//! Tier 6 combo shortcuts for the Dack, Sisay and Rograkh & Thrasios decks (audit/t6/<deck>/SPEC.md, "Win lines"), as
+//! `combos::Combo`s with declared steps (`combos::Step`). Each step has the answer window that fits it; an answered
+//! step stops the combo (the pieces already played stay) and the real loop is not played out once the last step
+//! passes: the player wins, as for every other combo.
+//!
+//! - **Dack**: Preston + Felidar Guardian + Radiant Solar (or a Preston copy of Solar), all under the player's
+//!   control. Started by a flicker spell (Cloudshift / Ephemerate), or already running (the engine's Preston loop cap
+//!   `t6_dack::PRESTON_CAP` was hit this turn: the loop is unbounded and only the cap stopped it). The cap stays: real
+//!   play (a Dack flip) reaches the loop without this combo. Steps: the three pieces (Permanent), the flicker spell
+//!   (Spell), the first Felidar trigger (Trigger).
+//! - **Sisay**: Ioreth + Marvin + a legend that taps for mana (the DDR line; Shang-Chi or Tyvar give the pieces
+//!   haste), and Derevi + Emiel + Gaea's Cradle / a rainbow Bloom Tender (the Flash Unicorn line); both finish with
+//!   Mount Doom pings. Ioreth's own cap `t6_legends1b::UNTAP_CAP` (6 untaps a turn) stays for the same reason.
+//! - **Rograkh & Thrasios**: Oboro Breezecaller + Gaea's Cradle (6+ creatures) + Talon Gates of Madara (Plan A: no
+//!   spells, every opposing creature phases out), and Eternal Witness + Snap + Cradle (5+ creatures); infinite mana
+//!   into Thrasios draws the library, then Finale of Devastation, or Faerie Mastermind with Green Sun's Zenith, wins.
+//!
+//! Left out: the Dack two-banisher trade (a way to get pieces back, not a line of its own), Sisay's Selvala chain,
+//! Deadpool + Forbidden Orchard and the Mana Vault starter, Rograkh's Badgermole, Springheart/Vibrance lines.
+
+use super::combos::{Combo, Ready, Step, StepKind, done, no_keys, no_src};
+use crate::engine::cast::{castable, on_cast};
+use crate::engine::life::check_state;
+use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::stack::{ability_window, ability_window_card, counter_window};
+use crate::engine::values::colors_of;
+use crate::flow::Res;
+use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::state::Game;
+use crate::sym::intern;
+use crate::tag::Tag;
+
+// ------------------------------------------------------------------ names
+const PRESTON: &str = "Preston, the Vanisher";
+const FELIDAR: &str = "Felidar Guardian";
+const SOLAR: &str = "Radiant Solar";
+const FLICKERS: &[&str] = &["Cloudshift", "Ephemerate"];
+
+const IORETH: &str = "Ioreth of the Healing House";
+const MARVIN: &str = "Marvin, Murderous Mimic";
+const SHANG: &str = "Shang-Chi, Master of Kung Fu";
+const TYVAR: &str = "Tyvar, Jubilant Brawler";
+const SELVALA: &str = "Selvala, Heart of the Wilds";
+const HASTERS: &[&str] = &[SHANG, TYVAR];
+const ENABLERS: &[&str] = &["Enduring Vitality", "Cryptolith Rite", "Relic of Legends"];
+const DEREVI: &str = "Derevi, Empyrial Tactician";
+const EMIEL: &str = "Emiel the Blessed";
+const TENDER: &str = "Bloom Tender";
+const DOOM: &str = "Mount Doom";
+const CRADLE: &str = "Gaea's Cradle";
+
+const OBORO: &str = "Oboro Breezecaller";
+const GATES: &str = "Talon Gates of Madara";
+const WITNESS: &str = "Eternal Witness";
+const SNAP: &str = "Snap";
+const THRASIOS: &str = "Thrasios, Triton Hero";
+const FINALE: &str = "Finale of Devastation";
+const MASTERMIND: &str = "Faerie Mastermind";
+const GSZ: &str = "Green Sun's Zenith";
+
+// ------------------------------------------------------------------ helpers
+fn live(g: &Game, m: PermId) -> bool {
+    g.perm(m).on_bf && !g.perm(m).phased
+}
+
+fn nm(g: &Game, m: PermId) -> &str {
+    &g.perm(m).name
+}
+
+fn cname(g: &Game, c: CardId) -> &str {
+    &g.db.get(c).name
+}
+
+fn bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
+    g.player(p).perms.iter().copied().find(|&m| live(g, m) && nm(g, m) == name)
+}
+
+fn bf_any(g: &Game, p: PlayerId, names: &[&str]) -> Option<PermId> {
+    names.iter().find_map(|n| bf(g, p, n))
+}
+
+fn hand_card(g: &Game, p: PlayerId, names: &[&str]) -> Option<CardId> {
+    g.player(p).hand.iter().copied().find(|&c| names.contains(&cname(g, c)))
+}
+
+fn lib_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
+    g.player(p).library.iter().copied().find(|&c| cname(g, c) == name)
+}
+
+fn land_on_bf(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
+    g.player(p).lands.iter().copied().find(|&l| g.land(l).on_bf && cname(g, g.land(l).cd) == name)
+}
+
+fn creatures(g: &Game, p: PlayerId) -> usize {
+    g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count()
+}
+
+type Cost = (u32, String);
+
+/// can p pay for all these at once?
+fn affordable(g: &Game, p: PlayerId, casts: &[CardId], extra: u32) -> bool {
+    let costs: Vec<Cost> = casts.iter().map(|&c| cost_of(g, p, c)).collect();
+    let gn: u32 = costs.iter().map(|x| x.0).sum::<u32>() + extra;
+    let pips: String = costs.iter().map(|x| x.1.as_str()).collect();
+    can_pay(g, p, gn, &pips, false)
+}
+
+fn ready_with(ok: bool) -> Ready {
+    (ok, vec![], vec![])
+}
+
+/// cast the card by name from hand through the normal AI cast (counter window and real enter effects); true if the
+/// permanent is there afterwards
+fn cast_named(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
+    let name = cname(g, c).to_string();
+    crate::ai::brain::do_cast(g, p, c, None)?;
+    Ok(bf(g, p, &name).is_some())
+}
+
+/// pay for and cast an instant or sorcery as a spell whose effect is the shortcut (`free`: the cost is paid by the
+/// infinite mana): the counter window is the normal one; false if it was countered or can't be cast
+fn cast_abstract(g: &mut Game, p: PlayerId, c: CardId, free: bool) -> Res<bool> {
+    let (gn, pips) = cost_of(g, p, c);
+    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || (!free && !can_pay(g, p, gn, &pips, false)) {
+        return Ok(false);
+    }
+    if !free {
+        pay(g, p, gn, &pips, false)?;
+    }
+    let hand = &mut g.player_mut(p).hand;
+    if let Some(i) = hand.iter().position(|&x| x == c) {
+        hand.remove(i);
+    }
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+    crate::glog!(g, "  {} casts {}", g.player(p).name, cname(g, c));
+    on_cast(g, p, c)?;
+    if g.over || !counter_window(g, p, c, 6.0, vec![])? {
+        g.player_mut(p).gy.push(c);
+        return Ok(false);
+    }
+    g.player_mut(p).gy.push(c);
+    check_state(g)?;
+    Ok(true)
+}
+
+const fn step(label: &'static str, kind: StepKind, run: fn(&mut Game, PlayerId) -> Res<bool>) -> Step {
+    Step { label, kind, src: no_src, pay: (0, ""), run, keys: no_keys }
+}
+
+const fn trigger(label: &'static str, src: fn(&Game, PlayerId) -> Option<PermId>) -> Step {
+    Step { label, kind: StepKind::Trigger, src, pay: (0, ""), run: done, keys: no_keys }
+}
+
+const fn ability(label: &'static str, src: fn(&Game, PlayerId) -> Option<PermId>, cost: (u32, &'static str)) -> Step {
+    Step { label, kind: StepKind::Ability, src, pay: cost, run: done, keys: no_keys }
+}
+
+const fn pieces(label: &'static str, keys: fn(&Game, PlayerId) -> Vec<PermId>) -> Step {
+    Step { label, kind: StepKind::Permanent, src: no_src, pay: (0, ""), run: done, keys }
+}
+
+const fn combo(
+    name: &'static str,
+    groups: &'static [&'static [&'static str]],
+    ready: fn(&Game, PlayerId) -> Ready,
+    steps: &'static [Step],
+) -> Combo {
+    Combo { name, groups, ready, mana: (0, ""), finish: None, xcost: &[], steps }
+}
+
+// ================================================================== Dack: Preston + Felidar Guardian + Radiant Solar
+/// Preston, a nontoken Felidar Guardian and a Radiant Solar (or a token copy of it), all p's
+fn dack_pieces(g: &Game, p: PlayerId) -> Option<[PermId; 3]> {
+    let preston = bf(g, p, PRESTON)?;
+    let felidar = g.player(p).perms.iter().copied().find(|&m| live(g, m) && nm(g, m) == FELIDAR && !g.perm(m).token)?;
+    let solar = bf(g, p, SOLAR)?;
+    Some([preston, felidar, solar])
+}
+
+fn flicker_spell(g: &Game, p: PlayerId) -> Option<CardId> {
+    let c = hand_card(g, p, FLICKERS)?;
+    (castable(g, p, c, "hand") && affordable(g, p, &[c], 0)).then_some(c)
+}
+
+/// the engine's Preston loop cap was hit this turn: the loop is unbounded (`t6_dack::preston_etb`)
+fn preston_loop_capped(g: &Game, p: PlayerId) -> bool {
+    let stamp = (g.round as f64) * 8.0 + g.active.map_or(0.0, |a| a.0 as f64);
+    let pl = g.player(p);
+    pl.grudge.get(&intern("preston_cap_round")).copied() == Some(stamp)
+        && pl.grudge.get(&intern("preston_cap_n")).copied().unwrap_or(0.0) > super::t6_dack::PRESTON_CAP
+}
+
+fn ready_dack_spell(g: &Game, p: PlayerId) -> Ready {
+    ready_with(dack_pieces(g, p).is_some() && flicker_spell(g, p).is_some())
+}
+
+fn ready_dack_running(g: &Game, p: PlayerId) -> Ready {
+    ready_with(dack_pieces(g, p).is_some() && flicker_spell(g, p).is_none() && preston_loop_capped(g, p))
+}
+
+fn dack_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    dack_pieces(g, p).map(|x| x.to_vec()).unwrap_or_default()
+}
+
+fn felidar_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    dack_pieces(g, p).map(|x| x[1])
+}
+
+fn cast_flicker(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(c) = flicker_spell(g, p) else { return Ok(false) };
+    cast_abstract(g, p, c, false)
+}
+
+const S_DACK_PIECES: Step = pieces("Preston, Felidar Guardian and Radiant Solar are under control", dack_keys);
+const S_DACK_FLICKER: Step =
+    step("a flicker spell on Felidar Guardian (it re-enters uncast)", StepKind::Spell, cast_flicker);
+const S_DACK_LOOP: Step = trigger(
+    "Felidar's flicker trigger: each token copy flickers the real Felidar, Solar ventures every time",
+    felidar_src,
+);
+
+// ================================================================== Sisay
+fn is_legend_creature(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    d.creature && d.tag(Tag::Leg) && !matches!(&*d.name, IORETH | MARVIN)
+}
+
+/// taps for mana without help: Selvala, or a legendary mana creature (not Shang-Chi: his mana only pays creature abilities)
+fn natural_source(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    &*d.name == SELVALA || d.tags.str(Tag::Dork).is_some_and(|k| k != "C")
+}
+
+fn pb_cd(g: &Game, m: PermId) -> Option<CardId> {
+    g.perm(m).cd
+}
+
+/// can m use a {T} ability now: untapped (unless `any_tap`: something else untaps it first), and not summoning sick unless
+/// it has haste or its controller has Shang-Chi / Tyvar
+fn can_tap(g: &Game, m: PermId, haste: bool, any_tap: bool) -> bool {
+    let x = g.perm(m);
+    (any_tap || !x.tapped) && (!x.sick || haste || crate::dsl::has_kw(g, m, "haste"))
+}
+
+fn land_drop_open(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.lands_played < 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now
+}
+
+/// Mount Doom is the finisher: out, or playable
+fn doom_available(g: &Game, p: PlayerId) -> bool {
+    land_on_bf(g, p, DOOM).is_some() || (hand_card(g, p, &[DOOM]).is_some() && land_drop_open(g, p))
+}
+
+/// (the cards to cast from hand, in order) for Ioreth + Marvin + a legend that taps for mana + Mount Doom, or None
+fn ddr_plan(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    if !doom_available(g, p) {
+        return None;
+    }
+    let mut casts: Vec<CardId> = vec![];
+    let (ioreth, marvin) = (bf(g, p, IORETH), bf(g, p, MARVIN));
+    if ioreth.is_none() {
+        casts.push(hand_card(g, p, &[IORETH])?);
+    }
+    if marvin.is_none() {
+        casts.push(hand_card(g, p, &[MARVIN])?);
+    }
+    // the legend that makes the mana
+    let legends_bf: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && pb_cd(g, m).is_some_and(|c| is_legend_creature(g, c)))
+        .collect();
+    let legends_hand: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| is_legend_creature(g, c)).collect();
+    let enab_bf = bf_any(g, p, ENABLERS).is_some();
+    let enab_hand = hand_card(g, p, ENABLERS);
+    let mut source: Option<PermId> =
+        legends_bf.iter().copied().find(|&m| pb_cd(g, m).is_some_and(|c| natural_source(g, c)));
+    if source.is_none() && enab_bf {
+        source = legends_bf.first().copied();
+    }
+    if source.is_none() {
+        if let Some(c) = legends_hand.iter().copied().find(|&c| natural_source(g, c)) {
+            casts.push(c);
+        } else {
+            // any other legend, with a Vitality / Cryptolith Rite / Relic of Legends to make it tap for mana
+            let enab = if enab_bf { None } else { Some(enab_hand?) };
+            if let Some(&m) = legends_bf.first() {
+                source = Some(m);
+            } else {
+                casts.push(*legends_hand.first()?);
+            }
+            casts.extend(enab);
+        }
+    }
+    // abilities need haste when a creature was cast this turn (Shang-Chi, Tyvar), or a bf piece is summoning sick
+    let creature_cast = casts.iter().any(|&c| g.db.get(c).creature);
+    let cast_haster = casts.iter().any(|&c| HASTERS.contains(&cname(g, c)));
+    let mut haste = super::t6_legends1b::ability_haste(g, p) || cast_haster;
+    let usable = |g: &Game, haste: bool| {
+        ioreth.is_none_or(|m| can_tap(g, m, haste, false))
+            && marvin.is_none_or(|m| can_tap(g, m, haste, true))
+            && source.is_none_or(|m| can_tap(g, m, haste, true))
+    };
+    let sick_bf = !usable(g, haste);
+    if (creature_cast || sick_bf) && !haste {
+        casts.push(hand_card(g, p, HASTERS)?);
+        haste = true;
+    }
+    if !usable(g, haste) {
+        return None;
+    }
+    affordable(g, p, &casts, 0).then_some(casts)
+}
+
+fn ready_ddr(g: &Game, p: PlayerId) -> Ready {
+    ready_with(ddr_plan(g, p).is_some())
+}
+
+fn cast_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(plan) = ddr_plan(g, p) else { return Ok(false) };
+    let Some(&c) = plan.first() else { return Ok(true) };
+    cast_named(g, p, c)
+}
+
+fn ddr_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    let mut v: Vec<PermId> = [bf(g, p, IORETH), bf(g, p, MARVIN)].into_iter().flatten().collect();
+    v.extend(
+        g.player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| live(g, m) && g.is_creature(m) && pb_cd(g, m).is_some_and(|c| is_legend_creature(g, c))),
+    );
+    v
+}
+
+fn ioreth_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, IORETH)
+}
+
+/// Mount Doom out (the land drop, if it was in hand)
+fn doom_in(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if land_on_bf(g, p, DOOM).is_some() {
+        return Ok(true);
+    }
+    let Some(c) = hand_card(g, p, &[DOOM]) else { return Ok(false) };
+    let hand = &mut g.player_mut(p).hand;
+    if let Some(i) = hand.iter().position(|&x| x == c) {
+        hand.remove(i);
+    }
+    crate::engine::turn::play_land_card(g, p, c, "plays")?;
+    Ok(land_on_bf(g, p, DOOM).is_some())
+}
+
+/// Mount Doom's ping (40 of them, each untapped by the loop): the ability answer window is its answer
+fn doom_ping(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(l) = land_on_bf(g, p, DOOM) else { return Ok(false) };
+    Ok(ability_window_card(g, p, g.land(l).cd, "1 damage to each opponent (again and again)", None, None)?
+        && land_on_bf(g, p, DOOM).is_some())
+}
+
+const S_CAST_NEXT_DDR: Step = step("cast a missing piece", StepKind::Spell, cast_next_ddr);
+const S_DOOM_IN: Step = step("Mount Doom is on the battlefield", StepKind::Engine, doom_in);
+const S_DOOM_PING: Step = step("Mount Doom pings, untapped by the loop", StepKind::Engine, doom_ping);
+
+// --- Flash Unicorn: Derevi + Emiel + Cradle / rainbow Bloom Tender
+/// Bloom Tender's colours: those among p's permanents and the cards about to be cast
+fn colors_among(g: &Game, p: PlayerId, casts: &[CardId]) -> u32 {
+    let mut cs = crate::cards::Colors::NONE;
+    for &m in &g.player(p).perms {
+        if live(g, m) {
+            cs = cs.union(colors_of(g, m));
+        }
+    }
+    for &c in casts {
+        cs = cs.union(g.db.get(c).colors);
+    }
+    cs.count()
+}
+
+fn uni_plan(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    if !doom_available(g, p) {
+        return None;
+    }
+    let mut casts: Vec<CardId> = vec![];
+    if bf(g, p, DEREVI).is_none() {
+        casts.push(hand_card(g, p, &[DEREVI])?);
+    }
+    if bf(g, p, EMIEL).is_none() {
+        casts.push(hand_card(g, p, &[EMIEL])?);
+    }
+    let engine_ok = if land_on_bf(g, p, CRADLE).is_some() {
+        creatures(g, p) + casts.len() >= 4 // 4 G a tap, {3} a blink
+    } else {
+        let haste = super::t6_legends1b::ability_haste(g, p);
+        bf(g, p, TENDER).is_some_and(|m| can_tap(g, m, haste, false)) && colors_among(g, p, &casts) >= 4
+    };
+    (engine_ok && affordable(g, p, &casts, 3)).then_some(casts)
+}
+
+fn ready_unicorn(g: &Game, p: PlayerId) -> Ready {
+    ready_with(uni_plan(g, p).is_some())
+}
+
+fn cast_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(plan) = uni_plan(g, p) else { return Ok(false) };
+    let Some(&c) = plan.first() else { return Ok(true) };
+    cast_named(g, p, c)
+}
+
+fn uni_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    [bf(g, p, DEREVI), bf(g, p, EMIEL), bf(g, p, TENDER)].into_iter().flatten().collect()
+}
+
+fn emiel_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, EMIEL)
+}
+
+fn derevi_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, DEREVI)
+}
+
+const S_CAST_NEXT_UNI: Step = step("cast Derevi or Emiel", StepKind::Spell, cast_next_uni);
+
+// ================================================================== Rograkh & Thrasios
+/// how the table is won once the mana is infinite (Thrasios draws the library first)
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Fin {
+    Finale,
+    Mastermind,
+}
+
+fn has_card(g: &Game, p: PlayerId, name: &str) -> bool {
+    hand_card(g, p, &[name]).is_some() || lib_card(g, p, name).is_some()
+}
+
+fn finisher(g: &Game, p: PlayerId) -> Option<Fin> {
+    if bf(g, p, THRASIOS).is_none() {
+        return None;
+    }
+    if has_card(g, p, FINALE) {
+        return Some(Fin::Finale);
+    }
+    ((bf(g, p, MASTERMIND).is_some() || has_card(g, p, MASTERMIND)) && has_card(g, p, GSZ)).then_some(Fin::Mastermind)
+}
+
+fn move_to_hand(g: &mut Game, p: PlayerId, name: &str) {
+    if hand_card(g, p, &[name]).is_some() {
+        return;
+    }
+    if let Some(c) = lib_card(g, p, name) {
+        let lib = &mut g.player_mut(p).library;
+        if let Some(i) = lib.iter().position(|&x| x == c) {
+            lib.remove(i);
+        }
+        g.player_mut(p).hand.push(c);
+    }
+}
+
+fn thrasios_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, THRASIOS)
+}
+
+/// Thrasios's {4} until the library is empty: the finisher is in hand (the infinite mana pays for it)
+fn thrasios_draw(g: &mut Game, p: PlayerId) -> Res<bool> {
+    match finisher(g, p) {
+        Some(Fin::Finale) => {
+            g.player_mut(p).grudge.insert(intern("combo_finisher"), 1.0);
+            move_to_hand(g, p, FINALE);
+        }
+        Some(Fin::Mastermind) => {
+            g.player_mut(p).grudge.insert(intern("combo_finisher"), 2.0);
+            if bf(g, p, MASTERMIND).is_none() {
+                move_to_hand(g, p, MASTERMIND);
+            }
+            move_to_hand(g, p, GSZ);
+        }
+        None => return Ok(false),
+    }
+    Ok(true)
+}
+
+/// the finishing spell: Finale of Devastation with X of 10 or more in the first main phase (or a Mastermind cast)
+fn finish_spell(g: &mut Game, p: PlayerId) -> Res<bool> {
+    match finisher(g, p) {
+        Some(Fin::Finale) => {
+            let Some(c) = hand_card(g, p, &[FINALE]) else { return Ok(false) };
+            cast_abstract(g, p, c, true)
+        }
+        Some(Fin::Mastermind) => {
+            if bf(g, p, MASTERMIND).is_some() {
+                return Ok(true);
+            }
+            let Some(c) = hand_card(g, p, &[MASTERMIND]) else { return Ok(false) };
+            cast_named(g, p, c)
+        }
+        None => Ok(false),
+    }
+}
+
+/// Mastermind's "each player draws a card", activated until the opponents are decked (Finale needs no ability)
+fn finish_ability(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if g.player(p).grudge.get(&intern("combo_finisher")).copied() != Some(2.0) {
+        return Ok(true);
+    }
+    let Some(m) = bf(g, p, MASTERMIND) else { return Ok(false) };
+    ability_window(g, p, Some(m), "each player draws a card (again and again)", Some(6.0), None)
+}
+
+const S_FIN_DRAW: Step = Step {
+    label: "Thrasios draws the library for the finisher",
+    kind: StepKind::Ability,
+    src: thrasios_src,
+    pay: (0, ""),
+    run: thrasios_draw,
+    keys: no_keys,
+};
+const S_FIN_SPELL: Step = step("cast Finale of Devastation (or Faerie Mastermind)", StepKind::Spell, finish_spell);
+const S_FIN_ABILITY: Step = step("Faerie Mastermind's draw, again and again", StepKind::Engine, finish_ability);
+
+// --- Plan A: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara
+fn gates_in_reach(g: &Game, p: PlayerId) -> bool {
+    land_on_bf(g, p, GATES).is_some() || hand_card(g, p, &[GATES]).is_some()
+}
+
+fn plan_a(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    land_on_bf(g, p, CRADLE)?;
+    if !gates_in_reach(g, p) || finisher(g, p).is_none() {
+        return None;
+    }
+    let mut casts = vec![];
+    if bf(g, p, OBORO).is_none() {
+        casts.push(hand_card(g, p, &[OBORO])?);
+    }
+    // Cradle at 6: 6 + Gates 1 in, {2} (Oboro) + {4} (Gates back from hand) out
+    if creatures(g, p) + casts.len() < 6 || !affordable(g, p, &casts, 6) {
+        return None;
+    }
+    Some(casts)
+}
+
+fn ready_plan_a(g: &Game, p: PlayerId) -> Ready {
+    ready_with(plan_a(g, p).is_some())
+}
+
+fn cast_oboro(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(plan) = plan_a(g, p) else { return Ok(false) };
+    let Some(&c) = plan.first() else { return Ok(true) };
+    cast_named(g, p, c)
+}
+
+fn a_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    let mut v: Vec<PermId> = bf(g, p, OBORO).into_iter().collect();
+    if creatures(g, p) <= 6 {
+        // at exactly 6 every creature is a key piece: one removal and Cradle makes too little
+        v.extend(g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)));
+    }
+    v
+}
+
+fn oboro_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, OBORO)
+}
+
+/// Gates comes back from hand (the {4} ability), and every entry phases out the opposing creatures: the loop phases out
+/// the whole table's creatures. The enter trigger is an ability the opponents may answer.
+fn gates_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let l = match land_on_bf(g, p, GATES) {
+        Some(l) => l,
+        None => {
+            let Some(c) = hand_card(g, p, &[GATES]) else { return Ok(false) };
+            let hand = &mut g.player_mut(p).hand;
+            if let Some(i) = hand.iter().position(|&x| x == c) {
+                hand.remove(i);
+            }
+            g.add_land(p, c, false)
+        }
+    };
+    if !ability_window_card(g, p, g.land(l).cd, "target creature phases out (every time)", None, None)? {
+        return Ok(false);
+    }
+    let victims: Vec<PermId> =
+        g.opps(p).flat_map(|q| g.player(q).perms.clone()).filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    for m in victims {
+        g.perm_mut(m).phased = true;
+    }
+    g.bf_ver += 1;
+    Ok(true)
+}
+
+// --- Eternal Witness + Snap + Gaea's Cradle
+fn plan_b(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    land_on_bf(g, p, CRADLE)?;
+    let (w, s) = (hand_card(g, p, &[WITNESS])?, hand_card(g, p, &[SNAP])?);
+    // Cradle at 5 + a {U} land in, Witness {1}{G}{G} + Snap {1}{U} out, Snap untaps two lands: +1 a cycle
+    if creatures(g, p) < 5 || finisher(g, p).is_none() || !affordable(g, p, &[w, s], 0) {
+        return None;
+    }
+    Some(vec![w, s])
+}
+
+fn ready_plan_b(g: &Game, p: PlayerId) -> Ready {
+    ready_with(plan_b(g, p).is_some())
+}
+
+fn cast_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(w) = hand_card(g, p, &[WITNESS]) else { return Ok(false) };
+    cast_named(g, p, w)
+}
+
+fn snap_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(s) = hand_card(g, p, &[SNAP]) else { return Ok(false) };
+    cast_abstract(g, p, s, false)
+}
+
+fn witness_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, WITNESS)
+}
+
+fn b_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    if creatures(g, p) <= 6 {
+        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect()
+    } else {
+        vec![]
+    }
+}
+
+// ================================================================== the combos
+/// the Tier 6 combos of this module (chained after the Godo ones by `combos::all`)
+pub static COMBOS: [Combo; 6] = [
+    combo(
+        "Preston + Felidar Guardian + Radiant Solar (flicker spell)",
+        &[&[PRESTON], &[FELIDAR], &[SOLAR], FLICKERS],
+        ready_dack_spell,
+        &[S_DACK_PIECES, S_DACK_FLICKER, S_DACK_LOOP],
+    ),
+    combo(
+        "Preston + Felidar Guardian + Radiant Solar (loop running)",
+        &[&[PRESTON], &[FELIDAR], &[SOLAR]],
+        ready_dack_running,
+        &[S_DACK_PIECES, S_DACK_LOOP],
+    ),
+    combo(
+        "Ioreth + Marvin + a legend that taps for mana (DDR)",
+        &[&[IORETH], &[MARVIN], &[SELVALA, SHANG, "Sisay, Weatherlight Captain"], &[DOOM]],
+        ready_ddr,
+        &[
+            S_CAST_NEXT_DDR,
+            S_CAST_NEXT_DDR,
+            S_CAST_NEXT_DDR,
+            S_CAST_NEXT_DDR,
+            S_CAST_NEXT_DDR,
+            pieces("Ioreth, Marvin and the legend survive", ddr_keys),
+            ability("Ioreth untaps Marvin and the legend (again and again)", ioreth_src, (0, "")),
+            S_DOOM_IN,
+            S_DOOM_PING,
+        ],
+    ),
+    combo(
+        "Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)",
+        &[&[DEREVI], &[EMIEL], &[CRADLE, TENDER], &[DOOM]],
+        ready_unicorn,
+        &[
+            S_CAST_NEXT_UNI,
+            S_CAST_NEXT_UNI,
+            pieces("Derevi, Emiel and the mana source survive", uni_keys),
+            ability("Emiel blinks Derevi ({3})", emiel_src, (3, "")),
+            trigger("Derevi's enter trigger untaps the mana source (again and again)", derevi_src),
+            S_DOOM_IN,
+            S_DOOM_PING,
+        ],
+    ),
+    combo(
+        "Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara",
+        &[&[OBORO], &[CRADLE], &[GATES], &[THRASIOS]],
+        ready_plan_a,
+        &[
+            step("cast Oboro Breezecaller", StepKind::Spell, cast_oboro),
+            pieces("Oboro and the creatures that feed Cradle survive", a_keys),
+            Step {
+                label: "Oboro returns Talon Gates to hand: untap Cradle (again and again)",
+                kind: StepKind::Ability,
+                src: oboro_src,
+                pay: (2, ""),
+                run: done,
+                keys: no_keys,
+            },
+            step("Talon Gates comes back for {4}: the table's creatures phase out", StepKind::Engine, gates_loop),
+            S_FIN_DRAW,
+            S_FIN_SPELL,
+            S_FIN_ABILITY,
+        ],
+    ),
+    combo(
+        "Eternal Witness + Snap + Gaea's Cradle",
+        &[&[WITNESS], &[SNAP], &[CRADLE], &[THRASIOS]],
+        ready_plan_b,
+        &[
+            step("cast Eternal Witness", StepKind::Spell, cast_witness),
+            step("Snap on Eternal Witness (untap two lands)", StepKind::Spell, snap_witness),
+            trigger("Eternal Witness returns Snap (again and again)", witness_src),
+            pieces("the creatures that feed Cradle survive", b_keys),
+            S_FIN_DRAW,
+            S_FIN_SPELL,
+            S_FIN_ABILITY,
+        ],
+    ),
+];
