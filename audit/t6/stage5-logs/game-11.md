@@ -1,0 +1,22 @@
+# Game 11 (seed 500011) — Dack Fayden, Sisay, Kraum/Tymna, Kinnan
+
+Seats: Dack, Sisay, Kraum/Tymna, Kinnan. Winner: **Sisay, by combat damage, round 14** (Kraum/Tymna eliminated by 7 attackers for 19). Eliminations: Kinnan R7 (Kraum's attack, after One Ring burden), Dack R10 (Kraum), Kraum R14. Nobody went for a combo in 14 rounds.
+
+## Sisay (winner, round 14)
+T1 Mana Confluence, Mox Diamond, Birds, Enlightened Tutor for Marvin (good start). T2 Sisay; R3 Dack's Path to Exile exiled her; Marvin was hit by Force of Will. She was recast only on T6 and the commander engine really ran from T11 (`Sisay activates Sisay: Emiel the Blessed`, Vampiric Tutor for Derevi, Derevi untaps Sisay).
+Earliest line: the spec wants Derevi + Emiel + a mana source (lines 1-2) with Mount Doom; here the deck had Emiel + Derevi + Sisay by R11 but only 3 lands and no Bloom Tender/Cradle/Marvin, so no loop. From R12 on, every Sisay decide shows `Sisay: Mount Doom 100%` yet the choice was `Ignoble Hierarch`, `Mana Vault`, or `stop (hold mana)`: the Mount Doom fetch was never taken in 4 turns (R11-R14). Tags: `SPEC` (no loop piece), `CHOICE` (Mount Doom 100% overridden by search each turn: `[Sisay decides: Sisay: Mount Doom 100%, Mana Vault 0%, stop (hold mana) 0%, Ignoble Hierarch 0% -> stop (hold mana) [search]]`), `STOPPED` (Path on T3, Force of Will on Marvin). It won by beats because Kraum/Tymna stalled.
+
+## Kraum/Tymna (died R14, had every win piece for several turns)
+T1 Caverns + Petal, T2 Tymna (Mental Misstep on Dack's Scout's Warning), T6 Bowmasters, R8 `Intuition` -> Ad Nauseam, R9 Mox Amber + Kraum + Mox Opal, R10 Ranger-Captain of Eos `searches for Thassa's Oracle`, R11 Vampiric Tutor -> Underworld Breach on top, R12 Chrome Mox imprinting **Demonic Consultation**, R13 Enlightened Tutor -> LED, Ertai countered Tymna.
+It held Ad Nauseam from R8 with 4 lands (+2 moxen from R9 = 6+ mana, life 25-36, 7 cards in hand): spec "Ad Nauseam: life above 25 and mana >= 5" was met on R9/R10 yet it never cast it. From R10 it also had Oracle in hand. R12: Oracle + Consultation was the 3-mana main line, and the AI **imprinted Consultation on Chrome Mox** the same turn (`Chrome Mox imprints Demonic Consultation`), destroying the piece. R13 it had Breach + LED but no Brain Freeze shown.
+Tags: `HOLD` (Ad Nauseam never cast R8-R14, `Kraum/Tymna decides: Chrome Mox 99%, stop (hold mana) 1% -> stop (hold mana)`), `CHOICE` (Chrome Mox imprint chose Consultation, a key piece), `TUTOR` (Intuition and Vampiric picked Ad Nauseam/Breach, never Oracle+Consultation pair; Vampiric Tutor at end of turn each time instead of a main-phase win), `NOLINE` (Oracle and Consultation were both in hand/graveyard-free at R10-R11 per tutors, never offered). `RULES`: **Ranger-Captain of Eos "search your library for a creature card with mana value 1 or less"**, but the log says `Kraum/Tymna searches for Thassa's Oracle` (MV 2). The spec itself says Ranger-Captain cannot find Oracle. See summary.
+
+## Dack Fayden (died R10, Dack never cast)
+Plains, City of Traitors, then **stuck on 2 lands** the whole game (`Dack Fayden turn 9: ... 2 lands`; Gemstone Caverns only R10). Cast Scout's Warning (Misstep'd), Path on Sisay, Tezzeret, Staff of Compleation (taken by Kinnan: `Kinnan gains control of Staff of Compleation`), Chalice at 1, Calamity's Wake (exiles 13 cards, also its own and the opposing win-piece graveyards), Cursed Totem. Dack ({4}{W}{W}) was out of reach. Tags: `MANA` (2 lands for 9 turns), `MULL`/`SPEC` (keep with low land count). `ODD`: Calamity's Wake (a stax-ish spell) was cast while no one's graveyard won the game; harmless.
+
+## Kinnan (died R7)
+Elvish Mystic, Talisman, then `[Kinnan decides: Kinnan, Bonder Prodigy 79%, Chrome Mox 13%, Volatile Stormdrake 7%, Enduring Vitality 1% -> Enduring Vitality [search]]` on T3: the commander was the 79% pick but Enduring Vitality (1%) was cast. 1 land through R5. Cast Kinnan and The One Ring on R4, burden killed it from 35 to 22 to 4 (loses 1+2+3 life) while Kraum's 4 attackers hit for 9. Tags: `MANA` (1 land), `CHOICE` (Vitality over Kinnan; One Ring into a Kraum/Bowmasters board), `STOPPED` (Kraum's attacks), `SPEC` (no Monolith/Horror line pieces seen).
+
+## Odd things
+- Kinnan's `Staff of Compleation` was Dack's: Kinnan gaining control of it is an unexplained steal (`ODD`).
+- Sisay at R10 used Teferi -2 and played Tundra but still never reached 5 colors for a second activation in the same turn.
