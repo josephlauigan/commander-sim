@@ -836,7 +836,7 @@ pub fn seph_dispute(g: &mut Game, p: PlayerId) -> Res<bool> {
     if let Some(f) = fod {
         die(g, f, "sac")?;
     } else if g.player(p).treasures > 0 {
-        g.player_mut(p).treasures -= 1;
+        g.player_mut(p).sac_treasure();
     }
     cast_card(g, p, c, "hand", Ctx::default())?;
     Ok(true)

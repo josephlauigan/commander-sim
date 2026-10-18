@@ -1,0 +1,7 @@
+# Report t6-e-tapped
+Mechanism: new event/slot `enters_tapped(g, src, p, Option<PermId>)` (hooks.rs `EntersTappedFn`, `Event::EntersTapped`); `engine/hooks.rs::enters_tapped` asks it. Called in `zones::enter` (right after the perm is on the battlefield, before as_enters/enter triggers) and `zones::make_tokens` (before enter triggers); `None` = artifact token. Treasures: `Player.tapped_treasures` (subset of `treasures`), set by `make_artifact_tokens_tapped` (and by the replacement), untapped in `turn.rs` untap step, ignored by `mana.rs` (`live_treasures`), sacrificed first by `Player::sac_treasure` (cast.rs, seph.rs, pool.rs, legends2). Treasure ability needs {T}, so tapped Treasures make no mana; they can still be sacrificed as a cost.
+Cards rewired: Blind Obedience, Spider-Woman (stand-ins removed), Thalia Heretic Cathar (creatures; was an Approximate etb stand-in), Tataru Taru (real tapped Treasure; Charge/upkeep/leaves stand-in removed, now Full).
+Helm of the Host (t3.rs): a token that entered tapped is not returned as a new attacker.
+Overrides: Tataru Full; Blind Obedience and Spider-Woman stay Partial (Food/Clue tokens still enter untapped).
+Behaviour change for other decks: Thalia creatures now tapped before enter triggers (was after); Tataru's Treasure arrives at once, tapped, instead of at next upkeep.
+Tests: Godo+Helm under Blind Obedience (cards_t6_godo), Treasure tapped (cards_t6_stax), Tataru/Spider updated (cards_t6_legends2).

@@ -21,7 +21,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::StackKind;
-use crate::state::{Ctx, DataKey, Game, Val};
+use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
@@ -122,7 +122,7 @@ fn magda_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     for _ in 0..5 {
-        g.player_mut(p).treasures -= 1;
+        g.player_mut(p).sac_treasure();
         if !g.hooks.is_empty() {
             crate::engine::hooks::fire_trigger(
                 g,
@@ -188,9 +188,7 @@ fn queen_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 /// **Tataru Taru** ({1}{W}, 0/3 Dwarf): when it enters, you draw a card (the engine's `draw` tag on the card does
 /// that) and target opponent may draw a card (the AI opponent with the least threat draws, if it has a card to draw).
 /// Scions' Secretary: whenever an opponent draws a card, if it isn't that player's turn, create a tapped Treasure
-/// token (once each turn). There are no tapped Treasures here (a Treasure is a counter), so the Treasure is kept on
-/// Tataru (`DataKey::Charge`) and appears at its controller's next upkeep, which is when a tapped Treasure would
-/// untap; if Tataru leaves first, it appears at once.
+/// token (once each turn; `make_artifact_tokens_tapped`, it untaps in its controller's untap step).
 fn tataru_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src || !live(g, src) {
         return Ok(());
@@ -204,10 +202,6 @@ fn tataru_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-fn tataru_pending(g: &Game, m: PermId) -> i64 {
-    g.perm(m).data.get(DataKey::Charge).map_or(0, Val::int)
-}
-
 fn tataru_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let o = owner(g, src);
     if !live(g, src) || p == o || g.active == Some(p) {
@@ -217,31 +211,7 @@ fn tataru_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     if trigger_window(g, o, Some(src), "create a tapped Treasure", None)? {
-        let n = tataru_pending(g, src) + 1;
-        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(n));
-    }
-    Ok(())
-}
-
-fn tataru_release(g: &mut Game, src: Src) -> Res {
-    let n = tataru_pending(g, src);
-    if n > 0 {
-        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(0));
-        add_treasure(g, owner(g, src), n as i32)?;
-    }
-    Ok(())
-}
-
-fn tataru_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p == owner(g, src) {
-        tataru_release(g, src)?;
-    }
-    Ok(())
-}
-
-fn tataru_leaves(g: &mut Game, src: Src, m: PermId) -> Res {
-    if m == src {
-        tataru_release(g, src)?;
+        crate::engine::zones::make_artifact_tokens_tapped(g, o, "Treasure", 1, true)?;
     }
     Ok(())
 }
@@ -354,26 +324,10 @@ static TEFERI: [WalkerAb; 3] = [
 // ================================================================== Spider-Woman, Stunning Savior
 const SPIDER_WOMAN: &str = "Spider-Woman, Stunning Savior";
 
-/// Venom Blast: artifacts and creatures your opponents control enter tapped. A permanent entering under an opponent's
-/// control is tapped by the enter event (which runs at once, before anyone can use it); a token batch by the
-/// tokens-enter event. Treasure / Food / Clue tokens are counters here, which can't be tapped (engine-needs-legends2.md).
-fn spider_taps(g: &mut Game, src: Src, m: PermId) {
-    if live(g, src) && live(g, m) && owner(g, m) != owner(g, src) && (g.is_creature(m) || is_artifact(g, m)) {
-        g.perm_mut(m).tapped = true;
-        crate::glog!(g, "    {} enters tapped ({})", g.perm(m).name, g.perm(src).name);
-    }
-}
-
-fn spider_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    spider_taps(g, src, m);
-    Ok(())
-}
-
-fn spider_tokens(g: &mut Game, src: Src, _p: PlayerId, toks: &[PermId]) -> Res {
-    for &m in toks {
-        spider_taps(g, src, m);
-    }
-    Ok(())
+/// Venom Blast: artifacts and creatures your opponents control enter tapped (the `enters_tapped` replacement; a
+/// Treasure token comes in tapped too).
+fn spider_tapped(g: &Game, src: Src, p: PlayerId, m: Option<PermId>) -> bool {
+    live(g, src) && p != owner(g, src) && m.is_none_or(|m| m != src && (g.is_creature(m) || is_artifact(g, m)))
 }
 
 // ================================================================== Ertai Resurrected
@@ -662,10 +616,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::Etb, false);
     c.draw = Some(tataru_draw);
     at_once(c, Event::Draw, false);
-    c.upkeep = Some(tataru_upkeep);
-    at_once(c, Event::Upkeep, true);
-    c.leaves = Some(tataru_leaves);
-    at_once(c, Event::Leaves, true);
     walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
     let c = r.card(db, WAN_SHI_TONG)?;
     c.hand_options = Some(wan_options);
@@ -678,9 +628,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(ertai_etb);
     at_once(c, Event::Etb, true);
     let c = r.card(db, SPIDER_WOMAN)?;
-    c.etb = Some(spider_etb);
-    at_once(c, Event::Etb, true);
-    c.tokens_enter = Some(spider_tokens);
+    c.enters_tapped = Some(spider_tapped);
     r.creature_pt.push(magda_pt);
     let c = r.card(db, MAGDA)?;
     c.as_enters = Some(magda_as);

@@ -231,3 +231,10 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }
 }
+
+/// "enters tapped" replacement effects (Blind Obedience, Spider-Woman, Thalia, Heretic Cathar): does a permanent
+/// entering under p's control (m; None for a Treasure / Food / Clue, which are counters) enter tapped?
+pub fn enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
+    !g.hooks.is_empty()
+        && hooked(g, Event::EntersTapped).iter().any(|(src, imp)| (imp.enters_tapped.unwrap())(g, *src, p, m))
+}

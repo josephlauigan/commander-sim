@@ -43,6 +43,7 @@ pub enum Event {
     Draw,
     EachCombat,
     EndStep,
+    EntersTapped,
     Etb,
     ExiledFromBf,
     ExtraLands,
@@ -104,7 +105,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 79] = [
+pub const EVENTS: [(Event, &str); 80] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -125,6 +126,7 @@ pub const EVENTS: [(Event, &str); 79] = [
     (Event::Draw, "draw"),
     (Event::EachCombat, "each_combat"),
     (Event::EndStep, "end_step"),
+    (Event::EntersTapped, "enters_tapped"),
     (Event::Etb, "etb"),
     (Event::ExiledFromBf, "exiled_from_bf"),
     (Event::ExtraLands, "extra_lands"),
@@ -260,6 +262,10 @@ pub type AttackLimitFn = fn(&Game, Src, PlayerId, PlayerId) -> Option<i32>;
 pub type GrantKwFn = fn(&Game, Src, PermId, Sym) -> bool;
 /// prevent_damage, no_lifegain, player_hexproof (g, src, p): a static that applies to player p
 pub type PlayerStaticFn = fn(&Game, Src, PlayerId) -> bool;
+/// enters_tapped(g, src, p, m): does a permanent entering under p's control enter tapped (a replacement effect: Blind Obedience,
+/// Thalia, Heretic Cathar). m is the permanent (already created, not yet entered); None is an artifact token that is a
+/// counter on the player (Treasure, Food, Clue).
+pub type EntersTappedFn = fn(&Game, Src, PlayerId, Option<PermId>) -> bool;
 /// lose_life, gain_life (g, src, p, n): player p lost or gained n life
 pub type LifeFn = fn(&mut Game, Src, PlayerId, i32) -> Res;
 /// sba(g, src): state-based checks of a card's own (run at once)
@@ -401,6 +407,7 @@ pub struct CardImpl {
     pub grant_kw: Option<GrantKwFn>,
     pub prevent_damage: Option<PlayerStaticFn>,
     pub no_lifegain: Option<PlayerStaticFn>,
+    pub enters_tapped: Option<EntersTappedFn>,
     pub player_hexproof: Option<PlayerStaticFn>,
     pub lose_life: Option<LifeFn>,
     pub gain_life: Option<LifeFn>,
@@ -551,6 +558,7 @@ impl CardImpl {
             Event::GrantKw => self.grant_kw.is_some(),
             Event::PreventDamage => self.prevent_damage.is_some(),
             Event::NoLifegain => self.no_lifegain.is_some(),
+            Event::EntersTapped => self.enters_tapped.is_some(),
             Event::PlayerHexproof => self.player_hexproof.is_some(),
             Event::LoseLife => self.lose_life.is_some(),
             Event::GainLife => self.gain_life.is_some(),

@@ -534,3 +534,32 @@ fn the_ai_casts_it_when_godo_and_helm_are_out_but_summoning_sick() {
     g.perm_mut(godo).sick = false;
     assert_eq!(prio(&g, P0, "Final Fortune"), 0, "Godo can attack now");
 }
+
+// ======================================================== enters tapped (engine mechanism)
+#[test]
+fn helm_token_copy_of_godo_enters_tapped_under_an_opponents_blind_obedience_and_cannot_attack() {
+    let mut g = tbl();
+    let godo = perm(&mut g, P0, "Godo, Bandit Warlord");
+    let helm = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host"))
+        .unwrap();
+    g.perm_mut(helm).attached = Some(godo);
+    // without the enchantment the copy is a new, hasty attacker
+    let before = sim_core::cardcode::combat_start(&mut g, P0).unwrap();
+    assert_eq!(before.len(), 1, "an untapped hasty copy attacks");
+    assert!(!g.perm(before[0]).tapped);
+    perm(&mut g, P1, "Blind Obedience");
+    let after = sim_core::cardcode::combat_start(&mut g, P0).unwrap();
+    assert!(after.is_empty(), "the copy entered tapped: it can't attack");
+    let tapped_copies = g
+        .player(P0)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).token && g.perm(m).on_bf && g.perm(m).tapped && g.perm(m).name.contains("Godo"))
+        .count();
+    assert_eq!(tapped_copies, 1, "the token copy of Godo is on the battlefield, tapped");
+}

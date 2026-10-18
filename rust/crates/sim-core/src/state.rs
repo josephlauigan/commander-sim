@@ -402,6 +402,9 @@ pub struct Player {
     pub tax2: u32,
     pub cmd2_dmg: [i32; MAX_SEATS],
     pub treasures: u32,
+    /// how many of `treasures` are tapped (Tataru Taru, "artifacts enter tapped"): they untap in the owner's untap step,
+    /// make no mana until then (the ability needs {T}) but can still be sacrificed to a cost
+    pub tapped_treasures: u32,
     pub clues: u32,
     /// Blood tokens (Restless Bloodseeker; impls/sheoldred.rs)
     pub bloods: u32,
@@ -624,6 +627,17 @@ pub struct Player {
 }
 
 impl Player {
+    /// Treasures that can make mana now
+    pub fn live_treasures(&self) -> u32 {
+        self.treasures.saturating_sub(self.tapped_treasures)
+    }
+
+    /// sacrifice one Treasure as a cost (a tapped one first: it can't make mana anyway)
+    pub fn sac_treasure(&mut self) {
+        self.tapped_treasures = self.tapped_treasures.saturating_sub(1);
+        self.treasures -= 1;
+    }
+
     pub fn new(id: PlayerId, key: Sym, name: Sym, ident: Colors, cmd: CardId, cards: Arc<[CardId]>) -> Player {
         let mut library: Vec<CardId> = cards.iter().copied().collect();
         if let Some(i) = library.iter().position(|&c| c == cmd) {
@@ -653,6 +667,7 @@ impl Player {
             tax2: 0,
             cmd2_dmg: [0; MAX_SEATS],
             treasures: 0,
+            tapped_treasures: 0,
             clues: 0,
             bloods: 0,
             foods: 0,

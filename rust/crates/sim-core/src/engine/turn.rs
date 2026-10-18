@@ -869,6 +869,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     for l in g.player(p).lands.clone() {
         g.land_mut(l).tapped = false;
     }
+    g.player_mut(p).tapped_treasures = 0; // tapped Treasures untap
     let crack = cardcode::crackdown_on(g); // Crackdown: big nonwhite creatures stay tapped
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
