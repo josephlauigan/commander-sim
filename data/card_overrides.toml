@@ -8575,8 +8575,8 @@ status = "Full"
 note = "enter trigger phases out the best opposing creature (back at its controller's next untap); {T}: {C}; {1},{T}: any colour (when another land pays the {1}); {4}: put it onto the battlefield from hand (own turn with the land drop spent, or against a big attacker, phasing it out of the attack); t6_lands.rs"
 ["Godo, Bandit Warlord"]
 dsl = []
-status = "Partial"
-note = "enters: search for an Equipment and put it onto the battlefield (Helm first, Hammer first when a copier is out or in hand); first attack each turn: untap Godo and the Samurai, one additional combat; missing: the engine caps extra combats at four a turn, so Helm's infinite loop stops early (rust/agents/engine-needs-godo.md)"
+status = "Full"
+note = "enters: search for an Equipment and put it onto the battlefield (Helm first, Hammer first when a copier is out or in hand); first attack each turn: untap Godo and the Samurai, one additional combat; the combat loop is capped only at 200 phases a turn, so Helm's hasty tokens run the loop until the table is dead"
 
 ["Hammer of Nazahn"]
 status = "Full"
@@ -8588,7 +8588,7 @@ note = "attach target Equipment to target creature, free: the AI moves one of it
 
 ["Sting, the Glinting Dagger"]
 status = "Partial"
-note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of its controller's combat; missing: the untap at opponents' combats, and first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
+note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of every player's combat (before attackers, also when nobody attacks); missing: first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
 
 ["Goblin Welder"]
 status = "Full"
@@ -8800,7 +8800,7 @@ note = "target player can't cast spells: modeled as no noncreature spells (Playe
 
 ["Mandate of Peace"]
 status = "Partial"
-note = "opponents can't cast spells: no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; 'end the combat phase' stood in for by a fog (no combat damage the rest of the turn); 'only during combat' not enforced; the AI never casts it (rust/agents/engine-needs-stax.md)"
+note = "opponents can't cast spells: no noncreature spells (Player::hope_lock) plus the flag t6_stax::cast_lock; 'end the combat phase' is real (rest of that combat skipped, attackers and blockers removed, later extra combats still happen); 'only during combat' not enforced; the AI never casts it (rust/agents/engine-needs-stax.md)"
 
 ["Angel's Grace"]
 status = "Partial"
