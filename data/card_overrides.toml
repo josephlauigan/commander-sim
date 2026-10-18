@@ -8402,3 +8402,8 @@ note = "4 damage divided as lethal damage among the opposing creatures worth the
 ["Scout's Warning"]
 status = "Partial"
 note = "draws a card and sets the caster's turn flag t6_redirects::scout_flash_active (the next creature card this turn can be played with flash); missing: the engine does not read the flag yet, so creature cards still wait for sorcery timing (engine need)"
+
+["Kozilek's Command"]
+tags = "tokx rem=exile tgt=c draw=1"
+status = "Full"
+note = "X = all spare mana; takes the best two of four modes: exile the best opposing creature with mana value X or less, scry X then draw, X 0/1 Eldrazi Spawn, exile up to X creature cards from opposing graveyards (the {C}{C} in the cost is paid as any two mana, as the card data has no colourless pips)"

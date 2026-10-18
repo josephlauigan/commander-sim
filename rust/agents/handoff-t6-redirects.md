@@ -10,3 +10,4 @@ Oracle text fetch, build cardgen, first card.
 - Untimely Malfunction: done (Partial).
 - Pyrokinesis: done (Partial; tags rem=dmg4 tgt=c added).
 - Scout's Warning: done (Partial).
+- Kozilek's Command: done (Full; tags tokx rem=exile tgt=c draw=1).

@@ -58643,9 +58643,10 @@
    "generic": 2,
    "pips": "",
    "tags": {
-    "draw": "1",
+    "tokx": true,
     "rem": "exile",
-    "tgt": "c"
+    "tgt": "c",
+    "draw": "1"
    },
    "pow": 0,
    "tgh": 0,
@@ -58693,13 +58694,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• target player creates x 0/1 colorless eldrazi spawn creature tokens with \"sacrifice this token: add {c}.\"",
-    "• target player scries x",
-    "• target player",
-    "• exile up to x target cards from graveyards"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

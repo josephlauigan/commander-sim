@@ -260,10 +260,93 @@ fn scout_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     Ok("gy")
 }
 
+
+// ================================================================== Kozilek's Command
+/// the opposing creature Kozilek's Command (or any exile-by-mana-value effect) would exile for X: the best one whose
+/// mana value is X or less (a token has mana value 0)
+fn exile_target_for(g: &Game, p: PlayerId, x: i32) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| {
+            let o = g.perm(m);
+            o.on_bf
+                && !o.phased
+                && g.is_creature(m)
+                && !untargetable(g, m)
+                && o.cd.map_or(0, |c| g.db.get(c).cmc as i32) <= x
+        })
+        .collect();
+    max_by(&cs, |m| pval(g, m))
+}
+
+/// the cards Kozilek's Command's graveyard mode would exile: up to X from the opponents' graveyards, creatures (the
+/// reanimation targets) with the highest mana value first
+fn gy_exile_picks(g: &Game, p: PlayerId, x: i32) -> Vec<(PlayerId, CardId)> {
+    let mut all: Vec<(PlayerId, CardId)> =
+        g.opps(p).flat_map(|q| g.player(q).gy.iter().map(move |&c| (q, c)).collect::<Vec<_>>()).collect();
+    all.retain(|&(_, c)| g.db.get(c).creature);
+    all.sort_by_key(|&(_, c)| std::cmp::Reverse(g.db.get(c).cmc));
+    all.truncate(x.max(0) as usize);
+    all
+}
+
+/// Kozilek's Command ({X}{C}{C}, choose two): the AI scores the four modes and takes the best two. Exile a creature
+/// with mana value X or less: the creature's value; scry X then draw: 2; X Eldrazi Spawn: 0.4 per Spawn (up to 5);
+/// exile up to X cards from graveyards: 1.5 when an opponent has a creature card there.
+fn kozilek_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let x = ctx.x.max(0);
+    let target = exile_target_for(g, p, x);
+    let picks = gy_exile_picks(g, p, x);
+    let mut modes: Vec<(f64, u8)> = vec![
+        (2.0 + 0.01, 1),                                   // scry X, draw a card
+        (0.4 * x.min(5) as f64, 2),                        // X Spawn
+        (if picks.is_empty() { 0.0 } else { 1.5 }, 3),     // graveyards
+        (target.map_or(0.0, |m| pval(g, m).max(2.5)), 0),  // exile a creature
+    ];
+    modes.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
+    for &(_, mode) in modes.iter().take(2) {
+        match mode {
+            0 => {
+                if let Some(m) = target.filter(|&m| g.perm(m).on_bf) {
+                    apply_removal(g, Some(p), m, "exile", Some(c))?;
+                }
+            }
+            1 => {
+                crate::cardcode::scry(g, p, x, false)?;
+                crate::engine::zones::draw(g, p, 1, false)?;
+            }
+            2 => {
+                if x > 0 {
+                    let spec = crate::engine::zones::Tokens {
+                        tgh: Some(1),
+                        color: Some(crate::cards::Colors::NONE),
+                        types: vec!["eldrazi", "spawn"],
+                        ..crate::engine::zones::Tokens::new(x as u32, 0)
+                    };
+                    crate::engine::zones::make_tokens(g, p, spec)?;
+                }
+            }
+            _ => {
+                for (q, card) in picks.clone() {
+                    let pl = g.player_mut(q);
+                    if pl.gy.contains(&card) {
+                        remove_card(&mut pl.gy, card);
+                        pl.exile.push(card);
+                    }
+                }
+                crate::glog!(g, "    {} exiles {} cards from graveyards (Kozilek's Command)", pname(g, p), picks.len());
+            }
+        }
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
     r.card(db, "Pyrokinesis")?.resolve = Some(pyro_resolve);
     r.card(db, "Scout's Warning")?.resolve = Some(scout_resolve);
+    r.card(db, "Kozilek's Command")?.resolve = Some(kozilek_resolve);
     Ok(())
 }

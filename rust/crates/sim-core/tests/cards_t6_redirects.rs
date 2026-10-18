@@ -216,3 +216,50 @@ fn scouts_warning_draws_and_grants_flash_to_the_next_creature() {
     t6::scout_flash_used(&mut g, P0);
     assert!(!t6::scout_flash_active(&g, P0));
 }
+
+// ======================================================== Kozilek's Command
+fn count_named(g: &Game, p: PlayerId, ty: &str) -> usize {
+    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).ttypes.contains(&ty)).count()
+}
+
+fn with_x(x: i32) -> sim_core::state::Ctx {
+    sim_core::state::Ctx { x, ..Default::default() }
+}
+
+#[test]
+fn kozilek_exiles_a_creature_and_draws() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = perm(&mut g, P1, "Grave Titan"); // mana value 6
+    let before = g.player(P0).hand.len();
+    cast_free(&mut g, P0, "Kozilek's Command", with_x(6));
+    assert!(!g.perm(t).on_bf, "mana value 6 <= X");
+    assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Grave Titan"));
+    assert_eq!(g.player(P0).hand.len(), before + 1, "drew a card");
+    assert_eq!(count_named(&g, P0, "spawn"), 0, "only two modes");
+    assert!(in_gy(&g, P0, "Kozilek's Command"));
+}
+
+#[test]
+fn kozilek_cannot_exile_a_creature_above_x() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = perm(&mut g, P1, "Baneslayer Angel");
+    cast_free(&mut g, P0, "Kozilek's Command", with_x(3));
+    assert!(g.perm(t).on_bf, "mana value 5 > X = 3");
+    assert_eq!(count_named(&g, P0, "spawn"), 3, "draw plus three Spawn instead");
+}
+
+#[test]
+fn kozilek_exiles_reanimation_targets_from_graveyards() {
+    let mut g = game();
+    g.active = Some(P0);
+    let gy = hand(&mut g, P1, &["Grave Titan"])[0];
+    let pl = g.player_mut(P1);
+    let i = pl.hand.iter().position(|&c| c == gy).unwrap();
+    pl.hand.remove(i);
+    pl.gy.push(gy);
+    cast_free(&mut g, P0, "Kozilek's Command", with_x(2));
+    assert!(g.player(P1).gy.is_empty());
+    assert!(g.player(P1).exile.contains(&gy));
+}
