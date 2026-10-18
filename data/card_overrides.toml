@@ -1483,6 +1483,11 @@ tags = "prot=blink ephemerate"
 status = "Full"
 note = "instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect; rebound: cast again free at your next upkeep on the best enter-effect creature"
 
+["Momentary Blink"]
+tags = "prot=blink fb=3U"
+status = "Full"
+note = "instant {1}{W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect; flashback {3}{U}"
+
 ["Eris, Roar of the Storm"]
 status = "Full"
 note = "costs {2} less per mana value among your graveyard instants/sorceries; flying, prowess; second spell each turn makes a 4/4 flying prowess Dragon (two with Veyran)"
@@ -3026,6 +3031,10 @@ note = "combo piece: assembly, casting and responses are simulated; the loop its
 ["Mind Stone"]
 status = "Full"
 note = "taps for {C}; cracked for a card late (six or more lands)"
+
+["The Soul Stone"]
+status = "Full"
+note = "indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or the cheapest creature) at instant speed once a creature worth returning is in the graveyard; then returns the best creature card every upkeep"
 
 ["Mind Twist"]
 types = "S"
@@ -8936,3 +8945,18 @@ note = "instant {U}: additional cost sacrifice a legendary creature or pay {2}; 
 ["Smaug the Magnificent"]
 status = "Full"
 note = "upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs)"
+
+["Rooftop Assassin"]
+dsl = []
+status = "Full"
+note = "flash, flying, lifelink; enters: destroy the best creature an opponent controls that was dealt damage this turn (combat or burn damage; sheoldred.rs); cast for that when one exists"
+
+["Silhana Starfletcher"]
+add_tags = ["dork=G"]
+status = "Full"
+note = "reach; taps for green (the chosen colour is always green in the titania deck)"
+
+["Fblthp, Knows the Way"]
+cost = "1GG"
+status = "Full"
+note = "{X}{G}{G} with X=1: fetch one basic Forest (X basics with different names, the deck has only Forest); never cast at X=0, which finds nothing; Domain power 1"

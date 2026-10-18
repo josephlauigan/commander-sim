@@ -158,8 +158,7 @@ impl Situation {
         let combo_near = t6 && super::t6_table::archenemy(g, p).is_some_and(|a| a.1 >= super::t6_table::NEAR)
             || opps.iter().any(|&q| {
             let k = g.player(q).key;
-            (k == "veyran" && has_q(q, Tag::Vkitten) && has_q(q, Tag::Vfire))
-                || (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
+            (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
                 || (k == "veyran" && has_q(q, Tag::Aether) && g.player(q).life >= 40)
         });
         Situation {
@@ -217,8 +216,8 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     let c = min_by(held, |c| g.db.get(c).cmc as f64).unwrap();
     let caution = style(g, pl.key).caution;
     let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * s.combo_near as i32 as f64;
-    if !is_main(pl.key) {
-        // outside decks: three opponents will cast something worth answering this cycle
+    if !is_main(pl.key) || pl.key == "sauron" {
+        // outside decks (and Sauron, a counter shell around one Army): three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
         v = v.max(1.5 + 2.5 * caution * n.min(2) as f64);
     }
@@ -290,7 +289,12 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
-    if base <= 0.0 && d.has_dsl() && !hand_written {
+    // JD's decks: a 0 from the deck's own priority is deliberate for an instant (held for responses) and for removal,
+    // wipes, counters and protection (cast by the response and removal logic); the rest still gets the ability value
+    // (a ritual is no answer: Dark Ritual is cast by the storm line, and from the graveyard under Yawgmoth's Will)
+    let ritual = d.abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Spell { effects } if effects.iter().any(|e| e.kind == "add_mana")));
+    let held_kind = !ritual && (d.instant || d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::Ctr) || d.tag(Tag::Prot));
+    if base <= 0.0 && d.has_dsl() && !hand_written && !(super::jd_deck(pl.key) && held_kind) {
         base = crate::dsl::card_value(g, p, c) * 10.0;
     }
     if base <= 0.0 {
@@ -597,7 +601,16 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         if !main && v < 2.5 {
             continue; // outside decks: no removal on trivial targets
         }
-        let mut u = v - 3.5;
+        // the yshtola seat: spot removal only on targets worth it; her MV3+ spells are also her trigger
+        let ysh_bonus = if g.player(p).key == "yshtola" {
+            match crate::impls::yshtola::removal_adjust(g, p, c, pval(g, best)) {
+                Some(b) => b,
+                None => continue,
+            }
+        } else {
+            0.0
+        };
+        let mut u = v - 3.5 + ysh_bonus;
         if alt {
             u -= 1.5 * altcost::lost(g, p, c, None); // cards given up instead of mana
         }
@@ -687,7 +700,13 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
                 continue;
             }
             let pen = if alt { 1.5 * altcost::lost(g, d, c, None) } else { 0.0 };
-            let v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
+            let mut v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
+            if g.player(d).key == "yshtola" {
+                match crate::impls::yshtola::removal_adjust(g, d, c, pval(g, m)) {
+                    Some(b) => v += b,
+                    None => continue,
+                }
+            }
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, m));
             }
@@ -740,6 +759,12 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
         return Ok(false);
     }
     let t = temp(g, p);
+    let live = if g.player(p).key == "yshtola" {
+        let top = live.iter().map(|x| x.0).fold(0.0, f64::max);
+        live.into_iter().filter(|x| x.0 >= 0.5 * top).collect() // no sampling of a target far below the best
+    } else {
+        live
+    };
     let target = sample(&mut g.rng, &live, t).unwrap();
     let mut fod = None;
     if d.tag(Tag::Needsac) || (d.tag(Tag::Sacor4) && !fods.is_empty()) {
@@ -792,8 +817,13 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         if ol <= 0.0 {
             continue; // hits nothing of theirs (Nibelheim Aflame with no creature of ours)
         }
-        let swing = ol - 1.2 * ml;
+        let ysh = g.player(p).key == "yshtola";
+        // yshtola: Teferi's Protection held up behind the wipe phases her own permanents out, so it costs her nothing
+        let swing = if ysh && crate::impls::yshtola::teferis_first(g, p, c, kind) { ol } else { ol - 1.2 * ml };
         let mut u = swing / 2.2 - 2.5 + 2.0 * s.danger.min(1.5);
+        if ysh {
+            u += crate::impls::yshtola::trigger_bonus(g, p, c) as f64 / 4.0; // the wipe is also her trigger
+        }
         if g.player(p).key == "sephfs" {
             match crate::impls::sephfs::wipe_utility(g, p, c, kind, s.danger) {
                 Some(v) => u = v,
@@ -821,12 +851,17 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
     if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
+    let teferi = g.player(p).key == "yshtola"
+        && g.db.get(c).tags.str(Tag::Wipe).is_some_and(|k| crate::impls::yshtola::teferis_first(g, p, c, k));
     if alt {
         if !altcost::pay_alt(g, p, c, None)? {
             return Ok(false);
         }
     } else {
         pay(g, p, cg, &cp, false)?;
+    }
+    if teferi {
+        crate::engine::zones::cast_teferis_protection(g, p, 6.0)?; // in response: her permanents phase out of the wipe
     }
     cast_card(g, p, c, "hand", Ctx { victim, ..Ctx::default() })?;
     g.player_mut(p).stat("wipes_cast", 1);

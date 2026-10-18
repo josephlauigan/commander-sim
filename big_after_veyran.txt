@@ -1,0 +1,1 @@
+(eval):1: command not found: nice -n 19 systemd-run --user --scope -q -p MemoryMax=8G -p MemorySwapMax=0

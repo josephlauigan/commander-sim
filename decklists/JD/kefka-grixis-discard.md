@@ -10,7 +10,7 @@ take Kefka with them.
 | | |
 |---|---|
 | **Commander** | Kefka, Court Mage ({2}{U}{B}{R}, 4/5, Grixis) // Kefka, Ruler of Ruin (5/7 flying) |
-| **Bracket** | 4 (6 Game Changers: Demonic Tutor, Jeska's Will, Mystical Tutor, Rhystic Study, Underworld Breach, Vampiric Tutor) |
+| **Bracket** | 4 (3 Game Changers: Jeska's Will, Rhystic Study, Underworld Breach; Bracket 4 for the Crawler/Niv two-card win, see Bracket and Rule 0) |
 | **Simulator** | deck key `kefka`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -34,7 +34,7 @@ is removed.
   Keep the cards that want to be discarded in hand rather than playing them out.
 - **Turns 4 to 6.** Land Kefka (with Lightning Greaves for two triggers in one turn), keep attacking when it is
   safe, and use each trigger to bin madness, mayhem and graveyard-castable cards. Build toward {8}: Treasure,
-  rocks, Dark Ritual and burst mana. Hold Psychosis Crawler until after the flip unless your library is short.
+  rocks, Dark Ritual and burst mana. Cast Psychosis Crawler early (Kefka's own draws and the looters ping the table with it); hold it only once Kefka has flipped and your library is not longer than the highest opponent life.
 - **Late game.** Flip, then cast pingers and one-shots in the same main phase so every point of life lost draws you
   a card. Finish with the Crawler or Niv-Mizzet loop, or with the Breach and storm line.
 
@@ -48,8 +48,9 @@ is removed.
   on the flip turn Breach recasts Lightning Bolt, Grab the Prize and the other one-shots, and every point of life
   lost is still a card. Each escape is two Garrison Excavator Spirits: one for the three exiled cards, one for the
   escaped card leaving. Breach is sacrificed at your end step, so cast it on the turn you use it.
-- **Bitter Triumph** ({1}{B} instant, destroys a creature or planeswalker; the extra cost is a discard or 3 life)
-  feeds the graveyard while it removes a threat.
+- **Decorum Dissertation** ({3}{B}{B} sorcery, Paradigm): you draw two and lose 2 life, then the spell is exiled
+  and you cast a free copy at the start of each of your first main phases, so it refills the hand for every Kefka
+  trigger with no mana spent.
 
 ### Outlets and looting
 Rummaging Goblin, Hallway Heckler, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
@@ -77,17 +78,16 @@ cards and play them; with a commander on the battlefield you may do both) and th
 - **Combat:** a flying 5/7 that hits for 5 draws you 5.
 
 ### Tutors
-**Demonic Tutor**, **Vampiric Tutor**, **Mystical Tutor** (instant or sorcery only), **Diabolic Tutor**, **Profane
-Tutor** (suspended for {1}{B}, it finds any card two turns later) and **Grim Servant** (a card with mana value up to
-your devotion to black; you lose 3 life). Use them to find the Crawler or Niv-Mizzet, Underworld Breach or Yawgmoth's
+**Diabolic Tutor**, **Profane Tutor** (suspended for {1}{B}, it finds any card two turns later) and **Grim Servant** (a card
+with mana value up to your devotion to black; you lose 3 life). They are the only tutors, so they are slow; use them to find the Crawler or Niv-Mizzet, Underworld Breach or Yawgmoth's
 Will, whichever the board needs.
 
 ### Removal, counters and wipes
-**Lightning Bolt**, **Bitter Triumph**, **Pongify** (they get a 3/3 Ape), **Reality Shift** (they manifest the top
+**Lightning Bolt**, **Pongify** (they get a 3/3 Ape), **Reality Shift** (they manifest the top
 card), **Feed the Swarm** (you lose life equal to the mana value), **Extinguish the Light**, **Deadly Embrace**
 (draws a card for each creature that died this turn), **Contract Killing** (two Treasure) and **Chaos Warp**
 (the owner shuffles the permanent away and may get a permanent from the top of the library, so use it on the
-biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one); **Crux of
+biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one) and **Mana Leak** ({1}{U}) counters a spell unless its controller pays {3}, which is usually a hard counter once the table is tapped out; **Crux of
 Fate** is the wipe, which also kills Kefka, so cast it when you are behind.
 
 ### Protection
@@ -114,7 +114,7 @@ pings at creatures (or at yourself) and stop. Niv also taps to draw, which start
 **Underworld Breach + storm.** See Key lines. It is a mill, not a two-card infinite.
 
 **Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second
-Demonic Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts. **Night's
+Diabolic Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts. **Night's
 Whisper** is a plain two-card draw.
 
 ### Weak spots and how to play around them
@@ -137,9 +137,9 @@ Whisper** is a plain two-card draw.
 
 **Underworld Breach + storm.** Breach (cast it for {1}{R}) also works as a second kill, with **Brain Freeze**, **Dark Ritual**, **Lotus Petal** and **Grapeshot**. Cast Brain Freeze on yourself to fill the graveyard (storm: one copy for each spell cast earlier in the turn, three cards milled per copy), then escape Dark Ritual and Lotus Petal again and again for mana and storm count (each escape exiles three other cards), escape Brain Freeze and point the copies at the opponents, who lose when they next draw from an empty library. Grapeshot is the same storm count as damage: one ping per copy to any target. Breach is sacrificed at your end step, so start only when you can finish, ideally into tapped-out opponents.
 
-**Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Vampiric Tutor and Mystical Tutor find Will, Breach or the missing piece (Mystical Tutor finds an instant or sorcery: Brain Freeze, Grapeshot, Dark Ritual). Cards that would go to the graveyard this turn are exiled instead, so Will is a one-time engine.
+**Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Diabolic Tutor finds Will, Breach or the missing piece, and Profane Tutor does the same two turns after it is suspended. Cards that would go to the graveyard this turn are exiled instead, so Will is a one-time engine.
 
-**Bitter Triumph feeds the graveyard.** Its additional cost is to discard a card (or pay 3 life): discarding a card puts it where Breach and Yawgmoth's Will can use it, so cast it with a spare Dark Ritual, Lotus Petal or Brain Freeze in hand to line up the storm turn while it removes a creature or planeswalker.
+**Decorum Dissertation goes down early.** It costs five once; after that Paradigm casts a free copy at the start of each of your first main phases, two cards a turn for 2 life. Cast it on a quiet turn before the flip, so the extra cards feed Kefka's discards and the graveyard for Breach and Yawgmoth's Will. Watch your life total: each copy costs 2.
 
 **Rhystic Study and Skullclamp** keep the hand full between Kefka triggers.
 
@@ -147,18 +147,18 @@ Whisper** is a plain two-card draw.
 
 ## Mana and consistency
 
-- **Lands:** 36 (12 nonbasic + 24 basic: 13 Swamp, 6 Island, 5 Mountain); Shivan Reef, Sulfurous Springs and Underground River are painlands (1 damage to you when tapped for colour). The other nonbasics are Command Tower, Exotic Orchard (colours an opponent's land could make), Gemstone Mine (three uses, then it is sacrificed), the shocklands Blood Crypt and Steam Vents, and the fast and check lands Haunted Ridge, Spirebluff Canal, Stormcarved Coast and Sulfur Falls, which usually enter untapped.
+- **Lands:** 36 (12 nonbasic + 24 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Niv-Mizzet (taps to draw), the looters. **Tutors:** Demonic Tutor, Vampiric Tutor, Mystical Tutor, Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
-- **Interaction:** Lightning Bolt, Bitter Triumph (destroys a creature or planeswalker for {1}{B}; the cost is a discard or 3 life), Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counter Arcane Denial, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
+- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
+- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with six Game Changers: **Demonic Tutor**, **Jeska's Will**, **Mystical Tutor**, **Rhystic Study**, **Underworld Breach** and **Vampiric Tutor**. No two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Six tutors (Demonic, Vampiric, Mystical, Diabolic and Profane Tutor, and Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
+**Bracket 4,** with three Game Changers: **Jeska's Will**, **Rhystic Study** and **Underworld Breach**. Three Game Changers alone would fit Bracket 3; the deck is Bracket 4 because of the two-card win. There is no two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Three tutors (Diabolic Tutor, Profane Tutor and Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
 
 Disclose before the game:
-- **Demonic Tutor**, **Jeska's Will**, **Mystical Tutor**, **Rhystic Study**, **Underworld Breach** and **Vampiric Tutor** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
+- **Jeska's Will**, **Rhystic Study** and **Underworld Breach** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
 - **The Crawler and Niv-Mizzet loops** with Kefka, Ruler of Ruin.
 - **The Breach + Brain Freeze line**, which can mill an opponent out in one turn (Dark Ritual, Lotus Petal and Grapeshot feed the storm count).
 - **Jin-Gitaxias, Progress Tyrant**, which counters the first artifact, instant or sorcery each opponent casts each turn.
@@ -176,9 +176,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
-**Sorceries (14).** Contract Killing, Crux of Fate, Deadly Embrace, Demonic Tutor, Diabolic Tutor, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Yawgmoth's Will
+**Sorceries (16).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
 
-**Instants (16).** Arcane Denial, Big Score, Bitter Triumph, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mystical Tutor, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision, Vampiric Tutor
+**Instants (14).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
 **Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Underground River, 6 Island, 5 Mountain, 13 Swamp
 
@@ -189,7 +189,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Arcane Denial
 1 Arcane Signet
 1 Big Score
-1 Bitter Triumph
 1 Blazing Firesinger
 1 Blightspeaker
 1 Blood Crypt
@@ -202,12 +201,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Crux of Fate
 1 Dark Ritual
 1 Deadly Embrace
+1 Decorum Dissertation
 1 Deflecting Swat
 1 Demonic Embrace
-1 Demonic Tutor
 1 Diabolic Tutor
 1 Eternal Student
 1 Exotic Orchard
+1 Expressive Iteration
 1 Extinguish the Light
 1 Feed the Swarm
 1 Garrison Excavator
@@ -224,8 +224,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Lightning Bolt
 1 Lightning Greaves
 1 Lotus Petal
+1 Mana Leak
 1 Massacre Wurm
-1 Mystical Tutor
 1 Night's Whisper
 1 Niv-Mizzet, the Firemind
 1 Pongify
@@ -245,6 +245,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sisay's Ring
 1 Skullclamp
 1 Skullport Merchant
+1 Sleight of Hand
 1 Slip Out the Back
 1 Sneering Shadewriter
 1 Spirebluff Canal
@@ -258,7 +259,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Twinned Vision
 1 Underground River
 1 Underworld Breach
-1 Vampiric Tutor
 1 Viashino Fangtail
 1 Yawgmoth's Will
 6 Island

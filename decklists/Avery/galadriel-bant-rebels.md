@@ -83,7 +83,7 @@ Each searcher finds a bigger one, so one early searcher becomes the whole chain:
 - **Panharmonicon:** every enters trigger of your permanents happens twice: Galadriel (two modes per creature), Cathars' Crusade (two counters each), Welcoming Vampire, Tocasia's Welcome, Mentor of the Meek, Kindred Discovery, Recruiter of the Guard and Farhaven Elf.
 - **Card draw:** Welcoming Vampire (power 2 or less, once a turn), Tocasia's Welcome (mana value 3 or less, once a turn), Mentor of the Meek (pay {1} per small creature), Kindred Discovery (enters or attacks), Beast Whisperer and Vanquisher's Banner (creature spells).
 - **Bodies:** Adeline makes a 1/1 for each opponent whenever you attack, Elspeth makes three Soldiers a turn, and Voice of Resurgence leaves an Elemental as big as your creature count.
-- **Dragonlord Dromoka** ({4}{G}{W}, 5/7 flying, lifelink) is the top end, a big body that also triggers Galadriel's Alliance like any other creature. It can't be countered, and your opponents can't cast spells during your turn.
+- **Flicker** ({1}{W} sorcery) exiles a nontoken permanent and returns it, so it re-triggers every enters payoff on one of your creatures (Galadriel's Alliance, Cathars' Crusade, Welcoming Vampire, Mentor of the Meek, twice with Panharmonicon), or resets an opponent's permanent that has counters or auras on it.
 
 ### Name a type
 
@@ -97,7 +97,7 @@ Each searcher finds a bigger one, so one early searcher becomes the whole chain:
 - **Spot removal:** Swords to Plowshares, Path to Exile, Generous Gift, Beast Within, Return to Dust (two artifacts or enchantments in your main phase), plus Lawbringer, Lightbringer and Ballista Squad on the battlefield.
 - **Theft:** Abduction (an opponent's creature, which goes home when it dies) and Bribery (the best creature in an opponent's library).
 - **Board control:** Austere Command (choose creatures with mana value 4 or more and artifacts, and your small creatures live), Farewell, Cyclonic Rift, River's Rebuke, Elspeth's −3 (power 4 or more) and Crackdown (big nonwhite creatures stop untapping; your own green creatures too once Crusade grows them).
-- **Protection:** Unbreakable Formation, Make a Stand and Rootborn Defenses make your team indestructible against a destroy wipe. Eerie Interlude exiles your creatures and returns them at the next end step, which beats exile and -X/-X wipes too, and re-triggers every enters payoff. Counterspell for the rest. Dragonlord Dromoka can't be countered, and while she is out opponents can't cast spells on your turn, so they can't answer your attack or your Rebel chain at instant speed.
+- **Protection:** Unbreakable Formation, Make a Stand and Rootborn Defenses make your team indestructible against a destroy wipe. Eerie Interlude exiles your creatures and returns them at the next end step, which beats exile and -X/-X wipes too, and re-triggers every enters payoff. Counterspell for the rest.
 
 ### Ramp and land search
 
@@ -118,8 +118,7 @@ two or three counters on everything. **Adeline**'s power equals your creature co
 opponent whenever you attack, so a board of eight creatures is an attack for 8 or more from her alone. **Mirror
 Entity** turns every creature into an X/X with leftover mana, and **Elspeth, Sun's Champion** adds three Soldiers a turn
 (and her emblem gives +2/+2 and flying). **Rogue's Passage** makes the biggest creature unblockable. **Reya
-Dawnbringer** brings back a creature every upkeep, if the game goes that long. **Dragonlord Dromoka** is a 5/7 flying
-lifelinker that no one can answer on your turn.
+Dawnbringer** brings back a creature every upkeep, if the game goes that long.
 
 ### Weak spots and how to play around them
 
@@ -134,7 +133,7 @@ lifelinker that no one can answer on your turn.
 - **Fast decks and big threats.** Use Swords to Plowshares and Path to Exile, and the Rebel creatures that tap or exile
   (Whipcorder, Lawbringer, Lightbringer, Ballista Squad), early. Crackdown stops big nonwhite creatures from untapping.
 - **Counterspells.** Fetched Rebels aren't cast, so the searchers, Maskwood Nexus' tokens and Elspeth's Soldiers dodge
-  them. Dragonlord Dromoka can't be countered and stops opponents from casting spells on your turn.
+  them.
 
 ## Key lines
 
@@ -198,7 +197,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Galadriel, Light of Valinor
 
-**Creatures (35).** Adeline, Resplendent Cathar, Amrou Seekers, Ballista Squad, Beast Whisperer, Cartographer, Cho-Manno, Revolutionary, Defiant Vanguard, Dragonlord Dromoka, Elvish Archdruid, Elvish Mystic, Errant Doomsayers, Farhaven Elf, Fyndhorn Elves, Jhovall Queen, Knight of the Holy Nimbus, Lawbringer, Lightbringer, Lin Sivvi, Defiant Hero, Llanowar Elves, Mangara, the Diplomat, Mentor of the Meek, Mirror Entity, Nightwind Glider, Ramosian Captain, Ramosian Commander, Ramosian Lieutenant, Ramosian Revivalist, Ramosian Sergeant, Recruiter of the Guard, Reya Dawnbringer, Sakura-Tribe Elder, Thermal Glider, Voice of Resurgence, Welcoming Vampire, Whipcorder
+**Creatures (34).** Adeline, Resplendent Cathar, Amrou Seekers, Ballista Squad, Beast Whisperer, Cartographer, Cho-Manno, Revolutionary, Defiant Vanguard, Elvish Archdruid, Elvish Mystic, Errant Doomsayers, Farhaven Elf, Fyndhorn Elves, Jhovall Queen, Knight of the Holy Nimbus, Lawbringer, Lightbringer, Lin Sivvi, Defiant Hero, Llanowar Elves, Mangara, the Diplomat, Mentor of the Meek, Mirror Entity, Nightwind Glider, Ramosian Captain, Ramosian Commander, Ramosian Lieutenant, Ramosian Revivalist, Ramosian Sergeant, Recruiter of the Guard, Reya Dawnbringer, Sakura-Tribe Elder, Thermal Glider, Voice of Resurgence, Welcoming Vampire, Whipcorder
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -208,7 +207,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (12).** Beast Within, Counterspell, Cyclonic Rift, Eerie Interlude, Generous Gift, Make a Stand, Path to Exile, Planar Genesis, Return to Dust, Rootborn Defenses, Swords to Plowshares, Unbreakable Formation
 
-**Sorceries (8).** Austere Command, Bribery, Cultivate, Farewell, Farseek, River's Rebuke, Shamanic Revelation, Shared Roots
+**Sorceries (9).** Austere Command, Bribery, Cultivate, Farewell, Farseek, Flicker, River's Rebuke, Shamanic Revelation, Shared Roots
 
 **Lands (29).** Command Tower, Exotic Orchard, Fabled Passage, Glacial Fortress, Grand Coliseum, Hinterland Harbor, Prairie Stream, Rogue's Passage, Seaside Citadel, Secluded Courtyard, Sunpetal Grove, Temple Garden, Temple of Mystery, Temple of Plenty, Yavimaya Coast, 7 Plains, 4 Island, 3 Forest
 
@@ -235,7 +234,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cyclonic Rift
 1 Defiant Vanguard
 1 Door of Destinies
-1 Dragonlord Dromoka
 1 Eerie Interlude
 1 Elspeth, Sun's Champion
 1 Elvish Archdruid
@@ -246,6 +244,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Farewell
 1 Farhaven Elf
 1 Farseek
+1 Flicker
 1 Fyndhorn Elves
 1 Galadriel, Light of Valinor
 1 Generous Gift

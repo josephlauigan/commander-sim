@@ -1,0 +1,135 @@
+Model status of the swapped-in cards (cardgen audit):
+  Underworld Breach: Full (nonland cards in your graveyard can be cast with escape (mana cost + exile three others) and go back to the graveyard; sacrificed at your end step. Counterspells and wipes aren't escaped by the AI)
+
+16,000 games (current list and the swapped one, 4,000 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 50 minutes
+  progress  10.0%  1m48s elapsed, ~16m12s left
+  progress  20.0%  3m36s elapsed, ~14m24s left
+  progress  30.0%  5m27s elapsed, ~12m43s left
+  progress  40.0%  7m16s elapsed, ~10m54s left
+  progress  50.0%  9m08s elapsed, ~9m08s left
+  progress  60.0%  10m54s elapsed, ~7m16s left
+  progress  70.0%  12m44s elapsed, ~5m27s left
+  progress  80.0%  14m34s elapsed, ~3m38s left
+  progress  90.0%  16m22s elapsed, ~1m49s left
+  progress 100.0%  18m14s elapsed, ~0m00s left
+Swaps: Rune-Scarred Demon -> Underworld Breach
+
+=== Tymna/Kraum vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  21.4% ->  21.4%  (delta -0.1 pts, noise ±1.2, paired)   n=4000
+               eliminated by (variant): Kinnan 22.9%  Yawgmoth 9.2%  Zur the Enchanter 13.1%  Urza 14.9%  Winota 18.6%
+[loose       ] win  22.5% ->  21.3%  (delta -1.2 pts, noise ±1.1, paired)   n=4000
+               eliminated by (variant): Kinnan 23.9%  Yawgmoth 8.7%  Zur the Enchanter 12.5%  Urza 15.4%  Winota 18.2%
+VERDICT: LEANS WORSE (clear only under loose; rerun with a larger --n to confirm)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          21.4% ->  21.3%  -0.1pt   ±1.8     22.5% ->  21.3%  -1.2pt   ±1.8 
+    Rounds survived (or game length)                   8.45 ->   8.48   +0.02  ±0.15      8.52 ->   8.50   -0.02  ±0.15 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.02      0.06 ->   0.06   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.43 ->   0.43   -0.00  ±0.03      0.43 ->   0.43   -0.00  ±0.03 
+    Mana available on your turn 4                      3.96 ->   3.96   +0.00  ±0.03      3.97 ->   3.97   +0.00  ±0.03 
+    Mana available on your turn 6                      5.55 ->   5.56   +0.00  ±0.06      5.56 ->   5.56   -0.00  ±0.06 
+
+  Speed
+    Games where the game plan came online              0.1% ->   0.1%  +0.1pt   ±0.2      0.1% ->   0.1%  +0.0pt   ±0.1 
+    Turn the game plan came online                    12.75 ->  12.00   -0.75  ±2.55      8.00 ->   9.33   +1.33  ±4.35 
+    Turn the commander first resolved                  3.73 ->   3.74   +0.01  ±0.06      3.75 ->   3.74   -0.01  ±0.06 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.69 ->  12.78   +0.09  ±0.34     12.94 ->  12.88   -0.06  ±0.34 
+    Tutors resolved per game                           0.09 ->   0.06   -0.03  ±0.01*     0.10 ->   0.07   -0.03  ±0.01*
+    Spells cast per game                               8.15 ->   8.20   +0.05  ±0.27      8.32 ->   8.30   -0.03  ±0.27 
+
+  Interaction
+    Counterspells cast                                 0.13 ->   0.14   +0.01  ±0.02      0.14 ->   0.14   +0.00  ±0.02 
+    Spot removal cast                                  0.63 ->   0.62   -0.01  ±0.04      0.65 ->   0.65   +0.00  ±0.04 
+    Board wipes cast                                   0.11 ->   0.10   -0.01  ±0.01      0.11 ->   0.10   -0.01  ±0.01 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.24 ->   0.25   +0.01  ±0.02      0.25 ->   0.25   +0.01  ±0.02 
+    Your spells countered                              0.41 ->   0.42   +0.01  ±0.03      0.43 ->   0.43   +0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.03 ->  25.77   -0.26  ±1.50     26.64 ->  26.19   -0.45  ±1.50 
+      ...of which combat damage                       25.72 ->  25.47   -0.25  ±1.48     26.30 ->  25.88   -0.42  ±1.48 
+      ...of which magecraft / burn                     0.05 ->   0.05   +0.00  ±0.02      0.05 ->   0.04   -0.01  ±0.01 
+      ...of which drain triggers                       0.00 ->   0.00   -0.00  ±0.01      0.01 ->   0.00   -0.00  ±0.01 
+      ...of which other triggers                       0.25 ->   0.24   -0.01  ±0.07      0.28 ->   0.26   -0.02  ±0.08 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Tutors resolved per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 4000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Underworld Breach                     20.5       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rune-Scarred Demon                    20.3      16.7         9.8     83.3       62.5      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        21.4      21.4     -0.1
+    rounds survived                                   8.45      8.48    +0.02
+    eliminated, % of games                            78.5      78.7     +0.1
+    opponents it eliminated, per game                 0.57      0.58    +0.01
+    damage dealt, per game                            26.0      25.8     -0.3
+    commander resolved by turn 4, %                   71.7      71.7     +0.0
+    commander resolved by turn 6, %                   84.7      84.7     +0.0
+    commander removals, per game                      0.35      0.36    +0.01
+    lands on the battlefield, turn 4                  3.77      3.77    +0.00
+    lands on the battlefield, turn 8                  6.74      6.75    +0.01
+    mana available, turn 4                            3.96      3.96    +0.00
+    mana available, turn 8                            7.04      7.05    +0.01
+    cards in hand after the land drop, turn 4         6.46      6.46    -0.00
+    cards in hand after the land drop, turn 8         6.93      6.91    -0.02
+    wins by (current):  damage 99%, timeout 1%, combo 0%
+    wins by (swapped):  damage 99%, combo 1%, timeout 1%
+    eliminated by (current): Kinnan via combo 21.8%, Urza via combo 14.3%, Zur the Enchanter via combo 12.4%, Winota via combo 11.8%
+    eliminated by (swapped): Kinnan via combo 22.2%, Urza via combo 13.9%, Zur the Enchanter via combo 12.1%, Winota via combo 11.6%
+
+-- Why: paired breakdown [loose profile, 4000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Underworld Breach                     20.2       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rune-Scarred Demon                    20.2      17.1        10.0     82.9       71.0      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        22.5      21.3     -1.2
+    rounds survived                                   8.52      8.50    -0.02
+    eliminated, % of games                            77.5      78.7     +1.2
+    opponents it eliminated, per game                 0.59      0.56    -0.03
+    damage dealt, per game                            26.6      26.2     -0.4
+    commander resolved by turn 4, %                   72.2      72.2     +0.1
+    commander resolved by turn 6, %                   84.3      84.5     +0.1
+    commander removals, per game                      0.38      0.38    -0.01
+    lands on the battlefield, turn 4                  3.78      3.78    -0.00
+    lands on the battlefield, turn 8                  6.76      6.75    -0.00
+    mana available, turn 4                            3.97      3.97    +0.00
+    mana available, turn 8                            7.05      7.05    -0.00
+    cards in hand after the land drop, turn 4         6.45      6.45    -0.00
+    cards in hand after the land drop, turn 8         6.87      6.86    -0.01
+    wins by (current):  damage 99%, timeout 1%, combo 0%
+    wins by (swapped):  damage 99%, timeout 1%, combo 0%
+    eliminated by (current): Kinnan via combo 23.1%, Urza via combo 13.6%, Winota via combo 11.6%, Zur the Enchanter via combo 11.6%
+    eliminated by (swapped): Kinnan via combo 23.4%, Urza via combo 14.2%, Zur the Enchanter via combo 11.5%, Winota via combo 11.4%
+
+(1094s total)

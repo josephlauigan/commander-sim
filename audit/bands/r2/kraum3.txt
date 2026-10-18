@@ -1,0 +1,171 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Shatterwing Pegasus [scryfall+dsl] C 2W :: pow=2 tgh=3 fly
+      ability: activated  -> pump
+   Flensing Raptor [scryfall] C 2W :: pow=2 fly
+      not modeled: Toxic 1
+      not modeled: When ~ enters, another target creature you control with toxic gets +1/+1 and gains flying until end of turn.
+   Moonwing Moth [scryfall+dsl] C 1WW :: pow=2 tgh=1 fly
+      ability: activated  -> pump
+   Thermal Glider [scryfall] C 2W :: human pow=2 tgh=1 fly
+Model status of the swapped-in cards (cardgen audit):
+  Underworld Breach: Full (nonland cards in your graveyard can be cast with escape (mana cost + exile three others) and go back to the graveyard; sacrificed at your end step. Counterspells and wipes aren't escaped by the AI)
+  Shatterwing Pegasus: Full-auto (compiled from Oracle text)
+  WARNING Flensing Raptor: Partial (body only, abilities not modeled: Toxic 1; When ~ enters, another target creature you control with toxic gets +1/; keywords not modeled: toxic)
+  WARNING Flensing Raptor is Partial: the sim plays it differently from the real card; read the result with that in mind
+  Moonwing Moth: Full-auto (compiled from Oracle text)
+  Thermal Glider: Full (flying, protection from red)
+
+4,000 games (current list and the swapped one, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m43s elapsed, ~6m29s left
+  progress  20.0%  1m27s elapsed, ~5m51s left
+  progress  30.0%  2m11s elapsed, ~5m06s left
+  progress  40.0%  2m55s elapsed, ~4m22s left
+  progress  50.0%  3m38s elapsed, ~3m38s left
+  progress  60.0%  4m21s elapsed, ~2m54s left
+  progress  70.0%  5m03s elapsed, ~2m10s left
+  progress  80.0%  5m46s elapsed, ~1m26s left
+  progress  90.0%  6m31s elapsed, ~0m43s left
+  progress 100.0%  7m15s elapsed, ~0m00s left
+Swaps: Rune-Scarred Demon -> Underworld Breach; Sunblast Angel -> Shatterwing Pegasus; Lyra Dawnbringer -> Flensing Raptor; Terror of the Peaks -> Moonwing Moth; Ghostly Prison -> Thermal Glider
+
+=== Tymna/Kraum vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  35.8% ->  31.3%  (delta -4.5 pts, noise ±3.9, paired)   n=1000
+               eliminated by (variant): Aurelia 20.5%  Tergrid 18.2%  Korvold 7.7%  Atraxa 8.1%  Marwyn 13.1%
+[loose       ] win  36.0% ->  30.6%  (delta -5.4 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Aurelia 22.1%  Tergrid 15.5%  Korvold 8.6%  Atraxa 8.4%  Marwyn 12.6%
+VERDICT: WORSE under both profiles
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          35.8% ->  31.3%  -4.5pt   ±4.2*    36.0% ->  30.6%  -5.4pt   ±4.2*
+    Rounds survived (or game length)                  12.50 ->  12.32   -0.18  ±0.34     12.45 ->  12.52   +0.06  ±0.33 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.03      0.06 ->   0.06   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.54 ->   0.53   -0.02  ±0.07      0.55 ->   0.53   -0.02  ±0.07 
+    Mana available on your turn 4                      3.93 ->   3.94   +0.01  ±0.07      3.93 ->   3.93   +0.01  ±0.07 
+    Mana available on your turn 6                      5.51 ->   5.50   -0.02  ±0.11      5.50 ->   5.48   -0.01  ±0.11 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0      0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a                                    n/a
+    Turn the commander first resolved                  3.71 ->   3.71   +0.01  ±0.12      3.70 ->   3.72   +0.02  ±0.12 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.51 ->  18.56   +0.05  ±0.70     18.64 ->  18.75   +0.11  ±0.69 
+    Tutors resolved per game                           0.25 ->   0.12   -0.13  ±0.04*     0.24 ->   0.14   -0.10  ±0.04*
+    Spells cast per game                              14.81 ->  14.57   -0.24  ±0.67     14.71 ->  14.85   +0.14  ±0.66 
+
+  Interaction
+    Counterspells cast                                 0.19 ->   0.18   -0.01  ±0.03      0.19 ->   0.20   +0.00  ±0.04 
+    Spot removal cast                                  0.94 ->   0.92   -0.02  ±0.08      0.91 ->   0.96   +0.05  ±0.08 
+    Board wipes cast                                   0.21 ->   0.23   +0.02  ±0.04      0.21 ->   0.21   +0.00  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.81 ->   0.71   -0.10  ±0.09*     0.74 ->   0.73   -0.01  ±0.09 
+    Your spells countered                              0.14 ->   0.12   -0.02  ±0.04      0.12 ->   0.13   +0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.71 ->  37.01   -1.69  ±3.19     38.53 ->  37.34   -1.19  ±3.15 
+      ...of which combat damage                       37.90 ->  36.94   -0.96  ±3.15     37.77 ->  37.19   -0.59  ±3.11 
+      ...of which magecraft / burn                     0.08 ->   0.06   -0.02  ±0.04      0.07 ->   0.10   +0.03  ±0.04 
+      ...of which drain triggers                       0.01 ->   0.00   -0.01  ±0.02      0.00 ->   0.02   +0.02  ±0.03 
+      ...of which other triggers                       0.71 ->   0.01   -0.70  ±0.17*     0.69 ->   0.04   -0.65  ±0.18*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Win rate (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Tutors resolved per game (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your key permanents removed by opponents (conservative profile only)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Underworld Breach                     22.7       0.0           -    100.0          -      0.00
+    Shatterwing Pegasus                   25.8      82.6         9.0     17.4       42.3      0.01
+    Flensing Raptor                       25.1      74.9         9.2     25.1       45.7      0.01
+    Moonwing Moth                         26.6      72.6        10.0     27.4       40.4      0.00
+    Thermal Glider                        28.4      75.4         9.1     24.6       43.0      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rune-Scarred Demon                    24.4      41.4        11.6     58.6       62.4      0.02
+    Sunblast Angel                        26.3      51.7        11.0     48.3       60.3      0.00
+    Lyra Dawnbringer                      27.1      65.7        10.3     34.3       57.9      0.04
+    Terror of the Peaks                   33.3      60.7        11.3     39.3       59.4      0.04
+    Ghostly Prison                        28.0      82.9         8.3     17.1       47.8      0.04
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        35.8      31.3     -4.5
+    rounds survived                                  12.50     12.32    -0.18
+    eliminated, % of games                            62.0      67.6     +5.6
+    opponents it eliminated, per game                 0.86      0.80    -0.06
+    damage dealt, per game                            38.7      37.0     -1.7
+    commander resolved by turn 4, %                   80.3      79.9     -0.4
+    commander resolved by turn 6, %                   92.9      92.7     -0.2
+    commander removals, per game                      0.83      0.79    -0.04
+    lands on the battlefield, turn 4                  3.74      3.74    +0.01
+    lands on the battlefield, turn 8                  6.64      6.71    +0.07
+    mana available, turn 4                            3.93      3.94    +0.01
+    mana available, turn 8                            6.91      6.95    +0.04
+    cards in hand after the land drop, turn 4         6.41      6.40    -0.01
+    cards in hand after the land drop, turn 8         6.34      6.40    +0.07
+    wins by (current):  damage 92%, timeout 8%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Aurelia via combat 15.9%, Marwyn via combat 10.5%, Tergrid via combat 9.3%, Atraxa via combat 6.5%
+    eliminated by (swapped): Aurelia via combat 16.9%, Tergrid via combat 13.8%, Marwyn via combat 12.8%, Atraxa via combat 6.1%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Underworld Breach                     24.3       0.0           -    100.0          -      0.00
+    Shatterwing Pegasus                   26.8      81.0         9.5     19.0       45.2      0.00
+    Flensing Raptor                       25.4      70.1         9.3     29.9       40.4      0.01
+    Moonwing Moth                         27.4      74.1        10.2     25.9       40.4      0.01
+    Thermal Glider                        27.8      77.3         9.3     22.7       40.5      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Rune-Scarred Demon                    25.6      44.9        11.8     55.1       64.3      0.02
+    Sunblast Angel                        26.5      51.7        10.8     48.3       62.0      0.01
+    Lyra Dawnbringer                      26.1      61.7         9.8     38.3       63.4      0.03
+    Terror of the Peaks                   33.3      58.3        11.4     41.7       64.9      0.04
+    Ghostly Prison                        28.6      85.7         7.9     14.3       52.7      0.04
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        36.0      30.6     -5.4
+    rounds survived                                  12.45     12.52    +0.06
+    eliminated, % of games                            62.7      67.2     +4.5
+    opponents it eliminated, per game                 0.85      0.79    -0.06
+    damage dealt, per game                            38.5      37.3     -1.2
+    commander resolved by turn 4, %                   80.0      80.4     +0.4
+    commander resolved by turn 6, %                   92.4      93.1     +0.7
+    commander removals, per game                      0.77      0.81    +0.04
+    lands on the battlefield, turn 4                  3.73      3.74    +0.01
+    lands on the battlefield, turn 8                  6.65      6.65    -0.01
+    mana available, turn 4                            3.93      3.93    +0.01
+    mana available, turn 8                            6.94      6.92    -0.02
+    cards in hand after the land drop, turn 4         6.39      6.37    -0.02
+    cards in hand after the land drop, turn 8         6.43      6.38    -0.06
+    wins by (current):  damage 91%, timeout 9%
+    wins by (swapped):  damage 94%, timeout 6%
+    eliminated by (current): Aurelia via combat 14.3%, Tergrid via combat 12.6%, Marwyn via combat 9.5%, Atraxa via combat 7.1%
+    eliminated by (swapped): Aurelia via combat 17.1%, Marwyn via combat 12.6%, Tergrid via combat 12.0%, Atraxa via combat 7.4%
+
+(436s total)

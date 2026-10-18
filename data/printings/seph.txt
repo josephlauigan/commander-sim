@@ -1,0 +1,90 @@
+1 Altar of Dementia (brr) 3
+1 Anguished Unmaking (soc) 293
+1 Animate Dead (4ed) 118
+1 Arcane Denial (all) 22a
+1 Arcane Sanctum (brc) 173
+1 Arcane Signet (cmm) 653
+1 Archon of Cruelty (pmh2) 75s
+1 Ash Barrens (fic) 374
+1 Ashnod's Altar (chr) 92
+1 Assassin's Trophy (2x2) 372
+1 Atraxa, Grand Unifier (fca) 49
+1 Aura Shards (inv) 233
+1 Austere Command (cmr) 12
+1 Birds of Paradise (dmr) 439
+1 Blood Artist (2x2) 352
+1 Bojuka Bog (soc) 363
+1 Brushland (bro) 259
+1 Buried Alive (ody) 118
+1 Caves of Koilos (dmu) 378
+1 Chromatic Lantern (fca) 61
+1 Command Tower (cmm) 659
+1 Conjurer's Closet (inr) 441
+1 Demonic Tutor (cmm) 696
+1 Diabolic Tutor (sld) 721
+1 Displacer Kitten (clb) 63
+1 Dread Return (dmr) 302
+1 Elesh Norn, Grand Cenobite (mul) 3
+1 Elesh Norn, Mother of Machines (one) 416
+1 Entomb (dmr) 426
+1 Ephemerate (sta) 68
+1 Evolving Wilds (dbl) 530
+1 Exotic Orchard (brc) 185
+1 Fabled Passage (pw21) 4
+1 Flickering Hound (fra) 7
+3 Forest (2ed) 302
+1 Galadriel's Dismissal (hoc) 16
+1 Gifts Ungiven (2x2) 347
+1 Glacial Fortress (m13) 225
+1 Grand Abolisher (cmm) 625
+1 Grave Pact (cmm) 639
+1 Grave Titan (sld) 223
+1 Hallowed Fountain (rtr) 241
+1 Harmonize (fic) 308
+1 Hinterland Harbor (msc) 250
+1 Hornet Queen (mkc) 172
+2 Island (2ed) 293
+1 Isolated Chapel (dmr) 397
+1 Karn's Bastion (onc) 156
+1 Kitchen Finks (f09) 3
+1 Melira, Sylvok Outcast (nph) 115
+1 Mikaeus, the Unhallowed (cmm) 1061
+1 Mind Stone (dmr) 232
+1 Momentary Blink (dmr) 268
+1 Muldrotha, the Gravetide (fca) 57
+1 Necromancy (plst) VIS-64
+1 Nim Deathmantle (som) 188
+1 Overgrown Tomb (rtr) 243
+1 Path to Exile (cmm) 626
+1 Phyrexian Arena (pone) 104s
+3 Plains (2ed) 288
+1 Reanimate (brb) 57
+1 Restoration Angel (j22) 233
+1 Sakura-Tribe Elder (soc) 285
+1 Sheoldred, the Apocalypse (dmu) 369
+1 Sheoldred, Whispering One (pnph) 73★
+1 Skullclamp (sld) 1663
+1 Sol Ring (sld) 2093
+1 Stitcher's Supplier (sld) 853
+1 Strip Mine (4ed) 363
+1 Summon: Bahamut (fin) 356
+1 Sunpetal Grove (fic) 432
+6 Swamp (2ed) 294
+1 Swan Song (sld) 1591
+1 Swords to Plowshares (ice) 54
+1 Talisman of Hierarchy (h1r) 36
+1 Teleportation Circle (afr) 39
+1 Temple Garden (rvr) 300
+1 Tireless Tracker (inr) 318
+1 Tortured Existence (plst) STH-74
+1 Toxic Deluge (sld) 1860
+1 Treno, Dark City (fin) 290
+1 Triskelion (dmr) 389
+1 Unburial Rites (2x2) 95
+1 Underground River (dkm) 41
+1 Viscera Seer (soc) 229
+1 Watery Grave (grn) 259
+1 Woodland Cemetery (soc) 424
+1 Yavimaya Coast (soc) 425
+1 Yawgmoth's Will (wc99) js171
+1 Zulaport Cutthroat (sld) 1982

@@ -50,6 +50,13 @@ fn test_cards_tokens_and_progress() {
     // progress: loading events count up to the total
     let last = loading.iter().rev().find(|e| e["kind"] == "loading").expect("loading events");
     assert_eq!(last["done"], last["total"]);
+    // your deck's own printings (data/printings/sauron.txt): every copy by set and collector number
+    let own = img["printed"]["sauron"].as_object().expect("Sauron's printings");
+    let swamps = own["Swamp"].as_array().expect("Swamp copies");
+    assert_eq!(swamps.len(), 6);
+    assert!(swamps[0][0].as_str().unwrap().starts_with("print-2ed-"), "{swamps:?}");
+    let f = own["Sol Ring"][0][0].as_str().unwrap();
+    assert_eq!(c.get(&format!("/images/{f}")).status, 200);
     c.quit();
 }
 
@@ -70,13 +77,19 @@ fn test_cached_the_second_time() {
 fn test_lookups_are_in_batches_of_75() {
     let s = rust_srv!();
     let mut c = s.client();
-    let (l0, n0) = (fake::LOOKUPS.load(Ordering::Relaxed), fake::NAMES_ASKED.load(Ordering::Relaxed));
+    let asked = || {
+        let o = Ordering::Relaxed;
+        (fake::LOOKUPS.load(o), fake::NAMES_ASKED.load(o), fake::PRINTS_ASKED.load(o))
+    };
+    let (l0, n0, p0) = asked();
     images_event(&mut c, true);
-    let (l, n) = (fake::LOOKUPS.load(Ordering::Relaxed) - l0, fake::NAMES_ASKED.load(Ordering::Relaxed) - n0);
-    // names are asked 75 to a request; the token lookup is one more request
-    if n > 0 {
-        assert!(l >= n.div_ceil(75), "{l} requests for {n} names");
-        assert!(l <= n.div_ceil(75) + 1, "{l} requests for {n} names");
+    let (l, n, p) = asked();
+    let (l, n, p) = (l - l0, n - n0, p - p0);
+    // names and printings are asked 75 to a request (separately); the token lookup is one more request
+    if n + p > 0 {
+        let batches = n.div_ceil(75) + p.div_ceil(75);
+        assert!(l >= batches, "{l} requests for {n} names and {p} printings");
+        assert!(l <= batches + 1, "{l} requests for {n} names and {p} printings");
     }
     c.quit();
 }

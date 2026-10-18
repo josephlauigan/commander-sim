@@ -1,0 +1,27 @@
+12,000 games (1 deck x 3 tiers (each deck in its own tiers), 2,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 27 minutes
+  progress  10.0%  2m28s elapsed, ~22m17s left
+  cell titania vs t1 [conservative]:  19.1% (17.4-20.8)
+  progress  20.0%  5m17s elapsed, ~21m08s left
+  progress  30.0%  8m25s elapsed, ~19m38s left
+  cell titania vs t2 [conservative]:  26.9% (25.1-28.9)
+  progress  40.0%  10m54s elapsed, ~16m22s left
+  progress  50.0%  13m00s elapsed, ~13m00s left
+  cell titania vs t3 [conservative]:  25.3% (23.4-27.3)
+  progress  60.0%  15m25s elapsed, ~10m17s left
+  cell titania vs t1 [loose]:  19.1% (17.4-20.9)
+  progress  70.0%  18m17s elapsed, ~7m50s left
+  progress  80.0%  21m26s elapsed, ~5m21s left
+  cell titania vs t2 [loose]:  28.2% (26.3-30.2)
+  progress  90.0%  23m53s elapsed, ~2m39s left
+  progress 100.0%  26m00s elapsed, ~0m00s left
+  cell titania vs t3 [loose]:  25.6% (23.7-27.6)
+
+=== Win rate by deck and tier [conservative profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  titania     19.1% (17.4-20.8)  26.9% (25.1-28.9)  25.3% (23.4-27.3)           23.8% over t1-t3
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  titania     19.1% (17.4-20.9)  28.2% (26.3-30.2)  25.6% (23.7-27.6)           24.3% over t1-t3
+
+(1560s total)

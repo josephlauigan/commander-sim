@@ -1,0 +1,25 @@
+16,000 games (1 deck x 2 tiers (each deck in its own tiers), 4,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 36 minutes
+  progress  10.0%  2m14s elapsed, ~20m10s left
+  progress  20.0%  4m30s elapsed, ~18m01s left
+  cell seph vs t3 [conservative]:  35.5% (34.0-36.9)
+  progress  30.0%  6m40s elapsed, ~15m33s left
+  progress  40.0%  8m40s elapsed, ~13m00s left
+  progress  50.0%  10m43s elapsed, ~10m43s left
+  cell seph vs t4 [conservative]:  28.4% (27.0-29.8)
+  progress  60.0%  13m00s elapsed, ~8m40s left
+  progress  70.0%  15m15s elapsed, ~6m32s left
+  cell seph vs t3 [loose]:  34.6% (33.2-36.1)
+  progress  80.0%  17m32s elapsed, ~4m23s left
+  progress  90.0%  19m32s elapsed, ~2m10s left
+  progress 100.0%  21m30s elapsed, ~0m00s left
+  cell seph vs t4 [loose]:  28.1% (26.7-29.5)
+
+=== Win rate by deck and tier [conservative profile, lookahead AI, n=4000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  seph        35.5% (34.0-36.9)  28.4% (27.0-29.8)          31.9% over t3, t4
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=4000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  seph        34.6% (33.2-36.1)  28.1% (26.7-29.5)          31.4% over t3, t4
+
+(1291s total)

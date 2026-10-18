@@ -1,0 +1,466 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Cactarantula [scryfall] C 4GG :: pow=6 tgh=5 bomb=6 reach
+      not modeled: This spell costs {1} less to cast if you control a Desert.
+      not modeled: Whenever ~ becomes the target of a spell or ability an opponent controls, you may draw a card.
+   Penumbra Spider [scryfall+dsl] C 2GG :: pow=2 tgh=4 reach
+      ability: triggered dies -> token
+   Paradise Druid [scryfall] C 1G :: pow=2 tgh=1 dork=A noatk
+      not modeled: This creature has hexproof as long as it's untapped.
+   Worldly Tutor [pool] I G :: top
+Model status of the swapped-in cards (cardgen audit):
+  Cactarantula: Full (reach; draws a card when an opponent's spell or ability targets it. The {1} discount needs a Desert and the deck has none)
+  Penumbra Spider: Full-auto (compiled from Oracle text)
+  Paradise Druid: Full (hexproof while untapped; taps for any color)
+  Worldly Tutor: Full (a creature on top of the library: the wish list first, cast at the end of the turn before yours)
+
+12,000 games (current list and the swapped one, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 27 minutes
+  progress  10.0%  2m25s elapsed, ~21m53s left
+  progress  20.0%  4m46s elapsed, ~19m04s left
+  progress  30.0%  7m10s elapsed, ~16m43s left
+Swaps: Hornet Queen -> Cactarantula; Harmonize -> Penumbra Spider; Tireless Tracker -> Paradise Druid; Environmental Scientist -> Worldly Tutor
+
+=== Titania vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  19.1% ->  19.2%  (delta +0.1 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Lathril 16.7%  Teysa Karlov 12.6%  Light-Paws 27.9%  Isshin 14.2%  Tatyova 9.0%
+[loose       ] win  20.8% ->  17.8%  (delta -3.0 pts, noise ±3.3, paired)   n=1000
+               eliminated by (variant): Lathril 14.8%  Teysa Karlov 11.6%  Light-Paws 29.0%  Isshin 16.7%  Tatyova 9.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          19.1% ->  19.2%  +0.1pt   ±3.5     20.8% ->  17.8%  -3.0pt   ±3.5 
+    Rounds survived (or game length)                  10.76 ->  10.87   +0.10  ±0.30     10.94 ->  10.87   -0.07  ±0.31 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03      0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.37 ->   0.40   +0.04  ±0.06      0.36 ->   0.40   +0.04  ±0.06 
+    Mana available on your turn 4                      4.60 ->   4.66   +0.05  ±0.08      4.62 ->   4.66   +0.04  ±0.08 
+    Mana available on your turn 6                      6.92 ->   6.93   +0.01  ±0.16      6.88 ->   6.93   +0.04  ±0.15 
+
+  Speed
+    Games where the game plan came online             49.4% ->  50.2%  +0.8pt   ±4.5     49.7% ->  49.8%  +0.1pt   ±4.5 
+    Turn the game plan came online                     7.54 ->   7.39   -0.15  ±0.32      7.56 ->   7.37   -0.18  ±0.31 
+    Turn the commander first resolved                  6.80 ->   6.59   -0.21  ±0.18*     6.84 ->   6.65   -0.19  ±0.19*
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.72 ->  13.94   -0.77  ±0.73*    14.99 ->  13.92   -1.06  ±0.72*
+    Tutors resolved per game                           0.00 ->   0.18   +0.18  ±0.02*     0.00 ->   0.18   +0.18  ±0.02*
+    Spells cast per game                              13.74 ->  13.74   +0.00  ±0.65     14.06 ->  13.74   -0.32  ±0.65 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.62 ->   0.61   -0.00  ±0.07      0.63 ->   0.60   -0.03  ±0.07 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.83 ->   0.88   +0.05  ±0.09      0.81 ->   0.82   +0.02  ±0.08 
+    Your spells countered                              0.17 ->   0.16   -0.01  ±0.04      0.17 ->   0.16   -0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                34.01 ->  33.06   -0.94  ±3.63     36.43 ->  32.96   -3.47  ±3.80 
+      ...of which combat damage                       34.01 ->  33.06   -0.94  ±3.63     36.43 ->  32.96   -3.47  ±3.80 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    better - Turn the commander first resolved (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cactarantula                          22.5      82.2         8.4     17.8       32.4      0.05
+    Penumbra Spider                       23.1      85.3         7.6     14.7       29.4      0.00
+    Paradise Druid                        24.4      89.3         6.1     10.7       23.4      0.01
+    Worldly Tutor                         22.5      82.2         6.4     17.8       27.6      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          24.5      71.0         9.2     29.0       31.0      0.01
+    Harmonize                             21.8      78.0         7.5     22.0       31.2      0.00
+    Tireless Tracker                      25.6      87.1         7.9     12.9       30.0      0.02
+    Environmental Scientist               22.5      90.7         5.9      9.3       30.4      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        19.1      19.2     +0.1
+    rounds survived                                  10.76     10.87    +0.10
+    eliminated, % of games                            80.4      80.4     +0.0
+    opponents it eliminated, per game                 0.50      0.53    +0.03
+    damage dealt, per game                            34.0      33.1     -0.9
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         2.3       2.8     +0.5
+      plan online by turn 6, %                        20.7      22.0     +1.3
+      plan online by turn 8, %                        35.1      36.9     +1.8
+      plan online by turn 12, %                       47.1      48.2     +1.1
+      plan online at all, %                           49.4      50.2     +0.8
+    commander resolved by turn 4, %                    7.6       8.2     +0.6
+    commander resolved by turn 6, %                   42.0      45.0     +3.0
+    commander removals, per game                      0.55      0.56    +0.01
+    lands on the battlefield, turn 4                  4.17      4.16    -0.01
+    lands on the battlefield, turn 8                  8.33      8.25    -0.08
+    mana available, turn 4                            4.60      4.66    +0.05
+    mana available, turn 8                            8.93      8.91    -0.02
+    cards in hand after the land drop, turn 4         5.94      5.79    -0.15
+    cards in hand after the land drop, turn 8         4.12      3.94    -0.19
+    wins by (current):  damage 95%, timeout 5%
+    wins by (swapped):  damage 95%, timeout 5%
+    eliminated by (current): Light-Paws via commander damage 23.0%, Isshin via combat 11.0%, Tatyova via combat 10.0%, Lathril via combat 10.0%
+    eliminated by (swapped): Light-Paws via commander damage 24.3%, Isshin via combat 10.9%, Lathril via combat 10.4%, Tatyova via combat 8.7%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cactarantula                          22.3      77.1         8.6     22.9       29.7      0.04
+    Penumbra Spider                       23.4      81.2         7.6     18.8       26.3      0.01
+    Paradise Druid                        24.3      92.6         6.3      7.4       20.0      0.01
+    Worldly Tutor                         20.5      89.8         6.2     10.2       24.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          23.5      74.0         9.0     26.0       37.9      0.01
+    Harmonize                             24.1      80.1         8.1     19.9       35.8      0.00
+    Tireless Tracker                      25.9      82.6         7.9     17.4       30.4      0.02
+    Environmental Scientist               23.0      93.9         6.1      6.1       29.2      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        20.8      17.8     -3.0
+    rounds survived                                  10.94     10.87    -0.07
+    eliminated, % of games                            78.5      81.7     +3.2
+    opponents it eliminated, per game                 0.56      0.48    -0.08
+    damage dealt, per game                            36.4      33.0     -3.5
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         2.2       3.0     +0.8
+      plan online by turn 6, %                        20.0      21.9     +1.9
+      plan online by turn 8, %                        35.3      36.3     +1.0
+      plan online by turn 12, %                       47.8      47.9     +0.1
+      plan online at all, %                           49.7      49.8     +0.1
+    commander resolved by turn 4, %                    8.5       8.5     +0.0
+    commander resolved by turn 6, %                   41.8      44.7     +2.9
+    commander removals, per game                      0.53      0.52    -0.01
+    lands on the battlefield, turn 4                  4.18      4.17    -0.00
+    lands on the battlefield, turn 8                  8.34      8.28    -0.06
+    mana available, turn 4                            4.62      4.66    +0.04
+    mana available, turn 8                            8.95      8.94    -0.00
+    cards in hand after the land drop, turn 4         5.92      5.80    -0.13
+    cards in hand after the land drop, turn 8         4.18      4.02    -0.16
+    wins by (current):  damage 96%, timeout 4%
+    wins by (swapped):  damage 98%, timeout 2%
+    eliminated by (current): Light-Paws via commander damage 24.2%, Isshin via combat 13.1%, Tatyova via combat 8.9%, Lathril via combat 8.7%
+    eliminated by (swapped): Light-Paws via commander damage 24.9%, Isshin via combat 13.2%, Tatyova via combat 9.6%, Lathril via combat 9.4%
+  progress  40.0%  10m00s elapsed, ~15m01s left
+  progress  50.0%  13m19s elapsed, ~13m19s left
+  progress  60.0%  17m19s elapsed, ~11m33s left
+Swaps: Hornet Queen -> Cactarantula; Harmonize -> Penumbra Spider; Tireless Tracker -> Paradise Druid; Environmental Scientist -> Worldly Tutor
+
+=== Titania vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  32.7% ->  27.8%  (delta -4.9 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 16.2%  Sythis 10.9%  Lord Windgrace 15.0%  Brago 12.9%  Meren of Clan Nel Toth 13.8%
+[loose       ] win  31.7% ->  25.4%  (delta -6.3 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Kaalia of the Vast 15.2%  Sythis 14.0%  Lord Windgrace 15.5%  Brago 12.9%  Meren of Clan Nel Toth 13.1%
+VERDICT: WORSE under both profiles
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          32.7% ->  27.8%  -4.9pt   ±4.1*    31.7% ->  25.4%  -6.3pt   ±4.0*
+    Rounds survived (or game length)                  13.88 ->  14.02   +0.14  ±0.32     13.96 ->  13.70   -0.26  ±0.32 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03      0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.38 ->   0.42   +0.04  ±0.07      0.37 ->   0.42   +0.04  ±0.07 
+    Mana available on your turn 4                      4.55 ->   4.61   +0.05  ±0.09      4.55 ->   4.61   +0.05  ±0.09 
+    Mana available on your turn 6                      6.82 ->   6.84   +0.02  ±0.15      6.83 ->   6.85   +0.02  ±0.15 
+
+  Speed
+    Games where the game plan came online             64.4% ->  62.1%  -2.3pt   ±4.3     63.4% ->  60.3%  -3.1pt   ±4.3 
+    Turn the game plan came online                     8.26 ->   8.08   -0.18  ±0.35      8.17 ->   8.24   +0.07  ±0.36 
+    Turn the commander first resolved                  7.16 ->   7.05   -0.11  ±0.22      7.11 ->   7.06   -0.05  ±0.21 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            20.34 ->  18.82   -1.52  ±0.85*    20.37 ->  18.29   -2.07  ±0.84*
+    Tutors resolved per game                           0.00 ->   0.22   +0.22  ±0.03*     0.00 ->   0.21   +0.21  ±0.03*
+    Spells cast per game                              19.83 ->  19.29   -0.54  ±0.75     19.73 ->  18.63   -1.10  ±0.74*
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.88 ->   0.84   -0.04  ±0.07      0.93 ->   0.81   -0.11  ±0.08*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           2.15 ->   2.29   +0.14  ±0.17      2.13 ->   2.21   +0.08  ±0.17 
+    Your spells countered                              0.22 ->   0.21   -0.00  ±0.05      0.22 ->   0.21   -0.01  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                49.89 ->  44.96   -4.93  ±3.66*    48.60 ->  43.40   -5.19  ±3.79*
+      ...of which combat damage                       49.89 ->  44.96   -4.93  ±3.66*    48.60 ->  43.40   -5.19  ±3.79*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Win rate (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    worse  - Spells cast per game (loose profile only)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (loose profile only)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cactarantula                          32.0      88.4         9.9     11.6       36.7      0.11
+    Penumbra Spider                       29.4      92.9         8.9      7.1       38.5      0.03
+    Paradise Druid                        29.1      91.8         7.7      8.2       30.0      0.05
+    Worldly Tutor                         24.8      88.7         7.5     11.3       28.2      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          32.2      86.6         9.6     13.4       48.4      0.03
+    Harmonize                             28.0      86.8         9.1     13.2       44.4      0.00
+    Tireless Tracker                      31.3      92.7         8.7      7.3       44.5      0.08
+    Environmental Scientist               30.6      94.1         8.1      5.9       39.9      0.04
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.7      27.8     -4.9
+    rounds survived                                  13.88     14.02    +0.14
+    eliminated, % of games                            64.7      68.8     +4.1
+    opponents it eliminated, per game                 0.91      0.77    -0.14
+    damage dealt, per game                            49.9      45.0     -4.9
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         3.6       2.7     -0.9
+      plan online by turn 6, %                        23.0      22.7     -0.3
+      plan online by turn 8, %                        39.4      40.8     +1.4
+      plan online by turn 12, %                       56.6      55.8     -0.8
+      plan online at all, %                           64.4      62.1     -2.3
+    commander resolved by turn 4, %                   10.3      10.0     -0.3
+    commander resolved by turn 6, %                   42.7      45.2     +2.5
+    commander removals, per game                      1.35      1.38    +0.03
+    lands on the battlefield, turn 4                  4.19      4.19    -0.00
+    lands on the battlefield, turn 8                  8.44      8.30    -0.14
+    mana available, turn 4                            4.55      4.61    +0.05
+    mana available, turn 8                            8.82      8.75    -0.07
+    cards in hand after the land drop, turn 4         5.91      5.77    -0.14
+    cards in hand after the land drop, turn 8         4.33      4.08    -0.25
+    wins by (current):  damage 89%, timeout 11%
+    wins by (swapped):  damage 89%, timeout 11%
+    eliminated by (current): Lord Windgrace via combat 13.6%, Brago via combat 11.1%, Kaalia of the Vast via combat 10.2%, Sythis via combat 8.2%
+    eliminated by (swapped): Lord Windgrace via combat 14.9%, Brago via combat 12.9%, Kaalia of the Vast via combat 10.0%, Meren of Clan Nel Toth via combat 7.5%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cactarantula                          29.6      86.5         9.4     13.5       33.2      0.11
+    Penumbra Spider                       28.4      93.3         9.1      6.7       32.5      0.02
+    Paradise Druid                        27.4      92.3         7.5      7.7       28.5      0.04
+    Worldly Tutor                         24.7      89.1         7.7     10.9       29.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          32.2      86.0         9.5     14.0       44.0      0.04
+    Harmonize                             27.7      89.2         9.0     10.8       45.3      0.00
+    Tireless Tracker                      31.7      90.5         8.8      9.5       40.1      0.09
+    Environmental Scientist               28.4      95.8         7.7      4.2       37.5      0.04
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.7      25.4     -6.3
+    rounds survived                                  13.96     13.70    -0.26
+    eliminated, % of games                            64.5      70.7     +6.2
+    opponents it eliminated, per game                 0.87      0.73    -0.14
+    damage dealt, per game                            48.6      43.4     -5.2
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         3.7       3.8     +0.1
+      plan online by turn 6, %                        22.4      23.1     +0.7
+      plan online by turn 8, %                        40.5      37.1     -3.4
+      plan online by turn 12, %                       57.3      54.1     -3.2
+      plan online at all, %                           63.4      60.3     -3.1
+    commander resolved by turn 4, %                    9.7      10.6     +0.9
+    commander resolved by turn 6, %                   42.2      45.8     +3.6
+    commander removals, per game                      1.31      1.36    +0.05
+    lands on the battlefield, turn 4                  4.20      4.19    -0.00
+    lands on the battlefield, turn 8                  8.39      8.27    -0.12
+    mana available, turn 4                            4.55      4.61    +0.05
+    mana available, turn 8                            8.85      8.76    -0.10
+    cards in hand after the land drop, turn 4         5.91      5.78    -0.13
+    cards in hand after the land drop, turn 8         4.30      4.02    -0.29
+    wins by (current):  damage 90%, timeout 10%
+    wins by (swapped):  damage 86%, timeout 14%
+    eliminated by (current): Lord Windgrace via combat 13.3%, Brago via combat 11.7%, Kaalia of the Vast via combat 9.1%, Sythis via combat 7.6%
+    eliminated by (swapped): Lord Windgrace via combat 15.3%, Brago via combat 12.9%, Kaalia of the Vast via combat 10.0%, Sythis via combat 8.4%
+  progress  70.0%  20m00s elapsed, ~8m34s left
+  progress  80.0%  21m56s elapsed, ~5m29s left
+  progress  90.0%  24m01s elapsed, ~2m40s left
+  progress 100.0%  26m13s elapsed, ~0m00s left
+Swaps: Hornet Queen -> Cactarantula; Harmonize -> Penumbra Spider; Tireless Tracker -> Paradise Druid; Environmental Scientist -> Worldly Tutor
+
+=== Titania vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  28.8% ->  24.8%  (delta -4.0 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Aurelia 23.1%  Tergrid 17.9%  Korvold 8.6%  Atraxa 11.0%  Marwyn 13.0%
+[loose       ] win  27.8% ->  27.2%  (delta -0.6 pts, noise ±3.8, paired)   n=1000
+               eliminated by (variant): Aurelia 22.3%  Tergrid 15.9%  Korvold 9.2%  Atraxa 9.1%  Marwyn 14.5%
+VERDICT: LEANS WORSE (clear only under conservative; rerun with a larger --n to confirm)
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          28.8% ->  24.8%  -4.0pt   ±4.0*    27.8% ->  27.2%  -0.6pt   ±4.0 
+    Rounds survived (or game length)                  12.29 ->  12.36   +0.06  ±0.33     12.33 ->  12.34   +0.01  ±0.34 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03      0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.38 ->   0.41   +0.03  ±0.07      0.39 ->   0.43   +0.04  ±0.07 
+    Mana available on your turn 4                      4.52 ->   4.54   +0.02  ±0.09      4.54 ->   4.54   +0.01  ±0.09 
+    Mana available on your turn 6                      6.78 ->   6.69   -0.09  ±0.15      6.77 ->   6.70   -0.07  ±0.15 
+
+  Speed
+    Games where the game plan came online             58.4% ->  55.1%  -3.3pt   ±4.4     58.3% ->  55.9%  -2.4pt   ±4.4 
+    Turn the game plan came online                     7.92 ->   7.64   -0.28  ±0.34      7.75 ->   7.75   -0.01  ±0.33 
+    Turn the commander first resolved                  6.74 ->   6.66   -0.08  ±0.20      6.79 ->   6.73   -0.06  ±0.19 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            16.82 ->  15.99   -0.83  ±0.73*    17.03 ->  15.92   -1.10  ±0.75*
+    Tutors resolved per game                           0.00 ->   0.20   +0.20  ±0.03*     0.00 ->   0.20   +0.20  ±0.03*
+    Spells cast per game                              15.56 ->  15.29   -0.27  ±0.65     15.69 ->  15.19   -0.50  ±0.67 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.71 ->   0.69   -0.01  ±0.07      0.74 ->   0.72   -0.02  ±0.07 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.92 ->   0.98   +0.06  ±0.11      0.91 ->   0.98   +0.08  ±0.11 
+    Your spells countered                              0.14 ->   0.15   +0.01  ±0.04      0.15 ->   0.14   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                38.29 ->  34.03   -4.26  ±3.40*    37.90 ->  34.94   -2.95  ±3.47 
+      ...of which combat damage                       38.29 ->  34.03   -4.26  ±3.40*    37.90 ->  34.94   -2.95  ±3.47 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Win rate (conservative profile only)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (conservative profile only)
+    worse  -   ...of which combat damage (conservative profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cactarantula                          26.3      76.8         9.1     23.2       33.7      0.03
+    Penumbra Spider                       25.1      88.8         8.5     11.2       38.1      0.01
+    Paradise Druid                        25.4      89.4         6.5     10.6       24.7      0.01
+    Worldly Tutor                         24.9      79.5         7.0     20.5       32.3      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          27.9      79.9         9.6     20.1       44.8      0.01
+    Harmonize                             24.6      80.1         8.0     19.9       35.5      0.00
+    Tireless Tracker                      27.0      84.8         8.1     15.2       33.2      0.03
+    Environmental Scientist               25.4      92.9         7.0      7.1       39.8      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        28.8      24.8     -4.0
+    rounds survived                                  12.29     12.36    +0.06
+    eliminated, % of games                            70.4      73.6     +3.2
+    opponents it eliminated, per game                 0.72      0.62    -0.10
+    damage dealt, per game                            38.3      34.0     -4.3
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         2.3       3.3     +1.0
+      plan online by turn 6, %                        22.3      23.4     +1.1
+      plan online by turn 8, %                        38.5      37.7     -0.8
+      plan online by turn 12, %                       53.3      51.8     -1.5
+      plan online at all, %                           58.4      55.1     -3.3
+    commander resolved by turn 4, %                    9.4      11.4     +2.0
+    commander resolved by turn 6, %                   47.3      49.3     +2.0
+    commander removals, per game                      0.63      0.69    +0.06
+    lands on the battlefield, turn 4                  4.16      4.13    -0.03
+    lands on the battlefield, turn 8                  8.33      8.14    -0.19
+    mana available, turn 4                            4.52      4.54    +0.02
+    mana available, turn 8                            8.63      8.40    -0.24
+    cards in hand after the land drop, turn 4         5.85      5.76    -0.09
+    cards in hand after the land drop, turn 8         4.07      3.91    -0.16
+    wins by (current):  damage 91%, timeout 9%
+    wins by (swapped):  damage 92%, timeout 8%
+    eliminated by (current): Aurelia via combat 16.1%, Marwyn via combat 14.0%, Tergrid via combat 13.1%, Atraxa via combat 8.3%
+    eliminated by (swapped): Aurelia via combat 18.7%, Tergrid via combat 14.2%, Marwyn via combat 12.9%, Atraxa via combat 9.0%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cactarantula                          24.9      77.5         8.9     22.5       34.7      0.03
+    Penumbra Spider                       26.1      85.8         8.4     14.2       43.8      0.01
+    Paradise Druid                        25.2      88.5         6.7     11.5       31.8      0.01
+    Worldly Tutor                         24.8      82.7         7.2     17.3       34.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          28.0      84.3         9.7     15.7       45.8      0.01
+    Harmonize                             24.2      83.1         8.5     16.9       43.3      0.00
+    Tireless Tracker                      25.5      86.3         7.9     13.7       38.2      0.03
+    Environmental Scientist               25.8      92.2         7.1      7.8       37.4      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        27.8      27.2     -0.6
+    rounds survived                                  12.33     12.34    +0.01
+    eliminated, % of games                            70.9      71.0     +0.1
+    opponents it eliminated, per game                 0.73      0.67    -0.06
+    damage dealt, per game                            37.9      34.9     -3.0
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         2.1       3.3     +1.2
+      plan online by turn 6, %                        23.6      22.5     -1.1
+      plan online by turn 8, %                        39.9      38.7     -1.2
+      plan online by turn 12, %                       54.0      51.3     -2.7
+      plan online at all, %                           58.3      55.9     -2.4
+    commander resolved by turn 4, %                    9.0      10.5     +1.5
+    commander resolved by turn 6, %                   45.6      46.4     +0.8
+    commander removals, per game                      0.65      0.68    +0.04
+    lands on the battlefield, turn 4                  4.17      4.13    -0.03
+    lands on the battlefield, turn 8                  8.36      8.18    -0.18
+    mana available, turn 4                            4.54      4.54    +0.01
+    mana available, turn 8                            8.62      8.44    -0.17
+    cards in hand after the land drop, turn 4         5.85      5.74    -0.11
+    cards in hand after the land drop, turn 8         3.98      3.82    -0.16
+    wins by (current):  damage 89%, timeout 11%
+    wins by (swapped):  damage 90%, timeout 10%
+    eliminated by (current): Aurelia via combat 18.2%, Marwyn via combat 15.9%, Tergrid via combat 10.8%, Atraxa via combat 8.1%
+    eliminated by (swapped): Aurelia via combat 17.6%, Marwyn via combat 14.3%, Tergrid via combat 12.5%, Atraxa via combat 8.0%
+
+(1573s total)

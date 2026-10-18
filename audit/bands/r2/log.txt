@@ -1,0 +1,17 @@
+03:14 start sephfs
+03:17 done sephfs exit 0
+03:17 start yshtola
+03:20 done yshtola exit 0
+03:20 start kefka
+03:26 done kefka exit 0
+03:26 start kraum
+03:34 done kraum exit 0
+03:34 start sheoldred
+03:44 done sheoldred exit 0
+03:44 start seph
+03:55 done seph exit 0
+03:55 start kefka3
+04:00 done kefka3 exit 0
+04:00 start kraum3
+04:08 done kraum3 exit 0
+04:08 QUEUE DONE

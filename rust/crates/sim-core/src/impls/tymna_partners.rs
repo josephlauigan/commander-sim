@@ -75,6 +75,22 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         return base.max(66);
     }
+    if pl.key == "kraum" {
+        if t.has(Tag::Breach) && !d.creature {
+            return breach_prio(g, p);
+        }
+        if d.creature && g.registry.get(c).is_some_and(|h| h.live() && h.attack_tax.is_some()) {
+            // Baird: every creature that attacks you costs {1}; valued like the pillowfort cards, not as a vanilla body
+            let power: i32 = g
+                .opps(p)
+                .flat_map(|q| g.player(q).perms.iter().copied())
+                .filter(|&m| g.is_creature(m) && !g.perm(m).phased)
+                .map(|m| epow(g, m))
+                .sum();
+            let n = g.opps(p).count().max(1) as f64;
+            return base.max(55 + ((1.5 * power as f64 / n) as i32).min(25));
+        }
+    }
     if &*d.name == LAGRELLA {
         // its enters trigger exiles the best creature of every opponent; the compiled tags lack the `etb` tag the
         // generic priority needs for an enters-removal creature, so it was valued 0 and never cast
@@ -273,4 +289,26 @@ pub fn commander_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Opt
         Some(crate::hooks::Action::Ability { .. }) if o.label.starts_with("Thrasios:") => Some(i),
         _ => None,
     }
+}
+
+// ------------------------------------------------------------------ Underworld Breach (kraum seat)
+/// Underworld Breach for the kraum seat ({1}{R}, gone at the end step), so it is cast only when a card in the graveyard can be escaped
+/// with the mana that is left (its cost plus the {1}{R}), 4+ cards in the graveyard (the three exiled and the card itself).
+/// `generic_prio` gave it 0, so it sat in the hand in every game. The escape options are `breach_gc_options`.
+fn breach_prio(g: &Game, p: PlayerId) -> i32 {
+    if g.active != Some(p) {
+        return 0;
+    }
+    let ok = crate::ai::decks::breach_candidates(g, p, false).into_iter().any(|(_, c)| {
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        can_pay_r(g, p, cg, &cp)
+    });
+    if ok { 72 } else { 0 }
+}
+
+/// the {1}{R} for Breach plus the escape cost: a red source remains after paying `cp` (a rough check on colours)
+fn can_pay_r(g: &Game, p: PlayerId, cg: u32, cp: &str) -> bool {
+    let with_r = format!("{cp}R");
+    let cg = cg + 1; // Breach is {1}{R}
+    crate::engine::mana::can_pay(g, p, cg, &with_r, false)
 }

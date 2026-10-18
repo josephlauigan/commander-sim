@@ -45,7 +45,11 @@ impl Site {
         let cat = self.catalog()?;
         let names = catalog::commanders(&cat);
         let mut c = cat.as_object().cloned().unwrap_or_default();
-        c.insert("images".into(), json!(self.images.cached(&names)));
+        let mut images = self.images.cached(&names);
+        for m in self.images.cached_printed(&catalog::commander_printings(&self.data, &cat)).into_values() {
+            images.extend(m.into_iter().filter_map(|(n, copies)| copies.into_iter().next().map(|f| (n, f))));
+        }
+        c.insert("images".into(), json!(images));
         Ok(Value::Object(c))
     }
 

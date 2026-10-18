@@ -93,7 +93,8 @@ pub fn fetch_commanders(handle: &ServerHandle, data: &std::path::Path) {
     let (images, data) = (handle.hub.images.clone(), data.to_path_buf());
     let _ = std::thread::Builder::new().name("practice-commanders".into()).spawn(move || {
         if let Ok(cat) = crate::catalog::catalog(&data) {
-            let _ = images.prepare_online(&crate::catalog::commanders(&cat), &mut |_, _| {});
+            let prints = crate::catalog::commander_printings(&data, &cat);
+            let _ = images.prepare_online(&crate::catalog::commanders(&cat), &prints, &mut |_, _| {});
         }
     });
 }

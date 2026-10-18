@@ -773,16 +773,16 @@ mod tier_tests {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
         let want: [(&str, &[&str]); 13] = [
-            ("yshtola", &["t5"]),
-            ("seph", &["t4"]),
-            ("sheoldred", &["t3", "t4", "t5"]),
-            ("sauron", &["t3", "t4", "t5"]),
-            ("kefka", &["t3", "t4", "t5"]),
-            ("sephfs", &["t4", "t5"]),
-            ("veyran", &["t1", "t2", "t3", "t4"]),
-            ("cloud", &["t1", "t2"]),
-            ("kraum", &["t3"]), // JD 10/16: the goal is a solid tier-3 deck
-            ("titania", &["t2", "t3", "t4"]),
+            ("yshtola", &["t5"]), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
+            ("seph", &["t3", "t4"]),
+            ("sheoldred", &["t3", "t4"]),
+            ("sauron", &["t3", "t4"]),
+            ("kefka", &["t3"]),
+            ("sephfs", &["t5"]),
+            ("veyran", &["t1", "t2", "t3"]),
+            ("cloud", &["t1", "t2", "t3"]),
+            ("kraum", &["t5"]),
+            ("titania", &["t1", "t2", "t3"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),
             ("godo", &["t6"]),

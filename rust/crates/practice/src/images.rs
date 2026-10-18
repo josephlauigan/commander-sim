@@ -98,7 +98,45 @@ impl Images {
         lookup: &dyn Fn(Vec<Value>) -> Vec<Value>,
         download: &dyn Fn(&str, &Path) -> Result<(), String>,
     ) -> Result<BTreeMap<String, Vec<String>>, String> {
+        self.prepare_printed(names, &Printings::new(), progress, lookup, download).map(|r| r.0)
+    }
+
+    /// `prepare`, plus the exact printings of the decks that list them: those are looked up by set and collector
+    /// number (index key `print:<set>/<number>`), and a card with a printing needs no lookup by name. Also returns
+    /// `{deck key: {card name: [image files of each copy]}}`, for the copies whose images are on disk.
+    pub fn prepare_printed(
+        &self,
+        names: &[String],
+        printed: &Printings,
+        progress: &mut dyn FnMut(usize, usize),
+        lookup: &dyn Fn(Vec<Value>) -> Vec<Value>,
+        download: &dyn Fn(&str, &Path) -> Result<(), String>,
+    ) -> Result<(BTreeMap<String, Vec<String>>, SeatImages), String> {
         let mut idx = self.load_index();
+        let prints: BTreeSet<&String> = printed.values().flat_map(|m| m.values().flatten()).collect();
+        let missing: Vec<&&String> = prints.iter().filter(|p| !idx.contains_key(&print_key(p))).collect();
+        for batch in missing.chunks(75) {
+            let ids = batch
+                .iter()
+                .filter_map(|p| p.split_once('/'))
+                .map(|(set, num)| json!({"set": set, "collector_number": num}))
+                .collect();
+            for card in lookup(ids) {
+                if let (Some(set), Some(num)) = (card["set"].as_str(), card["collector_number"].as_str()) {
+                    idx.insert(print_key(&format!("{set}/{num}")), entry(&card));
+                }
+            }
+        }
+        // a card with a printing needs no lookup by name: its first printing stands in for it
+        for m in printed.values() {
+            for (n, ps) in m {
+                if !idx.contains_key(&key(n))
+                    && let Some(e) = ps.iter().find_map(|p| idx.get(&print_key(p))).cloned()
+                {
+                    idx.insert(key(n), e);
+                }
+            }
+        }
         let want: Vec<&String> = names.iter().filter(|n| !idx.contains_key(&key(n))).collect();
         for batch in want.chunks(75) {
             let ids = batch.iter().map(|n| json!({"name": n.split(" // ").next().unwrap_or("")})).collect();
@@ -146,8 +184,9 @@ impl Images {
                 entries.push((e["name"].as_str().unwrap_or("").to_string(), e));
             }
         }
+        let printed_entries: Vec<&Value> = prints.iter().filter_map(|p| idx.get(&print_key(p))).collect();
         let mut jobs: Vec<(String, String)> = vec![];
-        for (_, e) in &entries {
+        for e in entries.iter().map(|(_, e)| *e).chain(printed_entries) {
             for (u, f) in strings(Some(&e["urls"])).into_iter().zip(files_of(Some(e))) {
                 if !self.have(&f) && !jobs.iter().any(|j| j.1 == f) {
                     jobs.push((u, f));
@@ -168,16 +207,40 @@ impl Images {
                 out.entry(name).or_insert(have);
             }
         }
-        Ok(out)
+        Ok((out, self.cached_printed_in(&idx, printed)))
     }
 
-    /// `prepare` against Scryfall (or `PRACTICE_SCRYFALL`)
+    /// `prepare_printed` against Scryfall (or `PRACTICE_SCRYFALL`)
     pub fn prepare_online(
         &self,
         names: &[String],
+        printed: &Printings,
         progress: &mut dyn FnMut(usize, usize),
-    ) -> Result<BTreeMap<String, Vec<String>>, String> {
-        self.prepare(names, progress, &scryfall_lookup, &scryfall_download)
+    ) -> Result<(BTreeMap<String, Vec<String>>, SeatImages), String> {
+        self.prepare_printed(names, printed, progress, &scryfall_lookup, &scryfall_download)
+    }
+
+    /// `{deck key: {card name: [image files of each copy]}}` for the printings already on disk (no network)
+    pub fn cached_printed(&self, printed: &Printings) -> SeatImages {
+        self.cached_printed_in(&self.load_index(), printed)
+    }
+
+    fn cached_printed_in(&self, idx: &serde_json::Map<String, Value>, printed: &Printings) -> SeatImages {
+        let mut out = SeatImages::new();
+        for (deck, m) in printed {
+            for (n, ps) in m {
+                let copies: Vec<Vec<String>> = ps
+                    .iter()
+                    .filter_map(|p| idx.get(&print_key(p)))
+                    .map(|e| files_of(Some(e)).into_iter().filter(|f| self.have(f)).collect::<Vec<_>>())
+                    .filter(|f| !f.is_empty())
+                    .collect();
+                if !copies.is_empty() {
+                    out.entry(deck.clone()).or_default().insert(n.clone(), copies);
+                }
+            }
+        }
+        out
     }
 
     /// the creature tokens the cards in `names` can make, from the image index (empty when the images haven't been
@@ -205,6 +268,35 @@ impl Images {
         }
         out
     }
+}
+
+/// deck key -> card name -> the printing of each copy ("set/number"), from `data/printings/<key>.txt`
+pub type Printings = BTreeMap<String, BTreeMap<String, Vec<String>>>;
+/// deck key -> card name -> the image files of each copy
+pub type SeatImages = BTreeMap<String, BTreeMap<String, Vec<Vec<String>>>>;
+
+fn print_key(p: &str) -> String {
+    format!("print:{}", p.to_lowercase())
+}
+
+/// the printings of these decks: `data/printings/<key>.txt`, lines like "6 Island (mdd) 294" (written by
+/// `cardgen deck` from a list with set codes); a deck without the file shows Scryfall's usual printing
+pub fn load_printings(data: &Path, keys: &[String]) -> Printings {
+    let mut out = Printings::new();
+    for k in keys {
+        let Ok(text) = std::fs::read_to_string(data.join("printings").join(format!("{k}.txt"))) else { continue };
+        let deck = out.entry(k.clone()).or_default();
+        for line in text.lines() {
+            let Some((count, rest)) = line.trim().split_once(' ') else { continue };
+            let Some(at) = rest.rfind(" (") else { continue };
+            let Some((set, num)) = rest[at + 2..].split_once(") ") else { continue };
+            let copies = deck.entry(rest[..at].to_string()).or_default();
+            for _ in 0..count.parse::<usize>().unwrap_or(1) {
+                copies.push(format!("{set}/{}", num.trim()));
+            }
+        }
+    }
+    out
 }
 
 /// every card name in the decks of a game: `(key, cards, commander)` seat specs
@@ -330,6 +422,49 @@ mod tests {
         let kinds = im.token_kinds(&names);
         assert_eq!(kinds, vec![json!({"name": "Soldier", "power": 1, "toughness": 1, "colors": "W", "flying": true})]);
         let _ = std::fs::remove_dir_all(&im.dir);
+    }
+
+    #[test]
+    fn printings_are_fetched_by_set_and_number_per_deck() {
+        let im = Images::new(temp("p").join("images"));
+        let data = im.dir.parent().unwrap().to_path_buf();
+        std::fs::create_dir_all(data.join("printings")).unwrap();
+        std::fs::write(data.join("printings/a.txt"), "1 Sol Ring (sld) 2093\n2 Plains (bro) 268\n1 Plains (dom) 252\n")
+            .unwrap();
+        std::fs::write(data.join("printings/b.txt"), "1 Sol Ring (fic) 356\n").unwrap();
+        let printed = load_printings(&data, &["a".to_string(), "b".to_string(), "c".to_string()]);
+        assert_eq!(printed["a"]["Plains"], ["bro/268", "bro/268", "dom/252"]);
+        assert!(!printed.contains_key("c"));
+        let by_name = Mutex::new(vec![]);
+        let lookup = |ids: Vec<Value>| -> Vec<Value> {
+            ids.iter()
+                .filter_map(|i| {
+                    if let Some(n) = i["name"].as_str() {
+                        by_name.lock().unwrap().push(n.to_string());
+                        return (n == "Island").then(|| card("Island", "isl"));
+                    }
+                    let (set, num) = (i["set"].as_str()?, i["collector_number"].as_str()?);
+                    let id = format!("{set}{num}");
+                    let mut c = card(if set == "sld" || set == "fic" { "Sol Ring" } else { "Plains" }, &id);
+                    c["set"] = set.into();
+                    c["collector_number"] = num.into();
+                    c["all_parts"] = json!([]);
+                    Some(c)
+                })
+                .collect()
+        };
+        let download = |_: &str, p: &Path| std::fs::write(p, b"jpg").map_err(|e| e.to_string());
+        let names: Vec<String> = ["Sol Ring", "Plains", "Island"].map(String::from).to_vec();
+        let (got, seats) = im.prepare_printed(&names, &printed, &mut |_, _| {}, &lookup, &download).unwrap();
+        // only the card without a printing is looked up by name
+        assert_eq!(*by_name.lock().unwrap(), ["Island"]);
+        assert_eq!(seats["a"]["Sol Ring"], [["sld2093.jpg"]]);
+        assert_eq!(seats["b"]["Sol Ring"], [["fic356.jpg"]]);
+        assert_eq!(seats["a"]["Plains"], [["bro268.jpg"], ["bro268.jpg"], ["dom252.jpg"]]);
+        assert_eq!(got["Island"], ["isl.jpg"]);
+        assert!(got.contains_key("Sol Ring")); // a printing stands in for the name
+        assert_eq!(im.cached_printed(&printed), seats);
+        let _ = std::fs::remove_dir_all(&data);
     }
 
     #[test]

@@ -2,7 +2,7 @@
 
 A mono-black deck that makes the whole table draw cards while Sheoldred, the Apocalypse punishes every one of them. It
 wins by draining: three opponents' draw steps cost them 6 life a round with Sheoldred out, more with Underworld Dreams
-and Fate Unraveler beside her, and Exsanguinate, Gray Merchant of Asphodel and Peer into the Abyss close the game. It
+and Fate Unraveler beside her, and Exsanguinate and Peer into the Abyss close the game. It
 is weak when Sheoldred is exiled or keeps getting removed, and when the symmetric draw cards are played with no
 punisher out, because they then just refuel the table.
 
@@ -28,7 +28,7 @@ bring her back (see "Protect her") before you start making the table draw.
   Artist, Phyrexian Rager, Vault Plunderer). **Underworld Dreams** ({B}{B}{B}) is a fine turn-3 play on its own: every
   card an opponent draws costs them 1.
 - **Turns 4-6:** Sheoldred on turn 3 or 4. Once she is out, equip protection first, then start the draw engines.
-- **Late game:** keep the engines running, drain with the creatures, and finish with Exsanguinate, Gray Merchant or
+- **Late game:** keep the engines running, drain with the creatures, and finish with Exsanguinate or
   Peer into the Abyss. If Sheoldred dies, recast her, or return her with Phyrexian Delver (see "Recursion").
 
 ### Punish their draws
@@ -71,9 +71,11 @@ above what the table could swing for. The cards are put into your hand, not draw
 from them. The deck's low curve (average mana value under 3) makes it cheap: about 2–3 life a card.
 
 ### Finishers
-**Exsanguinate** (X life from each opponent, you gain it) and **Gray Merchant of Asphodel** (drain by devotion to black;
-Sheoldred, Underworld Dreams, Fate Unraveler, Seizan and Phyrexian Arena all add black pips) are the plain kills.
-**Peer into the Abyss** is the draw-based kill.
+**Exsanguinate** (X life from each opponent, you gain it) is the plain kill. **Peer into the Abyss** is the draw-based
+kill. **Necrosquito** ({3}{B}, flying) is a body that grows into a finisher: it enters with two oil counters (a 2/2) and
+gets an oil counter, so +1/+1, whenever another creature or artifact you control goes to the graveyard. Carnage Altar,
+Deadly Dispute, the sacrifice-cost removal, chump blocks and your own Treasures and rocks all feed it, and it flies over
+the table's blockers.
 
 ### Protect her
 - **Swiftfoot Boots** (hexproof and haste, equip {1}) and **Darksteel Plate** (indestructible, equip {2}): equip one
@@ -104,13 +106,13 @@ loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery.
 
 ### Drain creatures
 **Blood Artist**, **Al Bhed Salvagers**, **Sneering Shadewriter** (drain 2 on entering) and **Screeching Soulbreaker**
-(drain 1 each attack) keep the pressure on when Sheoldred is gone, and each adds to Gray Merchant's devotion.
+(drain 1 each attack) keep the pressure on when Sheoldred is gone.
 **Fetid Imp** and **Burrog Banemaker** are deathtouch blockers that protect the life total. **Undercity Dire Rat** is a
 cheap body that leaves a Treasure.
 
 ### Recursion
 **Phyrexian Delver** returns a creature card from your graveyard (you lose life equal to its mana value): Sheoldred
-if she died, Gray Merchant for a second drain. It also triggers **Soul Enervation**, which drains 1 whenever creature
+if she died, Sneering Shadewriter for a second drain. It also triggers **Soul Enervation**, which drains 1 whenever creature
 cards leave your graveyard. Keep it for Sheoldred.
 
 ### Ramp
@@ -122,7 +124,7 @@ five- and four-mana artifacts you cast once the rocks are out.
 - **The slow drain.** Sheoldred plus Howling Mine, Seizan and the end-step engines drains each of three opponents every round; with Underworld Dreams and Fate Unraveler out it is faster.
 - **The burst.** Memory Jar with Sheoldred out is 14 life to each opponent at once. Peer into the Abyss on one
   opponent with Sheoldred out is lethal on its own. Exsanguinate for X is the table-wide finish.
-- **Gray Merchant** after a few permanents are out is a large drain and a large lifegain.
+- **Necrosquito** with a few sacrifices behind it is a large flier that attacks over the table's blockers.
 
 ### Weak spots and how to play around them
 - **Exile, bounce and repeated removal on Sheoldred.** Play around it with Swiftfoot Boots and hold a protection spell;
@@ -132,7 +134,7 @@ five- and four-mana artifacts you cast once the rocks are out.
   a punisher is out and kill that deck first.
 - **Big creature decks.** Use the cheap deathtouch blockers (Fetid Imp, Burrog Banemaker) and the removal; save Overkill
   and Wander Off for the biggest threat.
-- **Lifegain decks.** The drain is slower against them; push Gray Merchant and Exsanguinate for the last points.
+- **Lifegain decks.** The drain is slower against them; push Exsanguinate and the drain creatures for the last points.
 
 ## Key lines
 
@@ -168,7 +170,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
 
-**Creatures (22).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Melancholic Poet, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
+**Creatures (22).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Leech Collector // Bloodletting, Melancholic Poet, Necrosquito, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
 
 **Enchantments (3).** Phyrexian Arena, Soul Enervation, Underworld Dreams
 
@@ -208,7 +210,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Foolish Fate
 1 Geier Reach Sanitarium
 1 Gix, Yawgmoth Praetor
-1 Gray Merchant of Asphodel
 1 Howling Mine
 1 Invoke Despair
 1 Last Gasp
@@ -219,6 +220,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Memory Jar
 1 Mikokoro, Center of the Sea
 1 Mind Stone
+1 Necrosquito
 1 Otherworld Atlas
 1 Overkill
 1 Painful Lesson

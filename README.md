@@ -124,7 +124,8 @@ matches this tree, so leave it until the shell works.
 opponents (three drawn at random, or pick three), your seat, how much the opponents interact (loose or
 conservative), the opponent AI, and a seed. *Opponent AI*: look-ahead is the stronger opponent but thinks for a few
 seconds at its decisions; adaptive is much faster. The first game with a set of decks downloads their card images
-from Scryfall (about a minute, once); after that they load from `data/images/`.
+from Scryfall (about a minute, once); after that they load from `data/images/`. Your decks show the exact printings
+in `data/printings/<deck>.txt` (set and collector number of every copy); other decks show Scryfall's usual printing.
 
 **Your turn.** Click the table:
 - a land or mana rock taps it for mana (a menu asks for the colour when it makes several); click a land you just
@@ -220,6 +221,10 @@ cardgen deck sauron -                         # or paste the list, then Ctrl-D
 cardgen deck sauron new-list.txt --log "Why." # also add an "Updated <date>" line
 cardgen export                                # then rebuild the card data
 ```
+
+When the pasted list has set codes and collector numbers (`1x Sol Ring (sld) 2093 *F*`, as Moxfield, Archidekt and
+ManaBox export it), `cardgen deck` also writes them to `data/printings/<deck>.txt` for your decks, even if no card
+changed, so practice mode shows those exact cards. The simulations use only the names.
 
 It checks the list first (100 cards, singleton, colour identity, bans, every name found on Scryfall) and changes
 nothing if there is a problem. Then it rewrites the `## Import list` and `## Decklist by type` sections and

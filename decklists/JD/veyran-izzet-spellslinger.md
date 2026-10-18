@@ -9,7 +9,7 @@ chain starts.
 | | |
 |---|---|
 | **Commander** | Veyran, Voice of Duality ({1}{U}{R}, 2/2, blue-red) |
-| **Bracket** | 3 (no Game Changers) |
+| **Bracket** | 3 (2 Game Changers: Consecrated Sphinx, Mystical Tutor) |
 | **Simulator** | deck key `veyran`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -42,7 +42,7 @@ Five token makers trigger when you cast an instant or sorcery, and Veyran double
 - **Third Path Iconoclast** ({U}{R}): a 1/1 Soldier artifact creature. It triggers on any noncreature spell, but only instants and sorceries are doubled.
 - **Talrand, Sky Summoner** ({2}{U}{U}): a 2/2 flying Drake. It's a Wizard, so Harmonic Prodigy adds a third.
 - **Murmuring Mystic** ({3}{U}): a 1/1 flying Bird Illusion. It's a Wizard, so Harmonic Prodigy adds a third.
-- **Docent of Perfection** ({3}{U}{U}, 5/4 flier): a 1/1 Wizard. Once you control three Wizards it transforms into **Final Iteration**, which gives your Wizards +2/+1 and flying, so the Wizard tokens become 3/2 fliers. The Wizards you already have (Talrand, Murmuring Mystic, Archmage Emeritus, Flux Channeler, Alania, Venser, Harmonic Prodigy and the Emeritus creatures) count.
+- **Docent of Perfection** ({3}{U}{U}, 5/4 flier): a 1/1 Wizard. Once you control three Wizards it transforms into **Final Iteration**, which gives your Wizards +2/+1 and flying, so the Wizard tokens become 3/2 fliers. The Wizards you already have (Talrand, Murmuring Mystic, Archmage Emeritus, Flux Channeler, Alania, Harmonic Prodigy and the Emeritus creatures) count.
 - **Rite of the Dragoncaller** (an enchantment) makes a 5/5 flying Dragon for each instant or sorcery, doubled by Veyran.
 
 With one of these out, a four-spell turn leaves eight tokens. The token makers keep working when Veyran is gone, just at half strength. On turns you can't go off, cheap spells build a board you can attack with. Tokens are poor blockers in practice: they are often tapped or not yet on the board when the big attack comes, so don't count on them to protect Veyran.
@@ -63,7 +63,7 @@ With one of these out, a four-spell turn leaves eight tokens. The token makers k
 
 **Thousand-Year Storm** copies each instant or sorcery once for every other one you've cast before it this turn. Copies trigger magecraft (and Veyran doubles those) but aren't casts, so they don't trigger Guttersnipe, Kessig, Parun, or the token makers. Storm-Kiln Artist's magecraft does see them. The fourth spell of a turn becomes four spells' worth of magecraft.
 
-**Alania, Divergent Storm copies the first instant and the first sorcery you cast each turn** (yours and opponents' turns alike), if you have a target opponent draw a card for each copy. Each copy is optional, so take only the ones worth a card. Casting the spell is what triggers Alania, so **Veyran makes it trigger twice**, and Alania is a Wizard, so **Harmonic Prodigy adds a third**: with both out, your first instant and first sorcery each resolve up to four times. Like Thousand-Year Storm's, the copies trigger magecraft (Archmage Emeritus draws, Veyran grows) but aren't casts, so Guttersnipe, Kessig, Parun and the token makers see only the original, while Storm-Kiln Artist makes a Treasure for each copy. The best first spells: Ancestral Recall, Expressive Iteration, Seething Song (each copy is another five red), Crackle with Power (copies keep X), Evacuation, and Lightning Bolt. A copied counterspell is rarely worth a card. Spells cast before Alania landed still count: if your first instant this turn came before Alania, the next one isn't copied.
+**Alania, Divergent Storm copies the first instant and the first sorcery you cast each turn** (yours and opponents' turns alike), if you have a target opponent draw a card for each copy. Each copy is optional, so take only the ones worth a card. Casting the spell is what triggers Alania, so **Veyran makes it trigger twice**, and Alania is a Wizard, so **Harmonic Prodigy adds a third**: with both out, your first instant and first sorcery each resolve up to four times. Like Thousand-Year Storm's, the copies trigger magecraft (Archmage Emeritus draws, Veyran grows) but aren't casts, so Guttersnipe, Kessig, Parun and the token makers see only the original, while Storm-Kiln Artist makes a Treasure for each copy. The best first spells: Ancestral Recall, Expressive Iteration, Seething Song (each copy is another five red), Crackle with Power (copies keep X), and Lightning Bolt. A copied counterspell is rarely worth a card. Spells cast before Alania landed still count: if your first instant this turn came before Alania, the next one isn't copied.
 
 **Mizzix's Mastery** copies an instant or sorcery from your graveyard and casts it free (so Veyran sees a cast): the single-card blowout on River's Rebuke or a large Crackle with Power. **Flashback** gives an instant or sorcery in your graveyard flashback for its mana cost.
 
@@ -73,15 +73,15 @@ With one of these out, a four-spell turn leaves eight tokens. The token makers k
 - **Triple Triad** ({3}{R}{R}{R}) gives a free card every upkeep: each player exiles their top card, and you may play yours and every exiled card with lower mana value free. Free instants and sorceries are still cast, so they trigger Veyran and the magecraft cards.
 - **Spell Pierce** ({U}) counters a noncreature spell unless its controller pays {2}: a cheap answer to the removal spell aimed at Veyran, or the counter aimed at your big turn.
 - **Old Fat Spider Can't See Me** (a Saga) gives a creature of yours hexproof while it stays (chapter I), later prevents a creature's damage, and draws two cards on chapters III and IV.
-- **Unsummon**, **Banishing Betrayal** and **Venser, Shaper Savant** can save your own creature from removal by returning it to your hand (Venser returns a spell or a permanent), and **Counterspell**, **An Offer You Can't Refuse** and **Mystic Confluence** stop the removal itself.
+- **Unsummon** and **Banishing Betrayal** can save your own creature from removal by returning it to your hand, and **Counterspell**, **An Offer You Can't Refuse** and **Mystic Confluence** stop the removal itself.
 
 ### Protecting yourself from creature decks
 
-**Propaganda taxes the attacks on you.** Each creature that attacks you costs its controller {2}. The deck's losses come mostly from decks full of creatures, and the tokens rarely protect you because they aren't on the board when the big attack comes. Propaganda works from the turn it lands and doesn't affect your own attacks. Cast it early when a creature deck is across the table. It's an enchantment, so no tutor in the deck finds it. **Evacuation** (every creature back to its owner's hand), **Blasphemous Act** (13 damage to each creature) and **Splatter Technique** (4 damage to each creature and planeswalker) reset the board; **River's Rebuke** returns all of one player's nonland permanents.
+**Propaganda taxes the attacks on you.** Each creature that attacks you costs its controller {2}. The deck's losses come mostly from decks full of creatures, and the tokens rarely protect you because they aren't on the board when the big attack comes. Propaganda works from the turn it lands and doesn't affect your own attacks. Cast it early when a creature deck is across the table. It's an enchantment, so no tutor in the deck finds it. **Blasphemous Act** (13 damage to each creature) and **Splatter Technique** (4 damage to each creature and planeswalker) reset the board; **River's Rebuke** returns all of one player's nonland permanents.
 
 ### Interaction and burn
 
-- **Five ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Venser, Spell Pierce and Mystic Confluence (counter unless its controller pays {3}, bounce a creature, or draw: choose three).
+- **Four ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Spell Pierce and Mystic Confluence (counter unless its controller pays {3}, bounce a creature, or draw: choose three).
 - **Spot removal:** Abrade (3 damage to a creature, or destroy an artifact), Burst Lightning, Lightning Bolt, Lightning Strike, Vibrant Outburst (3 damage and a tap), Chaos Warp, Banishing Betrayal and Prismari Charm.
 - **Unsummon**: a one-mana bounce that also saves one of your own creatures.
 
@@ -90,8 +90,9 @@ Every one is also a magecraft trigger, so expect to hold up mana less often and 
 ### Other cards
 
 - **Eris, Roar of the Storm** is the reward for a full graveyard: it costs {2} less per *different* mana value among instants and sorceries there. It is a 4/4 flier with prowess, and whenever you cast your second spell each turn it makes a 4/4 flying Dragon Elemental. 
+- **Consecrated Sphinx** ({4}{U}{U}, 4/6 flier) draws you two cards whenever an opponent draws a card, so every opponent draw step is a free refill, and each of those cards is a draw for Niv-Mizzet, Parun to ping. It is a body to protect, not a combo piece, and its draw trigger is not an instant or sorcery cast, so Veyran does not double it.
 - **Flux Channeler** is a small Wizard with a proliferate trigger: whenever you cast a noncreature spell, it proliferates (add another counter of each kind already on permanents and players you choose, such as Ral's loyalty). It counts toward Docent's three Wizards and is a cheap body.
-- **Imperial Recruiter**, **Solve the Equation** and **Fabricate** are the tutors (see the section below).
+- **Imperial Recruiter**, **Solve the Equation**, **Fabricate** and **Mystical Tutor** are the tutors (see the section below).
 - **Cantrips** keep the chain going and fill the graveyard: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws and Visions of Beyond.
 - **Emeritus of Ideation // Ancestral Recall** and **Emeritus of Conflict // Lightning Bolt** are creatures with a prepared spell on the back (see Mana and consistency).
 
@@ -105,7 +106,7 @@ Every one is also a magecraft trigger, so expect to hold up mana less often and 
 
 ### Weak spots and how to play around them
 
-- **Creature decks.** The deck loses most to decks that attack with many creatures. Land Propaganda early, hold Evacuation or Blasphemous Act, and keep the cheap interaction for the biggest attacker.
+- **Creature decks.** The deck loses most to decks that attack with many creatures. Land Propaganda early, hold Blasphemous Act, and keep the cheap interaction for the biggest attacker.
 - **Board wipes.** The tokens die to them. Rebuild with the next few spells, and keep Spell Pierce up for the wipe when you can.
 - **Veyran removed.** Put Lightning Greaves down before or with Veyran, not after he has already eaten removal, and keep the engines that don't need him in play.
 - **Graveyard hate.** Eris, Mizzix's Mastery, Emeritus of Ideation and Flashback all want the graveyard. If an opponent exiles it, lean on the pingers, the token makers and the cards in hand instead.
@@ -129,7 +130,7 @@ Every one is also a magecraft trigger, so expect to hold up mana less often and 
 
 ## Tutor targets by board state
 
-Three tutors, each pointing somewhere different. **Solve the Equation only finds instants and sorceries**, **Fabricate finds artifacts**, and **Imperial Recruiter finds a creature with power 2 or less**. (Mizzix's Mastery is the graveyard rebuy.) Sanar's prepared spell, Wild Idea, is a fourth, for an instant or sorcery.
+Four tutors, each pointing somewhere different. **Solve the Equation only finds instants and sorceries**, **Fabricate finds artifacts**, **Imperial Recruiter finds a creature with power 2 or less**, and **Mystical Tutor finds an instant or sorcery** for {U} (it goes on top of the library). (Mizzix's Mastery is the graveyard rebuy.) Sanar's prepared spell, Wild Idea, is a fifth, for an instant or sorcery.
 
 - **Need a damage engine → Imperial Recruiter for Guttersnipe or Kessig Flamebreather.** Or Harmonic Prodigy when a Niv-Mizzet, Talrand or a Shaman engine is already out.
 - **Need a board → Imperial Recruiter for Talrand or Young Pyromancer.**
@@ -138,11 +139,11 @@ Three tutors, each pointing somewhere different. **Solve the Equation only finds
 - **Veyran keeps dying → Fabricate for Lightning Greaves**, or Solve the Equation for Spell Pierce.
 - **A creature deck is attacking you → cast Propaganda early.** It's an enchantment, so no tutor here finds it.
 - **Setting up a finish → Fabricate for Aetherflux Reservoir** before the long turn.
-- **Need to protect a big turn → Solve the Equation for a counter.**
+- **Need to protect a big turn → Solve the Equation for a counter** (or Mystical Tutor for it, a turn slower, at one mana).
 - **Need reach to close → Solve the Equation for Crackle with Power**, or **Mizzix's Mastery** to recast River's Rebuke or a big Crackle from the yard.
 - **Mana-screwed → Fabricate for Sol Ring or Fellwar Stone.**
 
-Timing note: **Solve the Equation puts the card into your hand**, so you can cast it the same turn. Venser can bounce Imperial Recruiter to your hand for a second search.
+Timing note: **Solve the Equation puts the card into your hand**, so you can cast it the same turn. **Mystical Tutor** puts the instant or sorcery on top of your library instead, so you draw it next (a cantrip or Archmage Emeritus can draw it the same turn).
 
 ## Mana and consistency
 
@@ -159,25 +160,25 @@ The list is exactly 100 cards.
 | Always enter tapped | 4 | Coastal Peak, Temple of Epiphany, Path of Ancestry, Spectacle Summit |
 | Sometimes enter tapped | 3 | Scorched Geyser, Mistrise Village, Mystic Sanctuary |
 
-**Curve pressure.** Niv-Mizzet, Parun, Thousand-Year Storm, Fiery Emancipation, Triple Triad and Rite of the Dragoncaller cost six (Parun is {U}{U}{U}{R}{R}{R}), and Alania, Docent of Perfection, Emeritus of Ideation, Mystic Confluence, Evacuation and Splatter Technique cost five. Parun's triple-pip cost in both colours is the hardest cast in the list. The cheap engines are Young Pyromancer, Third Path Iconoclast, Guttersnipe, Kessig Flamebreather and Harmonic Prodigy (two or three mana each), and the deck has only three rocks, so a cheap body or a rock matters more than a fifth six-drop.
+**Curve pressure.** Niv-Mizzet, Parun, Thousand-Year Storm, Fiery Emancipation, Triple Triad, Consecrated Sphinx and Rite of the Dragoncaller cost six (Parun is {U}{U}{U}{R}{R}{R}), and Alania, Docent of Perfection, Emeritus of Ideation, Mystic Confluence and Splatter Technique cost five. Parun's triple-pip cost in both colours is the hardest cast in the list. The cheap engines are Young Pyromancer, Third Path Iconoclast, Guttersnipe, Kessig Flamebreather and Harmonic Prodigy (two or three mana each), and the deck has only three rocks, so a cheap body or a rock matters more than another six-drop.
 
 **Spell density.** 32 instants and sorceries (21 instants, 11 sorceries), plus four prepare cards whose backs are castable spells: Emeritus of Ideation // Ancestral Recall, Emeritus of Conflict // Lightning Bolt, Blazing Firesinger // Seething Song, Sanar // Wild Idea.
 
 **Finding cards.** Archmage Emeritus and Niv-Mizzet, Parun are repeatable draw; Mystic Confluence (draw three at an opponent's end step) and Splatter Technique (draw four) refill, and Alania's copies of a cantrip draw again. Cantrips: Think Twice, Deduce, Quick Study, Dreams of Laguna, Light Up the Stage, Expressive Iteration, Flow State, Stock Up, Plunder the Trollshaws, and **Visions of Beyond** (draws three instead of one once any graveyard has twenty cards). Desolate Lighthouse and Mystic Sanctuary (puts a spell from the graveyard on top of the library) also help.
 
-**Interaction.** Five ways to stop a spell, eight pieces of spot removal, Unsummon, and four resets: Blasphemous Act, River's Rebuke, Evacuation and Splatter Technique.
+**Interaction.** Four ways to stop a spell, eight pieces of spot removal, Unsummon, and three resets: Blasphemous Act, River's Rebuke and Splatter Technique.
 
 **Redundancy.** Three recurring damage-on-cast sources (Guttersnipe, Kessig Flamebreather, Ral), a draw-to-damage Niv-Mizzet, and five token makers. Losing Veyran or any one engine doesn't turn the deck off.
 
 ## Bracket and Rule 0
 
-Bracket 3 with **no** Game Changers. Up to three Game Changers fit Bracket 3; a fourth moves the deck to Bracket 4. Flux Channeler, Imperial Recruiter, Thousand-Year Storm, Niv-Mizzet, Parun, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation and Propaganda are all off-list.
+Bracket 3 with two Game Changers: **Consecrated Sphinx** and **Mystical Tutor**. Up to three Game Changers fit Bracket 3; a fourth moves the deck to Bracket 4. Flux Channeler, Imperial Recruiter, Thousand-Year Storm, Niv-Mizzet, Parun, Ral, Storm Conduit, Aetherflux Reservoir, Fiery Emancipation and Propaganda are all off-list.
 
 **No two-card combo.** The deck produces large, non-infinite turns.
 
 Disclose before the game:
 
-- There are no Game Changers in the deck.
+- **Consecrated Sphinx** and **Mystical Tutor** (the Game Changers).
 - **Aetherflux Reservoir** as a 50-damage finisher after a long turn.
 - **Thousand-Year Storm** and the pinger suite, which can turn one turn into a lot of damage to each opponent.
 - **Fiery Emancipation**, which triples all of your damage (a Guttersnipe with Veyran out deals 12 to each opponent per spell).
@@ -190,13 +191,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** Ral Storm Conduit
 
-**Creatures (21).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Docent of Perfection // Final Iteration, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Flux Channeler, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Sanar Unfinished Genius // Wild Idea, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Thor Asgard's Avenger, Venser Shaper Savant, Young Pyromancer
+**Creatures (21).** Alania Divergent Storm, Archmage Emeritus, Blazing Firesinger // Seething Song, Consecrated Sphinx, Docent of Perfection // Final Iteration, Emeritus of Conflict // Lightning Bolt, Emeritus of Ideation // Ancestral Recall, Eris Roar of the Storm, Flux Channeler, Guttersnipe, Harmonic Prodigy, Imperial Recruiter, Kessig Flamebreather, Murmuring Mystic, Niv-Mizzet Parun, Sanar Unfinished Genius // Wild Idea, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Thor Asgard's Avenger, Young Pyromancer
 
 **Artifacts (5).** Aetherflux Reservoir, Arcane Signet, Fellwar Stone, Lightning Greaves, Sol Ring
 
 **Enchantments (6).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm, Triple Triad
 
-**Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Evacuation, Flashback, Lightning Bolt, Lightning Strike, Mystic Confluence, Plunder the Trollshaws, Prismari Charm, Quick Study, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
+**Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Flashback, Lightning Bolt, Lightning Strike, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Prismari Charm, Quick Study, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst, Visions of Beyond
 
 **Sorceries (11).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Splatter Technique, Stock Up
 
@@ -219,6 +220,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Chaos Warp
 1 Coastal Peak
 1 Command Tower
+1 Consecrated Sphinx
 1 Counterspell
 1 Crackle with Power
 1 Deduce
@@ -228,7 +230,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Emeritus of Conflict // Lightning Bolt
 1 Emeritus of Ideation // Ancestral Recall
 1 Eris, Roar of the Storm
-1 Evacuation
 1 Evolving Wilds
 1 Exotic Orchard
 1 Expressive Iteration
@@ -251,6 +252,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Murmuring Mystic
 1 Mystic Confluence
 1 Mystic Sanctuary
+1 Mystical Tutor
 1 Niv-Mizzet, Parun
 1 Old Fat Spider Can't See Me
 1 Path of Ancestry
@@ -281,7 +283,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Thousand-Year Storm
 1 Triple Triad
 1 Unsummon
-1 Venser, Shaper Savant
 1 Veyran, Voice of Duality
 1 Vibrant Outburst
 1 Visions of Beyond

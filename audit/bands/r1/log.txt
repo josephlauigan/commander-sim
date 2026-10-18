@@ -1,0 +1,22 @@
+01:22 start sephfs
+01:25 done sephfs exit 0
+01:25 start yshtola
+01:28 done yshtola exit 0
+01:28 start seph
+01:39 done seph exit 0
+01:39 start sauron
+01:42 binary switched to Worldly/Mystical prio fix (jobs from kefka on use it; sephfs, yshtola, seph, sauron ran on the old one)
+01:49 done sauron exit 0
+01:49 start kefka
+01:55 done kefka exit 0
+01:55 start kraum
+02:03 done kraum exit 0
+02:03 start titania
+02:29 done titania exit 0
+02:29 start veyran
+02:53 done veyran exit 0
+02:53 start sheoldred
+02:58 done sheoldred exit 0
+02:58 start cloud
+03:14 done cloud exit 0
+03:14 QUEUE DONE

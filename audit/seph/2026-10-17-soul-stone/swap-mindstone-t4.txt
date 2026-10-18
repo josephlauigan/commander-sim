@@ -1,0 +1,145 @@
+Model status of the swapped-in cards (cardgen audit):
+  The Soul Stone: Full (indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or the cheapest creature) at instant speed once a creature worth returning is in the graveyard; then returns the best creature card every upkeep)
+
+6,000 games (current list and the swapped one, 1,500 per list per tier, profiles conservative and loose), lookahead AI, 6 worker threads: about 50 minutes
+  progress  10.0%  2m56s elapsed, ~26m24s left
+  progress  20.0%  5m22s elapsed, ~21m29s left
+  progress  30.0%  7m55s elapsed, ~18m28s left
+  progress  40.0%  10m41s elapsed, ~16m02s left
+  progress  50.0%  12m58s elapsed, ~12m58s left
+  progress  60.0%  15m44s elapsed, ~10m29s left
+  progress  70.0%  18m02s elapsed, ~7m43s left
+  progress  80.0%  20m37s elapsed, ~5m09s left
+  progress  90.0%  23m16s elapsed, ~2m35s left
+  progress 100.0%  25m31s elapsed, ~0m00s left
+Swaps: Mind Stone -> The Soul Stone
+
+=== Sephiroth vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  28.1% ->  29.1%  (delta +1.0 pts, noise ±2.5, paired)   n=1500
+               eliminated by (variant): Yuriko 17.8%  Heliod 17.2%  Prosper 9.5%  Chulane 10.4%  Krenko 15.9%
+[loose       ] win  28.9% ->  28.5%  (delta -0.5 pts, noise ±2.4, paired)   n=1500
+               eliminated by (variant): Yuriko 17.9%  Heliod 18.1%  Prosper 9.1%  Chulane 9.9%  Krenko 16.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          28.1% ->  29.1%  +1.0pt   ±3.3     28.9% ->  28.5%  -0.5pt   ±3.3 
+    Rounds survived (or game length)                   9.98 ->   9.95   -0.04  ±0.24      9.86 ->   9.95   +0.08  ±0.24 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.03      0.07 ->   0.07   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.59 ->   0.59   +0.00  ±0.06      0.58 ->   0.59   +0.01  ±0.06 
+    Mana available on your turn 4                      4.15 ->   4.14   -0.00  ±0.08      4.16 ->   4.15   -0.00  ±0.08 
+    Mana available on your turn 6                      5.64 ->   5.63   -0.01  ±0.12      5.68 ->   5.68   -0.00  ±0.12 
+
+  Speed
+    Games where the game plan came online             71.3% ->  71.2%  -0.1pt   ±3.3     69.9% ->  70.3%  +0.4pt   ±3.3 
+    Turn the game plan came online                     6.59 ->   6.49   -0.09  ±0.18      6.44 ->   6.52   +0.07  ±0.17 
+    Turn the commander first resolved                  8.45 ->   8.35   -0.09  ±0.24      8.29 ->   8.38   +0.10  ±0.24 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.58 ->  13.57   -0.01  ±0.72     13.56 ->  13.71   +0.15  ±0.71 
+    Tutors resolved per game                           0.42 ->   0.41   -0.01  ±0.04      0.40 ->   0.40   +0.00  ±0.04 
+    Spells cast per game                              10.40 ->  10.48   +0.08  ±0.52     10.26 ->  10.35   +0.09  ±0.53 
+
+  Interaction
+    Counterspells cast                                 0.35 ->   0.35   +0.00  ±0.04      0.34 ->   0.34   -0.01  ±0.04 
+    Spot removal cast                                  0.87 ->   0.89   +0.02  ±0.07      0.86 ->   0.89   +0.03  ±0.07 
+    Board wipes cast                                   0.26 ->   0.26   -0.00  ±0.04      0.25 ->   0.23   -0.01  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.11 ->   0.11   -0.00  ±0.03      0.12 ->   0.13   +0.01  ±0.03 
+    Your key permanents removed by opponents           0.64 ->   0.69   +0.05  ±0.07      0.63 ->   0.62   -0.01  ±0.07 
+    Your spells countered                              0.36 ->   0.35   -0.01  ±0.05      0.35 ->   0.37   +0.01  ±0.05 
+    Removed bombs brought back                         0.20 ->   0.21   +0.02  ±0.04      0.19 ->   0.22   +0.04  ±0.04 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.21 ->   2.34   +0.13  ±0.18      2.18 ->   2.27   +0.10  ±0.18 
+    Damage dealt to opponents per game                22.63 ->  24.34   +1.71  ±2.40     22.73 ->  23.64   +0.91  ±2.39 
+      ...of which combat damage                       14.01 ->  15.26   +1.25  ±1.69     14.39 ->  14.52   +0.14  ±1.70 
+      ...of which magecraft / burn                     0.00 ->   0.00   -0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+      ...of which drain triggers                       7.37 ->   7.39   +0.03  ±0.91      7.05 ->   7.46   +0.41  ±0.89 
+      ...of which other triggers                       1.25 ->   1.69   +0.43  ±0.69      1.30 ->   1.66   +0.36  ±0.63 
+
+--- Reading it ---
+  No axis moved beyond noise under either profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [conservative profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Soul Stone                        26.0      89.0         6.7     11.0       48.4      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mind Stone                            23.4      84.0         5.8     16.0       36.6      0.04
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        28.1      29.1     +1.0
+    rounds survived                                   9.98      9.95    -0.04
+    eliminated, % of games                            71.9      70.9     -1.0
+    opponents it eliminated, per game                 0.71      0.73    +0.02
+    damage dealt, per game                            22.6      24.3     +1.7
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        11.0      11.6     +0.6
+      plan online by turn 6, %                        37.6      38.8     +1.2
+      plan online by turn 8, %                        59.1      59.6     +0.5
+      plan online by turn 12, %                       70.6      70.6     +0.0
+      plan online at all, %                           71.3      71.2     -0.1
+    commander resolved by turn 4, %                    0.7       0.6     -0.1
+    commander resolved by turn 6, %                    9.2       9.7     +0.5
+    commander removals, per game                      0.19      0.21    +0.03
+    lands on the battlefield, turn 4                  3.78      3.78    +0.00
+    lands on the battlefield, turn 8                  6.49      6.49    +0.00
+    mana available, turn 4                            4.15      4.14    -0.00
+    mana available, turn 8                            7.03      7.07    +0.04
+    cards in hand after the land drop, turn 4         5.68      5.68    -0.00
+    cards in hand after the land drop, turn 8         5.73      5.59    -0.13
+    wins by (current):  damage 71%, combo 29%, timeout 1%
+    wins by (swapped):  damage 72%, combo 28%, timeout 1%
+    eliminated by (current): Heliod via combo 14.6%, Krenko via combat 11.3%, Yuriko via triggers 10.8%, Yuriko via combat 6.7%
+    eliminated by (swapped): Heliod via combo 14.7%, Krenko via combat 12.4%, Yuriko via triggers 11.5%, Chulane via combat 6.3%
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Soul Stone                        25.5      84.6         6.3     15.4       46.6      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mind Stone                            24.7      86.0         6.0     14.0       43.6      0.04
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        28.9      28.5     -0.5
+    rounds survived                                   9.86      9.95    +0.08
+    eliminated, % of games                            71.1      71.5     +0.5
+    opponents it eliminated, per game                 0.72      0.71    -0.01
+    damage dealt, per game                            22.7      23.6     +0.9
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        10.1      10.9     +0.7
+      plan online by turn 6, %                        38.6      39.3     +0.7
+      plan online by turn 8, %                        60.7      59.0     -1.7
+      plan online by turn 12, %                       69.6      69.9     +0.3
+      plan online at all, %                           69.9      70.3     +0.4
+    commander resolved by turn 4, %                    0.7       0.9     +0.1
+    commander resolved by turn 6, %                   10.1      10.7     +0.7
+    commander removals, per game                      0.19      0.20    +0.01
+    lands on the battlefield, turn 4                  3.79      3.78    -0.00
+    lands on the battlefield, turn 8                  6.47      6.46    -0.01
+    mana available, turn 4                            4.16      4.15    -0.00
+    mana available, turn 8                            7.03      7.04    +0.02
+    cards in hand after the land drop, turn 4         5.66      5.66    -0.01
+    cards in hand after the land drop, turn 8         5.52      5.55    +0.03
+    wins by (current):  damage 68%, combo 32%, timeout 0%
+    wins by (swapped):  damage 70%, combo 28%, timeout 2%
+    eliminated by (current): Heliod via combo 14.1%, Krenko via combat 11.5%, Yuriko via triggers 11.3%, Yuriko via combat 6.2%
+    eliminated by (swapped): Heliod via combo 15.7%, Yuriko via triggers 11.5%, Krenko via combat 11.2%, Yuriko via combat 6.3%
+
+(1531s total)

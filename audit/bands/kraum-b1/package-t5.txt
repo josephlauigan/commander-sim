@@ -1,0 +1,172 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Enlightened Tutor [scryfall+dsl] I W :: tut=any
+      ability: spell  -> search
+   Teferi's Protection [scryfall] I 2W :: prot=phase
+      not modeled: Exile ~.
+Model status of the swapped-in cards (cardgen audit):
+  Force of Will: Full (tags: `ctr=any free`)
+  Rhystic Study: Full (opponents pay {1} per spell when they can spare it; otherwise you draw)
+  Mystical Tutor: Full (tags: `tut=is`)
+  Enlightened Tutor: Full-auto (compiled from Oracle text)
+  Teferi's Protection: Full (until your next turn your life can't change and you have protection from everything (damage, drains and damage/drain combo wins are stopped; Thassa's Oracle, mill and Revel in Riches aren't); everything you control phases out, lands too; exiled. Cast against wipes, removal of key permanents, lethal combat damage and lethal combos)
+
+16,000 games (current list and the swapped one, 4,000 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 50 minutes
+  progress  10.0%  1m49s elapsed, ~16m22s left
+  progress  20.0%  3m38s elapsed, ~14m32s left
+  progress  30.0%  5m30s elapsed, ~12m51s left
+  progress  40.0%  7m22s elapsed, ~11m04s left
+  progress  50.0%  9m18s elapsed, ~9m18s left
+  progress  60.0%  11m05s elapsed, ~7m23s left
+  progress  70.0%  12m55s elapsed, ~5m32s left
+  progress  80.0%  14m50s elapsed, ~3m42s left
+  progress  90.0%  16m38s elapsed, ~1m50s left
+  progress 100.0%  18m31s elapsed, ~0m00s left
+Swaps: Arcane Denial -> Force of Will; Fact or Fiction -> Rhystic Study; Expressive Iteration -> Mystical Tutor; Disenchant -> Enlightened Tutor; Dark Endurance -> Teferi's Protection
+
+=== Tymna/Kraum vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  21.4% ->  21.5%  (delta +0.0 pts, noise ±1.7, paired)   n=4000
+               eliminated by (variant): Kinnan 23.0%  Yawgmoth 9.2%  Zur the Enchanter 13.1%  Urza 14.7%  Winota 18.5%
+[loose       ] win  22.5% ->  21.2%  (delta -1.2 pts, noise ±1.7, paired)   n=4000
+               eliminated by (variant): Kinnan 22.6%  Yawgmoth 9.0%  Zur the Enchanter 13.1%  Urza 15.1%  Winota 19.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          21.4% ->  21.5%  +0.0pt   ±1.8     22.5% ->  21.2%  -1.3pt   ±1.8 
+    Rounds survived (or game length)                   8.45 ->   8.50   +0.05  ±0.15      8.52 ->   8.51   -0.01  ±0.15 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.02      0.06 ->   0.06   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.43 ->   0.45   +0.02  ±0.03      0.43 ->   0.45   +0.02  ±0.03 
+    Mana available on your turn 4                      3.96 ->   3.94   -0.01  ±0.03      3.97 ->   3.95   -0.02  ±0.03 
+    Mana available on your turn 6                      5.55 ->   5.51   -0.04  ±0.06      5.56 ->   5.54   -0.02  ±0.06 
+
+  Speed
+    Games where the game plan came online              0.1% ->   0.0%  -0.1pt   ±0.1*     0.1% ->   0.1%  +0.0pt   ±0.1 
+    Turn the game plan came online                                                    n/a     8.00 ->   9.33   +1.33  ±3.17 
+    Turn the commander first resolved                  3.73 ->   3.72   -0.02  ±0.06      3.75 ->   3.73   -0.02  ±0.06 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.69 ->  13.17   +0.48  ±0.36*    12.94 ->  13.19   +0.25  ±0.36 
+    Tutors resolved per game                           0.09 ->   0.34   +0.24  ±0.02*     0.10 ->   0.34   +0.25  ±0.02*
+    Spells cast per game                               8.15 ->   8.22   +0.08  ±0.27      8.32 ->   8.24   -0.08  ±0.27 
+
+  Interaction
+    Counterspells cast                                 0.13 ->   0.12   -0.01  ±0.01      0.14 ->   0.12   -0.02  ±0.01*
+    Spot removal cast                                  0.63 ->   0.49   -0.14  ±0.03*     0.65 ->   0.50   -0.15  ±0.03*
+    Board wipes cast                                   0.11 ->   0.10   -0.01  ±0.01      0.11 ->   0.10   -0.01  ±0.01 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.24 ->   0.26   +0.02  ±0.02      0.25 ->   0.27   +0.03  ±0.02*
+    Your spells countered                              0.41 ->   0.46   +0.04  ±0.03*     0.43 ->   0.48   +0.05  ±0.03*
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.03 ->  25.27   -0.76  ±1.49     26.64 ->  25.08   -1.55  ±1.47*
+      ...of which combat damage                       25.72 ->  24.95   -0.76  ±1.47     26.30 ->  24.78   -1.52  ±1.45*
+      ...of which magecraft / burn                     0.05 ->   0.03   -0.01  ±0.01      0.05 ->   0.04   -0.00  ±0.01 
+      ...of which drain triggers                       0.00 ->   0.01   +0.01  ±0.02      0.01 ->   0.01   -0.00  ±0.01 
+      ...of which other triggers                       0.25 ->   0.27   +0.01  ±0.07      0.28 ->   0.25   -0.03  ±0.07 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (conservative profile only)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Cards drawn per game (incl. draw step) (conservative profile only)
+    better - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (loose profile only)
+    worse  - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (loose profile only)
+    worse  - Your spells countered (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (loose profile only)
+    worse  -   ...of which combat damage (loose profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 4000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Force of Will                         20.9      59.8         6.2     40.2       33.8      0.00
+    Rhystic Study                         18.9      59.3         6.7     40.7       35.5      0.01
+    Mystical Tutor                        19.8      54.6         5.4     45.4       30.9      0.00
+    Enlightened Tutor                     21.6      74.0         5.3     26.0       32.2      0.00
+    Teferi's Protection                   20.3      28.0         8.9     72.0       36.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Arcane Denial                         19.4      68.4         6.6     31.6       35.7      0.00
+    Fact or Fiction                       18.8      32.0         8.8     68.0       47.9      0.00
+    Expressive Iteration                  20.0      43.5         7.7     56.5       46.0      0.00
+    Disenchant                            21.4      69.5         6.5     30.5       38.8      0.00
+    Dark Endurance                        20.0       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        21.4      21.5     +0.0
+    rounds survived                                   8.45      8.50    +0.05
+    eliminated, % of games                            78.5      78.5     -0.0
+    opponents it eliminated, per game                 0.57      0.56    -0.00
+    damage dealt, per game                            26.0      25.3     -0.8
+    commander resolved by turn 4, %                   71.7      71.9     +0.2
+    commander resolved by turn 6, %                   84.7      84.8     +0.1
+    commander removals, per game                      0.35      0.34    -0.01
+    lands on the battlefield, turn 4                  3.77      3.76    -0.01
+    lands on the battlefield, turn 8                  6.74      6.71    -0.02
+    mana available, turn 4                            3.96      3.94    -0.01
+    mana available, turn 8                            7.04      7.04    +0.00
+    cards in hand after the land drop, turn 4         6.46      6.35    -0.11
+    cards in hand after the land drop, turn 8         6.93      6.90    -0.04
+    wins by (current):  damage 99%, timeout 1%, combo 0%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Kinnan via combo 21.8%, Urza via combo 14.3%, Zur the Enchanter via combo 12.4%, Winota via combo 11.8%
+    eliminated by (swapped): Kinnan via combo 22.6%, Urza via combo 13.9%, Zur the Enchanter via combo 12.0%, Winota via combo 11.2%
+
+-- Why: paired breakdown [loose profile, 4000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Force of Will                         21.2      58.5         6.4     41.5       38.6      0.00
+    Rhystic Study                         18.7      55.0         6.4     45.0       35.0      0.01
+    Mystical Tutor                        20.6      59.1         5.9     40.9       36.8      0.00
+    Enlightened Tutor                     23.2      74.4         5.7     25.6       35.4      0.00
+    Teferi's Protection                   20.3      24.7         8.9     75.3       32.0      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Arcane Denial                         19.4      70.6         6.5     29.4       38.5      0.00
+    Fact or Fiction                       19.4      29.5         8.6     70.5       50.9      0.00
+    Expressive Iteration                  21.1      43.0         7.8     57.0       46.6      0.00
+    Disenchant                            21.4      68.3         6.5     31.7       38.6      0.00
+    Dark Endurance                        20.1       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        22.5      21.2     -1.2
+    rounds survived                                   8.52      8.51    -0.01
+    eliminated, % of games                            77.5      78.8     +1.3
+    opponents it eliminated, per game                 0.59      0.56    -0.03
+    damage dealt, per game                            26.6      25.1     -1.6
+    commander resolved by turn 4, %                   72.2      71.0     -1.1
+    commander resolved by turn 6, %                   84.3      84.2     -0.2
+    commander removals, per game                      0.38      0.36    -0.02
+    lands on the battlefield, turn 4                  3.78      3.76    -0.01
+    lands on the battlefield, turn 8                  6.76      6.70    -0.06
+    mana available, turn 4                            3.97      3.95    -0.02
+    mana available, turn 8                            7.05      7.01    -0.05
+    cards in hand after the land drop, turn 4         6.45      6.35    -0.10
+    cards in hand after the land drop, turn 8         6.87      6.87    +0.00
+    wins by (current):  damage 99%, timeout 1%, combo 0%
+    wins by (swapped):  damage 99%, timeout 1%, combo 0%
+    eliminated by (current): Kinnan via combo 23.1%, Urza via combo 13.6%, Winota via combo 11.6%, Zur the Enchanter via combo 11.6%
+    eliminated by (swapped): Kinnan via combo 22.1%, Urza via combo 14.2%, Zur the Enchanter via combo 11.7%, Winota via combo 11.3%
+
+(1112s total)

@@ -27,6 +27,7 @@ use crate::state::Game;
 use crate::sym::intern;
 
 pub const CLOUD: &str = "Cloud, Midgar Mercenary";
+const CLOGGED_HAND: usize = 7;
 const KEY: &str = "cloud";
 const PLAZA: &str = "Plaza of Heroes";
 
@@ -361,9 +362,9 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     let exposed = crate::ai::brain::removal_risk(g, p) >= 0.3;
     // Sword of Feast and Famine untaps the lands (the mana to equip or cast the next piece) and its discard is cheap
     // with a clogged hand; it also brings a different protection pair, so it comes before Hearth and Home once a Sword
-    // is already out or held, and first of all with four or more cards in hand
+    // is already out or held, and first of all with a truly clogged hand (7+ cards)
     let sword_held = ["Sword of Fire and Ice", "Sword of Hearth and Home"].iter().any(|n| have(n));
-    let clogged = g.player(p).hand.len() >= 4;
+    let clogged = g.player(p).hand.len() >= CLOGGED_HAND; // a typical turn-2 hand is 5-6 cards: not clogged
     let mut order: Vec<&str> = if clogged {
         vec!["Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
     } else if sword_held {
@@ -977,6 +978,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Zack Fair")?;
     c.as_enters = Some(zack_enters);
     r.card(db, "Unfinished Business")?.resolve = Some(unfinished_business);
+    r.card(db, "Open the Armory")?.resolve = Some(open_the_armory);
     register_ds(r, db)?;
     Ok(())
 }
@@ -1957,4 +1959,52 @@ pub fn register_ds(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(ds_prio);
     r.card(db, "Fireshrieker")?.prio = Some(ds_prio);
     Ok(())
+}
+
+// ------------------------------------------------------------------ audit fixes (ai-audit cv)
+/// Open the Armory: search for an Aura or Equipment card (the DSL row had no filter and fetched Sol Ring, Cid ...).
+/// The pick is Cloud's own search order; with no Equipment left, the best Aura.
+fn open_the_armory(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<crate::sym::Sym> {
+    let human = crate::human::is_human(g, p);
+    let pick = if human || g.player(p).key != KEY { None } else { cloud_pick(g, p) };
+    let ok = |g: &Game, c: CardId| g.db.get(c).has_subtype("equipment") || g.db.get(c).has_subtype("aura");
+    let got = super::t1::tutor_named(g, p, &|g, c| ok(g, c) && (human || pick.is_none_or(|k| k == c)), 1, "hand")?;
+    for c in got {
+        crate::glog!(g, "    {} reveals {}", g.player(p).name, card_name(g, c));
+    }
+    Ok(intern("gy"))
+}
+
+/// Austere Command's modes for Cloud's deck: the generic choice counts a Smothering Tithe, Court of Ardenvale or Sphere
+/// of Safety of its own as a cheap permanent, so it destroyed them with "enchantments". Own deck enchantments count 6
+/// each against the mode.
+pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Vec<crate::sym::Sym> {
+    let base = crate::ai::decks::wipe_modes(g, p, kind);
+    if kind != "austere2" || !base.contains(&intern("ench")) {
+        return base;
+    }
+    let ench = |m: PermId| g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ENCHANTMENT));
+    let own = g.player(p).perms.iter().filter(|&&m| live(g, m) && ench(m)).count() as f64 * 6.0;
+    if own == 0.0 {
+        return base;
+    }
+    let theirs: f64 = g
+        .players
+        .iter()
+        .filter(|q| q.alive && q.id != p)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&m| !g.perm(m).phased && ench(m))
+        .map(|m| pval(g, m))
+        .sum();
+    if theirs > own {
+        return base;
+    }
+    // drop "ench" for the best mode not chosen yet: art, then the creature halves in the generic order
+    let mut out: Vec<crate::sym::Sym> = base.into_iter().filter(|&s| s != "ench").collect();
+    for s in ["ge4", "le3", "art"] {
+        if out.len() < 2 && !out.contains(&intern(s)) {
+            out.push(intern(s));
+        }
+    }
+    out
 }

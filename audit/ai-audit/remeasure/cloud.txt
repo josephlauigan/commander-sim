@@ -1,0 +1,27 @@
+12,000 games (1 deck x 3 tiers (each deck in its own tiers), 2,000 per list per tier, profiles conservative and loose), lookahead AI, 10 worker threads: about 60 minutes
+  progress  10.0%  5m34s elapsed, ~50m13s left
+  cell cloud vs t1 [conservative]:  27.9% (26.0-29.9)
+  progress  20.0%  11m15s elapsed, ~45m02s left
+  progress  30.0%  17m40s elapsed, ~41m14s left
+  cell cloud vs t2 [conservative]:  22.6% (20.8-24.5)
+  progress  40.0%  22m59s elapsed, ~34m29s left
+  progress  50.0%  27m42s elapsed, ~27m42s left
+  cell cloud vs t3 [conservative]:  22.4% (20.6-24.2)
+  progress  60.0%  33m25s elapsed, ~22m17s left
+  cell cloud vs t1 [loose]:  29.9% (27.9-31.9)
+  progress  70.0%  39m10s elapsed, ~16m47s left
+  progress  80.0%  45m39s elapsed, ~11m24s left
+  cell cloud vs t2 [loose]:  24.9% (23.0-26.8)
+  progress  90.0%  50m57s elapsed, ~5m39s left
+  progress 100.0%  55m55s elapsed, ~0m00s left
+  cell cloud vs t3 [loose]:  20.4% (18.7-22.3)
+
+=== Win rate by deck and tier [conservative profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  cloud       27.9% (26.0-29.9)  22.6% (20.8-24.5)  22.4% (20.6-24.2)           24.3% over t1-t3
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  cloud       29.9% (27.9-31.9)  24.9% (23.0-26.8)  20.4% (18.7-22.3)           25.1% over t1-t3
+
+(3355s total)

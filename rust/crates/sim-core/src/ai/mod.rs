@@ -69,6 +69,16 @@ pub fn is_main(key: &str) -> bool {
     MAIN_STYLES.iter().any(|x| x.0 == key)
 }
 
+/// one of JD's twelve decks (data/my_decks.toml): their own priority functions decide what is held, so a 0 is never
+/// replaced by the generic ability value
+/// JD's own ten decks (the 10/18 AI audit scope; Avery's Alela and Galadriel are not included)
+pub fn jd_deck(key: &str) -> bool {
+    matches!(
+        key,
+        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "titania" | "sheoldred" | "cloud" | "kraum" | "sephfs"
+    )
+}
+
 /// brain.style: your deck's style, or the outside deck's configured one
 pub fn style(_g: &Game, key: &str) -> Style {
     match MAIN_STYLES.iter().find(|x| x.0 == key) {
@@ -315,6 +325,9 @@ pub fn protect_response(
 
 /// ais.wipe_modes (Farewell, Austere Command's modes)
 pub fn wipe_modes(g: &Game, p: PlayerId, kind: Sym) -> Vec<Sym> {
+    if g.player(p).key == "cloud" {
+        return crate::impls::cloud::wipe_modes(g, p, kind); // gated on the deck key (ai-audit cv)
+    }
     decks::wipe_modes(g, p, kind)
 }
 
@@ -331,9 +344,9 @@ pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Re
     if crate::human::is_human(g, p) {
         return crate::human::choices::fill(g, p, kind);
     }
-    let mut bombs: Vec<CardId> =
-        g.player(p).library.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 5).collect();
-    let val: Vec<f64> = bombs.iter().map(|&c| -seph_bval(g, p, c)).collect();
+    let need = seph::fill_pieces(g, p);
+    let mut bombs: Vec<CardId> = seph::fill_targets(g, p);
+    let val: Vec<f64> = bombs.iter().map(|&c| if need.contains(&c) { -100.0 } else { -seph_bval(g, p, c) }).collect();
     let mut keyed: Vec<(f64, CardId)> = val.into_iter().zip(bombs.iter().copied()).collect();
     keyed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal)); // stable, as Python's sorted
     bombs = keyed.into_iter().map(|x| x.1).collect();
@@ -516,11 +529,6 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
         }
     }
     if tide_response(g, p, &format!("combo_{which}"), 10.0, None)? {
-        if which == "veyran" {
-            for m in crate::engine::values::find(g, p, Tag::Vkitten) {
-                g.perm_mut(m).neutered = true;
-            }
-        }
         return Ok(true);
     }
     let qs: Vec<PlayerId> = g.after(p).collect();
@@ -643,6 +651,10 @@ pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
 pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, cands: &[CardId]) -> Option<CardId> {
     let ty = f.kind.as_deref();
     if ty.is_none() || ty == Some("any") {
+        if g.player(p).key == "kefka" && decks::deck_has_storm(g, p) {
+            let wish = decks::kefka_wish(g, p);
+            return wish.iter().find_map(|n| g.db.id(n).filter(|c| cands.contains(c))); // Grim Servant: the wish list within its devotion limit
+        }
         let nm = decks::tutor_pick(g, p, "any")?;
         return cands.iter().copied().find(|&c| c == nm);
     }

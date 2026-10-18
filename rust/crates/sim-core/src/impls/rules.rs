@@ -328,7 +328,17 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
                 "Collector Ouphe" if art => return true,
                 "Karn, the Great Creator" if art && p != q.id => return true,
                 "Cursed Totem" if g.is_creature(src) => return true,
-                "Grand Abolisher" if p != q.id && g.active == Some(q.id) => return true,
+                // Oracle: abilities of artifacts, creatures and enchantments. (Only Sephiroth's own Abolisher is held to the
+                // type list; the pool decks keep the old blanket lock)
+                "Grand Abolisher" if p != q.id && g.active == Some(q.id) => {
+                    if q.key != "seph"
+                        || art
+                        || g.is_creature(src)
+                        || of_type(g, src, Types::ENCHANTMENT)
+                    {
+                        return true;
+                    }
+                }
                 _ => {}
             }
         }

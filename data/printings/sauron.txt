@@ -1,0 +1,85 @@
+1 Aggravated Assault (sld) 2691
+1 Arcane Denial (all) 22a
+1 Arcane Signet (p30m) 1P
+1 Barad-dûr (ltr) 425
+1 Bitter Triumph (soa) 26
+1 Blood Crypt (ecl) 349
+1 Bloodchief's Thirst (znr) 388
+1 Bloodsoaked Insight // Sanguine Morass (mh3) 252
+1 Call of the Ring (ltr) 355
+1 Chandra's Ignition (plst) ORI-137
+1 Chaos Warp (fic) 291
+1 Chromatic Lantern (plst) GRN-233
+1 Comet Storm (c15) 146
+1 Command Tower (frc) 22
+1 Cost of Brilliance (sos) 77
+1 Counterspell (wc97) jk77
+1 Crumbling Necropolis (ddh) 74
+1 Cyclonic Rift (soa) 14
+1 Diabolic Intent (fca) 34
+1 Diabolic Tutor (kld) 75
+1 Dimir Signet (rav) 260
+1 Disdainful Stroke (soa) 147
+1 Dreadhorde Invasion (mic) 114
+1 Drowned Catacomb (who) 1083
+1 Exotic Orchard (msc) 241
+1 Exsanguinate (som) 61
+1 Fact or Fiction (dmr) 283
+1 Fellwar Stone (4ed) 319
+1 Force of Will (dmr) 418
+1 Foreboding Ruins (voc) 174
+1 Frostboil Snarl (msc) 246
+1 Go for the Throat (f11) 11
+1 Grave Titan (ecc) 74
+1 Haunted Ridge (fra) 398
+1 Inexorable Tide (som) 35
+1 Infernal Grasp (inr) 310
+1 Inferno Titan (cmm) 235
+1 Iron Man, Armored Avenger (msc) 33
+5 Island (2ed) 291
+1 Izzet Boilerworks (c20) 283
+1 Jace's Archivist (sld) 2515
+1 Kaervek the Merciless (2x2) 236
+1 Lazotep Reaver (war) 96
+1 Lightning Greaves (sld) 1662
+1 Massacre Wurm (moc) 256
+1 Mauhúr, Uruk-hai Captain (ltr) 214
+1 Mind Stone (dmr) 385
+7 Mountain (2ed) 298
+1 Nibelheim Aflame (fin) 339
+1 Night's Whisper (sld) 207
+1 Not of This World (cmm) 807
+1 Noxious Gearhulk (tdc) 191
+1 Orcish Bowmasters (ltr) 433
+1 Path of Ancestry (cmm) 661
+1 Rakdos Signet (gk2) 76
+1 Ral and the Implicit Maze (mh3) 132
+1 Relic of Legends (msc) 209
+1 Ringsight (ltr) 220
+1 Rogue's Passage (ddm) 77
+1 Sauron, the Dark Lord (ltr) 821
+1 Sauron, the Necromancer (ltr) 310
+1 Scarlet Witch, Chaotic Avenger (msc) 93
+1 Scavenger Grounds (msc) 263
+1 Sephiroth, Planet's Heir (fin) 553
+1 Sheoldred, the Apocalypse (pdmu) 107p
+1 Shivan Reef (m15) 246
+1 Sol Ring (fic) 357
+1 Steam Vents (pgrn) 257p
+1 Sulfur Falls (frc) 84
+6 Swamp (2ed) 295
+1 Talisman of Creativity (msc) 218
+1 Talisman of Dominance (frc) 62
+1 Talisman of Indulgence (aa1) 23
+1 Talrand, Sky Summoner (tsr) 318
+1 Terminate (dmc) 172
+1 The Ozolith (iko) 237
+1 Treno, Dark City (fin) 290
+1 Undermine (scd) 254
+1 Urabrask, Heretic Praetor (snc) 468
+1 Urza, Lord High Artificer (fca) 5
+1 Vandalblast (fic) 298
+1 Vision, Synthezoid Avenger (msc) 119
+1 Vraska, Betrayal's Sting (one) 442
+1 War Machine, Avenging Arsenal (msc) 63
+1 Whispersilk Cloak (m10) 221

@@ -1,0 +1,10 @@
+sephfs|sephfs|Star Compass=>Demonic Tutor;Tome of Legends=>Vampiric Tutor;Masterful Flourish=>Rune-Scarred Demon
+yshtola|yshtola|Dakkon, Shadow Slayer=>Force of Will;Mystic Remora=>Farewell;Thought Vessel=>Teferi's Protection
+seph|seph|Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
+sauron|sauron|Slaughter Pact=>Force of Will
+kefka|kefka|Demonic Tutor=>Star Compass;Vampiric Tutor=>Tome of Legends;Mystical Tutor=>Masterful Flourish
+kraum|kraum|Rune-Scarred Demon=>Underworld Breach
+titania|titania|Hornet Queen=>Cactarantula;Harmonize=>Penumbra Spider;Tireless Tracker=>Paradise Druid;Environmental Scientist=>Worldly Tutor
+veyran|veyran|Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
+sheoldred|sheoldred|
+cloud|cloud|

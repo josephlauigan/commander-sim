@@ -1,8 +1,8 @@
-1x Arcane Denial
 1x Arcane Sanctum
 1x Arnim Zola, Bio-Fanatic
 1x Battlefield Forge
 1x Birds of Paradise
+1x Bitter Triumph
 1x Brushland
 1x Call of the Ring
 1x Caparocti Sunborn
@@ -20,11 +20,11 @@
 1x Disenchant
 1x Dismiss
 1x Dissipate
+1x Dragonlord Dromoka
 1x Duress
 1x Elenda, the Dusk Rose
 1x Elrond, Lord of Rivendell
 1x Fact or Fiction
-1x Force of Will
 1x Frontier Bivouac
 1x Fyndhorn Elder
 1x Gandalf, Friend of the Shire
@@ -54,7 +54,6 @@
 1x Oboro Breezecaller
 1x Opulent Palace
 1x Overgrown Farmland
-1x Paradise Druid
 1x Path of Ancestry
 1x Phyrexian Boon
 1x Pillage

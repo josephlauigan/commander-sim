@@ -138,6 +138,8 @@ pub enum DataKey {
     Serenity,
     /// Sephiroth, Fabled SOLDIER: [turn stamp, times its drain has resolved that turn]
     SephTimes,
+    /// The Soul Stone has been harnessed (its upkeep reanimation is active)
+    Harnessed,
     Stolen,
     /// stun counters (the untap step removes one instead of untapping)
     Stun,
@@ -1184,6 +1186,8 @@ pub struct Game {
     pub search_tape: crate::ai::tape::TapeSlot,
     /// the X paid for the last X spell (card code that reads it: Walking Ballista ...)
     pub last_x: i32,
+    /// creatures dealt damage this turn: (the creature, the turn) (Rooftop Assassin); cleared of old turns on write
+    pub dmg_marks: Vec<(PermId, TurnStamp)>,
     /// the order each person chose for their simultaneous triggers last time (practice mode; Python's `trig_orders`)
     pub trig_orders: Vec<(Sym, Vec<String>)>,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
@@ -1340,6 +1344,7 @@ impl Game {
             link: Link::default(),
             search_tape: Default::default(),
             last_x: 0,
+            dmg_marks: vec![],
             trig_orders: vec![],
             forced_attack: None,
             search_n: 0,
@@ -1402,6 +1407,21 @@ impl Game {
     /// damage can't be prevented this turn (Impractical Joke)
     pub fn unpreventable(&self) -> bool {
         self.no_prevent == Some(self.turn_stamp())
+    }
+
+    /// note that creature `m` was dealt damage this turn
+    pub fn mark_damaged(&mut self, m: PermId) {
+        let ts = self.turn_stamp();
+        self.dmg_marks.retain(|x| x.1 == ts);
+        if !self.dmg_marks.iter().any(|x| x.0 == m) {
+            self.dmg_marks.push((m, ts));
+        }
+    }
+
+    /// was creature `m` dealt damage this turn?
+    pub fn was_damaged_now(&self, m: PermId) -> bool {
+        let ts = self.turn_stamp();
+        self.dmg_marks.iter().any(|x| x.0 == m && x.1 == ts)
     }
 
     pub fn turn_stamp(&self) -> TurnStamp {

@@ -1,0 +1,73 @@
+1 Adelbert Steiner (fin) 3
+1 Akroma's Will (m3c) 165
+1 Arcane Signet (fic) 333
+1 Archangel of Tithes (plst) ORI-4
+1 Archon of Absolution (plst) ELD-3
+1 Ardenn, Intrepid Archaeologist (cmr) 10
+1 Armored Skyhunter (cmr) 11
+1 Armory Automaton (fic) 336
+1 Ash Barrens (fic) 374
+1 Auriok Steelshaper (mrd) 4
+1 Austere Command (fic) 231
+1 Baird, Steward of Argive (dom) 4
+1 Balan, Wandering Knight (c17) 2
+1 Bastion Protector (fic) 233
+1 Champion's Helm (fic) 337
+1 Cid, Freeflier Pilot (fic) 13
+1 Citizen's Arrest (dmu) 11
+1 Cloud, Midgar Mercenary (fin) 375
+1 Coalition Relic (m3c) 286
+1 Colossus Hammer (fic) 338
+1 Court of Ardenvale (woc) 29
+1 Danitha Capashen, Paragon (fca) 22
+1 Day of Judgment (e02) 2
+1 Disenchant (fdn) 572
+1 Elspeth, Sun's Champion (ths) 9
+1 Enlightened Tutor (dmr) 412
+1 Evolving Wilds (fic) 389
+1 Exalted Angel (p30a) 10
+1 Fate of the Sun-Cryst (fin) 19
+1 Fellwar Stone (4ed) 319
+1 Fireshrieker (mrd) 171
+1 Forum Familiar (mkm) 16
+1 Fumigate (pkld) 15p
+1 Giver of Runes (plst) MH1-13
+1 Grand Abolisher (cmm) 27
+1 Helitrooper (fic) 22
+1 Hero's Blade (msc) 201
+1 Jocasta, Automaton Avenger (msc) 108
+1 Knight of the White Orchid (voc) 92
+1 Kor Outfitter (zen) 21
+1 Lay Down Arms (bro) 11
+1 Loyal Warhound (afr) 363
+1 Mask of Memory (fic) 350
+1 Mind Stone (ltc) 282
+1 Norn's Annex (nph) 17
+1 Open the Armory (sld) 2089
+1 Page, Loose Leaf (sos) 250
+1 Path of Ancestry (brc) 192
+28 Plains (mdd) 292
+1 Plaza of Heroes (msc) 255
+1 Puresteel Paladin (fic) 250
+1 Silverblade Paladin (avr) 36
+1 Skyclave Apparition (blc) 154
+1 Smothering Tithe (2x2) 342
+1 Sol Ring (woc) 149
+1 Solemn Simulacrum (brc) 161
+1 Sphere of Safety (dsc) 104
+1 Sram, Senior Edificer (fca) 3
+1 Stand Up for Yourself (sos) 34
+1 Swiftfoot Boots (brr) 58
+1 Sword of Feast and Famine (2xm) 296
+1 Sword of Fire and Ice (2xm) 365
+1 Sword of Hearth and Home (mh2) 433
+1 Sword of Kaldra (mrd) 251
+1 Terminal Moraine (dmr) 259
+1 Thalia, the Survivor (fra) 205
+1 Thought Vessel (msc) 222
+1 Wall of Omens (2x2) 344
+1 Windborn Muse (dmr) 415
+1 Winds of Abandon (soa) 12
+1 Wrath of God (dmr) 416
+1 Wrecking Ball Arm (fic) 100
+1 Zack Fair (fin) 45

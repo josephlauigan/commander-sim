@@ -175,3 +175,31 @@ Quick adaptive passes (2,000 paired) picked the cut; the look-ahead run decides.
 | Tocasia's Welcome (adaptive) | +1.8 (±1.2) | Best of the three on the quick AI. |
 | **Tocasia's Welcome (look-ahead, loose, 2,000 paired)** | **+1.1 (±2.7): 33.5 → 34.6%** | Within noise. Smaug is cast in 64% of the games he's drawn (stuck 36%: {R}{R} in a four-colour deck with 3 Mountains) and wins 56% when cast vs Tocasia's Welcome's 44%. Damage +1.1 a game, eliminations -1.1 pts; the death causes (Aurelia, Tergrid, Marwyn in combat) are unchanged. His Treasure trigger adds almost nothing (about 0.1 burn a game on the quick run): the deck makes no Treasure of its own, so he attacks with 0–2. He is a hasty 4-mana flier here, not an engine. |
 **Reading it:** a fair swap that doesn't hurt, but not a measurable gain. **Applied (JD's card, 2026-10-17): Smaug in, Tocasia's Welcome out.**
+
+## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
+Band 3 (T3). Proposed: Rune-Scarred Demon (to Seph FS), Sunblast Angel, Lyra Dawnbringer, Terror of the Peaks, Ghostly Prison, Propaganda, Elspeth, Sun's Champion out; Underworld Breach (spare, its one Game Changer), Shatterwing Pegasus, Flensing Raptor, Moonwing Moth, Thermal Glider, Argivian Cavalier, Warlord's Elite in. Final: **27.2% vs T3** (current list 35.9% at 1,000; the 10/17 Avenge made it stronger than the 31% above). Why: it took two finishers, two attack taxes and three more top cards to bring it under band 2; each step cost only 2-3 points. The sim never casts Underworld Breach here (kraum AI has no Breach line).
+
+## 2026-10-18 (morning): could it be band 1? (vs T5, --any-tier with JD's OK, 4,000 games per profile)
+Current list (before the band-3 trims): **22.0% vs T5** (21.4 conservative, 22.5 loose), only 1.7 points under Seph FS (23.7). It loses to combo around its own turn 7: Kinnan 23%, Urza 14%, Zur 12%, Winota 12% of games. Band-1 package (Force of Will, Rhystic Study, Mystical Tutor, Enlightened Tutor, Teferi's Protection for Arcane Denial, Fact or Fiction, Expressive Iteration, Disenchant, Dark Endurance): **21.4%, no effect** (paired, noise ±1.7). Why: the Game Changers get cast (Force of Will 60%, Enlightened Tutor 74%) but eliminations by combo don't move (Kinnan 21.8 -> 22.6%); one counter and faster card flow don't stop a turn-6 combo kill. Teferi's Protection is held 72% of the time. To beat T5 it would need something that changes how fast it kills or stops combo outright, not more card quality.
+Six binder cards back, only Rune-Scarred Demon => Underworld Breach (paired vs T5, 4,000 per profile): **21.4%** (conservative 21.4 -> 21.4, loose 22.5 -> 21.3; noise ±1.2). Rune-Scarred Demon is cast in only 17% of the T5 games it is drawn (wins 62% when cast), so losing it costs about 0.6 points.
+
+**Decision (JD, 10/18 morning):** Tymna/Kraum goes to band 1 (tier t5) with only Rune-Scarred Demon => Underworld Breach (21.4% vs T5). The band-3 cuts above are not applied.
+
+## 2026-10-18: AI audit phase 2 (branch audit-ysh; audit/ai-audit/kraum.md)
+T5, adaptive AI, 1,500 games per list: before 31.0 / 33.1, after 30.9 / 32.7 (noise). What changed in play:
+- **Underworld Breach is now cast** (6.7% of games, was 0%; it won 75% when cast, correlation). `breach_prio` (impls/tymna_partners.rs):
+  cast when a card in the graveyard can be escaped with the mana left after {1}{R}; the deck's wipes (Austere Command,
+  Avenge) are escape candidates when an opponent's board is 6+ power ahead. Example, trace 54, round 12: Breach, then
+  "escapes Lightning, Security Sergeant with Underworld Breach" and a 3-creature attack.
+- **Dark Endurance** is cast in response to destroy or damage removal on a commander or a 4+ permanent (1.9% of the games
+  it was drawn: opposing removal on Tymna needs the mana up). Exile and -X/-X are not answered.
+- **Baird** is valued like the pillowfort cards (55 + the opponents' power, up to 80); Baird's win rate when cast is high
+  (77%) but it is cast in 8% of games: mana-limited (4 mana, WW).
+- **Diabolic Tutor** takes the best finisher castable by next turn (Grave Titan, Terror, Sun Titan, Baneslayer ...); the
+  Flail only when none is left. **Firebird** pumps the other attackers; **Lightning** exiles and keeps the cards while it stays.
+- **Tymna's one-opponent-a-turn** (1.05): not a spread bug. In 14 traced games 44 of 73 Tymna-turn attacks had a single
+  attacker; the deck has too few cheap bodies on the table, and `spread` already splits what exists. **Top end
+  stuck in hand** (Titans 21%, Elspeth 28%): mana (turn 4: 4.0), no AI cause found; a mana-base question for JD.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**20.8% vs T5** (before 21.4): within noise. Breach now cast (6.7% of games), Dark Endurance protects, Diabolic Tutor fetches finishers, Firebird/Lightning coded. Still the softest band-1 deck; its limit is too few cheap bodies (a deckbuilding question).

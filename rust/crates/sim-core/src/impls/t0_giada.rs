@@ -114,6 +114,9 @@ pub fn combat_proof(g: &Game, m: PermId) -> bool {
 /// Metropolis Reformer: "Whenever this creature is dealt damage, you gain that much life" (engine/combat.rs for
 /// combat damage, engine/removal.rs for damage spells)
 pub fn damaged(g: &mut Game, m: PermId, dmg: i32) -> Res {
+    if dmg > 0 && live(g, m) {
+        g.mark_damaged(m); // Rooftop Assassin: "dealt damage this turn"
+    }
     if dmg > 0 && live(g, m) && !g.perm(m).neutered && &*g.perm(m).name == "Metropolis Reformer" {
         let p = owner(g, m);
         crate::glog!(g, "    Metropolis Reformer: {} gains {}", g.player(p).name, dmg);

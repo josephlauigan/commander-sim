@@ -27,7 +27,7 @@ fn test_your_decks() {
     assert_eq!(d["seph"]["commander"], "Atraxa, Grand Unifier"); // the card the engine (and image) uses
     assert_eq!(d["seph"]["bracket"], 4);
     assert_eq!(d["veyran"]["bracket"], 3);
-    assert!(d["seph"]["game_changers"].as_array().unwrap().len() > 3);
+    assert!(d["yshtola"]["game_changers"].as_array().unwrap().len() > 3); // band 1 (10/18): only Y'shtola, Seph FS above 3
     for x in d.values() {
         for k in ["key", "commander", "name", "bracket", "game_changers", "win_rates"] {
             assert!(x.get(k).is_some(), "{} lacks {k}", x["key"]);

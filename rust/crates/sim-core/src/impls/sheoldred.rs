@@ -163,7 +163,25 @@ fn cost_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     if human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
-    let host = best_creature(g, p);
+    let host = crate::engine::values::army_of(g, p)
+        .filter(|&m| g.player(p).key == "sauron" && live_creature(g, m))
+        .or_else(|| best_creature(g, p));
+    if g.player(p).key == "sauron"
+        && !sheoldred_out(g, p)
+        && crate::engine::values::has(g, p, crate::tag::Tag::Bowmasters)
+    {
+        // Orcish Bowmasters out: each card an opponent draws pings it and amasses 1, so two cards are four counters on the Army
+        let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive && g.player(q).library.len() > 2).collect();
+        if let Some(q) = min_by(&opps, |q| g.player(q).life as f64)
+            && g.player(p).life > 6
+        {
+            return Ok(vec![Opt {
+                utility: 4.8,
+                label: format!("Cost of Brilliance ({} draws two, Bowmasters pings)", g.player(q).name),
+                act: Some(Action::Plan { f: cost_plan, arg: c.0 as i64 | (((q.0 as i64) + 1) << 16) }),
+            }]);
+        }
+    }
     if let Some(q) = drain_target(g, p, 2) {
         // each card they draw costs them 2 life, and the spell 2 more: six in all
         let u = 5.0 + if g.player(q).life <= 6 { 3.0 } else { 0.0 } + if host.is_some() { 0.3 } else { 0.0 };
@@ -195,7 +213,9 @@ fn cost_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         0 => p,
         k => PlayerId((k - 1) as u8),
     };
-    let host = best_creature(g, p);
+    let host = crate::engine::values::army_of(g, p)
+        .filter(|&m| g.player(p).key == "sauron" && live_creature(g, m))
+        .or_else(|| best_creature(g, p));
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), host, ..Ctx::default() })
 }
 
@@ -476,6 +496,63 @@ fn necro_token(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
 fn necro_pt(g: &Game, _p: PlayerId, m: PermId) -> (i32, i32) {
     let k = oil(g, m);
     (k, k)
+}
+
+// ------------------------------------------------------------------ Rooftop Assassin
+const ROOFTOP: &str = "Rooftop Assassin";
+
+/// the opposing creatures p could destroy with Rooftop Assassin: dealt damage this turn, and targetable
+fn rooftop_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+    opp_creatures(g, p)
+        .into_iter()
+        .filter(|&m| on_bf(g, m) && g.was_damaged_now(m) && !untargetable(g, m))
+        .collect()
+}
+
+/// flash, flying, lifelink: it is removal only for a creature that already took damage this turn (after combat or a
+/// burn spell), so it is cast for that; otherwise it is a plain 2/2 flyer body
+fn rooftop_prio(g: &Game, p: PlayerId) -> i32 {
+    if rooftop_targets(g, p).iter().any(|&m| pval(g, m) >= 2.0) { 82 } else { 46 }
+}
+
+/// Rooftop Assassin: when it enters, destroy target creature an opponent controls that was dealt damage this turn
+fn rooftop_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let p = owner(g, src);
+    let Some(t) = rooftop_targets(g, p).into_iter().max_by(|&a, &b| {
+        pval(g, a).partial_cmp(&pval(g, b)).unwrap_or(std::cmp::Ordering::Equal)
+    }) else {
+        return Ok(());
+    };
+    if !trigger_window(g, p, Some(src), "destroy a damaged creature", Some(pval(g, t)))? || !on_bf(g, t) {
+        return Ok(());
+    }
+    apply_removal(g, Some(p), t, "destroy", None)
+}
+
+/// Necrosquito: grows with every other creature or artifact of ours that goes to the graveyard and every token or
+/// Treasure sacrificed, so it is worth more with a sacrifice outlet (Carnage Altar, Deadly Dispute) or fodder around
+fn necro_prio(g: &Game, p: PlayerId) -> i32 {
+    let pl = g.player(p);
+    let outlet = |n: &str| count_named(g, p, n) > 0 || pl.hand.iter().any(|&c| name_of(g, c) == n);
+    let engine = outlet("Carnage Altar") || outlet("Deadly Dispute") || outlet("Blood Artist");
+    let fodder = pl
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            x.on_bf && (x.token || (x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).creature)))
+        })
+        .count() as i32;
+    (55 + 3 * fodder.min(3) + if engine { 6 } else { 0 }).min(70)
+}
+
+/// Memory Jar: cast it to crack at once. With Sheoldred (or Dreams / Unraveler) out, both draws of seven punish every
+/// opponent; without a punisher it is only a burst of temporary cards, so it waits behind the real plays
+fn jar_prio(g: &Game, p: PlayerId) -> i32 {
+    if draw_toll(g, p) > 0 { 82 } else { 38 }
 }
 
 // ------------------------------------------------------------------ Callous Inspector
@@ -1355,6 +1432,9 @@ pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             if kill { 66 } else { 34 }
         }
         "Perigee Beckoner" => 52,
+        "Memory Jar" => jar_prio(g, p),
+        "Necrosquito" => necro_prio(g, p),
+        ROOFTOP => rooftop_prio(g, p),
         SEIZAN => seizan_prio(g, p),
         "Underworld Dreams" => 90,
         _ if pkg2_prio(g, p, &d.name).is_some() => pkg2_prio(g, p, &d.name).unwrap(),
@@ -1568,6 +1648,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(crawler_etb);
     c.hand_options = Some(crawler_options);
     r.card(db, "Mabel, Bitter Recluse")?.etb = Some(mabel_etb);
+    let c = r.card(db, ROOFTOP)?;
+    c.etb = Some(rooftop_etb);
     r.card(db, "Vault Plunderer")?.etb = Some(plunderer_etb);
     r.card(db, "Seymour Flux")?.upkeep = Some(seymour_upkeep);
     let c = r.card(db, "Al Bhed Salvagers")?;
@@ -1757,7 +1839,7 @@ fn deal_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     // each card an opponent redraws costs them 2; keep it for when they hold plenty and we hold little
     let mine = g.player(p).hand.len().saturating_sub(1);
     let theirs = opp_hand_total(g, p);
-    if !sheoldred_out(g, p) || theirs < 4 || mine > 2 {
+    if !sheoldred_out(g, p) || theirs < 4 || mine > 3 {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -1775,7 +1857,7 @@ fn deal_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// high and we are far behind on cards
 fn seizan_prio(g: &Game, p: PlayerId) -> i32 {
     let pl = g.player(p);
-    if sheoldred_out(g, p) {
+    if draw_toll(g, p) > 0 {
         return 80;
     }
     let max_opp = g.opps(p).filter(|&q| g.player(q).alive).map(|q| g.player(q).hand.len()).max().unwrap_or(0);
@@ -2229,6 +2311,10 @@ fn seph_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
             g.player_mut(p).stat("sf_first_flip_round", round);
         }
         g.player_mut(p).stat("sf_flips", 1);
+        if g.player(p).key == "sephfs" {
+            let t = g.player(p).turns;
+            g.player_mut(p).milestone.entry("sephfs").or_insert(t); // the plan report: the turn he first flipped
+        }
         g.player_mut(p).emblems.push("seph");
         g.selfpt = true;
         crate::glog!(

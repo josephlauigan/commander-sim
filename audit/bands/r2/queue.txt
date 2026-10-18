@@ -1,0 +1,8 @@
+sephfs|sephfs|Star Compass=>Demonic Tutor;Tome of Legends=>Vampiric Tutor;Masterful Flourish=>Rune-Scarred Demon;Bitter Triumph=>Bolas's Citadel;Rabid Attack=>Gray Merchant of Asphodel
+yshtola|yshtola|Dakkon, Shadow Slayer=>Force of Will;Thought Vessel=>Farewell;Bolas's Citadel=>Teferi's Protection
+kefka|kefka|Demonic Tutor=>Mana Leak;Vampiric Tutor=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
+kraum|kraum|Rune-Scarred Demon=>Underworld Breach;Sunblast Angel=>Shatterwing Pegasus;Lyra Dawnbringer=>Flensing Raptor
+sheoldred|sheoldred|Gray Merchant of Asphodel=>Necrosquito
+seph|seph|Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
+kefka3|kefka|Demonic Tutor=>Mana Leak;Rhystic Study=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
+kraum3|kraum|Rune-Scarred Demon=>Underworld Breach;Sunblast Angel=>Shatterwing Pegasus;Lyra Dawnbringer=>Flensing Raptor;Terror of the Peaks=>Moonwing Moth;Ghostly Prison=>Thermal Glider

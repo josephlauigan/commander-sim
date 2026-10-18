@@ -1323,6 +1323,116 @@ fn ophiomancer(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     Ok(())
 }
 
+
+// ---- The Soul Stone
+/// Full: indestructible; taps for {B}. {6}{B}, {T}, exile a creature you control: harness it. Harnessed: at the
+/// beginning of your upkeep, return the best creature card from your graveyard to the battlefield.
+fn soul_stone_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m == src {
+        g.perm_mut(src).data.set(DataKey::Indestr, Val::Bool(true));
+    }
+    Ok(())
+}
+
+/// the creature exiled to harness it: a token or the cheapest body, never the commander
+fn soul_stone_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
+    let pl = g.player(p);
+    let cs: Vec<PermId> = pl
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            g.is_creature(m) && !x.phased && !x.cd.is_some_and(|c| pl.is_commander(c))
+        })
+        .collect();
+    min_by(&cs, |m| if g.perm(m).token { pval(g, m) - 10.0 } else { pval(g, m) })
+}
+
+/// harness it with spare mana (at an opponent's end step or after combat) once a body can be spared and the graveyard
+/// holds a creature worth returning every turn
+fn soul_stone(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false)
+        || g.perm(src).tapped
+        || g.perm(src).data.truthy(DataKey::Harnessed)
+        || crate::human::is_human(g, p)
+    {
+        return Ok(vec![]);
+    }
+    g.perm_mut(src).tapped = true; // it taps as part of the cost: its own {B} can't help pay
+    let ok = can_pay(g, p, 6, "B", false);
+    g.perm_mut(src).tapped = false;
+    if !ok {
+        return Ok(vec![]);
+    }
+    let Some(f) = soul_stone_fodder(g, p) else { return Ok(vec![]) };
+    let best = g
+        .player(p)
+        .gy
+        .iter()
+        .filter(|&&c| g.db.get(c).creature)
+        .map(|&c| crate::ai::seph_bval(g, p, c))
+        .fold(0.0, f64::max);
+    let cost = if g.perm(f).token { 0.0 } else { pval(g, f) };
+    if best < 4.0 && cost > 2.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 3.0 + (best - cost).clamp(0.0, 6.0) / 2.0,
+        label: "harness The Soul Stone".into(),
+        act: Some(Action::Ability { src, f: soul_stone_go, arg: 0 }),
+    }])
+}
+
+fn soul_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if g.perm(src).tapped || !on(g, src, p) || g.perm(src).data.truthy(DataKey::Harnessed) {
+        return Ok(false);
+    }
+    let Some(f) = soul_stone_fodder(g, p) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    if !can_pay(g, p, 6, "B", false) {
+        g.perm_mut(src).tapped = false;
+        return Ok(false);
+    }
+    pay(g, p, 6, "B", false)?;
+    crate::glog!(g, "  {} exiles {} and harnesses The Soul Stone", g.player(p).name, g.perm(f).name);
+    exile_perm(g, f)?;
+    g.perm_mut(src).data.set(DataKey::Harnessed, Val::Bool(true)); // a special action: harnessing can't be responded to
+    check_state(g)?;
+    Ok(true)
+}
+
+fn soul_stone_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    let o = owner(g, src);
+    if p != o || !g.perm(src).data.truthy(DataKey::Harnessed) {
+        return Ok(());
+    }
+    if !g.player(o).gy.iter().any(|&c| g.db.get(c).creature) {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "return a creature card from your graveyard", Some(5.0))? {
+        return Ok(());
+    }
+    let cr: Vec<CardId> = g.player(o).gy.iter().copied().filter(|&x| g.db.get(x).creature).collect();
+    let pick = if cr.is_empty() {
+        None
+    } else if crate::human::is_human(g, o) {
+        let prompt = "The Soul Stone: return a creature card";
+        Some(crate::human::choices::pick_cards(g, o, &cr, 1, prompt, "choose")?[0])
+    } else {
+        max_by(&cr, |x| crate::ai::seph_bval(g, o, x))
+    };
+    if let Some(b) = pick {
+        let gy = &mut g.player_mut(o).gy;
+        let i = gy.iter().position(|&x| x == b).unwrap();
+        gy.remove(i);
+        let was = g.player(o).removed_bombs.contains(&b);
+        crate::glog!(g, "  The Soul Stone returns {}", g.db.get(b).name);
+        enter(g, o, b, Enter::default())?;
+        crate::ai::note_bomb(g, o, b, was);
+    }
+    check_state(g)
+}
 // ---- Pernicious Deed
 /// what Pernicious Deed with X destroys (src: the Deed itself, spared while choosing X)
 fn deed_hit(g: &Game, m: PermId, x: u32) -> bool {
@@ -2855,7 +2965,7 @@ fn drannith(g: &Game, src: Src, caster: PlayerId, _c: CardId, zone: Sym) -> bool
     caster == owner(g, src) || zone == "hand"
 }
 
-/// Grand Abolisher (Approximate): opponents can't cast spells on your turn; activated abilities are not restricted
+/// Grand Abolisher: opponents can't cast spells on your turn (their abilities are locked by rules::ability_locked)
 fn abolisher(g: &Game, src: Src, caster: PlayerId, _c: CardId, _zone: Sym) -> bool {
     caster == owner(g, src) || g.active != Some(owner(g, src))
 }
@@ -3298,6 +3408,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Priest of Forgotten Gods")?.options = Some(priest);
     // staples
     r.card(db, "Mind Stone")?.options = Some(mind_stone);
+    let c = r.card(db, "The Soul Stone")?;
+    c.etb = Some(soul_stone_etb);
+    c.options = Some(soul_stone);
+    c.upkeep = Some(soul_stone_upkeep);
     let c = r.card(db, "Rest in Peace")?;
     c.etb = Some(rip);
     c.sba = Some(rip_sweep);

@@ -543,9 +543,6 @@ pub fn pval(g: &Game, m: PermId) -> f64 {
 pub fn threat(g: &Game, _me: PlayerId, q: PlayerId) -> f64 {
     let pl = g.player(q);
     let mut s: f64 = pl.perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum();
-    if pl.key == "veyran" && has(g, q, Tag::Vkitten) && has(g, q, Tag::Vfire) {
-        s += 10.0;
-    }
     if pl.key == "sauron"
         && let Some(a) = army_of(g, q)
         && equipped(g, a, Tag::Sword)

@@ -1,0 +1,277 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Necrosquito [pool] C 3B :: pow=0 tgh=0 fly
+Model status of the swapped-in cards (cardgen audit):
+  Necrosquito: Full (flying; enters with two oil counters (+1/+1 each); another creature or artifact you control going to the graveyard (artifact tokens when sacrificed too) adds an oil counter)
+
+8,000 games (current list and the swapped one, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 18 minutes
+  progress  10.0%  1m03s elapsed, ~9m27s left
+  progress  20.0%  2m08s elapsed, ~8m32s left
+  progress  30.0%  3m12s elapsed, ~7m28s left
+  progress  40.0%  4m15s elapsed, ~6m23s left
+  progress  50.0%  5m21s elapsed, ~5m21s left
+Swaps: Gray Merchant of Asphodel -> Necrosquito
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  32.9% ->  31.7%  (delta -1.2 pts, noise ±3.2, paired)   n=1000
+               eliminated by (variant): Aurelia 24.0%  Tergrid 15.8%  Korvold 5.8%  Atraxa 9.8%  Marwyn 12.2%
+[loose       ] win  32.0% ->  29.9%  (delta -2.1 pts, noise ±3.0, paired)   n=1000
+               eliminated by (variant): Aurelia 25.0%  Tergrid 16.6%  Korvold 7.6%  Atraxa 8.4%  Marwyn 11.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          32.9% ->  31.7%  -1.2pt   ±4.2     32.0% ->  29.9%  -2.1pt   ±4.1 
+    Rounds survived (or game length)                  11.33 ->  11.55   +0.22  ±0.29     11.34 ->  11.37   +0.03  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.04      0.07 ->   0.07   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.57 ->   0.58   +0.01  ±0.08      0.57 ->   0.58   +0.01  ±0.07 
+    Mana available on your turn 4                      4.11 ->   4.11   +0.01  ±0.07      4.11 ->   4.11   +0.00  ±0.07 
+    Mana available on your turn 6                      5.57 ->   5.56   -0.00  ±0.11      5.57 ->   5.57   +0.00  ±0.11 
+
+  Speed
+    Games where the game plan came online             92.6% ->  91.5%  -1.1pt   ±2.4     92.4% ->  91.5%  -0.9pt   ±2.4 
+    Turn the game plan came online                     6.55 ->   6.46   -0.09  ±0.20      6.51 ->   6.47   -0.04  ±0.21 
+    Turn the commander first resolved                  6.49 ->   6.45   -0.04  ±0.20      6.44 ->   6.43   -0.01  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.69 ->  18.27   +0.58  ±0.74     17.50 ->  17.39   -0.12  ±0.66 
+    Tutors resolved per game                           0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spells cast per game                              13.58 ->  13.94   +0.36  ±0.52     13.50 ->  13.48   -0.02  ±0.50 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.40 ->   1.38   -0.03  ±0.11      1.37 ->   1.39   +0.02  ±0.11 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.75 ->   0.76   +0.01  ±0.08      0.74 ->   0.77   +0.03  ±0.08 
+    Your spells countered                              0.13 ->   0.12   -0.01  ±0.03      0.12 ->   0.13   +0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                55.78 ->  55.51   -0.27  ±3.59     54.99 ->  54.06   -0.93  ±3.49 
+      ...of which combat damage                        7.48 ->   7.85   +0.37  ±0.74      7.51 ->   7.51   -0.00  ±0.73 
+      ...of which magecraft / burn                     1.47 ->   1.39   -0.08  ±0.24      1.48 ->   1.44   -0.04  ±0.26 
+      ...of which drain triggers                      38.64 ->  37.72   -0.91  ±2.89     37.98 ->  36.96   -1.02  ±2.84 
+      ...of which other triggers                       6.87 ->   7.08   +0.20  ±1.29      6.62 ->   6.81   +0.18  ±1.22 
+
+--- Reading it ---
+  No axis moved beyond noise under either profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Necrosquito                           25.7      68.5         7.7     31.5       41.5      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Gray Merchant of Asphodel             26.4      74.6         8.4     25.4       45.7      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.9      31.7     -1.2
+    rounds survived                                  11.33     11.55    +0.22
+    eliminated, % of games                            66.6      67.6     +1.0
+    opponents it eliminated, per game                 0.94      0.96    +0.02
+    damage dealt, per game                            54.5      54.0     -0.4
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        16.8      16.8     +0.0
+      plan online by turn 6, %                        50.4      51.5     +1.1
+      plan online by turn 8, %                        74.4      75.6     +1.2
+      plan online by turn 12, %                       91.6      90.5     -1.1
+      plan online at all, %                           92.6      91.5     -1.1
+    commander resolved by turn 4, %                   17.3      17.1     -0.2
+    commander resolved by turn 6, %                   52.1      52.4     +0.3
+    commander removals, per game                      0.70      0.72    +0.02
+    lands on the battlefield, turn 4                  3.72      3.72    +0.00
+    lands on the battlefield, turn 8                  6.48      6.49    +0.01
+    mana available, turn 4                            4.11      4.11    +0.01
+    mana available, turn 8                            6.95      6.94    -0.01
+    cards in hand after the land drop, turn 4         5.55      5.55    +0.00
+    cards in hand after the land drop, turn 8         4.38      4.44    +0.06
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 98%, timeout 2%
+    eliminated by (current): Aurelia via combat 19.3%, Tergrid via combat 11.7%, Marwyn via combat 11.2%, Atraxa via combat 6.4%
+    eliminated by (swapped): Aurelia via combat 20.0%, Marwyn via combat 11.9%, Tergrid via combat 11.8%, Atraxa via combat 7.8%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Necrosquito                           24.9      69.5         7.6     30.5       35.3      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Gray Merchant of Asphodel             24.9      69.1         7.8     30.9       41.3      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.0      29.9     -2.1
+    rounds survived                                  11.34     11.37    +0.03
+    eliminated, % of games                            67.4      69.3     +1.9
+    opponents it eliminated, per game                 0.95      0.88    -0.07
+    damage dealt, per game                            53.6      52.7     -0.9
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        18.5      18.6     +0.1
+      plan online by turn 6, %                        51.8      52.6     +0.8
+      plan online by turn 8, %                        75.4      75.2     -0.2
+      plan online by turn 12, %                       91.0      90.5     -0.5
+      plan online at all, %                           92.4      91.5     -0.9
+    commander resolved by turn 4, %                   19.4      19.1     -0.3
+    commander resolved by turn 6, %                   53.0      53.4     +0.4
+    commander removals, per game                      0.69      0.72    +0.03
+    lands on the battlefield, turn 4                  3.73      3.73    +0.00
+    lands on the battlefield, turn 8                  6.44      6.41    -0.03
+    mana available, turn 4                            4.11      4.11    +0.00
+    mana available, turn 8                            6.89      6.83    -0.05
+    cards in hand after the land drop, turn 4         5.55      5.55    +0.00
+    cards in hand after the land drop, turn 8         4.43      4.41    -0.02
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 98%, timeout 2%
+    eliminated by (current): Aurelia via combat 18.2%, Tergrid via combat 13.1%, Marwyn via combat 12.0%, Atraxa via combat 5.7%
+    eliminated by (swapped): Aurelia via combat 19.4%, Tergrid via combat 12.5%, Marwyn via combat 11.6%, Atraxa via combat 7.1%
+  progress  60.0%  6m16s elapsed, ~4m10s left
+  progress  70.0%  7m13s elapsed, ~3m05s left
+  progress  80.0%  8m10s elapsed, ~2m02s left
+  progress  90.0%  9m07s elapsed, ~1m00s left
+  progress 100.0%  10m03s elapsed, ~0m00s left
+Swaps: Gray Merchant of Asphodel -> Necrosquito
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  32.7% ->  30.5%  (delta -2.2 pts, noise ±3.1, paired)   n=1000
+               eliminated by (variant): Heliod 19.9%  Yuriko 13.5%  Krenko 15.7%  Chulane 9.3%  Prosper 11.1%
+[loose       ] win  33.4% ->  30.3%  (delta -3.1 pts, noise ±2.8, paired)   n=1000
+               eliminated by (variant): Heliod 20.6%  Yuriko 11.9%  Krenko 15.5%  Chulane 9.4%  Prosper 12.1%
+VERDICT: LEANS WORSE (clear only under loose; rerun with a larger --n to confirm)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          32.7% ->  30.5%  -2.2pt   ±4.2     33.4% ->  30.3%  -3.1pt   ±4.2 
+    Rounds survived (or game length)                   9.61 ->   9.56   -0.05  ±0.28      9.69 ->   9.63   -0.06  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.04      0.07 ->   0.07   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.54 ->   0.53   -0.00  ±0.07      0.53 ->   0.54   +0.01  ±0.07 
+    Mana available on your turn 4                      4.08 ->   4.08   -0.00  ±0.07      4.08 ->   4.09   +0.00  ±0.07 
+    Mana available on your turn 6                      5.58 ->   5.59   +0.01  ±0.12      5.56 ->   5.56   -0.00  ±0.11 
+
+  Speed
+    Games where the game plan came online             80.4% ->  80.5%  +0.1pt   ±3.5     78.0% ->  77.7%  -0.3pt   ±3.7 
+    Turn the game plan came online                     6.15 ->   6.01   -0.14  ±0.20      6.09 ->   6.06   -0.03  ±0.21 
+    Turn the commander first resolved                  6.08 ->   5.91   -0.16  ±0.20      6.01 ->   6.00   -0.01  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.31 ->  14.36   +0.04  ±0.66     14.65 ->  14.33   -0.33  ±0.69 
+    Tutors resolved per game                           0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   -0.00  ±0.00 
+    Spells cast per game                              10.93 ->  10.90   -0.03  ±0.51     10.99 ->  10.96   -0.03  ±0.52 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.09 ->   1.10   +0.01  ±0.10      1.10 ->   1.14   +0.04  ±0.10 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.70 ->   0.66   -0.04  ±0.08      0.68 ->   0.66   -0.02  ±0.08 
+    Your spells countered                              0.35 ->   0.34   -0.01  ±0.06      0.34 ->   0.33   -0.02  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                46.78 ->  44.93   -1.85  ±3.49     48.32 ->  44.39   -3.93  ±3.59*
+      ...of which combat damage                        8.93 ->   8.96   +0.03  ±0.85      8.65 ->   9.00   +0.35  ±0.80 
+      ...of which magecraft / burn                     1.30 ->   1.38   +0.07  ±0.26      1.41 ->   1.33   -0.08  ±0.25 
+      ...of which drain triggers                      29.60 ->  27.63   -1.97  ±2.71     31.57 ->  27.20   -4.37  ±2.83*
+      ...of which other triggers                       5.79 ->   5.78   -0.01  ±1.16      5.57 ->   5.72   +0.16  ±1.10 
+
+--- Reading it ---
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (loose profile only)
+    worse  -   ...of which drain triggers (loose profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Necrosquito                           21.3      65.7         6.5     34.3       40.7      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Gray Merchant of Asphodel             21.9      63.9         7.1     36.1       45.7      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.7      30.5     -2.2
+    rounds survived                                   9.61      9.56    -0.05
+    eliminated, % of games                            67.2      69.5     +2.3
+    opponents it eliminated, per game                 0.97      0.89    -0.08
+    damage dealt, per game                            45.6      43.7     -1.9
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        19.6      20.3     +0.7
+      plan online by turn 6, %                        50.2      51.8     +1.6
+      plan online by turn 8, %                        69.5      71.9     +2.4
+      plan online by turn 12, %                       79.8      80.1     +0.3
+      plan online at all, %                           80.4      80.5     +0.1
+    commander resolved by turn 4, %                   21.2      21.6     +0.4
+    commander resolved by turn 6, %                   52.0      54.0     +2.0
+    commander removals, per game                      0.67      0.63    -0.04
+    lands on the battlefield, turn 4                  3.72      3.72    +0.00
+    lands on the battlefield, turn 8                  6.56      6.62    +0.06
+    mana available, turn 4                            4.08      4.08    -0.00
+    mana available, turn 8                            6.96      7.02    +0.06
+    cards in hand after the land drop, turn 4         5.69      5.69    +0.00
+    cards in hand after the land drop, turn 8         4.96      5.01    +0.06
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Heliod via combo 17.8%, Krenko via combat 11.5%, Prosper via combo 6.7%, Yuriko via combat 6.5%
+    eliminated by (swapped): Heliod via combo 17.9%, Krenko via combat 11.1%, Prosper via combo 8.0%, Yuriko via triggers 7.0%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Necrosquito                           22.0      64.5         6.9     35.5       35.2      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Gray Merchant of Asphodel             21.8      63.3         7.4     36.7       50.7      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        33.4      30.3     -3.1
+    rounds survived                                   9.69      9.63    -0.06
+    eliminated, % of games                            66.2      69.5     +3.3
+    opponents it eliminated, per game                 0.99      0.90    -0.08
+    damage dealt, per game                            47.2      43.2     -4.0
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        19.7      19.2     -0.5
+      plan online by turn 6, %                        48.9      49.6     +0.7
+      plan online by turn 8, %                        68.2      67.7     -0.5
+      plan online by turn 12, %                       77.2      77.3     +0.1
+      plan online at all, %                           78.0      77.7     -0.3
+    commander resolved by turn 4, %                   20.9      20.3     -0.6
+    commander resolved by turn 6, %                   51.3      52.2     +0.9
+    commander removals, per game                      0.64      0.63    -0.02
+    lands on the battlefield, turn 4                  3.72      3.73    +0.00
+    lands on the battlefield, turn 8                  6.56      6.56    +0.00
+    mana available, turn 4                            4.08      4.09    +0.00
+    mana available, turn 8                            6.97      6.96    -0.01
+    cards in hand after the land drop, turn 4         5.73      5.72    -0.01
+    cards in hand after the land drop, turn 8         5.01      5.05    +0.04
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Heliod via combo 18.8%, Krenko via combat 10.5%, Prosper via combo 7.7%, Yuriko via triggers 6.6%
+    eliminated by (swapped): Heliod via combo 18.2%, Krenko via combat 11.3%, Prosper via combo 8.0%, Yuriko via triggers 6.4%
+
+(603s total)

@@ -235,6 +235,20 @@ pub fn commanders(cat: &Value) -> Vec<String> {
     out
 }
 
+/// the printings of your decks' commanders (data/printings/<key>.txt), for the setup screen's pictures
+pub fn commander_printings(data: &Path, cat: &Value) -> crate::images::Printings {
+    let decks: Vec<&Value> = cat["decks"].as_array().into_iter().flatten().collect();
+    let keys: Vec<String> = decks.iter().filter_map(|d| d["key"].as_str()).map(String::from).collect();
+    let mut all = crate::images::load_printings(data, &keys);
+    for d in decks {
+        let cmds: Vec<&str> = d["commanders"].as_array().into_iter().flatten().filter_map(|c| c.as_str()).collect();
+        if let Some(m) = d["key"].as_str().and_then(|k| all.get_mut(k)) {
+            m.retain(|n, _| cmds.contains(&n.as_str()));
+        }
+    }
+    all
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

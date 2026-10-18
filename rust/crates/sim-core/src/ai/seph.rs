@@ -39,12 +39,32 @@ fn first_max<T: Copy, K: PartialOrd>(xs: &[T], key: impl Fn(T) -> K) -> Option<T
 }
 
 // ------------------------------------------------------------------ values
+/// The bomb rating Sephiroth (Atraxa) gives a card. Hornet Queen (four deathtouch fliers, 4 bodies) and Muldrotha carry no
+/// `bomb=` tag because the pool decks that play them share the tag line; here they are rated as the bombs they are.
+pub fn sbomb(g: &Game, c: CardId) -> i32 {
+    let d = g.db.get(c);
+    if d.bomb != 0 {
+        return d.bomb;
+    }
+    match &*d.name {
+        "Hornet Queen" => 7,
+        "Muldrotha, the Gravetide" => 6,
+        _ => 0,
+    }
+}
+
+/// A creature worth reanimating, binning or tutoring for (one threshold for every test: Mikaeus, Muldrotha and Hornet
+/// Queen count, as the reanimation spells' own target rule already did)
+pub const BOMB_TARGET: i32 = 5;
+/// A creature that, once on the battlefield, means the deck has its bomb out (Mikaeus alone is only a loop piece)
+pub const BOMB_BOARD: i32 = 6;
+
 /// ais.seph_bval: what a creature card is worth as a reanimation target
 pub fn seph_bval(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let d = g.db.get(c);
     let t = &d.tags;
-    let mut v = if d.bomb != 0 {
-        d.bomb as f64
+    let mut v = if sbomb(g, c) != 0 {
+        sbomb(g, c) as f64
     } else if d.creature {
         d.pow as f64
     } else {
@@ -64,9 +84,29 @@ pub fn seph_bval(g: &Game, p: PlayerId, c: CardId) -> f64 {
     v
 }
 
+/// library creatures that are the missing piece of a loop (Entomb/Buried Alive bin these first: Finks, Triskelion, Melira)
+pub fn fill_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
+    if g.player(p).key != "seph" {
+        return vec![];
+    }
+    let need = mine::loop_need(g, p, &[]);
+    g.player(p).library.iter().copied().filter(|&c| g.db.get(c).creature && need.contains(&&*g.db.get(c).name)).collect()
+}
+
+/// what a graveyard-filling spell may bin: the missing loop pieces, then every bomb
+pub fn fill_targets(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let need = fill_pieces(g, p);
+    g.player(p)
+        .library
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).creature && (need.contains(&c) || sbomb(g, c) >= BOMB_TARGET))
+        .collect()
+}
+
 /// ais.own_bomb_in_gy
 pub fn own_bomb_in_gy(g: &Game, p: PlayerId) -> bool {
-    g.player(p).gy.iter().any(|&c| g.db.get(c).creature && seph_bval(g, p, c) >= 6.0)
+    g.player(p).gy.iter().any(|&c| g.db.get(c).creature && sbomb(g, c) >= BOMB_TARGET)
 }
 
 /// ais.free_sac: a free sacrifice outlet on p's battlefield (Disruptor Flute stops one)
@@ -124,6 +164,15 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     }
     if FLICKERS.contains(&&*d.name) {
         return flicker_prio(g, p, c);
+    }
+    if &*d.name == "Grand Abolisher" {
+        // the doc: resolve it first, before the combo turn. It stops every spell and ability on your own turn
+        let hand: Vec<&str> = pl.hand.iter().map(|&x| &*g.db.get(x).name).collect();
+        let going = !mine::loop_need(g, p, &hand).is_empty() || (own_bomb_in_gy(g, p) && has_rean_access(g, p));
+        return if going || bomb_on_bf(g, p) { 70 } else { 35 };
+    }
+    if &*d.name == "The Soul Stone" {
+        return if pl.turns <= 5 { 80 } else { 55 }; // still worth casting late: its harnessed upkeep reanimation
     }
     if t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) {
         return if pl.turns <= 5 { 80 } else { 30 };
@@ -185,7 +234,7 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 35;
     }
     // ('tide': Tishana's Tidebinder, no longer in the list and no card has the tag)
-    if d.creature && d.bomb == 0 {
+    if d.creature && sbomb(g, c) == 0 {
         return 30;
     }
     0
@@ -238,29 +287,30 @@ pub fn seph_tutor_target(g: &Game, p: PlayerId) -> Option<&'static str> {
         }
         if tgt && !rean {
             let mut order: Vec<&'static str> = if pl.life > 22 { vec!["Reanimate"] } else { vec![] };
-            order.extend([
-                "Animate Dead",
-                "Necromancy",
-                "Dread Return",
-                "Persist",
-                "Unburial Rites",
-                "Evil Reawakened",
-            ]);
+            order.extend(["Animate Dead", "Necromancy", "Dread Return", "Unburial Rites"]);
             return first(&order);
         }
         if !rean && !tgt {
             return first(&["Entomb", "Buried Alive", "Animate Dead"]);
         }
     }
-    first(&[
-        "Heroic Intervention",
-        "Counterspell",
-        "Swan Song",
-        "Swiftfoot Boots",
-        "Dovin's Veto",
-        "Phyrexian Arena",
-        "Animate Dead",
-    ])
+    // a bomb is out or the yard is stocked: the late game. Under pressure the wipe (the doc: "tutor Deluge or Austere"),
+    // then protection, the engine, Muldrotha for a long game, Aura Shards
+    let theirs: usize = g.opps(p).map(|q| g.player(q).perms.iter().filter(|&&m| g.is_creature(m)).count()).sum();
+    let ours = pl.perms.iter().filter(|&&m| g.is_creature(m)).count();
+    if theirs >= 3 && theirs > ours + 1 {
+        let wipe: &[&'static str] =
+            if pl.life > 8 { &["Toxic Deluge", "Austere Command"] } else { &["Austere Command", "Toxic Deluge"] };
+        if let Some(n) = first(wipe) {
+            return Some(n);
+        }
+    }
+    if pl.turns >= 7 {
+        if let Some(n) = first(&["Muldrotha, the Gravetide"]) {
+            return Some(n); // the long game, combo answered
+        }
+    }
+    first(&["Swan Song", "Phyrexian Arena", "Aura Shards", "Muldrotha, the Gravetide", "Animate Dead"])
 }
 
 // ------------------------------------------------------------------ the main-phase options
@@ -314,7 +364,7 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
         && !gy_bomb
         && rean
         && pl.te_used != Some(pl.turns)
-        && hand_has(g, p, |c| g.db.get(c).creature && g.db.get(c).bomb >= 6)
+        && hand_has(g, p, |c| g.db.get(c).creature && sbomb(g, c) >= BOMB_BOARD)
         && can_pay(g, p, 0, "B", false)
     {
         o.push(plan(6.0, "Tortured Existence discard", tortured_go));
@@ -322,7 +372,7 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
     let tut_in_hand = hand_has(g, p, |c| g.db.get(c).tags.str(Tag::Tut).is_some_and(|s| !s.is_empty()));
     if !gy_bomb
         && (rean || tut_in_hand)
-        && pl.library.iter().any(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 5)
+        && !fill_targets(g, p).is_empty()
         && payable_in_hand(g, p, |c| FILLERS.contains(&&*g.db.get(c).name))
     {
         o.push(plan(if rean { 6.3 } else { 3.0 }, "fill graveyard", fill_go));
@@ -346,7 +396,7 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
     }
     for &c in &pl.hand {
         let d = g.db.get(c);
-        if d.creature && d.bomb >= 4 && can_pay(g, p, d.generic, &d.pips, false) {
+        if d.creature && sbomb(g, c) >= 4 && can_pay(g, p, d.generic, &d.pips, false) {
             hc = hc.max(seph_bval(g, p, c) - 1.0);
         }
     }
@@ -388,7 +438,7 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
     let bomb_out = pl
         .perms
         .iter()
-        .any(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).bomb >= 6) && !untargetable(g, m));
+        .any(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| sbomb(g, c) >= BOMB_BOARD) && !untargetable(g, m));
     if can_pay(g, p, 1, "", false) && loose_boots && bomb_out {
         o.push(plan(3.0 + 4.0 * removal_risk(g, p), "equip Boots", boots_go));
     }
@@ -435,7 +485,7 @@ pub fn seph_reanimate(g: &mut Game, p: PlayerId) -> Res<bool> {
                 .copied()
                 .filter(|&m| {
                     let x = g.perm(m);
-                    g.is_creature(m) && (x.token || x.cd.is_none_or(|cd| g.db.get(cd).bomb == 0))
+                    g.is_creature(m) && (x.token || x.cd.is_none_or(|cd| sbomb(g, cd) == 0))
                 })
                 .map(|m| (pval(g, m), m))
                 .collect();
@@ -493,7 +543,7 @@ pub fn seph_fill(g: &mut Game, p: PlayerId) -> Res<bool> {
     if !(has_rean_access(g, p) || tut) {
         return Ok(false);
     }
-    if !g.player(p).library.iter().any(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 5) {
+    if fill_targets(g, p).is_empty() {
         return Ok(false);
     }
     for name in FILLERS {
@@ -529,7 +579,7 @@ pub fn seph_tortured(g: &mut Game, p: PlayerId) -> Res<bool> {
         return Ok(false);
     }
     let bombs: Vec<CardId> =
-        g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 6).collect();
+        g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).creature && sbomb(g, c) >= BOMB_BOARD).collect();
     if bombs.is_empty() || !can_pay(g, p, 0, "B", false) || !has_rean_access(g, p) {
         return Ok(false);
     }
@@ -539,7 +589,7 @@ pub fn seph_tortured(g: &mut Game, p: PlayerId) -> Res<bool> {
     let t = g.player(p).turns;
     g.player_mut(p).te_used = Some(t);
     let small: Vec<CardId> =
-        g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb == 0 && c != b).collect();
+        g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).creature && sbomb(g, c) == 0 && c != b).collect();
     if let Some(x) = first_max(&small, |c| card_worth(g, p, c, false)) {
         let pl = g.player_mut(p);
         if let Some(i) = pl.gy.iter().position(|&y| y == x) {
@@ -583,7 +633,7 @@ pub fn seph_tutor(g: &mut Game, p: PlayerId) -> Res<bool> {
                 .copied()
                 .filter(|&m| {
                     let x = g.perm(m);
-                    g.is_creature(m) && (x.token || x.cd.is_some_and(|cd| g.db.get(cd).bomb == 0 && cd != cmd))
+                    g.is_creature(m) && (x.token || x.cd.is_some_and(|cd| sbomb(g, cd) == 0 && cd != cmd))
                 })
                 .collect();
             if fod.is_empty() {
@@ -685,7 +735,7 @@ pub fn seph_hardcast(g: &mut Game, p: PlayerId) -> Res<bool> {
         .hand
         .iter()
         .copied()
-        .filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 4)
+        .filter(|&c| g.db.get(c).creature && sbomb(g, c) >= 4)
         .map(|c| (-seph_bval(g, p, c), c))
         .collect();
     bombs.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
@@ -867,7 +917,7 @@ pub fn seph_boots(g: &mut Game, p: PlayerId) -> Res<bool> {
             .perms
             .iter()
             .copied()
-            .filter(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).bomb >= 6) && !untargetable(g, m))
+            .filter(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| sbomb(g, c) >= BOMB_BOARD) && !untargetable(g, m))
             .collect();
         let cost = boots_cost(g, e);
         if !bombs.is_empty() && can_pay(g, p, cost, "", false) {
@@ -945,6 +995,14 @@ pub fn protect(g: &mut Game, owner: PlayerId, m: PermId, kind: Sym, v: f64) -> R
     }
     if v >= 5.0
         && creature
+        && !g.perm(m).token
+        && !matches!(kind, "edict" | "wipe")
+        && mine::momentary_blink_cast(g, owner, m, "protection")?
+    {
+        return Ok(true);
+    }
+    if v >= 5.0
+        && creature
         && (matches!(kind, "destroy" | "exile" | "bounce" | "tuck") || kind.starts_with("dmg"))
         && mine::resto_cast(g, owner, m, "protection")?
     {
@@ -1017,11 +1075,31 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, loss: f64) -> Res<Opt
         let cmd = g.player(q).cmd;
         for m in g.player(q).perms.clone() {
             let x = g.perm(m);
-            if g.is_creature(m) && !x.token && x.cd.is_some_and(|c| g.db.get(c).bomb != 0 && c != cmd) {
+            if g.is_creature(m) && !x.token && x.cd.is_some_and(|c| sbomb(g, c) != 0 && c != cmd) {
                 g.player_mut(q).stat("sac_saves", 1);
                 seph_sac(g, q, m)?;
             }
         }
     }
     Ok(None)
+}
+
+// ------------------------------------------------------------------ Tireless Tracker before the land drop
+/// Tireless Tracker ("whenever a land enters under your control, investigate") is cast before the turn's land drop
+/// whenever the lands already out pay for it, so the drop (and a fetch land's second land) makes Clues. Not when the
+/// mana is wanted for a reanimation spell that has a target
+pub fn tracker_first(g: &mut Game, p: PlayerId) -> Res {
+    let pl = g.player(p);
+    if !pl.hand.iter().any(|&c| g.db.get(c).land) {
+        return Ok(());
+    }
+    let Some(c) = pl.hand.iter().copied().find(|&c| &*g.db.get(c).name == "Tireless Tracker") else { return Ok(()) };
+    let d = g.db.get(c);
+    if !can_pay(g, p, d.generic, &d.pips, false) || (own_bomb_in_gy(g, p) && has_rean_access(g, p)) {
+        return Ok(());
+    }
+    let (gn, pips) = (d.generic, d.pips.to_string());
+    pay(g, p, gn, &pips, false)?;
+    cast_card(g, p, c, "hand", Ctx::default())?;
+    Ok(())
 }

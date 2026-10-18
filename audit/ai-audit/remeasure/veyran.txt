@@ -1,0 +1,27 @@
+12,000 games (1 deck x 3 tiers (each deck in its own tiers), 2,000 per list per tier, profiles conservative and loose), lookahead AI, 10 worker threads: about 60 minutes
+  progress  10.0%  4m26s elapsed, ~40m00s left
+  cell veyran vs t1 [conservative]:  30.4% (28.4-32.5)
+  progress  20.0%  9m29s elapsed, ~37m57s left
+  progress  30.0%  14m44s elapsed, ~34m24s left
+  cell veyran vs t2 [conservative]:  33.0% (31.0-35.1)
+  progress  40.0%  19m08s elapsed, ~28m42s left
+  progress  50.0%  22m52s elapsed, ~22m52s left
+  cell veyran vs t3 [conservative]:  28.6% (26.7-30.7)
+  progress  60.0%  27m29s elapsed, ~18m19s left
+  cell veyran vs t1 [loose]:  28.6% (26.6-30.6)
+  progress  70.0%  32m13s elapsed, ~13m48s left
+  progress  80.0%  37m38s elapsed, ~9m24s left
+  cell veyran vs t2 [loose]:  32.2% (30.2-34.3)
+  progress  90.0%  42m34s elapsed, ~4m43s left
+  progress 100.0%  46m21s elapsed, ~0m00s left
+  cell veyran vs t3 [loose]:  26.7% (24.8-28.7)
+
+=== Win rate by deck and tier [conservative profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  veyran      30.4% (28.4-32.5)  33.0% (31.0-35.1)  28.6% (26.7-30.7)           30.7% over t1-t3
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  veyran      28.6% (26.6-30.6)  32.2% (30.2-34.3)  26.7% (24.8-28.7)           29.1% over t1-t3
+
+(2782s total)

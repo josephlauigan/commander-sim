@@ -1,0 +1,328 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Tireless Tracker [pool] C 2G :: human pow=3 tgh=2
+Model status of the swapped-in cards (cardgen audit):
+  Hornet Queen: Full (tags: `pow=2 fly dt tok=4 tokfly tokdt`)
+  Austere Command: Full (tags: `wipe=austere2`)
+  Arcane Denial: Full (counter; the caster draws two and you draw one at the next upkeep)
+  Harmonize: Full (tags: `draw=3`)
+  Tireless Tracker: Full ()
+
+8,000 games (current list and the swapped one, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 18 minutes
+  progress  10.0%  1m01s elapsed, ~9m14s left
+  progress  20.0%  2m06s elapsed, ~8m27s left
+  progress  30.0%  3m12s elapsed, ~7m29s left
+  progress  40.0%  4m18s elapsed, ~6m27s left
+  progress  50.0%  5m21s elapsed, ~5m21s left
+Swaps: Force of Will -> Hornet Queen; Farewell -> Austere Command; Teferi's Protection -> Arcane Denial; Consecrated Sphinx -> Harmonize; Worldly Tutor -> Tireless Tracker
+
+=== Sephiroth vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  35.3% ->  36.9%  (delta +1.6 pts, noise ±3.9, paired)   n=1000
+               eliminated by (variant): Aurelia 19.7%  Tergrid 16.5%  Korvold 7.2%  Atraxa 6.5%  Marwyn 12.9%
+[loose       ] win  37.0% ->  38.3%  (delta +1.3 pts, noise ±3.9, paired)   n=1000
+               eliminated by (variant): Aurelia 19.7%  Tergrid 16.1%  Korvold 5.7%  Atraxa 7.7%  Marwyn 12.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          35.3% ->  36.9%  +1.6pt   ±4.3     37.0% ->  38.3%  +1.3pt   ±4.3 
+    Rounds survived (or game length)                  11.37 ->  11.26   -0.11  ±0.30     11.29 ->  11.28   -0.01  ±0.30 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.04      0.07 ->   0.07   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.62 ->   0.57   -0.05  ±0.07      0.61 ->   0.59   -0.02  ±0.07 
+    Mana available on your turn 4                      4.19 ->   4.18   -0.02  ±0.10      4.20 ->   4.16   -0.04  ±0.10 
+    Mana available on your turn 6                      5.76 ->   5.76   -0.00  ±0.14      5.74 ->   5.72   -0.03  ±0.14 
+
+  Speed
+    Games where the game plan came online             81.7% ->  78.1%  -3.6pt   ±3.6*    79.9% ->  78.8%  -1.1pt   ±3.6 
+    Turn the game plan came online                     6.60 ->   6.67   +0.07  ±0.22      6.59 ->   6.68   +0.09  ±0.21 
+    Turn the commander first resolved                  8.48 ->   8.44   -0.04  ±0.28      8.44 ->   8.64   +0.20  ±0.28 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.38 ->  14.48   -0.90  ±0.72*    15.09 ->  14.48   -0.61  ±0.69 
+    Tutors resolved per game                           0.77 ->   0.50   -0.27  ±0.07*     0.77 ->   0.49   -0.28  ±0.07*
+    Spells cast per game                              13.14 ->  13.18   +0.05  ±0.75     13.01 ->  13.14   +0.12  ±0.76 
+
+  Interaction
+    Counterspells cast                                 0.37 ->   0.45   +0.09  ±0.05*     0.35 ->   0.45   +0.10  ±0.05*
+    Spot removal cast                                  1.04 ->   1.07   +0.04  ±0.09      1.01 ->   1.10   +0.08  ±0.09 
+    Board wipes cast                                   0.31 ->   0.30   -0.01  ±0.05      0.31 ->   0.30   -0.01  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.11 ->   0.12   +0.01  ±0.04      0.13 ->   0.12   -0.01  ±0.04 
+    Your key permanents removed by opponents           0.86 ->   0.74   -0.12  ±0.10*     0.80 ->   0.79   -0.01  ±0.10 
+    Your spells countered                              0.13 ->   0.12   -0.00  ±0.03      0.12 ->   0.12   +0.00  ±0.03 
+    Removed bombs brought back                         0.34 ->   0.36   +0.03  ±0.06      0.38 ->   0.38   -0.00  ±0.07 
+
+  Threat & pressure
+    Bombs put on the battlefield                       3.03 ->   2.84   -0.19  ±0.24      3.04 ->   2.90   -0.14  ±0.25 
+    Damage dealt to opponents per game                29.47 ->  31.25   +1.78  ±3.52     31.42 ->  31.47   +0.06  ±3.65 
+      ...of which combat damage                       17.75 ->  19.58   +1.83  ±2.57     19.67 ->  19.91   +0.24  ±2.74 
+      ...of which drain triggers                       9.16 ->   9.55   +0.39  ±1.22      8.99 ->   9.20   +0.21  ±1.16 
+      ...of which other triggers                       2.56 ->   2.12   -0.44  ±0.98      2.76 ->   2.37   -0.39  ±1.03 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (conservative profile only)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (conservative profile only)
+    worse  - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Counterspells cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your key permanents removed by opponents (conservative profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          22.9      41.0         9.8     59.0       72.3      0.00
+    Austere Command                       23.3      52.4         9.0     47.6       45.9      0.00
+    Arcane Denial                         27.0      83.7         8.4     16.3       51.3      0.00
+    Harmonize                             24.5      58.0         8.2     42.0       52.1      0.00
+    Tireless Tracker                      24.6      76.8         6.9     23.2       48.7      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Force of Will                         24.6      61.4         7.8     38.6       44.4      0.00
+    Farewell                              25.4      49.6         9.0     50.4       54.8      0.00
+    Teferi's Protection                   23.9      32.6        10.8     67.4       17.9      0.00
+    Consecrated Sphinx                    22.5      48.4         9.1     51.6       56.9      0.03
+    Worldly Tutor                         31.9      87.1         8.8     12.9       57.2      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        35.3      36.9     +1.6
+    rounds survived                                  11.37     11.26    -0.11
+    eliminated, % of games                            64.2      62.8     -1.4
+    opponents it eliminated, per game                 0.91      0.95    +0.04
+    damage dealt, per game                            29.5      31.3     +1.8
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        13.7      11.8     -1.9
+      plan online by turn 6, %                        44.2      40.0     -4.2
+      plan online by turn 8, %                        67.1      64.4     -2.7
+      plan online by turn 12, %                       80.7      77.4     -3.3
+      plan online at all, %                           81.7      78.1     -3.6
+    commander resolved by turn 4, %                    1.5       0.9     -0.6
+    commander resolved by turn 6, %                   14.7      11.7     -3.0
+    commander removals, per game                      0.31      0.29    -0.02
+    lands on the battlefield, turn 4                  3.85      3.81    -0.04
+    lands on the battlefield, turn 8                  6.60      6.60    -0.00
+    mana available, turn 4                            4.19      4.18    -0.02
+    mana available, turn 8                            7.11      7.19    +0.08
+    cards in hand after the land drop, turn 4         5.44      5.55    +0.11
+    cards in hand after the land drop, turn 8         4.96      4.72    -0.24
+    wins by (current):  damage 57%, combo 41%, timeout 1%
+    wins by (swapped):  damage 60%, combo 38%, timeout 1%
+    eliminated by (current): Aurelia via combat 15.3%, Marwyn via combat 12.8%, Tergrid via combat 12.4%, Atraxa via combat 6.7%
+    eliminated by (swapped): Aurelia via combat 16.6%, Marwyn via combat 12.8%, Tergrid via combat 11.6%, Atraxa via combat 4.9%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          22.9      37.6         9.7     62.4       70.9      0.01
+    Austere Command                       24.0      51.7         8.9     48.3       53.2      0.00
+    Arcane Denial                         27.0      81.9         8.4     18.1       52.5      0.00
+    Harmonize                             24.9      61.8         8.6     38.2       62.3      0.00
+    Tireless Tracker                      24.9      77.9         6.9     22.1       48.5      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Force of Will                         25.0      62.4         7.9     37.6       40.4      0.00
+    Farewell                              25.2      47.2         9.2     52.8       55.5      0.00
+    Teferi's Protection                   21.4      29.9         9.8     70.1       26.6      0.00
+    Consecrated Sphinx                    22.9      46.3         8.6     53.7       60.4      0.02
+    Worldly Tutor                         33.0      87.3         8.8     12.7       64.6      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        37.0      38.3     +1.3
+    rounds survived                                  11.29     11.28    -0.01
+    eliminated, % of games                            62.4      61.5     -0.9
+    opponents it eliminated, per game                 0.94      0.94    -0.00
+    damage dealt, per game                            31.4      31.5     +0.1
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        12.8      12.2     -0.6
+      plan online by turn 6, %                        42.3      40.0     -2.3
+      plan online by turn 8, %                        66.2      64.4     -1.8
+      plan online by turn 12, %                       79.4      78.0     -1.4
+      plan online at all, %                           79.9      78.8     -1.1
+    commander resolved by turn 4, %                    1.0       1.2     +0.2
+    commander resolved by turn 6, %                   14.0      11.8     -2.2
+    commander removals, per game                      0.30      0.32    +0.01
+    lands on the battlefield, turn 4                  3.84      3.80    -0.04
+    lands on the battlefield, turn 8                  6.57      6.58    +0.01
+    mana available, turn 4                            4.20      4.16    -0.04
+    mana available, turn 8                            7.08      7.15    +0.07
+    cards in hand after the land drop, turn 4         5.43      5.57    +0.13
+    cards in hand after the land drop, turn 8         4.98      4.80    -0.18
+    wins by (current):  damage 63%, combo 36%, timeout 1%
+    wins by (swapped):  damage 61%, combo 37%, timeout 2%
+    eliminated by (current): Aurelia via combat 16.7%, Tergrid via combat 13.1%, Marwyn via combat 11.7%, Atraxa via combat 5.6%
+    eliminated by (swapped): Aurelia via combat 16.6%, Marwyn via combat 12.1%, Tergrid via combat 11.5%, Atraxa via combat 6.0%
+  progress  60.0%  6m18s elapsed, ~4m12s left
+  progress  70.0%  7m17s elapsed, ~3m07s left
+  progress  80.0%  8m16s elapsed, ~2m04s left
+  progress  90.0%  9m15s elapsed, ~1m01s left
+  progress 100.0%  10m53s elapsed, ~0m00s left
+Swaps: Force of Will -> Hornet Queen; Farewell -> Austere Command; Teferi's Protection -> Arcane Denial; Consecrated Sphinx -> Harmonize; Worldly Tutor -> Tireless Tracker
+
+=== Sephiroth vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  30.2% ->  28.2%  (delta -2.0 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Heliod 19.0%  Yuriko 16.8%  Krenko 16.3%  Chulane 10.5%  Prosper 9.2%
+[loose       ] win  29.3% ->  27.6%  (delta -1.7 pts, noise ±3.6, paired)   n=1000
+               eliminated by (variant): Heliod 19.4%  Yuriko 17.5%  Krenko 17.3%  Chulane 9.3%  Prosper 8.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          30.2% ->  28.2%  -2.0pt   ±4.1     29.3% ->  27.6%  -1.7pt   ±4.0 
+    Rounds survived (or game length)                   9.85 ->   9.77   -0.07  ±0.29      9.74 ->   9.66   -0.08  ±0.28 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.04      0.07 ->   0.07   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.59 ->   0.55   -0.05  ±0.07      0.58 ->   0.55   -0.04  ±0.07 
+    Mana available on your turn 4                      4.19 ->   4.18   -0.02  ±0.10      4.20 ->   4.18   -0.02  ±0.10 
+    Mana available on your turn 6                      5.74 ->   5.71   -0.03  ±0.14      5.77 ->   5.74   -0.03  ±0.15 
+
+  Speed
+    Games where the game plan came online             71.5% ->  70.6%  -0.9pt   ±4.1     69.1% ->  69.1%  +0.0pt   ±4.1 
+    Turn the game plan came online                     6.53 ->   6.51   -0.02  ±0.22      6.37 ->   6.45   +0.08  ±0.21 
+    Turn the commander first resolved                  8.37 ->   8.24   -0.13  ±0.29      8.13 ->   8.15   +0.03  ±0.28 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.64 ->  12.63   -1.01  ±0.75*    13.70 ->  12.36   -1.34  ±0.79*
+    Tutors resolved per game                           0.63 ->   0.42   -0.21  ±0.06*     0.60 ->   0.38   -0.22  ±0.06*
+    Spells cast per game                              10.61 ->  10.55   -0.06  ±0.66     10.48 ->  10.29   -0.20  ±0.65 
+
+  Interaction
+    Counterspells cast                                 0.35 ->   0.42   +0.07  ±0.05*     0.35 ->   0.40   +0.05  ±0.05 
+    Spot removal cast                                  0.84 ->   0.87   +0.03  ±0.08      0.84 ->   0.83   -0.01  ±0.08 
+    Board wipes cast                                   0.26 ->   0.26   -0.00  ±0.04      0.24 ->   0.26   +0.02  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.12 ->   0.12   +0.01  ±0.04      0.15 ->   0.13   -0.02  ±0.04 
+    Your key permanents removed by opponents           0.65 ->   0.65   -0.00  ±0.08      0.63 ->   0.61   -0.02  ±0.08 
+    Your spells countered                              0.33 ->   0.34   +0.01  ±0.06      0.35 ->   0.36   +0.01  ±0.06 
+    Removed bombs brought back                         0.20 ->   0.16   -0.04  ±0.05      0.18 ->   0.16   -0.02  ±0.04 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.27 ->   2.06   -0.20  ±0.21      2.22 ->   2.02   -0.20  ±0.21 
+    Damage dealt to opponents per game                23.42 ->  24.02   +0.60  ±2.93     22.66 ->  23.87   +1.21  ±2.91 
+      ...of which combat damage                       14.90 ->  14.95   +0.05  ±2.13     13.82 ->  15.35   +1.53  ±2.08 
+      ...of which drain triggers                       7.11 ->   7.48   +0.37  ±1.11      7.42 ->   7.28   -0.14  ±1.06 
+      ...of which other triggers                       1.41 ->   1.59   +0.18  ±0.75      1.42 ->   1.24   -0.18  ±0.74 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    worse  - Tutors resolved per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Counterspells cast (conservative profile only)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          19.3      24.9         9.3     75.1       62.5      0.00
+    Austere Command                       22.2      45.0         8.4     55.0       46.0      0.00
+    Arcane Denial                         24.5      81.2         7.8     18.8       46.7      0.00
+    Harmonize                             20.4      52.5         8.0     47.5       48.6      0.00
+    Tireless Tracker                      22.0      71.8         6.1     28.2       36.1      0.04
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Force of Will                         23.0      61.7         7.3     38.3       38.7      0.00
+    Farewell                              22.1      42.1         8.2     57.9       49.5      0.00
+    Teferi's Protection                   19.9      31.2         9.8     68.8       29.0      0.00
+    Consecrated Sphinx                    19.8      42.4         8.5     57.6       53.6      0.02
+    Worldly Tutor                         26.8      83.2         7.6     16.8       50.7      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.2      28.2     -2.0
+    rounds survived                                   9.85      9.77    -0.07
+    eliminated, % of games                            69.8      71.8     +2.0
+    opponents it eliminated, per game                 0.73      0.73    -0.00
+    damage dealt, per game                            23.4      24.0     +0.6
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        11.6      10.9     -0.7
+      plan online by turn 6, %                        39.3      37.7     -1.6
+      plan online by turn 8, %                        60.1      59.9     -0.2
+      plan online by turn 12, %                       70.9      70.2     -0.7
+      plan online at all, %                           71.5      70.6     -0.9
+    commander resolved by turn 4, %                    0.7       0.7     +0.0
+    commander resolved by turn 6, %                   10.2       9.9     -0.3
+    commander removals, per game                      0.20      0.22    +0.02
+    lands on the battlefield, turn 4                  3.82      3.80    -0.02
+    lands on the battlefield, turn 8                  6.61      6.59    -0.02
+    mana available, turn 4                            4.19      4.18    -0.02
+    mana available, turn 8                            7.10      7.13    +0.04
+    cards in hand after the land drop, turn 4         5.61      5.71    +0.10
+    cards in hand after the land drop, turn 8         5.68      5.44    -0.24
+    wins by (current):  damage 68%, combo 31%, timeout 0%
+    wins by (swapped):  damage 67%, combo 32%, timeout 0%
+    eliminated by (current): Heliod via combo 16.6%, Krenko via combat 11.6%, Yuriko via triggers 9.4%, Chulane via combat 6.5%
+    eliminated by (swapped): Heliod via combo 17.1%, Krenko via combat 12.4%, Yuriko via triggers 10.4%, Yuriko via combat 6.3%
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hornet Queen                          19.1      28.8         8.8     71.2       52.7      0.00
+    Austere Command                       23.2      47.8         8.5     52.2       45.9      0.00
+    Arcane Denial                         23.9      81.6         7.5     18.4       47.7      0.00
+    Harmonize                             20.5      45.4         7.6     54.6       44.1      0.00
+    Tireless Tracker                      22.7      75.3         6.2     24.7       40.9      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Force of Will                         24.6      55.7         7.4     44.3       37.2      0.00
+    Farewell                              20.8      42.3         8.5     57.7       50.0      0.00
+    Teferi's Protection                   19.9      30.2         9.9     69.8       30.0      0.00
+    Consecrated Sphinx                    18.7      42.8         8.1     57.2       56.2      0.02
+    Worldly Tutor                         28.4      77.8         7.6     22.2       54.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.3      27.6     -1.7
+    rounds survived                                   9.74      9.66    -0.08
+    eliminated, % of games                            70.7      72.3     +1.6
+    opponents it eliminated, per game                 0.73      0.71    -0.03
+    damage dealt, per game                            22.7      23.9     +1.2
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        11.4      12.1     +0.7
+      plan online by turn 6, %                        40.9      37.9     -3.0
+      plan online by turn 8, %                        59.6      59.3     -0.3
+      plan online by turn 12, %                       68.6      68.6     +0.0
+      plan online at all, %                           69.1      69.1     +0.0
+    commander resolved by turn 4, %                    0.7       0.8     +0.1
+    commander resolved by turn 6, %                   12.4      10.7     -1.7
+    commander removals, per game                      0.20      0.19    -0.01
+    lands on the battlefield, turn 4                  3.83      3.81    -0.02
+    lands on the battlefield, turn 8                  6.64      6.67    +0.04
+    mana available, turn 4                            4.20      4.18    -0.02
+    mana available, turn 8                            7.23      7.24    +0.01
+    cards in hand after the land drop, turn 4         5.59      5.70    +0.11
+    cards in hand after the land drop, turn 8         5.48      5.30    -0.18
+    wins by (current):  damage 66%, combo 33%, timeout 1%
+    wins by (swapped):  damage 66%, combo 33%, timeout 1%
+    eliminated by (current): Heliod via combo 15.6%, Krenko via combat 13.3%, Yuriko via triggers 10.8%, Chulane via combat 5.7%
+    eliminated by (swapped): Heliod via combo 17.1%, Krenko via combat 12.4%, Yuriko via triggers 10.1%, Yuriko via combat 7.3%
+
+(653s total)

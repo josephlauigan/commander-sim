@@ -33,7 +33,6 @@
 2x Artifist Acumen (fra)
 2x Ascendant Dustspeaker (sos)
 1x Audience with Trostani (mkm)
-1x Austere Command (fic, msc)
 1x Avacyn's Pilgrim (list)
 1x Avalanche of Sector 7 (fic)
 1x Avarax (dmr)
@@ -65,6 +64,7 @@
 1x Bestial Incursion (fra)
 3x Biblioplex Tomekeeper (sos)
 1x Biomechan Engineer (eoe)
+1x Bitter Triumph
 1x Black Widow, Agile Avenger (msc)
 1x Blasphemous Act
 2x Blastfire Bolt (m15)
@@ -93,7 +93,6 @@
 1x Burning-Tree Vandal (rna)
 2x Burrog Banemaker (sos)
 4x Burrog Barrage (sos)
-1x Cactarantula
 1x Caged Zombie (m21)
 1x Cait Sith, Fortune Teller (fic)
 1x Call a Surprise Witness (mkm)
@@ -162,6 +161,7 @@
 2x Cultivate (fic, ump)
 3x Curtain of Light (sok)
 1x Cut Propulsion (eoe)
+1x Dakkon, Shadow Slayer
 1x Dark Endurance (eoe)
 1x Dark Inquiry (rix)
 1x Dark Matter Manipulator (fra)
@@ -170,7 +170,6 @@
 2x Death Cultist (roe)
 1x Deathcap Glade (sos)
 1x Decimate (fic)
-1x Decorum Dissertation
 3x Dedicated Commons (fra)
 1x Deepcavern Imp (mma)
 2x Deepglow Skate (cmm)
@@ -234,12 +233,14 @@
 1x End of the Hunt (sos)
 1x Ennis, Debate Moderator
 1x Entrust the Spark (fra)
+1x Environmental Scientist
 1x Epitaph Golem (inr)
 2x Essence Reliquary (mh3)
 3x Essence Scatter (dmu, sos)
 1x Essenceknit Scholar (sos)
 1x Eternal Student (sos)
 1x Eternal Warrior (ren)
+1x Evacuation
 2x Evil Reawakened (fin)
 1x Evolution Sage
 1x Evolving Wilds (fic, m15)
@@ -250,7 +251,6 @@
 1x Experimental Augury (one)
 1x Explorer's Scope
 3x Expressive Firedancer (sos)
-1x Expressive Iteration (soa)
 1x Extrapolate the Impossible (fra)
 1x Exuberant Fuseling (one)
 1x Exultant Skymarcher (rix)
@@ -261,7 +261,6 @@
 1x Fatehold Chronologist (fra)
 1x Fathom Fleet Cutthroat (xln)
 1x Fathom Seer (tsr)
-1x Fblthp, Knows the Way (fra)
 1x Fear of Isolation (dsk)
 1x Ferocity of the Hunt (fra)
 1x Festering Goblin (dmr)
@@ -463,9 +462,10 @@
 1x Make Your Move (msc)
 1x Malevolent Chandelier (dsk)
 1x Malevolent Rumble (mh3)
-3x Mana Leak (9ed)
+2x Mana Leak (9ed)
 1x March of the Multitudes (grn)
 1x Martyr of Dusk (rix)
+1x Masterful Flourish
 1x Matterbending Mage (sos)
 1x Mechan Shieldmate (eoe)
 3x Medic's Kitesail (fra)
@@ -498,7 +498,6 @@
 1x Mycologist (tsr)
 1x Mystic Monastery (msc)
 1x Nael, Avizoa Aeronaut (dmu)
-1x Necrosquito (one)
 1x Nim Deathmantle (som)
 1x Nightveil Predator (grn)
 1x Nightwind Glider (list)
@@ -574,7 +573,7 @@
 1x Quilled Charger (otj)
 4x Rabanastre, Royal City (fin)
 1x Rabble Rousing (snc)
-2x Rabid Attack (sos)
+3x Rabid Attack (sos)
 1x Radiant Grace (vow)
 1x Radiant Grove (fic)
 1x Radiant Summit (msc)
@@ -702,8 +701,8 @@
 1x Skyline Scout (grn)
 1x Skyward Spider (spm)
 2x Slash of Light (fin)
+1x Slaughter Pact
 1x Slayers' Stronghold (fic)
-1x Sleight of Hand (soa)
 1x Smallpox (soa)
 1x Smaug's Fury (hob)
 5x Smite (roe)
@@ -725,6 +724,7 @@
 1x Spectator Seating (msc)
 1x Spectral Lynx (dmr)
 1x Speed, Young Avenger (msh)
+1x Spell Pierce
 2x Spellbook Seeker (sos)
 1x Spellgorger Weird (war)
 1x Sphinx of New Prahv (rvr)
@@ -736,6 +736,7 @@
 3x Squire's Devotion (rix)
 1x Squire's Lightblade (eoe)
 2x Stadium Tidalmage (sos)
+1x Star Compass
 1x Starbreach Whale (eoe)
 1x Stargaze (soa)
 1x Starport Security (eoe)
@@ -799,6 +800,7 @@
 1x The Wasp, Winsome Avenger (msc)
 1x Thermal Glider (mmq)
 1x Thornfist Striker (sos)
+1x Thought Vessel
 1x Thraben Charm (mh3)
 1x Thriving Skyclaw (mh3)
 1x Thrummingbird (one)
@@ -812,7 +814,7 @@
 2x Tocasia's Welcome (bro)
 1x Together as One (sos)
 2x Tome Blast (sos)
-1x Tome of Legends (msc)
+2x Tome of Legends (msc)
 2x Torch Fiend (jmp, m15)
 1x Torch the Witness (mkm)
 2x Torii Watchward (sok)
@@ -838,7 +840,6 @@
 1x Unctus, Grand Metatect (ppone)
 3x Undercity Dire Rat (fin)
 1x Undercover Crocodelf (mkm)
-1x Underworld Breach
 1x Undulating Witness (fra)
 2x Unfathomable Truths (mh3)
 1x Unfinished Business
@@ -851,6 +852,7 @@
 1x Utopia Vow (tsr)
 1x Vanish from Sight (dsk)
 1x Vanquish the Horde (fic)
+1x Venser, Shaper Savant
 1x Veteran's Powerblade (bro)
 1x Veiling Oddity (tsr)
 1x Venomous Brutalizer (one)

@@ -1951,6 +1951,15 @@ fn on_bf_of(g: &Game, p: PlayerId, m: PermId) -> bool {
     g.perm(m).on_bf && g.perm(m).owner == p
 }
 
+/// the tokens a card makes when it enters (the `tok=N` tag): worth more flying or with deathtouch (Hornet Queen = 4.0)
+fn token_etb_value(t: &crate::cards::Tags) -> f64 {
+    let n = t.int_or_0(Tag::Tok) as f64;
+    if n <= 0.0 {
+        return 0.0;
+    }
+    n * (0.6 + if t.has(Tag::Tokfly) { 0.2 } else { 0.0 } + if t.has(Tag::Tokdt) { 0.2 } else { 0.0 })
+}
+
 /// mine.etb_value: what re-entering the battlefield is worth for permanent m (its enters-the-battlefield effects)
 pub fn etb_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     let cv = crate::impls::cloud::reenter_value(g, p, m);
@@ -1962,6 +1971,9 @@ pub fn etb_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     let d = g.db.get(cd);
     let t = &d.tags;
     let mut v = ETB_VALUE.iter().filter(|(k, _)| t.has(*k)).map(|x| x.1).psum();
+    if g.player(p).key == "seph" {
+        v += token_etb_value(t); // Hornet Queen's four Insects, every time
+    }
     if t.has(Tag::Draw) && d.perm {
         v += 1.5 * t.int_or_0(Tag::Draw) as f64;
     }
@@ -2274,6 +2286,7 @@ fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 pub fn card_etb_value(g: &Game, c: CardId) -> f64 {
     let t = &g.db.get(c).tags;
     let mut v = ETB_VALUE.iter().filter(|(k, _)| t.has(*k)).map(|x| x.1).psum();
+    v += token_etb_value(t); // only Sephiroth's flashed-in Necromancy asks
     if t.has(Tag::Draw) {
         v += 1.5 * t.int_or_0(Tag::Draw) as f64;
     }
@@ -4032,7 +4045,7 @@ fn loop_kills(name: &str, names: &[&str]) -> bool {
 }
 
 /// mine.loops_blocked: graveyard hate or Hushbringer: nothing that dies comes back, or its triggers don't happen
-fn loops_blocked(g: &Game, p: PlayerId) -> bool {
+pub(crate) fn loops_blocked(g: &Game, p: PlayerId) -> bool {
     (!g.hooks.is_empty() && crate::engine::hooks::total_player(g, Event::NoGraveyard, p) != 0)
         || crate::engine::zones::hushed(g)
 }
@@ -4364,6 +4377,80 @@ fn ephemerate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     ephemerate_cast(g, p, PermId(arg as u32), "value")
 }
 
+/// Momentary Blink ({1}{W} instant, flashback {3}{U}): blink your creature `m`, from the hand or (flashback, exiled
+/// after) from the graveyard. In response to removal the spell fizzles, as with Ephemerate. True if it resolved.
+pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> Res<bool> {
+    let Some(c) = g.db.id("Momentary Blink") else { return Ok(false) };
+    let from_hand = g.player(p).hand.contains(&c);
+    if !from_hand && !g.player(p).gy.contains(&c) {
+        return Ok(false);
+    }
+    let (gn, pips, zone) = if from_hand { (1, "W", "hand") } else { (3, "U", "gy") };
+    if !on_bf_of(g, p, m) || g.perm(m).token || !castable(g, p, c, zone) || !can_pay(g, p, gn, pips, false) {
+        return Ok(false);
+    }
+    if from_hand {
+        remove_card(&mut g.player_mut(p).hand, c);
+    } else {
+        remove_card(&mut g.player_mut(p).gy, c);
+    }
+    pay(g, p, gn, pips, false)?;
+    let pl = g.player_mut(p);
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+    on_cast(g, p, c)?;
+    crate::glog!(g, "  {} casts Momentary Blink{} on {} ({why})", g.player(p).name, if from_hand { "" } else { " (flashback)" }, g.perm(m).name);
+    let countered = g.over || !counter_window(g, p, c, if why == "protection" { 6.0 } else { 3.0 }, vec![])?;
+    let pl = g.player_mut(p);
+    if from_hand || countered { pl.gy.push(c) } else { pl.exile.push(c) }
+    if countered {
+        return Ok(false);
+    }
+    g.player_mut(p).stat(intern(&format!("momentary_blink_{why}")), 1);
+    if on_bf_of(g, p, m) {
+        t2_blink(g, p, m)?;
+    }
+    Ok(true)
+}
+
+/// Momentary Blink for value: blink the creature with the best enters-the-battlefield effect (one blink, then the
+/// flashback). Kept in hand while a bomb is out and it is the protection.
+fn momentary_blink_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    let from_hand = g.player(p).hand.contains(&c);
+    let (gn, pips) = if from_hand { (1, "W") } else { (3, "U") };
+    if !crate::ai::is_main(g.player(p).key) || !can_pay(g, p, gn, pips, false) {
+        return Ok(vec![]);
+    }
+    let cands: Vec<(f64, PermId)> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).token)
+        .map(|m| (blink_worth(g, p, m), m))
+        .filter(|x| x.0 >= 3.0)
+        .collect();
+    let Some((bv, m)) = first_max(&cands, |x| x.0) else { return Ok(vec![]) };
+    let keep = if g.player(p).perms.iter().any(|&x| {
+        g.is_creature(x) && g.perm(x).cd.is_some_and(|cd| crate::ai::seph::sbomb(g, cd) >= crate::ai::seph::BOMB_BOARD)
+    }) && from_hand
+    {
+        2.5
+    } else {
+        0.0
+    };
+    Ok(vec![Opt {
+        utility: bv - 1.5 - keep,
+        label: format!("Momentary Blink (blink {})", g.perm(m).name),
+        act: Some(Action::Plan { f: momentary_blink_go, arg: m.0 as i64 }),
+    }])
+}
+
+fn momentary_blink_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    momentary_blink_cast(g, p, PermId(arg as u32), "value")
+}
+
 // ------------------------------------------------------------------ registry
 // ------------------------------------------------------------------ Relic of Legends
 /// Tap an untapped legendary creature you control: add one mana of any colour (summoning sickness doesn't matter).
@@ -4457,6 +4544,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     k.as_enters = Some(bahamut_as_enters);
     k.saga = Some((bahamut_wants_lore, bahamut_proliferated)); // CI.SAGA: Karn's Bastion and proliferate
     r.card(db, "Ephemerate")?.hand_options = Some(ephemerate_value);
+    r.card(db, "Momentary Blink")?.hand_options = Some(momentary_blink_value);
+    r.card(db, "Momentary Blink")?.prio = Some(no_prio); // cast by its own options and as protection, never as a plain spell
     // Veyran
     r.card(db, "Muldrotha, the Gravetide")?.options = Some(muldrotha);
     let k = r.card(db, "Thousand-Year Storm")?;
@@ -4622,4 +4711,9 @@ fn veyran_protect_swat(g: &mut Game, owner: PlayerId, kind: Sym, actor: PlayerId
         }
     }
     Ok(false)
+}
+
+/// a hand-written priority of 0: the card is cast only by its own options
+fn no_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
 }

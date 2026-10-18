@@ -1059,7 +1059,7 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>) -> Re
 
 /// pool_ai._worth_whole_board: Teferi's Protection on one targeted removal only for the commander or a permanent
 /// carrying at least 40% of the board's value
-fn worth_whole_board(g: &Game, owner: PlayerId, m: PermId) -> bool {
+pub(crate) fn worth_whole_board(g: &Game, owner: PlayerId, m: PermId) -> bool {
     if g.perm(m).is_cmd {
         return true;
     }
