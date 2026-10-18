@@ -1157,12 +1157,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// How far q's best modeled line is: (the largest fraction of its piece groups already on the battlefield, whether
 /// some line is `ready` right now). Only lines whose every group is somewhere in q's cards count; quiet lines don't.
 pub fn line_progress(g: &Game, q: PlayerId) -> (f64, bool) {
-    let deck: std::collections::HashSet<&str> = full_deck_names(g, q).into_iter().collect();
     let (mut best, mut ready) = (0.0f64, false);
-    for cmb in all() {
-        if quiet(cmb) || cmb.groups.is_empty() || !cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n))) {
-            continue;
-        }
+    for i in lines_of(g, q).iter().copied() {
+        let cmb = all()[i];
         let on = cmb.groups.iter().filter(|grp| grp.iter().any(|n| on_bf(g, q, n).is_some())).count();
         best = best.max(on as f64 / cmb.groups.len() as f64);
         if !ready && cmb.groups.iter().all(|grp| has_piece(g, q, grp)) && (cmb.ready)(g, q).0 {
@@ -1170,6 +1167,32 @@ pub fn line_progress(g: &Game, q: PlayerId) -> (f64, bool) {
         }
     }
     (best, ready)
+}
+
+/// the indices in `all()` of the non-quiet lines whose every piece group has a card in q's deck (or commanders),
+/// cached per deck key
+fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
+    thread_local! {
+        static CACHE: RefCell<HashMap<(&'static str, usize), std::rc::Rc<Vec<usize>>>> = RefCell::new(HashMap::new());
+    }
+    let pl = g.player(q);
+    let key = (pl.key, pl.deck_names.len());
+    if let Some(v) = CACHE.with(|c| c.borrow().get(&key).cloned()) {
+        return v;
+    }
+    let mut deck: std::collections::HashSet<&str> = pl.deck_names.iter().map(|&c| name_of(g, c)).collect();
+    deck.extend(pl.commanders().map(|c| name_of(g, c)));
+    let v: Vec<usize> = all()
+        .iter()
+        .enumerate()
+        .filter(|(_, cmb)| {
+            !quiet(cmb) && !cmb.groups.is_empty() && cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n)))
+        })
+        .map(|(i, _)| i)
+        .collect();
+    let v = std::rc::Rc::new(v);
+    CACHE.with(|c| c.borrow_mut().insert(key, v.clone()));
+    v
 }
 
 /// the mana p needs for combo `cmb` (the loop's mana plus the spells still to cast): (generic, pips)

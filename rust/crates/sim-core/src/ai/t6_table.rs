@@ -168,17 +168,18 @@ pub fn go_ok(g: &Game, p: PlayerId, combo: &str) -> bool {
     }
     let risk = go_risk(g, p);
     let other = g.opps(p).map(|q| archenemy_score(g, q)).fold(0.0, f64::max);
+    // waiting costs turns, and a cEDH pod does not wait long: the bar drops as the game goes on
     let mut thr: f64 = if other >= 6.0 {
-        0.8 // somebody else is about to win: waiting is worse
+        0.85 // somebody else is about to win: waiting is worse
     } else if other >= NEAR {
-        0.6
+        0.75
     } else {
-        0.35
+        0.6
     };
-    if g.round >= 6 {
+    if g.round >= 4 {
         thr += 0.15;
     }
-    if g.round >= 10 {
+    if g.round >= 6 {
         thr = 1.0;
     }
     risk <= thr
