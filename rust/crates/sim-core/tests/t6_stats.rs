@@ -15,7 +15,8 @@ fn stat(g: &Game, p: PlayerId, key: &str) -> i64 {
 }
 
 fn keys_with(g: &Game, p: PlayerId, prefix: &str) -> Vec<String> {
-    let mut v: Vec<String> = g.player(p).stats.keys().filter(|k| k.starts_with(prefix)).map(|k| k.to_string()).collect();
+    let mut v: Vec<String> =
+        g.player(p).stats.keys().filter(|k| k.starts_with(prefix)).map(|k| k.to_string()).collect();
     v.sort();
     v
 }
@@ -123,7 +124,15 @@ fn no_keys(_g: &Game, _p: PlayerId) -> Vec<PermId> {
 fn synthetic(kind: StepKind) -> Combo {
     let st: &'static [Step] =
         Box::leak(Box::new([Step { label: "the step", kind, src: no_src, pay: (0, ""), run: yes, keys: no_keys }]));
-    Combo { name: "synthetic", groups: &[], ready: |_, _| (true, vec![], vec![]), mana: (0, ""), finish: None, xcost: &[], steps: st }
+    Combo {
+        name: "synthetic",
+        groups: &[],
+        ready: |_, _| (true, vec![], vec![]),
+        mana: (0, ""),
+        finish: None,
+        xcost: &[],
+        steps: st,
+    }
 }
 
 #[test]
@@ -209,7 +218,11 @@ fn a_mulligan_is_counted() {
         sim_core::engine::turn::mulligan(&mut g, P0, &mut r);
         let n = stat(&g, P0, "mull_n");
         assert!((0..=3).contains(&n));
-        assert_eq!(g.player(P0).hand.len() as i64, 7 - (n - 1).max(0), "a hand of seven, less what was bottomed (n={n})");
+        assert_eq!(
+            g.player(P0).hand.len() as i64,
+            7 - (n - 1).max(0),
+            "a hand of seven, less what was bottomed (n={n})"
+        );
         if n >= 2 {
             assert_eq!(stat(&g, P0, "mulls"), n);
         }

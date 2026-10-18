@@ -8,7 +8,8 @@ use crate::stats::Counter;
 use std::collections::HashMap;
 
 /// Targets from decklists/pool/TARGETS-t6.md: seat share of decisive games, low / real value / high
-pub const SEAT_TARGETS: [(f64, f64, f64); 4] = [(30.0, 34.1, 38.0), (24.0, 27.3, 31.0), (19.0, 22.5, 26.0), (14.0, 17.4, 21.0)];
+pub const SEAT_TARGETS: [(f64, f64, f64); 4] =
+    [(30.0, 34.1, 38.0), (24.0, 27.3, 31.0), (19.0, 22.5, 26.0), (14.0, 17.4, 21.0)];
 
 /// one deck's tallies over the games it was seated in
 #[derive(Default, Clone)]
@@ -170,8 +171,12 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
             pct(tot, d.seated),
             d.timeout_wins
         );
-        let routes: Vec<String> =
-            d.route.most_common().into_iter().map(|(r, n)| format!("{r} {n} ({:.0}%)", pct(n as u64, d.wins))).collect();
+        let routes: Vec<String> = d
+            .route
+            .most_common()
+            .into_iter()
+            .map(|(r, n)| format!("{r} {n} ({:.0}%)", pct(n as u64, d.wins)))
+            .collect();
         o += &format!("      wins by: {}\n", if routes.is_empty() { "none".into() } else { routes.join(", ") });
         if !d.win_rounds.is_empty() {
             let avg = d.win_rounds.iter().sum::<u32>() as f64 / d.win_rounds.len() as f64;
@@ -195,7 +200,14 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
                 "      stopped by: {}\n",
                 top(&d.stops, 6, &|s| s.replace('|', " by ").replace(" by ?", " by an unnamed answer"))
             );
-            o += &format!("      stopped by card: {}\n", top(&by_card, 6, &|s| s.to_string()));
+            o += &format!(
+                "      stopped by card: {}\n",
+                top(&by_card, 6, &|s| if s == "?" {
+                    "(no card named: a cost, a ward or a lock)".to_string()
+                } else {
+                    s.to_string()
+                })
+            );
         }
         let m = d.mulls;
         o += &format!(
@@ -208,7 +220,8 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
             m[3]
         );
         for kind in ["counter", "removal", "stax", "wipe"] {
-            let (mut n, mut cards, mut victims): (i64, Counter<String>, Counter<String>) = (0, Counter::new(), Counter::new());
+            let (mut n, mut cards, mut victims): (i64, Counter<String>, Counter<String>) =
+                (0, Counter::new(), Counter::new());
             for (k, v) in d.ix.most_common() {
                 let mut f = k.split('|');
                 if f.next() != Some(kind) {
@@ -223,7 +236,8 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
             if n == 0 {
                 continue;
             }
-            let hit = if victims.is_empty() { String::new() } else { format!("; hit {}", top(&victims, 5, &|s| name(s))) };
+            let hit =
+                if victims.is_empty() { String::new() } else { format!("; hit {}", top(&victims, 5, &|s| name(s))) };
             o += &format!(
                 "      {}: {} ({}){}\n",
                 match kind {
@@ -315,7 +329,9 @@ mod tests {
 
     #[test]
     fn damage_wins_are_told_apart_by_how_the_last_opponent_died() {
-        for (kind, want) in [("commander damage", "commander damage"), ("burn", "damage"), ("poison", "poison"), ("decked", "other")] {
+        for (kind, want) in
+            [("commander damage", "commander damage"), ("burn", "damage"), ("poison", "poison"), ("decked", "other")]
+        {
             let mut g = game(Some(0), None, 9);
             g.players[1].death_kind = kind;
             g.players[1].stats.insert("elim_round", 9);
