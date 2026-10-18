@@ -8744,3 +8744,45 @@ note = "+1 stops the opposing creature's combat damage until your next turn (Dov
 ["Paladin Class"]
 status = "Partial"
 note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries; level 3 pumps your best attacker +1/+1 per other attacker and gives double strike; the level 2 +1/+1 for your creatures is not applied"
+
+["Oboro Breezecaller"]
+status = "Full"
+note = "{2} (less with Training Grounds / Biomancer's Familiar, never under {1}), return a land: untap target land; the AI uses it on its best tapped land (Gaea's Cradle) when that pays the cost, the returned land and 2 more, and a spell or Thrasios is waiting for the mana"
+
+["Badgermole Cub"]
+status = "Partial"
+note = "2/2 body; whenever a creature of yours is tapped for mana, an additional {G} floats (per Cub; lands are not creatures); missing: 'when it enters, earthbend 1' (a land becomes a 0/0 haste creature with a +1/+1 counter and returns tapped when it dies), see rust/agents/engine-needs-green1.md"
+
+["Biomancer's Familiar"]
+status = "Partial"
+note = "2/2 body; activated abilities of your creatures cost {2} less (never under {1}) for Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), and its adapt ability (no adapt creature in the pool); see rust/agents/engine-needs-green1.md"
+
+["Training Grounds"]
+status = "Partial"
+note = "activated abilities of your creatures cost {2} less (never under {1}), stacking with Biomancer's Familiar, applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), see rust/agents/engine-needs-green1.md"
+
+["Earthcraft"]
+status = "Full"
+note = "tap an untapped creature you control: untap target basic land; the AI uses it with a tapped basic, a spell or Thrasios waiting for the mana, and a creature with nothing better to do (summoning sick before combat, any idle one after; never a mana creature)"
+
+["Candelabra of Tawnos"]
+status = "Full"
+note = "{X},{T}: untap X target lands; the AI picks the X best tapped lands (Gaea's Cradle first) when they make at least {2} more mana than X costs and a spell or Thrasios waits"
+
+["Magus of the Candelabra"]
+status = "Full"
+note = "{X},{T}: untap X target lands (summoning sick on the turn it enters); same AI rule as Candelabra of Tawnos; X is reduced by Training Grounds / Biomancer's Familiar (never under {1})"
+
+["Formidable Speaker"]
+dsl = []
+status = "Partial"
+note = "2/4; enters: you may discard a card, and if you do search for a creature (the AI discards its worst card, only when the library has a creature; the stock data discarded unconditionally, so the generic ability is cleared); {1},{T}: untap another target permanent, modelled for lands only (the AI untaps its best tapped land when that nets {2}); missing: untapping a tapped creature or artifact (e.g. Magus or Candelabra for a chain), see rust/agents/engine-needs-green1.md"
+
+["Vibrance"]
+dsl = []
+status = "Partial"
+note = "evoke {R/G}{R/G} from hand, sacrificed on entry: the AI pays {R}{R} for 3 damage (when it kills a creature worth 3+ or finishes a player) or {G}{G} for a land from the library (Gaea's Cradle / Talon Gates not yet held) and 2 life; a normal cast is priced {3}{R}{R} in the card data so it always deals 3 damage and never searches; the stock data gained 2 life unconditionally, so the generic ability is cleared; missing: the hybrid cost choice on a normal cast (engine-needs-green1.md)"
+
+["Springheart Nantuko"]
+status = "Partial"
+note = "1/1 body; landfall creates a 1/1 green Insect (the unattached branch); missing: bestow {1}{G} (+1/+1) and the {1}{G} token copy of the enchanted creature (the Eternal Witness loop), see rust/agents/engine-needs-green1.md"

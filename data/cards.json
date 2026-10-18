@@ -39280,20 +39280,7 @@
    "pow": 2,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "discard",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -39304,11 +39291,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you may discard a card. If you do, search your library for a creature card, reveal it, put it into your hand, then shuffle.   [partly: if you do, search your library for a creature card, reveal it, put it into your hand]",
-    "{1}, {T}: Untap another target permanent."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -114313,20 +114297,7 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "gain_life",
-       "n": 2,
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "evoke"
@@ -114339,11 +114310,8 @@
    "ward": 0,
    "identity": "GR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, if {R}{R} was spent to cast it, ~ deals 3 damage to any target.",
-    "When ~ enters, if {G}{G} was spent to cast it, search your library for a land card, reveal it, put it into your hand, then shuffle. You gain 2 life.   [partly: if {g}{g} was spent to cast it, search your library for a land card, reveal it, put it into your hand]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
