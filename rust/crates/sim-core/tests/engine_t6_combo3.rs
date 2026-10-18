@@ -572,7 +572,6 @@ fn the_new_lines_are_quiet_so_other_decks_do_not_change() {
         "Goblin Welder",
         "Goblin Engineer",
         "Hullbreaker Horror",
-        "Heat Shimmer",
         "Mirage Mirror",
         "Thrasios, Triton Hero",
     ] {

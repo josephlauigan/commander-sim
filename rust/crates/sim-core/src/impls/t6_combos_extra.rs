@@ -705,7 +705,7 @@ pub static COMBOS: [Combo; 11] = [
     ),
     Combo {
         name: "Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table)",
-        groups: &[&[BREACH], &[LED], &[BRAIN_FREEZE], &[ORACLE]],
+        groups: &[QUIET, &[BREACH], &[LED], &[BRAIN_FREEZE], &[ORACLE]],
         ready: ready_breach_table,
         mana: (0, ""),
         finish: Some(table_finish),
