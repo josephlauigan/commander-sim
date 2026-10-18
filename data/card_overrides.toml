@@ -8526,3 +8526,7 @@ note = "3/3 body; the cast trigger (even if the spell is countered) fetches a la
 ["Endurance"]
 status = "Full"
 note = "3/4 flash reach; when it enters, a graveyard goes to the bottom of its owner's library in random order (the AI picks its own with Faerie Mastermind out, else an opponent's graveyard of 4+ cards); evoke by exiling a green card from hand, then sacrificed, is a hand option used when the full cost is out of reach (t6_green2)"
+
+["Enduring Vitality"]
+status = "Partial"
+note = "3/3 vigilance; every untapped, non-summoning-sick creature you control taps for one mana of any colour (extra_mana hook); when it dies as a creature it returns to the battlefield (once); missing: the returned permanent is an enchantment, not a creature, but the engine still counts it as a creature (Gaea's Cradle count, attacks, blocks, creature removal)"

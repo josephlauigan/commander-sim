@@ -7,11 +7,12 @@
 //! - Noxious Revival: resolve puts the best of the caster's own graveyard cards on top of its library.
 //! - Sowing Mycospawn: the cast trigger fetches a land; the kicked exile is `mycospawn_kicked` (needs engine kicker).
 //! - Endurance: flash is the card's tag; the enters effect and evoke (exile a green card, sacrificed) are here.
+//! - Enduring Vitality: every creature taps for any colour (extra_mana); dies as a creature: back as an enchantment.
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
+use crate::engine::mana::{Source, Unit, cost_of, land_colors_now};
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::mana::{cost_of, land_colors_now};
 use crate::engine::stack::trigger_window;
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -20,7 +21,7 @@ use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, Game};
+use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
@@ -252,6 +253,61 @@ fn endurance_evoke_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Enduring Vitality
+const VITALITY: &str = "Enduring Vitality";
+
+/// has this Enduring Vitality already come back as an enchantment (DataKey::Final marks it)
+fn returned_enchantment(g: &Game, m: PermId) -> bool {
+    g.perm(m).data.truthy(DataKey::Final)
+}
+
+/// Creatures you control have "{T}: Add one mana of any color." Every untapped creature that is not summoning sick
+/// and does not already make mana (the engine's own `rite` path covers the creatures tagged noatk) gets a unit of
+/// mana in any colour. The returned enchantment gives the ability but is not a creature itself.
+fn vitality_mana(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
+    if g.perm(src).owner != p || !g.perm(src).on_bf || g.perm(src).phased {
+        return vec![];
+    }
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && !x.phased
+                && g.is_creature(m)
+                && !(m == src && returned_enchantment(g, m))
+                && !x.tapped
+                && !x.sick
+                && !units.iter().any(|u| u.src == Source::Perm(m))
+        })
+        .map(|m| Unit { src: Source::Perm(m), cols: Colors::from_letters("WUBRG"), amt: 1 })
+        .collect()
+}
+
+/// When Enduring Vitality dies, if it was a creature, return it to the battlefield under its owner's control. It's an
+/// enchantment (not a creature). The engine has no way to take the creature type off a creature card, so the card
+/// comes back marked (DataKey::Final) and `vitality_mana` ignores it as a creature (engine need). It is not flagged noatk: that would let the engine's `rite` mana path tap it.
+fn vitality_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
+    if m != src || returned_enchantment(g, m) {
+        return Ok(());
+    }
+    let (Some(cd), owner) = (g.perm(m).cd, g.perm(m).orig) else { return Ok(()) };
+    if !g.player(owner).gy.contains(&cd) {
+        return Ok(()); // exiled or otherwise gone
+    }
+    if !trigger_window(g, owner, Some(m), "Enduring Vitality returns as an enchantment", Some(4.0))? {
+        return Ok(());
+    }
+    remove_card(&mut g.player_mut(owner).gy, cd);
+    let n = enter(g, owner, cd, Enter::default())?;
+    let x = g.perm_mut(n);
+    x.data.set(DataKey::Final, Val::Bool(true));
+    crate::glog!(g, "    {} returns as an enchantment (Enduring Vitality)", pname(g, owner));
+    Ok(())
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Chatterstorm")?.self_cast = Some(chatterstorm_cast);
@@ -265,5 +321,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, ENDURANCE)?;
     c.etb = Some(endurance_etb);
     c.hand_options = Some(endurance_evoke);
+    let c = r.card(db, VITALITY)?;
+    c.extra_mana = Some(vitality_mana);
+    c.self_dies = Some(vitality_dies);
     Ok(())
 }

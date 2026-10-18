@@ -245,3 +245,55 @@ fn endurance_evoke_exiles_a_green_card_and_is_sacrificed() {
     assert!(in_gy(&g, P0, "Endurance"));
     assert!(g.player(P1).gy.is_empty(), "the enters effect still happened");
 }
+
+// ======================================================== Enduring Vitality
+fn mana_units(g: &Game, p: PlayerId) -> Vec<sim_core::engine::mana::Unit> {
+    sim_core::engine::mana::mana_units(g, p, false)
+}
+
+#[test]
+fn vitality_lets_each_creature_tap_for_any_colour() {
+    let mut g = game();
+    let v = perm(&mut g, P0, "Enduring Vitality");
+    let bird = perm(&mut g, P0, "Eternal Witness"); // no mana ability of its own
+    g.perm_mut(v).sick = false;
+    g.perm_mut(bird).sick = false;
+    let u = mana_units(&g, P0);
+    let from = |m: PermId| u.iter().find(|w| w.src == sim_core::engine::mana::Source::Perm(m));
+    assert!(from(bird).is_some(), "Eternal Witness taps for mana");
+    assert!(from(v).is_some(), "so does Vitality itself");
+    assert!(from(bird).unwrap().cols.has('W') && from(bird).unwrap().cols.has('U'), "any colour");
+    g.perm_mut(bird).sick = true;
+    assert!(mana_units(&g, P0).iter().all(|w| w.src != sim_core::engine::mana::Source::Perm(bird)), "summoning sick");
+}
+
+#[test]
+fn vitality_pays_for_a_spell() {
+    let mut g = game();
+    let v = perm(&mut g, P0, "Enduring Vitality");
+    g.perm_mut(v).sick = false;
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "U", false), "a blue pip from the creature's mana");
+}
+
+#[test]
+fn vitality_returns_as_an_enchantment_when_it_dies_and_still_gives_the_mana() {
+    let mut g = game();
+    let v = perm(&mut g, P0, "Enduring Vitality");
+    let w = perm(&mut g, P0, "Eternal Witness");
+    g.perm_mut(w).sick = false;
+    sim_core::engine::zones::die(&mut g, v, "destroy").unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    let n = on_bf(&g, P0, "Enduring Vitality").expect("it came back");
+    g.perm_mut(n).sick = false; // even unsick, a non-creature cannot tap for mana
+    assert_ne!(n, v);
+    assert!(!in_gy(&g, P0, "Enduring Vitality"));
+    assert!(g.perm(n).data.truthy(sim_core::state::DataKey::Final), "marked as the enchantment");
+    let u = mana_units(&g, P0);
+    assert!(u.iter().any(|x| x.src == sim_core::engine::mana::Source::Perm(w)), "creatures still tap for mana");
+    assert!(u.iter().all(|x| x.src != sim_core::engine::mana::Source::Perm(n)), "the enchantment is not a creature");
+    // it does not return a second time
+    sim_core::engine::zones::die(&mut g, n, "destroy").unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert!(on_bf(&g, P0, "Enduring Vitality").is_none());
+    assert!(in_gy(&g, P0, "Enduring Vitality"));
+}
