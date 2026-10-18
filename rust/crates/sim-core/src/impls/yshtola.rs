@@ -930,7 +930,8 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     let mana = pl.lands.len() as i32
         + pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count() as i32;
     let mut order: Vec<&str> = vec![];
-    if kind == "any" {
+    let finisher_ok = matches!(kind, "any" | "is"); // Mystical Tutor finds the X drains too
+    if finisher_ok {
         let low: i32 = opps.iter().map(|&q| g.player(q).life).sum();
         if mana >= 7
             && !opps.is_empty()
@@ -939,7 +940,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         {
             order.extend(["Debt to the Deathless", "Exsanguinate"]);
         }
-        if ysh_perm(g, p).is_none() && !pl.cmd_in_zone && pl.tax >= 4 {
+        if kind == "any" && ysh_perm(g, p).is_none() && !pl.cmd_in_zone && pl.tax >= 4 {
             order.push("Lightning Greaves");
         }
     }
@@ -959,7 +960,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         order.push("Curiosity");
     }
     order.extend(["Ill-Gotten Inheritance", "Prison Sentence", "Arrest", "Propaganda"]);
-    if kind == "any" {
+    if finisher_ok {
         order.extend(["Exsanguinate", "Debt to the Deathless"]);
     }
     first(&order)
@@ -1307,8 +1308,8 @@ pub fn yshtola_protect(
 }
 
 /// yshtola.yshtola_wipe_response (zur.zur_wipe_response)
-pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym) -> Res<Option<Sym>> {
-    zur::zur_wipe_response(g, q, kind)
+pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
+    zur::zur_wipe_response(g, q, kind, caster)
 }
 
 // ======================================================== registration

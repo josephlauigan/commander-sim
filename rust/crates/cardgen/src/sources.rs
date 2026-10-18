@@ -214,6 +214,9 @@ pub fn build(carddb: &[CardDbLine], overrides: &[(String, Entry)], cache: &Cache
     // tag edits and keyword data of the cards the simulator plays (pool_cards.POST)
     for (name, e) in overrides {
         let Some(cd) = db.get_mut(name) else { continue };
+        if e.status.as_deref() == Some("Full") {
+            cd.unparsed.clear(); // reviewed as Full: the card code covers what the text parser could not read (display only)
+        }
         if hand_tagged.contains(name) || want.played.contains(name) {
             let in_main = want.main.contains(name);
             if !in_main {

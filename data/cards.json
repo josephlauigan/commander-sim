@@ -76,10 +76,7 @@
    "identity": "BW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you cast a creature spell, ~ becomes prepared.",
-    "[back face] Put a +1/+1 counter on target creature."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -207,9 +204,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If you would draw a card, you may instead choose land or nonland and reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and put all other cards revealed this way on the bottom of your library in any order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -359,9 +354,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{1}{U}, {T}: Put target artifact card from your graveyard on top of your library."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -1904,9 +1897,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{1}, Sacrifice ~: Target creature or enchantment you control gains protection from the color of your choice until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -2237,9 +2228,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This creature can't be blocked except by artifact creatures and/or white creatures."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -2650,9 +2639,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Fabricate 2"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -2741,10 +2728,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If you would gain life, you gain that much life plus 1 instead.",
-    "This creature gets +2/+2 as long as you have 25 or more life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -2922,9 +2906,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Lieutenant — As long as you control your commander, ~ gets +2/+2 and creatures you control have vigilance."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -2967,9 +2949,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}: Target attacking or blocking creature gets +1/+1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -3293,9 +3273,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Cascade"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -3447,9 +3425,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Basic landcycling {2}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -3706,9 +3682,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you cast your first instant or sorcery spell each turn, exile an instant or sorcery card at random from your graveyard. Then copy each card exiled with ~. You may cast any number of the copies without paying their mana costs."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -5033,9 +5007,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ enters or attacks, you may attach any number of target Equipment to it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -5077,9 +5049,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{3}, {T}: Create a tapped 2/1 black Villain creature token with menace. Activate only if there are two or more creature cards in your graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -6325,11 +6295,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever this Vehicle enters or attacks, choose one —",
-    "• You may put a Hero creature card from your hand onto the battlefield.",
-    "• Return target Hero creature card from your graveyard to your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -6366,9 +6332,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{4}, {T}: Look at the top three cards of your library. You may reveal a Hero card from among them and put it into your hand. Put the rest on the bottom of your library in any order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -6934,9 +6898,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, target player reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -7140,10 +7102,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Return up to three target artifacts and/or creatures to their owners' hands.",
-    "You may cast a spell with mana value 4 or less from your hand without paying its mana cost."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -7238,9 +7197,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ doesn't untap during your untap step."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -8065,9 +8022,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of combat on your turn, you may attach any number of Equipment you control to target creature you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -8189,9 +8144,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Sacrifice ~: Target creature you control gains protection from the color of your choice until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -8763,9 +8716,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target creature you control deals damage equal to its power to target creature or planeswalker you don't control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -9017,9 +8968,7 @@
    "identity": "RW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever an opponent draws their second card each turn, put a +1/+1 counter on ~ and you draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -9108,9 +9057,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature has myriad."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -10213,9 +10160,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, you may pay {2}{R} any number of times. When you pay this cost one or more times, put that many +1/+1 counters on ~, then exile up to that many target instant and/or sorcery cards with mana value 3 or less from your graveyard and copy them. You may cast any number of the copies without paying their mana costs."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -11169,9 +11114,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Channel — {1}{G}, Discard ~: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control.   [partly: that player may search their library for a land card with a basic land type; that player put it onto the battlefield; that player; this ability costs {1} less to activate for each legendary creature you control]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -11277,9 +11220,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, look at the top four cards of your library. You may reveal a permanent card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -11409,12 +11350,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Read ahead",
-    "I — You may sacrifice a creature. If you do, each opponent discards a card.",
-    "II — Return target creature card from your graveyard to your hand.",
-    "III — Target opponent may sacrifice a nonland, nontoken permanent of their choice. If they don't, they lose 2 life and you draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -11743,10 +11679,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This creature can block only creatures with flying.",
-    "[back face] Return target nonland permanent an opponent controls to its owner's hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -12035,9 +11968,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{3}{G}{G}: Double the number of +1/+1 counters on each creature you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -12357,9 +12288,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Double target creature's power until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -12771,9 +12700,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target creature you control gets +1/+0 until end of turn if you've cast another instant or sorcery spell this turn. Then it deals damage equal to its power to up to one target creature an opponent controls."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -12854,9 +12781,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Undying"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -12999,10 +12924,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{2}{B}, Sacrifice a creature: Target creature gets -2/-2 until end of turn.",
-    "{2}{B}, Exile a creature card from your graveyard: Target creature gets -2/-2 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -13170,10 +13092,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, if you cast it, destroy all nonenchantment creatures.",
-    "Whenever ~ or another enchantment you control enters, until end of turn, ~ becomes a legendary 6/6 Nightmare God creature with menace and deathtouch. It's still an enchantment."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -13218,10 +13137,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This spell costs {1} less to cast if you control a Desert.",
-    "Whenever ~ becomes the target of a spell or ability an opponent controls, you may draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -13934,9 +13850,7 @@
    "identity": "UW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -13979,9 +13893,7 @@
    "identity": "RUW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever another Hero you control enters, it gains vigilance and haste until end of turn. Put a +1/+1 counter on that Hero and a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -14029,9 +13941,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Cosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells as though they had flash."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -14079,9 +13989,7 @@
    "identity": "RW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -14913,9 +14821,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}{B}{B}, {T}: Draw a card, then you lose life equal to the number of cards in your hand.   [partly: you lose life equal to the number of cards in your hand]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -15954,10 +15860,7 @@
    "identity": "BR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever another creature or artifact you control is put into a graveyard from the battlefield, put an oil counter on ~.",
-    "Remove three oil counters from ~: Exile the top card of your library. You may play that card this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -16421,10 +16324,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have.",
-    "{1}{B}, Sacrifice a creature: Target creature gets -2/-2 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -17411,9 +17311,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Evolve"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -18034,9 +17932,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}, Sacrifice ~: Put your commander into your hand from the command zone."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -18291,10 +18187,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "• Target creature you control deals damage equal to its power to target creature or planeswalker an opponent controls.",
-    "• Target planeswalker you control deals damage equal to its loyalty to target creature or planeswalker an opponent controls."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -18337,9 +18230,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Constellation — Whenever an enchantment you control enters, you may put a land card from your hand onto the battlefield tapped. If you control six or more enchantments, instead you may put a creature or land card from your hand onto the battlefield tapped."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -18425,9 +18316,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature has \"Whenever ~ attacks, tap target creature defending player controls. If that creature has greater power than ~, put a number of +1/+1 counters on ~ equal to the difference.\""
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -19078,10 +18967,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Fear",
-    "Suspend 5—{B}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -19153,9 +19039,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target player draws two cards and loses 2 life. Put a +1/+1 counter on up to one target creature."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -19605,9 +19489,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, if you cast it, the next instant or sorcery spell you cast this turn has storm."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -19901,9 +19783,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{2}, {T}, Sacrifice ~: Shuffle any number of cards from your hand into your library, then draw that many cards."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -20734,9 +20614,7 @@
    "identity": "GU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Increment"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -20894,9 +20772,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever an opponent attacks you and/or one or more planeswalkers you control, exile the top card of that player's library. You may play that card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -20975,9 +20851,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Exile X target creatures. For each creature exiled this way, its controller creates a 2/2 green Boar creature token."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -21248,9 +21122,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Each opponent draws a card, then you draw a card for each opponent who drew a card this way.   [partly: each opponent]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -21523,9 +21395,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Aura and Equipment spells you cast cost {1} less to cast."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -21736,9 +21606,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ gets +2/+0 for every seven cards in your graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -22931,11 +22799,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, choose one —",
-    "• Untap target permanent you control.",
-    "• Tap target permanent an opponent controls."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -23183,9 +23047,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Echo—Discard a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -23355,9 +23217,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever you cast a blue permanent spell, draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -23392,10 +23252,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If you control a commander, you may cast ~ without paying its mana cost.",
-    "You may choose new targets for target spell or ability."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -23584,9 +23441,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Once during each of your turns, you may cast an enchantment spell by paying life equal to its mana value rather than paying its mana cost."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -24834,10 +24689,7 @@
    "identity": "RUW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Hero spells you cast cost {1} less to cast.",
-    "Whenever you attack, look at the top four cards of your library. You may reveal a Hero card from among them and put that card into your hand. Put the rest on the bottom of your library in a random order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -25060,9 +24912,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When you cycle ~, destroy all artifacts and enchantments."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -25555,9 +25405,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -25722,9 +25570,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever you cast an instant or sorcery spell, create a 1/1 blue Human Wizard creature token. Then if you control three or more Wizards, transform ~.   [partly: if you control three or more wizards, transform ~]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -26007,9 +25853,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Constellation — Whenever ~ or another enchantment you control enters, creatures your opponents control get -1/-1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -26760,9 +26604,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, create two 0/1 colorless Eldrazi Spawn creature tokens. They have \"Sacrifice this token: Add {C}.\"   [partly: they have \"sacrifice this token: add {c}.\"]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -26885,9 +26727,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, you may cast target instant or sorcery card with mana value less than or equal to ~'s power from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -26941,9 +26781,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a Zombie token you control with power 6 or greater attacks, it gains lifelink until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -27593,10 +27431,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of your end step, if you didn't cast a spell this turn, put two +1/+1 counters on ~.",
-    "{4}{G}: Put a +1/+1 counter on each creature you control with a +1/+1 counter on it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -28184,9 +28019,7 @@
    "identity": "RU",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Opus — Whenever you cast an instant or sorcery spell, ~ gets +1/+0 until end of turn. If five or more mana was spent to cast that spell, exile the top card of your library. You may play that card until the end of your next turn.   [partly: if five or more mana was spent to cast that spell, exile the top card of your library]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -29477,9 +29310,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "At the beginning of your upkeep, if you control seven or more Plains, you may return target creature card from your graveyard to the battlefield."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -30450,9 +30281,7 @@
    "identity": "RU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Exile the top X cards of your library. You may cast instant and sorcery spells with mana value X or less from among them without paying their mana costs. Then put all cards exiled this way that weren't cast into your graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -31763,9 +31592,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever equipped creature attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -31826,9 +31653,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Opus — Whenever you cast an instant or sorcery spell, ~ gets +1/+1 until end of turn. If five or more mana was spent to cast that spell, ~ also gains double strike until end of turn.   [partly: if five or more mana was spent to cast that spell, ~ also gains double strike until end of turn]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -32895,9 +32720,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever an opponent draws a card, ~ deals 1 damage to that player."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -33817,10 +33640,7 @@
    "identity": "BG",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "When enchanted creature dies, return that card to the battlefield tapped under its owner's control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -33938,9 +33758,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ dies, target creature gets -1/-1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -34512,9 +34330,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You may cast up to one target instant card and/or up to one target sorcery card from your graveyard each with mana value X or less without paying their mana costs. If a spell cast this way would be put into your graveyard, exile it instead. If X is 10 or more, copy each of those spells twice. You may choose new targets for the copies."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -34562,10 +34378,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Draw X cards. If X is 10 or more, instead shuffle your graveyard into your library, draw X cards, untap up to five lands, and you have no maximum hand size for the rest of the game.   [partly: if x is 10 or more, instead shuffle your graveyard into your library, draw x cards, untap up to five lands, and you have no maximum hand size for the rest of the game]",
-    "Exile ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -34651,9 +34464,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, other attacking creatures get +X/+0 until end of turn, where X is ~'s power."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -34990,9 +34801,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "If you control a commander, you may cast ~ without paying its mana cost."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -35668,9 +35477,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Commander creatures you own have \"Whenever you cast a spell that shares a creature type with ~, draw a card. This ability triggers only once each turn.\""
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -35973,10 +35780,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "At the beginning of your upkeep, put a +1/+1 counter on enchanted creature."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -36236,9 +36040,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{3}{U}{U}, {T}: You may cast any number of spells from among cards exiled with ~ without paying their mana costs. Activate only as a sorcery."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -36490,10 +36292,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Ward—Discard a card.",
-    "Repartee — Whenever you cast an instant or sorcery spell that targets a creature, return target creature card from your graveyard to the battlefield."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -36637,11 +36436,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "{U}: Tap enchanted creature.",
-    "{U}: Untap enchanted creature."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -36689,9 +36484,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Plot {3}{G}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -38273,9 +38066,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {X} less to cast, where X is the greatest power among creatures you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 9,
     "land": false,
@@ -38334,9 +38125,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{T}, Sacrifice ~: Destroy target land. Its controller may search their library for a basic land card, put it onto the battlefield, then shuffle.   [partly: its controller may search their library for a basic land card; its controller put it onto the battlefield; its controller]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -38415,10 +38204,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "When enchanted creature dies, return this card to the battlefield at the beginning of the next end step."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -38465,9 +38251,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Each other Angel you control enters with an additional +1/+1 counter on it for each Angel you already control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -38694,10 +38478,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "When enchanted creature dies, return that card to the battlefield under its owner's control. Return this card to the battlefield attached to that creature at the beginning of the next end step."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -38872,9 +38653,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ enters or attacks, look at the top six cards of your library. You may put any number of Equipment cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order. When you put one or more Equipment onto the battlefield this way, you may attach one of them to a Samurai you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -38990,9 +38769,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}: Another target creature you control gains protection from colorless or from the color of your choice until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -40937,9 +40714,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Target creature you control gains protection from the color of your choice until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -40996,9 +40771,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Myriad"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -41986,9 +41759,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "As long as you control an artifact, ~ gets +1/+0 and has deathtouch."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -42461,10 +42232,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Disguise {5}{G}{G}",
-    "When ~ is turned face up, put a +1/+1 counter on each creature you control. Creatures you control gain trample until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -42564,11 +42332,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever a creature you control deals combat damage to a player, choose one —",
-    "• Goad target creature that player controls.",
-    "• Exile the top card of that player's library. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -42902,9 +42666,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Tragic Backstory — Cast ~ only if a creature died this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -44197,9 +43959,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target creature you control deals damage equal to its power to target creature or planeswalker you don't control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -44241,9 +44001,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you commit a crime, untap ~. This ability triggers only once each turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -44278,9 +44036,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -44815,9 +44571,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "• remove up to three counters from target creature"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -45113,9 +44867,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "pool",
-   "unparsed": [
-    "As long as your devotion to white is less than five, ~ isn't a creature."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -45206,9 +44958,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, another target attacking creature gains flying until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -45539,9 +45289,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You can't lose the game and your opponents can't win the game."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -45687,10 +45435,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Creature spells you cast of the chosen type cost {1} less to cast.",
-    "At the beginning of your upkeep, look at the top card of your library. If it's a creature card of the chosen type, you may reveal it and put it into your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -45770,10 +45515,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, put a +1/+1 counter on him. He gains indestructible until end of turn.",
-    "Whenever ~ is dealt damage for the first time each turn, put that many +1/+1 counters on him."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -45904,10 +45646,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Aura spells you cast cost {1} less to cast.",
-    "Heroic — Whenever you cast a spell that targets ~, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -45961,9 +45700,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a legendary creature you control enters, you may attach ~ to it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -46068,9 +45805,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "As long as equipped creature is legendary, it has trample and haste."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -46157,10 +45892,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {2} less to cast if a creature is attacking you.",
-    "Return target creature card from your graveyard to the battlefield. If a Hero enters this way, it enters with two additional +1/+1 counters on it.   [partly: if a hero enters this way, it enters with two additional +1/+1 counters on it]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -46540,9 +46272,7 @@
    "identity": "BG",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}{B}{G}: Until end of turn, ~ becomes a 2/2 black and green Elemental creature with deathtouch. It's still a land."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -46582,9 +46312,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{3}{B}: Until end of turn, ~ becomes a 3/3 black Beholder creature with menace and \"Whenever ~ attacks, exile target card from defending player's graveyard.\" It's still a land."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -46879,9 +46607,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Sacrifice ~: Until your next turn, target player who was dealt combat damage by ~ this turn can't cast noncreature spells."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -46931,9 +46657,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Devoid"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -47281,9 +47005,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of each player's draw step, if ~ is untapped, that player draws an additional card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -47470,9 +47192,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Increment"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -48958,9 +48678,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -49708,10 +49426,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target creature attacks this turn if able.",
-    "Splice onto Arcane {R}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -50175,9 +49890,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Lieutenant — At the beginning of combat on your turn, if you control your commander, target nonlegendary creature you control gains myriad until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -50397,9 +50110,7 @@
    "identity": "BRW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -50863,9 +50574,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you cast a Hero spell, draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -50958,9 +50667,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Blitz {1}{R}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -51052,10 +50759,7 @@
    "identity": "BG",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of combat on your turn, put a number of +1/+1 counters equal to ~'s power on up to one other target creature. That creature becomes a Mutant in addition to its other types.",
-    "Whenever a Mutant you control dies during your turn, you draw cards equal to its power."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -51164,9 +50868,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Black spells you cast cost {1} less to cast."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -51384,10 +51086,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever your commander deals combat damage to a player, put a +1/+1 counter on ~.",
-    "Whenever you attack with your commander, if this card is in your graveyard, you may return it to the battlefield tapped and attacking."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -51472,10 +51171,7 @@
    "identity": "BGRUW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Legendary creatures you control get +X/+X, where X is the number of legendary creatures you control.",
-    "Whenever you cast a legendary spell from your hand, exile cards from the top of your library until you exile a legendary nonland card with lesser mana value. You may cast that card without paying its mana cost. Put the rest on the bottom of your library in a random order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -52092,9 +51788,7 @@
    "identity": "BR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Other creatures you control enter with an additional +1/+1 counter on them for each mana from a Treasure spent to cast them."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -52649,9 +52343,7 @@
    "identity": "BW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy all creatures. You gain life equal to the number of creatures you controlled that were destroyed this way.   [partly: you gain life equal to the number of creatures you controlled that were destroyed this way]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -52741,9 +52433,7 @@
    "identity": "RU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}: The next instant or sorcery spell you cast this turn costs {X} less to cast, where X is the number of Wizards you control as this ability resolves."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -53771,11 +53461,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Flanking",
-    "If ~ would be destroyed, regenerate it.",
-    "{2}: This creature can't be regenerated this turn. Only your opponents may activate this ability."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -54379,9 +54065,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{1}{W}, {T}: Prevent all combat damage that would be dealt by target attacking creature this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -54739,10 +54423,7 @@
    "identity": "RU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever an opponent casts their second spell each turn, draw a card.",
-    "Partner"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -55432,9 +55113,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This spell costs {2} less to cast if your opponents control three or more creatures."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -55561,10 +55240,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Whenever enchanted creature deals combat damage to defending player, you may destroy target artifact that player controls."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -55978,9 +55654,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -56023,10 +55697,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you gain life for the first time each turn, ~ becomes prepared.",
-    "[back face] Each opponent loses 2 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -56162,9 +55833,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Creatures you control have myriad."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 8,
     "land": false,
@@ -57076,9 +56745,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Each opponent sacrifices a creature of their choice. If you control a Liliana planeswalker, each opponent also discards a card.   [partly: if you control a liliana planeswalker, each opponent also discards a card]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -57452,10 +57119,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant modified creature",
-    "Umbra armor"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -57870,9 +57534,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Plot {3}{U}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -57909,9 +57571,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target creature gets -1/-1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -58351,9 +58011,7 @@
    "identity": "RU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you attack with exactly two creatures, those creatures gain first strike until end of turn, then draw a card. Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -58910,9 +58568,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, remove up to three counters from another target creature or planeswalker."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -59157,9 +58813,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "A Test of Your Reflexes! — When ~ enters, you may attach it to target creature you control. If you do, that creature gains first strike until end of turn and must be blocked this turn if able."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -59198,10 +58852,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, return target Equipment card from your graveyard to the battlefield attached to ~.",
-    "Whenever you sacrifice an artifact, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -59663,9 +59314,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.   [partly: at the beginning of your next main phase, add an amount of {c} equal to that spell's mana value]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -60211,11 +59860,7 @@
    "identity": "BRW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "• target opponent reveals their hand",
-    "• you choose a noncreature, nonland card from it",
-    "• that player discards that card"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -60529,9 +60174,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, each other creature gets -1/-1 until end of turn. Whenever a creature dies this turn, each creature other than ~ gets -1/-1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -60731,10 +60374,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, return up to one other target creature to its owner's hand.",
-    "Whenever you cast a spell with {X} in its mana cost, ~ can't be blocked this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -61394,9 +61034,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Clues you control have exalted."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -61825,10 +61463,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You have hexproof.",
-    "Whenever ~ is dealt damage, you gain that much life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -61865,11 +61500,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{2}{U}: Put an hour counter on ~.",
-    "At the beginning of each upkeep, put an hour counter on ~.",
-    "When the twelfth hour counter is put on ~, shuffle your hand and graveyard into your library, then draw seven cards. Exile ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -62298,9 +61929,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -62343,9 +61972,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, empower Jace 4."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -62550,9 +62177,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{2}: This artifact becomes a copy of target artifact, creature, enchantment, or land until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -62638,9 +62263,7 @@
    "identity": "GW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever you tap a land for mana, add one mana of any type that land produced."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -63855,9 +63478,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you may put target creature card from your graveyard on top of your library."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -63906,9 +63527,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Infusion — At the beginning of your end step, if you gained life this turn, return up to one target creature card with mana value X or less from your graveyard to the battlefield, where X is the amount of life you gained this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -63997,9 +63616,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{G}, {T}: You may play the exiled card without paying its mana cost if creatures you control have total power 10 or greater."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -64042,9 +63659,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}: Target creature you control gains protection from the color of your choice until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -64129,9 +63744,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, creatures your opponents control get -3/-0 until your next turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -64741,9 +64354,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{1}: This land becomes a 2/2 creature with all creature types until end of turn. It's still a land."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -64925,11 +64536,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "All permanents are artifacts in addition to their other types.",
-    "All cards that aren't on the battlefield, spells, and permanents are colorless.",
-    "Players may spend mana as though it were mana of any color."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -64990,9 +64597,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ attacks, you may tap X untapped Myr you control. If you do, ~ gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -65501,10 +65106,7 @@
    "identity": "BGW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you sacrifice an enchantment, draw a card.",
-    "Whenever the final chapter ability of a Saga you control resolves, each opponent loses X life and you gain X life, where X is that Saga's mana value."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -66011,9 +65613,7 @@
    "identity": "RW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}{R}{W}: Until end of turn, ~ becomes a 2/1 red and white Elemental creature with double strike. It's still a land."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -66178,9 +65778,7 @@
    "identity": "BRW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control. During any turn you attacked with a commander, you may play those cards."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -66223,9 +65821,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Constellation — Whenever an enchantment you control enters, look at the top three cards of your library. You may reveal a land card from among them and put that card into your hand. Put the rest on the bottom of your library in a random order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -66981,9 +66577,7 @@
    "identity": "GUW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Exalted"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -67111,9 +66705,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever a commander you control enters or attacks, proliferate."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -67384,9 +66976,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{2}, {T}: Choose a color. Add an amount of mana of that color equal to your devotion to that color."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -67443,9 +67033,7 @@
    "identity": "BG",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}{B}{G}, Exile ~: Return target card from your graveyard to your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -67507,9 +67095,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {X} less to cast, where X is the total mana value of noncreature enchantments you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 12,
     "land": false,
@@ -67566,10 +67152,7 @@
    "identity": "UW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, exile another target permanent you control. Return it to the battlefield under its owner's control at the beginning of the next end step.   [partly: return it to the battlefield under its owner's control at the beginning of the next end step]",
-    "You may activate the loyalty abilities of planeswalkers you control twice each turn rather than only once."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -67748,9 +67331,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This spell costs {8} less to cast if you have eight or more instant and/or sorcery cards in your graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 10,
     "land": false,
@@ -68070,9 +67651,7 @@
    "identity": "BG",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Infusion — When ~ enters, put two +1/+1 counters on it if you gained life this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -68355,9 +67934,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever an enchantment you control enters, you may create a token that's a copy of it. Do this only once each turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -68703,9 +68280,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{T}: Put a +1/+1 counter on each green creature that entered this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -68928,9 +68503,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ costs {3} less to cast if creatures you control have total toughness 10 or greater."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -69075,9 +68648,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Channel — {3}{U}, Discard ~: Return target artifact, creature, enchantment, or planeswalker to its owner's hand. This ability costs {1} less to activate for each legendary creature you control.   [partly: this ability costs {1} less to activate for each legendary creature you control]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -69482,9 +69053,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Grandeur — Discard another card named ~: Reveal cards from the top of your library until you reveal an instant or sorcery card. Put that card into your hand and the rest on the bottom of your library in a random order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -69645,10 +69214,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Toxic 6",
-    "This creature can't be blocked by creatures with power 2 or less."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -69807,9 +69373,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This creature has hexproof as long as it's untapped."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -69854,9 +69418,7 @@
    "identity": "GU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, look at the top five cards of your library. You may reveal a land card or a card with {X} in its mana cost from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -70195,9 +69757,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "White spells you cast cost {1} less to cast."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -70234,9 +69794,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -70335,13 +69893,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "{U}: Untap enchanted creature.",
-    "{U}: Enchanted creature gains flying until end of turn.",
-    "{U}: Enchanted creature gains shroud until end of turn.",
-    "{1}: Enchanted creature gets +1/-1 or -1/+1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -70379,9 +69931,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}: Target 1/1 creature gets +1/+2 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -70490,10 +70040,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, until end of turn, another target creature you control gets +2/+0 and gains \"When ~ dies, return it to the battlefield tapped under its owner's control.\"",
-    "Warp {1}{B}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -70724,9 +70271,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, you may tap or untap target permanent."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -70935,9 +70480,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ deals combat damage to a player, add that much mana of any one color. Until end of turn, you don't lose this mana as steps and phases end."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -72803,10 +72346,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Enchant artifact",
-    "Enchanted artifact's activated abilities cost {2} less to activate. This effect can't reduce the mana in that cost to less than one mana."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -73238,9 +72778,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Until end of turn, target creature gets +2/+0 and gains \"When ~ dies, return it to the battlefield under its owner's control and suspect it.\""
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -73882,9 +73420,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ deals combat damage to a player, draw that many cards."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -74347,9 +73883,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{7}{U}: Adapt 4. This ability costs {1} less to activate for each instant and sorcery card in your graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -74542,10 +74076,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever an Equipment you control enters, you may draw a card.",
-    "Metalcraft — Equipment you control have equip {0} as long as you control three or more artifacts."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -74694,10 +74225,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Discard your hand, then draw four cards. For each card discarded this way, creatures you control get +1/+0 until end of turn.   [partly: discard your hand; for each card discarded this way, creatures you control get +1/+0 until end of turn]",
-    "Plot {3}{R}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -74983,9 +74511,7 @@
    "identity": "RU",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "As long as ~ is tapped, you may cast spells as though they had flash."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -75025,9 +74551,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Return a Forest you control to its owner's hand: Untap target creature. Activate only once each turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -75265,9 +74789,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Jump-start"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -75414,9 +74936,7 @@
    "identity": "GR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}{R}{G}: Until end of turn, ~ becomes a 3/3 red and green Elemental creature with \"Whenever ~ attacks, put a +1/+1 counter on it.\" It's still a land."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -76222,9 +75742,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Sacrifice ~: Your opponents can't cast noncreature spells this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -76378,9 +75896,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy target creature. It can't be regenerated. That creature's controller creates a 3/3 green Frog Lizard creature token.   [partly: that creature's controller creates a 3/3 green frog lizard creature token]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -77453,9 +76969,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, for each creature token you control that entered this turn, create a tapped and attacking token that's a copy of that token. At the beginning of the next end step, sacrifice those tokens."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -77789,9 +77303,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Tap an untapped legendary creature you control: Add one mana of any color."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -78159,9 +77671,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, return up to one other target artifact or creature you control to its owner's hand. If it was an artifact, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -78326,11 +77836,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of your end step, if you gained life this turn, create a Blood token.",
-    "Sacrifice two Blood tokens: Transform ~. Activate only as a sorcery.",
-    "[back face] At the beginning of your end step, if you gained life this turn, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\") / {4}{B}: Each opponent loses 2 life and you gain 2 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -78805,10 +78311,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Return target creature or planeswalker card with mana value 6 or less from your graveyard to the battlefield.",
-    "Empower Jace 2."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -78988,10 +78491,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Toxic 2",
-    "When this Vehicle enters, draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -79045,9 +78545,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Suspend 1—{R}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -79126,9 +78624,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you activate an ability, if it isn't a mana ability, you may pay {2}. If you do, copy that ability. You may choose new targets for the copy."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -79958,10 +79454,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Add {R} for each card in target opponent's hand. Until end of turn, you don't lose this mana as steps and phases end. Exile ~ with three time counters on it.",
-    "Suspend 3—{1}{R}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -80035,9 +79528,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Red spells you cast cost {1} less to cast."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -80262,9 +79753,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ or another Goblin you control dies, exile the top card of your library. If it's a Goblin creature card, you may cast that card until the end of your next turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -80652,10 +80141,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Cascade",
-    "You may have ~ enter as a copy of any permanent that entered this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -80742,9 +80228,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{1}: Add one mana of any color. Activate only once each turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -80787,9 +80271,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, you may collect evidence 3. When you do, put a +1/+1 counter on target creature you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -81092,9 +80574,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Creatures with flying can't attack you or planeswalkers you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 8,
     "land": false,
@@ -81133,9 +80613,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "At the beginning of your upkeep, tap ~ unless you pay 2 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -83747,10 +83225,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You may pay {W} and tap four untapped creatures you control with flying rather than pay ~'s mana cost.",
-    "Other creatures you control with flying have indestructible."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -84049,9 +83524,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Prevent all combat damage that would be dealt to ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -84139,9 +83612,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You can't cast ~ during your first, second, or third turns of the game."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -84439,9 +83910,7 @@
    "identity": "BW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Create two tapped 1/1 white Spirit creature tokens with flying."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -84562,9 +84031,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{1}: Permanents your opponents control lose hexproof and indestructible until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -84741,10 +84208,7 @@
    "identity": "UW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever you draw a card, put a +1/+1 counter on Shang-Chi.",
-    "When the tenth +1/+1 counter is put on Shang-Chi, you draw five cards and gain 5 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -85112,10 +84576,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Other Heroes you control have trample.",
-    "Whenever a Hero you control becomes blocked, put a +1/+1 counter on that Hero for each creature blocking it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -86584,9 +86045,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "This creature can't be blocked except by creatures with flying."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -86720,9 +86179,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you may search your library for a basic land card or a Desert card, reveal it, then shuffle and put it on top.   [partly: shuffle and put it on top]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -87483,9 +86940,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "During your turn, ~ has first strike."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -87587,9 +87042,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{W/P}, {T}: Choose a color. Another target creature you control gains toxic 1 and hexproof from that color until end of turn. It can't be blocked by creatures of that color this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -88304,9 +87757,7 @@
    "identity": "BR",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever Smaug is dealt noncombat damage, create that many Treasure tokens."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -88365,9 +87816,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever Smaug attacks, he deals damage equal to the number of Treasures you control to any target."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -88806,9 +88255,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Return target creature to its owner's hand. Untap up to two lands.   [partly: untap up to two lands]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -89347,9 +88794,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, target creature gets -4/-4 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -89914,9 +89359,7 @@
    "identity": "BW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{B}: Regenerate ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -90524,9 +89967,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Web-slinging {2}{G}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -91149,9 +90590,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, attach it to target creature you control. That creature gains first strike until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -91492,9 +90931,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Warp {1}{U}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -91543,9 +90980,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever an enchantment you control is put into a graveyard from the battlefield, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -91664,9 +91099,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Angel spells you cast cost {2} less to cast."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -91752,10 +91185,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever a creature you control deals combat damage to a player, you may draw that many cards.",
-    "Warp {2}{U}{U}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -91809,9 +91239,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you gain 2 life and create a tapped Powerstone token."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -91906,9 +91334,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Counter target spell. If you control a blue creature, draw a card, then discard a card.   [partly: if you control a blue creature, draw a card]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -93629,9 +93055,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Exile all creatures. Incubate X, where X is the number of creatures exiled this way.   [partly: incubate x]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -96738,9 +96162,7 @@
    "identity": "BG",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{B}{G}: Return ~ from your graveyard to the battlefield tapped."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -96839,9 +96261,7 @@
    "identity": "W",
    "game_changer": true,
    "source": "scryfall",
-   "unparsed": [
-    "Exile ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -97838,10 +97258,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ becomes the target of a spell or ability an opponent controls, you may draw a card.",
-    "Infusion — This creature gets +2/+0 as long as you gained life this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -98421,9 +97838,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Increment"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -98864,10 +98279,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "I — Each player mills three cards.",
-    "III — Return target creature or land card from your graveyard to your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -98991,11 +98403,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "I — Each opponent sacrifices a creature or planeswalker of their choice.",
-    "II — Each opponent discards a card.",
-    "III — Put target creature or planeswalker card from a graveyard onto the battlefield under your control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -99192,9 +98600,7 @@
    "identity": "BR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a player casts their first spell each turn, choose another target player. ~ deals damage equal to that spell's mana value to the chosen player."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -99233,9 +98639,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "III — Return all land cards from your graveyard to the battlefield, then shuffle your graveyard into your library."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -99482,10 +98886,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, target Hero gains hexproof until end of turn.",
-    "Whenever ~ attacks, tap target creature defending player controls."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -100701,9 +100102,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}{U}, Sacrifice ~: When you next cast an instant or sorcery spell this turn, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -101676,9 +101075,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Increment"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -102233,9 +101630,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature has nonbasic landwalk."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -103374,9 +102769,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Infusion — This creature gets +2/+0 as long as you gained life this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -103466,9 +102859,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals 7 damage to each creature. If ~ was cast from exile, for each opponent, choose an artifact or land that player controls. Destroy the chosen permanents.   [partly: if ~ was cast from exile, for each opponent, choose an artifact or land that player controls; destroy the chosen permanents]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -104598,9 +103989,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Each land is a Swamp in addition to its other land types."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -105515,9 +104904,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, target player draws a card and loses 1 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -105822,10 +105209,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Toxic 3",
-    "When ~ enters, you may pay {1}{G}. If you do, proliferate."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -107082,10 +106466,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Cascade",
-    "~ deals X damage to each creature and planeswalker your opponents control, where X is the number of spells you've cast this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -107173,10 +106554,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Ascend",
-    "Each opponent sacrifices a creature of their choice. If you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up.   [partly: if you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -107681,9 +107059,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{3}, {T}, Pay life equal to the number of colors in your commanders' color identity: Draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -109161,10 +108537,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "pool",
-   "unparsed": [
-    "Converge — This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.",
-    "Whenever you cast a creature spell, that creature enters with X additional +1/+1 counters on it, where X is the number of colors of mana spent to cast it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -109199,10 +108572,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "• Create a number of 1/1 red Warrior creature tokens equal to the number of creatures target player controls.",
-    "• ~ deals damage to target creature equal to the number of creatures you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -109335,9 +108705,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{W}, {T}: You may play the exiled card without paying its mana cost if you attacked with three or more creatures this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -109613,9 +108981,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ attacks, return target creature card with mana value less than or equal to ~'s power from your graveyard to the battlefield. If a Hero enters this way, it enters with an additional +1/+1 counter on it."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -109696,9 +109062,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Return an Elf you control to its owner's hand: Untap target creature. Activate only once each turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -110136,9 +109500,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever you attack, each opponent loses life equal to the number of creatures attacking them."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -110858,9 +110220,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature has base power and toughness 7/7 and can't be blocked by creatures with power 2 or less."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -111286,9 +110646,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{G}, {T}: Regenerate target creature."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -111568,9 +110926,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever another Angel you control enters, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -112304,10 +111660,7 @@
    "identity": "BRW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Mobilize 1",
-    "Whenever a creature token you control leaves the battlefield, draw a card if it was attacking. Otherwise, each opponent loses 1 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

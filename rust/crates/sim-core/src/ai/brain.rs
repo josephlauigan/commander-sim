@@ -278,7 +278,12 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
-    if base <= 0.0 && d.has_dsl() && !hand_written {
+    // JD's decks: a 0 from the deck's own priority is deliberate for an instant (held for responses) and for removal,
+    // wipes, counters and protection (cast by the response and removal logic); the rest still gets the ability value
+    // (a ritual is no answer: Dark Ritual is cast by the storm line, and from the graveyard under Yawgmoth's Will)
+    let ritual = d.abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Spell { effects } if effects.iter().any(|e| e.kind == "add_mana")));
+    let held_kind = !ritual && (d.instant || d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::Ctr) || d.tag(Tag::Prot));
+    if base <= 0.0 && d.has_dsl() && !hand_written && !(super::jd_deck(pl.key) && held_kind) {
         base = crate::dsl::card_value(g, p, c) * 10.0;
     }
     if base <= 0.0 {

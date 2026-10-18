@@ -1366,7 +1366,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
         return pool::wipe_response(g, q, kind, caster);
     }
     if key == "yshtola" {
-        return crate::impls::yshtola::yshtola_wipe_response(g, q, kind);
+        return crate::impls::yshtola::yshtola_wipe_response(g, q, kind, caster);
     }
     if key == "galadriel" {
         return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
