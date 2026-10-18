@@ -8578,3 +8578,8 @@ note = "enter trigger phases out the best opposing creature (back at its control
 dsl = []
 status = "Full"
 note = "exiles the best opposing creature (the AI never takes its own); the card returns under its owner's control when Fiend Hunter leaves"
+
+["All-Fates Stalker"]
+dsl = []
+status = "Partial"
+note = "exiles the best opposing non-Assassin creature until it leaves; Warp is coded but not offered (casting from exile is not modeled)"

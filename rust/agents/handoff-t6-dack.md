@@ -3,8 +3,9 @@ Batch: Dack Fayden Helping Hand; Preston the Vanisher; Fiend Hunter; All-Fates S
 Deck key: dack-fayden-white-stax. Code: impls/t6_dack.rs; tests: tests/cards_t6_dack.rs (seat 0 dack, seat 1 seph).
 ## Done
 - Fiend Hunter (Full)
+- All-Fates Stalker (Partial: warp recast from exile = engine need)
 ## Next (in order)
-All-Fates Stalker (warp), Touch the Spirit Realm, Radiant Solar (venture on grudge map), Preston, Dack, Gideon, Paladin Class
+Touch the Spirit Realm, Radiant Solar (venture on grudge map), Preston, Dack, Gideon, Paladin Class
 ## Gotchas
 - Banisher etb hooks use the enter call's `p` as "you", not perm owner (Dack donates before queued triggers run).
 - Use common::oring_exile / oring_return; override dsl = [] in data/card_overrides.toml so the compiled permanent exile does not double.
