@@ -103,6 +103,8 @@ pub struct RunTally {
     pub by_seed: HashMap<u64, bool>,
     pub axes: Axes,
     pub wintype: Counter<String>,
+    /// Tier 6 report counters, filled only when `me` is a Tier 6 deck (the per-deck block of `--deck X --pool t6`)
+    pub t6: crate::t6report::T6Tally,
 }
 
 impl RunTally {
@@ -121,6 +123,7 @@ impl RunTally {
             by_seed: HashMap::new(),
             axes: Axes::new(),
             wintype: Counter::new(),
+            t6: Default::default(),
         }
     }
 
@@ -129,6 +132,9 @@ impl RunTally {
         let Some(pi) = g.player(me) else { return };
         let p = &g.players[pi];
         let won = g.winner == Some(pi);
+        if sim_core::impls::t6_plans::is_t6_key(me) {
+            self.t6.add(g);
+        }
         self.n += 1;
         self.win += won as u64;
         self.by_seed.insert(seed, won);
@@ -334,6 +340,9 @@ impl Ctx<'_> {
             );
         }
         println!("  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)");
+        if sim_core::impls::t6_plans::is_t6_key(me) && tier == "t6" {
+            print!("{}", crate::t6report::render(&r.t6, &[me.to_string()], &|k| sim.name_of(k)));
+        }
     }
 
     /// poolmode.print_ab: baseline vs variant per profile, the verdict and the per-axis table
