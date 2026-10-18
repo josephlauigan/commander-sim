@@ -8522,3 +8522,7 @@ note = "2/2 body; activated abilities of your creatures cost {2} less (never und
 ["Training Grounds"]
 status = "Partial"
 note = "activated abilities of your creatures cost {2} less (never under {1}), stacking with Biomancer's Familiar, applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), see rust/agents/engine-needs-green1.md"
+
+["Earthcraft"]
+status = "Full"
+note = "tap an untapped creature you control: untap target basic land; the AI uses it with a tapped basic, a spell or Thrasios waiting for the mana, and a creature with nothing better to do (summoning sick before combat, any idle one after; never a mana creature)"

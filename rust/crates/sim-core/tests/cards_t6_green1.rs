@@ -149,3 +149,34 @@ fn training_grounds_stacks_with_the_familiar_and_floors_at_one() {
     assert_eq!(cost(&g, P0, 6), 2);
     assert_eq!(cost(&g, PlayerId(2), 6), 6, "an opponent's creatures are not discounted");
 }
+
+// ======================================================== Earthcraft
+#[test]
+fn earthcraft_taps_a_creature_to_untap_a_basic_land() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, "Earthcraft");
+    let f = lands(&mut g, P0, "Forest", 1, true)[0];
+    let t = token(&mut g, P0, 1);
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert!(options(&mut g, e, P0, Some(false)).is_empty(), "before combat an idle-able creature could attack");
+    let o = options(&mut g, e, P0, Some(true));
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.perm(t).tapped, "the creature is tapped as the cost");
+    assert!(!g.land(f).tapped, "the Forest is untapped");
+    assert!(options(&mut g, e, P0, Some(true)).is_empty(), "no tapped basic left, no untapped creature left");
+}
+
+#[test]
+fn earthcraft_only_untaps_basic_lands_and_needs_an_untapped_creature() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, "Earthcraft");
+    lands(&mut g, P0, "Gaea's Cradle", 1, true);
+    token(&mut g, P0, 1);
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert!(options(&mut g, e, P0, Some(true)).is_empty(), "Cradle is not a basic land");
+    lands(&mut g, P0, "Forest", 1, true);
+    let t2 = token(&mut g, P0, 1);
+    g.perm_mut(t2).tapped = true;
+    assert_eq!(options(&mut g, e, P0, Some(true)).len(), 1, "the untapped token is enough");
+}

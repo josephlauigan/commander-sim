@@ -149,8 +149,68 @@ fn cub_tapped(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
     Ok(())
 }
 
+// ================================================================== Earthcraft
+fn is_basic_land(g: &Game, l: LandId) -> bool {
+    crate::engine::mana::BASIC_NAMES.contains(&&*g.db.get(g.land(l).cd).name)
+}
+
+/// the creature the AI taps for Earthcraft: one that has nothing better to do (summoning sick, or can't attack, or
+/// any untapped one after combat), never a mana creature (tapping it for mana is as good), the cheapest to idle
+fn earthcraft_creature(g: &Game, p: PlayerId, src: PermId, post: bool) -> Option<PermId> {
+    let cs: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            let d = x.cd.map(|c| g.db.get(c));
+            live(g, m)
+                && g.is_creature(m)
+                && m != src
+                && !x.tapped
+                && (post || x.sick || x.noatk)
+                && !d.is_some_and(|d| d.tags.str(Tag::Dork).is_some() || d.tags.str(Tag::Rock).is_some())
+        })
+        .collect();
+    min_by(&cs, |m| crate::engine::values::pval(g, m))
+}
+
+/// **Earthcraft** ({1}{G} enchantment): tap an untapped creature you control: untap target basic land. The AI uses it
+/// with a tapped basic land, a spell (or Thrasios) waiting for the mana, and a creature with nothing better to do
+/// (see `earthcraft_creature`: before combat only a summoning-sick one).
+fn earthcraft_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let Some(post) = post else { return Ok(vec![]) };
+    if !live(g, src) || owner(g, src) != p || !has_sink(g, p) {
+        return Ok(vec![]);
+    }
+    let Some(l) = g.player(p).lands.iter().copied().find(|&l| g.land(l).tapped && is_basic_land(g, l)) else {
+        return Ok(vec![]);
+    };
+    let Some(c) = earthcraft_creature(g, p, src, post) else { return Ok(vec![]) };
+    Ok(vec![ability(1.5, "untap a basic land (Earthcraft)", src, earthcraft_go, pack(c.0, l.0))])
+}
+
+fn earthcraft_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let (c, l) = unpack(arg);
+    let (c, l) = (PermId(c), LandId(l));
+    if !live(g, src) || owner(g, src) != p || !live(g, c) || g.perm(c).tapped || !land_on(g, p, l) {
+        return Ok(false);
+    }
+    g.perm_mut(c).tapped = true; // the cost
+    if !ability_window(g, p, Some(src), "untap target basic land", None, None)? {
+        return Ok(true);
+    }
+    if land_on(g, p, l) && is_basic_land(g, l) {
+        g.land_mut(l).tapped = false;
+        crate::glog!(g, "    Earthcraft: {} taps to untap {}", g.perm(c).name, g.db.get(g.land(l).cd).name);
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Oboro Breezecaller")?.options = Some(oboro_options);
     r.card(db, "Badgermole Cub")?.mana_tapped = Some(cub_tapped);
+    r.card(db, "Earthcraft")?.options = Some(earthcraft_options);
     Ok(())
 }
