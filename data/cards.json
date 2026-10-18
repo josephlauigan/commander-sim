@@ -18099,11 +18099,11 @@
    "generic": 2,
    "pips": "UU",
    "tags": {
-    "pow": "0",
-    "tgh": "0"
+    "pow": "1",
+    "tgh": "1"
    },
-   "pow": 0,
-   "tgh": 0,
+   "pow": 1,
+   "tgh": 1,
    "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
@@ -18115,10 +18115,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may have ~ enter as a copy of any nonland permanent on the battlefield."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -38165,11 +38163,11 @@
    "generic": 0,
    "pips": "UU",
    "tags": {
-    "pow": "0",
-    "tgh": "0"
+    "pow": "1",
+    "tgh": "1"
    },
-   "pow": 0,
-   "tgh": 0,
+   "pow": 1,
+   "tgh": 1,
    "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
@@ -38182,10 +38180,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may have ~ enter as a copy of any creature on the battlefield, except it has vanishing 3 if that creature doesn't have vanishing."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -76241,11 +76237,11 @@
    "generic": 1,
    "pips": "U",
    "tags": {
-    "pow": "0",
-    "tgh": "0"
+    "pow": "1",
+    "tgh": "1"
    },
-   "pow": 0,
-   "tgh": 0,
+   "pow": 1,
+   "tgh": 1,
    "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
@@ -76257,10 +76253,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may have ~ enter as a copy of any creature on the battlefield, except it's an Illusion in addition to its other types and it has \"When ~ becomes the target of a spell or ability, sacrifice it.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

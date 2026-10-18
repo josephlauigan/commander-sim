@@ -8315,3 +8315,69 @@ note = "returns a spell to its owner's hand for {1}{W} (the Remand return); miss
 ["Tibalt's Trickery"]
 status = "Partial"
 note = "counters a spell for {1}{R}; missing: its side effect (the countered spell's controller mills 1-3, exiles to a nonland card and may cast it free), written as t6_counters::tibalt_after"
+["Twincast"]
+status = "Full"
+note = "cast from hand in response to an instant or sorcery (anyone's) whose copy is worth at least 3 (draw, tutor, burn, removal, magecraft payoffs): the copy resolves first, with the AI's targets; the AI never casts it any other way"
+
+["Flare of Duplication"]
+status = "Full"
+note = "as Twincast, but the copy must be worth at least 4; pays {1}{R}{R}, or sacrifices the cheapest nontoken red creature (never a commander) worth less than the copy"
+
+["Heat Shimmer"]
+status = "Full"
+note = "a token copy of the best creature (any controller's, not a hexproof one, no legend it already has) with haste, exiled at the end step; the copy's enters effects happen; cast in main phase when the enters effect and one attack are worth at least 2.5"
+
+["Molten Duplication"]
+status = "Partial"
+note = "a hasty token copy of your best artifact or creature, sacrificed at the end step (enters effects happen); missing: the token is an artifact in addition to its other types"
+
+["Electroduplicate"]
+status = "Full"
+note = "a hasty token copy of your best creature, sacrificed at the end step; flashback {2}{R}{R} (the generic flashback option)"
+
+["Clever Impersonator"]
+tags = "pow=1 tgh=1"
+status = "Full"
+note = "enters as a copy of the best nonland permanent on the battlefield (the copy's enters effects happen; the card goes to the graveyard as Clever Impersonator); cast only when a copy worth 3 or more is out. The card carries 1/1 so the 0/0 body survives until its enters hook swaps it for the copy; with nothing to copy it dies"
+
+["Mockingbird"]
+status = "Partial"
+note = "{X}{U}: the AI picks the cheapest X that reaches the best creature (mana value at most X+1, copy worth 3 or more); the copy has flying and the card goes to the graveyard as Mockingbird; missing: the Bird type is not added"
+
+["Phantasmal Image"]
+tags = "pow=1 tgh=1"
+status = "Partial"
+note = "enters as a copy of the best creature; missing: the Illusion type and 'when this becomes the target of a spell or ability, sacrifice it' (engine has no becomes-target trigger)"
+
+["Flesh Duplicate"]
+tags = "pow=1 tgh=1"
+status = "Partial"
+note = "enters as a copy of the best creature; missing: vanishing 3 (the copy lasts as long as the creature would)"
+
+["Copy Artifact"]
+status = "Partial"
+note = "enters as a copy of the best artifact (rocks and enters effects count); missing: it is an enchantment in addition to its other types"
+
+["Mirrormade"]
+status = "Full"
+note = "enters as a copy of the best artifact or enchantment on the battlefield; the card goes to the graveyard as Mirrormade"
+
+["Sculpting Steel"]
+status = "Full"
+note = "enters as a copy of the best artifact on the battlefield; the card goes to the graveyard as Sculpting Steel"
+
+["Imposter Mech"]
+status = "Partial"
+note = "not played by the AI: it needs vehicles with crew and a copy that loses its other card types (engine needs)"
+
+["Flash Photography"]
+status = "Full"
+note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
+
+["Peter Parker's Camera"]
+status = "Partial"
+note = "enters with three film counters; missing: the ability that copies an activated or triggered ability you control (engine need)"
+
+["Volatile Stormdrake"]
+status = "Partial"
+note = "flying; enters: exchange control with the best opposing creature whose mana value is at most the energy you will have (you get EEEE, then pay mana value in energy), else nothing happens; missing: hexproof from activated and triggered abilities only (the engine reads hexproof as full hexproof)"
