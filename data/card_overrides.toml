@@ -8251,3 +8251,11 @@ note = "adds RRR (floating red mana); the AI casts it only through a deck plan; 
 ["Rite of Flame"]
 status = "Full"
 note = "adds RR plus R for each other Rite of Flame in any graveyard (floating red mana); the AI casts it only through a deck plan"
+
+["Simian Spirit Guide"]
+status = "Partial"
+note = "2/2 body only; exile from hand for {R} needs the engine to take mana from any card in hand, not only Elvish Spirit Guide (rust/agents/engine-needs-mana.md)"
+
+["Manifold Key"]
+status = "Full"
+note = "{1},{T}: untaps a tapped mana artifact that makes two or more mana (when the hand holds a spell); {3},{T}: the biggest attacker can't be blocked this turn (before combat, when blockers are untapped)"

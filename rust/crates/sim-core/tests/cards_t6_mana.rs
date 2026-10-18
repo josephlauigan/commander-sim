@@ -93,3 +93,48 @@ fn rite_of_flame_adds_rr_and_one_more_per_copy_in_a_graveyard() {
     assert_eq!(&*dest, "gy");
     assert_eq!(g.player(P0).floating.r, 2 + 3, "the copy cast first plus two more in graveyards");
 }
+
+// ======================================================== Manifold Key
+#[test]
+fn manifold_key_untaps_a_sol_ring_for_one() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 1, false);
+    let key = perm(&mut g, P0, "Manifold Key");
+    let ring = perm(&mut g, P0, "Sol Ring");
+    hand(&mut g, P0, &["Rite of Flame"]);
+    g.perm_mut(ring).tapped = true;
+    let o = options(&mut g, key, P0, Some(false));
+    assert_eq!(o.len(), 1, "untap offer only; no creature to make unblockable");
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(!g.perm(ring).tapped, "Sol Ring untapped");
+    assert!(g.perm(key).tapped, "{{T}} is part of the cost");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2, "Mountain paid {{1}}; Sol Ring makes {{C}}{{C}}");
+    assert!(options(&mut g, key, P0, Some(false)).is_empty(), "the Key is tapped");
+}
+
+#[test]
+fn manifold_key_does_not_untap_a_one_mana_rock() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let key = perm(&mut g, P0, "Manifold Key");
+    let rock = perm(&mut g, P0, "Arcane Signet");
+    hand(&mut g, P0, &["Rite of Flame"]);
+    g.perm_mut(rock).tapped = true;
+    assert!(options(&mut g, key, P0, Some(false)).is_empty(), "{{1}} for {{1}} is no gain");
+}
+
+#[test]
+fn manifold_key_makes_the_best_attacker_unblockable_for_three() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 3, false);
+    let key = perm(&mut g, P0, "Manifold Key");
+    let big = token(&mut g, P0, 5);
+    token(&mut g, P1, 2); // a blocker
+    let o = options(&mut g, key, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    let st = g.turn_stamp();
+    assert_eq!(g.perm(big).data.get(sim_core::state::DataKey::Unbl), Some(&sim_core::state::Val::Stamp(st)));
+    assert!(g.perm(key).tapped);
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 0, "paid {{3}}");
+}
