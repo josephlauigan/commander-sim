@@ -8668,3 +8668,7 @@ note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} 
 tags = "xtutor reach"
 status = "Partial"
 note = "{X}{G}{G} (X = all spare mana): puts the best non-Human creature card with mana value X or less from the library or graveyard onto the battlefield (the deck's wish list first), shuffling if it came from the library; missing: the battle rules (the Siege stays with 6 defense counters, can be attacked, and cast transformed as Zilortha when defeated; the engine has no battles, so the card goes to the graveyard)"
+
+["Borne Upon a Wind"]
+status = "Partial"
+note = "draws a card and sets the caster's one-turn flash flag (t6_blue::flash_turn_grant); missing: the engine does not read the flag yet, so spells still wait for their normal timing (engine need: cast spells as though they had flash)"
