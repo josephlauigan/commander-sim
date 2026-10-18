@@ -485,6 +485,10 @@ pub struct Player {
     pub flag_turn: IndexMap<Sym, TurnStamp>,
     /// the AI's memory of who hurt it (brain.note_damage)
     pub grudge: IndexMap<Sym, f64>,
+    /// the dungeon p is in: (index into `engine::dungeon::DUNGEONS`, room index); None = not in one
+    pub dungeon: Option<(usize, u8)>,
+    /// dungeons p has completed this game
+    pub dungeons_done: u32,
     /// cards cast this game
     pub cast_names: IndexSet<CardId>,
     /// the turn (own turn count) each card was first cast, logged at the end of each of its owner's turns;
@@ -734,6 +738,8 @@ impl Player {
             nc_dmg_last: false,
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
+            dungeon: None,
+            dungeons_done: 0,
             cast_names: IndexSet::new(),
             cast_turns: vec![],
             cast_logged: 0,

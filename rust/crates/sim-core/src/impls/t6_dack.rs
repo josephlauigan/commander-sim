@@ -17,14 +17,14 @@
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
-use crate::engine::life::{gain, lose_life};
+use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{epow, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, die, discard_cards, draw, enter, enter_token_copy_with, exile_perm, make_tokens, max_by,
+    Enter, die, discard_cards, enter, enter_token_copy_with, exile_perm, max_by,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -229,47 +229,10 @@ pub fn controlled_when(g: &Game, src: PermId, p: PlayerId, m: PermId) -> bool {
 }
 
 // ================================================================== Radiant Solar: the dungeon
-/// Venture into the dungeon. Only Lost Mine of Phandelver is ever chosen (the best of the three for this deck: its
-/// third room drains each opponent for 1): Cave Entrance (scry 1), Goblin Lair (a 1/1 Goblin), Dark Pool (each
-/// opponent loses 1 life and you gain 1), Temple of Dumathoin (draw a card); after the last room the dungeon is
-/// completed and the next venture enters a new Lost Mine. The room is kept per player in `Player::grudge` under the
-/// key "dungeon_room" (that map is only read by the defender choice, by player key); completions under
-/// "dungeons_completed". (A real dungeon system is an engine need: engine-needs-dack.md.)
+/// Venture into the dungeon: the engine's dungeon system (`engine::dungeon`) picks the dungeon and branches; for
+/// this deck that is Lost Mine of Phandelver, Goblin Lair, Dark Pool (each opponent loses 1, you gain 1).
 pub fn venture(g: &mut Game, p: PlayerId) -> Res {
-    let room_key = intern("dungeon_room");
-    let room = g.player(p).grudge.get(&room_key).copied().unwrap_or(0.0) as u32 + 1;
-    g.player_mut(p).grudge.insert(room_key, room as f64);
-    match room {
-        1 => {
-            crate::glog!(g, "    {} ventures into Lost Mine of Phandelver: Cave Entrance (scry 1)", pname(g, p));
-            crate::cardcode::scry(g, p, 1, false)?;
-        }
-        2 => {
-            crate::glog!(g, "    {} ventures: Goblin Lair (a 1/1 Goblin)", pname(g, p));
-            let spec =
-                Tokens { color: Some(Colors::from_letters("R")), types: vec![intern("goblin")], ..Tokens::new(1, 1) };
-            make_tokens(g, p, spec)?;
-        }
-        3 => {
-            crate::glog!(g, "    {} ventures: Dark Pool (each opponent loses 1, {} gains 1)", pname(g, p), pname(g, p));
-            for q in g.opps(p).filter(|&q| g.player(q).alive).collect::<Vec<_>>() {
-                lose_life(g, q, 1, Some(p), intern("drain"), None)?;
-            }
-            gain(g, p, 1)?;
-        }
-        _ => {
-            crate::glog!(
-                g,
-                "    {} ventures: Temple of Dumathoin (draw a card); the dungeon is completed",
-                pname(g, p)
-            );
-            g.player_mut(p).grudge.insert(room_key, 0.0);
-            let k = intern("dungeons_completed");
-            *g.player_mut(p).grudge.entry(k).or_insert(0.0) += 1.0;
-            draw(g, p, 1, false)?;
-        }
-    }
-    Ok(())
+    crate::engine::dungeon::venture(g, p)
 }
 
 // ================================================================== Radiant Solar

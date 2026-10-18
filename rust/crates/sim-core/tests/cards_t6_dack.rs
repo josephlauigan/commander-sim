@@ -98,21 +98,21 @@ fn touch_channel_needs_its_mana_and_a_legal_target() {
 }
 
 // ======================================================== Radiant Solar
-fn room(g: &Game, p: PlayerId) -> u32 {
-    g.player(p).grudge.get(&sim_core::sym::intern("dungeon_room")).copied().unwrap_or(0.0) as u32
+fn room(g: &Game, p: PlayerId) -> &'static str {
+    sim_core::engine::dungeon::current(g, p).map(|(d, r)| sim_core::engine::dungeon::DUNGEONS[d].rooms[r as usize].name).unwrap_or("none")
 }
 
 #[test]
 fn solar_ventures_for_itself_and_other_nontoken_creatures_but_not_tokens() {
     let mut g = game();
     let _solar = perm(&mut g, P0, "Radiant Solar");
-    assert_eq!(room(&g, P0), 1, "entering itself ventures");
+    assert_eq!(room(&g, P0), "Cave Entrance", "entering itself ventures");
     let _t = token(&mut g, P0, 1);
-    assert_eq!(room(&g, P0), 1, "a token doesn't");
+    assert_eq!(room(&g, P0), "Cave Entrance", "a token doesn't");
     let _x = perm(&mut g, P0, "Grave Titan");
-    assert_eq!(room(&g, P0), 2);
+    assert_eq!(room(&g, P0), "Goblin Lair");
     let _y = perm(&mut g, P1, "Grave Titan");
-    assert_eq!(room(&g, P0), 2, "an opponent's creature doesn't");
+    assert_eq!(room(&g, P0), "Goblin Lair", "an opponent's creature doesn't");
 }
 
 #[test]
@@ -126,9 +126,11 @@ fn four_ventures_drain_each_opponent_once_and_draw_then_start_over() {
     assert_eq!(g.player(P1).life, l1 - 1);
     assert_eq!(g.player(P0).life, l0 + 1);
     assert_eq!(g.player(P0).hand.len(), hand0 + 1, "Temple of Dumathoin draws");
-    assert_eq!(room(&g, P0), 0, "completed");
+    assert_eq!(room(&g, P0), "Temple of Dumathoin");
+    assert_eq!(g.player(P0).dungeons_done, 0, "the last room is left by the next venture");
     sim_core::impls::t6_dack::venture(&mut g, P0).unwrap();
-    assert_eq!(room(&g, P0), 1, "the next venture starts a new dungeon");
+    assert_eq!(g.player(P0).dungeons_done, 1);
+    assert_eq!(room(&g, P0), "Cave Entrance", "the next venture starts a new dungeon");
 }
 
 #[test]
@@ -138,7 +140,7 @@ fn solar_discard_ventures_and_gains_three() {
     let c = hand(&mut g, P0, &["Radiant Solar"])[0];
     let life = g.player(P0).life;
     assert!(sim_core::impls::t6_dack::solar_discard(&mut g, P0, c).unwrap());
-    assert_eq!(room(&g, P0), 1);
+    assert_eq!(room(&g, P0), "Cave Entrance");
     assert_eq!(g.player(P0).life, life + 3);
     assert!(g.player(P0).gy.contains(&c));
     assert!(!sim_core::impls::t6_dack::solar_discard(&mut g, P0, c).unwrap(), "no longer in hand");
@@ -284,8 +286,8 @@ fn dack_pile_solar_and_preston_see_each_other_before_the_donation() {
     g.active = Some(P0);
     stack_library(&mut g, P0, &["Radiant Solar", "Serra Angel", "Preston, the Vanisher"]);
     let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
-    let room = g.player(P0).grudge.get(&sim_core::sym::intern("dungeon_room")).copied().unwrap_or(0.0);
-    assert!(room >= 2.0, "Solar ventures for itself and the creatures that entered with it (got room {room})");
+    let room = sim_core::engine::dungeon::current(&g, P0).map(|(_, r)| r);
+    assert!(room.is_some(), "Solar ventures for itself and the creatures that entered with it");
     let ill = g
         .players
         .iter()
@@ -406,9 +408,9 @@ fn preston_with_felidar_guardian_is_capped_instead_of_overflowing() {
     let n = g.player(P0).grudge.get(&intern("preston_cap_n")).copied().unwrap_or(0.0);
     let cap = sim_core::impls::t6_dack::PRESTON_CAP;
     assert!(n >= 1.0 && n <= cap + 1.0, "copies counted and bounded, got {n}");
-    let room = g.player(P0).grudge.get(&intern("dungeon_room")).copied().unwrap_or(0.0);
-    let done = g.player(P0).grudge.get(&intern("dungeons_completed")).copied().unwrap_or(0.0);
-    assert!(room + done > 0.0, "Solar's ventures were counted");
+    let room = sim_core::engine::dungeon::current(&g, P0).is_some();
+    let done = g.player(P0).dungeons_done;
+    assert!(room || done > 0, "Solar's ventures were counted");
     // at the cap, Preston stops: a new uncast creature gets no copy
     let stamp = g.player(P0).grudge.get(&intern("preston_cap_round")).copied().unwrap();
     g.player_mut(P0).grudge.insert(intern("preston_cap_round"), stamp);
@@ -490,4 +492,36 @@ fn preston_copy_of_a_human_wizard_is_only_an_illusion() {
     assert!(!sim_core::engine::values::has_type(&g, ill[0], "human"), "not a Human");
     assert!(!sim_core::engine::values::has_type(&g, ill[0], "wizard"), "not a Wizard");
     assert!(sim_core::engine::values::has_type(&g, ill[0], "illusion"));
+}
+
+// ======================================================== the dungeon system (engine::dungeon)
+#[test]
+fn venture_walks_connected_rooms_and_chooses_lost_mine_goblin_lair_dark_pool() {
+    use sim_core::engine::dungeon::{DUNGEONS, current, venture};
+    let mut g = game();
+    assert_eq!(current(&g, P0), None);
+    let mut seen = vec![];
+    for _ in 0..4 {
+        venture(&mut g, P0).unwrap();
+        seen.push(room(&g, P0));
+    }
+    assert_eq!(seen, ["Cave Entrance", "Goblin Lair", "Dark Pool", "Temple of Dumathoin"]);
+    assert_eq!(DUNGEONS[0].name, "Lost Mine of Phandelver");
+    // every room leads only to rooms of the same dungeon, and every dungeon ends
+    for d in DUNGEONS.iter() {
+        assert!(d.rooms.iter().all(|r| r.next.iter().all(|&n| (n as usize) < d.rooms.len())));
+        assert!(d.rooms.iter().any(|r| r.next.is_empty()), "{} has a last room", d.name);
+    }
+}
+
+#[test]
+fn completed_dungeons_are_counted_and_the_state_is_per_player() {
+    use sim_core::engine::dungeon::venture;
+    let mut g = game();
+    for _ in 0..10 {
+        venture(&mut g, P0).unwrap();
+    }
+    assert_eq!(g.player(P0).dungeons_done, 2);
+    assert_eq!(sim_core::engine::dungeon::current(&g, P1), None);
+    assert_eq!(g.player(P1).dungeons_done, 0);
 }
