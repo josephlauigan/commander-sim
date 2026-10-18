@@ -208,14 +208,52 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
             let folder = folders.iter().find(|f| f.starts_with(&format!("{t}-")));
             json!({
                 "key": t, "label": tier_label(t, folder.map(String::as_str)),
-                "decks": ds.iter().map(|d| json!({
-                    "key": d["key"], "commander": d["commander"],
-                    "name": short_name(d["commander"].as_str().unwrap_or("")),
-                })).collect::<Vec<_>>(),
+                "decks": ds.iter().map(|d| {
+                    let file = folder.map(|f| root.join("decklists/pool").join(f).join(format!("{}.md", d["key"].as_str().unwrap_or(""))));
+                    json!({
+                        "key": d["key"], "commander": d["commander"],
+                        "name": short_name(d["commander"].as_str().unwrap_or("")),
+                        "summary": file.and_then(|f| read(&f)).map(|t| pool_summary(&t)),
+                    })
+                }).collect::<Vec<_>>(),
             })
         })
         .collect();
     Ok(json!({"decks": decks, "tiers": tiers}))
+}
+
+/// the text of a `## <heading>` section, up to the next `## `
+fn section<'a>(text: &'a str, heading: &str) -> Option<&'a str> {
+    let start = text.find(&format!("\n## {heading}\n"))? + heading.len() + 5;
+    let rest = &text[start..];
+    Some(rest[..rest.find("\n## ").unwrap_or(rest.len())].trim())
+}
+
+/// a pool deck's box on the setup screen, from its file: the title, its axis, Game Changers and combos (header
+/// lines), and the four "At the table" bullets (plan, wins by, watch out for, interaction) as `[label, text]`; a deck
+/// without that section gives the first paragraph of its Strategy instead
+pub fn pool_summary(text: &str) -> Value {
+    let title = text.lines().next().and_then(|l| l.strip_prefix("# ")).unwrap_or("").trim();
+    let axis = text.lines().find_map(|l| l.split_once("Axis: ").map(|(_, a)| a.trim().trim_end_matches('.')));
+    let bullet = |label: &str| {
+        text.lines().find_map(|l| l.strip_prefix(&format!("- **{label}")).map(|r| r.trim_start_matches(':').trim()))
+    };
+    let gcs = bullet("Game Changers").map(|g| g.split_once(":** ").map(|x| x.1).unwrap_or(g).trim());
+    let combos = bullet("Combos:**").map(str::trim);
+    let table: Vec<Value> = section(text, "At the table")
+        .map(|s| {
+            s.lines()
+                .filter_map(|l| l.strip_prefix("- **")?.split_once(":** "))
+                .map(|(k, v)| json!([k, v.trim()]))
+                .collect()
+        })
+        .unwrap_or_default();
+    let strategy = if table.is_empty() {
+        section(text, "Strategy").and_then(|s| s.split("\n\n").next()).map(str::trim)
+    } else {
+        None
+    };
+    json!({"title": title, "axis": axis, "game_changers": gcs, "combos": combos, "table": table, "strategy": strategy})
 }
 
 /// every commander on the setup screen (for their images)
@@ -252,6 +290,26 @@ pub fn commander_printings(data: &Path, cat: &Value) -> crate::images::Printings
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_pool_decks_box_comes_from_its_file() {
+        let head = "# Atraxa — Superfriends\n\nOpponent pool deck — **Tier 3**. Axis: Planeswalkers / proliferate.\n\n\
+                    - **Commander:** Atraxa\n- **Game Changers (2):** Rhystic Study, Smothering Tithe\n- **Combos:** None.\n\n\
+                    ## Role in the pool\n\nPressure.\n\n";
+        let s = pool_summary(&format!(
+            "{head}## At the table\n\n- **Plan:** Walkers behind taxes.\n- **Wins by:** Ultimates.\n\n\
+             ## Strategy\n\nOld text.\n\nMore.\n\n## Import list (100)\n\n1 Atraxa\n"
+        ));
+        assert_eq!(s["title"], "Atraxa — Superfriends");
+        assert_eq!(s["axis"], "Planeswalkers / proliferate");
+        assert_eq!(s["game_changers"], "Rhystic Study, Smothering Tithe");
+        assert_eq!(s["combos"], "None.");
+        assert_eq!(s["table"], json!([["Plan", "Walkers behind taxes."], ["Wins by", "Ultimates."]]));
+        assert_eq!(s["strategy"], Value::Null);
+        // no "At the table" yet: the Strategy's first paragraph
+        let s = pool_summary(&format!("{head}## Strategy\n\nOld text.\n\nMore.\n\n## Import list (100)\n"));
+        assert_eq!((s["table"].clone(), s["strategy"].clone()), (json!([]), json!("Old text.")));
+    }
 
     #[test]
     fn labels() {

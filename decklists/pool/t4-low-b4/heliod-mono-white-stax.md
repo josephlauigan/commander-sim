@@ -10,13 +10,20 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Stax / hatebears with a 
 
 ## Role in the pool
 
-Stax. Taxes, one-spell-per-turn limits, commander and graveyard locks, and hatebears that slow every other seat, with a two-card kill whose first card is always available in the command zone. Replaces Grand Arbiter Augustin IV (retired: its list had no reliable way to win in the sim; see decklists/pool/pool-results.md).
+Stax. Taxes, one-spell-per-turn limits, commander and graveyard locks, and hatebears that slow every other seat, with a two-card kill whose first card is always available in the command zone.
+
+## At the table
+
+- **Plan:** Slows every seat with taxes and limits: Thalia, Guardian of Thraben, Sphere of Resistance, Thorn of Amethyst, Rule of Law, Drannith Magistrate and Archon of Emeria. Protects its board with Mother of Runes, Giver of Runes and Selfless Spirit.
+- **Wins by:** Heliod, Sun-Crowned with Walking Ballista: Heliod gives the Ballista lifelink, each ping gains life, adds a counter, for unbounded damage. Otherwise Adeline, Luminarch Aspirant and Elspeth, Sun's Champion win slowly. Karn, the Great Creator with Mycosynth Lattice is a second lock.
+- **Watch out for:** Walking Ballista once Heliod is on the battlefield. Drannith Magistrate shuts off commanders, and Rule of Law and Deafening Silence cap you to one spell a turn. Recruiter of the Guard finds Ballista. Sweepers and enchantment removal beat the stax pieces.
+- **Interaction:** Swords to Plowshares, Path to Exile, Oblivion Ring, Cast Out, Council's Judgment, Solitude, Skyclave Apparition, Palace Jailer, and sweepers Wrath of God, Austere Command and Winds of Abandon. Teferi's Protection and Flawless Maneuver protect.
 
 ## Strategy
 
 Thalia, Guardian of Thraben, Thalia, Heretic Cathar, Glowrider, Vryn Wingmare, Sphere of Resistance and Thorn of Amethyst tax spells; Rule of Law, Deafening Silence, Archon of Emeria and Ethersworn Canonist cap spells per turn; Drannith Magistrate shuts off commanders and graveyard casting; Grand Abolisher, Aven Mindcensor, Hushbringer and Spirit of the Labyrinth blank interaction, searches, ETBs and extra draws. Mother of Runes, Giver of Runes, Selfless Spirit, Flawless Maneuver and Teferi's Protection keep the board and the combo alive. The kill is Heliod plus Walking Ballista, with Adeline, Luminarch Aspirant, Elspeth and The Wandering Emperor as a fair clock.
 
-Built as Low Bracket 4: one creature tutor and Idyllic Tutor rather than a full tutor suite. With Ranger-Captain of Eos and Enlightened Tutor as well, the sim put this list at 45% against Tier 3 and 39% against Tier 5 (a High Bracket 4 level).
+Built as Low Bracket 4: one creature tutor and Idyllic Tutor rather than a full tutor suite.
 
 ## Sim modeling notes
 

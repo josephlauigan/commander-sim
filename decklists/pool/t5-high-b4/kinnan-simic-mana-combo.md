@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Mana combo.
 
 A second fast-combo deck with a different axis (creatures and auras rather than artifacts), so artifact hate alone doesn't answer it.
 
+## At the table
+
+- **Plan:** Fast mana (Mana Vault, Chrome Mox, Sol Ring, Lotus Petal) and mana dorks, with Kinnan, Bonder Prodigy adding extra mana from every nonland permanent that taps. It turns on by turn two to four.
+- **Wins by:** Basalt Monolith with Kinnan makes unbounded colorless mana, as does Freed from the Real or Pemmin's Aura on a two-mana dork. It then finds Hullbreaker Horror, Walking Ballista or Craterhoof Behemoth. Natural Order is a backup.
+- **Watch out for:** A turn-three to five kill: hold counters or artifact and enchantment removal for the combo pieces. Tutors (Mystical Tutor, Worldly Tutor, Survival of the Fittest) and free counters protect it. Kinnan himself is a lightning rod.
+- **Interaction:** Force of Will, Fierce Guardianship, Mana Drain, Counterspell, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Stern Scolding, Chain of Vapor, Cyclonic Rift and Beast Within. Veil of Summer protects against your blue and black spells.
+
 ## Strategy
 
 Kinnan makes every nonland permanent that taps for mana add one more, which turns Basalt Monolith into unbounded colorless mana on its own, and Freed from the Real or Pemmin's Aura on any two-mana dork into unbounded mana. The mana goes into Kinnan's own activation to find and cast a finisher, or into Walking Ballista. Tutors and free counters protect the turn-three-to-five combo; Natural Order into Craterhoof is the backup.

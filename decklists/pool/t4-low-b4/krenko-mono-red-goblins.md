@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Explosive go-wide / comb
 
 Whether your decks can answer a single creature on turns two to four, or lose on the spot.
 
+## At the table
+
+- **Plan:** Dumps cheap Goblins (Goblin Lackey, Legion Loyalist, Goblin Warchief) so Krenko, Mob Boss can land and tap, doubling the Goblin count each turn. Haste makers let it start the turn he lands.
+- **Wins by:** Impact Tremors, Purphoros, God of the Forge and Goblin Bombardment turn the swarm into damage. Combo lines: Kiki-Jiki, Mirror Breaker with Zealous Conscripts, or Krenko with Thornbite Staff and a sacrifice outlet like Skirk Prospector.
+- **Watch out for:** Krenko in the first turns: kill him before he untaps. The early Kiki-Jiki plus Zealous Conscripts line can win on the spot. Goblin Chainwhirler pings your small creatures and Vandalblast destroys your artifacts. Sweepers are strong against the swarm.
+- **Interaction:** Lightning Bolt, Abrade, Chaos Warp, Pyroblast, Red Elemental Blast, Blasphemous Act, Vandalblast and Goblin Chainwhirler. No counterspells; Deflecting Swat and Cavern of Souls protect its combo.
+
 ## Strategy
 
 Protect Krenko for one untap and the goblin count doubles every activation; Goblin Warchief and Legion Loyalist give haste, so it happens the turn he lands. Impact Tremors, Purphoros, Goblin Bombardment, and Coat of Arms turn the swarm into lethal damage. Two combo lines: Kiki-Jiki + Zealous Conscripts (infinite hasty copies), and Krenko + Thornbite Staff + a sac outlet (Skirk Prospector, Goblin Bombardment) for unbounded goblins.

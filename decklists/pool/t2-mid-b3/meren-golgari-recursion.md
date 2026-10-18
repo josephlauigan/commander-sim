@@ -12,17 +12,22 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Grind / recursion value.
 
 Long games. Punishes decks that trade one-for-one and have no graveyard hate. Bojuka Bog and Deathrite also interact with Sephiroth's yard.
 
+## At the table
+
+- **Plan:** Develops mana (Birds of Paradise, Llanowar Elves, Sakura-Tribe Elder) and plays value creatures. Meren of Clan Nel Toth returns a creature from the graveyard each end step, and sacrifice outlets such as Ashnod's Altar and Viscera Seer feed her.
+- **Wins by:** Grinds with Ravenous Chupacabra, Shriekmaw, Nekrataal and Plaguecrafter over and over, then finishes with Gray Merchant of Asphodel, Grave Titan, Bloodgift Demon and Blood Artist drains.
+- **Watch out for:** Trading one-for-one loses to Meren, so exile the graveyard (Bojuka Bog and Deathrite Shaman use yours too) or kill Meren. Chupacabra and Shriekmaw return again and again to remove your best creature. Survival of the Fittest and Fauna Shaman find the right piece.
+- **Interaction:** Ravenous Chupacabra, Shriekmaw, Nekrataal, Plaguecrafter, Infernal Grasp, Putrefy, Assassin's Trophy, Bone Shards, Casualties of War, Beast Within, Pernicious Deed and Toxic Deluge. No counterspells.
+
 ## Strategy
 
-Every creature is a value ETB, every sacrifice is an experience counter, and Meren returns one to the battlefield each end step. Chupacabra, Shriekmaw, Fleshbag, Plaguecrafter, and Merciless Executioner re-buy removal every turn cycle; Eternal Witness re-buys spells; Gray Merchant drains; Archon of Cruelty is the top end. Survival of the Fittest and Birthing Pod turn surplus creatures into the right creature. No two-card infinite.
-
-Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Archon of Cruelty, Grave Pact, Massacre Wurm, Hornet Queen, Sheoldred, Whispering One and Birthing Pod made way for Bloodgift Demon, Courser of Kruphix, Burglar Rat, Canopy Tactician, Elderfang Ritualist and Mind Stone (the recursion engine is unchanged; the top end is Mid Bracket 3). Within Tier 2: 39-47% before, 25% after.
+Every creature is a value ETB, every sacrifice is an experience counter, and Meren returns one to the battlefield each end step. Chupacabra, Shriekmaw, Fleshbag, Plaguecrafter, and Merciless Executioner re-buy removal every turn cycle; Eternal Witness re-buys spells; Gray Merchant drains; Grave Titan is the top end. Survival of the Fittest turns a surplus creature into the right creature. No two-card infinite.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand); ETB removal re-use; sac outlets; Grave Pact; Survival / Birthing Pod tutoring.
+Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand); ETB removal re-use; sac outlets; Survival of the Fittest tutoring.
 
 ## Decklist by type (100)
 

@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Ramp / 
 
 Speed-to-beat for a low-interaction goldfish deck. If your deck can't pressure or disrupt a ramp player, this is the one that runs away.
 
+## At the table
+
+- **Plan:** Ramps with Llanowar Elves, Cultivate, Kodama's Reach and Lotus Cobra, then plays lands every turn. Tatyova, Benthic Druid draws a card and gains 1 life for each land, and Exploration, Burgeoning and Oracle of Mul Daya add land drops.
+- **Wins by:** Turns lands into a board with Avenger of Zendikar, Scute Swarm and Rampaging Baloths, then draws deep with Hydroid Krasis and Mulldrifter. Crucible of Worlds and Life from the Loam replay lands.
+- **Watch out for:** It usually does little to you, so pressure it early before the land count snowballs. Avenger of Zendikar plus landfall is a huge board in one turn. Hold removal for Tatyova and Oracle of Mul Daya.
+- **Interaction:** Counterspell, Arcane Denial, Mystic Snake and Swan Song. Beast Within, Pongify, Rapid Hybridization, Kenrith's Transformation, Nature's Claim and Krosan Grip answer threats. Aetherize and Evacuation reset combat and boards.
+
 ## Strategy
 
 Play two or three lands a turn and turn each one into a card and a life with Tatyova. Exploration, Burgeoning, Azusa, and Dryad of the Ilysian Grove supply extra land drops; Crucible, Ramunap, and Life from the Loam replay fetch and sac lands. Avenger of Zendikar, Scute Swarm, and Rampaging Baloths convert the land count into a board, and Zendikar Resurgent or Aesi keep the cards coming. Interaction is light and reactive: a few counters, bounce, and fog-style Aetherize.

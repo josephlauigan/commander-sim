@@ -35,16 +35,13 @@
     </div>
     </div>
     <p id="lan-note" class="help" hidden></p>
-    <h2>Your deck</h2>
-    <div id="decks" class="decks" role="radiogroup" aria-label="Your deck"></div>
     <h2>The table</h2>
     <div id="tiers" class="tiers" role="radiogroup" aria-label="Tier"></div>
-    <h2>Opponents</h2>
-    <div class="row">
-      <label><input type="radio" name="opp" value="random" checked> <span class="opp-n">Three</span> drawn at random from the tier</label>
-      <label><input type="radio" name="opp" value="pick"> I'll pick <span class="opp-n-lc">three</span></label>
-    </div>
-    <div id="picks" class="row" hidden></div>
+    <h2>Your opponents</h2>
+    <p class="help"><span class="opp-n">Three</span> drawn at random from the tier. Hover over one (or tap it) to see how it plays.</p>
+    <div id="opponents" class="opponents"></div>
+    <h2>Your deck</h2>
+    <div id="decks" class="decks" role="radiogroup" aria-label="Your deck"></div>
     <h2>Options</h2>
     <div class="row options">
       <label class="seat-pick">Your seat <select name="seat"><option value="">random</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>

@@ -12,13 +12,16 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aristocrats combo.
 
 A resilient combo that recurs through removal and doubles as a creature-sweeper for X/1 tokens (Najeela, Sauron's army). Also brings Dauthi and Bojuka Bog.
 
+## At the table
+
+- **Plan:** Cheap sacrifice fodder (Bloodghast, Gravecrawler, Reassembling Skeleton, Bitterblossom) and mana from Dark Ritual, Mana Vault and Sol Ring, with Yawgmoth, Thran Physician sacrificing creatures to draw cards and spread -1/-1 counters.
+- **Wins by:** Yawgmoth with undying creatures Geralf's Messenger, Butcher Ghoul and Mikaeus, the Unhallowed loops sacrifices into cards and drain. Sanguine Bond with Exquisite Blood is a compact second kill; Gravecrawler with Phyrexian Altar is a third.
+- **Watch out for:** Yawgmoth's -1/-1 counters wipe your X/1 creatures for free. Blood Artist and Zulaport Cutthroat make each death drain. Necropotence and Ad Nauseam refuel quickly. Exile its graveyard and kill key pieces before the loop starts.
+- **Interaction:** Fatal Push, Infernal Grasp, Snuff Out, Culling the Weak, Plaguecrafter, and sweepers Damnation and Toxic Deluge. No counterspells; recursion with Reanimate, Animate Dead and Bloodghast recovers from your removal.
+
 ## Strategy
 
-Yawgmoth pays 1 life to sacrifice a creature, put a -1/-1 counter on something, and draw. With two undying creatures (Geralf's Messenger, Butcher Ghoul, or anything under Mikaeus), each sacrifice cancels the other's +1/+1 counter, so the loop repeats for as many cards and drain triggers as you want; Geralf's Messenger's drain pays for it. Yawgmoth's -1/-1 counters also sweep opposing X/1s for free. Gravecrawler + Phyrexian Altar is a second loop. Necropotence, Ad Nauseam, and Bolas's Citadel refuel.
-
-Tuned in September 2026 toward a High Bracket 4 build: two more death payoffs (Falkenrath Noble, Vindictive Vampire), steady fodder and card flow (Bitterblossom, Midnight Reaper), and Sanguine Bond + Exquisite Blood as a second compact kill, for Liliana of the Veil, Deadly Rollick, Bloodchief's Thirst, Stitcher's Supplier, Grave Pact and Feed the Swarm. Mono-black has only three loop pieces for the Yawgmoth combo (Mikaeus, Geralf's Messenger, Butcher Ghoul).
-
-Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Fellwar Stone and Night's Whisper made way for Grim Monolith and The One Ring. Yawgmoth stays at the low edge of Tier 5 (about 15%): mono-black has only three pieces for its loop, and it loses races rather than lacking power.
+Yawgmoth pays 1 life to sacrifice a creature, put a -1/-1 counter on something, and draw. With two undying creatures (Geralf's Messenger, Butcher Ghoul, or anything under Mikaeus), each sacrifice cancels the other's +1/+1 counter, so the loop repeats for as many cards and drain triggers as you want; Geralf's Messenger's drain pays for it. Yawgmoth's -1/-1 counters also sweep opposing X/1s for free. Gravecrawler + Phyrexian Altar is a second loop. Necropotence, Ad Nauseam, and Bolas's Citadel refuel. Mono-black has only three loop pieces for the Yawgmoth combo (Mikaeus, Geralf's Messenger, Butcher Ghoul).
 
 ## Sim modeling notes
 

@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Tempo / evasive chip dam
 
 Damage that ignores your board and arrives from turn two. Tests cheap removal, blockers for tiny fliers, and whether combo turns get countered.
 
+## At the table
+
+- **Plan:** Attacks from turn two with cheap evasive creatures (Ornithopter, Invisible Stalker, Slither Blade), then ninjutsus Yuriko, the Tiger's Shadow or another Ninja in. Counterspells hold up the turn.
+- **Wins by:** Combat damage from Ninjas, with Yuriko revealing the top card and each opponent losing life equal to its mana value. Brainstorm, Scroll Rack and Sensei's Divining Top set up Draco or Enter the Infinite on top for huge hits.
+- **Watch out for:** Cheap evasive attackers early: keep blockers and removal ready. Yuriko can cast from the command zone for U and B. A Draco or Enter the Infinite reveal hurts a lot. Mana Drain, Force of Negation and Fierce Guardianship counter your key plays.
+- **Interaction:** Counterspell, Mana Drain, Arcane Denial, Force of Negation, Fierce Guardianship, Swan Song, Cyclonic Rift, Fatal Push, Infernal Grasp, Snuff Out, Pongify and Toxic Deluge. Tishana's Tidebinder counters abilities.
+
 ## Strategy
 
 Attack with one-mana evasive creatures, ninjutsu Yuriko or another Ninja in, and reveal the top card for its mana value in damage to every opponent. Top-of-library control (Brainstorm, Scroll Rack, Sensei's Top, Vampiric Tutor) stacks Draco, Enter the Infinite, or a big delve spell on top for 10+ damage to each player per hit. Backed by free and cheap counterspells.

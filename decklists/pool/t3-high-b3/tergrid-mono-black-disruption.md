@@ -12,9 +12,16 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Disruption / discard & 
 
 Hand and board disruption. Punishes Veyran's hand-held combo and any deck that relies on a single creature. Dauthi Voidwalker and Bojuka Bog are graveyard hate.
 
+## At the table
+
+- **Plan:** Plays discard and edicts early (Hymn to Tourach, Mind Twist, Chainer's Edict, Plaguecrafter) while ramping with Dark Ritual, Sol Ring and Cabal Coffers. Tergrid, God of Fright takes every nontoken permanent you discard or sacrifice.
+- **Wins by:** Stealing your best cards with Tergrid, then finishing with big threats: Grave Titan, Sheoldred, the Apocalypse, Gray Merchant of Asphodel, and discard-punishers Waste Not and Megrim.
+- **Watch out for:** Tergrid on the table: do not discard or sacrifice nontoken permanents to her. Single big creatures die to edicts, so keep tokens around. Liliana of the Veil and Mind Twist empty hands, so play out your hand early. Dauthi Voidwalker and Bojuka Bog shut off graveyards.
+- **Interaction:** Go for the Throat, Infernal Grasp, Hero's Downfall, Snuff Out, Liliana's Triumph, Sheoldred's Edict, and sweepers Damnation, Toxic Deluge and Innocent Blood. No counterspells.
+
 ## Strategy
 
-Force opponents to discard and sacrifice, then use Tergrid to take every nontoken permanent they lose. Edict creatures (Fleshbag, Plaguecrafter, Archfiend of Depravity) and Grave Pact / Dictate of Erebos steal creatures; Liliana of the Veil, Hymn, Mind Twist, and Tinybones steal permanents out of hand. Waste Not and Megrim pay off every discard. No mass land denial: land-sacrifice effects like Pox are left out.
+Force opponents to discard and sacrifice, then use Tergrid to take every nontoken permanent they lose. Edict creatures (Fleshbag, Plaguecrafter, Archfiend of Depravity) and Grave Pact / Dictate of Erebos steal creatures; Liliana of the Veil, Hymn, Mind Twist, and Tinybones steal permanents out of hand. Waste Not and Megrim pay off every discard.
 
 ## Sim modeling notes
 

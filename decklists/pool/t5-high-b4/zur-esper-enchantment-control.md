@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Control + compact combo
 
 Interaction density plus an instant win. Tests whether your decks can win through a wall of counters and graveyard hate aimed straight at Sephiroth.
 
+## At the table
+
+- **Plan:** Plays draw-go with counters and cheap removal while Zur the Enchanter attacks to fetch Necropotence, Rhystic Study, Propaganda, Ghostly Prison or an Aura like Ethereal Armor straight onto the battlefield.
+- **Wins by:** Thassa's Oracle with Demonic Consultation or Tainted Pact, found by Demonic Tutor, Vampiric Tutor, Mystical Tutor or Necropotence. Zur with armor Auras is a slower clock.
+- **Watch out for:** A sudden win through Thassa's Oracle: it holds Force of Will, Mana Drain and Fierce Guardianship to protect it. Rest in Peace and Dauthi Voidwalker shut off graveyards. Rhystic Study and Smothering Tithe tax you; Propaganda and Ghostly Prison tax attacks.
+- **Interaction:** Force of Will, Force of Negation, Mana Drain, Counterspell, Fierce Guardianship, Pact of Negation, Flusterstorm, Swan Song, Swords to Plowshares, Path to Exile, Vindicate, Council's Judgment, Snuff Out, Oblivion Ring, Toxic Deluge and Cyclonic Rift.
+
 ## Strategy
 
 Zur attacks and fetches an enchantment with MV 3 or less straight onto the battlefield: Necropotence, Rhystic Study, Mystic Remora, Propaganda, Ghostly Prison, Rest in Peace, or an armor Aura to make Zur a real clock. The deck plays draw-go with a deep counterspell suite and cheap removal, and wins on the spot with Thassa's Oracle + Demonic Consultation or Tainted Pact once Necropotence or the tutors assemble it. Rest in Peace and Dauthi Voidwalker shut off graveyard strategies.
