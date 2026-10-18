@@ -11,3 +11,5 @@ Ad line needs 8 mana (ad_ready), rituals never used. Next: measure (t6 300 games
 ## Step 2: run1 (keep+prio+wish only): 14-16% wins, mull 35.7% (keep too strict -> loosened: no action card ok if 2+ fast), tries 0.26-0.29.
 Trace finding: lookahead picks "stop (hold mana)" over Lotus Petal / Rograkh (hold_bonus in ai/search.rs ignores hold_up) -> hook added
 in ai/search.rs hold_bonus (adds t6 hold_up; t6-only since hold_up is None outside t6). hold_up now -50 when developing. Next: re-measure.
+## Step 3: run2 (hold_up develop-first): 13.8% / 17.3% wins, mull 30%, median win round 6 (was 7). Added: lands==0 keep only with 3 fast+tutor,
+Squelcher cast before Oracle line + go_now true with Squelcher out. Next: run3, tests (tests/ai_t6_rograkh_silas.rs written, not yet run), t3 lock, report.

@@ -112,7 +112,13 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
         // Dark Floodcaller, Wishclaw (an opponent gets it), Bauble, Silas: no value in a turbo turn
         "Valley Floodcaller" | "Vexing Bauble" | "Grinding Station" | "Chromatic Star" => Some(0.0),
         "Wishclaw Talisman" => Some(if oracle_line_in_hand(g, p) { 0.0 } else { 30.0 }),
-        "Hexing Squelcher" | "Defense Grid" => Some(0.0), // cast before the attempt (protection), not as development
+        // protection first: Squelcher (our spells can't be countered) right before the Oracle line, if the mana covers both
+        "Hexing Squelcher" => {
+            let d = g.db.get(c);
+            let both = oracle_line_in_hand(g, p) && can_pay(g, p, d.generic + 3, &format!("{}UUB", d.pips), false);
+            Some(if both { 98.0 } else { 0.0 })
+        }
+        "Defense Grid" => Some(0.0),
         _ => None,
     }
 }
@@ -143,8 +149,12 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let engines = if fast >= 1.0 { count_in(g, p, &ENGINES) } else { 0 }; // Rhystic/Remora alone do not win
     let oracle = in_hand(g, p, "Thassa's Oracle");
     let action = tutors + payoffs + engines + usize::from(oracle);
-    if lands == 0 || lands >= 6 {
-        return Some(false); // ship all-land hands; a no-land hand has no colours
+    if lands >= 6 {
+        return Some(false); // ship all-land hands
+    }
+    if lands == 0 {
+        // no colours from lands: only with three fast mana pieces and a tutor or payoff to cast
+        return Some(fast >= 3.0 && tutors + payoffs >= 1);
     }
     if mana < 2.0 || (action == 0 && fast < 2.0) {
         return Some(false); // lands-and-spells hands with no payoff or tutor, or no mana to cast it
@@ -169,6 +179,10 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 
 /// go for the combo named `combo` now (Some(true)), wait (Some(false)), or no opinion (None)
 pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
-    let _ = (g, p, combo, FREE_PROT);
+    let _ = FREE_PROT;
+    // Hexing Squelcher out: our spells can't be countered, so the Oracle line only fears removal and locks
+    if combo.starts_with("Thassa's Oracle +") && on_bf(g, p, "Hexing Squelcher").is_some() {
+        return Some(true);
+    }
     None
 }
