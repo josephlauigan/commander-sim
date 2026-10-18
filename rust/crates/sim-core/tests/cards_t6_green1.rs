@@ -107,3 +107,32 @@ fn cub_ignores_lands_and_two_cubs_add_two() {
     assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "", false).unwrap());
     assert_eq!(g.player(P0).floating.g, 2, "each Cub adds one");
 }
+
+// ======================================================== Biomancer's Familiar
+#[test]
+fn familiar_takes_two_off_creature_abilities_but_never_below_one() {
+    use sim_core::impls::t6_green1::creature_ability_cost as cost;
+    let mut g = tbl();
+    assert_eq!(cost(&g, P0, 4), 4);
+    perm(&mut g, P0, "Biomancer's Familiar");
+    assert_eq!(cost(&g, P0, 4), 2, "{{4}} becomes {{2}}");
+    assert_eq!(cost(&g, P0, 2), 1, "{{2}} becomes {{1}}, not {{0}}");
+    assert_eq!(cost(&g, P0, 1), 1, "a {{1}} ability stays {{1}}");
+    assert_eq!(cost(&g, P0, 0), 0, "a free ability stays free");
+    assert_eq!(cost(&g, PlayerId(1), 4), 4, "only its controller's creatures");
+}
+
+#[test]
+fn familiar_lets_oboro_run_on_one_mana() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 1, false);
+    lands(&mut g, P0, "Gaea's Cradle", 1, true);
+    lands(&mut g, P0, "Forest", 1, true);
+    for _ in 0..3 {
+        token(&mut g, P0, 1);
+    }
+    let o = perm(&mut g, P0, "Oboro Breezecaller");
+    perm(&mut g, P0, "Biomancer's Familiar");
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert_eq!(options(&mut g, o, P0, Some(false)).len(), 1);
+}

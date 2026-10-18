@@ -8514,3 +8514,7 @@ note = "{2} (less with Training Grounds / Biomancer's Familiar, never under {1})
 ["Badgermole Cub"]
 status = "Partial"
 note = "2/2 body; whenever a creature of yours is tapped for mana, an additional {G} floats (per Cub; lands are not creatures); missing: 'when it enters, earthbend 1' (a land becomes a 0/0 haste creature with a +1/+1 counter and returns tapped when it dies), see rust/agents/engine-needs-green1.md"
+
+["Biomancer's Familiar"]
+status = "Partial"
+note = "2/2 body; activated abilities of your creatures cost {2} less (never under {1}) for Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on every other creature ability (Thrasios {4}), and its adapt ability (no adapt creature in the pool); see rust/agents/engine-needs-green1.md"
