@@ -7,10 +7,10 @@ use super::partials::at_once;
 use crate::cards::CardDb;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
-use crate::engine::values::epow;
+use crate::engine::values::{epow, pval};
 use crate::impls::t5::is_artifact;
 use crate::tag::Tag;
-use crate::engine::zones::{die, draw, max_by};
+use crate::engine::zones::{die, draw, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -174,6 +174,48 @@ fn key_unblock(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Honor-Worn Shaku
+/// the legendary permanents p could tap to untap Shaku: untapped, not mana sources themselves, and not a creature
+/// that could still attack or block usefully (a summoning-sick one is fine: it is tapped only until p's next untap)
+fn shaku_legends(g: &Game, p: PlayerId, shaku: PermId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            let Some(c) = x.cd else { return false };
+            let d = g.db.get(c);
+            m != shaku
+                && live(g, m)
+                && !x.tapped
+                && d.tag(Tag::Leg)
+                && d.tags.str(Tag::Rock).is_none()
+                && d.tags.str(Tag::Dork).is_none()
+                && (!g.is_creature(m) || x.sick)
+        })
+        .collect()
+}
+
+/// **Honor-Worn Shaku** ({3} artifact): {T}: add {C}; tap an untapped legendary permanent you control: untap it. The
+/// mana count is 1 plus one per legendary permanent that can be tapped for the untap (each untap makes another {C}).
+fn shaku_mana(g: &Game, p: PlayerId, m: PermId) -> u32 {
+    1 + shaku_legends(g, p, m).len() as u32
+}
+
+/// tapped for n mana: the extra n - 1 are paid by tapping the least useful legendary permanents
+fn shaku_tap(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {
+    g.perm_mut(m).tapped = false; // untapped by the ability each time, then tapped for mana again: it ends tapped
+    for _ in 1..used {
+        let ls = shaku_legends(g, p, m);
+        if let Some(l) = min_by(&ls, |l| pval(g, l)) {
+            g.perm_mut(l).tapped = true;
+        }
+    }
+    g.perm_mut(m).tapped = true;
+    Ok(())
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -207,6 +249,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.resolve = Some(desperate_ritual);
     c.prio = Some(zero_prio);
     r.card(db, "Manifold Key")?.options = Some(key_options);
+    let c = r.card(db, "Honor-Worn Shaku")?;
+    c.dyn_mana_perm = Some(shaku_mana);
+    c.on_tap_perm = Some(shaku_tap);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);

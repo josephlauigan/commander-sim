@@ -8259,3 +8259,7 @@ note = "2/2 body only; exile from hand for {R} needs the engine to take mana fro
 ["Manifold Key"]
 status = "Full"
 note = "{1},{T}: untaps a tapped mana artifact that makes two or more mana (when the hand holds a spell); {3},{T}: the biggest attacker can't be blocked this turn (before combat, when blockers are untapped)"
+
+["Honor-Worn Shaku"]
+status = "Full"
+note = "{T}: {C}; tapping an untapped legendary permanent untaps it, making another {C} per legendary permanent (non-creatures, or summoning-sick creatures, so attackers and blockers are not tapped)"

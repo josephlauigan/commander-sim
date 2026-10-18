@@ -138,3 +138,39 @@ fn manifold_key_makes_the_best_attacker_unblockable_for_three() {
     assert!(g.perm(key).tapped);
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 0, "paid {{3}}");
 }
+
+// ======================================================== Honor-Worn Shaku
+#[test]
+fn shaku_taps_a_legendary_permanent_to_untap_for_more_mana() {
+    use sim_core::engine::mana::{can_pay, pay, total_mana};
+    let mut g = tbl();
+    let shaku = perm(&mut g, P0, "Honor-Worn Shaku");
+    assert_eq!(total_mana(&g, P0, false), 1, "just {{C}} with no legendary permanent");
+    let apple = perm(&mut g, P0, "Apple of Eden, Isu Relic");
+    assert_eq!(total_mana(&g, P0, false), 2, "tap the legendary Apple to untap Shaku: {{C}}{{C}}");
+    assert!(can_pay(&g, P0, 2, "", false));
+    assert!(pay(&mut g, P0, 2, "", false).unwrap());
+    assert!(g.perm(shaku).tapped && g.perm(apple).tapped, "both tapped");
+    assert_eq!(total_mana(&g, P0, false), 0);
+}
+
+#[test]
+fn shaku_uses_one_mana_when_only_one_is_needed() {
+    use sim_core::engine::mana::{pay, total_mana};
+    let mut g = tbl();
+    let shaku = perm(&mut g, P0, "Honor-Worn Shaku");
+    let apple = perm(&mut g, P0, "Apple of Eden, Isu Relic");
+    assert!(pay(&mut g, P0, 1, "", false).unwrap());
+    assert!(g.perm(shaku).tapped);
+    assert!(!g.perm(apple).tapped, "the Apple is tapped only for the extra mana");
+    assert_eq!(total_mana(&g, P0, false), 0);
+}
+
+#[test]
+fn shaku_does_not_tap_a_creature_that_can_attack() {
+    use sim_core::engine::mana::total_mana;
+    let mut g = tbl();
+    perm(&mut g, P0, "Honor-Worn Shaku");
+    perm(&mut g, P0, "Godo, Bandit Warlord"); // legendary, not summoning sick: a blocker and an attacker
+    assert_eq!(total_mana(&g, P0, false), 1);
+}
