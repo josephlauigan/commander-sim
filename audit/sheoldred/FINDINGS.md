@@ -41,3 +41,6 @@ full hand, a one-board floor; and the look-ahead overriding "hold mana").
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 2 (T3-T4). Proposed: Gray Merchant of Asphodel to Seph FS, Necrosquito (spare) in. Final: **30.6% vs T3, 30.8% vs T4** (avg 30.7%; current 32.5 / 33.1 at 1,000). Why: Sheoldred was at the top of band 2; Gray Merchant is a better fit in Seph FS (32 Swamps), and losing it costs Sheoldred ~2 points, which tightens band 2.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**31.9% vs T3, 31.6% vs T4** (before 30.6 / 30.8): +1, within noise. Protection held for Sheoldred; Ad Nauseam in the second main; Memory Jar waits for a punisher; Seizan, Necrosquito valued; Rooftop Assassin condition.

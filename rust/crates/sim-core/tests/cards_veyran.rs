@@ -495,7 +495,7 @@ fn veyran_priorities() {
     let mut g = table(&["veyran", "seph", "sauron"]);
     let prio = |g: &Game, n: &str| veyran::veyran_prio(g, P0, card(g, n));
     assert_eq!(prio(&g, "Veyran, Voice of Duality"), 70);
-    assert_eq!(prio(&g, "Displacer Kitten"), 74);
+    assert_eq!(prio(&g, "Blazing Firesinger // Seething Song"), 48); // a body and a ritual, not the engine
     assert_eq!(prio(&g, "Guttersnipe"), 72);
     assert_eq!(prio(&g, "Thousand-Year Storm"), 57);
     assert_eq!(prio(&g, "Fiery Emancipation"), 40);
@@ -505,22 +505,6 @@ fn veyran_priorities() {
     perm(&mut g, P1, "Grave Titan");
     assert_eq!(prio(&g, "Propaganda"), 52 + 10); // a 6/6 and two 2/2 Zombies
     assert_eq!(decks::deck_prio(&g, P0, card(&g, "Guttersnipe")), 72);
-}
-
-#[test]
-fn veyran_goes_for_the_kitten_and_firesinger_combo() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
-    lands(&mut g, P0, "Mountain", 3, false);
-    perm(&mut g, P0, "Displacer Kitten");
-    perm(&mut g, P0, "Blazing Firesinger // Seething Song");
-    let opts = options(&mut g, P0, false);
-    assert!(!labels(&opts).contains(&"go for the combo".to_string())); // no payoff yet
-    perm(&mut g, P0, "Guttersnipe");
-    let opts = options(&mut g, P0, false);
-    let o = find_opt(&opts, "go for the combo");
-    assert!(o.utility > 4.0);
-    assert!(veyran::veyran_try_combo(&mut g, P0).unwrap());
-    assert!(g.over && g.winner == Some(P0));
 }
 
 #[test]
@@ -535,13 +519,15 @@ fn veyran_fires_aetherflux_at_51_life() {
 }
 
 #[test]
-fn veyran_wishes_for_the_combo_half_it_lacks() {
+fn recruiter_fetches_by_what_the_board_lacks() {
+    let pick = |g: &Game| decks::tutor_pick(g, P0, "cre2").map(|c| g.db.get(c).name.to_string()).unwrap();
     let mut g = table(&["veyran", "seph"]);
-    perm(&mut g, P0, "Blazing Firesinger // Seething Song");
-    // Displacer Kitten isn't in Veyran's list now: nothing to fetch for the combo, so the next creature of the list
-    let pick = decks::tutor_pick(&g, P0, "cre2").map(|c| g.db.get(c).name.to_string());
-    assert!(pick.is_some());
-    assert_ne!(pick.as_deref(), Some("Displacer Kitten"));
+    assert_eq!(pick(&g), "Guttersnipe", "no pinger: damage first");
+    perm(&mut g, P0, "Guttersnipe");
+    assert_eq!(pick(&g), "Young Pyromancer", "a pinger and no token maker: a board");
+    perm(&mut g, P0, "Young Pyromancer");
+    assert_eq!(pick(&g), "Storm-Kiln Artist", "both engines out: mana");
+    assert_ne!(pick(&g), "Blazing Firesinger // Seething Song");
 }
 
 #[test]
@@ -559,4 +545,72 @@ fn whole_games_with_veyran_finish() {
         let g = play(&["veyran", "seph", "sauron"], seed, false);
         assert!(g.over || g.round >= 20, "seed {seed}");
     }
+}
+
+// ======================================================== ai-audit cv: the audit's problems
+#[test]
+fn triple_triad_is_cast_with_an_engine_out() {
+    let mut g = table(&["veyran", "seph"]);
+    let tt = card(&g, "Triple Triad");
+    assert_eq!(veyran::veyran_prio(&g, P0, tt), 44, "no engine, no mana: low but not 0");
+    perm(&mut g, P0, "Guttersnipe");
+    lands(&mut g, P0, "Mountain", 6, false);
+    assert_eq!(veyran::veyran_prio(&g, P0, tt), 58);
+}
+
+#[test]
+fn lightning_greaves_comes_before_veyran() {
+    let g = table(&["veyran", "seph"]);
+    let greaves = veyran::veyran_prio(&g, P0, card(&g, "Lightning Greaves"));
+    let cmd = veyran::veyran_prio(&g, P0, g.player(P0).cmd);
+    assert!(greaves > cmd, "Greaves {greaves} must beat Veyran {cmd} while Veyran waits");
+}
+
+#[test]
+fn fabricate_fetches_greaves_first_then_aetherflux() {
+    let mut g = table(&["veyran", "seph"]);
+    g.player_mut(P0).library = ["Aetherflux Reservoir", "Sol Ring", "Lightning Greaves"].iter().map(|n| card(&g, n)).collect();
+    let pick = |g: &Game| decks::tutor_pick(g, P0, "art").map(|c| g.db.get(c).name.to_string()).unwrap();
+    assert_eq!(pick(&g), "Lightning Greaves");
+    perm(&mut g, P0, "Lightning Greaves");
+    assert_eq!(pick(&g), "Aetherflux Reservoir");
+}
+
+#[test]
+fn engine_creatures_beat_cantrips_with_spells_in_hand() {
+    let mut g = table(&["veyran", "seph"]);
+    hand(&mut g, P0, &["Lightning Bolt", "Burst Lightning", "Counterspell"]);
+    for n in ["Docent of Perfection // Final Iteration", "Alania, Divergent Storm", "Harmonic Prodigy", "Niv-Mizzet, Parun"] {
+        let v = veyran::veyran_prio(&g, P0, card(&g, n));
+        assert!(v > 48, "{n} is {v}: it should sit above a draw spell (48)");
+    }
+    let generic = veyran::veyran_prio(&g, P0, card(&g, "Eris, Roar of the Storm"));
+    assert!(generic > 40);
+}
+
+#[test]
+fn mystical_tutor_finds_a_wipe_when_the_table_outboards_us() {
+    let mut g = table(&["veyran", "seph"]);
+    lands(&mut g, P0, "Island", 6, false);
+    g.player_mut(P0).library = ["Stock Up", "Blasphemous Act", "Counterspell"].iter().map(|n| card(&g, n)).collect();
+    let pick = |g: &Game| decks::tutor_pick(g, P0, "is").map(|c| g.db.get(c).name.to_string()).unwrap();
+    assert_ne!(pick(&g), "Blasphemous Act", "an empty table: no wipe");
+    for _ in 0..4 {
+        perm(&mut g, P1, "Grave Titan");
+    }
+    assert_eq!(pick(&g), "Blasphemous Act");
+}
+
+#[test]
+fn solve_the_equation_needs_a_real_target() {
+    let mut g = table(&["veyran", "seph"]);
+    g.player_mut(P0).library = ["Stock Up", "Blasphemous Act"].iter().map(|n| card(&g, n)).collect();
+    hand(&mut g, P0, &["Lightning Bolt", "Burst Lightning", "Counterspell", "Island"]);
+    let solve = card(&g, "Solve the Equation");
+    assert_eq!(veyran::veyran_prio(&g, P0, solve), 0, "only Stock Up to find: not worth three mana");
+    lands(&mut g, P0, "Island", 6, false);
+    for _ in 0..4 {
+        perm(&mut g, P1, "Grave Titan");
+    }
+    assert_eq!(veyran::veyran_prio(&g, P0, solve), 40, "a wipe to find");
 }

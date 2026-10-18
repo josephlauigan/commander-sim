@@ -117,7 +117,8 @@ fn feast_and_famine_comes_before_hearth_and_home_once_a_sword_is_out() {
 fn feast_and_famine_first_with_a_clogged_hand() {
     let mut g = game();
     swords_library(&mut g);
-    hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Arcane Signet", "Swords to Plowshares"]);
+    // truly clogged: 7+ cards (a turn-2 hand of 5-6 is not, ai-audit cv)
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Arcane Signet", "Swords to Plowshares", "Plains", "Plains", "Island"]);
     assert_eq!(pick(&g), "Sword of Feast and Famine");
 }
 
@@ -164,4 +165,51 @@ fn recommission_is_cast_on_a_cheap_graveyard_creature() {
     g.player_mut(P0).turns = 5;
     let l = labels(&mut g);
     assert!(l.iter().any(|x| x.contains("Recommission")), "{l:?}");
+}
+
+// ---- ai-audit cv: Cloud's search is not "clogged" on a normal turn-2 hand
+#[test]
+fn a_turn_two_hand_does_not_make_feast_and_famine_first() {
+    let mut g = game();
+    swords_library(&mut g);
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Arcane Signet", "Swords to Plowshares", "Plains"]);
+    assert_eq!(pick(&g), "Sword of Fire and Ice", "5 cards in hand: the usual order");
+}
+
+#[test]
+fn open_the_armory_fetches_only_aura_or_equipment() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 4, false);
+    g.player_mut(P0).library = ["Sol Ring", "Coalition Relic", "Cid, Freeflier Pilot", "Sword of Fire and Ice"]
+        .iter()
+        .map(|n| card(&g, n))
+        .collect();
+    let c = hand(&mut g, P0, &["Open the Armory"])[0];
+    sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", sim_core::state::Ctx::default()).unwrap();
+    let names: Vec<String> = g.player(P0).hand.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    assert_eq!(names, vec!["Sword of Fire and Ice"], "Sol Ring, Relic and Cid are not Auras or Equipment");
+}
+
+#[test]
+fn open_the_armory_with_no_equipment_in_the_library_fetches_nothing() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 4, false);
+    g.player_mut(P0).library = ["Sol Ring", "Cid, Freeflier Pilot"].iter().map(|n| card(&g, n)).collect();
+    let c = hand(&mut g, P0, &["Open the Armory"])[0];
+    sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", sim_core::state::Ctx::default()).unwrap();
+    assert!(g.player(P0).hand.is_empty());
+}
+
+#[test]
+fn austere_command_keeps_the_decks_own_enchantments() {
+    let mut g = game();
+    perm(&mut g, P0, "Smothering Tithe");
+    perm(&mut g, P0, "Court of Ardenvale");
+    perm(&mut g, P1, "Rhystic Study");
+    for _ in 0..3 {
+        perm(&mut g, P1, "Grave Titan");
+    }
+    let modes = sim_core::ai::wipe_modes(&g, P0, "austere2".into());
+    assert_eq!(modes.len(), 2);
+    assert!(!modes.iter().any(|m| *m == "ench"), "kept the Tithe and the Court: {modes:?}");
 }

@@ -56,3 +56,17 @@ Ad Nauseam was already modeled; the tests exposed AI misplays, fixed in shared c
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 3 (T3). Proposed: Demonic Tutor, Vampiric Tutor (to Seph FS), Mystical Tutor (to Veyran) out; Mana Leak, Expressive Iteration, Sleight of Hand (spares) in. 6 -> 3 Game Changers (Underworld Breach, Jeska's Will, Rhystic Study). Final: **26.7% vs T3** (current 27.4% at 1,000). Why: the combo is intact but found less often. Filler choice made no difference (Star Compass / Tome / Flourish gave 25.6%), nor did keeping Vampiric instead of Rhystic (26.1%).
+
+## 2026-10-18: AI audit phase 2 (branch audit-grixis; adaptive AI vs t3, 600 games x 2 profiles, before -> after)
+Win rate 22.2% -> 22.2% (no change; these are play fixes, not a power change). What moved: Deflecting Swat cast 4.0% -> 7.7% of draws
+(it is no longer binned to Kefka's own trigger), Underworld Breach cast-in 24% with 44.8% win (kept in hand, not discarded), Psychosis
+Crawler cast-in 27% -> 29%, Breach line pieces held on our turn 26.5% -> 28.5%.
+Strengths: Kefka's discard engine, the Crawler loop, Breach line (every execution wins). Weaknesses: the Breach line needs storm >= the
+table's life (three 40-life opponents), so most dry-run failures are real shortfalls, not a bug (traced 200 games: failures at
+life 11-25 with 6-10 mana left over); Kefka dies to removal 0.25/game.
+Tried and why: tutors now read the board (flipped Kefka and no Crawler/Niv -> Crawler/Niv, else the Breach line; Grim Servant reads the
+same list within its devotion limit); Breach, Yawgmoth's Will and protection get discard keep values; Mana Leak into open mana is
+valued x0.3; Profane Tutor suspends at 4.0 on a turn with no 1-2 mana play; doc: the Crawler is cast early, held only after the flip.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**27.3% vs T3** (before 26.7): within noise. Tutors fetch Crawler/Niv for a flipped Kefka; his discard keeps Breach, Will and protection; Mana Leak discounted into open mana.

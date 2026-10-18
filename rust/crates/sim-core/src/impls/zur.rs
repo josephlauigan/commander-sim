@@ -746,6 +746,13 @@ pub fn zur_protect(
         let d = g.db.get(c);
         let tp = d.tags.str(Tag::Prot);
         let (gen_, pips, convoke) = (d.generic, d.pips.to_string(), d.tag(Tag::Convoke));
+        if tp == Some("phase") && d.name.as_ref() == crate::engine::zones::TEFERIS_PROTECTION {
+            // Teferi's Protection: the whole board, life locked; not worth it for one removal spell
+            if crate::ai::pool::worth_whole_board(g, o, m) && crate::engine::zones::cast_teferis_protection(g, o, 6.0)? {
+                return Ok(true);
+            }
+            continue;
+        }
         if tp == Some("phase") && can_pay(g, o, gen_, &pips, convoke) {
             // Clever Concealment
             if !pay_card(g, o, c, 0)? {
@@ -793,17 +800,18 @@ pub fn zur_protect(
 
 /// zur.zur_wipe_response: a wipe: phase out your creatures and the Auras on them (Clever Concealment), or make them
 /// indestructible (Rootborn Defenses). Some('all'), Some('indes') or None.
-pub fn zur_wipe_response(g: &mut Game, q: PlayerId, kind: &str) -> Res<Option<Sym>> {
+pub fn zur_wipe_response(g: &mut Game, q: PlayerId, kind: &str, caster: PlayerId) -> Res<Option<Sym>> {
     use crate::ai::decks::pay_card;
     let all = matches!(kind, "rift" | "rebuke");
     let loss = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) || all).map(|&m| pval(g, m)).psum();
-    if loss < 6.0 {
+    let board_loss = crate::ai::decks::wipe_loss(g, q, kind, caster); // Teferi's phases out every permanent
+    if loss < 6.0 && board_loss < 6.0 {
         return Ok(None);
     }
     for c in g.player(q).hand.clone() {
         let d = g.db.get(c);
         let (gen_, pips, convoke) = (d.generic, d.pips.to_string(), d.tag(Tag::Convoke));
-        if d.tags.str(Tag::Prot) == Some("phase") && can_pay(g, q, gen_, &pips, convoke) {
+        if d.tags.str(Tag::Prot) == Some("phase") && d.name.as_ref() != crate::engine::zones::TEFERIS_PROTECTION && loss >= 6.0 && can_pay(g, q, gen_, &pips, convoke) {
             if !pay_card(g, q, c, 0)? {
                 return Ok(None);
             }
@@ -816,6 +824,12 @@ pub fn zur_wipe_response(g: &mut Game, q: PlayerId, kind: &str) -> Res<Option<Sy
             crate::glog!(g, "    {} casts {}: their creatures phase out", pname(g, q), g.db.get(c).name);
             return Ok(Some("all"));
         }
+    }
+    if board_loss >= 6.0 && crate::engine::zones::cast_teferis_protection(g, q, 6.0)? {
+        return Ok(Some("all"));
+    }
+    if loss < 6.0 {
+        return Ok(None);
     }
     if matches!(kind, "destroy" | "dmg13" | "austere" | "nib") {
         for c in g.player(q).hand.clone() {

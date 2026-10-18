@@ -930,7 +930,8 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     let mana = pl.lands.len() as i32
         + pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count() as i32;
     let mut order: Vec<&str> = vec![];
-    if kind == "any" {
+    let finisher_ok = matches!(kind, "any" | "is"); // Mystical Tutor finds the X drains too
+    if finisher_ok {
         let low: i32 = opps.iter().map(|&q| g.player(q).life).sum();
         if mana >= 7
             && !opps.is_empty()
@@ -939,7 +940,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         {
             order.extend(["Debt to the Deathless", "Exsanguinate"]);
         }
-        if ysh_perm(g, p).is_none() && !pl.cmd_in_zone && pl.tax >= 4 {
+        if kind == "any" && ysh_perm(g, p).is_none() && !pl.cmd_in_zone && pl.tax >= 4 {
             order.push("Lightning Greaves");
         }
     }
@@ -959,7 +960,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         order.push("Curiosity");
     }
     order.extend(["Ill-Gotten Inheritance", "Prison Sentence", "Arrest", "Propaganda"]);
-    if kind == "any" {
+    if finisher_ok {
         order.extend(["Exsanguinate", "Debt to the Deathless"]);
     }
     first(&order)
@@ -1076,6 +1077,9 @@ pub fn trigger_bonus(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if g.opps(p).any(|q| g.player(q).life <= per) {
         v += 6.0;
     }
+    if one_trigger_from_four(g, p) {
+        v += 3.0; // a player has lost 2-3 already: this trigger makes four and she draws at the end step
+    }
     20.min((4.0 * v) as i32)
 }
 
@@ -1121,10 +1125,11 @@ pub fn yshtola_named_prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
             return if v != 0 { v + b } else { 0 };
         }
         if t.has(Tag::Remora) {
-            return if pl.turns <= 4 { 66 } else { 8 };
+            // lowest win rate of her cards when cast (39-45%): a turn or two at most, so below her engine cards
+            return if pl.turns <= 4 { 40 } else { 8 };
         }
         if n == "Esper Sentinel" {
-            return if pl.turns <= 4 { 62 } else { 30 };
+            return if pl.turns <= 4 { 46 } else { 30 }; // bottom group by win rate when cast
         }
         if t.has(Tag::Xdrain) || t.has(Tag::Tokx) {
             return 0; // X spells: their own options
@@ -1307,8 +1312,8 @@ pub fn yshtola_protect(
 }
 
 /// yshtola.yshtola_wipe_response (zur.zur_wipe_response)
-pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym) -> Res<Option<Sym>> {
-    zur::zur_wipe_response(g, q, kind)
+pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
+    zur::zur_wipe_response(g, q, kind, caster)
 }
 
 // ======================================================== registration
@@ -1357,4 +1362,39 @@ mod zur {
     pub fn lock_kind(name: &str) -> &'static str {
         crate::impls::zur::lock_kind(name).unwrap_or("")
     }
+}
+
+// ======================================================== AI audit: removal with her out, wipes with Teferi's
+/// brain.removal_options for the yshtola seat: the utility added to casting removal spell c (best target worth `best`),
+/// or None when it isn't worth casting. With Y'shtola out, a noncreature spell of mana value 3 or more is also her
+/// trigger (2 to each opponent, 2 life: Anguished Unmaking, Generous Gift, Your Fate Ends Here), and the draw when an
+/// opponent has already lost 2-3 this turn, so it needs only a target worth 1; every other removal needs a target worth
+/// 3 or more (before, Path to Exile went on Ornithopter and Fatal Push on Esper Sentinel).
+pub fn removal_adjust(g: &Game, p: PlayerId, c: CardId, best: f64) -> Option<f64> {
+    if trigger_bonus(g, p, c) > 0 {
+        (best >= 1.0).then(|| trigger_bonus(g, p, c) as f64 / 4.0)
+    } else {
+        (best >= 3.0).then_some(0.0)
+    }
+}
+
+/// a player (not her) has lost 2 or 3 life this turn: one more trigger makes four, and she draws at the end step
+fn one_trigger_from_four(g: &Game, p: PlayerId) -> bool {
+    g.players.iter().any(|q| q.alive && q.id != p && (2..=3).contains(&lost_this_turn(g, q.id)))
+}
+
+/// Teferi's Protection in hand and enough mana to hold it up behind wipe `c` (cast the wipe, phase her own permanents
+/// out in response, so it takes only the opponents'): the deck's key line. Only when the wipe would cost her something.
+pub fn teferis_first(g: &Game, p: PlayerId, c: CardId, kind: &str) -> bool {
+    let pl = g.player(p);
+    let Some(t) = g.db.id(crate::engine::zones::TEFERIS_PROTECTION).filter(|t| pl.hand.contains(t)) else {
+        return false;
+    };
+    if pl.life_locked || crate::engine::values::silenced(g, p) || !crate::engine::cast::castable(g, p, t, "hand") {
+        return false;
+    }
+    let (_, ml, _) = crate::ai::decks::wipe_eval(g, p, kind);
+    let (cg, cp) = crate::ai::decks::wipe_cost(g, p, c);
+    let td = g.db.get(t);
+    ml >= 2.0 && can_pay(g, p, cg + td.generic, &format!("{cp}{}", td.pips), false)
 }
