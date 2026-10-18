@@ -30,7 +30,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{WalkerAb, best_opp_creature, oring_exile, oring_return, walker};
-use crate::impls::marchesa::steal;
+use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::impls::t2::flicker_worth;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::intern;
@@ -454,8 +454,7 @@ fn preston_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> 
 /// The order follows the rules: every creature enters under Dack's controller (so their enters triggers, Preston's
 /// and Radiant Solar's are queued as Dack's controller's), then each is given away (`mark_donated` records the giver
 /// for the queued triggers), then the triggers resolve with the opponents' creatures as legal targets. The AI hands
-/// the most valuable creature to the least threatening opponent. Goad lasts only until the goader's next turn here
-/// (`DataKey::Goaded` has no "rest of the game": engine need).
+/// the most valuable creature to the least threatening opponent. The goad lasts for the rest of the game (`control::goad`, `GoadFor::Forever`).
 fn dack_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src || !trigger_window(g, p, Some(src), "reveal creatures and give them away", Some(6.0))? {
         return Ok(());
@@ -513,18 +512,17 @@ fn flip_and_donate_inner(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
     order.sort_by(|&a, &b| pval(g, b).partial_cmp(&pval(g, a)).unwrap_or(std::cmp::Ordering::Equal));
     let mut who = opps;
     who.sort_by(|&a, &b| threat(g, p, a).partial_cmp(&threat(g, p, b)).unwrap_or(std::cmp::Ordering::Equal));
-    let turns = g.player(p).turns as i64;
     let mut given = vec![];
     for (m, q) in order.into_iter().zip(who) {
         mark_donated(g, m, p);
-        steal(g, q, m, false);
-        g.perm_mut(m).data.set(DataKey::Goaded, Val::List(vec![Val::Player(p), Val::Int(turns)]));
+        gain_control(g, q, m, Duration::Permanent);
+        goad(g, p, m, GoadFor::Forever);
         given.push(m);
     }
     for &m in &pile {
         // a pile creature that left again (died to a state-based action) has nothing to goad
         if g.perm(m).on_bf && !given.contains(&m) {
-            g.perm_mut(m).data.set(DataKey::Goaded, Val::List(vec![Val::Player(p), Val::Int(turns)]));
+            goad(g, p, m, GoadFor::Forever);
         }
     }
     Ok(pile)

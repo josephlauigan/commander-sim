@@ -10,7 +10,6 @@
 //! - **Twincast, Flare of Duplication**: cast from hand in response to a worthwhile instant or sorcery, as Dualcaster
 //!   Mage is (`hand_cast`); Flare's alternative cost sacrifices a red nontoken creature.
 
-use super::marchesa::steal;
 use super::mine::{etb_value, is_legendary, spell_copy_value};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, copy_spell, on_cast};
@@ -434,8 +433,11 @@ fn stormdrake_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let q = g.perm(t).owner;
-    steal(g, o, t, false); // you control the creature
-    steal(g, q, src, false); // and they control the Drake
+    {
+        use crate::engine::control::{Duration, gain_control};
+        gain_control(g, o, t, Duration::Permanent); // you control the creature
+        gain_control(g, q, src, Duration::Permanent); // and they control the Drake
+    }
     g.player_mut(o).energy += 4;
     let mv = g.perm(t).cd.map_or(0, |c| g.db.get(c).cmc as i32);
     if g.player(o).energy >= mv {
