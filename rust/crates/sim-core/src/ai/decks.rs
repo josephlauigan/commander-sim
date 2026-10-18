@@ -499,7 +499,9 @@ pub fn helm_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// much smaller
 pub fn archivist_worth(g: &Game, p: PlayerId) -> bool {
     let most = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0);
-    has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) || (g.player(p).hand.len() <= 1 && most >= 4) // Sheoldred: every opponent draw costs 2 life
+    let sauron_payoff = g.player(p).key == "sauron"
+        && (has(g, p, Tag::Kaervek) || (has(g, p, Tag::Sauron) && g.player(p).hand.len() <= 2 && most >= 4)); // refilled opponents cast into Kaervek and Sauron
+    sauron_payoff || has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) || (g.player(p).hand.len() <= 1 && most >= 4) // Sheoldred: every opponent draw costs 2 life
 }
 
 /// ais.sauron_archivist: Jace's Archivist: everyone discards their hand and draws the largest hand size

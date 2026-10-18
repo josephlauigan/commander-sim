@@ -42,9 +42,11 @@ fn sauron_tutor_gets_evasion_for_a_huge_army_then_the_extra_combat() {
     perm(&mut g, P0, "The Ozolith");
     perm(&mut g, P0, "Not of This World");
     zones::amass(&mut g, P0, 9).unwrap();
-    let pk = decks::tutor_pick(&g, P0, "any").unwrap(); assert_eq!(&*g.db.get(pk).name, "Whispersilk Cloak");
+    let pk = decks::tutor_pick(&g, P0, "any").unwrap();
+    assert_eq!(&*g.db.get(pk).name, "Whispersilk Cloak");
     perm(&mut g, P0, "Whispersilk Cloak");
-    let pk = decks::tutor_pick(&g, P0, "any").unwrap(); assert_eq!(&*g.db.get(pk).name, "Aggravated Assault");
+    let pk = decks::tutor_pick(&g, P0, "any").unwrap();
+    assert_eq!(&*g.db.get(pk).name, "Aggravated Assault");
 }
 
 #[test]
@@ -105,4 +107,30 @@ fn sauron_holds_mana_up_for_two_counters_more_than_for_one() {
     hand(&mut g, P0, &["Arcane Denial"]);
     let (_, v2) = brain::hold_value(&g, P0, &s);
     assert!(v2 > v1);
+}
+
+#[test]
+fn sauron_gives_an_opponent_cards_with_cost_of_brilliance_when_bowmasters_is_out() {
+    use sim_core::ai::brain;
+    let mut g = sauron_table();
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    g.active = Some(P0);
+    zones::amass(&mut g, P0, 2).unwrap();
+    hand(&mut g, P0, &["Cost of Brilliance"]);
+    let plain = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(plain.iter().any(|o| o.label.starts_with("Cost of Brilliance (draw two")));
+    perm(&mut g, P0, "Orcish Bowmasters");
+    let with = brain::main_options(&mut g, P0, false).unwrap();
+    let o = with.iter().find(|o| o.label.contains("Bowmasters pings")).expect("opponent draws");
+    assert!(o.utility > 4.0);
+}
+
+#[test]
+fn sauron_wheels_with_the_archivist_for_kaervek_or_sauron_when_short_of_cards() {
+    let mut g = sauron_table();
+    g.player_mut(P0).hand.clear();
+    assert!(!decks::archivist_worth(&g, P0));
+    perm(&mut g, P0, "Kaervek the Merciless");
+    assert!(decks::archivist_worth(&g, P0));
 }
