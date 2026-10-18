@@ -31,7 +31,8 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
         t.cast_etb = g.last_cast_etb;
     }
     // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
-    let extra: Vec<Trigger> = entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
+    let extra: Vec<Trigger> =
+        entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
     entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
@@ -432,6 +433,13 @@ pub fn counter_window(g: &mut Game, p: PlayerId, c: CardId, imp: f64, aff: Vec<(
 
 /// stack_window, also returning the card that countered the item
 pub fn stack_window_keep(g: &mut Game, p: PlayerId, new: StackItem) -> Res<(bool, Option<CardId>)> {
+    let it = stack_window_item(g, p, new)?;
+    Ok((!it.countered, it.countered_by))
+}
+
+/// stack_window, returning the item as it left the stack: its controller and ctx may have changed (a stolen spell,
+/// a new target), and `cast_card` resolves the spell with them
+pub fn stack_window_item(g: &mut Game, p: PlayerId, new: StackItem) -> Res<StackItem> {
     let id = new.id;
     g.stack_pushes = g.stack_pushes.max(id);
     g.stack.push(new);
@@ -444,8 +452,7 @@ pub fn stack_window_keep(g: &mut Game, p: PlayerId, new: StackItem) -> Res<(bool
     let it = item(g, id).cloned();
     remove_item(g, id);
     r?;
-    let it = it.expect("the item is still on the stack until stack_window takes it off");
-    Ok((!it.countered, it.countered_by))
+    Ok(it.expect("the item is still on the stack until stack_window takes it off"))
 }
 
 pub fn mistrised(g: &Game, c: CardId) -> bool {
@@ -475,6 +482,12 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         return Ok(());
     }
     let hand = g.player(q).hand.clone();
+    if top.generic
+        && hand.iter().any(|&x| crate::impls::t6_counters::STACK_RESPONSES.contains(&&*g.db.get(x).name))
+        && crate::impls::t6_counters::stack_response(g, q, top_id)?
+    {
+        return Ok(()); // Misdirection, Commandeer, Sudden Substitution
+    }
     if !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant") {
         return Ok(()); // nothing to respond with
     }
@@ -697,7 +710,8 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     }
     let pitch = |g: &mut Game, blues: Vec<CardId>| -> Res {
         // the least useful blue card (a person picks: play/cards.pick_blue)
-        let mut x = crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
+        let mut x =
+            crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
         if crate::human::is_human(g, q) {
             let what = g.db.get(ctr).name.to_string();
             x = crate::human::cards::pick_blue(g, q, &blues, &what)?;

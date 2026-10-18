@@ -37,3 +37,6 @@ Needs: a per-card side-effect slot when a counterspell counters (`counter_side_e
 Where it would hook: engine/stack.rs `counter_side_effects` (call `t6_counters::tibalt_after(g, q, p, spell)` when the counterspell is Tibalt's Trickery, with q the caster and p the countered spell's controller).
 Card side done: `tibalt_after` (mill 1-3 at random, exile to a nonland card with a different name, cast it free unless it is a counterspell, the rest on the bottom in random order).
 Test to add once the engine has it: countering a spell with it gives the countered player a free spell and a shorter library.
+
+## t6-e-stack DONE (2026-10-17)
+Misdirection, Commandeer and Sudden Substitution are cast by `ai_respond` (`t6_counters::stack_response`); `cast_card` takes the item back from `stack::stack_window_item` and resolves under its controller, target, face and owner. Not done: stealing a spell that was put on the stack by card code (`counter_window`, not `cast_card`), and Snapback.

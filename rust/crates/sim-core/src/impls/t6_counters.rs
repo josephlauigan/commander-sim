@@ -472,6 +472,118 @@ fn abeyance_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
+// ================================================================== the AI answers a spell with a non-counter
+/// the cards `stack_response` casts at a spell on the stack (`engine::stack::ai_respond` checks the hand for them)
+pub const STACK_RESPONSES: [&str; 3] = ["Misdirection", "Commandeer", "Sudden Substitution"];
+
+/// q pays for `card`, a response to the spell on the stack: its mana cost, or its alternative cost when the mana is
+/// short and `alt_ok` (the AI gives up cards only for something that matters). The cast counts (cast triggers) and the
+/// card goes to the graveyard. False, nothing paid, if q can't.
+fn pay_response(g: &mut Game, q: PlayerId, card: CardId, spell: CardId, alt_ok: bool) -> Res<bool> {
+    if !g.player(q).hand.contains(&card) || !castable(g, q, card, "hand") {
+        return Ok(false);
+    }
+    let (gn, pips) = cost_of(g, q, card);
+    if can_pay(g, q, gn, &pips, false) {
+        pay(g, q, gn, &pips, false)?;
+    } else if !(alt_ok && crate::engine::altcost::pay_alt(g, q, card, Some(spell))?) {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(q).hand, card);
+    let pl = g.player_mut(q);
+    pl.spells_this_turn += 1;
+    pl.cast_names.insert(card);
+    pl.stat("spells_cast", 1);
+    on_cast(g, q, card)?;
+    g.player_mut(q).gy.push(card);
+    g.stack_pushes += 1; // the exchange of responses goes another round (`stack::priority`)
+    Ok(true)
+}
+
+/// q (with priority) answers the opponent's spell on the stack (item `id`, cast by `cast_card`) with Misdirection
+/// (a spell aimed at q's key permanent goes to one of the caster's own), Commandeer (a good noncreature spell, or one
+/// aimed at q, becomes q's) or Sudden Substitution (the same, for q's least valuable creature). True if q cast one.
+pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
+    let Some(i) = stack_index(g, id) else { return Ok(false) };
+    let it = g.stack[i].clone();
+    let Some(spell) = it.card.filter(|_| {
+        it.kind == StackKind::Spell
+            && it.generic
+            && !it.countered
+            && it.controller != q
+            && it.ctx.counter.is_none()
+            && g.player(it.controller).alive
+    }) else {
+        return Ok(false);
+    };
+    let d = g.db.get(spell);
+    let (creature, land, is_perm, cmc) = (d.creature, d.land, d.perm, d.cmc);
+    let removal = d.tags.str(crate::tag::Tag::Rem).is_some() || d.tag(crate::tag::Tag::Wipe);
+    let held = |g: &Game, name: &str| g.player(q).hand.iter().copied().find(|&c| cname(g, c) == name);
+    let (mis, com, sub) = (held(g, "Misdirection"), held(g, "Commandeer"), held(g, "Sudden Substitution"));
+    // Misdirection: a spell aimed at the permanent we would protect
+    if let (Some(mis), Some(t)) = (mis, it.ctx.target.filter(|_| it.ctx.face.is_none()))
+        && g.perm(t).owner == q
+        && (pval(g, t) >= 4.0 || g.perm(t).is_cmd)
+        && !land
+        && would_redirect(g, q, id)
+    {
+        let (gn, pips) = cost_of(g, q, mis);
+        let affordable = can_pay(g, q, gn, &pips, false) || crate::engine::altcost::available(g, q, mis, Some(spell));
+        if affordable && pay_response(g, q, mis, spell, true)? {
+            return misdirect(g, q, id);
+        }
+    }
+    // Commandeer / Sudden Substitution: a noncreature spell worth having, or aimed at us
+    if creature || land {
+        return Ok(false);
+    }
+    let aimed_at_us = it.ctx.target.is_some_and(|t| g.perm(t).owner == q) || it.ctx.face == Some(q);
+    let value = if is_perm { cmc as f64 } else { 0.0 };
+    if !((is_perm && cmc >= 3) || (aimed_at_us && removal && it.imp >= 4.0)) {
+        return Ok(false);
+    }
+    if let Some(com) = com {
+        let (gn, pips) = cost_of(g, q, com);
+        let mana = can_pay(g, q, gn, &pips, false);
+        if (mana || it.imp >= 6.0 || value >= 4.0 || aimed_at_us) && pay_response(g, q, com, spell, true)? {
+            return commandeer(g, q, id);
+        }
+    }
+    if let Some(sub) = sub {
+        let junk: Vec<PermId> = g
+            .player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| g.perm(m).on_bf && g.is_creature(m) && !g.perm(m).phased && !g.perm(m).is_cmd)
+            .collect();
+        if let Some(m) = min_by(&junk, |m| pval(g, m))
+            && (pval(g, m) < 3.0 || aimed_at_us)
+            && pval(g, m) + 1.0 < value.max(it.imp)
+            && pay_response(g, q, sub, spell, false)?
+        {
+            return substitute(g, id, m);
+        }
+    }
+    Ok(false)
+}
+
+/// would Misdirection change anything: the spell's single target is q's, and the caster has another permanent for it
+fn would_redirect(g: &Game, q: PlayerId, id: u32) -> bool {
+    let Some(i) = stack_index(g, id) else { return false };
+    let it = &g.stack[i];
+    let (Some(c), Some(t)) = (it.card, it.ctx.target) else { return false };
+    let d = g.db.get(c);
+    let creature_only = d.tags.str(crate::tag::Tag::Tgt) == Some("c")
+        || d.tags.str(crate::tag::Tag::Rem).is_some_and(|r| r.starts_with("dmg"));
+    g.perm(t).owner == q
+        && g.player(it.controller)
+            .perms
+            .iter()
+            .any(|&x| x != t && !g.perm(x).phased && !untargetable(g, x) && (!creature_only || g.is_creature(x)))
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Dizzy Spell")?;
@@ -480,7 +592,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.hand_options = Some(dizzy_transmute_opts);
     r.card(db, "Into the Flood Maw")?.resolve = Some(maw_resolve);
     r.card(db, "Abeyance")?.resolve = Some(abeyance_resolve);
-    for name in ["Daze", "Flare of Denial", "Disrupting Shoal", "Misdirection", "Snapback", "Commandeer", "Mindbreak Trap"] {
+    for name in
+        ["Daze", "Flare of Denial", "Disrupting Shoal", "Misdirection", "Snapback", "Commandeer", "Mindbreak Trap"]
+    {
         r.card(db, name)?.alt_cost = Some(ALT_COST);
     }
     Ok(())
