@@ -129,3 +129,39 @@ starts it, so the existing windows apply) over Godo-only code. Check Kinnan + Ba
 Tests: the Godo + Helm equip with an opponent holding Swords to Plowshares / Snap / Chain of Vapor and mana up gets
 answered; with no answer it still wins. Measure Godo (`--deck godo --pool t6 --games 300`) and Tier 6
 (`--calibrate within --pool t6 --games 300`) before/after; the t3 lock stays identical.
+
+## Fixes from the annotated games (2026-10-18; read `audit/t6/stage5-logs/SUMMARY.md` and the game files it cites)
+
+Three tasks, each in its own worktree, run at the same time: CARGO_BUILD_JOBS=3 and sims --jobs 3. Measure each with
+`--calibrate within --pool t6 --games 300` and `--deck godo --pool t6 --games 300` before/after (the median win round
+in the report should fall); the t3 lock (`rust/agents/perf-lock-t3.txt`, re-saved after the Ranger-Captain fix) stays
+identical. Trace with `--calibrate within --pool t6 --trace N` to check the games the summary cites.
+
+### `must` — the plan's must-do plays beat the search (SUMMARY problem 1)
+
+The look-ahead overrides the deck plans: `Sisay: Mount Doom 100% … -> stop (hold mana)`, `Kinnan 79%, Chord 21% ->
+Chord`, Dack scored 70% then not cast for two turns. Find where the search (`ai/search.rs`, `ai/brain.rs`
+`main_options`) turns the plan's priority into a choice and why "stop (hold mana)" and lesser spells win. For Tier 6,
+add a way for a plan to mark a play "do it now" (e.g. a priority at or above 90 from `t6_plans::prio`, or a new slot
+`must(g, p) -> Option<Opt-ish>`) that is taken before or instead of the search, and use it for: casting the commander
+when the plan says so (Sisay, Kinnan, Dack, Rograkh, Godo), the line's missing piece when the line would be complete,
+and Sisay's fetch. Keep "stop (hold mana)" for the turns the plan's `hold_up` asks for. Files: `ai/search.rs`,
+`ai/brain.rs`, `impls/t6_plans.rs` (contract), and only the priority values in the plan files.
+
+### `keeps` — land-light keeps (SUMMARY problem 5)
+
+Dack, Kraum, Sisay and both Rograkh decks keep 1-landers and sit on 1-3 lands for 6-9 rounds. Re-check each plan's
+`keep` against its spec's mulligan section and against what the games show: count only fast mana that makes mana on
+turn 1-2 without a land (Lotus Petal, Mox Diamond needs a land, Chrome Mox needs a card to imprint, Mana Vault needs
+mana), and measure keep rate and "lands on turn 4" per deck. Files: the `keep` functions in `impls/t6_plan_*.rs`
+(not other slots) and the Mox Diamond discard choice (it discarded a land from a 2-land hand, g6).
+
+### `pieces` — tutors and combo pieces thrown away, self-damage (SUMMARY problems 6 and 8)
+
+Card code, gated to Tier 6 where it is an AI choice: Gamble's random discard should not be cast when the hand holds
+the line's other piece unless the fetched card is cast at once (g1, g4); Beseech the Mirror's free cast must not cast
+Thassa's Oracle without the line's other half in hand (g2, g12, g19); Chrome Mox never imprints a piece of the deck's
+lines (Demonic Consultation g11, Underworld Breach g19); Wishclaw Talisman is activated only on a turn the tutored
+card wins or is cast at once (g7, g17); Invasion of Ikoria and other X tutors fetch the line's missing piece (Oboro,
+g2); The One Ring's life loss and Sylvan Library's 4-life draws are priced against the player's life (g5, g9). Files:
+the card code for those cards (grep the names in `impls/`), plus tests.
