@@ -8446,3 +8446,63 @@ note = "enters tapped unless you control a Plains; {T}: {W}; {2}{W}{W},{T}: look
 ["Apple of Eden, Isu Relic"]
 status = "Approximate"
 note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an opponent's nonland cards as Opposition Agent does (any-type mana), the AI casts what it can at once and the rest go home; the owner draws for each spell played; lands stay in the hand and are never played (rust/agents/engine-needs-mana.md)"
+
+["Redirect Lightning"]
+status = "Partial"
+note = "t6_redirects::redirect_removal answers removal aimed at the owner's key permanent like Deflecting Swat: pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: the engine does not call it yet, and it cannot change the target of an ability or of a spell on the stack (engine needs)"
+
+["Ricochet Trap"]
+status = "Partial"
+note = "t6_redirects::redirect_removal aims removal at the owner's key permanent back at the caster's best permanent, paying {R} if an opponent cast a blue spell this turn (read from the turn's cast list) else {3}{R}; missing: the engine does not call it yet, and it cannot re-aim a spell on the stack (engine needs)"
+
+["Untimely Malfunction"]
+status = "Partial"
+note = "destroys the targeted opposing artifact, else (no artifact chosen) up to two of the opponents' best untapped creatures can't block this turn; the redirect mode is t6_redirects::redirect_removal (like Redirect Lightning, {1}{R}); missing: the engine does not call it yet and cannot re-aim an ability or a spell on the stack, and the AI only casts it at an artifact (engine needs)"
+
+["Pyrokinesis"]
+tags = "rem=dmg4 tgt=c"
+status = "Partial"
+note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); the pitch cost (exile a red card from hand) is t6_redirects::pay_pyro_pitch; missing: the engine casts it only for {4}{R}{R} (alternative-cost hook)"
+
+["Scout's Warning"]
+status = "Partial"
+note = "draws a card and sets the caster's turn flag t6_redirects::scout_flash_active (the next creature card this turn can be played with flash); missing: the engine does not read the flag yet, so creature cards still wait for sorcery timing (engine need)"
+
+["Kozilek's Command"]
+tags = "tokx rem=exile tgt=c draw=1"
+status = "Full"
+note = "X = all spare mana; takes the best two of four modes: exile the best opposing creature with mana value X or less, scry X then draw, X 0/1 Eldrazi Spawn, exile up to X creature cards from opposing graveyards (the {C}{C} in the cost is paid as any two mana, as the card data has no colourless pips)"
+
+["Eldrazi Confluence"]
+tags = "rem=shrink3 tgt=c"
+status = "Full"
+note = "three choices: +3/-3 on the opposing creatures worth the most per choice (two or three choices for a bigger creature, toughness 0 dies), then each left over exiles and returns tapped a different own permanent with an enters effect worth 3 or more, else makes a 1/1 Eldrazi Scion; cast when an opposing creature of toughness 3 or less can be killed (the {C}{C} in the cost is paid as any two mana)"
+
+["Get Lost"]
+status = "Partial"
+note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"
+
+["Erode"]
+status = "Full"
+note = "destroys the targeted opposing creature or planeswalker; its controller then fetches a basic land onto the battlefield tapped and shuffles (always, the 'may' is taken)"
+
+["Soul Partition"]
+status = "Partial"
+note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"
+
+["Calamity's Wake"]
+status = "Partial"
+note = "exiles all graveyards and itself, and sets the turn lock t6_redirects::noncreature_lock (players can't cast noncreature spells this turn); missing: the engine's cast check does not read the lock yet (engine need)"
+
+["Emerald Charm"]
+status = "Partial"
+note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"
+
+["Sunscour"]
+status = "Partial"
+note = "destroys all creatures (the wipe=destroy tag); the pitch cost (exile two white cards from hand) is t6_redirects::pay_sunscour_pitch; missing: the engine casts it only for {5}{W}{W} (alternative-cost hook)"
+
+["Gleaming Splendor"]
+tags = ""
+status = "Full"
+note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: you and one opponent each draw a card, which the AI uses in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure)"
