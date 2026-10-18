@@ -142,9 +142,13 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
 /// fast mana with Kinnan): ship no land, six or more lands, and hands with nothing to do.
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let hand = &g.player(p).hand;
-    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
-    // Mox Diamond needs a land to discard: it makes mana only with a second land
-    let makers = hand.iter().filter(|&&c| mana_maker(g, c) && (nm(g, c) != "Mox Diamond" || lands >= 2)).count();
+    // mana by turn 2 from this hand: Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land
+    let m = crate::impls::t6_keep::mana(g, p);
+    if m.settle() {
+        return Some(true);
+    }
+    let lands = m.lands;
+    let makers = m.n_mana;
     let engines = hand.iter().filter(|&&c| engine(nm(g, c))).count();
     let cheap_engine = hand.iter().any(|&c| engine(nm(g, c)) && g.db.get(c).cmc <= 2);
     let wins = hand.iter().filter(|&&c| win_piece(nm(g, c))).count();
@@ -152,7 +156,7 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let action = makers + engines + wins;
     let ok = match lands {
         0 => false,
-        1 => makers >= 2,
+        1 => m.eff >= m.need_one_lander() && (engines + wins + free >= 1),
         2 => makers >= 1 || cheap_engine || engines + wins >= 1 || free >= 2,
         3 | 4 => action + free >= 1,
         5 => action >= 2,
