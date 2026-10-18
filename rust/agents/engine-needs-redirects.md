@@ -7,3 +7,9 @@ Needs: the removal-response hook (`ai::protect_response`, `ai/mod.rs` ~304 and `
 Where it would hook: `ai::protect_response` and `engine/stack.rs` `ai_respond`.
 Card side done: `redirect_removal` (pays {R}+{2} or {R}+5 life, aims at the caster's best permanent, applies the removal there), `redirect_lightning_life` (which additional cost the AI pays).
 Test to add once the engine has it: an opponent's Swords to Plowshares on our key creature, with the card in hand, exiles the caster's own creature instead.
+
+## Ricochet Trap
+Needs: the same removal-response hook as Redirect Lightning. The alternative cost ({R} after an opponent's blue spell) is already worked out in the card code (`blue_spell_this_turn`), so no separate alternative-cost hook is needed.
+Where it would hook: `ai::protect_response` and `engine/stack.rs` `ai_respond`.
+Card side done: `redirect_removal` (the Trap branch), `blue_spell_this_turn`.
+Test to add once the engine has it: after an opponent casts a blue spell, removal aimed at our creature is re-aimed at the caster's creature for {R}.

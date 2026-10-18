@@ -81,3 +81,39 @@ fn redirect_lightning_needs_a_target_and_a_cost_and_ignores_own_spells() {
     assert!(!t6::redirect_removal(&mut g, P0, mine, intern("destroy"), Some(P1), Some(swords)).unwrap());
     assert!(on_bf(&g, P0, "Grave Titan").is_some());
 }
+
+// ======================================================== Ricochet Trap
+#[test]
+fn ricochet_trap_costs_one_red_after_an_opposing_blue_spell() {
+    let mut g = game();
+    lands(&mut g, P0, "Mountain", 1, false);
+    let mine = perm(&mut g, P0, "Grave Titan");
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    hand(&mut g, P0, &["Ricochet Trap"]);
+    let swords = hand(&mut g, P1, &["Swords to Plowshares"])[0];
+    // no blue spell yet: {3}{R} is out of reach
+    assert!(!t6::blue_spell_this_turn(&g, P0));
+    assert!(!t6::redirect_removal(&mut g, P0, mine, intern("destroy"), Some(P1), Some(swords)).unwrap());
+    // the opponent cast Counterspell this turn
+    let blue = card(&g, "Counterspell");
+    let st = g.turn_stamp();
+    g.player_mut(P1).turn_casts = Some((st, vec![blue]));
+    assert!(t6::blue_spell_this_turn(&g, P0));
+    assert!(t6::redirect_removal(&mut g, P0, mine, intern("destroy"), Some(P1), Some(swords)).unwrap());
+    assert!(g.perm(mine).on_bf && !g.perm(theirs).on_bf);
+    assert!(in_gy(&g, P0, "Ricochet Trap"));
+    assert_eq!(untapped(&g, P0), 0);
+}
+
+#[test]
+fn ricochet_trap_hard_cast_costs_four_without_a_blue_spell() {
+    let mut g = game();
+    lands(&mut g, P0, "Mountain", 4, false);
+    let mine = perm(&mut g, P0, "Grave Titan");
+    let theirs = perm(&mut g, P1, "Grave Titan");
+    hand(&mut g, P0, &["Ricochet Trap"]);
+    let swords = hand(&mut g, P1, &["Swords to Plowshares"])[0];
+    assert!(t6::redirect_removal(&mut g, P0, mine, intern("destroy"), Some(P1), Some(swords)).unwrap());
+    assert!(!g.perm(theirs).on_bf);
+    assert_eq!(untapped(&g, P0), 0);
+}
