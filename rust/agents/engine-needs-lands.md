@@ -23,3 +23,9 @@ Needs: a "can't activate abilities of sources with this name, except mana abilit
 Where it would hook: cardcode::land_options / the permanents' activated-ability options (ai/act.rs perform, engine/stack.rs ability_window*); read `t6_lands::hamlet_names(g)` (the chosen card names) and drop the options of those cards.
 Card side done: the name is chosen when it enters (the opponents' land with the most non-mana abilities) and kept on the Hamlet (`DataKey::Imprint`, `Val::Card`); `hamlet_names` returns them; its own {T}: {C}; the City of Traitors check still runs.
 Test to add once the engine has it: with Mutavault named, its animate option is gone; Mutavault still taps for {C}.
+
+## The Mycosynth Gardens
+Needs: a land that becomes a copy of another permanent ({X},{T}: becomes a copy of target nontoken artifact you control with mana value X); lands are not permanents here, so a land-to-permanent copy needs the `animate` stand-in token generalised to a copy.
+Where it would hook: impls/lands.rs `animate` (a token standing in for the land that goes back at the next turn) + engine/zones.rs copy entry (`enter_token_copy`).
+Card side done: {T}: {C}; {1},{T}: any colour (any_filter_cols, shared with Talon Gates and Abstergo).
+Test to add once the engine has it: pay X=1, Mycosynth Gardens becomes a copy of Sol Ring (taps for {C}{C}) while the land's old mana ability is gone.

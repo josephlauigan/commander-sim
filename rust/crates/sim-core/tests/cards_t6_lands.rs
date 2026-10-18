@@ -244,3 +244,21 @@ fn petrified_hamlet_names_nothing_without_a_land_with_abilities_and_still_sacrif
     assert!(t6::hamlet_names(&g).is_empty());
     assert_eq!(names(&g, P0), ["Petrified Hamlet"], "playing the Hamlet sacrifices the City");
 }
+
+// ------------------------------------------------------------------ The Mycosynth Gardens
+#[test]
+fn mycosynth_gardens_is_colourless_alone_and_filters_with_another_land() {
+    let mut g = pod();
+    lands(&mut g, P0, "The Mycosynth Gardens", 1, false);
+    let u = mana::mana_units(&g, P0, false);
+    assert!(u.len() == 1 && u[0].cols.is_empty());
+    lands(&mut g, P0, "Forest", 1, false);
+    let u = mana::mana_units(&g, P0, false);
+    assert_eq!(u.iter().map(|x| x.amt).sum::<u32>(), 2);
+    assert!(u.iter().any(|x| x.cols == g.player(P0).ident), "{{1}},{{T}}: one mana of any colour");
+    // two filters and no other land: still colourless (nothing real pays the {1})
+    let mut g = pod();
+    lands(&mut g, P0, "The Mycosynth Gardens", 1, false);
+    lands(&mut g, P0, "Abstergo Entertainment", 1, false);
+    assert!(mana::mana_units(&g, P0, false).iter().all(|x| x.cols.is_empty()));
+}

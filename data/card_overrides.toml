@@ -8276,3 +8276,7 @@ note = "{T}: any colour of the identity; whenever tapped for mana the opponent w
 ["Petrified Hamlet"]
 status = "Partial"
 note = "{T}: {C}; when it enters it names the opponents' land with the most non-mana abilities (kept on the land, t6_lands.rs hamlet_names); the ban on that name's activated abilities and the chosen lands' {T}: {C} are not modeled (engine-needs-lands.md)"
+
+["The Mycosynth Gardens"]
+status = "Partial"
+note = "{T}: {C}; {1},{T}: any colour (only when another untapped land pays the {1}; t6_lands.rs any_filter_cols); the {X},{T} copy-an-artifact ability is not modeled (engine-needs-lands.md)"
