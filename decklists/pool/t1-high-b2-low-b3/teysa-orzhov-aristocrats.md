@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Aristoc
 
 Damage that bypasses blockers and punishes chump-blocking. Grave Pact effects also test how many creatures your decks commit.
 
+## At the table
+
+- **Plan:** Makes cheap bodies with Bitterblossom, Lingering Souls, Spectral Procession and Doomed Traveler, and uses Phyrexian Altar, Viscera Seer and Skullclamp to sacrifice them. Teysa Karlov makes each death trigger twice.
+- **Wins by:** Drains the table: Blood Artist, Zulaport Cutthroat, Cruel Celebrant, Falkenrath Noble and Bastion of Remembrance, with Grave Pact and Dictate of Erebos forcing sacrifices. Sun Titan and Elenda, the Dusk Rose recur value.
+- **Watch out for:** Killing Teysa halves the drain, and killing the drain creatures when they appear matters more than killing tokens. Grave Pact punishes you for each creature it sacrifices, so do not overcommit. Several drains in play can be lethal.
+- **Interaction:** Swords to Plowshares, Path to Exile, Vindicate, Anguished Unmaking, Despark, Mortify, Infernal Grasp, Feed the Swarm, Toxic Deluge, Kaya's Wrath and Vanquish the Horde. Selfless Spirit and Swiftfoot Boots offer protection.
+
 ## Strategy
 
 Make disposable bodies, sacrifice them, and let Teysa double every death trigger. Blood Artist, Zulaport, Cruel Celebrant, Falkenrath Noble, and Bastion each drain twice per death with Teysa out, and Grave Pact / Dictate of Erebos turn every sacrifice into two opposing sacrifices. Fodder comes from Bitterblossom, Lingering Souls, Spectral Procession, Pawn of Ulamog, and the dies-into-token creatures. No two-card infinite: the recursion (Sun Titan, Elenda, Requiem Angel) is incremental.

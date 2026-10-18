@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Go-wide / Craterhoof fi
 
 A one-turn kill from a wide board. Your decks need a sweeper or instant-speed interaction ready by about turn five or six.
 
+## At the table
+
+- **Plan:** Turns one-mana elves like Elvish Mystic, Llanowar Elves and Fyndhorn Elves into a huge board, with Marwyn, the Nurturer, Priest of Titania, Elvish Archdruid and Gaea's Cradle making a lot of mana by turn three or four.
+- **Wins by:** Craterhoof Behemoth, found by Natural Order, Green Sun's Zenith, Chord of Calling or Finale of Devastation. Ezuri, Renegade Leader and Avenger of Zendikar are backups.
+- **Watch out for:** A wide board of elves by about turn four: have a sweeper or instant-speed answer ready. Natural Order puts Craterhoof straight onto the battlefield, and Survival of the Fittest keeps finding it. Gaea's Cradle makes the turn explosive.
+- **Interaction:** Beast Within, Reclamation Sage, Collector Ouphe, Boseiju, Who Endures and Heroic Intervention. Kill the mana elves early or sweep before the board goes wide.
+
 ## Strategy
 
 Curve out on mana elves, then turn the board into huge mana through Priest of Titania, Archdruid, Circle of Dreams Druid, Gaea's Cradle, and Marwyn herself. The finish is Craterhoof Behemoth, found by Natural Order, Finale of Devastation, Chord of Calling, or Green Sun's Zenith; Ezuri and Overwhelming Stampede are the backups. Glimpse of Nature and Beast Whisperer keep the hand full. Umbral Mantle is deliberately out, so there is no two-card infinite mana.

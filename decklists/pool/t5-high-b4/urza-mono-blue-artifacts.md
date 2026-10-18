@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Artifact combo + stax.
 
 The fastest deck in the pool: realistic kills on turns three to five. Tests whether anything your decks run can stop an artifact combo turn.
 
+## At the table
+
+- **Plan:** Chains artifact mana (Mana Vault, Grim Monolith, Mox Diamond, Sol Ring) so Urza, Lord High Artificer taps artifacts for blue and builds a Construct. Taxing artifacts slow your plays while it assembles.
+- **Wins by:** Isochron Scepter with Dramatic Reversal, Power Artifact on Grim Monolith or Basalt Monolith, or Basalt Monolith with Rings of Brighthearth, into Walking Ballista or Urza's shuffle-and-play ability. Thassa's Oracle is an alternate win; Karn, the Great Creator with Mycosynth Lattice locks the table.
+- **Watch out for:** The fastest deck in the pool: kills can come on turns three to five. Keep counters and artifact removal up on turn two to four. Mana Drain, Force of Will, Pact of Negation and Fierce Guardianship protect the combo. Trinisphere and Sphere of Resistance slow you down.
+- **Interaction:** Counterspell, Mana Drain, Force of Will, Mental Misstep, Flusterstorm, Swan Song, Pact of Negation, Pongify, Rapid Hybridization, Chain of Vapor and Cyclonic Rift.
+
 ## Strategy
 
 Fast artifact mana, Urza turning every artifact into a blue source, and several compact combos: Isochron Scepter + Dramatic Reversal (unbounded mana with enough rocks), Power Artifact on Grim or Basalt Monolith, Basalt Monolith + Rings of Brighthearth. Unbounded mana wins through Walking Ballista or Urza's shuffle-and-play ability; Karn + Mycosynth Lattice locks the table. Sphere, Thorn, Trinisphere, and Cursed Totem slow opponents while the combo assembles. Heavy free countermagic. Tormod's Crypt and Soul-Guide Lantern are graveyard hate.

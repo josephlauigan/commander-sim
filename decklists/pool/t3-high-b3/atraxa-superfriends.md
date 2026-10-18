@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Planeswalker value / pr
 
 Pressure on non-creature permanents. Your decks need to attack planeswalkers through a tax, or they lose to ultimates by turn eight or nine.
 
+## At the table
+
+- **Plan:** Ramps with Sol Ring, Birds of Paradise, Cultivate and the talismans, then lands planeswalkers behind Ghostly Prison and Propaganda. Atraxa proliferates every end step, so loyalty climbs fast.
+- **Wins by:** Ultimating walkers: Elspeth, Sun's Champion makes an army, Teferi, Hero of Dominaria exiles your permanents, and Ugin, the Spirit Dragon clears the board while the deck keeps its own walkers.
+- **Watch out for:** Walkers that go unattacked: you must get through Propaganda and Ghostly Prison to reach them. Rhystic Study taxes your spells. Oko, Thief of Crowns turns your best permanent into an Elk, and Teferi's Protection saves its board from your sweeper.
+- **Interaction:** Counterspell, Arcane Denial, Swan Song, Swords to Plowshares, Path to Exile, Anguished Unmaking, Assassin's Trophy, Utter End, Beast Within, and sweepers Supreme Verdict, Austere Command, Hour of Revelation and Toxic Deluge. Teferi's Protection and Heroic Intervention protect its board.
+
 ## Strategy
 
 Protect a growing stable of planeswalkers behind Ghostly Prison, Propaganda, and board wipes, and proliferate every turn with Atraxa so loyalty climbs to ultimates. Doubling Season makes walkers enter at double loyalty, often ultimating on the spot. Wins come from Elspeth's army, Teferi's emblem lock, Jace, or Ugin clearing the board. No combo.

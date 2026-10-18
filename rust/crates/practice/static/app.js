@@ -623,7 +623,7 @@ function setStatus(seed, seats) {
   st.title = `Seats in turn order: ${seats.join(', ')}`;
 }
 
-let catalog = null, chosen = { deck: null, tier: 't3' };
+let catalog = null, chosen = { deck: null, tier: 't3', opponents: [] };
 
 window.addEventListener('resize', () => fitBoards(document.getElementById('table')));
 
@@ -640,6 +640,7 @@ function screen(name) {
   $('#undo').hidden = name !== 'game' || !tools.undo;
   $('#save').hidden = name === 'setup' || name === 'lobby' || name === 'join' || !me.host;
   if (name === 'setup') listSaves();
+  if (name === 'setup' && catalog) { drawOpponents(); renderSetup(); }  // a new table each time
   if (name === 'game') requestAnimationFrame(() => fitBoards($('#table')));    // hidden areas measure as zero
   $('#hint').hidden = name !== 'game' || !tools.hint;
   $('#autopass-box').hidden = name !== 'game';
@@ -658,30 +659,57 @@ function deckImages(d) {
 
 function pct(x) { return x == null ? '–' : `${x.toFixed(1)}%`; }
 
+// The opponents are always drawn at random from the tier (three, or two with a friend): again whenever the tier or
+// the number of players changes, and each time you come back to this screen. You choose your deck after seeing them.
+function drawOpponents() {
+  const tier = catalog.tiers.find((t) => t.key === chosen.tier);
+  const keys = tier.decks.map((x) => x.key);
+  for (let i = keys.length - 1; i > 0; i--) {                    // shuffle (Fisher-Yates)
+    const j = Math.floor(Math.random() * (i + 1));
+    [keys[i], keys[j]] = [keys[j], keys[i]];
+  }
+  chosen.opponents = keys.slice(0, $('#newgame').players.value === 'two' ? 2 : 3);
+}
+
+// "**bold**" in the deck files' text, as <b>
+function rich(text) {
+  return String(text || '').split('**').map((part, i) => (i % 2 ? el('b', {}, part) : part));
+}
+
+// an opponent: its commander, and on hover (or tap) a box with how it plays, from its deck file's "At the table"
+function opponentCard(x) {
+  const s = x.summary || {};
+  const rows = (s.table || []).map(([label, text]) => el('p', {}, el('b', {}, `${label}: `), rich(text)));
+  return el('button', { type: 'button', class: 'oppcard', 'aria-label': `${x.name}: how it plays` },
+    cardImage(x.commander),
+    el('span', {}, el('b', {}, x.name), el('small', {}, s.axis || '')),
+    el('div', { class: 'summary', role: 'tooltip' },
+      el('h3', {}, s.title || x.commander),
+      rows.length ? rows : el('p', {}, s.strategy ? rich(s.strategy) : 'No summary for this deck yet.'),
+      el('p', { class: 'meta' }, el('b', {}, 'Game Changers: '), s.game_changers || 'none'),
+      el('p', { class: 'meta' }, el('b', {}, 'Combos: '), rich(s.combos || 'None.'))));
+}
+
 function renderSetup() {
-  const deck = catalog.decks.find((d) => d.key === chosen.deck);
+  const tier = catalog.tiers.find((t) => t.key === chosen.tier);
+  if (!chosen.opponents.length) drawOpponents();
+  $('#tiers').replaceChildren(...catalog.tiers.map((t) => el('button', {
+    type: 'button', class: 'tier', role: 'radio', 'aria-checked': String(t.key === chosen.tier),
+    onclick: () => { if (chosen.tier !== t.key) { chosen.tier = t.key; drawOpponents(); } renderSetup(); },
+  }, el('span', {}, el('b', {}, t.label)),
+    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: x.commander }, cardImage(x.commander), x.name))))));
+  $('#opponents').replaceChildren(...chosen.opponents.map((k) => opponentCard(tier.decks.find((x) => x.key === k))));
   $('#decks').replaceChildren(...catalog.decks.map((d) => el('button', {
     type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
     onclick: () => { chosen.deck = d.key; renderSetup(); },
   }, deckImages(d), el('span', {}, el('b', {}, d.name),
     el('small', {}, `Bracket ${d.bracket} · ${d.game_changers.length} Game Changers`),
-    el('small', {}, d.average == null ? 'No simulation results yet' : `Simulations: ${pct(d.average)} average`)))));
-  $('#tiers').replaceChildren(...catalog.tiers.map((t) => el('button', {
-    type: 'button', class: 'tier', role: 'radio', 'aria-checked': String(t.key === chosen.tier),
-    onclick: () => { chosen.tier = t.key; renderSetup(); },
-  }, el('span', {}, el('b', {}, t.label)),
-    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: x.commander }, cardImage(x.commander), x.name))),
-    el('span', { class: 'rate' }, deck && deck.win_rates ? pct(deck.win_rates[t.key]) : '', el('small', {}, deck && deck.win_rates ? 'your win rate in sims' : '')))));
-  const tier = catalog.tiers.find((t) => t.key === chosen.tier);
-  const prev = new Set([...document.querySelectorAll('#picks input:checked')].map((b) => b.value));
-  $('#picks').replaceChildren(...tier.decks.map((x) => el('label', {},
-    el('input', Object.assign({ type: 'checkbox', value: x.key }, prev.has(x.key) ? { checked: '' } : {})), ' ', x.name)));
-  $('#picks').hidden = $('#newgame').opp.value !== 'pick';
+    el('small', {}, d.win_rates && d.win_rates[chosen.tier] != null
+      ? `Simulations at ${chosen.tier.toUpperCase()}: ${pct(d.win_rates[chosen.tier])} wins` : 'No simulation results at this tier')))));
   const f = $('#newgame');
   if (catalog.app) { f.players.value = 'one'; $('#players-pick').hidden = true; }   // the iPad app: one player only
   const pair = f.players.value === 'two';
   for (const x of document.querySelectorAll('.opp-n')) x.textContent = pair ? 'Two' : 'Three';
-  for (const x of document.querySelectorAll('.opp-n-lc')) x.textContent = pair ? 'two' : 'three';
   document.querySelector('.seat-pick').hidden = pair;
   const lanNote = $('#lan-note');
   lanNote.hidden = !pair;
@@ -700,11 +728,7 @@ async function startGame(e) {
   const pair = f.players.value === 'two';
   if (f.seed.value) body.seed = +f.seed.value;
   if (f.seat.value && !pair) body.seat = +f.seat.value;
-  if (f.opp.value === 'pick') {
-    body.opponents = [...document.querySelectorAll('#picks input:checked')].map((b) => b.value);
-    const want = pair ? 2 : 3;
-    if (body.opponents.length !== want) { $('#setup-error').textContent = `Pick exactly ${want === 2 ? 'two' : 'three'} opponents.`; return; }
-  }
+  body.opponents = chosen.opponents;                             // the ones drawn and shown above
   $('#setup-error').textContent = '';
   if (pair) {
     body.two = true;
@@ -737,8 +761,7 @@ async function init() {
   chosen.deck = catalog.decks[0].key;
   const f = $('#newgame');
   f.addEventListener('submit', startGame);
-  for (const r of f.opp) r.addEventListener('change', renderSetup);
-  for (const r of f.players) r.addEventListener('change', renderSetup);
+  for (const r of f.players) r.addEventListener('change', () => { drawOpponents(); renderSetup(); });
   $('#to-setup').addEventListener('click', () => screen('setup'));
   $('#table').addEventListener('click', onTableClick);
   $('#undo').addEventListener('click', undo);

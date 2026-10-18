@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Treasure / impulse-draw 
 
 High card velocity and a two-card drain combo out of a fair-looking shell. Tests artifact removal and enchantment removal.
 
+## At the table
+
+- **Plan:** Exiles cards to play them (Light Up the Stage, Jeska's Will, Ragavan, Outpost Siege) and Prosper, Tome-Bound makes a Treasure each time, so card flow turns into mana and a hand full of options.
+- **Wins by:** Sanguine Bond with Exquisite Blood drains the table from any life change. Bolas's Citadel chains with Sensei's Divining Top, and Mayhem Devil, Storm-Kiln Artist and Goldspan Dragon turn Treasures into damage.
+- **Watch out for:** Sanguine Bond plus Exquisite Blood: remove either enchantment on sight. Bolas's Citadel can empty its library into damage. Orcish Bowmasters and Dark Confidant punish extra draws. Demonic Tutor and Vampiric Tutor find the combo.
+- **Interaction:** Lightning Bolt, Terminate, Infernal Grasp, Bitter Triumph, Chaos Warp, Kolaghan's Command, Abrade, Bedevil, and sweepers Blasphemous Act and Toxic Deluge. No counterspells; Deflecting Swat redirects your removal.
+
 ## Strategy
 
 Exile cards to play them (Light Up the Stage, Outpost Siege, Valakut Exploration, Jeska's Will, Ragavan, Professional Face-Breaker) and Prosper makes a Treasure every time, so card flow becomes mana. Mayhem Devil, Storm-Kiln Artist, and Pitiless Plunderer turn Treasures into damage and more mana. Bolas's Citadel and Sensei's Top chain through the library. The compact combo is Sanguine Bond + Exquisite Blood, which drains the table from any life gain or life loss.

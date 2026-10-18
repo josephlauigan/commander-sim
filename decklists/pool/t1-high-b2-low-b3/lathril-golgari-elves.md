@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Go-wide
 
 A creature-heavy board that your sweepers need to answer at the right time, and a clean comparison point for Najeela's go-wide plan.
 
+## At the table
+
+- **Plan:** Drops mana elves on turns one to three (Llanowar Elves, Elvish Mystic, Fyndhorn Elves, Priest of Titania, Elvish Archdruid) and floods the board with elves. Lathril, Blade of the Elves makes Elf Warrior tokens when she connects.
+- **Wins by:** Taps ten Elves with Lathril to drain 10, or overruns the team with Elvish Promenade, Overwhelming Stampede and Elvish Champion. Ezuri, Renegade Leader and Shaman of the Pack add reach.
+- **Watch out for:** The board grows quickly, so a sweeper before turn five is its worst nightmare. Priest of Titania and Elvish Archdruid make large amounts of mana. Watch Lathril's menace attacks and a lethal overrun.
+- **Interaction:** Assassin's Trophy, Heartless Act, Infernal Grasp, Putrefy, Feed the Swarm, Beast Within, Krosan Grip, Casualties of War, Pernicious Deed and Toxic Deluge. Heroic Intervention protects its team from your wipes.
+
 ## Strategy
 
 Dump a turn-one-to-three stream of mana elves, flood the board with Elf Warrior tokens from Lathril's combat damage and Elvish Promenade, then either tap ten Elves for Lathril's drain or overrun with Ezuri, Overwhelming Stampede, or Shaman of the Pack. Priest of Titania and Elvish Archdruid make the board a mana engine. No Craterhoof and no infinite loops at this tier.

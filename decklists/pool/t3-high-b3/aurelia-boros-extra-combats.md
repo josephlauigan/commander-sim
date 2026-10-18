@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Aggro / extra combats.
 
 Multiple combats per turn blow past normal blocker math. Tests instant-speed removal on the commander and fog-style effects.
 
+## At the table
+
+- **Plan:** Plays Mother of Runes, Giver of Runes, Sol Ring and signets, then cheap attackers like Goblin Rabblemaster, Legion Warboss and Hero of Bladehold. Aurelia, the Warleader untaps the team and adds a second combat when she attacks.
+- **Wins by:** Attack triggers repeated every combat, pumped by Embercleave, Sword of Fire and Ice and Relentless Assault. Late, Helm of the Host copying Combat Celebrant gives endless combats.
+- **Watch out for:** Aurelia herself: she has flying, vigilance and haste, so answer her the turn she lands. Hellrider and Adeline, Resplendent Cathar swing for a lot once extra combats stack. Embercleave on a wide board ends games out of nowhere.
+- **Interaction:** Swords to Plowshares, Path to Exile, Lightning Helix, Council's Judgment, Chaos Warp, Boros Charm and Generous Gift answer your threats. Blasphemous Act sweeps. Mother of Runes, Giver of Runes, Deflecting Swat, Flawless Maneuver and Selfless Spirit protect its creatures.
+
 ## Strategy
 
 Aurelia gives a second combat every turn she attacks; every other extra-combat card stacks on top. Attack-trigger creatures (Hero of Bladehold, Adeline, Brimaz, Rabblemaster, Hellrider) pay off twice or three times per turn, and equipment like Sword of Fire and Ice and Embercleave hits on every combat. The late-game combo is Helm of the Host copying Combat Celebrant for unbounded combats.

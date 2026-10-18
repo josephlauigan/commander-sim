@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Grind / recursion value.
 
 Long games. Punishes decks that trade one-for-one and have no graveyard hate. Bojuka Bog and Deathrite also interact with Sephiroth's yard.
 
+## At the table
+
+- **Plan:** Develops mana (Birds of Paradise, Llanowar Elves, Sakura-Tribe Elder) and plays value creatures. Meren of Clan Nel Toth returns a creature from the graveyard each end step, and sacrifice outlets such as Ashnod's Altar and Viscera Seer feed her.
+- **Wins by:** Grinds with Ravenous Chupacabra, Shriekmaw, Nekrataal and Plaguecrafter over and over, then finishes with Gray Merchant of Asphodel, Grave Titan, Bloodgift Demon and Blood Artist drains.
+- **Watch out for:** Trading one-for-one loses to Meren, so exile the graveyard (Bojuka Bog and Deathrite Shaman use yours too) or kill Meren. Chupacabra and Shriekmaw return again and again to remove your best creature. Survival of the Fittest and Fauna Shaman find the right piece.
+- **Interaction:** Ravenous Chupacabra, Shriekmaw, Nekrataal, Plaguecrafter, Infernal Grasp, Putrefy, Assassin's Trophy, Bone Shards, Casualties of War, Beast Within, Pernicious Deed and Toxic Deluge. No counterspells.
+
 ## Strategy
 
 Every creature is a value ETB, every sacrifice is an experience counter, and Meren returns one to the battlefield each end step. Chupacabra, Shriekmaw, Fleshbag, Plaguecrafter, and Merciless Executioner re-buy removal every turn cycle; Eternal Witness re-buys spells; Gray Merchant drains; Archon of Cruelty is the top end. Survival of the Fittest and Birthing Pod turn surplus creatures into the right creature. No two-card infinite.

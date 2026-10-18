@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 0: Bracket 2 (unmodified precon)**. Axis: Aggro / 
 
 The Bracket 2 baseline: an unmodified preconstructed deck, the power level WotC uses to define Bracket 2.
 
+## At the table
+
+- **Plan:** Goes wide fast with Legion Warboss, Adeline, Resplendent Cathar, Hero of Bladehold and Lingering Souls. Zurgo Stormrender adds a tapped, attacking 1/1 Warrior each attack, and tokens drain or draw when they leave.
+- **Wins by:** Attacks with a wide board made bigger by Divine Visitation (Angel tokens), Kaya, Geist Hunter and Siege-Gang Commander. Myr Battlesphere and Sun Titan finish, and Viscera Seer and Skullclamp turn tokens into cards.
+- **Watch out for:** Hero of Bladehold and Adeline hit hard the turn after they land, so deal with them first. Divine Visitation makes every token a 4/4 flier. Keep a board wipe ready for a wide swing.
+- **Interaction:** Swords to Plowshares, Bitter Triumph, Abrade, Stroke of Midnight, Will of the Mardu, Hour of Reckoning and Eliminate the Competition. Selfless Spirit and Lightning Greaves protect its board.
+
 ## Decklist by type (100)
 
 **Commander (1).** Zurgo Stormrender

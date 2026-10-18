@@ -14,6 +14,13 @@ Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the l
 
 The most counterspells and spot removal in the mid-B3 pool. Tests whether combo decks can resolve their pieces and whether bombs survive.
 
+## At the table
+
+- **Plan:** Holds up counterspells and removal while building value with flicker creatures. Brago, King Eternal blinks your nonland permanents when he connects, and Conjurer's Closet, Soulherder and Eldrazi Displacer do it without combat. Rhystic Study taxes your spells.
+- **Wins by:** Reuses Mulldrifter, Palace Jailer, Reflector Mage and Skyclave Apparition, then closes with fliers: Baneslayer Angel, Lyra Dawnbringer, Resplendent Angel, Hero of Bladehold, Elspeth, Sun's Champion and Teferi, Hero of Dominaria.
+- **Watch out for:** Rhystic Study draws a lot unless you pay or kill it, and Cyclonic Rift (overloaded) can bounce your whole board. Cast your key spell into open blue mana only when you must, and bait with lesser spells. Supreme Verdict and Wrath of God clear the board before its fliers take over.
+- **Interaction:** Counterspell, Absorb, Cryptic Command, Mystic Confluence, Dovin's Veto, An Offer You Can't Refuse and Glen Elendra Archmage. Swords to Plowshares, Path to Exile, Council's Judgment, Oblivion Ring, Banishing Light, Detention Sphere, Cyclonic Rift and two wraths.
+
 ## Strategy
 
 Hold up counters, answer the biggest threat, and grind value from flicker. Brago blinks Mulldrifter, Palace Jailer, Reflector Mage, Skyclave Apparition, and Venser every time he connects; Conjurer's Closet, Soulherder, Deadeye Navigator, and Eldrazi Displacer do it without combat. Supreme Verdict and Wrath reset the board when needed. The deck wins slowly with fliers, Elspeth, and Teferi. No Peregrine Drake, so no infinite mana.

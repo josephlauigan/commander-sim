@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 0: Bracket 2 (unmodified precon)**. Axis: Enchantm
 
 The Bracket 2 baseline: an unmodified preconstructed deck, the power level WotC uses to define Bracket 2.
 
+## At the table
+
+- **Plan:** Ramps with Sol Ring, Arcane Signet, Farseek, Kodama's Reach and Rampant Growth, then lays down enchantments. Courser of Kruphix, Eidolon of Blossoms and Enchantress's Presence draw cards off every enchantment.
+- **Wins by:** Anikthea, Hand of Erebos attacks with menace and turns graveyard enchantments into 3/3 Zombie copies. Mirari's Wake and Starfield of Nyx pump the team, and Archon of Sun's Grace and Demon of Fate's Design add fliers.
+- **Watch out for:** Anikthea is the engine, so kill her before she attacks twice. Starfield of Nyx and Mirari's Wake can turn a slow board into a lethal one in a single turn. Its wipes hit your board, not its enchantments.
+- **Interaction:** Path to Exile, Cast Out, Grasp of Fate, Binding the Old Gods, The Eldest Reborn, Culling Ritual and Extinguish All Hope. No counterspells; enchantments stay out of reach of most of your removal.
+
 ## Decklist by type (100)
 
 **Commander (1).** Anikthea, Hand of Erebos

@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 0: Bracket 2 (unmodified precon)**. Axis: Go-wide 
 
 The Bracket 2 baseline: an unmodified preconstructed deck, the power level WotC uses to define Bracket 2.
 
+## At the table
+
+- **Plan:** Plays a steady stream of small Heroes, with Sol Ring, Arcane Signet, Fellwar Stone and three Talismans to help. Captain America, Team Leader gives each Hero that enters haste and a +1/+1 counter.
+- **Wins by:** Goes wide and pumps the team with Door of Destinies, Methods of the Mighty and Hero's Blade. Professor Hulk, Photon, Mighty Marvel and Thor, Asgard's Avenger connect to refuel the hand and mana.
+- **Watch out for:** Captain America grows every Hero that enters, so removing him early slows the whole deck. Austere Command and Dismantling Wave clear your board and artifacts. Methods of the Mighty kills a tapped creature, so be careful attacking.
+- **Interaction:** Swords to Plowshares, Destroy Evil, Rip Apart, Dismantling Wave, Austere Command and Methods of the Mighty, plus Arcane Denial as its lone counterspell.
+
 ## Decklist by type (100)
 
 **Commander (1).** Captain America, Team Leader

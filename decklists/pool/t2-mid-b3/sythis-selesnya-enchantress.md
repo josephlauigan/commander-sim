@@ -14,6 +14,13 @@ Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the l
 
 Can your decks win through an attack tax, and do they bring enchantment removal? This is the deck where Aura Shards should earn its slot.
 
+## At the table
+
+- **Plan:** Ramps with Utopia Sprawl, Wild Growth and Fertile Ground, then builds a pillowfort while Sythis, Harvest's Hand, Eidolon of Blossoms and Argothian Enchantress draw cards off enchantments.
+- **Wins by:** Wins slowly in the air and with Auras: Rancor, All That Glitters and Archangel of Tithes make a few creatures hit hard, with Spider Umbra and Snake Umbra protecting them. Taxes such as Ghostly Prison, Sphere of Safety, Norn's Annex and Silent Arbiter keep you from attacking back.
+- **Watch out for:** Attack taxes grow with each enchantment, so bring enchantment removal and go around the fort with fliers or spells. Silent Arbiter limits you to one attacker. Privileged Position and Sterling Grove give hexproof, so removal must come before they land.
+- **Interaction:** Swords to Plowshares, Path to Exile, Journey to Nowhere, Oblivion Ring, Banishing Light, Cast Out, Council's Judgment, Grasp of Fate, Song of the Dryads, Darksteel Mutation, Beast Within and Austere Command. Heroic Intervention and Swiftfoot Boots protect.
+
 ## Strategy
 
 Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Norn's Annex, Windborn Muse, Baird, Archangel of Tithes, Crawlspace, Silent Arbiter), draw a card off every enchantment cast, and win with Sigil of the Empty Throne angels, Starfield of Nyx animating the enchantments, or an Ancestral Mask on anything evasive. Removal is almost all enchantment-based, so it grows the engine.

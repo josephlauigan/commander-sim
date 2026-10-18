@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aggro-cheat with stax.
 
 Turn-three board explosion that also locks down commanders and nonbasic mana (Magus of the Moon hits every multicolor deck you own).
 
+## At the table
+
+- **Plan:** Fast mana (Mana Vault, Chrome Mox, Sol Ring) puts Winota, Joiner of Forces down turn two or three, with cheap non-Humans like Ornithopter, Memnite, Signal Pest and Goblin Guide to attack. Hatebears slow you down.
+- **Wins by:** Winota puts a Human such as Hero of Bladehold, Adeline, Resplendent Cathar or Drannith Magistrate onto the battlefield attacking, indestructible. Kiki-Jiki, Mirror Breaker with Restoration Angel, Felidar Guardian or Zealous Conscripts is the combo finish; Helm of the Host with Combat Celebrant is another.
+- **Watch out for:** A turn-three board explosion. Magus of the Moon turns off your nonbasic lands, Drannith Magistrate stops your commander, and Thalia, Guardian of Thraben taxes you. Kill Winota or the small attacker before combat.
+- **Interaction:** Swords to Plowshares, Path to Exile, Lightning Bolt, Council's Judgment, Chaos Warp, Abrade, Solitude, Pyroblast. Mother of Runes, Giver of Runes, Flawless Maneuver, Teferi's Protection and Deflecting Swat protect its board. No counterspells.
+
 ## Strategy
 
 Attack with cheap non-Humans (Ornithopter, Memnite, Signal Pest, Ragavan, goblin token makers) and Winota puts a Human from the top six onto the battlefield attacking and indestructible for each one. The Humans are hatebears and payoffs: Drannith Magistrate, both Thalias, Grand Abolisher, Magus of the Moon, Hero of Bladehold, Adeline. Kiki-Jiki with Restoration Angel, Felidar Guardian, or Zealous Conscripts is the infinite-combo finish, and Helm of the Host + Combat Celebrant is a second. Fast mana gets Winota down on turn two or three.
