@@ -188,3 +188,34 @@ fn obedience_extort_does_not_trigger_on_an_opponents_spell() {
     f(&mut g, ob, P1, sol).unwrap();
     assert_eq!(g.player(P1).life, l1);
 }
+
+// ======================================================== Damping Sphere
+use sim_core::engine::mana::total_mana;
+
+#[test]
+fn sphere_makes_two_mana_lands_produce_one() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Ancient Tomb", 2, false);
+    lands(&mut g, P1, "Plains", 1, false);
+    assert_eq!(total_mana(&g, P1, false), 5, "without the Sphere: 2 + 2 + 1");
+    perm(&mut g, P0, "Damping Sphere");
+    assert_eq!(total_mana(&g, P1, false), 3, "with it, every land makes one mana");
+    perm(&mut g, P0, "Damping Sphere");
+    assert_eq!(total_mana(&g, P1, false), 3, "a second Sphere changes nothing more");
+}
+
+#[test]
+fn sphere_taxes_each_spell_by_the_spells_already_cast_this_turn() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Damping Sphere");
+    let sol = card(&g, "Sol Ring");
+    assert_eq!(cost_of(&g, P1, sol).0, 1, "the first spell is not taxed");
+    let st = g.turn_stamp();
+    g.player_mut(P1).turn_casts = Some((st, vec![card(&g, "Mana Vault")]));
+    assert_eq!(cost_of(&g, P1, sol).0, 2, "one other spell: {{1}} more");
+    g.player_mut(P1).turn_casts = Some((st, vec![card(&g, "Mana Vault"), card(&g, "Lightning Bolt")]));
+    assert_eq!(cost_of(&g, P1, sol).0, 3, "two other spells: {{2}} more");
+    assert_eq!(cost_of(&g, P0, sol).0, 1, "counted per player");
+    g.player_mut(P0).turn_casts = Some((st, vec![card(&g, "Mana Vault")]));
+    assert_eq!(cost_of(&g, P0, sol).0, 2, "its own controller pays too");
+}

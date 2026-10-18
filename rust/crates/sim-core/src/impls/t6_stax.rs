@@ -15,7 +15,9 @@ use crate::flow::Res;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::trigger_window;
+use crate::engine::cast::casts_this_turn;
 use crate::hooks::{Event, Registry, Src};
+use crate::tag::Tag;
 use crate::ids::PermId;
 use super::t5::is_artifact;
 use crate::ids::{CardId, PlayerId};
@@ -208,6 +210,40 @@ fn obedience_extort(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res
     Ok(())
 }
 
+
+// ================================================================== Damping Sphere
+/// is `src` the Damping Sphere that counts: with two out, the land rule applies once (it is one replacement,
+/// "produces {C} instead", not two reductions), so only the earliest one acts
+fn first_sphere(g: &Game, src: Src) -> bool {
+    !g.players.iter().any(|q| {
+        q.perms.iter().any(|&m| {
+            let x = g.perm(m);
+            m.0 < src.0 && x.on_bf && !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Damping Sphere")
+        })
+    })
+}
+
+/// **Damping Sphere** ({2} artifact): a land tapped for two or more mana produces {C} instead of any other type and
+/// amount; each spell a player casts costs {1} more for each other spell that player has cast this turn.
+/// This is the land half: a land that taps for two or more makes one mana (the `land_mana` slot, as Blood Moon's cut
+/// in `t6_godo.rs`; it sees only the land's own amount, so another static adding mana to the same land is not
+/// cut). The colour is not changed: a two-mana land of another colour (a bounce land) should make {C}, and card code
+/// has no colour override for a land. Partial (engine-needs-stax.md).
+fn sphere_land(g: &Game, src: Src, p: PlayerId, l: crate::ids::LandId) -> i32 {
+    if !g.perm(src).on_bf || !first_sphere(g, src) {
+        return 0;
+    }
+    let base = crate::cardcode::dyn_mana_land(g, p, l)
+        .map_or_else(|| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1), |n| n as i32);
+    if base >= 2 { 1 - base } else { 0 }
+}
+
+/// Damping Sphere's cost half (exact): each spell costs {1} more for each other spell its caster has cast this turn,
+/// for every player, the Sphere's controller included; lands are not spells
+fn sphere_cost(g: &Game, _src: Src, caster: PlayerId, c: CardId) -> i32 {
+    if g.db.get(c).land { 0 } else { casts_this_turn(g, caster) }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
@@ -227,5 +263,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     *c = c.at_once(Event::TokensEnter);
     *c = c.at_once(Event::Etb);
     c.cast = Some(obedience_extort);
+    let c = r.card(db, "Damping Sphere")?;
+    c.land_mana = Some(sphere_land);
+    c.cost = Some(sphere_cost);
     Ok(())
 }

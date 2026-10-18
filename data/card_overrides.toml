@@ -8655,3 +8655,7 @@ note = "resolving sets the turn flag t6_stax::grace_active / grace_floor (can't 
 ["Blind Obedience"]
 status = "Partial"
 note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures are tapped right after they enter (etb and tokens_enter hooks) instead of entering tapped: no replacement effect in the engine (rust/agents/engine-needs-stax.md); Treasure/Food/Clue tokens are counters here and are not tapped"
+
+["Damping Sphere"]
+status = "Partial"
+note = "the {1}-more tax per other spell the caster cast this turn is exact; lands that tap for two or more make one mana, but keep their colour instead of making {C} (no land colour override in card code; rust/agents/engine-needs-stax.md)"
