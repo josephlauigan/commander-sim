@@ -276,11 +276,7 @@ pub fn hold_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
         return 0.0;
     }
     let s = brain::Situation::new(g, p);
-    let mut hv = brain::hold_value(g, p, &s).1;
-    if let Some(u) = crate::impls::t6_plans::hold_up(g, p) {
-        hv += u; // a Tier 6 plan slot adjusts the shared hold value here too (negative: develop, do not hold)
-    }
-    w * hv.max(0.0)
+    w * brain::hold_value(g, p, &s).1.max(0.0)
 }
 
 /// the n-th option labelled `label`

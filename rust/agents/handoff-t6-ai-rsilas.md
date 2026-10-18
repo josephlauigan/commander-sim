@@ -13,3 +13,7 @@ Trace finding: lookahead picks "stop (hold mana)" over Lotus Petal / Rograkh (ho
 in ai/search.rs hold_bonus (adds t6 hold_up; t6-only since hold_up is None outside t6). hold_up now -50 when developing. Next: re-measure.
 ## Step 3: run2 (hold_up develop-first): 13.8% / 17.3% wins, mull 30%, median win round 6 (was 7). Added: lands==0 keep only with 3 fast+tutor,
 Squelcher cast before Oracle line + go_now true with Squelcher out. Next: run3, tests (tests/ai_t6_rograkh_silas.rs written, not yet run), t3 lock, report.
+## Step 4: run3 14.8%/17.3% (mull 29%). Wins below baseline 19.9/18.4: running A/B via env RSV (letters k keep, p prio, w wish, h hold_up; temp code, REMOVE
+before final commit) variants "", k, kw, kwp, then full -> /tmp/claude-1000/ab_*.txt. Then tests, lock, report.
+## Step 5: A/B result: k alone 25.0/21.4 (good), +w same, +p (prio) 15.3/15.3 (bad). Bisecting prio by flags a(commander) m(amber) i(rituals) c(static) -> ab_kwp?.txt
+## Step 6: per lead: kept keep+wish only; prio/hold_up/go_now None; search.rs hook reverted; running final script /tmp/claude-1000/fin.sh (tests, t6 run, t3 lock, build, full tests)
