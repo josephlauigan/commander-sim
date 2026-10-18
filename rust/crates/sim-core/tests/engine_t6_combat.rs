@@ -61,3 +61,21 @@ fn end_the_combat_phase_skips_damage_and_removes_attackers_but_later_combats_hap
     combat(&mut g, P0).unwrap();
     assert!(!g.end_combat);
 }
+
+#[test]
+fn karlach_with_isshin_gives_at_most_two_extra_combats() {
+    // Karlach's extra combat is "if it's the first combat phase of the turn"; Isshin doubles it: 3 combats at most.
+    // Its compiled ability had no first-combat condition and, uncapped, chained to 200 combats (fixed 2026-10-18).
+    let mut g = table(&["isshin-mardu-attack-triggers", "lathril-golgari-elves", "tatyova-simic-landfall", "teysa-orzhov-aristocrats"]);
+    perm(&mut g, P0, "Isshin, Two Heavens as One");
+    perm(&mut g, P0, "Karlach, Fury of Avernus");
+    for _ in 0..3 {
+        token(&mut g, P0, 3);
+    }
+    for q in 1..4 {
+        g.player_mut(PlayerId(q)).life = 200;
+    }
+    combat(&mut g, P0).unwrap();
+    let n = g.player(P0).combat_no;
+    assert!(n >= 2 && n <= 3, "Karlach + Isshin: 2 or 3 combats, got {n}");
+}

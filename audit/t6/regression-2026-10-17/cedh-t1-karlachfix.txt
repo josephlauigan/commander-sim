@@ -1,0 +1,29 @@
+3,000 games (calibration: within, 1,500 per list per tier, profiles conservative and loose), lookahead AI, 8 worker threads: about 19 minutes
+
+=== Within-tier balance [conservative, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  2m05s elapsed, ~18m45s left
+  progress  20.0%  4m08s elapsed, ~16m35s left
+  progress  30.0%  6m04s elapsed, ~14m11s left
+  progress  40.0%  8m06s elapsed, ~12m09s left
+  progress  50.0%  10m19s elapsed, ~10m19s left
+  Tier 1 (High B2 / Low B3): avg game 12.2 rounds, timeouts 3.5%
+    Isshin                        22.7% (20.4-25.1)  [0.4 pts from round-cap wins]
+    Lathril                       20.7% (18.5-23.1)  [0.4 pts from round-cap wins]
+    Light-Paws                    37.3% (34.6-40.1)  HIGH  [1.6 pts from round-cap wins]
+    Tatyova                       20.7% (18.5-23.1)  [1.3 pts from round-cap wins]
+    Teysa Karlov                  23.6% (21.3-26.1)  [0.7 pts from round-cap wins]
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  60.0%  12m24s elapsed, ~8m16s left
+  progress  70.0%  14m28s elapsed, ~6m12s left
+  progress  80.0%  16m28s elapsed, ~4m07s left
+  progress  90.0%  18m25s elapsed, ~2m02s left
+  progress 100.0%  20m27s elapsed, ~0m00s left
+  Tier 1 (High B2 / Low B3): avg game 12.3 rounds, timeouts 2.9%
+    Isshin                        26.9% (24.5-29.5)  [0.2 pts from round-cap wins]
+    Lathril                       21.1% (18.9-23.5)  [0.5 pts from round-cap wins]
+    Light-Paws                    37.7% (35.0-40.5)  HIGH  [1.7 pts from round-cap wins]
+    Tatyova                       17.4% (15.4-19.7)  [0.4 pts from round-cap wins]
+    Teysa Karlov                  21.8% (19.6-24.3)  [0.8 pts from round-cap wins]
+
+(1228s total)
