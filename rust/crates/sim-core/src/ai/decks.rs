@@ -35,7 +35,7 @@ pub fn loose(g: &Game, e: PermId, p: PlayerId) -> bool {
 pub fn bomb_on_bf(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);
-        !x.phased && x.cd.is_some_and(|c| g.db.get(c).bomb >= 6)
+        !x.phased && x.cd.is_some_and(|c| super::seph::sbomb(g, c) >= super::seph::BOMB_BOARD)
     })
 }
 
@@ -722,6 +722,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
         "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
         "kraum" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
+        "sephfs" => crate::impls::sephfs::tutor_pick(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {
                 // Lightning Greaves first (the engine is removed 1.8 times a game), then the rest

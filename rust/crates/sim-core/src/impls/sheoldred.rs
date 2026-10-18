@@ -2311,6 +2311,10 @@ fn seph_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
             g.player_mut(p).stat("sf_first_flip_round", round);
         }
         g.player_mut(p).stat("sf_flips", 1);
+        if g.player(p).key == "sephfs" {
+            let t = g.player(p).turns;
+            g.player_mut(p).milestone.entry("sephfs").or_insert(t); // the plan report: the turn he first flipped
+        }
         g.player_mut(p).emblems.push("seph");
         g.selfpt = true;
         crate::glog!(

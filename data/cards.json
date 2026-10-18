@@ -62974,6 +62974,7 @@
    "generic": 1,
    "pips": "W",
    "tags": {
+    "prot": "blink",
     "fb": "3U"
    },
    "pow": 0,
@@ -63006,7 +63007,7 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

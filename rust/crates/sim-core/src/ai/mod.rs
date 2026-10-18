@@ -343,9 +343,9 @@ pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Re
     if crate::human::is_human(g, p) {
         return crate::human::choices::fill(g, p, kind);
     }
-    let mut bombs: Vec<CardId> =
-        g.player(p).library.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 5).collect();
-    let val: Vec<f64> = bombs.iter().map(|&c| -seph_bval(g, p, c)).collect();
+    let need = seph::fill_pieces(g, p);
+    let mut bombs: Vec<CardId> = seph::fill_targets(g, p);
+    let val: Vec<f64> = bombs.iter().map(|&c| if need.contains(&c) { -100.0 } else { -seph_bval(g, p, c) }).collect();
     let mut keyed: Vec<(f64, CardId)> = val.into_iter().zip(bombs.iter().copied()).collect();
     keyed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal)); // stable, as Python's sorted
     bombs = keyed.into_iter().map(|x| x.1).collect();

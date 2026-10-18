@@ -1483,6 +1483,11 @@ tags = "prot=blink ephemerate"
 status = "Full"
 note = "instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect; rebound: cast again free at your next upkeep on the best enter-effect creature"
 
+["Momentary Blink"]
+tags = "prot=blink fb=3U"
+status = "Full"
+note = "instant {1}{W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect; flashback {3}{U}"
+
 ["Eris, Roar of the Storm"]
 status = "Full"
 note = "costs {2} less per mana value among your graveyard instants/sorceries; flying, prowess; second spell each turn makes a 4/4 flying prowess Dragon (two with Veyran)"
