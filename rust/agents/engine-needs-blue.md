@@ -19,3 +19,9 @@ Needs: a mana source "sacrifice a land: add {B}" granted to every land of a play
 Where it would hook: `engine/mana.rs` (`Source`, `total_mana` / the unit list, `pay` which taps or sacrifices the unit's source), reading `t6_blue::rain_of_filth_active(g, p)`.
 Card side done: resolving sets the caster's turn flag (`rain_of_filth_active`); with no usable mana source the AI has no reason to cast it (no tags, no priority).
 Test to add once the engine has it: with the flag, a player with three lands and a {B}{B}{B} spell sacrifices all three lands to cast it, from tapped or untapped lands; next turn the lands only tap.
+
+## Exhibition Tidecaller
+Needs: the real amount of mana spent to cast a spell, recorded when it is paid (after cost reductions, with alternative costs and X), readable by cast triggers ("if five or more mana was spent to cast that spell"). Also the right place for Vexing Bauble's "no mana was spent" (`engine-needs-godo.md`).
+Where it would hook: `engine/cast.rs` `cast_card` / the payment functions (`mana::pay`), stored on `g.cur_cast`'s `Ctx` (e.g. `Ctx::mana_spent`).
+Card side done: `impls/t6_blue.rs` Opus on the cast hook: a cast instant or sorcery makes the best opposing player mill three, or ten when the spell's mana value plus X is 5 or more (0 when an alternative cost was paid: `Ctx::paid_otherwise`); the compiled mill-3 trigger is removed (`dsl = []`).
+Test to add once the engine has it: a mana-value-6 sorcery cast for {3} (cost reduction) mills three, not ten; a mana-value-3 spell with X-style extra payment reaching five mills ten.

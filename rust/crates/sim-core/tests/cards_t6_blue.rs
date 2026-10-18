@@ -170,3 +170,36 @@ fn sevinnes_reclamation_can_return_a_land() {
     cast_free(&mut g, P0, "Sevinne's Reclamation");
     assert_eq!(g.player(P0).lands.len(), before + 1);
 }
+// ======================================================== Exhibition Tidecaller
+fn lib_len(g: &Game, p: PlayerId) -> usize {
+    g.player(p).library.len()
+}
+
+#[test]
+fn tidecaller_mills_three_for_a_cheap_spell() {
+    let mut g = game();
+    perm(&mut g, P0, "Exhibition Tidecaller");
+    let before = lib_len(&g, P1);
+    cast_free(&mut g, P0, "Opt"); // mana value 1
+    assert_eq!(before - lib_len(&g, P1), 3, "target player mills three");
+}
+
+#[test]
+fn tidecaller_mills_ten_when_five_mana_was_spent() {
+    let mut g = game();
+    perm(&mut g, P0, "Exhibition Tidecaller");
+    let before = lib_len(&g, P1);
+    cast_free(&mut g, P0, "Dark Petition"); // mana value 5
+    assert_eq!(before - lib_len(&g, P1), 10);
+}
+
+#[test]
+fn tidecaller_ignores_creature_spells_and_opposing_spells() {
+    let mut g = game();
+    perm(&mut g, P0, "Exhibition Tidecaller");
+    let (a, b) = (lib_len(&g, P0), lib_len(&g, P1));
+    cast_free(&mut g, P0, "Drift of Phantasms");
+    cast_free(&mut g, P1, "Opt");
+    assert_eq!(lib_len(&g, P0), a);
+    assert!(b - lib_len(&g, P1) < 3, "only Opt's own scry/draw touched the library");
+}

@@ -8692,3 +8692,8 @@ note = "resolving sets the caster's one-turn flag (t6_blue::rain_of_filth_active
 ["Sevinne's Reclamation"]
 status = "Full"
 note = "returns the best permanent card with mana value 3 or less from the graveyard (a land enters like a played one, without the land drop); cast with flashback {4}{W} it is copied (the AI picks a second target) and exiled (t6_blue.rs, tested)"
+
+["Exhibition Tidecaller"]
+dsl = []
+status = "Partial"
+note = "Opus on the cast hook: whenever you cast an instant or sorcery the best opposing player mills three, or ten when the spell's mana value plus X is 5 or more; missing: the engine records no real mana-spent total, so a cost reduction (or a cheaper alternative cost other than the flagged ones) is not seen (engine need)"

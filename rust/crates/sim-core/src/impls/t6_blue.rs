@@ -8,12 +8,14 @@
 //! - Demonic Counsel: a Demon search, or any card with delirium (four card types in the graveyard).
 //! - Rain of Filth: sets the one-turn flag (`rain_of_filth_active`); the sacrifice-a-land mana source is an engine need.
 //! - Sevinne's Reclamation: the best permanent card of mana value 3 or less returns; from the graveyard it is copied.
+//! - Exhibition Tidecaller: Opus on the cast hook; the old compiled mill-3 trigger is removed (dsl = []).
 
 use crate::cards::CardDb;
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
-use crate::engine::zones::{Enter, agent_for, agent_take, draw, enter, max_by, searchable};
+use crate::engine::stack::trigger_window;
+use crate::engine::zones::{Enter, agent_for, agent_take, draw, enter, max_by, mill, searchable};
 use crate::flow::Res;
-use crate::hooks::Registry;
+use crate::hooks::{Registry, Src};
 use crate::ids::{CardId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
@@ -189,8 +191,46 @@ fn reclamation_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<
 }
 
 
+// ================================================================== Exhibition Tidecaller
+/// the mana spent on the spell being cast (c): its mana value plus X, or nothing when an alternative cost was paid.
+/// The engine records no real payment total, so cost reductions are not seen (see engine-needs-blue.md).
+fn mana_spent_on(g: &Game, c: CardId) -> i32 {
+    match &g.cur_cast {
+        Some((cc, ctx, _)) if *cc == c => {
+            if ctx.paid_otherwise {
+                0
+            } else {
+                g.db.get(c).cmc as i32 + ctx.x.max(0)
+            }
+        }
+        _ => g.db.get(c).cmc as i32,
+    }
+}
+
+/// Exhibition Tidecaller (Opus): whenever you cast an instant or sorcery spell, target player mills three cards; if
+/// five or more mana was spent to cast it, that player mills ten instead. The AI aims it at the opposing player it
+/// most wants to hurt (the DSL's "target player" rule: highest threat, not hexproof).
+fn tidecaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    let d = g.db.get(c);
+    if caster != o || !(d.instant || d.sorcery) {
+        return Ok(());
+    }
+    let n = if mana_spent_on(g, c) >= 5 { 10 } else { 3 };
+    if !trigger_window(g, o, Some(src), &format!("mill {n}"), Some(2.0))? {
+        return Ok(());
+    }
+    let Some(&t) = crate::dsl::players(g, o, Some("target_player"), &crate::dsl::DslCtx::default()).first() else {
+        return Ok(());
+    };
+    crate::glog!(g, "    Exhibition Tidecaller: {} mills {}", g.player(t).name, n);
+    mill(g, t, n)
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Exhibition Tidecaller")?.cast = Some(tidecaller_cast);
     r.card(db, "Sevinne's Reclamation")?.resolve = Some(reclamation_resolve);
     r.card(db, "Rain of Filth")?.resolve = Some(rain_resolve);
     r.card(db, "Demonic Counsel")?.resolve = Some(counsel_resolve);

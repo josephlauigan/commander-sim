@@ -34028,22 +34028,7 @@
    "pow": 0,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "mill",
-       "n": 3,
-       "who": "target_player"
-      }
-     ],
-     "event": "cast",
-     "who": "you",
-     "spell": "instant_or_sorcery",
-     "nth": null
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "mill",
@@ -34057,10 +34042,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Opus — Whenever you cast an instant or sorcery spell, target player mills three cards. If five or more mana was spent to cast that spell, that player mills ten cards instead.   [partly: if five or more mana was spent to cast that spell, that player mills ten cards instead]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
