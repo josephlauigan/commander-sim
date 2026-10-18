@@ -7,10 +7,11 @@
 //! - Timetwister: every player's hand and graveyard shuffled into their library, then seven cards drawn.
 //! - Demonic Counsel: a Demon search, or any card with delirium (four card types in the graveyard).
 //! - Rain of Filth: sets the one-turn flag (`rain_of_filth_active`); the sacrifice-a-land mana source is an engine need.
+//! - Sevinne's Reclamation: the best permanent card of mana value 3 or less returns; from the graveyard it is copied.
 
 use crate::cards::CardDb;
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
-use crate::engine::zones::{agent_for, agent_take, draw, max_by, searchable};
+use crate::engine::zones::{Enter, agent_for, agent_take, draw, enter, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{CardId, PlayerId};
@@ -145,8 +146,52 @@ fn rain_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 }
 
 
+// ================================================================== Sevinne's Reclamation
+/// the permanent card with mana value 3 or less in p's graveyard the AI returns: creatures by power, then other
+/// permanents by mana value; a land only when nothing else is there
+fn reclaim_pick(g: &Game, p: PlayerId) -> Option<CardId> {
+    let cs: Vec<CardId> =
+        g.player(p).gy.iter().copied().filter(|&c| (g.db.get(c).perm || g.db.get(c).land) && g.db.get(c).cmc <= 3).collect();
+    let key = |c: CardId| {
+        let d = g.db.get(c);
+        (!d.land) as i32 as f64 * 10000.0 + d.creature as i32 as f64 * 1000.0 + d.pow as f64 * 10.0 + d.cmc as f64
+    };
+    max_by(&cs, key)
+}
+
+/// put the chosen permanent card from p's graveyard onto the battlefield (a land enters like a played one, without
+/// using the land drop)
+fn reclaim_return(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(x) = reclaim_pick(g, p) else { return Ok(false) };
+    let gy = &mut g.player_mut(p).gy;
+    let i = gy.iter().position(|&c| c == x).unwrap();
+    gy.remove(i);
+    if g.db.get(x).land {
+        let tapped = crate::engine::turn::land_enters_tapped(g, p, x);
+        let l = g.add_land(p, x, tapped);
+        crate::cardcode::land_etb(g, p, l)?;
+        crate::engine::zones::landfall(g, p)?;
+    } else {
+        enter(g, p, x, Enter::default())?;
+    }
+    crate::glog!(g, "    Sevinne's Reclamation returns {}", g.db.get(x).name);
+    Ok(true)
+}
+
+/// Sevinne's Reclamation: return target permanent card with mana value 3 or less from your graveyard to the
+/// battlefield; cast from a graveyard (flashback), the AI copies it and the copy returns a second card
+fn reclamation_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    reclaim_return(g, p)?;
+    if ctx.from_gy {
+        reclaim_return(g, p)?;
+    }
+    Ok("gy")
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Sevinne's Reclamation")?.resolve = Some(reclamation_resolve);
     r.card(db, "Rain of Filth")?.resolve = Some(rain_resolve);
     r.card(db, "Demonic Counsel")?.resolve = Some(counsel_resolve);
     r.card(db, "Timetwister")?.resolve = Some(timetwister_resolve);

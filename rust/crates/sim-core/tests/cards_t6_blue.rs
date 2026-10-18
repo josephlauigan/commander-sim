@@ -131,3 +131,42 @@ fn rain_of_filth_sets_the_turn_flag_for_the_caster() {
     assert!(!t6::rain_of_filth_active(&g, P1));
     assert!(in_gy(&g, P0, "Rain of Filth"));
 }
+
+// ======================================================== Sevinne's Reclamation
+fn on_bf(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == name)
+}
+
+#[test]
+fn sevinnes_reclamation_returns_a_cheap_permanent() {
+    let mut g = game();
+    put_gy(&mut g, P0, "Sol Ring");
+    put_gy(&mut g, P0, "Grave Titan"); // mana value 6: not allowed
+    put_gy(&mut g, P0, "Opt");
+    cast_free(&mut g, P0, "Sevinne's Reclamation");
+    assert!(on_bf(&g, P0, "Sol Ring"));
+    assert!(!on_bf(&g, P0, "Grave Titan"));
+    assert!(in_gy(&g, P0, "Grave Titan") && in_gy(&g, P0, "Opt"));
+    assert!(in_gy(&g, P0, "Sevinne's Reclamation"), "hard-cast it goes to the graveyard (flashback later)");
+}
+
+#[test]
+fn sevinnes_reclamation_flashback_is_copied_and_exiled() {
+    let mut g = game();
+    put_gy(&mut g, P0, "Sol Ring");
+    put_gy(&mut g, P0, "Fellwar Stone");
+    let rec = put_gy(&mut g, P0, "Sevinne's Reclamation");
+    cast::cast_card(&mut g, P0, rec, "gy", Ctx::default()).unwrap();
+    assert!(on_bf(&g, P0, "Sol Ring") && on_bf(&g, P0, "Fellwar Stone"), "the copy returns a second card");
+    assert!(g.player(P0).exile.contains(&rec), "flashback exiles it");
+    assert!(!g.player(P0).gy.contains(&rec));
+}
+
+#[test]
+fn sevinnes_reclamation_can_return_a_land() {
+    let mut g = game();
+    let before = g.player(P0).lands.len();
+    put_gy(&mut g, P0, "Island");
+    cast_free(&mut g, P0, "Sevinne's Reclamation");
+    assert_eq!(g.player(P0).lands.len(), before + 1);
+}

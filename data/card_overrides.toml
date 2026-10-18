@@ -8688,3 +8688,7 @@ note = "searches for the Demon with the most worth, or any card (the deck's tuto
 ["Rain of Filth"]
 status = "Partial"
 note = "resolving sets the caster's one-turn flag (t6_blue::rain_of_filth_active); missing: the lands' 'Sacrifice this land: Add {B}' mana ability (engine need: a sacrifice-a-land mana source), so the AI never casts it"
+
+["Sevinne's Reclamation"]
+status = "Full"
+note = "returns the best permanent card with mana value 3 or less from the graveyard (a land enters like a played one, without the land drop); cast with flashback {4}{W} it is copied (the AI picks a second target) and exiled (t6_blue.rs, tested)"
