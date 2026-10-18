@@ -1636,3 +1636,20 @@ fn sauron_tutor(g: &Game, p: PlayerId, first: &dyn Fn(&[&str]) -> Option<CardId>
     line.extend(["The Ozolith", "Inexorable Tide", "Whispersilk Cloak", "Exsanguinate", "Not of This World"]);
     first(&line)
 }
+
+/// Force of Will pitches the blue card Sauron needs least: the engines and the Army's helpers stay (a creature that
+/// grows or protects the Army, the wheel), then the other counters; draw spells and the like go first.
+pub fn sauron_pitch_keep(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    let d = g.db.get(c);
+    let t = &d.tags;
+    if t.has(Tag::Archivist) {
+        return if has(g, p, Tag::Bowmasters) { 120.0 } else { 80.0 };
+    }
+    if d.creature {
+        return 100.0; // Talrand, Iron Man, Sheoldred, Sephiroth, Vision: bodies the Army deck cannot spare
+    }
+    if t.has(Tag::Ctr) {
+        return 40.0;
+    }
+    0.0
+}

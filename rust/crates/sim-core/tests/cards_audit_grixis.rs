@@ -78,3 +78,15 @@ fn sauron_does_not_sweep_away_its_own_army() {
     let (_, ml2, _) = decks::wipe_eval(&g, P0, "nib");
     assert!(ml2 < ml, "with The Ozolith out the counters survive");
 }
+
+#[test]
+fn sauron_force_of_will_pitches_a_draw_spell_not_the_engine_creature() {
+    let mut g = table(&["sauron", "veyran"]);
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    let cs = hand(&mut g, P0, &["Force of Will", "Talrand, Sky Summoner", "Fact or Fiction", "Jace's Archivist"]);
+    assert!(sim_core::engine::stack::pay_counter(&mut g, P0, cs[0], None).unwrap());
+    let ex = &g.player(P0).exile;
+    assert_eq!(ex.len(), 1);
+    assert_eq!(&*g.db.get(ex[0]).name, "Fact or Fiction");
+}

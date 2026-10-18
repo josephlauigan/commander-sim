@@ -652,7 +652,12 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     }
     let pitch = |g: &mut Game, blues: Vec<CardId>| -> Res {
         // the least useful blue card (a person picks: play/cards.pick_blue)
-        let mut x = crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
+        let sauron = g.player(q).key == "sauron";
+        let mut x = crate::engine::zones::min_by(&blues, |c| {
+            let w = crate::engine::tutors::card_worth(g, q, c, false);
+            if sauron { w + crate::ai::decks::sauron_pitch_keep(g, q, c) } else { w }
+        })
+        .unwrap();
         if crate::human::is_human(g, q) {
             let what = g.db.get(ctr).name.to_string();
             x = crate::human::cards::pick_blue(g, q, &blues, &what)?;
