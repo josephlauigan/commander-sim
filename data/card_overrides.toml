@@ -8631,3 +8631,7 @@ note = "the extra turn and the loss at its end step need engine extra turns; the
 ["Last Chance"]
 status = "Partial"
 note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md, with Final Fortune)"
+
+["Disruptor Flute"]
+status = "Full"
+note = "flash; the AI names the card that hurts opponents most as it enters (ai::flute_pick); spells with that name cost {3} more for every player (mana::cost_of) and its activated abilities are off except mana abilities (values::stopped)"
