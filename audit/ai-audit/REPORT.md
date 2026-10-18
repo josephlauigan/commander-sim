@@ -22,7 +22,7 @@ profile, so its noise is about ±1.4 points per tier.
 | 3 | Kefka | T3 | 26.7 | 27.3 | +0.6 |
 | 4 | Cloud | T1 / T2 / T3 | 29.6 / 26.3 / 20.4 | 28.9 / 23.8 / 21.4 | -0.7 / -2.5 / +1.0 |
 | 4 | Veyran | T1 / T2 / T3 | 25.8 / 28.6 / 24.5 | 29.5 / 32.6 / 27.7 | **+3.7 / +4.0 / +3.2** |
-| 4 | Titania | T1 / T2 / T3 | 19.1 / 27.6 / 25.5 | TBD (runs tonight) | TBD |
+| 4 | Titania | T1 / T2 / T3 | 19.1 / 27.6 / 25.5 | 17.5 / 25.9 / 25.5 | -1.6 / -1.7 / 0.0 |
 
 **Reading it:**
 - **Veyran is the one real mover: +3 to +4 points at every tier**, beyond noise. Triple Triad is finally cast, Greaves comes down before Veyran, his tutors and Recruiter pick by state, and his engine creatures are valued. At T3 he is now level with Kefka (27.7 vs 27.3): **the band 3 / band 4 gap is gone** (JD to decide on rebalancing).
@@ -92,4 +92,4 @@ not affect pool decks (they already used the full card).
 - **Cloud at T2 (-2.5):** on the edge of noise; the agent's own small check also leaned slightly negative. Suspects:
   the new turn-2 search order (Feast and Famine no longer first unless the hand is 7+) and the Austere Command mode
   rule. A paired run of this branch against main (Cloud vs T2, 4,000 games per profile) would settle it.
-- **Titania:** measured tonight; the table above gets its number in a follow-up.
+- **Titania:** within noise (-1.1 on average); its before was measured with Penumbra Spider, the after with Fblthp, so the card swap and the AI fixes are mixed.

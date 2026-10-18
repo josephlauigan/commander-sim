@@ -18,3 +18,5 @@
 16:17 done veyran exit 0
 16:17 start titania
 16:17 stopped before titania (JD: run Titania overnight, PR with Titania TBD)
+16:17 start titania (the stop missed this sim: it kept running)
+17:08 done titania exit 0
