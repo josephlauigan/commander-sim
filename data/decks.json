@@ -119,7 +119,8 @@
    "ident": "W",
    "tiers": [
     "t1",
-    "t2"
+    "t2",
+    "t3"
    ],
    "cards": [
     "Adelbert Steiner",
@@ -342,9 +343,7 @@
    "commander": "Kefka, Court Mage // Kefka, Ruler of Ruin",
    "ident": "UBR",
    "tiers": [
-    "t3",
-    "t4",
-    "t5"
+    "t3"
    ],
    "cards": [
     "Alpharael, Dreaming Acolyte",
@@ -568,8 +567,7 @@
    "ident": "UBR",
    "tiers": [
     "t3",
-    "t4",
-    "t5"
+    "t4"
    ],
    "cards": [
     "Aggravated Assault",
@@ -680,6 +678,7 @@
    "commander": "Atraxa, Grand Unifier",
    "ident": "WUBG",
    "tiers": [
+    "t3",
     "t4"
    ],
    "cards": [
@@ -791,7 +790,6 @@
    "commander": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
    "ident": "B",
    "tiers": [
-    "t4",
     "t5"
    ],
    "cards": [
@@ -904,8 +902,7 @@
    "ident": "B",
    "tiers": [
     "t3",
-    "t4",
-    "t5"
+    "t4"
    ],
    "cards": [
     "Accursed Marauder",
@@ -1016,9 +1013,9 @@
    "commander": "Titania, Protector of Argoth",
    "ident": "G",
    "tiers": [
+    "t1",
     "t2",
-    "t3",
-    "t4"
+    "t3"
    ],
    "cards": [
     "Annoyed Altisaur",
@@ -1131,8 +1128,7 @@
    "tiers": [
     "t1",
     "t2",
-    "t3",
-    "t4"
+    "t3"
    ],
    "cards": [
     "Abrade",
