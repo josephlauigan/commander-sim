@@ -8,3 +8,6 @@ Started 2026-10-18. Worktree .claude/worktrees/t6-ai-rsilas, branch t6-ai-rsilas
 ## Step 1 (done, uncommitted->commit): first version of plan file (keep, prio, wish). Findings: Rograkh was cast on turn 5 (generic commander
 cmd_turn=2, Silas first at 62%); mulligans: shared 2-5 lands rule vs 23 lands/99; Floodcaller/Wishclaw wasted mana with Oracle+Consultation in hand;
 Ad line needs 8 mana (ad_ready), rituals never used. Next: measure (t6 300 games jobs 3), go_now, tests, t3 lock.
+## Step 2: run1 (keep+prio+wish only): 14-16% wins, mull 35.7% (keep too strict -> loosened: no action card ok if 2+ fast), tries 0.26-0.29.
+Trace finding: lookahead picks "stop (hold mana)" over Lotus Petal / Rograkh (hold_bonus in ai/search.rs ignores hold_up) -> hook added
+in ai/search.rs hold_bonus (adds t6 hold_up; t6-only since hold_up is None outside t6). hold_up now -50 when developing. Next: re-measure.

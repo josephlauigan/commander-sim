@@ -146,7 +146,7 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     if lands == 0 || lands >= 6 {
         return Some(false); // ship all-land hands; a no-land hand has no colours
     }
-    if mana < 2.0 || action == 0 {
+    if mana < 2.0 || (action == 0 && fast < 2.0) {
         return Some(false); // lands-and-spells hands with no payoff or tutor, or no mana to cast it
     }
     if lands >= 5 && fast == 0.0 && action < 2 {
@@ -156,8 +156,15 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
 }
 
 /// extra value of passing with mana up this turn (added to the shared hold value); None = no opinion
-pub fn hold_up(_g: &Game, _p: PlayerId) -> Option<f64> {
-    None
+pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
+    // develop first: Rograkh, a Mox or Sol Ring that can be cast now beats passing with a Pyroblast up
+    let pl = g.player(p);
+    let out = commander_out(g, p);
+    let develop = pl.hand.iter().any(|&c| {
+        let n = name(g, c);
+        matches!(n, "Sol Ring" | "Mana Vault" | "Lotus Petal") || (n == "Mox Amber" && out)
+    });
+    if develop || (!out && pl.turns <= 2) { Some(-50.0) } else { None }
 }
 
 /// go for the combo named `combo` now (Some(true)), wait (Some(false)), or no opinion (None)
