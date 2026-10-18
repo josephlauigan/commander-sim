@@ -18,17 +18,10 @@ const ACCEL: &[&str] = &[
     "Mana Vault",
     "Chrome Mox",
     "Mox Diamond",
-    "Mox Opal",
     "Lotus Petal",
     "Simian Spirit Guide",
     "Everflowing Chalice",
     "Arcane Signet",
-    "Grim Monolith",
-    "Treasonous Ogre",
-    "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
-    "Birgi, God of Storytelling",
-    "Metalworker",
-    "_____ Goblin",
 ];
 const RITUALS: &[&str] = &["Rite of Flame", "Desperate Ritual", "Pyretic Ritual", "Seething Song", "Jeska's Will"];
 /// a way to win, a tutor for one, or an engine that carries a long game (spec: "a path to victory")
@@ -135,11 +128,15 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     if lands == 0 && accel < 2 {
         return Some(false);
     }
+    let tutor = count(g, p, &["Gamble", "Imperial Recruiter", "Goblin Engineer"]);
+    if lands == 1 && (accel < 2 && !(accel == 1 && rituals + tutor >= 2)) {
+        return Some(false); // one land needs two accelerators (or one plus a ritual and a tutor) to reach Godo
+    }
     if sources < 2 || lands >= 6 {
         return Some(false);
     }
-    // a hand of rocks and rituals with no named path is sent back unless the mana is plentiful (it draws into one)
-    Some(path >= 1 || sources + rituals >= 5)
+    // spec scenario 16: ramp without a path to victory is shipped, however much of it there is
+    Some(path >= 1)
 }
 
 /// extra value of passing with mana up this turn (added to the shared hold value); None = no opinion
