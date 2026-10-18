@@ -10,3 +10,4 @@ Branch t6-ai-dack. Files: impls/t6_plan_dack.rs, tests/ai_t6_dack.rs.
 - 1st draft of t6_plan_dack.rs written (keep/prio/wish/hold_up/go_now), NOT yet built. Baseline running into agents/dack-before.txt (ends with "done").
 - Next: build (after baseline ends, binary is in use), write tests/ai_t6_dack.rs, run after, t3 lock.
 - tests file written (7 tests); next build+run tests, then after-run
+- tests pass; running after-run -> agents/dack-after1.txt
