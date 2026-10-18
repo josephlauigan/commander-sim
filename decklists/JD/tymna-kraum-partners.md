@@ -9,7 +9,7 @@ It is weak to decks that can pay the attack taxes every turn, to combo, and to f
 | | |
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Kraum, Ludevic's Opus ({3}{U}{R}, 4/4); white-blue-black-red |
-| **Bracket** | 3 (no Game Changers) |
+| **Bracket** | 3 (1 Game Changer: Underworld Breach) |
 | **Simulator** | deck key `kraum`, matched tier T3; history in `decklists/CHANGELOG.md`, findings in `audit/kraum/FINDINGS.md` |
 
 ## Strategy
@@ -72,8 +72,7 @@ Tymna, so it can't also block. The attack taxes fix that:
   each upkeep (colour fixing toward the five- and six-drops), and deals damage equal to your Treasures to any target
   when he attacks: spend the Treasures as mana by default, and save them only when the damage kills a blocker or a
   player.
-- **Rune-Scarred Demon** tutors any card when it enters; **Diabolic Tutor** does the same for 4. Fetch Elspeth when
-  behind, a Titan or Terror of the Peaks to close.
+- **Diabolic Tutor** ({2}{B}{B}) fetches any card. Fetch Elspeth when behind, a Titan or Terror of the Peaks to close.
 - **Gilgamesh, Master-at-Arms** looks at six cards for Equipment on entering and attacking; **Shield of Kaldra** (equip
   {4}) makes a creature indestructible, **Helm of Kaldra** (equip {2}) gives first strike, trample and haste, and
   **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells on your turn.
@@ -91,15 +90,19 @@ the taxes let through, and draw.
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a
 commander), **Skyclave Apparition**, **Memory Trap**, **Bedevil** and **Disenchant**; **Glorybringer** and **Elspeth**
 add more. **Arcane Denial** is the one counterspell, and **Aven Mindcensor** (flash) blunts tutors and land searches.
-**Restoration Angel** (flash) blinks a creature out of removal and reuses an enters effect (a Titan, Rune-Scarred
-Demon, Skyclave Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible) and **Lightning Greaves** protect
+**Restoration Angel** (flash) blinks a creature out of removal and reuses an enters effect (a Titan, Skyclave
+Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible) and **Lightning Greaves** protect
 Tymna.
 
 ### Card advantage beyond the commanders
 
 **Black Widow** draws when an opponent draws their second card in a turn, and **Fact or Fiction** and
 **Expressive Iteration** dig.
-**Lightning** plays the top card when it connects.
+**Lightning** plays the top card when it connects. **Underworld Breach** ({1}{R}) gives every nonland card in your
+graveyard escape for the turn (its mana cost plus exiling three other cards from the graveyard), so a late game with a
+full graveyard recasts a dead Elspeth, Titan, Angel or wipe (Austere Command, Avenge) in one turn. It is sacrificed at
+the end step, and Sun Titan can bring it back (mana value 2). It needs {R} and four or more cards in the graveyard, so
+save it for after a wipe or a turn of trades.
 
 ### How it wins
 
@@ -124,7 +127,8 @@ and Gilgamesh close faster when they land.
 - **Adeline + Tymna:** every attack puts a token into each opponent, so Tymna draws three.
 - **Crawlspace + Ghostly Prison:** at most two attackers, each costing {2}.
 - **Sun Titan on a dead Tymna or a destroyed attack tax:** it comes back every attack.
-- **Rune-Scarred Demon or Diabolic Tutor for Elspeth** when behind on board.
+- **Diabolic Tutor for Elspeth** when behind on board.
+- **Underworld Breach after a wipe:** recast the Titan, Angel or wipe that died, paying three other graveyard cards each.
 - **Sunblast Angel after an opponent's alpha strike:** every tapped attacker dies.
 
 **Mulligan:** keep 3+ lands that make at least three of the four colours, with a rock or a turn-3 play. A hand that can't
@@ -142,11 +146,11 @@ rocks: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Co
   (filter), Furycalm Snarl and Port Town (reveal a basic), Spectator Seating (untapped with two or more opponents).
 
 **Card draw:** Tymna, Kraum, Black Widow, Fact or Fiction, Expressive Iteration.
-**Tutors:** Diabolic Tutor, Rune-Scarred Demon.
+**Tutors:** Diabolic Tutor.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with no Game Changers. No two-card infinite combos, no mass land destruction, no extra turns. Mention the
+**Bracket 3,** with one Game Changer, **Underworld Breach**. No two-card infinite combos, no mass land destruction, no extra turns. Mention the
 attack taxes (Ghostly Prison, Propaganda, Crawlspace, Windborn Muse, Archon of Absolution, Baird), Aven Mindcensor and
 Conqueror's Flail (no spells on your turn) before the game.
 
@@ -154,13 +158,13 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (35).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Rune-Scarred Demon, Serra Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Serra Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
 **Artifacts (9).** Arcane Signet, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Orzhov Signet, Shield of Kaldra, Talisman of Conviction
 
-**Enchantments (4).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda
+**Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Underworld Breach
 
 **Instants (7).** Arcane Denial, Bedevil, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares
 
@@ -229,7 +233,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Resplendent Angel
 1 Restoration Angel
 1 Rugged Prairie
-1 Rune-Scarred Demon
 1 Serra Angel
 1 Shield of Kaldra
 1 Skyclave Apparition
@@ -247,6 +250,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Tymna the Weaver
 1 Unclaimed Territory
 1 Underground River
+1 Underworld Breach
 1 Vampire Nighthawk
 1 Windborn Muse
 6 Island

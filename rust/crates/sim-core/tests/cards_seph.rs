@@ -1084,3 +1084,30 @@ fn whole_games_with_sephiroth_finish() {
         assert!(g.over || g.round >= 20, "seed {seed}");
     }
 }
+
+/// The Soul Stone: "Indestructible. {T}: Add {B}. {6}{B}, {T}, Exile a creature you control: Harness The Soul Stone.
+/// ∞ — At the beginning of your upkeep, return target creature card from your graveyard to the battlefield."
+#[test]
+fn soul_stone_harness_and_upkeep_return() {
+    let mut g = table(&["seph", "veyran"]);
+    let st = perm(&mut g, P0, "The Soul Stone");
+    assert!(values::indestructible(&g, st));
+    let tok = token(&mut g, P0, 2);
+    let titan = take(&mut g, P0, "Grave Titan");
+    g.player_mut(P0).gy.push(titan);
+    // six lands: the Stone taps as part of the cost, so its own {B} can't make the seventh mana
+    lands(&mut g, P0, "Swamp", 6, false);
+    assert!(!labels(&options(&mut g, P0, true)).contains(&"harness The Soul Stone".to_string()));
+    lands(&mut g, P0, "Swamp", 1, false);
+    let opts = options(&mut g, P0, true);
+    let o = opts.iter().find(|o| o.label == "harness The Soul Stone").expect("harness offered");
+    assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(!on_bf(&g, tok), "the token is the creature exiled");
+    assert!(g.perm(st).tapped && g.perm(st).data.truthy(DataKey::Harnessed));
+    // an opponent's upkeep does nothing; yours returns the creature card
+    hooks::fire_trigger(&mut g, Event::Upkeep, Call::Player { p: P1 }).unwrap();
+    assert!(g.player(P0).gy.contains(&titan));
+    hooks::fire_trigger(&mut g, Event::Upkeep, Call::Player { p: P0 }).unwrap();
+    assert!(!g.player(P0).gy.contains(&titan));
+    assert!(named(&g, P0, "Grave Titan").is_some());
+}

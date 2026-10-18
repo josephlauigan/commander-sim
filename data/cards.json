@@ -99352,6 +99352,44 @@
    "spell_prio": false
   },
   {
+   "name": "The Soul Stone",
+   "types": "A",
+   "generic": 1,
+   "pips": "B",
+   "tags": {
+    "rock": "1:B",
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "The Tabernacle at Pendrell Vale",
    "types": "L",
    "generic": 0,

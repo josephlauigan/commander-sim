@@ -65,3 +65,6 @@ Four swaps applied 10/16 (Archangel of Tithes, Open the Armory, Sphere of Safety
 - Keep the creature count and rocks; cut only dead cards.
 
 **2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 18.3 → 18.8, inside the noise (about ±5). No measurable change to this deck.
+
+## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
+Band 4 (T1-T3). No change. Final: **29.6% vs T1, 26.3% vs T2, 20.4% vs T3** (avg 25.4%, 2,000 per profile). Fair against T1-T2, clearly weaker at T3: the band-4 shape.

@@ -125,6 +125,9 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if FLICKERS.contains(&&*d.name) {
         return flicker_prio(g, p, c);
     }
+    if &*d.name == "The Soul Stone" {
+        return if pl.turns <= 5 { 80 } else { 55 }; // still worth casting late: its harnessed upkeep reanimation
+    }
     if t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) {
         return if pl.turns <= 5 { 80 } else { 30 };
     }

@@ -1,0 +1,25 @@
+16,000 games (1 deck x 2 tiers (each deck in its own tiers), 4,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 36 minutes
+  progress  10.0%  2m01s elapsed, ~18m12s left
+  progress  20.0%  4m01s elapsed, ~16m05s left
+  cell sauron vs t3 [conservative]:  30.1% (28.7-31.5)
+  progress  30.0%  6m06s elapsed, ~14m15s left
+  progress  40.0%  7m52s elapsed, ~11m48s left
+  progress  50.0%  9m41s elapsed, ~9m41s left
+  cell sauron vs t4 [conservative]:  31.0% (29.6-32.5)
+  progress  60.0%  11m41s elapsed, ~7m47s left
+  progress  70.0%  13m44s elapsed, ~5m53s left
+  cell sauron vs t3 [loose]:  30.3% (28.9-31.8)
+  progress  80.0%  15m39s elapsed, ~3m54s left
+  progress  90.0%  17m25s elapsed, ~1m56s left
+  progress 100.0%  19m09s elapsed, ~0m00s left
+  cell sauron vs t4 [loose]:  32.1% (30.7-33.6)
+
+=== Win rate by deck and tier [conservative profile, lookahead AI, n=4000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  sauron      30.1% (28.7-31.5)  31.0% (29.6-32.5)          30.6% over t3, t4
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=4000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  sauron      30.3% (28.9-31.8)  32.1% (30.7-33.6)          31.2% over t3, t4
+
+(1150s total)

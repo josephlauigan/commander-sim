@@ -6,21 +6,21 @@ file = "JD/sephiroth-phyrexian-reanimator.md"
 name = "Sephiroth"
 commander = "Atraxa, Grand Unifier"
 ident = "WUBG"
-tiers = ["t4"]
+tiers = ["t3", "t4"]
 
 [veyran]
 file = "JD/veyran-izzet-spellslinger.md"
 name = "Veyran"
 commander = "Veyran, Voice of Duality"
 ident = "UR"
-tiers = ["t1", "t2", "t3", "t4"]
+tiers = ["t1", "t2", "t3"]
 
 [sauron]
 file = "JD/sauron-grixis-amass.md"
 name = "Sauron"
 commander = "Sauron, the Dark Lord"
 ident = "UBR"
-tiers = ["t3", "t4", "t5"]
+tiers = ["t3", "t4"]
 
 [yshtola]
 file = "JD/yshtola-esper-drain.md"
@@ -48,28 +48,28 @@ file = "JD/kefka-grixis-discard.md"
 name = "Kefka"
 commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
 ident = "UBR"
-tiers = ["t3", "t4", "t5"]
+tiers = ["t3"]
 
 [titania]
 file = "JD/titania-lands.md"
 name = "Titania"
 commander = "Titania, Protector of Argoth"
 ident = "G"
-tiers = ["t2", "t3", "t4"]
+tiers = ["t1", "t2", "t3"]
 
 [sheoldred]
 file = "JD/sheoldred-mono-black.md"
 name = "Sheoldred"
 commander = "Sheoldred, the Apocalypse"
 ident = "B"
-tiers = ["t3", "t4", "t5"]
+tiers = ["t3", "t4"]
 
 [cloud]
 file = "JD/cloud-midgar-equipment.md"
 name = "Cloud"
 commander = "Cloud, Midgar Mercenary"
 ident = "W"
-tiers = ["t1", "t2"]
+tiers = ["t1", "t2", "t3"]
 
 # Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
 [kraum]
@@ -78,11 +78,11 @@ name = "Tymna/Kraum"
 commander = "Tymna the Weaver"
 commander2 = "Kraum, Ludevic's Opus"
 ident = "WUBR"
-tiers = ["t3"]
+tiers = ["t5"]
 
 [sephfs]
 file = "JD/sephiroth-fs-wipe-steal.md"
 name = "Sephiroth FS"
 commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
 ident = "B"
-tiers = ["t4", "t5"]
+tiers = ["t5"]

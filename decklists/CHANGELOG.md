@@ -63,6 +63,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Demonic Tutor, Mystical Tutor, Vampiric Tutor. In: Expressive Iteration, Mana Leak, Sleight of Hand. Band calibration 10/18 (JD approved): Demonic Tutor=>Mana Leak;Vampiric Tutor=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
 - **2026-10-14.** Out: Decorum Dissertation. In: Bitter Triumph, Shivan Reef, Sulfurous Springs. Decorum Dissertation (to bulk) for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef (all three from the binder, the retired Jodah deck's leftovers). Measured -1.9 over all tiers (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); within noise; JD's choice to apply it. A pool run is pending.
 - **2026-10-13 (package A, Yawgmoth's Will storm turn).** Out: Disintegrate, Kaervek's Purge, Twinflame. In: Mystical Tutor, Vampiric Tutor, Yawgmoth's Will. Twinflame, Kaervek's Purge and Disintegrate went to bulk; Yawgmoth's Will (JD's spare copy), Vampiric Tutor and Mystical Tutor (binder, from the retired Jodah deck) came in. Measured +1.0 over all tiers (T1 -3.2, T2 +1.4, T3 +1.6, T4 +2.2, T5 +2.8; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Six Game Changers, still Bracket 4. Jin-Gitaxias stays (JD).
 - **2026-10-13 (second change).** Out: Grim Tutor, Diabolic Intent, Swiftfoot Boots. In: Profane Tutor, Demonic Tutor, Chaos Warp. JD's choice, not simulated: the two tutors come from the retired Jodah deck instead of being bought (Profane Tutor is suspended for {1}{B} and finds any card two turns later; Demonic Tutor is a Game Changer, so the deck moved to Bracket 4). Swiftfoot Boots went to the Cloud deck (Kefka keeps Lightning Greaves for haste); Chaos Warp came back from bulk.
@@ -92,6 +93,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Slaughter Pact. In: Force of Will. Band calibration 10/18 (JD approved): Slaughter Pact=>Force of Will
 - **2026-10-13 (package C).** Out: Bedevil. In: Sheoldred, the Apocalypse. JD's package C: Bedevil out (to bulk), Sheoldred, the Apocalypse in (JD's own spare copy): every opponent draw from Jace's Archivist's wheel costs 2 life. Measured +2.7 over all tiers (T1 +5.0, T2 +4.8, T3 +0.6, T4 +2.8, T5 +0.2; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Not a Game Changer: still two, Bracket 3.
 - **2026-10-13 (Swords).** Out: Sword of Feast and Famine, Sword of Hearth and Home. In: Chaos Warp, Spell Pierce. JD's choice: both Swords go to the Cloud deck; Chaos Warp and Spell Pierce come back from bulk (both had been cut earlier on 10-13) as answers. Paired test, look-ahead, 500 games per tier: -1.7 over four tiers (t1 +1.6, t2 -3.4, t3 -1.2, t5 -3.6; t4 was blocked by a Conspicuous Snoop crash, since fixed); `audit/cloud/2026-10-13/screen/D1-*`. The Sword of Feast and Famine + Aggravated Assault infinite-combat combo (made 09-22) is gone. Game Changers unchanged (2).
 - **2026-10-13 (rebuild).** Out: Blasphemous Act, Brain Freeze, Chaos Warp, Conqueror's Flail, Dark Ritual, Deepglow Skate, Flux Channeler, Lotus Petal, Spell Pierce, Sword of Fire and Ice, Toxic Deluge, Underworld Breach. In: Chandra's Ignition, Comet Storm, Dimir Signet, Dreadhorde Invasion, Exsanguinate, Fellwar Stone, Inferno Titan, Lazotep Reaver, Massacre Wurm, Rakdos Signet, Ral and the Implicit Maze, Talisman of Indulgence. JD's choice, from the 2026-10-12/13 audit (audit/sauron/2026-10-12-weakness/): one-sided removal in place of the symmetric wipes, a faster start (rocks, Dreadhorde Invasion, Lazotep Reaver), and the Underworld Breach package replaced by Exsanguinate, Comet Storm and two rocks. Measured +8.3 over all tiers with Torment of Hailfire in Comet Storm's slot (24.3% -> 32.6%; T1 +6.8, T2 +8.8, T3 +10.0, T4 +9.9, T5 +5.8; look-ahead, loose, 1,000 paired games per tier); Comet Storm for Torment then measured -0.6, within noise. Brain Freeze, Dark Ritual and Lotus Petal go to Kefka, Flux Channeler to Veyran. Two Game Changers now (Cyclonic Rift, Orcish Bowmasters; Underworld Breach left). The rebuild made the deck faster (the first Army hit about a turn earlier) and kinder to the Army. Removed softest cards: the Breach package, the symmetric wipes, Deepglow Skate and the Swords that never connected.
@@ -141,6 +143,7 @@ Deck key `sephfs`, `decklists/JD/sephiroth-fs-wipe-steal.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Bitter Triumph, Masterful Flourish, Rabid Attack, Star Compass, Tome of Legends. In: Bolas's Citadel, Demonic Tutor, Gray Merchant of Asphodel, Rune-Scarred Demon, Vampiric Tutor. Band calibration 10/18 (JD approved): Star Compass=>Demonic Tutor;Tome of Legends=>Vampiric Tutor;Masterful Flourish=>Rune-Scarred Demon;Bitter Triumph=>Bolas's Citadel;Rabid Attack=>Gray Merchant of Asphodel
 - **2026-10-14 (second change).** Out: Ophiomancer, Sneering Shadewriter. In: Grave Titan, Pawn of Ulamog. JD's package
   (2026-10-14): Grave Titan for Sneering Shadewriter, Pawn of Ulamog for Ophiomancer. Measured +0.3 ±1.6 over all tiers
   (paired, 1,000 games per tier; `audit/sephfs/2026-10-14-pkg/`): neutral; JD is buying both. Grave Titan is a second
@@ -174,6 +177,7 @@ Deck key `seph`, `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, t
 
 ### Changes
 
+- **2026-10-18.** Out: Consecrated Sphinx, Farewell, Force of Will, Teferi's Protection, Worldly Tutor. In: Arcane Denial, Austere Command, Harmonize, Hornet Queen, Tireless Tracker. Band calibration 10/18 (JD approved): Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
 - **2026-10-14.** Out: Orzhov Signet. In: Worldly Tutor. Orzhov Signet (to bulk) for Worldly Tutor (binder, from the retired Jodah deck). Measured -0.1 over all tiers (T1 -2.0, T2 +0.8, T3 +2.2, T4 -1.0, T5 -0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice to keep it. Eight Game Changers, Bracket 4.
 - **2026-10-13.** Out: Smothering Tithe. In: Momentary Blink. JD's choice: Smothering Tithe goes to the Cloud deck; Momentary Blink (bulk) is a second Ephemerate-style blink for the Kitten. Paired test, 500 games per tier: -1.8 (t1 -4.0, t2 -1.4, t3 +3.8, t4 -3.8, t5 -3.8); `audit/cloud/2026-10-13/screen/D2-*`. Game Changers 8 -> 7, still Bracket 4.
 - **2026-10-10 (second pass).** Avacyn's Pilgrim -> Flickering Hound: the Pilgrim only made {W}, and the Hound turns every creature you cast (Muldrotha's recasts included) into another flicker. Still eight Game Changers, Bracket 4, 100 cards and 37 lands.
@@ -252,6 +256,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Gray Merchant of Asphodel. In: Necrosquito. Band calibration 10/18 (JD approved): Gray Merchant of Asphodel=>Necrosquito
 - **2026-10-17.** Out: Restless Bloodseeker // Bloodsoaked Reveler. In: Ad Nauseam. Ad Nauseam (JD's pick): +1.6 over t3-t5 (look-ahead, 1,000 paired per tier, noise; positive in every tier) once the shared Ad Nauseam AI and the look-ahead's hold-mana credit were fixed. The deck's first Game Changer.
 - **2026-10-15.** Out: Apex Witchstalker. In: Crawlspace. Synced with JD's physical deck: Crawlspace is in the deck in place of Apex Witchstalker (no more than two creatures can attack you each combat). Apex Witchstalker goes to bulk. Not simulated.
 - **2026-10-13.** Out: Champion's Helm. In: Carnage Altar. JD's choice: Champion's Helm goes to the Cloud deck; Carnage
@@ -322,6 +327,7 @@ Deck key `titania`, `decklists/JD/titania-lands.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Environmental Scientist, Harmonize, Hornet Queen, Tireless Tracker. In: Cactarantula, Fblthp, Knows the Way, Paradise Druid, Worldly Tutor. Band calibration 10/18 (JD approved): Hornet Queen=>Cactarantula;Harmonize=>Fblthp, Knows the Way;Tireless Tracker=>Paradise Druid;Environmental Scientist=>Worldly Tutor
 - **2026-10-13.** Out: Cactarantula, Elfhame Wurm, Penumbra Spider, Yavimaya Wurm. In: Cartographer's Survey, Kura, the
   Boundless Sky, Tireless Tracker, Vorinclex, Monstrous Raider. JD's package D (landfall value):
   Yavimaya Wurm, Elfhame Wurm, Cactarantula and Penumbra Spider out (to bulk); Vorinclex, Monstrous Raider (JD's own
@@ -412,6 +418,7 @@ Deck key `veyran`, `decklists/JD/veyran-izzet-spellslinger.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Evacuation, Venser, Shaper Savant. In: Consecrated Sphinx, Mystical Tutor. Band calibration 10/18 (JD approved): Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
 - **2026-10-13.** Out: Jeska's Will. In: Flux Channeler. JD's choice: Jeska's Will moves to Kefka; Flux Channeler (from Sauron) takes the slot. Measured -2.1 over all tiers (T1 -3.9, T2 -4.5, T3 -0.4, T4 -0.9, T5 -0.8; look-ahead, loose, 1,000 paired games per tier; `audit/sauron/2026-10-12-weakness/sofi-veyran/`). No Game Changers left. The deck lost some big-turn fuel (Jeska's Will gave four to seven mana and three more spells for one card) and gained a cheap Wizard body with a proliferate trigger.
 - **2026-10-12.** Out: Return the Favor (to bulk). In: Triple Triad (new). JD's choice: each upkeep, every player exiles their top card; you may play yours and every cheaper one free, and free instants and sorceries still trigger Veyran. A partial test (Tiers 1-3, 1,000 paired games each: +0.5, +0.9, -2.1, all within noise) was stopped early.
 - **2026-10-11 (trade with Kefka, moved as functional blocks).** Out to Kefka: Deflecting Swat, Slip Out the Back, Underworld Breach, Niv-Mizzet, the Firemind, Jin-Gitaxias, Progress Tyrant, Steam Vents, Sulfur Falls, Spirebluff Canal, Stormcarved Coast. In: Mystic Confluence and Splatter Technique (from Kefka), Return the Favor, Spell Pierce and Lightning Strike (from bulk), 2 Island and 2 Mountain. Paired look-ahead test, 1,000 games per tier: **+1.7 points** (22.9% -> 24.5%). One Game Changer now (Jeska's Will). Veyran refilled only from Kefka's cuts and the bulk list; Kefka gained 1.3 points from the same trade (28.1% -> 29.4%), so both decks came out ahead. Audit: `audit/kefka-veyran/2026-10-11-trade/`.
@@ -505,6 +512,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Bolas's Citadel, Dakkon, Shadow Slayer, Thought Vessel. In: Farewell, Force of Will, Teferi's Protection. Band calibration 10/18 (JD approved): Dakkon, Shadow Slayer=>Force of Will;Thought Vessel=>Farewell;Bolas's Citadel=>Teferi's Protection
 - **2026-10-14.** Out: Triplicate Spirits. In: Adarkar Wastes, Dakkon, Shadow Slayer, Underground River. Triplicate Spirits (to bulk) for Dakkon, Shadow Slayer; a Swamp and an Island for Underground River and Adarkar Wastes (all three from the binder, the retired Jodah deck's leftovers). Measured -0.7 over all tiers (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice.
 - **2026-10-11.** Out: Bastion Protector. In: Thought Vessel (from Sauron). JD's choice: no maximum hand size for the deck that draws the most each turn (Necropotence, Consecrated Sphinx, Notion Thief, Bolas's Citadel); Bastion Protector was a creature, so it never triggered Y'shtola. Not measured.
 - **2026-10-09.** Out: Secure the Wastes. In: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal. JD's choice: Venat draws a card the first time each turn you cast a legendary spell; its flip side ({7}: exile a nonland permanent) makes a creature indestructible each turn. Measured +0.1 ±0.8 for Secure the Wastes (adaptive, paired, 1,000 games per tier). Not a Game Changer.
@@ -634,6 +642,7 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Rune-Scarred Demon. In: Underworld Breach. Band calibration 10/18 (JD approved): Rune-Scarred Demon=>Underworld Breach
 - **2026-10-17.** Out: Tocasia's Welcome. In: Smaug the Magnificent. Smaug the Magnificent (JD's card): +1.1 ±2.7 at T3, 2,000 paired look-ahead games, noise; a hasty flier for Tymna plus a Treasure each upkeep.
 - **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.
 - **2026-10-17.** Out: Rip Apart. In: Avenge (from bulk). Measured at T3 (2,000 paired games): +3.1 (±2.6), list 31.7 → 34.8%: a second creature wipe, so the deck dies to combat less (eliminated 67.0 → 63.7%).

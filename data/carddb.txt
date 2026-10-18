@@ -56,6 +56,7 @@ Llanowar Wastes|L|-|c=BG
 Massacre Wurm|C|3BBB|bomb=6 pow=6 tgh=5 wurm wurmdrain
 Mikaeus, the Unhallowed|C|3BBB|bomb=5 pow=5 leg mikaeus anthemnh
 Mind Stone|A|2|rock=1:C
+The Soul Stone|A|1B|rock=1:B leg
 Necromancy|E|2B|rean=necro
 Night's Whisper|S|1B|draw=2
 Orzhov Signet|A|2|rock=1:WB

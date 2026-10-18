@@ -12,7 +12,7 @@ This is the Sephiroth, Fabled SOLDIER deck (sim key `sephfs`), not the Seph/Atra
 | | |
 |---|---|
 | **Commander** | Sephiroth, Fabled SOLDIER ({2}{B}, 3/3, black) // Sephiroth, One-Winged Angel (5/5 flying) |
-| **Bracket** | 3 (1 Game Changer: The One Ring) |
+| **Bracket** | 4 (4 Game Changers: The One Ring, Demonic Tutor, Vampiric Tutor, Bolas's Citadel) |
 | **Simulator** | deck key `sephfs`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -60,8 +60,9 @@ to be on the battlefield when the fourth drain resolves to flip).
 
 ### Drain on every death
 **Blood Artist**, **Zulaport Cutthroat**, **Al Bhed Salvagers** (also counts artifacts of yours dying),
-**Bastion of Remembrance** (and a 1/1 token) and **Butcher of Malakir** (each opponent sacrifices a creature whenever
-yours die) add to every death on top of Sephiroth, so a single wipe can be game ending. **Moseo, Vein's New Dean** (a flying
+**Bastion of Remembrance** (and a 1/1 token), **Butcher of Malakir** (each opponent sacrifices a creature whenever
+yours die) and **Gray Merchant of Asphodel** (when it enters, each opponent loses life equal to your devotion to black and
+you gain that much; in mono-black that is usually a big drain, and it is a body to sacrifice afterwards) add to every death on top of Sephiroth, so a single wipe can be game ending. **Moseo, Vein's New Dean** (a flying
 body with a Pest token) uses the life you gain from the drains: at your end step it returns a creature card to the
 battlefield with mana value up to the life you gained that turn.
 
@@ -87,21 +88,26 @@ creature card to hand) for your own. Stolen creatures go to Phyrexian Tower or A
 and every death drains again.
 
 ### Protecting Sephiroth
-**Kaya's Ghostform** (he comes back if he dies or is exiled, and his enter trigger fires again), **Masterful Flourish**
-(indestructible against your own wipes and theirs), **Presumed Dead** (a creature that dies comes back suspected: use it
+**Kaya's Ghostform** (he comes back if he dies or is exiled, and his enter trigger fires again), **Presumed Dead** (a creature that dies comes back suspected: use it
 on Sephiroth, or on a creature you are about to sacrifice, which can then be sacrificed again), and the sacrifice
 outlets in response to removal. **The One Ring** gives protection from everything until your next turn when you cast it.
 
 ### Removal
-**Bitter Triumph**, **Last Gasp**, **Sephiroth's Intervention** (destroy, gain 2), **Wander Off** (exile) and **End of the
-Hunt** are the spot answers. **Rabid Attack** gives your creatures "when this dies, draw a card" until end of turn:
-cast it before a sacrifice turn or a wipe.
+**Last Gasp**, **Sephiroth's Intervention** (destroy, gain 2), **Wander Off** (exile) and **End of the Hunt** are the
+spot answers.
 
 ### Card flow and mana
 **The One Ring** (draw more each turn; the burden counters cost life, and the drain gains it back), **Call of the Ring**
-(a Ring-bearer and a card for 2 life), **Tome of Legends** (a page counter whenever Sephiroth enters or attacks; {1}, {T}, remove one: draw), **Cast Away Doubt**
+(a Ring-bearer and a card for 2 life), **Bolas's Citadel** (play lands and cast spells off the top of the library by paying life
+instead of mana; the drains refill the life, and every creature you cast from the top is more fodder), **Cast Away Doubt**
 (draw two; 2 damage to every player), **Stargaze** (X cards to hand, the rest into the graveyard where reanimation uses
-them), **Sol Ring**, **Arcane Signet**, **Fellwar Stone**, **Mind Stone**, **Star Compass** and **Dark Ritual**.
+them), **Sol Ring**, **Arcane Signet**, **Fellwar Stone**, **Mind Stone** and **Dark Ritual**.
+
+### Tutors
+**Demonic Tutor** ({1}{B}, any card to hand), **Vampiric Tutor** ({B}, lose 2 life, any card on top of the library, a good
+match for Bolas's Citadel) and **Rune-Scarred Demon** ({5}{B}{B}, 6/6 flier: search for any card when it enters) find the
+piece the game needs: Pestilence or Massacre Girl for the wipe turn, Exsanguinate or Gray Merchant to finish, Phyrexian
+Altar or Kaya's Ghostform to set up the flip. The life paid is refilled by the drains.
 
 ### How it wins
 - **The wipe turn.** With the emblem out, a wipe in a four-player game drains once per creature on the board. A board of
@@ -117,7 +123,7 @@ them), **Sol Ring**, **Arcane Signet**, **Fellwar Stone**, **Mind Stone**, **Sta
 ### Weak spots and how to play around them
 - **Graveyard hate** (effects that exile graveyards) stops the stealing and reanimating. The sacrifice
   and drain plan still works.
-- **Exile or bounce on Sephiroth before the flip.** Play him with an outlet, keep Kaya's Ghostform or Masterful Flourish
+- **Exile or bounce on Sephiroth before the flip.** Play him with an outlet, keep Kaya's Ghostform or Presumed Dead
   ready, and flip as soon as possible. If he is removed, keep going: the drain creatures and Pestilence still work.
 - **Few creatures on the table.** Edicts and wipes do little against a deck that plays no creatures; use removal and
   Exsanguinate instead.
@@ -141,17 +147,19 @@ them), **Sol Ring**, **Arcane Signet**, **Fellwar Stone**, **Mind Stone**, **Sta
 
 36 lands: 32 Swamp, Command Tower and Path of Ancestry (both make black here), Vivid Marsh (enters tapped, makes black)
 and Phyrexian Tower (colorless, or sacrifice a creature for {B}{B}). Ramp: Sol Ring, Arcane Signet, Fellwar Stone,
-Mind Stone, Star Compass and Phyrexian Altar, plus Dark Ritual, Treasure and the Eldrazi tokens. Card draw: The One
-Ring, Call of the Ring, Tome of Legends, Cast Away Doubt, Stargaze, Sephiroth's own sacrifice. Interaction: five spot
+Mind Stone and Phyrexian Altar, plus Dark Ritual, Treasure and the Eldrazi tokens. Card draw: The One
+Ring, Call of the Ring, Bolas's Citadel, Cast Away Doubt, Stargaze, Sephiroth's own sacrifice. Tutors: Demonic Tutor,
+Vampiric Tutor and Rune-Scarred Demon. Interaction: four spot
 removal spells and seven wipes (Crux of Fate, Toxic Deluge, Blood on the Snow, Massacre Girl, Extinction
 Event, Living Death, Necromantic Selection).
 
 ## Bracket and Rule 0
 
-**Bracket 3:** one Game Changer, **The One Ring**; no extra turns and no mass land destruction. Say at the table that
+**Bracket 4 by Game Changer count:** four Game Changers, **The One Ring**, **Demonic Tutor**, **Vampiric Tutor** and
+**Bolas's Citadel**; no extra turns and no mass land destruction. Say at the table that
 the deck wipes the board and takes dead creatures, and that the Phyrexian Altar, Reassembling Skeleton and Pawn of
-Ulamog loop makes unlimited deaths and drains (it needs three specific cards and a drain source). Say that The One
-Ring is in the deck.
+Ulamog loop makes unlimited deaths and drains (it needs three specific cards and a drain source). Name the four Game Changers, and that Rune-Scarred
+Demon is a seven-mana tutor.
 
 ## Decklist by type (100)
 
@@ -159,17 +167,17 @@ Ring is in the deck.
 
 **Lands (36).** Command Tower, Path of Ancestry, Phyrexian Tower, Vivid Marsh, 32 Swamp
 
-**Creatures (26).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Butcher of Malakir, Callous Inspector, Carrier Thrall, Carrion Feeder, Common Crook, Dread Drone, Dread Slaver, Eternal Student, Fleshbag Marauder, Gonti Lord of Luxury, Grave Researcher // Reanimate, Grave Titan, Massacre Girl, Moseo Vein's New Dean, Pawn of Ulamog, Pitiless Plunderer, Plaguecrafter, Reassembling Skeleton, Undercity Dire Rat, Viscera Seer, Woe Strider, Yahenni Undying Partisan, Zulaport Cutthroat
+**Creatures (28).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Butcher of Malakir, Callous Inspector, Carrier Thrall, Carrion Feeder, Common Crook, Dread Drone, Dread Slaver, Eternal Student, Fleshbag Marauder, Gonti Lord of Luxury, Grave Researcher // Reanimate, Grave Titan, Gray Merchant of Asphodel, Massacre Girl, Moseo Vein's New Dean, Pawn of Ulamog, Pitiless Plunderer, Plaguecrafter, Reassembling Skeleton, Rune-Scarred Demon, Undercity Dire Rat, Viscera Seer, Woe Strider, Yahenni Undying Partisan, Zulaport Cutthroat
 
 **Planeswalkers (1).** Ral Zarek Guest Lecturer
 
-**Artifacts (8).** Arcane Signet, Fellwar Stone, Mind Stone, Phyrexian Altar, Sol Ring, Star Compass, The One Ring, Tome of Legends
+**Artifacts (7).** Arcane Signet, Bolas's Citadel, Fellwar Stone, Mind Stone, Phyrexian Altar, Sol Ring, The One Ring
 
 **Enchantments (7).** Animate Dead, Bastion of Remembrance, Braids's Frightful Return, Call of the Ring, Grave Betrayal, Kaya's Ghostform, Pestilence
 
-**Instants (8).** Bitter Triumph, Dark Ritual, Last Gasp, Masterful Flourish, Presumed Dead, Rabid Attack, Sephiroth's Intervention, Wander Off
+**Instants (6).** Dark Ritual, Last Gasp, Presumed Dead, Sephiroth's Intervention, Vampiric Tutor, Wander Off
 
-**Sorceries (13).** Blood on the Snow, Cast Away Doubt, Crux of Fate, End of the Hunt, Exsanguinate, Extinction Event, Living Death, Necromantic Selection, Pull from the Grave, Rewrite Regrets, Stargaze, Toxic Deluge, Zombify
+**Sorceries (14).** Blood on the Snow, Cast Away Doubt, Crux of Fate, Demonic Tutor, End of the Hunt, Exsanguinate, Extinction Event, Living Death, Necromantic Selection, Pull from the Grave, Rewrite Regrets, Stargaze, Toxic Deluge, Zombify
 
 ## Import list (100)
 
@@ -179,9 +187,9 @@ Ring is in the deck.
 1 Animate Dead
 1 Arcane Signet
 1 Bastion of Remembrance
-1 Bitter Triumph
 1 Blood Artist
 1 Blood on the Snow
+1 Bolas's Citadel
 1 Braids's Frightful Return
 1 Butcher of Malakir
 1 Call of the Ring
@@ -193,6 +201,7 @@ Ring is in the deck.
 1 Common Crook
 1 Crux of Fate
 1 Dark Ritual
+1 Demonic Tutor
 1 Dread Drone
 1 Dread Slaver
 1 End of the Hunt
@@ -205,11 +214,11 @@ Ring is in the deck.
 1 Grave Betrayal
 1 Grave Researcher // Reanimate
 1 Grave Titan
+1 Gray Merchant of Asphodel
 1 Kaya's Ghostform
 1 Last Gasp
 1 Living Death
 1 Massacre Girl
-1 Masterful Flourish
 1 Mind Stone
 1 Moseo, Vein's New Dean
 1 Necromantic Selection
@@ -222,19 +231,18 @@ Ring is in the deck.
 1 Plaguecrafter
 1 Presumed Dead
 1 Pull from the Grave
-1 Rabid Attack
 1 Ral Zarek, Guest Lecturer
 1 Reassembling Skeleton
 1 Rewrite Regrets
+1 Rune-Scarred Demon
 1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Sephiroth's Intervention
 1 Sol Ring
-1 Star Compass
 1 Stargaze
 1 The One Ring
-1 Tome of Legends
 1 Toxic Deluge
 1 Undercity Dire Rat
+1 Vampiric Tutor
 1 Viscera Seer
 1 Vivid Marsh
 1 Wander Off

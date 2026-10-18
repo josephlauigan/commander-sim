@@ -138,6 +138,8 @@ pub enum DataKey {
     Serenity,
     /// Sephiroth, Fabled SOLDIER: [turn stamp, times its drain has resolved that turn]
     SephTimes,
+    /// The Soul Stone has been harnessed (its upkeep reanimation is active)
+    Harnessed,
     Stolen,
     /// stun counters (the untap step removes one instead of untapping)
     Stun,

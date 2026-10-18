@@ -28,3 +28,6 @@ The shared Ad Nauseam AI and the look-ahead's hold-mana credit were fixed during
 | **Mystic Remora (look-ahead, hold credit)** | **-1.9 (±3.1)** | Cast 14%, wins 54% when cast; Mystic Remora cast 75%. |
 **Reading it:** Ad Nauseam wins when it's cast but is rarely cast: T5 games are short (about 8.5 rounds) and the deck
 pays life already (Necropotence, Bolas's Citadel), so the safe window seldom opens. Not a fit; Sheoldred is its home.
+
+## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
+Band 1 (T5). Proposed: +Force of Will, +Farewell, +Teferi's Protection (all from Seph/Atraxa) for Dakkon, Thought Vessel, Bolas's Citadel (to Seph FS). 9 Game Changers. Final: **24.3% vs T5** (current list 23.2%). Why: Force of Will is cast 76% of the games drawn and answers T5 combo; Farewell and Teferi's Protection are mostly held (stuck 68-75%) but win 45-60% when cast. Citadel was cast in only 25% of the games Y'shtola drew it, so it was the cheapest card to give up.

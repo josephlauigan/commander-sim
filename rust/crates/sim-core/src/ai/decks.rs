@@ -47,7 +47,7 @@ fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
 // ------------------------------------------------------------------ cast priorities
 /// ais.deck_prio: the deck's cast priority for a card (0-90)
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    match g.player(p).key {
+    let v = match g.player(p).key {
         "sauron" => sauron_prio(g, p, c),
         "seph" => super::seph::seph_prio(g, p, c),
         "veyran" => super::veyran::veyran_prio(g, p, c),
@@ -63,7 +63,14 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "garland" => crate::impls::garland::garland_prio(g, p, c),
         "sephfs" => crate::impls::sephfs::sephfs_prio(g, p, c),
         _ => pool::generic_prio(g, p, c),
+    };
+    if v == 0 && g.db.get(c).tag(Tag::Top) {
+        // a card-to-top tutor (Worldly, Mystical) the deck's own priority doesn't know: the card's own timing
+        if let Some(f) = g.registry.get(c).and_then(|i| i.prio) {
+            return f(g, p, c);
+        }
     }
+    v
 }
 
 /// ais.deck_prio as Python returns it: a float where a deck's priority isn't whole (Y'shtola's for a card taken from

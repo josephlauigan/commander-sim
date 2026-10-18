@@ -3026,6 +3026,10 @@ note = "combo piece: assembly, casting and responses are simulated; the loop its
 status = "Full"
 note = "taps for {C}; cracked for a card late (six or more lands)"
 
+["The Soul Stone"]
+status = "Full"
+note = "indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or the cheapest creature) at instant speed once a creature worth returning is in the graveyard; then returns the best creature card every upkeep"
+
 ["Mind Twist"]
 types = "S"
 tags = "xtutor"

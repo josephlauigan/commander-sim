@@ -12,7 +12,7 @@ use std::sync::Arc;
 const P0: PlayerId = PlayerId(0);
 
 fn game() -> Game {
-    let mut g = table(&["kefka", "veyran", "sauron", "seph"]);
+    let mut g = table(&["sheoldred", "veyran", "sauron", "seph"]); // Ad Nauseam's own deck, no counterspells to hold mana for
     g.player_mut(P0).hand.clear();
     set_ai(&mut g, AiMode::Lookahead);
     let cs: Vec<_> = (0..30).map(|_| card(&g, "Swamp")).collect();
