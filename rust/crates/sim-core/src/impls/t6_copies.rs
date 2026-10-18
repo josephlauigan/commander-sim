@@ -392,12 +392,45 @@ fn copier_go(g: &mut Game, c: CardId, p: PlayerId, spell: CardId, flare: bool, s
 }
 
 // ------------------------------------------------------------------ Peter Parker's Camera
-/// enters with three film counters. (Copying an activated or triggered ability is an engine need.)
+/// enters with three film counters
 fn camera_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
         g.perm_mut(src).data.set(DataKey::Counters, Val::Int(3));
     }
     Ok(())
+}
+
+/// {2}, {T}, remove a film counter: copy target activated or triggered ability you control. The AI uses it on its own
+/// important triggered ability on top of the stack (`stack::ai_respond`, importance 6 or more): the copy goes on the
+/// stack (it can be countered), and its effect runs once more before the original resolves (`stack::copy_trigger`).
+/// The abilities that can be copied are the hook-run triggers (a stack item with its `Trigger`, e.g. Godo's enters);
+/// the copies make no new choices of targets. Returns true if a copy resolved.
+pub fn camera_copy(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
+    let Some(cam) = g.player(q).perms.iter().copied().find(|&m| {
+        let x = g.perm(m);
+        x.on_bf
+            && !x.phased
+            && !x.tapped
+            && !x.neutered
+            && &*x.name == "Peter Parker's Camera"
+            && x.data.int(DataKey::Counters) > 0
+    }) else {
+        return Ok(false);
+    };
+    let Some(it) = g.stack.iter().find(|x| x.id == item).cloned() else { return Ok(false) };
+    if it.controller != q || it.countered || it.ctx.trigger.is_none() || !can_pay(g, q, 2, "", false) {
+        return Ok(false);
+    }
+    pay(g, q, 2, "", false)?;
+    g.perm_mut(cam).tapped = true;
+    let n = g.perm(cam).data.int(DataKey::Counters);
+    g.perm_mut(cam).data.set(DataKey::Counters, Val::Int(n - 1));
+    crate::glog!(g, "    {} activates Peter Parker's Camera: copies {}", g.player(q).name, it.name);
+    // the ability itself is on the stack too: if it is countered, nothing is copied
+    if !crate::engine::stack::ability_window(g, q, Some(cam), "copy target triggered ability", Some(3.0), None)? {
+        return Ok(false);
+    }
+    crate::engine::stack::copy_trigger(g, q, item)
 }
 
 // ------------------------------------------------------------------ Volatile Stormdrake

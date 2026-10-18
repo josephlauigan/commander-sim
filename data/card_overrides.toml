@@ -8376,7 +8376,7 @@ note = "a token copy of the best nonland permanent (any controller's), which sta
 
 ["Peter Parker's Camera"]
 status = "Partial"
-note = "enters with three film counters; missing: the ability that copies an activated or triggered ability you control (engine need)"
+note = "enters with three film counters; {2}, {T}, remove a counter: the AI copies its own important (importance 6+) triggered ability on the stack (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and its effect runs before the original (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host). Missing: copying activated abilities and choosing new targets"
 
 ["Volatile Stormdrake"]
 status = "Partial"
@@ -8692,8 +8692,8 @@ status = "Partial"
 note = "flying 2/2; Venom Blast: artifact and creature permanents and tokens that enter under an opponent's control enter tapped (enters_tapped replacement slot, t6_legends2.rs), opposing Treasures too. Only Food and Clue tokens (counters here) still enter untapped"
 
 ["Ertai Resurrected"]
-status = "Partial"
-note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast it in response like Mystic Snake, and its enter hook gives the spell's controller the card; destroy mode: the opponents' best creature or planeswalker when worth 3+, its controller draws (t6_legends2.rs). Countering an activated or triggered ability is written (ertai_answer, tested) but the engine does not call it yet (engine-needs-legends2.md)"
+status = "Full"
+note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast it in response like Mystic Snake, and its enter hook gives the spell's controller the card. Counter an activated or triggered ability: the AI flashes it in against an opponent's important (importance 6+) ability or trigger on the stack (cardcode::answer_ability -> ertai_answer). Destroy mode: the opponents' best creature or planeswalker when worth 3+, its controller draws (t6_legends2.rs)"
 
 ["Legolas's Quick Reflexes"]
 dsl = []
@@ -8928,3 +8928,7 @@ note = "tap or untap up to two targets: the AI untaps two of its tapped mana sou
 ["Valley Floodcaller"]
 status = "Partial"
 note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otters and Rats get +1/+1 until end of turn and untap (tested); the 'cast noncreature spells as though they had flash' static is t6_blue::static_flash; missing: the engine does not read it yet (engine need: permanent-based flash grant)"
+
+["Louisoix's Sacrifice"]
+status = "Full"
+note = "instant {U}: additional cost sacrifice a legendary creature or pay {2}; counter target activated ability, triggered ability or noncreature spell. Spells: the ctr=nc tag, the engine pays {2} extra (stack::counter_cost). Abilities: the AI casts it against an important ability or trigger (cardcode::answer_ability -> t6_counters::louisoix_answer), paying {2}, or sacrificing its least valuable legendary creature when it cannot pay and that is worth less than the ability"

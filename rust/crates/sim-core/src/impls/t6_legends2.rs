@@ -373,7 +373,7 @@ fn ertai_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 /// The AI q with Ertai in hand answers an opponent's important ability or trigger on the stack (item `item`): flash
 /// in Ertai ({2}{U}{B}) and counter it; the ability's controller draws a card. Written after `partials::answer_ability`
-/// (Tishana's Tidebinder); the engine's `cardcode::answer_ability` has to call it (engine-needs-legends2.md).
+/// (Tishana's Tidebinder); `cardcode::answer_ability` calls it.
 /// Returns true if Ertai was cast.
 pub fn ertai_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
     let Some(it) = g.stack.iter().find(|x| x.id == item).cloned() else { return Ok(false) };

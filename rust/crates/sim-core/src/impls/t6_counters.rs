@@ -599,3 +599,66 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     }
     Ok(())
 }
+
+// ------------------------------------------------------------------ Louisoix's Sacrifice
+/// The AI q with Louisoix's Sacrifice in hand answers an opponent's important activated or triggered ability on the
+/// stack (item `item`): {U}, and as the additional cost sacrifice a legendary creature or pay {2}. The AI pays {2}
+/// when it can, else sacrifices its least valuable legendary creature if that is worth less than the ability.
+/// (Countering a noncreature spell is the card's `ctr=nc` tag, `stack::counter_cost` adds the {2}.)
+/// Returns true if it was cast.
+pub fn louisoix_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
+    let Some(it) = g.stack.iter().find(|x| x.id == item).cloned() else { return Ok(false) };
+    if it.kind == StackKind::Spell || it.controller == q || it.countered {
+        return Ok(false);
+    }
+    let Some(c) = g.player(q).hand.iter().copied().find(|&x| cname(g, x) == "Louisoix's Sacrifice") else {
+        return Ok(false);
+    };
+    if g.humans.get(q).is_some() || !castable(g, q, c, "hand") {
+        return Ok(false);
+    }
+    let (gn, pips) = cost_of(g, q, c);
+    let with_mana = can_pay(g, q, gn + 2, &pips, false);
+    let sac = if with_mana {
+        None
+    } else if can_pay(g, q, gn, &pips, false) {
+        let legends: Vec<PermId> = g
+            .player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                x.on_bf && !x.phased && x.cd.is_some() && g.is_creature(m) && super::mine::is_legendary(g, m)
+            })
+            .collect();
+        match min_by(&legends, |m| sac_worth(g, m)) {
+            Some(m) if sac_worth(g, m) < it.imp => Some(m),
+            _ => return Ok(false),
+        }
+    } else {
+        return Ok(false);
+    };
+    if let Some(m) = sac {
+        crate::glog!(g, "    {} sacrifices {} to Louisoix's Sacrifice", pname(g, q), g.perm(m).name);
+        die(g, m, "sac")?;
+        if !pay(g, q, gn, &pips, false)? {
+            return Ok(false);
+        }
+    } else if !pay(g, q, gn + 2, &pips, false)? {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(q).hand, c);
+    crate::glog!(g, "    {} casts Louisoix's Sacrifice: {} is countered", pname(g, q), it.name);
+    on_cast(g, q, c)?;
+    if !counter_window(g, q, c, 4.0, vec![])? {
+        g.player_mut(q).gy.push(c);
+        return Ok(true);
+    }
+    if let Some(x) = g.stack.iter_mut().find(|x| x.id == item) {
+        x.countered = true;
+        x.countered_by = Some(c);
+    }
+    g.player_mut(q).gy.push(c);
+    Ok(true)
+}
