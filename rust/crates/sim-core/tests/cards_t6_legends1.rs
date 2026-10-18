@@ -45,7 +45,7 @@ fn derevi_untaps_when_a_creature_deals_combat_damage_to_a_player() {
     sim_core::engine::hooks::fire_trigger(
         &mut g,
         sim_core::hooks::Event::CombatDamage,
-        sim_core::engine::hooks::Call::CombatDamage { p: P0, a: hitter, d: P1, dmg: 3 },
+        sim_core::hooks::Call::CombatDamage { p: P0, a: hitter, d: P1, dmg: 3 },
     )
     .unwrap();
     assert!(!tapped(&g, dork));
@@ -62,7 +62,7 @@ fn derevi_ignores_damage_by_an_opponents_creature() {
     sim_core::engine::hooks::fire_trigger(
         &mut g,
         sim_core::hooks::Event::CombatDamage,
-        sim_core::engine::hooks::Call::CombatDamage { p: P1, a: hitter, d: P0, dmg: 3 },
+        sim_core::hooks::Call::CombatDamage { p: P1, a: hitter, d: P0, dmg: 3 },
     )
     .unwrap();
     assert!(tapped(&g, dork));
