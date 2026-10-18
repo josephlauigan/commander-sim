@@ -262,3 +262,42 @@ fn mycosynth_gardens_is_colourless_alone_and_filters_with_another_land() {
     lands(&mut g, P0, "Abstergo Entertainment", 1, false);
     assert!(mana::mana_units(&g, P0, false).iter().all(|x| x.cols.is_empty()));
 }
+
+// ------------------------------------------------------------------ Fomori Vault
+#[test]
+fn fomori_vault_discards_a_card_and_takes_the_best_of_the_top_x_cards() {
+    let mut g = pod();
+    lands(&mut g, P0, "Fomori Vault", 1, false);
+    lands(&mut g, P0, "Forest", 3, false);
+    for n in ["Sol Ring", "Mana Vault", "Grim Monolith"] {
+        perm(&mut g, P0, n);
+    }
+    hand(&mut g, P0, &["Forest"]);
+    let top: Vec<_> = ["Llanowar Elves", "Birds of Paradise", "Craterhoof Behemoth", "Eternal Witness"]
+        .iter()
+        .map(|n| take(&mut g, P0, n))
+        .collect();
+    g.player_mut(P0).library.extend(&top); // the last is the top
+    let before = g.player(P0).library.len();
+    let o = sim_core::cardcode::land_options(&mut g, P0, None).unwrap();
+    assert_eq!(o.iter().map(|x| x.label.as_str()).collect::<Vec<_>>(), ["Fomori Vault"]);
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    let pl = g.player(P0);
+    assert_eq!(pl.hand.len(), 1, "discarded the Forest, took one card");
+    assert!(pl.gy.contains(&card(&g, "Forest")));
+    let got = pl.hand[0];
+    assert!(top[1..].contains(&got), "one of the top 3 (X = 3 artifacts)");
+    assert_eq!(pl.library.len(), before - 1, "the other two went to the bottom");
+    assert!(pl.library.last() == Some(&top[0]), "the 4th card is still on top");
+    assert!(g.land(g.player(P0).lands[0]).tapped, "{{T}}: the Vault is tapped");
+}
+
+#[test]
+fn fomori_vault_needs_artifacts() {
+    let mut g = pod();
+    lands(&mut g, P0, "Fomori Vault", 1, false);
+    lands(&mut g, P0, "Forest", 3, false);
+    perm(&mut g, P0, "Sol Ring");
+    hand(&mut g, P0, &["Forest"]);
+    assert!(sim_core::cardcode::land_options(&mut g, P0, None).unwrap().is_empty(), "X = 1: not worth a card");
+}

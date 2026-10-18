@@ -8280,3 +8280,7 @@ note = "{T}: {C}; when it enters it names the opponents' land with the most non-
 ["The Mycosynth Gardens"]
 status = "Partial"
 note = "{T}: {C}; {1},{T}: any colour (only when another untapped land pays the {1}; t6_lands.rs any_filter_cols); the {X},{T} copy-an-artifact ability is not modeled (engine-needs-lands.md)"
+
+["Fomori Vault"]
+status = "Full"
+note = "{T}: {C}; {3},{T}, discard a card: look at the top X (X = artifacts you control), best to hand, the rest to the bottom in random order; used when X is 3+ (2 with a spare land), t6_lands.rs"

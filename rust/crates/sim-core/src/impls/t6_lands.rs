@@ -12,6 +12,7 @@ use crate::engine::zones::max_by;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId};
 use crate::tag::Tag;
+use crate::engine::cast::discard_worst;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
@@ -431,6 +432,64 @@ pub fn hamlet_names(g: &Game) -> Vec<CardId> {
     v
 }
 
+// ================================================================== Fomori Vault
+/// the artifacts p controls (cards with the artifact type, and Treasure / Clue / Food / Blood tokens)
+fn artifacts(g: &Game, p: PlayerId) -> u32 {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            let card_art = x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT));
+            let token_art = x.token && x.ttypes.iter().any(|t| ["treasure", "clue", "food", "blood", "artifact"].contains(&&**t));
+            x.on_bf && (card_art || token_art)
+        })
+        .count() as u32
+}
+
+/// **Fomori Vault**: {T}: Add {C}. {3},{T}, discard a card: look at the top X cards, X the number of artifacts you
+/// control; put one into your hand and the rest on the bottom in a random order. The AI does it with 3 spare mana at
+/// the end of the turn or after combat, when X is at least 3 (or 2 with a land in hand to throw away)
+fn vault_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false) || g.land(l).tapped || !can_pay_without(g, p, l, 3, "") || g.player(p).hand.is_empty() {
+        return Ok(vec![]);
+    }
+    let x = artifacts(g, p);
+    let spare_land = g.player(p).hand.iter().any(|&c| g.db.get(c).land);
+    if x < 3 && !(x == 2 && spare_land) || g.player(p).library.len() < x as usize {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 0.3 * x as f64,
+        label: "Fomori Vault".into(),
+        act: Some(Action::Plan { f: vault_go, arg: l.0 as i64 }),
+    }])
+}
+
+fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || g.player(p).hand.is_empty() || !pay_without(g, p, l, 3, "")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    discard_worst(g, p, 1)?; // the cost
+    crate::glog!(g, "  {} uses Fomori Vault", g.player(p).name);
+    if !ability_window_card(g, p, g.land(l).cd, "look at the top cards, one to hand", None, None)? {
+        return Ok(true);
+    }
+    let n = (artifacts(g, p) as usize).min(g.player(p).library.len());
+    let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+    let Some(pick) = max_by(&top, |c| crate::ai::tutor_value(g, p, c)) else { return Ok(true) };
+    let mut rest = top.clone();
+    rest.remove(rest.iter().position(|&c| c == pick).unwrap()); // one copy of the pick
+    g.rng.shuffle(&mut rest);
+    let pl = g.player_mut(p);
+    pl.library.splice(0..0, rest);
+    pl.hand.push(pick);
+    crate::glog!(g, "    Fomori Vault: {} to hand, the rest to the bottom", g.db.get(pick).name);
+    Ok(true)
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -457,6 +516,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Emergence Zone")?.land_options = Some(emergence);
     r.card(db, "Forbidden Orchard")?.on_tap_land = Some(orchard_tap);
     r.card(db, "Petrified Hamlet")?.land_etb = Some(hamlet_etb);
+    r.card(db, "Fomori Vault")?.land_options = Some(vault_options);
     // REGISTER-HERE
     Ok(())
 }
