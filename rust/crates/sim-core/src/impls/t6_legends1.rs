@@ -7,7 +7,7 @@ use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::zones::{draw, max_by};
 use crate::flow::Res;
-use crate::hooks::{Registry, Src};
+use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
@@ -175,6 +175,58 @@ fn selvala_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
     (x - 1).max(0) as u32
 }
 
+// ================================================================== Agatha's Soul Cauldron
+/// the creature card in an opponent's graveyard worth exiling most: (owner, card)
+fn cauldron_pick(g: &Game, p: PlayerId) -> Option<(PlayerId, crate::ids::CardId)> {
+    let mut best: Option<(PlayerId, crate::ids::CardId, f64)> = None;
+    for q in g.opps(p) {
+        for &c in &g.player(q).gy {
+            if !g.db.get(c).creature {
+                continue;
+            }
+            let w = crate::engine::tutors::card_worth(g, q, c, true);
+            if best.is_none_or(|b| w > b.2) {
+                best = Some((q, c, w));
+            }
+        }
+    }
+    best.map(|b| (b.0, b.1))
+}
+
+/// **Agatha's Soul Cauldron**: {T}: exile target card from a graveyard; when a creature card is exiled this way, put a
+/// +1/+1 counter on target creature you control. The AI exiles the best creature card from an opponent's graveyard
+/// (denying reanimation and recursion) onto its best creature, in the second main phase or the end-of-turn window.
+/// Not modeled: spending mana as any colour on creature abilities, and the exiled creatures' abilities for creatures
+/// with +1/+1 counters (see engine-needs-legends1.md).
+fn cauldron_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false) || !live(g, src) || owner(g, src) != p || g.perm(src).tapped {
+        return Ok(vec![]);
+    }
+    if cauldron_pick(g, p).is_none() || !g.player(p).perms.iter().any(|&m| live(g, m) && g.is_creature(m)) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.0,
+        label: "exile a creature card from a graveyard (Cauldron)".into(),
+        act: Some(Action::Ability { src, f: cauldron_go, arg: 0 }),
+    }])
+}
+
+fn cauldron_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped {
+        return Ok(false);
+    }
+    let Some((q, c)) = cauldron_pick(g, p) else { return Ok(false) };
+    let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    let Some(t) = max_by(&mine, |m| pval(g, m)) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    g.player_mut(q).gy.retain(|&x| x != c);
+    g.player_mut(q).exile.push(c);
+    crate::cardcode::add_counters(g, t, 1);
+    crate::glog!(g, "  Agatha's Soul Cauldron exiles {}, +1/+1 counter on {}", g.db.get(c).name, g.perm(t).name);
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), String> {
     let c = r.card(db, "Derevi, Empyrial Tactician")?;
     c.etb = Some(derevi_etb);
@@ -183,5 +235,6 @@ pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), Strin
     let c = r.card(db, "Selvala, Heart of the Wilds")?;
     c.etb = Some(selvala_etb);
     c.dyn_mana_perm = Some(selvala_mana);
+    r.card(db, "Agatha's Soul Cauldron")?.options = Some(cauldron_options);
     Ok(())
 }

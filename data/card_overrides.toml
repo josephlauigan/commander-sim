@@ -8586,3 +8586,8 @@ note = "{G},{T}: X mana of any colours (X = greatest power among your creatures)
 ["Emiel the Blessed"]
 status = "Full"
 note = "{3}: blink another creature you control (compiled); whenever another creature you control enters, pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs)"
+
+["Agatha's Soul Cauldron"]
+dsl = []
+status = "Partial"
+note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter on the best creature (AI, second main / end step); missing: spend mana as any colour on creature abilities, and creatures with +1/+1 counters gaining the exiled creatures' activated abilities (t6_legends1.rs)"

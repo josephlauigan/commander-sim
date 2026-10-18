@@ -1,6 +1,8 @@
 //! Tier 6 "legends1" batch (impls/t6_legends1.rs): each card on a hand-built position with its Oracle text as the
 //! expectation.
 
+use sim_core::ai::act;
+use sim_core::hooks::Opt;
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -118,4 +120,30 @@ fn selvala_taps_for_greatest_power_less_the_g() {
     g.perm_mut(s).sick = false;
     perm(&mut g, P0, "Baneslayer Angel");
     assert_eq!(sim_core::cardcode::dyn_mana_perm(&g, P0, s), Some(4), "X = 5, minus the {{G}}");
+}
+
+fn options(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let c = g.perm(src).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, src, p, post).unwrap()
+}
+
+// ======================================================== Agatha's Soul Cauldron
+#[test]
+fn cauldron_exiles_an_opponents_creature_card_for_a_counter() {
+    let mut g = tbl();
+    let cau = perm(&mut g, P0, "Agatha's Soul Cauldron");
+    assert!(options(&mut g, cau, P0, None).is_empty(), "nothing in a graveyard, no creature of ours");
+    let me = perm(&mut g, P0, "Bloom Tender");
+    assert!(options(&mut g, cau, P0, None).is_empty(), "no creature card in an opponent's graveyard");
+    let ang = take(&mut g, P1, "Baneslayer Angel");
+    g.player_mut(P1).gy.push(ang);
+    let o = options(&mut g, cau, P0, None);
+    assert_eq!(o.len(), 1);
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(g.perm(cau).tapped);
+    assert!(!g.player(P1).gy.contains(&ang));
+    assert!(g.player(P1).exile.contains(&ang));
+    assert_eq!(g.perm(me).plus, 1);
+    assert!(options(&mut g, cau, P0, None).is_empty(), "tapped");
 }
