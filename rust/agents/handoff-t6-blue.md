@@ -4,8 +4,9 @@ Test deck seat 0 = rograkh-silas-turbo-breach, seat 1 = seph. Oracle text: scrat
 ## Done
 - Borne Upon a Wind (Partial: flash grant is an engine need)
 - Mnemonic Betrayal (Partial)
+- Timetwister (Full)
 ## Next (order)
-Timetwister, Demonic Counsel, Rain of Filth, Sevinne's Reclamation, Exhibition Tidecaller, Voice of Victory, High Fae Trickster, Drift of Phantasms, Emrakul, Rograkh, Silas Renn, Hidden Strings, Valley Floodcaller
+Demonic Counsel, Rain of Filth, Sevinne's Reclamation, Exhibition Tidecaller, Voice of Victory, High Fae Trickster, Drift of Phantasms, Emrakul, Rograkh, Silas Renn, Hidden Strings, Valley Floodcaller
 ## Gotchas
 - `resolve` slot overrides the DSL; return "gy" / "exile" / "handled".
 - Cards taken from opponents: yshtola::take_card (agent_ids = any mana type, stolen = owner for gy).

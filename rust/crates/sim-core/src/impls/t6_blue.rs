@@ -4,8 +4,10 @@
 //!
 //! - Borne Upon a Wind: draw, and the one-turn "cast spells as though they had flash" flag (`t6_lands::FLASH_FLAG`).
 //! - Mnemonic Betrayal: opponents' graveyards are exiled and their nonland cards held in hand (any mana type) for the turn.
+//! - Timetwister: every player's hand and graveyard shuffled into their library, then seven cards drawn.
 
 use crate::cards::CardDb;
+use crate::engine::tutors::shuffle_library;
 use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::Registry;
@@ -54,8 +56,39 @@ fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
     Ok("exile")
 }
 
+// ================================================================== Timetwister
+/// Timetwister: each player shuffles their hand and graveyard into their library, then draws seven cards; Timetwister
+/// itself goes to the graveyard afterwards (it is not shuffled in). A card held from an opponent (Opposition Agent
+/// style) goes into its owner's library.
+fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let mut order = vec![p];
+    order.extend(g.after(p).filter(|&q| g.player(q).alive));
+    for &q in &order {
+        let hand = std::mem::take(&mut g.player_mut(q).hand);
+        let gy = std::mem::take(&mut g.player_mut(q).gy);
+        for c in hand.into_iter().chain(gy) {
+            let owner = g.player_mut(q).stolen.swap_remove(&c).unwrap_or(q);
+            g.player_mut(q).agent_ids.retain(|&x| x != c);
+            g.player_mut(q).impulse.retain(|&x| x != c);
+            g.player_mut(owner).library.push(c);
+        }
+    }
+    for &q in &order {
+        shuffle_library(g, q);
+    }
+    for &q in &order {
+        draw(g, q, 7, false)?;
+        if g.over {
+            break;
+        }
+    }
+    Ok("gy")
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Timetwister")?.resolve = Some(timetwister_resolve);
     r.card(db, "Borne Upon a Wind")?.resolve = Some(borne_resolve);
     r.card(db, "Mnemonic Betrayal")?.resolve = Some(betrayal_resolve);
     Ok(())

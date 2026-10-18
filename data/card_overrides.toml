@@ -8676,3 +8676,7 @@ note = "draws a card and sets the caster's one-turn flash flag (t6_blue::flash_t
 ["Mnemonic Betrayal"]
 status = "Partial"
 note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); missing: cards left uncast should return to their owners' graveyards at the next end step, but the end-step clean-up exiles them (engine need: delayed end-step return)"
+
+["Timetwister"]
+status = "Full"
+note = "each player shuffles hand and graveyard into the library and draws seven (cards held from an opponent go to their owner's library); Timetwister then goes to the graveyard (t6_blue.rs, tested)"

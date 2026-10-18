@@ -61,3 +61,23 @@ fn mnemonic_betrayal_takes_opposing_graveyards_for_the_turn() {
     assert!(g.player(P0).gy.contains(&mine), "own graveyard untouched");
     assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Mnemonic Betrayal"), "Betrayal is exiled");
 }
+
+// ======================================================== Timetwister
+#[test]
+fn timetwister_wheels_every_player_for_seven() {
+    let mut g = game();
+    let a = put_gy(&mut g, P0, "Opt");
+    let b = put_gy(&mut g, P1, "Lightning Bolt");
+    hand(&mut g, P1, &["Island", "Island"]);
+    let total: usize = [P0, P1].iter().map(|&q| g.player(q).library.len() + g.player(q).hand.len() + g.player(q).gy.len()).sum();
+    cast_free(&mut g, P0, "Timetwister");
+    assert_eq!(g.player(P0).hand.len(), 7);
+    assert_eq!(g.player(P1).hand.len(), 7);
+    assert_eq!(g.player(P0).gy.len(), 1, "only Timetwister itself is in the graveyard");
+    assert!(in_gy(&g, P0, "Timetwister"));
+    assert!(g.player(P1).gy.is_empty());
+    let now: usize = [P0, P1].iter().map(|&q| g.player(q).library.len() + g.player(q).hand.len() + g.player(q).gy.len()).sum();
+    assert_eq!(total, now, "no card is lost");
+    let all = |g: &Game, q: PlayerId, c: CardId| g.player(q).library.contains(&c) || g.player(q).hand.contains(&c);
+    assert!(all(&g, P0, a) && all(&g, P1, b), "the graveyard cards were shuffled in");
+}
