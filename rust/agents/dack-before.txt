@@ -1,0 +1,4 @@
+600 games (calibration: within, 300 per list per tier, profiles conservative and loose), lookahead AI, 3 worker threads: about 10 minutes
+
+=== Within-tier balance [conservative, n=300 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m42s elapsed, ~6m23s left
