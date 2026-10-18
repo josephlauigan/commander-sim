@@ -12,16 +12,17 @@ use crate::engine::zones::max_by;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId};
 use crate::tag::Tag;
-use crate::engine::cast::{castable, discard_worst, on_cast};
+use crate::engine::cast::{cast_card, castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
-use crate::engine::values::{etgh, pval, threat, untargetable};
+use crate::engine::values::{etgh, no_damage, pval, threat, untargetable};
 use crate::engine::zones::{Tokens, die, make_tokens, min_by};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{LandId, PlayerId};
-use crate::state::{DataKey, Game, Val};
+use crate::state::{Ctx, DataKey, Game, Val};
+use crate::sym::Sym;
 
 fn name_of(g: &Game, l: LandId) -> &str {
     &g.db.get(g.land(l).cd).name
@@ -730,6 +731,118 @@ fn razorgrass_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
     Ok(mdfc_land_opt(g, c, p, post).into_iter().collect())
 }
 
+// ================================================================== Shatterskull Smashing
+/// **Shatterskull Smashing** ({X}{R}{R} sorcery): X damage divided as you choose among up to two target creatures
+/// and/or planeswalkers; if X is 6 or more, twice X instead. The AI picks the X that kills the most valuable one or
+/// two opposing creatures / planeswalkers (the smallest X that reaches the best total value), and divides the damage
+/// as exactly lethal to each; with no kill worth 5 in value it keeps the card (or plays it as a land when short of lands)
+pub fn smash_damage(x: i32) -> i32 {
+    if x >= 6 { 2 * x } else { x }
+}
+
+/// the damage a creature (its toughness) or planeswalker (its loyalty) needs to die, if damage can hurt it
+fn smash_need(g: &Game, m: PermId) -> Option<i32> {
+    let x = g.perm(m);
+    if !x.on_bf || x.phased || untargetable(g, m) {
+        return None;
+    }
+    if g.is_creature(m) {
+        return if no_damage(g, m) { None } else { Some(etgh(g, m).max(1)) };
+    }
+    x.loyalty.map(|l| l.max(1))
+}
+
+/// (target, damage it gets, value): the best one or two opposing targets that `dmg` kills, worth at least 3 each
+fn smash_targets(g: &Game, p: PlayerId, dmg: i32) -> Vec<(PermId, i32, f64)> {
+    let cs: Vec<(PermId, i32, f64)> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter_map(|m| smash_need(g, m).map(|n| (m, n, pval(g, m))))
+        .filter(|&(_, n, v)| n <= dmg && v >= 3.0)
+        .collect();
+    let mut best: Vec<(PermId, i32, f64)> = vec![];
+    let mut best_v = 0.0;
+    for (i, &a) in cs.iter().enumerate() {
+        if a.2 > best_v {
+            best = vec![a];
+            best_v = a.2;
+        }
+        for &b in &cs[i + 1..] {
+            if a.1 + b.1 <= dmg && a.2 + b.2 > best_v {
+                best = vec![a, b];
+                best_v = a.2 + b.2;
+            }
+        }
+    }
+    best
+}
+
+fn smash_plan(g: &Game, p: PlayerId) -> Option<(i32, f64)> {
+    let spare = total_mana(g, p, false) as i32 - 2;
+    let mut best: Option<(i32, f64)> = None;
+    for x in 1..=spare.max(0) {
+        if !can_pay(g, p, x as u32, "RR", false) {
+            break;
+        }
+        let score: f64 = smash_targets(g, p, smash_damage(x)).iter().map(|t| t.2).sum();
+        if score >= 5.0 && best.is_none_or(|b| score > b.1 + 0.01) {
+            best = Some((x, score));
+        }
+    }
+    best
+}
+
+fn smash_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut o: Vec<Opt> = mdfc_land_opt(g, c, p, post).into_iter().collect();
+    if post.is_some()
+        && g.active == Some(p)
+        && let Some((x, score)) = smash_plan(g, p)
+    {
+        o.push(Opt {
+            utility: 1.5 + 0.2 * score.min(30.0),
+            label: format!("Shatterskull Smashing (X = {x})"),
+            act: Some(Action::Plan { f: smash_go, arg: c.0 as i64 }),
+        });
+    }
+    Ok(o)
+}
+
+fn smash_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    let Some((x, _)) = smash_plan(g, p) else { return Ok(false) };
+    let (gn, pips) = cost_of(g, p, c);
+    if !can_pay(g, p, gn + x as u32, &pips, false) || !pay(g, p, gn + x as u32, &pips, false)? {
+        return Ok(false);
+    }
+    cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
+    Ok(true)
+}
+
+fn smash_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let dmg = smash_damage(ctx.x.max(0));
+    let tg = smash_targets(g, p, dmg);
+    crate::glog!(g, "    Shatterskull Smashing (X = {}, {dmg} damage)", ctx.x);
+    for (m, need, _) in tg {
+        if !g.perm(m).on_bf {
+            continue;
+        }
+        if g.is_creature(m) {
+            apply_removal(g, Some(p), m, &format!("dmg{need}"), None)?;
+        } else {
+            let l = g.perm(m).loyalty.unwrap_or(0) - need;
+            g.perm_mut(m).loyalty = Some(l.max(0));
+            if l <= 0 {
+                die(g, m, "sba")?;
+            }
+        }
+    }
+    crate::engine::life::check_state(g)?;
+    Ok("gy")
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -766,6 +879,12 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     rz.hand_options = Some(razorgrass_options);
     rz.hand_defend = Some(razorgrass_defend);
     rz.hand_blocks = Some(razorgrass_blocks);
+    for n in SHATTERSKULL {
+        let s = r.card(db, n)?;
+        s.land_cols = Some(mdfc_cols);
+        s.hand_options = Some(smash_options);
+        s.resolve = Some(smash_resolve);
+    }
     // REGISTER-HERE
     Ok(())
 }

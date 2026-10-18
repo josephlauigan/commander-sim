@@ -8292,3 +8292,11 @@ note = "{T}, pay 1 life: {B} or {R} (not at 1 life); {1}{B}{R},{T}: 1 damage to 
 ["Razorgrass Ambush // Razorgrass Field"]
 status = "Full"
 note = "Ambush: {1}{W} instant, 3 damage to an attacking or blocking creature, cast when it kills a creature worth 4+; Field: played as a land through hand_options (no other land in hand, under 4 lands, land drop free), pays 3 life for untapped or enters tapped, {T}: {W} (t6_lands.rs)"
+
+["Shatterskull Smashing"]
+status = "Full"
+note = "{X}{R}{R} sorcery: X damage (twice X from 6) divided between up to two opposing creatures / planeswalkers, exactly lethal to each, smallest X that kills the best targets; Shatterskull, the Hammer Pass is played as a land (pay 3 life or enters tapped, {T}: {R}) through hand_options (t6_lands.rs)"
+
+["Shatterskull Smashing // Shatterskull, the Hammer Pass"]
+status = "Full"
+note = "same card as Shatterskull Smashing (t6_lands.rs)"

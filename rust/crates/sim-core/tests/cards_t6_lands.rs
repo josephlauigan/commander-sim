@@ -419,3 +419,54 @@ fn hand_opts(g: &mut Game, p: PlayerId, post: Option<bool>) -> Vec<sim_core::hoo
     }
     o
 }
+
+// ------------------------------------------------------------------ Shatterskull Smashing // Shatterskull, the Hammer Pass
+const SMASH: &str = "Shatterskull Smashing";
+
+#[test]
+fn shatterskull_smashing_divides_x_damage_between_two_creatures() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &[SMASH])[0];
+    lands(&mut g, P0, "Mountain", 9, false);
+    let kaalia = perm(&mut g, P1, "Kaalia of the Vast"); // toughness 2
+    let sheo = perm(&mut g, P1, "Sheoldred, the Apocalypse"); // toughness 5
+    let o = hand_opts(&mut g, P0, Some(false));
+    let o = o.iter().find(|x| x.label.starts_with("Shatterskull Smashing")).expect("offered with a kill");
+    assert_eq!(o.label, "Shatterskull Smashing (X = 6)", "X = 6 deals twice X = 12: the smallest X that kills both (2 + 5)");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(!g.perm(kaalia).on_bf && !g.perm(sheo).on_bf, "the damage is divided as lethal to each");
+    assert!(g.player(P0).gy.contains(&c));
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 8, "{{6}}{{R}}{{R}}");
+}
+
+#[test]
+fn shatterskull_smashing_x_of_six_or_more_deals_twice_x() {
+    use sim_core::impls::t6_lands as t6;
+    assert_eq!((t6::smash_damage(5), t6::smash_damage(6), t6::smash_damage(8)), (5, 12, 16));
+}
+
+#[test]
+fn shatterskull_smashing_is_held_without_a_worthwhile_kill() {
+    let mut g = pod();
+    g.active = Some(P0);
+    hand(&mut g, P0, &[SMASH]);
+    lands(&mut g, P0, "Mountain", 6, false);
+    perm(&mut g, P1, "Llanowar Elves");
+    assert!(hand_opts(&mut g, P0, Some(false)).iter().all(|x| !x.label.starts_with("Shatterskull Smashing")));
+}
+
+#[test]
+fn shatterskull_the_hammer_pass_is_played_as_a_land_that_taps_for_r() {
+    let mut g = pod();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &[SMASH])[0];
+    lands(&mut g, P0, "Mountain", 2, false);
+    let o = hand_opts(&mut g, P0, Some(false));
+    let o = o.iter().find(|x| x.label.contains("as a land")).expect("land option");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    let l = *g.player(P0).lands.last().unwrap();
+    assert_eq!(g.land(l).cd, c);
+    g.land_mut(l).tapped = false;
+    assert!(mana::mana_units(&g, P0, false).iter().any(|x| x.src == mana::Source::Land(l) && x.cols.has('R')));
+}
