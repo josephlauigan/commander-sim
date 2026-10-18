@@ -1,0 +1,29 @@
+3,000 games (calibration: within, 1,500 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 9 minutes
+
+=== Within-tier balance [conservative, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m48s elapsed, ~7m19s left
+  progress  20.0%  1m37s elapsed, ~6m29s left
+  progress  30.0%  2m26s elapsed, ~5m42s left
+  progress  40.0%  3m20s elapsed, ~5m00s left
+  progress  50.0%  4m15s elapsed, ~4m15s left
+  Tier 0 (Bracket 2 precons): avg game 12.2 rounds, timeouts 0.5%
+    Anikthea                      29.7% (27.1-32.3)  [0.2 pts from round-cap wins]
+    Captain America               25.4% (23.0-27.9)  [0.2 pts from round-cap wins]
+    Giada                         32.6% (30.0-35.3)  [0.2 pts from round-cap wins]
+    Stella Lee                    15.1% (13.2-17.2)  [0.1 pts from round-cap wins]
+    Zurgo Stormrender             22.2% (19.9-24.6)  [0.0 pts from round-cap wins]
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  60.0%  5m11s elapsed, ~3m27s left
+  progress  70.0%  6m04s elapsed, ~2m36s left
+  progress  80.0%  6m55s elapsed, ~1m43s left
+  progress  90.0%  7m47s elapsed, ~0m51s left
+  progress 100.0%  8m43s elapsed, ~0m00s left
+  Tier 0 (Bracket 2 precons): avg game 12.3 rounds, timeouts 0.4%
+    Anikthea                      28.9% (26.4-31.5)  [0.2 pts from round-cap wins]
+    Captain America               23.5% (21.2-26.0)  [0.1 pts from round-cap wins]
+    Giada                         35.1% (32.5-37.9)  HIGH  [0.1 pts from round-cap wins]
+    Stella Lee                    15.8% (13.9-18.0)  [0.1 pts from round-cap wins]
+    Zurgo Stormrender             21.6% (19.4-24.0)  [0.0 pts from round-cap wins]
+
+(524s total)

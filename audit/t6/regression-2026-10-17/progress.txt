@@ -1,0 +1,15 @@
+23:09 building baseline
+23:09 baseline built
+23:09 baseline t0 skipped (done)
+23:25 cedh t0 exit=0 secs=948
+23:33 baseline t1 exit=0 secs=513
+23:46 cedh t1 exit=0 secs=731
+23:57 baseline t2 exit=0 secs=709
+00:13 cedh t2 exit=0 secs=923
+00:19 baseline t3 exit=0 secs=395
+00:28 cedh t3 exit=0 secs=537
+00:34 baseline t4 exit=0 secs=339
+00:42 cedh t4 exit=0 secs=458
+00:45 baseline t5 exit=0 secs=176
+00:49 cedh t5 exit=0 secs=244
+00:49 ALL DONE

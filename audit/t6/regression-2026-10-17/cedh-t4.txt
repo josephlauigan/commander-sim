@@ -1,0 +1,29 @@
+3,000 games (calibration: within, 1,500 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 9 minutes
+
+=== Within-tier balance [conservative, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m46s elapsed, ~7m01s left
+  progress  20.0%  1m33s elapsed, ~6m12s left
+  progress  30.0%  2m16s elapsed, ~5m19s left
+  progress  40.0%  3m03s elapsed, ~4m35s left
+  progress  50.0%  3m47s elapsed, ~3m47s left
+  Tier 4 (Low B4): avg game 9.9 rounds, timeouts 0.6%
+    Chulane                       19.8% (17.6-22.1)  [0.2 pts from round-cap wins]
+    Heliod                        33.8% (31.2-36.5)  [0.3 pts from round-cap wins]
+    Krenko                        27.0% (24.6-29.6)  [0.0 pts from round-cap wins]
+    Prosper                       17.9% (15.9-20.2)  [0.0 pts from round-cap wins]
+    Yuriko                        26.4% (24.0-29.0)  [0.2 pts from round-cap wins]
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  60.0%  4m32s elapsed, ~3m01s left
+  progress  70.0%  5m18s elapsed, ~2m16s left
+  progress  80.0%  6m03s elapsed, ~1m30s left
+  progress  90.0%  6m51s elapsed, ~0m45s left
+  progress 100.0%  7m37s elapsed, ~0m00s left
+  Tier 4 (Low B4): avg game 9.9 rounds, timeouts 0.5%
+    Chulane                       18.4% (16.3-20.6)  [0.1 pts from round-cap wins]
+    Heliod                        33.2% (30.6-35.9)  [0.3 pts from round-cap wins]
+    Krenko                        26.1% (23.7-28.7)  [0.2 pts from round-cap wins]
+    Prosper                       19.0% (16.9-21.3)  [0.1 pts from round-cap wins]
+    Yuriko                        28.3% (25.8-30.9)  [0.0 pts from round-cap wins]
+
+(457s total)
