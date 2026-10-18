@@ -71,6 +71,7 @@ pub enum StepKind {
 }
 
 /// one step of a combo's line (see `Combo::steps`): an answered step stops the combo
+#[derive(Clone, Copy)]
 pub struct Step {
     pub label: &'static str,
     pub kind: StepKind,
@@ -99,7 +100,11 @@ pub fn done(_g: &mut Game, _p: PlayerId) -> Res<bool> {
 /// exports `pub static COMBOS: [Combo; N]` and is chained here (the index of a combo is its place in this list)
 pub fn all() -> &'static [&'static Combo] {
     static ALL: LazyLock<Vec<&'static Combo>> = LazyLock::new(|| {
-        BASE.iter().chain(super::t6_combos_godo::COMBOS.iter()).chain(super::t6_combos_t6::COMBOS.iter()).collect()
+        BASE.iter()
+            .chain(super::t6_combos_godo::COMBOS.iter())
+            .chain(super::t6_combos_t6::COMBOS.iter())
+            .chain(super::t6_combos_extra::COMBOS.iter())
+            .collect()
     });
     &ALL
 }
@@ -152,7 +157,7 @@ pub static BASE: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
-        steps: &[],
+        steps: &super::t6_combos_extra::KINNAN_BASALT_STEPS,
     },
     Combo {
         name: "Kinnan + Freed from the Real / Pemmin's Aura",
@@ -186,9 +191,9 @@ pub static BASE: [Combo; 14] = [
         groups: &[&["Thassa's Oracle"], &["Demonic Consultation", "Tainted Pact"]],
         ready: oracle,
         mana: (0, ""),
-        finish: None,
+        finish: Some(super::t6_combos_extra::oracle_finish),
         xcost: &[],
-        steps: &[],
+        steps: &super::t6_combos_extra::ORACLE_STEPS,
     },
     Combo {
         name: "Helm of the Host + Combat Celebrant",
@@ -246,15 +251,28 @@ pub static BASE: [Combo; 14] = [
     },
 ];
 
+/// the first group of a "quiet" combo: a line that is offered and played (options, steps, answers) but whose cards are
+/// not registered as pieces (no tutor wish lists, discard keeps, piece threats or deck progress: a deck outside Tier 6
+/// that happens to play Sol Ring, Underworld Breach or Goblin Welder must not change). The sentinel is no card, so
+/// `deck_combos` and `missing_pieces` never see the combo either.
+pub const QUIET: &[&str] = &["~quiet"];
+
+pub fn quiet(c: &Combo) -> bool {
+    c.groups.first().is_some_and(|g| *g == QUIET)
+}
+
 /// combos.PIECES: is this card name a piece of a modeled combo?
 pub fn is_piece_name(name: &str) -> bool {
-    all().iter().any(|c| c.groups.iter().any(|grp| grp.contains(&name)))
+    all().iter().any(|c| !quiet(c) && c.groups.iter().any(|grp| grp.contains(&name)))
 }
 
 /// combos.PIECES as card ids (the names in the card database)
 pub fn pieces(g: &Game) -> Vec<CardId> {
     let mut out = vec![];
     for cmb in all() {
+        if quiet(cmb) {
+            continue;
+        }
         for grp in cmb.groups {
             for n in grp.iter() {
                 if let Some(c) = g.db.id(n)
@@ -606,7 +624,7 @@ pub fn piece_threat(g: &Game, m: PermId) -> f64 {
     }
     let p = g.perm(m).owner;
     for cmb in all() {
-        if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
+        if quiet(cmb) || !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
         let others: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !grp.contains(&name)).collect();
@@ -628,7 +646,7 @@ pub fn combo_imp(g: &Game, p: PlayerId, c: CardId) -> f64 {
         return 0.0;
     }
     for cmb in all() {
-        if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
+        if quiet(cmb) || !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
         let others: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !grp.contains(&name)).collect();
@@ -833,10 +851,11 @@ fn power_artifact(g: &Game, p: PlayerId) -> Ready {
     (true, vec![pa, mono], vec![])
 }
 
-/// infinite colourless mana; Kinnan's activation finds a winner
+/// infinite colourless mana; Kinnan's activation (its {U}{G} paid from real sources) finds a winner. Without {U}{G} the
+/// Thrasios / Mirage Mirror outlets (t6_combos_extra) take over
 fn kinnan_basalt(g: &Game, p: PlayerId) -> Ready {
     match (on_bf(g, p, "Kinnan, Bonder Prodigy"), on_bf(g, p, "Basalt Monolith")) {
-        (Some(k), Some(b)) => (true, vec![k, b], vec![]),
+        (Some(k), Some(b)) if super::t6_combos_extra::can_pay_ug(g, p) => (true, vec![k, b], vec![]),
         _ => NOT_READY(),
     }
 }

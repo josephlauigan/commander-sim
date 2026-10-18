@@ -45,7 +45,8 @@ fn first_attack_key(src: PermId) -> Sym {
 }
 
 // ================================================================== Godo, Bandit Warlord
-/// the copy cards that make Godo's second fetch worth Hammer first (the spec's line 3): on the battlefield or in hand
+/// the copy cards that make Godo's second fetch worth Hammer first (the spec's line 3): in hand (Jaxis and the Camera also on the
+/// battlefield)
 pub(crate) const COPIERS: [&str; 8] = [
     "Jaxis, the Troublemaker",
     "Sculpting Steel",
@@ -61,8 +62,10 @@ pub(crate) const COPIERS: [&str; 8] = [
 /// Hammer attaches it free), else Helm of the Host, else Hammer, else the AI's usual pick (None)
 pub(crate) fn godo_wants(g: &Game, p: PlayerId) -> Option<&'static str> {
     let lib = |n: &str| g.player(p).library.iter().any(|&c| &*g.db.get(c).name == n);
+    // on the battlefield only Jaxis and the Camera still copy; a Mirror, Steel or copy spell has done its work then
     let copier = COPIERS.iter().any(|n| {
-        on_bf_named(g, p, n) || g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == *n)
+        (matches!(*n, "Jaxis, the Troublemaker" | "Peter Parker's Camera") && on_bf_named(g, p, n))
+            || g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == *n)
     });
     let helm = on_bf_named(g, p, "Helm of the Host");
     let hammer = on_bf_named(g, p, "Hammer of Nazahn");
@@ -303,7 +306,7 @@ fn welder_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     Ok(vec![ability(6.0, "Goblin Welder swap", src, welder_go)])
 }
 
-fn welder_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn welder_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || g.perm(src).sick {
         return Ok(false);
     }
