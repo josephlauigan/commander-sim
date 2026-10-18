@@ -117,6 +117,18 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
         | "Biomancer's Familiar"
         | "Cloud of Faeries"
         | "Valley Floodcaller" => Some(82.0),
+        // the Cradle tutors: at once while Cradle is still in the library; never with Cradle in hand (Gamble discards at random)
+        "Gamble" | "Crop Rotation" => {
+            let have = cradle_out(g, p) || in_hand(g, p, CRADLE);
+            let lib = g.player(p).library.iter().any(|&x| name(g, x) == CRADLE);
+            if have || (n == "Crop Rotation" && (!lib || g.player(p).lands.len() < 2)) {
+                Some(0.0)
+            } else if lib {
+                Some(88.0)
+            } else {
+                None
+            }
+        }
         "Formidable Speaker" => Some(78.0),
         _ => None,
     }
