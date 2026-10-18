@@ -134,3 +134,29 @@ fn sauron_wheels_with_the_archivist_for_kaervek_or_sauron_when_short_of_cards() 
     perm(&mut g, P0, "Kaervek the Merciless");
     assert!(decks::archivist_worth(&g, P0));
 }
+
+fn kefka_hand(names: &[&str]) -> sim_core::state::Game {
+    let mut g = table(&["kefka", "veyran"]);
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    hand(&mut g, P0, names);
+    g
+}
+
+fn kefka_discards(g: &sim_core::state::Game) -> String {
+    let h = g.player(P0).hand.clone();
+    let c = sim_core::impls::kefka::discard_choice(g, P0, &h, 0).unwrap();
+    g.db.get(c).name.to_string()
+}
+
+#[test]
+fn kefka_keeps_breach_and_will_over_a_land_while_a_storm_card_is_left() {
+    let g = kefka_hand(&["Underworld Breach", "Yawgmoth's Will", "Island"]);
+    assert_eq!(kefka_discards(&g), "Island");
+}
+
+#[test]
+fn kefka_keeps_protection_over_a_land() {
+    let g = kefka_hand(&["Deflecting Swat", "Slip Out the Back", "Island"]);
+    assert_eq!(kefka_discards(&g), "Island");
+}
