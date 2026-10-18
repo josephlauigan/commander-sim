@@ -263,7 +263,12 @@ pub fn quiet(c: &Combo) -> bool {
 
 /// combos.PIECES: is this card name a piece of a modeled combo?
 pub fn is_piece_name(name: &str) -> bool {
-    all().iter().any(|c| !quiet(c) && c.groups.iter().any(|grp| grp.contains(&name)))
+    // a set built once: this runs for every permanent each time the AI values a board
+    static SET: std::sync::OnceLock<std::collections::HashSet<&'static str>> = std::sync::OnceLock::new();
+    SET.get_or_init(|| {
+        all().iter().filter(|c| !quiet(c)).flat_map(|c| c.groups.iter().flat_map(|grp| grp.iter().copied())).collect()
+    })
+    .contains(name)
 }
 
 /// combos.PIECES as card ids (the names in the card database)
