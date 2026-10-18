@@ -1,0 +1,66 @@
+//! AI audit, phase 2: Sauron and Kefka (audit/ai-audit/sauron.md, kefka.md).
+
+use sim_core::ai::decks;
+use sim_core::engine::zones;
+use sim_core::ids::PlayerId;
+use sim_core::testkit::*;
+
+const P0: PlayerId = PlayerId(0);
+
+fn sauron_table() -> sim_core::state::Game {
+    let mut g = table(&["sauron", "veyran"]);
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    lands(&mut g, P0, "Island", 3, false);
+    lands(&mut g, P0, "Swamp", 3, false);
+    lands(&mut g, P0, "Mountain", 2, false);
+    g.player_mut(P0).turns = 8;
+    g
+}
+
+#[test]
+fn sauron_tutor_fetches_the_ozolith_once_an_army_is_growing() {
+    let mut g = sauron_table();
+    zones::amass(&mut g, P0, 4).unwrap();
+    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "The Ozolith")));
+    perm(&mut g, P0, "The Ozolith");
+    assert_ne!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "The Ozolith")));
+}
+
+#[test]
+fn sauron_tutor_never_takes_the_old_list_or_a_lone_assault() {
+    let mut g = sauron_table();
+    perm(&mut g, P0, "The Ozolith");
+    zones::amass(&mut g, P0, 2).unwrap();
+    let pick = decks::tutor_pick(&g, P0, "any").unwrap();
+    assert_ne!(&*g.db.get(pick).name, "Aggravated Assault");
+}
+
+#[test]
+fn sauron_tutor_gets_evasion_for_a_huge_army_then_the_extra_combat() {
+    let mut g = sauron_table();
+    perm(&mut g, P0, "The Ozolith");
+    perm(&mut g, P0, "Not of This World");
+    zones::amass(&mut g, P0, 9).unwrap();
+    let pk = decks::tutor_pick(&g, P0, "any").unwrap(); assert_eq!(&*g.db.get(pk).name, "Whispersilk Cloak");
+    perm(&mut g, P0, "Whispersilk Cloak");
+    let pk = decks::tutor_pick(&g, P0, "any").unwrap(); assert_eq!(&*g.db.get(pk).name, "Aggravated Assault");
+}
+
+#[test]
+fn sauron_tutor_ringsight_wants_the_archivist_with_bowmasters_out() {
+    let mut g = sauron_table();
+    perm(&mut g, P0, "The Ozolith");
+    perm(&mut g, P0, "Orcish Bowmasters");
+    zones::amass(&mut g, P0, 2).unwrap();
+    assert_eq!(decks::tutor_pick(&g, P0, "ubr"), Some(card(&g, "Jace's Archivist")));
+}
+
+#[test]
+fn sauron_tutor_fetches_sol_ring_when_short_of_mana() {
+    let mut g = table(&["sauron", "veyran"]);
+    lands(&mut g, P0, "Island", 2, false);
+    g.player_mut(P0).turns = 3;
+    zones::amass(&mut g, P0, 1).unwrap();
+    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Sol Ring")));
+}

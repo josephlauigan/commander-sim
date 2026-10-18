@@ -128,7 +128,8 @@ pub fn sauron_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 57; // compiled Swords (Fire and Ice, Hearth and Home)
     }
     if t.has(Tag::Assault) {
-        return if has(g, p, Tag::Sword) || in_hand_tag(g, p, Tag::Sword) { 58 } else { 30 };
+        let evasion = has(g, p, Tag::Sword) || in_hand_tag(g, p, Tag::Sword) || has(g, p, Tag::Cloak);
+        return if evasion { 58 } else { 30 }; // the extra combats need an Army that connects (Cloak is the Sword of this list)
     }
     if t.has(Tag::Cloak) {
         return 57;
@@ -758,68 +759,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             }
             None
         }
-        "sauron" => {
-            let sw = held(Tag::Sword);
-            let asl = held(Tag::Assault);
-            let mut order: Vec<&str> = vec![];
-            if sw && !asl {
-                order.push("Aggravated Assault");
-            }
-            if asl && !sw {
-                order.push("Sword of Feast and Famine");
-            }
-            if sw && asl {
-                order.push("Whispersilk Cloak");
-            }
-            let br = held(Tag::Breach);
-            let st = pl.hand.iter().chain(pl.gy.iter()).any(|&c| g.db.get(c).tag(Tag::Storm));
-            const LABMEN: [&str; 2] = ["Laboratory Maniac", "Jace, Wielder of Mysteries"];
-            let tail = [
-                "Rhystic Study",
-                "Sword of Feast and Famine",
-                "Aggravated Assault",
-                "Deepglow Skate",
-                "Counterspell",
-                "Whispersilk Cloak",
-            ];
-            let breach_first = ["Grapeshot", "Lion's Eye Diamond", LABMEN[0], LABMEN[1]]
-                .iter()
-                .any(|n| g.db.id(n).is_some_and(|c| pl.deck_names.contains(&c)));
-            if breach_first {
-                // Breach-first builds
-                let mut line: Vec<&str> = vec![];
-                if !br {
-                    line.push("Underworld Breach");
-                }
-                if !st {
-                    line.extend(["Brain Freeze", "Grapeshot"]);
-                }
-                const RITUALS: [&str; 5] =
-                    ["Dark Ritual", "Cabal Ritual", "Lotus Petal", "Lion's Eye Diamond", "Jeska's Will"];
-                let rit = pl.hand.iter().chain(pl.gy.iter()).any(|&c| RITUALS.contains(&&*g.db.get(c).name));
-                let lab = pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| LABMEN.contains(&&*g.db.get(c).name)))
-                    || pl.hand.iter().any(|&c| LABMEN.contains(&&*g.db.get(c).name));
-                if br && st && !lab {
-                    line.extend(LABMEN); // the self-mill finish
-                }
-                if br && st && !rit {
-                    line.extend(["Lion's Eye Diamond", "Jeska's Will", "Dark Ritual", "Cabal Ritual", "Lotus Petal"]);
-                }
-                line.extend(order);
-                line.extend(tail);
-                return first(&line);
-            }
-            if br && !st {
-                let at = if !(sw || asl) { 0 } else { order.len() };
-                order.insert(at, "Brain Freeze");
-            }
-            if st && !br {
-                let at = if !(sw || asl) { 0 } else { order.len() };
-                order.insert(at, "Underworld Breach");
-            }
-            order.extend(tail); // artifact tutors with the Sword already found: evasion, not a rock
-            first(&order)
-        }
+        "sauron" => sauron_tutor(g, p, &first),
         _ => None,
     }
 }
@@ -1642,4 +1582,54 @@ pub fn breach_keep_bonus(g: &Game, p: PlayerId, c: CardId) -> f64 {
         false
     };
     if keep { 80.0 } else { 0.0 }
+}
+
+/// Sauron's tutors (Diabolic Tutor, Diabolic Intent: any card; Ringsight: any blue, black or red card), by what the
+/// board needs, in the order of the deck doc's "Tutor targets by board state". A candidate that the tutor cannot reach
+/// (a colourless card for Ringsight) is skipped by `first`, so the next need is served.
+fn sauron_tutor(g: &Game, p: PlayerId, first: &dyn Fn(&[&str]) -> Option<CardId>) -> Option<CardId> {
+    let pl = g.player(p);
+    let named = |c: CardId, n: &str| &*g.db.get(c).name == n;
+    // a card of this name in hand or on the battlefield
+    let have = |n: &str| {
+        pl.hand.iter().any(|&c| named(c, n))
+            || pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| named(c, n)))
+    };
+    let army = army_of(g, p);
+    let apow = army.map_or(0, |a| epow(g, a));
+    let lands = pl.lands.len();
+    let rocks = pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count();
+    let sources = lands + rocks;
+    let sauron_out = has(g, p, Tag::Sauron);
+    let evasion = have("Whispersilk Cloak") || have("Rogue's Passage");
+    let connecting = pl.milestone.contains_key("army_hit");
+    let mut line: Vec<&str> = vec![];
+    if sources <= 4 && pl.turns <= 6 && !have("Sol Ring") {
+        line.push("Sol Ring"); // slow start, no mana
+    }
+    if army.is_none() && !sauron_out && pl.turns <= 5 {
+        line.extend(["Dreadhorde Invasion", "Lazotep Reaver"]); // start the Army before Sauron lands
+    }
+    if !have("The Ozolith") && (apow >= 3 || sauron_out) {
+        line.push("The Ozolith"); // insurance before the Army is committed to
+    }
+    if has(g, p, Tag::Bowmasters) && !have("Jace's Archivist") {
+        line.push("Jace's Archivist"); // the wheel is the payoff
+    }
+    if connecting && sources >= 7 {
+        line.extend(["Exsanguinate", "Comet Storm"]); // close the game
+    }
+    if apow >= 7 && !evasion {
+        line.extend(["Whispersilk Cloak", "Rogue's Passage"]); // a huge Army that cannot get through
+    } else if apow >= 7 && !have("Aggravated Assault") && sources >= 6 {
+        line.push("Aggravated Assault"); // evasion in hand: now the extra combat
+    }
+    if (apow >= 7 || sauron_out) && !have("Not of This World") {
+        line.push("Not of This World"); // protection for the swing (free with a 7-power creature)
+    }
+    if pl.hand.len() <= 1 && lands >= 7 {
+        line.push("Barad-dûr"); // flooded and grinding
+    }
+    line.extend(["The Ozolith", "Inexorable Tide", "Whispersilk Cloak", "Exsanguinate", "Not of This World"]);
+    first(&line)
 }
