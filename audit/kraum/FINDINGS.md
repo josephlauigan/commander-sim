@@ -174,4 +174,4 @@ Quick adaptive passes (2,000 paired) picked the cut; the look-ahead run decides.
 | Serra Angel (adaptive) | -0.1 (±1.2) | No effect: a 4-mana flier for a 4-mana flier. |
 | Tocasia's Welcome (adaptive) | +1.8 (±1.2) | Best of the three on the quick AI. |
 | **Tocasia's Welcome (look-ahead, loose, 2,000 paired)** | **+1.1 (±2.7): 33.5 → 34.6%** | Within noise. Smaug is cast in 64% of the games he's drawn (stuck 36%: {R}{R} in a four-colour deck with 3 Mountains) and wins 56% when cast vs Tocasia's Welcome's 44%. Damage +1.1 a game, eliminations -1.1 pts; the death causes (Aurelia, Tergrid, Marwyn in combat) are unchanged. His Treasure trigger adds almost nothing (about 0.1 burn a game on the quick run): the deck makes no Treasure of its own, so he attacks with 0–2. He is a hasty 4-mana flier here, not an engine. |
-**Reading it:** a fair swap that doesn't hurt, but not a measurable gain. If JD wants Smaug in the deck, Tocasia's Welcome is the slot.
+**Reading it:** a fair swap that doesn't hurt, but not a measurable gain. **Applied (JD's card, 2026-10-17): Smaug in, Tocasia's Welcome out.**
