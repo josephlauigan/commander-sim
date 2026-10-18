@@ -56,3 +56,17 @@ fn chromatic_star_destroyed_still_draws() {
     assert_eq!(g.player(P0).hand.len(), before + 1);
     let _ = P1;
 }
+
+// ======================================================== Desperate Ritual
+#[test]
+fn desperate_ritual_adds_rrr_for_two_mana() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let c = hand(&mut g, P0, &["Desperate Ritual"])[0];
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "R", false).unwrap(), "{{1}}{{R}}");
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Default::default()).unwrap());
+    assert_eq!(g.player(P0).floating.r, 3, "RRR");
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 3, "both Mountains were tapped for the cost");
+    assert!(g.player(P0).gy.contains(&c), "an instant goes to the graveyard");
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "RRR", false));
+}

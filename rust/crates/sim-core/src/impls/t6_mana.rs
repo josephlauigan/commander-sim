@@ -11,7 +11,7 @@ use crate::engine::zones::{die, draw};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
@@ -63,11 +63,27 @@ fn star_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
     Ok(())
 }
 
+// ================================================================== Desperate Ritual
+/// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
+/// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
+/// Cabal Ritual, the AI casts it only through a deck plan (priority 0).
+fn desperate_ritual(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    g.player_mut(p).floating.r += 3;
+    crate::glog!(g, "    {} adds RRR (Desperate Ritual)", g.player(p).name);
+    Ok("gy")
+}
+
+fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Chromatic Star")?;
     c.options = Some(star_options);
     c.self_dies = Some(star_dies);
     at_once(c, Event::SelfDies, false);
-    let _ = CardId(0);
+    let c = r.card(db, "Desperate Ritual")?;
+    c.resolve = Some(desperate_ritual);
+    c.prio = Some(zero_prio);
     Ok(())
 }

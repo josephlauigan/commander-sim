@@ -3,8 +3,8 @@ Module: rust/crates/sim-core/src/impls/t6_mana.rs (registered in impls/mod.rs), 
 Data: add override in data/card_overrides.toml, then `cargo run --release -q -p cardgen -- export --offline` (from rust/) and commit data/cards.json too.
 Test deck keys: pool keys (long) or mine keys ("godo", ...) in `table(&[...])`.
 Order: Chromatic Star, Desperate Ritual, Rite of Flame, Simian Spirit Guide, Manifold Key, Honor-Worn Shaku, Metalworker, Treasonous Ogre, _____ Goblin, Ignoble Hierarch, Jeweled Amulet, The Mind Stone, Grinding Station, Apple of Eden, Monumental Henge.
-Done: Chromatic Star.
-Next: Desperate Ritual.
+Done: Chromatic Star, Desperate Ritual.
+Next: Rite of Flame.
 Plans: rituals = resolve slot + floating.r + prio zero; SSG = engine need (partials::hand_mana is name-hardcoded);
 Shaku/Metalworker via dyn_mana_perm; Ogre via extra_mana unit (life-for-mana, only when untapped) + on_tap_perm pays life;
 Amulet via extra_mana + DataKey::Charge; Mind Stone via options + end_step (t2::end_step_flicker); Henge enters_rule already Control(plains) -> only the land_options ability;

@@ -8243,3 +8243,7 @@ tags = ""
 dsl = []
 status = "Full"
 note = "{1},{T}, sacrifice: one mana of any colour (floating, from the AI's end-of-turn / second-main window); drawing a card when it goes to a graveyard from the battlefield (sacrificed or destroyed); no longer a free mana rock"
+
+["Desperate Ritual"]
+status = "Full"
+note = "adds RRR (floating red mana); the AI casts it only through a deck plan; splice onto Arcane left out (no other Arcane spell shares a deck with it)"
