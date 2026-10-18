@@ -8424,3 +8424,7 @@ note = "destroys the targeted opposing creature or planeswalker; its controller 
 ["Soul Partition"]
 status = "Partial"
 note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"
+
+["Calamity's Wake"]
+status = "Partial"
+note = "exiles all graveyards and itself, and sets the turn lock t6_redirects::noncreature_lock (players can't cast noncreature spells this turn); missing: the engine's cast check does not read the lock yet (engine need)"

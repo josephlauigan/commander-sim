@@ -470,6 +470,28 @@ fn soul_partition_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Re
     Ok("gy")
 }
 
+
+// ================================================================== Calamity's Wake
+/// "Players can't cast noncreature spells this turn" is on (Calamity's Wake; the flag sits on whoever cast it): the
+/// engine's cast check reads this for every player
+pub fn noncreature_lock(g: &Game) -> bool {
+    g.players.iter().any(|q| flag_now(g, q.id, "calamity_lock"))
+}
+
+/// Calamity's Wake: exile all graveyards; players can't cast noncreature spells this turn; exile Calamity's Wake
+fn calamity_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let mut n = 0;
+    for i in 0..g.players.len() {
+        let pl = &mut g.players[i];
+        n += pl.gy.len();
+        let gy = std::mem::take(&mut pl.gy);
+        pl.exile.extend(gy);
+    }
+    crate::glog!(g, "    {} exiles {} cards from all graveyards (Calamity's Wake)", pname(g, p), n);
+    set_flag(g, p, "calamity_lock");
+    Ok("exile")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
@@ -480,5 +502,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Get Lost")?.resolve = Some(get_lost_resolve);
     r.card(db, "Erode")?.resolve = Some(erode_resolve);
     r.card(db, "Soul Partition")?.resolve = Some(soul_partition_resolve);
+    r.card(db, "Calamity's Wake")?.resolve = Some(calamity_resolve);
     Ok(())
 }

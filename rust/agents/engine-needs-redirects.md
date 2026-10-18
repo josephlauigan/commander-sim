@@ -43,3 +43,9 @@ Needs: "may play from exile" as a lasting permission (a per-card marker on the e
 Where it would hook: `engine/cast.rs` `castable` and `cost_of`, plus the AI's cast options in `ai/brain.rs`.
 Card side done: `soul_partition_resolve` (exile, then the card returns to its owner's hand as a stand-in; tokens vanish).
 Test to add once the engine has it: after Soul Partition on an opposing creature, the creature stays in exile, can be cast by its owner for {2} more, and cannot be cast for less.
+
+## Calamity's Wake
+Needs: "players can't cast noncreature spells this turn" in the cast check (the same lock Silence / Bilbo's Gambit / Abeyance need: a per-turn "can't cast" flag read by `castable` for every player).
+Where it would hook: `engine/cast.rs` `castable` (and the counter / response casting in `engine/stack.rs`).
+Card side done: graveyards and the Wake exiled, `noncreature_lock` (true for the rest of the turn).
+Test to add once the engine has it: after the Wake, an opponent holding Lightning Bolt cannot cast it that turn but can cast a creature.

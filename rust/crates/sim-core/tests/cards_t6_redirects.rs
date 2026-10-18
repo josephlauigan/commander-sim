@@ -357,3 +357,24 @@ fn soul_partition_removes_a_token_for_good() {
     assert!(!g.perm(t).on_bf);
     assert_eq!(g.player(P1).hand.len(), hand_before);
 }
+
+// ======================================================== Calamity's Wake
+#[test]
+fn calamitys_wake_exiles_every_graveyard_and_itself_and_locks_noncreature_spells() {
+    let mut g = game();
+    g.active = Some(P0);
+    for (p, name) in [(P0, "Lightning Bolt"), (P1, "Grave Titan")] {
+        let c = hand(&mut g, p, &[name])[0];
+        let pl = g.player_mut(p);
+        let i = pl.hand.iter().position(|&x| x == c).unwrap();
+        pl.hand.remove(i);
+        pl.gy.push(c);
+    }
+    assert!(!t6::noncreature_lock(&g));
+    cast_free(&mut g, P0, "Calamity's Wake", sim_core::state::Ctx::default());
+    assert!(g.player(P0).gy.is_empty() && g.player(P1).gy.is_empty(), "the Wake itself is exiled too");
+    assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Calamity's Wake"));
+    assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Lightning Bolt"));
+    assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Grave Titan"));
+    assert!(t6::noncreature_lock(&g));
+}

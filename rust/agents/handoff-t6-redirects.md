@@ -15,3 +15,4 @@ Oracle text fetch, build cardgen, first card.
 - Get Lost: done (Partial; Maps not modeled).
 - Erode: done (Full).
 - Soul Partition: done (Partial; stand-in returns card to hand).
+- Calamity's Wake: done (Partial; lock flag unread).
