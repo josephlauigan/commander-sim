@@ -250,15 +250,28 @@ pub static BASE: [Combo; 14] = [
     },
 ];
 
+/// the first group of a "quiet" combo: a line that is offered and played (options, steps, answers) but whose cards are
+/// not registered as pieces (no tutor wish lists, discard keeps, piece threats or deck progress: a deck outside Tier 6
+/// that happens to play Sol Ring, Underworld Breach or Goblin Welder must not change). The sentinel is no card, so
+/// `deck_combos` and `missing_pieces` never see the combo either.
+pub const QUIET: &[&str] = &["~quiet"];
+
+pub fn quiet(c: &Combo) -> bool {
+    c.groups.first().is_some_and(|g| *g == QUIET)
+}
+
 /// combos.PIECES: is this card name a piece of a modeled combo?
 pub fn is_piece_name(name: &str) -> bool {
-    all().iter().any(|c| c.groups.iter().any(|grp| grp.contains(&name)))
+    all().iter().any(|c| !quiet(c) && c.groups.iter().any(|grp| grp.contains(&name)))
 }
 
 /// combos.PIECES as card ids (the names in the card database)
 pub fn pieces(g: &Game) -> Vec<CardId> {
     let mut out = vec![];
     for cmb in all() {
+        if quiet(cmb) {
+            continue;
+        }
         for grp in cmb.groups {
             for n in grp.iter() {
                 if let Some(c) = g.db.id(n)
@@ -610,7 +623,7 @@ pub fn piece_threat(g: &Game, m: PermId) -> f64 {
     }
     let p = g.perm(m).owner;
     for cmb in all() {
-        if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
+        if quiet(cmb) || !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
         let others: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !grp.contains(&name)).collect();
@@ -632,7 +645,7 @@ pub fn combo_imp(g: &Game, p: PlayerId, c: CardId) -> f64 {
         return 0.0;
     }
     for cmb in all() {
-        if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
+        if quiet(cmb) || !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
         let others: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !grp.contains(&name)).collect();

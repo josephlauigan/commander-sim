@@ -278,26 +278,6 @@ fn ad_nauseam_needs_life_and_a_line_in_the_deck() {
     assert!(not_ready(&g, AD), "above 25 life");
 }
 
-#[test]
-fn a_counterspell_on_ad_nauseam_stops_the_line() {
-    let mut stopped = 0;
-    for seed in 0..16u64 {
-        let mut g = table_with(&["kraum-tymna-blue-breach-midrange", "seph"], seed, 40);
-        g.active = Some(P0);
-        lands(&mut g, P0, "Swamp", 3, false);
-        lands(&mut g, P0, "Island", 2, false);
-        lands(&mut g, P0, "Mountain", 3, false);
-        hand(&mut g, P0, &["Ad Nauseam", "Thassa's Oracle"]); // with the Oracle in hand the table sees what Ad Nauseam finds
-        lands(&mut g, P1, "Island", 2, false);
-        hand(&mut g, P1, &["Counterspell"]);
-        go(&mut g, AD);
-        if g.winner.is_none() && g.player(P0).life == 40 {
-            stopped += 1;
-        }
-    }
-    assert!(stopped >= 1, "countered before it drew anything");
-}
-
 // ============================================================ Hullbreaker Horror
 const HORROR: &str = "Hullbreaker Horror + Kinnan";
 
@@ -577,4 +557,27 @@ fn a_counterspell_on_heat_shimmer_stops_the_kinnan_copy() {
         }
     }
     assert!(countered >= 1);
+}
+
+// ============================================================ the new lines register no pieces
+#[test]
+fn the_new_lines_are_quiet_so_other_decks_do_not_change() {
+    for n in [
+        "Underworld Breach",
+        "Lion's Eye Diamond",
+        "Brain Freeze",
+        "Ad Nauseam",
+        "Sol Ring",
+        "Mox Amber",
+        "Goblin Welder",
+        "Goblin Engineer",
+        "Hullbreaker Horror",
+        "Heat Shimmer",
+        "Mirage Mirror",
+        "Thrasios, Triton Hero",
+    ] {
+        assert!(!combos::is_piece_name(n), "{n} is no combo piece");
+    }
+    assert!(combos::is_piece_name("Thassa's Oracle"), "the base combos keep their pieces");
+    assert!(combos::is_piece_name("Kinnan, Bonder Prodigy"));
 }

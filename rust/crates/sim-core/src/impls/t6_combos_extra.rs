@@ -14,7 +14,7 @@
 //! * Godo: Goblin Welder + Goblin Engineer, the rebuild with Godo already out (Cursed Mirror / Sculpting Steel / Jaxis /
 //!   a token copy spell), and Basalt Monolith with a copied opposing Kinnan.
 
-use super::combos::{self, Combo, Ready, Step, StepKind, done, no_keys, no_src};
+use super::combos::{self, Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
 use super::t6_combos_godo as gd;
 use super::t6_combos_godo::{Cost, affordable, bf, cost, in_hand, in_lib, nm, ok_ready};
 use super::t6_godo::welder_go;
@@ -687,19 +687,19 @@ const BASALT_KINNAN_STEPS: [Step; 8] = [
 pub static COMBOS: [Combo; 11] = [
     combo(
         "Kinnan + Basalt Monolith + Thrasios (draw the deck)",
-        &[&[KINNAN], &[BASALT], &[THRASIOS]],
+        &[QUIET, &[KINNAN], &[BASALT], &[THRASIOS]],
         ready_thrasios,
         &THRASIOS_STEPS,
     ),
     combo(
         "Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet)",
-        &[&[KINNAN], &[BASALT], &[MIRAGE]],
+        &[QUIET, &[KINNAN], &[BASALT], &[MIRAGE]],
         ready_mirage,
         &MIRAGE_STEPS,
     ),
     combo(
         "Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish)",
-        &[&[BREACH], &[LED], &[BRAIN_FREEZE], &[ORACLE]],
+        &[QUIET, &[BREACH], &[LED], &[BRAIN_FREEZE], &[ORACLE]],
         ready_breach_oracle,
         &BREACH_ORACLE_STEPS,
     ),
@@ -714,7 +714,7 @@ pub static COMBOS: [Combo; 11] = [
     },
     Combo {
         name: "Ad Nauseam into a win",
-        groups: &[&[AD], &[ORACLE]],
+        groups: &[QUIET, &[AD], &[ORACLE]],
         ready: ad_ready,
         mana: (0, ""),
         finish: Some(ad_finish),
@@ -723,37 +723,37 @@ pub static COMBOS: [Combo; 11] = [
     },
     combo(
         "Hullbreaker Horror + Kinnan + two rocks cast between each other",
-        &[&[KINNAN], &[HORROR], &["Mox Amber", "Sol Ring", "Mox Opal", "Grim Monolith", "Mana Vault"]],
+        &[QUIET, &[KINNAN], &[HORROR], &["Mox Amber", "Sol Ring", "Mox Opal", "Grim Monolith", "Mana Vault"]],
         ready_horror,
         &HORROR_STEPS,
     ),
     combo(
         "Goblin Welder + Goblin Engineer, then Godo",
-        &[&[gd::GODO], &[gd::HELM], &[gd::HAMMER], &[WELDER], &[ENGINEER]],
+        &[QUIET, &[gd::GODO], &[gd::HELM], &[gd::HAMMER], &[WELDER], &[ENGINEER]],
         ready_welder,
         &WELDER_STEPS,
     ),
     combo(
         "Godo already out, Hammer out: Cursed Mirror / Sculpting Steel as a second Godo",
-        &[&[gd::GODO], &[gd::HELM], &[gd::HAMMER], &[gd::MIRROR, gd::STEEL]],
+        &[QUIET, &[gd::GODO], &[gd::HELM], &[gd::HAMMER], &[gd::MIRROR, gd::STEEL]],
         ready_rebuild_mirror,
         &REBUILD_MIRROR,
     ),
     combo(
         "Godo already out, Hammer out: Jaxis blitzes a copy of Godo",
-        &[&[gd::GODO], &[gd::HELM], &[gd::HAMMER], &[gd::JAXIS]],
+        &[QUIET, &[gd::GODO], &[gd::HELM], &[gd::HAMMER], &[gd::JAXIS]],
         ready_rebuild_jaxis,
         &REBUILD_JAXIS,
     ),
     combo(
         "Godo already out, Hammer out: a token copy spell on Godo",
-        &[&[gd::GODO], &[gd::HELM], &[gd::HAMMER], gd::TOKEN_COPIERS],
+        &[QUIET, &[gd::GODO], &[gd::HELM], &[gd::HAMMER], gd::TOKEN_COPIERS],
         ready_rebuild_spell,
         &REBUILD_SPELL,
     ),
     combo(
         "Godo + Basalt Monolith + a copied Kinnan",
-        &[&[gd::GODO], &[gd::HELM], &[BASALT], &[SHIMMER, gd::MIRROR]],
+        &[QUIET, &[gd::GODO], &[gd::HELM], &[BASALT], &[SHIMMER, gd::MIRROR]],
         ready_basalt_kinnan,
         &BASALT_KINNAN_STEPS,
     ),
