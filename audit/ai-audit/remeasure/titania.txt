@@ -1,0 +1,1 @@
+12,000 games (1 deck x 3 tiers (each deck in its own tiers), 2,000 per list per tier, profiles conservative and loose), lookahead AI, 10 worker threads: about 60 minutes

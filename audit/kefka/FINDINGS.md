@@ -61,3 +61,6 @@ life 11-25 with 6-10 mana left over); Kefka dies to removal 0.25/game.
 Tried and why: tutors now read the board (flipped Kefka and no Crawler/Niv -> Crawler/Niv, else the Breach line; Grim Servant reads the
 same list within its devotion limit); Breach, Yawgmoth's Will and protection get discard keep values; Mana Leak into open mana is
 valued x0.3; Profane Tutor suspends at 4.0 on a turn with no 1-2 mana play; doc: the Crawler is cast early, held only after the flip.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**27.3% vs T3** (before 26.7): within noise. Tutors fetch Crawler/Niv for a flipped Kefka; his discard keeps Breach, Will and protection; Mana Leak discounted into open mana.

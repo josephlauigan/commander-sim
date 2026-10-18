@@ -200,3 +200,6 @@ T5, adaptive AI, 1,500 games per list: before 31.0 / 33.1, after 30.9 / 32.7 (no
 - **Tymna's one-opponent-a-turn** (1.05): not a spread bug. In 14 traced games 44 of 73 Tymna-turn attacks had a single
   attacker; the deck has too few cheap bodies on the table, and `spread` already splits what exists. **Top end
   stuck in hand** (Titans 21%, Elspeth 28%): mana (turn 4: 4.0), no AI cause found; a mana-base question for JD.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**20.8% vs T5** (before 21.4): within noise. Breach now cast (6.7% of games), Dark Endurance protects, Diabolic Tutor fetches finishers, Firebird/Lightning coded. Still the softest band-1 deck; its limit is too few cheap bodies (a deckbuilding question).

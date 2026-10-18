@@ -35,3 +35,6 @@ Verdict: a fine but not needed swap. It only pays off if games go long, and loss
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 2 (T3-T4). Proposed: Force of Will, Farewell, Teferi's Protection (to Y'shtola), Consecrated Sphinx (to Veyran), Worldly Tutor (to Titania) out; Hornet Queen, Harmonize, Tireless Tracker (from Titania), Austere Command, Arcane Denial (spares) in. 8 -> 3 Game Changers (Demonic Tutor, Gifts Ungiven, Aura Shards). Final: **35.1% vs T3, 28.3% vs T4** (avg 31.7%; current list 36.2 / 29.8 at 1,000). Why: the deck barely misses its five GCs: Hornet Queen is a strong reanimation target (72% win when cast at T3) and Harmonize/Tracker replace the Sphinx's cards. AI bug found: the sim never cast Worldly Tutor (fixed ebd8d6f).
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**36.3% vs T3, 27.6% vs T4** (before 35.1 / 28.3): within noise. Hornet Queen and Muldrotha now valued as bombs; Momentary Blink protection; Abolisher timing; Tracker before the land drop.

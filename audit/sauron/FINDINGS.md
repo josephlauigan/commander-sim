@@ -37,3 +37,6 @@ Other fixes: tutors by board state (Sol Ring when short, Ozolith, Archivist with
 Assault, closers, Not of This World, Barad-dur when flooded); Force of Will pitches draw spells before engine creatures; Sauron holds
 mana for counters like the outside decks; Cost of Brilliance gives an opponent cards while Bowmasters is out; Archivist wheel also
 for Kaervek, or Sauron with a small hand.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**30.4% vs T3, 32.0% vs T4** (before 30.2 / 31.6): no change. Board-state tutors; its own sweepers spare the Army; Force of Will pitches draw spells first; mana held for counters.

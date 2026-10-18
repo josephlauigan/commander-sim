@@ -48,3 +48,6 @@ win rate. Weakness this leaves: she still loses 35% of games to Kinnan/Urza comb
   is not possible: the AI's end-of-turn window runs after the end-step triggers have been checked.
 - **Mystic Remora 66 -> 40, Esper Sentinel 62 -> 46** (early casts; the two were in the bottom group by win rate when
   cast). Neutral on the win rate (31.6 / 32.0 with both); kept because Remora was being cast and sacrificed unpaid.
+
+## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
+**24.5% vs T5** (before 24.3): no change. Fixes changed play (trigger timing, removal targets, Teferi's Protection as the full card, Mystical Tutor finishers), not the win rate. Details: audit/ai-audit/yshtola.md, REPORT.md.
