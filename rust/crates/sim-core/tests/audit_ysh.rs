@@ -2,7 +2,7 @@
 //! pick, Firebird and Lightning.
 
 use sim_core::ai::decks;
-use sim_core::engine::{removal, values, zones};
+use sim_core::engine::{life, removal, values, zones};
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -163,4 +163,78 @@ fn lightning_exiles_a_card_playable_while_it_stays_and_loses_them_when_it_leaves
     zones::die(&mut g, l, "destroy").unwrap();
     assert!(!g.player(P0).hand.contains(&c));
     assert!(g.player(P0).exile.contains(&c), "exiled for good");
+}
+
+// ================================================================== Y'shtola
+use sim_core::ai::brain::{self, Situation};
+use sim_core::hooks::Action;
+use sim_core::impls::yshtola as ysh_mod;
+
+fn ysh_tbl() -> Game {
+    table(&["yshtola", "veyran", "sauron"])
+}
+
+fn ysh_out(g: &mut Game, p: PlayerId) -> PermId {
+    let cmd = g.player(p).cmd;
+    let m = zones::enter(g, p, cmd, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    g.perm_mut(m).is_cmd = true;
+    g.player_mut(p).cmd_in_zone = false;
+    m
+}
+
+#[test]
+fn spot_removal_needs_a_worthwhile_target_and_a_three_mana_spell_counts_her_trigger() {
+    let mut g = ysh_tbl();
+    let path = card(&g, "Path to Exile");
+    let unmaking = card(&g, "Anguished Unmaking");
+    assert_eq!(ysh_mod::removal_adjust(&g, P0, path, 1.5), None, "Path on a mana-rock sized target: held");
+    assert_eq!(ysh_mod::removal_adjust(&g, P0, path, 5.0), Some(0.0));
+    // without her out the MV3 instant needs a real target too
+    assert_eq!(ysh_mod::removal_adjust(&g, P0, unmaking, 1.5), None);
+    ysh_out(&mut g, P0);
+    let b = ysh_mod::removal_adjust(&g, P0, unmaking, 1.5).expect("with her out the trigger is the value");
+    assert!(b > 0.0, "{b}");
+    assert_eq!(ysh_mod::removal_adjust(&g, P0, path, 1.5), None, "Path is MV1: no trigger");
+}
+
+#[test]
+fn a_trigger_that_makes_four_is_worth_more() {
+    let mut g = ysh_tbl();
+    ysh_out(&mut g, P0);
+    let c = card(&g, "Anguished Unmaking");
+    let before = ysh_mod::trigger_bonus(&g, P0, c);
+    life::lose_life(&mut g, P1, 2, Some(P0), "triggers", None).unwrap();
+    assert!(ysh_mod::trigger_bonus(&g, P0, c) > before, "an opponent has lost 2 this turn");
+}
+
+#[test]
+fn farewell_is_cast_with_teferis_protection_held_up_behind_it() {
+    let mut g = ysh_tbl();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Plains", 9, false);
+    let y = ysh_out(&mut g, P0);
+    let sb = perm(&mut g, P0, "Sanguine Bond");
+    let far = hand(&mut g, P0, &["Farewell", "Teferi's Protection"]);
+    let bane = perm(&mut g, P1, "Baneslayer Angel");
+    assert!(ysh_mod::teferis_first(&g, P0, far[0], "farewell"), "9 mana: Farewell and Teferi's");
+    let s = Situation::new(&g, P0);
+    let u = brain::wipe_options(&g, P0, &s, false);
+    assert!(u.iter().any(|o| o.label == "Farewell"));
+    assert!(matches!(u[0].act, Some(Action::Wipe { .. })));
+    brain::cast_wipe(&mut g, P0, far[0], None).unwrap();
+    assert!(!g.perm(bane).on_bf, "the Angel is gone");
+    assert!(g.perm(y).on_bf && g.perm(y).phased && g.perm(sb).on_bf && g.perm(sb).phased, "hers phased out");
+    assert!(g.player(P0).life_locked);
+    assert!(!g.player(P0).hand.contains(&far[1]));
+}
+
+#[test]
+fn farewell_without_the_mana_for_teferis_is_not_planned_around_it() {
+    let mut g = ysh_tbl();
+    lands(&mut g, P0, "Plains", 6, false);
+    ysh_out(&mut g, P0);
+    let far = hand(&mut g, P0, &["Farewell", "Teferi's Protection"]);
+    perm(&mut g, P0, "Sanguine Bond");
+    perm(&mut g, P1, "Baneslayer Angel");
+    assert!(!ysh_mod::teferis_first(&g, P0, far[0], "farewell"));
 }
