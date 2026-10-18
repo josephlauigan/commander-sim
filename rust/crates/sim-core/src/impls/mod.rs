@@ -41,6 +41,7 @@ pub mod cloud;
 pub mod sweepers;
 pub mod bulk_blue;
 pub mod bulk_white;
+pub mod t6_lands;
 pub mod t0_zurgo;
 pub mod t0_stella;
 pub mod t0_captain;
@@ -100,5 +101,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     garland_cards::register_more(&mut r, db)?;
     sephfs_cards::register(&mut r, db)?;
     sephfs::register(&mut r, db)?;
+    t6_lands::register(&mut r, db)?;
     Ok(r)
 }

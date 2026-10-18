@@ -8236,3 +8236,11 @@ note = "gain X life, X 1/1 colourless Phyrexian Mite artifact creature tokens wi
 dsl = []
 status = "Full"
 note = "you don't lose for 0 or less life (check_state); at 0 or less life damage to you is dealt as poison counters (lose_life), ten poison still lose; the AI casts it once at 20 life or less"
+
+["City of Brass"]
+status = "Full"
+note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
+
+["City of Traitors"]
+status = "Full"
+note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md)"
