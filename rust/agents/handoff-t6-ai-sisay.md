@@ -1,2 +1,1 @@
-# Handoff t6-ai-sisay
-Status: started. Next: read spec, traces, fill slots.
+Status: plan file written (keep/prio/wish/fetch hook in legends.rs sisay_pick). Next: build, measure, tests.
