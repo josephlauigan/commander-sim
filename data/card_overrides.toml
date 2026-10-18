@@ -8407,3 +8407,8 @@ note = "draws a card and sets the caster's turn flag t6_redirects::scout_flash_a
 tags = "tokx rem=exile tgt=c draw=1"
 status = "Full"
 note = "X = all spare mana; takes the best two of four modes: exile the best opposing creature with mana value X or less, scry X then draw, X 0/1 Eldrazi Spawn, exile up to X creature cards from opposing graveyards (the {C}{C} in the cost is paid as any two mana, as the card data has no colourless pips)"
+
+["Eldrazi Confluence"]
+tags = "rem=shrink3 tgt=c"
+status = "Full"
+note = "three choices: +3/-3 on the opposing creatures worth the most per choice (two or three choices for a bigger creature, toughness 0 dies), then each left over exiles and returns tapped a different own permanent with an enters effect worth 3 or more, else makes a 1/1 Eldrazi Scion; cast when an opposing creature of toughness 3 or less can be killed (the {C}{C} in the cost is paid as any two mana)"

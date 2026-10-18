@@ -12,7 +12,7 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{pval, untargetable};
 use crate::engine::values::{epow, etgh};
-use crate::engine::zones::max_by;
+use crate::engine::zones::{die, max_by};
 use crate::state::Ctx;
 use crate::flow::Res;
 use crate::hooks::Registry;
@@ -342,11 +342,73 @@ fn kozilek_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> 
     Ok("gy")
 }
 
+
+// ================================================================== Eldrazi Confluence
+/// Eldrazi Confluence ({2}{C}{C}, choose three, the same mode may be chosen more than once): the AI spends its three
+/// choices like this. +3/-3 on the opposing creatures worth the most per choice (a creature of toughness 4 to 6 takes
+/// two choices, 7 to 9 three), each only if the choices left can kill it; then each remaining choice exiles and returns
+/// (tapped) a different permanent of its own with an enters effect worth at least 3 (`t2::blink_value`), else it makes
+/// a 1/1 Eldrazi Scion.
+fn confluence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let mut left = 3;
+    let mut cs: Vec<(PermId, i32, f64)> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && g.is_creature(m) && !untargetable(g, m)
+        })
+        .map(|m| (m, (etgh(g, m).max(1) + 2) / 3, pval(g, m)))
+        .collect();
+    cs.sort_by(|a, b| (b.2 / b.1 as f64).partial_cmp(&(a.2 / a.1 as f64)).unwrap());
+    for (m, k, v) in cs {
+        if k <= left && v >= 0.5 {
+            left -= k;
+            for _ in 0..k {
+                super::common::eot(g, m, 3, -3);
+            }
+            crate::glog!(g, "    {} gets +{}/-{} (Eldrazi Confluence)", g.perm(m).name, 3 * k, 3 * k);
+            if etgh(g, m) <= 0 {
+                die(g, m, "sba")?; // toughness 0 or less: no regeneration
+            }
+        }
+    }
+    // the rest: blink our best enters-effect permanents, else Scions
+    let mut own: Vec<(PermId, i32)> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && !g.perm(m).token && !untargetable(g, m))
+        .map(|m| (m, crate::impls::t2::blink_value(g, p, m)))
+        .filter(|&(m, v)| v >= 3 && g.perm(m).cd.is_some_and(|c| !g.db.get(c).land))
+        .collect();
+    own.sort_by_key(|&(_, v)| std::cmp::Reverse(v));
+    for _ in 0..left {
+        if let Some((m, _)) = own.first().copied() {
+            own.remove(0);
+            if let Some(n) = crate::impls::t2::blink(g, p, m)? {
+                g.perm_mut(n).tapped = true; // "return it to the battlefield tapped"
+            }
+        } else {
+            let spec = crate::engine::zones::Tokens {
+                tgh: Some(1),
+                color: Some(crate::cards::Colors::NONE),
+                types: vec!["eldrazi", "scion"],
+                ..crate::engine::zones::Tokens::new(1, 1)
+            };
+            crate::engine::zones::make_tokens(g, p, spec)?;
+        }
+    }
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
     r.card(db, "Pyrokinesis")?.resolve = Some(pyro_resolve);
     r.card(db, "Scout's Warning")?.resolve = Some(scout_resolve);
     r.card(db, "Kozilek's Command")?.resolve = Some(kozilek_resolve);
+    r.card(db, "Eldrazi Confluence")?.resolve = Some(confluence_resolve);
     Ok(())
 }

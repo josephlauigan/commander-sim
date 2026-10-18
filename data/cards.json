@@ -29993,8 +29993,8 @@
    "generic": 4,
    "pips": "",
    "tags": {
-    "rem": "exile",
-    "tgt": "nl"
+    "rem": "shrink3",
+    "tgt": "c"
    },
    "pow": 0,
    "tgh": 0,
@@ -30031,12 +30031,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "• target creature gets +3/-3 until end of turn",
-    "• return it to the battlefield tapped under its owner's control",
-    "• create a 1/1 colorless eldrazi scion creature token with \"sacrifice this token: add {c}.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

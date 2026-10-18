@@ -263,3 +263,38 @@ fn kozilek_exiles_reanimation_targets_from_graveyards() {
     assert!(g.player(P1).gy.is_empty());
     assert!(g.player(P1).exile.contains(&gy));
 }
+
+// ======================================================== Eldrazi Confluence
+#[test]
+fn confluence_kills_small_creatures_and_makes_a_scion() {
+    let mut g = game();
+    g.active = Some(P0);
+    let a = token(&mut g, P1, 3);
+    let b = token(&mut g, P1, 3);
+    cast_free(&mut g, P0, "Eldrazi Confluence", sim_core::state::Ctx::default());
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "+3/-3 kills toughness 3");
+    assert_eq!(count_named(&g, P0, "scion"), 1, "the third choice is a Scion");
+    assert!(in_gy(&g, P0, "Eldrazi Confluence"));
+}
+
+#[test]
+fn confluence_spends_two_choices_on_a_big_creature() {
+    let mut g = game();
+    g.active = Some(P0);
+    let angel = perm(&mut g, P1, "Baneslayer Angel");
+    cast_free(&mut g, P0, "Eldrazi Confluence", sim_core::state::Ctx::default());
+    assert!(!g.perm(angel).on_bf, "two choices: +6/-6 kills a 5/5");
+    assert_eq!(count_named(&g, P0, "scion"), 1);
+}
+
+#[test]
+fn confluence_blinks_its_own_enters_effect_permanent_tapped() {
+    let mut g = game();
+    g.active = Some(P0);
+    let t = perm(&mut g, P0, "Ravenous Chupacabra");
+    cast_free(&mut g, P0, "Eldrazi Confluence", sim_core::state::Ctx::default());
+    assert!(!g.perm(t).on_bf, "the old permanent left");
+    let titan = on_bf(&g, P0, "Ravenous Chupacabra").expect("it came back");
+    assert!(g.perm(titan).tapped);
+    assert_eq!(count_named(&g, P0, "scion"), 2, "the other two choices are Scions");
+}
