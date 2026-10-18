@@ -197,8 +197,12 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     if free + paid == 0 && blue_up >= 1 {
         return Some(false); // bait first or wait: no cover and an opponent can counter
     }
-    if free >= 1 && blue_up <= 1 {
-        return Some(true);
+    // spec: "an outlet in play or in hand" before Monolith; the early turns are for the draw engines
+    let outlet = ["Thrasios, Triton Hero", "Mirage Mirror", "Finale of Devastation", "Wan Shi Tong, Librarian"]
+        .iter()
+        .any(|n| have(g, p, n));
+    if combo.starts_with("Kinnan + Basalt Monolith") && !outlet && g.round < 4 && free == 0 {
+        return Some(false);
     }
     None
 }
