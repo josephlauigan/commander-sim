@@ -5,7 +5,7 @@
 //!
 //! - Dizzy Spell: -3/-0 (resolve, and as a defender: `hand_defend`, like Icy Reception) and its Transmute.
 //! - Into the Flood Maw: bounce, with the Fish gift when the target is not a creature.
-//! - Abeyance: draw a card; the target player gets a turn flag (`abeyance_flag`) the engine reads.
+//! - Abeyance: draw a card; the target player gets the engine's `InstSorcAbilities` cast lock.
 //! - The alternative costs (`alt_cost_ok` / `pay_alt_cost`): Daze, Flare of Denial, Disrupting Shoal, Misdirection,
 //!   Snapback, Commandeer, Mindbreak Trap.
 //! - Effects on a spell on the stack, by stack item id: `misdirect`, `commandeer`, `substitute`, `bilbo_bounce`,
@@ -264,7 +264,7 @@ pub fn substitute(g: &mut Game, id: u32, m: PermId) -> Res<bool> {
 }
 
 /// Bilbo's Gambit: return the spell (stack item `id`) to its owner's hand. With the gift promised an opponent gets a
-/// Treasure first and nobody can cast spells this turn (`lock_flag`). True if the spell was returned.
+/// Treasure first and nobody can cast spells this turn (a player cast lock on everyone). True if the spell was returned.
 pub fn bilbo_bounce(g: &mut Game, q: PlayerId, id: u32, gift: bool) -> Res<bool> {
     let Some(i) = stack_index(g, id) else { return Ok(false) };
     let it = &g.stack[i];
@@ -275,7 +275,9 @@ pub fn bilbo_bounce(g: &mut Game, q: PlayerId, id: u32, gift: bool) -> Res<bool>
         if let Some(o) = min_by(&g.opps(q).collect::<Vec<_>>(), |o| g.player(o).perms.len() as f64) {
             crate::engine::zones::add_treasure(g, o, 1)?;
         }
-        set_flag(g, q, "bilbo_lock");
+        for a in g.players.iter().filter(|x| x.alive).map(|x| x.id).collect::<Vec<_>>() {
+            crate::engine::cast::lock_this_turn(g, a, crate::state::LockKind::AllSpells); // nobody can cast spells this turn
+        }
     }
     crate::glog!(g, "    {} returns {} to its owner's hand", pname(g, q), cname(g, c));
     let it = &mut g.stack[i];
@@ -283,11 +285,6 @@ pub fn bilbo_bounce(g: &mut Game, q: PlayerId, id: u32, gift: bool) -> Res<bool>
     it.countered_by = None;
     g.player_mut(owner).hand.push(c);
     Ok(true)
-}
-
-/// the turn flag Bilbo's Gambit's lock sets (on the caster; it means "players can't cast spells this turn")
-pub fn lock_flag(g: &Game, p: PlayerId) -> bool {
-    flag_now(g, p, "bilbo_lock")
 }
 
 /// Mindbreak Trap: exile any number of target spells; the AI exiles every spell on the stack that is not its own.
@@ -314,15 +311,6 @@ pub fn mindbreak_exile(g: &mut Game, q: PlayerId) -> Res<usize> {
         g.stack[i].countered_by = g.db.id("Mindbreak Trap");
     }
     Ok(ids.len())
-}
-
-fn set_flag(g: &mut Game, p: PlayerId, key: Sym) {
-    let stamp = g.turn_stamp();
-    g.player_mut(p).flag_turn.insert(key, stamp);
-}
-
-fn flag_now(g: &Game, p: PlayerId, key: Sym) -> bool {
-    g.player(p).flag_turn.get(key) == Some(&g.turn_stamp())
 }
 
 // ================================================================== Tibalt's Trickery
@@ -471,19 +459,13 @@ fn maw_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 }
 
 // ================================================================== Abeyance
-/// the turn flag Abeyance sets on its target: that player can't cast instant or sorcery spells or activate abilities
-/// that aren't mana abilities this turn (the engine reads it)
-pub fn abeyance_flag(g: &Game, p: PlayerId) -> bool {
-    flag_now(g, p, "abeyance")
-}
-
 /// Abeyance: target player (the opponent with the most cards in hand) can't cast instants or sorceries or activate
 /// non-mana abilities this turn; draw a card
 fn abeyance_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let target = ctx.face.filter(|f| opps.contains(f)).or_else(|| max_by(&opps, |o| g.player(o).hand.len() as f64));
     if let Some(t) = target {
-        set_flag(g, t, "abeyance");
+        crate::engine::cast::lock_this_turn(g, t, crate::state::LockKind::InstSorcAbilities);
         crate::glog!(g, "    {} can't cast instants or sorceries this turn (Abeyance)", pname(g, t));
     }
     draw(g, p, 1, false)?;

@@ -4,8 +4,8 @@
 //! enters tapped for opponents, a counter-on-cast hook) is written as a plain `pub fn` the engine can call later and
 //! listed in rust/agents/engine-needs-stax.md. Each card's doc comment says how it is modeled and what is left out.
 //!
-//! - Silence, Orim's Chant, Mandate of Peace: the target player(s) get a turn flag (`cast_lock`) the engine reads, and
-//!   today a stand-in the engine already reads: `Player::hope_lock` (no noncreature spells that turn).
+//! - Silence, Orim's Chant, Mandate of Peace: the target player(s) get the engine's player cast lock
+//!   (`engine::cast::lock_this_turn`, `LockKind::AllSpells`).
 //! - Orim's Chant also sets `stax_no_attack` when kicked (`attack_lock`).
 //! - Angel's Grace: the turn flag `grace_active`.
 
@@ -15,9 +15,9 @@ use crate::flow::Res;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::trigger_window;
-use crate::engine::cast::casts_this_turn;
+use crate::engine::cast::{casts_this_turn, lock_this_turn};
 use crate::hooks::{Event, Registry, Src};
-use crate::state::{DataKey, Val};
+use crate::state::{DataKey, LockKind, Val};
 use crate::tag::Tag;
 use crate::ids::PermId;
 use super::t5::is_artifact;
@@ -43,25 +43,13 @@ fn never_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ================================================================== Silence effects
-/// the turn flag a Silence effect sets on the player who can't cast spells this turn: the engine's cast check should
-/// refuse every spell (creatures and flash included) from a flagged player until the turn ends
-pub fn cast_lock(g: &Game, p: PlayerId) -> bool {
-    flag_now(g, p, "stax_cast_lock")
-}
-
-/// p can't cast spells this turn: the flag above, plus the stand-in the engine reads today (`Player::hope_lock`, as
-/// Hope of Ghirapur sets it: no noncreature spells until the active player's turn count moves on)
+/// p can't cast spells this turn (Silence, Orim's Chant, Mandate of Peace): the engine's player cast lock
 fn lock_player(g: &mut Game, p: PlayerId) {
-    set_flag(g, p, "stax_cast_lock");
-    if let Some(a) = g.active {
-        let t = g.player(a).turns;
-        g.player_mut(p).hope_lock = Some((a, t));
-    }
+    lock_this_turn(g, p, LockKind::AllSpells);
 }
 
-/// **Silence** ({W} instant): your opponents can't cast spells this turn. Stand-in: opponents can't cast noncreature
-/// spells (a flash creature is still castable). Partial: the full lock needs the engine (engine-needs-stax.md). The AI
-/// never casts it (priority 0): when it wins a combo turn is the deck plan's call.
+/// **Silence** ({W} instant): your opponents can't cast spells this turn (`LockKind::AllSpells` on each, so a flash
+/// creature is refused too). The AI never casts it (priority 0): when it wins a combo turn is the deck plan's call.
 fn silence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in g.opps(p).collect::<Vec<_>>() {
         lock_player(g, q);
@@ -79,7 +67,7 @@ pub fn attack_lock(g: &Game) -> bool {
 
 /// **Orim's Chant** ({W} instant, kicker {W}): target player can't cast spells this turn; if kicked, creatures can't
 /// attack this turn. The target is the face the spell was aimed at, else the opponent with the most cards in hand.
-/// Partial: like Silence the lock is a noncreature stand-in; the kicker needs the engine to offer and pay it (a
+/// Partial: the lock is real; the kicker needs the engine to offer and pay it (a
 /// kicked cast sets `ctx.kicks`, which nothing does yet), and the no-attack rule needs an attack check
 /// (engine-needs-stax.md). Kicked, the flag `attack_lock` is set. The AI never casts it (priority 0).
 fn chant_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
@@ -105,7 +93,7 @@ pub fn in_combat_now(g: &Game) -> bool {
 }
 
 /// **Mandate of Peace** ({1}{W} instant, only during combat): your opponents can't cast spells this turn; end the
-/// combat phase. Partial: the lock is the Silence stand-in; ending the combat phase is real (`Game::end_combat`: the
+/// combat phase. The lock is real; ending the combat phase is real (`Game::end_combat`: the
 /// engine skips the rest of that combat, attackers and blockers leave combat, no damage; later additional combat
 /// phases still happen); "cast only during combat" is not enforced
 /// by the engine for a card in hand (`in_combat_now` says when). The AI never casts it (priority 0).
@@ -135,8 +123,8 @@ pub fn grace_floor(g: &Game, p: PlayerId, life_after: i32) -> i32 {
 }
 
 /// **Angel's Grace** ({W} instant, split second): you can't lose the game this turn, your opponents can't win this
-/// turn, and damage can't take you below 1 life this turn. Partial: resolving it sets the turn flag
-/// (`grace_active`, `grace_floor`) but the engine does not read it yet, and split second needs the engine too
+/// turn, and damage can't take you below 1 life this turn. Split second is real (the card's keyword: `cast::split_second_up`). Partial: resolving it sets the turn flag
+/// (`grace_active`, `grace_floor`) but the engine does not read it yet ("can't lose" is a later feature)
 /// (engine-needs-stax.md). The AI never casts it (priority 0): a card that does nothing today is not worth casting.
 fn grace_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     set_flag(g, p, "stax_grace");

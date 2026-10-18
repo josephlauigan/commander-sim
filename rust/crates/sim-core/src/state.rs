@@ -250,6 +250,28 @@ impl PermData {
 }
 
 // ------------------------------------------------------------------ small value types
+/// What a player-level "can't cast" lock stops (Silence, Chant, Mandate, Bilbo's Gambit: every spell; Calamity's Wake,
+/// Hope of Ghirapur: noncreature spells; Abeyance: instants and sorceries, and abilities that aren't mana abilities).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LockKind {
+    AllSpells,
+    Noncreature,
+    InstSorcAbilities,
+}
+
+/// When a cast lock ends: with the turn it was set in, or when the given player's turn count passes the number.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LockEnd {
+    Turn(TurnStamp),
+    TurnOf(PlayerId, u32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CastLock {
+    pub kind: LockKind,
+    pub end: LockEnd,
+}
+
 /// Python's `turn_stamp(g)`: (round, the active player). Used for "this turn" flags.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TurnStamp {
@@ -469,8 +491,8 @@ pub struct Player {
     pub discard_log: Option<(TurnStamp, Vec<CardId>)>,
     /// extra land drops this turn (Explore)
     pub extra_land_now: u32,
-    /// Hope of Ghirapur: no noncreature spells until that player's turn count passes
-    pub hope_lock: Option<(PlayerId, u32)>,
+    /// "can't cast" locks on this player (Silence, Orim's Chant, Hope of Ghirapur, Abeyance ...); see `engine::cast`
+    pub cast_locks: Vec<CastLock>,
     /// Mistrise Village: the next spell this turn can't be countered
     pub mistrise_next: Option<TurnStamp>,
     /// pact costs owed at the next upkeep (generic, pips)
@@ -687,7 +709,7 @@ impl Player {
             discarded_turn: None,
             discard_log: None,
             extra_land_now: 0,
-            hope_lock: None,
+            cast_locks: vec![],
             mistrise_next: None,
             pact_debts: vec![],
             pacts: 0,
@@ -970,6 +992,8 @@ pub struct Game {
     pub sac_snapshot: Option<(u32, i32)>,
     /// Silence-style lock: (the turn, the player it doesn't stop)
     pub silence: Option<(TurnStamp, PlayerId)>,
+    /// a player cast-lock was ever set this game (the gate that turns the lock checks on when no card is hooked)
+    pub locks_used: bool,
     /// undying / persist returns this turn, by card (RETURN_CAP)
     pub returns_turn: Option<TurnStamp>,
     pub returns: IndexMap<CardId, u32>,
@@ -1178,6 +1202,7 @@ impl Game {
             attach_to: None,
             sac_snapshot: None,
             silence: None,
+            locks_used: false,
             returns_turn: None,
             returns: IndexMap::new(),
             dying: None,
@@ -1306,6 +1331,12 @@ impl Game {
 
     pub fn turn_stamp(&self) -> TurnStamp {
         TurnStamp { round: self.round, active: self.active }
+    }
+
+    /// Do the cast checks (`engine::cast::castable`) have anything to look at: a hooked card, or a cast lock / split
+    /// second ever used this game. Callers that skip `castable` when nothing could forbid a cast gate on this.
+    pub fn cast_checks(&self) -> bool {
+        !self.hooks.is_empty() || self.locks_used
     }
 
     /// One engine step (Python's `tick`): a game, or a look-ahead copy, that runs past its budget stops.

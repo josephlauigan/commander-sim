@@ -47,9 +47,9 @@ fn silence_locks_every_opponent_for_the_turn_but_not_its_caster() {
     g.active = Some(P0);
     assert!(can_cast(&g, P1, "Lightning Bolt"));
     resolve(&mut g, P0, "Silence");
-    assert!(sim_core::impls::t6_stax::cast_lock(&g, P1));
-    assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
-    assert!(!sim_core::impls::t6_stax::cast_lock(&g, P0), "your opponents, not you");
+    assert!(!can_cast(&g, P1, "Lightning Bolt"));
+    assert!(!can_cast(&g, PlayerId(2), "Lightning Bolt"));
+    assert!(can_cast(&g, P0, "Lightning Bolt"), "your opponents, not you");
     assert!(!can_cast(&g, P1, "Lightning Bolt"), "an opponent's instant is refused");
     assert!(can_cast(&g, P0, "Lightning Bolt"));
 }
@@ -59,7 +59,7 @@ fn silence_ends_with_the_turn() {
     let mut g = tbl();
     g.active = Some(P0);
     resolve(&mut g, P0, "Silence");
-    g.player_mut(P0).turns += 1; // the next turn of the same player
+    g.round += 1; // the next turn of the same player
     assert!(can_cast(&g, P1, "Lightning Bolt"), "next turn it is over");
 }
 
@@ -97,7 +97,7 @@ fn chant_without_a_target_picks_the_opponent_with_most_cards() {
     g.active = Some(P0);
     hand(&mut g, PlayerId(2), &["Sol Ring", "Mana Vault", "Lightning Bolt"]);
     resolve_at(&mut g, P0, "Orim's Chant", &Default::default());
-    assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
+    assert!(!can_cast(&g, PlayerId(2), "Lightning Bolt"));
 }
 
 // ======================================================== Mandate of Peace
@@ -109,9 +109,9 @@ fn mandate_locks_opponents_and_ends_the_combat_phase() {
     g.in_combat = vec![atk];
     assert!(sim_core::impls::t6_stax::in_combat_now(&g));
     resolve(&mut g, P0, "Mandate of Peace");
-    assert!(sim_core::impls::t6_stax::cast_lock(&g, P1));
-    assert!(sim_core::impls::t6_stax::cast_lock(&g, PlayerId(2)));
-    assert!(!sim_core::impls::t6_stax::cast_lock(&g, P0));
+    assert!(!can_cast(&g, P1, "Lightning Bolt"));
+    assert!(!can_cast(&g, PlayerId(2), "Lightning Bolt"));
+    assert!(can_cast(&g, P0, "Lightning Bolt"));
     assert!(!can_cast(&g, P1, "Lightning Bolt"));
     assert!(g.end_combat, "the combat phase ends: the engine skips the rest of it");
 }
@@ -276,4 +276,47 @@ fn mirror_refuses_free_spells_and_generic_spells_paid_without_coloured_mana() {
     assert!(!can_cast(&g, P1, "Mox Diamond"), "a free spell is still countered");
     g.perm_mut(m).on_bf = false;
     assert!(can_cast(&g, P1, "Mox Diamond"), "gone with the Mirror");
+}
+
+// ======================================================== the engine's cast lock (t6-e-locks)
+#[test]
+fn silence_refuses_a_flash_creature_this_turn_and_lifts_next_turn() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    assert!(can_cast(&g, P1, "Brazen Borrower"));
+    resolve(&mut g, P0, "Silence");
+    assert!(!can_cast(&g, P1, "Brazen Borrower"), "a flash creature is a spell too");
+    assert!(can_cast(&g, P0, "Brazen Borrower"));
+    g.round += 1; // the turn ends: the lock goes with it
+    assert!(can_cast(&g, P1, "Brazen Borrower"));
+}
+
+#[test]
+fn angels_grace_has_split_second_so_nobody_responds_or_casts_while_it_is_on_the_stack() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    assert!(can_cast(&g, P1, "Lightning Bolt"));
+    let c = hand(&mut g, P0, &["Angel's Grace"])[0];
+    let id = g.stack_pushes + 1;
+    g.stack_pushes = id;
+    g.stack.push(sim_core::state::StackItem {
+        id,
+        controller: P0,
+        card: Some(c),
+        ctx: Default::default(),
+        zone: "hand",
+        imp: 5.0,
+        aff: vec![],
+        generic: true,
+        kind: sim_core::state::StackKind::Spell,
+        name: "Angel's Grace".to_string(),
+        passed: vec![],
+        countered: false,
+        countered_by: None,
+    });
+    g.locks_used = true; // cast_card sets this when a split-second card is cast
+    assert!(!can_cast(&g, P1, "Lightning Bolt"), "no spells with a split-second spell on the stack");
+    assert!(!can_cast(&g, P0, "Lightning Bolt"), "not even its caster");
+    g.stack.clear();
+    assert!(can_cast(&g, P1, "Lightning Bolt"));
 }

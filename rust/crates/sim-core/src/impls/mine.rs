@@ -1021,7 +1021,7 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
     let real: Vec<_> = mana_units(g, p, false).into_iter().filter(|u| u.src != Source::FloatAny).collect();
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let bf = g.db.id(BRAIN_FREEZE).unwrap();
-    let gy_ok = g.hooks.is_empty() || castable(g, p, bf, "gy"); // a lock on casting from graveyards stops escapes
+    let gy_ok = !g.cast_checks() || castable(g, p, bf, "gy"); // a lock on casting from graveyards stops escapes
     let pl = g.player(p);
     let colour = |c: char| real.iter().filter(|u| u.cols.has(c)).map(|u| u.amt).sum::<u32>();
     let mut wh = [None; 7];
@@ -1573,7 +1573,7 @@ fn breach_escape(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !pl.gy.contains(&c) || pl.gy.len() < 4 || !has(g, p, Tag::Breach) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && !castable(g, p, c, "gy") {
+    if g.cast_checks() && !castable(g, p, c, "gy") {
         return Ok(false); // Drannith Magistrate, Rule of Law ...
     }
     let (cg, cp) = cost_of(g, p, c);
@@ -1818,7 +1818,7 @@ fn citadel_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
                 act: Some(Action::Plan { f: citadel_land, arg: top.0 as i64 }),
             });
         }
-    } else if !g.hooks.is_empty() && !castable(g, p, top, "lib") {
+    } else if g.cast_checks() && !castable(g, p, top, "lib") {
         // Drannith Magistrate, Rule of Law ...
     } else if g.player(p).life - d.cmc as i32 >= floor
         && !t.has(Tag::Ctr)

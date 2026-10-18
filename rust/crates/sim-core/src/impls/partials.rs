@@ -2044,7 +2044,12 @@ fn hope_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let label = format!("{} can't cast noncreature spells", pname(g, d));
     if crate::engine::stack::ability_window_card(g, p, cd, &label, None, None)? {
         let t = g.player(p).turns;
-        g.player_mut(d).hope_lock = Some((p, t));
+        crate::engine::cast::add_cast_lock(
+            g,
+            d,
+            crate::state::LockKind::Noncreature,
+            crate::state::LockEnd::TurnOf(p, t), // until Hope's controller's next turn
+        );
     }
     Ok(true)
 }

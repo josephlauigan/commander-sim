@@ -395,7 +395,11 @@ fn priority(g: &mut Game, id: u32, first: PlayerId) -> Res {
 
 /// q has priority with the item on top of the stack; true if q put something on the stack (it has resolved by now)
 fn take_priority(g: &mut Game, q: PlayerId, _id: u32) -> Res<bool> {
-    if !g.player(q).alive || g.over || crate::engine::values::silenced(g, q) {
+    if !g.player(q).alive
+        || g.over
+        || crate::engine::values::silenced(g, q)
+        || (g.locks_used && crate::engine::cast::split_second_up(g))
+    {
         return Ok(false);
     }
     let n = g.stack_pushes;
@@ -609,7 +613,7 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         if !t.has(Tag::Ctr) || !counter_ok(g, ctr, c) {
             continue;
         }
-        if !g.hooks.is_empty() && !castable(g, q, ctr, "hand") {
+        if g.cast_checks() && !castable(g, q, ctr, "hand") {
             continue;
         }
         // the free modes pay the cost increases (Defense Grid) in mana: `altcost::tax`, 0 when nothing taxes spells

@@ -406,7 +406,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     }
     let zone: Sym = zone.unwrap_or(if pl.is_commander(c) && !in_hand { "cmd" } else { "hand" });
     let cast_zone: Sym = if zone == "yawg" { "gy" } else { zone };
-    if !g.hooks.is_empty() && !castable(g, p, c, cast_zone) {
+    if g.cast_checks() && !castable(g, p, c, cast_zone) {
         return Ok(false);
     }
     let cv = d.tag(Tag::Convoke);
@@ -695,7 +695,7 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     if !g.player(p).hand.contains(&c) || (!free && !alt && !can_pay(g, p, rg + extra, &rp, cv)) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
+    if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
     let live: Vec<(f64, PermId)> =
@@ -782,7 +782,7 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
     if !g.player(p).hand.contains(&c) || (!alt && !can_pay(g, p, cg, &cp, false)) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
+    if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
     if alt {

@@ -143,10 +143,18 @@ fn abeyance_draws_and_flags_the_opponent() {
     let c = hand(&mut g, P0, &["Abeyance"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).hand.len(), before + 1, "Abeyance out, a card drawn");
-    assert!(t6::abeyance_flag(&g, P1));
-    assert!(!t6::abeyance_flag(&g, P0));
-    g.active = Some(P1);
-    assert!(!t6::abeyance_flag(&g, P1), "only this turn");
+    let bolt = sim_core::testkit::card(&g, "Lightning Bolt");
+    let ring = sim_core::testkit::card(&g, "Counterspell");
+    let creature = sim_core::testkit::card(&g, "Grave Titan");
+    assert!(!cast::castable(&g, P1, bolt, "hand"), "an instant is refused");
+    assert!(!cast::castable(&g, P1, ring, "hand"));
+    assert!(cast::castable(&g, P1, creature, "hand"), "a creature spell is fine");
+    assert!(cast::castable(&g, P0, bolt, "hand"), "the caster is not locked");
+    assert!(cast::abilities_locked(&g, P1), "and no non-mana abilities");
+    assert!(!cast::abilities_locked(&g, P0));
+    g.round += 1;
+    assert!(cast::castable(&g, P1, bolt, "hand"), "only this turn");
+    assert!(!cast::abilities_locked(&g, P1));
 }
 
 // ======================================================== alternative costs
@@ -290,10 +298,12 @@ fn bilbo_gambit_returns_a_spell_to_hand_and_the_gift_locks_spells() {
     assert!(t6::bilbo_bounce(&mut g, P0, id, false).unwrap());
     assert!(item(&g, id).countered);
     assert!(in_hand(&g, P1, "Brainstorm"));
-    assert!(!t6::lock_flag(&g, P0), "no gift, no lock");
+    let bolt = sim_core::testkit::card(&g, "Lightning Bolt");
+    assert!(cast::castable(&g, P0, bolt, "hand") && cast::castable(&g, P1, bolt, "hand"), "no gift, no lock");
     let (id2, _) = on_stack(&mut g, P1, "Counterspell", Ctx::default());
     assert!(t6::bilbo_bounce(&mut g, P0, id2, true).unwrap());
-    assert!(t6::lock_flag(&g, P0));
+    assert!(!cast::castable(&g, P0, bolt, "hand") && !cast::castable(&g, P1, bolt, "hand"), "nobody casts");
+    assert!(!cast::castable(&g, P1, sim_core::testkit::card(&g, "Grave Titan"), "hand"), "creatures too");
 }
 
 #[test]
