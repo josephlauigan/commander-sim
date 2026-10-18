@@ -8846,3 +8846,25 @@ note = "+1 untaps the best tapped creature; -2 mills three then returns the best
 ["Loki's Scepter"]
 status = "Full"
 note = "enters: gain control of the best opposing creature (value 3 or more, not a commander) until end of turn, untapped and hasty (Villain type has no effect); taps for one mana of any colour (rock tag)"
+
+["Derevi, Empyrial Tactician"]
+status = "Partial"
+note = "enters and whenever a creature you control deals combat damage to a player: untap the best tapped mana source (else tap the best opposing blocker on our turn); missing: {1}{G}{W}{U} put-from-command-zone ability (t6_legends1.rs)"
+
+["Selvala, Heart of the Wilds"]
+add_tags = ["dork=A"]
+status = "Full"
+note = "{G},{T}: X mana of any colours (X = greatest power among your creatures) is a dork making X-1 (the {G} netted off); whenever another creature enters its controller draws if its power is greater than every other creature's (t6_legends1.rs)"
+
+["Emiel the Blessed"]
+status = "Full"
+note = "{3}: blink another creature you control (compiled); whenever another creature you control enters, pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs)"
+
+["Agatha's Soul Cauldron"]
+dsl = []
+status = "Partial"
+note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter on the best creature (AI, second main / end step); missing: spend mana as any colour on creature abilities, and creatures with +1/+1 counters gaining the exiled creatures' activated abilities (t6_legends1.rs)"
+
+["Deadpool, Trading Card"]
+status = "Partial"
+note = "5/3; upkeep: lose 3 life (compiled); {3}, sacrifice: each other player draws (AI uses it at 6 life or less); missing: the as-enters text box exchange with another creature (t6_legends1.rs)"
