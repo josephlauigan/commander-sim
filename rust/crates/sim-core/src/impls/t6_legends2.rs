@@ -347,6 +347,31 @@ static TEFERI: [WalkerAb; 3] = [
     WalkerAb { delta: -7, label: "emblem: untap and draw in their steps", val: |_, _, _| None, eff: teferi_ult },
 ];
 
+// ================================================================== Spider-Woman, Stunning Savior
+const SPIDER_WOMAN: &str = "Spider-Woman, Stunning Savior";
+
+/// Venom Blast: artifacts and creatures your opponents control enter tapped. A permanent entering under an opponent's
+/// control is tapped by the enter event (which runs at once, before anyone can use it); a token batch by the
+/// tokens-enter event. Treasure / Food / Clue tokens are counters here, which can't be tapped (engine-needs-legends2.md).
+fn spider_taps(g: &mut Game, src: Src, m: PermId) {
+    if live(g, src) && live(g, m) && owner(g, m) != owner(g, src) && (g.is_creature(m) || is_artifact(g, m)) {
+        g.perm_mut(m).tapped = true;
+        crate::glog!(g, "    {} enters tapped ({})", g.perm(m).name, g.perm(src).name);
+    }
+}
+
+fn spider_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    spider_taps(g, src, m);
+    Ok(())
+}
+
+fn spider_tokens(g: &mut Game, src: Src, _p: PlayerId, toks: &[PermId]) -> Res {
+    for &m in toks {
+        spider_taps(g, src, m);
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "The Queen of Dale")?;
     c.cast = Some(queen_cast);
@@ -361,6 +386,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.leaves = Some(tataru_leaves);
     at_once(c, Event::Leaves, true);
     walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
+    let c = r.card(db, SPIDER_WOMAN)?;
+    c.etb = Some(spider_etb);
+    at_once(c, Event::Etb, true);
+    c.tokens_enter = Some(spider_tokens);
     r.creature_pt.push(magda_pt);
     let c = r.card(db, MAGDA)?;
     c.as_enters = Some(magda_as);

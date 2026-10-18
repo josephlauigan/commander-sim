@@ -13,3 +13,9 @@ Needs: emblem hooks on the turn structure: "untap all permanents you control dur
 Where it would hook: `engine/turn.rs` where each player's untap step and draw step run (the emblem is the string `"teferi_sunset"` in `Player::emblems`; `cardcode::emblem_draw` is the existing per-draw emblem hook).
 Card side done: +1 and -2 are complete; the -7 ability pushes the emblem (`teferi_ult`) but its value is `None`, so the AI never uses it until the effects exist (then give `teferi_ult` a value in `TEFERI`).
 Test to add once the engine has it: with the emblem, an opponent's untap step untaps our lands and their draw step draws us a card.
+
+## Spider-Woman, Stunning Savior
+Needs: tapped artifact tokens: Treasure / Food / Clue are counters on the player (`treasures`, `foods`, `clues`), so "create a tapped Treasure" and "artifacts your opponents control enter tapped" cannot be told for them. A `tapped_treasures` count (untapped at the owner's untap step) would serve this card and Tataru Taru's Scions' Secretary (which now keeps its Treasure on the card until the next upkeep).
+Where it would hook: `state.rs` Player, `engine/zones.rs::make_artifact_tokens`, the untap step in `engine/turn.rs`, and the mana code that spends Treasures.
+Card side done: opposing artifact and creature permanents and creature tokens enter tapped (`spider_etb` on the enter event, `spider_tokens` on the tokens-enter event; both run at once).
+Test to add once the engine has it: with Spider-Woman out, an opponent's Treasure token cannot pay for a spell the turn it is made.

@@ -237,3 +237,31 @@ fn teferi_ultimate_records_the_emblem_but_the_ai_does_not_pick_it() {
     walker_eff(&mut g, t, P0, 2);
     assert!(g.player(P0).emblems.contains(&"teferi_sunset"));
 }
+
+// ======================================================== Spider-Woman, Stunning Savior
+#[test]
+fn spider_woman_makes_opposing_artifacts_and_creatures_enter_tapped() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Spider-Woman, Stunning Savior");
+    let ring = perm(&mut g, P1, "Sol Ring");
+    assert!(g.perm(ring).tapped, "an opposing artifact enters tapped");
+    let tok = token(&mut g, P1, 2);
+    assert!(g.perm(tok).tapped, "an opposing creature token enters tapped");
+    let creature = perm(&mut g, P1, "Goblin Guide");
+    assert!(g.perm(creature).tapped, "an opposing creature enters tapped");
+    let mine = perm(&mut g, P0, "Sol Ring");
+    assert!(!g.perm(mine).tapped, "our own artifact is untouched");
+    let own_tok = token(&mut g, P0, 2);
+    assert!(!g.perm(own_tok).tapped);
+    let enchant = perm(&mut g, P1, "Rhystic Study");
+    assert!(!g.perm(enchant).tapped, "an enchantment is not an artifact or creature");
+}
+
+#[test]
+fn spider_woman_gone_means_untapped_again() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Spider-Woman, Stunning Savior");
+    sim_core::engine::zones::die(&mut g, s, "destroy").unwrap();
+    let ring = perm(&mut g, P1, "Sol Ring");
+    assert!(!g.perm(ring).tapped);
+}
