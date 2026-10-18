@@ -63328,27 +63328,7 @@
    "pow": 2,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "sac": "permanent"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "artifact"
-       },
-       "to": "battlefield",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "treasure"
@@ -63361,11 +63341,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Other Dwarves you control get +1/+0.",
-    "Whenever a Dwarf you control becomes tapped, create a Treasure token."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

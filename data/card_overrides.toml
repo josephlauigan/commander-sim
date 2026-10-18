@@ -8573,3 +8573,8 @@ note = "same card as Shatterskull Smashing (t6_lands.rs)"
 ["Talon Gates of Madara"]
 status = "Full"
 note = "enter trigger phases out the best opposing creature (back at its controller's next untap); {T}: {C}; {1},{T}: any colour (when another land pays the {1}); {4}: put it onto the battlefield from hand (own turn with the land drop spent, or against a big attacker, phasing it out of the attack); t6_lands.rs"
+
+["Magda, Brazen Outlaw"]
+dsl = []
+status = "Partial"
+note = "other Dwarves you control get +1/+0 (creature_pt); a Dwarf you control becoming tapped makes a Treasure when it taps for mana or attacks; sacrifice five Treasures: the best artifact or Dragon card from the library onto the battlefield, shuffle (t6_legends2.rs). A Dwarf tapped by a tap cost or an effect makes no Treasure (no general becomes-tapped event; engine-needs-legends2.md)"

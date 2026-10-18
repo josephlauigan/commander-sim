@@ -55,6 +55,7 @@ pub mod t6_counters;
 pub mod t6_copies;
 pub mod t6_mana;
 pub mod t6_redirects;
+pub mod t6_legends2;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -109,6 +110,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t6_copies::register(&mut r, db)?;
     t6_mana::register(&mut r, db)?;
     t6_redirects::register(&mut r, db)?;
+    t6_legends2::register(&mut r, db)?;
     t6_lands::register(&mut r, db)?;
     Ok(r)
 }
