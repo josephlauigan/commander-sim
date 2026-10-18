@@ -9,12 +9,13 @@
 //! - Endurance: flash is the card's tag; the enters effect and evoke (exile a green card, sacrificed) are here.
 //! - Enduring Vitality: every creature taps for any colour (extra_mana); dies as a creature: back as an enchantment.
 //! - Shifting Woodland: enters tapped unless you control a Forest and {T}: {G} are data; the delirium copy is a land option.
+//! - Invasion of Ikoria: the enters search (library and/or graveyard, non-Human, X) is the resolve; battle rules are an engine need.
 //! - The Cabbage Merchant: Food on opposing noncreature casts, Food sacrificed on combat damage to you, two Foods tap for
 //!   one mana (the tapped count lives on the Merchant, DataKey::Burden, reset at its controller's upkeep).
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::on_cast;
-use crate::engine::mana::{Source, Unit, cost_of, land_colors_now};
+use crate::engine::mana::{Source, Unit, cost_of, land_colors_now, total_mana};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::land_enters_tapped;
@@ -487,6 +488,55 @@ fn woodland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Invasion of Ikoria // Zilortha, Apex of Ikoria
+const IKORIA: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
+
+/// the non-Human creature card with mana value X or less the AI finds, in the library or the graveyard: the deck's
+/// wish list first, else the most useful (card worth, then mana value). The bool is true for a library card.
+pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
+    let ok = |c: &CardId| {
+        let d = g.db.get(*c);
+        d.creature && !d.has_subtype("human") && d.cmc as i32 <= x
+    };
+    let mut cands: Vec<(CardId, bool)> = searchable(g, p).into_iter().filter(ok).map(|c| (c, true)).collect();
+    cands.extend(g.player(p).gy.iter().copied().filter(ok).map(|c| (c, false)));
+    if cands.is_empty() {
+        return None;
+    }
+    let wish = crate::ai::plans::wish_list(g, p);
+    if let Some(&b) = cands.iter().find(|(c, _)| wish.contains(c)) {
+        return Some(b);
+    }
+    max_by(&cands, |(c, _)| card_worth(g, p, c, false) * 100.0 + g.db.get(c).cmc as f64)
+}
+
+/// {X}{G}{G}. When this Siege enters, search your library and/or graveyard for a non-Human creature card with mana
+/// value X or less and put it onto the battlefield; shuffle if you searched the library. X is all the spare mana.
+/// The Siege is a battle that stays on the battlefield and can be attacked; the engine has no battles, so the card
+/// goes to the graveyard (engine need: battles, Zilortha's back face).
+fn ikoria_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let x = ctx.x.max(0);
+    if let Some((c, lib)) = ikoria_pick(g, p, x) {
+        if lib {
+            remove_card(&mut g.player_mut(p).library, c);
+            shuffle_library(g, p);
+            g.player_mut(p).stat("tutored", 1);
+        } else {
+            remove_card(&mut g.player_mut(p).gy, c);
+        }
+        crate::glog!(g, "    {} puts {} onto the battlefield (Invasion of Ikoria, X = {x})", pname(g, p), cname(g, c));
+        enter(g, p, c, Enter::default())?;
+    } else if g.player(p).library.len() > 1 {
+        shuffle_library(g, p); // a failed search of the library still shuffles
+    }
+    Ok(intern("gy"))
+}
+
+/// cast with enough mana for a two-drop: X = spare mana
+fn ikoria_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if total_mana(g, p, false) >= 4 && ikoria_pick(g, p, total_mana(g, p, false) as i32 - 2).is_some() { 60 } else { 0 }
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Chatterstorm")?.self_cast = Some(chatterstorm_cast);
@@ -510,5 +560,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.on_tap_perm = Some(merchant_tapped);
     c.upkeep = Some(merchant_untap);
     r.card(db, WOODLAND)?.land_options = Some(woodland_options);
+    let c = r.card(db, IKORIA)?;
+    c.resolve = Some(ikoria_resolve);
+    c.prio = Some(ikoria_prio);
     Ok(())
 }

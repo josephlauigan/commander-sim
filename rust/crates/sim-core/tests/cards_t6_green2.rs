@@ -415,3 +415,55 @@ fn woodland_does_nothing_without_delirium() {
     let f = g.registry.get(g.land(l).cd).and_then(|i| i.land_options).unwrap();
     assert!(f(&mut g, l, P0, Some(false)).unwrap().is_empty());
 }
+
+// ======================================================== Invasion of Ikoria // Zilortha, Apex of Ikoria
+const IKORIA: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
+
+fn ikoria_cast(g: &mut Game, x: i32) {
+    let c = hand(g, P0, &[IKORIA])[0];
+    cast::cast_card(g, P0, c, "hand", Ctx { x, ..Ctx::default() }).unwrap();
+}
+
+/// a library with no creature cards in it
+fn no_creatures(g: &mut Game) {
+    let lib = std::mem::take(&mut g.player_mut(P0).library);
+    let keep: Vec<_> = lib.into_iter().filter(|&c| !g.db.get(c).creature).collect();
+    g.player_mut(P0).library = keep;
+}
+
+#[test]
+fn ikoria_finds_a_non_human_creature_with_mana_value_x_or_less() {
+    let mut g = game();
+    no_creatures(&mut g);
+    let h = hand(&mut g, P0, &["Oboro Breezecaller", "Eternal Witness", "Sol Ring"]);
+    g.player_mut(P0).library.extend(&h[..2]);
+    let ik = hand(&mut g, P0, &[IKORIA])[0];
+    cast::cast_card(&mut g, P0, ik, "hand", Ctx { x: 3, ..Ctx::default() }).unwrap();
+    assert!(on_bf(&g, P0, "Eternal Witness").is_none(), "a Human is not found");
+    assert!(on_bf(&g, P0, "Oboro Breezecaller").is_some(), "the non-Human creature is");
+    assert!(!g.player(P0).library.contains(&h[0]));
+    assert!(g.player(P0).library.contains(&h[1]));
+}
+
+#[test]
+fn ikoria_respects_the_mana_value_limit() {
+    let mut g = game();
+    no_creatures(&mut g);
+    let h = hand(&mut g, P0, &["Oboro Breezecaller"]);
+    g.player_mut(P0).library.extend(&h);
+    ikoria_cast(&mut g, 1); // Oboro is mana value 2
+    assert!(on_bf(&g, P0, "Oboro Breezecaller").is_none());
+    assert!(in_gy(&g, P0, IKORIA));
+}
+
+#[test]
+fn ikoria_can_take_the_creature_from_the_graveyard() {
+    let mut g = game();
+    no_creatures(&mut g);
+    let gy = hand(&mut g, P0, &["Oboro Breezecaller"])[0];
+    sim_core::engine::zones::discard_cards(&mut g, P0, &[gy]).unwrap();
+    ikoria_cast(&mut g, 2);
+    assert!(on_bf(&g, P0, "Oboro Breezecaller").is_some());
+    assert!(!in_gy(&g, P0, "Oboro Breezecaller"));
+    assert!(in_gy(&g, P0, IKORIA), "the battle is not modelled: the card goes to the graveyard");
+}

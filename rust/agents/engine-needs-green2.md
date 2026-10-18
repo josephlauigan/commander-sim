@@ -17,3 +17,9 @@ Needs: "becomes a copy of a card until end of turn" for a land: a land turning i
 Where it would hook: `state.rs` (Land vs Perm are separate structs; a land cannot become a Perm and back), `impls/alela.rs` `set_face` / `mirror_revert` (Mirage Mirror does it for a Perm only).
 Card side done: enters tapped unless you control a Forest (data enters_rule), {T}: {G}, `delirium()` (four card types in the graveyard), and the {2}{G}{G} land option: pays, taps the land, makes a temporary token copy of the best creature card in the graveyard (Oboro Breezecaller first), not summoning sick, exiled at the end step.
 Test to add once the engine has it: the copy's enters triggers don't fire, the land is the same object and is a land again at end of turn.
+
+## Invasion of Ikoria // Zilortha, Apex of Ikoria
+Needs: battles (Siege): a battle permanent with defense counters that stays on the battlefield, can be attacked by its caster, and when defeated is exiled and cast transformed (back face Zilortha, 8/8 reach legendary, "assign combat damage as though not blocked" for non-Humans); a protector player chosen on entry.
+Where it would hook: `state.rs` (a permanent type with defense), `engine/combat.rs` (attack declaration: a battle as a legal attack target), `engine/cast.rs` (cast the back face for free).
+Card side done: the enters search (non-Human creature card, MV X or less, library and/or graveyard, shuffle only if the library was searched) as a sorcery-like `resolve` with X = all spare mana (tag xtutor via override); the card then goes to the graveyard.
+Test to add once the engine has it: the Siege stays with 6 defense, an attack that removes the counters exiles it and Zilortha enters transformed.
