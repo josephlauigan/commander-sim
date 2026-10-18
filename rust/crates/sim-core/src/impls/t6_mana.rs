@@ -11,6 +11,7 @@ use crate::sym::intern;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{epow, pval};
+use crate::impls::t2::{end_step_flicker, flicker_worth};
 use crate::impls::t5::is_artifact;
 use crate::tag::Tag;
 use crate::engine::zones::{die, draw, max_by, min_by};
@@ -348,6 +349,65 @@ fn amulet_tap(g: &mut Game, _p: PlayerId, m: PermId, _used: u32) -> Res {
     Ok(())
 }
 
+// ================================================================== The Mind Stone
+fn harnessed(g: &Game, m: PermId) -> bool {
+    g.perm(m).data.truthy(DataKey::Flipped)
+}
+
+/// something worth blinking at the end step: a creature with an enter effect, or a tapped mana rock
+fn stone_has_target(g: &Game, p: PlayerId, stone: PermId) -> bool {
+    g.player(p).perms.iter().any(|&m| {
+        m != stone
+            && live(g, m)
+            && !g.perm(m).token
+            && ((g.is_creature(m) && flicker_worth(g, p, m) > 0.0) || (g.perm(m).tapped && rock_amt(g, p, m) > 0))
+    })
+}
+
+/// **The Mind Stone** ({1}{W} legendary artifact, indestructible): {T}: add {W} (the `rock` tag); {5}{W}, {T}:
+/// harness it; once harnessed, at the beginning of your end step exile up to one other nonland permanent you control,
+/// then return it (the same pick as Soulherder / Teleportation Circle: the creature with the best enter effect, else
+/// a tapped mana rock). The AI harnesses it when it has the mana to spare and a permanent worth blinking. Harnessed
+/// is kept as `DataKey::Flipped`.
+fn stone_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || !live(g, src) || owner(g, src) != p || g.perm(src).tapped || harnessed(g, src) {
+        return Ok(vec![]);
+    }
+    // the Stone taps itself as a cost, so its own {W} can't help pay
+    g.perm_mut(src).tapped = true;
+    let ok = can_pay(g, p, 5, "W", false);
+    g.perm_mut(src).tapped = false;
+    if !ok || !stone_has_target(g, p, src) {
+        return Ok(vec![]);
+    }
+    Ok(vec![ability(2.5, "harness The Mind Stone", src, stone_harness, 0)])
+}
+
+fn stone_harness(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || harnessed(g, src) {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    if !pay(g, p, 5, "W", false)? {
+        g.perm_mut(src).tapped = false;
+        return Ok(false);
+    }
+    if !ability_window(g, p, Some(src), "harness The Mind Stone", None, None)? {
+        return Ok(true);
+    }
+    g.perm_mut(src).data.set(DataKey::Flipped, Val::Bool(true));
+    crate::glog!(g, "    {} harnesses The Mind Stone", g.player(p).name);
+    Ok(true)
+}
+
+/// the infinity ability: at the beginning of your end step, blink one other nonland permanent
+fn stone_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != owner(g, src) || !harnessed(g, src) || !live(g, src) {
+        return Ok(());
+    }
+    end_step_flicker(g, src, p, true, true)
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -393,6 +453,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.options = Some(amulet_options);
     c.extra_mana = Some(amulet_mana);
     c.on_tap_perm = Some(amulet_tap);
+    let c = r.card(db, "The Mind Stone")?;
+    c.options = Some(stone_options);
+    c.end_step = Some(stone_end);
+    at_once(c, Event::EndStep, true); // end_step_flicker has its own trigger window
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);

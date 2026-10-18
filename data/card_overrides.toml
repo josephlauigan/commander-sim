@@ -8286,3 +8286,7 @@ note = "{T}: {B}, {R} or {G} (dork tag); exalted is the engine's keyword"
 tags = ""
 status = "Full"
 note = "{1},{T}: a charge counter noting the colour of the mana spent (when it has none); {T}, remove it: one mana of that type later; the AI charges it in the second main phase or the end-of-turn window; no longer a free colourless rock"
+
+["The Mind Stone"]
+status = "Full"
+note = "{T}: {W}; {5}{W},{T}: harness (the AI does it with the mana to spare and a permanent worth blinking); once harnessed, at your end step blinks one other nonland permanent (best enter-effect creature, else a tapped mana rock); indestructible"
