@@ -219,3 +219,19 @@ fn sphere_taxes_each_spell_by_the_spells_already_cast_this_turn() {
     g.player_mut(P0).turn_casts = Some((st, vec![card(&g, "Mana Vault")]));
     assert_eq!(cost_of(&g, P0, sol).0, 2, "its own controller pays too");
 }
+
+// ======================================================== Pithing Needle
+#[test]
+fn needle_names_the_opposing_engine_and_stops_only_that_name() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Tezzeret, Cruel Captain");
+    let (want, _) = sim_core::ai::decks::flute_pick(&g, P0).expect("something worth naming");
+    let needle = perm(&mut g, P0, "Pithing Needle");
+    let named = sim_core::impls::t6_stax::needle_name(&g, needle).expect("it names a card as it enters");
+    assert_eq!(named, want, "it names what Disruptor Flute would");
+    let name = g.db.get(named).name.to_string();
+    assert!(sim_core::impls::t6_stax::needle_stops(&g, &name));
+    assert!(!sim_core::impls::t6_stax::needle_stops(&g, "Sol Ring"));
+    g.perm_mut(needle).on_bf = false;
+    assert!(!sim_core::impls::t6_stax::needle_stops(&g, &name), "gone with the Needle");
+}

@@ -35,3 +35,9 @@ Needs: a colour override for a land's mana from card code ("produces {C} instead
 Where it would hook: `engine/mana.rs::land_cols` (next to `moon`), a `land_colors` slot on `CardImpl` returning an override for a land.
 Card side done: `impls/t6_stax.rs`: the amount of any land that taps for two or more is cut to one (`land_mana` slot; only the earliest Sphere acts), and the spell tax of {1} per other spell the caster cast this turn (`cost` slot, exact).
 Test to add once the engine has it: with the Sphere out, Izzet Boilerworks taps for one {C} only, never {U} or {R}.
+
+## Pithing Needle
+Needs: a name-based "activated abilities can't be activated" lock that the activation paths ask, separate from Disruptor Flute's: `engine/values.rs::stopped` is the Flute's check and `engine/mana.rs::cost_of` also uses it for the {3} spell tax, so the Needle cannot just push into `g.flutes`. A general `ability_locked_by_name(g, name)` (the Flute's ability half plus Needle) called from `combat::blocked`, `dsl/mod.rs` (the two `stopped` calls), `ai/decks.rs`, `combos.rs`, `common.rs` sac-outlet checks, with mana abilities exempt. `rules.rs::ability_locked` takes a source permanent and hard-codes card names (Collector Ouphe, Cursed Totem ...); it would also be the place.
+Where it would hook: the places above, reading `impls::t6_stax::needle_stops(g, name)`.
+Card side done: `impls/t6_stax.rs`: as it enters the Needle names the card `ai::decks::flute_pick` would name for the Flute (stored as `DataKey::Imprint` = the named card, read with `needle_name`), and `needle_stops` answers the rule.
+Test to add once the engine has it: with the Needle naming an opposing planeswalker, its loyalty abilities are not offered, and its mana abilities (and other cards' abilities) still are.

@@ -17,6 +17,7 @@ use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::trigger_window;
 use crate::engine::cast::casts_this_turn;
 use crate::hooks::{Event, Registry, Src};
+use crate::state::{DataKey, Val};
 use crate::tag::Tag;
 use crate::ids::PermId;
 use super::t5::is_artifact;
@@ -244,6 +245,48 @@ fn sphere_cost(g: &Game, _src: Src, caster: PlayerId, c: CardId) -> i32 {
     if g.db.get(c).land { 0 } else { casts_this_turn(g, caster) }
 }
 
+
+// ================================================================== Pithing Needle
+/// the card name a Pithing Needle was set to as it entered (`DataKey::Imprint` holds the named card), if it named one
+pub fn needle_name(g: &Game, m: PermId) -> Option<CardId> {
+    match g.perm(m).data.get(DataKey::Imprint) {
+        Some(Val::Card(c)) => Some(*c),
+        _ => None,
+    }
+}
+
+/// do the activated abilities of sources named `name` stop (not mana abilities): a Pithing Needle on the battlefield
+/// names it. For the engine's ability checks (`engine-needs-stax.md`); `values::stopped` is the Flute's check and also
+/// taxes spells, so it can't just be extended.
+pub fn needle_stops(g: &Game, name: &str) -> bool {
+    g.players.iter().any(|q| {
+        q.perms.iter().any(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && !x.phased
+                && !x.neutered
+                && x.cd.is_some_and(|c| &*g.db.get(c).name == "Pithing Needle")
+                && needle_name(g, m).is_some_and(|c| &*g.db.get(c).name == name)
+        })
+    })
+}
+
+/// **Pithing Needle** ({1} artifact): as it enters, choose a card name; activated abilities of sources with that name
+/// can't be activated unless they're mana abilities. The AI names what Disruptor Flute would name (`flute_pick`: the
+/// opposing commander or engine permanent that hurts most). Partial: the name is chosen and kept (`needle_name`), and
+/// `needle_stops` answers the rule, but the engine's activation checks don't ask it yet (engine-needs-stax.md).
+fn needle_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if let Some((name, _)) = crate::ai::decks::flute_pick(g, o) {
+        g.perm_mut(src).data.set(DataKey::Imprint, Val::Card(name));
+        crate::glog!(g, "    Pithing Needle names {}", g.db.get(name).name);
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Silence")?;
     c.resolve = Some(silence_resolve);
@@ -266,5 +309,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Damping Sphere")?;
     c.land_mana = Some(sphere_land);
     c.cost = Some(sphere_cost);
+    let c = r.card(db, "Pithing Needle")?;
+    c.etb = Some(needle_etb);
+    *c = c.at_once(Event::Etb);
     Ok(())
 }

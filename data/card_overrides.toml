@@ -8659,3 +8659,7 @@ note = "extort works (pay {W} or {B} with spare mana, drain each opponent); oppo
 ["Damping Sphere"]
 status = "Partial"
 note = "the {1}-more tax per other spell the caster cast this turn is exact; lands that tap for two or more make one mana, but keep their colour instead of making {C} (no land colour override in card code; rust/agents/engine-needs-stax.md)"
+
+["Pithing Needle"]
+status = "Partial"
+note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it; the engine's activation checks do not ask the Needle yet, so no ability is stopped (rust/agents/engine-needs-stax.md)"
