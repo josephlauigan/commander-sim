@@ -511,16 +511,13 @@ fn thrasher_main1(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 // ================================================================== Vexing Bauble
 /// **Vexing Bauble** ({1} artifact): whenever a player casts a spell, if no mana was spent to cast it, counter that
-/// spell; {1}, {T}, sacrifice: draw a card (the compiled ability). Modeled as a lock (`can_cast`): while it is out,
-/// nobody casts a spell that costs no mana (the Moxen, Lotus Petal, Sol Ring-style zero-drops of either player).
-/// The real card lets the cast happen and counters it (the card is lost to the graveyard, and a free alternative
-/// cost is caught too): that needs a counter-on-cast hook, see rust/agents/engine-needs-godo.md.
-fn bauble_can_cast(g: &Game, src: Src, p: PlayerId, c: CardId, _zone: Sym) -> bool {
-    if !live(g, src) || g.db.get(c).land {
-        return true;
-    }
-    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-    gn > 0 || !pips.is_empty()
+/// spell; {1}, {T}, sacrifice: draw a card (the compiled ability). The `cast_counter` slot (engine/cast.rs `cast_card`)
+/// counters a spell cast with no mana spent: the spell is cast (cast triggers happen) and goes to its owner's
+/// graveyard; the Bauble's controller's own free spells too, and a free alternative cost (Daze, Snuff Out ...) spends
+/// no mana either (`Ctx::mana_spent`). A cost increase paid in mana (Trinisphere's floor) makes it a spell with mana
+/// spent.
+fn bauble_counter(g: &Game, src: Src, _p: PlayerId, c: CardId, ctx: &Ctx) -> bool {
+    live(g, src) && !g.db.get(c).land && ctx.mana_spent == 0
 }
 
 // ================================================================== Hexing Squelcher
@@ -630,7 +627,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::common::walker(r, db, "Tezzeret, Cruel Captain", &TEZZERET)?;
     r.card(db, "Tezzeret, Cruel Captain")?.etb = Some(tez_etb);
     r.card(db, "Party Thrasher")?.main1 = Some(thrasher_main1);
-    r.card(db, "Vexing Bauble")?.can_cast = Some(bauble_can_cast);
+    r.card(db, "Vexing Bauble")?.cast_counter = Some(bauble_counter);
     r.card(db, "Hexing Squelcher")?.uncounterable = Some(squelcher_unc);
     let c = r.card(db, "Blood Moon")?;
     c.blood_moon = Some(moon_on);

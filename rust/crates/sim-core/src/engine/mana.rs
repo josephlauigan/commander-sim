@@ -332,9 +332,22 @@ pub fn can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 /// p pays the cost; false (nothing paid) if it can't
 pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -> Res<bool> {
     if crate::human::is_human(g, p) {
-        return Ok(crate::human::mana::pay_from_pool(g, p, generic, pips).is_none());
+        let ok = crate::human::mana::pay_from_pool(g, p, generic, pips).is_none();
+        if ok {
+            if !g.spent_keep {
+                g.mana_spent = 0;
+                g.mana_colored = false;
+            }
+            g.mana_spent += generic + pips.chars().count() as u32; // the pool does not say which mana paid
+            g.mana_colored |= !pips.is_empty();
+        }
+        return Ok(ok);
     }
     g.treasure_paid = 0;
+    if !g.spent_keep {
+        g.mana_spent = 0;
+        g.mana_colored = false;
+    }
     let u = mana_units(g, p, convoke);
     let Some((used, col)) = plan_pay(g, &u, generic, pips) else { return Ok(false) };
     for (i, w) in u.iter().enumerate() {
@@ -348,6 +361,8 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 /// Use unit w for n mana; col: the coloured pips it paid for (painlands hurt only then). Taps or sacrifices the
 /// source and runs its side effects: Treasures, floating mana, on-tap triggers, pain. Python's `spend_unit`.
 pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res {
+    g.mana_spent += n; // the record of mana spent on the spell being paid for
+    g.mana_colored |= !w.cols.is_empty();
     match w.src {
         Source::Treasure => {
             let st = g.turn_stamp();

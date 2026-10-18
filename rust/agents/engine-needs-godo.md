@@ -24,7 +24,7 @@ Where it would hook: `engine/cast.rs` cost payment (convoke for spells in `Playe
 Card side done: the trigger (discard a spare card, exile the top two, keep the better in the hand/impulse list for this turn, the other stays exiled) in `impls/t6_godo.rs`.
 Test to add once the engine has it: a 3-mana noncreature spell in `impulse` with two untapped creatures and one land is castable, taps both creatures; a creature spell from exile gets no convoke.
 
-## Vexing Bauble
+## Vexing Bauble (DONE: t6-e-castctr, rust/agents/report-t6-e-castctr.md)
 Needs: a counter-on-cast hook: a permanent that counters a spell as it is cast when a condition on the cast holds ("if no mana was spent to cast it"), with the spell going to its owner's graveyard, as Jin-Gitaxias's counter does in `engine/cast.rs` (`jin_kind`, before the stack item is pushed). The mana actually spent is `cur_cast` plus `ctx.paid_otherwise`.
 Where it would hook: `engine/cast.rs` `cast_card` right after `on_cast` (the Jin-Gitaxias counter), reading a new `Event::CastCounter` slot.
 Card side done: the draw ability (compiled) and a stand-in lock in `impls/t6_godo.rs` using the existing `can_cast` slot (`engine/hooks.rs::allowed`): nobody casts a spell whose cost is {0}. Differences: the countered card stays in hand instead of the graveyard, and free alternative costs (Daze-style, "without paying") are not caught.

@@ -903,6 +903,10 @@ pub struct Ctx {
     pub from_gy: bool,
     /// Multikicker: how many times the spell was kicked (Comet Storm)
     pub kicks: u32,
+    /// the mana actually spent to cast it, after reductions and alternative costs (0 for a free cast); set by `cast_card`
+    pub mana_spent: u32,
+    /// some of that mana was coloured (Void Mirror, Vibrance)
+    pub mana_colored: bool,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
@@ -1009,6 +1013,13 @@ pub struct Game {
     pub treasure_paid: u32,
     /// the last spell cast and the Treasure mana paid for it (Kalain, Reclusive Painter)
     pub cast_treasure: Option<(CardId, u32)>,
+    /// mana spent and whether any was coloured, since the last payment began; the spell cast with it takes it (`Ctx::mana_spent`)
+    pub mana_spent: u32,
+    pub mana_colored: bool,
+    /// an alternative cost is being paid: its several payments add up instead of restarting the record
+    pub spent_keep: bool,
+    /// the mana spent to cast the permanent spell that is entering (Chalice of the Void: X is half of it)
+    pub entering_spent: u32,
     /// permanents entered, numbered in order (born)
     pub enter_no: u32,
     /// permanents that entered this turn
@@ -1211,6 +1222,10 @@ impl Game {
             died_count: (None, 0),
             treasure_paid: 0,
             cast_treasure: None,
+            mana_spent: 0,
+            mana_colored: false,
+            spent_keep: false,
+            entering_spent: 0,
             enter_no: 0,
             entered: vec![],
             in_combat: vec![],

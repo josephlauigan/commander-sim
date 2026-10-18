@@ -232,7 +232,27 @@ pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
             return false;
         }
     }
-    g.hooks.is_empty() || hooks::allowed(g, p, c, zone)
+    if g.hooks.is_empty() {
+        return true;
+    }
+    hooks::allowed(g, p, c, zone) && (crate::human::is_human(g, p) || !ai_cast_countered(g, p, c))
+}
+
+/// The AI does not cast a spell that Vexing Bauble, Chalice of the Void or Void Mirror would counter as it is cast. The
+/// mana it would spend is estimated from the cost; a card with an alternative cost it can only use because the mana
+/// cost is out of reach spends none (a free Force of Will into a Bauble is a wasted card). A person may cast it anyway.
+fn ai_cast_countered(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.db.get(c).land {
+        return false;
+    }
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    let mut spent = gn + pips.chars().count() as u32;
+    let mut colored = !pips.is_empty()
+        || (gn > 0 && "WUBRG".chars().any(|ch| crate::engine::mana::can_pay(g, p, 0, &ch.to_string(), false)));
+    if crate::engine::altcost::slot(g, c).is_some() && !crate::engine::mana::can_pay(g, p, gn, &pips, false) {
+        (spent, colored) = (0, false);
+    }
+    hooks::would_be_cast_countered(g, p, c, spent, colored)
 }
 
 /// spells p has cast during the current turn (anyone's turn)
@@ -698,6 +718,9 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         g.locks_used = true; // from now on `castable` looks at the stack for it
     }
     let mut ctx = ctx;
+    // what the payment spent (altcost.rs and mana::pay keep the record); a free cast spent nothing
+    ctx.mana_spent = std::mem::take(&mut g.mana_spent);
+    ctx.mana_colored = std::mem::take(&mut g.mana_colored);
     match zone {
         "hand" => {
             let pl = g.player_mut(p);
@@ -782,6 +805,12 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             countered: false,
             countered_by: None,
         };
+        // a permanent that counters a spell as it is cast (Vexing Bauble, Chalice of the Void, Void Mirror): the cast
+        // and its triggers happened; the spell goes to its owner's graveyard like any countered spell
+        if crate::engine::hooks::cast_countered(g, p, c, &ctx) && counterable(g, &item) {
+            crate::glog!(g, "    {} is countered as it is cast", g.db.get(c).name);
+            return Ok(Some((false, None, ctx.clone())));
+        }
         let human_near = g.humans.any()
             && (g.players.iter().any(|q| q.id != p && crate::human::is_human(g, q.id))
                 || crate::human::human::copy_window(g, p, Some(c)));
@@ -935,6 +964,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
             pl.hand.remove(i);
             pl.gy.push(x);
         }
+        g.entering_spent = ctx.mana_spent; // Chalice of the Void: X is half the mana paid
         let prev = std::mem::replace(&mut g.cast_target, ctx.target); // an Aura's target, chosen as cast
         let r = enter(g, p, c, Enter { was_cast: true, orig: ctx.owner, ..Enter::default() });
         g.cast_target = prev;
