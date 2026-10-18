@@ -1,0 +1,83 @@
+//! Tier 6 "green1" batch (impls/t6_green1.rs): each card on a hand-built position with its Oracle text as the
+//! expectation.
+
+use sim_core::ai::act;
+use sim_core::hooks::Opt;
+use sim_core::ids::{PermId, PlayerId};
+use sim_core::state::Game;
+use sim_core::testkit::*;
+
+const P0: PlayerId = PlayerId(0);
+
+fn tbl() -> Game {
+    table(&["rograkh-thrasios-creature-combo", "godo", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"])
+}
+
+fn options(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let c = g.perm(src).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, src, p, post).unwrap()
+}
+
+fn run(g: &mut Game, p: PlayerId, o: &Opt) -> bool {
+    act::perform(g, p, o.act.as_ref().unwrap()).unwrap()
+}
+
+fn untapped(g: &Game, p: PlayerId) -> u32 {
+    sim_core::engine::mana::total_mana(g, p, false)
+}
+
+// ======================================================== Oboro Breezecaller
+#[test]
+fn oboro_returns_a_land_and_untaps_cradle() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 2, false);
+    let cr = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    let spare = lands(&mut g, P0, "Forest", 1, true)[0];
+    for _ in 0..6 {
+        token(&mut g, P0, 1);
+    }
+    let o = perm(&mut g, P0, "Oboro Breezecaller");
+    hand(&mut g, P0, &["Sol Ring"]);
+    let opts = options(&mut g, o, P0, Some(false));
+    assert_eq!(opts.len(), 1);
+    let before = untapped(&g, P0);
+    let hand_before = g.player(P0).hand.len();
+    assert!(run(&mut g, P0, &opts[0]));
+    assert!(!g.land(cr).tapped, "Cradle untapped");
+    assert!(!g.land(spare).on_bf, "the tapped spare Forest was returned");
+    assert_eq!(g.player(P0).hand.len(), hand_before + 1, "to its owner's hand");
+    // {2} paid from the untapped Forests, Cradle (7 creatures with Oboro) now untapped
+    assert_eq!(untapped(&g, P0), before - 2 + 7);
+}
+
+#[test]
+fn oboro_not_offered_when_the_untap_does_not_pay() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 3, false);
+    lands(&mut g, P0, "Forest", 1, true);
+    let o = perm(&mut g, P0, "Oboro Breezecaller");
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert!(options(&mut g, o, P0, Some(false)).is_empty(), "a Forest is not worth {{2}} and a land");
+}
+
+#[test]
+fn oboro_costs_less_with_training_grounds_but_never_under_one() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Forest", 1, false);
+    let cr = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    lands(&mut g, P0, "Forest", 1, true);
+    for _ in 0..3 {
+        token(&mut g, P0, 1);
+    }
+    let o = perm(&mut g, P0, "Oboro Breezecaller");
+    perm(&mut g, P0, "Training Grounds");
+    hand(&mut g, P0, &["Sol Ring"]);
+    assert_eq!(sim_core::impls::t6_green1::creature_ability_cost(&g, P0, 2), 1);
+    let opts = options(&mut g, o, P0, Some(false));
+    assert_eq!(opts.len(), 1, "only {{1}} needed: the one untapped Forest pays");
+    let before = untapped(&g, P0);
+    assert!(run(&mut g, P0, &opts[0]));
+    assert!(!g.land(cr).tapped);
+    assert_eq!(untapped(&g, P0), before - 1 + 4);
+}

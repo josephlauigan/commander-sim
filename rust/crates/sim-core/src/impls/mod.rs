@@ -52,6 +52,7 @@ pub mod tymna_cards;
 pub mod tymna_partners;
 pub mod t6_counters;
 pub mod t6_copies;
+pub mod t6_green1;
 pub mod t6_mana;
 pub mod t6_redirects;
 
@@ -106,6 +107,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     sephfs::register(&mut r, db)?;
     t6_counters::register(&mut r, db)?;
     t6_copies::register(&mut r, db)?;
+    t6_green1::register(&mut r, db)?;
     t6_mana::register(&mut r, db)?;
     t6_redirects::register(&mut r, db)?;
     Ok(r)
