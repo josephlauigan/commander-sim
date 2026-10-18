@@ -18,7 +18,7 @@
 //! Left out: the Dack two-banisher trade (a way to get pieces back, not a line of its own), Sisay's Selvala chain,
 //! Deadpool + Forbidden Orchard and the Mana Vault starter, Rograkh's Badgermole, Springheart/Vibrance lines.
 
-use super::combos::{Combo, Ready, Step, StepKind, done, no_keys, no_src};
+use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, cost_of, pay};
@@ -636,19 +636,19 @@ fn b_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 pub static COMBOS: [Combo; 6] = [
     combo(
         "Preston + Felidar Guardian + Radiant Solar (flicker spell)",
-        &[&[PRESTON], &[FELIDAR], &[SOLAR], FLICKERS],
+        &[QUIET, &[PRESTON], &[FELIDAR], &[SOLAR], FLICKERS],
         ready_dack_spell,
         &[S_DACK_PIECES, S_DACK_FLICKER, S_DACK_LOOP],
     ),
     combo(
         "Preston + Felidar Guardian + Radiant Solar (loop running)",
-        &[&[PRESTON], &[FELIDAR], &[SOLAR]],
+        &[QUIET, &[PRESTON], &[FELIDAR], &[SOLAR]],
         ready_dack_running,
         &[S_DACK_PIECES, S_DACK_LOOP],
     ),
     combo(
         "Ioreth + Marvin + a legend that taps for mana (DDR)",
-        &[&[IORETH], &[MARVIN], &[SELVALA, SHANG, "Sisay, Weatherlight Captain"], &[DOOM]],
+        &[QUIET, &[IORETH], &[MARVIN], &[SELVALA, SHANG, "Sisay, Weatherlight Captain"], &[DOOM]],
         ready_ddr,
         &[
             S_CAST_NEXT_DDR,
@@ -664,7 +664,7 @@ pub static COMBOS: [Combo; 6] = [
     ),
     combo(
         "Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)",
-        &[&[DEREVI], &[EMIEL], &[CRADLE, TENDER], &[DOOM]],
+        &[QUIET, &[DEREVI], &[EMIEL], &[CRADLE, TENDER], &[DOOM]],
         ready_unicorn,
         &[
             S_CAST_NEXT_UNI,
@@ -678,7 +678,7 @@ pub static COMBOS: [Combo; 6] = [
     ),
     combo(
         "Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara",
-        &[&[OBORO], &[CRADLE], &[GATES], &[THRASIOS]],
+        &[QUIET, &[OBORO], &[CRADLE], &[GATES], &[THRASIOS]],
         ready_plan_a,
         &[
             step("cast Oboro Breezecaller", StepKind::Spell, cast_oboro),
@@ -699,7 +699,7 @@ pub static COMBOS: [Combo; 6] = [
     ),
     combo(
         "Eternal Witness + Snap + Gaea's Cradle",
-        &[&[WITNESS], &[SNAP], &[CRADLE], &[THRASIOS]],
+        &[QUIET, &[WITNESS], &[SNAP], &[CRADLE], &[THRASIOS]],
         ready_plan_b,
         &[
             step("cast Eternal Witness", StepKind::Spell, cast_witness),
