@@ -25,3 +25,15 @@ T5 26.4% (28.7% over t3–t5).**
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 2 (T3-T4). Proposed: +Force of Will (spare) for Slaughter Pact; 3 Game Changers. Final: **30.2% vs T3, 31.6% vs T4** (avg 30.9%; current 28.9 / 31.6 at 1,000). Why: a free counter protects Sauron and stops T3-T4 combo turns; Slaughter Pact had the lowest win rate when cast.
+
+## 2026-10-18: AI audit phase 2 (branch audit-grixis; adaptive AI vs t3, 600 games x 2 profiles, before -> after)
+Win rate 26.7% -> 27.0% (noise). Aggravated Assault is now cast in 17.5-18.5% of games at a 43% win rate (it was the tutors'
+default target and rarely cast with a Sword that is no longer in the list); Army power at T6/T8/T10 mean 1.6/2.3/2.4 -> 1.7/2.7/2.2.
+Why the Army is mostly absent (traced 37 games): it is killed, not unmade. About 30 Army deaths in 37 games: opponents' wipes
+(Toxic Deluge, Deed, austere, dmg13) and spot removal; plus Sauron's own Nibelheim Aflame (the sweep source is the biggest creature,
+so a smaller Army died). Fixed the self-sweep (the Army counts 3x in wipe_eval unless The Ozolith is out) and the tutors now fetch The
+Ozolith first once an Army is growing. Weakness that remains: one big Army against a removal-heavy table; the Ozolith is the answer.
+Other fixes: tutors by board state (Sol Ring when short, Ozolith, Archivist with Bowmasters, Cloak/Passage for a huge Army, then
+Assault, closers, Not of This World, Barad-dur when flooded); Force of Will pitches draw spells before engine creatures; Sauron holds
+mana for counters like the outside decks; Cost of Brilliance gives an opponent cards while Bowmasters is out; Archivist wheel also
+for Kaervek, or Sauron with a small hand.
