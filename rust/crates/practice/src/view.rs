@@ -46,6 +46,9 @@ fn perm(g: &Game, m: sim_core::ids::PermId) -> Map<String, Value> {
     if m_.is_cmd {
         d.insert("commander".into(), true.into());
     }
+    if m_.orig != m_.owner {
+        d.insert("owner".into(), (&*g.player(m_.orig).key).into()); // a stolen card shows its owner's printing
+    }
     if m_.phased {
         d.insert("phased_out".into(), true.into());
     }

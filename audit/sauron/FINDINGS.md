@@ -15,6 +15,11 @@ T5 26.4% (28.7% over t3–t5).**
   Disdainful Stroke, Arcane Denial, Spell Pierce (t3, t4), Inexorable Tide, Relic of Legends.
 
 ## What was tried, and why it did or didn't work
+### 2026-10-18: list matched to the physical deck (Urza in, Spell Pierce out; no new run)
+JD's physical list already had Urza in for Spell Pierce, so the repo list now matches it (branch `printings`). The
+evidence is the test below: +0.5, noise, a fair swap. The "Current state" numbers are from the old list; the next
+run of the deck measures the new one.
+
 ### Urza, Lord High Artificer (2026-10-17 night; branch `adnaus`; Full, from the pool's Urza deck)
 | Swap (Urza in for) | Result over t3–t5 | Why |
 |---|---|---|

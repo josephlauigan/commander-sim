@@ -21,6 +21,12 @@ T5 23.1% (26.8% over t3–t5).**
    Rank Rat, Hallway Heckler, Grim Servant (t4).
 
 ## What was tried, and why it did or didn't work
+### 2026-10-18: list matched to the physical deck (Decorum Dissertation in, Bitter Triumph out; no new run)
+The 10/14 Jodah-leftover swap (Bitter Triumph for Decorum Dissertation) was never made in the physical deck, so the
+repo list goes back to Decorum Dissertation (branch `printings`). That swap tested as noise (`audit/leftovers`), and
+Bitter Triumph was the bottom-ten card when cast in all three tiers (weakness 4). The "Current state" numbers are from
+the old list; the next run of the deck measures the new one.
+
 ### Smaug the Magnificent (2026-10-17 evening; modeled Full in `impls/smaug.rs`, branch `smaug`)
 | Swap (Smaug in for) | Result over t3–t5 | Why |
 |---|---|---|

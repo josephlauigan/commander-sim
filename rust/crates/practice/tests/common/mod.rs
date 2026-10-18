@@ -513,7 +513,8 @@ pub fn play_out(c: &mut Client, secs: u64) -> (Value, usize) {
 
 pub mod fake {
     //! A local stand-in for Scryfall for the image tests: `POST /cards/collection` answers every requested name (or
-    //! token id) with a card whose image is `<base>/img/<id>.jpg`; the image's bytes are `jpg:<id>`. The first card of
+    //! token id, or set and collector number) with a card whose image is `<base>/img/<id>.jpg`; the image's bytes are
+    //! `jpg:<id>`. The first card of
     //! each request makes one token (`tok-zombie`, named Zombie). Counts what was asked.
     use serde_json::{Value, json};
     use std::io::{BufRead, BufReader, Read, Write};
@@ -522,6 +523,7 @@ pub mod fake {
 
     pub static LOOKUPS: AtomicUsize = AtomicUsize::new(0);
     pub static NAMES_ASKED: AtomicUsize = AtomicUsize::new(0);
+    pub static PRINTS_ASKED: AtomicUsize = AtomicUsize::new(0);
     pub static DOWNLOADS: AtomicUsize = AtomicUsize::new(0);
 
     pub fn slug(name: &str) -> String {
@@ -591,6 +593,13 @@ pub mod fake {
                     data.push(card(&slug(name), name, base, (i == 0).then_some("tok-zombie")));
                 } else if let Some(t) = id["id"].as_str() {
                     data.push(card(t, "Zombie", base, None));
+                } else if let (Some(set), Some(num)) = (id["set"].as_str(), id["collector_number"].as_str()) {
+                    // a deck's own printing (data/printings/<key>.txt)
+                    PRINTS_ASKED.fetch_add(1, Ordering::Relaxed);
+                    let mut c = card(&format!("print-{set}-{}", slug(num)), "Printed", base, None);
+                    c["set"] = set.into();
+                    c["collector_number"] = num.into();
+                    data.push(c);
                 }
             }
             ("200 OK", "application/json", json!({"object": "list", "data": data}).to_string().into_bytes())

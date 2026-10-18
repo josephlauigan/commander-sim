@@ -48,8 +48,9 @@ is removed.
   on the flip turn Breach recasts Lightning Bolt, Grab the Prize and the other one-shots, and every point of life
   lost is still a card. Each escape is two Garrison Excavator Spirits: one for the three exiled cards, one for the
   escaped card leaving. Breach is sacrificed at your end step, so cast it on the turn you use it.
-- **Bitter Triumph** ({1}{B} instant, destroys a creature or planeswalker; the extra cost is a discard or 3 life)
-  feeds the graveyard while it removes a threat.
+- **Decorum Dissertation** ({3}{B}{B} sorcery, Paradigm): you draw two and lose 2 life, then the spell is exiled
+  and you cast a free copy at the start of each of your first main phases, so it refills the hand for every Kefka
+  trigger with no mana spent.
 
 ### Outlets and looting
 Rummaging Goblin, Hallway Heckler, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
@@ -82,7 +83,7 @@ with mana value up to your devotion to black; you lose 3 life). They are the onl
 Will, whichever the board needs.
 
 ### Removal, counters and wipes
-**Lightning Bolt**, **Bitter Triumph**, **Pongify** (they get a 3/3 Ape), **Reality Shift** (they manifest the top
+**Lightning Bolt**, **Pongify** (they get a 3/3 Ape), **Reality Shift** (they manifest the top
 card), **Feed the Swarm** (you lose life equal to the mana value), **Extinguish the Light**, **Deadly Embrace**
 (draws a card for each creature that died this turn), **Contract Killing** (two Treasure) and **Chaos Warp**
 (the owner shuffles the permanent away and may get a permanent from the top of the library, so use it on the
@@ -138,7 +139,7 @@ Whisper** is a plain two-card draw.
 
 **Yawgmoth's Will: a second storm turn.** With Kefka's discards and the looters filling the graveyard, Will (cast it for {2}{B}) lets you cast cards from the graveyard this turn, so it replays **Dark Ritual**, **Lotus Petal**, **Brain Freeze** and **Grapeshot** from the pile. Diabolic Tutor finds Will, Breach or the missing piece, and Profane Tutor does the same two turns after it is suspended. Cards that would go to the graveyard this turn are exiled instead, so Will is a one-time engine.
 
-**Bitter Triumph feeds the graveyard.** Its additional cost is to discard a card (or pay 3 life): discarding a card puts it where Breach and Yawgmoth's Will can use it, so cast it with a spare Dark Ritual, Lotus Petal or Brain Freeze in hand to line up the storm turn while it removes a creature or planeswalker.
+**Decorum Dissertation goes down early.** It costs five once; after that Paradigm casts a free copy at the start of each of your first main phases, two cards a turn for 2 life. Cast it on a quiet turn before the flip, so the extra cards feed Kefka's discards and the graveyard for Breach and Yawgmoth's Will. Watch your life total: each copy costs 2.
 
 **Rhystic Study and Skullclamp** keep the hand full between Kefka triggers.
 
@@ -148,8 +149,8 @@ Whisper** is a plain two-card draw.
 
 - **Lands:** 36 (12 nonbasic + 24 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Skullclamp, Niv-Mizzet (taps to draw), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
-- **Interaction:** Lightning Bolt, Bitter Triumph (destroys a creature or planeswalker for {1}{B}; the cost is a discard or 3 life), Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
+- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
+- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
@@ -175,9 +176,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
-**Sorceries (15).** Contract Killing, Crux of Fate, Deadly Embrace, Diabolic Tutor, Expressive Iteration, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
+**Sorceries (16).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
 
-**Instants (15).** Arcane Denial, Big Score, Bitter Triumph, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
+**Instants (14).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
 **Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Underground River, 6 Island, 5 Mountain, 13 Swamp
 
@@ -188,7 +189,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Arcane Denial
 1 Arcane Signet
 1 Big Score
-1 Bitter Triumph
 1 Blazing Firesinger
 1 Blightspeaker
 1 Blood Crypt
@@ -201,6 +201,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Crux of Fate
 1 Dark Ritual
 1 Deadly Embrace
+1 Decorum Dissertation
 1 Deflecting Swat
 1 Demonic Embrace
 1 Diabolic Tutor

@@ -1,0 +1,75 @@
+1 Airlift Chaplain (bro) 2
+1 Alela, Artful Provocateur (sld) 1630
+1 Angelic Page (plst) USG-4
+1 Angelic Shield (plst) INV-228
+1 Arrest (j22) 52
+1 Avenger en-Dal (nem) 2
+1 Burnished Hart (fdn) 250
+1 Cabal Patriarch (cmm) 140
+1 Cavalier of Dawn (m20) 10
+1 Clever Concealment (msc) 125
+1 Credit Voucher (mmq) 289
+1 Crystal Chimes (plst) C15-250
+1 Dark Ritual (msc) 793
+1 Daydream (sos) 9
+1 Desperate Futurescribe (fra) 129
+1 Dockside Chef (neo) 93
+1 Emry, Lurker of the Loch (eoc) 71
+1 Essence Scatter (sos) 47
+1 Ethersworn Canonist (2xm) 14
+1 Fabricate (plst) M10-52
+1 Feather of Flight (blb) 13
+1 Felidar Retreat (fdn) 574
+1 Ghost Quarter (ltc) 314
+1 Gravedigger (j25) 452
+1 Helping Hand (lci) 17
+1 Hidden Grotto (blb) 254
+1 Igneous Golem (mir) 305
+1 Imperious Inkmage (sos) 195
+1 Inspiring Overseer (j25) 212
+9 Island (trk) 319
+1 Isolated Chapel (frc) 74
+1 Jackdaw Savior (blb) 18
+1 Judge's Familiar (rvr) 192
+1 Karmic Justice (c15) 72
+1 Last Gasp (trc) 580
+1 Lieutenant Kirtar (dmr) 12
+1 Lightning Greaves (msc) 202
+1 Luminous Bonds (grn) 21
+1 Malcator, Purity Overseer (one) 208
+1 Meteor Golem (msc) 205
+1 Meticulous Commons (fra) 184
+1 Mind Stone (soc) 352
+1 Mirage Mirror (msc) 206
+1 Muddle the Mixture (sld) 1254
+1 Multiply by Zero (fra) 58
+1 Negate (tmt) 47
+1 Night's Whisper (hoc) 189
+1 Notion Thief (ltc) 270
+1 Path of Ancestry (frc) 77
+1 Path to Exile (frc) 30
+1 Pileated Provisioner (blb) 25
+11 Plains (trk) 317
+1 Plan for All Outcomes (fra) 35
+1 Plumecreed Mentor (blb) 228
+1 Prophesied End (fra) 17
+1 Reconstructed Thopter (bro) 242
+1 Repel Calamity (blb) 27
+1 Scrapheap (ulg) 132
+1 Serra the Benevolent (sld) 1252
+1 Shatterwing Pegasus (fra) 21
+1 Short Bow (blb) 248
+1 Skullclamp (msc) 210
+1 Sol Ring (frc) 21
+1 Statute of Denial (m15) 79
+1 Stirring Hopesinger (sos) 35
+8 Swamp (trk) 321
+1 Swords to Plowshares (frc) 37
+1 Theorix Annex (fra) 192
+1 Tragic Poet (dom) 37
+1 Unquestioned Authority (j22) 260
+1 Unsummon (fra) 46
+1 Venser, the Sojourner (ddi) 1
+1 Wall of Junk (dmr) 240
+1 Windborn Muse (mkc) 92
+1 Wispdrinker Vampire (mkm) 243

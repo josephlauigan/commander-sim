@@ -1,0 +1,83 @@
+1 Abrade (soa) 37
+1 Aetherflux Reservoir (plst) KLD-192
+1 Alania, Divergent Storm (blb) 327
+1 An Offer You Can't Refuse (fdn) 160
+1 Arcane Signet (soc) 127
+1 Archmage Emeritus (stx) 37
+1 Ash Barrens (tmc) 60
+1 Banishing Betrayal (sos) 38
+1 Blasphemous Act (scd) 124
+1 Blazing Firesinger // Seething Song (sos) 109
+1 Burst Lightning (soa) 41
+1 Chaos Warp (pw24) 7
+1 Coastal Peak (msc) 232
+1 Command Tower (msc) 236
+1 Consecrated Sphinx (sld) 1657
+1 Counterspell (pf26) 5
+1 Crackle with Power (soa) 42
+1 Deduce (soa) 16
+1 Desolate Lighthouse (lcc) 327
+1 Docent of Perfection // Final Iteration (emn) 56
+1 Dreams of Laguna (fin) 50
+1 Emeritus of Conflict // Lightning Bolt (sos) 113
+1 Emeritus of Ideation // Ancestral Recall (sos) 45
+1 Eris, Roar of the Storm (otc) 5
+1 Evolving Wilds (eoc) 158
+1 Exotic Orchard (msc) 241
+1 Expressive Iteration (spg) 43
+1 Fabricate (sld) 2090
+1 Fellwar Stone (cmm) 657
+1 Fiery Emancipation (wot) 42
+1 Flashback (sos) 115
+1 Flow State (sos) 49
+1 Flux Channeler (plst) WAR-52
+1 Guttersnipe (pm19) 145
+1 Harmonic Prodigy (mh2) 132
+1 Imperial Recruiter (mh2) 314
+11 Island (trk) 319
+1 Kessig Flamebreather (vow) 164
+1 Light Up the Stage (dsc) 166
+1 Lightning Bolt (sld) 86
+1 Lightning Greaves (sld) 1493
+1 Lightning Strike (dmu) 137
+1 Mistrise Village (tdm) 397
+1 Mizzix's Mastery (otc) 175
+8 Mountain (rtr) 267
+1 Murmuring Mystic (grn) 45
+1 Mystic Confluence (tsr) 312
+1 Mystic Sanctuary (soc) 388
+1 Mystical Tutor (dmr) 421
+1 Niv-Mizzet, Parun (grn) 192
+1 Old Fat Spider Can't See Me (hob) 50
+1 Path of Ancestry (p30a) 25
+1 Plunder the Trollshaws (hob) 51
+1 Prismari Charm (sos) 211
+1 Propaganda (tmp) 80
+1 Quick Study (sos) 65
+1 Ral, Storm Conduit (plst) WAR-211
+1 Rite of the Dragoncaller (pfdn) 92s
+1 River's Rebuke (fdn) 595
+1 Sanar, Unfinished Genius // Wild Idea (sos) 223
+1 Scorched Geyser (msc) 264
+1 Shivan Reef (9ed) 324
+1 Sokenzan, Crucible of Defiance (neo) 415
+1 Sol Ring (3ed) 274
+1 Solve the Equation (sld) 886
+1 Spectacle Summit (sos) 262
+1 Spell Pierce (soa) 23
+1 Splatter Technique (sos) 231
+1 Stock Up (soa) 24
+1 Storm-Kiln Artist (cmm) 260
+1 Talrand, Sky Summoner (cmm) 673
+1 Temple of Epiphany (soc) 412
+1 Terramorphic Expanse (sos) 265
+1 Think Twice (tsr) 92
+1 Third Path Iconoclast (bro) 223
+1 Thor, Asgard's Avenger (msc) 756
+1 Thousand-Year Storm (2x2) 390
+1 Triple Triad (fin) 340
+1 Unsummon (leb) 87
+1 Veyran, Voice of Duality (sld) 1915
+1 Vibrant Outburst (sos) 240
+1 Visions of Beyond (sld) 1670
+1 Young Pyromancer (2x2) 364
