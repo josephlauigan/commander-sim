@@ -20,12 +20,6 @@ Where it would hook: `ai::protect_response`, `engine/stack.rs` `ai_respond`; the
 Card side done: `malfunction_resolve` (artifact destroyed, else two best blockers get `cant_block` until end of turn via `partials::eot_kw`), `redirect_removal` (redirect mode, {1}{R}).
 Test to add once the engine has it: a lethal attack stopped only by two blockers is cast through them and wins.
 
-## Pyrokinesis
-Needs: a per-card alternative cost for a hand spell (also asked for by `engine-needs-counters.md`: Daze, Snapback, Misdirection ...): cast it for "exile a red card from your hand" instead of {4}{R}{R}, free on the opponent's turn or in response.
-Where it would hook: `engine/cast.rs` where `cost_of` / `pay` run for a hand spell, and the AI's instant-speed removal in `ai/`.
-Card side done: `pay_pyro_pitch` / `red_pitch` (exile the least useful red card), `pyro_split` and `pyro_resolve` (divided damage). The card carries `rem=dmg4 tgt=c` so the AI casts it as 4-damage removal for its mana cost.
-Test to add once the engine has it: with a red card in hand and no mana, Pyrokinesis kills two 2/2s and the red card is exiled.
-
 ## Scout's Warning
 Needs: "play this creature card as though it had flash" as a per-player turn grant: the cast-timing check for creature spells reads `t6_redirects::scout_flash_active` and calls `scout_flash_used` after the creature is cast.
 Where it would hook: `engine/cast.rs` `castable` (the timing test) and the AI's end-of-turn / in-response creature casting in `ai/`.
@@ -55,12 +49,6 @@ Needs: removing a keyword from a creature until end of turn (the `eot_kw` list o
 Where it would hook: `dsl::has_kw` / `Perm::fly` readers in `engine/combat.rs` (a "loses flying" eot list), `engine/removal.rs` `legal_targets`.
 Card side done: `emerald_charm_resolve` (destroy a non-Aura enchantment, else untap a land or the best tapped permanent).
 Test to add once the engine has it: a 2/2 flyer loses flying and is blocked by a ground creature that turn.
-
-## Sunscour
-Needs: the per-card alternative cost for a hand spell (same hook as Pyrokinesis and `engine-needs-counters.md`): cast it for "exile two white cards from your hand" instead of {5}{W}{W}.
-Where it would hook: `engine/cast.rs` where `cost_of` / `pay` run for a hand spell; the wipe decision in `ai/` (`wipe_options`).
-Card side done: `pay_sunscour_pitch` / `white_pitch` (exile the two least useful white cards, refuse with fewer than two). The wipe is the existing `wipe=destroy` tag.
-Test to add once the engine has it: with two white cards in hand and no mana, the AI casts Sunscour on a losing board and both cards are exiled.
 
 ## Lead note (merge, 2026-10-17): toughness 0 as a state-based action
 `check_state` doesn't kill a creature whose toughness drops to 0 or less after it entered (zones.rs checks only on
