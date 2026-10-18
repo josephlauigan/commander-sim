@@ -33171,9 +33171,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "pool",
-   "unparsed": [
-    "Domain — ~'s power is equal to the number of basic land types among lands you control."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

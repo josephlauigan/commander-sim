@@ -717,7 +717,6 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let okn: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| ok(c)).collect();
     let first = |ns: &[&str]| -> Option<CardId> { ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c)) };
     let pl = g.player(p);
-    let held = |t: Tag| has(g, p, t) || in_hand_tag(g, p, t);
     match pl.key {
         "seph" => super::seph::seph_tutor_target(g, p).and_then(|n| g.db.id(n)).filter(|c| okn.contains(c)),
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
