@@ -347,12 +347,11 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let spells = hand.len() - lands - fast - free;
     let white = hand.iter().any(|&c| white_source(g, c));
     let sources = lands + fast;
-    if lands == 0 || lands >= 6 || !white || spells == 0 {
+    if lands == 0 || lands >= 6 || spells == 0 || (!white && sources < 5) {
         return Some(false);
     }
-    // Tomb / City make two mana with a mox; Sol Ring and Vault count as two
-    let power = sources + tomb.min(1) + usize::from(in_hand(g, p, "Sol Ring")) + free.min(1);
-    Some(if sources >= 3 || (sources >= 2 && power >= 3) { spells >= 1 } else { false })
+    // three sources, or two with fast mana / Tomb / City / a Petal: the deck keeps on speed, not on land count
+    Some(sources >= 3 || (sources == 2 && (fast >= 1 || tomb >= 1 || free >= 1)))
 }
 
 /// extra value of passing with mana up: the first turns are for developing; a held protection spell with Dack

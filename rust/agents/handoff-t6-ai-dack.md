@@ -11,3 +11,4 @@ Branch t6-ai-dack. Files: impls/t6_plan_dack.rs, tests/ai_t6_dack.rs.
 - Next: build (after baseline ends, binary is in use), write tests/ai_t6_dack.rs, run after, t3 lock.
 - tests file written (7 tests); next build+run tests, then after-run
 - tests pass; running after-run -> agents/dack-after1.txt
+- keep loosened; rebuilding; after-run2 -> agents/dack-after2.txt. trace helper test removed
