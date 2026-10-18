@@ -8467,3 +8467,8 @@ note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at t
 ["Goblin Welder"]
 status = "Full"
 note = "{T}: sacrifice an artifact you control and return an artifact card from your graveyard to the battlefield, when the card is worth at least 3 more than the artifact (a spent rock for Helm of the Host or Hammer of Nazahn); the AI never targets an opponent's artifact or graveyard"
+
+["Goblin Engineer"]
+dsl = []
+status = "Full"
+note = "enters: search for an artifact and put it into the graveyard (Helm, then Hammer, with a Welder out; else Cursed Mirror; else the best artifact of mana value 3 or less); {R},{T}, sacrifice an artifact: return an artifact card of mana value 3 or less when it is worth 3 more than the sacrificed artifact (spent rocks first)"

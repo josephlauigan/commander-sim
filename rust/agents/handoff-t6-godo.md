@@ -8,3 +8,4 @@ Hammer: DONE (Full), committed.
 Magnetic Theft: DONE (Full), committed.
 Sting: DONE (Partial, engine needs), committed.
 Goblin Welder: DONE (Full), committed.
+Goblin Engineer: DONE (Full), committed.

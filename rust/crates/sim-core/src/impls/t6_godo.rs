@@ -306,6 +306,96 @@ fn welder_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+/// which artifact the Engineer puts into the graveyard: with a Welder out, Helm (then Hammer) when it is not already
+/// on the battlefield or in the graveyard; else Cursed Mirror (the primer's usual target, mana value 3, which the
+/// Engineer's own ability can return); else None (the AI's pick among artifacts of mana value 3 or less)
+fn engineer_wants(g: &Game, p: PlayerId) -> Option<&'static str> {
+    let lib = |n: &str| g.player(p).library.iter().any(|&c| &*g.db.get(c).name == n);
+    let out = |n: &str| on_bf_named(g, p, n) || g.player(p).gy.iter().any(|&c| &*g.db.get(c).name == n);
+    if on_bf_named(g, p, "Goblin Welder") {
+        for n in ["Helm of the Host", "Hammer of Nazahn"] {
+            if !out(n) && lib(n) {
+                return Some(n);
+            }
+        }
+    }
+    (!out("Cursed Mirror") && lib("Cursed Mirror")).then_some("Cursed Mirror")
+}
+
+/// **Goblin Engineer** ({1}{R}, 1/2): when it enters, search the library for an artifact card, put it into the
+/// graveyard, shuffle (see `engineer_wants`); {R}, {T}, sacrifice an artifact: return target artifact card with mana
+/// value 3 or less from your graveyard to the battlefield (the AI when the card is worth three or more than the
+/// artifact, `swap_plan`).
+fn engineer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src || !live(g, src) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if !trigger_window(g, o, Some(src), "search for an artifact, put it into the graveyard", Some(4.0))? {
+        return Ok(());
+    }
+    let want = engineer_wants(g, o);
+    let pred = move |g: &Game, c: CardId| match want {
+        Some(n) => &*g.db.get(c).name == n,
+        None => is_artifact_card(g, c) && g.db.get(c).cmc <= 3,
+    };
+    let got = super::t1::tutor_named(g, o, &pred, 1, "graveyard")?;
+    for c in got {
+        let lib = &mut g.player_mut(o).library;
+        if let Some(i) = lib.iter().position(|&x| x == c) {
+            lib.remove(i);
+        }
+        g.player_mut(o).gy.push(c);
+        crate::glog!(g, "    Goblin Engineer puts {} into the graveyard", g.db.get(c).name);
+    }
+    shuffle_library(g, o);
+    Ok(())
+}
+
+fn engineer_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none()
+        || !live(g, src)
+        || owner(g, src) != p
+        || g.perm(src).tapped
+        || g.perm(src).sick
+        || !can_pay(g, p, 0, "R", false)
+        || swap_plan(g, p, Some(3)).is_none()
+    {
+        return Ok(vec![]);
+    }
+    Ok(vec![ability(5.0, "Goblin Engineer return", src, engineer_go)])
+}
+
+fn engineer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || g.perm(src).sick {
+        return Ok(false);
+    }
+    let Some((mut s, c)) = swap_plan(g, p, Some(3)) else { return Ok(false) };
+    if !can_pay(g, p, 0, "R", false) {
+        return Ok(false);
+    }
+    pay(g, p, 0, "R", false)?;
+    g.perm_mut(src).tapped = true;
+    if !live(g, s) {
+        // paying used the artifact (a Lotus Petal): sacrifice the next one, if there is another
+        match sac_candidate(g, p) {
+            Some(x) => s = x,
+            None => return Ok(true),
+        }
+    }
+    // the sacrifice is a cost: the artifact is gone before the ability goes on the stack
+    crate::glog!(g, "    {} sacrifices {} to Goblin Engineer", g.player(p).name, g.perm(s).name);
+    die(g, s, "sac")?;
+    if ability_window(g, p, Some(src), "return an artifact card with mana value 3 or less", Some(5.0), None)?
+        && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
+    {
+        g.player_mut(p).gy.remove(i);
+        enter(g, p, c, Enter::default())?;
+        crate::glog!(g, "    {} returns to the battlefield", g.db.get(c).name);
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -316,5 +406,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(theft_prio);
     r.card(db, "Sting, the Glinting Dagger")?.combat_start = Some(sting_combat);
     r.card(db, "Goblin Welder")?.options = Some(welder_options);
+    let c = r.card(db, "Goblin Engineer")?;
+    c.etb = Some(engineer_etb);
+    c.options = Some(engineer_options);
     Ok(())
 }

@@ -43319,24 +43319,7 @@
    "pow": 1,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "artifact"
-       },
-       "to": "graveyard",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -43347,10 +43330,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{R}, {T}, Sacrifice an artifact: Return target artifact card with mana value 3 or less from your graveyard to the battlefield."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

@@ -223,3 +223,49 @@ fn welder_wont_trade_down_or_when_summoning_sick() {
     to_gy(&mut g, P0, "Helm of the Host");
     assert!(options(&mut g, sick, P0, Some(false)).is_empty(), "summoning sick: {{T}} is a cost");
 }
+
+// ======================================================== Goblin Engineer
+#[test]
+fn engineer_puts_helm_in_the_graveyard_when_a_welder_is_out() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Goblin Welder");
+    perm(&mut g, P0, "Goblin Engineer");
+    assert!(g.player(P0).gy.contains(&card(&g, "Helm of the Host")), "searched into the graveyard");
+    assert!(!on(&g, P0, "Helm of the Host"));
+    assert!(!g.player(P0).library.contains(&card(&g, "Helm of the Host")));
+}
+
+#[test]
+fn engineer_without_a_welder_takes_cursed_mirror() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Goblin Engineer");
+    assert!(g.player(P0).gy.contains(&card(&g, "Cursed Mirror")));
+    assert_eq!(g.player(P0).gy.len(), 1);
+}
+
+#[test]
+fn engineer_sacrifices_a_rock_to_return_a_cheap_artifact_for_r() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let e = perm(&mut g, P0, "Goblin Engineer"); // finds Cursed Mirror
+    let rock = perm(&mut g, P0, "Mox Amber");
+    g.perm_mut(rock).tapped = true;
+    let o = options(&mut g, e, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(on(&g, P0, "Cursed Mirror"), "returned to the battlefield");
+    assert!(!g.perm(rock).on_bf, "sacrificed as a cost");
+    assert!(g.perm(e).tapped);
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2, "paid {{R}}: one Mountain left, plus Cursed Mirror taps for {{R}}");
+}
+
+#[test]
+fn engineer_ability_returns_only_mana_value_three_or_less() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let e = perm(&mut g, P0, "Goblin Engineer");
+    g.player_mut(P0).gy.clear();
+    to_gy(&mut g, P0, "Helm of the Host"); // mana value 4
+    perm(&mut g, P0, "Sol Ring");
+    assert!(options(&mut g, e, P0, Some(false)).is_empty());
+}
