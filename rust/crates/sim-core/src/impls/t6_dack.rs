@@ -337,6 +337,9 @@ fn illusions(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// trigger for tokens. Preston counts creatures that entered under its controller in the same resolution it was
 /// donated in (`controlled_when`). The token keeps the copied card's creature types as well (engine need: copy
 /// exceptions that replace types).
+/// Preston copies per turn before the stopgap loop cap stops him (engine-needs-dack.md)
+pub const PRESTON_CAP: f64 = 30.0;
+
 fn preston_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let copy_born = g.player(p).grudge.get(&intern("preston_copy_born")).copied().unwrap_or(0.0);
     if m == src
@@ -353,6 +356,22 @@ fn preston_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, p, Some(src), &label, Some(4.0))? {
         return Ok(());
     }
+    // stopgap: an infinite loop (Preston + an uncast Felidar Guardian) would overflow the stack; cap the copies per turn
+    let (cap_round, cap_n) = (intern("preston_cap_round"), intern("preston_cap_n"));
+    let stamp = (g.round as f64) * 8.0 + g.active.map_or(0.0, |a| a.0 as f64);
+    if g.player(p).grudge.get(&cap_round).copied() != Some(stamp) {
+        g.player_mut(p).grudge.insert(cap_round, stamp);
+        g.player_mut(p).grudge.insert(cap_n, 0.0);
+    }
+    let n = g.player(p).grudge.get(&cap_n).copied().unwrap_or(0.0);
+    if n >= PRESTON_CAP {
+        if n == PRESTON_CAP {
+            g.player_mut(p).grudge.insert(cap_n, n + 1.0);
+            crate::glog!(g, "    Preston loop capped (infinite combo, engine pass will resolve it)");
+        }
+        return Ok(());
+    }
+    g.player_mut(p).grudge.insert(cap_n, n + 1.0);
     // the copy is not marked as a token until it has entered: remember its entry number so it never triggers Preston
     let born_key = intern("preston_copy_born");
     let next = g.enter_no as f64 + 1.0;

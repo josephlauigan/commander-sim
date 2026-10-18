@@ -395,3 +395,28 @@ fn paladin_class_levels_one_at_a_time_and_level_three_pumps_an_attacker() {
     assert!(after.0 == before + 1 || after.1 == before + 1, "one attacker gets +1/+1 (one other attacker)");
     assert!(sim_core::engine::combat::double_strike(&g, a) || sim_core::engine::combat::double_strike(&g, b));
 }
+
+#[test]
+fn preston_with_felidar_guardian_is_capped_instead_of_overflowing() {
+    use sim_core::sym::intern;
+    let mut g = game();
+    let _solar = perm(&mut g, P0, "Radiant Solar");
+    let _preston = perm(&mut g, P0, "Preston, the Vanisher");
+    let _felidar = perm(&mut g, P0, "Felidar Guardian"); // enters uncast: no stack overflow
+    let n = g.player(P0).grudge.get(&intern("preston_cap_n")).copied().unwrap_or(0.0);
+    let cap = sim_core::impls::t6_dack::PRESTON_CAP;
+    assert!(n >= 1.0 && n <= cap + 1.0, "copies counted and bounded, got {n}");
+    let room = g.player(P0).grudge.get(&intern("dungeon_room")).copied().unwrap_or(0.0);
+    let done = g.player(P0).grudge.get(&intern("dungeons_completed")).copied().unwrap_or(0.0);
+    assert!(room + done > 0.0, "Solar's ventures were counted");
+    // at the cap, Preston stops: a new uncast creature gets no copy
+    let stamp = g.player(P0).grudge.get(&intern("preston_cap_round")).copied().unwrap();
+    g.player_mut(P0).grudge.insert(intern("preston_cap_round"), stamp);
+    g.player_mut(P0).grudge.insert(intern("preston_cap_n"), cap);
+    let before =
+        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
+    let _x = perm(&mut g, P0, "Serra Angel");
+    let after =
+        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
+    assert_eq!(before, after, "capped: no more copies this turn");
+}

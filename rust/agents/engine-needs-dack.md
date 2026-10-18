@@ -50,3 +50,5 @@ Needs: a level-gated static anthem (a "+1/+1 to creatures you control" that turn
 Where it would hook: `engine/values.rs::static_bonus` (a check of `DataKey::Level` for Class cards, or a `static_pt` slot on `CardImpl`).
 Card side done: the {1} opponents' spell tax on your turn (`cost` slot), level-up abilities (data `Level`), the level 3 attack trigger (`attack` slot, once per combat, +N/+N and double strike until end of turn on the highest-power attacker).
 Test to add once the engine has it: at level 2 your other creatures are +1/+1.
+
+NOTE (stopgap): `t6_dack::PRESTON_CAP` (30 Preston copies per turn, then "Preston loop capped (infinite combo, engine pass will resolve it)") only keeps the loop from overflowing the stack. The real fix is a combo shortcut in the engine pass that recognizes the infinite loop and resolves it (win via Solar's ventures).
