@@ -24,3 +24,9 @@ Needs: hybrid mana costs ({R/G}) kept in card data and paid with a chosen colour
 Where it would hook: `cost_of` / `pay` in engine/mana.rs and `Enter { was_cast }` in engine/zones.rs.
 Card side done: evoke options from hand for {R}{R} (3 damage) and {G}{G} (land + 2 life), sacrificed on entry, via a thread-local mode; a normal cast is priced {3}{R}{R} and deals 3 damage.
 Test to add once the engine has it: cast Vibrance for {3}{G}{G}: land to hand, 2 life, no damage; cast for {3}{R}{R}{R}... both modes when {R}{R} and {G}{G} were both spent.
+
+## Springheart Nantuko
+Needs: bestow (cast as an Aura attached to a creature, +1/+1, becomes a creature when the host leaves) for a general card, and a landfall "pay {1}{G}: token copy of the enchanted creature". `partials::bestow_*` exists only for Eidolon of Countless Battles.
+Where it would hook: `DataKey::Bestow` / `cardcode::bestow_fall` in engine/zones.rs, `partials.rs` bestow section.
+Card side done: 1/1 body; landfall makes a 1/1 green Insect (the "if you didn't" branch).
+Test to add once the engine has it: Nantuko bestowed on Eternal Witness; landfall pays {1}{G} for a Witness token copy (its ETB returns a card).

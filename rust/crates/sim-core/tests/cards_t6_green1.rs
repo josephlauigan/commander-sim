@@ -314,3 +314,18 @@ fn vibrance_evoked_for_gg_finds_cradle_and_gains_2() {
     assert_eq!(g.player(PlayerId(1)).life, opp, "no damage in the {{G}}{{G}} mode");
     assert!(g.player(P0).hand.is_empty() || !g.player(P0).hand.contains(&card(&g, "Vibrance")));
 }
+
+// ======================================================== Springheart Nantuko
+#[test]
+fn nantuko_makes_an_insect_on_each_landfall_of_its_controller() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Springheart Nantuko");
+    let creatures = |g: &Game, p: PlayerId| g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count();
+    let n = creatures(&g, P0);
+    sim_core::engine::zones::landfall(&mut g, P0).unwrap();
+    assert_eq!(creatures(&g, P0), n + 1, "a 1/1 Insect");
+    let ins = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).unwrap();
+    assert_eq!(sim_core::engine::values::epow(&g, ins), 1);
+    sim_core::engine::zones::landfall(&mut g, PlayerId(1)).unwrap();
+    assert_eq!(creatures(&g, P0), n + 1, "an opponent's land does nothing");
+}

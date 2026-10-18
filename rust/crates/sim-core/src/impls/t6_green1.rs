@@ -430,12 +430,35 @@ fn vibrance_evoke(g: &mut Game, p: PlayerId, mode: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Springheart Nantuko
+/// **Springheart Nantuko** ({1}{G} enchantment creature, 1/1): landfall: "you may pay {1}{G} if this is attached to a
+/// creature you control: create a token copy of that creature; if you didn't, create a 1/1 green Insect". Modelled as
+/// the unattached creature: each land you play makes a 1/1 Insect. Missing: bestow {1}{G} (cast attached to a
+/// creature, +1/+1, the {1}{G} token copy of the enchanted creature, e.g. Eternal Witness) and the Aura falling off
+/// as a creature (engine-needs-green1.md).
+fn nantuko_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if !live(g, src) || owner(g, src) != p {
+        return Ok(());
+    }
+    if trigger_window(g, p, Some(src), "create a 1/1 Insect", None)? {
+        let spec = crate::engine::zones::Tokens {
+            color: Some(crate::cards::Colors::from_letters("G")),
+            types: vec!["insect"],
+            sick: true,
+            ..crate::engine::zones::Tokens::new(1, 1)
+        };
+        crate::engine::zones::make_tokens(g, p, spec)?;
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Oboro Breezecaller")?.options = Some(oboro_options);
     r.card(db, "Badgermole Cub")?.mana_tapped = Some(cub_tapped);
     r.card(db, "Earthcraft")?.options = Some(earthcraft_options);
     r.card(db, "Candelabra of Tawnos")?.options = Some(candelabra_options);
     r.card(db, "Magus of the Candelabra")?.options = Some(candelabra_options);
+    r.card(db, "Springheart Nantuko")?.landfall = Some(nantuko_landfall);
     let v = r.card(db, "Vibrance")?;
     v.etb = Some(vibrance_etb);
     v.hand_options = Some(vibrance_hand);
