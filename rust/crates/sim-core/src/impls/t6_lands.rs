@@ -272,6 +272,65 @@ fn temple_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Minamo, School at Water's Edge
+/// **Minamo, School at Water's Edge**: {T}: Add {U}. {U},{T}: untap target legendary permanent (a legendary land or
+/// permanent). The AI untaps a tapped legendary land or permanent when that gives at least 3 more mana (the {U} and
+/// Minamo's own mana are the cost): Gaea's Cradle, a legendary mana creature. Arg: Minamo's land id, then the
+/// target's kind (1 land, 2 permanent) and id packed above it
+fn minamo(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.land(l).tapped || !can_pay_without(g, p, l, 0, "U") {
+        return Ok(vec![]);
+    }
+    let mut best: Option<(i64, i32, String)> = None; // (arg, gain, label)
+    for t in g.player(p).lands.clone() {
+        if t != l && g.land(t).tapped && g.db.get(g.land(t).cd).tag(Tag::Leg) {
+            let d = land_untap_gain(g, p, t);
+            if d >= 3 && best.as_ref().is_none_or(|b| d > b.1) {
+                best = Some((pack(l.0, t.0), d, name_of(g, t).to_string()));
+            }
+        }
+    }
+    for m in g.player(p).perms.clone() {
+        let x = g.perm(m);
+        if x.on_bf && x.tapped && !x.phased && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg)) {
+            let d = perm_untap_gain(g, p, m);
+            if d >= 3 && best.as_ref().is_none_or(|b| d > b.1) {
+                best = Some((pack(l.0, m.0 | 1 << 31), d, g.perm(m).name.to_string()));
+            }
+        }
+    }
+    let Some((arg, d, n)) = best else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 0.5 * (d - 2) as f64,
+        label: format!("Minamo untaps {n}"),
+        act: Some(Action::Plan { f: minamo_go, arg }),
+    }])
+}
+
+fn minamo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (l, t) = unpack(arg);
+    let l = LandId(l);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 0, "U")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    let perm = t & (1 << 31) != 0;
+    let t = t & !(1 << 31);
+    crate::glog!(g, "  {} uses Minamo: untaps a legendary permanent", g.player(p).name);
+    if ability_window_card(g, p, g.land(l).cd, "untap a legendary permanent", None, None)? {
+        if perm {
+            let m = PermId(t);
+            if g.perm(m).on_bf && g.perm(m).owner == p {
+                g.perm_mut(m).tapped = false;
+                g.bf_ver += 1;
+            }
+        } else if g.player(p).lands.contains(&LandId(t)) {
+            g.land_mut(LandId(t)).tapped = false;
+        }
+    }
+    Ok(true)
+}
+
 // CODE-HERE
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -294,6 +353,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     e.hand_defend = Some(eiganjo_defend);
     e.hand_blocks = Some(eiganjo_blocks);
     r.card(db, "Deserted Temple")?.land_options = Some(temple);
+    r.card(db, "Minamo, School at Water's Edge")?.land_options = Some(minamo);
     // REGISTER-HERE
     Ok(())
 }

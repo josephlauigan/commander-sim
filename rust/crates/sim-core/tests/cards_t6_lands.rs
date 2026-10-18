@@ -164,3 +164,30 @@ fn deserted_temple_untaps_a_land_that_makes_enough_mana_to_pay_for_it() {
     assert!(g.land(t).tapped, "{{T}}");
     assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "Temple + the {{1}} + the City");
 }
+
+// ------------------------------------------------------------------ Minamo, School at Water's Edge
+#[test]
+fn minamo_untaps_a_legendary_land_for_u_and_its_own_tap() {
+    let mut g = pod();
+    let m = lands(&mut g, P0, "Minamo, School at Water's Edge", 1, false)[0];
+    lands(&mut g, P0, "Island", 2, false);
+    let cradle = lands(&mut g, P0, "Gaea's Cradle", 1, true)[0];
+    for _ in 0..3 {
+        token(&mut g, P0, 1);
+    }
+    let o = sim_core::cardcode::land_options(&mut g, P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Minamo untaps Gaea's Cradle");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.land(cradle).tapped && g.land(m).tapped);
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 2, "Minamo and the Island that paid {{U}}");
+}
+
+#[test]
+fn minamo_does_nothing_when_the_untap_does_not_pay_for_itself() {
+    let mut g = pod();
+    lands(&mut g, P0, "Minamo, School at Water's Edge", 1, false);
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Gaea's Cradle", 1, true); // no creatures: it makes nothing
+    assert!(sim_core::cardcode::land_options(&mut g, P0, None).unwrap().is_empty());
+}

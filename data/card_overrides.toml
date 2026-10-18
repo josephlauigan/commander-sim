@@ -8260,3 +8260,7 @@ note = "{T}: {W}; Channel {2}{W} (less per legendary creature you control), disc
 ["Deserted Temple"]
 status = "Full"
 note = "{T}: {C}; {1},{T}: untap target land, used when the land untapped gives 3+ more mana (the {1} and the Temple's own mana are the cost; t6_lands.rs)"
+
+["Minamo, School at Water's Edge"]
+status = "Full"
+note = "{T}: {U}; {U},{T}: untap target legendary land or permanent, used when it gives 3+ more mana (the {U} and Minamo's own mana are the cost; t6_lands.rs)"
