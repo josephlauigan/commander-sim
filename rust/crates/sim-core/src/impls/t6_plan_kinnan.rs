@@ -152,8 +152,8 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let action = makers + engines + wins;
     let ok = match lands {
         0 => false,
-        1 => makers >= 2 && action + free >= 3,
-        2 => makers >= 1 || cheap_engine || (engines >= 1 && free >= 1),
+        1 => makers >= 2,
+        2 => makers >= 1 || cheap_engine || engines + wins >= 1 || free >= 2,
         3 | 4 => action + free >= 1,
         5 => action >= 2,
         _ => false,
