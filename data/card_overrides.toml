@@ -8588,3 +8588,7 @@ note = "exiles the best opposing non-Assassin creature until it leaves; Warp is 
 dsl = []
 status = "Full"
 note = "ETB exiles the best opposing artifact or creature until it leaves; Channel ({1}{W}, discard) exiles one and returns it under its owner's control at the next end step (the AI channels to flicker its best ETB creature)"
+
+["Radiant Solar"]
+status = "Partial"
+note = "only Lost Mine of Phandelver is ever entered (no dungeon choice, no dungeon state in the engine); venture whenever it or another nontoken creature you control enters (Lost Mine of Phandelver always: scry, Goblin, Dark Pool drain, draw); {W}, discard: venture and gain 3 life"

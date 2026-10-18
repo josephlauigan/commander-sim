@@ -96,3 +96,62 @@ fn touch_channel_needs_its_mana_and_a_legal_target() {
     sim_core::engine::zones::die(&mut g, land_like, "test").unwrap();
     assert!(!sim_core::impls::t6_dack::touch_channel(&mut g, P0, c, land_like).unwrap(), "target is gone");
 }
+
+// ======================================================== Radiant Solar
+fn room(g: &Game, p: PlayerId) -> u32 {
+    g.player(p).grudge.get(&sim_core::sym::intern("dungeon_room")).copied().unwrap_or(0.0) as u32
+}
+
+#[test]
+fn solar_ventures_for_itself_and_other_nontoken_creatures_but_not_tokens() {
+    let mut g = game();
+    let _solar = perm(&mut g, P0, "Radiant Solar");
+    assert_eq!(room(&g, P0), 1, "entering itself ventures");
+    let _t = token(&mut g, P0, 1);
+    assert_eq!(room(&g, P0), 1, "a token doesn't");
+    let _x = perm(&mut g, P0, "Grave Titan");
+    assert_eq!(room(&g, P0), 2);
+    let _y = perm(&mut g, P1, "Grave Titan");
+    assert_eq!(room(&g, P0), 2, "an opponent's creature doesn't");
+}
+
+#[test]
+fn four_ventures_drain_each_opponent_once_and_draw_then_start_over() {
+    let mut g = game();
+    let (l0, l1) = (g.player(P0).life, g.player(P1).life);
+    let hand0 = g.player(P0).hand.len();
+    for _ in 0..4 {
+        sim_core::impls::t6_dack::venture(&mut g, P0).unwrap();
+    }
+    assert_eq!(g.player(P1).life, l1 - 1);
+    assert_eq!(g.player(P0).life, l0 + 1);
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1, "Temple of Dumathoin draws");
+    assert_eq!(room(&g, P0), 0, "completed");
+    sim_core::impls::t6_dack::venture(&mut g, P0).unwrap();
+    assert_eq!(room(&g, P0), 1, "the next venture starts a new dungeon");
+}
+
+#[test]
+fn solar_discard_ventures_and_gains_three() {
+    let mut g = game();
+    lands(&mut g, P0, "Plains", 1, false);
+    let c = hand(&mut g, P0, &["Radiant Solar"])[0];
+    let life = g.player(P0).life;
+    assert!(sim_core::impls::t6_dack::solar_discard(&mut g, P0, c).unwrap());
+    assert_eq!(room(&g, P0), 1);
+    assert_eq!(g.player(P0).life, life + 3);
+    assert!(g.player(P0).gy.contains(&c));
+    assert!(!sim_core::impls::t6_dack::solar_discard(&mut g, P0, c).unwrap(), "no longer in hand");
+}
+
+#[test]
+fn a_donated_solar_still_counts_creatures_that_entered_before_the_donation() {
+    let mut g = game();
+    let solar = perm(&mut g, P0, "Radiant Solar");
+    let early = perm(&mut g, P0, "Grave Titan");
+    sim_core::impls::marchesa::steal(&mut g, P1, solar, false);
+    sim_core::impls::t6_dack::mark_donated(&mut g, solar, P0);
+    assert!(sim_core::impls::t6_dack::controlled_when(&g, solar, P0, early));
+    let late = perm(&mut g, P0, "Grave Titan");
+    assert!(!sim_core::impls::t6_dack::controlled_when(&g, solar, P0, late), "entered after the donation");
+}

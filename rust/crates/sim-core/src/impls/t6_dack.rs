@@ -3,6 +3,7 @@
 //!
 //! - Fiend Hunter, All-Fates Stalker: banishers built on `common::oring_exile` / `oring_return`.
 //! - Touch the Spirit Realm: the same, plus Channel (`touch_channel`).
+//! - Radiant Solar: venture (Lost Mine of Phandelver only) and its hand ability; Dack marks donated creatures.
 //!
 //!
 //! The banishers' enter hooks read "you" from the enter call's `p` (the player the creature entered under), not from
@@ -10,13 +11,15 @@
 //! donates them, so by the time the queued enter trigger runs the permanent belongs to an opponent but the trigger is
 //! still its original controller's (CR 603.3a).
 
-use crate::cards::{CardDb, Types};
+use crate::cards::{CardDb, Colors, Types};
+use crate::engine::life::{gain, lose_life};
 use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{pval, untargetable};
-use crate::engine::zones::{discard_cards, exile_perm, max_by};
+use crate::engine::zones::{Tokens, discard_cards, draw, exile_perm, make_tokens, max_by};
+use crate::sym::intern;
 use crate::impls::t2::flicker_worth;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -40,6 +43,10 @@ fn hunter_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
 }
 
 // ================================================================== All-Fates Stalker
+fn pname(g: &Game, p: PlayerId) -> crate::sym::Sym {
+    g.player(p).name
+}
+
 fn has_sub(g: &Game, m: PermId, s: &str) -> bool {
     g.perm(m).cd.is_some_and(|c| g.db.get(c).has_subtype(s))
 }
@@ -195,6 +202,114 @@ fn touch_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
     Ok(out)
 }
 
+// ================================================================== donation bookkeeping
+/// Dack's ETB donates creatures after they entered under its controller, but their queued enter triggers (and the
+/// triggers of the other pile creatures that see them) belong to the player who controlled them when they triggered
+/// (CR 603.3a). `donated` marks the permanent with (the giver, `enter_no` at the donation); a creature `m` that
+/// entered no later than the donation entered while the giver still controlled `src`.
+pub fn mark_donated(g: &mut Game, m: PermId, giver: PlayerId) {
+    let n = g.enter_no as i64;
+    g.perm_mut(m).data.set(DataKey::Flip, Val::List(vec![Val::Player(giver), Val::Int(n)]));
+}
+
+/// was `src` under p's control when `m` entered under p? (its controller now, or its controller before Dack gave it
+/// away in the same resolution)
+pub fn controlled_when(g: &Game, src: PermId, p: PlayerId, m: PermId) -> bool {
+    let x = g.perm(src);
+    if x.owner == p {
+        return true;
+    }
+    matches!(x.data.get(DataKey::Flip), Some(Val::List(v))
+        if matches!((v.first(), v.get(1)), (Some(Val::Player(q)), Some(Val::Int(n)))
+            if *q == p && i64::from(g.perm(m).born) <= *n))
+}
+
+// ================================================================== Radiant Solar: the dungeon
+/// Venture into the dungeon. Only Lost Mine of Phandelver is ever chosen (the best of the three for this deck: its
+/// third room drains each opponent for 1): Cave Entrance (scry 1), Goblin Lair (a 1/1 Goblin), Dark Pool (each
+/// opponent loses 1 life and you gain 1), Temple of Dumathoin (draw a card); after the last room the dungeon is
+/// completed and the next venture enters a new Lost Mine. The room is kept per player in `Player::grudge` under the
+/// key "dungeon_room" (that map is only read by the defender choice, by player key); completions under
+/// "dungeons_completed". (A real dungeon system is an engine need: engine-needs-dack.md.)
+pub fn venture(g: &mut Game, p: PlayerId) -> Res {
+    let room_key = intern("dungeon_room");
+    let room = g.player(p).grudge.get(&room_key).copied().unwrap_or(0.0) as u32 + 1;
+    g.player_mut(p).grudge.insert(room_key, room as f64);
+    match room {
+        1 => {
+            crate::glog!(g, "    {} ventures into Lost Mine of Phandelver: Cave Entrance (scry 1)", pname(g, p));
+            crate::cardcode::scry(g, p, 1, false)?;
+        }
+        2 => {
+            crate::glog!(g, "    {} ventures: Goblin Lair (a 1/1 Goblin)", pname(g, p));
+            let spec = Tokens { color: Some(Colors::from_letters("R")), types: vec![intern("goblin")], ..Tokens::new(1, 1) };
+            make_tokens(g, p, spec)?;
+        }
+        3 => {
+            crate::glog!(g, "    {} ventures: Dark Pool (each opponent loses 1, {} gains 1)", pname(g, p), pname(g, p));
+            for q in g.opps(p).filter(|&q| g.player(q).alive).collect::<Vec<_>>() {
+                lose_life(g, q, 1, Some(p), intern("drain"), None)?;
+            }
+            gain(g, p, 1)?;
+        }
+        _ => {
+            crate::glog!(g, "    {} ventures: Temple of Dumathoin (draw a card); the dungeon is completed", pname(g, p));
+            g.player_mut(p).grudge.insert(room_key, 0.0);
+            let k = intern("dungeons_completed");
+            *g.player_mut(p).grudge.entry(k).or_insert(0.0) += 1.0;
+            draw(g, p, 1, false)?;
+        }
+    }
+    Ok(())
+}
+
+// ================================================================== Radiant Solar
+/// Full: whenever it or another nontoken creature you control enters, venture into the dungeon (including creatures
+/// that entered with it under Dack's control before being donated); {W}, discard it: venture and gain 3 life
+/// (`solar_hand`, the AI uses it with spare {W} when it can't cast the Angel this turn).
+fn solar_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    let counts = m == src || (!g.perm(m).token && g.is_creature(m));
+    if counts
+        && controlled_when(g, src, p, m)
+        && trigger_window(g, p, Some(src), "venture into the dungeon", Some(3.0))?
+    {
+        venture(g, p)?;
+    }
+    Ok(())
+}
+
+/// {W}, discard Radiant Solar: venture into the dungeon and you gain 3 life
+pub fn solar_discard(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "W", false) {
+        return Ok(false);
+    }
+    pay(g, p, 0, "W", false)?;
+    discard_cards(g, p, &[c])?;
+    venture(g, p)?;
+    gain(g, p, 3)?;
+    Ok(true)
+}
+
+fn solar_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    solar_discard(g, p, CardId(arg as u16))
+}
+
+fn solar_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(true) || g.active != Some(p) || !can_pay(g, p, 0, "W", false) {
+        return Ok(vec![]);
+    }
+    // main phase 2 with {W} left over and the Angel not castable: cycle it into a room and 3 life
+    let (cg, cp) = cost_of(g, p, c);
+    if can_pay(g, p, cg + 1, &format!("{cp}W"), false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.5,
+        label: "Radiant Solar (discard: venture, gain 3)".into(),
+        act: Some(Action::Plan { f: solar_go, arg: c.0 as i64 }),
+    }])
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Fiend Hunter")?;
@@ -212,5 +327,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     crate::impls::partials::at_once(c, crate::hooks::Event::Leaves, true);
     c.prio = Some(touch_prio);
     c.hand_options = Some(touch_hand);
+    let c = r.card(db, "Radiant Solar")?;
+    c.etb = Some(solar_etb);
+    c.hand_options = Some(solar_hand);
     Ok(())
 }
