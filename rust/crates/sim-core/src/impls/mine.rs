@@ -113,7 +113,7 @@ pub fn ring_level(g: &Game, p: PlayerId) -> u32 {
 
 /// mine.is_legendary: a legendary card, or (the Ring) your Ring-bearer
 pub fn is_legendary(g: &Game, m: PermId) -> bool {
-    if card_tag(g, m, Tag::Leg) {
+    if card_tag(g, m, Tag::Leg) && !g.perm(m).exc.not_legendary {
         return true;
     }
     let o = g.perm(m).owner;

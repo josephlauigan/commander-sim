@@ -31,7 +31,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
             }
             let is_c = g.is_creature(m);
             let cd = g.perm(m).cd.map(|c| g.db.get(c));
-            let ty = cd.map_or(Types::CREATURE, |d| d.types);
+            let ty = crate::engine::values::ptypes(g, m);
             let ok = match tgt {
                 "c" => is_c,
                 "cp" => is_c || ty.has(Types::PLANESWALKER),
@@ -433,7 +433,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
             if g.perm(m).phased || (prot == Some("indes") && destroyish.contains(&kind)) {
                 continue;
             }
-            let ty = g.perm(m).cd.map_or(Types::CREATURE, |c| g.db.get(c).types);
+            let ty = crate::engine::values::ptypes(g, m);
             let cre = g.is_creature(m);
             let cmc = g.perm(m).cd.map(|c| g.db.get(c).cmc);
             let wiped = g.perm(m).name.to_string();

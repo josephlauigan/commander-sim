@@ -24,7 +24,7 @@ use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{epow, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, die, discard_cards, draw, enter, enter_token_copy, exile_perm, make_tokens, max_by,
+    Enter, Tokens, die, discard_cards, draw, enter, enter_token_copy_with, exile_perm, make_tokens, max_by,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -32,7 +32,7 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{WalkerAb, best_opp_creature, oring_exile, oring_return, walker};
 use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::impls::t2::flicker_worth;
-use crate::state::{Ctx, DataKey, Game, Val};
+use crate::state::{Ctx, CopyExc, DataKey, Game, Val};
 use crate::sym::intern;
 
 // ================================================================== Fiend Hunter
@@ -335,8 +335,7 @@ fn illusions(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// Whenever another nontoken creature you control enters, if it wasn't cast, create a token that's a copy of that
 /// creature, except it's a 0/1 white Illusion. The copy's own enters trigger fires (it is a copy); Preston doesn't
 /// trigger for tokens. Preston counts creatures that entered under its controller in the same resolution it was
-/// donated in (`controlled_when`). The token keeps the copied card's creature types as well (engine need: copy
-/// exceptions that replace types).
+/// donated in (`controlled_when`). The copy's exceptions are `CopyExc` (0/1, white, only the Illusion type).
 /// Preston copies per turn before the stopgap loop cap stops him (engine-needs-dack.md)
 pub const PRESTON_CAP: f64 = 30.0;
 
@@ -376,18 +375,17 @@ fn preston_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let born_key = intern("preston_copy_born");
     let next = g.enter_no as f64 + 1.0;
     g.player_mut(p).grudge.insert(born_key, next);
-    let made = enter_token_copy(g, p, cd);
+    // except it's a 0/1 white Illusion with ONLY the Illusion creature type (set as it enters: its own enters trigger
+    // sees it)
+    let exc = CopyExc {
+        pt: Some((0, 1)),
+        colors: Some(Colors::from_letters("W")),
+        only_subtype: Some("illusion"),
+        ..CopyExc::default()
+    };
+    let made = enter_token_copy_with(g, p, cd, Some(exc));
     g.player_mut(p).grudge.insert(born_key, 0.0);
-    if let Some(t) = made? {
-        let x = g.perm_mut(t);
-        x.pow = 0;
-        x.tgh = 1;
-        x.plus = 0;
-        x.colors = Colors::from_letters("W");
-        if !x.ttypes.contains(&"illusion") {
-            x.ttypes.push(intern("illusion"));
-        }
-        g.bf_ver += 1;
+    if made?.is_some() {
         crate::glog!(g, "    Preston makes a 0/1 Illusion copy of {}", g.db.get(cd).name);
     }
     Ok(())

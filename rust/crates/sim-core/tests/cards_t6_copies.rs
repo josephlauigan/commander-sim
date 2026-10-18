@@ -248,3 +248,125 @@ fn peter_parkers_camera_enters_with_three_film_counters() {
     let m = perm(&mut g, P0, "Peter Parker's Camera");
     assert_eq!(g.perm(m).data.int(DataKey::Counters), 3);
 }
+
+// ======================================================== the copy mechanism (engine pass)
+use sim_core::cards::Types;
+use sim_core::engine::values::{colors_of, ptypes, subtypes};
+use sim_core::engine::zones::enter_token_copy_with;
+use sim_core::state::CopyExc;
+
+#[test]
+fn a_clone_enters_once_with_no_stand_in_body() {
+    // Warleader's Call: whenever a creature enters under your control, each opponent loses 1 life. The clone is the
+    // only creature that enters: one trigger (the old 1/1 stand-in entered first, then the copy: two).
+    let mut g = game();
+    perm(&mut g, P0, "Warleader's Call");
+    perm(&mut g, P1, "Serra Angel");
+    let life = g.player(P1).life;
+    let c = cast_hand(&mut g, P0, "Phantasmal Image");
+    assert!(copy_of(&g, P0, "Serra Angel", c).is_some());
+    assert_eq!(g.player(P1).life, life - 1, "one creature entered");
+}
+
+#[test]
+fn a_clone_with_nothing_to_copy_enters_as_a_0_0_and_dies() {
+    for name in ["Clever Impersonator", "Phantasmal Image", "Flesh Duplicate"] {
+        let mut g = game();
+        let c = cast_hand(&mut g, P0, name);
+        assert!(on_bf(&g, P0, name).is_empty(), "{name} died as a 0/0");
+        assert!(g.player(P0).gy.contains(&c), "{name} is in the graveyard");
+    }
+}
+
+#[test]
+fn the_three_clones_have_their_printed_0_0() {
+    let g = game();
+    for name in ["Clever Impersonator", "Phantasmal Image", "Flesh Duplicate"] {
+        let d = g.db.get(sim_core::testkit::card(&g, name));
+        assert_eq!((d.pow, d.tgh), (0, 0), "{name}");
+    }
+}
+
+#[test]
+fn mockingbird_copying_a_wizard_is_a_flying_bird_wizard() {
+    let mut g = game();
+    let t = perm(&mut g, P1, "Archaeomancer");
+    let c = hand(&mut g, P0, &["Mockingbird"])[0];
+    // the target is chosen as it is cast (X = 3, four mana spent, mana value 4)
+    cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 3, target: Some(t), ..Ctx::default() }).unwrap();
+    let m = copy_of(&g, P0, "Archaeomancer", c).expect("a copy of Archaeomancer");
+    let subs = subtypes(&g, m);
+    assert!(subs.contains(&"bird") && subs.contains(&"wizard") && subs.contains(&"human"), "{subs:?}");
+    assert!(g.perm(m).fly);
+}
+
+#[test]
+fn copy_artifact_makes_an_enchantment_in_addition() {
+    let mut g = game();
+    perm(&mut g, P1, "Basalt Monolith");
+    let c = cast_hand(&mut g, P0, "Copy Artifact");
+    let m = copy_of(&g, P0, "Basalt Monolith", c).expect("copy");
+    assert!(ptypes(&g, m).has(Types::ARTIFACT) && ptypes(&g, m).has(Types::ENCHANTMENT));
+    // an enchantment-or-flyer removal target ("fe") now finds the copy; the original artifact alone is not one
+    let hit = sim_core::engine::removal::legal_targets(&g, P1, "destroy", "fe", false, None);
+    assert!(hit.contains(&m), "enchantment removal sees the copy");
+    assert!(!hit.iter().any(|&x| g.perm(x).owner == P1), "the plain Monolith is no enchantment");
+}
+
+#[test]
+fn molten_duplication_token_is_an_artifact_in_addition() {
+    let mut g = game();
+    perm(&mut g, P0, "Mulldrifter");
+    cast_hand(&mut g, P0, "Molten Duplication");
+    let tok = on_bf(&g, P0, "Mulldrifter").into_iter().find(|&m| g.perm(m).token).expect("token");
+    assert!(ptypes(&g, tok).has(Types::ARTIFACT) && g.is_creature(tok));
+    let orig = on_bf(&g, P0, "Mulldrifter").into_iter().find(|&m| !g.perm(m).token).unwrap();
+    assert!(!ptypes(&g, orig).has(Types::ARTIFACT));
+}
+
+#[test]
+fn phantasmal_image_is_an_illusion_in_addition() {
+    let mut g = game();
+    perm(&mut g, P1, "Archaeomancer");
+    let c = cast_hand(&mut g, P0, "Phantasmal Image");
+    let m = copy_of(&g, P0, "Archaeomancer", c).expect("copy");
+    let subs = subtypes(&g, m);
+    assert!(subs.contains(&"illusion") && subs.contains(&"wizard"), "{subs:?}");
+}
+
+#[test]
+fn token_copy_exceptions_replace_types_and_stats_and_drop_legendary() {
+    let mut g = game();
+    let godo = perm(&mut g, P0, "Godo, Bandit Warlord");
+    let godo_cd = g.perm(godo).cd.unwrap();
+    assert!(sim_core::impls::mine::is_legendary(&g, godo));
+    let exc = CopyExc {
+        pt: Some((0, 1)),
+        colors: Some(sim_core::cards::Colors::from_letters("W")),
+        only_subtype: Some("illusion"),
+        not_legendary: true,
+        ..CopyExc::default()
+    };
+    let t = enter_token_copy_with(&mut g, P0, godo_cd, Some(exc)).unwrap().unwrap();
+    assert_eq!(subtypes(&g, t), vec!["illusion"], "ONLY the Illusion type: not a Human or Barbarian");
+    assert_eq!((g.perm(t).pow, g.perm(t).tgh), (0, 1));
+    assert!(colors_of(&g, t).has('W') && !colors_of(&g, t).has('R'));
+    assert!(!sim_core::impls::mine::is_legendary(&g, t));
+    assert!(sim_core::impls::mine::is_legendary(&g, godo), "the original is untouched");
+}
+
+#[test]
+fn sculpting_steel_copies_cursed_mirror_which_becomes_a_hasty_copy_of_godo() {
+    let mut g = game();
+    perm(&mut g, P0, "Cursed Mirror"); // no creature out yet: it just sits there as an artifact
+    let godo = perm(&mut g, P1, "Godo, Bandit Warlord");
+    let _ = godo;
+    let c = cast_hand(&mut g, P0, "Sculpting Steel");
+    let m = on_bf(&g, P0, "Cursed Mirror").into_iter().find(|&m| g.perm(m).phys == Some(c)).expect("Steel as Mirror");
+    assert!(g.is_creature(m), "as Cursed Mirror it became a copy of Godo");
+    assert!(!g.perm(m).sick, "with haste");
+    assert!(sim_core::engine::values::epow(&g, m) >= 3);
+    // the original Mirror stayed an artifact (it entered before Godo was out)
+    let orig = on_bf(&g, P0, "Cursed Mirror").into_iter().find(|&x| x != m).unwrap();
+    assert!(!g.is_creature(orig));
+}

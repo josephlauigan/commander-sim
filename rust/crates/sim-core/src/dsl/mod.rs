@@ -145,7 +145,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
 }
 
 fn type_ok(g: &Game, m: PermId, t: &str) -> Option<bool> {
-    let ty = g.perm(m).cd.map(|c| g.db.get(c).types);
+    let ty = g.perm(m).cd.map(|_| crate::engine::values::ptypes(g, m));
     let has_t = |x: Types| ty.is_some_and(|t| t.has(x));
     let cre = g.is_creature(m);
     Some(match t {

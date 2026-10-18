@@ -12,7 +12,7 @@
 //! - Tables Python keys by `id(permanent)` (end-of-turn pumps, granted keywords) become fields of the permanent.
 //! - Card-specific state on a permanent (Python's `m.data` dict) is `PermData`: a short list of typed keys.
 
-use crate::cards::{CardDb, Colors};
+use crate::cards::{CardDb, Colors, Types};
 use crate::control::{Humans, Link};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::rng::Rng;
@@ -303,6 +303,33 @@ pub struct Floating {
 }
 
 // ------------------------------------------------------------------ permanents and lands
+/// What a copy is "except": the exceptions of a clone, a token copy or Preston's Illusions. Stored on the copy
+/// (`Perm::exc`) so that the type queries (`values::subtypes`, `values::ptypes`, `colors_of`, `is_legendary`) see them.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct CopyExc {
+    /// card types it has in addition (Copy Artifact: enchantment; Molten Duplication: artifact)
+    pub add_types: Types,
+    /// a creature type it has in addition (Mockingbird: Bird; Phantasmal Image: Illusion)
+    pub add_subtype: Option<Sym>,
+    /// it has ONLY this creature type (Preston's Illusions)
+    pub only_subtype: Option<Sym>,
+    /// its power and toughness are these (Preston: 0/1)
+    pub pt: Option<(i32, i32)>,
+    /// its colours are these (Preston: white)
+    pub colors: Option<Colors>,
+    pub fly: bool,
+    pub haste: bool,
+    /// it is not legendary (Helm of the Host)
+    pub not_legendary: bool,
+}
+
+/// An "enters as a copy of" replacement: the card that is copied, and the exceptions.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct CopyOf {
+    pub cd: CardId,
+    pub exc: CopyExc,
+}
+
 /// A nonland permanent or a token (Python's `Perm`, every slot kept).
 #[derive(Debug, Clone, PartialEq)]
 pub struct Perm {
@@ -357,6 +384,8 @@ pub struct Perm {
     /// until end of turn: power/toughness change and granted keywords (Python's `g.eot_pt`, `g.eot_kw`)
     pub eot_pt: (i32, i32),
     pub eot_kw: Vec<Sym>,
+    /// the exceptions this permanent was copied with (added types, only one creature type, new colour, not legendary)
+    pub exc: CopyExc,
 }
 
 /// A land on the battlefield (Python's `Land`).
@@ -1430,6 +1459,7 @@ impl Game {
             on_bf: false,
             eot_pt: (0, 0),
             eot_kw: vec![],
+            exc: CopyExc::default(),
         };
         if let Some(c) = cd {
             use crate::tag::Tag;

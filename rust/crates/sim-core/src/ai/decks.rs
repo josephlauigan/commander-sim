@@ -1179,7 +1179,7 @@ pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Vec<Sym> {
         }
         v
     };
-    let ty = |m: PermId, t: Types| g.perm(m).cd.map_or(t == Types::CREATURE, |c| g.db.get(c).types.has(t));
+    let ty = |m: PermId, t: Types| g.perm(m).cd.map_or(t == Types::CREATURE, |_| crate::engine::values::ptypes(g, m).has(t));
     let cmc = |m: PermId| g.perm(m).cd.map(|c| g.db.get(c).cmc);
     let mut opts: Vec<(Sym, f64)> =
         vec![("art", val(&|m| ty(m, Types::ARTIFACT))), ("ench", val(&|m| ty(m, Types::ENCHANTMENT)))];

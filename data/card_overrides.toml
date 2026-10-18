@@ -2211,7 +2211,7 @@ dsl = [
   { type = "static", static = "equip_cost", mana = 5 },
 ]
 status = "Full"
-note = "a hasty token copy of the equipped creature at the start of each combat"
+note = "a hasty token copy of the equipped creature at the start of each combat, except it is not legendary"
 
 ["Helping Hand"]
 types = "S"
@@ -8328,43 +8328,40 @@ status = "Full"
 note = "a token copy of the best creature (any controller's, not a hexproof one, no legend it already has) with haste, exiled at the end step; the copy's enters effects happen; cast in main phase when the enters effect and one attack are worth at least 2.5"
 
 ["Molten Duplication"]
-status = "Partial"
-note = "a hasty token copy of your best artifact or creature, sacrificed at the end step (enters effects happen); missing: the token is an artifact in addition to its other types"
+status = "Full"
+note = "a hasty token copy of your best artifact or creature, sacrificed at the end step; it is an artifact in addition to its other types (enters effects happen)"
 
 ["Electroduplicate"]
 status = "Full"
 note = "a hasty token copy of your best creature, sacrificed at the end step; flashback {2}{R}{R} (the generic flashback option)"
 
 ["Clever Impersonator"]
-tags = "pow=1 tgh=1"
 status = "Full"
-note = "enters as a copy of the best nonland permanent on the battlefield (the copy's enters effects happen; the card goes to the graveyard as Clever Impersonator); cast only when a copy worth 3 or more is out. The card carries 1/1 so the 0/0 body survives until its enters hook swaps it for the copy; with nothing to copy it dies"
+note = "enters as a copy of the best nonland permanent on the battlefield, as a replacement effect (printed 0/0: no stand-in body, so only the copied permanent's enters effects happen; the card goes to the graveyard as Clever Impersonator); cast only when a copy worth 3 or more is out; with nothing to copy it enters as a 0/0 and dies"
 
 ["Mockingbird"]
-status = "Partial"
-note = "{X}{U}: the AI picks the cheapest X that reaches the best creature (mana value at most X+1, copy worth 3 or more); the copy has flying and the card goes to the graveyard as Mockingbird; missing: the Bird type is not added"
+status = "Full"
+note = "{X}{U}: the AI picks the cheapest X that reaches the best creature (mana value at most the mana spent, X+1; copy worth 3 or more); it enters as a copy of it, except it is a Bird in addition and has flying; the card goes to the graveyard as Mockingbird"
 
 ["Phantasmal Image"]
-tags = "pow=1 tgh=1"
 status = "Partial"
-note = "enters as a copy of the best creature; missing: the Illusion type and 'when this becomes the target of a spell or ability, sacrifice it' (engine has no becomes-target trigger)"
+note = "enters as a copy of the best creature, except it is an Illusion in addition (printed 0/0, no stand-in); missing: 'when this becomes the target of a spell or ability, sacrifice it' (needs the becomes-target event)"
 
 ["Flesh Duplicate"]
-tags = "pow=1 tgh=1"
 status = "Partial"
-note = "enters as a copy of the best creature; missing: vanishing 3 (the copy lasts as long as the creature would)"
+note = "enters as a copy of the best creature (printed 0/0, no stand-in); missing: vanishing 3 (the copy lasts as long as the creature would)"
 
 ["Copy Artifact"]
-status = "Partial"
-note = "enters as a copy of the best artifact (rocks and enters effects count); missing: it is an enchantment in addition to its other types"
+status = "Full"
+note = "enters as a copy of the best artifact (rocks and enters effects count), except it is an enchantment in addition to its other types"
 
 ["Mirrormade"]
 status = "Full"
-note = "enters as a copy of the best artifact or enchantment on the battlefield; the card goes to the graveyard as Mirrormade"
+note = "enters as a copy of the best artifact or enchantment on the battlefield, as a replacement effect; the card goes to the graveyard as Mirrormade"
 
 ["Sculpting Steel"]
 status = "Full"
-note = "enters as a copy of the best artifact on the battlefield; the card goes to the graveyard as Sculpting Steel"
+note = "enters as a copy of the best artifact on the battlefield, as a replacement effect (a copy of Cursed Mirror may then become a copy of a creature, with haste); the card goes to the graveyard as Sculpting Steel"
 
 ["Imposter Mech"]
 status = "Partial"
@@ -8730,8 +8727,8 @@ note = "only Lost Mine of Phandelver is ever entered (no dungeon choice, no dung
 
 ["Preston, the Vanisher"]
 dsl = []
-status = "Partial"
-note = "another nontoken creature you control that wasn't cast gets a 0/1 white Illusion token copy (its enters trigger fires); {1}{W}, sacrifice five Illusions: exile target nonland permanent; the copy keeps the copied creature's other types"
+status = "Full"
+note = "another nontoken creature you control that wasn't cast gets a 0/1 white Illusion token copy (its enters trigger fires); {1}{W}, sacrifice five Illusions: exile target nonland permanent; the copy is a 0/1 white Illusion with only the Illusion creature type, as it enters (its enters trigger sees that)"
 
 ["Dack Fayden, Helping Hand"]
 status = "Full"

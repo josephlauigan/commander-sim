@@ -238,6 +238,9 @@ pub type Src = PermId;
 
 /// etb(g, src, p, m): m entered under p's control
 pub type EtbFn = fn(&mut Game, Src, PlayerId, PermId) -> Res;
+/// enter_copy(g, p, c): card c is entering under p's control as a copy of something (Clone, Clever Impersonator ...):
+/// the card it copies and the exceptions, chosen as it enters (None: it enters as itself). Read by `zones::enter`.
+pub type EnterCopyFn = fn(&mut Game, PlayerId, CardId) -> Option<crate::state::CopyOf>;
 /// leaves(g, src, m): m left the battlefield (any way)
 pub type LeavesFn = fn(&mut Game, Src, PermId) -> Res;
 /// dies(g, src, m, cause): any permanent m died
@@ -389,6 +392,8 @@ pub struct AltCost {
 #[derive(Debug, Clone, Copy, Default)]
 pub struct CardImpl {
     pub etb: Option<EtbFn>,
+    /// "you may have it enter as a copy of ..." (a replacement effect, applied as the permanent is created)
+    pub enter_copy: Option<EnterCopyFn>,
     pub leaves: Option<LeavesFn>,
     pub dies: Option<DiesFn>,
     pub self_dies: Option<DiesFn>,
