@@ -6,18 +6,18 @@
 //! - Redirect Lightning, Ricochet Trap, Untimely Malfunction (redirect mode): `redirect_removal`, the same response
 //!   as Deflecting Swat / Return the Favor in `mine.rs`, plus `redirect_spell` for a spell on the stack.
 
+use crate::cards::CardDb;
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::apply_removal;
-use crate::engine::values::{pval, untargetable};
 use crate::engine::values::{epow, etgh};
+use crate::engine::values::{pval, untargetable};
 use crate::engine::zones::{die, max_by};
-use crate::state::Ctx;
 use crate::flow::Res;
 use crate::hooks::{Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::cards::CardDb;
+use crate::state::Ctx;
 use crate::state::Game;
 use crate::sym::Sym;
 
@@ -143,7 +143,6 @@ pub fn blue_spell_this_turn(g: &Game, p: PlayerId) -> bool {
     })
 }
 
-
 // ================================================================== Untimely Malfunction
 /// Untimely Malfunction resolves. The modes: destroy target artifact; change the target of a spell or ability with a
 /// single target (`redirect_removal`, the response); one or two target creatures can't block this turn. With an
@@ -172,7 +171,6 @@ fn malfunction_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<
     }
     Ok("gy")
 }
-
 
 // ================================================================== Pyrokinesis
 /// the red cards in p's hand other than `card` (Pyrokinesis exiles one instead of paying {4}{R}{R})
@@ -230,7 +228,6 @@ fn pyro_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-
 // ================================================================== turn flags
 fn set_flag(g: &mut Game, p: PlayerId, key: Sym) {
     let stamp = g.turn_stamp();
@@ -259,7 +256,6 @@ fn scout_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     crate::engine::zones::draw(g, p, 1, false)?;
     Ok("gy")
 }
-
 
 // ================================================================== Kozilek's Command
 /// the opposing creature Kozilek's Command (or any exile-by-mana-value effect) would exile for X: the best one whose
@@ -299,10 +295,10 @@ fn kozilek_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> 
     let target = exile_target_for(g, p, x);
     let picks = gy_exile_picks(g, p, x);
     let mut modes: Vec<(f64, u8)> = vec![
-        (2.0 + 0.01, 1),                                   // scry X, draw a card
-        (0.4 * x.min(5) as f64, 2),                        // X Spawn
-        (if picks.is_empty() { 0.0 } else { 1.5 }, 3),     // graveyards
-        (target.map_or(0.0, |m| pval(g, m).max(2.5)), 0),  // exile a creature
+        (2.0 + 0.01, 1),                                  // scry X, draw a card
+        (0.4 * x.min(5) as f64, 2),                       // X Spawn
+        (if picks.is_empty() { 0.0 } else { 1.5 }, 3),    // graveyards
+        (target.map_or(0.0, |m| pval(g, m).max(2.5)), 0), // exile a creature
     ];
     modes.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
     for &(_, mode) in modes.iter().take(2) {
@@ -341,7 +337,6 @@ fn kozilek_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> 
     }
     Ok("gy")
 }
-
 
 // ================================================================== Eldrazi Confluence
 /// Eldrazi Confluence ({2}{C}{C}, choose three, the same mode may be chosen more than once): the AI spends its three
@@ -403,7 +398,6 @@ fn confluence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<
     Ok("gy")
 }
 
-
 // ================================================================== removal with a price
 /// the best opposing permanent of one of these types (creature, enchantment, planeswalker ...) p may target
 fn best_opposing(g: &Game, p: PlayerId, ok: impl Fn(&Game, PermId) -> bool) -> Option<PermId> {
@@ -434,7 +428,6 @@ fn get_lost_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym>
     Ok("gy")
 }
 
-
 // ================================================================== Erode
 /// Erode: destroy target creature or planeswalker; its controller may search for a basic land, put it onto the
 /// battlefield tapped, then shuffle (the AI always searches)
@@ -448,7 +441,6 @@ fn erode_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     g.player_mut(owner).library = lib;
     Ok("gy")
 }
-
 
 // ================================================================== Soul Partition
 /// Soul Partition: exile target nonland permanent; for as long as that card remains exiled its owner may play it, and
@@ -470,7 +462,6 @@ fn soul_partition_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Re
     Ok("gy")
 }
 
-
 // ================================================================== Calamity's Wake
 /// "Players can't cast noncreature spells this turn" is on (Calamity's Wake; the flag sits on whoever cast it): the
 /// engine's cast check reads this for every player
@@ -491,7 +482,6 @@ fn calamity_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
     set_flag(g, p, "calamity_lock");
     Ok("exile")
 }
-
 
 // ================================================================== Emerald Charm
 fn non_aura_enchantment(g: &Game, m: PermId) -> bool {
@@ -527,7 +517,6 @@ fn emerald_charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
     Ok("gy")
 }
 
-
 // ================================================================== Sunscour
 /// the white cards in p's hand other than `card` (Sunscour exiles two instead of paying {5}{W}{W})
 pub fn white_pitch(g: &Game, p: PlayerId, card: CardId) -> Vec<CardId> {
@@ -552,13 +541,17 @@ pub fn pay_sunscour_pitch(g: &mut Game, p: PlayerId, card: CardId) -> Res<bool> 
     Ok(true)
 }
 
-
 // ================================================================== Gleaming Splendor
 /// Gleaming Splendor: whenever an opponent draws their second card each turn, you create a Treasure
 fn splendor_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let o = g.perm(src).owner;
     if p != o && g.perm(src).on_bf && !g.perm(src).phased && g.player(p).draw_n == 2 && g.player(o).alive {
-        crate::glog!(g, "    {} draws a second card: {} creates a Treasure (Gleaming Splendor)", pname(g, p), pname(g, o));
+        crate::glog!(
+            g,
+            "    {} draws a second card: {} creates a Treasure (Gleaming Splendor)",
+            pname(g, p),
+            pname(g, o)
+        );
         crate::engine::zones::add_treasure(g, o, 1)?;
     }
     Ok(())
