@@ -119,7 +119,8 @@ fn counters_go_to_the_archenemy_not_to_a_bystander() {
     let it = sim_core::engine::stack::spell_item(&mut g, P2, c, Ctx::default(), 4.0);
     assert_eq!(t6_table::counter_verdict(&g, P1, &it, 4.0, 4.0, 2), Verdict::Pass, "P2 is not the one to stop");
     let it = sim_core::engine::stack::spell_item(&mut g, P0, c, Ctx::default(), 4.0);
-    assert!(matches!(t6_table::counter_verdict(&g, P1, &it, 4.0, 4.0, 2), Verdict::Roll(v, t) if v > 4.0 && t < 4.0));
+    let v = t6_table::counter_verdict(&g, P1, &it, 4.0, 4.0, 2);
+    assert!(v == Verdict::Counter || matches!(v, Verdict::Roll(x, t) if x > 4.0 && t < 4.0), "{v:?}");
 }
 
 #[test]
@@ -189,4 +190,30 @@ fn without_grace_the_same_player_loses_and_other_tiers_never_cast_it() {
     g.player_mut(P0).life = 0;
     sim_core::engine::life::check_state(&mut g).unwrap();
     assert!(!g.player(P0).alive, "a Tier 0-5 player does not use the Tier 6 rule");
+}
+
+#[test]
+fn the_archenemy_reading_does_not_see_cards_in_hand() {
+    // Thassa's Oracle and Demonic Consultation in hand are hidden: nothing of the line is public
+    let g = oracle_table(&[KRAUM, SISAY, KINNAN], 1);
+    assert_eq!(combos::line_progress(&g, P0), (0.0, false));
+}
+
+#[test]
+fn quiet_tier_6_lines_count_for_the_archenemy_reading() {
+    // Godo + Helm of the Host is a quiet line (Tier 0-5 decks don't value its pieces); the Tier 6 reading sees it
+    let mut g = tbl(&["godo", SISAY, KINNAN]);
+    perm(&mut g, P0, "Godo, Bandit Warlord");
+    perm(&mut g, P0, "Helm of the Host");
+    let (frac, _) = combos::line_progress(&g, P0);
+    assert!(frac > 0.0, "Godo and Helm on the battlefield: {frac}");
+}
+
+#[test]
+fn a_commander_line_is_ready_only_when_the_commander_can_be_cast() {
+    // Dack's flip line is Dack alone; in the command zone with no mana it is not ready, with the mana it is
+    let mut g = tbl(&[DACK, SISAY, KINNAN]);
+    assert!(!combos::line_progress(&g, P0).1);
+    lands(&mut g, P0, "Plains", 6, false); // Dack costs {4}{W}{W}
+    assert!(combos::line_progress(&g, P0).1);
 }

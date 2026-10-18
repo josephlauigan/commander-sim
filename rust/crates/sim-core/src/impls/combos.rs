@@ -607,7 +607,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
     };
     for (i, cmb) in all().iter().enumerate() {
         // a line that starts from the command zone or the library (Godo) has no piece in hand to gate on: ask `ready`
-        if !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0) {
+        if !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)))
+            && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0)
+        {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
@@ -1172,23 +1174,43 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 }
 
 // ------------------------------------------------------------------ Tier 6 table reading (ai/t6_table.rs)
-/// How far q's best modeled line is: (the largest fraction of its piece groups already on the battlefield, whether
-/// some line is `ready` right now). Only lines whose every group is somewhere in q's cards count; quiet lines don't.
+/// a line's real piece groups (a quiet line's first group is the `QUIET` marker, not a card)
+fn real_groups(c: &Combo) -> &[&'static [&'static str]] {
+    if quiet(c) { &c.groups[1..] } else { &c.groups[..] }
+}
+
+/// a piece the table can see is live: on q's battlefield, or one of q's commanders in the command zone that q can
+/// cast now from its open mana (a commander is public, but a line of one commander alone is not "ready" while it
+/// can't be cast)
+fn public_piece(g: &Game, q: PlayerId, grp: &[&str]) -> bool {
+    let pl = g.player(q);
+    grp.iter().any(|n| {
+        on_bf(g, q, n).is_some()
+            || pl.commanders().any(|c| {
+                pl.cmd_zone_of(c) && name_of(g, c) == *n && {
+                    let (gn, pips) = cost_of(g, q, c);
+                    can_pay(g, q, gn + pl.tax_of(c), &pips, false)
+                }
+            })
+    })
+}
+
+/// How far q's best modeled line is, read from public information only (opponents can't see q's hand): (the largest
+/// fraction of its piece groups on the battlefield, whether some line has every group public). Only lines whose every
+/// group is somewhere in q's cards count; quiet lines count too (this is the Tier 6 reading, which needs them).
 pub fn line_progress(g: &Game, q: PlayerId) -> (f64, bool) {
     let (mut best, mut ready) = (0.0f64, false);
     for i in lines_of(g, q).iter().copied() {
-        let cmb = all()[i];
-        let on = cmb.groups.iter().filter(|grp| grp.iter().any(|n| on_bf(g, q, n).is_some())).count();
-        best = best.max(on as f64 / cmb.groups.len() as f64);
-        if !ready && cmb.groups.iter().all(|grp| has_piece(g, q, grp)) && (cmb.ready)(g, q).0 {
-            ready = true;
-        }
+        let grps = real_groups(all()[i]);
+        let on = grps.iter().filter(|grp| grp.iter().any(|n| on_bf(g, q, n).is_some())).count();
+        best = best.max(on as f64 / grps.len() as f64);
+        ready |= grps.iter().all(|grp| public_piece(g, q, grp));
     }
     (best, ready)
 }
 
-/// the indices in `all()` of the non-quiet lines whose every piece group has a card in q's deck (or commanders),
-/// cached per deck key
+/// the indices in `all()` of the lines whose every piece group has a card in q's deck (or commanders), cached per
+/// deck key
 fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
     thread_local! {
         static CACHE: RefCell<HashMap<(&'static str, usize), std::rc::Rc<Vec<usize>>>> = RefCell::new(HashMap::new());
@@ -1204,7 +1226,7 @@ fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
         .iter()
         .enumerate()
         .filter(|(_, cmb)| {
-            !quiet(cmb) && !cmb.groups.is_empty() && cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n)))
+            !real_groups(cmb).is_empty() && real_groups(cmb).iter().all(|grp| grp.iter().any(|n| deck.contains(n)))
         })
         .map(|(i, _)| i)
         .collect();
