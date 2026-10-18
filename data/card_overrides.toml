@@ -8631,3 +8631,40 @@ note = "the extra turn and the loss at its end step need engine extra turns; the
 ["Last Chance"]
 status = "Partial"
 note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md, with Final Fortune)"
+
+["Chatterstorm"]
+status = "Full"
+note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast before it this turn (t6_green2 via t0_stella::storm_copies)"
+
+["Cloud of Faeries"]
+status = "Full"
+note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cycling {2} is a hand option the AI uses in an opponent's end step or after combat with the mana to spare (t6_green2)"
+
+["Noxious Revival"]
+status = "Full"
+note = "{G/P} (the engine pays 2 life when no green mana is free); puts a graveyard card on top of its owner's library: the AI takes the best nonland card of its own graveyard (a creature first) and casts it only when one is there (t6_green2)"
+
+["Sowing Mycospawn"]
+status = "Partial"
+note = "3/3 body; the cast trigger (even if the spell is countered) fetches a land onto the battlefield (Gaea's Cradle with two creatures out, else the land adding the most new colours) and shuffles; missing: kicker {1}{C} and its exile-target-land half (written as t6_green2::mycospawn_kicked, not yet called) and devoid colourlessness"
+
+["Endurance"]
+status = "Full"
+note = "3/4 flash reach; when it enters, a graveyard goes to the bottom of its owner's library in random order (the AI picks its own with Faerie Mastermind out, else an opponent's graveyard of 4+ cards); evoke by exiling a green card from hand, then sacrificed, is a hand option used when the full cost is out of reach (t6_green2)"
+
+["Enduring Vitality"]
+status = "Partial"
+note = "3/3 vigilance; every untapped, non-summoning-sick creature you control taps for one mana of any colour (extra_mana hook); when it dies as a creature it returns to the battlefield (once); missing: the returned permanent is an enchantment, not a creature, but the engine still counts it as a creature (Gaea's Cradle count, attacks, blocks, creature removal)"
+
+["The Cabbage Merchant"]
+status = "Full"
+note = "an opponent's noncreature spell makes you a Food; a creature's combat damage to you sacrifices a Food; two untapped Foods tap for one mana of any colour (a source worth one mana per pair; the tapped Foods are counted on the Merchant and untap at your upkeep, the Merchant itself is not tapped). Approximation: the engine keeps Foods as a count, so a tapped Food can still be eaten with {2},{T}, sacrifice (t6_green2)"
+
+["Shifting Woodland"]
+status = "Partial"
+note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the AI has it become a copy of the best creature card there (Oboro Breezecaller first) in its first main phase; missing: it is modelled as the land tapped plus a temporary token copy (exiled at the end step), so the copy's enters triggers wrongly fire and only creature cards are chosen"
+
+["Invasion of Ikoria // Zilortha, Apex of Ikoria"]
+tags = "xtutor reach"
+status = "Partial"
+note = "{X}{G}{G} (X = all spare mana): puts the best non-Human creature card with mana value X or less from the library or graveyard onto the battlefield (the deck's wish list first), shuffling if it came from the library; missing: the battle rules (the Siege stays with 6 defense counters, can be attacked, and cast transformed as Zilortha when defeated; the engine has no battles, so the card goes to the graveyard)"
