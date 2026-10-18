@@ -350,3 +350,31 @@ fn silas_renn_only_triggers_for_its_own_damage_and_the_choice_lasts_one_turn() {
     g.round += 1; // a new turn
     assert!(!t6::silas_chosen(&g, P0, ring), "only this turn");
 }
+
+// ======================================================== Hidden Strings
+#[test]
+fn hidden_strings_untaps_two_tapped_mana_sources() {
+    let mut g = game();
+    let ls = lands(&mut g, P0, "Island", 3, true);
+    let rock = perm(&mut g, P0, "Sol Ring");
+    g.perm_mut(rock).tapped = true;
+    cast_free(&mut g, P0, "Hidden Strings");
+    let untapped = |g: &Game| ls.iter().filter(|&&l| !g.land(l).tapped).count() + usize::from(!g.perm(rock).tapped);
+    assert_eq!(untapped(&g), 2, "two targets, tapped or untapped as chosen");
+    assert!(!g.perm(rock).tapped, "the rock first");
+    assert!(in_gy(&g, P0, "Hidden Strings"));
+}
+
+#[test]
+fn hidden_strings_taps_down_opposing_creatures_when_nothing_of_ours_is_tapped() {
+    let mut g = game();
+    let a = perm(&mut g, P1, "Grave Titan");
+    let b = perm(&mut g, P1, "Sheoldred, the Apocalypse");
+    let c = perm(&mut g, P1, "Birds of Paradise");
+    for m in [a, b, c] {
+        g.perm_mut(m).tapped = false;
+    }
+    cast_free(&mut g, P0, "Hidden Strings");
+    let tapped = [a, b, c].iter().filter(|&&m| g.perm(m).tapped).count();
+    assert_eq!(tapped, 2, "up to two permanents are tapped");
+}

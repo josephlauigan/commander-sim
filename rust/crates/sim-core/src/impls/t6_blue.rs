@@ -13,18 +13,21 @@
 //! - Drift of Phantasms: Transmute {1}{U}{U} as a hand option (sorcery speed); defender, flying and the 0/5 body are data.
 //! - Emrakul, the Promised End: costs {1} less per card type in your graveyard (`self_cost`); control of an opponent's turn, the extra turn and protection from instants are engine needs.
 //! - Silas Renn: the combat damage trigger marks the best artifact card in the graveyard for the turn (a per-player turn flag); an option casts it from the graveyard in a main phase.
+//! - Hidden Strings: untaps two of its own tapped mana sources (else taps down two opposing creatures); cipher is an engine need.
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
+use crate::engine::values::{pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, discard_cards, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
+use crate::tag::Tag;
 
 fn set_turn_flag(g: &mut Game, p: PlayerId, key: Sym) {
     let stamp = g.turn_stamp();
@@ -460,8 +463,69 @@ fn silas_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 
+// ================================================================== Hidden Strings
+/// p's tapped mana sources, the best first: a rock (more mana first), a dork, then lands
+fn tapped_mana_sources(g: &Game, p: PlayerId) -> Vec<(Option<PermId>, Option<crate::ids::LandId>)> {
+    let mut out = vec![];
+    for &m in &g.player(p).perms {
+        let x = g.perm(m);
+        let Some(cd) = x.cd else { continue };
+        let d = g.db.get(cd);
+        if x.on_bf && !x.phased && x.tapped && (d.tags.has(Tag::Rock) || d.tags.has(Tag::Dork)) {
+            out.push((Some(m), None));
+        }
+    }
+    for &l in &g.player(p).lands {
+        if g.land(l).tapped {
+            out.push((None, Some(l)));
+        }
+    }
+    out
+}
+
+/// The AI casts it when two of its mana sources are tapped (untapping both pays back the {1}{U} and then some)
+fn strings_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if tapped_mana_sources(g, p).len() >= 3 { 40 } else { 0 }
+}
+
+/// Hidden Strings: you may tap or untap target permanent, then you may tap or untap another target permanent. The
+/// AI untaps two of its own tapped mana sources; with none tapped it taps down the two best untapped creatures
+/// opponents control. Cipher (encoding the card on a creature, a free copy on combat damage) is an engine need.
+fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let mine = tapped_mana_sources(g, p);
+    if !mine.is_empty() {
+        for (m, l) in mine.into_iter().take(2) {
+            if let Some(m) = m {
+                g.perm_mut(m).tapped = false;
+                crate::glog!(g, "    Hidden Strings untaps {}", g.perm(m).name);
+            }
+            if let Some(l) = l {
+                g.land_mut(l).tapped = false;
+                crate::glog!(g, "    Hidden Strings untaps {}", g.db.get(g.land(l).cd).name);
+            }
+        }
+        g.bf_ver += 1;
+        return Ok("gy");
+    }
+    let mut theirs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).tapped && g.is_creature(m) && !untargetable(g, m))
+        .collect();
+    theirs.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
+    for m in theirs.into_iter().take(2) {
+        g.perm_mut(m).tapped = true;
+        crate::glog!(g, "    Hidden Strings taps {}", g.perm(m).name);
+    }
+    Ok("gy")
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, "Hidden Strings")?;
+    c.resolve = Some(strings_resolve);
+    c.prio = Some(strings_prio);
     let c = r.card(db, "Silas Renn, Seeker Adept")?;
     c.combat_damage = Some(silas_damage);
     c.options = Some(silas_options);
