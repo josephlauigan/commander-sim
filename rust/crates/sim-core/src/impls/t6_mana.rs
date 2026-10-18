@@ -9,7 +9,9 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{Source, Unit, mana_units, plan_pay};
 use crate::sym::intern;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
+use crate::engine::tutors::card_worth;
+use crate::impls::lands::{can_pay_without, pay_without};
 use crate::engine::values::{epow, pval};
 use crate::impls::t2::{end_step_flicker, flicker_worth};
 use crate::impls::t5::is_artifact;
@@ -17,7 +19,7 @@ use crate::tag::Tag;
 use crate::engine::zones::{die, draw, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 
@@ -424,6 +426,60 @@ fn station_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+// ================================================================== Monumental Henge
+/// a historic card: an artifact, a legendary card or a Saga
+fn historic(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    d.types.has(Types::ARTIFACT) || d.tag(Tag::Leg) || d.has_subtype("saga")
+}
+
+/// **Monumental Henge** (land): enters tapped unless you control a Plains (the engine's enters rule); {T}: add {W};
+/// {2}{W}{W}, {T}: look at the top five cards of your library, you may reveal a historic card from among them and
+/// put it into your hand, the rest go to the bottom in a random order. The AI uses it in the second main phase or
+/// the end-of-turn window with the mana to spare, when a historic card is on top (it looks at the real top five).
+fn henge_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false) || g.land(l).tapped || g.player(p).library.len() < 5 {
+        return Ok(vec![]);
+    }
+    if !can_pay_without(g, p, l, 2, "WW") {
+        return Ok(vec![]);
+    }
+    let top = g.player(p).library.iter().rev().take(5).copied().collect::<Vec<_>>();
+    if !top.iter().any(|&c| historic(g, c)) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: if post == Some(true) { 0.7 } else { 1.2 },
+        label: "Monumental Henge digs for a historic card".into(),
+        act: Some(Action::Plan { f: henge_go, arg: l.0 as i64 }),
+    }])
+}
+
+fn henge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = LandId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 2, "WW")? {
+        return Ok(false);
+    }
+    g.land_mut(l).tapped = true;
+    crate::glog!(g, "  {} activates Monumental Henge", g.player(p).name);
+    let cd = g.land(l).cd;
+    if !ability_window_card(g, p, cd, "look at the top five cards", None, None)? {
+        return Ok(true);
+    }
+    let n = g.player(p).library.len().min(5);
+    let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+    let pick = max_by(&top.iter().copied().filter(|&c| historic(g, c)).collect::<Vec<_>>(), |c| card_worth(g, p, c, false));
+    let mut rest = top;
+    if let Some(c) = pick {
+        rest.retain(|&x| x != c);
+        g.player_mut(p).hand.push(c);
+        crate::glog!(g, "    Monumental Henge: {} to hand", g.db.get(c).name);
+    }
+    g.rng.shuffle(&mut rest);
+    g.player_mut(p).library.splice(0..0, rest);
+    Ok(true)
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -476,6 +532,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Grinding Station")?;
     c.etb = Some(station_etb);
     at_once(c, Event::Etb, false);
+    r.card(db, "Monumental Henge")?.land_options = Some(henge_options);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);

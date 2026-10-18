@@ -372,3 +372,60 @@ fn grinding_station_untaps_when_an_artifact_enters_and_mills_by_sacrificing_one(
     assert_eq!(libs(&g), lib - 3, "three cards milled from one library");
     let _ = ring;
 }
+
+// ======================================================== Monumental Henge
+fn lib_top(g: &mut Game, p: PlayerId, names: &[&str]) {
+    // the first name ends on top
+    for n in names.iter().rev() {
+        let c = card(g, n);
+        g.player_mut(p).library.push(c);
+    }
+}
+
+#[test]
+fn monumental_henge_digs_five_for_a_historic_card() {
+    let mut g = tbl();
+    let ls = lands(&mut g, P0, "Monumental Henge", 1, false);
+    lands(&mut g, P0, "Plains", 4, false);
+    lib_top(&mut g, P0, &["Mountain", "Forest", "Sol Ring", "Island", "Swamp"]);
+    let size = g.player(P0).library.len();
+    let hand0 = g.player(P0).hand.len();
+    let f = g.registry.get(g.land(ls[0]).cd).unwrap().land_options.unwrap();
+    assert!(f(&mut g, ls[0], P0, Some(false)).unwrap().is_empty(), "not before combat");
+    let o = f(&mut g, ls[0], P0, None).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(g.land(ls[0]).tapped, "{{T}} is part of the cost");
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1);
+    assert!(g.player(P0).hand.contains(&card(&g, "Sol Ring")), "the artifact is historic");
+    assert_eq!(g.player(P0).library.len(), size - 1);
+    // the other four went to the bottom
+    let bottom: Vec<&str> = g.player(P0).library.iter().take(4).map(|&c| &*g.db.get(c).name).collect();
+    for n in ["Mountain", "Forest", "Island", "Swamp"] {
+        assert!(bottom.contains(&n), "{n} is on the bottom");
+    }
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 0, "{{2}}{{W}}{{W}} paid by the four Plains");
+}
+
+#[test]
+fn monumental_henge_is_not_offered_without_a_historic_card_on_top() {
+    let mut g = tbl();
+    let ls = lands(&mut g, P0, "Monumental Henge", 1, false);
+    lands(&mut g, P0, "Plains", 4, false);
+    lib_top(&mut g, P0, &["Mountain", "Forest", "Island", "Swamp", "Mountain"]);
+    let f = g.registry.get(g.land(ls[0]).cd).unwrap().land_options.unwrap();
+    assert!(f(&mut g, ls[0], P0, None).unwrap().is_empty());
+    // a legendary creature counts as historic too
+    g.player_mut(P0).library.pop();
+    lib_top(&mut g, P0, &["Godo, Bandit Warlord"]);
+    assert_eq!(f(&mut g, ls[0], P0, None).unwrap().len(), 1);
+}
+
+#[test]
+fn monumental_henge_enters_tapped_without_a_plains() {
+    let mut g = tbl();
+    let c = hand(&mut g, P0, &["Monumental Henge"])[0];
+    assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c), "no Plains");
+    lands(&mut g, P0, "Plains", 1, false);
+    assert!(!sim_core::engine::turn::land_enters_tapped(&g, P0, c), "a Plains");
+}
