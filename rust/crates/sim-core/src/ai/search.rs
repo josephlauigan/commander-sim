@@ -162,6 +162,7 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
     if g2.player(act).alive && !g2.over {
         let step = g2.step;
         crate::engine::turn::continue_turn(g2, act, step)?;
+        crate::engine::turn::run_extra_turns(g2)?;
     }
     let n = g2.players.len();
     let mut k = act.index();
@@ -187,7 +188,7 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
             break;
         }
         if g2.player(q).alive {
-            crate::engine::turn::take_turn(g2, q)?;
+            crate::engine::turn::play_turn(g2, q)?;
         }
         if q == p2 {
             left = left.saturating_sub(1);

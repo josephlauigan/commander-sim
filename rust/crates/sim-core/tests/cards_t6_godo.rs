@@ -449,23 +449,88 @@ fn defense_grid_taxes_spells_cast_outside_their_casters_turn() {
 }
 
 // ======================================================== Final Fortune / Last Chance
-#[test]
-fn final_fortune_goes_to_the_graveyard_and_the_ai_never_casts_it() {
-    let mut g = tbl();
-    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "without engine extra turns it would only lose a card");
-    let c = take(&mut g, P0, "Final Fortune");
+fn resolve(g: &mut Game, p: PlayerId, name: &str) {
+    let c = take(g, p, name);
     let f = g.registry.get(c).unwrap().resolve.unwrap();
-    let dest = f(&mut g, P0, c, &sim_core::state::Ctx::default()).unwrap();
+    let dest = f(g, p, c, &sim_core::state::Ctx::default()).unwrap();
     assert_eq!(&*dest, "gy");
-    assert!(g.player(P0).alive, "nothing loses the game yet: the engine has no extra turn to end");
 }
 
 #[test]
-fn last_chance_resolves_like_final_fortune() {
+fn final_fortune_queues_an_extra_turn_and_the_caster_loses_at_its_end_step() {
     let mut g = tbl();
-    assert_eq!(prio(&g, P0, "Last Chance"), 0);
-    let c = take(&mut g, P0, "Last Chance");
-    let f = g.registry.get(c).unwrap().resolve.unwrap();
-    assert_eq!(&*f(&mut g, P0, c, &sim_core::state::Ctx::default()).unwrap(), "gy");
-    assert!(g.player(P0).alive);
+    resolve(&mut g, P0, "Final Fortune");
+    assert_eq!(g.extra_turns, vec![(P0, true)]);
+    assert!(g.player(P0).alive, "nothing is lost until the extra turn ends");
+    let turns = g.player(P0).turns;
+    sim_core::engine::turn::run_extra_turns(&mut g).unwrap();
+    assert_eq!(g.player(P0).turns, turns + 1, "one extra turn was played");
+    assert!(!g.player(P0).alive, "P0 loses at the extra turn's end step");
+    assert!(g.extra_turns.is_empty());
+    assert!(g.player(P1).alive);
+}
+
+#[test]
+fn last_chance_does_the_same() {
+    let mut g = tbl();
+    resolve(&mut g, P0, "Last Chance");
+    assert_eq!(g.extra_turns, vec![(P0, true)]);
+    sim_core::engine::turn::run_extra_turns(&mut g).unwrap();
+    assert!(!g.player(P0).alive);
+}
+
+#[test]
+fn a_plain_extra_turn_is_a_normal_turn_with_no_loss_and_the_last_queued_goes_first() {
+    let mut g = tbl();
+    sim_core::engine::turn::add_extra_turn(&mut g, P0, false);
+    sim_core::engine::turn::add_extra_turn(&mut g, P1, false);
+    let (t0, t1) = (g.player(P0).turns, g.player(P1).turns);
+    sim_core::engine::turn::run_extra_turns(&mut g).unwrap();
+    assert_eq!((g.player(P0).turns, g.player(P1).turns), (t0 + 1, t1 + 1));
+    assert!(g.player(P0).alive && g.player(P1).alive);
+    assert_eq!(g.active, Some(P0), "P1's turn (queued last) came first, then P0's");
+    assert!(g.doomed_turn.is_none());
+}
+
+#[test]
+fn an_extra_turn_in_the_round_loop_follows_the_current_turn() {
+    let mut g = tbl();
+    sim_core::engine::turn::add_extra_turn(&mut g, P1, false);
+    let t1 = g.player(P1).turns;
+    sim_core::engine::turn::play_turn(&mut g, P0).unwrap();
+    assert_eq!(g.active, Some(P1), "after P0's turn, P1 took the queued extra turn");
+    assert_eq!(g.player(P1).turns, t1 + 1);
+}
+
+#[test]
+fn the_ai_casts_the_extra_turn_spells_only_when_the_extra_turn_wins() {
+    let mut g = tbl();
+    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "empty table: the extra turn wins nothing");
+    // Godo in the command zone, eight lands all tapped: not castable now, castable after the untap
+    lands(&mut g, P0, "Mountain", 8, true);
+    assert_eq!(prio(&g, P0, "Final Fortune"), 85);
+    assert_eq!(prio(&g, P0, "Last Chance"), 85);
+    g.doomed_turn = Some(P0);
+    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "never on a turn that already ends in a loss");
+    g.doomed_turn = None;
+    sim_core::engine::turn::add_extra_turn(&mut g, P0, true);
+    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "one is already queued");
+}
+
+#[test]
+fn the_ai_does_not_cast_it_when_godo_can_win_this_turn() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Mountain", 12, false);
+    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "plenty of mana now: Godo goes off this turn");
+}
+
+#[test]
+fn the_ai_casts_it_when_godo_and_helm_are_out_but_summoning_sick() {
+    let mut g = tbl();
+    let godo = perm(&mut g, P0, "Godo, Bandit Warlord");
+    perm(&mut g, P0, "Helm of the Host");
+    g.perm_mut(godo).sick = true;
+    assert_eq!(prio(&g, P0, "Final Fortune"), 85);
+    g.perm_mut(godo).sick = false;
+    assert_eq!(prio(&g, P0, "Final Fortune"), 0, "Godo can attack now");
 }

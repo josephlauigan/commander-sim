@@ -572,17 +572,49 @@ fn grid_tax(g: &Game, src: Src, caster: PlayerId, _c: CardId) -> i32 {
 
 // ================================================================== Final Fortune / Last Chance
 /// **Final Fortune** ({R}{R} instant) and **Last Chance** ({R}{R} sorcery): take an extra turn after this one; at the
-/// beginning of that turn's end step, you lose the game. The engine has no extra turns (`turn.rs` runs the seats in
-/// order, `skip_turns` only skips), so the spell does nothing when it resolves and the AI never casts it
-/// (priority 0, no deck plan names it): casting it would only throw the card away. Both are Partial, with the engine
-/// needs in rust/agents/engine-needs-godo.md.
+/// beginning of that turn's end step, you lose the game. The resolve queues the extra turn flagged as losing
+/// (`turn::add_extra_turn`; `turn::end_step` ends the game for its taker). Nothing about Oracle is left out.
 fn extra_turn_spell(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    crate::glog!(g, "  {}: {} resolves (no extra turn: the engine has none)", g.player(p).name, g.db.get(c).name);
+    crate::glog!(g, "  {}: {} resolves (an extra turn follows; the caster loses at its end step)", g.player(p).name, g.db.get(c).name);
+    crate::engine::turn::add_extra_turn(g, p, true);
     Ok("gy")
 }
 
-fn never_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
-    0
+/// the AI casts Final Fortune / Last Chance only when the extra turn is expected to win (spec line 7: "only when it
+/// wins"), never on a turn that is already an extra turn. Two shapes it recognises:
+/// (a) Godo is on the battlefield with Helm of the Host and cannot attack now (summoning sick, no haste): the extra
+///     turn lets him (and the Helm tokens) attack;
+/// (b) Godo is in the hand or command zone and this turn's mana cannot cast him (plus an Equipment's equip, {2})
+///     while the whole mana base, untapped on the extra turn, can, with a Helm of the Host or Hammer of Nazahn
+///     in play, in hand or still in the library to fetch.
+/// Priority 85: above setup, below the protection plays the spec wants first (Defense Grid, Vexing Bauble resolve first).
+fn extra_turn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    if g.doomed_turn.is_some() || g.extra_turns.iter().any(|&(q, _)| q == p) {
+        return 0;
+    }
+    let godo_bf = g.player(p).perms.iter().copied().find(|&m| live(g, m) && name_of(g, m) == "Godo, Bandit Warlord");
+    if let Some(m) = godo_bf {
+        let sick = g.perm(m).sick && !crate::engine::combat::has_haste(g, m);
+        return if sick && on_bf_named(g, p, "Helm of the Host") { 85 } else { 0 };
+    }
+    let pl = g.player(p);
+    let godo_cmd = pl.any_cmd_in_zone() && pl.cmd_in_zone && &*g.db.get(pl.cmd).name == "Godo, Bandit Warlord";
+    let godo_hand = pl.hand.iter().any(|&h| &*g.db.get(h).name == "Godo, Bandit Warlord");
+    if !godo_cmd && !godo_hand {
+        return 0;
+    }
+    let godo_card = if godo_cmd { pl.cmd } else { pl.hand.iter().copied().find(|&h| &*g.db.get(h).name == "Godo, Bandit Warlord").unwrap() };
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, godo_card);
+    let need = gn + pips.len() as u32 + 2; // Godo and an equip
+    let fortune = crate::engine::mana::cost_of(g, p, c);
+    let now = crate::engine::mana::total_mana(g, p, false).saturating_sub(fortune.0 + fortune.1.len() as u32);
+    let tapped = pl.lands.iter().filter(|&&l| g.land(l).tapped).count() as u32
+        + pl.perms.iter().filter(|&&m| live(g, m) && g.perm(m).tapped && is_artifact(g, m)).count() as u32;
+    let all = crate::engine::mana::total_mana(g, p, false) + tapped;
+    let equip = on_bf_named(g, p, "Helm of the Host")
+        || on_bf_named(g, p, "Hammer of Nazahn")
+        || pl.hand.iter().chain(pl.library.iter()).any(|&h| matches!(&*g.db.get(h).name, "Helm of the Host" | "Hammer of Nazahn"));
+    if equip && now < need && all >= need { 85 } else { 0 }
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -607,10 +639,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Defense Grid")?.cost = Some(grid_tax);
     let c = r.card(db, "Final Fortune")?;
     c.resolve = Some(extra_turn_spell);
-    c.prio = Some(never_prio);
+    c.prio = Some(extra_turn_prio);
     let c = r.card(db, "Last Chance")?;
     c.resolve = Some(extra_turn_spell);
-    c.prio = Some(never_prio);
+    c.prio = Some(extra_turn_prio);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

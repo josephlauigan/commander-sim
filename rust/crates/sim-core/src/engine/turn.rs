@@ -653,6 +653,19 @@ pub fn yawg_cleanup(g: &mut Game, p: PlayerId) {
 pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     cardcode::necro_deliver(g, p)?;
     cardcode::delayed_end_step(g, p)?; // Marchesa, The Eternal Wanderer, Eerie Interlude, Memory Jar
+    if g.doomed_turn == Some(p) {
+        // Final Fortune, Last Chance: "at the beginning of that turn's end step, you lose the game"
+        g.doomed_turn = None;
+        if !crate::impls::t0_giada::cant_lose(g, p) && g.player(p).alive {
+            crate::glog!(g, "  {} loses the game (the extra turn ends)", g.player(p).name);
+            let pl = g.player_mut(p);
+            pl.last_kind = crate::sym::intern("extra turn");
+            pl.last_src = None;
+            crate::engine::life::eliminate(g, p);
+            check_state(g)?;
+            return Ok(());
+        }
+    }
     if g.player(p).yawg {
         yawg_cleanup(g, p);
     }
@@ -774,6 +787,35 @@ pub const STEPS: [Step; 5] = [Step::Start, Step::Main1, Step::Combat, Step::Main
 
 pub fn take_turn(g: &mut Game, p: PlayerId) -> Res {
     continue_turn(g, p, Step::Start)
+}
+
+/// p's turn, then every extra turn queued meanwhile (`Game::extra_turns`)
+pub fn play_turn(g: &mut Game, p: PlayerId) -> Res {
+    take_turn(g, p)?;
+    run_extra_turns(g)
+}
+
+/// play the queued extra turns, the most recently queued first: a normal turn (untap, upkeep, draw...) for the player
+/// who took it, which may queue more. One flagged as losing ends with that player losing at its end step
+/// (`end_step`). Called after a turn is over; a copied game resumed mid-turn calls it after `continue_turn`.
+pub fn run_extra_turns(g: &mut Game) -> Res {
+    g.doomed_turn = None;
+    while !g.over {
+        let Some((q, doomed)) = g.extra_turns.pop() else { break };
+        if !g.player(q).alive {
+            continue;
+        }
+        crate::glog!(g, "  {} takes an extra turn", g.player(q).name);
+        g.doomed_turn = doomed.then_some(q);
+        take_turn(g, q)?;
+        g.doomed_turn = None;
+    }
+    Ok(())
+}
+
+/// p takes an extra turn after the current one; `lose` marks it as ending in p's loss (Final Fortune, Last Chance)
+pub fn add_extra_turn(g: &mut Game, p: PlayerId, lose: bool) {
+    g.extra_turns.push((p, lose));
 }
 
 /// play p's turn from `step` on (a copied game resumes mid-turn from here)
@@ -1147,7 +1189,7 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
                         ai::end_of_turn_window(g, p)?; // not for a person's seat
                     }
                     if g.player(p).alive && !g.over {
-                        take_turn(g, p)?;
+                        play_turn(g, p)?;
                     }
                 }
             }
