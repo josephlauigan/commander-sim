@@ -1,1 +1,1 @@
-Status: plan file written (keep/prio/wish/fetch hook in legends.rs sisay_pick). Next: build, measure, tests.
+Status: plan filled (keep/prio/wish/fetch); baseline 29.8 -> run1 20.7 (noisy, combos unchanged ~0.05/game); finding: pieces get fetched (Doom, Derevi, Emiel, Ioreth...) but lines rarely ready at once (removal kills pieces, Cradle/Tender missing). Next: line-completion bonus in fetch, tests ai_t6_sisay.rs, t3 lock, report.
