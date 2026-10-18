@@ -135,3 +135,56 @@ fn grace_sets_the_turn_flag_and_the_life_floor_for_its_caster_only() {
     assert_eq!(sim_core::impls::t6_stax::grace_floor(&g, P0, 12), 12, "above 1 is unchanged");
     assert_eq!(sim_core::impls::t6_stax::grace_floor(&g, P1, -3), -3);
 }
+
+// ======================================================== Blind Obedience
+fn tapped(g: &Game, m: sim_core::ids::PermId) -> bool {
+    g.perm(m).tapped
+}
+
+#[test]
+fn obedience_taps_opposing_creatures_and_artifacts_as_they_enter_but_not_its_own() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Blind Obedience");
+    let theirs = token(&mut g, P1, 2);
+    assert!(tapped(&g, theirs), "an opposing creature token enters tapped");
+    let art = perm(&mut g, P1, "Sol Ring");
+    assert!(tapped(&g, art), "an opposing artifact enters tapped");
+    let own = token(&mut g, P0, 2);
+    assert!(!tapped(&g, own), "its controller's own permanents are untouched");
+    let own_art = perm(&mut g, P0, "Mana Vault");
+    assert!(!tapped(&g, own_art));
+}
+
+#[test]
+fn obedience_leaves_opposing_lands_and_other_permanents_alone() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Blind Obedience");
+    let ench = perm(&mut g, P1, "Rhystic Study");
+    assert!(!tapped(&g, ench), "enchantments are not affected");
+}
+
+#[test]
+fn obedience_extort_drains_each_opponent_when_its_controller_casts_with_spare_mana() {
+    let mut g = tbl();
+    let ob = perm(&mut g, P0, "Blind Obedience");
+    lands(&mut g, P0, "Plains", 4, false);
+    let (l0, l1) = (g.player(P0).life, g.player(P1).life);
+    let c = card(&g, "Sol Ring");
+    let f = g.registry.get(card(&g, "Blind Obedience")).unwrap().cast.unwrap();
+    f(&mut g, ob, P0, c).unwrap();
+    assert_eq!(g.player(P1).life, l1 - 1);
+    assert_eq!(g.player(PlayerId(2)).life, g.player(PlayerId(3)).life);
+    assert_eq!(g.player(P0).life, l0 + 3, "gains what the three opponents lost");
+}
+
+#[test]
+fn obedience_extort_does_not_trigger_on_an_opponents_spell() {
+    let mut g = tbl();
+    let ob = perm(&mut g, P0, "Blind Obedience");
+    lands(&mut g, P0, "Plains", 4, false);
+    let l1 = g.player(P1).life;
+    let f = g.registry.get(card(&g, "Blind Obedience")).unwrap().cast.unwrap();
+    let sol = card(&g, "Sol Ring");
+    f(&mut g, ob, P1, sol).unwrap();
+    assert_eq!(g.player(P1).life, l1);
+}

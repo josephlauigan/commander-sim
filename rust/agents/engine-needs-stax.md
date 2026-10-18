@@ -23,3 +23,9 @@ Needs: (1) split second (no responses, no spells or non-mana abilities while it 
 Where it would hook: `engine/stack.rs` `take_priority` / `ai_respond`; `engine/life.rs::check_state` and `lose_life` (damage branch), reading `impls::t6_stax::grace_active` / `grace_floor`.
 Card side done: resolving sets the turn flag; `grace_active` and `grace_floor` answer both rules. The AI never casts it (priority 0).
 Test to add once the engine has it: at 3 life, Angel's Grace in response to lethal damage leaves the player at 1 and alive; no response can be cast while it is on the stack.
+
+## Blind Obedience
+Needs: "enters tapped" as a replacement effect for a class of permanents (an opponent's artifacts and creatures), applied before the permanent is created: the same item `engine-needs-copies.md` / Thalia, Heretic Cathar's approximation share. Reuse that general hook, not a card-specific one.
+Where it would hook: `engine/zones.rs::enter` (before `new_perm`) and `make_tokens` (before the tokens' enter triggers), asking a new `enters_tapped(g, src, owner, perm_or_card)` slot on battlefield cards.
+Card side done: extort (pay {W}, else {B}, with spare mana as Crypt Ghast's does; each opponent loses 1, the controller gains the total) and the tap right after entering through `etb` (cards and artifacts) and `tokens_enter` (creature tokens), `impls/t6_stax.rs`; the same stand-in as Thalia, Heretic Cathar (`common.rs::thalia_hc`).
+Test to add once the engine has it: an opposing creature with "when this enters, untap it" ends untapped never (it enters tapped, then the trigger untaps it); a Soul Warden-style enters trigger sees `tapped` already true.

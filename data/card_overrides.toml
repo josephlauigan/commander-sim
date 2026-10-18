@@ -8651,3 +8651,7 @@ note = "opponents can't cast spells: no noncreature spells (Player::hope_lock) p
 ["Angel's Grace"]
 status = "Partial"
 note = "resolving sets the turn flag t6_stax::grace_active / grace_floor (can't lose, damage leaves you at 1) but the engine does not read it, and split second is not modeled; the AI never casts it (rust/agents/engine-needs-stax.md)"
+
+["Blind Obedience"]
+status = "Partial"
+note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures are tapped right after they enter (etb and tokens_enter hooks) instead of entering tapped: no replacement effect in the engine (rust/agents/engine-needs-stax.md); Treasure/Food/Clue tokens are counters here and are not tapped"
