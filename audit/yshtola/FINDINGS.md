@@ -31,3 +31,20 @@ pays life already (Necropotence, Bolas's Citadel), so the safe window seldom ope
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)
 Band 1 (T5). Proposed: +Force of Will, +Farewell, +Teferi's Protection (all from Seph/Atraxa) for Dakkon, Thought Vessel, Bolas's Citadel (to Seph FS). 9 Game Changers. Final: **24.3% vs T5** (current list 23.2%). Why: Force of Will is cast 76% of the games drawn and answers T5 combo; Farewell and Teferi's Protection are mostly held (stuck 68-75%) but win 45-60% when cast. Citadel was cast in only 25% of the games Y'shtola drew it, so it was the cheapest card to give up.
+
+## 2026-10-18: AI audit phase 2 (branch audit-ysh; problems 3-6 of audit/ai-audit/yshtola.md)
+Measured at T5 (her tier), adaptive AI, 4,000 games per list, conservative/loose win rate: before 32.3 / 31.6; after
+31.7-32.0 / 31.9-32.0. No change beyond noise (one run's SE is 0.7); the fixes make the plays right, they do not move the
+win rate. Weakness this leaves: she still loses 35% of games to Kinnan/Urza combos, which spot removal cannot reach in time.
+- **Removal and her trigger.** `removal_adjust` (impls/yshtola.rs): a noncreature spell of mana value 3+ with her out
+  (Anguished Unmaking, Generous Gift, Your Fate Ends Here) earns `trigger_bonus / 4` and needs a target worth 1; every
+  other removal needs a target worth 3 (before: Path on Ornithopter, Push on Esper Sentinel). `trigger_bonus` adds 3 when
+  an opponent already lost 2-3 life this turn (one more trigger makes four and she draws). The same check applies to the
+  attack-response removal. The unplayed 4-player test: choosing the single best target instead of sampling cost -1.3
+  points (31.0 vs 32.3), so the sample stays, restricted to targets at least half as valuable as the best.
+- **Farewell / Austere Command.** The wipe also earns the trigger bonus. With Teferi's Protection in hand and its
+  {2}{W} left over, the wipe is valued without her own losses and cast with Teferi's in response (her permanents phase
+  out, the opponents' are exiled): `teferis_first`, `cast_wipe`. The opponent-end-step version of the second trigger
+  is not possible: the AI's end-of-turn window runs after the end-step triggers have been checked.
+- **Mystic Remora 66 -> 40, Esper Sentinel 62 -> 46** (early casts; the two were in the bottom group by win rate when
+  cast). Neutral on the win rate (31.6 / 32.0 with both); kept because Remora was being cast and sacrificed unpaid.

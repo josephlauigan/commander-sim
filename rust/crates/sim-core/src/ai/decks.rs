@@ -342,7 +342,9 @@ pub fn breach_candidates(g: &Game, p: PlayerId, need_mana: bool) -> Vec<(f64, Ca
     for &c in &pl.gy {
         let d = g.db.get(c);
         let t = &d.tags;
-        if d.land || t.has(Tag::Ctr) || t.has(Tag::Wipe) || t.has(Tag::Breach) {
+        // the kraum seat escapes its own wipes (Austere Command ...) when the table is far ahead on the board
+        let kraum_wipe = t.has(Tag::Wipe) && !t.has(Tag::Ctr) && pl.key == "kraum" && behind_on_board(g, p);
+        if d.land || t.has(Tag::Ctr) || (t.has(Tag::Wipe) && !kraum_wipe) || t.has(Tag::Breach) {
             continue;
         }
         const SPECIALX: [Tag; 7] = [Tag::Rean, Tag::Fill, Tag::Yawg, Tag::Avarice, Tag::Mastery, Tag::Crackle, Tag::X];
@@ -359,6 +361,9 @@ pub fn breach_candidates(g: &Game, p: PlayerId, need_mana: bool) -> Vec<(f64, Ca
             }
         }
         let mut v = card_worth(g, p, c, false);
+        if kraum_wipe {
+            v = v.max(40.0);
+        }
         if let Some(rk) = t.str(Tag::Rem) {
             let tg = legal_targets(g, p, rk, t.str(Tag::Tgt).unwrap_or("c"), t.has(Tag::Mv4), Some(c));
             if tg.is_empty() {
@@ -1643,4 +1648,18 @@ pub fn breach_keep_bonus(g: &Game, p: PlayerId, c: CardId) -> f64 {
         false
     };
     if keep { 80.0 } else { 0.0 }
+}
+
+/// the kraum seat's wipe rule (also the Diabolic Tutor one): the strongest opponent's creature power is 6 or more above mine
+fn behind_on_board(g: &Game, p: PlayerId) -> bool {
+    let pow = |q: PlayerId| -> i32 {
+        g.player(q)
+            .perms
+            .iter()
+            .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m))
+            .map(|&m| crate::engine::values::epow(g, m))
+            .sum()
+    };
+    let theirs = g.opps(p).filter(|&q| g.player(q).alive).map(pow).max().unwrap_or(0);
+    theirs >= pow(p) + 6
 }
