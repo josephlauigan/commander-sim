@@ -8609,8 +8609,8 @@ status = "Partial"
 note = "first main phase: the AI discards a spare card (a second land or a spell of mana value 7+), exiles the top two, may play the better one this turn (the other stays exiled); missing: convoke for noncreature spells cast from exile (rust/agents/engine-needs-godo.md)"
 
 ["Vexing Bauble"]
-status = "Partial"
-note = "{1},{T}, sacrifice: draw a card; the counter clause is a lock: while it is out nobody casts a spell that costs no mana (Moxen, Lotus Petal ...); the real card lets the cast happen and counters it (the card is lost, free alternative costs are caught too)"
+status = "Full"
+note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox, a free alternative cost, either player's) is countered as it is cast: it counts as cast and goes to its owner's graveyard"
 
 ["Hexing Squelcher"]
 status = "Partial"
@@ -8819,12 +8819,12 @@ status = "Partial"
 note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it; the engine's activation checks do not ask the Needle yet, so no ability is stopped (rust/agents/engine-needs-stax.md)"
 
 ["Chalice of the Void"]
-status = "Partial"
-note = "X is fixed at 1 (costs {2}, one charge counter); the counter is a lock like Vexing Bauble's: nobody can cast a nonland spell with mana value 1 (the card stays in hand; no cast triggers, free costs not caught); needs the engine's counter-on-cast hook and an X choice (rust/agents/engine-needs-stax.md)"
+status = "Full"
+note = "{X}{X}: the AI picks X from 1 to 3 by the cards left in the table's decks (0 only if every X would hurt it more than the table), enters with half the mana paid as charge counters; a spell with that mana value is countered as it is cast (cast, then to its owner's graveyard)"
 
 ["Void Mirror"]
-status = "Partial"
-note = "a lock like Vexing Bauble's: free spells, and generic-only spells when the caster has no untapped coloured source, can't be cast (the real card lets them be cast and counters them by the mana actually spent; free alternative costs not caught; needs the counter-on-cast hook, rust/agents/engine-needs-stax.md)"
+status = "Full"
+note = "a spell cast with no coloured mana spent (colourless sources only, or free) is countered as it is cast; the engine picks which sources pay a generic cost"
 
 ["Ioreth of the Healing House"]
 status = "Full"

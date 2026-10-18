@@ -15,7 +15,7 @@
 use crate::cards::CardDb;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 
 /// Every event card code can hook (Python: the second argument of `@on(name, event)`, and the events the engine
@@ -31,6 +31,7 @@ pub enum Event {
     CanCast,
     CardsToGy,
     Cast,
+    CastCounter,
     CombatDamage,
     CombatStart,
     Copycast,
@@ -104,7 +105,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 79] = [
+pub const EVENTS: [(Event, &str); 80] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -113,6 +114,7 @@ pub const EVENTS: [(Event, &str); 79] = [
     (Event::CanCast, "can_cast"),
     (Event::CardsToGy, "cards_to_gy"),
     (Event::Cast, "cast"),
+    (Event::CastCounter, "cast_counter"),
     (Event::CombatDamage, "combat_damage"),
     (Event::CombatStart, "combat_start"),
     (Event::Copycast, "copycast"),
@@ -134,8 +136,8 @@ pub const EVENTS: [(Event, &str); 79] = [
     (Event::GyDies, "gy_dies"),
     (Event::GyHate, "gy_hate"),
     (Event::GyLandfall, "gy_landfall"),
-    (Event::GyUpkeep, "gy_upkeep"),
     (Event::GyOptions, "gy_options"),
+    (Event::GyUpkeep, "gy_upkeep"),
     (Event::HandAttack, "hand_attack"),
     (Event::HandCast, "hand_cast"),
     (Event::HandDefend, "hand_defend"),
@@ -254,6 +256,8 @@ pub type OptionsFn = fn(&mut Game, Src, PlayerId, Option<bool>) -> Res<Vec<Opt>>
 pub type CostFn = fn(&Game, Src, PlayerId, CardId) -> i32;
 /// can_cast(g, src, caster, c, zone): false forbids casting c
 pub type CanCastFn = fn(&Game, Src, PlayerId, CardId, Sym) -> bool;
+/// cast_counter(g, src, caster, c, ctx): true counters c as it is cast (ctx: what was spent, `Ctx::mana_spent`)
+pub type CastCounterFn = fn(&Game, Src, PlayerId, CardId, &Ctx) -> bool;
 /// attack_tax / attack_cap (g, src, attacker, d): mana per attacker / the most creatures that can attack d
 pub type AttackLimitFn = fn(&Game, Src, PlayerId, PlayerId) -> Option<i32>;
 /// grant_kw(g, src, m, kw): a static keyword grant
@@ -396,6 +400,8 @@ pub struct CardImpl {
     pub alt_cost: Option<AltCost>,
     pub cost: Option<CostFn>,
     pub can_cast: Option<CanCastFn>,
+    /// counter-on-cast (Vexing Bauble, Chalice of the Void, Void Mirror): checked in `cast_card` after the cast triggers
+    pub cast_counter: Option<CastCounterFn>,
     pub attack_tax: Option<AttackLimitFn>,
     pub attack_cap: Option<AttackLimitFn>,
     pub grant_kw: Option<GrantKwFn>,
@@ -546,6 +552,7 @@ impl CardImpl {
             Event::Options => self.options.is_some(),
             Event::Cost => self.cost.is_some(),
             Event::CanCast => self.can_cast.is_some(),
+            Event::CastCounter => self.cast_counter.is_some(),
             Event::AttackTax => self.attack_tax.is_some(),
             Event::AttackCap => self.attack_cap.is_some(),
             Event::GrantKw => self.grant_kw.is_some(),

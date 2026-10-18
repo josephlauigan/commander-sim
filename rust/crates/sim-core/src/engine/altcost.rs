@@ -75,8 +75,16 @@ pub fn pay_alt(g: &mut Game, p: PlayerId, c: CardId, spell: Option<CardId>) -> R
         return Ok(false);
     }
     let a = slot(g, c).unwrap();
-    if !pay_tax(g, p, c)? {
-        return Ok(false);
-    }
-    (a.pay)(g, p, c, spell)
+    // the mana the tax and the alternative cost spend adds up as the mana spent on the spell
+    g.mana_spent = 0;
+    g.mana_colored = false;
+    g.spent_keep = true;
+    let r = (|| -> Res<bool> {
+        if !pay_tax(g, p, c)? {
+            return Ok(false);
+        }
+        (a.pay)(g, p, c, spell)
+    })();
+    g.spent_keep = false;
+    r
 }

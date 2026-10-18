@@ -236,47 +236,7 @@ fn needle_names_the_opposing_engine_and_stops_only_that_name() {
     assert!(!sim_core::impls::t6_stax::needle_stops(&g, &name), "gone with the Needle");
 }
 
-// ======================================================== Chalice of the Void
-#[test]
-fn chalice_enters_with_one_counter_and_costs_two() {
-    let mut g = tbl();
-    let ch = card(&g, "Chalice of the Void");
-    assert_eq!(cost_of(&g, P0, ch).0, 2, "{{X}}{{X}} with X = 1");
-    let m = perm(&mut g, P0, "Chalice of the Void");
-    assert_eq!(sim_core::impls::t6_stax::chalice_counters(&g, m), 1);
-}
-
-#[test]
-fn chalice_stops_spells_with_mana_value_equal_to_its_counters_for_everyone() {
-    let mut g = tbl();
-    assert!(can_cast(&g, P1, "Sol Ring"));
-    let m = perm(&mut g, P0, "Chalice of the Void");
-    assert!(!can_cast(&g, P1, "Sol Ring"), "mana value 1 is countered");
-    assert!(!can_cast(&g, P0, "Sol Ring"), "its controller's too");
-    assert!(!can_cast(&g, P1, "Lightning Bolt"), "any mana value 1 spell");
-    let two = card(&g, "Godo, Bandit Warlord");
-    assert!(sim_core::engine::cast::castable(&g, P1, two, "hand"), "mana value 6 is fine");
-    g.perm_mut(m).on_bf = false;
-    assert!(can_cast(&g, P1, "Sol Ring"), "gone with the Chalice");
-}
-
-// ======================================================== Void Mirror
-#[test]
-fn mirror_refuses_free_spells_and_generic_spells_paid_without_coloured_mana() {
-    let mut g = tbl();
-    lands(&mut g, P1, "Ancient Tomb", 2, false);
-    assert!(can_cast(&g, P1, "Sol Ring"));
-    assert!(can_cast(&g, P1, "Mox Diamond"));
-    let m = perm(&mut g, P0, "Void Mirror");
-    assert!(!can_cast(&g, P1, "Sol Ring"), "Sol Ring paid from Tombs: no coloured mana");
-    assert!(!can_cast(&g, P1, "Mox Diamond"), "mana value 0: nothing spent");
-    assert!(can_cast(&g, P1, "Lightning Bolt"), "a red spell spends coloured mana");
-    lands(&mut g, P1, "Plains", 1, false);
-    assert!(can_cast(&g, P1, "Sol Ring"), "with a Plains it can pay in white");
-    assert!(!can_cast(&g, P1, "Mox Diamond"), "a free spell is still countered");
-    g.perm_mut(m).on_bf = false;
-    assert!(can_cast(&g, P1, "Mox Diamond"), "gone with the Mirror");
-}
+// ======================================================== Chalice of the Void, Void Mirror: tests/castctr.rs
 
 // ======================================================== the engine's cast lock (t6-e-locks)
 #[test]

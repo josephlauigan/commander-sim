@@ -128,6 +128,11 @@ pub fn allowed(g: &Game, p: PlayerId, c: crate::ids::CardId, zone: &str) -> bool
     hooked(g, Event::CanCast).iter().all(|(src, imp)| (imp.can_cast.unwrap())(g, *src, p, c, zone))
 }
 
+/// a battlefield card counters c as p casts it (Vexing Bauble, Chalice of the Void, Void Mirror)
+pub fn cast_countered(g: &Game, p: PlayerId, c: crate::ids::CardId, ctx: &crate::state::Ctx) -> bool {
+    !g.hooks.is_empty() && hooked(g, Event::CastCounter).iter().any(|(src, imp)| (imp.cast_counter.unwrap())(g, *src, p, c, ctx))
+}
+
 /// state checks of hooked cards (Python's `CI.fire(g, 'sba')`, not a triggered event: run at once)
 pub fn fire_sba(g: &mut Game) -> Res {
     for (src, imp) in hooked(g, Event::Sba) {

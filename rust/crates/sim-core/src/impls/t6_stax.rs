@@ -279,62 +279,64 @@ fn needle_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 
 // ================================================================== Chalice of the Void
-/// the X the AI casts Chalice of the Void for: one, the stax pilot's usual setting (it stops Sol Ring, the one-mana
-/// Moxen, Mana Vault ...; the spec's line D). The card costs {X}{X}, so two mana.
-const CHALICE_X: i32 = 1;
+/// the most X the AI casts Chalice of the Void for: three (it stops Sol Ring and the Moxen at one, the usual cEDH
+/// setting; two and three catch the decks that live there)
+const CHALICE_MAX_X: i32 = 3;
 
 /// the charge counters on a Chalice (`DataKey::Charge`)
 pub fn chalice_counters(g: &Game, m: PermId) -> i32 {
     g.perm(m).data.int(DataKey::Charge) as i32
 }
 
-/// {X}{X} with X fixed at one: two generic mana (the data has no mana cost for it)
-fn chalice_cost(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
-    2 * CHALICE_X
+/// The X the AI casts p's Chalice for, 1 to 3 as the mana allows: the one that hits the most nonland cards still to
+/// come (hand and library) in the opponents' decks, less the same count in its own. X = 0 (which stops mana value 0:
+/// the Moxen, Lotus Petal) only when every X from 1 up would hurt p more than the table; `None` when it can pay for
+/// none of them (the card is then not cast).
+pub fn chalice_x(g: &Game, p: PlayerId) -> Option<i32> {
+    let count = |q: PlayerId, x: i32| {
+        let pl = g.player(q);
+        pl.hand.iter().chain(pl.library.iter()).filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc as i32 == x).count()
+            as i32
+    };
+    let score = |x: i32| g.opps(p).map(|q| count(q, x)).sum::<i32>() - count(p, x);
+    let afford = (total_mana(g, p, false) as i32 / 2).min(CHALICE_MAX_X);
+    let best = (1..=afford).max_by_key(|&x| (score(x), -x))?;
+    Some(if score(0) > score(best).max(0) { 0 } else { best })
 }
 
-/// enters with X charge counters
+/// {X}{X}: two generic mana per X the AI chose (the data has no mana cost for it); uncastable when it can't pay for X = 1
+fn chalice_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    chalice_x(g, p).map_or(99, |x| 2 * x)
+}
+
+/// enters with X charge counters, X being half the mana paid for it
 fn chalice_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(CHALICE_X as i64));
-        crate::glog!(g, "    Chalice of the Void enters with {} charge counter(s)", CHALICE_X);
+        let x = (g.entering_spent / 2) as i64;
+        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(x));
+        crate::glog!(g, "    Chalice of the Void enters with {} charge counter(s)", x);
     }
     Ok(())
 }
 
 /// **Chalice of the Void** ({X}{X} artifact): enters with X charge counters; whenever a player casts a spell with
-/// mana value equal to the number of charge counters, counter that spell. Modeled as a lock like Vexing Bauble's
-/// (`can_cast`, `t6_godo.rs`): nobody can cast a nonland spell whose mana value equals the counters. Partial: X is
-/// always 1 (the engine has no X choice for a card with no X tag, and the data gives it no mana cost; `self_cost`
-/// makes it cost {2}); the real card lets the cast happen and counters it (cast triggers happen, the card goes to the
-/// graveyard, a free alternative cost is caught too), which needs a counter-on-cast hook (engine-needs-stax.md).
-fn chalice_can_cast(g: &Game, src: Src, _p: PlayerId, c: CardId, _zone: Sym) -> bool {
+/// mana value equal to the number of charge counters, counter that spell (the `cast_counter` slot: the spell is cast,
+/// its triggers happen, it goes to its owner's graveyard; any player's, free alternative costs too). The AI chooses X
+/// in `chalice_x` and the card costs twice it; the counters are half the mana actually paid (`Ctx::mana_spent`, kept
+/// for the entering permanent in `Game::entering_spent`).
+fn chalice_counter(g: &Game, src: Src, _p: PlayerId, c: CardId, _ctx: &Ctx) -> bool {
     let d = g.db.get(c);
-    if !g.perm(src).on_bf || d.land {
-        return true;
-    }
-    d.cmc as i32 != chalice_counters(g, src)
+    g.perm(src).on_bf && !d.land && d.cmc as i32 == chalice_counters(g, src)
 }
 
 
 // ================================================================== Void Mirror
 /// **Void Mirror** ({2} artifact): whenever a player casts a spell, if no coloured mana was spent to cast it, counter
-/// that spell. Modeled as a lock like Vexing Bauble's (`can_cast`): a spell with a coloured mana symbol in its cost
-/// always spends coloured mana and is allowed; a spell that costs nothing spends none and is refused; a spell with
-/// only generic mana is refused when the caster has no untapped source of coloured mana (Sol Ring paid from Ancient
-/// Tomb and City of Traitors), and allowed when it has one (it can pay with coloured mana; the engine's payment may
-/// still use colourless sources, which the real card would counter). Partial: the real card lets the spell be cast and
-/// counters it by the mana actually spent, and catches free alternative costs: needs the counter-on-cast hook
-/// (engine-needs-stax.md).
-fn mirror_can_cast(g: &Game, src: Src, p: PlayerId, c: CardId, _zone: Sym) -> bool {
-    if !g.perm(src).on_bf || g.db.get(c).land {
-        return true;
-    }
-    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-    if pips.chars().any(|ch| "WUBRG".contains(ch)) {
-        return true;
-    }
-    gn > 0 && "WUBRG".chars().any(|ch| can_pay(g, p, 0, &ch.to_string(), false))
+/// that spell. The `cast_counter` slot reads the mana actually spent (`Ctx::mana_colored`): a spell paid from Ancient
+/// Tomb and Sol Ring mana or cast for free (a Mox, a free alternative cost) is countered; the payment the engine
+/// picks decides a generic cost paid from a mix of colourless and coloured sources.
+fn mirror_counter(g: &Game, src: Src, _p: PlayerId, c: CardId, ctx: &Ctx) -> bool {
+    g.perm(src).on_bf && !g.db.get(c).land && !ctx.mana_colored
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -365,8 +367,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Chalice of the Void")?;
     c.etb = Some(chalice_etb);
     *c = c.at_once(Event::Etb);
-    c.can_cast = Some(chalice_can_cast);
+    c.cast_counter = Some(chalice_counter);
     c.self_cost = Some(chalice_cost);
-    r.card(db, "Void Mirror")?.can_cast = Some(mirror_can_cast);
+    r.card(db, "Void Mirror")?.cast_counter = Some(mirror_counter);
     Ok(())
 }
