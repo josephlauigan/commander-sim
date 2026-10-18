@@ -8573,3 +8573,61 @@ note = "same card as Shatterskull Smashing (t6_lands.rs)"
 ["Talon Gates of Madara"]
 status = "Full"
 note = "enter trigger phases out the best opposing creature (back at its controller's next untap); {T}: {C}; {1},{T}: any colour (when another land pays the {1}); {4}: put it onto the battlefield from hand (own turn with the land drop spent, or against a big attacker, phasing it out of the attack); t6_lands.rs"
+["Godo, Bandit Warlord"]
+dsl = []
+status = "Partial"
+note = "enters: search for an Equipment and put it onto the battlefield (Helm first, Hammer first when a copier is out or in hand); first attack each turn: untap Godo and the Samurai, one additional combat; missing: the engine caps extra combats at four a turn, so Helm's infinite loop stops early (rust/agents/engine-needs-godo.md)"
+
+["Hammer of Nazahn"]
+status = "Full"
+note = "whenever it or another Equipment you control enters, attaches that Equipment (the AI always does) to the best creature you control (Godo first, then the strongest able to attack); +2/+0, indestructible, equip {4} from the compiled abilities"
+
+["Magnetic Theft"]
+status = "Full"
+note = "attach target Equipment to target creature, free: the AI moves one of its own loose Equipment (Helm of the Host first, or Helm off another creature) onto its best creature (Godo first) and casts it only when there is such a move; it does not target opposing Equipment or creatures"
+
+["Sting, the Glinting Dagger"]
+status = "Partial"
+note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of its controller's combat; missing: the untap at opponents' combats, and first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
+
+["Goblin Welder"]
+status = "Full"
+note = "{T}: sacrifice an artifact you control and return an artifact card from your graveyard to the battlefield, when the card is worth at least 3 more than the artifact (a spent rock for Helm of the Host or Hammer of Nazahn); the AI never targets an opponent's artifact or graveyard"
+
+["Goblin Engineer"]
+dsl = []
+status = "Full"
+note = "enters: search for an artifact and put it into the graveyard (Helm, then Hammer, with a Welder out; else Cursed Mirror; else the best artifact of mana value 3 or less); {R},{T}, sacrifice an artifact: return an artifact card of mana value 3 or less when it is worth 3 more than the sacrificed artifact (spent rocks first)"
+
+["Tezzeret, Cruel Captain"]
+dsl = []
+status = "Partial"
+note = "enters with 4 loyalty; whenever an artifact you control enters, +1 loyalty; 0: untap a spent mana rock (or tapped creature), +1/+1 counter if it is an artifact creature; -3: search for an artifact with mana value 1 or less into the hand; missing: the -7 emblem (rust/agents/engine-needs-godo.md)"
+
+["Party Thrasher"]
+status = "Partial"
+note = "first main phase: the AI discards a spare card (a second land or a spell of mana value 7+), exiles the top two, may play the better one this turn (the other stays exiled); missing: convoke for noncreature spells cast from exile (rust/agents/engine-needs-godo.md)"
+
+["Vexing Bauble"]
+status = "Partial"
+note = "{1},{T}, sacrifice: draw a card; the counter clause is a lock: while it is out nobody casts a spell that costs no mana (Moxen, Lotus Petal ...); the real card lets the cast happen and counters it (the card is lost, free alternative costs are caught too)"
+
+["Hexing Squelcher"]
+status = "Partial"
+note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
+
+["Blood Moon"]
+status = "Partial"
+note = "nonbasic lands tap for {R} only, and a two-mana land (Ancient Tomb, City of Traitors) makes one; the AI casts it when opponents have three more nonbasic lands than it; missing: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, manlands) and become Mountains (rust/agents/engine-needs-godo.md)"
+
+["Defense Grid"]
+status = "Partial"
+note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); free alternative costs are not taxed"
+
+["Final Fortune"]
+status = "Partial"
+note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md)"
+
+["Last Chance"]
+status = "Partial"
+note = "the extra turn and the loss at its end step need engine extra turns; the spell resolves to the graveyard and the AI never casts it (rust/agents/engine-needs-godo.md, with Final Fortune)"
