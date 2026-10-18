@@ -1585,6 +1585,9 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
         }
         g.land_mut(l).data.set(DataKey::In, Val::Bool(true));
         let cd = g.land(l).cd;
+        if crate::engine::mana::moon_land(g, l) {
+            continue; // Blood Moon: a plain Mountain has no enters trigger
+        }
         for fx in g.db.get(cd).land_etb_fx.clone() {
             let name = match fx {
                 LandEtb::Scry(n) => format!("scry {n}"),

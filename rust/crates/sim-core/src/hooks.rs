@@ -60,6 +60,7 @@ pub enum Event {
     HandCast,
     HandDefend,
     HandOptions,
+    LandColorless,
     LandDefend,
     LandGy,
     LandMana,
@@ -106,7 +107,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 81] = [
+pub const EVENTS: [(Event, &str); 82] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -144,6 +145,7 @@ pub const EVENTS: [(Event, &str); 81] = [
     (Event::HandCast, "hand_cast"),
     (Event::HandDefend, "hand_defend"),
     (Event::HandOptions, "hand_options"),
+    (Event::LandColorless, "land_colorless"),
     (Event::LandDefend, "land_defend"),
     (Event::LandGy, "land_gy"),
     (Event::LandMana, "land_mana"),
@@ -282,6 +284,8 @@ pub type SbaFn = fn(&mut Game, Src) -> Res;
 pub type PlayerCountFn = fn(&Game, Src, PlayerId) -> i32;
 /// land_mana(g, src, p, land): extra mana a land of p's makes
 pub type LandManaFn = fn(&Game, Src, PlayerId, crate::ids::LandId) -> i32;
+/// land_colorless(g, src, p, land, n): a land of p tapped for n mana makes one {C} instead (Damping Sphere)
+pub type LandColorlessFn = fn(&Game, Src, PlayerId, crate::ids::LandId, u32) -> bool;
 /// extra_mana(g, src, p, units): mana sources a card adds (Urza, Kinnan)
 pub type ExtraManaFn = fn(&Game, Src, PlayerId, &[crate::engine::mana::Unit]) -> Vec<crate::engine::mana::Unit>;
 /// steal_draw(g, src, p): Notion Thief takes p's extra draw
@@ -430,6 +434,7 @@ pub struct CardImpl {
     pub nonland_mana_bonus: Option<PlayerCountFn>,
     pub treasure_bonus: Option<PlayerCountFn>,
     pub land_mana: Option<LandManaFn>,
+    pub land_colorless: Option<LandColorlessFn>,
     pub extra_mana: Option<ExtraManaFn>,
     pub mana_tapped: Option<ManaTappedFn>,
     pub steal_draw: Option<StealDrawFn>,
@@ -582,6 +587,7 @@ impl CardImpl {
             Event::NonlandManaBonus => self.nonland_mana_bonus.is_some(),
             Event::TreasureBonus => self.treasure_bonus.is_some(),
             Event::LandMana => self.land_mana.is_some(),
+            Event::LandColorless => self.land_colorless.is_some(),
             Event::ExtraMana => self.extra_mana.is_some(),
             Event::ManaTapped => self.mana_tapped.is_some(),
             Event::StealDraw => self.steal_draw.is_some(),

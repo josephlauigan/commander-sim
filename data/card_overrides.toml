@@ -2872,7 +2872,7 @@ note = "creatures you control have haste; cascade, cascade"
 tags = "pow=2 tgh=2"
 dsl = []
 status = "Full"
-note = "nonbasic lands tap for R only (engine mana check)"
+note = "nonbasic lands are plain Mountains (engine::mana::moon_land): they tap for {R} only and lose every ability (no Ancient Tomb damage, no manland or utility ability, no Urza's Saga chapters, no enters-tapped or enters triggers, a fetch land cannot crack)"
 
 ["Mahadi, Emporium Master"]
 tags = "leg pow=3"
@@ -8614,8 +8614,8 @@ status = "Partial"
 note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
 
 ["Blood Moon"]
-status = "Partial"
-note = "nonbasic lands tap for {R} only, and a two-mana land (Ancient Tomb, City of Traitors) makes one; the AI casts it when opponents have three more nonbasic lands than it; missing: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, manlands) and become Mountains (rust/agents/engine-needs-godo.md)"
+status = "Full"
+note = "nonbasic lands are plain Mountains (engine::mana::moon_land): they tap for {R} only (one mana, Ancient Tomb and City of Traitors included) and lose every ability and other land type (no Tomb damage, no manland or utility ability, Urza's Saga loses its chapters and is sacrificed as a state-based action (still a Saga with final chapter 0), no enters-tapped or enters triggers, a fetch land cannot crack); the AI casts it when opponents have three more nonbasic lands than it"
 
 ["Defense Grid"]
 status = "Full"
@@ -8808,8 +8808,8 @@ status = "Partial"
 note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures (tokens too) enter tapped as a real replacement (enters_tapped slot, applied before any enters trigger), Treasure tokens too (a tapped Treasure makes no mana until its owner untaps). Only Food and Clue tokens (counters here) still enter untapped: a tapped Food could not be sacrificed for life until it untaps (not modeled)"
 
 ["Damping Sphere"]
-status = "Partial"
-note = "the {1}-more tax per other spell the caster cast this turn is exact; lands that tap for two or more make one mana, but keep their colour instead of making {C} (no land colour override in card code; rust/agents/engine-needs-stax.md)"
+status = "Full"
+note = "the {1}-more tax per other spell the caster cast this turn is exact; a land tapped for two or more mana makes one {C} instead of any other type and amount (land_colorless slot, asked after every bonus to the land; two Spheres act once)"
 
 ["Pithing Needle"]
 status = "Partial"

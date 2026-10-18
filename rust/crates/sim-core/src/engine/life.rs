@@ -132,6 +132,8 @@ pub fn check_state(g: &mut Game) -> Res {
         }
     }
     sba_toughness(g)?;
+    sba_legend(g)?;
+    sba_moon_saga(g)?;
     if g.over {
         return Ok(());
     }
@@ -179,6 +181,79 @@ fn sba_toughness(g: &mut Game) -> Res {
             if g.perm(m).on_bf {
                 crate::glog!(g, "    {} has toughness 0 or less and dies", g.perm(m).name);
                 crate::engine::zones::die(g, m, "sba")?;
+            }
+        }
+    }
+    Ok(())
+}
+
+/// 704.5j, the legend rule: a player who controls two or more legendary permanents with the same name chooses one and
+/// puts the rest into their owners' graveyards (not destruction: indestructible does not help; `die(.., "sba")`).
+/// Legendary-ness reads `mine::is_legendary` (copy exceptions: a Helm of the Host token is not legendary). The AI
+/// keeps the better one: untapped, equipped, with counters, the real card over a token copy, then the older one
+/// (not `pval`: a token copy of a card has no card to value).
+/// Cheap: a player with fewer than two permanents is skipped, and names are compared only among legendary ones.
+fn sba_legend(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if !g.players[i].alive || g.players[i].perms.len() < 2 {
+            continue;
+        }
+        let leg: Vec<_> = g.players[i]
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                x.on_bf && !x.phased && crate::cardcode::is_legendary(g, m)
+            })
+            .collect();
+        if leg.len() < 2 {
+            continue;
+        }
+        let mut done: Vec<crate::sym::Sym> = vec![];
+        for &m in &leg {
+            let name = g.perm(m).name;
+            if done.contains(&name) {
+                continue;
+            }
+            let same: Vec<_> = leg.iter().copied().filter(|&n| g.perm(n).name == name && g.perm(n).on_bf).collect();
+            if same.len() < 2 {
+                continue;
+            }
+            done.push(name);
+            let score = |n: crate::ids::PermId| -> f64 {
+                let x = g.perm(n);
+                let gear = g.players[i].perms.iter().filter(|&&e| g.perm(e).attached == Some(n)).count();
+                crate::engine::values::epow(g, n) as f64 * 0.25 + if x.tapped { 0.0 } else { 2.0 } + 1.5 * gear as f64
+                    + 0.5 * x.plus.max(0) as f64
+                    + if x.token { 0.0 } else { 0.25 }
+                    - x.born as f64 * 1e-6
+            };
+            let keep = same.iter().copied().fold(same[0], |b, n| if score(n) > score(b) { n } else { b });
+            for n in same {
+                if n != keep && g.perm(n).on_bf {
+                    crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
+                    crate::engine::zones::die(g, n, "sba")?;
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// 704.5s with Blood Moon: a Saga land (Urza's Saga) loses its chapter abilities (it is a Mountain now) but keeps the
+/// Saga subtype, so its final chapter number is 0 and its lore counters are at least that: it is sacrificed.
+fn sba_moon_saga(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if g.players[i].sagas.is_empty() {
+            continue;
+        }
+        let p = PlayerId(i as u8);
+        for (l, _) in g.players[i].sagas.clone() {
+            if g.players[i].lands.contains(&l) && crate::engine::mana::moon_land(g, l) {
+                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", g.db.get(g.land(l).cd).name);
+                crate::impls::lands::sac_land(g, p, l)?;
+                g.players[i].sagas.retain(|x| x.0 != l);
             }
         }
     }

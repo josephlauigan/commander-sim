@@ -1246,7 +1246,7 @@ fn cromat_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// Korlash: power and toughness equal to your Swamps (grandeur needs a second copy: never in a singleton deck)
 fn korlash_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
-    let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B')).count() as i32;
+    let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B') && !crate::engine::mana::moon_land(g, l)).count() as i32;
     (n, n)
 }
 

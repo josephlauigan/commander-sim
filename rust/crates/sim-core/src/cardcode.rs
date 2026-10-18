@@ -717,6 +717,9 @@ pub fn defend_hooks(
             }
         }
         for l in g.player(d).lands.clone() {
+            if crate::engine::mana::moon_land(g, l) {
+                continue; // Blood Moon: no abilities
+            }
             if let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_defend) {
                 f(g, l, d, p, atk, assign)?;
             }
@@ -831,6 +834,9 @@ pub fn saga_proliferated(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 
 /// CI.LAND_ETB: a land played as a land drop enters (Bojuka Bog ...)
 pub fn land_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    if crate::engine::mana::moon_land(g, l) {
+        return Ok(()); // Blood Moon: a plain Mountain has no enters ability
+    }
     match imp_of(g, g.land(l).cd).and_then(|i| i.land_etb) {
         Some(f) => f(g, p, l),
         None => Ok(()),
@@ -952,6 +958,7 @@ pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
     }
     for l in g.player(p).lands.clone() {
         if g.player(p).lands.contains(&l)
+            && !crate::engine::mana::moon_land(g, l)
             && let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_upkeep)
         {
             f(g, l, p)?;
