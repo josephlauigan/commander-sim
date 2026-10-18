@@ -8241,3 +8241,7 @@ note = "you don't lose for 0 or less life (check_state); at 0 or less life damag
 dsl = []
 status = "Full"
 note = "enters: you may search the library for an Equipment, put it onto the battlefield attached to Godo (job select pieces bring their Hero but still go on him), shuffle; the AI takes the best one on him, haste counting most while he is summoning sick (Hero's Heirloom, legendary haste and +2/+1, then Helm of Kaldra). First attack each turn: untap him and every Samurai (Gilgamesh, a creature wearing Samurai's Katana) and one additional combat; attacking again in it adds nothing (impls/tymna_cards.rs)"
+
+["Smaug the Magnificent"]
+status = "Full"
+note = "upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs)"

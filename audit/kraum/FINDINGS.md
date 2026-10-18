@@ -164,3 +164,14 @@ Not modeled, so not tested: Archfiend of the Dross, Skrelv, Gut Shot, White Sun'
 | Swap | Result | Why |
 |---|---|---|
 | Godo in, Sun Titan out | -0.2 (±1.9), list 31.7 → 31.5% (`2026-10-17-godo/G2-godo-suntitan.txt`) | A wash: two 6-drops that get stuck the same way (cast in 43% vs 45% of the games drawn, first cast round 10.5 vs 10.7) and win about as often when cast (60% vs 57%, correlation). Game shape unchanged to a tenth. With both Godo tests (Serra Angel -0.1, Sun Titan -0.2), Godo is a fair card here but no upgrade: his extra combat doesn't feed Tymna, and the deck's limit is surviving combat, not dealing damage. |
+
+### Smaug the Magnificent (2026-10-17 evening, T3; modeled Full in `impls/smaug.rs`, branch `smaug`)
+Smaug ({2}{R}{R}, 4/3 flying, haste; upkeep: a Treasure; attacks: damage equal to your Treasures to any target).
+Quick adaptive passes (2,000 paired) picked the cut; the look-ahead run decides. Files: `audit/kraum/2026-10-17-smaug/`.
+| Swap (Smaug in for) | Result | Why |
+|---|---|---|
+| Elemental Mascot (adaptive) | +0.1 (±1.3) | No effect. |
+| Serra Angel (adaptive) | -0.1 (±1.2) | No effect: a 4-mana flier for a 4-mana flier. |
+| Tocasia's Welcome (adaptive) | +1.8 (±1.2) | Best of the three on the quick AI. |
+| **Tocasia's Welcome (look-ahead, loose, 2,000 paired)** | **+1.1 (±2.7): 33.5 → 34.6%** | Within noise. Smaug is cast in 64% of the games he's drawn (stuck 36%: {R}{R} in a four-colour deck with 3 Mountains) and wins 56% when cast vs Tocasia's Welcome's 44%. Damage +1.1 a game, eliminations -1.1 pts; the death causes (Aurelia, Tergrid, Marwyn in combat) are unchanged. His Treasure trigger adds almost nothing (about 0.1 burn a game on the quick run): the deck makes no Treasure of its own, so he attacks with 0–2. He is a hasty 4-mana flier here, not an engine. |
+**Reading it:** a fair swap that doesn't hurt, but not a measurable gain. **Applied (JD's card, 2026-10-17): Smaug in, Tocasia's Welcome out.**
