@@ -16,3 +16,6 @@
 - 40-game jobs-1 timing: mainbase 127s/145s, branch 183s/217s (~+45%; another session was loading the box).
 - First hot spot seen: combos::is_piece_name (linear scan with slice eq) via piece_threat <- pval <- threat.
 - Lead: merge t6-cedh (Karlach double-run fix da52e57) before final timing; re-save lock after the merge.
+- Opt 1 (committed): is_piece_name -> OnceLock HashSet. Opt 2 (committed): dsl::pt one pass over statics. Lock identical after both.
+  t3 300 games jobs 12 CPU: branch 1236 s vs mainbase 1094 s (+13%, box shared with another session, load ~8).
+- Next: merge t6-cedh (Karlach fix), re-save lock, more profile rounds (sampler: scratchpad mk.sh; stats via awk on mine.log).
