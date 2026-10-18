@@ -8713,3 +8713,7 @@ note = "0/5 flying defender; Transmute {1}{U}{U} as a sorcery-speed hand option 
 ["Emrakul, the Promised End"]
 status = "Partial"
 note = "13/13 flying trample that costs {1} less per card type in the graveyard (self_cost, tested); missing: the cast trigger (control of target opponent's next turn, then that player takes an extra turn), and protection from instants (the engine has no turn control, extra turns, or protection from a card type)"
+
+["Rograkh, Son of Rohgahh"]
+status = "Full"
+note = "{0} 0/1 with first strike, menace and trample (card data, tested); partner is the engine's (the deck's commander pair)"

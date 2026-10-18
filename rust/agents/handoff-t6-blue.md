@@ -13,6 +13,7 @@ Test deck seat 0 = rograkh-silas-turbo-breach, seat 1 = seph. Oracle text: scrat
 - High Fae Trickster (Partial)
 - Drift of Phantasms (Full)
 - Emrakul, the Promised End (Partial)
+- Rograkh, Son of Rohgahh (Full)
 ## Next (order)
 Emrakul, Rograkh, Silas Renn, Hidden Strings, Valley Floodcaller
 ## Gotchas

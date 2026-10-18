@@ -300,3 +300,19 @@ fn emrakul_costs_one_less_per_card_type_in_the_graveyard() {
     assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c).0, 8, "artifact and sorcery too");
     assert_eq!(sim_core::engine::mana::cost_of(&g, P1, c).0, 13, "an opponent's graveyard does not count");
 }
+
+// ======================================================== Rograkh, Son of Rohgahh
+#[test]
+fn rograkh_is_a_partner_commander_with_first_strike_menace_and_trample() {
+    use sim_core::engine::combat::kw;
+    let d = deck("rograkh-silas-turbo-breach");
+    assert_eq!(d.commander, "Rograkh, Son of Rohgahh");
+    assert_eq!(d.commander2.as_deref(), Some("Silas Renn, Seeker Adept"));
+    let mut g = game();
+    let m = perm(&mut g, P0, "Rograkh, Son of Rohgahh");
+    assert_eq!((g.perm(m).pow, g.perm(m).tgh), (0, 1));
+    for k in ["first strike", "menace", "trample"] {
+        assert!(kw(&g, m, k), "{k}");
+    }
+    assert_eq!(g.db.get(g.perm(m).cd.unwrap()).cmc, 0);
+}
