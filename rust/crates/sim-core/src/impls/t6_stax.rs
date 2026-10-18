@@ -141,34 +141,16 @@ fn owner(g: &Game, m: PermId) -> PlayerId {
 /// **Blind Obedience** ({1}{W} enchantment): extort, and artifacts and creatures your opponents control enter tapped.
 /// Extort: whenever its controller casts a spell they may pay {W/B}; if they do, each opponent loses 1 life and they
 /// gain that much (the AI pays when it has spare mana, the rule Crypt Ghast's extort uses in `partials.rs`; each
-/// Blind Obedience triggers separately). Partial: "enter tapped" is a replacement the engine lacks, so the opponents'
-/// creatures and artifacts (tokens too) are tapped by this enters hook right after they enter (like Thalia, Heretic
-/// Cathar's): a haste attacker is still stopped, but an enters trigger that untaps it or uses "if it entered tapped"
-/// sees it untapped (engine-needs-stax.md). Artifact tokens (Treasure, Food, Clue) are counters in this engine, so
-/// "enters tapped" has nothing to act on there.
-fn obedience_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    let x = g.perm(m);
-    if m == src || !g.perm(src).on_bf || owner(g, m) == owner(g, src) || !x.on_bf {
-        return Ok(());
+/// Blind Obedience triggers separately).
+///
+/// Artifacts and creatures your opponents control enter tapped: the `enters_tapped` replacement slot (engine/hooks.rs
+/// `enters_tapped`), asked as the permanent is created, so an enters trigger already sees it tapped; a Treasure (a counter on
+/// the player) comes in tapped too (Food and Clue need no {T} to be sacrificed for value, so they aren't tracked).
+fn obedience_tapped(g: &Game, src: Src, p: PlayerId, m: Option<PermId>) -> bool {
+    if p == owner(g, src) {
+        return false;
     }
-    let artifact_token = x.token && x.ttypes.contains(&"artifact");
-    if g.is_creature(m) || artifact_token || is_artifact(g, m) {
-        g.perm_mut(m).tapped = true;
-    }
-    Ok(())
-}
-
-/// the opponents' creature tokens that just entered (a token made by `make_tokens` does not go through the enters hook)
-fn obedience_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
-    if !g.perm(src).on_bf || p == owner(g, src) {
-        return Ok(());
-    }
-    for &m in toks {
-        if g.perm(m).on_bf && g.is_creature(m) {
-            g.perm_mut(m).tapped = true;
-        }
-    }
-    Ok(())
+    m.is_none_or(|m| m != src && (g.is_creature(m) || is_artifact(g, m)))
 }
 
 /// extort: pay {W/B} (white if it can, else black) when casting a spell with spare mana
@@ -353,10 +335,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.resolve = Some(grace_resolve);
     c.prio = Some(never_prio);
     let c = r.card(db, "Blind Obedience")?;
-    c.etb = Some(obedience_etb);
-    c.tokens_enter = Some(obedience_tokens);
-    *c = c.at_once(Event::TokensEnter);
-    *c = c.at_once(Event::Etb);
+    c.enters_tapped = Some(obedience_tapped);
     c.cast = Some(obedience_extort);
     let c = r.card(db, "Damping Sphere")?;
     c.land_mana = Some(sphere_land);

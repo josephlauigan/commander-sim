@@ -925,7 +925,8 @@ fn helm(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     let Some(t) = enter_token_copy(g, p, g.perm(a).cd.unwrap())? else { return Ok(vec![]) };
     g.perm_mut(t).sick = false;
     crate::glog!(g, "    Helm of the Host copies {name}");
-    Ok(vec![t])
+    // a token that entered tapped (Blind Obedience, Spider-Woman) has haste but can't attack
+    Ok(if g.perm(t).tapped { vec![] } else { vec![t] })
 }
 
 /// fetches an Equipment

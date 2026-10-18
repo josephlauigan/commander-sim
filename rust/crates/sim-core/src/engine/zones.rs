@@ -284,6 +284,9 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
             x.tapped = true;
         }
         g.player_mut(p).perms.push(m);
+        if hooks::enters_tapped(g, p, Some(m)) {
+            g.perm_mut(m).tapped = true; // before the tokens' enter triggers
+        }
         if etgh(g, m) <= 0 {
             die(g, m, "sba")?;
             continue;
@@ -1064,6 +1067,10 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     if g.registry.get(cd).is_some_and(|i| i.live()) {
         g.hooks.push(m);
     }
+    // a replacement effect: it is already tapped as it enters, before any enters trigger sees it
+    if hooks::enters_tapped(g, p, Some(m)) {
+        g.perm_mut(m).tapped = true;
+    }
     cardcode::as_enters(g, p, m)?; // naming a creature type
     let st = g.turn_stamp();
     g.entered.retain(|e| e.0 == st);
@@ -1646,6 +1653,12 @@ pub fn add_treasure(g: &mut Game, p: PlayerId, n: i32) -> Res {
 
 /// create n Treasure / Food / Clue tokens, applying Academy Manufactor and token doubling (common.make_artifact_tokens)
 pub fn make_artifact_tokens(g: &mut Game, p: PlayerId, kind: Sym, n: i32) -> Res {
+    make_artifact_tokens_tapped(g, p, kind, n, false)
+}
+
+/// the same, and `tapped`: the Treasures come in tapped (Tataru Taru) -- they also do under an "artifacts enter tapped"
+/// replacement. A tapped Treasure can't make mana (its ability needs {T}) until its owner's untap step.
+pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32, tapped: bool) -> Res {
     if n <= 0 {
         return Ok(());
     }
@@ -1653,10 +1666,14 @@ pub fn make_artifact_tokens(g: &mut Game, p: PlayerId, kind: Sym, n: i32) -> Res
     let manufactor =
         g.player(p).perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some("Academy Manufactor"));
     let kinds: Vec<Sym> = if manufactor { vec!["Treasure", "Food", "Clue"] } else { vec![kind] };
+    let tap_all = hooks::enters_tapped(g, p, None);
     for &k in &kinds {
         let pl = g.player_mut(p);
         match k {
-            "Treasure" => pl.treasures += n as u32,
+            "Treasure" => {
+                pl.treasures += n as u32;
+                pl.tapped_treasures += (tapped || tap_all) as u32 * n as u32;
+            }
             "Food" => pl.foods += n as u32,
             _ => pl.clues += n as u32,
         }

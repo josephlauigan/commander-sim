@@ -110,7 +110,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 }
             }
             Choice::Sac(Fodder::Treasure) => {
-                g.player_mut(p).treasures -= 1;
+                g.player_mut(p).sac_treasure();
                 if !g.hooks.is_empty() {
                     fire_trigger(
                         g,

@@ -137,16 +137,9 @@ fn tataru_enters_you_draw_and_an_opponent_may_draw() {
     let drawn =
         g.player(P1).hand.len() - h1 + g.player(PlayerId(2)).hand.len() - h2 + g.player(PlayerId(3)).hand.len() - h3;
     assert_eq!(drawn, 1, "exactly one opponent drew");
-    // that opponent drew on our turn: Scions' Secretary made a tapped Treasure, which arrives at our next upkeep
-    assert_eq!(g.player(P0).treasures, 0, "tapped: not usable yet");
-    sim_core::engine::hooks::fire_trigger(
-        &mut g,
-        sim_core::hooks::Event::Upkeep,
-        sim_core::hooks::Call::Player { p: P0 },
-    )
-    .unwrap();
-    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
-    assert_eq!(g.player(P0).treasures, 1);
+    // that opponent drew on our turn: Scions' Secretary made a tapped Treasure
+    assert_eq!((g.player(P0).treasures, g.player(P0).tapped_treasures), (1, 1), "a tapped Treasure");
+    assert_eq!(g.player(P0).live_treasures(), 0, "no mana from it yet");
 }
 
 #[test]
@@ -154,22 +147,22 @@ fn scions_secretary_once_a_turn_and_not_on_their_own_turn() {
     let mut g = tbl();
     let t = perm(&mut g, P0, "Tataru Taru");
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
-    g.perm_mut(t).data.set(sim_core::state::DataKey::Charge, sim_core::state::Val::Int(0));
+    let base = g.player(P0).treasures;
     set_library(&mut g, P1, &["Mountain", "Mountain", "Mountain", "Mountain"]);
     g.active = Some(P1);
     sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
-    assert_eq!(g.perm(t).data.get(sim_core::state::DataKey::Charge).map_or(0, |v| v.int()), 0, "their own turn");
+    assert_eq!(g.player(P0).treasures, base, "their own turn");
     g.active = Some(P0);
     g.round = 2; // (a new turn: the Treasure from the enter-trigger draw used the first turn's)
+    let base = g.player(P0).treasures;
     for _ in 0..3 {
         sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
         sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     }
-    assert_eq!(g.perm(t).data.get(sim_core::state::DataKey::Charge).map_or(0, |v| v.int()), 1, "once each turn");
-    sim_core::engine::zones::die(&mut g, t, "destroy").unwrap();
-    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
-    assert_eq!(g.player(P0).treasures, 1, "Tataru left: the Treasure appears");
+    assert_eq!(g.player(P0).treasures, base + 1, "once each turn");
+    assert_eq!(g.player(P0).tapped_treasures, g.player(P0).treasures, "all tapped");
+    let _ = t;
 }
 
 // ======================================================== Teferi, Who Slows the Sunset
@@ -253,6 +246,8 @@ fn spider_woman_makes_opposing_artifacts_and_creatures_enter_tapped() {
     assert!(!g.perm(mine).tapped, "our own artifact is untouched");
     let own_tok = token(&mut g, P0, 2);
     assert!(!g.perm(own_tok).tapped);
+    sim_core::engine::zones::add_treasure(&mut g, P1, 1).unwrap();
+    assert_eq!(g.player(P1).tapped_treasures, 1, "an opposing Treasure enters tapped");
     let enchant = perm(&mut g, P1, "Rhystic Study");
     assert!(!g.perm(enchant).tapped, "an enchantment is not an artifact or creature");
 }

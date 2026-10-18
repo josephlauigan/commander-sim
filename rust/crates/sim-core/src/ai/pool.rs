@@ -697,9 +697,15 @@ fn dispute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     // the sacrificed Treasure can't also pay for the spell (Python pays first and can sacrifice a Treasure it spent,
     // leaving -1 Treasures; a u32 here would wrap to four billion)
     let tre = fod == Some(Fodder::Treasure);
-    g.player_mut(p).treasures -= tre as u32;
+    let saved = g.player(p).tapped_treasures;
+    if tre {
+        g.player_mut(p).sac_treasure();
+    }
     if !can_pay(g, p, gn, &pips, false) {
-        g.player_mut(p).treasures += tre as u32;
+        if tre {
+            g.player_mut(p).treasures += 1;
+            g.player_mut(p).tapped_treasures = saved;
+        }
         return Ok(false);
     }
     pay(g, p, gn, &pips, false)?;

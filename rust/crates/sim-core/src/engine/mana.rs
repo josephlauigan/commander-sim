@@ -202,7 +202,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
         }
     }
-    let tre = if no_art_mana { 0 } else { pl.treasures };
+    let tre = if no_art_mana { 0 } else { pl.live_treasures() };
     let bonus = if hooked { hooks::total_count(g, Event::TreasureBonus, p) } else { 0 };
     for _ in 0..tre {
         u.push(Unit { src: Source::Treasure, cols: ident, amt: (1 + bonus).max(0) as u32 });

@@ -8680,7 +8680,7 @@ note = "whenever an opponent casts their first noncreature spell each turn (per 
 
 ["Tataru Taru"]
 status = "Full"
-note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure, once each turn - kept on Tataru and added at its controller's next upkeep (when a tapped Treasure would untap), or at once if Tataru leaves"
+note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure for you, once each turn (tapped_treasures: no mana from it until your untap step; it can still be sacrificed)"
 
 ["Teferi, Who Slows the Sunset"]
 dsl = []
@@ -8689,7 +8689,7 @@ note = "+1: the best of one artifact, one creature and one land (ours tapped: un
 
 ["Spider-Woman, Stunning Savior"]
 status = "Partial"
-note = "flying 2/2; artifact and creature permanents and creature tokens that enter under an opponent's control are tapped as they enter (the enter and tokens-enter events, t6_legends2.rs). Opponents' Treasure / Food / Clue tokens (counters here) still enter untapped (engine-needs-legends2.md)"
+note = "flying 2/2; Venom Blast: artifact and creature permanents and tokens that enter under an opponent's control enter tapped (enters_tapped replacement slot, t6_legends2.rs), opposing Treasures too. Only Food and Clue tokens (counters here) still enter untapped"
 
 ["Ertai Resurrected"]
 status = "Partial"
@@ -8808,7 +8808,7 @@ note = "split second is real (while it is on the stack nobody can cast spells, a
 
 ["Blind Obedience"]
 status = "Partial"
-note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures are tapped right after they enter (etb and tokens_enter hooks) instead of entering tapped: no replacement effect in the engine (rust/agents/engine-needs-stax.md); Treasure/Food/Clue tokens are counters here and are not tapped"
+note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures (tokens too) enter tapped as a real replacement (enters_tapped slot, applied before any enters trigger), Treasure tokens too (a tapped Treasure makes no mana until its owner untaps). Only Food and Clue tokens (counters here) still enter untapped: a tapped Food could not be sacrificed for life until it untaps (not modeled)"
 
 ["Damping Sphere"]
 status = "Partial"

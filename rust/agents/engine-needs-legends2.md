@@ -15,6 +15,7 @@ Card side done: +1 and -2 are complete; the -7 ability pushes the emblem (`tefer
 Test to add once the engine has it: with the emblem, an opponent's untap step untaps our lands and their draw step draws us a card.
 
 ## Spider-Woman, Stunning Savior
+DONE by t6-e-tapped (tapped_treasures + enters_tapped slot; Tataru uses make_artifact_tokens_tapped). Food/Clue still untapped.
 Needs: tapped artifact tokens: Treasure / Food / Clue are counters on the player (`treasures`, `foods`, `clues`), so "create a tapped Treasure" and "artifacts your opponents control enter tapped" cannot be told for them. A `tapped_treasures` count (untapped at the owner's untap step) would serve this card and Tataru Taru's Scions' Secretary (which now keeps its Treasure on the card until the next upkeep).
 Where it would hook: `state.rs` Player, `engine/zones.rs::make_artifact_tokens`, the untap step in `engine/turn.rs`, and the mana code that spends Treasures.
 Card side done: opposing artifact and creature permanents and creature tokens enter tapped (`spider_etb` on the enter event, `spider_tokens` on the tokens-enter event; both run at once).

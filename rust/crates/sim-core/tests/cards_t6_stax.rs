@@ -1,7 +1,7 @@
 //! Tier 6 "stax" batch (impls/t6_stax.rs): each card on a hand-built position with its Oracle text as the
 //! expectation.
 
-use sim_core::engine::mana::cost_of;
+use sim_core::engine::mana::{cost_of, total_mana};
 use sim_core::ids::PlayerId;
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -190,7 +190,6 @@ fn obedience_extort_does_not_trigger_on_an_opponents_spell() {
 }
 
 // ======================================================== Damping Sphere
-use sim_core::engine::mana::total_mana;
 
 #[test]
 fn sphere_makes_two_mana_lands_produce_one() {
@@ -279,4 +278,33 @@ fn angels_grace_has_split_second_so_nobody_responds_or_casts_while_it_is_on_the_
     assert!(!can_cast(&g, P0, "Lightning Bolt"), "not even its caster");
     g.stack.clear();
     assert!(can_cast(&g, P1, "Lightning Bolt"));
+}
+
+// ======================================================== enters tapped: Treasures (engine mechanism)
+#[test]
+fn obedience_makes_opposing_treasures_tapped_until_their_untap_step() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Blind Obedience");
+    lands(&mut g, P1, "Plains", 1, false);
+    let before = total_mana(&g, P1, false);
+    sim_core::engine::zones::add_treasure(&mut g, P1, 2).unwrap();
+    assert_eq!((g.player(P1).treasures, g.player(P1).tapped_treasures), (2, 2), "enter tapped");
+    assert_eq!(total_mana(&g, P1, false), before, "a tapped Treasure can't be tapped for mana");
+    sim_core::engine::zones::add_treasure(&mut g, P0, 1).unwrap();
+    assert_eq!(g.player(P0).tapped_treasures, 0, "its controller's own Treasure is untapped");
+    assert_eq!(total_mana(&g, P0, false), 1);
+    // a tapped Treasure can still be sacrificed as a cost; the tapped one goes first
+    g.player_mut(P1).treasures += 1; // a third, untapped
+    g.player_mut(P1).sac_treasure();
+    assert_eq!((g.player(P1).treasures, g.player(P1).tapped_treasures), (2, 1));
+    assert_eq!(g.player(P1).live_treasures(), 1);
+}
+
+#[test]
+fn blind_obedience_object_enters_tapped_before_its_enters_trigger_sees_it() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Blind Obedience");
+    // Goblin Guide has haste but enters tapped: the replacement is applied as it is created
+    let gg = perm(&mut g, P1, "Goblin Guide");
+    assert!(g.perm(gg).tapped);
 }

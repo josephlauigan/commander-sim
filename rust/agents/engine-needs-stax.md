@@ -27,6 +27,7 @@ Card side done: resolving sets the turn flag; `grace_active` and `grace_floor` a
 Test to add once the engine has it: at 3 life, Angel's Grace in response to lethal damage leaves the player at 1 and alive; no response can be cast while it is on the stack.
 
 ## Blind Obedience
+DONE by t6-e-tapped: `enters_tapped` slot (hooks.rs), `engine/hooks.rs::enters_tapped`, applied in `zones::enter` and `make_tokens`; Treasures via `Player.tapped_treasures`. Food/Clue still untapped.
 Needs: "enters tapped" as a replacement effect for a class of permanents (an opponent's artifacts and creatures), applied before the permanent is created: the same item `engine-needs-copies.md` / Thalia, Heretic Cathar's approximation share. Reuse that general hook, not a card-specific one.
 Where it would hook: `engine/zones.rs::enter` (before `new_perm`) and `make_tokens` (before the tokens' enter triggers), asking a new `enters_tapped(g, src, owner, perm_or_card)` slot on battlefield cards.
 Card side done: extort (pay {W}, else {B}, with spare mana as Crypt Ghast's does; each opponent loses 1, the controller gains the total) and the tap right after entering through `etb` (cards and artifacts) and `tokens_enter` (creature tokens), `impls/t6_stax.rs`; the same stand-in as Thalia, Heretic Cathar (`common.rs::thalia_hc`).
