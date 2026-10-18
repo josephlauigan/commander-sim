@@ -672,19 +672,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     if g.dsl_on {
         crate::dsl::fire(g, "end_step", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
     }
-    for m in std::mem::take(&mut g.player_mut(p).borrowed) {
-        // Zealous Conscripts: control returns
-        let orig = g.perm(m).orig;
-        if g.perm(m).on_bf && g.perm(m).owner == p && g.player(orig).alive {
-            g.player_mut(p).perms.retain(|&x| x != m);
-            g.perm_mut(m).owner = orig;
-            g.player_mut(orig).perms.push(m);
-            g.bf_ver += 1;
-            if g.perm_mut(m).data.remove(crate::state::DataKey::TapOnReturn).is_some_and(|v| v.truthy()) {
-                g.perm_mut(m).tapped = true; // Ray of Command
-            }
-        }
-    }
+    crate::engine::control::return_borrowed(g, p); // Zealous Conscripts: control returns
     if g.monarch == Some(p) {
         draw(g, p, 1, false)?; // the monarch draws
     }

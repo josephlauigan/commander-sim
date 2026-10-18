@@ -252,7 +252,7 @@ pub fn substitute(g: &mut Game, id: u32, m: PermId) -> Res<bool> {
     }
     let (sp, cp) = (it.controller, g.perm(m).owner);
     crate::glog!(g, "    {} exchanges {} and {}", pname(g, sp), cname(g, c), g.perm(m).name);
-    crate::impls::marchesa::steal(g, sp, m, false);
+    crate::engine::control::gain_control(g, sp, m, crate::engine::control::Duration::Permanent);
     let it = &mut g.stack[i];
     it.ctx.owner.get_or_insert(sp);
     it.controller = cp;

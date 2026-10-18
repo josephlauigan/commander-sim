@@ -544,15 +544,7 @@ fn conscripts(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         if crate::ai::protect_response(g, q, t, "steal", Some(o), cd)? || !g.perm(t).on_bf {
             return Ok(());
         }
-        let q = owner(g, t);
-        g.player_mut(q).perms.retain(|&x| x != t);
-        let x = g.perm_mut(t);
-        x.owner = o;
-        x.tapped = false;
-        x.sick = false;
-        g.player_mut(o).perms.push(t);
-        g.bf_ver += 1;
-        g.player_mut(o).borrowed.push(t);
+        crate::engine::control::gain_control(g, o, t, crate::engine::control::Duration::EndOfTurn);
     }
     Ok(())
 }

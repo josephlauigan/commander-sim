@@ -420,3 +420,62 @@ fn preston_with_felidar_guardian_is_capped_instead_of_overflowing() {
         g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
     assert_eq!(before, after, "capped: no more copies this turn");
 }
+
+// ======================================================== control change and goad (engine verbs)
+#[test]
+fn gain_control_until_end_of_turn_untaps_hastes_and_returns_at_the_end_step() {
+    use sim_core::engine::control::{Duration, gain_control, return_borrowed};
+    let mut g = game();
+    let m = perm(&mut g, P1, "Serra Angel");
+    g.perm_mut(m).tapped = true;
+    assert!(gain_control(&mut g, P0, m, Duration::EndOfTurn));
+    assert_eq!(g.perm(m).owner, P0);
+    assert!(!g.perm(m).tapped && !g.perm(m).sick);
+    assert!(g.player(P0).perms.contains(&m) && !g.player(P1).perms.contains(&m));
+    return_borrowed(&mut g, P0);
+    assert_eq!(g.perm(m).owner, P1);
+    assert!(g.player(P1).perms.contains(&m) && !g.player(P0).perms.contains(&m));
+}
+
+#[test]
+fn permanent_gain_control_is_sick_and_never_returns() {
+    use sim_core::engine::control::{Duration, gain_control, return_borrowed};
+    let mut g = game();
+    let m = perm(&mut g, P1, "Serra Angel");
+    gain_control(&mut g, P0, m, Duration::EndOfTurn);
+    gain_control(&mut g, P0, m, Duration::Permanent); // the longer effect wins
+    return_borrowed(&mut g, P0);
+    assert_eq!(g.perm(m).owner, P0);
+}
+
+#[test]
+fn forever_goad_outlasts_the_goaders_turns_but_a_normal_goad_lapses() {
+    use sim_core::engine::control::{GoadFor, goad};
+    let mut g = game();
+    let a = perm(&mut g, P1, "Serra Angel");
+    let b = perm(&mut g, P1, "Serra Angel");
+    goad(&mut g, P0, a, GoadFor::Forever);
+    goad(&mut g, P0, b, GoadFor::NextTurn);
+    g.player_mut(P0).turns += 2;
+    assert_eq!(sim_core::impls::t0_zurgo::goaded_by(&g, a), Some(P0));
+    assert_eq!(sim_core::impls::t0_zurgo::goaded_by(&g, b), None);
+}
+
+#[test]
+fn dacks_donated_creatures_stay_goaded_after_two_of_his_turns() {
+    let mut g = table(&["dack-fayden-white-stax", "seph", "sheoldred", "yshtola"]);
+    g.active = Some(P0);
+    stack_library(&mut g, P0, &["Serra Angel", "Plains", "Serra Angel", "Plains", "Serra Angel", "Plains"]);
+    let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
+    g.player_mut(P0).turns += 2;
+    let mut n = 0;
+    for q in [PlayerId(1), PlayerId(2), PlayerId(3)] {
+        for &m in &g.player(q).perms {
+            if g.perm(m).orig == P0 {
+                assert_eq!(sim_core::impls::t0_zurgo::goaded_by(&g, m), Some(P0));
+                n += 1;
+            }
+        }
+    }
+    assert_eq!(n, 3);
+}

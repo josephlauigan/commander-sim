@@ -17,6 +17,7 @@
 pub mod altcost;
 pub mod cast;
 pub mod combat;
+pub mod control;
 pub mod hooks;
 pub mod life;
 pub mod mana;

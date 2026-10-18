@@ -252,7 +252,7 @@ fn loki_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if crate::ai::protect_response(g, q, t, "steal", Some(o), cd)? || !g.perm(t).on_bf {
         return Ok(());
     }
-    super::marchesa::steal(g, o, t, true);
+    crate::engine::control::gain_control(g, o, t, crate::engine::control::Duration::EndOfTurn);
     Ok(())
 }
 
