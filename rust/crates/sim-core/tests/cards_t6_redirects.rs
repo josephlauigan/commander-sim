@@ -201,3 +201,18 @@ fn pyrokinesis_alternative_cost_exiles_a_red_card() {
     assert!(in_hand(&g, P0, "Pyrokinesis") && in_hand(&g, P0, "Island"));
     assert!(!t6::pay_pyro_pitch(&mut g, P0, c).unwrap(), "no red card left");
 }
+
+// ======================================================== Scout's Warning
+#[test]
+fn scouts_warning_draws_and_grants_flash_to_the_next_creature() {
+    let mut g = game();
+    g.active = Some(P0);
+    let before = g.player(P0).hand.len();
+    cast_free(&mut g, P0, "Scout's Warning", sim_core::state::Ctx::default());
+    assert_eq!(g.player(P0).hand.len(), before + 1, "the Warning left the hand, one card was drawn");
+    assert!(in_gy(&g, P0, "Scout's Warning"));
+    assert!(t6::scout_flash_active(&g, P0));
+    assert!(!t6::scout_flash_active(&g, P1), "only the caster");
+    t6::scout_flash_used(&mut g, P0);
+    assert!(!t6::scout_flash_active(&g, P0));
+}

@@ -8398,3 +8398,7 @@ note = "destroys the targeted opposing artifact, else (no artifact chosen) up to
 tags = "rem=dmg4 tgt=c"
 status = "Partial"
 note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); the pitch cost (exile a red card from hand) is t6_redirects::pay_pyro_pitch; missing: the engine casts it only for {4}{R}{R} (alternative-cost hook)"
+
+["Scout's Warning"]
+status = "Partial"
+note = "draws a card and sets the caster's turn flag t6_redirects::scout_flash_active (the next creature card this turn can be played with flash); missing: the engine does not read the flag yet, so creature cards still wait for sorcery timing (engine need)"

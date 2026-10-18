@@ -25,3 +25,9 @@ Needs: a per-card alternative cost for a hand spell (also asked for by `engine-n
 Where it would hook: `engine/cast.rs` where `cost_of` / `pay` run for a hand spell, and the AI's instant-speed removal in `ai/`.
 Card side done: `pay_pyro_pitch` / `red_pitch` (exile the least useful red card), `pyro_split` and `pyro_resolve` (divided damage). The card carries `rem=dmg4 tgt=c` so the AI casts it as 4-damage removal for its mana cost.
 Test to add once the engine has it: with a red card in hand and no mana, Pyrokinesis kills two 2/2s and the red card is exiled.
+
+## Scout's Warning
+Needs: "play this creature card as though it had flash" as a per-player turn grant: the cast-timing check for creature spells reads `t6_redirects::scout_flash_active` and calls `scout_flash_used` after the creature is cast.
+Where it would hook: `engine/cast.rs` `castable` (the timing test) and the AI's end-of-turn / in-response creature casting in `ai/`.
+Card side done: the draw and the turn flag (`scout_resolve`, `scout_flash_active`, `scout_flash_used`).
+Test to add once the engine has it: after the Warning, a creature card in hand is cast in the opponent's end step and the grant is spent.

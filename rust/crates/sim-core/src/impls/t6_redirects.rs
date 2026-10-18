@@ -230,9 +230,40 @@ fn pyro_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+
+// ================================================================== turn flags
+fn set_flag(g: &mut Game, p: PlayerId, key: Sym) {
+    let stamp = g.turn_stamp();
+    g.player_mut(p).flag_turn.insert(key, stamp);
+}
+
+fn flag_now(g: &Game, p: PlayerId, key: Sym) -> bool {
+    g.player(p).flag_turn.get(key) == Some(&g.turn_stamp())
+}
+
+// ================================================================== Scout's Warning
+/// p's next creature card this turn can be played as though it had flash (set by Scout's Warning; the engine's
+/// "can this card be cast now" check reads it, and calls `scout_flash_used` when a creature card is cast with it)
+pub fn scout_flash_active(g: &Game, p: PlayerId) -> bool {
+    flag_now(g, p, "scout_flash")
+}
+
+/// a creature card was played: the Warning's grant is spent
+pub fn scout_flash_used(g: &mut Game, p: PlayerId) {
+    g.player_mut(p).flag_turn.shift_remove("scout_flash");
+}
+
+/// Scout's Warning: the next creature card you play this turn can be played as though it had flash; draw a card
+fn scout_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    set_flag(g, p, "scout_flash");
+    crate::engine::zones::draw(g, p, 1, false)?;
+    Ok("gy")
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Untimely Malfunction")?.resolve = Some(malfunction_resolve);
     r.card(db, "Pyrokinesis")?.resolve = Some(pyro_resolve);
+    r.card(db, "Scout's Warning")?.resolve = Some(scout_resolve);
     Ok(())
 }
