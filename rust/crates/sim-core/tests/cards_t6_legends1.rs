@@ -147,3 +147,21 @@ fn cauldron_exiles_an_opponents_creature_card_for_a_counter() {
     assert_eq!(g.perm(me).plus, 1);
     assert!(options(&mut g, cau, P0, None).is_empty(), "tapped");
 }
+
+// ======================================================== Deadpool, Trading Card
+#[test]
+fn deadpool_sacrifices_to_dodge_its_own_drain_and_the_others_draw() {
+    let mut g = tbl();
+    let dp = perm(&mut g, P0, "Deadpool, Trading Card");
+    lands(&mut g, P0, "Swamp", 3, false);
+    assert!(options(&mut g, dp, P0, None).is_empty(), "life 40: keep the 5/3");
+    g.player_mut(P0).life = 5;
+    let o = options(&mut g, dp, P0, None);
+    assert_eq!(o.len(), 1);
+    let (h1, h2) = (g.player(P1).hand.len(), g.player(PlayerId(2)).hand.len());
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.perm(dp).on_bf, "sacrificed");
+    assert_eq!(g.player(P1).hand.len(), h1 + 1);
+    assert_eq!(g.player(PlayerId(2)).hand.len(), h2 + 1);
+    assert_eq!(g.player(P0).hand.len(), 0, "{{3}} paid, the owner does not draw");
+}

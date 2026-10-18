@@ -9,3 +9,9 @@ Needs: (1) a "spend mana as though any colour" player flag for activated abiliti
 Where it would hook: engine/mana.rs plan_pay (pay_for / ability context), and the options collection in ai/brain.rs for borrowed abilities
 Card side done: {T}: exile creature card from an opponent's graveyard (best by card_worth), +1/+1 counter on best own creature (options hook, t6_legends1.rs); data DSL (wrong "exile all graveyards") replaced by dsl = []
 Test to add once the engine has it: Cauldron with Sisay's exiled ability: a creature with a counter offers Sisay's activation, paid with any colours
+
+## Deadpool, Trading Card
+Needs: replace a permanent's text box (abilities, compiled triggers, hook slots) with another permanent's, as it enters (a per-permanent "ability source card" indirection for registry lookups)
+Where it would hook: hooks.rs Registry lookup by card (hooked(), imp_of) and the enters path (as_enters slot, hooks.rs AsEntersFn)
+Card side done: 5/3, upkeep lose 3 life, {3} sacrifice: other players draw (options hook, t6_legends1.rs)
+Test to add once the engine has it: Deadpool entering swaps with an opposing 1/1 Spirit token that has the drain upkeep trigger; the Spirit's controller loses 3 life at their upkeep and Deadpool has a Spirit's (blank) text

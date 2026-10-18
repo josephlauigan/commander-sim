@@ -8591,3 +8591,7 @@ note = "{3}: blink another creature you control (compiled); whenever another cre
 dsl = []
 status = "Partial"
 note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter on the best creature (AI, second main / end step); missing: spend mana as any colour on creature abilities, and creatures with +1/+1 counters gaining the exiled creatures' activated abilities (t6_legends1.rs)"
+
+["Deadpool, Trading Card"]
+status = "Partial"
+note = "5/3; upkeep: lose 3 life (compiled); {3}, sacrifice: each other player draws (AI uses it at 6 life or less); missing: the as-enters text box exchange with another creature (t6_legends1.rs)"

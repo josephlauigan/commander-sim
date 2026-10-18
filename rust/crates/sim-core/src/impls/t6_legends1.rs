@@ -5,7 +5,7 @@
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::zones::{draw, max_by};
+use crate::engine::zones::{die, draw, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{PermId, PlayerId};
@@ -227,6 +227,34 @@ fn cauldron_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Deadpool, Trading Card
+/// **Deadpool, Trading Card**: at the beginning of your upkeep you lose 3 life (compiled from the Oracle text);
+/// {3}, sacrifice it: each other player draws a card. The AI sacrifices it only to stop the drain from killing it
+/// (life 6 or less) with {3} spare. Not modeled: "as it enters, you may exchange its text box and another creature's"
+/// (see engine-needs-legends1.md).
+fn deadpool_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(true) || !live(g, src) || owner(g, src) != p || g.player(p).life > 6 || !can_pay(g, p, 3, "", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 4.0,
+        label: "sacrifice Deadpool (each other player draws)".into(),
+        act: Some(Action::Ability { src, f: deadpool_go, arg: 0 }),
+    }])
+}
+
+fn deadpool_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !live(g, src) || owner(g, src) != p || !pay(g, p, 3, "", false)? {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} sacrifices Deadpool", g.player(p).name);
+    die(g, src, "sac")?;
+    for q in g.opps(p).collect::<Vec<_>>() {
+        draw(g, q, 1, false)?;
+    }
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), String> {
     let c = r.card(db, "Derevi, Empyrial Tactician")?;
     c.etb = Some(derevi_etb);
@@ -236,5 +264,6 @@ pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), Strin
     c.etb = Some(selvala_etb);
     c.dyn_mana_perm = Some(selvala_mana);
     r.card(db, "Agatha's Soul Cauldron")?.options = Some(cauldron_options);
+    r.card(db, "Deadpool, Trading Card")?.options = Some(deadpool_options);
     Ok(())
 }
