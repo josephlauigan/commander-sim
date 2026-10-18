@@ -8518,3 +8518,7 @@ note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cyclin
 ["Noxious Revival"]
 status = "Full"
 note = "{G/P} (the engine pays 2 life when no green mana is free); puts a graveyard card on top of its owner's library: the AI takes the best nonland card of its own graveyard (a creature first) and casts it only when one is there (t6_green2)"
+
+["Sowing Mycospawn"]
+status = "Partial"
+note = "3/3 body; the cast trigger (even if the spell is countered) fetches a land onto the battlefield (Gaea's Cradle with two creatures out, else the land adding the most new colours) and shuffles; missing: kicker {1}{C} and its exile-target-land half (written as t6_green2::mycospawn_kicked, not yet called) and devoid colourlessness"

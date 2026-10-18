@@ -3,6 +3,7 @@
 
 use sim_core::engine::cast;
 use sim_core::ids::{CardId, PermId, PlayerId};
+use sim_core::impls::t6_green2 as t6;
 use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;
 
@@ -137,4 +138,45 @@ fn noxious_revival_with_an_empty_graveyard_just_goes_to_the_graveyard() {
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).library.len(), lib);
     assert!(in_gy(&g, P0, "Noxious Revival"));
+}
+
+// ======================================================== Sowing Mycospawn
+fn lib_has(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).library.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+#[test]
+fn mycospawn_cast_fetches_a_land_onto_the_battlefield() {
+    let mut g = game();
+    let c = hand(&mut g, P0, &["Sowing Mycospawn"])[0];
+    let lib_lands = g.player(P0).library.iter().filter(|&&x| g.db.get(x).land).count();
+    assert!(lib_lands > 0);
+    let n = g.player(P0).lands.len();
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(g.player(P0).lands.len() > n, "a land came from the library");
+    assert!(g.player(P0).library.iter().filter(|&&x| g.db.get(x).land).count() < lib_lands);
+    assert!(on_bf(&g, P0, "Sowing Mycospawn").is_some(), "the 3/3 resolves too");
+}
+
+#[test]
+fn mycospawn_prefers_gaea_s_cradle_with_creatures_out() {
+    let mut g = game();
+    perm(&mut g, P0, "Birds of Paradise");
+    perm(&mut g, P0, "Birds of Paradise");
+    if !lib_has(&g, P0, "Gaea's Cradle") {
+        let c = card(&g, "Gaea's Cradle");
+        g.player_mut(P0).library.push(c);
+    }
+    let cr = card(&g, "Gaea's Cradle");
+    assert_eq!(t6::mycospawn_pick(&g, P0), Some(cr));
+}
+
+#[test]
+fn mycospawn_kicked_exiles_the_best_opposing_land() {
+    let mut g = game();
+    lands(&mut g, P1, "Forest", 2, false);
+    lands(&mut g, P1, "Command Tower", 1, false);
+    t6::mycospawn_kicked(&mut g, P0).unwrap();
+    assert_eq!(g.player(P1).lands.len(), 2);
+    assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Command Tower"));
 }

@@ -7,6 +7,7 @@ After override edit: rust/target/release/cardgen audit --deck rograkh-thrasios-c
 - Chatterstorm: Full (self_cast -> t0_stella::storm_copies; token from compiled spell)
 - Cloud of Faeries: Full (etb hook untaps 2 lands; cycling = hand_options Plan)
 - Noxious Revival: Full (resolve: best own gy nonland card to library top; Phyrexian mana is engine-supported; note cast_card does not pay mana; hand() takes cards out of the library)
+- Sowing Mycospawn: Partial (kicker missing; fetch via self_cast; engine-needs-green2.md written). Fetch picks fetchlands fine (engine cracks)
 ## Next (order)
 Noxious Revival, Sowing Mycospawn, Endurance, Enduring Vitality, Cabbage Merchant, Shifting Woodland, Invasion of Ikoria
 ## Gotchas
