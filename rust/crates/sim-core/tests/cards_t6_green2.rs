@@ -354,3 +354,64 @@ fn merchant_foods_untap_at_its_controllers_upkeep() {
     f(&mut g, m, P0).unwrap();
     assert_eq!(t6::foods_untapped(&g, m), 2);
 }
+
+// ======================================================== Shifting Woodland
+use sim_core::ids::LandId;
+
+fn woodland(g: &mut Game, p: PlayerId) -> LandId {
+    let c = card(g, "Shifting Woodland");
+    g.add_land(p, c, false)
+}
+
+#[test]
+fn woodland_enters_tapped_unless_you_control_a_forest() {
+    let mut g = game();
+    let c = card(&g, "Shifting Woodland");
+    assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c), "no Forest: tapped");
+    lands(&mut g, P0, "Island", 2, false);
+    assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c), "Islands don't count");
+    lands(&mut g, P0, "Forest", 1, false);
+    assert!(!sim_core::engine::turn::land_enters_tapped(&g, P0, c), "with a Forest: untapped");
+}
+
+#[test]
+fn woodland_taps_for_green() {
+    let mut g = game();
+    woodland(&mut g, P0);
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "G", false));
+}
+
+#[test]
+fn delirium_needs_four_card_types_in_the_graveyard() {
+    let mut g = game();
+    fill_gy(&mut g, P0, &["Opt", "Eternal Witness", "Sol Ring"]);
+    assert!(!t6::delirium(&g, P0), "instant, creature, artifact");
+    fill_gy(&mut g, P0, &["Forest"]);
+    assert!(t6::delirium(&g, P0), "plus a land");
+}
+
+#[test]
+fn woodland_becomes_a_copy_of_oboro_with_delirium() {
+    let mut g = game();
+    let l = woodland(&mut g, P0);
+    lands(&mut g, P0, "Forest", 4, false);
+    fill_gy(&mut g, P0, &["Oboro Breezecaller", "Opt", "Sol Ring", "Forest"]);
+    let f = g.registry.get(g.land(l).cd).and_then(|i| i.land_options).expect("land option");
+    let opts = f(&mut g, l, P0, Some(false)).unwrap();
+    assert_eq!(opts.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    let copy = on_bf(&g, P0, "Oboro Breezecaller").expect("a copy of Oboro");
+    assert!(g.perm(copy).temp && !g.perm(copy).sick, "until end of turn, and not summoning sick");
+    assert!(g.land(l).tapped, "the land is the creature: no mana from it as a land");
+    assert!(in_gy(&g, P0, "Oboro Breezecaller"), "the card stays in the graveyard");
+}
+
+#[test]
+fn woodland_does_nothing_without_delirium() {
+    let mut g = game();
+    let l = woodland(&mut g, P0);
+    lands(&mut g, P0, "Forest", 4, false);
+    fill_gy(&mut g, P0, &["Oboro Breezecaller", "Opt"]);
+    let f = g.registry.get(g.land(l).cd).and_then(|i| i.land_options).unwrap();
+    assert!(f(&mut g, l, P0, Some(false)).unwrap().is_empty());
+}

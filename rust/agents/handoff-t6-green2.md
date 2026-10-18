@@ -11,8 +11,9 @@ After override edit: rust/target/release/cardgen audit --deck rograkh-thrasios-c
 - Endurance: Full (etb bottoms a graveyard; evoke via hand_options like rules2 Solitude; flash tag already handled by AI)
 - Enduring Vitality: Partial (extra_mana hook gives any-colour mana to all creatures; returns once, marked DataKey::Final; non-creature override is an engine need)
 - The Cabbage Merchant: Full (cast+combat_damage hooks; Food mana via extra_mana + on_tap_perm, tapped foods in DataKey::Burden, reset at upkeep)
+- Shifting Woodland: Partial (delirium copy = tapped land + temp token copy via enter_token_copy; ETB wrongly fires)
 ## Next (order)
-Shifting Woodland, Invasion of Ikoria // Zilortha, then report + full cargo test
+Invasion of Ikoria // Zilortha, then report + full cargo test
 ## Gotchas
 - "cast trigger" = self_cast hook; storm_copies reusable. Engine needs go to rust/agents/engine-needs-green2.md
 - cast_card in tests doesn't pay mana; hand() removes the card from the library; glog needs g.log=Some(vec![]) to inspect

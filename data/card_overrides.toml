@@ -8534,3 +8534,7 @@ note = "3/3 vigilance; every untapped, non-summoning-sick creature you control t
 ["The Cabbage Merchant"]
 status = "Full"
 note = "an opponent's noncreature spell makes you a Food; a creature's combat damage to you sacrifices a Food; two untapped Foods tap for one mana of any colour (a source worth one mana per pair; the tapped Foods are counted on the Merchant and untap at your upkeep, the Merchant itself is not tapped). Approximation: the engine keeps Foods as a count, so a tapped Food can still be eaten with {2},{T}, sacrifice (t6_green2)"
+
+["Shifting Woodland"]
+status = "Partial"
+note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the AI has it become a copy of the best creature card there (Oboro Breezecaller first) in its first main phase; missing: it is modelled as the land tapped plus a temporary token copy (exiled at the end step), so the copy's enters triggers wrongly fire and only creature cards are chosen"

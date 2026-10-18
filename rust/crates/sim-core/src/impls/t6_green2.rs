@@ -8,21 +8,24 @@
 //! - Sowing Mycospawn: the cast trigger fetches a land; the kicked exile is `mycospawn_kicked` (needs engine kicker).
 //! - Endurance: flash is the card's tag; the enters effect and evoke (exile a green card, sacrificed) are here.
 //! - Enduring Vitality: every creature taps for any colour (extra_mana); dies as a creature: back as an enchantment.
+//! - Shifting Woodland: enters tapped unless you control a Forest and {T}: {G} are data; the delirium copy is a land option.
 //! - The Cabbage Merchant: Food on opposing noncreature casts, Food sacrificed on combat damage to you, two Foods tap for
 //!   one mana (the tapped count lives on the Merchant, DataKey::Burden, reset at its controller's upkeep).
 
-use crate::cards::{CardDb, Colors};
+use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::on_cast;
 use crate::engine::mana::{Source, Unit, cost_of, land_colors_now};
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::trigger_window;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::zones::{Enter, die, discard_cards, draw, enter, make_artifact_tokens, max_by, min_by};
+use crate::engine::zones::{
+    Enter, die, discard_cards, draw, enter, enter_token_copy, make_artifact_tokens, max_by, min_by,
+};
 use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::impls::common::sac_food;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
@@ -385,6 +388,105 @@ fn merchant_untap(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
+// ================================================================== Shifting Woodland
+const WOODLAND: &str = "Shifting Woodland";
+
+/// Delirium: four or more card types among the cards in p's graveyard
+pub fn delirium(g: &Game, p: PlayerId) -> bool {
+    let mut types = 0u8;
+    for &c in &g.player(p).gy {
+        let d = g.db.get(c);
+        for (on, bit) in [
+            (d.land, 1u8),
+            (d.creature, 2),
+            (d.instant, 4),
+            (d.sorcery, 8),
+            (d.types.has(Types::ARTIFACT), 16),
+            (d.types.has(Types::ENCHANTMENT), 32),
+            (d.types.has(Types::PLANESWALKER), 64),
+        ] {
+            if on {
+                types |= bit;
+            }
+        }
+    }
+    types.count_ones() >= 4
+}
+
+/// the permanent card in p's graveyard the AI has Shifting Woodland copy: the best creature card (Oboro Breezecaller
+/// first: recursion for the Cradle line), not a legend p already controls
+pub fn woodland_pick(g: &Game, p: PlayerId) -> Option<CardId> {
+    let cands: Vec<CardId> = g
+        .player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| {
+            let d = g.db.get(c);
+            d.creature
+                && !(d.tag(Tag::Leg)
+                    && g.player(p)
+                        .perms
+                        .iter()
+                        .any(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|x| g.db.get(x).name == d.name)))
+        })
+        .collect();
+    max_by(&cands, |c| {
+        let d = g.db.get(c);
+        let oboro = if &*d.name == "Oboro Breezecaller" { 100.0 } else { 0.0 };
+        oboro + card_worth(g, p, c, true) + d.cmc as f64
+    })
+}
+
+/// Delirium {2}{G}{G}: this land becomes a copy of target permanent card in your graveyard until end of turn. The AI
+/// does it in its first main phase when the delirium is there, the mana is spare and a creature card is worth copying.
+fn woodland_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false) || g.active != Some(p) || !g.player(p).lands.contains(&l) || g.land(l).tapped {
+        return Ok(vec![]);
+    }
+    if !delirium(g, p) || !can_pay(g, p, 2, "GG", false) {
+        return Ok(vec![]);
+    }
+    let Some(t) = woodland_pick(g, p) else { return Ok(vec![]) };
+    if &*g.db.get(t).name != "Oboro Breezecaller" && card_worth(g, p, t, true) < 20.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 2.0,
+        label: format!("Shifting Woodland becomes {}", cname(g, t)),
+        act: Some(Action::Plan { f: woodland_go, arg: ((l.0 as i64) << 32) | t.0 as i64 }),
+    }])
+}
+
+fn woodland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let (l, t) = (LandId((arg >> 32) as u32), CardId((arg & 0xffff_ffff) as u16));
+    if !g.player(p).lands.contains(&l)
+        || !g.player(p).gy.contains(&t)
+        || !delirium(g, p)
+        || !can_pay(g, p, 2, "GG", false)
+    {
+        return Ok(false);
+    }
+    pay(g, p, 2, "GG", false)?;
+    if !ability_window(g, p, None, &format!("Shifting Woodland becomes a copy of {}", cname(g, t)), Some(3.0), None)? {
+        return Ok(true);
+    }
+    if !g.player(p).lands.contains(&l) || !g.player(p).gy.contains(&t) {
+        return Ok(true);
+    }
+    // the land is the creature now: it makes no mana as a land; it has been under its controller's control all along
+    g.land_mut(l).tapped = true;
+    crate::glog!(g, "  {} Shifting Woodland becomes a copy of {}", pname(g, p), cname(g, t));
+    if let Some(m) = enter_token_copy(g, p, t)?
+        && g.perm(m).on_bf
+    {
+        let x = g.perm_mut(m);
+        x.sick = false;
+        x.temp = true; // gone at the end step: the land is a land again
+    }
+    Ok(true)
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Chatterstorm")?.self_cast = Some(chatterstorm_cast);
@@ -407,5 +509,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.extra_mana = Some(merchant_mana);
     c.on_tap_perm = Some(merchant_tapped);
     c.upkeep = Some(merchant_untap);
+    r.card(db, WOODLAND)?.land_options = Some(woodland_options);
     Ok(())
 }
