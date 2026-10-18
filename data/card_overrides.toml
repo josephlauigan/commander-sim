@@ -8680,3 +8680,7 @@ note = "exiles all opponents' graveyards, exiles itself, and lets the caster cas
 ["Timetwister"]
 status = "Full"
 note = "each player shuffles hand and graveyard into the library and draws seven (cards held from an opponent go to their owner's library); Timetwister then goes to the graveyard (t6_blue.rs, tested)"
+
+["Demonic Counsel"]
+status = "Full"
+note = "searches for the Demon with the most worth, or any card (the deck's tutor pick) with delirium (4+ card types in the graveyard), then shuffles (t6_blue.rs, tested)"

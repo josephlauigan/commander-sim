@@ -5,10 +5,11 @@
 //! - Borne Upon a Wind: draw, and the one-turn "cast spells as though they had flash" flag (`t6_lands::FLASH_FLAG`).
 //! - Mnemonic Betrayal: opponents' graveyards are exiled and their nonland cards held in hand (any mana type) for the turn.
 //! - Timetwister: every player's hand and graveyard shuffled into their library, then seven cards drawn.
+//! - Demonic Counsel: a Demon search, or any card with delirium (four card types in the graveyard).
 
 use crate::cards::CardDb;
-use crate::engine::tutors::shuffle_library;
-use crate::engine::zones::draw;
+use crate::engine::tutors::{card_worth, shuffle_library, tutor};
+use crate::engine::zones::{agent_for, agent_take, draw, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::ids::{CardId, PlayerId};
@@ -86,8 +87,49 @@ fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res
 }
 
 
+// ================================================================== Demonic Counsel
+/// Demonic Counsel: search for a Demon card (any card with delirium: four or more card types in your graveyard),
+/// reveal it, put it into your hand, then shuffle. Delirium searches use the deck's own tutor pick; a plain Demon
+/// search takes the Demon the deck would value most (a card taken by Opposition Agent follows its rule).
+fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if crate::impls::t6_green2::delirium(g, p) {
+        tutor(g, p, "any")?;
+        return Ok("gy");
+    }
+    let is_demon = |g: &Game, c: CardId| g.db.get(c).has_subtype("demon");
+    if crate::human::is_human(g, p) {
+        let found = crate::human::choices::search(g, p, &|g: &Game, c: CardId| is_demon(g, c), 1, "Search your library for a Demon", true)?;
+        for c in found {
+            let pl = g.player_mut(p);
+            pl.hand.push(c);
+            pl.stat("tutored", 1);
+            pl.seen.insert(c);
+        }
+        return Ok("gy");
+    }
+    let cands: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| is_demon(g, c)).collect();
+    if let Some(c) = max_by(&cands, |c| card_worth(g, p, c, false)) {
+        let lib = &mut g.player_mut(p).library;
+        let i = lib.iter().position(|&x| x == c).unwrap();
+        lib.remove(i);
+        if let Some(a) = agent_for(g, p) {
+            agent_take(g, a, p, c);
+        } else {
+            let pl = g.player_mut(p);
+            pl.hand.push(c);
+            pl.stat("tutored", 1);
+            pl.seen.insert(c);
+            crate::glog!(g, "    {} tutors {} (Demonic Counsel)", g.player(p).name, g.db.get(c).name);
+        }
+    }
+    shuffle_library(g, p);
+    Ok("gy")
+}
+
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Demonic Counsel")?.resolve = Some(counsel_resolve);
     r.card(db, "Timetwister")?.resolve = Some(timetwister_resolve);
     r.card(db, "Borne Upon a Wind")?.resolve = Some(borne_resolve);
     r.card(db, "Mnemonic Betrayal")?.resolve = Some(betrayal_resolve);

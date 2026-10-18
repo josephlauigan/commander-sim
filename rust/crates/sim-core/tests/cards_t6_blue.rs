@@ -81,3 +81,42 @@ fn timetwister_wheels_every_player_for_seven() {
     let all = |g: &Game, q: PlayerId, c: CardId| g.player(q).library.contains(&c) || g.player(q).hand.contains(&c);
     assert!(all(&g, P0, a) && all(&g, P1, b), "the graveyard cards were shuffled in");
 }
+
+// ======================================================== Demonic Counsel
+fn lib_with(g: &mut Game, p: PlayerId, name: &str) -> CardId {
+    let c = take(g, p, name);
+    g.player_mut(p).library.push(c);
+    c
+}
+
+#[test]
+fn demonic_counsel_finds_a_demon_without_delirium() {
+    let mut g = game();
+    let demon = lib_with(&mut g, P0, "Doom Whisperer");
+    let other = lib_with(&mut g, P0, "Grave Titan");
+    cast_free(&mut g, P0, "Demonic Counsel");
+    assert!(g.player(P0).hand.contains(&demon));
+    assert!(!g.player(P0).hand.contains(&other), "only a Demon without delirium");
+    assert!(in_gy(&g, P0, "Demonic Counsel"));
+}
+
+#[test]
+fn demonic_counsel_without_a_demon_finds_nothing() {
+    let mut g = game();
+    lib_with(&mut g, P0, "Grave Titan");
+    let n = g.player(P0).hand.len();
+    cast_free(&mut g, P0, "Demonic Counsel");
+    assert_eq!(g.player(P0).hand.len(), n, "the card left, nothing came");
+}
+
+#[test]
+fn demonic_counsel_with_delirium_finds_any_card() {
+    let mut g = game();
+    for n in ["Island", "Grave Titan", "Lightning Bolt", "Sol Ring"] {
+        put_gy(&mut g, P0, n);
+    }
+    assert!(sim_core::impls::t6_green2::delirium(&g, P0));
+    let n = g.player(P0).hand.len();
+    cast_free(&mut g, P0, "Demonic Counsel");
+    assert_eq!(g.player(P0).hand.len(), n + 1, "one card was tutored");
+}
