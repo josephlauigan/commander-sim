@@ -5,6 +5,7 @@
 //! - Touch the Spirit Realm: the same, plus Channel (`touch_channel`).
 //! - Radiant Solar: venture (Lost Mine of Phandelver only) and its hand ability; Dack marks donated creatures.
 //! - Preston, the Vanisher: Illusion token copies of creatures that entered without being cast; the five-Illusion exile.
+//! - Dack Fayden, Helping Hand: the flip, shuffle, donation and goad.
 //!
 //!
 //! The banishers' enter hooks read "you" from the enter call's `p` (the player the creature entered under), not from
@@ -18,9 +19,11 @@ use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
 use crate::engine::removal::apply_removal;
-use crate::engine::values::{pval, untargetable};
-use crate::engine::zones::{Tokens, die, discard_cards, draw, enter_token_copy, exile_perm, make_tokens, max_by};
+use crate::engine::tutors::shuffle_library;
+use crate::engine::values::{pval, threat, untargetable};
+use crate::engine::zones::{Enter, Tokens, die, enter, discard_cards, draw, enter_token_copy, exile_perm, make_tokens, max_by};
 use crate::sym::intern;
+use crate::impls::marchesa::steal;
 use crate::impls::t2::flicker_worth;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -416,6 +419,91 @@ fn preston_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> 
     }])
 }
 
+// ================================================================== Dack Fayden, Helping Hand
+/// When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is
+/// the number of opponents you have. Put those creature cards onto the battlefield, then shuffle. They're goaded for
+/// the rest of the game. For each of those permanents, choose a different opponent. Each opponent gains control of
+/// the permanent for which they were chosen.
+///
+/// The order follows the rules: every creature enters under Dack's controller (so their enters triggers, Preston's
+/// and Radiant Solar's are queued as Dack's controller's), then each is given away (`mark_donated` records the giver
+/// for the queued triggers), then the triggers resolve with the opponents' creatures as legal targets. The AI hands
+/// the most valuable creature to the least threatening opponent. Goad lasts only until the goader's next turn here
+/// (`DataKey::Goaded` has no "rest of the game": engine need).
+fn dack_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m != src || !trigger_window(g, p, Some(src), "reveal creatures and give them away", Some(6.0))? {
+        return Ok(());
+    }
+    flip_and_donate(g, p)?;
+    Ok(())
+}
+
+/// Dack's ability for p: returns the permanents it put onto the battlefield (now owned by the opponents they went to).
+/// Triggers of the entering creatures wait (`g.resolving`, as for a resolving spell) until every creature has been
+/// given away, then go on the stack.
+pub fn flip_and_donate(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
+    g.resolving += 1;
+    let r = flip_and_donate_inner(g, p);
+    g.resolving -= 1;
+    let pile = r?;
+    if g.resolving == 0 && !g.trig_queue.is_empty() {
+        crate::engine::stack::flush_triggers(g)?;
+    }
+    Ok(pile)
+}
+
+fn flip_and_donate_inner(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let x = opps.len();
+    // reveal from the top (the end of the vector) until X creature cards are revealed; the rest stay in the library
+    let mut found: Vec<CardId> = vec![];
+    let mut i = g.player(p).library.len();
+    while i > 0 && found.len() < x {
+        i -= 1;
+        let c = g.player(p).library[i];
+        if g.db.get(c).creature {
+            found.push(c);
+        }
+    }
+    for c in &found {
+        let lib = &mut g.player_mut(p).library;
+        if let Some(i) = lib.iter().position(|x| x == c) {
+            lib.remove(i);
+        }
+    }
+    crate::glog!(
+        g,
+        "    Dack reveals {} creature cards: {}",
+        found.len(),
+        found.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ")
+    );
+    let mut pile = vec![];
+    for c in found {
+        pile.push(enter(g, p, c, Enter::default())?);
+    }
+    shuffle_library(g, p);
+    // the most valuable creature goes to the least threatening opponent; each opponent gets at most one
+    let mut order: Vec<PermId> = pile.iter().copied().filter(|&m| g.perm(m).on_bf).collect();
+    order.sort_by(|&a, &b| pval(g, b).partial_cmp(&pval(g, a)).unwrap_or(std::cmp::Ordering::Equal));
+    let mut who = opps;
+    who.sort_by(|&a, &b| threat(g, p, a).partial_cmp(&threat(g, p, b)).unwrap_or(std::cmp::Ordering::Equal));
+    let turns = g.player(p).turns as i64;
+    let mut given = vec![];
+    for (m, q) in order.into_iter().zip(who) {
+        mark_donated(g, m, p);
+        steal(g, q, m, false);
+        g.perm_mut(m).data.set(DataKey::Goaded, Val::List(vec![Val::Player(p), Val::Int(turns)]));
+        given.push(m);
+    }
+    for &m in &pile {
+        // a pile creature that left again (died to a state-based action) has nothing to goad
+        if g.perm(m).on_bf && !given.contains(&m) {
+            g.perm_mut(m).data.set(DataKey::Goaded, Val::List(vec![Val::Player(p), Val::Int(turns)]));
+        }
+    }
+    Ok(pile)
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Fiend Hunter")?;
@@ -433,6 +521,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     crate::impls::partials::at_once(c, crate::hooks::Event::Leaves, true);
     c.prio = Some(touch_prio);
     c.hand_options = Some(touch_hand);
+    r.card(db, "Dack Fayden, Helping Hand")?.etb = Some(dack_etb);
     let c = r.card(db, "Preston, the Vanisher")?;
     c.etb = Some(preston_etb);
     c.options = Some(preston_options);

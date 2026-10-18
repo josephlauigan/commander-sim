@@ -26,3 +26,15 @@ Needs: a recursion/loop cap for self-feeding enter triggers. Preston's Illusion 
 Where it would hook: `engine/zones.rs::enter` depth counter (as `blink_depth` in t2) or a loop detector in `stack::resolve_batch`.
 Card side done: Preston's token copy guard (`preston_copy_born`) so a copy never triggers Preston itself.
 Test to add once the engine has it: Preston + Felidar Guardian uncast ends the resolution with a cap, no overflow.
+
+## Dack Fayden, Helping Hand
+Needs: goad with a duration "for the rest of the game" (and, generally, goad that lasts until a given event).
+Where it would hook: `impls/t0_zurgo.rs::goaded_by` (compares the goader's turn count with `DataKey::Goaded`'s stamp); a stamp such as -1 meaning "forever" would do. `engine/combat.rs` already calls `goad_attackers`.
+Card side done: the whole flip (reveal until X creatures, enter under the controller, shuffle, donate with `marchesa::steal`, `mark_donated` for the queued triggers); `DataKey::Goaded` is set with the current turn count, so it lapses at the goader's next turn.
+Test to add once the engine has it: after two of Dack's controller's turns the donated creatures are still goaded.
+
+## Giving a permanent to an opponent (Dack)
+Needs: a first-class "gain control" with a duration and controller-change events (the engine has only `marchesa::steal`, which moves the permanent between `perms` lists and sets sickness).
+Where it would hook: `engine/zones.rs` (a control-change fn that also fires leaves/enters-control hooks and clears attachments / hooks bookkeeping).
+Card side done: `marchesa::steal(g, opp, m, false)` is used; ETB triggers of the donated creatures use the entering player as "you" (hook argument `p`), `mark_donated` / `controlled_when` for Preston and Radiant Solar.
+Test to add once the engine has it: the donated creature's queued enters trigger is still the giver's.

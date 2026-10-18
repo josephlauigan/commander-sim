@@ -219,3 +219,69 @@ fn preston_sacrifices_five_illusions_to_exile_a_nonland_permanent() {
     assert!(illusions_of(&g, P0).is_empty());
     assert!(!g.perm(theirs).on_bf);
 }
+
+// ======================================================== Dack Fayden, Helping Hand
+fn stack_library(g: &mut Game, p: PlayerId, top_last: &[&str]) {
+    // top_last: bottom ... top
+    let cs: Vec<_> = top_last.iter().map(|n| card(g, n)).collect();
+    g.player_mut(p).library = cs;
+}
+
+#[test]
+fn dack_flips_one_creature_per_opponent_and_gives_each_away_goaded() {
+    let mut g = table(&["dack-fayden-white-stax", "seph", "sheoldred", "yshtola"]);
+    g.active = Some(P0);
+    // top of the library (the end) first: land, Serra Angel, land, Serra Angel, ...
+    stack_library(&mut g, P0, &["Grave Titan", "Serra Angel", "Plains", "Serra Angel", "Plains", "Serra Angel", "Plains"]);
+    let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
+    let mine: Vec<_> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.is_creature(m)).collect();
+    assert_eq!(mine.len(), 1, "only Dack stays with his controller");
+    let mut owners = vec![];
+    for q in [PlayerId(1), PlayerId(2), PlayerId(3)] {
+        let n = g.player(q).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).orig == P0).count();
+        owners.push(n);
+    }
+    assert_eq!(owners, vec![1, 1, 1], "each opponent gains control of exactly one");
+    for q in [PlayerId(1), PlayerId(2), PlayerId(3)] {
+        for &m in &g.player(q).perms {
+            if g.perm(m).orig == P0 {
+                assert!(g.perm(m).data.truthy(sim_core::state::DataKey::Goaded), "goaded");
+            }
+        }
+    }
+    // the revealed non-creature cards and the rest of the library are shuffled back: 4 cards remain
+    assert_eq!(g.player(P0).library.len(), 4);
+}
+
+#[test]
+fn dack_with_too_few_creatures_flips_what_remains() {
+    let mut g = table(&["dack-fayden-white-stax", "seph", "sheoldred", "yshtola"]);
+    g.active = Some(P0);
+    stack_library(&mut g, P0, &["Plains", "Serra Angel", "Plains"]);
+    let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
+    let n: usize = (1..4).map(|i| g.player(PlayerId(i)).perms.iter().filter(|&&m| g.perm(m).orig == P0).count()).sum();
+    assert_eq!(n, 1);
+}
+
+#[test]
+fn dacks_pile_banisher_can_exile_a_creature_that_was_just_donated() {
+    let mut g = table(&["dack-fayden-white-stax", "seph", "sheoldred", "yshtola"]);
+    g.active = Some(P0);
+    // two opponents' worth... three creatures: Fiend Hunter, Serra Angel, Serra Angel (top is the end)
+    stack_library(&mut g, P0, &["Serra Angel", "Serra Angel", "Fiend Hunter"]);
+    let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
+    let exiled: usize = g.players.iter().map(|pl| pl.exile.len()).sum();
+    assert_eq!(exiled, 1, "the Hunter (its enters trigger is its first controller's) exiled a donated creature");
+}
+
+#[test]
+fn dack_pile_solar_and_preston_see_each_other_before_the_donation() {
+    let mut g = table(&["dack-fayden-white-stax", "seph", "sheoldred", "yshtola"]);
+    g.active = Some(P0);
+    stack_library(&mut g, P0, &["Radiant Solar", "Serra Angel", "Preston, the Vanisher"]);
+    let _dack = perm(&mut g, P0, "Dack Fayden, Helping Hand");
+    let room = g.player(P0).grudge.get(&sim_core::sym::intern("dungeon_room")).copied().unwrap_or(0.0);
+    assert!(room >= 2.0, "Solar ventures for itself and the creatures that entered with it (got room {room})");
+    let ill = g.players.iter().flat_map(|pl| pl.perms.iter()).filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"illusion")).count();
+    assert!(ill >= 1, "Preston copies the creatures that entered with it");
+}

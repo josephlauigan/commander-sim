@@ -7,8 +7,9 @@ Deck key: dack-fayden-white-stax. Code: impls/t6_dack.rs; tests: tests/cards_t6_
 - Touch the Spirit Realm (Full; channel via g.eot_returns)
 - Radiant Solar (Partial: Lost Mine only; venture + mark_donated/controlled_when helpers in t6_dack.rs, room in Player::grudge)
 - Preston (Partial: Illusion copy keeps types; exile ability done). Beware Felidar loop in tests (stack overflow) -- use Serra Angel
+- Dack (Partial: goad lapses; g.resolving wrapper defers pile triggers till donation done; flip_and_donate pub)
 ## Next (in order)
-Dack, Gideon, Paladin Class
+Gideon, Paladin Class
 ## Gotchas
 - Banisher etb hooks use the enter call's `p` as "you", not perm owner (Dack donates before queued triggers run).
 - Use common::oring_exile / oring_return; override dsl = [] in data/card_overrides.toml so the compiled permanent exile does not double.
