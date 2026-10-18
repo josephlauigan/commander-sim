@@ -8577,3 +8577,12 @@ note = "enter trigger phases out the best opposing creature (back at its control
 ["Derevi, Empyrial Tactician"]
 status = "Partial"
 note = "enters and whenever a creature you control deals combat damage to a player: untap the best tapped mana source (else tap the best opposing blocker on our turn); missing: {1}{G}{W}{U} put-from-command-zone ability (t6_legends1.rs)"
+
+["Selvala, Heart of the Wilds"]
+add_tags = ["dork=A"]
+status = "Full"
+note = "{G},{T}: X mana of any colours (X = greatest power among your creatures) is a dork making X-1 (the {G} netted off); whenever another creature enters its controller draws if its power is greater than every other creature's (t6_legends1.rs)"
+
+["Emiel the Blessed"]
+status = "Full"
+note = "{3}: blink another creature you control (compiled); whenever another creature you control enters, pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs)"

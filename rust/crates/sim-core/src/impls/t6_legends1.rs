@@ -4,9 +4,10 @@
 
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{epow, pval, untargetable};
-use crate::engine::zones::max_by;
+use crate::engine::mana::{can_pay, pay};
+use crate::engine::zones::{draw, max_by};
 use crate::flow::Res;
-use crate::hooks::{Event, Registry, Src};
+use crate::hooks::{Registry, Src};
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
@@ -122,10 +123,65 @@ fn derevi_hit(g: &mut Game, src: Src, p: PlayerId, _a: PermId, d: PlayerId, _dmg
     Ok(())
 }
 
+
+// ================================================================== Emiel the Blessed
+/// **Emiel the Blessed**: {3}: blink another creature you control (compiled from the Oracle text). Whenever another
+/// creature you control enters, you may pay {G/W} (paid with W, else G) to put a +1/+1 counter on it (two if it is a
+/// Unicorn). The AI pays whenever it can spare the mana.
+fn emiel_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m == src || p != owner(g, src) || !live(g, src) || !live(g, m) || !g.is_creature(m) || owner(g, m) != p {
+        return Ok(());
+    }
+    let col = if can_pay(g, p, 0, "W", false) {
+        "W"
+    } else if can_pay(g, p, 0, "G", false) {
+        "G"
+    } else {
+        return Ok(());
+    };
+    if !trigger_window(g, p, Some(src), "pay {G/W} for a +1/+1 counter", None)? || !pay(g, p, 0, col, false)? {
+        return Ok(());
+    }
+    let n = if crate::engine::values::has_type(g, m, "unicorn") { 2 } else { 1 };
+    crate::cardcode::put_plus(g, m, n);
+    crate::glog!(g, "    Emiel puts {} +1/+1 counter(s) on {}", n, g.perm(m).name);
+    Ok(())
+}
+
+// ================================================================== Selvala, Heart of the Wilds
+/// **Selvala**: whenever another creature enters, its controller may draw a card if its power is greater than each
+/// other creature's power. The mana ability ({G}, {T}: X mana of any colours, X the greatest power among your
+/// creatures) is the `dork` tag with `dyn_mana_perm` = X - 1: the {G} it costs is netted off.
+fn selvala_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m == src || !live(g, src) || !live(g, m) || !g.is_creature(m) {
+        return Ok(());
+    }
+    let pw = epow(g, m);
+    let all: Vec<PermId> = std::iter::once(p).chain(g.opps(p))
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&x| x != m && live(g, x) && g.is_creature(x))
+        .collect();
+    if all.iter().any(|&x| epow(g, x) >= pw) {
+        return Ok(());
+    }
+    if trigger_window(g, p, Some(src), "draw a card (greatest power)", None)? {
+        draw(g, p, 1, false)?;
+    }
+    Ok(())
+}
+
+fn selvala_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    let x = g.player(p).perms.iter().filter(|&&y| live(g, y) && g.is_creature(y)).map(|&y| epow(g, y)).max().unwrap_or(0);
+    (x - 1).max(0) as u32
+}
+
 pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), String> {
     let c = r.card(db, "Derevi, Empyrial Tactician")?;
     c.etb = Some(derevi_etb);
     c.combat_damage = Some(derevi_hit);
-    let _ = Event::Etb;
+    r.card(db, "Emiel the Blessed")?.etb = Some(emiel_etb);
+    let c = r.card(db, "Selvala, Heart of the Wilds")?;
+    c.etb = Some(selvala_etb);
+    c.dyn_mana_perm = Some(selvala_mana);
     Ok(())
 }

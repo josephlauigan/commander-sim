@@ -67,3 +67,55 @@ fn derevi_ignores_damage_by_an_opponents_creature() {
     .unwrap();
     assert!(tapped(&g, dork));
 }
+
+// ======================================================== Emiel the Blessed
+#[test]
+fn emiel_pays_for_a_counter_on_an_entering_creature() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Emiel the Blessed");
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = true;
+    }
+    lands(&mut g, P0, "Plains", 1, false);
+    let c = perm(&mut g, P0, "Bloom Tender");
+    assert_eq!(g.perm(c).plus, 1, "pay W: +1/+1 counter");
+    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "the Plains paid");
+}
+
+#[test]
+fn emiel_puts_two_counters_on_a_unicorn_and_none_without_mana() {
+    let mut g = tbl();
+    for l in g.player(P0).lands.clone() {
+        g.land_mut(l).tapped = true;
+    }
+    perm(&mut g, P0, "Emiel the Blessed");
+    let none = perm(&mut g, P0, "Baneslayer Angel");
+    assert_eq!(g.perm(none).plus, 0, "no mana, no counter");
+    lands(&mut g, P0, "Forest", 1, false);
+    g.perm_mut(none).tapped = false;
+    let e2 = perm(&mut g, P0, "Emiel the Blessed");
+    assert_eq!(g.perm(e2).plus, 2, "the first Emiel pays G: a Unicorn gets two");
+}
+
+// ======================================================== Selvala, Heart of the Wilds
+#[test]
+fn selvala_draws_for_the_biggest_creature_entering() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Selvala, Heart of the Wilds");
+    perm(&mut g, P1, "Bloom Tender");
+    let h = g.player(P0).hand.len();
+    perm(&mut g, P0, "Baneslayer Angel");
+    assert_eq!(g.player(P0).hand.len(), h + 1, "5 power beats every other creature");
+    let h = g.player(P1).hand.len();
+    perm(&mut g, P1, "Bloom Tender");
+    assert_eq!(g.player(P1).hand.len(), h, "1 power does not");
+}
+
+#[test]
+fn selvala_taps_for_greatest_power_less_the_g() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Selvala, Heart of the Wilds");
+    g.perm_mut(s).sick = false;
+    perm(&mut g, P0, "Baneslayer Angel");
+    assert_eq!(sim_core::cardcode::dyn_mana_perm(&g, P0, s), Some(4), "X = 5, minus the {{G}}");
+}
