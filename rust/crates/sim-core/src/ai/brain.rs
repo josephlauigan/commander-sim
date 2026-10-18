@@ -211,8 +211,8 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     let c = min_by(held, |c| g.db.get(c).cmc as f64).unwrap();
     let caution = style(g, pl.key).caution;
     let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * s.combo_near as i32 as f64;
-    if !is_main(pl.key) {
-        // outside decks: three opponents will cast something worth answering this cycle
+    if !is_main(pl.key) || pl.key == "sauron" {
+        // outside decks (and Sauron, a counter shell around one Army): three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
         v = v.max(1.5 + 2.5 * caution * n.min(2) as f64);
     }

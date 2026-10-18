@@ -90,3 +90,19 @@ fn sauron_force_of_will_pitches_a_draw_spell_not_the_engine_creature() {
     assert_eq!(ex.len(), 1);
     assert_eq!(&*g.db.get(ex[0]).name, "Fact or Fiction");
 }
+
+#[test]
+fn sauron_holds_mana_up_for_two_counters_more_than_for_one() {
+    use sim_core::ai::brain;
+    let mut g = sauron_table();
+    let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
+    g.player_mut(P0).library.extend(h);
+    hand(&mut g, P0, &["Counterspell"]);
+    let s = brain::Situation::new(&g, P0);
+    let (c1, v1) = brain::hold_value(&g, P0, &s);
+    assert!(c1.is_some());
+    assert!(v1 >= 1.5, "one counter is worth holding mana for: {v1}");
+    hand(&mut g, P0, &["Arcane Denial"]);
+    let (_, v2) = brain::hold_value(&g, P0, &s);
+    assert!(v2 > v1);
+}
