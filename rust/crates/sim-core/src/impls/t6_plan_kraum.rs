@@ -98,7 +98,6 @@ fn free_counter(name: &str) -> bool {
             | "Deflecting Swat"
             | "Misdirection"
             | "Mindbreak Trap"
-            | "Snapback"
     )
 }
 
@@ -230,9 +229,9 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     let ok = match lands {
         0 => false,
         1 => makers + fast_lands >= 2 || (makers >= 1 && engines + tutors >= 1),
-        2 => action >= 2 || (action >= 1 && free >= 1) || (makers >= 1 && lands + makers >= 3),
-        3 | 4 => action >= 1 || free >= 2,
-        5 => action >= 2,
+        2 => action >= 2 || (action >= 1 && free >= 1) || free >= 3,
+        3 | 4 => action >= 1 || free >= 1,
+        5 => action >= 1 && action + free >= 2,
         _ => false,
     };
     Some(ok)
@@ -265,7 +264,7 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 /// line is not held back.
 pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     let pl = g.player(p);
-    let can_answer = g.opps(p).filter(|&q| stop_chance(g, q) >= 0.2).count();
+    let can_answer = g.opps(p).filter(|&q| stop_chance(g, q) >= 0.3).count();
     if combo.starts_with("Thassa's Oracle") {
         let drawer = out(g, p, "Esper Sentinel") || crate::ai::plans::on_bf(g, p, "Kraum, Ludevic's Opus").is_some();
         let cards_up = g.opps(p).any(|q| !g.player(q).hand.is_empty() && open_mana(g, q, None) >= 1);
