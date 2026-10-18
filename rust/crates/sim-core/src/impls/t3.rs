@@ -917,7 +917,7 @@ fn helm(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     }
     let Some(a) = host(g) else { return Ok(vec![]) };
     let name = format!("create a token copy of {}", g.perm(a).name);
-    if !trigger_window(g, p, Some(src), &name, Some(5.0))? {
+    if !trigger_window(g, p, Some(src), &name, Some(6.0))? {
         return Ok(vec![]);
     }
     let Some(a) = host(g) else { return Ok(vec![]) };

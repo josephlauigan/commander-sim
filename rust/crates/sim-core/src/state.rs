@@ -1115,6 +1115,9 @@ pub struct Game {
     pub trig_probe: bool,
     /// the stack item of the trigger being resolved (by id)
     pub trig_current: Option<u32>,
+    /// ids of trigger items that have a copy which resolved (Peter Parker's Camera): the hook runs its effect again
+    /// for each, before the original (`stack::take_copies`)
+    pub trig_copies: Vec<u32>,
     /// the counterspell that countered the last spell (Python's `LAST_COUNTER`)
     pub last_counter: Option<CardId>,
     /// Hullbreaker Horror bounced the spell instead of countering it
@@ -1281,6 +1284,7 @@ impl Game {
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
+            trig_copies: vec![],
             last_counter: None,
             bounced_spell: false,
             unc_cast: None,

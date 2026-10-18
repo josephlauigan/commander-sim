@@ -269,9 +269,23 @@ pub fn bestow_fall(g: &mut Game, m: PermId) -> Res {
 }
 
 /// partials.answer_ability: counter an opponent's important ability on top of the stack (Tishana's Tidebinder,
-/// Azorius Guildmage); `item` is the stack item's id
+/// Azorius Guildmage), then the flash cards written for the Tier 6 engine pass: Ertai Resurrected, Louisoix's
+/// Sacrifice; `item` is the stack item's id
 pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
-    crate::impls::partials::answer_ability(g, q, item)
+    crate::impls::partials::answer_ability(g, q, item)?;
+    let open = |g: &Game| g.stack.iter().any(|x| x.id == item && !x.countered);
+    if open(g) {
+        crate::impls::t6_legends2::ertai_answer(g, q, item)?;
+    }
+    if open(g) {
+        crate::impls::t6_counters::louisoix_answer(g, q, item)?;
+    }
+    Ok(())
+}
+
+/// the AI q copies its own triggered ability on the stack (Peter Parker's Camera)
+pub fn copy_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
+    crate::impls::t6_copies::camera_copy(g, q, item).map(|_| ())
 }
 
 /// rules.emblem_cast: Chandra's and Venser's emblems on each spell p casts

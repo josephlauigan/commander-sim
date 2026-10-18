@@ -794,6 +794,10 @@ fn oracle_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     let x = oracle_devotion(g, p);
     if x >= g.player(p).library.len() {
+        // the win is a triggered ability on the stack (importance 9): the table can counter it
+        if !crate::engine::stack::trigger_window(g, p, Some(src), "look at the top cards: win with an empty library", Some(9.0))? {
+            return Ok(());
+        }
         return crate::ai::win(g, p, "combo", Some(false));
     }
     let lib = &mut g.player_mut(p).library;
