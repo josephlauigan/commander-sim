@@ -3,12 +3,15 @@
 //! no engine file is touched; what needs the engine is listed in rust/agents/engine-needs-legends2.md.
 
 use super::common::{WalkerAb, walker};
-use super::partials::{at_once, first_max, on};
+use super::partials::{at_once, best_opp_nonland, first_max, on};
 use super::t5::is_artifact;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
+use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::gain;
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::removal::apply_removal;
+use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, once_per_turn, pval, threat, untargetable};
 use crate::engine::zones::{
@@ -17,6 +20,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::state::StackKind;
 use crate::state::{DataKey, Game, Val};
 use crate::sym::intern;
 use crate::tag::Tag;
@@ -372,6 +376,79 @@ fn spider_tokens(g: &mut Game, src: Src, _p: PlayerId, toks: &[PermId]) -> Res {
     Ok(())
 }
 
+// ================================================================== Ertai Resurrected
+const ERTAI: &str = "Ertai Resurrected";
+
+/// the spell or ability this Ertai countered as it came in, still on the stack
+fn ertai_countered(g: &Game, src: PermId) -> Option<PlayerId> {
+    let c = g.perm(src).cd?;
+    g.stack.iter().find(|it| it.countered && it.countered_by == Some(c)).map(|it| it.controller)
+}
+
+/// the creature or planeswalker the destroy mode picks: the opponents' best, when it is worth a card to them
+fn ertai_target(g: &Game, p: PlayerId) -> Option<PermId> {
+    let t = best_opp_nonland(g, p, |g, m| {
+        g.is_creature(m) || g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER))
+    })?;
+    (pval(g, t) >= 3.0).then_some(t)
+}
+
+/// **Ertai Resurrected** ({2}{U}{B}, flash 3/2): when it enters, choose up to one: counter target spell, activated
+/// ability or triggered ability, its controller draws a card; or destroy another target creature or planeswalker, its
+/// controller draws a card. The counter-a-spell mode is the engine's (the card's `ctr=any` tag makes it a flash
+/// counter like Mystic Snake, cast in response; the countered spell is marked `countered_by` Ertai), so on entering
+/// from that response this hook gives the spell's controller their card. Otherwise it takes the destroy mode on the
+/// opponents' best creature or planeswalker when that is worth 3 or more. Countering an ability is `ertai_answer`.
+fn ertai_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src || !live(g, src) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if let Some(q) = ertai_countered(g, src) {
+        crate::glog!(g, "    Ertai Resurrected: {} draws a card", g.player(q).name);
+        return draw(g, q, 1, false);
+    }
+    let Some(t) = ertai_target(g, o) else { return Ok(()) };
+    if trigger_window(g, o, Some(src), &format!("destroy {}", g.perm(t).name), Some(5.0))? && live(g, t) {
+        let q = owner(g, t);
+        apply_removal(g, Some(o), t, "destroy", None)?;
+        draw(g, q, 1, false)?;
+    }
+    Ok(())
+}
+
+/// The AI q with Ertai in hand answers an opponent's important ability or trigger on the stack (item `item`): flash
+/// in Ertai ({2}{U}{B}) and counter it; the ability's controller draws a card. Written after `partials::answer_ability`
+/// (Tishana's Tidebinder); the engine's `cardcode::answer_ability` has to call it (engine-needs-legends2.md).
+/// Returns true if Ertai was cast.
+pub fn ertai_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
+    let Some(it) = g.stack.iter().find(|x| x.id == item).cloned() else { return Ok(false) };
+    if it.kind == StackKind::Spell || it.controller == q || it.countered {
+        return Ok(false);
+    }
+    let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == ERTAI) else { return Ok(false) };
+    let (gn, pips) = cost_of(g, q, c);
+    if g.humans.get(q).is_some() || !castable(g, q, c, "hand") || !can_pay(g, q, gn, &pips, false) {
+        return Ok(false);
+    }
+    if !pay(g, q, gn, &pips, false)? {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(q).hand, c);
+    crate::glog!(g, "    {} flashes in Ertai Resurrected: {} is countered", g.player(q).name, it.name);
+    on_cast(g, q, c)?;
+    if !counter_window(g, q, c, 4.0, vec![])? {
+        g.player_mut(q).gy.push(c);
+        return Ok(true);
+    }
+    if let Some(x) = g.stack.iter_mut().find(|x| x.id == item) {
+        x.countered = true;
+        x.countered_by = Some(c);
+    }
+    enter(g, q, c, Enter { was_cast: true, ..Enter::default() })?; // the enter hook draws for the ability's controller
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "The Queen of Dale")?;
     c.cast = Some(queen_cast);
@@ -386,6 +463,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.leaves = Some(tataru_leaves);
     at_once(c, Event::Leaves, true);
     walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
+    let c = r.card(db, ERTAI)?;
+    c.etb = Some(ertai_etb);
+    at_once(c, Event::Etb, true);
     let c = r.card(db, SPIDER_WOMAN)?;
     c.etb = Some(spider_etb);
     at_once(c, Event::Etb, true);

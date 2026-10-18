@@ -19,3 +19,9 @@ Needs: tapped artifact tokens: Treasure / Food / Clue are counters on the player
 Where it would hook: `state.rs` Player, `engine/zones.rs::make_artifact_tokens`, the untap step in `engine/turn.rs`, and the mana code that spends Treasures.
 Card side done: opposing artifact and creature permanents and creature tokens enter tapped (`spider_etb` on the enter event, `spider_tokens` on the tokens-enter event; both run at once).
 Test to add once the engine has it: with Spider-Woman out, an opponent's Treasure token cannot pay for a spell the turn it is made.
+
+## Ertai Resurrected
+Needs: the AI answering an opponent's activated or triggered ability on the stack with a flash creature whose enter trigger counters it. `stack::ai_respond` reaches `cardcode::answer_ability` for abilities and triggers (importance 6 or more); that function only knows Azorius Guildmage and Tishana's Tidebinder. Add a call to `t6_legends2::ertai_answer(g, q, item)` there (it returns true when Ertai was cast). Reuses the existing hook.
+Where it would hook: `impls/partials.rs::answer_ability` (called from `cardcode::answer_ability`, `engine/stack.rs::ai_respond`).
+Card side done: `ertai_answer` (flashes Ertai in for {2}{U}{B}, counters the item, marks `countered_by`, Ertai's enter hook draws the card for the ability's controller). The counter-a-spell mode already works through the `ctr=any` tag (draw added by the enter hook); the destroy mode is the enter hook. Against Godo the call is what counters his enter trigger.
+Test to add once the engine has it: Godo's enter trigger on the stack with Ertai and {2}{U}{B} open is countered by the AI through `ai_respond`, and Godo's controller draws.

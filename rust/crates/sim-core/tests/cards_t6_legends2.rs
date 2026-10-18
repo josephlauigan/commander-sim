@@ -265,3 +265,81 @@ fn spider_woman_gone_means_untapped_again() {
     let ring = perm(&mut g, P1, "Sol Ring");
     assert!(!g.perm(ring).tapped);
 }
+
+// ======================================================== Ertai Resurrected
+use sim_core::state::{Ctx, StackItem, StackKind};
+
+fn on_stack(g: &mut Game, p: PlayerId, name: &str, kind: StackKind) -> u32 {
+    let id = g.stack_pushes + 1;
+    g.stack_pushes = id;
+    let c = if kind == StackKind::Spell { Some(card(g, name)) } else { None };
+    g.stack.push(StackItem {
+        id,
+        controller: p,
+        card: c,
+        ctx: Ctx::default(),
+        zone: "hand",
+        imp: 7.0,
+        aff: vec![],
+        generic: true,
+        kind,
+        name: name.to_string(),
+        passed: vec![],
+        countered: false,
+        countered_by: None,
+    });
+    id
+}
+
+#[test]
+fn ertai_enters_and_destroys_their_best_creature_its_controller_draws() {
+    let mut g = tbl();
+    let big = perm(&mut g, P1, "Lyra Dawnbringer");
+    let h = g.player(P1).hand.len();
+    perm(&mut g, P0, "Ertai Resurrected");
+    assert!(!g.perm(big).on_bf, "destroyed");
+    assert_eq!(g.player(P1).hand.len(), h + 1, "its controller drew a card");
+}
+
+#[test]
+fn ertai_with_nothing_worth_destroying_chooses_no_mode() {
+    let mut g = tbl();
+    let small = token(&mut g, P1, 1);
+    let h = g.player(P1).hand.len();
+    perm(&mut g, P0, "Ertai Resurrected");
+    assert!(g.perm(small).on_bf, "up to one mode: none chosen");
+    assert_eq!(g.player(P1).hand.len(), h);
+}
+
+#[test]
+fn ertai_flashed_in_against_a_spell_counters_it_and_its_controller_draws() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Swamp", 2, false);
+    let ertai = hand(&mut g, P0, &["Ertai Resurrected"])[0];
+    let id = on_stack(&mut g, P1, "Grave Titan", StackKind::Spell);
+    let h = g.player(P1).hand.len();
+    assert!(sim_core::engine::stack::cast_counter_spell(&mut g, P0, ertai, id).unwrap());
+    assert!(g.stack.iter().find(|x| x.id == id).unwrap().countered);
+    assert!(has_perm(&g, P0, "Ertai Resurrected"), "it entered");
+    assert_eq!(g.player(P1).hand.len(), h + 1, "the spell's controller drew a card (and no creature was destroyed)");
+}
+
+#[test]
+fn ertai_answers_an_ability_when_the_engine_asks() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Swamp", 2, false);
+    hand(&mut g, P0, &["Ertai Resurrected"]);
+    let bystander = perm(&mut g, P1, "Lyra Dawnbringer");
+    let id = on_stack(&mut g, P1, "Godo, Bandit Warlord: fetch Helm of the Host", StackKind::Trigger);
+    let h = g.player(P1).hand.len();
+    assert!(sim_core::impls::t6_legends2::ertai_answer(&mut g, P0, id).unwrap());
+    assert!(g.stack.iter().find(|x| x.id == id).unwrap().countered, "the trigger is countered");
+    assert!(has_perm(&g, P0, "Ertai Resurrected"));
+    assert_eq!(g.player(P1).hand.len(), h + 1, "its controller drew a card");
+    assert!(g.perm(bystander).on_bf, "only one mode");
+    // no Ertai, no mana, or a spell on the stack: nothing happens
+    let id2 = on_stack(&mut g, P1, "x", StackKind::Trigger);
+    assert!(!sim_core::impls::t6_legends2::ertai_answer(&mut g, P0, id2).unwrap());
+}

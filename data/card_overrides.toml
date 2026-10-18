@@ -8595,3 +8595,7 @@ note = "+1: the best of one artifact, one creature and one land (ours tapped: un
 ["Spider-Woman, Stunning Savior"]
 status = "Partial"
 note = "flying 2/2; artifact and creature permanents and creature tokens that enter under an opponent's control are tapped as they enter (the enter and tokens-enter events, t6_legends2.rs). Opponents' Treasure / Food / Clue tokens (counters here) still enter untapped (engine-needs-legends2.md)"
+
+["Ertai Resurrected"]
+status = "Partial"
+note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast it in response like Mystic Snake, and its enter hook gives the spell's controller the card; destroy mode: the opponents' best creature or planeswalker when worth 3+, its controller draws (t6_legends2.rs). Countering an activated or triggered ability is written (ertai_answer, tested) but the engine does not call it yet (engine-needs-legends2.md)"
