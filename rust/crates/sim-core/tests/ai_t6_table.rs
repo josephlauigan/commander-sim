@@ -217,3 +217,20 @@ fn a_commander_line_is_ready_only_when_the_commander_can_be_cast() {
     lands(&mut g, P0, "Plains", 6, false); // Dack costs {4}{W}{W}
     assert!(combos::line_progress(&g, P0).1);
 }
+
+#[test]
+fn a_spell_that_completes_a_line_is_countered_and_a_piece_is_worth_more() {
+    // Kinnan cast with Basalt Monolith on the battlefield completes Kinnan + Basalt (a quiet Tier 6 line counts too)
+    let mut g = tbl(&[KINNAN, KRAUM, SISAY]);
+    perm(&mut g, P0, "Basalt Monolith");
+    let k = card(&g, "Kinnan, Bonder Prodigy");
+    let it = sim_core::engine::stack::spell_item(&mut g, P0, k, Ctx::default(), 4.0);
+    assert_eq!(t6_table::counter_verdict(&g, P1, &it, 3.0, 4.0, 2), Verdict::Counter);
+    // Godo with nothing of its lines out is a piece, not the last one: its value rises above the plain creature's
+    let mut g = tbl(&["godo", KRAUM, SISAY]);
+    let godo = card(&g, "Godo, Bandit Warlord");
+    assert!(combos::piece_gain(&g, P0, "Godo, Bandit Warlord") > 0.0);
+    let it = sim_core::engine::stack::spell_item(&mut g, P0, godo, Ctx::default(), 4.0);
+    let v = t6_table::counter_verdict(&g, P1, &it, 3.0, 4.0, 2);
+    assert!(matches!(v, Verdict::Counter) || matches!(v, Verdict::Roll(x, _) if x > 5.0), "{v:?}");
+}

@@ -1209,6 +1209,22 @@ pub fn line_progress(g: &Game, q: PlayerId) -> (f64, bool) {
     (best, ready)
 }
 
+/// How far the card named `name` would take q's best line if it resolved now: the largest fraction of a line's piece
+/// groups that would be on the battlefield (or a castable commander) with it, over the lines whose groups include it
+/// (quiet lines too). 0.0 when it is no piece of q's lines. Public information only: q's hand is not read.
+pub fn piece_gain(g: &Game, q: PlayerId, name: &str) -> f64 {
+    let mut best = 0.0f64;
+    for i in lines_of(g, q).iter().copied() {
+        let grps = real_groups(all()[i]);
+        if !grps.iter().any(|grp| grp.contains(&name)) {
+            continue;
+        }
+        let on = grps.iter().filter(|grp| grp.contains(&name) || public_piece(g, q, grp)).count();
+        best = best.max(on as f64 / grps.len() as f64);
+    }
+    best
+}
+
 /// the indices in `all()` of the lines whose every piece group has a card in q's deck (or commanders), cached per
 /// deck key
 fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {

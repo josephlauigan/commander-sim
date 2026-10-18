@@ -117,6 +117,14 @@ pub fn counter_verdict(g: &Game, q: PlayerId, top: &StackItem, val: f64, thr: f6
     if g.t6_going == Some(ctrl) || adnaus {
         return Verdict::Counter; // the spell is (a step of) the win: every answer, free ones too
     }
+    // a piece of one of the caster's lines (quiet Tier 6 lines too: Godo, Kinnan, Dack): the closer it takes the line,
+    // the more it is worth stopping; the last piece is the win. Only permanents: an instant or sorcery piece matters as
+    // a step of the win attempt itself (`t6_going` above)
+    let piece = top.card.filter(|&c| g.db.get(c).perm).map_or(0.0, |c| combos::piece_gain(g, ctrl, &g.db.get(c).name));
+    if piece >= 1.0 {
+        return Verdict::Counter;
+    }
+    let val = if piece > 0.0 { val + 2.0 + 4.0 * piece } else { val };
     let arch = archenemy(g, q);
     let held = |extra: f64| thr + extra + if nc <= 1 { 1.0 } else { 0.0 };
     match arch {
