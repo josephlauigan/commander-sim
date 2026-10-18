@@ -8493,3 +8493,7 @@ note = "can't be countered itself and spells you control can't be countered; mis
 ["Blood Moon"]
 status = "Partial"
 note = "nonbasic lands tap for {R} only, and a two-mana land (Ancient Tomb, City of Traitors) makes one; the AI casts it when opponents have three more nonbasic lands than it; missing: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, manlands) and become Mountains (rust/agents/engine-needs-godo.md)"
+
+["Defense Grid"]
+status = "Partial"
+note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); free alternative costs are not taxed"

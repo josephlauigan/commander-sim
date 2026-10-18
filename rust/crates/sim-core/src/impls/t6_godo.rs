@@ -562,6 +562,14 @@ fn moon_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     if theirs - nonbasic_lands(g, p) >= 3 { 55 } else { 0 }
 }
 
+// ================================================================== Defense Grid
+/// **Defense Grid** ({2} artifact): each spell costs {3} more to cast except during its controller's turn (the `cost`
+/// slot, for every player, its own controller included: the Godo deck's instant-speed protection costs three more on
+/// an opponent's turn). Free alternative costs are not taxed (the engine adds cost increases to the mana cost only).
+fn grid_tax(g: &Game, src: Src, caster: PlayerId, _c: CardId) -> i32 {
+    if live(g, src) && g.active != Some(caster) { 3 } else { 0 }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -581,6 +589,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.blood_moon = Some(moon_on);
     c.land_mana = Some(moon_amt);
     c.prio = Some(moon_prio);
+    r.card(db, "Defense Grid")?.cost = Some(grid_tax);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

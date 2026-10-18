@@ -41,3 +41,9 @@ Needs: "nonbasic lands are Mountains" as a layer effect: such lands lose all abi
 Where it would hook: `engine/mana.rs` (`Tag::Tomb`/`Tag::Pain` damage, lines ~117, 264, 382), `impls/lands.rs` land options and land abilities (`land_options`, `land_etb`), reading `cardcode::blood_moon(g)`.
 Card side done: the existing `blood_moon` slot (colour R), `land_mana` slot cutting two-mana lands to one, and an AI cast priority (`impls/t6_godo.rs`).
 Test to add once the engine has it: with Blood Moon out, tapping Ancient Tomb deals no damage; Urza's Saga's tutor ability is gone; a manland cannot animate.
+
+## Defense Grid
+Needs: cost increases applied to spells cast for an alternative cost (Force of Will, Daze, Pact, "without paying"): `hooks::total_cost` is added only to the mana cost in `mana::cost_of`; the alternative-cost casts (`t6_counters::pay_alt_cost`, once wired) should pay the increase as well.
+Where it would hook: the cast path that handles `paid_otherwise` in `engine/cast.rs` (`cast_card`), adding `hooks::total_cost(g, p, c)` as generic mana.
+Card side done: the {3} tax outside the caster's turn for every player (`cost` slot, `impls/t6_godo.rs`).
+Test to add once the engine has it: with Defense Grid out on another player's turn, casting a spell for its alternative cost still needs {3}.

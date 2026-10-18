@@ -431,3 +431,18 @@ fn blood_moon_is_cast_against_nonbasic_heavy_tables_only() {
     lands(&mut g, P3, "Cavern of Souls", 1, false);
     assert!(prio(&g, P0, "Blood Moon") > 0);
 }
+
+// ======================================================== Defense Grid
+#[test]
+fn defense_grid_taxes_spells_cast_outside_their_casters_turn() {
+    let mut g = tbl();
+    let sol = card(&g, "Sol Ring");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P1, sol).0, 1);
+    perm(&mut g, P0, "Defense Grid");
+    assert_eq!(g.active, Some(P0));
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, sol).0, 1, "on its caster's own turn: no tax");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P1, sol).0, 4, "an opponent's spell on P0's turn costs {{3}} more");
+    g.active = Some(P1);
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P0, sol).0, 4, "the Grid's own controller pays too on another turn");
+    assert_eq!(sim_core::engine::mana::cost_of(&g, P1, sol).0, 1);
+}
