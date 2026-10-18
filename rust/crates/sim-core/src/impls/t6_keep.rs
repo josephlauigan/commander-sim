@@ -57,6 +57,7 @@ fn is_piece(g: &Game, c: CardId) -> bool {
         && (d.tag(Tag::Rock)
             || d.tag(Tag::Dork)
             || d.tag(Tag::Fastmana)
+            || d.tag(Tag::Lr)
             || d.tag(Tag::Chromemox)
             || matches!(d.name.as_ref(), "Lotus Petal" | "Chrome Mox" | "Mox Diamond"))
 }
@@ -97,7 +98,15 @@ pub fn mana(g: &Game, p: PlayerId) -> Mana {
                 free += 1;
                 0.7
             }
-            "Mox Opal" | "Mox Amber" => 0.0, // metalcraft / a legend: not on turn 1 from this hand
+            // needs a legendary creature or planeswalker: the Rograkh decks cast their {0} commander first
+            "Mox Amber" => {
+                if g.player(p).key.starts_with("rograkh") {
+                    1.0
+                } else {
+                    0.5
+                }
+            }
+            "Mox Opal" => 0.0, // metalcraft: three artifacts
             "Sol Ring" => {
                 if lands >= 1 {
                     2.0

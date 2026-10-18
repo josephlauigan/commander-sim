@@ -20,22 +20,6 @@ const MASTERMIND: &str = "Faerie Mastermind";
 const THRASIOS: &str = "Thrasios, Triton Hero";
 const ROGRAKH: &str = "Rograkh, Son of Rohgahh";
 
-/// fast mana and mana creatures: what lets a 1-2 land hand work
-const ACCEL: [&str; 13] = [
-    "Sol Ring",
-    "Mana Vault",
-    "Mox Amber",
-    "Mox Diamond",
-    "Chrome Mox",
-    "Lotus Petal",
-    "Birds of Paradise",
-    "Elvish Spirit Guide",
-    "Springleaf Drum",
-    "Badgermole Cub",
-    "Wild Growth",
-    "Ancient Tomb",
-    "Gemstone Caverns",
-];
 /// ways to get Cradle or the engine going
 const ENGINE: [&str; 9] = [
     "Crop Rotation",

@@ -8,29 +8,6 @@
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 
-const FAST: [&str; 13] = [
-    "Lotus Petal",
-    "Mox Amber",
-    "Chrome Mox",
-    "Mox Diamond",
-    "Sol Ring",
-    "Mana Vault",
-    "Dark Ritual",
-    "Cabal Ritual",
-    "Simian Spirit Guide",
-    "Rite of Flame",
-    "Jeska's Will",
-    "Culling the Weak",
-    "Infernal Plunge",
-];
-const SLOW: [&str; 6] = [
-    "Mox Opal",
-    "Grim Monolith",
-    "Arcane Signet",
-    "Talisman of Dominance",
-    "Talisman of Indulgence",
-    "Springleaf Drum",
-];
 const TUTORS: [&str; 11] = [
     "Demonic Tutor",
     "Vampiric Tutor",

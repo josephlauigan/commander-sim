@@ -985,11 +985,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
                 crate::glog!(g, "    Mox Diamond goes to the graveyard (no land to discard)");
                 return Ok(());
             }
-            let x = min_by(&lands, |l| {
-                let lt = &g.db.get(l).tags;
-                lt.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 2.0 - lt.has(Tag::T) as i32 as f64
-            })
-            .unwrap();
+            let x = min_by(&lands, |l| crate::engine::zones::mox_discard_key(g, p, l)).unwrap();
             let pl = g.player_mut(p);
             let i = pl.hand.iter().position(|&y| y == x).unwrap();
             pl.hand.remove(i);

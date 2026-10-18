@@ -39,17 +39,6 @@ fn creatures(g: &Game, p: PlayerId) -> usize {
     g.player(p).perms.iter().filter(|&&m| !g.perm(m).phased && g.is_creature(m)).count()
 }
 
-/// a card that makes mana for the opening-hand count (lands excluded)
-fn mana_maker(g: &Game, c: CardId) -> bool {
-    let d = g.db.get(c);
-    !d.land
-        && (d.tag(Tag::Rock)
-            || d.tag(Tag::Dork)
-            || d.tag(Tag::Fastmana)
-            || d.tag(Tag::Lr)
-            || matches!(&*d.name, "Lotus Petal" | "Elvish Spirit Guide" | "Mana Vault" | "Mox Amber"))
-}
-
 /// How much the line wants this card (0 = nothing). The deck's lines: Derevi + Emiel + Cradle / Bloom Tender + Mount
 /// Doom (Flash Unicorn); Marvin + Ioreth + a legend that taps for mana + Mount Doom (DDR).
 fn want(g: &Game, p: PlayerId, name: &str) -> f64 {

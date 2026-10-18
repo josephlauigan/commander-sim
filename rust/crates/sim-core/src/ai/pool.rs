@@ -116,6 +116,11 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if t.has(Tag::Moxd) {
         // Mox Diamond: needs a land to discard (it carries rock=1:A too, so this check comes first)
         let n = pl.hand.iter().filter(|&&x| g.db.get(x).land).count();
+        // Tier 6: the discard must leave two lands (hand plus battlefield), or the Mox starves its own mana
+        let bf = pl.lands.len();
+        if crate::impls::t6_plans::is_t6(g, p) && n + bf < 3 {
+            return 0;
+        }
         return if n >= 2 || (n >= 1 && pl.land_turn == pl.turns as i32) { plans::ramp_prio(g, p, c, 1) } else { 0 };
     }
     if let Some(r) = t.str(Tag::Rock)
