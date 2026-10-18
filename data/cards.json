@@ -60331,23 +60331,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "untap",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "split second"
@@ -60357,10 +60341,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Untap target creature. Until end of turn, it gains reach, hexproof, and \"Whenever ~ becomes tapped, it deals damage equal to its power to up to one target creature.\"   [partly: until end of turn, it gains reach, hexproof, and \"whenever ~ becomes tapped, it deals damage equal to its power to up to one target creature.\"]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

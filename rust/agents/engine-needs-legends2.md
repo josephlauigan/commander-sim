@@ -25,3 +25,9 @@ Needs: the AI answering an opponent's activated or triggered ability on the stac
 Where it would hook: `impls/partials.rs::answer_ability` (called from `cardcode::answer_ability`, `engine/stack.rs::ai_respond`).
 Card side done: `ertai_answer` (flashes Ertai in for {2}{U}{B}, counters the item, marks `countered_by`, Ertai's enter hook draws the card for the ability's controller). The counter-a-spell mode already works through the `ctr=any` tag (draw added by the enter hook); the destroy mode is the enter hook. Against Godo the call is what counters his enter trigger.
 Test to add once the engine has it: Godo's enter trigger on the stack with Ertai and {2}{U}{B} open is countered by the AI through `ai_respond`, and Godo's controller draws.
+
+## Legolas's Quick Reflexes
+Needs: (1) split second (while it is on the stack nobody can cast spells or activate non-mana abilities); (2) the "permanent becomes tapped" event (the same one Magda needs) for the until-end-of-turn trigger "whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature"; (3) the AI casting a response spell to protect a creature (hexproof in answer to removal).
+Where it would hook: (1) `engine/stack.rs::stack_window` / `ai_respond` and the human legal-cast check `human/legal.rs`; (2) the `became_tapped` call sites listed under Magda: store the pending trigger on the creature (a `Charge`-like `DataKey`) and fire it there; (3) `engine/stack.rs::ai_respond` for removal on the stack, calling `t6_legends2::legolas_cast`.
+Card side done: `legolas_resolve` (untap, reach, hexproof until end of turn; the AI holds the card with a zero `prio`), `legolas_cast` (the {G} response cast, countered like any spell).
+Test to add once the engine has it: with Legolas's Quick Reflexes on a tapped creature that then attacks, the attack deals damage equal to its power to a creature; and no spell can be cast in response to it.

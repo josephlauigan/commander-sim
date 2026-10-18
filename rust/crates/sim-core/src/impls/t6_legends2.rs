@@ -3,7 +3,7 @@
 //! no engine file is touched; what needs the engine is listed in rust/agents/engine-needs-legends2.md.
 
 use super::common::{WalkerAb, walker};
-use super::partials::{at_once, best_opp_nonland, first_max, on};
+use super::partials::{at_once, best_opp_nonland, eot_kw, first_max, on};
 use super::t5::is_artifact;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
@@ -21,8 +21,8 @@ use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::state::StackKind;
-use crate::state::{DataKey, Game, Val};
-use crate::sym::intern;
+use crate::state::{Ctx, DataKey, Game, Val};
+use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
@@ -449,6 +449,61 @@ pub fn ertai_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Legolas's Quick Reflexes
+const LEGOLAS: &str = "Legolas's Quick Reflexes";
+
+/// the creature Legolas's Quick Reflexes is aimed at when nothing was chosen: p's own, a tapped one first, the most
+/// valuable
+fn legolas_pick(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cs: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    let tapped: Vec<PermId> = cs.iter().copied().filter(|&m| g.perm(m).tapped).collect();
+    max_by(if tapped.is_empty() { &cs } else { &tapped }, |m| pval(g, m))
+}
+
+/// the effect: untap target creature; until end of turn it gains reach and hexproof. (The third part, "whenever this
+/// creature becomes tapped, it deals damage equal to its power to up to one target creature", needs the becomes-tapped
+/// event: engine-needs-legends2.md. Split second is the engine's too.)
+fn legolas_effect(g: &mut Game, t: PermId) {
+    g.perm_mut(t).tapped = false;
+    eot_kw(g, t, "reach");
+    eot_kw(g, t, "hexproof");
+    crate::glog!(g, "    {} untaps, gains reach and hexproof (Legolas's Quick Reflexes)", g.perm(t).name);
+}
+
+/// when it resolves (cast by the engine's usual path, or by a person): the chosen creature, else the best of ours
+fn legolas_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let t = ctx.target.filter(|&m| live(g, m) && g.is_creature(m)).or_else(|| legolas_pick(g, p));
+    if let Some(t) = t {
+        legolas_effect(g, t);
+    }
+    Ok("gy")
+}
+
+fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
+}
+
+/// `who` casts Legolas's Quick Reflexes from the hand on creature `t` as a response (saving it from removal, or
+/// untapping it): {G}, countered like any spell. True if the card was cast. For the engine's response code
+/// (engine-needs-legends2.md).
+pub fn legolas_cast(g: &mut Game, who: PlayerId, c: CardId, t: PermId) -> Res<bool> {
+    if !g.player(who).hand.contains(&c) || !castable(g, who, c, "hand") || !live(g, t) {
+        return Ok(false);
+    }
+    let (gn, pips) = cost_of(g, who, c);
+    if !can_pay(g, who, gn, &pips, false) || !pay(g, who, gn, &pips, false)? {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(who).hand, c);
+    crate::glog!(g, "  {} casts {} on {}", g.player(who).name, LEGOLAS, g.perm(t).name);
+    on_cast(g, who, c)?;
+    if counter_window(g, who, c, 5.0, vec![])? && live(g, t) {
+        legolas_effect(g, t);
+    }
+    g.player_mut(who).gy.push(c);
+    Ok(true)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "The Queen of Dale")?;
     c.cast = Some(queen_cast);
@@ -463,6 +518,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.leaves = Some(tataru_leaves);
     at_once(c, Event::Leaves, true);
     walker(r, db, "Teferi, Who Slows the Sunset", &TEFERI)?;
+    let c = r.card(db, LEGOLAS)?;
+    c.resolve = Some(legolas_resolve);
+    c.prio = Some(zero_prio); // the AI holds it: only a response uses it (legolas_cast)
     let c = r.card(db, ERTAI)?;
     c.etb = Some(ertai_etb);
     at_once(c, Event::Etb, true);

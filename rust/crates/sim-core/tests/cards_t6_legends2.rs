@@ -343,3 +343,29 @@ fn ertai_answers_an_ability_when_the_engine_asks() {
     let id2 = on_stack(&mut g, P1, "x", StackKind::Trigger);
     assert!(!sim_core::impls::t6_legends2::ertai_answer(&mut g, P0, id2).unwrap());
 }
+
+// ======================================================== Legolas's Quick Reflexes
+#[test]
+fn legolas_untaps_and_gives_reach_and_hexproof_until_end_of_turn() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 3);
+    g.perm_mut(t).tapped = true;
+    let c = hand(&mut g, P0, &["Legolas's Quick Reflexes"])[0];
+    sim_core::engine::cast::resolve(&mut g, P0, c, &Ctx { target: Some(t), ..Ctx::default() }, "hand").unwrap();
+    assert!(!g.perm(t).tapped, "untapped");
+    assert!(g.perm(t).eot_kw.iter().any(|k| &**k == "reach"));
+    assert!(sim_core::engine::values::untargetable(&g, t), "hexproof: opponents can't target it");
+    assert!(g.player(P0).gy.contains(&c), "the instant goes to the graveyard");
+}
+
+#[test]
+fn legolas_cast_as_a_response_costs_g() {
+    let mut g = tbl();
+    let t = token(&mut g, P0, 3);
+    let c = hand(&mut g, P0, &["Legolas's Quick Reflexes"])[0];
+    assert!(!sim_core::impls::t6_legends2::legolas_cast(&mut g, P0, c, t).unwrap(), "no {{G}}");
+    lands(&mut g, P0, "Forest", 1, false);
+    assert!(sim_core::impls::t6_legends2::legolas_cast(&mut g, P0, c, t).unwrap());
+    assert!(sim_core::engine::values::untargetable(&g, t));
+    assert!(g.player(P0).gy.contains(&c));
+}
