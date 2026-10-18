@@ -120,3 +120,49 @@ fn queen_of_dale_ignores_its_own_controllers_spells() {
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert_eq!(tokens(&g, P0), 0);
 }
+
+// ======================================================== Tataru Taru
+#[test]
+fn tataru_enters_you_draw_and_an_opponent_may_draw() {
+    let mut g = tbl();
+    set_library(&mut g, P0, &["Plains", "Plains"]);
+    set_library(&mut g, P1, &["Mountain", "Mountain"]);
+    set_library(&mut g, PlayerId(2), &["Plains"]);
+    set_library(&mut g, PlayerId(3), &["Plains"]);
+    let (h0, h1) = (g.player(P0).hand.len(), g.player(P1).hand.len());
+    let (h2, h3) = (g.player(PlayerId(2)).hand.len(), g.player(PlayerId(3)).hand.len());
+    perm(&mut g, P0, "Tataru Taru");
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.player(P0).hand.len(), h0 + 1, "you draw a card");
+    let drawn = g.player(P1).hand.len() - h1 + g.player(PlayerId(2)).hand.len() - h2 + g.player(PlayerId(3)).hand.len() - h3;
+    assert_eq!(drawn, 1, "exactly one opponent drew");
+    // that opponent drew on our turn: Scions' Secretary made a tapped Treasure, which arrives at our next upkeep
+    assert_eq!(g.player(P0).treasures, 0, "tapped: not usable yet");
+    sim_core::engine::hooks::fire_trigger(&mut g, sim_core::hooks::Event::Upkeep, sim_core::hooks::Call::Player { p: P0 })
+        .unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.player(P0).treasures, 1);
+}
+
+#[test]
+fn scions_secretary_once_a_turn_and_not_on_their_own_turn() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Tataru Taru");
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    g.perm_mut(t).data.set(sim_core::state::DataKey::Charge, sim_core::state::Val::Int(0));
+    set_library(&mut g, P1, &["Mountain", "Mountain", "Mountain", "Mountain"]);
+    g.active = Some(P1);
+    sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.perm(t).data.get(sim_core::state::DataKey::Charge).map_or(0, |v| v.int()), 0, "their own turn");
+    g.active = Some(P0);
+    g.round = 2; // (a new turn: the Treasure from the enter-trigger draw used the first turn's)
+    for _ in 0..3 {
+        sim_core::engine::zones::draw(&mut g, P1, 1, false).unwrap();
+        sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    }
+    assert_eq!(g.perm(t).data.get(sim_core::state::DataKey::Charge).map_or(0, |v| v.int()), 1, "once each turn");
+    sim_core::engine::zones::die(&mut g, t, "destroy").unwrap();
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.player(P0).treasures, 1, "Tataru left: the Treasure appears");
+}

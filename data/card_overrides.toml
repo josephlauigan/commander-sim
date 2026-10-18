@@ -8582,3 +8582,7 @@ note = "other Dwarves you control get +1/+0 (creature_pt); a Dwarf you control b
 ["The Queen of Dale"]
 status = "Full"
 note = "whenever an opponent casts their first noncreature spell each turn (per caster), you recruit: draw, then discard (the AI's usual discard); a nonland discard makes a 1/1 white Human Soldier token (t6_legends2.rs recruit)"
+
+["Tataru Taru"]
+status = "Full"
+note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure, once each turn - kept on Tataru and added at its controller's next upkeep (when a tapped Treasure would untap), or at once if Tataru leaves"
