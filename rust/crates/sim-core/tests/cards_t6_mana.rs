@@ -339,3 +339,36 @@ fn the_mind_stone_blinks_a_permanent_at_your_end_step_once_harnessed() {
     f(&mut g, st, P1).unwrap();
     assert!(g.perm(again[0]).on_bf, "an opponent's end step blinks nothing");
 }
+
+// ======================================================== Grinding Station
+#[test]
+fn grinding_station_untaps_when_an_artifact_enters_and_mills_by_sacrificing_one() {
+    use sim_core::dsl;
+    let mut g = tbl();
+    let gs = perm(&mut g, P0, "Grinding Station");
+    let ring = perm(&mut g, P0, "Sol Ring");
+    // a tapped Station untaps as any artifact enters, an opponent's too
+    g.perm_mut(gs).tapped = true;
+    perm(&mut g, P1, "Sol Ring");
+    assert!(!g.perm(gs).tapped, "an opponent's artifact entering untaps it");
+    // a non-artifact entering does nothing
+    g.perm_mut(gs).tapped = true;
+    perm(&mut g, P0, "Solemn Simulacrum"); // an artifact creature: untaps
+    assert!(!g.perm(gs).tapped);
+    g.perm_mut(gs).tapped = true;
+    perm(&mut g, P0, "Mountain");
+    assert!(g.perm(gs).tapped, "a land is not an artifact");
+    // {T}, sacrifice an artifact: the target player mills three
+    g.perm_mut(gs).tapped = false;
+    let libs = |g: &Game| g.players.iter().map(|q| q.library.len()).sum::<usize>();
+    let lib = libs(&g);
+    let idx = dsl::ability_options(&mut g, P0, true).unwrap();
+    let o = idx.iter().find(|x| x.label.contains("Grinding Station")).expect("the compiled mill ability is offered");
+    assert!(run(&mut g, P0, o));
+    assert!(g.perm(gs).tapped);
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Sol Ring").count()
+        + g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Solemn Simulacrum").count(), 1,
+        "one artifact was sacrificed");
+    assert_eq!(libs(&g), lib - 3, "three cards milled from one library");
+    let _ = ring;
+}

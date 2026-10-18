@@ -8290,3 +8290,7 @@ note = "{1},{T}: a charge counter noting the colour of the mana spent (when it h
 ["The Mind Stone"]
 status = "Full"
 note = "{T}: {W}; {5}{W},{T}: harness (the AI does it with the mana to spare and a permanent worth blinking); once harnessed, at your end step blinks one other nonland permanent (best enter-effect creature, else a tapped mana rock); indestructible"
+
+["Grinding Station"]
+status = "Full"
+note = "{T}, sacrifice an artifact: target player mills three; whenever any artifact enters, untaps it (always taken)"

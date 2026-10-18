@@ -408,6 +408,22 @@ fn stone_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     end_step_flicker(g, src, p, true, true)
 }
 
+// ================================================================== Grinding Station
+/// **Grinding Station** ({2} artifact): {T}, sacrifice an artifact: target player mills three cards (the compiled
+/// ability); whenever an artifact enters (any player's, itself included), you may untap this artifact (always taken
+/// when it is tapped).
+fn station_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if !live(g, src) || !g.perm(src).tapped || !is_artifact(g, m) {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if trigger_window(g, o, Some(src), "untap Grinding Station", None)? && live(g, src) {
+        g.perm_mut(src).tapped = false;
+        crate::glog!(g, "    Grinding Station untaps ({} entered)", g.perm(m).name);
+    }
+    Ok(())
+}
+
 // ================================================================== Desperate Ritual
 /// **Desperate Ritual** ({1}{R} Arcane instant): add {R}{R}{R} (floating red mana). Splice onto Arcane is not
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
@@ -457,6 +473,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.options = Some(stone_options);
     c.end_step = Some(stone_end);
     at_once(c, Event::EndStep, true); // end_step_flicker has its own trigger window
+    let c = r.card(db, "Grinding Station")?;
+    c.etb = Some(station_etb);
+    at_once(c, Event::Etb, false);
     let c = r.card(db, "Rite of Flame")?;
     c.resolve = Some(rite_of_flame);
     c.prio = Some(zero_prio);
