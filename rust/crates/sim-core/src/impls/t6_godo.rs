@@ -509,6 +509,20 @@ fn thrasher_main1(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
+// ================================================================== Vexing Bauble
+/// **Vexing Bauble** ({1} artifact): whenever a player casts a spell, if no mana was spent to cast it, counter that
+/// spell; {1}, {T}, sacrifice: draw a card (the compiled ability). Modeled as a lock (`can_cast`): while it is out,
+/// nobody casts a spell that costs no mana (the Moxen, Lotus Petal, Sol Ring-style zero-drops of either player).
+/// The real card lets the cast happen and counters it (the card is lost to the graveyard, and a free alternative
+/// cost is caught too): that needs a counter-on-cast hook, see rust/agents/engine-needs-godo.md.
+fn bauble_can_cast(g: &Game, src: Src, p: PlayerId, c: CardId, _zone: Sym) -> bool {
+    if !live(g, src) || g.db.get(c).land {
+        return true;
+    }
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    gn > 0 || !pips.is_empty()
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Godo, Bandit Warlord")?;
     c.etb = Some(godo_etb);
@@ -522,6 +536,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::common::walker(r, db, "Tezzeret, Cruel Captain", &TEZZERET)?;
     r.card(db, "Tezzeret, Cruel Captain")?.etb = Some(tez_etb);
     r.card(db, "Party Thrasher")?.main1 = Some(thrasher_main1);
+    r.card(db, "Vexing Bauble")?.can_cast = Some(bauble_can_cast);
     let c = r.card(db, "Goblin Engineer")?;
     c.etb = Some(engineer_etb);
     c.options = Some(engineer_options);

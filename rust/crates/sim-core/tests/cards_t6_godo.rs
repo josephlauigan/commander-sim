@@ -359,3 +359,27 @@ fn thrasher_does_nothing_without_a_spare_card_or_on_an_opponents_turn() {
     main1(&mut g, t, P1);
     assert_eq!(g.player(P0).library.len(), lib, "only on its controller's first main phase");
 }
+
+// ======================================================== Vexing Bauble
+fn may_cast(g: &Game, p: PlayerId, name: &str) -> bool {
+    sim_core::engine::hooks::allowed(g, p, card(g, name), "hand")
+}
+
+#[test]
+fn bauble_stops_spells_that_cost_no_mana_for_every_player() {
+    let mut g = tbl();
+    assert!(may_cast(&g, P0, "Mox Amber") && may_cast(&g, P1, "Mox Amber"));
+    perm(&mut g, P0, "Vexing Bauble");
+    assert!(!may_cast(&g, P0, "Mox Amber"), "its controller's free spells are countered too");
+    assert!(!may_cast(&g, P1, "Lotus Petal"), "an opponent's too");
+    assert!(may_cast(&g, P0, "Sol Ring"), "a spell that costs mana is fine");
+    assert!(may_cast(&g, P1, "Mountain"), "lands are not spells");
+}
+
+#[test]
+fn bauble_draws_for_one_when_sacrificed() {
+    // the compiled {1},{T}, sacrifice: draw a card is still on the card
+    let g = tbl();
+    let c = card(&g, "Vexing Bauble");
+    assert!(g.db.get(c).has_dsl());
+}

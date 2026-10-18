@@ -8481,3 +8481,7 @@ note = "enters with 4 loyalty; whenever an artifact you control enters, +1 loyal
 ["Party Thrasher"]
 status = "Partial"
 note = "first main phase: the AI discards a spare card (a second land or a spell of mana value 7+), exiles the top two, may play the better one this turn (the other stays exiled); missing: convoke for noncreature spells cast from exile (rust/agents/engine-needs-godo.md)"
+
+["Vexing Bauble"]
+status = "Partial"
+note = "{1},{T}, sacrifice: draw a card; the counter clause is a lock: while it is out nobody casts a spell that costs no mana (Moxen, Lotus Petal ...); the real card lets the cast happen and counters it (the card is lost, free alternative costs are caught too)"
