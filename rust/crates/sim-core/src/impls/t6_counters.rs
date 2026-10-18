@@ -160,6 +160,21 @@ pub fn pay_alt_cost(g: &mut Game, p: PlayerId, card: CardId, spell: Option<CardI
     Ok(true)
 }
 
+/// cards' worth of value the alternative cost gives up (the AI's price, 1.5 threshold points per card; see
+/// `engine::altcost`): a pitched card is a card, Daze's Island is replayed (a land drop), Mindbreak Trap's free mode is free
+pub fn alt_lost(g: &Game, _p: PlayerId, card: CardId, _spell: Option<CardId>) -> f64 {
+    match cname(g, card) {
+        "Daze" => 0.4,
+        "Commandeer" => 2.0,
+        "Mindbreak Trap" => 0.0,
+        _ => 1.0,
+    }
+}
+
+/// the alternative-cost slot of the cards above (read through `engine::altcost`)
+pub const ALT_COST: crate::hooks::AltCost =
+    crate::hooks::AltCost { ok: alt_cost_ok, pay: pay_alt_cost, lost: alt_lost };
+
 // ================================================================== effects on a spell on the stack
 fn stack_index(g: &Game, id: u32) -> Option<usize> {
     g.stack.iter().position(|x| x.id == id)
@@ -281,7 +296,13 @@ pub fn mindbreak_exile(g: &mut Game, q: PlayerId) -> Res<usize> {
     let ids: Vec<u32> = g
         .stack
         .iter()
-        .filter(|x| x.kind == StackKind::Spell && x.controller != q && !x.countered && x.card.is_some())
+        .filter(|x| {
+            x.kind == StackKind::Spell
+                && x.controller != q
+                && !x.countered
+                && x.card.is_some()
+                && crate::engine::stack::counterable(g, x)
+        })
         .map(|x| x.id)
         .collect();
     for &id in &ids {
@@ -477,5 +498,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.hand_options = Some(dizzy_transmute_opts);
     r.card(db, "Into the Flood Maw")?.resolve = Some(maw_resolve);
     r.card(db, "Abeyance")?.resolve = Some(abeyance_resolve);
+    for name in ["Daze", "Flare of Denial", "Disrupting Shoal", "Misdirection", "Snapback", "Commandeer", "Mindbreak Trap"] {
+        r.card(db, name)?.alt_cost = Some(ALT_COST);
+    }
     Ok(())
 }

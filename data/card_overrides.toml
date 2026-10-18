@@ -8259,44 +8259,44 @@ status = "Partial"
 note = "draws a card and flags the opposing player with the most cards in hand (abeyance_flag); missing: the engine does not yet stop a flagged player casting instants or sorceries or activating non-mana abilities"
 
 ["Daze"]
-status = "Partial"
-note = "counter unless its controller pays {1}, hard-cast for {1}{U} only; missing: the alternative cost (return an Island you control to hand), written as t6_counters::pay_alt_cost"
+status = "Full"
+note = "counter target spell unless its controller pays {1}; cast for {1}{U}, or by returning an Island you control to hand (alternative-cost slot, engine/altcost.rs); the AI pays the alternative cost when it can't pay the mana, as a Force of Will pitch (a threshold bump for the Island replayed)"
 
 ["Flare of Denial"]
-status = "Partial"
-note = "counter target spell, hard-cast for {1}{U}{U} only; missing: the alternative cost (sacrifice a nontoken blue creature), written as t6_counters::pay_alt_cost"
+status = "Full"
+note = "counter target spell; cast for {1}{U}{U}, or by sacrificing a nontoken blue creature (alternative-cost slot); the AI sacrifices the least valuable one when it can't pay the mana, at a 1.5 threshold bump per card"
 
 ["Disrupting Shoal"]
 types = "I"
-tags = ""
+tags = "ctr=mvx"
 dsl = []
-status = "Partial"
-note = "not cast by the AI: the engine would counter ANY spell for {U}{U}, but it counters only a spell whose mana value is X (cost {X}{U}{U}, or exile a blue card with mana value X); the card side (shoal_pitch, shoal_counters, pay_alt_cost) is written, the engine needs a mana-value-equals-X counter kind"
+status = "Full"
+note = "counter target spell if its mana value is X; cast for {X}{U}{U} or by exiling a blue card with mana value X (alternative-cost slot, counter kind ctr=mvx); the AI always chooses X equal to the spell's mana value"
 
 ["Snapback"]
-status = "Partial"
-note = "bounces the best opposing creature, hard-cast for {1}{U} only; missing: the alternative cost (exile a blue card from hand), written as t6_counters::pay_alt_cost"
+status = "Full"
+note = "bounces the best opposing creature; cast for its mana cost, or by exiling a blue card from hand (alternative-cost slot); the AI pitches when it can't pay the mana, valuing the removal 1.5 lower per card given up"
 
 ["Mindbreak Trap"]
 types = "I"
 tags = "ctr=any ctrexile"
 dsl = []
-status = "Partial"
-note = "hard-cast for {2}{U}{U} it exiles one spell; missing: the free mode (an opponent cast three or more spells this turn) and exiling any number of spells (mindbreak_free, mindbreak_exile are written)"
+status = "Full"
+note = "exile target spell, and every other opposing spell on the stack; cast for {2}{U}{U}, or for free (plus cost increases) when an opponent has cast three or more spells this turn (alternative-cost slot); the AI takes the free mode whenever it is open"
 
 ["Misdirection"]
 types = "I"
 tags = ""
 dsl = []
 status = "Partial"
-note = "not cast by the AI yet: t6_counters::misdirect changes a single target of a spell on the stack (a spell aimed at us goes to the caster's best permanent or the caster), pitch cost in pay_alt_cost; missing: the engine casting a non-counter card in response to a spell"
+note = "not cast by the AI yet: t6_counters::misdirect changes a single target of a spell on the stack; its pitch cost (exile a blue card) is wired into the alternative-cost slot (engine/altcost.rs); missing: the engine casting a non-counter card in response to a spell"
 
 ["Commandeer"]
 types = "I"
 tags = ""
 dsl = []
 status = "Partial"
-note = "not cast by the AI yet: t6_counters::commandeer takes control of a noncreature spell on the stack with new targets, pitch cost (two blue cards) in pay_alt_cost; missing: casting in response, and a stolen spell resolving under its new controller"
+note = "not cast by the AI yet: t6_counters::commandeer takes control of a noncreature spell on the stack with new targets; its pitch cost (two blue cards) is wired into the alternative-cost slot (engine/altcost.rs); missing: casting in response, and a stolen spell resolving under its new controller"
 
 ["Sudden Substitution"]
 types = "I"
@@ -8461,8 +8461,8 @@ note = "destroys the targeted opposing artifact, else (no artifact chosen) up to
 
 ["Pyrokinesis"]
 tags = "rem=dmg4 tgt=c"
-status = "Partial"
-note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); the pitch cost (exile a red card from hand) is t6_redirects::pay_pyro_pitch; missing: the engine casts it only for {4}{R}{R} (alternative-cost hook)"
+status = "Full"
+note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); cast for {4}{R}{R} or by exiling a red card from hand (alternative-cost slot); the AI pitches when it can't pay the mana (main phase and as an answer to an attack), valuing the kill 1.5 lower per card given up"
 
 ["Scout's Warning"]
 status = "Partial"
@@ -8499,8 +8499,8 @@ status = "Partial"
 note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"
 
 ["Sunscour"]
-status = "Partial"
-note = "destroys all creatures (the wipe=destroy tag); the pitch cost (exile two white cards from hand) is t6_redirects::pay_sunscour_pitch; missing: the engine casts it only for {5}{W}{W} (alternative-cost hook)"
+status = "Full"
+note = "destroys all creatures (the wipe=destroy tag); cast for {5}{W}{W} or by exiling two white cards from hand (alternative-cost slot); the AI pitches when it can't pay the mana, valuing the wipe 3 lower"
 
 ["Gleaming Splendor"]
 tags = ""
@@ -8621,8 +8621,8 @@ status = "Partial"
 note = "nonbasic lands tap for {R} only, and a two-mana land (Ancient Tomb, City of Traitors) makes one; the AI casts it when opponents have three more nonbasic lands than it; missing: nonbasic lands lose their other abilities (Ancient Tomb's damage, Urza's Saga, manlands) and become Mountains (rust/agents/engine-needs-godo.md)"
 
 ["Defense Grid"]
-status = "Partial"
-note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); free alternative costs are not taxed"
+status = "Full"
+note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); the tax is also paid by alternative-cost and free casts (pitch, Daze, Force of Will, Fierce Guardianship, Pact, Deflecting Swat; engine/altcost.rs tax)"
 
 ["Final Fortune"]
 status = "Partial"

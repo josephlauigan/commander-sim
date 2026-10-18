@@ -14,6 +14,7 @@
 
 use super::{act, decks, explain, gumbel_order, is_main, pool, sample, search, sig, style, temp};
 use crate::cards::Types;
+use crate::engine::altcost;
 use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_affordable, parse_cost};
 use crate::engine::combat::double_strike;
 use crate::engine::life::lose_life;
@@ -508,7 +509,8 @@ fn rem_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String, i32) {
 
 fn free_removal(g: &Game, p: PlayerId, c: CardId) -> bool {
     let t = &g.db.get(c).tags;
-    (t.has(Tag::Freecmd) && commander_out(g, p)) || (t.has(Tag::Snuff) && g.player(p).life > 12 && swamp_land(g, p))
+    ((t.has(Tag::Freecmd) && commander_out(g, p)) || (t.has(Tag::Snuff) && g.player(p).life > 12 && swamp_land(g, p)))
+        && altcost::tax_payable(g, p, c) // a free cast still pays the cost increases (Defense Grid)
 }
 
 fn rem_spec(g: &Game, c: CardId) -> (&str, &str, bool) {
@@ -530,7 +532,10 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         let fods = rem_fodder(g, p);
         let extra = if t.has(Tag::Sacor4) && fods.is_empty() { 4 } else { 0 };
         let (rg, rp, _) = rem_cost(g, p, c);
-        if !free_removal(g, p, c) && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
+        // an alternative cost (Snapback, Pyrokinesis: cards exiled from hand) when the mana can't be paid
+        let free = free_removal(g, p, c);
+        let alt = !free && altcost::use_alt(g, p, c, None, rg + extra, &rp);
+        if !free && !alt && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
             continue;
         }
         if t.has(Tag::Needart3)
@@ -557,6 +562,9 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
             continue; // outside decks: no removal on trivial targets
         }
         let mut u = v - 3.5;
+        if alt {
+            u -= 1.5 * altcost::lost(g, p, c, None); // cards given up instead of mana
+        }
         if d.instant {
             u -= 1.2 * caution * g.settings.instant_extra as f64 / 2.0; // instants are worth holding
         }
@@ -630,7 +638,8 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     let mut best: Option<(f64, CardId, PermId)> = None;
     for &c in &rem {
         let x = g.db.get(c);
-        if !can_pay(g, d, x.generic, &x.pips, x.tag(Tag::Convoke)) {
+        let alt = altcost::use_alt(g, d, c, None, x.generic, &x.pips);
+        if !alt && !can_pay(g, d, x.generic, &x.pips, x.tag(Tag::Convoke)) {
             continue;
         }
         if x.tag(Tag::Needsac) || x.tag(Tag::Pactpay) {
@@ -641,7 +650,8 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             if !atk.contains(&m) {
                 continue;
             }
-            let v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64;
+            let pen = if alt { 1.5 * altcost::lost(g, d, c, None) } else { 0.0 };
+            let v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, m));
             }
@@ -681,7 +691,8 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     let free = free_removal(g, p, c);
     extra += kick;
     let (rg, rp, rlife) = rem_cost(g, p, c);
-    if !g.player(p).hand.contains(&c) || (!free && !can_pay(g, p, rg + extra, &rp, cv)) {
+    let alt = !free && kick == 0 && altcost::use_alt(g, p, c, None, rg + extra, &rp);
+    if !g.player(p).hand.contains(&c) || (!free && !alt && !can_pay(g, p, rg + extra, &rp, cv)) {
         return Ok(false);
     }
     if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
@@ -701,9 +712,18 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
         }
         fod = min_by(&fods, |x| sac_worth(g, x));
     }
-    if free && d.tag(Tag::Snuff) && !(d.tag(Tag::Freecmd) && commander_out(g, p)) {
-        lose_life(g, p, 4, Some(p), "life", None)?;
-    } else if !free {
+    if alt {
+        if !altcost::pay_alt(g, p, c, None)? {
+            return Ok(false);
+        }
+    } else if free {
+        if !altcost::pay_tax(g, p, c)? {
+            return Ok(false);
+        }
+        if d.tag(Tag::Snuff) && !(d.tag(Tag::Freecmd) && commander_out(g, p)) {
+            lose_life(g, p, 4, Some(p), "life", None)?;
+        }
+    } else {
         pay(g, p, rg + extra, &rp, cv)?;
         if rlife > 0 {
             lose_life(g, p, rlife, Some(p), "life", None)?; // {B/P} paid with 2 life (Dismember)
@@ -728,7 +748,8 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
             continue;
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
-        if !can_pay(g, p, cg, &cp, false) {
+        let alt = altcost::use_alt(g, p, c, None, cg, &cp); // Sunscour: two white cards instead of {5}{W}{W}
+        if !alt && !can_pay(g, p, cg, &cp, false) {
             continue;
         }
         let (ol, ml, victim) = decks::wipe_eval(g, p, kind);
@@ -743,6 +764,9 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
                 None => continue,
             }
         }
+        if alt {
+            u -= 1.5 * altcost::lost(g, p, c, None); // cards given up instead of mana
+        }
         if d.instant && !eot && s.danger < 0.8 {
             u -= 1.5; // held: at the end of the turn before yours it sticks
         }
@@ -754,13 +778,20 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
 /// the executor of a wipe option
 pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>) -> Res<bool> {
     let (cg, cp) = decks::wipe_cost(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, cg, &cp, false) {
+    let alt = altcost::use_alt(g, p, c, None, cg, &cp);
+    if !g.player(p).hand.contains(&c) || (!alt && !can_pay(g, p, cg, &cp, false)) {
         return Ok(false);
     }
     if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
-    pay(g, p, cg, &cp, false)?;
+    if alt {
+        if !altcost::pay_alt(g, p, c, None)? {
+            return Ok(false);
+        }
+    } else {
+        pay(g, p, cg, &cp, false)?;
+    }
     cast_card(g, p, c, "hand", Ctx { victim, ..Ctx::default() })?;
     g.player_mut(p).stat("wipes_cast", 1);
     Ok(true)

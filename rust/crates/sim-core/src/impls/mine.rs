@@ -3296,7 +3296,9 @@ pub fn veyran_protect(
             .copied()
             .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && (g.is_creature(x) || kind != "dmg"))
             .collect();
-        if !alt.is_empty() && cast_response(g, owner, sw, if free { 0 } else { 2 }, if free { "" } else { "R" })? {
+        // free with the commander out, but still taxed (Defense Grid): `altcost::tax` is 0 when nothing taxes spells
+        let swat_generic = if free { crate::engine::altcost::tax(g, owner, sw) } else { 2 };
+        if !alt.is_empty() && cast_response(g, owner, sw, swat_generic, if free { "" } else { "R" })? {
             let t = first_max(&alt, |x| pval(g, x)).unwrap();
             crate::glog!(
                 g,

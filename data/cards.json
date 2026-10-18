@@ -26958,7 +26958,9 @@
    "types": "I",
    "generic": 0,
    "pips": "UU",
-   "tags": {},
+   "tags": {
+    "ctr": "mvx"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,

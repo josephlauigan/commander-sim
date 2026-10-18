@@ -42,12 +42,6 @@ Where it would hook: `engine/mana.rs` (`Tag::Tomb`/`Tag::Pain` damage, lines ~11
 Card side done: the existing `blood_moon` slot (colour R), `land_mana` slot cutting two-mana lands to one, and an AI cast priority (`impls/t6_godo.rs`).
 Test to add once the engine has it: with Blood Moon out, tapping Ancient Tomb deals no damage; Urza's Saga's tutor ability is gone; a manland cannot animate.
 
-## Defense Grid
-Needs: cost increases applied to spells cast for an alternative cost (Force of Will, Daze, Pact, "without paying"): `hooks::total_cost` is added only to the mana cost in `mana::cost_of`; the alternative-cost casts (`t6_counters::pay_alt_cost`, once wired) should pay the increase as well.
-Where it would hook: the cast path that handles `paid_otherwise` in `engine/cast.rs` (`cast_card`), adding `hooks::total_cost(g, p, c)` as generic mana.
-Card side done: the {3} tax outside the caster's turn for every player (`cost` slot, `impls/t6_godo.rs`).
-Test to add once the engine has it: with Defense Grid out on another player's turn, casting a spell for its alternative cost still needs {3}.
-
 ## Final Fortune, Last Chance
 Needs: extra turns (a queue of extra turns on the game that `turn.rs` plays right after the current one, with the same player active), and a delayed "at the beginning of that turn's end step, you lose the game" effect tied to that extra turn. The deck uses them for a second combat phase / full untap on the combo turn (spec line 7), so the AI also needs a rule to cast one only when the extra turn wins.
 Where it would hook: `engine/turn.rs` (the seat loop around `step_start`, ~line 1140 where `skip_turns` is read) and the end-step code next to `Event::EndStep`; a `Player::extra_turns` counter plus a per-turn "loses at end" flag.
