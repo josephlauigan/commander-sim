@@ -180,3 +180,68 @@ fn mycospawn_kicked_exiles_the_best_opposing_land() {
     assert_eq!(g.player(P1).lands.len(), 2);
     assert!(g.player(P1).exile.iter().any(|&c| &*g.db.get(c).name == "Command Tower"));
 }
+
+// ======================================================== Endurance
+fn fill_gy(g: &mut Game, p: PlayerId, names: &[&str]) {
+    for c in hand(g, p, names) {
+        sim_core::engine::zones::discard_cards(g, p, &[c]).unwrap();
+    }
+}
+
+#[test]
+fn endurance_is_a_flash_reach_body() {
+    let g = game();
+    let d = g.db.get(card(&g, "Endurance"));
+    assert!(d.tag(sim_core::tag::Tag::Flash) && d.tag(sim_core::tag::Tag::Reach));
+    assert_eq!((d.pow, d.tgh), (3, 4));
+}
+
+#[test]
+fn endurance_puts_an_opponent_graveyard_on_the_bottom_of_their_library() {
+    let mut g = game();
+    fill_gy(&mut g, P1, &["Swords to Plowshares", "Opt", "Ponder", "Brainstorm", "Preordain"]);
+    let c = hand(&mut g, P0, &["Endurance"])[0];
+    let lib = g.player(P1).library.len();
+    let bottom: Vec<_> = g.player(P1).library.iter().take(2).copied().collect();
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(on_bf(&g, P0, "Endurance").is_some());
+    assert!(g.player(P1).gy.is_empty(), "graveyard emptied");
+    assert_eq!(g.player(P1).library.len(), lib + 5);
+    assert_eq!(&g.player(P1).library[5..7], &bottom[..], "the old library sits above the five cards");
+}
+
+#[test]
+fn endurance_aims_at_its_own_graveyard_with_faerie_mastermind() {
+    let mut g = game();
+    perm(&mut g, P0, "Faerie Mastermind");
+    fill_gy(&mut g, P0, &["Opt", "Ponder"]);
+    fill_gy(&mut g, P1, &["Opt", "Ponder", "Brainstorm", "Preordain", "Swords to Plowshares"]);
+    let c = hand(&mut g, P0, &["Endurance"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(g.player(P0).gy.is_empty());
+    assert_eq!(g.player(P1).gy.len(), 5, "the opponent's stays");
+}
+
+#[test]
+fn endurance_with_small_graveyards_does_nothing() {
+    let mut g = game();
+    fill_gy(&mut g, P1, &["Opt"]);
+    let c = hand(&mut g, P0, &["Endurance"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P1).gy.len(), 1);
+}
+
+#[test]
+fn endurance_evoke_exiles_a_green_card_and_is_sacrificed() {
+    let mut g = game();
+    fill_gy(&mut g, P1, &["Swords to Plowshares", "Opt", "Ponder", "Brainstorm", "Preordain"]);
+    let h = hand(&mut g, P0, &["Endurance", "Noxious Revival"]);
+    let f = g.registry.get(h[0]).and_then(|i| i.hand_options).expect("evoke option");
+    let opts = f(&mut g, h[0], P0, None).unwrap();
+    assert_eq!(opts.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
+    assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Noxious Revival"));
+    assert!(on_bf(&g, P0, "Endurance").is_none(), "sacrificed");
+    assert!(in_gy(&g, P0, "Endurance"));
+    assert!(g.player(P1).gy.is_empty(), "the enters effect still happened");
+}

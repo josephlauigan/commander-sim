@@ -8522,3 +8522,7 @@ note = "{G/P} (the engine pays 2 life when no green mana is free); puts a gravey
 ["Sowing Mycospawn"]
 status = "Partial"
 note = "3/3 body; the cast trigger (even if the spell is countered) fetches a land onto the battlefield (Gaea's Cradle with two creatures out, else the land adding the most new colours) and shuffles; missing: kicker {1}{C} and its exile-target-land half (written as t6_green2::mycospawn_kicked, not yet called) and devoid colourlessness"
+
+["Endurance"]
+status = "Full"
+note = "3/4 flash reach; when it enters, a graveyard goes to the bottom of its owner's library in random order (the AI picks its own with Faerie Mastermind out, else an opponent's graveyard of 4+ cards); evoke by exiling a green card from hand, then sacrificed, is a hand option used when the full cost is out of reach (t6_green2)"

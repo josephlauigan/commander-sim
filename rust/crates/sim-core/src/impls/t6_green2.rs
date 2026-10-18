@@ -6,14 +6,16 @@
 //! - Cloud of Faeries: ETB untaps two lands; cycling {2} is a hand option.
 //! - Noxious Revival: resolve puts the best of the caster's own graveyard cards on top of its library.
 //! - Sowing Mycospawn: the cast trigger fetches a land; the kicked exile is `mycospawn_kicked` (needs engine kicker).
+//! - Endurance: flash is the card's tag; the enters effect and evoke (exile a green card, sacrificed) are here.
 
 use crate::cards::{CardDb, Colors};
-use crate::engine::mana::land_colors_now;
+use crate::engine::cast::on_cast;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{cost_of, land_colors_now};
 use crate::engine::stack::trigger_window;
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::zones::{discard_cards, draw, max_by};
+use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
 use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -170,6 +172,86 @@ pub fn mycospawn_kicked(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
+// ================================================================== Endurance
+const ENDURANCE: &str = "Endurance";
+
+/// whose graveyard the AI puts on the bottom of the library: its own with Faerie Mastermind out (the decking line
+/// wants a longer library to refill), else the opponent with the biggest graveyard of at least four cards (it
+/// shuts off their recursion and delve); None otherwise
+pub fn endurance_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
+    let mastermind = g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == "Faerie Mastermind");
+    if mastermind && !g.player(p).gy.is_empty() {
+        return Some(p);
+    }
+    let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive && g.player(q).gy.len() >= 4).collect();
+    max_by(&opps, |q| g.player(q).gy.len() as f64)
+}
+
+/// Flash, reach. When this creature enters, up to one target player puts all the cards from their graveyard on the
+/// bottom of their library in a random order.
+fn endurance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    if m != src {
+        return Ok(());
+    }
+    let Some(q) = endurance_target(g, o) else { return Ok(()) };
+    if !trigger_window(g, o, Some(src), "a graveyard goes to the bottom of its library", Some(3.0))? {
+        return Ok(());
+    }
+    let mut gy = std::mem::take(&mut g.player_mut(q).gy);
+    g.rng.shuffle(&mut gy);
+    crate::glog!(
+        g,
+        "    {}'s graveyard ({} cards) goes to the bottom of its library (Endurance)",
+        pname(g, q),
+        gy.len()
+    );
+    g.player_mut(q).library.splice(0..0, gy);
+    Ok(())
+}
+
+/// Evoke: exile a green card from hand (free, instant speed) when the full cost isn't payable and the enters effect
+/// is wanted; the Elemental is sacrificed as it enters.
+fn endurance_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let (gn, pips) = cost_of(g, p, c);
+    if post.is_some() && can_pay(g, p, gn, &pips, false) {
+        return Ok(vec![]);
+    }
+    if !g.player(p).hand.contains(&c) || endurance_target(g, p).is_none() || evoke_pitch(g, p, c).is_none() {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.5,
+        label: "evoke Endurance".into(),
+        act: Some(Action::Plan { f: endurance_evoke_go, arg: c.0 as i64 }),
+    }])
+}
+
+/// the green card the AI exiles: the least wanted other green card in hand
+fn evoke_pitch(g: &Game, p: PlayerId, c: CardId) -> Option<CardId> {
+    let greens: Vec<CardId> =
+        g.player(p).hand.iter().copied().filter(|&x| x != c && g.db.get(x).pips.contains('G')).collect();
+    min_by(&greens, |x| card_worth(g, p, x, false))
+}
+
+fn endurance_evoke_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).hand.contains(&c) {
+        return Ok(false);
+    }
+    let Some(x) = evoke_pitch(g, p, c) else { return Ok(false) };
+    remove_card(&mut g.player_mut(p).hand, x);
+    g.player_mut(p).exile.push(x);
+    remove_card(&mut g.player_mut(p).hand, c);
+    crate::glog!(g, "  {} evokes Endurance (exiling {})", pname(g, p), cname(g, x));
+    on_cast(g, p, c)?;
+    let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
+    if g.perm(m).on_bf {
+        die(g, m, "sac")?;
+    }
+    Ok(true)
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Chatterstorm")?.self_cast = Some(chatterstorm_cast);
@@ -180,5 +262,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.resolve = Some(revival_resolve);
     c.prio = Some(revival_prio);
     r.card(db, "Sowing Mycospawn")?.self_cast = Some(mycospawn_cast);
+    let c = r.card(db, ENDURANCE)?;
+    c.etb = Some(endurance_etb);
+    c.hand_options = Some(endurance_evoke);
     Ok(())
 }

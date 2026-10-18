@@ -8,7 +8,8 @@ After override edit: rust/target/release/cardgen audit --deck rograkh-thrasios-c
 - Cloud of Faeries: Full (etb hook untaps 2 lands; cycling = hand_options Plan)
 - Noxious Revival: Full (resolve: best own gy nonland card to library top; Phyrexian mana is engine-supported; note cast_card does not pay mana; hand() takes cards out of the library)
 - Sowing Mycospawn: Partial (kicker missing; fetch via self_cast; engine-needs-green2.md written). Fetch picks fetchlands fine (engine cracks)
+- Endurance: Full (etb bottoms a graveyard; evoke via hand_options like rules2 Solitude; flash tag already handled by AI)
 ## Next (order)
-Noxious Revival, Sowing Mycospawn, Endurance, Enduring Vitality, Cabbage Merchant, Shifting Woodland, Invasion of Ikoria
+Noxious Revival, Sowing Mycospawn, Enduring Vitality, Cabbage Merchant, Shifting Woodland, Invasion of Ikoria
 ## Gotchas
 - "cast trigger" = self_cast hook; storm_copies reusable. Engine needs go to rust/agents/engine-needs-green2.md
