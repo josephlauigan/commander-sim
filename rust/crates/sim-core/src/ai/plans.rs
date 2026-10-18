@@ -389,10 +389,48 @@ pub fn citadel_floor(g: &Game, p: PlayerId) -> i32 {
     10.max(super::necro_floor(g, p))
 }
 
-/// Ad Nauseam: about 2.5 life per card; worth it for four or more cards
+/// Ad Nauseam's threat floor: the largest opposing board plus half of the others' (more than one opponent can swing
+/// at you before your next turn), plus 6, and never under 10
+pub fn adnaus_floor(g: &Game, p: PlayerId) -> i32 {
+    let mut boards: Vec<i32> = g
+        .opps(p)
+        .map(|q| {
+            g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).sum()
+        })
+        .collect();
+    boards.sort_unstable_by(|a, b| b.cmp(a));
+    let rest: i32 = boards.iter().skip(1).sum();
+    10.max(boards.first().copied().unwrap_or(0) + rest / 2 + 6)
+}
+
+/// the life Ad Nauseam costs per card: the average mana value of the library (lands are free)
+pub fn adnaus_life_per_card(g: &Game, p: PlayerId) -> f64 {
+    let lib = &g.player(p).library;
+    if lib.is_empty() {
+        return 2.5;
+    }
+    let total: f64 = lib.iter().map(|&c| g.db.get(c).cmc as f64).sum();
+    (total / lib.len() as f64).max(0.5)
+}
+
+/// the hand Ad Nauseam should stop at: seven (the cleanup discards the rest) plus what next turn's mana casts,
+/// about one card per three mana (this turn's lands and a land drop)
+pub fn adnaus_hand_cap(g: &Game, p: PlayerId) -> usize {
+    7 + (g.player(p).lands.len() + 1) / 3
+}
+
+/// Ad Nauseam: what it's worth, from the cards the life above the threat floor buys; worth it for four or more.
+/// When to cast it (the end of the turn before yours, with room in the hand) is `adnaus_cast_now`.
 pub fn adnaus_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    let cards = life_margin(g, p) as f64 / 2.5;
+    let cards = (g.player(p).life - adnaus_floor(g, p) - 7) as f64 / adnaus_life_per_card(g, p);
     if cards < 4.0 { 0 } else { 80.0f64.min(40.0 + 4.0 * cards) as i32 }
+}
+
+/// Ad Nauseam now: at the end of the turn before yours (your mana untaps for the cards it finds), with room for four
+/// cards under the hand cap (the cast itself leaves the hand)
+pub fn adnaus_cast_now(g: &Game, p: PlayerId) -> bool {
+    let room = (adnaus_hand_cap(g, p) + 1).saturating_sub(g.player(p).hand.len());
+    g.active != Some(p) && room >= 4
 }
 
 /// The One Ring: a turn of protection matters most when the table could kill you; the burden costs life every upkeep
