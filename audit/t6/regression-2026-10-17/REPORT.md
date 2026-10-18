@@ -20,3 +20,12 @@ Runs with the machine to itself: t3 395 s -> 537 s (+36%), t4 339 s -> 458 s (+3
 **The engine pass made games about 35-40% slower.** Earlier tiers overlapped another session's sims or a pause and
 are not comparable. Candidates: the legend-rule and toughness checks at every `check_state`, the hand scan for Spirit
 Guides in every mana computation, the cast-lock / cast-counter checks on every castability test. To profile and fix.
+
+## Update 2026-10-18: Isshin's +6 was a bug, now fixed
+
+Karlach, Fury of Avernus ran twice: its hand code (first combat only, correct) and a compiled "attack: extra_combat"
+with no first-combat condition. The old 4-combat cap hid it; uncapped, Isshin's doubling chained it to 200 combats in a
+turn (ISSHIN.md has the traces). Fixed in da52e57 (`dsl = []`, regression test: Karlach + Isshin give 2-3 combats; on
+the old data the test saw 36). Re-run of t1 with the fix (`cedh-t1-karlachfix.txt`): Isshin 22.7 / 26.9 vs baseline
+24.5 / 25.8, every deck within noise. **No tier now shows a shift beyond noise.** No other card had a compiled
+extra_combat next to hand code.
