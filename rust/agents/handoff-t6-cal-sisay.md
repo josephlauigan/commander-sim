@@ -11,3 +11,4 @@
 - merged fixed t6-cedh (kept one marvin_both); build + 600 -> after2.txt running
 - 600 after2: Sisay 20.0%, tries 25 (0.06/game) stopped 52% (was 69-87). Trace found: must_option picks Sisay fetch (91) over ready combo option; added combo=92 in t6_table.rs must_option. Building+600 -> after3.txt
 - after3 (combo=92 in must_option): 19.8%, tries 0.11/game (43), stopped 84%, 14 'no card named'. Looking for the step that fails (traces 12-41 -> stops.txt)
+- A/B: go_now disabled (risk check decides) -> after4.txt
