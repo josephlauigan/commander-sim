@@ -92,7 +92,7 @@ fn lightning_hit(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
 /// the creatures whose {T} abilities Marvin copies, best first (Niv's draw first)
 const COPIED: [&str; 4] = ["Niv-Mizzet, the Firemind", "Rummaging Goblin", "Viashino Fangtail", "Blightspeaker"];
 
-pub fn marvin_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn marvin_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || !g.perm(src).on_bf || g.perm(src).phased {
         return Ok(vec![]);
     }

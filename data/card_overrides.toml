@@ -8445,10 +8445,6 @@ tags = ""
 status = "Full"
 note = "{1},{T}: a charge counter noting the colour of the mana spent (when it has none); {T}, remove it: one mana of that type later; the AI charges it in the second main phase or the end-of-turn window; no longer a free colourless rock"
 
-["The Mind Stone"]
-status = "Full"
-note = "{T}: {W}; {5}{W},{T}: harness (the AI does it with the mana to spare and a permanent worth blinking); once harnessed, at your end step blinks one other nonland permanent (best enter-effect creature, else a tapped mana rock); indestructible"
-
 ["Grinding Station"]
 status = "Full"
 note = "{T}, sacrifice an artifact: target player mills three; whenever any artifact enters, untaps it (always taken)"
@@ -8844,10 +8840,6 @@ note = "a spell cast with no coloured mana spent (colourless sources only, or fr
 status = "Full"
 note = "{T}: untap another target permanent (a tapped land, mana creature or rock) or untap two other target legendary creatures; the AI taps only for a gain of at least one mana, six times a turn at most (t6_legends1b.rs)"
 
-["Marvin, Murderous Mimic"]
-status = "Partial"
-note = "has Ioreth's two untap abilities while its controller has an Ioreth (the DDR loop); the activated abilities of other creatures are not copied (engine-needs-legends1b.md)"
-
 ["Shang-Chi, Master of Kung Fu"]
 status = "Partial"
 note = "taps for mana as a dork; 'activate abilities as though haste' is honored by the engine's creature mana sources and the card code (ability_haste); missing: the two mana of one colour is not limited to creature abilities (restricted mana, engine-needs-legends1b.md)"
@@ -8997,4 +8989,4 @@ note = "first strike, trample, lifelink; Stagger on combat damage to a player do
 
 ["Marvin, Murderous Mimic"]
 status = "Partial"
-note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first"
+note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first; also has Ioreth's two untap abilities while its controller has an Ioreth (the Tier 6 DDR loop). Other creatures' activated abilities are not copied"
