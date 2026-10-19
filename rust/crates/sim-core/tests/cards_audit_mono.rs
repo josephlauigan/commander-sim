@@ -85,14 +85,14 @@ fn necrosquito_is_a_better_cast_with_sacrifice_fodder() {
 
 #[test]
 fn silhana_starfletcher_taps_for_green() {
-    let g = table(&["titania", "seph"]);
+    let g = table(&["omnath", "seph"]);
     let d = g.db.get(card(&g, "Silhana Starfletcher"));
     assert_eq!(d.tags.str(Tag::Dork), Some("G"));
 }
 
 #[test]
 fn fblthp_costs_x_gg_and_fetches_one_forest() {
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     let f = card(&g, "Fblthp, Knows the Way");
     assert_eq!(g.db.get(f).cmc, 3, "{{1}}{{G}}{{G}}: X = 1");
     lands(&mut g, P0, "Forest", 2, false);
@@ -155,7 +155,7 @@ fn dark_deal_is_allowed_with_three_other_cards() {
 #[test]
 fn worldly_tutor_fetches_a_mana_creature_early_and_a_big_body_late() {
     use sim_core::ai::decks::tutor_pick_named;
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     lands(&mut g, P0, "Forest", 2, false);
     let early = tutor_pick_named(&g, P0, "cre").unwrap();
     assert!(
@@ -171,12 +171,12 @@ fn worldly_tutor_fetches_a_mana_creature_early_and_a_big_body_late() {
 #[test]
 fn arachnogenesis_answers_three_small_attackers() {
     use sim_core::impls::titania::attack_fog;
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     lands(&mut g, P0, "Forest", 3, false);
     hand(&mut g, P0, &["Arachnogenesis"]);
     let atk: Vec<PermId> = (0..3).map(|_| token(&mut g, P1, 1)).collect();
     assert!(attack_fog(&mut g, P0, P1, &atk).unwrap());
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     lands(&mut g, P0, "Forest", 3, false);
     hand(&mut g, P0, &["Arachnogenesis"]);
     let atk: Vec<PermId> = (0..2).map(|_| token(&mut g, P1, 1)).collect();

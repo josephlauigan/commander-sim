@@ -27,7 +27,7 @@ use crate::engine::combat::{can_block, first_strike, has_haste, kw};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, land_colors_now, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
+use crate::engine::stack::{ability_window, ability_window_card, counter_window, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, colors_of, epow, etgh, no_sac, pval, untargetable};
 use crate::engine::zones::{
@@ -485,7 +485,7 @@ fn karmic_fire(g: &mut Game, src: PermId, m: PermId, cause: Sym) -> Res {
     let cands: Vec<PermId> =
         g.player(d).perms.iter().copied().filter(|&x| !g.perm(x).phased && !untargetable(g, x)).collect();
     let Some(t) = max_by(&cands, |x| pval(g, x)) else { return Ok(()) };
-    if !trigger_window(g, o, Some(src), &format!("destroy {}", name_of(g, t)), Some(4.0))? {
+    if !may_window(g, o, Some(src), &format!("destroy {}", name_of(g, t)), Some(4.0))? {
         return Ok(());
     }
     if controls(g, d, t) {
@@ -746,7 +746,27 @@ fn chaplain(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             g.player(o).gy.contains(&c) && (&*d.name == "Plains" || (d.creature && d.cmc <= 3))
         })
         .collect();
-    if let Some(c) = max_by(&cs, |c| card_worth(g, o, c, false)) {
+    // "you may put a Plains or a cheap creature card into your hand": a person picks the card, or declines for the counter
+    let pick = if crate::human::is_human(g, o) {
+        let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+        if labels.is_empty() {
+            None
+        } else {
+            crate::human::choices::choose(
+                g,
+                o,
+                "choose",
+                "Airlift Chaplain: put a milled card into your hand? (otherwise it gets a +1/+1 counter)",
+                &labels,
+                Some("no (a +1/+1 counter)"),
+                None,
+            )?
+            .map(|k| cs[k])
+        }
+    } else {
+        max_by(&cs, |c| card_worth(g, o, c, false))
+    };
+    if let Some(c) = pick {
         remove_first(&mut g.player_mut(o).gy, c);
         g.player_mut(o).hand.push(c);
         crate::glog!(g, "    Airlift Chaplain: {} puts {} into hand", pname(g, o), g.db.get(c).name);

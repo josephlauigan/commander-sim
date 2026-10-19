@@ -137,6 +137,28 @@ pub fn annex_life(g: &mut Game, p: PlayerId, d: PlayerId, xs: Vec<PermId>) -> Re
     }
     let mut out = vec![];
     for m in xs {
+        if crate::human::is_human(g, p) {
+            let mut labels = vec![];
+            if can_pay(g, p, 0, "W", false) {
+                labels.push("pay {W}".to_string());
+            }
+            if g.player(p).life > 2 {
+                labels.push("pay 2 life".to_string());
+            }
+            let prompt = format!("Norn's Annex: attacking with {} costs {{W/P}}", g.perm(m).name);
+            match crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("don't attack with it"), None)? {
+                Some(k) if labels[k] == "pay {W}" => {
+                    pay(g, p, 0, "W", false)?;
+                    out.push(m);
+                }
+                Some(_) => {
+                    lose_life(g, p, 2, Some(p), "other", None)?;
+                    out.push(m);
+                }
+                None => {}
+            }
+            continue;
+        }
         if can_pay(g, p, 0, "W", false) {
             pay(g, p, 0, "W", false)?;
             out.push(m);
@@ -318,7 +340,7 @@ fn kotwo(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let n = g.player(o).lands.len();
         g.opps(o).any(|q| g.player(q).lands.len() > n)
     };
-    if behind(g) && trigger_window(g, o, Some(src), "search for a Plains", None)? && behind(g) {
+    if behind(g) && crate::engine::stack::may_window(g, o, Some(src), "search for a Plains", None)? && behind(g) {
         let cs: Vec<CardId> = searchable(g, o)
             .into_iter()
             .filter(|&x| {

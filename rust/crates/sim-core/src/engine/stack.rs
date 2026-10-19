@@ -221,6 +221,32 @@ pub fn trigger_window(g: &mut Game, p: PlayerId, src: Option<PermId>, name: &str
     stack_window(g, p, it)
 }
 
+/// `trigger_window` for a "you may" trigger. The window works as before (the table may respond, the trigger may be
+/// countered); then, if it resolves and `p` is a person, they are asked yes/no and `false` comes back on no. For the
+/// AI it is exactly `trigger_window` (the card code's own value test decides). The default question is
+/// "<card>: <name>?"; use `may_window_ask` for a better one. The question comes at resolution, which is when Oracle
+/// has you choose; each copy of a copied trigger asks again.
+pub fn may_window(g: &mut Game, p: PlayerId, src: Option<PermId>, name: &str, imp: Option<f64>) -> Res<bool> {
+    let prompt = format!("{}: {name}?", src_name(g, src));
+    may_window_ask(g, p, src, name, imp, &prompt)
+}
+
+/// `may_window` with the question spelled out (start it with the card's name)
+pub fn may_window_ask(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    name: &str,
+    imp: Option<f64>,
+    prompt: &str,
+) -> Res<bool> {
+    let ok = trigger_window(g, p, src, name, imp)?;
+    if !ok || !crate::human::is_human(g, p) {
+        return Ok(ok);
+    }
+    crate::human::choices::yes_no(g, p, prompt)
+}
+
 /// trigger_window for a trigger whose source is a card, not a permanent (a land's enter trigger)
 pub fn trigger_window_card(g: &mut Game, p: PlayerId, cd: CardId, name: &str) -> Res<bool> {
     if g.trig_probe {
@@ -233,6 +259,15 @@ pub fn trigger_window_card(g: &mut Game, p: PlayerId, cd: CardId, name: &str) ->
     let full = format!("{}: {name}", g.db.get(cd).name);
     let it = new_item(g, p, Some(cd), Ctx::default(), "trigger", 3.0, StackKind::Trigger, full);
     stack_window(g, p, it)
+}
+
+/// `may_window` for a trigger whose source is a card, not a permanent (Jocasta returning from the graveyard)
+pub fn may_window_card(g: &mut Game, p: PlayerId, cd: CardId, name: &str, prompt: &str) -> Res<bool> {
+    let ok = trigger_window_card(g, p, cd, name)?;
+    if !ok || !crate::human::is_human(g, p) {
+        return Ok(ok);
+    }
+    crate::human::choices::yes_no(g, p, prompt)
 }
 
 #[allow(clippy::too_many_arguments)]

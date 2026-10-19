@@ -12,6 +12,37 @@ Look-ahead, loose, current list: **T5 23.3–23.6%** (the baselines of the swap 
   Sentence, Esper Sentinel, Curiosity, Chromatic Lantern, Thought Vessel (43–44%).
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Curiosity => Orcish Bowmasters, confirmed (T5, loose, 2,000 games per list, look-ahead)
+Result: **31.6% -> 34.1%, +2.5 (noise ±2.3): BETTER**, the first swap to clear the noise for her. Raw:
+`2026-10-19-bowmasters/full-curiosity-t5.txt`.
+Why: Bowmasters is cast in 81% of the games it is drawn (Curiosity 68%, stuck in hand 32%), around round 5.9, and
+wins 48% of the games it is cast in. Damage to opponents +2.3 a game and the plan online +2.4 points (60.3 -> 62.7%),
+same game length (9.4 rounds). The losses to Urza, Zur and Winota combo fall slightly (all within noise): the ping
+and the Orc Army pick off the fast decks' mana creatures and small pieces. Recommended: buy a second Bowmasters for her.
+
+### 2026-10-19: Orcish Bowmasters for three cards (quick read: T5, loose only, 700 games per list, look-ahead)
+| Cut (=> Orcish Bowmasters) | T5 (noise ±4.0-4.1) |
+|---|---|
+| Curiosity | +3.1 |
+| Mystic Remora | +2.0 |
+| Lightning Greaves | +3.3 |
+**Leans good: about +2.8, every cut positive, none beyond noise alone.** The three share one baseline (30.9%), so they
+are not independent; a full run of one cut is needed to confirm. Raw: `2026-10-19-bowmasters/<cut>-t5.txt`.
+Why: Bowmasters is cast in 79-86% of the games it is drawn, early (round 5.4-5.8), and wins 45-56% of the games it
+is cast in (the deck averages about 31%). Damage to opponents rises 1.8-3.6 a game in all three, and the plan comes
+online slightly more often (+0.9 to +3.3). The ping kills T5's mana creatures and 1-toughness pieces, and the fast
+tables' own extra draws feed it. JD would buy a second copy (the Sauron copy stays).
+
+### 2026-10-19: Talisman of Progress => The Mind Stone (T5, 2,000 games per list per profile, look-ahead)
+Result: **+2.5 conservative (±2.0) / -1.0 loose (±1.9): about +0.75 averaged, no clear effect** (the tool's
+"leans better" rests on one profile, and the other goes the other way). Raw: `2026-10-19-mind-stone/t5.txt`.
+Why: a rock for a rock. Mana on turns 4 and 6 and the plan (online in about 61% of games, turn 6.9) are unchanged.
+The Mind Stone is cast in 67-73% of the games it is drawn (Talisman 67-68%), around round 5.2-5.5, and stuck in hand
+in 27-33%, as much as the Talisman: her rocks are often skipped for better plays, so it is not a Mind Stone priority
+problem. Her losses are the same fast combo either way (Urza 15%, Zur 13%, Winota 11-20%), which ends T5 games at
+about 9.4 rounds, before the {5}{W} harness matters. The 10/18 quick test (Chromatic Lantern out, loose only) was
+also noise (+0.4). Verdict: not an upgrade for her.
+
 ### AI fix: cards her rules don't name (2026-10-17, `9b7e19a`)
 `yshtola_prio` returned 0 (never cast by priority) for any card it didn't name: a swapped-in Ad Nauseam was cast in
 0.5% of the games it was drawn, and **Dakkon, Shadow Slayer in her list was never cast**. Unnamed cards now get the

@@ -8,11 +8,8 @@
 1 Cactarantula (otj) 158
 1 Carnivorous Canopy (one) 162
 1 Cartographer's Survey (dbl) 457
-1 Chelonian Tackle (sos) 142
 1 Compel Brutality (fra) 101b
-1 Crushing Canopy (vow) 194
 1 Cultivate (msc) 172
-1 Diplomatic Relations (eoe) 177†
 1 End-Raze Forerunners (blc) 214
 1 Evolving Wilds (msc) 240
 1 Fabled Passage (frc) 71
@@ -22,13 +19,9 @@
 1 Garruk's Uprising (ecc) 109
 1 Genesis Hydra (otc) 193
 1 Ghalta the Unstoppable (fra) 260
-1 Glorious Decay (sos) 150
 1 Greenbelt Radical (mkm) 163
 1 Greenhouse Propagator (fra) 104
-1 Hard-Hitting Question (mkm) 164
 1 Hardbristle Bandit (otj) 168
-1 Infestation Expert (vow) 206
-1 Knockout Maneuver (tdm) 147
 1 Kura, the Boundless Sky (neo) 200
 1 Lashwhip Predator (eoe) 195
 1 Lifestream's Blessing (fic) 67
@@ -39,7 +32,6 @@
 1 Overwhelming Stampede (msc) 178
 1 Paladin of Predation (one) 178
 1 Paradise Druid (pwar) 171
-1 Pick Your Poison (mkm) 170
 1 Pothole Mole (dft) 176
 1 Rampant Growth (fic) 313
 1 Rending Vines (sok) 143
@@ -50,12 +42,8 @@
 1 Silhana Starfletcher (gpt) 95
 1 Skyshroud Claim (eoc) 107
 1 Something Worth Saving (fra) 114
-1 Spider-Man, Brooklyn Visionary (spm) 115
-1 Studious First-Year (sos) 162
 1 Symbiotic Beast (dmr) 180
-1 Tenured Concocter (sos) 163
 1 Terramorphic Expanse (msc) 273
-1 Thirsting Roots (one) 185
 1 Thrashing Brontodon (fdn) 560
 1 Titania, Protector of Argoth (mh2) 319
 1 Topiary Lecturer (sos) 165
@@ -64,3 +52,34 @@
 1 Vinelasher Adept (fra) 119
 1 Vorinclex, Monstrous Raider (khm) 406
 1 Worldly Tutor (dmr) 442
+1 Cinder Glade (fic) 380
+1 Decimate (fic) 323
+1 Hellkite Tyrant (fic) 295
+1 Rootbound Crag (fic) 416
+1 Scorching Dragonfire (j22) 596
+# set not in JD's lists: default printing
+1 Birds of Paradise (msc) 170
+# set not in JD's lists: default printing
+1 Command Tower (frc) 22
+# set not in JD's lists: default printing
+1 Fyndhorn Elder (8ed) 251
+# set not in JD's lists: default printing
+1 Karplusan Forest (eoc) 164
+# set not in JD's lists: default printing
+1 Terror of the Peaks (otj) 149
+# set not in JD's lists: default printing
+1 Wrenn and Six (2x2) 296
+# set not in JD's lists: default printing
+1 Blasphemous Act (msc) 163
+# set not in JD's lists: default printing
+1 Disintegrate (tsb) 58
+# set not in JD's lists: default printing
+1 Exotic Orchard (mbc) 79
+# placeholder until JD's copy is known
+1 Omnath, Locus of Rage (ecc) 129
+# placeholder until JD's copy is known
+1 Goblin Bombardment (mh2) 279
+# placeholder until JD's copy is known
+1 Oracle of Mul Daya (eoc) 102
+# placeholder until JD's copy is known
+1 Harrow (eoc) 98

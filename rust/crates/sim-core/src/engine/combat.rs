@@ -556,7 +556,8 @@ fn resolve_combat_inner(
     g.blocking = assign.iter().map(|x| x.1).collect();
     let ringblk: Vec<PermId> =
         assign.iter().filter(|&&(a, b)| cardcode::ring_blocked(g, p, a, b)).map(|x| x.1).collect();
-    let to_walker = if crate::human::is_human(g, p) { vec![] } else { walker_attacks(g, p, &atk, d, &assign) };
+    let to_walker =
+        if crate::human::is_human(g, p) { g.human_walker_atk.clone() } else { walker_attacks(g, p, &atk, d, &assign) };
     cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
@@ -688,6 +689,9 @@ fn resolve_combat_inner(
                     *g.player_mut(d).lost_names.entry(name).or_insert(0) += 1;
                 }
                 dmg = 0;
+            }
+            if dmg > 0 && crate::human::is_human(g, p) && to_walker.iter().any(|x| x.0 == a) {
+                dmg = 0; // the person's attacker went after a planeswalker that is gone: no damage to the player
             }
             if dmg > 0 && crate::impls::t0_captain::sac_player(g, d, dmg) {
                 dmg = 0; // Heroic Sacrifice

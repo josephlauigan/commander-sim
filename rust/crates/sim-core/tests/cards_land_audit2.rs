@@ -75,7 +75,7 @@ fn spire_of_industry_needs_an_artifact_and_costs_a_life() {
 
 #[test]
 fn exotic_orchard_makes_only_colours_an_opponent_land_could_make() {
-    let mut g = table(&["titania", "veyran"]);
+    let mut g = table(&["omnath", "veyran"]);
     let orchard = lands(&mut g, P0, "Exotic Orchard", 1, false)[0];
     assert_eq!(cols(&g, orchard), "", "the opponents control no lands");
     lands(&mut g, P1, "Forest", 1, false);
@@ -144,7 +144,7 @@ fn hidden_grotto_taps_for_colourless() {
 #[test]
 fn fabled_passage_untaps_the_land_with_three_other_lands() {
     for (others, tapped) in [(2usize, true), (3, false)] {
-        let mut g = table(&["titania", "veyran"]);
+        let mut g = table(&["omnath", "veyran"]);
         lands(&mut g, P0, "Forest", others, false);
         let before = g.player(P0).lands.len();
         let fp = lands(&mut g, P0, "Fabled Passage", 1, false)[0];

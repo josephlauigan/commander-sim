@@ -12,7 +12,6 @@
 1 Coalition Relic (fut) 161
 1 Command Tower (sld) 1697
 1 Consecrated Sphinx (sld) 2028
-1 Curiosity (wot) 17
 1 Dark Petition (sch) 19
 1 Debt to the Deathless (rvr) 364
 1 Deep Analysis (dmr) 46
@@ -47,6 +46,7 @@
 1 Necropotence (wot) 74
 1 Night's Whisper (plst) EMA-100
 1 Notion Thief (spg) 36
+1 Orcish Bowmasters (hoc) 19
 1 Path to Exile (ss2) 3
 8 Plains (trk) 318
 1 Polluted Bonds (wot) 75

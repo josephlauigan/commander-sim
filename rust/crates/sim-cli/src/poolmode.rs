@@ -786,7 +786,7 @@ mod tier_tests {
             ("veyran", &["t1", "t2", "t3"]),
             ("cloud", &["t1", "t2", "t3"]),
             ("kraum", &["t5"]),
-            ("titania", &["t1", "t2", "t3"]),
+            ("omnath", &["t1", "t2", "t3"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),
             ("godo", &["t6"]),

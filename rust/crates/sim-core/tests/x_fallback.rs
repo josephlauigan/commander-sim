@@ -159,7 +159,7 @@ fn demon_of_fates_design_pumps_by_the_sacrificed_enchantments_mana_value() {
 #[test]
 fn no_compiled_x_falls_back_to_three_in_the_jd_decks_games() {
     dsl::x_fallbacks();
-    for (keys, seed) in [(["kefka", "cloud", "sephfs", "titania"], 11u64), (["cloud", "kefka", "veyran", "seph"], 12)] {
+    for (keys, seed) in [(["kefka", "cloud", "sephfs", "omnath"], 11u64), (["cloud", "kefka", "veyran", "seph"], 12)] {
         for s in 0..3 {
             let _ = play(&keys, seed + s, false);
         }

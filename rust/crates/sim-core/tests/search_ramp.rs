@@ -68,7 +68,7 @@ fn lookahead_casts_the_rock_over_a_two_drop_on_turn_two() {
 
 #[test]
 fn lookahead_casts_land_ramp_rather_than_stop() {
-    let mut g = game(&["titania", "seph"], "Forest");
+    let mut g = game(&["omnath", "seph"], "Forest");
     set_ramp_w(&mut g, ON);
     lands(&mut g, P0, "Forest", 2, false);
     hand(&mut g, P0, &["Rampant Growth"]);

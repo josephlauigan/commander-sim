@@ -34,6 +34,12 @@ use crate::tag::Tag;
 
 pub const TITANIA: &str = "Titania, Protector of Argoth";
 const KEY: &str = "titania";
+const OMNATH_KEY: &str = "omnath";
+
+/// the decks that share this plan: titania, and omnath (Titania in the 99)
+pub fn is_deck(key: &str) -> bool {
+    key == KEY || key == OMNATH_KEY
+}
 const EXPERT: &str = "Infestation Expert";
 const ARACHNO: &str = "Arachnogenesis";
 const ROYAL: &str = "Royal Treatment";
@@ -52,6 +58,11 @@ fn creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// p's Titania, if she is out
 pub fn titania_of(g: &Game, p: PlayerId) -> Option<PermId> {
     g.player(p).perms.iter().copied().find(|&m| live(g, m) && card_name(g, m) == Some(TITANIA))
+}
+
+/// p's Omnath, Locus of Rage, if she is out (each fetch land cracked is a landfall for her)
+fn omnath_out(g: &Game, p: PlayerId) -> bool {
+    g.player(p).key == OMNATH_KEY && g.player(p).perms.iter().any(|&m| live(g, m) && card_name(g, m) == Some("Omnath, Locus of Rage"))
 }
 
 fn is_fetch(g: &Game, c: CardId) -> bool {
@@ -79,10 +90,19 @@ fn in_hand(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
 /// Titania can be cast (in the command zone or in hand) and costs this much now
 fn titania_cost(g: &Game, p: PlayerId) -> Option<u32> {
     let pl = g.player(p);
-    if pl.key != KEY || titania_of(g, p).is_some() || !(pl.cmd_in_zone || pl.hand.contains(&pl.cmd)) {
+    if !is_deck(pl.key) || titania_of(g, p).is_some() {
         return None;
     }
-    let (gn, pips) = cost_of(g, p, pl.cmd);
+    // the titania deck: Titania is the commander; the omnath deck: she is a card in hand
+    let card = if pl.key == KEY {
+        if !(pl.cmd_in_zone || pl.hand.contains(&pl.cmd)) {
+            return None;
+        }
+        pl.cmd
+    } else {
+        in_hand(g, p, TITANIA)?
+    };
+    let (gn, pips) = cost_of(g, p, card);
     Some(gn + pips.chars().count() as u32)
 }
 
@@ -96,8 +116,11 @@ fn other_land_in_hand(g: &Game, p: PlayerId) -> bool {
 /// cast), and the 5/3 comes when she arrives. With Garruk's Uprising still to be cast while Titania is out, the crack
 /// waits for it too (`crack_held` casts it first).
 pub fn hold_fetch(g: &Game, p: PlayerId) -> bool {
-    if g.player(p).key != KEY {
+    if !is_deck(g.player(p).key) {
         return false;
+    }
+    if omnath_out(g, p) && titania_of(g, p).is_none() {
+        return false; // every crack is a landfall now
     }
     if titania_of(g, p).is_some() {
         return uprising_first(g, p);
@@ -114,10 +137,10 @@ pub fn hold_fetch(g: &Game, p: PlayerId) -> bool {
 /// can be cast this turn without the land drop, play it and hold it; while the land drop is what makes her castable
 /// this turn, play the basic
 pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    if g.player(p).key != KEY || !is_fetch(g, c) {
+    if !is_deck(g.player(p).key) || !is_fetch(g, c) {
         return 0.0;
     }
-    if titania_of(g, p).is_some() {
+    if titania_of(g, p).is_some() || omnath_out(g, p) {
         return 6.0;
     }
     let Some(need) = titania_cost(g, p) else { return 0.0 };
@@ -165,7 +188,7 @@ fn crack_held(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
 /// shared version (t1.rs) serves the other decks: it returns the land with the most colors, tapped.
 fn titania_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
-    if g.player(o).key != KEY {
+    if !is_deck(g.player(o).key) {
         return super::t1::titania(g, src, p, m);
     }
     if m != src {
@@ -665,6 +688,8 @@ pub fn titania_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let fetch_in_gy = pl.gy.iter().any(|&x| g.db.get(x).land && is_fetch(g, x));
     let filler = !out && !fetch_in_gy && pl.library.len() > 20;
     match name {
+        // the omnath deck: Titania (in the 99) as soon as she can be cast, behind Omnath
+        TITANIA if pl.key == OMNATH_KEY => 90,
         ROYAL | BLOSSOM | ARACHNO => 0,
         "Overwhelming Stampede" | "End-Raze Forerunners" => finisher_prio(g, p, name, base),
         // the graveyard fillers: before Titania while no fetch land waits in the graveyard
@@ -772,7 +797,7 @@ fn titan_land_score(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let d = g.db.get(c);
     let cols = d.tags.str(Tag::C).map_or(0, |s| s.chars().count()) as f64;
     let basic = crate::engine::zones::BASIC_LANDS.contains(&&*d.name);
-    if g.player(p).key == KEY {
+    if is_deck(g.player(p).key) {
         let fetch = if is_fetch(g, c) { 100.0 } else { 0.0 };
         return fetch + if basic { 0.0 } else { 10.0 } + cols;
     }

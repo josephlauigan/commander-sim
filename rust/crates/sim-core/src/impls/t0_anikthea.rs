@@ -379,9 +379,6 @@ fn titans_exile(g: &mut Game, p: PlayerId) -> Res {
 
 /// The Eldest Reborn I: q sacrifices the creature or planeswalker it values least
 fn edict_creature_or_walker(g: &mut Game, q: PlayerId) -> Res {
-    if crate::human::is_human(g, q) {
-        return crate::engine::zones::edict(g, q, false);
-    }
     let cands: Vec<PermId> = g
         .player(q)
         .perms
@@ -389,6 +386,14 @@ fn edict_creature_or_walker(g: &mut Game, q: PlayerId) -> Res {
         .copied()
         .filter(|&m| on_bf(g, m) && (g.is_creature(m) || g.perm(m).loyalty.is_some()))
         .collect();
+    if crate::human::is_human(g, q) {
+        return crate::human::choices::sacrifice_permanent(
+            g,
+            q,
+            &cands,
+            "The Eldest Reborn: sacrifice a creature or planeswalker",
+        );
+    }
     if let Some(m) = min_by(&cands, |x| sac_worth(g, x)) {
         let name = g.perm(m).name.to_string();
         die(g, m, "sac")?;

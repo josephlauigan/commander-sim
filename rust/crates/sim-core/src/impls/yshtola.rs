@@ -29,7 +29,7 @@ use crate::engine::cast::cast_card;
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
+use crate::engine::stack::{ability_window, ability_window_card, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{card_name, epow, etgh, protected_from, pval, threat, untargetable};
 use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
@@ -181,7 +181,7 @@ static CURIOSITY: AuraSpec = AuraSpec { target: "either", host_pick: Some(curios
 
 /// yshtola.may_draw: draws are skipped with three cards or fewer left in the library
 fn may_draw(g: &Game, p: PlayerId) -> bool {
-    g.player(p).library.len() > 3
+    g.player(p).library.len() > 3 || (crate::human::is_human(g, p) && !g.player(p).library.is_empty()) // a person decides for themselves
 }
 
 /// whenever the enchanted creature deals combat damage to an opponent, you draw
@@ -190,7 +190,7 @@ fn curiosity(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: 
     if Some(a) != g.perm(src).attached || !g.opps(o).any(|q| q == d) || dmg <= 0 || !may_draw(g, o) {
         return Ok(());
     }
-    if !trigger_window(g, o, Some(src), "draw a card", None)? {
+    if !may_window(g, o, Some(src), "draw a card", None)? {
         return Ok(());
     }
     draw(g, o, 1, false)
@@ -208,7 +208,7 @@ pub fn curiosity_draws(g: &mut Game, creature: PermId, n: usize) -> Res {
             if !may_draw(g, o) {
                 break;
             }
-            if trigger_window(g, o, Some(a), "draw a card", None)? {
+            if may_window(g, o, Some(a), "draw a card", None)? {
                 draw(g, o, 1, false)?;
             }
         }

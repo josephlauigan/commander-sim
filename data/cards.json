@@ -6125,7 +6125,8 @@
       {
        "do": "gain_life",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -6360,7 +6361,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "dies",
@@ -13200,7 +13202,15 @@
       {
        "do": "discard",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true,
+       "if_you_do": [
+        {
+         "do": "draw",
+         "n": 1,
+         "who": "you"
+        }
+       ]
       }
      ],
      "event": "attack",
@@ -13221,8 +13231,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "Riot",
-    "Whenever ~ attacks, you may discard a card. If you do, draw a card.   [partly: if you do, draw a card]"
+    "Riot"
    ],
    "derived": {
     "cmc": 3,
@@ -15089,7 +15098,8 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -29106,7 +29116,8 @@
        },
        "to": "top",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -31425,7 +31436,8 @@
        "warrior": false,
        "types": [
         "bird"
-       ]
+       ],
+       "optional": true
       }
      ],
      "event": "landfall"
@@ -32678,7 +32690,8 @@
        },
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -35280,7 +35293,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -45264,7 +45278,8 @@
        "filter": {
         "type": "creature"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -46211,7 +46226,8 @@
        "who": "you"
       },
       {
-       "do": "put_land"
+       "do": "put_land",
+       "optional": true
       }
      ]
     }
@@ -48091,7 +48107,8 @@
        "filter": {},
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -55922,7 +55939,8 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "RG"
+    "c": "RG",
+    "pain": true
    },
    "pow": 0,
    "tgh": 0,
@@ -57033,7 +57051,8 @@
          "type": "creature"
         },
         "upto": false
-       }
+       },
+       "optional": true
       }
      ],
      "event": "etb",
@@ -57691,7 +57710,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -59661,7 +59681,8 @@
        "filter": {},
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -65641,7 +65662,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "cast",
@@ -72645,7 +72667,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -76458,7 +76481,8 @@
        },
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -77606,7 +77630,8 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -82235,7 +82260,8 @@
          "type": "ae"
         },
         "upto": false
-       }
+       },
+       "optional": true
       }
      ],
      "event": "etb",
@@ -84180,7 +84206,8 @@
        "filter": {
         "type": "creature"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "upkeep",
@@ -84931,7 +84958,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "combat_damage",
@@ -92517,7 +92545,8 @@
        },
        "to": "top",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -95089,7 +95118,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -95101,7 +95131,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "dies",
@@ -101465,7 +101496,8 @@
        "filter": {
         "type": "creature"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "combat_damage",
@@ -105027,7 +105059,17 @@
       {
        "do": "discard",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true,
+       "if_you_do": [
+        {
+         "do": "damage",
+         "n": 2,
+         "to": {
+          "sel": "any_target"
+         }
+        }
+       ]
       }
      ],
      "event": "etb",
@@ -105047,9 +105089,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you may discard a card. When you do, ~ deals 2 damage to any target.   [partly: when you do, ~ deals 2 damage to any target]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -113513,7 +113553,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "cast",
@@ -118419,7 +118460,8 @@
       {
        "do": "mill",
        "n": 3,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "attack",

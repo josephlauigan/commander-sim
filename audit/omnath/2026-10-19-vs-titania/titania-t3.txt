@@ -1,0 +1,26 @@
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m18s elapsed, ~2m48s left
+  progress  20.0%  0m38s elapsed, ~2m34s left
+  progress  30.0%  1m00s elapsed, ~2m20s left
+  progress  40.0%  1m21s elapsed, ~2m01s left
+  progress  50.0%  1m41s elapsed, ~1m41s left
+  progress  60.0%  2m01s elapsed, ~1m21s left
+  progress  70.0%  2m23s elapsed, ~1m01s left
+  progress  80.0%  2m43s elapsed, ~0m40s left
+  progress  90.0%  3m03s elapsed, ~0m20s left
+  progress 100.0%  3m27s elapsed, ~0m00s left
+
+=== Titania vs Tier 3 (High B3) [loose, lookahead AI, 2000 games] ===
+Win rate  24.4%   95% CI 22.6-26.4%   (even share 25%: -0.6 pts)
+Average turn (your own turn count) of wins 14.8, of losses 11.1
+Plan online (first 5/3 Elemental from Titania): 56.0% of games
+Wins by: damage 90%, timeout 10%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      61.0%            30.6%           18.4%
+  Atraxa (atraxa-superfriends)                 60.4%            23.9%            9.9%
+  Aurelia (aurelia-boros-extra-combats)        60.4%            32.1%           21.4%
+  Marwyn (marwyn-mono-green-elves)             59.7%            24.8%           16.2%
+  Korvold (korvold-jund-sacrifice)             58.6%            14.2%            8.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(208s total)

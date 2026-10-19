@@ -53,7 +53,7 @@ The second opponent dies too if they're at 12. Debt to the Deathless is the best
 
 ### Draw and engines
 
-**Curiosity belongs on Y'shtola.** *Whenever enchanted creature deals damage to an opponent, you may draw a card.* Her trigger damages each opponent separately, so Curiosity on her draws three cards per trigger at a full table. It costs {U}, and Zur can fetch it.
+**Orcish Bowmasters punishes the table's extra cards.** *Flash. When it enters, and whenever an opponent draws a card except the first one they draw in each of their draw steps, it deals 1 damage to any target, then you amass Orcs 1.* At this table every cantrip, Rhystic Study and wheel feeds it. Flash it in at the end of an opponent's turn, or in answer to their draw spell, and aim the ping at a mana creature or a 1-toughness combo piece (the fast decks' Kinnan, Urza and Winota lines run on those). Each ping also grows the Orc Army, a body that chips in or blocks.
 
 **Mana, then cards.** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low. **Necropotence** skips your draw step and turns life into cards (cast it with a healthy life total; the drains refill it; your maximum hand size is seven, so spend what you draw). **Mystic Remora** draws a card when an opponent casts a noncreature spell unless they pay {4}: pay its cumulative upkeep for a turn or two at most, then let it go. **Esper Sentinel** draws a card when an opponent casts their first noncreature spell each turn, unless they pay {X} (its power). **Notion Thief** (flash) turns each extra card an opponent draws into a card for you, and goes well with **Deep Analysis**: target an opponent with it while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger. The other draw spells are Night's Whisper, Read the Bones and Tezzeret's Gambit.
 
@@ -107,10 +107,10 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 **Zur in the 99.** Zur the Enchanter ({1}{W}{U}{B}, 1/4 flier) searches for an enchantment with mana value 3 or less whenever it attacks:
 - **Necropotence** early with a healthy life total;
 - **Propaganda** when the table attacks you;
-- **Curiosity** for Y'shtola;
+- **Mystic Remora** early, for cards off the table's spells;
 - **a lock Aura** on the biggest threat. A fetched Aura isn't cast and doesn't target, so it goes around hexproof and ward.
 
-Zur can find Arrest, Bound in Silence, Curiosity, Encrust, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Prison Sentence and Propaganda. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
+Zur can find Arrest, Bound in Silence, Encrust, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Prison Sentence and Propaganda. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
 
 **Notion Thief + Deep Analysis.** Target an opponent with Deep Analysis while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger.
 
@@ -134,10 +134,10 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 
 **Curve.** One-drops 7, two-drops 7, three-drops 23, four-drops 16 (counting Y'shtola), five 5, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
-**Card types.** 15 creatures (plus Y'shtola), 16 enchantments, 7 artifacts, 10 instants, 13 sorceries, 1 planeswalker.
+**Card types.** 16 creatures (plus Y'shtola), 15 enchantments, 7 artifacts, 10 instants, 13 sorceries, 1 planeswalker.
 
 **Finding cards.**
-- **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, Curiosity on Y'shtola, and her own end-step draw.
+- **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
 - **Draw spells:** Night's Whisper, Read the Bones, Deep Analysis, Tezzeret's Gambit, Cast Away Doubt.
 - **Cards taken from opponents:** Gonti, Thief of Sanity, Hostage Taker.
@@ -172,11 +172,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (15).** Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Windborn Muse, Zur the Enchanter
+**Creatures (16).** Consecrated Sphinx, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Orcish Bowmasters, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Windborn Muse, Zur the Enchanter
 
 **Planeswalkers (1).** The Eternal Wanderer
 
-**Enchantments (16).** Arrest, Bound in Silence, Curiosity, Encrust, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Sanguine Bond, Smothering Tithe, Static Net
+**Enchantments (15).** Arrest, Bound in Silence, Encrust, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Sanguine Bond, Smothering Tithe, Static Net
 
 **Artifacts (7).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress
 
@@ -203,7 +203,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Coalition Relic
 1 Command Tower
 1 Consecrated Sphinx
-1 Curiosity
 1 Dark Petition
 1 Debt to the Deathless
 1 Deep Analysis
@@ -237,6 +236,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Necropotence
 1 Night's Whisper
 1 Notion Thief
+1 Orcish Bowmasters
 1 Path to Exile
 1 Polluted Bonds
 1 Prairie Stream

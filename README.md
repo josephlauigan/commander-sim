@@ -79,7 +79,7 @@ Options:
 - `--games`: games per list per profile (default 1500). `--n` is the same.
 - `--seed`: the first seed (default 500000).
 - `--jobs`: worker threads (default: every CPU core).
-- `--profiles`: `conservative,loose` (default both). `--profile` runs one. Loose opponents counter and remove more
+- `--profiles`: `loose` by default (JD, 2026-10-19); `conservative,loose` runs both. `--profile` runs one. Loose opponents counter and remove more
   freely, so it is the worst case for your decks.
 - `--ai`: `lookahead` (default) or `adaptive`.
   - Look-ahead: every deck at the table chooses its main-phase plays, attacks and counterspells by trying the best
@@ -203,8 +203,8 @@ A/B runs report a paired noise band (from per-seed pairs) and a breakdown along 
 and consistency, speed, card flow, interaction, resilience, and threat and pressure. Each axis shows baseline →
 variant under each profile, with `*` marking changes larger than the noise band.
 
-Win rates are directional; the paired before/after comparison is the reliable part. Trust changes that hold under
-both interaction profiles.
+Win rates are directional; the paired before/after comparison is the reliable part. Runs use the loose profile (the
+more interactive table) unless `--profiles conservative,loose` asks for both.
 
 The pool results and calibration are in `decklists/pool/pool-results.md`.
 

@@ -17,7 +17,7 @@ pub const FILES: [(&str, &str, &str); 13] = [
     ("galadriel", "Avery", "galadriel-bant-rebels.md"),
     ("alela", "Avery", "alela-esper-faeries.md"),
     ("kefka", "JD", "kefka-grixis-discard.md"),
-    ("titania", "JD", "titania-lands.md"),
+    ("omnath", "JD", "omnath-landfall.md"),
     ("sheoldred", "JD", "sheoldred-mono-black.md"),
     ("cloud", "JD", "cloud-midgar-equipment.md"),
     ("kraum", "JD", "tymna-kraum-partners.md"),
@@ -26,7 +26,7 @@ pub const FILES: [(&str, &str, &str); 13] = [
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 13] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud", "kraum", "sephfs", "godo"];
+pub const MINE: [&str; 13] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "omnath", "sheoldred", "cloud", "kraum", "sephfs", "godo"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 

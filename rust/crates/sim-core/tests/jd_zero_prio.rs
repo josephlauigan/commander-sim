@@ -8,7 +8,7 @@ use sim_core::ids::PlayerId;
 use sim_core::testkit::*;
 
 const JD: [&str; 10] =
-    ["seph", "veyran", "sauron", "yshtola", "kefka", "titania", "sheoldred", "cloud", "kraum", "sephfs"];
+    ["seph", "veyran", "sauron", "yshtola", "kefka", "omnath", "sheoldred", "cloud", "kraum", "sephfs"];
 
 #[test]
 fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {
@@ -44,7 +44,7 @@ fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {
 
 #[test]
 fn the_answers_are_not_cast_proactively() {
-    for (key, name) in [("sheoldred", "Masterful Flourish"), ("sheoldred", "Battle-Rage Blessing"), ("titania", "Blossoming Defense")] {
+    for (key, name) in [("sheoldred", "Masterful Flourish"), ("sheoldred", "Battle-Rage Blessing"), ("omnath", "Blossoming Defense")] {
         let mut g = table(&[key, "sauron", "seph"]);
         let c = take(&mut g, PlayerId(0), name);
         g.player_mut(PlayerId(0)).hand.push(c);
