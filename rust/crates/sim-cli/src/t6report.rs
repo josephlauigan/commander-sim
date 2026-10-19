@@ -27,6 +27,9 @@ pub struct DeckT6 {
     pub stops: Counter<String>,
     /// hands with 0, 1, 2, 3 mulligans
     pub mulls: [u64; 4],
+    /// wins and their rounds by the same mulligan count
+    pub mull_wins: [u64; 4],
+    pub mull_win_rounds: [Vec<u32>; 4],
     /// "<kind>|<card>|<victim key>" for kind counter / removal, "<kind>|<card>" for stax / wipe
     pub ix: Counter<String>,
     /// speed (rounds, one entry per game that reached it): a line first ready / one tutor away / gone for
@@ -131,6 +134,9 @@ impl T6Tally {
                         d.wins += 1;
                         d.route.add(r, 1);
                         d.win_rounds.push(g.round);
+                        let m = p.stat("mull_n").clamp(0, 3) as usize;
+                        d.mull_wins[m] += 1;
+                        d.mull_win_rounds[m].push(g.round);
                     }
                     None => d.timeout_wins += 1,
                 }
@@ -454,6 +460,11 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
             m[1],
             m[2],
             m[3]
+        );
+        o += &format!(
+            "      by mulligans (none/one/two/three): win % {}, median win round {}\n",
+            (0..4).map(|i| format!("{:.1}", pct(d.mull_wins[i], m[i]))).collect::<Vec<_>>().join("/"),
+            (0..4).map(|i| format!("{:.0}", median(&d.mull_win_rounds[i]))).collect::<Vec<_>>().join("/")
         );
         for kind in ["counter", "removal", "stax", "wipe"] {
             let (mut n, mut cards, mut victims): (i64, Counter<String>, Counter<String>) =

@@ -142,3 +142,38 @@ pub fn mana(g: &Game, p: PlayerId) -> Mana {
     }
     Mana { lands, eff, free, spells, n_mana, tries: g.player(p).stats.get("mull_try").copied().unwrap_or(0) }
 }
+
+/// Tier 6's card to bottom after a mulligan (London: draw seven, bottom one per mulligan past the free one). The shared
+/// rule bottoms the most expensive spell, which can be the combo piece or tutor the hand was kept for. Here: prefer a
+/// card whose loss leaves a hand the deck's own keep rule still takes; among those, bottom the card worth least to the
+/// plan: not a tutor target (the deck's wish list, best first), not a mana piece, a land only past the third, the
+/// deck's lowest play priority, the most expensive last.
+pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
+    let hand = g.player(p).hand.clone();
+    if hand.is_empty() {
+        return None;
+    }
+    let wish = crate::ai::plans::wish_raw(g, p);
+    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    let value = |c: CardId| {
+        let d = g.db.get(c);
+        if d.land {
+            return if lands > 3 { -1.0 } else { 30.0 };
+        }
+        let wished = wish.iter().position(|&x| x == c).map_or(0.0, |i| 50.0 - i.min(20) as f64);
+        let piece = if is_piece(g, c) { 20.0 } else { 0.0 };
+        let prio = super::t6_plans::prio(g, p, c).unwrap_or(0.0) / 10.0;
+        wished + piece + prio - d.cmc as f64 * 0.1
+    };
+    let still_keeps = |c: CardId| {
+        let mut h = g.clone();
+        let pl = h.player_mut(p);
+        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+            pl.hand.remove(i);
+        }
+        super::t6_plans::keep(&h, p).unwrap_or(true)
+    };
+    let ok: Vec<CardId> = hand.iter().copied().filter(|&c| still_keeps(c)).collect();
+    let pool = if ok.is_empty() { &hand } else { &ok };
+    pool.iter().copied().min_by(|&a, &b| value(a).total_cmp(&value(b)))
+}
