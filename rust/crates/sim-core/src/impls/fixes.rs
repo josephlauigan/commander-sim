@@ -401,7 +401,6 @@ fn gamble(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-
 /// Tier 6: may the AI cast Gamble now? With a piece of one of the deck's lines in hand the random discard could bin
 /// it, so Gamble is cast only when it finds a card that completes a line and that card can be cast at once with the
 /// mana left (Gamble costs {R}). Human players and other tiers are not restricted.

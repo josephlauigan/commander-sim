@@ -361,7 +361,11 @@ fn ral_run(g: &mut Game, p: PlayerId, n: i64) -> Res {
             if crate::human::is_human(g, p) {
                 // "you may discard a card. If you do, exile the top two cards of your library"
                 if !g.player(p).hand.is_empty()
-                    && crate::human::choices::yes_no(g, p, "Ral and the Implicit Maze: discard a card to exile the top two cards of your library?")?
+                    && crate::human::choices::yes_no(
+                        g,
+                        p,
+                        "Ral and the Implicit Maze: discard a card to exile the top two cards of your library?",
+                    )?
                 {
                     crate::human::choices::discard(g, p, 1, "Ral and the Implicit Maze: discard a card")?;
                     for _ in 0..2 {

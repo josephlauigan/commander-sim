@@ -1624,7 +1624,11 @@ pub fn will_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         return vec![];
     }
     will_value(g, p)
-        .map(|u| Opt { utility: u, label: "Yawgmoth's Will (replay the graveyard)".into(), act: Some(Action::Plan { f: will_go, arg: 0 }) })
+        .map(|u| Opt {
+            utility: u,
+            label: "Yawgmoth's Will (replay the graveyard)".into(),
+            act: Some(Action::Plan { f: will_go, arg: 0 }),
+        })
         .into_iter()
         .collect()
 }

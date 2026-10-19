@@ -27,8 +27,8 @@ use crate::engine::zones::{
     searchable, to_zone_card,
 };
 use crate::flow::Res;
-use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
+use crate::human::{choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Val};
@@ -88,7 +88,8 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 11] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "titania", "sheoldred", "cloud"];
+const CTHRESH: [&str; 11] =
+    ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "titania", "sheoldred", "cloud"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)
@@ -331,11 +332,7 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
                 // Oracle: abilities of artifacts, creatures and enchantments. (Only Sephiroth's own Abolisher is held to the
                 // type list; the pool decks keep the old blanket lock)
                 "Grand Abolisher" if p != q.id && g.active == Some(q.id) => {
-                    if q.key != "seph"
-                        || art
-                        || g.is_creature(src)
-                        || of_type(g, src, Types::ENCHANTMENT)
-                    {
+                    if q.key != "seph" || art || g.is_creature(src) || of_type(g, src, Types::ENCHANTMENT) {
                         return true;
                     }
                 }

@@ -388,7 +388,8 @@ pub fn becomes_target(g: &mut Game, m: PermId, _by: PlayerId) -> Res {
     }
     let o = owner(g, m);
     if (g.player(o).library.len() > 2 || (crate::human::is_human(g, o) && !g.player(o).library.is_empty()))
-        && may_window(g, o, Some(m), "you may draw a card", Some(3.0))? {
+        && may_window(g, o, Some(m), "you may draw a card", Some(3.0))?
+    {
         draw(g, o, 1, false)?;
     }
     Ok(())

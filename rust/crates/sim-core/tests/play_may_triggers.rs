@@ -89,7 +89,11 @@ fn stadium_tidalmage_loots_only_on_yes() {
         let lib0 = g.player(P0).library.len();
         perm(&mut g, P0, "Stadium Tidalmage");
         assert!(asked_with(&h, "Stadium Tidalmage") >= 1, "you were asked");
-        assert_eq!(g.player(P0).library.len(), lib0 - 1 - usize::from(drawn), "the Tidalmage left the library; yes draws one more");
+        assert_eq!(
+            g.player(P0).library.len(),
+            lib0 - 1 - usize::from(drawn),
+            "the Tidalmage left the library; yes draws one more"
+        );
     }
 }
 
@@ -128,4 +132,3 @@ fn rhystic_study_asks_its_owner_before_drawing() {
         assert_eq!(g.player(P0).hand.len() == hand0 + 1, drew);
     }
 }
-

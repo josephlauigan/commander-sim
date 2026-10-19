@@ -452,7 +452,9 @@ fn blade_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         None => true,
         Some(t) => t != m && holder_score(g, m) > holder_score(g, t) + 1.0,
     };
-    if (better || crate::human::is_human(g, o)) && may_window(g, o, Some(src), "attach to the legendary creature", Some(6.0))? {
+    if (better || crate::human::is_human(g, o))
+        && may_window(g, o, Some(src), "attach to the legendary creature", Some(6.0))?
+    {
         attach(g, src, m);
     }
     Ok(())
@@ -605,10 +607,7 @@ pub fn steelshaper_bonus(g: &Game, m: PermId) -> i32 {
 /// Puresteel Paladin: whenever an Equipment you control enters, you may draw a card
 fn puresteel_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = owner(g, src);
-    if owner(g, m) == o
-        && live(g, src)
-        && is_equipment(g, m)
-        && may_window(g, o, Some(src), "draw a card", Some(4.0))?
+    if owner(g, m) == o && live(g, src) && is_equipment(g, m) && may_window(g, o, Some(src), "draw a card", Some(4.0))?
     {
         draw(g, o, 1, false)?;
     }
@@ -850,7 +849,13 @@ pub fn jocasta_attack(g: &mut Game, p: PlayerId, atk: &[PermId]) -> Res<Vec<Perm
     let Some(c) = g.player(p).gy.iter().copied().find(|&c| card_name(g, c) == "Jocasta, Automaton Avenger") else {
         return Ok(vec![]);
     };
-    if !may_window_card(g, p, c, "return Jocasta attacking", "Jocasta, Automaton Avenger: return her to the battlefield tapped and attacking?")? {
+    if !may_window_card(
+        g,
+        p,
+        c,
+        "return Jocasta attacking",
+        "Jocasta, Automaton Avenger: return her to the battlefield tapped and attacking?",
+    )? {
         return Ok(vec![]);
     }
     let Some(i) = g.player(p).gy.iter().position(|&x| x == c) else { return Ok(vec![]) };
@@ -2046,8 +2051,7 @@ fn narsil_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
         return Ok(vec![]);
     }
     let n = if city_blessing(g, p) { 2 } else { 1 };
-    let mine: Vec<PermId> =
-        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
     for m in mine {
         crate::cardcode::add_counters(g, m, n);
     }

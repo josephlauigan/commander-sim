@@ -44,3 +44,8 @@ Where the code skipped the trigger for a person by an AI value test, the test is
   they cannot be converted from card code. Needs cardgen to set `optional` from Oracle plus a person-only yes/no in `dsl/mod.rs`; setting it on
   draws would change the AI (`library <= 12` skip), so it needs a person-only guard. Not done here.
 - Inner choices left to the per-card task: which Equipment / creature for the attach cards, Moseo's card, Boughside Wanderers' card.
+
+## Checks
+- `cargo test --release -j 4` (whole workspace): all pass; `cargo build --release` no warnings.
+- New tests `crates/sim-core/tests/play_may_triggers.rs` (8): Seymour Flux yes/no/low life, AI unchanged, Mana Vault, Stadium Tidalmage, Conjurer's Closet, Rhystic Study.
+- Before/after sims (200 games, adaptive, loose, 4 jobs; sheoldred t3, cloud t1, kefka t3): output from the "===" line down identical (diff empty).

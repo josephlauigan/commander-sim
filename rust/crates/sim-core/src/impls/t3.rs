@@ -23,11 +23,11 @@ use crate::engine::zones::{
     make_artifact_tokens, make_tokens, max_by, min_by, searchable,
 };
 use crate::flow::Res;
-use crate::human::{choices, human_of};
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Sacrificed, Src};
+use crate::human::{choices, human_of};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
-use crate::state::{Ctx, CopyExc, DataKey, Game, PermData, TurnStamp, Val};
+use crate::state::{CopyExc, Ctx, DataKey, Game, PermData, TurnStamp, Val};
 use crate::sym::{Sym, intern};
 
 // ------------------------------------------------------------------ helpers (shared with rules.rs and rules2.rs)
@@ -1713,7 +1713,14 @@ fn gix(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -
         && d != o
         && (crate::human::is_human(g, p) || (g.player(p).life > 10 && g.player(p).library.len() > 10))
         && g.player(p).life > 0
-        && crate::engine::stack::may_window_ask(g, p, Some(src), "pay 1 life: draw a card", None, "Gix, Yawgmoth Praetor: pay 1 life to draw a card?")?
+        && crate::engine::stack::may_window_ask(
+            g,
+            p,
+            Some(src),
+            "pay 1 life: draw a card",
+            None,
+            "Gix, Yawgmoth Praetor: pay 1 life to draw a card?",
+        )?
     {
         lose_life(g, p, 1, Some(p), "other", None)?;
         draw(g, p, 1, false)?;
