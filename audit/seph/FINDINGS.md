@@ -16,6 +16,18 @@ The deck's living list of strengths, weaknesses and what was tested. Opponents: 
 - The plan is not online at all in about 30% of games.
 
 ## Tested
+### 2026-10-19: Mind Stone => The Mind Stone over t3-t4 (2,000 games per list per profile, look-ahead)
+Result: **T3 -0.5 / +1.1, T4 -1.6 / +1.4 (conservative / loose; noise ±2.1-2.2 each). About +0.1 averaged over
+t3-t4: no clear effect.** Raw output: `2026-10-19-mind-stone/t3.txt`, `t4.txt`. The model is Approximate (blinks the
+best enters-effect creature, else a tapped rock).
+Why: as a rock it is Mind Stone (mana on turns 4 and 6 unchanged; plan online at the same rate and turn). It is
+drawn in 24-30% of games and cast in 82-88% of those, around round 6.3-7.5, which is 0.6-1.8 rounds later than Mind
+Stone (5.7-6.7) and stuck in hand a little more (12-18% vs 11-16%): its {1}{W} needs white on turn 2, where Mind
+Stone takes any mana (inferred, not traced). So the {5}{W} harness and its end-step blink come in the late game, and
+at t4 the deck mostly dies first to Heliod combo (about 17%), Krenko and Yuriko. The loose T3 cell shows more damage
+dealt (+2.6, mostly combat), under one profile only: likely chance.
+Verdict: a sidegrade for Mind Stone, like The Soul Stone. Not worth buying for the win rate.
+
 ### 2026-10-18 evening: Mind Stone => The Soul Stone, re-run over t3-t4 (2,000 games per list per profile, look-ahead)
 Result: **T3 +0.2 / +1.4, T4 -0.8 / +0.2 (conservative / loose; noise ±2.1-2.3 each). About +0.25 averaged
 over t3-t4: no clear effect**, the same as the first run. Raw output: `2026-10-18-stones/soul-stone-t3t4.txt`.
