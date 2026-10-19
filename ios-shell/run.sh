@@ -4,6 +4,12 @@
 #   ios-shell/run.sh                                   # on the iPad Pro 13-inch (M5)
 #   DEVICE="iPad Air 11-inch (M3)" ios-shell/run.sh    # another simulator (xcrun simctl list devices shows their names)
 set -e
+# Homebrew's folder, in case this Terminal doesn't have it on PATH yet
+[ -d /opt/homebrew/bin ] && export PATH="/opt/homebrew/bin:$PATH"
+if ! command -v xcodegen >/dev/null 2>&1; then
+  echo "XcodeGen is missing: run  brew install xcodegen  (Homebrew: https://brew.sh), then run.sh again."
+  exit 1
+fi
 DEVICE="${DEVICE:-iPad Pro 13-inch (M5)}"
 # that simulator not installed on this Mac: take the first iPad one that is
 if ! xcrun simctl list devices available | grep -qF "    $DEVICE ("; then
