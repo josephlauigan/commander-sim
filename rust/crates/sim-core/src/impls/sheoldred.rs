@@ -2237,7 +2237,10 @@ fn sheoldred_perm(g: &Game, m: PermId) -> bool {
 /// draw a card for each
 fn seph_sacrifice(g: &mut Game, src: PermId) -> Res {
     let p = owner(g, src);
-    if human(g, p) || g.player(p).library.is_empty() {
+    if human(g, p) {
+        return seph_sacrifice_human(g, p, src);
+    }
+    if g.player(p).library.is_empty() {
         return Ok(());
     }
     let fodder = seph_fodder(g, p, src);
@@ -2251,6 +2254,47 @@ fn seph_sacrifice(g: &mut Game, src: PermId) -> Res {
             crate::glog!(g, "    {} sacrifices {} to Sephiroth", pname(g, p), g.perm(m).name);
             crate::engine::zones::die(g, m, "sac")?;
             done += 1;
+        }
+    }
+    if done > 0 && g.player(p).alive {
+        g.player_mut(p).stat("sf_seph_draws", done as i64);
+        draw(g, p, done, false)?;
+    }
+    Ok(())
+}
+
+/// the person's choice for the same trigger: another creature to sacrifice, or none (any number, one at a time,
+/// once it is One-Winged Angel); a card for each
+fn seph_sacrifice_human(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+    let many = flipped(g, src);
+    let others = |g: &Game| -> Vec<PermId> { my_creatures(g, p).into_iter().filter(|&m| m != src).collect() };
+    if others(g).is_empty() || !trigger_window(g, p, Some(src), "sacrifice creatures to draw", Some(2.0))? {
+        return Ok(());
+    }
+    let mut done = 0;
+    loop {
+        let cands = others(g);
+        if cands.is_empty() {
+            break;
+        }
+        let labels: Vec<String> = cands
+            .iter()
+            .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
+            .collect();
+        let prompt = if many {
+            format!("Sephiroth: sacrifice another creature to draw a card ({done} so far; any number)")
+        } else {
+            "Sephiroth: you may sacrifice another creature. If you do, draw a card.".to_string()
+        };
+        let cancel = if done == 0 { "don't sacrifice" } else { "done" };
+        let Some(k) = crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some(cancel), None)? else {
+            break;
+        };
+        crate::glog!(g, "    {} sacrifices {} to Sephiroth", pname(g, p), g.perm(cands[k]).name);
+        crate::engine::zones::die(g, cands[k], "sac")?;
+        done += 1;
+        if !many || !g.player(p).alive {
+            break;
         }
     }
     if done > 0 && g.player(p).alive {
