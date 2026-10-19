@@ -68,7 +68,7 @@ Opponents low on cards discard their best one to Kefka.
 Treasure (Big Score, Seize the Spoils, Contract Killing, Skullport Merchant), the rocks (Arcane Signet, Sisay's Ring,
 Lotus Petal), **Dark Ritual**, **Jeska's Will** (red mana for each card in an opponent's hand, or exile the top three
 cards and play them; with a commander on the battlefield you may do both) and the burst cards get you there:
-**Blazing Firesinger**'s prepared spell makes {R}{R}{R}{R}{R}, and Rapturous Moment refunds five.
+Rapturous Moment refunds five.
 
 ### Making them lose life
 - **Repeatable pings:** Sawblade Scamp, Viashino Fangtail, Blightspeaker, Screeching Soulbreaker, Susurian Voidborn
@@ -87,8 +87,7 @@ Will, whichever the board needs.
 card), **Feed the Swarm** (you lose life equal to the mana value), **Extinguish the Light**, **Deadly Embrace**
 (draws a card for each creature that died this turn), **Contract Killing** (two Treasure) and **Chaos Warp**
 (the owner shuffles the permanent away and may get a permanent from the top of the library, so use it on the
-biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one) and **Mana Leak** ({1}{U}) counters a spell unless its controller pays {3}, which is usually a hard counter once the table is tapped out; **Crux of
-Fate** is the wipe, which also kills Kefka, so cast it when you are behind.
+biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one) and **Mana Leak** ({1}{U}) counters a spell unless its controller pays {3}, which is usually a hard counter once the table is tapped out. **Massacre Wurm** is the sweeper: it kills the opponents' small creatures, and each one costs its controller 2 life.
 
 ### Protection
 **Lightning Greaves** gives haste and shroud with a free equip. **Deflecting Swat** is free while you control a
@@ -111,6 +110,14 @@ opponent on your turn draws you a card, which pings again. One ping hits one opp
 larger than the opponents' life added together, but you choose every target: when the library is short, aim the
 pings at creatures (or at yourself) and stop. Niv also taps to draw, which starts it.
 
+**Fiery Emancipation** ({3}{R}{R}{R}) triples the damage your sources deal. With Psychosis Crawler or Niv-Mizzet each card
+you draw becomes 3 damage (to each opponent with the Crawler), so the flipped Kefka's loop needs a third of the
+library, and Grapeshot copies and Lightning Bolt hit three times as hard. Cast it once the Crawler or Niv is out or in
+hand, or after the flip; otherwise it waits (six mana is a whole turn).
+
+**Bribery** ({3}{U}{U}) puts the best creature from an opponent's library onto your battlefield: a bomb or a combo
+creature on your side, and one fewer in their deck. Pick the opponent whose deck holds the biggest threat.
+
 **Underworld Breach + storm.** See Key lines. It is a mill, not a two-card infinite.
 
 **Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second
@@ -125,7 +132,7 @@ Whisper** is a plain two-card draw.
 - **Short library.** Never start the Crawler or Niv loop without counting your library against the highest life total.
 - **Hand size.** Discard down to seven is the limit to watch after a flip turn.
 - **Fast pressure and large creatures.** You win late. Spend removal on the threats that would kill you first, and
-  use **Massacre Wurm**, **Crux of Fate** or Arcane Denial and Jin-Gitaxias to buy time.
+  use **Massacre Wurm** or Arcane Denial and Jin-Gitaxias to buy time.
 
 ## Key lines
 
@@ -150,7 +157,7 @@ Whisper** is a plain two-card draw.
 - **Lands:** 36 (12 nonbasic + 24 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
 - **Card draw:** Kefka, Rhystic Study, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
-- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; wipe Crux of Fate.
+- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Feed the Swarm, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; one-sided sweeper Massacre Wurm.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
@@ -170,13 +177,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (24).** Alpharael Dreaming Acolyte, Blazing Firesinger, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Hallway Heckler, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
+**Creatures (23).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Hallway Heckler, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
 
-**Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Rhystic Study, Underworld Breach
+**Enchantments (5).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Rhystic Study, Underworld Breach
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
-**Sorceries (16).** Contract Killing, Crux of Fate, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
+**Sorceries (16).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Feed the Swarm, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
 
 **Instants (14).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
@@ -189,16 +196,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Arcane Denial
 1 Arcane Signet
 1 Big Score
-1 Blazing Firesinger
 1 Blightspeaker
 1 Blood Crypt
 1 Brain Freeze
+1 Bribery
 1 Cackling Fiend
 1 Chaos Warp
 1 Command Tower
 1 Contract Killing
 1 Corroding Dragonstorm
-1 Crux of Fate
 1 Dark Ritual
 1 Deadly Embrace
 1 Decorum Dissertation
@@ -210,6 +216,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Expressive Iteration
 1 Extinguish the Light
 1 Feed the Swarm
+1 Fiery Emancipation
 1 Garrison Excavator
 1 Gemstone Mine
 1 Grab the Prize

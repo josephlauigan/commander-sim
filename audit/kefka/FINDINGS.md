@@ -70,3 +70,17 @@ valued x0.3; Profane Tutor suspends at 4.0 on a turn with no 1-2 mana play; doc:
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **27.3% vs T3** (before 26.7): within noise. Tutors fetch Crawler/Niv for a flipped Kefka; his discard keeps Breach, Will and protection; Mana Leak discounted into open mana.
+
+## 2026-10-18: lift Kefka to sit between band 4 and band 2 at T3 (APPLIED, JD approved)
+Goal: after the AI audit Veyran (band 4) matched Kefka at T3 (27.7 vs 27.3), so Kefka needed about +2 while staying
+under band 2 (Sauron 30.4, Sheoldred 31.9). JD's new cards: Fiery Emancipation and Bribery (Cecil, Oppression and
+Marvin judged poor fits: Kefka doesn't attack, Oppression punishes its own storm turns, Marvin unmodeled).
+Swap: Crux of Fate => Fiery Emancipation, Blazing Firesinger => Bribery (paired, vs T3, 2,000 games per profile).
+1. Without Kefka AI rules: 27.4 -> 25.9 / 27.1 -> 26.9 (-0.8, noise). Bribery was **never cast** (Kefka's priority had
+   no rule for it), Fiery Emancipation cast in only 31% of draws.
+2. With two Kefka-only rules (Bribery 62; Fiery Emancipation 78 with Crawler/Niv out or in hand or after the flip, else
+   45): **27.4 -> 28.6 / 27.1 -> 29.1 (+1.6 on average)**, positive in both profiles, inside each one's noise band.
+   Bribery cast in 51-54% of draws (wins 46-50% when cast); Fiery Emancipation wins 53-60% when cast but is cast in
+   only 23% of draws (six mana). The cut cards won 25% (Crux) and 30-35% (Firesinger) when cast.
+Result: Kefka about 28.9 at T3: above Veyran (27.7), below band 2. The test ran on the list before #92 matched Kefka to
+the physical deck (Bitter Triumph, now Decorum Dissertation): one card different. Outputs: 2026-10-18-lift/.

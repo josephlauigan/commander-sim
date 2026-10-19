@@ -69,6 +69,7 @@
 1x Blasphemous Act
 2x Blastfire Bolt (m15)
 2x Blazing Crescendo (one, fra)
+1x Blazing Firesinger
 1x Blitzball Stadium (fic)
 1x Bloodsworn Squire (vow)
 1x Blossoming Sands (c18)
@@ -154,6 +155,7 @@
 1x Craftwork Crusher (fra)
 1x Cranial Ram (mh3)
 2x Crowd's Favor (m15)
+1x Crux of Fate
 1x Cryoclasm (csp)
 2x Cryotheory Adept (fra)
 1x Cuboid Colony (sos)
