@@ -52,3 +52,4 @@ downgrade).** Basalt is cast in 82-84% of draws (a 3-mana rock that taps for 3 o
 until the combo is near). With Urza out the pair is infinite colorless mana into Urza's free plays (the loop is
 abstracted). Wins stayed by damage, so the combo itself rarely assembles in 500 games: the gain, if real, is mostly
 Basalt's burst mana. Rings of Brighthearth is not owned yet. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+**PINNED (JD, 10/18):** JD owns Basalt Monolith but not Rings of Brighthearth yet; the package waits until he has Rings.

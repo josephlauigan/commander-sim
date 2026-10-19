@@ -36,3 +36,5 @@ Band 4 (T1-T3). Proposed: Hornet Queen, Harmonize, Tireless Tracker (to Seph/Atr
 Why: the Titan is cast in 85-90% of the games it's drawn, about a round earlier than Ghalta (8-9 vs 9-10), and wins
 36-48% when cast vs Ghalta's 33-35%. It fetches fetch lands first (a landfall now, a 5/3 Elemental under Titania when
 cracked), so it is ramp and threat in one where Ghalta needs a big board first. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+**Correction (JD, 10/18): Primeval Titan is BANNED in Commander.** The test above should never have been proposed; the
+swap is not made. See CLAUDE.md "Check every swap before proposing it".

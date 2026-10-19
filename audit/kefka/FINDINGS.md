@@ -92,3 +92,4 @@ the physical deck (Bitter Triumph, now Decorum Dissertation): one card different
   Goblin): T3 +0.2 (noise ±5.0, no downgrade).** Cast in 62% of draws, wins 33% when cast vs Feed the Swarm's 25%; a
   cheap body whose copied ability only matters with one of those creatures out.
 Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+**JD's decision (10/18):** Marvin in for Feed the Swarm (applied to the list); Oppression not added.
