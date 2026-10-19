@@ -186,7 +186,10 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
         s += 1.5 * (amt - 1) as f64
             - if life > 15 {
                 0.0
-            } else if life > 6 {
+            } else if life >    if pl.t6 && pl.turns <= 5 {
+        crate::t6stats::mana_snapshot(g, p);
+    }
+ 6 {
                 1.5
             } else {
                 6.0

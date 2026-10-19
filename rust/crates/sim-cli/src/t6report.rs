@@ -39,6 +39,8 @@ pub struct DeckT6 {
     pub ready_no_go: u64,
     /// the option chosen at decisions where a line was ready and the deck had not gone yet
     pub instead: Counter<String>,
+    /// sums of the `mn|...` mana stats (see `sim_core::t6stats`)
+    pub mn: Counter<String>,
 }
 
 /// one seat's tallies (seat 0 goes first), over all games
@@ -146,6 +148,9 @@ impl T6Tally {
                 _ => {}
             }
             for (k, &v) in &p.stats {
+                if let Some(l) = k.strip_prefix("mn|") {
+                    d.mn.add(l.to_string(), v);
+                }
                 if let Some(l) = k.strip_prefix("spx|") {
                     d.instead.add(l.to_string(), v);
                 }
@@ -284,6 +289,30 @@ fn render_speed(d: &DeckT6) -> String {
     o
 }
 
+/// mean mana at the start of turns 1-5, mana permanents in play, mana cards held and cast (see `sim_core::t6stats`)
+fn render_mana(d: &DeckT6) -> String {
+    let row = |pre: &str| -> String {
+        (1..=5)
+            .map(|t| {
+                let n = d.mn.get(&format!("n|T{t}")).max(1) as f64;
+                format!("{:.2}", d.mn.get(&format!("{pre}T{t}")) as f64 / n)
+            })
+            .collect::<Vec<_>>()
+            .join(" ")
+    };
+    let cast: Vec<String> = (1..=3)
+        .map(|t| format!("{:.2}", d.mn.get(&format!("cast|T{t}")) as f64 / d.mn.get(&format!("n|T{t}")).max(1) as f64))
+        .collect();
+    format!(
+        "      mana T1-T5: {}; mana permanents: {}; mana cards in hand: {} (castable {}); cast on T1-3: {}\n",
+        row(""),
+        row("perm|"),
+        row("hand|"),
+        row("handc|"),
+        cast.join(" ")
+    )
+}
+
 /// the per-seat block: win round, mulligans, tries, stops, removal taken, deaths
 fn render_seats(t: &T6Tally) -> String {
     let mut o = String::from("  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out\n");
@@ -390,6 +419,7 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
             );
         }
         o += &render_speed(d);
+        o += &render_mana(d);
         let m = d.mulls;
         o += &format!(
             "      mulligans: {} of {} hands ({:.1}%): one {}, two {}, three {}\n",
