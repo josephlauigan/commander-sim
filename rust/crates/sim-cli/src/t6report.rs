@@ -31,6 +31,29 @@ pub struct DeckT6 {
     pub ix: Counter<String>,
 }
 
+/// one seat's tallies (seat 0 goes first), over all games
+#[derive(Default, Clone)]
+pub struct SeatT6 {
+    pub games: u64,
+    pub wins: u64,
+    pub win_rounds: Vec<u32>,
+    pub mull_hands: u64,
+    pub go: i64,
+    pub stops: i64,
+    /// removal and counters other seats resolved on this seat (decks counted by key; only games with distinct keys)
+    pub removal_in: i64,
+    pub counter_in: i64,
+    pub dead: u64,
+    pub death_rounds: Vec<u32>,
+    /// this seat was the first one out
+    pub first_out: u64,
+    pub games_distinct: u64,
+    /// (sum, games) of mana and hand size on the seat's turn 4, and of the turn its commander first resolved
+    pub mana4: (i64, i64),
+    pub hand4: i64,
+    pub cmd_turn: (i64, i64),
+}
+
 /// a whole calibration run of one tier
 #[derive(Default, Clone)]
 pub struct T6Tally {
@@ -39,6 +62,7 @@ pub struct T6Tally {
     /// wins by seat (turn order, 0-3) in decisive games
     pub seat_wins: [u64; 4],
     pub decks: HashMap<String, DeckT6>,
+    pub seats: [SeatT6; 4],
 }
 
 /// how the winner won: a combo line's name, "commander damage", "poison", "damage", "other"; None for the round cap
@@ -85,6 +109,7 @@ impl T6Tally {
         {
             self.seat_wins[w] += 1;
         }
+        self.add_seats(g, timeout);
         for (i, p) in g.players.iter().enumerate() {
             let d = self.decks.entry(p.key.to_string()).or_default();
             d.seated += 1;
@@ -107,6 +132,68 @@ impl T6Tally {
                     d.stops.add(c.to_string(), v);
                 } else if let Some(c) = k.strip_prefix("ix|") {
                     d.ix.add(c.to_string(), v);
+                }
+            }
+        }
+    }
+
+    /// per-seat tallies (stats only)
+    fn add_seats(&mut self, g: &GameOut, timeout: bool) {
+        let n = g.players.len().min(4);
+        let mut keys: Vec<&str> = g.players.iter().map(|p| p.key).collect();
+        keys.sort();
+        keys.dedup();
+        let distinct = keys.len() == g.players.len();
+        let first_out = g.players[..n].iter().filter_map(|p| p.stats.get("elim_round").copied()).min();
+        for i in 0..n {
+            let p = &g.players[i];
+            let s = &mut self.seats[i];
+            s.games += 1;
+            if g.winner == Some(i) && !timeout {
+                s.wins += 1;
+                s.win_rounds.push(g.round);
+            }
+            if p.stat("had_T4") > 0 {
+                s.mana4.0 += p.stat("mana_T4");
+                s.mana4.1 += 1;
+                s.hand4 += p.stat("hand_T4");
+            }
+            if let Some(&t) = p.milestone.get("cmd_cast") {
+                s.cmd_turn.0 += t as i64;
+                s.cmd_turn.1 += 1;
+            }
+            s.mull_hands += (p.stat("mull_n") > 0) as u64;
+            for (k, &v) in &p.stats {
+                if k.starts_with("go|") {
+                    s.go += v;
+                } else if k.starts_with("stop|") {
+                    s.stops += v;
+                }
+            }
+            if let Some(&er) = p.stats.get("elim_round") {
+                s.dead += 1;
+                s.death_rounds.push(er as u32);
+                if Some(er) == first_out {
+                    s.first_out += 1;
+                }
+            }
+            if distinct {
+                s.games_distinct += 1;
+                for (j, q) in g.players[..n].iter().enumerate() {
+                    if j == i {
+                        continue;
+                    }
+                    for (k, &v) in &q.stats {
+                        if let Some(r) = k.strip_prefix("ix|removal|")
+                            && r.rsplit('|').next() == Some(p.key)
+                        {
+                            s.removal_in += v;
+                        } else if let Some(r) = k.strip_prefix("ix|counter|")
+                            && r.rsplit('|').next() == Some(p.key)
+                        {
+                            s.counter_in += v;
+                        }
+                    }
                 }
             }
         }
@@ -141,6 +228,42 @@ fn top(c: &Counter<String>, n: usize, label: &dyn Fn(&str) -> String) -> String 
     c.most_common().into_iter().take(n).map(|(k, v)| format!("{} {v}", label(&k))).collect::<Vec<_>>().join(", ")
 }
 
+/// the per-seat block: win round, mulligans, tries, stops, removal taken, deaths
+fn render_seats(t: &T6Tally) -> String {
+    let mut o = String::from("  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out\n");
+    for (i, s) in t.seats.iter().enumerate() {
+        if s.games == 0 {
+            continue;
+        }
+        let avg = |v: &[u32]| if v.is_empty() { 0.0 } else { v.iter().sum::<u32>() as f64 / v.len() as f64 };
+        o += &format!(
+            "      seat {}: wins {} ({:.1}% of games), win round {:.1}/{:.1}, mulligans {:.1}%, tries {:.2}/game, stopped {:.0}%, taken {:.2}+{:.2}/game, died {:.0}%, death round {:.1}, first out {:.0}%, wins by round <=4/5/6/8: {}/{}/{}/{} of {}, T4 mana {:.1} hand {:.1}, commander out turn {:.1}\n",
+            i + 1,
+            s.wins,
+            pct(s.wins, s.games),
+            avg(&s.win_rounds),
+            median(&s.win_rounds),
+            pct(s.mull_hands, s.games),
+            s.go as f64 / s.games as f64,
+            pct(s.stops as u64, s.go.max(0) as u64),
+            s.removal_in as f64 / s.games_distinct.max(1) as f64,
+            s.counter_in as f64 / s.games_distinct.max(1) as f64,
+            pct(s.dead, s.games),
+            avg(&s.death_rounds),
+            pct(s.first_out, s.games),
+            s.win_rounds.iter().filter(|&&r| r <= 4).count(),
+            s.win_rounds.iter().filter(|&&r| r <= 5).count(),
+            s.win_rounds.iter().filter(|&&r| r <= 6).count(),
+            s.win_rounds.iter().filter(|&&r| r <= 8).count(),
+            s.wins,
+            s.mana4.0 as f64 / s.mana4.1.max(1) as f64,
+            s.hand4 as f64 / s.mana4.1.max(1) as f64,
+            s.cmd_turn.0 as f64 / s.cmd_turn.1.max(1) as f64,
+        );
+    }
+    o
+}
+
 /// the report text for one tier's run: `keys` are the tier's decks in file order, `name` turns a key into the printed name
 pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> String {
     let mut o = String::new();
@@ -160,6 +283,7 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
         })
         .collect();
     o += &format!("  win share by seat of decisive games: {}\n", seats.join("; "));
+    o += &render_seats(t);
     for k in keys {
         let Some(d) = t.decks.get(k) else { continue };
         let tot = d.wins + d.timeout_wins;
@@ -295,6 +419,24 @@ mod tests {
         assert!((t.seat_share(3) - 100.0 / 7.0).abs() < 1e-9);
         // a deck's round-cap win is kept apart from its real wins
         assert_eq!((t.decks["d"].wins, t.decks["d"].timeout_wins), (1, 1));
+    }
+
+    #[test]
+    fn the_seat_block_counts_wins_rounds_and_removal_taken_per_seat() {
+        let mut g = game(Some(1), Some("combo"), 6);
+        g.players[0].stats.insert("mull_n", 1);
+        g.players[0].stats.insert("elim_round", 4);
+        g.players[2].stats.insert("ix|removal|Swords to Plowshares|a", 3);
+        g.players[1].stats.insert("go|X", 2);
+        g.players[1].stats.insert("stop|X|Force of Will", 1);
+        let mut t = T6Tally::default();
+        t.add(&g);
+        assert_eq!((t.seats[1].wins, t.seats[1].win_rounds.clone(), t.seats[0].wins), (1, vec![6], 0));
+        assert_eq!((t.seats[0].mull_hands, t.seats[0].dead, t.seats[0].first_out), (1, 1, 1));
+        assert_eq!((t.seats[0].removal_in, t.seats[1].go, t.seats[1].stops), (3, 2, 1));
+        let text = render(&t, &[], &|k| k.to_string());
+        assert!(text.contains("seat 2: wins 1 (100.0% of games), win round 6.0/6.0"), "{text}");
+        assert!(text.contains("seat 1: wins 0 (0.0% of games)"), "{text}");
     }
 
     #[test]
