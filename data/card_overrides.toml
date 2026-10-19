@@ -3035,6 +3035,10 @@ note = "taps for {C}; cracked for a card late (six or more lands)"
 status = "Full"
 note = "indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or the cheapest creature) at instant speed once a creature worth returning is in the graveyard; then returns the best creature card every upkeep"
 
+["The Mind Stone"]
+status = "Approximate"
+note = "indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked)"
+
 ["Mind Twist"]
 types = "S"
 tags = "xtutor"

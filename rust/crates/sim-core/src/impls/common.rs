@@ -1433,6 +1433,64 @@ fn soul_stone_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     check_state(g)
 }
+
+// ---- The Mind Stone
+/// Indestructible; taps for {W}. {5}{W}, {T}: harness it. Harnessed: at the beginning of your end step, exile up to one
+/// other nonland permanent you control, then return it (t2's end-step flicker: the creature with the best enters
+/// effect, else a tapped mana rock, which comes back untapped). Indestructible comes from soul_stone_etb
+fn the_mind_stone(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false)
+        || g.perm(src).tapped
+        || g.perm(src).data.truthy(DataKey::Harnessed)
+        || crate::human::is_human(g, p)
+    {
+        return Ok(vec![]);
+    }
+    g.perm_mut(src).tapped = true; // it taps as part of the cost: its own {W} can't help pay
+    let ok = can_pay(g, p, 5, "W", false);
+    g.perm_mut(src).tapped = false;
+    if !ok {
+        return Ok(vec![]);
+    }
+    // worth it once a creature with an enters effect worth repeating every turn is on the battlefield
+    let best = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| g.is_creature(m))
+        .map(|&m| super::t2::flicker_worth(g, p, m))
+        .fold(0.0, f64::max);
+    if best < 2.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 3.0 + best.min(8.0) / 2.0,
+        label: "harness The Mind Stone".into(),
+        act: Some(Action::Ability { src, f: the_mind_stone_go, arg: 0 }),
+    }])
+}
+
+fn the_mind_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if g.perm(src).tapped || !on(g, src, p) || g.perm(src).data.truthy(DataKey::Harnessed) {
+        return Ok(false);
+    }
+    g.perm_mut(src).tapped = true;
+    if !can_pay(g, p, 5, "W", false) {
+        g.perm_mut(src).tapped = false;
+        return Ok(false);
+    }
+    pay(g, p, 5, "W", false)?;
+    crate::glog!(g, "  {} harnesses The Mind Stone", g.player(p).name);
+    g.perm_mut(src).data.set(DataKey::Harnessed, Val::Bool(true)); // a special action: harnessing can't be responded to
+    Ok(true)
+}
+
+fn the_mind_stone_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if !g.perm(src).data.truthy(DataKey::Harnessed) {
+        return Ok(());
+    }
+    super::t2::end_step_flicker(g, src, p, true, true)
+}
 // ---- Pernicious Deed
 /// what Pernicious Deed with X destroys (src: the Deed itself, spared while choosing X)
 fn deed_hit(g: &Game, m: PermId, x: u32) -> bool {
@@ -3415,6 +3473,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(soul_stone_etb);
     c.options = Some(soul_stone);
     c.upkeep = Some(soul_stone_upkeep);
+    let c = r.card(db, "The Mind Stone")?;
+    c.etb = Some(soul_stone_etb);
+    c.options = Some(the_mind_stone);
+    c.end_step = Some(the_mind_stone_end);
+    super::partials::at_once(c, Event::EndStep, true); // end_step_flicker opens its own trigger window
     let c = r.card(db, "Rest in Peace")?;
     c.etb = Some(rip);
     c.sba = Some(rip_sweep);
