@@ -133,11 +133,11 @@ fn pre_cast(g: &Game, p: PlayerId) -> Option<CardId> {
 /// the lowest risk at which an unprotected Dack is cast, by round
 fn dack_bar(g: &Game, p: PlayerId) -> f64 {
     let mut bar: f64 = match g.round {
-        0..=2 => 0.3,
-        3 => 0.4,
-        4 => 0.5,
-        5 => 0.65,
-        _ => 1.0,
+        0..=2 => 0.2,
+        3 => 0.3,
+        4 => 0.4,
+        5 => 0.5,
+        _ => 0.8,
     };
     if pool_left(g, p) >= 7 {
         bar -= 0.1; // the flip is a long shot with every creature still in the library
