@@ -9,3 +9,7 @@ Step 1: building, baseline 600 games + traces.
 - Code read: plan_a (t6_combos_t6.rs ~L712) needs Cradle, Gates in reach, finisher() (Thrasios ON BF + Finale/ (Mastermind+GSZ) in hand or library), Oboro in hand/bf, creatures>=6, 6 spare mana. plan prio holds Oboro/Snap/GSZ/Finale at 0. go_now: Oboro line only with shield or round>=5.
 - Oracle check: loop nets Cradle N + Gates 1 - (2+4) => N=6 positive, N=5 neutral: 6 is correct for infinite mana (modeling OK). Spec scen. 20 (5 = phase-out only) is a separate use, not modeled.
 - Next: baseline 600 + traces (--calibrate within --pool t6 --trace N); suspects: finisher requires Thrasios on bf (Thrasios cast prio 93 but needs {2}? check), Cradle tutoring, creature count 6, Rograkh recast after death; lines B-G rarely tried (Mastermind+GSZ needs infinite mana only).
+
+## 21:40 update
+- Merge of t6-cedh is broken (duplicate Mind Stone override -> cards.json lacks T6 cards); lead fixing, will say when to re-merge. No sims until then.
+- Prepared tuning (uncommitted until measured): go_now Oboro round>=3 (was 5), Witness round>=4 (was 7). Baseline 600 still to run after re-merge.

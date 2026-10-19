@@ -196,13 +196,13 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     }) || on_bf(g, p, "Hexing Squelcher");
     if combo.starts_with("Oboro") {
         // line A casts one creature spell and then only abilities: go with any cover, or once the game is a few turns old
-        if shield || g.round >= 5 {
+        if shield || g.round >= 3 {
             return Some(true);
         }
         return None;
     }
     // line B casts two spells: needs cover, unless the game is late
-    if shield || g.round >= 7 {
+    if shield || g.round >= 4 {
         return Some(true);
     }
     None
