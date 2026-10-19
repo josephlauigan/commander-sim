@@ -702,7 +702,7 @@ fn vinelasher_adept_landcycles_for_two() {
     let lands_before = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land).count();
     assert!(take_option(&mut g, P0, false, "Vinelasher Adept (basic landcycling)"));
     assert!(in_gy(&g, P0, "Vinelasher Adept"));
-    let basic = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land && &*g.db.get(c).name == "Forest").count();
+    let basic = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land && matches!(&*g.db.get(c).name, "Forest" | "Mountain")).count(); // any basic: the omnath deck plays two
     assert_eq!(basic, lands_before + 1);
 }
 

@@ -235,7 +235,7 @@ mod tests {
     fn the_repository_decks_load() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
         let mine = load_mine(&root).unwrap();
-        assert_eq!(mine.len(), 14);
+        assert_eq!(mine.len(), 13);
         for (k, v) in &mine {
             assert_eq!(v.len(), 100, "{k}");
         }
