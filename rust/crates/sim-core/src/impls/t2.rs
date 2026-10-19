@@ -849,6 +849,8 @@ fn omnath(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if owner(g, src) == p && trigger_window(g, p, Some(src), "create a 5/5 Elemental", None)? {
         let spec = Tokens { color: Some(Colors::from_letters("RG")), types: vec!["elemental"], ..Tokens::new(1, 5) };
         make_tokens(g, p, spec)?;
+        let turns = g.player(p).turns;
+        g.player_mut(p).milestone.entry("omnath").or_insert(turns); // the omnath deck's plan online
     }
     Ok(())
 }

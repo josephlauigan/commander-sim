@@ -656,3 +656,11 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 - **2026-10-17.** Out: Tocasia's Welcome. In: Smaug the Magnificent. Smaug the Magnificent (JD's card): +1.1 ±2.7 at T3, 2,000 paired look-ahead games, noise; a hasty flier for Tymna plus a Treasure each upkeep.
 - **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.
 - **2026-10-17.** Out: Rip Apart. In: Avenge (from bulk). Measured at T3 (2,000 paired games): +3.1 (±2.6), list 31.7 → 34.8%: a second creature wipe, so the deck dies to combat less (eliminated 67.0 → 63.7%).
+
+## Omnath, Locus of Rage — Red-Green Landfall Elementals
+
+Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
+
+### Changes
+
+- **2026-10-19.** New deck: Omnath, Locus of Rage red-green landfall, built from the Titania list.

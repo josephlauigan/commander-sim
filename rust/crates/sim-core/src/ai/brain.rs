@@ -657,7 +657,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
-    if g.player(d).key == "titania" && crate::impls::titania::attack_fog(g, d, p, atk)? {
+    if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
     let gand = has(g, d, Tag::Gandalf); // Gandalf: sorceries at instant speed
@@ -881,7 +881,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "seph" => super::seph::options(g, p, s, post),
         "veyran" => super::veyran::options(g, p, s, post),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
-        "titania" => crate::impls::titania::titania_special(g, p, post),
+        "titania" | "omnath" => crate::impls::titania::titania_special(g, p, post),
         "sheoldred" => crate::impls::sheoldred::sheoldred_special(g, p, post),
         "cloud" => crate::impls::cloud::cloud_special(g, p, post),
         "kraum" => crate::impls::tymna_cards::kraum_special(g, p, post),
@@ -994,7 +994,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 7] = ["galadriel", "yshtola", "alela", "kefka", "titania", "sheoldred", "cloud"];
+const GENERIC_PLAYS: [&str; 8] = ["galadriel", "yshtola", "alela", "kefka", "titania", "omnath", "sheoldred", "cloud"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.

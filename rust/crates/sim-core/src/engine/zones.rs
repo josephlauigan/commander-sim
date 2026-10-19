@@ -1496,7 +1496,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             let n = g.player(p).library.len().min(4);
             let mut top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
             // the titania deck leaves its fetch lands in the graveyard, where Titania returns them
-            let keep_fetch = g.player(p).key == "titania";
+            let keep_fetch = crate::impls::titania::is_deck(g.player(p).key);
             if let Some(i) = top.iter().position(|&c| g.db.get(c).land && !(keep_fetch && g.db.get(c).tag(Tag::F))) {
                 let l = top.remove(i);
                 g.player_mut(p).hand.push(l);
