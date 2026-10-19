@@ -185,6 +185,7 @@ pub mod seam {
                     GyKind::Muldrotha => "muldrotha",
                 },
                 None if g.db.get(c).land && check_land_gy(g, p, c).is_none() => "land",
+                None if sim_core::human::alt::gy_hook(g, c) => "alt", // an escape, unearth ... the card code keeps for the AI
                 None => continue,
             };
             out.push(json!({"i": i, "name": &*g.db.get(c).name, "how": how}));
@@ -196,8 +197,8 @@ pub mod seam {
         false
     }
     /// `abilities.land_abilities(g, p, L)` is not empty
-    pub fn land_has_ability(_g: &Game, _p: PlayerId, _l: LandId) -> bool {
-        false
+    pub fn land_has_ability(g: &Game, p: PlayerId, l: LandId) -> bool {
+        !sim_core::human::abilities::land_abilities(g, p, l).is_empty() || sim_core::human::alt::land_hook(g, l)
     }
     /// the mana the person has in the pool, counted as any colour for a copy of the game (`mana.pool_of(p).total()`)
     pub fn pool_total(g: &Game, p: PlayerId) -> u32 {

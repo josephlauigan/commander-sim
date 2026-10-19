@@ -96,7 +96,7 @@ fn abstergo(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec
     }])
 }
 
-fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = LandId(arg as u32);
     if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 3, "")? {
         return Ok(false);

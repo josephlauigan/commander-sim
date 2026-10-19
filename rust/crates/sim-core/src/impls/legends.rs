@@ -293,7 +293,7 @@ fn beacon(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<O
     Ok(vec![plan(9.5, label, beacon_go, l.0 as i64)])
 }
 
-fn beacon_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn beacon_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = LandId(arg as u32);
     if !(g.land(l).on_bf && g.player(p).lands.contains(&l)) || g.land(l).tapped || !g.player(p).cmd_in_zone {
         return Ok(false);

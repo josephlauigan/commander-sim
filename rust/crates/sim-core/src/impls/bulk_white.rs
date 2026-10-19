@@ -145,7 +145,7 @@ fn up_cost(name: &str) -> Option<(u32, &'static str)> {
 }
 
 /// m is a face-down creature of this module's cards
-fn is_face_down(g: &Game, m: PermId) -> bool {
+pub(crate) fn is_face_down(g: &Game, m: PermId) -> bool {
     live(g, m) && g.perm(m).data.truthy(DataKey::Facedown) && card_name(g, m).is_some_and(|n| up_cost(n).is_some())
 }
 
@@ -182,7 +182,7 @@ pub fn exit_blocked(g: &Game, b: PermId, a: PermId) -> bool {
 }
 
 /// cast c face down for {3}: a 2/2 with no abilities (and ward {2} for a disguise card); `arg` is the card
-fn cast_down(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn cast_down(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "", false) || !castable(g, p, c, "hand") {
         return Ok(false);
@@ -291,7 +291,7 @@ fn up_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
 }
 
 /// **Turn face up** (any time, for its cost: a special action) and run "when this creature is turned face up".
-fn face_up_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn face_up_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let m = PermId(arg as u32);
     if !is_face_down(g, m) || owner(g, m) != p {
         return Ok(false);

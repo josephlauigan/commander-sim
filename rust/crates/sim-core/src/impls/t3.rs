@@ -393,7 +393,7 @@ fn skeleton(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec
     Ok(vec![plan(u, "return Reassembling Skeleton".into(), skeleton_go, c.0 as i64)])
 }
 
-fn skeleton_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn skeleton_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).gy.contains(&c) || !can_pay(g, p, 1, "B", false) {
         return Ok(false);

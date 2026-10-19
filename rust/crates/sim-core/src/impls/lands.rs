@@ -458,7 +458,7 @@ fn ld_land_options(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) ->
     Ok(vec![opt(2.5, label, ld_land_go, pack(l.0, t.0))])
 }
 
-fn ld_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn ld_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (l, t) = unpack(arg);
     let (l, t) = (LandId(l), LandId(t));
     let ghost = land_name(g, l) == "Ghost Quarter";
@@ -605,7 +605,7 @@ fn bastion(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     Ok(vec![opt(u, "Karn's Bastion".into(), bastion_go, l.0 as i64)])
 }
 
-fn bastion_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn bastion_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = LandId(arg as u32);
     if !has_land(g, p, l) || g.land(l).tapped || !pay_without(g, p, l, 4, "")? {
         return Ok(false);
