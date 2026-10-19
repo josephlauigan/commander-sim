@@ -61,7 +61,9 @@ fn in_hand(g: &Game, p: PlayerId, n: &str) -> bool {
 }
 
 fn on_bf(g: &Game, p: PlayerId, n: &str) -> bool {
+    // lands are not permanents in this engine: look in the land list too
     crate::ai::plans::on_bf(g, p, n).is_some()
+        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && name(g, g.land(l).cd) == n)
 }
 
 fn in_gy(g: &Game, p: PlayerId, f: impl Fn(&str) -> bool) -> bool {
@@ -85,6 +87,8 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
     match n {
         // held for the winning turn: the line's own pieces and the finishers
         OBORO | FINALE | GSZ | SNAP => Some(0.0),
+        // the clones are pieces of lines C and D (a copy of the earthbent land / of Badgermole Cub), not plays of their own
+        "Mockingbird" | "Phantasmal Image" | "Flesh Duplicate" | "Clever Impersonator" => Some(0.0),
         // Witness is the line B piece; cast it alone only to rebuy a counter or protection
         WITNESS => {
             let value = in_gy(g, p, |x| REACTIVE.contains(&x) || x == "Crop Rotation" || x == "Noxious Revival");
@@ -141,7 +145,9 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     if !on_bf(g, p, OBORO) && !in_hand(g, p, OBORO) {
         w.push(OBORO);
     }
-    w.extend([WITNESS, SNAP, FINALE, "Spellseeker", MASTERMIND, GSZ, "Veil of Summer", "Sol Ring", "Mana Vault"]);
+    // lines C (Cub + Mockingbird / Image + Oboro + Cradle) and D (Cub + clone + Witness + Snap)
+    w.extend(["Badgermole Cub", "Mockingbird", "Phantasmal Image"]);
+    w.extend([WITNESS, SNAP, FINALE, "Spellseeker", MASTERMIND, GSZ, "Flesh Duplicate", "Clever Impersonator", "Veil of Summer", "Sol Ring", "Mana Vault"]);
     Some(w.iter().filter_map(|n| g.db.id(n)).collect())
 }
 
@@ -189,7 +195,8 @@ pub fn hold_up(_g: &Game, _p: PlayerId) -> Option<f64> {
 
 /// go for the combo named `combo` now (Some(true)), wait (Some(false)), or no opinion (None)
 pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
-    if !combo.starts_with("Oboro") && !combo.starts_with("Eternal Witness") {
+    let oboro = combo.contains("Oboro");
+    if !oboro && !combo.contains("Eternal Witness") {
         return None;
     }
     let pl = g.player(p);
@@ -199,7 +206,7 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
             "Force of Will" | "Fierce Guardianship" | "Pact of Negation" | "Veil of Summer" | "Deflecting Swat"
         )
     }) || on_bf(g, p, "Hexing Squelcher");
-    if combo.starts_with("Oboro") {
+    if oboro {
         // line A casts one creature spell and then only abilities: go with any cover, or once the game is a few turns old
         if shield || g.round >= 3 {
             return Some(true);

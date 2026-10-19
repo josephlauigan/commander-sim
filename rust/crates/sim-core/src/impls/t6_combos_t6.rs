@@ -911,9 +911,157 @@ fn b_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
     }
 }
 
+// --- Lines C and D: Badgermole Cub (earthbend) + a clone
+// Oracle: Badgermole Cub {1}{G}: "When this creature enters, earthbend 1" (a land becomes a 0/0 haste creature, +1/+1
+// counter, still a land) and "Whenever you tap a creature for mana, add an additional {G}". The engine has no
+// earthbend, so these two lines are counted from the cards' text and the sim never plays the creature-lands.
+//
+// Line C (Cub + Mockingbird or Phantasmal Image + Oboro + Cradle): a clone enters as a copy of the earthbent land L1
+// (mana value 0, so Mockingbird with X=0 costs {U}); the copy is a plain land (the earthbend is not copiable). Loop:
+// tap Cradle (N {G}) and the copy ({U}), pay Oboro {2}, return the copy to hand, untap Cradle, recast the clone with
+// the {U}. Net per loop: N - 2 with Mockingbird ({U}), N - 3 with Phantasmal Image ({1}{U}). N counts Cub, L1 and
+// Oboro, so N >= 3 (Mockingbird) or 4 (Image) is unbounded; no Gates. Needs one {U} land to earthbend. Clever
+// Impersonator can't copy a land and Flesh Duplicate needs {U}{U} (only one {U} comes back): both left out of C.
+//
+// Line D (Cub + a clone of it + Eternal Witness + Snap, no Cradle): two Cubs, two earthbent lands L1 and L2. Each
+// creature-land tap makes 1 + 2 = 3 mana: 6 for both. Witness {1}{G}{G} + Snap {1}{U} = 5; Snap untaps both lands and
+// returns Witness, Witness returns Snap: +1 a cycle (L1 gives the {U}). Any clone that can copy Cub works.
+//
+// Line G (Springheart Nantuko on Witness + Vibrance with the Oboro/Gates loop) is NOT unbounded in our list: each
+// Vibrance damage needs {R}{R} spent and the loop makes one renewable {R} (the Gates filter, {1},{T}); Taiga,
+// Volcanic Island, Chrome Mox and Mox Amber don't untap. A loop also costs Oboro 2 + Gates 4 + landfall 2 + evoke 2 =
+// 10 against Cradle N + 1. Finite damage, not a win line: skipped.
+const CUB: &str = "Badgermole Cub";
+const MOCKINGBIRD: &str = "Mockingbird";
+const IMAGE: &str = "Phantasmal Image";
+const IMPERSONATOR: &str = "Clever Impersonator";
+const FLESH: &str = "Flesh Duplicate";
+const CLONES_C: &[&str] = &[MOCKINGBIRD, IMAGE];
+const CLONES_D: &[&str] = &[IMAGE, FLESH, MOCKINGBIRD, IMPERSONATOR];
+const ALL_CLONES: &[&str] = &[MOCKINGBIRD, IMAGE, FLESH, IMPERSONATOR];
+
+/// a land other than Cradle and Gates that taps for {U} (the one Cub earthbends)
+fn blue_land(g: &Game, p: PlayerId) -> bool {
+    g.player(p).lands.iter().any(|&l| {
+        g.land(l).on_bf
+            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES)
+            && crate::engine::mana::land_colors_now(g, p, l).has('U')
+    })
+}
+
+/// the cheapest clone in hand among these names
+fn clone_in_hand(g: &Game, p: PlayerId, names: &[&str]) -> Option<CardId> {
+    names.iter().find_map(|n| hand_card(g, p, &[n]))
+}
+
+/// Cub: Some(None) it is out, Some(Some(card)) it is in hand, None neither
+fn cub_card(g: &Game, p: PlayerId) -> Option<Option<CardId>> {
+    if bf(g, p, CUB).is_some() { Some(None) } else { hand_card(g, p, &[CUB]).map(Some) }
+}
+
+/// the spells line C needs besides the clone: (Cub, Oboro, clone)
+fn plan_c(g: &Game, p: PlayerId) -> Option<()> {
+    land_on_bf(g, p, CRADLE)?;
+    if finisher(g, p).is_none() || !blue_land(g, p) {
+        return None;
+    }
+    let cub = cub_card(g, p)?;
+    let oboro = if bf(g, p, OBORO).is_some() { None } else { Some(hand_card(g, p, &[OBORO])?) };
+    let clone = clone_in_hand(g, p, CLONES_C)?;
+    // Cub, the earthbent land and Oboro feed Cradle: 3 for Mockingbird ({U}), 4 for Phantasmal Image ({1}{U})
+    let need = if cname(g, clone) == MOCKINGBIRD { 3 } else { 4 };
+    let n = creatures(g, p) + usize::from(cub.is_some()) + usize::from(oboro.is_some()) + 1;
+    let mut casts: Vec<CardId> = cub.into_iter().chain(oboro).collect();
+    casts.push(clone);
+    // 2 spare: the first Oboro activation before Cradle is tapped
+    (n >= need && affordable(g, p, &casts, 2)).then_some(())
+}
+
+fn ready_plan_c(g: &Game, p: PlayerId) -> Ready {
+    ready_with(plan_c(g, p).is_some())
+}
+
+fn cast_cub(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if bf(g, p, CUB).is_some() {
+        return Ok(true);
+    }
+    let Some(c) = hand_card(g, p, &[CUB]) else { return Ok(false) };
+    cast_named(g, p, c)
+}
+
+fn cast_oboro_c(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if bf(g, p, OBORO).is_some() {
+        return Ok(true);
+    }
+    let Some(c) = hand_card(g, p, &[OBORO]) else { return Ok(false) };
+    cast_named(g, p, c)
+}
+
+/// a clone is a copy, so it is not found by its own name: it was cast if it left the hand without being countered
+fn cast_clone_of(g: &mut Game, p: PlayerId, names: &[&str]) -> Res<bool> {
+    let Some(c) = clone_in_hand(g, p, names) else { return Ok(false) };
+    crate::ai::brain::do_cast(g, p, c, None)?;
+    Ok(!g.player(p).hand.contains(&c) && !g.player(p).gy.contains(&c))
+}
+
+fn cast_clone_c(g: &mut Game, p: PlayerId) -> Res<bool> {
+    cast_clone_of(g, p, CLONES_C)
+}
+
+fn cast_clone_d(g: &mut Game, p: PlayerId) -> Res<bool> {
+    cast_clone_of(g, p, CLONES_D)
+}
+
+fn c_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    let mut v: Vec<PermId> = bf_any(g, p, &[OBORO, CUB]).into_iter().collect();
+    if creatures(g, p) <= 4 {
+        // at the minimum every creature is a key piece
+        v.extend(g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)));
+    }
+    v
+}
+
+fn plan_d(g: &Game, p: PlayerId) -> Option<()> {
+    if finisher(g, p).is_none() || !blue_land(g, p) {
+        return None;
+    }
+    let cub = cub_card(g, p)?;
+    let clone = clone_in_hand(g, p, CLONES_D)?;
+    hand_card(g, p, &[WITNESS])?;
+    hand_card(g, p, &[SNAP])?;
+    let mut casts: Vec<CardId> = cub.into_iter().collect();
+    casts.push(clone);
+    // two lands stay untapped to be earthbent: they pay for Witness and Snap (6 in, 5 out)
+    affordable(g, p, &casts, 2).then_some(())
+}
+
+fn ready_plan_d(g: &Game, p: PlayerId) -> Ready {
+    ready_with(plan_d(g, p).is_some())
+}
+
+/// the two creature-lands pay for Witness and Snap (the sim has no earthbend), so these casts are the shortcut's, free
+fn cast_witness_d(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(w) = hand_card(g, p, &[WITNESS]) else { return Ok(false) };
+    cast_abstract(g, p, w, true)
+}
+
+fn snap_witness_d(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(s) = hand_card(g, p, &[SNAP]) else { return Ok(false) };
+    cast_abstract(g, p, s, true)
+}
+
+fn d_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| cname(g, c) == CUB))
+        .collect()
+}
+
 // ================================================================== the combos
 /// the Tier 6 combos of this module (chained after the Godo ones by `combos::all`)
-pub static COMBOS: [Combo; 7] = [
+pub static COMBOS: [Combo; 9] = [
     combo(
         "Preston + Felidar Guardian + Radiant Solar (flicker spell)",
         &[QUIET, &[PRESTON], &[FELIDAR], &[SOLAR], FLICKERS],
@@ -999,6 +1147,44 @@ pub static COMBOS: [Combo; 7] = [
             step("Snap on Eternal Witness (untap two lands)", StepKind::Spell, snap_witness),
             trigger("Eternal Witness returns Snap (again and again)", witness_src),
             pieces("the creatures that feed Cradle survive", b_keys),
+            S_FIN_DRAW,
+            S_FIN_SPELL,
+            S_FIN_ABILITY,
+        ],
+    ),
+    combo(
+        "Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle",
+        &[QUIET, &[CUB], ALL_CLONES, &[OBORO], &[CRADLE], &[THRASIOS]],
+        ready_plan_c,
+        &[
+            step("cast Badgermole Cub (earthbend 1)", StepKind::Spell, cast_cub),
+            step("cast Oboro Breezecaller", StepKind::Spell, cast_oboro_c),
+            pieces("Cub, Oboro and the creatures that feed Cradle survive", c_keys),
+            step("cast Mockingbird / Phantasmal Image as a copy of the earthbent land", StepKind::Spell, cast_clone_c),
+            Step {
+                label: "Oboro returns the copy to hand: untap Cradle (again and again)",
+                kind: StepKind::Ability,
+                src: oboro_src,
+                pay: (2, ""),
+                run: done,
+                keys: no_keys,
+            },
+            S_FIN_DRAW,
+            S_FIN_SPELL,
+            S_FIN_ABILITY,
+        ],
+    ),
+    combo(
+        "Badgermole Cub + clone + Eternal Witness + Snap",
+        &[QUIET, &[CUB], ALL_CLONES, &[WITNESS], &[SNAP], &[THRASIOS]],
+        ready_plan_d,
+        &[
+            step("cast Badgermole Cub (earthbend 1)", StepKind::Spell, cast_cub),
+            step("cast a clone as a second Badgermole Cub (earthbend 1)", StepKind::Spell, cast_clone_d),
+            pieces("both Badgermole Cubs survive", d_keys),
+            step("cast Eternal Witness", StepKind::Spell, cast_witness_d),
+            step("Snap on Eternal Witness (untap two creature-lands)", StepKind::Spell, snap_witness_d),
+            trigger("Eternal Witness returns Snap (again and again)", witness_src),
             S_FIN_DRAW,
             S_FIN_SPELL,
             S_FIN_ABILITY,
