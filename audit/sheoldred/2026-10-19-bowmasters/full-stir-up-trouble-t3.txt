@@ -1,0 +1,118 @@
+Model status of the swapped-in cards (cardgen audit):
+  Orcish Bowmasters: Full (1 damage on entry and per extra draw of an opponent, amassing an Orc Army)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sheoldred's AI?
+  AI: Orcish Bowmasters: priority 44 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Orcish Bowmasters: drawn in 24.5% of games (49), cast in 69.4% of those (34)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 10 minutes
+  progress 100.0%  5m20s elapsed, ~0m00s left
+Swaps: Stir Up Trouble -> Orcish Bowmasters
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.9% ->  33.9%  (delta +2.0 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 15.8%  Atraxa 8.6%  Aurelia 23.2%  Marwyn 12.8%  Korvold 5.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.9% ->  33.9%  +2.0pt   ±3.0 
+    Rounds survived (or game length)                  11.37 ->  11.27   -0.10  ±0.20 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.57 ->   0.57   -0.00  ±0.05 
+    Mana available on your turn 4                      4.14 ->   4.14   -0.01  ±0.05 
+    Mana available on your turn 6                      5.63 ->   5.65   +0.03  ±0.08 
+
+  Speed
+    Games where the game plan came online             90.6% ->  91.0%  +0.3pt   ±1.8 
+    Turn the game plan came online                     6.44 ->   6.44   -0.00  ±0.14 
+    Turn the commander first resolved                  6.40 ->   6.40   -0.00  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.80 ->  17.81   +0.01  ±0.50 
+    Tutors resolved per game                           0.00 ->   0.00   +0.00  ±0.00 
+    Spells cast per game                              13.38 ->  13.22   -0.16  ±0.35 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.95 ->   1.69   -0.25  ±0.09*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.71 ->   0.70   -0.01  ±0.06 
+    Your spells countered                              0.14 ->   0.14   -0.01  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                56.44 ->  58.14   +1.70  ±2.54 
+      ...of which combat damage                        7.73 ->   8.93   +1.20  ±0.56*
+      ...of which magecraft / burn                     1.56 ->   1.58   +0.02  ±0.18 
+      ...of which drain triggers                      38.28 ->  37.97   -0.31  ±2.05 
+      ...of which other triggers                       7.48 ->   8.26   +0.78  ±0.91 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Orcish Bowmasters                     26.2      91.2         6.1      8.8       39.7      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Stir Up Trouble                       26.4      86.4         6.9     13.6       37.4      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.9      33.9     +2.0
+    rounds survived                                  11.37     11.27    -0.10
+    eliminated, % of games                            67.4      65.7     -1.7
+    opponents it eliminated, per game                 0.94      1.02    +0.07
+    damage dealt, per game                            55.1      56.7     +1.7
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        18.4      17.4     -0.9
+      plan online by turn 6, %                        51.7      51.8     +0.1
+      plan online by turn 8, %                        75.5      77.0     +1.5
+      plan online by turn 12, %                       89.8      89.8     +0.0
+      plan online at all, %                           90.6      91.0     +0.4
+    commander resolved by turn 4, %                   19.0      18.0     -1.0
+    commander resolved by turn 6, %                   52.6      53.0     +0.3
+    commander removals, per game                      0.67      0.65    -0.02
+    lands on the battlefield, turn 4                  3.73      3.73    +0.00
+    lands on the battlefield, turn 8                  6.55      6.54    -0.01
+    mana available, turn 4                            4.14      4.14    -0.01
+    mana available, turn 8                            6.98      6.96    -0.02
+    cards in hand after the land drop, turn 4         5.64      5.65    +0.01
+    cards in hand after the land drop, turn 8         4.50      4.51    +0.01
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 98%, timeout 2%
+    eliminated by (current): Aurelia via combat 17.7%, Tergrid via combat 12.8%, Marwyn via combat 12.3%, Atraxa via combat 8.2%
+    eliminated by (swapped): Aurelia via combat 17.2%, Marwyn via combat 12.8%, Tergrid via combat 12.6%, Atraxa via combat 6.4%
+
+(321s total)

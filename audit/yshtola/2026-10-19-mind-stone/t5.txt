@@ -1,0 +1,150 @@
+Model status of the swapped-in cards (cardgen audit):
+  The Mind Stone: Approximate (indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by yshtola's AI?
+  AI: The Mind Stone: priority 82 (deck rule)
+400 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 22 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (conservative, loose) of the swapped list vs Tier 5 (High B4)
+  dry run: The Mind Stone: drawn in 22.8% of games (91), cast in 63.7% of those (58)
+
+8,400 games (current list and the swapped one, 2,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 19 minutes
+  progress 100.0%  8m26s elapsed, ~0m00s left
+Swaps: Talisman of Progress -> The Mind Stone
+
+=== Y'shtola vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  30.1% ->  32.6%  (delta +2.5 pts, noise ±2.0, paired)   n=2000
+               eliminated by (variant): Zur the Enchanter 14.3%  Kinnan 7.3%  Urza 17.1%  Yawgmoth 9.6%  Winota 18.9%
+[loose       ] win  31.6% ->  30.6%  (delta -1.0 pts, noise ±1.9, paired)   n=2000
+               eliminated by (variant): Zur the Enchanter 14.1%  Kinnan 8.2%  Urza 17.9%  Yawgmoth 8.3%  Winota 20.8%
+VERDICT: LEANS BETTER (clear only under conservative; rerun with a larger --n to confirm)
+
+--- What changed, by strength axis (yshtola) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yshtola: first drain from Y'shtola's cast trigger
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          30.0% ->  32.6%  +2.6pt   ±2.9     31.6% ->  30.6%  -1.0pt   ±2.9 
+    Rounds survived (or game length)                   9.38 ->   9.46   +0.07  ±0.20      9.44 ->   9.33   -0.11  ±0.20 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03      0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.53 ->   0.53   +0.01  ±0.05      0.52 ->   0.52   +0.00  ±0.05 
+    Mana available on your turn 4                      4.02 ->   4.03   +0.00  ±0.07      4.02 ->   4.01   -0.01  ±0.07 
+    Mana available on your turn 6                      5.81 ->   5.78   -0.03  ±0.13      5.79 ->   5.77   -0.02  ±0.12 
+
+  Speed
+    Games where the game plan came online             61.3% ->  61.0%  -0.3pt   ±3.1     60.3% ->  60.2%  -0.0pt   ±3.1 
+    Turn the game plan came online                     6.86 ->   6.90   +0.04  ±0.18      6.83 ->   6.78   -0.06  ±0.17 
+    Turn the commander first resolved                  5.60 ->   5.62   +0.02  ±0.15      5.55 ->   5.53   -0.02  ±0.15 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            16.28 ->  16.55   +0.26  ±0.67     16.48 ->  16.38   -0.10  ±0.65 
+    Tutors resolved per game                           0.45 ->   0.45   +0.00  ±0.04      0.45 ->   0.43   -0.01  ±0.04 
+    Spells cast per game                               9.93 ->  10.05   +0.12  ±0.40     10.04 ->   9.80   -0.24  ±0.40 
+
+  Interaction
+    Counterspells cast                                 0.29 ->   0.29   -0.00  ±0.03      0.30 ->   0.29   -0.00  ±0.03 
+    Spot removal cast                                  1.46 ->   1.47   +0.01  ±0.08      1.50 ->   1.49   -0.01  ±0.08 
+    Board wipes cast                                   0.14 ->   0.15   +0.01  ±0.02      0.16 ->   0.15   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   -0.00  ±0.01      0.01 ->   0.01   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.25 ->   0.24   -0.01  ±0.03      0.24 ->   0.24   -0.00  ±0.03 
+    Your spells countered                              0.71 ->   0.71   -0.00  ±0.06      0.71 ->   0.72   +0.02  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.32 ->  33.19   +0.87  ±2.14     32.79 ->  31.88   -0.92  ±2.12 
+      ...of which combat damage                        9.90 ->  10.36   +0.46  ±0.78     10.01 ->   9.82   -0.19  ±0.77 
+      ...of which magecraft / burn                     0.62 ->   0.62   -0.01  ±0.11      0.74 ->   0.71   -0.03  ±0.12 
+      ...of which drain triggers                       9.33 ->   9.06   -0.27  ±1.06      8.94 ->   8.34   -0.60  ±0.99 
+      ...of which other triggers                      12.47 ->  13.16   +0.68  ±0.92     13.10 ->  13.00   -0.10  ±0.94 
+
+--- Reading it ---
+  No axis moved beyond noise under either profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [conservative profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Mind Stone                        23.4      72.6         5.5     27.4       47.8      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Talisman of Progress                  23.2      67.1         5.1     32.9       40.1      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.1      32.6     +2.6
+    rounds survived                                   9.38      9.46    +0.07
+    eliminated, % of games                            69.8      67.3     -2.5
+    opponents it eliminated, per game                 0.80      0.86    +0.06
+    damage dealt, per game                            32.3      33.2     +0.9
+    plan: first drain from Y'shtola's cast trigger
+      plan online by turn 4, %                         3.4       3.5     +0.1
+      plan online by turn 6, %                        32.6      32.2     -0.4
+      plan online by turn 8, %                        50.7      49.6     -1.1
+      plan online by turn 12, %                       59.8      59.5     -0.3
+      plan online at all, %                           61.3      61.0     -0.3
+    commander resolved by turn 4, %                   26.1      26.4     +0.3
+    commander resolved by turn 6, %                   54.8      54.0     -0.8
+    commander removals, per game                      0.13      0.13    -0.01
+    lands on the battlefield, turn 4                  3.73      3.73    +0.00
+    lands on the battlefield, turn 8                  6.50      6.51    +0.01
+    mana available, turn 4                            4.02      4.03    +0.00
+    mana available, turn 8                            7.39      7.33    -0.06
+    cards in hand after the land drop, turn 4         6.23      6.24    +0.01
+    cards in hand after the land drop, turn 8         6.54      6.57    +0.03
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Urza via combo 15.2%, Zur the Enchanter via combo 13.3%, Winota via combat 11.3%, Winota via combo 8.8%
+    eliminated by (swapped): Urza via combo 15.2%, Zur the Enchanter via combo 13.1%, Winota via combat 11.3%, Yawgmoth via combo 8.0%
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Mind Stone                        22.2      66.7         5.2     33.3       45.8      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Talisman of Progress                  22.9      68.2         5.5     31.8       43.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.6      30.6     -1.0
+    rounds survived                                   9.44      9.33    -0.11
+    eliminated, % of games                            68.2      69.3     +1.0
+    opponents it eliminated, per game                 0.81      0.78    -0.02
+    damage dealt, per game                            32.8      31.9     -0.9
+    plan: first drain from Y'shtola's cast trigger
+      plan online by turn 4, %                         3.9       3.7     -0.1
+      plan online by turn 6, %                        32.1      32.5     +0.4
+      plan online by turn 8, %                        49.2      49.4     +0.1
+      plan online by turn 12, %                       59.0      59.1     +0.1
+      plan online at all, %                           60.3      60.2     -0.0
+    commander resolved by turn 4, %                   28.2      28.1     -0.1
+    commander resolved by turn 6, %                   54.6      55.8     +1.1
+    commander removals, per game                      0.15      0.14    -0.01
+    lands on the battlefield, turn 4                  3.73      3.73    +0.00
+    lands on the battlefield, turn 8                  6.57      6.54    -0.03
+    mana available, turn 4                            4.02      4.01    -0.01
+    mana available, turn 8                            7.34      7.29    -0.05
+    cards in hand after the land drop, turn 4         6.24      6.24    +0.00
+    cards in hand after the land drop, turn 8         6.64      6.67    +0.03
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Urza via combo 14.2%, Zur the Enchanter via combo 13.2%, Winota via combat 11.2%, Winota via combo 8.8%
+    eliminated by (swapped): Urza via combo 15.4%, Zur the Enchanter via combo 12.8%, Winota via combat 11.2%, Winota via combo 8.8%
+
+(506s total)

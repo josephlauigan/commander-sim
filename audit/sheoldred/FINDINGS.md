@@ -20,6 +20,28 @@ Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 3. **Combat decks:** Krenko (12%) and Yuriko (7%) by combat.
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Stir Up Trouble => Orcish Bowmasters, full run (T3-T4, loose, 2,000 games per list, look-ahead)
+Result: **T3 +2.0 (±2.6), T4 +0.5 (±2.4): about +1.2 over t3-t4, positive but within noise.** Raw:
+`2026-10-19-bowmasters/full-stir-up-trouble-t3.txt`, `t4.txt`.
+Why: Bowmasters is cast in 88-91% of the games it is drawn, around round 5.4-6.1, against Stir Up Trouble's 79-86%
+(stuck 14-21%). Damage +0.9 to +1.7 a game; plan timing and game length unchanged. At T3 the Atraxa losses drop
+(8.2 -> 6.4%); at T4 the deck still dies to Heliod combo (17%) and Krenko (12%) as before, which a 1/1 pinger doesn't
+stop. A small, real-looking edge over a weak card, smaller than the quick read suggested.
+
+### 2026-10-19: Orcish Bowmasters for three cards (quick read: T3-T4, loose only, 700 games per list, look-ahead)
+| Cut (=> Orcish Bowmasters) | T3 | T4 | Average |
+|---|---|---|---|
+| Stir Up Trouble | +3.3 | +1.9 | +2.6 |
+| Fetid Imp | +3.3 | +1.3 | +2.3 |
+| Soul Enervation | +1.4 | +2.1 | +1.8 |
+Noise ±3.9-4.3 per cell. **Leans good: about +2.2 over t3-t4, all six cells positive, none beyond noise alone.** The
+cuts share one baseline per tier (30.9% T3, 29.4% T4), so they are not independent; a full run of one cut is needed
+to confirm. Raw: `2026-10-19-bowmasters/<cut>-<tier>.txt`.
+Why: Bowmasters is cast in 84-90% of the games it is drawn, early (round 5.5-6.5), and wins 38-48% of the games it is
+cast in. Damage to opponents rises in every cell (+0.7 to +3.7 a game): Howling Mine and Seizan hand opponents
+extra draws, each a ping and a bigger Orc Army. The plan (Sheoldred out) comes no sooner, so the gain is extra
+pressure, not speed. JD would buy a second copy (the Sauron copy stays).
+
 | Change | Result | Why |
 |---|---|---|
 | AI: look-ahead ramp bonus (`ramp_w` 1; audit/ramp/2026-10-15) | T4 -1.9 (noise +-2) | Rocks come down first, and the late payoffs are cast less (Howling Mine 50% -> 43% of games drawn, Peer into the Abyss 31% -> 26%); Sheoldred's timing is unchanged (6.0). Merged off. |
