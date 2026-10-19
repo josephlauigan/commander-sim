@@ -1,0 +1,110 @@
+Model status of the swapped-in cards (cardgen audit):
+  The Mind Stone: Approximate (indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by cloud's AI?
+  AI: The Mind Stone: priority 85 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: The Mind Stone: drawn in 22.0% of games (44), cast in 65.9% of those (29)
+
+1,600 games (current list and the swapped one, 700 per list per tier, profile loose), lookahead AI, 22 worker threads: about 4 minutes
+  progress 100.0%  2m38s elapsed, ~0m00s left
+Swaps: Mind Stone -> The Mind Stone
+
+=== Cloud vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.4% ->  23.0%  (delta -0.4 pts, noise ±3.0, paired)   n=700
+               eliminated by (variant): Aurelia 26.4%  Tergrid 16.6%  Atraxa 11.1%  Korvold 8.7%  Marwyn 12.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.4% ->  23.0%  -0.4pt   ±4.5 
+    Rounds survived (or game length)                  11.49 ->  11.51   +0.02  ±0.36 
+
+  Mana & consistency
+    Extra mulligans per game                           0.18 ->   0.18   +0.00  ±0.07 
+    Missed land drops, turns 1-5                       1.00 ->   1.01   +0.01  ±0.10 
+    Mana available on your turn 4                      3.95 ->   3.96   +0.00  ±0.12 
+    Mana available on your turn 6                      5.46 ->   5.42   -0.04  ±0.19 
+
+  Speed
+    Games where the game plan came online             74.9% ->  75.3%  +0.4pt   ±4.6 
+    Turn the game plan came online                     6.10 ->   6.09   -0.02  ±0.33 
+    Turn the commander first resolved                  2.12 ->   2.12   +0.00  ±0.05 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.77 ->  15.95   +0.17  ±0.84 
+    Tutors resolved per game                           3.42 ->   3.45   +0.02  ±0.17 
+    Spells cast per game                              16.30 ->  16.46   +0.16  ±0.82 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.76 ->   0.81   +0.05  ±0.09 
+    Board wipes cast                                   0.41 ->   0.40   -0.01  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.77 ->   0.83   +0.06  ±0.11 
+    Your spells countered                              0.14 ->   0.14   +0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                36.43 ->  37.74   +1.31  ±4.51 
+      ...of which combat damage                       33.75 ->  34.92   +1.17  ±4.22 
+      ...of which other triggers                       2.68 ->   2.82   +0.14  ±0.53 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 700 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Mind Stone                        22.1      78.1         6.5     21.9       25.6      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mind Stone                            21.1      83.1         6.7     16.9       30.1      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.4      23.0     -0.4
+    rounds survived                                  11.49     11.51    +0.02
+    eliminated, % of games                            75.6      75.3     -0.3
+    opponents it eliminated, per game                 0.71      0.74    +0.03
+    damage dealt, per game                            36.4      37.7     +1.3
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        25.3      24.7     -0.6
+      plan online by turn 6, %                        50.3      50.9     +0.6
+      plan online by turn 8, %                        64.3      64.6     +0.3
+      plan online by turn 12, %                       71.9      72.6     +0.7
+      plan online at all, %                           74.9      75.3     +0.4
+    commander resolved by turn 4, %                   99.3      99.3     +0.0
+    commander resolved by turn 6, %                   99.7      99.7     +0.0
+    commander removals, per game                      0.68      0.72    +0.04
+    lands on the battlefield, turn 4                  3.58      3.58    +0.00
+    lands on the battlefield, turn 8                  6.09      6.18    +0.09
+    mana available, turn 4                            3.95      3.96    +0.00
+    mana available, turn 8                            6.88      6.93    +0.05
+    cards in hand after the land drop, turn 4         6.24      6.24    +0.00
+    cards in hand after the land drop, turn 8         5.19      5.23    +0.04
+    wins by (current):  damage 95%, timeout 5%
+    wins by (swapped):  damage 96%, timeout 4%
+    eliminated by (current): Aurelia via combat 18.3%, Marwyn via combat 13.7%, Tergrid via combat 12.1%, Atraxa via combat 9.0%
+    eliminated by (swapped): Aurelia via combat 18.7%, Marwyn via combat 12.4%, Tergrid via combat 12.1%, Atraxa via combat 9.0%
+
+(158s total)
