@@ -1,0 +1,26 @@
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m29s elapsed, ~4m25s left
+  progress  20.0%  0m57s elapsed, ~3m50s left
+  progress  30.0%  1m24s elapsed, ~3m17s left
+  progress  40.0%  1m54s elapsed, ~2m51s left
+  progress  50.0%  2m21s elapsed, ~2m21s left
+  progress  60.0%  2m51s elapsed, ~1m54s left
+  progress  70.0%  3m19s elapsed, ~1m25s left
+  progress  80.0%  3m50s elapsed, ~0m57s left
+  progress  90.0%  4m17s elapsed, ~0m28s left
+  progress 100.0%  4m49s elapsed, ~0m00s left
+
+=== Omnath vs Tier 2 (Mid B3) [loose, lookahead AI, 2000 games] ===
+Win rate  27.4%   95% CI 25.5-29.4%   (even share 25%: +2.5 pts)
+Average turn (your own turn count) of wins 15.3, of losses 12.8
+Plan online (first 5/5 Elemental from Omnath): 52.9% of games
+Wins by: damage 89%, timeout 11%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         61.0%            24.5%           11.8%
+  Brago (brago-azorius-blink-control)          60.4%            24.8%           13.9%
+  Kaalia of the Vast (kaalia-mardu-creature-   60.4%            23.4%           17.3%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.7%            24.6%           13.1%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.6%            23.6%           13.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(290s total)
