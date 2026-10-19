@@ -35,7 +35,7 @@ One-time setup:
    open a new Terminal window.
 3. Install **XcodeGen**: `brew install xcodegen` (Homebrew: https://brew.sh).
 4. Get the code: `git clone https://github.com/josephlauigan/commander-sim.git`, then `cd commander-sim` and
-   `git checkout main`. If you already have it: `git fetch`, `git checkout main` and `git pull`.
+   `git checkout ipad-rust` (`main` once PR #99 is merged). If you already have it: `git fetch`, `git checkout ipad-rust` and `git pull`.
 
 Then, from the `commander-sim` folder:
 

@@ -11,8 +11,9 @@ set -e
 cd "$(dirname "$0")"
 ROOT="$(cd .. && pwd)"
 export PATH="$HOME/.cargo/bin:$PATH"
-rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
 cd "$ROOT/rust"
+# from rust/, so the targets go to the toolchain rust/rust-toolchain.toml pins (not the default one)
+rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
 for t in aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios; do
   cargo build --release --target "$t" -p practice --lib
 done
