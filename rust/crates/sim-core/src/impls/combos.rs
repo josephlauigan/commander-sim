@@ -21,7 +21,7 @@ use crate::engine::zones::{Enter, die, draw, enter, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, Step, Val};
+use crate::state::{Ctx, DataKey, Game, Step as TurnStep, Val};
 use crate::tag::Tag;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -343,7 +343,7 @@ fn free_outlet(g: &Game, p: PlayerId, only: Option<&[&str]>) -> Option<PermId> {
 
 /// p's turn, before combat: a combo that wins by attacking needs a combat still to come
 fn precombat(g: &Game, p: PlayerId) -> bool {
-    g.active == Some(p) && matches!(g.step, Step::Start | Step::Main1)
+    g.active == Some(p) && matches!(g.step, TurnStep::Start | TurnStep::Main1)
 }
 
 /// a payoff that drains on each death of a loop. Goblin Bombardment isn't one: it is an outlet (its damage comes
