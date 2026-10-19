@@ -352,7 +352,7 @@ format). Serve `play/static/` unchanged.
 
 #### Phase 12 — The iPad app (M)
 
-**Status: pending (the Swift shell in `ios-shell/` is to be tested on the user's device on 11 Oct 2026).**
+**Status: done 18 Oct 2026. The Swift app in `ios-shell/` runs the real practice server (`practice_start(bundle_dir, app_dir, port)`, `practice_stop`, `practice_set_lan`), copies the bundled data on first launch (`rust/crates/practice/src/bundle.rs`), and works on the user's iPad.**
 
 Under B2 (section 4): a small Swift app with a web view that links the Rust library, calls one function to start
 the server, and shows the table. Bring over what the Briefcase app does today: the first-launch copy of card data
@@ -364,7 +364,7 @@ two-player option, and the true-black palette.
 
 #### Phase 13 — Cutover (S)
 
-**Status: done 10 Oct 2026, except removing `ios/` (the Briefcase app stays until the Swift shell works on the device). Python (`commander_sim/`, `tests/`, the PyO3 bridge, the difftest harness and the audit scripts that needed the Python engine) is deleted; the browser page moved to `rust/crates/practice/static/`; the README, `architecture.md` and `practice-mode.md` describe the Rust code.**
+**Status: done; the Briefcase app (`ios/`) and `tools/app_icon.py` were removed 18 Oct 2026, once the Swift app worked on the iPad. Python (`commander_sim/`, `tests/`, the PyO3 bridge, the difftest harness and the audit scripts that needed the Python engine) is deleted; the browser page moved to `rust/crates/practice/static/`; the README, `architecture.md` and `practice-mode.md` describe the Rust code.**
 
 Make Rust the default for simulations and practice mode, retire the Python engine and `play/` (or keep them read-only
 for a while), retire the Briefcase app, and update `documents/architecture.md`, `documents/practice-mode.md`, the

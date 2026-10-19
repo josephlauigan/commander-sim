@@ -4,13 +4,13 @@ The practice app on your iPad: a small Swift app with a web view, linking the Ru
 (`rust/crates/practice`). At launch the app starts the real practice server inside the app, which listens on the
 iPad only (127.0.0.1), and shows its page full screen on true black. It is the same practice mode as
 `commander-practice` on a computer (setup screen, table, hints, review, saving, *Continue*), with the Rust engine and
-the look-ahead AI, and no copy of Python. It replaces the Briefcase app in `ios/`.
+the look-ahead AI, and no copy of Python. It replaced the old Python (Briefcase) app.
 
 ```
 ios-shell/
   App/                  the Swift app: start the server, show the page
   include/              the Rust library's C interface (practice.h) and its module map
-  Assets.xcassets/      the app icon (the same picture the Briefcase app had)
+  Assets.xcassets/      the app icon
   project.yml           the Xcode project, for XcodeGen
   build-rust.sh         builds the Rust library for iOS (build/PracticeCore.xcframework) and fills AppData/
   run.sh                build-rust.sh, then generate the project, build, and start it in the iPad simulator
@@ -35,7 +35,7 @@ One-time setup:
    open a new Terminal window.
 3. Install **XcodeGen**: `brew install xcodegen` (Homebrew: https://brew.sh).
 4. Get the code: `git clone https://github.com/josephlauigan/commander-sim.git`, then `cd commander-sim` and
-   `git checkout ipad-rust` (`main` once PR #99 is merged). If you already have it: `git fetch`, `git checkout ipad-rust` and `git pull`.
+   `git checkout main`. If you already have it: `git fetch`, `git checkout main` and `git pull`.
 
 Then, from the `commander-sim` folder:
 
@@ -70,8 +70,8 @@ A free Apple ID signs the app for **7 days**. After that it won't open until you
 iPad connected); your saved games stay, because the app is replaced, not deleted. A paid developer account ($99 a
 year) makes it a year. Don't delete the app from the iPad to re-sign it: that deletes the saved games.
 
-The app has the same bundle identifier the Briefcase app is believed to have had (`com.josephlauigan.commander-ipad`),
-so it should replace the old app in place. The old app's saved games don't carry over (they are in a different
+The app has the same bundle identifier the old Python (Briefcase) app had (`com.josephlauigan.commander-ipad`), so it
+replaces that app in place. The old app's saved games don't carry over (they are in a different
 format); if the iPad shows two apps, delete the old one.
 
 ## Checklist for the first run on the iPad

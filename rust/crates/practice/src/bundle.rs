@@ -1,4 +1,4 @@
-//! First-launch data copy for the iPad app (a port of `ios/src/commander_ipad/bootstrap.py::sync_data`).
+//! First-launch data copy for the iPad app (a port of the old Briefcase app's `bootstrap.py::sync_data`).
 //!
 //! An iOS app's bundle is read-only, so the data the bundle carries (`<bundle>/data`, `<bundle>/decklists`) is copied
 //! into the app's own writable folder (`<app>/data`, `<app>/decklists`; the catalog reads the deck lists next to the
