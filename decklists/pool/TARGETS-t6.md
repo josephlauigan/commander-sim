@@ -55,7 +55,7 @@ balance rather than the exact values:
 
 - each deck wins **18–32%** of the decisive games it plays in, in Tier 6 pods (an even share is 25%). Dack Fayden is held to the same range: its 49% comes from only 32 entries in its first two weeks;
 - the gap between the best and worst deck is **8 points or less** (the real gap is 4 points);
-- **Kinnan may stay the strongest deck** (JD, 2026-10-18): it is not tuned down to the band or the gap just for topping the tier; real modeling errors are still fixed. The band and the gap apply to the other five decks;
+- Kinnan is held to the same band and gap as the others (JD, 2026-10-18, late): its earlier lead came from a modeling error (Kinnan + Basalt counted as a win without a mana sink, fixed in #100), so the earlier "Kinnan may stay the strongest" exception is withdrawn;
 - no deck wins more than half its games through one line the primer calls a backup.
 
 ## Godo reference

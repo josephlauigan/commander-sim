@@ -4,7 +4,7 @@ Read `rust/agents/RULES.md`, `rust/agents/t6-ai.md` (the Stage 5 brief: plan slo
 targets `decklists/pool/TARGETS-t6.md`. Stage 6 tunes **plans and thresholds, never decklists**, until Tier 6 matches
 the targets on two seeds: seat shares of decisive games 30-38 / 24-31 / 19-26 / 14-21; each deck except Kinnan 18-32%
 of its games; best-worst gap among those five 8 points or less; no deck winning more than half its games through a
-line its spec calls a backup. Kinnan may stay the strongest (JD).
+line its spec calls a backup. Kinnan is held to the same band (JD withdrew the exception after #100).
 
 Starting point (2026-10-18, 2,000 games per profile, seed 500000; `/tmp/claude-1000/-home-joseph-projects-mtg-sims/ca30944f-e06c-4aa9-9c35-c9fae50d3a2b/scratchpad/s6/base-s500000.txt`):
 Dack 33-34%, Kinnan 32-34, Kraum/Tymna 28-29, Rograkh/Silas 21-23, Sisay 19-21, Rograkh/Thrasios 13-14 (LOW); seat 1
