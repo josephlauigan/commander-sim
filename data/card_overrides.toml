@@ -8293,3 +8293,17 @@ dsl = [
 ]
 status = "Full"
 note = "ascend (the city's blessing at ten permanents, lands included, kept for the game); when the equipped creature attacks, a +1/+1 counter on each creature you control, two with the blessing; equip {3}. Cloud doubles the trigger"
+
+["Cecil, Dark Knight"]
+kws = ["deathtouch"]
+status = "Full"
+note = "2/3 deathtouch; whenever it deals damage (combat, to a player or a creature) you lose that much life, then at half your starting life (20) or less it untaps and transforms into Cecil, Redeemed Paladin, a 4/4 lifelink that, whenever it attacks, gives the other attackers indestructible until end of turn (impls/newcards_b.rs)"
+
+["Lightning, Army of One"]
+kws = ["first strike", "trample", "lifelink"]
+status = "Approximate"
+note = "first strike, trample, lifelink; Stagger on combat damage to a player doubles, until its controller's next turn, all damage to that player (combat and noncombat) and to their permanents (removal damage, combat kills). Gaps: sweepers with a fixed damage kind, the AI's combat estimates, lifelink of a doubled hit, and attackers resolved before Lightning in the same damage step are not doubled"
+
+["Marvin, Murderous Mimic"]
+status = "Partial"
+note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first"

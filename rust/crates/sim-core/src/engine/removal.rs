@@ -158,6 +158,11 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
             kind = intern(&format!("dmg{n3}"));
         }
     }
+    if let Some(n) = dmg_amount(kind, "dmg")
+        && crate::engine::life::stagger_mult(g, owner) > 1
+    {
+        kind = intern(&format!("dmg{}", n * 2)); // Lightning, Army of One: damage to its victim's permanents is doubled
+    }
     if !g.perm(m).on_bf || untargetable(g, m) {
         return Ok(());
     }

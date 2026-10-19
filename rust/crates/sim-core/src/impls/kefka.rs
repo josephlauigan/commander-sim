@@ -1434,6 +1434,9 @@ pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             generic_prio(g, p, c)
         };
     }
+    if let Some(v) = crate::impls::newcards_b::marvin_prio(g, p, c) {
+        return v;
+    }
     if name == "Rapturous Moment" {
         // draw three, discard two (Kefka's fodder) and five red mana back: a free filter whenever the hand can spend it
         let others = g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();

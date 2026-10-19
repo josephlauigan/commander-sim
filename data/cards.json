@@ -15416,6 +15416,48 @@
    "spell_prio": false
   },
   {
+   "name": "Cecil, Dark Knight",
+   "types": "C",
+   "generic": 0,
+   "pips": "B",
+   "tags": {
+    "pow": "2",
+    "tgh": "3",
+    "dt": true,
+    "leg": true
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "deathtouch"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Celestial Mantle",
    "types": "E",
    "generic": 3,
@@ -56632,6 +56674,51 @@
    "spell_prio": false
   },
   {
+   "name": "Lightning, Army of One",
+   "types": "C",
+   "generic": 1,
+   "pips": "RW",
+   "tags": {
+    "pow": "3",
+    "tgh": "2",
+    "trample": true,
+    "lifelink": true,
+    "leg": true
+   },
+   "pow": 3,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "first strike",
+    "lifelink",
+    "trample"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Lightning, Security Sergeant",
    "types": "C",
    "generic": 2,
@@ -60028,6 +60115,45 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Marvin, Murderous Mimic",
+   "types": "AC",
+   "generic": 2,
+   "pips": "",
+   "tags": {
+    "pow": "2",
+    "tgh": "2",
+    "leg": true
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,

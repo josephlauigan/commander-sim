@@ -360,3 +360,7 @@ Awaken the Ages|S|5R|
 Primeval Titan|C|4GG|pow=6 tgh=6 trample bomb=6
 Oppression|E|1BB|
 Andúril, Narsil Reforged|A|2|leg
+
+Cecil, Dark Knight|C|B|pow=2 tgh=3 dt leg
+Lightning, Army of One|C|1RW|pow=3 tgh=2 trample lifelink leg
+Marvin, Murderous Mimic|AC|2|pow=2 tgh=2 leg
