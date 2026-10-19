@@ -606,7 +606,13 @@ pub fn put_creature(
         return Ok(None);
     }
     let wish = crate::ai::plans::wish_list(g, p);
-    let c = match cs.iter().copied().find(|c| wish.contains(c)) {
+    // Tier 6: the best-ranked wished card (lower tiers keep the first in library order: their results are locked)
+    let pick = if crate::impls::t6_plans::is_t6(g, p) {
+        wish.iter().copied().find(|w| cs.contains(w))
+    } else {
+        cs.iter().copied().find(|c| wish.contains(c))
+    };
+    let c = match pick {
         Some(c) => c,
         None => {
             let hoof = cs.iter().copied().find(|&c| &*g.db.get(c).name == "Craterhoof Behemoth");

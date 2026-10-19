@@ -135,6 +135,12 @@ fn revival_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// lacks (then the one making the most colours), else the first land
 pub fn mycospawn_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     let lands: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| g.db.get(c).land).collect();
+    // the deck's wish list first (Gaea's Cradle, then Talon Gates once Cradle is out)
+    if crate::impls::t6_plans::is_t6(g, p)
+        && let Some(&w) = crate::ai::plans::wish_list(g, p).iter().find(|w| lands.contains(w))
+    {
+        return Some(w);
+    }
     let creatures = g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.is_creature(m)).count();
     let have = g.player(p).lands.iter().fold(Colors::NONE, |a, &l| a.union(land_colors_now(g, p, l)));
     max_by(&lands, |c| {
