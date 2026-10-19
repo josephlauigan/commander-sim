@@ -96,3 +96,26 @@ is modeled too generously (e.g. Oracle lines going off through counters the tabl
 library, free counters it pitches with no blue card, Ad Nauseam life), then tune its plan
 (impls/t6_plan_kraum.rs: go_now, hold_up, keep). Branch t6-cal-kraum off t6-cedh. Machine: CARGO_BUILD_JOBS=8,
 sims --jobs 8, all in the background. Timebox ~90 minutes; confirm once at 2000.
+
+## State after dack / rthras3 / kraum (2026-10-19 01:20; 2,000 games, seeds 500000 and 900000, scratchpad s6/cal3-s*.txt)
+
+Kraum/Tymna 29-32, Dack 27-30, Kinnan 27-28, Sisay 22-27, Rograkh/Silas 22-26, Rograkh/Thrasios 15-17 (LOW). Seat 1
+26-28% (target 30-38), seat 4 22% (target 14-21). Average game ~10.2 rounds, timeouts 2-3%.
+
+## Task `rthras4` — keep Thrasios alive
+
+rthras3 found the deck's pieces arrive (Mycospawn fetches Cradle by round 4) but its commanders are removed ~240 times
+per 600 games and each recast costs {2} more and a turn. 1. Check the removal it eats is chosen fairly (the table's
+removal targets: is Rograkh/Thrasios over-targeted vs the archenemy rules? Dack's Fiend Hunter / All-Fates Stalker
+loops). 2. Plan: don't recast Thrasios/Rograkh into open removal (opponents' open mana + cards), hold protection
+(Veil of Summer, Snap/Chain to save) for the commanders, prefer to rebuild the line when the table is tapped.
+Branch t6-cal-rthras (merge t6-cedh first). 8 build jobs / --jobs 8, background. Timebox 90 minutes; confirm at 2000.
+
+## Task `seats` — why is going first worth so little?
+
+Real cEDH: seat 1 wins 34% of decisive games, seat 4 17%. Ours: 26-28 / 22. Find why, with numbers: win round by seat,
+mulligan rate by seat, how often seat 1's line is stopped vs others', whether turn 1-3 plays (fast mana, the seat that
+acts first) give seat 1 the tempo they should, whether the archenemy/answer rules dogpile the first player too hard
+(the leader eats every answer), and whether the opening (draw on turn 1? mulligans? London mulligan free 7 in
+multiplayer) follows the rules. Fix modeling errors; tuning of the shared table rules (ai/t6_table.rs) is allowed,
+gated to Tier 6. Branch t6-cal-seats off t6-cedh. 8 build jobs / --jobs 8, background. Timebox 90 minutes.
