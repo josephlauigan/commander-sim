@@ -8,3 +8,4 @@ Task `seats` in t6-calib.md: why is going first worth so little (seat 1 26-28% v
 5. Fix, measure, 2000 games, t3 lock diff, tests, report-t6-cal-seats.md.
 ## Status
 - started
+- 10/19: per-seat block added to t6report.rs (uncommitted->commit next). Baseline 600 (seed 500000, /tmp/claude-1000/t6cal-seats/base600.txt): seat1 26.2/24.6, seat4 21.5/23.1. Per seat: win round, tries/game, mulligans identical across seats; seat 1 takes MORE removal (1.28 vs 0.99/game). Games last 10 rounds, so tempo washes out. Next: trace rounds 1-4 for fast-mana/tempo, check mulligan rate (43%).
