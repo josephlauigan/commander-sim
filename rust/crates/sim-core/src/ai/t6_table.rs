@@ -284,6 +284,8 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                     continue;
                 }
             }
+            // Sisay: a ready line (the table and the plan already said go) comes before one more fetch
+            Some(Action::Plan { .. }) if g.player(p).key == "sisay-legends-toolbox" && o.label.starts_with("combo: ") => 92.0,
             Some(Action::Ability { .. })
                 if g.player(p).key == "sisay-legends-toolbox" && o.label.starts_with("Sisay: ") =>
             {
