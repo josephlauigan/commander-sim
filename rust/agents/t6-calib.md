@@ -86,3 +86,13 @@ what helps:
 
 Branch t6-cal-rthras (merge t6-cedh first). Machine: CARGO_BUILD_JOBS=8, sims --jobs 8, all in the background.
 Timebox ~90 minutes; confirm the kept changes once at 2000 games.
+
+## Task `kraum` — Kraum/Tymna is a little too strong (2026-10-18 night)
+
+After the Dack calibration (2,000 games, seed 500000), Kraum/Tymna is 34.3% (target 18-32); before it, 31.8 / 33.2%.
+82% of its wins are Thassa's Oracle + Demonic Consultation / Tainted Pact, median round 9. Real data (TARGETS-t6.md)
+puts it near the top of the five established decks, so bring it to about 28-31%, not lower. Check first that nothing
+is modeled too generously (e.g. Oracle lines going off through counters the table holds, Tainted Pact with the
+library, free counters it pitches with no blue card, Ad Nauseam life), then tune its plan
+(impls/t6_plan_kraum.rs: go_now, hold_up, keep). Branch t6-cal-kraum off t6-cedh. Machine: CARGO_BUILD_JOBS=8,
+sims --jobs 8, all in the background. Timebox ~90 minutes; confirm once at 2000.
