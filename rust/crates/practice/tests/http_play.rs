@@ -26,16 +26,26 @@ fn until_request(c: &mut Client) -> Vec<Value> {
     c.stream(0, None).until(300, is_request)
 }
 
+/// after an Undo: the events from its reset (newer than event `since`) to the next request. The Undo answers before the
+/// game restarts, so reading from the start at once can still see the old game's events
+fn after_reset(c: &mut Client, since: u64) -> Vec<Value> {
+    let mut st = c.stream(0, None);
+    let reset = st.until(300, |e| e["kind"] == "reset" && e["id"].as_u64() > Some(since)).pop().unwrap();
+    let mut evs = vec![reset];
+    evs.extend(st.until(300, is_request));
+    evs
+}
+
 #[test]
 fn test_undo_asks_the_last_decision_again_with_the_same_table() {
     let s = srv!();
     let mut c = s.client();
     start(&mut c, "sauron", 11, "adaptive", json!({}));
-    let (seen, _) = play(&mut c, 40, false);
+    let (seen, last) = play(&mut c, 40, false);
     assert_eq!(seen.len(), 41);
     let r = c.post("/api/undo", json!({"n": 3}));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
-    let evs = until_request(&mut c);
+    let evs = after_reset(&mut c, last);
     assert_eq!(frozen(evs.last().unwrap()), seen[40 - 3]);
     c.quit();
 }
@@ -45,9 +55,10 @@ fn test_replayed_history_is_marked() {
     let s = srv!();
     let mut c = s.client();
     start(&mut c, "sauron", 11, "adaptive", json!({}));
-    play(&mut c, 15, false);
+    let (_, last) = play(&mut c, 15, false);
     assert_eq!(c.post("/api/undo", json!({"n": 1})).status, 200);
-    let evs = until_request(&mut c);
+    // card images arrive from a background thread whenever they are fetched: not part of the replay
+    let evs: Vec<Value> = after_reset(&mut c, last).into_iter().filter(|e| e["kind"] != "images").collect();
     assert_eq!(evs[0]["kind"], "reset");
     let (mid, last) = (&evs[1..evs.len() - 1], evs.last().unwrap());
     assert!(mid.iter().filter(|e| e["kind"] == "log").all(|e| e["replay"] == true));
@@ -174,7 +185,11 @@ fn test_review_and_try_it() {
     {
         let r = c.post("/api/tryit", json!({"n": d["n"]}));
         assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
-        let evs = c.stream(0, None).until(300, |e| matches!(e["kind"].as_str(), Some("request" | "over" | "error")));
+        // the try-it game's reset (the old game's events can still be there for a moment), then on to a request
+        let mut st = c.stream(0, None);
+        let mut evs = st.until(300, |e| e["kind"] == "reset" && e.get("tryit").is_some()).split_off(0);
+        evs.drain(..evs.len() - 1);
+        evs.extend(st.until(300, |e| matches!(e["kind"].as_str(), Some("request" | "over" | "error"))));
         assert_eq!(evs[0]["kind"], "reset");
         assert_eq!(evs[0]["tryit"]["n"], d["n"]);
         assert!(evs[0]["tryit"].get("applied").is_some());
