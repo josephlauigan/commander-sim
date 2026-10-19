@@ -1,0 +1,106 @@
+Model status of the swapped-in cards (cardgen audit):
+  Cecil, Dark Knight: Full (2/3 deathtouch; whenever it deals damage (combat, to a player or a creature) you lose that much life, then at half your starting life (20) or less it untaps and transforms into Cecil, Redeemed Paladin, a 4/4 lifelink that, whenever it attacks, gives the other attackers indestructible until end of turn (impls/newcards_b.rs))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by kraum's AI?
+  AI: Cecil, Dark Knight: priority 76 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Cecil, Dark Knight: drawn in 17.0% of games (34), cast in 73.5% of those (25)
+
+1,200 games (current list and the swapped one, 500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 3 minutes
+  progress 100.0%  1m00s elapsed, ~0m00s left
+Swaps: Gilgamesh, Master-at-Arms -> Cecil, Dark Knight
+
+=== Tymna/Kraum vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.0% ->  23.4%  (delta +0.4 pts, noise ±4.6, paired)   n=500
+               eliminated by (variant): Urza 14.8%  Zur the Enchanter 13.0%  Winota 18.8%  Kinnan 21.8%  Yawgmoth 8.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kraum) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kraum: 
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.0% ->  23.4%  +0.4pt   ±5.3 
+    Rounds survived (or game length)                   8.52 ->   8.54   +0.02  ±0.43 
+
+  Mana & consistency
+    Extra mulligans per game                           0.06 ->   0.06   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.39 ->   0.39   -0.01  ±0.09 
+    Mana available on your turn 4                      3.98 ->   3.97   -0.00  ±0.09 
+    Mana available on your turn 6                      5.55 ->   5.59   +0.04  ±0.16 
+
+  Speed
+    Games where the game plan came online              0.0% ->   0.0%  +0.0pt   ±0.0 
+    Turn the game plan came online                                                    n/a
+    Turn the commander first resolved                  3.84 ->   3.82   -0.02  ±0.18 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.66 ->  12.98   +0.32  ±0.97 
+    Tutors resolved per game                           0.06 ->   0.05   -0.01  ±0.03 
+    Spells cast per game                               8.43 ->   8.66   +0.24  ±0.79 
+
+  Interaction
+    Counterspells cast                                 0.15 ->   0.14   -0.01  ±0.04 
+    Spot removal cast                                  0.65 ->   0.69   +0.04  ±0.11 
+    Board wipes cast                                   0.09 ->   0.10   +0.01  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.01   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.26 ->   0.31   +0.05  ±0.07 
+    Your spells countered                              0.43 ->   0.44   +0.01  ±0.09 
+
+  Threat & pressure
+    Damage dealt to opponents per game                27.46 ->  28.45   +0.98  ±4.46 
+      ...of which combat damage                       27.20 ->  28.08   +0.87  ±4.41 
+      ...of which magecraft / burn                     0.04 ->   0.05   +0.00  ±0.03 
+      ...of which drain triggers                       0.00 ->   0.00   +0.00  ±0.01 
+      ...of which other triggers                       0.22 ->   0.28   +0.06  ±0.21 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Cecil, Dark Knight                    19.0      73.7         6.2     26.3       40.0      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Gilgamesh, Master-at-Arms             18.4      29.3         9.2     70.7       66.7      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.0      23.4     +0.4
+    rounds survived                                   8.52      8.54    +0.02
+    eliminated, % of games                            77.0      76.6     -0.4
+    opponents it eliminated, per game                 0.60      0.63    +0.02
+    damage dealt, per game                            27.5      28.4     +0.9
+    commander resolved by turn 4, %                   69.8      68.2     -1.6
+    commander resolved by turn 6, %                   83.4      84.0     +0.6
+    commander removals, per game                      0.36      0.38    +0.02
+    lands on the battlefield, turn 4                  3.78      3.78    -0.00
+    lands on the battlefield, turn 8                  6.72      6.64    -0.08
+    mana available, turn 4                            3.98      3.97    -0.00
+    mana available, turn 8                            6.98      6.93    -0.05
+    cards in hand after the land drop, turn 4         6.40      6.37    -0.03
+    cards in hand after the land drop, turn 8         6.78      6.81    +0.03
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Kinnan via combo 22.6%, Urza via combo 15.8%, Winota via combo 13.8%, Zur the Enchanter via combo 9.4%
+    eliminated by (swapped): Kinnan via combo 21.6%, Urza via combo 13.6%, Winota via combo 12.8%, Zur the Enchanter via combo 11.4%
+
+(60s total)

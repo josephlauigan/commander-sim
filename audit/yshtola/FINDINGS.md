@@ -58,3 +58,8 @@ Why: a better rock than the Lantern (cast 70% of the games drawn vs 51%; mana on
 fast combo (Kinnan 20%, Urza 16%, Zur 11%, Winota 11%) and the 6-mana harness (blink Hostage Taker, Massacre Wurm,
 Gonti) comes too late. Open AI question: The Mind Stone sits in hand in 30% of the games it's drawn; her rules
 don't name it (generic priority), so a re-test should check that first. JD decided to wait on buying it.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+**Prison Sentence => Stroke of Midnight: T5 -2.6 (noise ±4.3, no big downgrade).** Cast in 80% of draws (Prison
+Sentence 67%), but it doesn't change her losses (fast combo: Kinnan, Urza, Zur, Winota). Cloud is the other home
+(-1.4 there); JD has one copy. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.

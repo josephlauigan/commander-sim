@@ -75,3 +75,12 @@ Band 4 (T1-T3). No change. Final: **29.6% vs T1, 26.3% vs T2, 20.4% vs T3** (avg
 ## 2026-10-18 evening: Mind Stone => The Mind Stone (quick pass, stopped after T1; loose only, 700 games per list)
 Result: **T1 29.9% -> 30.6% (+0.7, ±3.2): noise.** T2 and T3 not run (JD stopped the sims and decided to wait on
 buying the Stone). Raw: `2026-10-18-mind-stone/mind-stone-quick-STOPPED-t1only.txt`.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+- **Hero's Blade => Andúril, Narsil Reforged: T1 +0.4, T2 -2.0, T3 +0.8 (about -0.3; noise, no downgrade).** Cast in
+  83-88% of draws (Hero's Blade 79-86%), wins 56% when cast at T1; a counter on every creature per swing (two with the
+  city's blessing) is a team pump, but Cloud wins by one equipped attacker, so it trades evenly with a cheap pump.
+- **Citizen's Arrest => Stroke of Midnight: T1 -3.8, T2 +0.8, T3 -1.2 (about -1.4; noise, no big downgrade).** Held
+  as an instant answer (cast 73-79% of draws vs the Arrest's 76-84%) and stuck in hand more; the 1/1 it gives the
+  opponent and its {2}{W} cost make it no better than the Arrest here. Y'shtola is the other home being tested.
+Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.

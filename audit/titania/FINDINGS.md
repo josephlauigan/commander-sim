@@ -30,3 +30,9 @@ Band 4 (T1-T3). Proposed: Hornet Queen, Harmonize, Tireless Tracker (to Seph/Atr
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **17.5 / 25.9 / 25.5% vs T1 / T2 / T3** (before 19.1 / 27.6 / 25.5, with Penumbra Spider): within noise, stays band 4. AI fixes: Fblthp X cost, Silhana coloured mana, Worldly Tutor pick, Arachnogenesis timing, protection held.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+**Ghalta the Unstoppable => Primeval Titan: T1 +1.0, T2 +1.6, T3 +3.6 (about +2.1 over t1-t3; noise, no downgrade).**
+Why: the Titan is cast in 85-90% of the games it's drawn, about a round earlier than Ghalta (8-9 vs 9-10), and wins
+36-48% when cast vs Ghalta's 33-35%. It fetches fetch lands first (a landfall now, a 5/3 Elemental under Titania when
+cracked), so it is ramp and threat in one where Ghalta needs a big board first. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.

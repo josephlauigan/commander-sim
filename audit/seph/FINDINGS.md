@@ -59,3 +59,9 @@ Why: cast in 86-88% of the games it's drawn, around round 6.5-7.3, so with the 6
 around turns 8-9. At T3 (games ~11 rounds) the plan came online a little more often (+2.3 pts) and it won 56% when
 cast vs Mind Stone's 46%; at T4 (games ~10 rounds, Heliod combo, Krenko) it's too slow to matter. Same shape as The
 Soul Stone: a long-game card. JD decided to wait on buying either Stone.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+**Dread Return => Victimize: T3 +1.8, T4 -0.2 (noise ±4.1-4.6, no downgrade).** The Seph AI never cast it at first
+(priority 0); fixed in `6e7ac4d` (its own rule: a big creature card in the yard and a cheap body to sacrifice). Cast
+in 42-49% of draws (Dread Return 67-72%: the AI waits for two good targets plus fodder), but wins 77-82% when cast:
+two bombs back for 3 mana. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.

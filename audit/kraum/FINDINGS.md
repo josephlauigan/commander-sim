@@ -203,3 +203,12 @@ T5, adaptive AI, 1,500 games per list: before 31.0 / 33.1, after 30.9 / 32.7 (no
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **20.8% vs T5** (before 21.4): within noise. Breach now cast (6.7% of games), Dark Endurance protects, Diabolic Tutor fetches finishers, Firebird/Lightning coded. Still the softest band-1 deck; its limit is too few cheap bodies (a deckbuilding question).
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+- **Gilgamesh => Cecil, Dark Knight: T5 +0.4 (noise ±4.6, no downgrade).** Cast in 74% of draws around round 6
+  (Gilgamesh: 29%, stuck 71%); a 1-drop deathtouch attacker for Tymna, but at T5 the deck dies to fast combo.
+- **Elemental Mascot => Lightning, Army of One (Approximate): T5 -2.8 (noise ±3.5, within noise, the worst of the
+  pass).** Cast in 59% of draws; wins 42% when cast vs the Mascot's 56%. Deaths unchanged (Kinnan, Urza, Winota,
+  Zur combo): a 3-mana 3/2 ground attacker doesn't speed up a clock that needs evasion, and Stagger's doubling
+  needs a second hit before Lightning's controller's next turn. Not a big downgrade, but the one to watch.
+Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
