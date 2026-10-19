@@ -105,7 +105,12 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
         "Gamble" | "Crop Rotation" => {
             let have = cradle_out(g, p) || in_hand(g, p, CRADLE);
             let lib = g.player(p).library.iter().any(|&x| name(g, x) == CRADLE);
-            if have || (n == "Crop Rotation" && (!lib || g.player(p).lands.len() < 2)) {
+            // with Cradle out, the same tutor fetches Talon Gates (Oboro line); Gamble only while Cradle is not in hand
+            let gates_lib = g.player(p).library.iter().any(|&x| name(g, x) == GATES);
+            let gates_need = cradle_out(g, p) && gates_lib && !on_bf(g, p, GATES) && !in_hand(g, p, GATES);
+            if gates_need && (n == "Gamble" || g.player(p).lands.len() >= 2) {
+                Some(86.0)
+            } else if have || (n == "Crop Rotation" && (!lib || g.player(p).lands.len() < 2)) {
                 Some(0.0)
             } else if lib {
                 Some(88.0)

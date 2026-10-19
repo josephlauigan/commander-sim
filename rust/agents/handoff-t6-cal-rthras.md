@@ -13,3 +13,8 @@ Step 1: building, baseline 600 games + traces.
 ## 21:40 update
 - Merge of t6-cedh is broken (duplicate Mind Stone override -> cards.json lacks T6 cards); lead fixing, will say when to re-merge. No sims until then.
 - Prepared tuning (uncommitted until measured): go_now Oboro round>=3 (was 5), Witness round>=4 (was 7). Baseline 600 still to run after re-merge.
+
+## 22:00 update
+- Re-merged t6-cedh, rebuilt. go_now change (round 3/4) 600 games: Thrasios 14.0%, 0.09 tries/game: NO effect (readiness is the limit, not go_now).
+- Debug counters (plan_a fail reasons, rounds>=5): Cradle in library ~85% of noCradle, Gates in library ~98% of noGates; Oboro/finisher rarely the limit. So tutoring is the bottleneck: Crop Rotation/Gamble went to prio 0 once Cradle was out, never fetching Gates.
+- Change: Crop Rotation/Gamble prio 86 while Cradle is out and Gates is only in the library. Measured in /tmp/claude-1000/t6cal-rthras/tutor600.txt.
