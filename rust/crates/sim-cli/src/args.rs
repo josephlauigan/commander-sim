@@ -2,7 +2,7 @@
 //! prefix of an option's name also works (`--gam 960`), --swap repeats, and a bad value is an error naming the
 //! option (exit code 2).
 
-pub const DECK_KEYS: [&str; 12] = crate::decks::MINE;
+pub const DECK_KEYS: [&str; 13] = crate::decks::MINE;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
@@ -52,7 +52,7 @@ const OPTS: [Opt; 24] = [
     opt(
         "--pool",
         false,
-        &["t0", "t1", "t2", "t3", "t4", "t5", "all"],
+        &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
         "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
          (data/my_decks.toml: e.g. sephfs t1-t3, yshtola t4-t5). A tier outside them is refused unless --any-tier",
@@ -72,7 +72,13 @@ const OPTS: [Opt; 24] = [
     opt("--profiles", false, &[], "LIST", "AI interaction profiles to run (default conservative,loose)"),
     opt("--profile", false, &[], "NAME", "run one profile only (conservative or loose)"),
     opt("--analyze", true, &[], "", "deep report: how the deck wins and loses, plan timing, card report"),
-    opt("--trace", false, &[], "GAME", "print a play-by-play log of one game (seed offset) and exit"),
+    opt(
+        "--trace",
+        false,
+        &[],
+        "GAME",
+        "print a play-by-play log of one game (seed offset) and exit; with --calibrate within --pool tN, a game of that tier",
+    ),
     opt("--cards", true, &[], "", "list every card in --deck with its tags, source and unmodeled text"),
     opt("--brief", true, &[], "", "skip the per-axis breakdown"),
     opt(

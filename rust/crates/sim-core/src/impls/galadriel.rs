@@ -1441,7 +1441,9 @@ fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if let Some(l) = land {
         // not the land drop: onto the battlefield tapped
         let lid = g.add_land(p, l, true);
-        if let Some(f) = g.registry.get(l).filter(|i| i.live()).and_then(|i| i.land_etb) {
+        if !crate::engine::mana::moon_land(g, lid)
+            && let Some(f) = g.registry.get(l).filter(|i| i.live()).and_then(|i| i.land_etb)
+        {
             f(g, p, lid)?;
         }
         crate::glog!(g, "    Planar Genesis: {} puts {} onto the battlefield tapped", pname(g, p), g.db.get(l).name);

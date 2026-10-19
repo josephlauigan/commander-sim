@@ -77,6 +77,9 @@ fn remove_first(v: &mut Vec<CardId>, c: CardId) -> bool {
 pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut o = vec![];
     for l in g.player(p).lands.clone() {
+        if crate::engine::mana::moon_land(g, l) {
+            continue; // Blood Moon: no abilities
+        }
         if let Some(f) = g.registry.get(g.land(l).cd).and_then(|i| i.land_options) {
             o.extend(f(g, l, p, post)?);
         }
@@ -87,6 +90,9 @@ pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
 /// lands.land_upkeep: p's lands' upkeep abilities (Emeria, the Sky Ruin)
 pub fn land_upkeep(g: &mut Game, p: PlayerId) -> Res {
     for l in g.player(p).lands.clone() {
+        if crate::engine::mana::moon_land(g, l) {
+            continue;
+        }
         if let Some(f) = g.registry.get(g.land(l).cd).and_then(|i| i.land_upkeep) {
             f(g, l, p)?;
         }

@@ -1,0 +1,29 @@
+3,000 games (calibration: within, 1,500 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 9 minutes
+
+=== Within-tier balance [conservative, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  1m46s elapsed, ~15m55s left
+  progress  20.0%  3m23s elapsed, ~13m33s left
+  progress  30.0%  4m56s elapsed, ~11m31s left
+  progress  40.0%  6m18s elapsed, ~9m27s left
+  progress  50.0%  7m54s elapsed, ~7m54s left
+  Tier 2 (Mid B3): avg game 15.3 rounds, timeouts 13.0%
+    Brago                         29.2% (26.7-31.8)  [4.2 pts from round-cap wins]
+    Kaalia of the Vast            23.9% (21.6-26.4)  [1.6 pts from round-cap wins]
+    Lord Windgrace                24.9% (22.6-27.5)  [3.1 pts from round-cap wins]
+    Meren of Clan Nel Toth        22.9% (20.7-25.4)  [3.8 pts from round-cap wins]
+    Sythis                        24.0% (21.7-26.5)  [3.6 pts from round-cap wins]
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  60.0%  9m30s elapsed, ~6m20s left
+  progress  70.0%  10m52s elapsed, ~4m39s left
+  progress  80.0%  12m24s elapsed, ~3m06s left
+  progress  90.0%  13m48s elapsed, ~1m32s left
+  progress 100.0%  15m22s elapsed, ~0m00s left
+  Tier 2 (Mid B3): avg game 15.3 rounds, timeouts 12.5%
+    Brago                         27.6% (25.1-30.2)  [4.4 pts from round-cap wins]
+    Kaalia of the Vast            22.4% (20.2-24.9)  [1.0 pts from round-cap wins]
+    Lord Windgrace                25.4% (23.0-27.9)  [2.8 pts from round-cap wins]
+    Meren of Clan Nel Toth        23.6% (21.3-26.1)  [3.0 pts from round-cap wins]
+    Sythis                        26.0% (23.6-28.6)  [4.4 pts from round-cap wins]
+
+(923s total)

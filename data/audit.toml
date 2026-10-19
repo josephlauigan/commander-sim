@@ -24,7 +24,7 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
-extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; max 4 combats a turn" }
+extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
 attack_triggers = { status = "Approximate", note = "attack triggers: hooks for the key cards, compiled text for the rest" }
 isshin_doubling = { status = "Full", note = "attack-caused triggers fire twice (hand tags, compiled triggers, hooks)" }
 teysa_doubling = { status = "Full", note = "death-caused triggers of your permanents fire twice" }

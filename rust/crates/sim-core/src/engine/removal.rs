@@ -31,7 +31,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
             }
             let is_c = g.is_creature(m);
             let cd = g.perm(m).cd.map(|c| g.db.get(c));
-            let ty = cd.map_or(Types::CREATURE, |d| d.types);
+            let ty = crate::engine::values::ptypes(g, m);
             let ok = match tgt {
                 "c" => is_c,
                 "cp" => is_c || ty.has(Types::PLANESWALKER),
@@ -222,6 +222,9 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         crate::impls::t0_giada::damaged(g, m, n)?; // Metropolis Reformer
     }
     g.last_removed = Some((g.perm(m).cd, owner, kind, actor));
+    if let Some(a) = actor {
+        crate::t6stats::removal_hit(g, a, spell, owner);
+    }
     if kind == "exile"
         && let Some(src) = g.rem_src
         && card_name(g, src) == Some("Skyclave Apparition")
@@ -354,6 +357,7 @@ fn etb_removal_pick(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// a board wipe of this kind resolves (card: the wipe spell, whose tags matter). Python's `apply_wipe`.
 /// card: the wipe spell (its tags matter: Toxic Deluge), None for a wipe with no card
 pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
+    crate::t6stats::wipe(g, p, card);
     g.batch += 1; // creatures destroyed together die simultaneously
     let prev_batch = g.cur_batch.replace(g.batch);
     let prev = g.destroyer.replace(p); // Karmic Justice: who destroyed them
@@ -438,7 +442,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
             if g.perm(m).phased || (prot == Some("indes") && destroyish.contains(&kind)) {
                 continue;
             }
-            let ty = g.perm(m).cd.map_or(Types::CREATURE, |c| g.db.get(c).types);
+            let ty = crate::engine::values::ptypes(g, m);
             let cre = g.is_creature(m);
             let cmc = g.perm(m).cd.map(|c| g.db.get(c).cmc);
             let wiped = g.perm(m).name.to_string();

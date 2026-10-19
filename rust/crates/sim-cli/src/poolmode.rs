@@ -103,6 +103,8 @@ pub struct RunTally {
     pub by_seed: HashMap<u64, bool>,
     pub axes: Axes,
     pub wintype: Counter<String>,
+    /// Tier 6 report counters, filled only when `me` is a Tier 6 deck (the per-deck block of `--deck X --pool t6`)
+    pub t6: crate::t6report::T6Tally,
 }
 
 impl RunTally {
@@ -121,6 +123,7 @@ impl RunTally {
             by_seed: HashMap::new(),
             axes: Axes::new(),
             wintype: Counter::new(),
+            t6: Default::default(),
         }
     }
 
@@ -129,6 +132,9 @@ impl RunTally {
         let Some(pi) = g.player(me) else { return };
         let p = &g.players[pi];
         let won = g.winner == Some(pi);
+        if sim_core::impls::t6_plans::is_t6_key(me) {
+            self.t6.add(g);
+        }
         self.n += 1;
         self.win += won as u64;
         self.by_seed.insert(seed, won);
@@ -273,8 +279,17 @@ impl Ctx<'_> {
             let seats = sim.seats_for(s, me, None, opp_keys, k);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
         });
-        let mut c = Calib { seated: Counter::new(), won: Counter::new(), rounds: 0, timeouts: 0, timeout_won: Counter::new(), n };
+        let mut c = Calib {
+            seated: Counter::new(),
+            won: Counter::new(),
+            rounds: 0,
+            timeouts: 0,
+            timeout_won: Counter::new(),
+            n,
+            t6: Default::default(),
+        };
         for (_, g) in &games {
+            c.t6.add(g);
             c.rounds += g.round as u64;
             c.timeouts += (g.wintype == Some("timeout")) as u64;
             if let (Some(w), Some("timeout")) = (g.winner, g.wintype) {
@@ -329,6 +344,9 @@ impl Ctx<'_> {
             );
         }
         println!("  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)");
+        if sim_core::impls::t6_plans::is_t6_key(me) && tier == "t6" {
+            print!("{}", crate::t6report::render(&r.t6, &[me.to_string()], &|k| sim.name_of(k)));
+        }
     }
 
     /// poolmode.print_ab: baseline vs variant per profile, the verdict and the per-axis table
@@ -469,6 +487,9 @@ impl Ctx<'_> {
                             100.0 * r.timeout_won.get(k) as f64 / s as f64
                         );
                     }
+                    if *tier == "t6" {
+                        print!("{}", crate::t6report::render(&r.t6, &keys, &|k| sim.name_of(k)));
+                    }
                 }
             }
         }
@@ -518,6 +539,8 @@ pub struct Calib {
     pub timeouts: u64,
     /// wins by round-cap tiebreak (life + 2 x board power), per deck
     pub timeout_won: Counter<String>,
+    /// the Tier 6 counters (win routes, combo tries and stops, mulligans, interaction, seat shares)
+    pub t6: crate::t6report::T6Tally,
     /// games planned (errors included, as Python counted len(seeds))
     pub n: u64,
 }
@@ -664,9 +687,10 @@ fn card_infos(sim: &Sim, cards: &[String]) -> Vec<CardInfo> {
         .collect()
 }
 
-/// poolmode.trace: a play-by-play of one pool game (seed = --seed + GAME)
+/// poolmode.trace: a play-by-play of one pool game (seed = --seed + GAME); without --deck, a game of four decks of
+/// the --pool tier seated as `--calibrate within` seats them
 pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
-    let deck = a.deck.as_deref().ok_or("--trace needs --deck")?;
+    let Some(deck) = a.deck.as_deref() else { return trace_pool(sim, a) };
     let prof = a.profiles[0].clone();
     let st = sim.settings(profile(&prof)?);
     // no tier (or all): the deck's first tier; a tier outside the deck's own needs --any-tier
@@ -693,6 +717,28 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     Ok(())
 }
 
+/// `--pool tN --trace GAME` without --deck: one within-tier game (the seats `--calibrate within` draws for that seed)
+fn trace_pool(sim: &Sim, a: &Args) -> Result<(), String> {
+    let tier = match a.pool.as_deref() {
+        Some("all") | None => return Err("--trace needs --deck, or --pool with one tier".into()),
+        Some(t) => t,
+    };
+    let prof = a.profiles[0].clone();
+    let st = sim.settings(profile(&prof)?);
+    let game = a.trace.unwrap();
+    let seed = a.seed + game;
+    let seats = sim.seats_for(seed, None, None, &sim.pool_keys(tier), 4);
+    let g = crate::play::catch_game(|| GameOut::from_game(&sim.play(seed, &seats, &st, true), false))?;
+    println!(
+        "Play-by-play of within-tier game {game} (seed {seed}): {}, {prof} profile, {} AI",
+        tier_label(tier),
+        ai_name(sim.opts.ai)
+    );
+    println!("{}", g.log.clone().unwrap_or_default().join("\n"));
+    let winner = g.winner.map_or("none".to_string(), |w| sim.name_of(g.players[w].key));
+    println!("Winner: {winner} ({})", g.wintype.unwrap_or("None"));
+    Ok(())
+}
 #[cfg(test)]
 mod tier_tests {
     use super::*;
@@ -715,7 +761,7 @@ mod tier_tests {
         assert!(e.contains("yshtola") && e.contains("t4, t5") && e.contains("--any-tier"), "{e}");
         assert_eq!(select_tiers("yshtola", &own, "t1", true).unwrap(), v(&["t1"]));
         // --any-tier with all: every tier
-        assert_eq!(select_tiers("yshtola", &own, "all", true).unwrap().len(), 6);
+        assert_eq!(select_tiers("yshtola", &own, "all", true).unwrap().len(), 7);
     }
 
     #[test]
@@ -730,7 +776,7 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str]); 12] = [
+        let want: [(&str, &[&str]); 13] = [
             ("yshtola", &["t5"]), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("seph", &["t3", "t4"]),
             ("sheoldred", &["t3", "t4"]),
@@ -743,6 +789,7 @@ mod tier_tests {
             ("titania", &["t1", "t2", "t3"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),
+            ("godo", &["t6"]),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t) in want {

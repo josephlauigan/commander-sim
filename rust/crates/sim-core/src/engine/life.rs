@@ -143,9 +143,26 @@ pub fn check_state(g: &mut Game) -> Res {
             crate::engine::zones::lands_entered(g, q)?; // a land put onto the battlefield without landfall's path
         }
     }
+    sba_toughness(g)?;
+    sba_legend(g)?;
+    sba_moon_saga(g)?;
+    if g.over {
+        return Ok(());
+    }
     for i in 0..g.players.len() {
         let pl = &g.players[i];
-        if pl.alive && ((pl.life <= 0 && !crate::impls::tymna_cards::unlife(g, PlayerId(i as u8))) || pl.decked || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21) || pl.poison >= 10) && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8)) {
+        let dying = pl.alive
+            && ((pl.life <= 0 && !crate::impls::tymna_cards::unlife(g, PlayerId(i as u8)))
+                || pl.decked
+                || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21)
+                || pl.poison >= 10);
+        if dying && crate::impls::t6_plans::is_t6(g, PlayerId(i as u8)) && !crate::impls::t6_stax::grace_active(g, PlayerId(i as u8)) {
+            crate::ai::t6_table::grace_save(g, PlayerId(i as u8)); // Angel's Grace, if it holds one and {W} is open
+        }
+        if dying
+            && !crate::impls::t0_giada::cant_lose(g, PlayerId(i as u8))
+            && !crate::impls::t6_stax::grace_active(g, PlayerId(i as u8))
+        {
             eliminate(g, PlayerId(i as u8));
         }
     }
@@ -155,6 +172,112 @@ pub fn check_state(g: &mut Game) -> Res {
         g.winner = alive.first().copied();
         if g.wintype.is_none() {
             g.wintype = Some("damage");
+        }
+    }
+    Ok(())
+}
+
+/// 704.5f: a creature with toughness 0 or less is put into its owner's graveyard, at every check (not only as it
+/// enters). `die(.., "sba")` ignores indestructible and regeneration. Cheap: the full `etgh` runs only for a creature
+/// whose stored toughness (base + counters + until-end-of-turn bonus) is below 6, since static effects shift it by
+/// a few points at most. Armies (amass) are skipped as on entering.
+fn sba_toughness(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if !g.players[i].alive {
+            continue;
+        }
+        let doomed: Vec<_> = g.players[i]
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                x.on_bf
+                    && !x.phased
+                    && !x.army
+                    && x.tgh + x.plus + x.eot_pt.1 < 6
+                    && g.is_creature(m)
+                    && crate::engine::values::etgh(g, m) <= 0
+            })
+            .collect();
+        for m in doomed {
+            if g.perm(m).on_bf {
+                crate::glog!(g, "    {} has toughness 0 or less and dies", g.perm(m).name);
+                crate::engine::zones::die(g, m, "sba")?;
+            }
+        }
+    }
+    Ok(())
+}
+
+/// 704.5j, the legend rule: a player who controls two or more legendary permanents with the same name chooses one and
+/// puts the rest into their owners' graveyards (not destruction: indestructible does not help; `die(.., "sba")`).
+/// Legendary-ness reads `mine::is_legendary` (copy exceptions: a Helm of the Host token is not legendary). The AI
+/// keeps the better one: untapped, equipped, with counters, the real card over a token copy, then the older one
+/// (not `pval`: a token copy of a card has no card to value).
+/// Cheap: a player with fewer than two permanents is skipped, and names are compared only among legendary ones.
+fn sba_legend(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if !g.players[i].alive || g.players[i].perms.len() < 2 {
+            continue;
+        }
+        let leg: Vec<_> = g.players[i]
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                x.on_bf && !x.phased && crate::cardcode::is_legendary(g, m)
+            })
+            .collect();
+        if leg.len() < 2 {
+            continue;
+        }
+        let mut done: Vec<crate::sym::Sym> = vec![];
+        for &m in &leg {
+            let name = g.perm(m).name;
+            if done.contains(&name) {
+                continue;
+            }
+            let same: Vec<_> = leg.iter().copied().filter(|&n| g.perm(n).name == name && g.perm(n).on_bf).collect();
+            if same.len() < 2 {
+                continue;
+            }
+            done.push(name);
+            let score = |n: crate::ids::PermId| -> f64 {
+                let x = g.perm(n);
+                let gear = g.players[i].perms.iter().filter(|&&e| g.perm(e).attached == Some(n)).count();
+                crate::engine::values::epow(g, n) as f64 * 0.25 + if x.tapped { 0.0 } else { 2.0 } + 1.5 * gear as f64
+                    + 0.5 * x.plus.max(0) as f64
+                    + if x.token { 0.0 } else { 0.25 }
+                    - x.born as f64 * 1e-6
+            };
+            let keep = same.iter().copied().fold(same[0], |b, n| if score(n) > score(b) { n } else { b });
+            for n in same {
+                if n != keep && g.perm(n).on_bf {
+                    crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
+                    crate::engine::zones::die(g, n, "sba")?;
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+/// 704.5s with Blood Moon: a Saga land (Urza's Saga) loses its chapter abilities (it is a Mountain now) but keeps the
+/// Saga subtype, so its final chapter number is 0 and its lore counters are at least that: it is sacrificed.
+fn sba_moon_saga(g: &mut Game) -> Res {
+    for i in 0..g.players.len() {
+        if g.players[i].sagas.is_empty() {
+            continue;
+        }
+        let p = PlayerId(i as u8);
+        for (l, _) in g.players[i].sagas.clone() {
+            if g.players[i].lands.contains(&l) && crate::engine::mana::moon_land(g, l) {
+                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", g.db.get(g.land(l).cd).name);
+                crate::impls::lands::sac_land(g, p, l)?;
+                g.players[i].sagas.retain(|x| x.0 != l);
+            }
         }
     }
     Ok(())

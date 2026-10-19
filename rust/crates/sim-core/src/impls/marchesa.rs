@@ -166,22 +166,8 @@ pub fn best_steal(g: &Game, p: PlayerId, spell: Option<CardId>) -> Option<PermId
 
 /// marchesa.steal: p gains control of m (until end of turn: untapped and hasty, back at the end step)
 pub fn steal(g: &mut Game, p: PlayerId, m: PermId, until_eot: bool) {
-    let q = g.perm(m).owner;
-    g.player_mut(q).perms.retain(|&x| x != m);
-    let x = g.perm_mut(m);
-    x.owner = p;
-    x.attached = None;
-    g.player_mut(p).perms.push(m);
-    g.bf_ver += 1;
-    if until_eot {
-        let x = g.perm_mut(m);
-        x.tapped = false;
-        x.sick = false;
-        g.player_mut(p).borrowed.push(m);
-    } else {
-        g.perm_mut(m).sick = true;
-    }
-    crate::glog!(g, "    {} gains control of {} ({})", g.player(p).name, g.perm(m).name, g.player(q).name);
+    use crate::engine::control::{Duration, gain_control};
+    gain_control(g, p, m, if until_eot { Duration::EndOfTurn } else { Duration::Permanent });
 }
 
 // ================================================================== Coalition Relic

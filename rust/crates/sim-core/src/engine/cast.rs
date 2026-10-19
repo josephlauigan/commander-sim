@@ -8,14 +8,14 @@ use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, apply_wipe, legal_targets};
-use crate::engine::stack::{counter_window, counterable, stack_window_keep, trigger_window};
+use crate::engine::stack::{counter_window, counterable, stack_window_item, trigger_window};
 use crate::engine::tutors::{ad_nauseam, card_worth, jeskas_will, pile_tutor, tutor, tutor_to_top};
 use crate::engine::values::*;
 use crate::engine::zones::*;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
+use crate::state::{CastLock, Ctx, DataKey, Game, LockEnd, LockKind, StackItem, StackKind, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
@@ -110,7 +110,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 }
             }
             Choice::Sac(Fodder::Treasure) => {
-                g.player_mut(p).treasures -= 1;
+                g.player_mut(p).sac_treasure();
                 if !g.hooks.is_empty() {
                     fire_trigger(
                         g,
@@ -164,19 +164,79 @@ fn sac_phrase(t: &str) -> Option<String> {
     None
 }
 
+/// Is the cast lock (a `CastLock` on a player) still in force?
+fn lock_in_force(g: &Game, l: &CastLock) -> bool {
+    match l.end {
+        LockEnd::Turn(st) => st == g.turn_stamp(),
+        LockEnd::TurnOf(q, t) => g.player(q).alive && g.player(q).turns == t,
+    }
+}
+
+/// Put a cast lock on player p (Silence: every opponent, `AllSpells` until the end of the turn ...). Expired locks of
+/// p are dropped as it goes.
+pub fn add_cast_lock(g: &mut Game, p: PlayerId, kind: LockKind, end: LockEnd) {
+    g.locks_used = true;
+    let old = std::mem::take(&mut g.player_mut(p).cast_locks);
+    let mut keep: Vec<CastLock> = old.into_iter().filter(|l| lock_in_force(g, l)).collect();
+    keep.push(CastLock { kind, end });
+    g.player_mut(p).cast_locks = keep;
+}
+
+/// "Lock p out of `kind` until the end of this turn."
+pub fn lock_this_turn(g: &mut Game, p: PlayerId, kind: LockKind) {
+    let st = g.turn_stamp();
+    add_cast_lock(g, p, kind, LockEnd::Turn(st));
+}
+
+/// does a player-level lock stop p from casting c (a land is never a spell)
+pub fn spell_locked(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.player(p).cast_locks.is_empty() {
+        return false;
+    }
+    let d = g.db.get(c);
+    if d.land {
+        return false;
+    }
+    g.player(p).cast_locks.iter().filter(|l| lock_in_force(g, l)).any(|l| match l.kind {
+        LockKind::AllSpells => true,
+        LockKind::Noncreature => !d.creature,
+        LockKind::InstSorcAbilities => d.instant || d.sorcery,
+    })
+}
+
+/// is p stopped from activating abilities that aren't mana abilities (Abeyance)
+pub fn abilities_locked(g: &Game, p: PlayerId) -> bool {
+    g.player(p).cast_locks.iter().any(|l| l.kind == LockKind::InstSorcAbilities && lock_in_force(g, l))
+}
+
+/// is a split-second spell on the stack: nobody can cast spells or activate non-mana abilities (or respond) until it
+/// resolves
+pub fn split_second_up(g: &Game) -> bool {
+    g.stack.iter().any(|it| it.kind == StackKind::Spell && it.card.is_some_and(|c| g.db.get(c).has_kw("split second")))
+}
+
+/// does something let p cast c as though it had flash: Quicksilver / Captain Mar-Vell, High Fae Trickster / Valley
+/// Floodcaller, Borne Upon a Wind / Emergence Zone's one-turn grant, Scout's Warning (creature cards only)
+pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    if d.land {
+        return false;
+    }
+    crate::impls::t0_captain::as_flash(g, p)
+        || crate::impls::t6_blue::static_flash(g, p, d.creature)
+        || (d.creature && crate::impls::t6_redirects::scout_flash_active(g, p))
+}
+
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)
 pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
     let d = g.db.get(c);
     if crate::impls::t0_giada::cast_locked(g, p, c) {
         return false; // Serra Avenger: not on your first three turns
     }
+    if spell_locked(g, p, c) || (g.locks_used && split_second_up(g)) {
+        return false;
+    }
     if !d.creature && !d.land {
-        if let Some((q, t)) = g.player(p).hope_lock
-            && g.player(q).alive
-            && g.player(q).turns == t
-        {
-            return false;
-        }
         if let Some((st, q)) = g.silence
             && st == g.turn_stamp()
             && q != p
@@ -184,7 +244,27 @@ pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
             return false;
         }
     }
-    g.hooks.is_empty() || hooks::allowed(g, p, c, zone)
+    if g.hooks.is_empty() {
+        return true;
+    }
+    hooks::allowed(g, p, c, zone) && (crate::human::is_human(g, p) || !ai_cast_countered(g, p, c))
+}
+
+/// The AI does not cast a spell that Vexing Bauble, Chalice of the Void or Void Mirror would counter as it is cast. The
+/// mana it would spend is estimated from the cost; a card with an alternative cost it can only use because the mana
+/// cost is out of reach spends none (a free Force of Will into a Bauble is a wasted card). A person may cast it anyway.
+fn ai_cast_countered(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if g.db.get(c).land {
+        return false;
+    }
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    let mut spent = gn + pips.chars().count() as u32;
+    let mut colored = !pips.is_empty()
+        || (gn > 0 && "WUBRG".chars().any(|ch| crate::engine::mana::can_pay(g, p, 0, &ch.to_string(), false)));
+    if crate::engine::altcost::slot(g, c).is_some() && !crate::engine::mana::can_pay(g, p, gn, &pips, false) {
+        (spent, colored) = (0, false);
+    }
+    hooks::would_be_cast_countered(g, p, c, spent, colored)
 }
 
 /// spells p has cast during the current turn (anyone's turn)
@@ -216,6 +296,10 @@ pub fn pact_affordable(g: &Game, p: PlayerId, cost: &str) -> bool {
 // ------------------------------------------------------------------ casting triggers
 /// what happens when p casts c (cast triggers of tagged cards, magecraft, copies). Python's `on_cast`.
 pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
+    crate::t6stats::cast(g, p, c);
+    if g.db.get(c).creature && crate::impls::t6_redirects::scout_flash_active(g, p) {
+        crate::impls::t6_redirects::scout_flash_used(g, p); // Scout's Warning covers the next creature card only
+    }
     let st = g.turn_stamp();
     if g.player(p).mistrise_next == Some(st) {
         g.player_mut(p).mistrise_next = None; // Mistrise Village: this spell can't be countered
@@ -643,7 +727,16 @@ fn gy_of(ctx: &Ctx, p: PlayerId) -> PlayerId {
 /// true if it resolved. Python's `cast_card`.
 pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> Res<bool> {
     g.tick()?;
+    if g.locks_used && (spell_locked(g, p, c) || split_second_up(g)) {
+        return Ok(false); // a player cast lock or a split-second spell on the stack (callers check `castable` first)
+    }
+    if g.db.get(c).has_kw("split second") {
+        g.locks_used = true; // from now on `castable` looks at the stack for it
+    }
     let mut ctx = ctx;
+    // what the payment spent (altcost.rs and mana::pay keep the record); a free cast spent nothing
+    ctx.mana_spent = std::mem::take(&mut g.mana_spent);
+    ctx.mana_colored = std::mem::take(&mut g.mana_colored);
     match zone {
         "hand" => {
             let pl = g.player_mut(p);
@@ -696,6 +789,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     );
     g.cast_treasure = Some((c, std::mem::take(&mut g.treasure_paid))); // Kalain: Treasure mana paid for this spell
     let prev = g.cur_cast.replace((c, ctx.clone(), zone)); // cast triggers see its targets and X
+    let mut fin: Option<StackItem> = None; // the item as it left the stack (stolen, re-aimed)
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
         on_cast(g, p, c)?;
         if g.over || !g.player(p).alive {
@@ -728,19 +822,39 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             countered: false,
             countered_by: None,
         };
+        // a permanent that counters a spell as it is cast (Vexing Bauble, Chalice of the Void, Void Mirror): the cast
+        // and its triggers happened; the spell goes to its owner's graveyard like any countered spell
+        if crate::engine::hooks::cast_countered(g, p, c, &ctx) && counterable(g, &item) {
+            crate::glog!(g, "    {} is countered as it is cast", g.db.get(c).name);
+            return Ok(Some((false, None, ctx.clone())));
+        }
         let human_near = g.humans.any()
             && (g.players.iter().any(|q| q.id != p && crate::human::is_human(g, q.id))
                 || crate::human::human::copy_window(g, p, Some(c)));
         if !(imp > 0.0 || !aff.is_empty() || human_near) || !counterable(g, &item) {
             return Ok(Some((true, None, ctx.clone()))); // nobody would answer it
         }
-        let (ok, by) = stack_window_keep(g, p, item)?;
+        let sent = (item.ctx.target, item.ctx.face);
+        let done = stack_window_item(g, p, item)?;
+        let (ok, by) = (!done.countered, done.countered_by);
+        if done.controller != p || (done.ctx.target, done.ctx.face) != sent {
+            fin = Some(done);
+        }
         Ok(Some((ok, by, ctx.clone())))
     })();
     let ctx_now = g.cur_cast.take().map(|x| x.1);
     g.cur_cast = prev;
     let Some((ok, by, _)) = r? else { return Ok(false) };
-    let ctx = ctx_now.unwrap_or(ctx);
+    let mut ctx = ctx_now.unwrap_or(ctx);
+    // a response changed the spell: Misdirection re-aimed it, Commandeer / Sudden Substitution gave it a new controller
+    // (it resolves under them, new targets chosen; the card still goes to its owner's zones: `ctx.owner`)
+    let mut rp = p; // who resolves it
+    if let Some(f) = fin {
+        ctx.target = f.ctx.target;
+        ctx.face = f.ctx.face;
+        ctx.owner = f.ctx.owner;
+        rp = f.controller;
+    }
     if !ok {
         let last = by;
         g.last_counter = last;
@@ -770,7 +884,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         }
         return Ok(false);
     }
-    resolve(g, p, c, &ctx, zone)?;
+    resolve(g, rp, c, &ctx, zone)?;
     check_state(g)?;
     Ok(true)
 }
@@ -871,16 +985,13 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
                 crate::glog!(g, "    Mox Diamond goes to the graveyard (no land to discard)");
                 return Ok(());
             }
-            let x = min_by(&lands, |l| {
-                let lt = &g.db.get(l).tags;
-                lt.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 2.0 - lt.has(Tag::T) as i32 as f64
-            })
-            .unwrap();
+            let x = min_by(&lands, |l| crate::engine::zones::mox_discard_key(g, p, l)).unwrap();
             let pl = g.player_mut(p);
             let i = pl.hand.iter().position(|&y| y == x).unwrap();
             pl.hand.remove(i);
             pl.gy.push(x);
         }
+        g.entering_spent = ctx.mana_spent; // Chalice of the Void: X is half the mana paid
         let prev = std::mem::replace(&mut g.cast_target, ctx.target); // an Aura's target, chosen as cast
         let r = enter(g, p, c, Enter { was_cast: true, orig: ctx.owner, ..Enter::default() });
         g.cast_target = prev;

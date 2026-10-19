@@ -20,6 +20,7 @@ mod preflight;
 mod pyrand;
 mod report;
 mod stats;
+mod t6report;
 mod tools;
 
 use args::Args;

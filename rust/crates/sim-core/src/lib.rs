@@ -20,4 +20,5 @@ pub mod settings;
 pub mod state;
 pub mod sym;
 pub mod tag;
+pub mod t6stats;
 pub mod testkit;

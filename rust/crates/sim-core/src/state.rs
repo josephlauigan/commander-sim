@@ -12,7 +12,7 @@
 //! - Tables Python keys by `id(permanent)` (end-of-turn pumps, granted keywords) become fields of the permanent.
 //! - Card-specific state on a permanent (Python's `m.data` dict) is `PermData`: a short list of typed keys.
 
-use crate::cards::{CardDb, Colors};
+use crate::cards::{CardDb, Colors, Types};
 use crate::control::{Humans, Link};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::rng::Rng;
@@ -254,6 +254,28 @@ impl PermData {
 }
 
 // ------------------------------------------------------------------ small value types
+/// What a player-level "can't cast" lock stops (Silence, Chant, Mandate, Bilbo's Gambit: every spell; Calamity's Wake,
+/// Hope of Ghirapur: noncreature spells; Abeyance: instants and sorceries, and abilities that aren't mana abilities).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LockKind {
+    AllSpells,
+    Noncreature,
+    InstSorcAbilities,
+}
+
+/// When a cast lock ends: with the turn it was set in, or when the given player's turn count passes the number.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LockEnd {
+    Turn(TurnStamp),
+    TurnOf(PlayerId, u32),
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CastLock {
+    pub kind: LockKind,
+    pub end: LockEnd,
+}
+
 /// Python's `turn_stamp(g)`: (round, the active player). Used for "this turn" flags.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TurnStamp {
@@ -285,6 +307,33 @@ pub struct Floating {
 }
 
 // ------------------------------------------------------------------ permanents and lands
+/// What a copy is "except": the exceptions of a clone, a token copy or Preston's Illusions. Stored on the copy
+/// (`Perm::exc`) so that the type queries (`values::subtypes`, `values::ptypes`, `colors_of`, `is_legendary`) see them.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct CopyExc {
+    /// card types it has in addition (Copy Artifact: enchantment; Molten Duplication: artifact)
+    pub add_types: Types,
+    /// a creature type it has in addition (Mockingbird: Bird; Phantasmal Image: Illusion)
+    pub add_subtype: Option<Sym>,
+    /// it has ONLY this creature type (Preston's Illusions)
+    pub only_subtype: Option<Sym>,
+    /// its power and toughness are these (Preston: 0/1)
+    pub pt: Option<(i32, i32)>,
+    /// its colours are these (Preston: white)
+    pub colors: Option<Colors>,
+    pub fly: bool,
+    pub haste: bool,
+    /// it is not legendary (Helm of the Host)
+    pub not_legendary: bool,
+}
+
+/// An "enters as a copy of" replacement: the card that is copied, and the exceptions.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct CopyOf {
+    pub cd: CardId,
+    pub exc: CopyExc,
+}
+
 /// A nonland permanent or a token (Python's `Perm`, every slot kept).
 #[derive(Debug, Clone, PartialEq)]
 pub struct Perm {
@@ -339,6 +388,8 @@ pub struct Perm {
     /// until end of turn: power/toughness change and granted keywords (Python's `g.eot_pt`, `g.eot_kw`)
     pub eot_pt: (i32, i32),
     pub eot_kw: Vec<Sym>,
+    /// the exceptions this permanent was copied with (added types, only one creature type, new colour, not legendary)
+    pub exc: CopyExc,
 }
 
 /// A land on the battlefield (Python's `Land`).
@@ -384,6 +435,9 @@ pub struct Player {
     pub tax2: u32,
     pub cmd2_dmg: [i32; MAX_SEATS],
     pub treasures: u32,
+    /// how many of `treasures` are tapped (Tataru Taru, "artifacts enter tapped"): they untap in the owner's untap step,
+    /// make no mana until then (the ability needs {T}) but can still be sacrificed to a cost
+    pub tapped_treasures: u32,
     pub clues: u32,
     /// Blood tokens (Restless Bloodseeker; impls/sheoldred.rs)
     pub bloods: u32,
@@ -411,6 +465,8 @@ pub struct Player {
     /// the kind of the last life loss (for how the player was eliminated)
     pub last_kind: Sym,
     pub death_kind: Sym,
+    /// a Tier 6 deck (pool or Godo): the report counters (`t6stats`) are kept for it
+    pub t6: bool,
     /// this player's own turn count when it last dealt damage to an opponent
     pub hit_turn: i32,
     /// Lightning, Army of One: (its controller, that player's turn count when it connected); all damage to this player and their
@@ -438,6 +494,10 @@ pub struct Player {
     pub flag_turn: IndexMap<Sym, TurnStamp>,
     /// the AI's memory of who hurt it (brain.note_damage)
     pub grudge: IndexMap<Sym, f64>,
+    /// the dungeon p is in: (index into `engine::dungeon::DUNGEONS`, room index); None = not in one
+    pub dungeon: Option<(usize, u8)>,
+    /// dungeons p has completed this game
+    pub dungeons_done: u32,
     /// cards cast this game
     pub cast_names: IndexSet<CardId>,
     /// the turn (own turn count) each card was first cast, logged at the end of each of its owner's turns;
@@ -476,8 +536,8 @@ pub struct Player {
     pub discard_log: Option<(TurnStamp, Vec<CardId>)>,
     /// extra land drops this turn (Explore)
     pub extra_land_now: u32,
-    /// Hope of Ghirapur: no noncreature spells until that player's turn count passes
-    pub hope_lock: Option<(PlayerId, u32)>,
+    /// "can't cast" locks on this player (Silence, Orim's Chant, Hope of Ghirapur, Abeyance ...); see `engine::cast`
+    pub cast_locks: Vec<CastLock>,
     /// Mistrise Village: the next spell this turn can't be countered
     pub mistrise_next: Option<TurnStamp>,
     /// pact costs owed at the next upkeep (generic, pips)
@@ -609,6 +669,17 @@ pub struct Player {
 }
 
 impl Player {
+    /// Treasures that can make mana now
+    pub fn live_treasures(&self) -> u32 {
+        self.treasures.saturating_sub(self.tapped_treasures)
+    }
+
+    /// sacrifice one Treasure as a cost (a tapped one first: it can't make mana anyway)
+    pub fn sac_treasure(&mut self) {
+        self.tapped_treasures = self.tapped_treasures.saturating_sub(1);
+        self.treasures -= 1;
+    }
+
     pub fn new(id: PlayerId, key: Sym, name: Sym, ident: Colors, cmd: CardId, cards: Arc<[CardId]>) -> Player {
         let mut library: Vec<CardId> = cards.iter().copied().collect();
         if let Some(i) = library.iter().position(|&c| c == cmd) {
@@ -638,6 +709,7 @@ impl Player {
             tax2: 0,
             cmd2_dmg: [0; MAX_SEATS],
             treasures: 0,
+            tapped_treasures: 0,
             clues: 0,
             bloods: 0,
             foods: 0,
@@ -662,6 +734,7 @@ impl Player {
             life_locked: false,
             last_kind: "other",
             death_kind: "",
+            t6: crate::t6stats::is_t6_key(key),
             hit_turn: -1,
             stagger: None,
             lost_turn: None,
@@ -676,6 +749,8 @@ impl Player {
             nc_dmg_last: false,
             flag_turn: IndexMap::new(),
             grudge: IndexMap::new(),
+            dungeon: None,
+            dungeons_done: 0,
             cast_names: IndexSet::new(),
             cast_turns: vec![],
             cast_logged: 0,
@@ -695,7 +770,7 @@ impl Player {
             discarded_turn: None,
             discard_log: None,
             extra_land_now: 0,
-            hope_lock: None,
+            cast_locks: vec![],
             mistrise_next: None,
             pact_debts: vec![],
             pacts: 0,
@@ -889,6 +964,10 @@ pub struct Ctx {
     pub from_gy: bool,
     /// Multikicker: how many times the spell was kicked (Comet Storm)
     pub kicks: u32,
+    /// the mana actually spent to cast it, after reductions and alternative costs (0 for a free cast); set by `cast_card`
+    pub mana_spent: u32,
+    /// some of that mana was coloured (Void Mirror, Vibrance)
+    pub mana_colored: bool,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).
@@ -978,6 +1057,8 @@ pub struct Game {
     pub sac_snapshot: Option<(u32, i32)>,
     /// Silence-style lock: (the turn, the player it doesn't stop)
     pub silence: Option<(TurnStamp, PlayerId)>,
+    /// a player cast-lock was ever set this game (the gate that turns the lock checks on when no card is hooked)
+    pub locks_used: bool,
     /// undying / persist returns this turn, by card (RETURN_CAP)
     pub returns_turn: Option<TurnStamp>,
     pub returns: IndexMap<CardId, u32>,
@@ -993,6 +1074,13 @@ pub struct Game {
     pub treasure_paid: u32,
     /// the last spell cast and the Treasure mana paid for it (Kalain, Reclusive Painter)
     pub cast_treasure: Option<(CardId, u32)>,
+    /// mana spent and whether any was coloured, since the last payment began; the spell cast with it takes it (`Ctx::mana_spent`)
+    pub mana_spent: u32,
+    pub mana_colored: bool,
+    /// an alternative cost is being paid: its several payments add up instead of restarting the record
+    pub spent_keep: bool,
+    /// the mana spent to cast the permanent spell that is entering (Chalice of the Void: X is half of it)
+    pub entering_spent: u32,
     /// permanents entered, numbered in order (born)
     pub enter_no: u32,
     /// permanents that entered this turn
@@ -1027,6 +1115,8 @@ pub struct Game {
     pub blocking: Vec<PermId>,
     /// a fog this turn (Spore Frog): no combat damage
     pub fog: Option<TurnStamp>,
+    /// "end the combat phase" (Mandate of Peace) was cast: the current combat skips its remaining steps (cleared by `combat`)
+    pub end_combat: bool,
     /// Arachnogenesis: combat damage from non-Spider creatures is prevented this turn
     pub fog_spiders: Option<TurnStamp>,
     /// day and night (Infestation Expert): 0 neither, 1 day, 2 night
@@ -1051,6 +1141,10 @@ pub struct Game {
     pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
     /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
     pub marchesa_due: Vec<(PlayerId, CardId, PlayerId)>,
+    /// extra turns waiting (the last queued plays first): (who takes it, whether that player loses at its end step)
+    pub extra_turns: Vec<(PlayerId, bool)>,
+    /// the player whose current turn is one that ends in a loss (Final Fortune, Last Chance)
+    pub doomed_turn: Option<PlayerId>,
     /// Memory Jar: the hands set aside, returned at the end step
     pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
@@ -1067,6 +1161,9 @@ pub struct Game {
     pub trig_probe: bool,
     /// the stack item of the trigger being resolved (by id)
     pub trig_current: Option<u32>,
+    /// ids of trigger items that have a copy which resolved (Peter Parker's Camera): the hook runs its effect again
+    /// for each, before the original (`stack::take_copies`)
+    pub trig_copies: Vec<u32>,
     /// the counterspell that countered the last spell (Python's `LAST_COUNTER`)
     pub last_counter: Option<CardId>,
     /// Hullbreaker Horror bounced the spell instead of countering it
@@ -1109,6 +1206,8 @@ pub struct Game {
     pub animated: Vec<(PlayerId, PermId, LandId)>,
     /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
     pub combo_spell: bool,
+    /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
+    pub t6_going: Option<PlayerId>,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
     /// Coat of Arms has entered (partials.coat_bonus applies)
@@ -1182,6 +1281,7 @@ impl Game {
             attach_to: None,
             sac_snapshot: None,
             silence: None,
+            locks_used: false,
             returns_turn: None,
             returns: IndexMap::new(),
             dying: None,
@@ -1190,6 +1290,10 @@ impl Game {
             died_count: (None, 0),
             treasure_paid: 0,
             cast_treasure: None,
+            mana_spent: 0,
+            mana_colored: false,
+            spent_keep: false,
+            entering_spent: 0,
             enter_no: 0,
             entered: vec![],
             in_combat: vec![],
@@ -1207,6 +1311,7 @@ impl Game {
             selfpt: false,
             blocking: vec![],
             fog: None,
+            end_combat: false,
             fog_spiders: None,
             day_night: 0,
             dn_last: None,
@@ -1219,6 +1324,8 @@ impl Game {
             garland: false,
             garland_list: vec![],
             marchesa_due: vec![],
+            extra_turns: vec![],
+            doomed_turn: None,
             jar_due: vec![],
             cur_batch: None,
             hooks: vec![],
@@ -1227,6 +1334,7 @@ impl Game {
             stack_pushes: 0,
             trig_probe: false,
             trig_current: None,
+            trig_copies: vec![],
             last_counter: None,
             bounced_spell: false,
             unc_cast: None,
@@ -1249,6 +1357,7 @@ impl Game {
             search_work: 0,
             animated: vec![],
             combo_spell: false,
+            t6_going: None,
             lattice_lock: None,
             coat: false,
             lineage: false,
@@ -1325,6 +1434,12 @@ impl Game {
         TurnStamp { round: self.round, active: self.active }
     }
 
+    /// Do the cast checks (`engine::cast::castable`) have anything to look at: a hooked card, or a cast lock / split
+    /// second ever used this game. Callers that skip `castable` when nothing could forbid a cast gate on this.
+    pub fn cast_checks(&self) -> bool {
+        !self.hooks.is_empty() || self.locks_used
+    }
+
     /// One engine step (Python's `tick`): a game, or a look-ahead copy, that runs past its budget stops.
     pub fn tick(&mut self) -> crate::flow::Res {
         self.work += 1;
@@ -1382,6 +1497,7 @@ impl Game {
             on_bf: false,
             eot_pt: (0, 0),
             eot_kw: vec![],
+            exc: CopyExc::default(),
         };
         if let Some(c) = cd {
             use crate::tag::Tag;

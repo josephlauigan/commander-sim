@@ -17,6 +17,7 @@ Within each tier, the five decks cover different axes: a combat/aggro deck, a gr
 | 3 | `t3-high-b3/` | High Bracket 3 | Exactly 3 Game Changers. Late-game combos allowed (none that assemble early); efficient tutors and removal. |
 | 4 | `t4-low-b4/` | Low Bracket 4 | Unrestricted Game Changers (typically 3–7). Compact combos allowed. Limited fast mana (Ancient Tomb at most; no zero-mana Moxen, Mana Vault, or Lotus Petal). |
 | 5 | `t5-high-b4/` | High Bracket 4 | Unrestricted. Fast mana (Mana Vault, Chrome Mox, Mox Diamond, Lotus Petal), free counterspells, tutored compact combos. Just under cEDH. |
+| 6 | `t6-cedh/` | cEDH (Bracket 5) | Unrestricted. The full cEDH toolkit: fast mana, free interaction, tutors and compact combos; partner pairs allowed (two commanders). |
 
 ## Decks
 
@@ -47,6 +48,12 @@ Within each tier, the five decks cover different axes: a combat/aggro deck, a gr
 | 5 | [Winota — Boros Humans & Hatebears](t5-high-b4/winota-boros-humans-cheat.md) | Winota, Joiner of Forces | Aggro-cheat with stax | 9 | 32 | Yes |
 | 5 | [Zur the Enchanter — Esper Control & Oracle](t5-high-b4/zur-esper-enchantment-control.md) | Zur the Enchanter | Control + compact combo | 20 | 31 | Yes |
 | 5 | [Yawgmoth — Mono-Black Undying Combo](t5-high-b4/yawgmoth-mono-black-aristocrats.md) | Yawgmoth, Thran Physician | Aristocrats combo | 12 | 31 | Yes |
+| 6 | [Dack Fayden — White Stax](t6-cedh/dack-fayden-white-stax.md) | Dack Fayden, Helping Hand | Stax | 11 | 27 | No |
+| 6 | [Kinnan — Mana-Creature Combo](t6-cedh/kinnan-bonder-mana-combo.md) | Kinnan, Bonder Prodigy | Mana combo with creatures | 10 | 24 | Yes |
+| 6 | [Kraum & Tymna — Blue Breach Midrange](t6-cedh/kraum-tymna-blue-breach-midrange.md) | Kraum, Ludevic's Opus / Tymna the Weaver | Blue midrange: interaction first, Oracle and Breach wins | 21 | 25 | Yes |
+| 6 | [Rograkh & Silas — Turbo Oracle and Breach](t6-cedh/rograkh-silas-turbo-breach.md) | Rograkh, Son of Rohgahh / Silas Renn, Seeker Adept | Turbo combo | 19 | 23 | Yes |
+| 6 | [Rograkh & Thrasios — Green Creature Combo](t6-cedh/rograkh-thrasios-creature-combo.md) | Rograkh, Son of Rohgahh / Thrasios, Triton Hero | Creature engine combo | 10 | 27 | Yes |
+| 6 | [Sisay — Legends Toolbox and Taxes](t6-cedh/sisay-legends-toolbox.md) | Sisay, Weatherlight Captain | Taxing toolbox | 13 | 28 | No |
 
 ## Notes on the lists
 

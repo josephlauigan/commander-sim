@@ -192,6 +192,9 @@ pub const NONCREATURE_TYPES: [&str; 9] =
 /// m's subtypes (lower case): printed for Scryfall-built cards, set on tokens by their maker (Python's `subtypes`)
 pub fn subtypes(g: &Game, m: PermId) -> Vec<Sym> {
     let x = g.perm(m);
+    if let Some(s) = x.exc.only_subtype {
+        return vec![s]; // a copy that has only this creature type (Preston's Illusions)
+    }
     let Some(c) = x.cd else { return x.ttypes.clone() };
     let d = g.db.get(c);
     let mut s: Vec<Sym> = d.subtypes.iter().map(|t| crate::sym::intern(t)).collect();
@@ -213,6 +216,13 @@ pub fn subtypes(g: &Game, m: PermId) -> Vec<Sym> {
         }
     }
     s
+}
+
+/// m's card types, including those a copy has in addition (Copy Artifact's enchantment); a token has creature
+pub fn ptypes(g: &Game, m: PermId) -> crate::cards::Types {
+    let x = g.perm(m);
+    let base = x.cd.map_or(crate::cards::Types::CREATURE, |c| g.db.get(c).types);
+    crate::cards::Types::union(base, x.exc.add_types)
 }
 
 /// Maskwood Nexus: p's creatures are every creature type
@@ -314,6 +324,9 @@ pub fn player_hexproof(g: &Game, q: PlayerId) -> bool {
 /// a permanent's colours (cards: coloured mana symbols in the cost; tokens: their token colour)
 pub fn colors_of(g: &Game, m: PermId) -> Colors {
     let x = g.perm(m);
+    if let Some(c) = x.exc.colors {
+        return c;
+    }
     match x.cd {
         Some(c) if g.db.get(c).kws.iter().any(|k| &**k == "devoid") => Colors::NONE, // Spawn-Gang Commander
         Some(c) => g.db.get(c).colors,

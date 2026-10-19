@@ -15,7 +15,7 @@
 use crate::cards::CardDb;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 
 /// Every event card code can hook (Python: the second argument of `@on(name, event)`, and the events the engine
@@ -31,6 +31,7 @@ pub enum Event {
     CanCast,
     CardsToGy,
     Cast,
+    CastCounter,
     CombatDamage,
     CombatStart,
     Copycast,
@@ -41,7 +42,9 @@ pub enum Event {
     Dies,
     Discard,
     Draw,
+    EachCombat,
     EndStep,
+    EntersTapped,
     Etb,
     ExiledFromBf,
     ExtraLands,
@@ -57,6 +60,7 @@ pub enum Event {
     HandCast,
     HandDefend,
     HandOptions,
+    LandColorless,
     LandDefend,
     LandGy,
     LandMana,
@@ -103,7 +107,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 78] = [
+pub const EVENTS: [(Event, &str); 82] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -112,6 +116,7 @@ pub const EVENTS: [(Event, &str); 78] = [
     (Event::CanCast, "can_cast"),
     (Event::CardsToGy, "cards_to_gy"),
     (Event::Cast, "cast"),
+    (Event::CastCounter, "cast_counter"),
     (Event::CombatDamage, "combat_damage"),
     (Event::CombatStart, "combat_start"),
     (Event::Copycast, "copycast"),
@@ -122,7 +127,9 @@ pub const EVENTS: [(Event, &str); 78] = [
     (Event::Dies, "dies"),
     (Event::Discard, "discard"),
     (Event::Draw, "draw"),
+    (Event::EachCombat, "each_combat"),
     (Event::EndStep, "end_step"),
+    (Event::EntersTapped, "enters_tapped"),
     (Event::Etb, "etb"),
     (Event::ExiledFromBf, "exiled_from_bf"),
     (Event::ExtraLands, "extra_lands"),
@@ -132,12 +139,13 @@ pub const EVENTS: [(Event, &str); 78] = [
     (Event::GyDies, "gy_dies"),
     (Event::GyHate, "gy_hate"),
     (Event::GyLandfall, "gy_landfall"),
-    (Event::GyUpkeep, "gy_upkeep"),
     (Event::GyOptions, "gy_options"),
+    (Event::GyUpkeep, "gy_upkeep"),
     (Event::HandAttack, "hand_attack"),
     (Event::HandCast, "hand_cast"),
     (Event::HandDefend, "hand_defend"),
     (Event::HandOptions, "hand_options"),
+    (Event::LandColorless, "land_colorless"),
     (Event::LandDefend, "land_defend"),
     (Event::LandGy, "land_gy"),
     (Event::LandMana, "land_mana"),
@@ -185,7 +193,7 @@ pub const EVENTS: [(Event, &str); 78] = [
 ];
 
 /// Python's `engine.TRIGGER_EVENTS`
-pub const TRIGGER_EVENTS: [Event; 24] = [
+pub const TRIGGER_EVENTS: [Event; 25] = [
     Event::Attack,
     Event::Blocks,
     Event::CardsToGy,
@@ -197,6 +205,7 @@ pub const TRIGGER_EVENTS: [Event; 24] = [
     Event::Dies,
     Event::Discard,
     Event::Draw,
+    Event::EachCombat,
     Event::EndStep,
     Event::Etb,
     Event::ExiledFromBf,
@@ -231,6 +240,9 @@ pub type Src = PermId;
 
 /// etb(g, src, p, m): m entered under p's control
 pub type EtbFn = fn(&mut Game, Src, PlayerId, PermId) -> Res;
+/// enter_copy(g, p, c): card c is entering under p's control as a copy of something (Clone, Clever Impersonator ...):
+/// the card it copies and the exceptions, chosen as it enters (None: it enters as itself). Read by `zones::enter`.
+pub type EnterCopyFn = fn(&mut Game, PlayerId, CardId) -> Option<crate::state::CopyOf>;
 /// leaves(g, src, m): m left the battlefield (any way)
 pub type LeavesFn = fn(&mut Game, Src, PermId) -> Res;
 /// dies(g, src, m, cause): any permanent m died
@@ -251,12 +263,18 @@ pub type OptionsFn = fn(&mut Game, Src, PlayerId, Option<bool>) -> Res<Vec<Opt>>
 pub type CostFn = fn(&Game, Src, PlayerId, CardId) -> i32;
 /// can_cast(g, src, caster, c, zone): false forbids casting c
 pub type CanCastFn = fn(&Game, Src, PlayerId, CardId, Sym) -> bool;
+/// cast_counter(g, src, caster, c, ctx): true counters c as it is cast (ctx: what was spent, `Ctx::mana_spent`)
+pub type CastCounterFn = fn(&Game, Src, PlayerId, CardId, &Ctx) -> bool;
 /// attack_tax / attack_cap (g, src, attacker, d): mana per attacker / the most creatures that can attack d
 pub type AttackLimitFn = fn(&Game, Src, PlayerId, PlayerId) -> Option<i32>;
 /// grant_kw(g, src, m, kw): a static keyword grant
 pub type GrantKwFn = fn(&Game, Src, PermId, Sym) -> bool;
 /// prevent_damage, no_lifegain, player_hexproof (g, src, p): a static that applies to player p
 pub type PlayerStaticFn = fn(&Game, Src, PlayerId) -> bool;
+/// enters_tapped(g, src, p, m): does a permanent entering under p's control enter tapped (a replacement effect: Blind Obedience,
+/// Thalia, Heretic Cathar). m is the permanent (already created, not yet entered); None is an artifact token that is a
+/// counter on the player (Treasure, Food, Clue).
+pub type EntersTappedFn = fn(&Game, Src, PlayerId, Option<PermId>) -> bool;
 /// lose_life, gain_life (g, src, p, n): player p lost or gained n life
 pub type LifeFn = fn(&mut Game, Src, PlayerId, i32) -> Res;
 /// sba(g, src): state-based checks of a card's own (run at once)
@@ -266,6 +284,8 @@ pub type SbaFn = fn(&mut Game, Src) -> Res;
 pub type PlayerCountFn = fn(&Game, Src, PlayerId) -> i32;
 /// land_mana(g, src, p, land): extra mana a land of p's makes
 pub type LandManaFn = fn(&Game, Src, PlayerId, crate::ids::LandId) -> i32;
+/// land_colorless(g, src, p, land, n): a land of p tapped for n mana makes one {C} instead (Damping Sphere)
+pub type LandColorlessFn = fn(&Game, Src, PlayerId, crate::ids::LandId, u32) -> bool;
 /// extra_mana(g, src, p, units): mana sources a card adds (Urza, Kinnan)
 pub type ExtraManaFn = fn(&Game, Src, PlayerId, &[crate::engine::mana::Unit]) -> Vec<crate::engine::mana::Unit>;
 /// steal_draw(g, src, p): Notion Thief takes p's extra draw
@@ -339,6 +359,8 @@ pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::C
 pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);
 /// combat_start(g, src, p): the beginning of p's combat (Helm of the Host); returns new attacking creatures
 pub type CombatStartFn = fn(&mut Game, Src, PlayerId) -> Res<Vec<PermId>>;
+/// each_combat(g, src, p): the beginning of combat on p's turn, for every player's combat (Sting, the Glinting Dagger)
+pub type EachCombatFn = fn(&mut Game, Src, PlayerId) -> Res;
 /// cards_to_gy(g, src, p, cards): these cards of p's are going to the graveyard (milled, discarded)
 pub type CardsToGyFn = fn(&mut Game, Src, PlayerId, &[CardId]) -> Res;
 /// a card's own cast priority (0-90, 0: not now): Python's `CI.SPELL_PRIO`
@@ -360,10 +382,22 @@ pub type SagaLoreFn = fn(&mut Game, PlayerId, PermId) -> Res;
 /// Python passes the copy's effect as a closure; here it is the card code's own number for it (impls::mine).
 pub type CopycastFn = fn(&mut Game, Src, PlayerId, u8) -> Res;
 
+/// A card's alternative cost (engine/altcost.rs). `ok(g, p, card, spell)`: can p pay it now (`spell` is the spell the card
+/// answers, if any); `pay` pays it (false, nothing paid, if it can't be); `lost` is the cards' worth of value it gives up,
+/// which the AI weighs against the mana saved.
+#[derive(Debug, Clone, Copy)]
+pub struct AltCost {
+    pub ok: fn(&Game, PlayerId, CardId, Option<CardId>) -> bool,
+    pub pay: fn(&mut Game, PlayerId, CardId, Option<CardId>) -> Res<bool>,
+    pub lost: fn(&Game, PlayerId, CardId, Option<CardId>) -> f64,
+}
+
 /// One card's code: a slot per event it handles.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct CardImpl {
     pub etb: Option<EtbFn>,
+    /// "you may have it enter as a copy of ..." (a replacement effect, applied as the permanent is created)
+    pub enter_copy: Option<EnterCopyFn>,
     pub leaves: Option<LeavesFn>,
     pub dies: Option<DiesFn>,
     pub self_dies: Option<DiesFn>,
@@ -377,13 +411,18 @@ pub struct CardImpl {
     pub attack: Option<AttackFn>,
     pub combat_damage: Option<CombatDamageFn>,
     pub options: Option<OptionsFn>,
+    /// the card's alternative cost for a spell cast from hand (engine/altcost.rs): Daze, pitch spells
+    pub alt_cost: Option<AltCost>,
     pub cost: Option<CostFn>,
     pub can_cast: Option<CanCastFn>,
+    /// counter-on-cast (Vexing Bauble, Chalice of the Void, Void Mirror): checked in `cast_card` after the cast triggers
+    pub cast_counter: Option<CastCounterFn>,
     pub attack_tax: Option<AttackLimitFn>,
     pub attack_cap: Option<AttackLimitFn>,
     pub grant_kw: Option<GrantKwFn>,
     pub prevent_damage: Option<PlayerStaticFn>,
     pub no_lifegain: Option<PlayerStaticFn>,
+    pub enters_tapped: Option<EntersTappedFn>,
     pub player_hexproof: Option<PlayerStaticFn>,
     pub lose_life: Option<LifeFn>,
     pub gain_life: Option<LifeFn>,
@@ -395,6 +434,7 @@ pub struct CardImpl {
     pub nonland_mana_bonus: Option<PlayerCountFn>,
     pub treasure_bonus: Option<PlayerCountFn>,
     pub land_mana: Option<LandManaFn>,
+    pub land_colorless: Option<LandColorlessFn>,
     pub extra_mana: Option<ExtraManaFn>,
     pub mana_tapped: Option<ManaTappedFn>,
     pub steal_draw: Option<StealDrawFn>,
@@ -439,6 +479,8 @@ pub struct CardImpl {
     pub creature_to_gy: Option<LeavesFn>,
     pub copycast: Option<CopycastFn>,
     pub combat_start: Option<CombatStartFn>,
+    /// each_combat: fires at the start of every combat phase, before attackers are declared, also when nobody attacks
+    pub each_combat: Option<EachCombatFn>,
     pub cards_to_gy: Option<CardsToGyFn>,
     /// monarch(g, src, p): p became the monarch (run at once: not a triggered event; Palace Jailer)
     pub monarch: Option<PlayerFn>,
@@ -527,11 +569,13 @@ impl CardImpl {
             Event::Options => self.options.is_some(),
             Event::Cost => self.cost.is_some(),
             Event::CanCast => self.can_cast.is_some(),
+            Event::CastCounter => self.cast_counter.is_some(),
             Event::AttackTax => self.attack_tax.is_some(),
             Event::AttackCap => self.attack_cap.is_some(),
             Event::GrantKw => self.grant_kw.is_some(),
             Event::PreventDamage => self.prevent_damage.is_some(),
             Event::NoLifegain => self.no_lifegain.is_some(),
+            Event::EntersTapped => self.enters_tapped.is_some(),
             Event::PlayerHexproof => self.player_hexproof.is_some(),
             Event::LoseLife => self.lose_life.is_some(),
             Event::GainLife => self.gain_life.is_some(),
@@ -543,6 +587,7 @@ impl CardImpl {
             Event::NonlandManaBonus => self.nonland_mana_bonus.is_some(),
             Event::TreasureBonus => self.treasure_bonus.is_some(),
             Event::LandMana => self.land_mana.is_some(),
+            Event::LandColorless => self.land_colorless.is_some(),
             Event::ExtraMana => self.extra_mana.is_some(),
             Event::ManaTapped => self.mana_tapped.is_some(),
             Event::StealDraw => self.steal_draw.is_some(),
@@ -583,6 +628,7 @@ impl CardImpl {
             Event::Copycast => self.copycast.is_some(),
             Event::Crew => self.crew.is_some(),
             Event::CombatStart => self.combat_start.is_some(),
+            Event::EachCombat => self.each_combat.is_some(),
             Event::CardsToGy => self.cards_to_gy.is_some(),
             Event::Monarch => self.monarch.is_some(),
             Event::ExiledFromBf => self.exiled_from_bf.is_some(),

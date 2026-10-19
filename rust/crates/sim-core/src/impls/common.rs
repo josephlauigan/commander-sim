@@ -3039,12 +3039,10 @@ fn lavinia(g: &Game, src: Src, caster: PlayerId, c: CardId, _zone: Sym) -> bool 
         && !(d.tag(Tag::Free) && !can_pay(g, caster, d.generic, &d.pips, false))
 }
 
-/// Thalia, Heretic Cathar (Approximate): opponents' creatures enter tapped (nonbasic lands are not tapped)
-fn thalia_hc(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m != src && owner(g, m) != owner(g, src) && g.is_creature(m) {
-        g.perm_mut(m).tapped = true;
-    }
-    Ok(())
+/// Thalia, Heretic Cathar: creatures your opponents control enter tapped (the `enters_tapped` replacement; their nonbasic
+/// lands are handled in engine/turn.rs)
+fn thalia_hc(g: &Game, src: Src, p: PlayerId, m: Option<PermId>) -> bool {
+    p != owner(g, src) && m.is_some_and(|m| m != src && g.is_creature(m))
 }
 
 // ======================================================== staples: Walking Ballista, tutors, Solitude, Magus
@@ -3407,8 +3405,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Grand Abolisher")?.can_cast = Some(abolisher);
     r.card(db, "Lavinia, Azorius Renegade")?.can_cast = Some(lavinia);
     let c = r.card(db, "Thalia, Heretic Cathar")?;
-    c.etb = Some(thalia_hc);
-    *c = c.at_once(Event::Etb);
+    c.enters_tapped = Some(thalia_hc);
     // staples
     let c = r.card(db, "Walking Ballista")?;
     c.etb = Some(ballista);

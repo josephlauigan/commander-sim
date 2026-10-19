@@ -14,6 +14,7 @@
 
 use super::{act, decks, explain, gumbel_order, is_main, pool, sample, search, sig, style, temp};
 use crate::cards::Types;
+use crate::engine::altcost;
 use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_affordable, parse_cost};
 use crate::engine::combat::double_strike;
 use crate::engine::life::lose_life;
@@ -135,7 +136,11 @@ impl Situation {
     pub fn new(g: &Game, p: PlayerId) -> Situation {
         let pl = g.player(p);
         let opps: Vec<PlayerId> = g.opps(p).collect();
-        let threat: Vec<(PlayerId, f64)> = opps.iter().map(|&q| (q, threat(g, p, q))).collect();
+        let t6 = crate::impls::t6_plans::is_t6(g, p);
+        let threat: Vec<(PlayerId, f64)> = opps
+            .iter()
+            .map(|&q| (q, threat(g, p, q) + if t6 { super::t6_table::threat_bonus(g, q) } else { 0.0 }))
+            .collect();
         let leader = max_by(&threat, |x| x.1).map(|x| x.0);
         let max_threat =
             if threat.is_empty() { 0.0 } else { threat.iter().map(|x| x.1).fold(f64::NEG_INFINITY, f64::max) };
@@ -150,7 +155,8 @@ impl Situation {
             }
         }
         let has_q = |q: PlayerId, t: Tag| has(g, q, t);
-        let combo_near = opps.iter().any(|&q| {
+        let combo_near = t6 && super::t6_table::archenemy(g, p).is_some_and(|a| a.1 >= super::t6_table::NEAR)
+            || opps.iter().any(|&q| {
             let k = g.player(q).key;
             (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
                 || (k == "veyran" && has_q(q, Tag::Aether) && g.player(q).life >= 40)
@@ -224,12 +230,15 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     (Some(c), v)
 }
 
-fn reserve_penalty(g: &Game, p: PlayerId, c: CardId, hold: Option<CardId>, hold_v: f64) -> f64 {
+fn reserve_penalty(g: &Game, p: PlayerId, c: CardId, hold: Option<CardId>, hold_v: f64, near: bool) -> f64 {
     let Some(h) = hold.filter(|&h| h != c) else { return 0.0 };
     let (cg, cp) = cost_of(g, p, c);
     let hd = g.db.get(h);
     if can_pay(g, p, cg + hd.generic, &format!("{cp}{}", hd.pips), false) {
         return 0.0;
+    }
+    if near && !super::t6_table::is_ramp(g, c) {
+        return 8.0f64.max(0.7 * hold_v); // Tier 6, an opponent is close: the answer stays up, no tapping out for value
     }
     0.7 * hold_v
 }
@@ -274,6 +283,9 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     }
     if d.tag(Tag::Adnaus) && !super::plans::adnaus_cast_now(g, p) {
         return None; // Ad Nauseam waits for the end of the turn before yours, with room in the hand
+    }
+    if base <= 0.0 && crate::impls::t6_plans::prio(g, p, c).is_some() {
+        return None; // a Tier 6 deck plan set this card to 0: it waits (no DSL-value fallback)
     }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
@@ -424,7 +436,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     }
     let zone: Sym = zone.unwrap_or(if pl.is_commander(c) && !in_hand { "cmd" } else { "hand" });
     let cast_zone: Sym = if zone == "yawg" { "gy" } else { zone };
-    if !g.hooks.is_empty() && !castable(g, p, c, cast_zone) {
+    if g.cast_checks() && !castable(g, p, c, cast_zone) {
         return Ok(false);
     }
     let cv = d.tag(Tag::Convoke);
@@ -527,7 +539,8 @@ fn rem_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String, i32) {
 
 fn free_removal(g: &Game, p: PlayerId, c: CardId) -> bool {
     let t = &g.db.get(c).tags;
-    (t.has(Tag::Freecmd) && commander_out(g, p)) || (t.has(Tag::Snuff) && g.player(p).life > 12 && swamp_land(g, p))
+    ((t.has(Tag::Freecmd) && commander_out(g, p)) || (t.has(Tag::Snuff) && g.player(p).life > 12 && swamp_land(g, p)))
+        && altcost::tax_payable(g, p, c) // a free cast still pays the cost increases (Defense Grid)
 }
 
 fn rem_spec(g: &Game, c: CardId) -> (&str, &str, bool) {
@@ -549,7 +562,10 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         let fods = rem_fodder(g, p);
         let extra = if t.has(Tag::Sacor4) && fods.is_empty() { 4 } else { 0 };
         let (rg, rp, _) = rem_cost(g, p, c);
-        if !free_removal(g, p, c) && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
+        // an alternative cost (Snapback, Pyrokinesis: cards exiled from hand) when the mana can't be paid
+        let free = free_removal(g, p, c);
+        let alt = !free && altcost::use_alt(g, p, c, None, rg + extra, &rp);
+        if !free && !alt && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
             continue;
         }
         if t.has(Tag::Needart3)
@@ -563,11 +579,25 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
             continue;
         }
         let (rk, tgt, mv4) = rem_spec(g, c);
-        let tg = legal_targets(g, p, rk, tgt, mv4, Some(c));
+        let mut tg = legal_targets(g, p, rk, tgt, mv4, Some(c));
+        if !main && s.combo_near && crate::impls::t6_plans::is_t6(g, p) {
+            // Tier 6: with an opponent close to winning, the answer goes to its pieces
+            let on_arch: Vec<PermId> = tg.iter().copied().filter(|&m| Some(g.perm(m).owner) == s.leader).collect();
+            if !on_arch.is_empty() {
+                tg = on_arch;
+            }
+        }
         let Some(best) = max_by(&tg, |m| pval(g, m)) else { continue };
         let mut v = pval(g, best);
         if Some(g.perm(best).owner) == s.leader {
             v *= 1.25;
+        }
+        if !main && crate::impls::t6_plans::is_t6(g, p) {
+            if s.combo_near && Some(g.perm(best).owner) == s.leader {
+                v += 3.0; // Tier 6: answers are spent on the archenemy's engine
+            } else if d.instant && !s.combo_near && v < 4.5 {
+                continue; // Tier 6: held for the win attempt, not fired at the first creature
+            }
         }
         if s.combo_near && pval(g, best) >= 8.0 {
             v += 2.0;
@@ -585,6 +615,9 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
             0.0
         };
         let mut u = v - 3.5 + ysh_bonus;
+        if alt {
+            u -= 1.5 * altcost::lost(g, p, c, None); // cards given up instead of mana
+        }
         if d.instant {
             u -= 1.2 * caution * g.settings.instant_extra as f64 / 2.0; // instants are worth holding
         }
@@ -658,7 +691,8 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     let mut best: Option<(f64, CardId, PermId)> = None;
     for &c in &rem {
         let x = g.db.get(c);
-        if !can_pay(g, d, x.generic, &x.pips, x.tag(Tag::Convoke)) {
+        let alt = altcost::use_alt(g, d, c, None, x.generic, &x.pips);
+        if !alt && !can_pay(g, d, x.generic, &x.pips, x.tag(Tag::Convoke)) {
             continue;
         }
         if x.tag(Tag::Needsac) || x.tag(Tag::Pactpay) {
@@ -669,7 +703,8 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             if !atk.contains(&m) {
                 continue;
             }
-            let mut v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64;
+            let pen = if alt { 1.5 * altcost::lost(g, d, c, None) } else { 0.0 };
+            let mut v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
             if g.player(d).key == "yshtola" {
                 match crate::impls::yshtola::removal_adjust(g, d, c, pval(g, m)) {
                     Some(b) => v += b,
@@ -715,10 +750,11 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     let free = free_removal(g, p, c);
     extra += kick;
     let (rg, rp, rlife) = rem_cost(g, p, c);
-    if !g.player(p).hand.contains(&c) || (!free && !can_pay(g, p, rg + extra, &rp, cv)) {
+    let alt = !free && kick == 0 && altcost::use_alt(g, p, c, None, rg + extra, &rp);
+    if !g.player(p).hand.contains(&c) || (!free && !alt && !can_pay(g, p, rg + extra, &rp, cv)) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
+    if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
     let live: Vec<(f64, PermId)> =
@@ -741,9 +777,18 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
         }
         fod = min_by(&fods, |x| sac_worth(g, x));
     }
-    if free && d.tag(Tag::Snuff) && !(d.tag(Tag::Freecmd) && commander_out(g, p)) {
-        lose_life(g, p, 4, Some(p), "life", None)?;
-    } else if !free {
+    if alt {
+        if !altcost::pay_alt(g, p, c, None)? {
+            return Ok(false);
+        }
+    } else if free {
+        if !altcost::pay_tax(g, p, c)? {
+            return Ok(false);
+        }
+        if d.tag(Tag::Snuff) && !(d.tag(Tag::Freecmd) && commander_out(g, p)) {
+            lose_life(g, p, 4, Some(p), "life", None)?;
+        }
+    } else {
         pay(g, p, rg + extra, &rp, cv)?;
         if rlife > 0 {
             lose_life(g, p, rlife, Some(p), "life", None)?; // {B/P} paid with 2 life (Dismember)
@@ -768,7 +813,8 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
             continue;
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
-        if !can_pay(g, p, cg, &cp, false) {
+        let alt = altcost::use_alt(g, p, c, None, cg, &cp); // Sunscour: two white cards instead of {5}{W}{W}
+        if !alt && !can_pay(g, p, cg, &cp, false) {
             continue;
         }
         let (ol, ml, victim) = decks::wipe_eval(g, p, kind);
@@ -788,6 +834,9 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
                 None => continue,
             }
         }
+        if alt {
+            u -= 1.5 * altcost::lost(g, p, c, None); // cards given up instead of mana
+        }
         if d.instant && !eot && s.danger < 0.8 {
             u -= 1.5; // held: at the end of the turn before yours it sticks
         }
@@ -799,15 +848,22 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
 /// the executor of a wipe option
 pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>) -> Res<bool> {
     let (cg, cp) = decks::wipe_cost(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, cg, &cp, false) {
+    let alt = altcost::use_alt(g, p, c, None, cg, &cp);
+    if !g.player(p).hand.contains(&c) || (!alt && !can_pay(g, p, cg, &cp, false)) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && !castable(g, p, c, "hand") {
+    if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
     let teferi = g.player(p).key == "yshtola"
         && g.db.get(c).tags.str(Tag::Wipe).is_some_and(|k| crate::impls::yshtola::teferis_first(g, p, c, k));
-    pay(g, p, cg, &cp, false)?;
+    if alt {
+        if !altcost::pay_alt(g, p, c, None)? {
+            return Ok(false);
+        }
+    } else {
+        pay(g, p, cg, &cp, false)?;
+    }
     if teferi {
         crate::engine::zones::cast_teferis_protection(g, p, 6.0)?; // in response: her permanents phase out of the wipe
     }
@@ -1031,13 +1087,17 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         if !ok {
             continue;
         }
-        u -= reserve_penalty(g, p, c, hold_card, hold_v);
+        u -= reserve_penalty(g, p, c, hold_card, hold_v, s.combo_near && crate::impls::t6_plans::is_t6(g, p));
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
         {
             u -= 6.0; // outside decks: mana kept for combat (ninjutsu)
         }
-        if d.creature && d.tag(Tag::Flash) && !g.player(p).is_commander(c) && s.danger < 0.8 {
+        if d.creature
+            && (d.tag(Tag::Flash) || (crate::impls::t6_blue::static_flash(g, p, true) && !crate::impls::t6_blue::flash_turn_grant(g, p)))
+            && !g.player(p).is_commander(c)
+            && s.danger < 0.8
+        {
             u -= 1.5; // flash: better at the end of the turn before yours
         }
         opts.push(Opt { utility: u, label: d.name.to_string(), act: Some(Action::Cast { card: c, zone: None }) });
@@ -1072,6 +1132,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     opts.extend(hook_options(g, p, &s, Some(post))?);
     gandalf_hold(g, p, &s, &mut opts);
     let mut stop_u = if hold_card.is_some() { hold_v } else { -3.0 };
+    if let Some(u) = crate::impls::t6_plans::hold_up(g, p) {
+        stop_u += u; // a Tier 6 deck's plan slot: pass with the mana up (or develop)
+    }
     if rsv.is_some() {
         stop_u = stop_u.max(4.5); // ninjutsu window: go to combat, cast after
     }
@@ -1093,6 +1156,17 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
         }
         g.tick()?;
         let opts = main_options(g, p, post)?;
+        if crate::impls::t6_plans::is_t6(g, p)
+            && let Some(i) = super::t6_table::must_option(g, p, &opts)
+            && let Some(a) = &opts[i].act
+        {
+            // Tier 6: the plan's must-do play comes before the look-ahead
+            let lbl = format!("{} [must]", opts[i].label);
+            if act::perform(g, p, a)? {
+                explain(g, p, &labels(&opts), &lbl, "decides");
+                continue;
+            }
+        }
         if opts.len() >= 2
             && search::enabled(g, p)
             && let Some(i) = search::choose(g, p, post, &opts)
@@ -1153,6 +1227,9 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     let mut items: Vec<(f64, PlayerId)> = vec![];
     for &q in &opps {
         let mut u = 0.25 * threat(g, p, q);
+        if crate::impls::t6_plans::is_t6(g, p) {
+            u += 0.25 * super::t6_table::threat_bonus(g, q); // Tier 6: hit whoever is about to win
+        }
         if my as f64 >= g.player(q).life as f64 * 0.8 {
             u += 4.0 + 2.0 * aggr; // go for the kill
         }
@@ -1270,7 +1347,8 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         for c in g.player(p).hand.clone() {
             let d = g.db.get(c);
             let t = &d.tags;
-            if !(d.instant || (gand && d.sorcery)) || t.has(Tag::Prot) || t.has(Tag::Rem) || t.has(Tag::Wipe) {
+            let flashed = crate::engine::cast::grants_flash(g, p, c); // Borne, Trickster, Floodcaller, Quicksilver ...
+            if !(d.instant || ((gand || flashed) && d.sorcery)) || t.has(Tag::Prot) || t.has(Tag::Rem) || t.has(Tag::Wipe) {
                 continue;
             }
             if special(g, c) {
@@ -1312,7 +1390,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         for c in g.player(p).hand.clone() {
             // flash creatures: in before the next turn's draws
             let d = g.db.get(c);
-            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::impls::t0_captain::as_flash(g, p)))
+            if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::engine::cast::grants_flash(g, p, c)))
                 || special(g, c)
                 || !can_pay(g, p, d.generic, &d.pips, false)
             {

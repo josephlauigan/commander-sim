@@ -113,7 +113,7 @@ pub fn ring_level(g: &Game, p: PlayerId) -> u32 {
 
 /// mine.is_legendary: a legendary card, or (the Ring) your Ring-bearer
 pub fn is_legendary(g: &Game, m: PermId) -> bool {
-    if card_tag(g, m, Tag::Leg) {
+    if card_tag(g, m, Tag::Leg) && !g.perm(m).exc.not_legendary {
         return true;
     }
     let o = g.perm(m).owner;
@@ -1021,7 +1021,7 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
     let real: Vec<_> = mana_units(g, p, false).into_iter().filter(|u| u.src != Source::FloatAny).collect();
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let bf = g.db.id(BRAIN_FREEZE).unwrap();
-    let gy_ok = g.hooks.is_empty() || castable(g, p, bf, "gy"); // a lock on casting from graveyards stops escapes
+    let gy_ok = !g.cast_checks() || castable(g, p, bf, "gy"); // a lock on casting from graveyards stops escapes
     let pl = g.player(p);
     let colour = |c: char| real.iter().filter(|u| u.cols.has(c)).map(|u| u.amt).sum::<u32>();
     let mut wh = [None; 7];
@@ -1573,7 +1573,7 @@ fn breach_escape(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !pl.gy.contains(&c) || pl.gy.len() < 4 || !has(g, p, Tag::Breach) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && !castable(g, p, c, "gy") {
+    if g.cast_checks() && !castable(g, p, c, "gy") {
         return Ok(false); // Drannith Magistrate, Rule of Law ...
     }
     let (cg, cp) = cost_of(g, p, c);
@@ -1818,7 +1818,7 @@ fn citadel_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
                 act: Some(Action::Plan { f: citadel_land, arg: top.0 as i64 }),
             });
         }
-    } else if !g.hooks.is_empty() && !castable(g, p, top, "lib") {
+    } else if g.cast_checks() && !castable(g, p, top, "lib") {
         // Drannith Magistrate, Rule of Law ...
     } else if g.player(p).life - d.cmc as i32 >= floor
         && !t.has(Tag::Ctr)
@@ -3281,6 +3281,21 @@ fn cast_response(g: &mut Game, owner: PlayerId, c: CardId, gn: u32, pips: &str) 
     Ok(true)
 }
 
+/// Deflecting Swat answering removal aimed at the owner's key permanent (any deck holding it: `ai::decks::protect_response`)
+pub fn deflecting_swat(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    if (pval(g, m) < 4.0 && !g.perm(m).is_cmd) || !spell.is_some() || !actor.is_some_and(|a| a != owner) || matches!(kind, "edict" | "wipe") {
+        return Ok(false);
+    }
+    veyran_protect_swat(g, owner, kind, actor.unwrap(), spell.unwrap())
+}
+
 /// mine.veyran_protect: removal aimed at Veyran (or another key permanent): Deflecting Swat (free with your commander
 /// out) sends a targeted spell at one of the caster's permanents; Dive Down (hexproof, +0/+3) and Slip Out the Back
 /// (phases out) save a creature from a targeted spell
@@ -3300,27 +3315,8 @@ pub fn veyran_protect(
         return Ok(false);
     }
     let (actor, spell) = (actor.unwrap(), spell.unwrap());
-    if let Some(sw) = g.db.id("Deflecting Swat").filter(|c| g.player(owner).hand.contains(c)) {
-        let free = commander_out(g, owner);
-        let alt: Vec<PermId> = g
-            .player(actor)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && (g.is_creature(x) || kind != "dmg"))
-            .collect();
-        if !alt.is_empty() && cast_response(g, owner, sw, if free { 0 } else { 2 }, if free { "" } else { "R" })? {
-            let t = first_max(&alt, |x| pval(g, x)).unwrap();
-            crate::glog!(
-                g,
-                "    {} casts Deflecting Swat: {} now targets {}",
-                g.player(owner).name,
-                g.db.get(spell).name,
-                g.perm(t).name
-            );
-            apply_removal(g, Some(actor), t, kind, Some(spell))?;
-            return Ok(true);
-        }
+    if veyran_protect_swat(g, owner, kind, actor, spell)? {
+        return Ok(true);
     }
     if !g.is_creature(m) {
         return Ok(false);
@@ -4685,6 +4681,36 @@ pub fn army_power_snapshot(g: &mut Game, p: PlayerId) {
         let pw = crate::engine::values::epow(g, a).max(0) as u32;
         g.player_mut(p).milestone.insert(crate::sym::intern(&format!("army_p{t}")), pw);
     }
+}
+
+/// Deflecting Swat: cast for {2}{R}, or free with the commander out, it sends the targeted spell at the best
+/// permanent the caster has. True if it did.
+fn veyran_protect_swat(g: &mut Game, owner: PlayerId, kind: Sym, actor: PlayerId, spell: CardId) -> Res<bool> {
+    if let Some(sw) = g.db.id("Deflecting Swat").filter(|c| g.player(owner).hand.contains(c)) {
+        let free = commander_out(g, owner);
+        let alt: Vec<PermId> = g
+            .player(actor)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&x| !g.perm(x).phased && !untargetable(g, x) && (g.is_creature(x) || kind != "dmg"))
+            .collect();
+        // free with the commander out, but still taxed (Defense Grid): `altcost::tax` is 0 when nothing taxes spells
+        let swat_generic = if free { crate::engine::altcost::tax(g, owner, sw) } else { 2 };
+        if !alt.is_empty() && cast_response(g, owner, sw, swat_generic, if free { "" } else { "R" })? {
+            let t = first_max(&alt, |x| pval(g, x)).unwrap();
+            crate::glog!(
+                g,
+                "    {} casts Deflecting Swat: {} now targets {}",
+                g.player(owner).name,
+                g.db.get(spell).name,
+                g.perm(t).name
+            );
+            apply_removal(g, Some(actor), t, kind, Some(spell))?;
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
 
 /// a hand-written priority of 0: the card is cast only by its own options

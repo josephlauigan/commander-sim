@@ -108,6 +108,9 @@ pub fn config(key: &str) -> &'static DeckConfig {
 
 /// what this deck's tutors want: its configured list, else the pieces of its closest combo
 pub fn wish_raw(g: &Game, p: PlayerId) -> Vec<CardId> {
+    if let Some(w) = crate::impls::t6_plans::wish(g, p) {
+        return w;
+    }
     match config(g.player(p).key).wish {
         Some(f) => f(g, p),
         None => crate::cardcode::missing_pieces(g, p),

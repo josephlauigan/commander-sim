@@ -526,6 +526,9 @@ fn resolve_combat_inner(
     tot: &mut i32,
 ) -> Res<Vec<PermId>> {
     step_priority(g, "attackers", Some(d), atk)?; // the declare attackers step's priority
+    if g.end_combat {
+        return Ok(vec![]); // Mandate of Peace: the combat phase ended
+    }
     let mut atk: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
     if g.over || !g.player(d).alive {
         return Ok(vec![]);
@@ -557,6 +560,10 @@ fn resolve_combat_inner(
     cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
+        if g.end_combat {
+            g.blocking.clear();
+            return Ok(vec![]);
+        }
     }
     let blocker_of = |assign: &[(PermId, PermId)], a: PermId| assign.iter().find(|x| x.0 == a).map(|x| x.1);
     if !shielded(g, d)
@@ -883,12 +890,16 @@ pub fn ozolith_move(g: &mut Game, p: PlayerId) {
     crate::glog!(g, "  The Ozolith moves {} counters onto {}", k, g.perm(tgt).name);
 }
 
+/// A safety cap on the combat phases of one turn (additional combat phases are otherwise unlimited: Godo + Helm of the
+/// Host makes one per hasty token). Never reached in a real game; hitting it is logged.
+const MAX_COMBATS: u32 = 200;
+
 /// p's combat phase (and extra combats). Python's `combat`.
 pub fn combat(g: &mut Game, p: PlayerId) -> Res {
     ozolith_move(g, p);
     g.player_mut(p).haste_all = false;
     let mut ncomb = 0;
-    while ncomb < 4 && !g.over && g.player(p).alive {
+    while ncomb < MAX_COMBATS && !g.over && g.player(p).alive {
         ncomb += 1;
         g.player_mut(p).combat_no = ncomb;
         if g.opps(p).next().is_none() {
@@ -897,6 +908,14 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         step_priority(g, "combat", None, &[])?;
         if g.over || !g.player(p).alive {
             return Ok(());
+        }
+        g.end_combat = false;
+        if !g.hooks.is_empty() {
+            // beginning of combat, every player's combat, before attackers (Sting, the Glinting Dagger)
+            fire_trigger(g, Event::EachCombat, Call::Player { p })?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
         }
         if !g.hooks.is_empty() && ncomb == 1 {
             fire_trigger(g, Event::Crew, Call::Player { p })?;
@@ -1098,7 +1117,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         let r = (|| -> Res {
             for (gd, xs) in &groups {
                 // each defending player blocks, then takes damage, in turn
-                if g.over || !g.player(p).alive || !g.player(*gd).alive {
+                if g.over || !g.player(p).alive || !g.player(*gd).alive || g.end_combat {
                     continue;
                 }
                 conn.extend(resolve_combat(g, p, xs, *gd, &unbl)?);
@@ -1107,6 +1126,10 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         })();
         let r = r.and_then(|_| crate::impls::t0_zurgo::end_of_combat(g, p)); // t0-zurgo: myriad tokens are exiled
         g.in_combat.clear();
+        if g.end_combat {
+            g.end_combat = false; // the attackers and blockers are out of combat; later combat phases still happen
+            g.blocking.clear();
+        }
         r?;
         if g.over || !g.player(p).alive {
             return Ok(());
@@ -1141,7 +1164,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 continue;
             }
         }
-        if g.player(p).extra_combats > 0 && ncomb < 4 {
+        if g.player(p).extra_combats > 0 {
             // extra combat phases granted by card abilities
             g.player_mut(p).extra_combats -= 1;
             untap_creatures(g, p);
@@ -1149,6 +1172,11 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         }
         break;
     }
+    if ncomb >= MAX_COMBATS {
+        crate::glog!(g, "  combat cap of {} phases reached", MAX_COMBATS);
+        g.player_mut(p).extra_combats = 0;
+    }
+    g.end_combat = false;
     let pl = g.player_mut(p);
     pl.haste_all = false;
     pl.trample = false;

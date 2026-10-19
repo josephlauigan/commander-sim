@@ -6,6 +6,7 @@
 //! player priority on it and says whether it was countered.
 
 use crate::ai;
+use crate::engine::altcost;
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::run_hook;
@@ -30,7 +31,8 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
         t.cast_etb = g.last_cast_etb;
     }
     // Cloud, Midgar Mercenary: a trigger of his, or of an Equipment attached to him, triggers an additional time
-    let extra: Vec<Trigger> = entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
+    let extra: Vec<Trigger> =
+        entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
     entries.extend(extra);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
@@ -90,7 +92,7 @@ fn src_name(g: &Game, src: Option<PermId>) -> String {
 
 fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
     let batch = apnap(g, batch);
-    if !abilities_answered(g, None) {
+    if !abilities_answered(g, None) && !batch.iter().any(|t| camera_ready(g, t.controller)) {
         // nobody could respond: as before the stack, in order
         for t in &batch {
             if g.over {
@@ -158,8 +160,12 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
             // the engine's and the ability language's: the window is here
             let first = g.active.unwrap_or(t.controller);
             priority(g, id, first)?;
+            let copies = take_copies(g, id);
             let countered = item(g, id).is_some_and(|it| it.countered);
             remove_item(g, id);
+            for _ in 0..copies {
+                run_copy(g, &t)?; // Camera copies resolve before the original
+            }
             if !countered {
                 call(g, &t)?;
             }
@@ -186,6 +192,11 @@ pub fn trigger_window(g: &mut Game, p: PlayerId, src: Option<PermId>, name: &str
         if on_stack(g, cur) {
             let first = g.active.unwrap_or(p);
             priority(g, cur, first)?;
+            if let Some(t) = item(g, cur).and_then(|it| it.ctx.trigger.clone()) {
+                for _ in 0..take_copies(g, cur) {
+                    run_copy(g, &t)?; // each copy resolves before the original
+                }
+            }
             let countered = item(g, cur).is_some_and(|it| it.countered);
             remove_item(g, cur);
             return Ok(!countered);
@@ -277,18 +288,78 @@ pub fn spell_item(g: &mut Game, p: PlayerId, c: CardId, ctx: Ctx, imp: f64) -> S
 /// cards the AI uses to counter abilities
 pub const ABILITY_ANSWERS: [&str; 2] = ["Tishana's Tidebinder", "Azorius Guildmage"];
 
+/// flash cards the AI casts from its hand to counter an ability (Ertai Resurrected, Louisoix's Sacrifice)
+pub const ABILITY_ANSWERS_HAND: [&str; 2] = ["Ertai Resurrected", "Louisoix's Sacrifice"];
+
 /// Could anyone answer an ability of p's (a person at the table, or an opponent with an ability counter)? When nobody
 /// could, an ability resolves without a round of priority, which keeps simulations fast.
 pub fn abilities_answered(g: &Game, p: Option<PlayerId>) -> bool {
     if g.humans.any() {
         return true;
     }
+    // p's own copier: Peter Parker's Camera can copy its trigger
+    if p.is_some_and(|p| camera_ready(g, p)) {
+        return true;
+    }
     g.players.iter().filter(|q| Some(q.id) != p && q.alive).any(|q| {
-        q.hand.iter().any(|&c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name))
-            || q.perms.iter().any(|&m| {
-                !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name))
-            })
+        q.hand.iter().any(|&c| {
+            let n = &*g.db.get(c).name;
+            ABILITY_ANSWERS.contains(&n) || ABILITY_ANSWERS_HAND.contains(&n)
+        }) || q
+            .perms
+            .iter()
+            .any(|&m| !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name)))
     })
+}
+
+/// p has an untapped Peter Parker's Camera with a film counter left
+pub fn camera_ready(g: &Game, p: PlayerId) -> bool {
+    g.player(p).perms.iter().any(|&m| {
+        let x = g.perm(m);
+        x.on_bf
+            && !x.phased
+            && !x.tapped
+            && !x.neutered
+            && &*x.name == "Peter Parker's Camera"
+            && x.data.int(crate::state::DataKey::Counters) > 0
+    })
+}
+
+/// the number of copies of trigger item `id` that resolved (they are used up)
+fn take_copies(g: &mut Game, id: u32) -> usize {
+    let n = g.trig_copies.iter().filter(|&&x| x == id).count();
+    g.trig_copies.retain(|&x| x != id);
+    n
+}
+
+/// a copy of a triggered ability resolves: its hook runs again (no new stack window: it already had one)
+fn run_copy(g: &mut Game, t: &Trigger) -> Res {
+    let prev = g.trig_current.replace(0); // id 0 is never on the stack: trigger_window just says "resolved"
+    let r = call(g, t);
+    g.trig_current = prev;
+    r
+}
+
+/// q copies the triggered ability of theirs on top of the stack (item `id`): the copy goes on the stack above it, players
+/// may respond (counter it), and if it resolves the trigger's effect runs once more before the original resolves.
+/// True if the copy resolved. The copy cannot be copied again.
+pub fn copy_trigger(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
+    let Some(orig) = item(g, id).cloned() else { return Ok(false) };
+    if orig.ctx.trigger.is_none() || orig.kind != StackKind::Trigger {
+        return Ok(false);
+    }
+    let mut cp = orig;
+    cp.id = g.stack_pushes + 1; // stack_window counts the push
+    cp.name = format!("copy of {}", cp.name);
+    cp.ctx.trigger = None;
+    cp.passed = vec![];
+    cp.countered = false;
+    cp.controller = q;
+    if stack_window(g, q, cp)? {
+        g.trig_copies.push(id);
+        return Ok(true);
+    }
+    Ok(false)
 }
 
 // ------------------------------------------------------------------ priority
@@ -302,6 +373,12 @@ pub fn ability_window(
     imp: Option<f64>,
     target: Option<PermId>,
 ) -> Res<bool> {
+    // Tier 6: an activation that works on a piece of a modeled line is a win step the table may answer
+    if let Some(m) = src
+        && crate::impls::combos::normal_play_window(g, p, m)?
+    {
+        return Ok(false);
+    }
     if g.over || !abilities_answered(g, Some(p)) {
         return Ok(true);
     }
@@ -394,7 +471,11 @@ fn priority(g: &mut Game, id: u32, first: PlayerId) -> Res {
 
 /// q has priority with the item on top of the stack; true if q put something on the stack (it has resolved by now)
 fn take_priority(g: &mut Game, q: PlayerId, _id: u32) -> Res<bool> {
-    if !g.player(q).alive || g.over || crate::engine::values::silenced(g, q) {
+    if !g.player(q).alive
+        || g.over
+        || crate::engine::values::silenced(g, q)
+        || (g.locks_used && crate::engine::cast::split_second_up(g))
+    {
         return Ok(false);
     }
     let n = g.stack_pushes;
@@ -427,6 +508,13 @@ pub fn counter_window(g: &mut Game, p: PlayerId, c: CardId, imp: f64, aff: Vec<(
 
 /// stack_window, also returning the card that countered the item
 pub fn stack_window_keep(g: &mut Game, p: PlayerId, new: StackItem) -> Res<(bool, Option<CardId>)> {
+    let it = stack_window_item(g, p, new)?;
+    Ok((!it.countered, it.countered_by))
+}
+
+/// stack_window, returning the item as it left the stack: its controller and ctx may have changed (a stolen spell,
+/// a new target), and `cast_card` resolves the spell with them
+pub fn stack_window_item(g: &mut Game, p: PlayerId, new: StackItem) -> Res<StackItem> {
     let id = new.id;
     g.stack_pushes = g.stack_pushes.max(id);
     g.stack.push(new);
@@ -439,8 +527,7 @@ pub fn stack_window_keep(g: &mut Game, p: PlayerId, new: StackItem) -> Res<(bool
     let it = item(g, id).cloned();
     remove_item(g, id);
     r?;
-    let it = it.expect("the item is still on the stack until stack_window takes it off");
-    Ok((!it.countered, it.countered_by))
+    Ok(it.expect("the item is still on the stack until stack_window takes it off"))
 }
 
 pub fn mistrised(g: &Game, c: CardId) -> bool {
@@ -456,6 +543,18 @@ pub fn counterable(g: &Game, it: &StackItem) -> bool {
 /// Python's `ai_respond`.
 pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     let Some(top) = g.stack.last() else { return Ok(()) };
+    if top.controller == q
+        && top.kind == StackKind::Trigger
+        && top.imp >= 6.0
+        && top.ctx.trigger.is_some()
+        && !top.passed.contains(&q)
+    {
+        // q's own important trigger: copy it (Peter Parker's Camera)
+        let top_id = top.id;
+        g.stack.last_mut().unwrap().passed.push(q);
+        crate::cardcode::copy_ability(g, q, top_id)?;
+        return Ok(());
+    }
     if top.controller == q || top.passed.contains(&q) {
         return Ok(());
     }
@@ -470,6 +569,12 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         return Ok(());
     }
     let hand = g.player(q).hand.clone();
+    if top.generic
+        && hand.iter().any(|&x| crate::impls::t6_counters::STACK_RESPONSES.contains(&&*g.db.get(x).name))
+        && crate::impls::t6_counters::stack_response(g, q, top_id)?
+    {
+        return Ok(()); // Misdirection, Commandeer, Sudden Substitution
+    }
     if !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant") {
         return Ok(()); // nothing to respond with
     }
@@ -513,15 +618,31 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         let (cg, cp) = counter_cost(g, pk, Some(c), Some(q));
         if g.db.get(pk).tag(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
             thr += 1.5;
+        } else if altcost::use_alt(g, q, pk, Some(c), cg, &cp) {
+            thr += 1.5 * altcost::lost(g, q, pk, Some(c)); // cards given up for the alternative cost
         }
     }
-    // the look-ahead decides counters to the active player's spell in their main phase
-    match ai::search_counter(g, q, top.controller, c, top.generic) {
-        Some(false) => return Ok(()),
-        Some(true) => {}
-        None => {
-            if g.rng.random() > ai::wants_counter(val, thr, nc) {
-                return Ok(());
+    // Tier 6: the table rules decide (archenemy, win steps), not the look-ahead
+    if crate::impls::t6_plans::is_t6(g, q) {
+        use ai::t6_table::Verdict;
+        match ai::t6_table::counter_verdict(g, q, &top, val, thr, nc) {
+            Verdict::Counter => {}
+            Verdict::Pass => return Ok(()),
+            Verdict::Roll(v, t) => {
+                if g.rng.random() > ai::wants_counter(v, t, nc) {
+                    return Ok(());
+                }
+            }
+        }
+    } else {
+        // the look-ahead decides counters to the active player's spell in their main phase
+        match ai::search_counter(g, q, top.controller, c, top.generic) {
+            Some(false) => return Ok(()),
+            Some(true) => {}
+            None => {
+                if g.rng.random() > ai::wants_counter(val, thr, nc) {
+                    return Ok(());
+                }
             }
         }
     }
@@ -553,6 +674,9 @@ pub fn counter_ok(g: &Game, ctr: CardId, c: CardId) -> bool {
         Some("cre2") => d.creature && (d.pow <= 2 || d.tgh <= 2), // Stern Scolding
         Some("blue") => d.pips.contains('U'),                     // Pyroblast / Red Elemental Blast
         Some("crleg") => d.creature || d.tag(Tag::Leg),           // Icy Reception: creature or legendary spell
+        // Disrupting Shoal counters a spell only if its mana value is X. The AI always chooses X equal to the spell's
+        // mana value (`counter_cost`; the pitch needs a blue card of that value, `t6_counters::shoal_pitch`).
+        Some("mvx") => true,
         _ => false,
     }
 }
@@ -563,6 +687,14 @@ pub fn counter_cost(g: &Game, ctr: CardId, spell: Option<CardId>, q: Option<Play
     let d = g.db.get(ctr);
     if d.tag(Tag::Brushoff) && spell.is_some_and(|s| g.db.get(s).instant || g.db.get(s).sorcery) {
         return (1, "U".into());
+    }
+    if &*d.name == "Disrupting Shoal"
+        && let Some(s) = spell
+    {
+        return (g.db.get(s).cmc, d.pips.to_string()); // {X}{U}{U}, X = the spell's mana value
+    }
+    if &*d.name == "Louisoix's Sacrifice" {
+        return (d.generic + 2, d.pips.to_string()); // the additional cost: pay {2} (or sacrifice a legendary creature)
     }
     if &*d.name == "Phantom Interference" {
         return (1, "U".into()); // spree: the counter mode costs {1} more (the Spirit mode: bulk_blue::spree_extra)
@@ -580,9 +712,22 @@ fn blue_in_hand(g: &Game, q: PlayerId, except: CardId) -> Vec<CardId> {
     g.player(q).hand.iter().copied().filter(|&x| x != except && g.db.get(x).pips.contains('U')).collect()
 }
 
+/// Pact of Negation is only free if {3}{U}{U} (for each pact still owed) can be paid at the next upkeep. Tier 0-5: five
+/// lands, as always. Tier 6: also two lands that make blue, and five lands per pact (a lost game to a missed upkeep
+/// was the single biggest leak of the cEDH decks that run it).
+fn pact_affordable(g: &Game, q: PlayerId) -> bool {
+    let lands = g.player(q).lands.len();
+    if !crate::impls::t6_plans::is_t6(g, q) {
+        return lands >= 5;
+    }
+    let blue = g.player(q).lands.iter().filter(|&&l| crate::engine::mana::land_colors_now(g, q, l).has('U')).count();
+    lands >= 5 * (1 + g.player(q).pacts as usize) && blue >= 2
+}
+
 /// the counterspell q would use against c, if any
 pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     let mut best: Option<CardId> = None;
+    let mut loose = false; // best is a pitch (Force of Will) or alternative-cost pick: any counter paid in mana beats it
     let cheaper = |best: Option<CardId>, ctr: CardId| best.is_none_or(|b| g.db.get(ctr).cmc < g.db.get(b).cmc);
     for &ctr in &g.player(q).hand {
         let d = g.db.get(ctr);
@@ -600,30 +745,49 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         if !t.has(Tag::Ctr) || !counter_ok(g, ctr, c) {
             continue;
         }
-        if !g.hooks.is_empty() && !castable(g, q, ctr, "hand") {
+        if g.cast_checks() && !castable(g, q, ctr, "hand") {
             continue;
         }
-        if t.has(Tag::Fierce) && commander_out(g, q) {
+        // the free modes pay the cost increases (Defense Grid) in mana: `altcost::tax`, 0 when nothing taxes spells
+        let taxed_ok = altcost::tax_payable(g, q, ctr);
+        if t.has(Tag::Fierce) && commander_out(g, q) && taxed_ok {
             return Some(ctr); // Fierce Guardianship: free with your commander out
         }
-        if t.has(Tag::Pact) && g.player(q).lands.len() >= 5 {
+        if t.has(Tag::Pact) && pact_affordable(g, q) && taxed_ok {
             return Some(ctr); // Pact of Negation: free now, {3}{U}{U} next upkeep
         }
-        if t.has(Tag::Misstep) && g.player(q).life > 10 {
+        if t.has(Tag::Pact) && crate::impls::t6_plans::is_t6(g, q) {
+            continue; // Tier 6: a Pact whose upkeep can't be paid is not cast (the {0} cost fell through to `can_pay` below)
+        }
+        if t.has(Tag::Misstep) && g.player(q).life > 10 && taxed_ok {
             return Some(ctr); // Mental Misstep: 2 life
         }
-        if t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty() {
+        if t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty() && taxed_ok {
             return Some(ctr); // Force of Negation: free on others' turns
         }
         let (cg, cp) = counter_cost(g, ctr, Some(c), Some(q));
         if t.has(Tag::Free) {
-            if (!blue_in_hand(g, q, ctr).is_empty() || can_pay(g, q, cg, &cp, false)) && best.is_none() {
+            if ((!blue_in_hand(g, q, ctr).is_empty() && taxed_ok) || can_pay(g, q, cg, &cp, false)) && best.is_none() {
                 best = Some(ctr);
+                loose = true;
             }
             continue;
         }
-        if can_pay(g, q, cg, &cp, false) && (cheaper(best, ctr) || best.is_some_and(|b| g.db.get(b).tag(Tag::Free))) {
+        if altcost::use_alt(g, q, ctr, Some(c), cg, &cp) {
+            // an alternative cost (Daze, Flare of Denial, Disrupting Shoal, Mindbreak Trap): taken at once when it gives
+            // up nothing, else (the mana cost can't be paid) like a Force of Will pitch
+            if altcost::lost(g, q, ctr, Some(c)) <= 0.0 {
+                return Some(ctr);
+            }
+            if best.is_none() {
+                best = Some(ctr);
+                loose = true;
+            }
+            continue;
+        }
+        if can_pay(g, q, cg, &cp, false) && (cheaper(best, ctr) || loose) {
             best = Some(ctr);
+            loose = false;
         }
     }
     best
@@ -633,7 +797,12 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
 /// while q controls its commander
 pub fn free_counter(g: &Game, q: PlayerId, c: CardId) -> bool {
     let t = &g.db.get(c).tags;
-    t.has(Tag::Free) || (t.has(Tag::Fierce) && commander_out(g, q))
+    t.has(Tag::Free)
+        || (t.has(Tag::Fierce) && commander_out(g, q))
+        || (altcost::slot(g, c).is_some()
+            && altcost::tax(g, q, c) == 0
+            && altcost::lost(g, q, c, None) <= 0.0
+            && altcost::available(g, q, c, None)) // Mindbreak Trap's free mode
 }
 
 /// pay counterspell ctr's cost (or its alternative cost) against spell; true if paid
@@ -642,6 +811,14 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
         return Ok(true); // practice mode: paid from the person's pool
     }
     let t = g.db.get(ctr).tags.clone();
+    // a cast without paying the mana cost still pays the cost increases (Defense Grid): `altcost::tax`
+    let tax_free_cast = (t.has(Tag::Fierce) && commander_out(g, q))
+        || t.has(Tag::Pact)
+        || (t.has(Tag::Misstep) && g.player(q).life > 10)
+        || (t.has(Tag::Fon) && g.active != Some(q) && !blue_in_hand(g, q, ctr).is_empty());
+    if tax_free_cast && !altcost::pay_tax(g, q, ctr)? {
+        return Ok(false);
+    }
     if t.has(Tag::Fierce) && commander_out(g, q) {
         return Ok(true); // cast without paying its mana cost
     }
@@ -679,12 +856,15 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     let (cg, cp) = counter_cost(g, ctr, spell, Some(q));
     if t.has(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
         let blues = blue_in_hand(g, q, ctr);
-        if blues.is_empty() {
+        if blues.is_empty() || !altcost::pay_tax(g, q, ctr)? {
             return Ok(false);
         }
         pitch(g, blues)?;
         lose_life(g, q, 1, Some(q), "other", None)?;
         return Ok(true);
+    }
+    if altcost::use_alt(g, q, ctr, spell, cg, &cp) {
+        return altcost::pay_alt(g, q, ctr, spell); // Daze, Flare of Denial, Disrupting Shoal, Mindbreak Trap
     }
     pay(g, q, cg, &cp, false)
 }
@@ -786,6 +966,8 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
         g.player_mut(p).stat("seph_spell_countered", 1);
     }
     g.player_mut(p).stat("spells_countered", 1);
+    g.last_counter = Some(ctr);
+    crate::t6stats::counter_hit(g, q, ctr, p);
     if let Some(inner) = t.ctx.counter
         && g.stack.iter().any(|x| x.id == inner && x.controller == q)
     {
@@ -801,6 +983,9 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
         if desert {
             it.ctx.desert_to = Some(q); // Desertion: the countered artifact or creature is q's
         }
+    }
+    if &*g.db.get(ctr).name == "Mindbreak Trap" {
+        crate::impls::t6_counters::mindbreak_exile(g, q)?; // "exile any number of target spells": all the others
     }
     Ok(())
 }

@@ -1,0 +1,45 @@
+# Engine needs: batch `blue`
+
+Card side for all of these is in `crates/sim-core/src/impls/t6_blue.rs` (tests in `tests/cards_t6_blue.rs`).
+
+## Borne Upon a Wind
+Needs: the player-level "you may cast spells this turn as though they had flash" grant (same need as Emergence Zone in `engine-needs-lands.md`): the cast-timing check and the AI's end-of-turn / in-response casting read the one-turn flag.
+Where it would hook: impls/t0_captain.rs `as_flash` (read by `ai/brain.rs` ~line 1264): also return true when `t6_blue::flash_turn_grant(g, p)` (the flag `t6_lands::FLASH_FLAG`, shared with Emergence Zone); `engine/cast.rs` `castable` for the timing test.
+Card side done: draws a card and sets the caster's turn flag (`t6_blue::flash_turn_grant`).
+Test to add once the engine has it: after Borne Upon a Wind on the opponent's turn, a sorcery in hand is cast in their end step.
+
+## Mnemonic Betrayal
+Needs: a delayed "at the beginning of the next end step" trigger that is not tied to a permanent (any player's end step), here "return the cards still exiled to their owners' graveyards"; and `impulse` clean-up to send a taken card back to its owner (`Player::stolen`) instead of into the caster's exile.
+Where it would hook: `engine/turn.rs` end step where `impulse` is cleared (about line 707): for a card in `stolen`, push it to the owner's graveyard and drop it from `stolen`/`agent_ids`; the clean-up also only runs at the caster's own end step.
+Card side done: exiles every opponent's graveyard (lands stay in exile), holds the nonland cards in the caster's hand with `yshtola::take_card` (castable with mana of any type, goes to the owner's graveyard when cast) and lists them in `impulse`; Betrayal itself is exiled.
+Test to add once the engine has it: an uncast card from an opponent's graveyard is back in that graveyard after the end step, and nothing stays in the caster's exile.
+
+## Rain of Filth
+Needs: a mana source "sacrifice a land: add {B}" granted to every land of a player for a turn (a new `Source` variant next to `Scion`/`Treasure`, or a general "land gains an ability until end of turn" layer).
+Where it would hook: `engine/mana.rs` (`Source`, `total_mana` / the unit list, `pay` which taps or sacrifices the unit's source), reading `t6_blue::rain_of_filth_active(g, p)`.
+Card side done: resolving sets the caster's turn flag (`rain_of_filth_active`); with no usable mana source the AI has no reason to cast it (no tags, no priority).
+Test to add once the engine has it: with the flag, a player with three lands and a {B}{B}{B} spell sacrifices all three lands to cast it, from tapped or untapped lands; next turn the lands only tap.
+
+## Exhibition Tidecaller
+Needs: the real amount of mana spent to cast a spell, recorded when it is paid (after cost reductions, with alternative costs and X), readable by cast triggers ("if five or more mana was spent to cast that spell"). Also the right place for Vexing Bauble's "no mana was spent" (`engine-needs-godo.md`).
+Where it would hook: `engine/cast.rs` `cast_card` / the payment functions (`mana::pay`), stored on `g.cur_cast`'s `Ctx` (e.g. `Ctx::mana_spent`).
+Card side done: `impls/t6_blue.rs` Opus on the cast hook: a cast instant or sorcery makes the best opposing player mill three, or ten when the spell's mana value plus X is 5 or more (0 when an alternative cost was paid: `Ctx::paid_otherwise`); the compiled mill-3 trigger is removed (`dsl = []`).
+Test to add once the engine has it: a mana-value-6 sorcery cast for {3} (cost reduction) mills three, not ten; a mana-value-3 spell with X-style extra payment reaching five mills ten.
+
+## High Fae Trickster (and Valley Floodcaller, Borne Upon a Wind)
+Needs: the permanent-based "you may cast spells as though they had flash" (all spells for the Trickster, noncreature spells for the Floodcaller), alongside the one-turn grant above; for a permanent the AI should then hold sorceries and artifacts for the end of an opponent's turn and cast them in response windows.
+Where it would hook: impls/t0_captain.rs `as_flash` (read at `ai/brain.rs` ~line 1264, which only looks at permanent cards, not instants/sorceries or creatures) and `engine/cast.rs` `castable` for the timing test; return `t6_blue::static_flash(g, p, creature_spell)`.
+Card side done: flash and flying (data), `t6_blue::static_flash` (Trickster, Floodcaller, Borne's turn flag).
+Test to add once the engine has it: with the Trickster out, a sorcery in hand is cast in the opponent's end step.
+
+## Emrakul, the Promised End
+Needs: (1) controlling another player's turn ("you gain control of target opponent during that player's next turn": the controller makes that player's decisions, sees their hand, uses their cards and mana); (2) extra turns (see `engine-needs-godo.md`, Final Fortune): "after that turn, that player takes an extra turn"; (3) "protection from instants" (`Cards::protfrom` holds colours only): instants cannot target it, and damage from instants is prevented.
+Where it would hook: (1) `engine/turn.rs` (a per-turn "controlled by" player that `ai/` and `human/` decision calls consult) and a `Cast` slot on Emrakul (`CardImpl::cast` is for permanents already on the battlefield; this is a trigger from the spell on the stack: `engine/cast.rs` `on_cast` could call a per-card `self_cast` slot, which exists); (2) the same extra-turn queue as Final Fortune; (3) `engine/values.rs::untargetable` and the damage prevention code.
+Card side done: `impls/t6_blue.rs` `self_cost`: {1} less for each card type among cards in your graveyard (`t6_blue::graveyard_types`; land, creature, instant, sorcery, artifact, enchantment, planeswalker); 13/13 flying, trample (data).
+Test to add once the engine has it: casting Emrakul makes the target opponent's next turn run under the caster's control, followed by an extra turn for that opponent; a Lightning Bolt cannot target Emrakul.
+
+## Hidden Strings
+Needs: cipher: "exile this spell card encoded on a creature you control; whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost" (a per-permanent list of encoded cards, a combat-damage trigger for any permanent that holds one, a free copy cast through `cast_card(.., "copy", ..)`, and the encoded card leaving with the creature).
+Where it would hook: `state.rs::Perm` (encoded cards, or a `DataKey` list of `Val::Card`), `engine/combat.rs` where `Event::CombatDamage` fires; the encode choice in `engine/cast.rs::to_gy_or_exile` (the spell's destination).
+Card side done: `t6_blue::strings_resolve`: untaps up to two of the caster's tapped mana sources (rocks and dorks first, then lands), or with none tapped taps down the two best untapped opposing creatures; `strings_prio` makes the AI cast it when three or more of its mana sources are tapped. The card goes to the graveyard (not encoded).
+Test to add once the engine has it: cast with a creature out, the card is exiled encoded on it; when it hits a player a free copy untaps two more permanents.

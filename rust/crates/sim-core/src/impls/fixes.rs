@@ -401,6 +401,34 @@ fn gamble(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+
+/// Tier 6: may the AI cast Gamble now? With a piece of one of the deck's lines in hand the random discard could bin
+/// it, so Gamble is cast only when it finds a card that completes a line and that card can be cast at once with the
+/// mana left (Gamble costs {R}). Human players and other tiers are not restricted.
+pub fn gamble_allowed(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if !super::t6_plans::is_t6(g, p) || crate::human::is_human(g, p) {
+        return true;
+    }
+    let holds_piece = g
+        .player(p)
+        .hand
+        .iter()
+        .any(|&x| x != c && !g.db.get(x).land && super::t6_pieces::is_line_piece(g, p, &g.db.get(x).name));
+    if !holds_piece {
+        return true;
+    }
+    let left = (total_mana(g, p, false) as i32 - 1).max(0);
+    let held = super::t6_pieces::held_names(g, p);
+    searchable(g, p).into_iter().any(|x| {
+        let d = g.db.get(x);
+        !d.land && d.cmc as i32 <= left && super::t6_pieces::completes_line(g, p, &d.name, &held)
+    })
+}
+
+fn gamble_ok(g: &Game, _src: Src, caster: PlayerId, c: CardId, _zone: Sym) -> bool {
+    gamble_allowed(g, caster, c)
+}
+
 // ------------------------------------------------------------------ Goblin Trashmaster: sacrifice a Goblin
 /// Full: other Goblins +1/+1; sacrifices a spare Goblin to destroy a valuable artifact
 fn trashmaster(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -725,6 +753,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.prio = Some(decimate_prio);
     let c = r.card(db, "Gamble")?;
     c.resolve = Some(gamble);
+    c.can_cast = Some(gamble_ok);
     c.prio = Some(crate::ai::decks::gamble_prio);
     r.card(db, "Goblin Trashmaster")?.options = Some(trashmaster);
     let c = r.card(db, "Reshape")?;

@@ -82,6 +82,11 @@ pub fn total_land_mana(g: &Game, p: PlayerId, l: crate::ids::LandId) -> i32 {
     hooked(g, Event::LandMana).iter().map(|(src, imp)| (imp.land_mana.unwrap())(g, *src, p, l)).sum()
 }
 
+/// land_colorless(g, src, p, land, n): does a land making n mana make one {C} instead (Damping Sphere)
+pub fn land_colorless(g: &Game, p: PlayerId, l: crate::ids::LandId, n: u32) -> bool {
+    hooked(g, Event::LandColorless).iter().any(|(src, imp)| (imp.land_colorless.unwrap())(g, *src, p, l, n))
+}
+
 /// trigger_copies summed for p's triggered abilities of this kind (Panharmonicon, Teysa, Ancient Greenwarden)
 pub fn total_trigger_copies(g: &Game, p: PlayerId, kind: crate::sym::Sym, x: Option<PermId>) -> i32 {
     if g.hooks.is_empty() {
@@ -126,6 +131,18 @@ pub fn any_uncounterable(g: &Game, p: PlayerId, c: crate::ids::CardId) -> bool {
 pub fn allowed(g: &Game, p: PlayerId, c: crate::ids::CardId, zone: &str) -> bool {
     let zone = crate::sym::intern(zone);
     hooked(g, Event::CanCast).iter().all(|(src, imp)| (imp.can_cast.unwrap())(g, *src, p, c, zone))
+}
+
+/// a battlefield card counters c as p casts it (Vexing Bauble, Chalice of the Void, Void Mirror)
+pub fn cast_countered(g: &Game, p: PlayerId, c: crate::ids::CardId, ctx: &crate::state::Ctx) -> bool {
+    !g.hooks.is_empty() && hooked(g, Event::CastCounter).iter().any(|(src, imp)| (imp.cast_counter.unwrap())(g, *src, p, c, ctx))
+}
+
+/// Would a battlefield cast-counter counter c as p casts it having spent `spent` mana, `colored` of it coloured? The AI
+/// asks before it casts (`cast::castable`): it never means to cast a Mox into a Vexing Bauble.
+pub fn would_be_cast_countered(g: &Game, p: PlayerId, c: crate::ids::CardId, spent: u32, colored: bool) -> bool {
+    let ctx = crate::state::Ctx { mana_spent: spent, mana_colored: colored, ..Default::default() };
+    cast_countered(g, p, c, &ctx)
 }
 
 /// state checks of hooked cards (Python's `CI.fire(g, 'sba')`, not a triggered event: run at once)
@@ -226,7 +243,15 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
             g.new_attackers.extend(made);
             Ok(())
         }
+        (Event::EachCombat, Call::Player { p }) => imp.each_combat.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::CardsToGy, Call::Cards { p, cards }) => imp.cards_to_gy.map_or(Ok(()), |f| f(g, src, *p, cards)),
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }
+}
+
+/// "enters tapped" replacement effects (Blind Obedience, Spider-Woman, Thalia, Heretic Cathar): does a permanent
+/// entering under p's control (m; None for a Treasure / Food / Clue, which are counters) enter tapped?
+pub fn enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
+    !g.hooks.is_empty()
+        && hooked(g, Event::EntersTapped).iter().any(|(src, imp)| (imp.enters_tapped.unwrap())(g, *src, p, m))
 }

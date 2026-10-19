@@ -21,7 +21,7 @@ fn test_your_decks() {
         o["decks"].as_array().unwrap().iter().map(|x| (x["key"].as_str().unwrap(), x)).collect();
     assert_eq!(
         d.keys().copied().collect::<Vec<_>>(),
-        ["alela", "cloud", "galadriel", "kefka", "kraum", "sauron", "seph", "sephfs", "sheoldred", "titania", "veyran", "yshtola"]
+        ["alela", "cloud", "galadriel", "godo", "kefka", "kraum", "sauron", "seph", "sephfs", "sheoldred", "titania", "veyran", "yshtola"]
     );
     assert_eq!(d["seph"]["name"], "Sephiroth, the Savior"); // the deck file's name for Atraxa
     assert_eq!(d["seph"]["commander"], "Atraxa, Grand Unifier"); // the card the engine (and image) uses
@@ -54,8 +54,8 @@ fn test_tiers() {
     let s = srv!();
     let o = s.client().get("/api/options").json();
     let tiers = o["tiers"].as_array().unwrap();
-    assert_eq!(tiers.iter().map(|t| t["key"].as_str().unwrap()).collect::<Vec<_>>(), ["t0", "t1", "t2", "t3", "t4", "t5"]);
-    assert!(tiers.iter().all(|t| t["decks"].as_array().unwrap().len() == 5));
+    assert_eq!(tiers.iter().map(|t| t["key"].as_str().unwrap()).collect::<Vec<_>>(), ["t0", "t1", "t2", "t3", "t4", "t5", "t6"]);
+    assert!(tiers.iter().all(|t| t["decks"].as_array().unwrap().len() == if t["key"] == "t6" { 6 } else { 5 }));
     assert_eq!(tiers[0]["label"], "T0 · B2 Precons");
     assert_eq!(tiers[1]["label"], "T1 · High B2 / Low B3");
     for t in tiers {

@@ -338,6 +338,8 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
 
 /// Chrome Mox: you may exile a nonartifact, nonland card from your hand; it taps for that card's colours
 pub fn chrome_imprint(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    // Tier 6 (AI choice): never imprint a piece of the deck's own lines (Demonic Consultation, Underworld Breach)
+    let t6_ai = crate::impls::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p);
     let ident = g.player(p).ident;
     let cs: Vec<CardId> = g
         .player(p)
@@ -347,6 +349,7 @@ pub fn chrome_imprint(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         .filter(|&c| {
             let d = g.db.get(c);
             !d.land && !d.types.has(crate::cards::Types::ARTIFACT) && d.colors.intersects(ident)
+                && !(t6_ai && crate::impls::t6_pieces::is_line_piece(g, p, &d.name))
         })
         .collect();
     let Some(c) = min_by(&cs, |c| card_worth(g, p, c, false)) else { return Ok(()) };

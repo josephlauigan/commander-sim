@@ -222,7 +222,7 @@ pub fn load_hooks(p: &Project) -> Result<BTreeMap<String, Hooks>, String> {
 }
 
 /// the tiers a deck of yours is simulated against
-pub const TIERS: [&str; 6] = ["t0", "t1", "t2", "t3", "t4", "t5"];
+pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
 fn get_tiers(v: &toml::Value, key: &str, path: &std::path::Path) -> Result<Vec<String>, String> {
     let arr = v

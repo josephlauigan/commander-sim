@@ -188,7 +188,7 @@ pub fn spare_after(g: &Game, p: PlayerId, n: u32) -> bool {
         .iter()
         .filter(|&&c| {
             let d = g.db.get(c);
-            !d.land && (own || d.instant || d.tag(crate::tag::Tag::Flash))
+            !d.land && (own || d.instant || d.tag(crate::tag::Tag::Flash) || crate::engine::cast::grants_flash(g, p, c))
         })
         .map(|&c| {
             let (gn, pips) = cost_of(g, p, c);
@@ -269,9 +269,23 @@ pub fn bestow_fall(g: &mut Game, m: PermId) -> Res {
 }
 
 /// partials.answer_ability: counter an opponent's important ability on top of the stack (Tishana's Tidebinder,
-/// Azorius Guildmage); `item` is the stack item's id
+/// Azorius Guildmage), then the flash cards written for the Tier 6 engine pass: Ertai Resurrected, Louisoix's
+/// Sacrifice; `item` is the stack item's id
 pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
-    crate::impls::partials::answer_ability(g, q, item)
+    crate::impls::partials::answer_ability(g, q, item)?;
+    let open = |g: &Game| g.stack.iter().any(|x| x.id == item && !x.countered);
+    if open(g) {
+        crate::impls::t6_legends2::ertai_answer(g, q, item)?;
+    }
+    if open(g) {
+        crate::impls::t6_counters::louisoix_answer(g, q, item)?;
+    }
+    Ok(())
+}
+
+/// the AI q copies its own triggered ability on the stack (Peter Parker's Camera)
+pub fn copy_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
+    crate::impls::t6_copies::camera_copy(g, q, item).map(|_| ())
 }
 
 /// rules.emblem_cast: Chandra's and Venser's emblems on each spell p casts
@@ -703,6 +717,9 @@ pub fn defend_hooks(
             }
         }
         for l in g.player(d).lands.clone() {
+            if crate::engine::mana::moon_land(g, l) {
+                continue; // Blood Moon: no abilities
+            }
             if let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_defend) {
                 f(g, l, d, p, atk, assign)?;
             }
@@ -817,6 +834,9 @@ pub fn saga_proliferated(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 
 /// CI.LAND_ETB: a land played as a land drop enters (Bojuka Bog ...)
 pub fn land_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    if crate::engine::mana::moon_land(g, l) {
+        return Ok(()); // Blood Moon: a plain Mountain has no enters ability
+    }
     match imp_of(g, g.land(l).cd).and_then(|i| i.land_etb) {
         Some(f) => f(g, p, l),
         None => Ok(()),
@@ -938,6 +958,7 @@ pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
     }
     for l in g.player(p).lands.clone() {
         if g.player(p).lands.contains(&l)
+            && !crate::engine::mana::moon_land(g, l)
             && let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_upkeep)
         {
             f(g, l, p)?;

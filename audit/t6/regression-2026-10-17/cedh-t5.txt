@@ -1,0 +1,29 @@
+3,000 games (calibration: within, 1,500 per list per tier, profiles conservative and loose), lookahead AI, 16 worker threads: about 9 minutes
+
+=== Within-tier balance [conservative, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m24s elapsed, ~3m36s left
+  progress  20.0%  0m49s elapsed, ~3m16s left
+  progress  30.0%  1m13s elapsed, ~2m52s left
+  progress  40.0%  1m40s elapsed, ~2m30s left
+  progress  50.0%  2m05s elapsed, ~2m05s left
+  Tier 5 (High B4): avg game 7.9 rounds, timeouts 0.1%
+    Kinnan                        34.0% (31.3-36.7)  [0.0 pts from round-cap wins]
+    Urza                          24.0% (21.7-26.5)  [0.0 pts from round-cap wins]
+    Winota                        33.9% (31.2-36.6)  [0.0 pts from round-cap wins]
+    Yawgmoth                      13.9% (12.1-16.0)  LOW  [0.1 pts from round-cap wins]
+    Zur the Enchanter             19.2% (17.0-21.5)  [0.0 pts from round-cap wins]
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  60.0%  2m29s elapsed, ~1m39s left
+  progress  70.0%  2m52s elapsed, ~1m14s left
+  progress  80.0%  3m15s elapsed, ~0m48s left
+  progress  90.0%  3m39s elapsed, ~0m24s left
+  progress 100.0%  4m03s elapsed, ~0m00s left
+  Tier 5 (High B4): avg game 7.7 rounds, timeouts 0.0%
+    Kinnan                        33.7% (31.1-36.4)  [0.0 pts from round-cap wins]
+    Urza                          25.4% (23.0-27.9)  [0.0 pts from round-cap wins]
+    Winota                        32.7% (30.1-35.4)  [0.0 pts from round-cap wins]
+    Yawgmoth                      14.1% (12.2-16.2)  LOW  [0.0 pts from round-cap wins]
+    Zur the Enchanter             19.0% (16.9-21.3)  [0.0 pts from round-cap wins]
+
+(243s total)

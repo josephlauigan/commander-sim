@@ -160,7 +160,7 @@ mod tests {
         let cards = load_cards(&data("cards.json")).unwrap();
         let names: HashSet<&str> = cards.iter().map(|c| c.name.as_str()).collect();
         let decks = load_decks(&data("decks.json")).unwrap();
-        assert_eq!(decks.pool.len(), 30);
+        assert_eq!(decks.pool.len(), 36);
         for d in decks.mine.iter().chain(&decks.pool) {
             for n in d.cards.iter().chain(std::iter::once(&d.commander)) {
                 assert!(names.contains(n.as_str()), "{}: {} has no definition", d.key, n);

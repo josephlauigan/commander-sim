@@ -137,12 +137,12 @@ pub fn token_left(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 }
 
 // ------------------------------------------------------------------ goad
-/// the player goading m, while the goad lasts (until that player's next turn)
-fn goaded_by(g: &Game, m: PermId) -> Option<PlayerId> {
+/// the player goading m, while the goad lasts (until that player's next turn, or for the rest of the game: stamp -1)
+pub fn goaded_by(g: &Game, m: PermId) -> Option<PlayerId> {
     if let Some(Val::List(v)) = g.perm(m).data.get(DataKey::Goaded)
         && let (Some(Val::Player(q)), Some(Val::Int(t))) = (v.first(), v.get(1))
         && g.player(*q).alive
-        && g.player(*q).turns as i64 == *t
+        && (*t == -1 || g.player(*q).turns as i64 == *t)
     {
         return Some(*q);
     }
@@ -156,11 +156,6 @@ fn goaded_by(g: &Game, m: PermId) -> Option<PlayerId> {
         .then_some(x.owner)
         .filter(|&q| g.player(q).alive)
     })
-}
-
-fn goad(g: &mut Game, goader: PlayerId, m: PermId) {
-    let turns = g.player(goader).turns as i64;
-    g.perm_mut(m).data.set(DataKey::Goaded, Val::List(vec![Val::Player(goader), Val::Int(turns)]));
 }
 
 /// combat::combat: goaded creatures attack if able, and a player other than the goader if able
@@ -649,7 +644,7 @@ fn grenzo_damage(g: &mut Game, src: Src, p: PlayerId, _a: PermId, d: PlayerId, _
             g.player_mut(o).impulse.push(c);
         }
     } else if let Some(t) = best.filter(|&t| on_bf(g, t)) {
-        goad(g, o, t);
+        crate::engine::control::goad(g, o, t, crate::engine::control::GoadFor::NextTurn);
         crate::glog!(g, "    {} is goaded by {}", g.perm(t).name, g.player(o).name);
     }
     Ok(())

@@ -14,8 +14,11 @@
 //! | combat.rs | ais.py: combat |
 //! | turn.rs | ais.py: lands, upkeep, end step, the turn, mulligans, a game |
 
+pub mod altcost;
 pub mod cast;
 pub mod combat;
+pub mod control;
+pub mod dungeon;
 pub mod hooks;
 pub mod life;
 pub mod mana;

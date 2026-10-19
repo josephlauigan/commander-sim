@@ -145,7 +145,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
 }
 
 fn type_ok(g: &Game, m: PermId, t: &str) -> Option<bool> {
-    let ty = g.perm(m).cd.map(|c| g.db.get(c).types);
+    let ty = g.perm(m).cd.map(|_| crate::engine::values::ptypes(g, m));
     let has_t = |x: Types| ty.is_some_and(|t| t.has(x));
     let cre = g.is_creature(m);
     Some(match t {
@@ -1321,13 +1321,40 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
         return (dp, dt);
     }
     let cre = g.is_creature(m);
-    for (q, src, ab, i) in statics(g, "anthem") {
-        if let Ability::Static { pow, tgh, filter, .. } = &ab[i]
-            && cre
-            && matches(g, q, m, filter.as_ref(), Some(src))
-        {
-            dp += pow.unwrap_or(0);
-            dt += tgh.unwrap_or(0);
+    // one pass over the statics of the three kinds that change power and toughness (anthem, equip_bonus,
+    // bma_anthem); the sums do not depend on the order
+    let owner = x.owner;
+    for q in g.players.iter().filter(|q| q.alive) {
+        for &src in &q.perms {
+            let s = g.perm(src);
+            let Some(cd) = s.cd else { continue };
+            if s.phased || s.owner != q.id {
+                continue;
+            }
+            for a in g.db.get(cd).abilities.iter() {
+                let Ability::Static { kind, pow, tgh, filter, .. } = a else { continue };
+                match kind.as_str() {
+                    "anthem" => {
+                        if cre && matches(g, q.id, m, filter.as_ref(), Some(src)) {
+                            dp += pow.unwrap_or(0);
+                            dt += tgh.unwrap_or(0);
+                        }
+                    }
+                    "equip_bonus" => {
+                        if s.attached == Some(m) {
+                            dp += pow.unwrap_or(0);
+                            dt += tgh.unwrap_or(0);
+                        }
+                    }
+                    "bma_anthem" => {
+                        if s.plus >= 7 && cre && owner == q.id {
+                            dp += 5; // Beastmaster Ascension with 7+ quest counters
+                            dt += 5;
+                        }
+                    }
+                    _ => {}
+                }
+            }
         }
     }
     if let Some((bp, bt)) = crate::impls::cloud::base_pt(g, m) {
@@ -1337,20 +1364,6 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
     let shaped = crate::impls::cloud::steelshaper_bonus(g, m); // Auriok Steelshaper
     dp += shaped;
     dt += shaped;
-    for (_, src, ab, i) in statics(g, "equip_bonus") {
-        if let Ability::Static { pow, tgh, .. } = &ab[i]
-            && g.perm(src).attached == Some(m)
-        {
-            dp += pow.unwrap_or(0);
-            dt += tgh.unwrap_or(0);
-        }
-    }
-    for (q, src, _, _) in statics(g, "bma_anthem") {
-        if g.perm(src).plus >= 7 && cre && x.owner == q {
-            dp += 5; // Beastmaster Ascension with 7+ quest counters
-            dt += 5;
-        }
-    }
     if let Some(cd) = x.cd {
         for a in g.db.get(cd).abilities.iter() {
             if let Ability::Static { kind, per, pow, tgh, base0, .. } = a
@@ -1837,6 +1850,12 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     let Some(cd) = g.perm(src).cd else { return Ok(false) };
     let ab = abilities(g, cd);
     let Ability::Activated { cost, effects, .. } = &ab[idx as usize] else { return Ok(false) };
+    if g.locks_used
+        && !effects.iter().all(|e| e.kind == "add_mana")
+        && (crate::engine::cast::abilities_locked(g, p) || crate::engine::cast::split_second_up(g))
+    {
+        return Ok(false); // Abeyance, split second: no non-mana abilities
+    }
     if !g.perm(src).on_bf || g.perm(src).owner != p || !pay_ability_cost(g, p, src, cost, false)? {
         return Ok(false);
     }

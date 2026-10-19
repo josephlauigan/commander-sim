@@ -22,6 +22,7 @@ pub mod plans;
 pub mod pool;
 pub mod search;
 pub mod seph;
+pub mod t6_table;
 pub mod tape;
 pub mod topdeck;
 pub mod veyran;

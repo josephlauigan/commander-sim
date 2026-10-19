@@ -71,6 +71,18 @@ fn tag_colors(v: &str, ident: Colors) -> Colors {
     }
 }
 
+/// Blood Moon / Magus of the Moon make nonbasic land `l` a plain Mountain: it loses its other land types and every
+/// ability (Ancient Tomb's damage, Urza's Saga's chapters, manlands, utility abilities, enters-tapped rules) and
+/// taps for {R} only. Cheap: a basic or a game with no hooked card answers at once.
+pub fn moon_land(g: &Game, l: LandId) -> bool {
+    moon_card(g, g.land(l).cd)
+}
+
+/// the same for a land card that is about to enter
+pub fn moon_card(g: &Game, cd: CardId) -> bool {
+    !g.hooks.is_empty() && !BASIC_NAMES.contains(&&*g.db.get(cd).name) && cardcode::blood_moon(g)
+}
+
 /// what land L taps for, the board-wide checks (Blood Moon, Dryad of the Ilysian Grove) already made
 fn land_cols(g: &Game, p: PlayerId, l: LandId, anyc: bool, moon: bool, dryad: bool) -> Colors {
     let d = g.db.get(g.land(l).cd);
@@ -111,23 +123,32 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             continue;
         }
         let t = &g.db.get(land.cd).tags;
-        if t.has(Tag::Workshop) && !art {
+        // Blood Moon: a plain Mountain with no abilities of its own (the board-wide check was made above)
+        let plain = moon && !BASIC_NAMES.contains(&&*g.db.get(land.cd).name);
+        if !plain && t.has(Tag::Workshop) && !art {
             continue; // Mishra's Workshop: artifact spells only
         }
-        if t.has(Tag::Tomb) && pl.life <= 2 {
+        if !plain && t.has(Tag::Tomb) && pl.life <= 2 {
             continue; // Ancient Tomb's 2 damage would kill you
         }
-        let mut amt = t.int(Tag::Amt).unwrap_or(1);
-        if let Some(n) = cardcode::dyn_mana_land(g, p, l) {
+        let mut amt = if plain { 1 } else { t.int(Tag::Amt).unwrap_or(1) };
+        if !plain && let Some(n) = cardcode::dyn_mana_land(g, p, l) {
             amt = n as i32;
         }
         if hooked {
             amt += hooks::total_land_mana(g, p, l);
         }
-        u.push(Unit { src: Source::Land(l), cols: land_cols(g, p, l, anyc, moon, dryad), amt: amt.max(0) as u32 });
+        let mut cols = land_cols(g, p, l, anyc, moon, dryad);
+        if hooked && amt >= 2 && hooks::land_colorless(g, p, l, amt as u32) {
+            cols = Colors::NONE; // Damping Sphere: one {C} instead of any other type and amount
+            amt = 1;
+        }
+        u.push(Unit { src: Source::Land(l), cols, amt: amt.max(0) as u32 });
     }
     let rite = has(g, p, Tag::Rite);
     let no_art_mana = hooked && hooks::total_count(g, Event::NoArtifactMana, p) != 0;
+    // Shang-Chi, Tyvar: creature mana abilities work while summoning sick (checked lazily)
+    let ahaste = || crate::impls::t6_legends1b::ability_haste(g, p);
     for &m in &pl.perms {
         let x = g.perm(m);
         if x.tapped || x.phased {
@@ -137,9 +158,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             continue; // Arrest, Encrust: no mana abilities either
         }
         let Some(c) = x.cd else {
-            if rite && !x.sick {
+            if rite && (!x.sick || ahaste()) {
                 u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
-            } else if let Some(Val::Str(cols)) = x.data.get(DataKey::Manatok).filter(|_| !x.sick) {
+            } else if let Some(Val::Str(cols)) = x.data.get(DataKey::Manatok).filter(|_| !x.sick || ahaste()) {
                 u.push(Unit { src: Source::Perm(m), cols: Colors::from_letters(cols), amt: 1 });
             } else if x.ttypes.contains(&"scion") || x.ttypes.contains(&"spawn") {
                 u.push(Unit { src: Source::Scion(m), cols: Colors::NONE, amt: 1 });
@@ -182,7 +203,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if amt > 0 {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
-        } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick) {
+        } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick || ahaste()) {
             if &*d.name == "Giada, Font of Hope" && !g.pay_for.is_some_and(|c| g.db.get(c).has_subtype("angel")) {
                 continue; // spend this mana only to cast an Angel spell
             }
@@ -198,17 +219,19 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if amt > 0 {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
-        } else if rite && d.creature && !x.sick && x.noatk {
+        } else if rite && d.creature && (!x.sick || ahaste()) && x.noatk {
             u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
         }
     }
-    let tre = if no_art_mana { 0 } else { pl.treasures };
+    let tre = if no_art_mana { 0 } else { pl.live_treasures() };
     let bonus = if hooked { hooks::total_count(g, Event::TreasureBonus, p) } else { 0 };
     for _ in 0..tre {
         u.push(Unit { src: Source::Treasure, cols: ident, amt: (1 + bonus).max(0) as u32 });
     }
     if hooked {
         u = adjust_mana(g, p, u);
+    } else {
+        u.extend(cardcode::hand_mana(g, p)); // Spirit Guides need no hooked permanent
     }
     let f = pl.floating;
     let float = |n: u32, src: Source, cols: Colors| (0..n).map(move |_| Unit { src, cols, amt: 1 });
@@ -253,7 +276,7 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
             u.extend(extra);
         }
     }
-    u.extend(cardcode::hand_mana(g, p)); // Elvish Spirit Guide
+    u.extend(cardcode::hand_mana(g, p)); // Spirit Guides (also added in `units` when nothing is hooked)
     u
 }
 
@@ -261,7 +284,7 @@ fn is_pain(g: &Game, src: Source) -> bool {
     match src {
         Source::Land(l) => {
             let t = &g.db.get(g.land(l).cd).tags;
-            t.has(Tag::Tomb) || t.has(Tag::Pain)
+            (t.has(Tag::Tomb) || t.has(Tag::Pain)) && !moon_land(g, l)
         }
         Source::Perm(m) => g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Pain)),
         _ => false,
@@ -332,9 +355,22 @@ pub fn can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 /// p pays the cost; false (nothing paid) if it can't
 pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -> Res<bool> {
     if crate::human::is_human(g, p) {
-        return Ok(crate::human::mana::pay_from_pool(g, p, generic, pips).is_none());
+        let ok = crate::human::mana::pay_from_pool(g, p, generic, pips).is_none();
+        if ok {
+            if !g.spent_keep {
+                g.mana_spent = 0;
+                g.mana_colored = false;
+            }
+            g.mana_spent += generic + pips.chars().count() as u32; // the pool does not say which mana paid
+            g.mana_colored |= !pips.is_empty();
+        }
+        return Ok(ok);
     }
     g.treasure_paid = 0;
+    if !g.spent_keep {
+        g.mana_spent = 0;
+        g.mana_colored = false;
+    }
     let u = mana_units(g, p, convoke);
     let Some((used, col)) = plan_pay(g, &u, generic, pips) else { return Ok(false) };
     for (i, w) in u.iter().enumerate() {
@@ -348,6 +384,8 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 /// Use unit w for n mana; col: the coloured pips it paid for (painlands hurt only then). Taps or sacrifices the
 /// source and runs its side effects: Treasures, floating mana, on-tap triggers, pain. Python's `spend_unit`.
 pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res {
+    g.mana_spent += n; // the record of mana spent on the spell being paid for
+    g.mana_colored |= !w.cols.is_empty();
     match w.src {
         Source::Treasure => {
             let st = g.turn_stamp();
@@ -377,9 +415,12 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         Source::Land(l) => {
             g.land_mut(l).tapped = true;
             g.tap_cols = Colors::from_letters(col);
-            cardcode::on_tap_land(g, p, l, n)?;
+            if !moon_land(g, l) {
+                cardcode::on_tap_land(g, p, l, n)?;
+            }
             let t = &g.db.get(g.land(l).cd).tags;
-            let (tomb, pain) = (t.has(Tag::Tomb), t.has(Tag::Pain));
+            let plain = moon_land(g, l); // Blood Moon: no Tomb damage, no pain
+            let (tomb, pain) = (!plain && t.has(Tag::Tomb), !plain && t.has(Tag::Pain));
             if tomb {
                 lose_life(g, p, 2, Some(p), "other", Some(true))?; // Ancient Tomb deals 2 damage to you
             }

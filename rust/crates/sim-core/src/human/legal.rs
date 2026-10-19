@@ -132,9 +132,9 @@ pub fn check_land(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     None
 }
 
-pub fn instant_speed(g: &Game, c: CardId) -> bool {
+pub fn instant_speed(g: &Game, p: PlayerId, c: CardId) -> bool {
     let d = g.db.get(c);
-    d.instant || d.tag(Tag::Flash) || d.has_kw("flash")
+    d.instant || d.tag(Tag::Flash) || d.has_kw("flash") || cast::grants_flash(g, p, c)
 }
 
 /// the colours of c's Phyrexian mana symbols ({B/P}: 'B'), from its printed mana cost; '' if none
@@ -209,7 +209,7 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
     if name == "Return the Favor" {
         return Some("Return the Favor targets a spell: cast it in response to one.".into());
     }
-    if !instant_speed(g, c) && name != "Necromancy" {
+    if !instant_speed(g, p, c) && name != "Necromancy" {
         // Necromancy: "as though it had flash"
         if let Some(why) = sorcery_timing(g, p) {
             return Some(why.replace("do that", &format!("cast {name}")));
@@ -444,7 +444,7 @@ pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Optio
     if engine::values::silenced(g, p) {
         return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
     }
-    if !g.hooks.is_empty() && !cast::castable(g, p, ctr, "hand") {
+    if g.cast_checks() && !cast::castable(g, p, ctr, "hand") {
         return Some(format!("Something on the battlefield stops you casting {} right now.", nm(g, ctr)));
     }
     let (gn, pips) = engine::stack::counter_cost(g, ctr, Some(spell), Some(p));
@@ -518,7 +518,7 @@ pub fn check_cast_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     let Some((kind, gn, pips)) = gy_mode(g, p, c) else {
         return Some(format!("You can't cast {name} from your graveyard right now."));
     };
-    if !instant_speed(g, c)
+    if !instant_speed(g, p, c)
         && let Some(why) = sorcery_timing(g, p)
     {
         return Some(why.replace("do that", &format!("cast {name}")));

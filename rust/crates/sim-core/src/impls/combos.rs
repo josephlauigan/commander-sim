@@ -14,19 +14,21 @@ use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::legal_targets;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{has_type, untargetable};
 use crate::engine::zones::{Enter, die, draw, enter, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, Step, Val};
+use crate::state::{Ctx, DataKey, Game, Step as TurnStep, Val};
 use crate::tag::Tag;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 
 /// what a combo's `ready` finds: (ready, its key permanents, the cards still to cast from hand)
-type Ready = (bool, Vec<PermId>, Vec<CardId>);
+pub type Ready = (bool, Vec<PermId>, Vec<CardId>);
 
 const NOT_READY: fn() -> Ready = || (false, vec![], vec![]);
 
@@ -36,16 +38,75 @@ const NOT_READY: fn() -> Ready = || (false, vec![], vec![]);
 pub struct Combo {
     pub name: &'static str,
     pub groups: &'static [&'static [&'static str]],
-    ready: fn(&Game, PlayerId) -> Ready,
-    mana: (u32, &'static str),
-    finish: Option<fn(&mut Game, PlayerId) -> Res>,
-    xcost: &'static [(&'static str, u32)],
+    pub ready: fn(&Game, PlayerId) -> Ready,
+    pub mana: (u32, &'static str),
+    pub finish: Option<fn(&mut Game, PlayerId) -> Res>,
+    pub xcost: &'static [(&'static str, u32)],
+    /// the steps of the line, each with its own answer window (empty: the old single window at the end)
+    pub steps: &'static [Step],
 }
 
 impl Combo {
     fn x_for(&self, name: &str) -> u32 {
         self.xcost.iter().find(|x| x.0 == name).map_or(0, |x| x.1)
     }
+}
+
+/// how the opponents may answer a step of a combo
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum StepKind {
+    /// a spell: `run` casts it (normal counter window, as any spell); false if it was countered or can't be cast
+    Spell,
+    /// a triggered ability: its cost is paid, it goes on the stack with `src` as its source (the ability-answer
+    /// path: Ertai, Louisoix, Tidebinder, Stifle-likes), and `run` is its effect if it resolves
+    Trigger,
+    /// an activated ability: as Trigger (`ability_window`)
+    Ability,
+    /// a permanent that must survive: `run` happens, then each opponent may remove or bounce one of `keys` at instant
+    /// speed (`interrupted`)
+    Permanent,
+    /// something the real engine does with its own windows (a cast Godo's enter trigger, a copy's enters effect):
+    /// `run` makes it happen and answers whether it came out as the line needs
+    Engine,
+}
+
+/// one step of a combo's line (see `Combo::steps`): an answered step stops the combo
+#[derive(Clone, Copy)]
+pub struct Step {
+    pub label: &'static str,
+    pub kind: StepKind,
+    /// Trigger / Ability: the permanent the ability belongs to
+    pub src: fn(&Game, PlayerId) -> Option<PermId>,
+    /// Trigger / Ability: the cost, paid before the ability goes on the stack
+    pub pay: (u32, &'static str),
+    pub run: fn(&mut Game, PlayerId) -> Res<bool>,
+    /// Permanent: what opponents may answer, looked up after `run`
+    pub keys: fn(&Game, PlayerId) -> Vec<PermId>,
+}
+
+pub fn no_src(_g: &Game, _p: PlayerId) -> Option<PermId> {
+    None
+}
+
+pub fn no_keys(_g: &Game, _p: PlayerId) -> Vec<PermId> {
+    vec![]
+}
+
+pub fn done(_g: &mut Game, _p: PlayerId) -> Res<bool> {
+    Ok(true)
+}
+
+/// every modeled combo, in order: `BASE` (Python's), then each Tier 6 module's slice. A new `t6_combos_*.rs` module
+/// exports `pub static COMBOS: [Combo; N]` and is chained here (the index of a combo is its place in this list)
+pub fn all() -> &'static [&'static Combo] {
+    static ALL: LazyLock<Vec<&'static Combo>> = LazyLock::new(|| {
+        BASE.iter()
+            .chain(super::t6_combos_godo::COMBOS.iter())
+            .chain(super::t6_combos_t6::COMBOS.iter())
+            .chain(super::t6_combos_extra::COMBOS.iter())
+            .collect()
+    });
+    &ALL
 }
 
 // ------------------------------------------------------------------ the pieces
@@ -61,7 +122,7 @@ const UNDYING_LOOP: &[&str] =
 const STAFF_OUTLETS: &[&str] = &["Skirk Prospector", "Goblin Bombardment", "Ashnod's Altar", "Phyrexian Altar"];
 
 /// combos.COMBOS, in Python's order
-pub static COMBOS: [Combo; 14] = [
+pub static BASE: [Combo; 14] = [
     Combo {
         name: "Kiki-Jiki + Zealous Conscripts / Felidar / Resto",
         groups: &[&[KIKI, FABLE], KIKI_TARGETS],
@@ -69,6 +130,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Isochron Scepter + Dramatic Reversal",
@@ -77,6 +139,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Power Artifact / Rings of Brighthearth + Monolith",
@@ -85,6 +148,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Kinnan + Basalt Monolith",
@@ -93,6 +157,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &super::t6_combos_extra::KINNAN_BASALT_STEPS,
     },
     Combo {
         name: "Kinnan + Freed from the Real / Pemmin's Aura",
@@ -101,6 +166,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Aluren + Chulane + a bouncing creature",
@@ -109,6 +175,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Sanguine Bond + Exquisite Blood",
@@ -117,14 +184,16 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Thassa's Oracle + Demonic Consultation / Tainted Pact",
         groups: &[&["Thassa's Oracle"], &["Demonic Consultation", "Tainted Pact"]],
         ready: oracle,
         mana: (0, ""),
-        finish: None,
+        finish: Some(super::t6_combos_extra::oracle_finish),
         xcost: &[],
+        steps: &super::t6_combos_extra::ORACLE_STEPS,
     },
     Combo {
         name: "Helm of the Host + Combat Celebrant",
@@ -133,6 +202,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Gravecrawler + Phyrexian Altar + a Zombie + a death payoff",
@@ -141,6 +211,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Yawgmoth + undying loop + a death payoff",
@@ -149,6 +220,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: Some(yawg_finish),
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Krenko + Thornbite Staff + a sacrifice outlet",
@@ -157,6 +229,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: None,
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Karn, the Great Creator + Mycosynth Lattice",
@@ -165,6 +238,7 @@ pub static COMBOS: [Combo; 14] = [
         mana: (0, ""),
         finish: Some(lock_lattice),
         xcost: &[],
+        steps: &[],
     },
     Combo {
         name: "Heliod, Sun-Crowned + Walking Ballista",
@@ -173,18 +247,37 @@ pub static COMBOS: [Combo; 14] = [
         mana: (1, "W"),
         finish: None,
         xcost: &[("Walking Ballista", 2)],
+        steps: &[],
     },
 ];
 
+/// the first group of a "quiet" combo: a line that is offered and played (options, steps, answers) but whose cards are
+/// not registered as pieces (no tutor wish lists, discard keeps, piece threats or deck progress: a deck outside Tier 6
+/// that happens to play Sol Ring, Underworld Breach or Goblin Welder must not change). The sentinel is no card, so
+/// `deck_combos` and `missing_pieces` never see the combo either.
+pub const QUIET: &[&str] = &["~quiet"];
+
+pub fn quiet(c: &Combo) -> bool {
+    c.groups.first().is_some_and(|g| *g == QUIET)
+}
+
 /// combos.PIECES: is this card name a piece of a modeled combo?
 pub fn is_piece_name(name: &str) -> bool {
-    COMBOS.iter().any(|c| c.groups.iter().any(|grp| grp.contains(&name)))
+    // a set built once: this runs for every permanent each time the AI values a board
+    static SET: std::sync::OnceLock<std::collections::HashSet<&'static str>> = std::sync::OnceLock::new();
+    SET.get_or_init(|| {
+        all().iter().filter(|c| !quiet(c)).flat_map(|c| c.groups.iter().flat_map(|grp| grp.iter().copied())).collect()
+    })
+    .contains(name)
 }
 
 /// combos.PIECES as card ids (the names in the card database)
 pub fn pieces(g: &Game) -> Vec<CardId> {
     let mut out = vec![];
-    for cmb in &COMBOS {
+    for cmb in all() {
+        if quiet(cmb) {
+            continue;
+        }
         for grp in cmb.groups {
             for n in grp.iter() {
                 if let Some(c) = g.db.id(n)
@@ -250,7 +343,7 @@ fn free_outlet(g: &Game, p: PlayerId, only: Option<&[&str]>) -> Option<PermId> {
 
 /// p's turn, before combat: a combo that wins by attacking needs a combat still to come
 fn precombat(g: &Game, p: PlayerId) -> bool {
-    g.active == Some(p) && matches!(g.step, Step::Start | Step::Main1)
+    g.active == Some(p) && matches!(g.step, TurnStep::Start | TurnStep::Main1)
 }
 
 /// a payoff that drains on each death of a loop. Goblin Bombardment isn't one: it is an outlet (its damage comes
@@ -304,17 +397,36 @@ fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
 /// the index in COMBOS of the first combo whose name contains `part` (tests: Python's
 /// `next(c for c in COMBOS if part in c.name)`)
 pub fn combo_index(part: &str) -> Option<usize> {
-    COMBOS.iter().position(|c| c.name.contains(part))
+    all().iter().position(|c| c.name.contains(part))
 }
 
 /// COMBOS[i].ready(g, p)[0]: p has everything COMBOS[i] needs
 pub fn ready(g: &Game, p: PlayerId, i: usize) -> bool {
-    (COMBOS[i].ready)(g, p).0
+    (all()[i].ready)(g, p).0
 }
 
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
-    let cmb = &COMBOS[i as usize];
+    if !crate::impls::t6_plans::is_t6(g, p) {
+        return attempt_run(g, p, i);
+    }
+    // Tier 6: protection first (Silence / Orim's Chant), then every spell and ability of the line is a win step the
+    // table answers with everything it has
+    let cmb = all()[i as usize];
+    let (ok, _, casts) = (cmb.ready)(g, p);
+    let turns = g.player(p).turns;
+    if ok && affordable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
+        let need = mana_need(g, p, cmb, &casts);
+        crate::ai::t6_table::protect_before_go(g, p, need)?;
+    }
+    g.t6_going = Some(p);
+    let r = attempt_run(g, p, i);
+    g.t6_going = None;
+    r
+}
+
+fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
+    let cmb = all()[i as usize];
     let (ok, keys, casts) = (cmb.ready)(g, p);
     if !ok || !affordable(g, p, cmb, &casts) {
         return Ok(false);
@@ -327,7 +439,12 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     pl.combo_turn = Some((turns, cmb.name));
     pl.stat("combo_attempt", 1);
     pl.milestone.entry("combo").or_insert(turns);
+    crate::t6stats::combo_go(g, p, cmb.name);
+    g.last_counter = None; // unread by the game; the report names the card that stops a line
     crate::glog!(g, "  {} goes for {}", g.player(p).name, cmb.name);
+    if !cmb.steps.is_empty() {
+        return run_steps(g, p, cmb);
+    }
     for (i, &c) in casts.iter().enumerate() {
         // the last pieces are cast normally: they can be countered
         let (gn, pips) = (g.db.get(c).generic, g.db.get(c).pips.to_string());
@@ -335,6 +452,7 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
             if i > 0 {
                 crate::glog!(g, "    ...{} fizzles ({} is gone)", cmb.name, name_of(g, c));
                 g.player_mut(p).stat("combo_stopped", 1);
+                crate::t6stats::combo_stop(g, p, cmb.name, "fizzled");
             }
             return Ok(i > 0); // something already happened: the turn state changed
         }
@@ -349,6 +467,8 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
         if !r? {
             crate::glog!(g, "    ...{} is countered: {} stopped", name_of(g, c), cmb.name);
             g.player_mut(p).stat("combo_stopped", 1);
+            let by = crate::t6stats::last_counter_name(g);
+            crate::t6stats::combo_stop(g, p, cmb.name, &by);
             return Ok(true);
         }
     }
@@ -360,11 +480,75 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     if interrupted(g, p, &keys)? {
         crate::glog!(g, "    ...{} is stopped", cmb.name);
         g.player_mut(p).stat("combo_stopped", 1);
+        let by = crate::t6stats::last_counter_name(g);
+        crate::t6stats::combo_stop(g, p, cmb.name, &by);
         return Ok(true);
     }
     match cmb.finish {
         Some(f) => f(g, p)?,
         None => crate::ai::win(g, p, "combo", Some(!cmb.name.contains("Oracle")))?, // Oracle: an alternate win
+    }
+    if g.over && g.winner == Some(p) {
+        crate::t6stats::combo_win(g, p, cmb.name);
+    }
+    Ok(true)
+}
+
+/// a combo with declared steps: each step is answerable in its own way (`StepKind`); an answered step stops the combo
+/// (the pieces already played stay, and p may go for another line later), and once the last one passes the loop is
+/// executed abstractly
+pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
+    let (gn, pips) = cmb.mana;
+    if gn > 0 || !pips.is_empty() {
+        pay(g, p, gn, pips, false)?;
+    }
+    for (n, st) in cmb.steps.iter().enumerate() {
+        g.last_counter = None;
+        let ok = match st.kind {
+            StepKind::Spell | StepKind::Engine => (st.run)(g, p)?,
+            StepKind::Trigger | StepKind::Ability => {
+                let (cg, cp) = st.pay;
+                if !can_pay(g, p, cg, cp, false) {
+                    false
+                } else {
+                    if cg > 0 || !cp.is_empty() {
+                        pay(g, p, cg, cp, false)?;
+                    }
+                    let src = (st.src)(g, p);
+                    let resolved = if st.kind == StepKind::Trigger {
+                        trigger_window(g, p, src, st.label, Some(6.0))?
+                    } else {
+                        ability_window(g, p, src, st.label, Some(6.0), None)?
+                    };
+                    if resolved && !g.over { (st.run)(g, p)? } else { resolved }
+                }
+            }
+            StepKind::Permanent => {
+                if !(st.run)(g, p)? {
+                    false
+                } else {
+                    let keys: Vec<PermId> = (st.keys)(g, p).into_iter().filter(|&k| g.perm(k).on_bf).collect();
+                    !interrupted(g, p, &keys)?
+                }
+            }
+        };
+        if g.over {
+            return Ok(true);
+        }
+        if !ok {
+            crate::glog!(g, "    ...{} stops at step {} ({})", cmb.name, n + 1, st.label);
+            g.player_mut(p).stat("combo_stopped", 1);
+            let by = crate::t6stats::last_counter_name(g);
+            crate::t6stats::combo_stop(g, p, cmb.name, &by);
+            return Ok(true);
+        }
+    }
+    match cmb.finish {
+        Some(f) => f(g, p)?,
+        None => crate::ai::win(g, p, "combo", Some(true))?,
+    }
+    if g.over && g.winner == Some(p) {
+        crate::t6stats::combo_win(g, p, cmb.name);
     }
     Ok(true)
 }
@@ -402,6 +586,7 @@ fn interrupted(g: &mut Game, p: PlayerId, keys: &[PermId]) -> Res<bool> {
             let (gn, pips) = cost_of(g, q, c);
             pay(g, q, gn, &pips, false)?;
             cast_card(g, q, c, "hand", Ctx { target: Some(tg[0]), ..Ctx::default() })?;
+            g.last_counter = Some(c);
             if !g.perm(tg[0]).on_bf || g.perm(tg[0]).phased {
                 g.player_mut(q).stat("combo_stops_removal", 1);
                 return Ok(true);
@@ -418,6 +603,7 @@ fn interrupted(g: &mut Game, p: PlayerId, keys: &[PermId]) -> Res<bool> {
                 }
                 enter(g, q, c, Enter::default())?;
                 g.player_mut(q).stat("combo_stops_ability", 1);
+                g.last_counter = Some(c);
                 return Ok(true);
             }
         }
@@ -443,13 +629,26 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         return Ok(vec![]); // g.combo_decks: the outside decks
     }
     let mut out = vec![];
-    for (i, cmb) in COMBOS.iter().enumerate() {
-        if !cmb.groups.iter().any(|grp| has_piece(g, p, grp)) {
+    // the names of p's cards in hand and on the battlefield, built once: the same test as `has_piece` for every combo
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for (i, cmb) in all().iter().enumerate() {
+        // a line that starts from the command zone or the library (Godo) has no piece in hand to gate on: ask `ready`
+        if !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)))
+            && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0)
+        {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
         if !ok || !affordable(g, p, cmb, &casts) {
             continue;
+        }
+        if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            continue; // Tier 6: the table can still stop it (or the plan slot says wait)
         }
         let risk = if casts.is_empty() { 0.0 } else { ctr_risk };
         out.push(Opt {
@@ -463,7 +662,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
 
 /// any modeled combo is ready (Ad Nauseam stops there)
 pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
-    COMBOS.iter().any(|cmb| (cmb.ready)(g, p).0)
+    all().iter().any(|cmb| (cmb.ready)(g, p).0)
 }
 
 /// combos.full_deck_names: the cards of p's deck in its library, hand, graveyard and on the battlefield (lands
@@ -480,7 +679,7 @@ fn full_deck_names(g: &Game, p: PlayerId) -> Vec<&str> {
 pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
     let deck = full_deck_names(g, p);
     let mut best: Option<(usize, Vec<&str>)> = None;
-    for cmb in &COMBOS {
+    for cmb in all() {
         if !cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n))) {
             continue;
         }
@@ -509,8 +708,8 @@ pub fn piece_threat(g: &Game, m: PermId) -> f64 {
         return 0.0;
     }
     let p = g.perm(m).owner;
-    for cmb in &COMBOS {
-        if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
+    for cmb in all() {
+        if quiet(cmb) || !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
         let others: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !grp.contains(&name)).collect();
@@ -531,8 +730,8 @@ pub fn combo_imp(g: &Game, p: PlayerId, c: CardId) -> f64 {
     if !is_piece_name(name) {
         return 0.0;
     }
-    for cmb in &COMBOS {
-        if !cmb.groups.iter().any(|grp| grp.contains(&name)) {
+    for cmb in all() {
+        if quiet(cmb) || !cmb.groups.iter().any(|grp| grp.contains(&name)) {
             continue;
         }
         let others: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !grp.contains(&name)).collect();
@@ -561,7 +760,7 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
     let pl = g.player(q);
     let mut names: Vec<&str> = pl.deck_names.iter().map(|&c| name_of(g, c)).collect();
     names.extend(pl.commanders().map(|c| name_of(g, c))); // `| {q.cmd.name}`
-    let v: Vec<usize> = COMBOS
+    let v: Vec<usize> = all()
         .iter()
         .enumerate()
         .filter(|(_, c)| c.groups.iter().all(|grp| grp.iter().any(|n| names.contains(n))))
@@ -592,7 +791,7 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
     }
     let mut best = f64::NEG_INFINITY;
     for i in cmbs {
-        let c = &COMBOS[i];
+        let c = all()[i];
         let n = c.groups.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
         best = best.max(n as f64 / c.groups.len() as f64);
     }
@@ -814,6 +1013,16 @@ fn oracle_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     let x = oracle_devotion(g, p);
     if x >= g.player(p).library.len() {
+        // the win is a triggered ability on the stack (importance 9): the table can counter it
+        if !crate::engine::stack::trigger_window(
+            g,
+            p,
+            Some(src),
+            "look at the top cards: win with an empty library",
+            Some(9.0),
+        )? {
+            return Ok(());
+        }
         return crate::ai::win(g, p, "combo", Some(false));
     }
     let lib = &mut g.player_mut(p).library;
@@ -986,4 +1195,133 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     oracle.prio = Some(oracle_prio);
     *oracle = oracle.at_once(crate::hooks::Event::Etb); // no trigger window: it runs as it enters
     Ok(())
+}
+
+// ------------------------------------------------------------------ Tier 6 table reading (ai/t6_table.rs)
+/// a line's real piece groups (a quiet line's first group is the `QUIET` marker, not a card)
+fn real_groups(c: &Combo) -> &[&'static [&'static str]] {
+    if quiet(c) { &c.groups[1..] } else { &c.groups[..] }
+}
+
+/// a piece the table can see is live: on q's battlefield, or one of q's commanders in the command zone that q can
+/// cast now from its open mana (a commander is public, but a line of one commander alone is not "ready" while it
+/// can't be cast)
+fn public_piece(g: &Game, q: PlayerId, grp: &[&str]) -> bool {
+    let pl = g.player(q);
+    grp.iter().any(|n| {
+        on_bf(g, q, n).is_some()
+            || pl.commanders().any(|c| {
+                pl.cmd_zone_of(c) && name_of(g, c) == *n && {
+                    let (gn, pips) = cost_of(g, q, c);
+                    can_pay(g, q, gn + pl.tax_of(c), &pips, false)
+                }
+            })
+    })
+}
+
+/// How far q's best modeled line is, read from public information only (opponents can't see q's hand): (the largest
+/// fraction of its piece groups on the battlefield, whether some line has every group public). Only lines whose every
+/// group is somewhere in q's cards count; quiet lines count too (this is the Tier 6 reading, which needs them).
+pub fn line_progress(g: &Game, q: PlayerId) -> (f64, bool) {
+    let (mut best, mut ready) = (0.0f64, false);
+    for i in lines_of(g, q).iter().copied() {
+        let grps = real_groups(all()[i]);
+        let on = grps.iter().filter(|grp| grp.iter().any(|n| on_bf(g, q, n).is_some())).count();
+        best = best.max(on as f64 / grps.len() as f64);
+        ready |= grps.iter().all(|grp| public_piece(g, q, grp));
+    }
+    (best, ready)
+}
+
+/// How far the card named `name` would take q's best line if it resolved now: the largest fraction of a line's piece
+/// groups that would be on the battlefield (or a castable commander) with it, over the lines whose groups include it
+/// (quiet lines too). 0.0 when it is no piece of q's lines. Public information only: q's hand is not read.
+pub fn piece_gain(g: &Game, q: PlayerId, name: &str) -> f64 {
+    let mut best = 0.0f64;
+    for i in lines_of(g, q).iter().copied() {
+        let grps = real_groups(all()[i]);
+        if !grps.iter().any(|grp| grp.contains(&name)) {
+            continue;
+        }
+        let on = grps.iter().filter(|grp| grp.contains(&name) || public_piece(g, q, grp)).count();
+        best = best.max(on as f64 / grps.len() as f64);
+    }
+    best
+}
+
+/// the indices in `all()` of the lines whose every piece group has a card in q's deck (or commanders), cached per
+/// deck key
+fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
+    thread_local! {
+        static CACHE: RefCell<HashMap<(&'static str, usize), std::rc::Rc<Vec<usize>>>> = RefCell::new(HashMap::new());
+    }
+    let pl = g.player(q);
+    let key = (pl.key, pl.deck_names.len());
+    if let Some(v) = CACHE.with(|c| c.borrow().get(&key).cloned()) {
+        return v;
+    }
+    let mut deck: std::collections::HashSet<&str> = pl.deck_names.iter().map(|&c| name_of(g, c)).collect();
+    deck.extend(pl.commanders().map(|c| name_of(g, c)));
+    let v: Vec<usize> = all()
+        .iter()
+        .enumerate()
+        .filter(|(_, cmb)| {
+            !real_groups(cmb).is_empty() && real_groups(cmb).iter().all(|grp| grp.iter().any(|n| deck.contains(n)))
+        })
+        .map(|(i, _)| i)
+        .collect();
+    let v = std::rc::Rc::new(v);
+    CACHE.with(|c| c.borrow_mut().insert(key, v.clone()));
+    v
+}
+
+/// the mana p needs for combo `cmb` (the loop's mana plus the spells still to cast): (generic, pips)
+pub fn mana_need(g: &Game, _p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, String) {
+    (cmb.mana.0 + cast_generic(g, cmb, casts), cast_pips(g, cmb, casts))
+}
+
+/// how many answerable steps the line has: its declared steps that are not plain permanents, else its spells to cast
+pub fn answerable_steps(cmb: &Combo, casts: &[CardId]) -> usize {
+    if cmb.steps.is_empty() {
+        casts.len().max(1)
+    } else {
+        cmb.steps.iter().filter(|s| s.kind != StepKind::Engine).count().max(1)
+    }
+}
+
+// ------------------------------------------------------------------ windows for lines played out by normal actions
+/// A Tier 6 player's action with `acting` (an equip, an activation, a trigger such as Helm of the Host's) that works on a
+/// piece of one of its modeled lines whose every piece group is already on the battlefield is a win step like any step
+/// of `attempt`: each opponent may answer a piece of the line with instant-speed removal or bounce. Normal play never
+/// goes through `attempt`, so without this nobody could answer Godo + Helm of the Host played out turn by turn.
+/// True: the line was stopped, the action does not happen. Not used while the player is in `attempt` (its steps have
+/// their own windows).
+pub fn normal_play_window(g: &mut Game, p: PlayerId, acting: PermId) -> Res<bool> {
+    if g.over || g.trig_probe || g.t6_going == Some(p) || !crate::impls::t6_plans::is_t6(g, p) || !g.perm(acting).on_bf {
+        return Ok(false);
+    }
+    let Some(cd) = g.perm(acting).cd else { return Ok(false) };
+    let an = name_of(g, cd).to_string();
+    let mut found: Option<(&'static str, Vec<PermId>)> = None;
+    for i in lines_of(g, p).iter().copied() {
+        let grps = real_groups(all()[i]);
+        if !grps.iter().any(|grp| grp.contains(&an.as_str())) {
+            continue;
+        }
+        let keys: Vec<PermId> = grps.iter().filter_map(|grp| grp.iter().find_map(|n| on_bf(g, p, n))).collect();
+        if keys.len() == grps.len() {
+            found = Some((all()[i].name, keys));
+            break;
+        }
+    }
+    let Some((line, keys)) = found else { return Ok(false) };
+    g.last_counter = None;
+    if interrupted(g, p, &keys)? {
+        crate::glog!(g, "    ...{} is stopped", line);
+        g.player_mut(p).stat("combo_stopped", 1);
+        let by = crate::t6stats::last_counter_name(g);
+        crate::t6stats::combo_stop(g, p, line, &by);
+        return Ok(true);
+    }
+    Ok(false)
 }

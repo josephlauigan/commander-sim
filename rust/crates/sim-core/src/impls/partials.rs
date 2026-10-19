@@ -424,13 +424,18 @@ pub fn bestow_fall(g: &mut Game, m: PermId) -> Res {
 }
 
 // ======================================================== Elvish Spirit Guide; special mana units
-/// partials.hand_mana: mana from cards in hand (Elvish Spirit Guide: exiled for {G})
+/// Cards that can be exiled from hand for one mana of a colour (card name, colour letter): the Spirit Guides.
+const HAND_MANA: &[(&str, &str)] = &[("Elvish Spirit Guide", "G"), ("Simian Spirit Guide", "R")];
+
+/// partials.hand_mana: mana from cards in hand exiled as the cost (data-driven: `HAND_MANA`)
 pub fn hand_mana(g: &Game, p: PlayerId) -> Vec<Unit> {
     g.player(p)
         .hand
         .iter()
-        .filter(|&&c| &*g.db.get(c).name == "Elvish Spirit Guide")
-        .map(|&c| Unit { src: Source::HandCard(c), cols: Colors::from_letters("G"), amt: 1 })
+        .filter_map(|&c| {
+            let n = &*g.db.get(c).name;
+            HAND_MANA.iter().find(|h| h.0 == n).map(|h| Unit { src: Source::HandCard(c), cols: Colors::from_letters(h.1), amt: 1 })
+        })
         .collect()
 }
 
@@ -574,7 +579,7 @@ fn jaxis_blitz(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
     }])
 }
 
-fn jaxis_blitz_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub fn jaxis_blitz_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
         return Ok(false);
@@ -2044,7 +2049,12 @@ fn hope_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let label = format!("{} can't cast noncreature spells", pname(g, d));
     if crate::engine::stack::ability_window_card(g, p, cd, &label, None, None)? {
         let t = g.player(p).turns;
-        g.player_mut(d).hope_lock = Some((p, t));
+        crate::engine::cast::add_cast_lock(
+            g,
+            d,
+            crate::state::LockKind::Noncreature,
+            crate::state::LockEnd::TurnOf(p, t), // until Hope's controller's next turn
+        );
     }
     Ok(true)
 }
@@ -2871,6 +2881,12 @@ fn ring_burden(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
+/// Tier 6 AI: may The One Ring be tapped with `b` burden counters on it? Three upkeeps of the larger burden plus 10
+/// life must remain. Other tiers and humans: always.
+pub fn ring_life_ok(g: &Game, p: PlayerId, b: i32) -> bool {
+    !(super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) && g.player(p).life <= 3 * (b + 1) + 10)
+}
+
 /// {T}: a burden counter, draw that many
 fn ring_draw(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || g.perm(src).tapped {
@@ -2878,6 +2894,11 @@ fn ring_draw(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Ve
     }
     let b = burden(g, src) as i32;
     if g.player(p).life - (b + 1) * 2 < 12 && b >= 2 {
+        return Ok(vec![]);
+    }
+    // Tier 6: each tap adds a burden counter, so the upkeep loss grows by one a turn; keep three turns of it plus 10
+    // life in hand (a Dack at 3 life tapped the Ring until it died)
+    if !ring_life_ok(g, p, b) {
         return Ok(vec![]);
     }
     Ok(vec![opt_ability(2.0 + b as f64, "The One Ring".into(), src, ring_go, 0)])
@@ -3158,6 +3179,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     at_once(c, Event::Upkeep, false);
     c.prio = Some(draco_prio);
     r.card(db, "Elvish Spirit Guide")?.prio = Some(prio_0);
+    r.card(db, "Simian Spirit Guide")?.prio = Some(prio_0);
     let c = r.card(db, "Enter the Infinite")?;
     c.resolve = Some(eti);
     c.prio = Some(prio_70);

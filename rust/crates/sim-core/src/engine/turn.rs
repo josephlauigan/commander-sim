@@ -29,6 +29,9 @@ fn cards_named(g: &Game, p: PlayerId, names: &[&str]) -> bool {
 pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
     let d = g.db.get(cd);
     let t = &d.tags;
+    if crate::engine::mana::moon_card(g, cd) {
+        return false; // Blood Moon: a Mountain with no "enters tapped" of its own (not a fetch land either)
+    }
     if t.has(Tag::F) {
         return true;
     }
@@ -49,16 +52,21 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
     false
 }
 
+/// the basic land types of a land on the battlefield: under Blood Moon a nonbasic land is only a Mountain
+fn land_types(g: &Game, l: LandId) -> crate::cards::Colors {
+    if crate::engine::mana::moon_land(g, l) { crate::cards::Colors::from_letters("R") } else { g.db.get(g.land(l).cd).land_types }
+}
+
 fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool {
     let pl = g.player(p);
     let lt = |l: LandId| g.db.get(g.land(l).cd);
     match rule {
-        EnterRule::Control(ts) => pl.lands.iter().any(|&l| lt(l).land_types.intersects(ts)),
+        EnterRule::Control(ts) => pl.lands.iter().any(|&l| land_types(g, l).intersects(ts)),
         EnterRule::Fewer(n) => pl.lands.len() as u32 <= n,
         EnterRule::More(n) => pl.lands.len() as u32 >= n,
         EnterRule::Basics(n) => pl.lands.iter().filter(|&&l| lt(l).basic).count() as u32 >= n,
         EnterRule::Opponents(n) => g.opps(p).count() as u32 >= n,
-        EnterRule::TypesMore(t, n) => pl.lands.iter().filter(|&&l| lt(l).land_types.intersects(t)).count() as u32 >= n,
+        EnterRule::TypesMore(t, n) => pl.lands.iter().filter(|&&l| land_types(g, l).intersects(t)).count() as u32 >= n,
         EnterRule::Reveal(ts) => {
             pl.hand.iter().any(|&c| c != cd && g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
         }
@@ -206,7 +214,8 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     let rule = g.db.get(c).enters_rule;
     let l = match rule {
         Some(EnterRule::Pay(n))
-            if !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
+            if !crate::engine::mana::moon_card(g, c)
+                && !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
         {
             let paid = if crate::human::is_human(g, p) {
                 let prompt = format!("{}: pay {n} life so it enters untapped?", g.db.get(c).name);
@@ -230,7 +239,8 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     cardcode::land_etb(g, p, l)?; // CI.LAND_ETB (Bojuka Bog ...)
     g.player_mut(p).lands_played += 1;
     crate::glog!(g, "  {} {} {}", g.player(p).name, how, g.db.get(c).name);
-    let t = g.db.get(c).tags.clone();
+    // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
+    let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
     if t.has(Tag::Chasm) {
         // Glacial Chasm: when it enters, sacrifice a land
         g.player_mut(p).chasm_age = 0;
@@ -292,6 +302,9 @@ fn true_fetch(name: &str) -> Option<&'static str> {
 
 /// pool games: a fetch land is sacrificed at once for a land (a second landfall, a land in the graveyard)
 pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+    if crate::engine::mana::moon_land(g, l) {
+        return Ok(()); // Blood Moon: a fetch land has no ability
+    }
     let name = g.db.get(g.land(l).cd).name.to_string();
     let kinds = true_fetch(&name);
     let basics = ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"];
@@ -659,25 +672,26 @@ pub fn yawg_cleanup(g: &mut Game, p: PlayerId) {
 pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     cardcode::necro_deliver(g, p)?;
     cardcode::delayed_end_step(g, p)?; // Marchesa, The Eternal Wanderer, Eerie Interlude, Memory Jar
+    if g.doomed_turn == Some(p) {
+        // Final Fortune, Last Chance: "at the beginning of that turn's end step, you lose the game"
+        g.doomed_turn = None;
+        if !crate::impls::t0_giada::cant_lose(g, p) && g.player(p).alive {
+            crate::glog!(g, "  {} loses the game (the extra turn ends)", g.player(p).name);
+            let pl = g.player_mut(p);
+            pl.last_kind = crate::sym::intern("extra turn");
+            pl.last_src = None;
+            crate::engine::life::eliminate(g, p);
+            check_state(g)?;
+            return Ok(());
+        }
+    }
     if g.player(p).yawg {
         yawg_cleanup(g, p);
     }
     if g.dsl_on {
         crate::dsl::fire(g, "end_step", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
     }
-    for m in std::mem::take(&mut g.player_mut(p).borrowed) {
-        // Zealous Conscripts: control returns
-        let orig = g.perm(m).orig;
-        if g.perm(m).on_bf && g.perm(m).owner == p && g.player(orig).alive {
-            g.player_mut(p).perms.retain(|&x| x != m);
-            g.perm_mut(m).owner = orig;
-            g.player_mut(orig).perms.push(m);
-            g.bf_ver += 1;
-            if g.perm_mut(m).data.remove(crate::state::DataKey::TapOnReturn).is_some_and(|v| v.truthy()) {
-                g.perm_mut(m).tapped = true; // Ray of Command
-            }
-        }
-    }
+    crate::engine::control::return_borrowed(g, p); // Zealous Conscripts: control returns
     if g.monarch == Some(p) {
         draw(g, p, 1, false)?; // the monarch draws
     }
@@ -782,6 +796,35 @@ pub fn take_turn(g: &mut Game, p: PlayerId) -> Res {
     continue_turn(g, p, Step::Start)
 }
 
+/// p's turn, then every extra turn queued meanwhile (`Game::extra_turns`)
+pub fn play_turn(g: &mut Game, p: PlayerId) -> Res {
+    take_turn(g, p)?;
+    run_extra_turns(g)
+}
+
+/// play the queued extra turns, the most recently queued first: a normal turn (untap, upkeep, draw...) for the player
+/// who took it, which may queue more. One flagged as losing ends with that player losing at its end step
+/// (`end_step`). Called after a turn is over; a copied game resumed mid-turn calls it after `continue_turn`.
+pub fn run_extra_turns(g: &mut Game) -> Res {
+    g.doomed_turn = None;
+    while !g.over {
+        let Some((q, doomed)) = g.extra_turns.pop() else { break };
+        if !g.player(q).alive {
+            continue;
+        }
+        crate::glog!(g, "  {} takes an extra turn", g.player(q).name);
+        g.doomed_turn = doomed.then_some(q);
+        take_turn(g, q)?;
+        g.doomed_turn = None;
+    }
+    Ok(())
+}
+
+/// p takes an extra turn after the current one; `lose` marks it as ending in p's loss (Final Fortune, Last Chance)
+pub fn add_extra_turn(g: &mut Game, p: PlayerId, lose: bool) {
+    g.extra_turns.push((p, lose));
+}
+
 /// play p's turn from `step` on (a copied game resumes mid-turn from here)
 pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
     let i = STEPS.iter().position(|&s| s == step).unwrap();
@@ -833,6 +876,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     for l in g.player(p).lands.clone() {
         g.land_mut(l).tapped = false;
     }
+    g.player_mut(p).tapped_treasures = 0; // tapped Treasures untap
     let crack = cardcode::crackdown_on(g); // Crackdown: big nonwhite creatures stay tapped
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
@@ -1016,6 +1060,9 @@ pub fn keeps_hand(g: &Game, p: PlayerId) -> bool {
     if g.player(p).key == "cloud" {
         return crate::impls::cloud::keep_hand(g, p);
     }
+    if let Some(k) = crate::impls::t6_plans::keep(g, p) {
+        return k; // a Tier 6 deck's own keep rule
+    }
     (2..=5).contains(&n)
 }
 
@@ -1044,18 +1091,25 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
             pl.hand.push(c);
         }
     };
-    let ok = |g: &Game| keeps_hand(g, p);
+    // Tier 6 keeps get to know which draw this is (0 = the first seven): a later, smaller hand is kept more easily
+    let ok = |g: &mut Game, tries: i64| {
+        if g.player(p).t6 {
+            g.player_mut(p).stats.insert("mull_try", tries);
+        }
+        keeps_hand(g, p)
+    };
     draw7(g, rng);
-    if ok(g) {
+    if ok(g, 0) {
         return;
     }
     draw7(g, rng);
-    if ok(g) {
+    if ok(g, 1) {
+        g.player_mut(p).stats.insert("mull_n", 1);
         return;
     }
     for bottom in [1, 2] {
         draw7(g, rng);
-        if ok(g) || bottom == 2 {
+        if ok(g, bottom + 1) || bottom == 2 {
             for _ in 0..bottom {
                 let c = bottom_pick(g, p).unwrap();
                 let pl = g.player_mut(p);
@@ -1064,6 +1118,7 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
                 pl.library.insert(0, c);
             }
             g.player_mut(p).stats.insert("mulls", bottom + 1);
+            g.player_mut(p).stats.insert("mull_n", bottom + 1);
             return;
         }
     }
@@ -1162,7 +1217,7 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
                         ai::end_of_turn_window(g, p)?; // not for a person's seat
                     }
                     if g.player(p).alive && !g.over {
-                        take_turn(g, p)?;
+                        play_turn(g, p)?;
                     }
                 }
             }

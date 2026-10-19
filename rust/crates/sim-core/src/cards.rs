@@ -40,6 +40,10 @@ impl Types {
     pub fn has(self, t: Types) -> bool {
         self.0 & t.0 != 0
     }
+
+    pub fn union(self, o: Types) -> Types {
+        Types(self.0 | o.0)
+    }
 }
 
 /// A set of colours (W U B R G).

@@ -1450,26 +1450,32 @@ fn godo_cast(g: &mut Game) -> PermId {
     zones::enter(g, P0, c, zones::Enter { sick: true, ..Default::default() }).unwrap()
 }
 
+// Godo's card code is now impls/t6_godo.rs (Tier 6; it registers after this module). Per Oracle text his enter
+// trigger only puts the Equipment onto the battlefield: it is not attached (the Kraum swap test's model attached it).
+
 #[test]
-fn godo_fetches_the_best_equipment_onto_himself_and_shuffles() {
+fn godo_fetches_one_equipment_onto_the_battlefield_unattached() {
     let mut g = tbl();
     set_library(&mut g, P0, &["Mountain", "Conqueror's Flail", "Helm of Kaldra", "Shield of Kaldra", "Island"]);
     let before = g.player(P0).library.len();
     let godo = godo_cast(&mut g);
-    let helm = on_bf(&g, P0, "Helm of Kaldra").expect("he fetched the Helm: haste while summoning sick");
-    assert_eq!(g.perm(helm).attached, Some(godo));
-    assert!(on_bf(&g, P0, "Shield of Kaldra").is_none() && on_bf(&g, P0, "Conqueror's Flail").is_none());
+    let got: Vec<_> = ["Conqueror's Flail", "Helm of Kaldra", "Shield of Kaldra"]
+        .iter()
+        .filter_map(|n| on_bf(&g, P0, n))
+        .collect();
+    assert_eq!(got.len(), 1, "exactly one Equipment");
+    assert_eq!(g.perm(got[0]).attached, None, "not attached to Godo");
     assert_eq!(g.player(P0).library.len(), before - 1);
-    assert!(sim_core::dsl::has_kw(&g, godo, "haste"), "the Helm gives haste");
+    assert!(g.perm(godo).sick);
 }
 
 #[test]
-fn godo_fetches_a_job_select_piece_but_attaches_it_to_himself() {
+fn godo_fetches_a_job_select_piece_unattached() {
     let mut g = tbl();
     set_library(&mut g, P0, &["Samurai's Katana"]);
     let godo = godo_cast(&mut g);
     let katana = on_bf(&g, P0, "Samurai's Katana").expect("the Katana came in");
-    assert_eq!(g.perm(katana).attached, Some(godo), "attached to Godo, not to its Hero");
+    assert_ne!(g.perm(katana).attached, Some(godo), "Godo's trigger does not attach it");
 }
 
 #[test]
@@ -1499,27 +1505,6 @@ fn godos_first_attack_untaps_him_and_the_samurai_and_gives_one_extra_combat() {
     // attacking again this turn (the extra combat) is not the first time
     combat::attack_triggers(&mut g, P0, &[godo], P1).unwrap();
     assert_eq!(g.player(P0).extra_combats, 1, "no further combat");
-}
-
-#[test]
-fn a_hasty_godo_attacks_twice_on_the_turn_he_lands() {
-    let mut g = tbl();
-    set_library(&mut g, P0, &["Island", "Helm of Kaldra"]);
-    let godo = godo_cast(&mut g);
-    assert!(g.perm(godo).sick);
-    g.player_mut(P0).combat_no = 0;
-    combat::combat(&mut g, P0).unwrap();
-    assert_eq!(g.player(P0).combat_no, 2, "the first combat and exactly one extra one");
-    assert_eq!(g.player(P0).extra_combats, 0);
-}
-
-#[test]
-fn godo_prefers_the_legendary_heirloom_to_the_helm() {
-    let mut g = tbl();
-    set_library(&mut g, P0, &["Hero's Heirloom", "Helm of Kaldra"]);
-    let godo = godo_cast(&mut g);
-    let heirloom = on_bf(&g, P0, "Hero's Heirloom").expect("+2/+1, trample and haste on a legendary creature");
-    assert_eq!(g.perm(heirloom).attached, Some(godo));
 }
 
 // ======================================================== Cecil, Dark Knight // Cecil, Redeemed Paladin

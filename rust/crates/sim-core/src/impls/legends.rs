@@ -372,6 +372,11 @@ fn sisay_pt(g: &Game, p: PlayerId, m: PermId) -> (i32, i32) {
 /// jodah.sisay_pick: a legendary permanent card with mana value below Sisay's power: the dearest legendary creature, else
 /// the dearest legend
 pub fn sisay_pick(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
+    if crate::impls::t6_plans::is_t6(g, p)
+        && let Some(c) = crate::impls::t6_plan_sisay::fetch(g, p, power)
+    {
+        return Some(c); // Tier 6: the deck plan picks the line's piece (lands included)
+    }
     let ok: Vec<CardId> = searchable(g, p)
         .into_iter()
         .filter(|&c| {
@@ -398,7 +403,10 @@ fn sisay(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt
         return Ok(vec![]);
     }
     let Some(t) = sisay_pick(g, p, epow(g, src)) else { return Ok(vec![]) };
-    let u = 7.0f64.min(1.5 + 0.6 * g.db.get(t).cmc as f64);
+    let mut u = 7.0f64.min(1.5 + 0.6 * g.db.get(t).cmc as f64);
+    if crate::impls::t6_plans::is_t6(g, p) {
+        u = 11.0; // Tier 6: the fetch is the plan, ahead of a value spell
+    }
     Ok(vec![ability(u, format!("Sisay: {}", cname(g, t)), src, sisay_go, t.0 as i64)])
 }
 
@@ -1246,7 +1254,7 @@ fn cromat_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// Korlash: power and toughness equal to your Swamps (grandeur needs a second copy: never in a singleton deck)
 fn korlash_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
-    let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B')).count() as i32;
+    let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B') && !crate::engine::mana::moon_land(g, l)).count() as i32;
     (n, n)
 }
 
@@ -1995,4 +2003,17 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Plaza of Heroes")?.land_cols = Some(plaza_colors);
     r.card(db, "Unclaimed Territory")?.land_cols = Some(territory_colors);
     Ok(())
+}
+
+/// Tier 6 combo step: Sisay's ability for the named card (the same activation as the normal option); true if the card
+/// left the library (the ability was not stopped)
+pub fn sisay_fetch_card(g: &mut Game, p: PlayerId, t: CardId) -> Res<bool> {
+    let Some(src) = g.player(p).perms.iter().copied().find(|&m| {
+        let x = g.perm(m);
+        x.on_bf && !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Sisay, Weatherlight Captain")
+    }) else {
+        return Ok(false);
+    };
+    sisay_go(g, src, p, t.0 as i64)?;
+    Ok(!g.player(p).library.contains(&t))
 }

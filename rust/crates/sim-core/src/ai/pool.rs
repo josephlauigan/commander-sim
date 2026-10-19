@@ -116,6 +116,11 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if t.has(Tag::Moxd) {
         // Mox Diamond: needs a land to discard (it carries rock=1:A too, so this check comes first)
         let n = pl.hand.iter().filter(|&&x| g.db.get(x).land).count();
+        // Tier 6: the discard must leave two lands (hand plus battlefield), or the Mox starves its own mana
+        let bf = pl.lands.len();
+        if crate::impls::t6_plans::is_t6(g, p) && n + bf < 3 {
+            return 0;
+        }
         return if n >= 2 || (n >= 1 && pl.land_turn == pl.turns as i32) { plans::ramp_prio(g, p, c, 1) } else { 0 };
     }
     if let Some(r) = t.str(Tag::Rock)
@@ -372,6 +377,9 @@ pub fn card_threat_value(g: &Game, c: CardId) -> f64 {
 
 /// cardimpl.spell_importance: how much opponents want to counter spell c (0-9; 6-7 is the usual threshold)
 pub fn spell_importance(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if g.db.get(c).tag(Tag::Adnaus) && crate::impls::t6_plans::is_t6(g, p) {
+        return 8.0; // Tier 6: Ad Nauseam is a win spell like any other, a counter target
+    }
     let imp = g.registry.get(c);
     if let Some(f) = imp.and_then(|i| i.spell_imp) {
         return f(g, p, c);
@@ -697,9 +705,15 @@ fn dispute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     // the sacrificed Treasure can't also pay for the spell (Python pays first and can sacrifice a Treasure it spent,
     // leaving -1 Treasures; a u32 here would wrap to four billion)
     let tre = fod == Some(Fodder::Treasure);
-    g.player_mut(p).treasures -= tre as u32;
+    let saved = g.player(p).tapped_treasures;
+    if tre {
+        g.player_mut(p).sac_treasure();
+    }
     if !can_pay(g, p, gn, &pips, false) {
-        g.player_mut(p).treasures += tre as u32;
+        if tre {
+            g.player_mut(p).treasures += 1;
+            g.player_mut(p).tapped_treasures = saved;
+        }
         return Ok(false);
     }
     pay(g, p, gn, &pips, false)?;

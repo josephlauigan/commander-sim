@@ -11,7 +11,7 @@ use crate::engine::values::*;
 use crate::flow::Res;
 use crate::hooks::{Call, Event, Sacrificed, TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{DataKey, Game, PermData, Val};
+use crate::state::{CopyExc, CopyOf, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -284,6 +284,9 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
             x.tapped = true;
         }
         g.player_mut(p).perms.push(m);
+        if hooks::enters_tapped(g, p, Some(m)) {
+            g.perm_mut(m).tapped = true; // before the tokens' enter triggers
+        }
         if etgh(g, m) <= 0 {
             die(g, m, "sba")?;
             continue;
@@ -978,11 +981,13 @@ pub struct Enter {
     pub was_cast: bool,
     pub undying: bool,
     pub plus: i32,
+    /// the copy exceptions of a token copy ("except it's a 0/1 white Illusion"); a clone's come from its `enter_copy`
+    pub exc: Option<CopyExc>,
 }
 
 impl Default for Enter {
     fn default() -> Enter {
-        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0 }
+        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None }
     }
 }
 
@@ -999,14 +1004,19 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
             crate::glog!(g, "    Mox Diamond goes to the graveyard (no land to discard)");
             return Ok(g.new_perm(p, Some(cd), "Token", 0, 0)); // never on the battlefield
         }
-        let x = min_by(&lands, |c| mox_discard_key(g, c)).unwrap();
+        let x = min_by(&lands, |c| mox_discard_key(g, p, c)).unwrap();
         let pl = g.player_mut(p);
         let i = pl.hand.iter().position(|&c| c == x).unwrap();
         pl.hand.remove(i);
         pl.gy.push(x);
     }
+    // "enters as a copy of ...": a replacement effect, applied as the permanent is created (no 0/0 stand-in, no
+    // enters triggers of the clone itself: the copied card's are the ones that fire)
     let mut phys = None;
-    if g.db.get(cd).tag(Tag::Clone) {
+    let mut exc = how.exc;
+    let copy = if let Some(f) = g.registry.get(cd).and_then(|i| i.enter_copy) {
+        f(g, p, cd)
+    } else if g.db.get(cd).tag(Tag::Clone) {
         // Phyrexian Metamorph: copy the best creature or artifact on the battlefield
         let cands: Vec<PermId> = g
             .players
@@ -1023,10 +1033,14 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
                 })
             })
             .collect();
-        if let Some(b) = max_by(&cands, |x| pval(g, x)) {
-            phys = Some(cd);
-            cd = g.perm(b).cd.unwrap();
-        }
+        max_by(&cands, |x| pval(g, x)).map(|b| CopyOf { cd: g.perm(b).cd.unwrap(), exc: CopyExc::default() })
+    } else {
+        None
+    };
+    if let Some(c) = copy {
+        phys = Some(cd);
+        cd = c.cd;
+        exc = exc.or(Some(c.exc));
     }
     let m = g.new_perm(p, Some(cd), "Token", 0, 0);
     g.enter_no += 1;
@@ -1055,6 +1069,17 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     if plus != 0 {
         x.plus = v_plus; // enters with counters (persist: -1)
     }
+    if let Some(e) = exc {
+        x.exc = e;
+        if let Some((pw, th)) = e.pt {
+            (x.pow, x.tgh) = (pw, th);
+        }
+        x.fly |= e.fly;
+        x.sick = x.sick && !e.haste;
+        if let Some(s) = e.add_subtype.or(e.only_subtype) {
+            x.ttypes.push(s);
+        }
+    }
     x.on_bf = true;
     if has_dsl {
         g.dsl_on = true;
@@ -1063,6 +1088,10 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.bf_ver += 1;
     if g.registry.get(cd).is_some_and(|i| i.live()) {
         g.hooks.push(m);
+    }
+    // a replacement effect: it is already tapped as it enters, before any enters trigger sees it
+    if hooks::enters_tapped(g, p, Some(m)) {
+        g.perm_mut(m).tapped = true;
     }
     cardcode::as_enters(g, p, m)?; // naming a creature type
     let st = g.turn_stamp();
@@ -1102,20 +1131,50 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     Ok(m)
 }
 
-/// which land Mox Diamond discards: the one making the fewest colours, a tapped land first
-fn mox_discard_key(g: &Game, c: CardId) -> f64 {
+/// which land Mox Diamond discards (the lowest key): the one making the fewest colours, a tapped land first.
+/// A Tier 6 player also keeps the only source of a colour its hand needs (a 2-land hand lost its Plains, g6) and the
+/// lands that make two mana or do a job (Ancient Tomb, City of Traitors, Gaea's Cradle).
+pub fn mox_discard_key(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let t = &g.db.get(c).tags;
-    let cols = t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64;
-    cols * 2.0 - if t.has(Tag::T) { 1.0 } else { 0.0 }
+    let mine = t.str(Tag::C).unwrap_or("");
+    let mut key = mine.chars().count() as f64 * 2.0 - if t.has(Tag::T) { 1.0 } else { 0.0 };
+    if !crate::impls::t6_plans::is_t6(g, p) {
+        return key;
+    }
+    if matches!(g.db.get(c).name.as_ref(), "Ancient Tomb" | "City of Traitors" | "Gaea's Cradle" | "Gemstone Caverns") {
+        key += 20.0;
+    }
+    let pl = g.player(p);
+    let others: Vec<CardId> = pl
+        .hand
+        .iter()
+        .copied()
+        .filter(|&x| x != c && g.db.get(x).land)
+        .chain(pl.lands.iter().map(|&l| g.land(l).cd))
+        .collect();
+    let covered = |ch: char| others.iter().any(|&o| g.db.get(o).tags.str(Tag::C).is_some_and(|s| s.contains(ch)));
+    let needed = |ch: char| pl.hand.iter().any(|&x| !g.db.get(x).land && g.db.get(x).pips.contains(ch));
+    for ch in mine.chars() {
+        if !covered(ch) {
+            key += if needed(ch) { 6.0 } else { 1.5 };
+        }
+    }
+    key
 }
 
 /// a token that's a copy of card cd (Scute Swarm, Kiki-Jiki, Helm of the Host ...)
 pub fn enter_token_copy(g: &mut Game, p: PlayerId, cd: CardId) -> Res<Option<PermId>> {
+    enter_token_copy_with(g, p, cd, None)
+}
+
+/// a token copy with exceptions ("except it's a 0/1 white Illusion", "it's an artifact in addition"): they apply as it
+/// enters, so its own enters triggers see them
+pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<CopyExc>) -> Res<Option<PermId>> {
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
     if have >= TOKEN_CAP {
         return Ok(None);
     }
-    let m = enter(g, p, cd, Enter::default())?;
+    let m = enter(g, p, cd, Enter { exc, ..Enter::default() })?;
     g.perm_mut(m).token = true;
     note_tokens(g, p, 1);
     Ok(Some(m))
@@ -1550,6 +1609,9 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
         }
         g.land_mut(l).data.set(DataKey::In, Val::Bool(true));
         let cd = g.land(l).cd;
+        if crate::engine::mana::moon_land(g, l) {
+            continue; // Blood Moon: a plain Mountain has no enters trigger
+        }
         for fx in g.db.get(cd).land_etb_fx.clone() {
             let name = match fx {
                 LandEtb::Scry(n) => format!("scry {n}"),
@@ -1646,6 +1708,12 @@ pub fn add_treasure(g: &mut Game, p: PlayerId, n: i32) -> Res {
 
 /// create n Treasure / Food / Clue tokens, applying Academy Manufactor and token doubling (common.make_artifact_tokens)
 pub fn make_artifact_tokens(g: &mut Game, p: PlayerId, kind: Sym, n: i32) -> Res {
+    make_artifact_tokens_tapped(g, p, kind, n, false)
+}
+
+/// the same, and `tapped`: the Treasures come in tapped (Tataru Taru) -- they also do under an "artifacts enter tapped"
+/// replacement. A tapped Treasure can't make mana (its ability needs {T}) until its owner's untap step.
+pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32, tapped: bool) -> Res {
     if n <= 0 {
         return Ok(());
     }
@@ -1653,10 +1721,14 @@ pub fn make_artifact_tokens(g: &mut Game, p: PlayerId, kind: Sym, n: i32) -> Res
     let manufactor =
         g.player(p).perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some("Academy Manufactor"));
     let kinds: Vec<Sym> = if manufactor { vec!["Treasure", "Food", "Clue"] } else { vec![kind] };
+    let tap_all = hooks::enters_tapped(g, p, None);
     for &k in &kinds {
         let pl = g.player_mut(p);
         match k {
-            "Treasure" => pl.treasures += n as u32,
+            "Treasure" => {
+                pl.treasures += n as u32;
+                pl.tapped_treasures += (tapped || tap_all) as u32 * n as u32;
+            }
             "Food" => pl.foods += n as u32,
             _ => pl.clues += n as u32,
         }

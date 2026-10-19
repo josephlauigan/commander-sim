@@ -1119,7 +1119,7 @@ note = "when it blocks, at end of combat, it and the creature it blocked are des
 
 ["Deflecting Swat"]
 status = "Full"
-note = "free while you control your commander: changes the target of a removal spell aimed at your permanent to one of the caster's (Veyran's AI casts it in response)"
+note = "free while you control your commander, else {2}{R}: changes the target of a removal spell aimed at your permanent to one of the caster's; every deck holding it casts it in response (ai::decks::redirect_response)"
 
 ["Delighted Halfling"]
 pool_add_tags = ["dork=C"]
@@ -2216,7 +2216,7 @@ dsl = [
   { type = "static", static = "equip_cost", mana = 5 },
 ]
 status = "Full"
-note = "a hasty token copy of the equipped creature at the start of each combat"
+note = "a hasty token copy of the equipped creature at the start of each combat, except it is not legendary"
 
 ["Helping Hand"]
 types = "S"
@@ -2522,8 +2522,9 @@ note = "ward {4}; +1/+1 and unblockable this turn when an artifact enters"
 
 ["Karlach, Fury of Avernus"]
 tags = "leg pow=5 tgh=4"
+dsl = []
 status = "Full"
-note = "first combat: attackers untap and gain first strike; additional combat"
+note = "first combat: attackers untap and gain first strike; additional combat (hand code in impls/t1.rs only; the compiled \"attack: extra_combat\" had no first-combat condition and doubled up with Isshin, fixed 2026-10-18)"
 
 ["Karmic Justice"]
 types = "E"
@@ -2877,7 +2878,7 @@ note = "creatures you control have haste; cascade, cascade"
 tags = "pow=2 tgh=2"
 dsl = []
 status = "Full"
-note = "nonbasic lands tap for R only (engine mana check)"
+note = "nonbasic lands are plain Mountains (engine::mana::moon_land): they tap for {R} only and lose every ability (no Ancient Tomb damage, no manland or utility ability, no Urza's Saga chapters, no enters-tapped or enters triggers, a fetch land cannot crack)"
 
 ["Mahadi, Emporium Master"]
 tags = "leg pow=3"
@@ -3798,8 +3799,11 @@ status = "Full"
 note = ""
 
 ["Ranger-Captain of Eos"]
+dsl = [
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "search", filter = { type = "creature", max_mv = 1 }, to = "hand", n = 1 }] },
+]
 status = "Full"
-note = "fetches a 1-drop creature; sacrificed before a combo to stop noncreature spells"
+note = "fetches a creature card with mana value 1 or less (the parsed ability had lost the limit and fetched Thassa's Oracle); sacrificed before a combo to stop noncreature spells"
 
 ["Rapid Hybridization"]
 status = "Full"
@@ -8250,11 +8254,690 @@ dsl = []
 status = "Full"
 note = "you don't lose for 0 or less life (check_state); at 0 or less life damage to you is dealt as poison counters (lose_life), ten poison still lose; the AI casts it once at 20 life or less"
 
+["Dizzy Spell"]
+types = "I"
+tags = ""
+dsl = []
+status = "Full"
+note = "target creature gets -3/-0 until end of turn (also cast as the defender on an attacker whose damage matters); Transmute {1}{U}{U} at sorcery speed fetches a card with the same mana value"
+
+["Into the Flood Maw"]
+types = "I"
+tags = "rem=bounce tgt=nl"
+dsl = []
+status = "Full"
+note = "returns the best opposing creature to hand; a noncreature nonland target is the gift mode (an opponent gets a tapped 1/1 Fish first, given to an opponent other than the target's controller if there is one)"
+
+["Abeyance"]
+types = "I"
+tags = "draw=1"
+dsl = []
+status = "Full"
+note = "draws a card and puts the engine cast lock (LockKind::InstSorcAbilities) on the opposing player with the most cards in hand: this turn they can't cast instants or sorceries (castable, cast_card) or activate non-mana abilities (rules::ability_locked, dsl::activate); the AI casts it at priority 0 unless its deck plan wants it"
+
+["Daze"]
+status = "Full"
+note = "counter target spell unless its controller pays {1}; cast for {1}{U}, or by returning an Island you control to hand (alternative-cost slot, engine/altcost.rs); the AI pays the alternative cost when it can't pay the mana, as a Force of Will pitch (a threshold bump for the Island replayed)"
+
+["Flare of Denial"]
+status = "Full"
+note = "counter target spell; cast for {1}{U}{U}, or by sacrificing a nontoken blue creature (alternative-cost slot); the AI sacrifices the least valuable one when it can't pay the mana, at a 1.5 threshold bump per card"
+
+["Disrupting Shoal"]
+types = "I"
+tags = "ctr=mvx"
+dsl = []
+status = "Full"
+note = "counter target spell if its mana value is X; cast for {X}{U}{U} or by exiling a blue card with mana value X (alternative-cost slot, counter kind ctr=mvx); the AI always chooses X equal to the spell's mana value"
+
+["Snapback"]
+status = "Full"
+note = "bounces the best opposing creature; cast for its mana cost, or by exiling a blue card from hand (alternative-cost slot); the AI pitches when it can't pay the mana, valuing the removal 1.5 lower per card given up"
+
+["Mindbreak Trap"]
+types = "I"
+tags = "ctr=any ctrexile"
+dsl = []
+status = "Full"
+note = "exile target spell, and every other opposing spell on the stack; cast for {2}{U}{U}, or for free (plus cost increases) when an opponent has cast three or more spells this turn (alternative-cost slot); the AI takes the free mode whenever it is open"
+
+["Misdirection"]
+status = "Full"
+note = "change the target of a spell with a single target: the AI casts it (mana, or exiling a blue card) at a spell aimed at its key permanent and aims it at the caster's own best permanent (engine/stack.rs ai_respond -> t6_counters::stack_response)"
+types = "I"
+tags = ""
+dsl = []
+
+["Commandeer"]
+status = "Full"
+note = "gain control of a noncreature spell, new targets chosen, and it resolves under the new controller (cast_card uses the stack item's controller; the card still goes to its owner's zones); cast for {5}{U}{U} or by exiling two blue cards (alternative-cost slot); the AI takes a noncreature permanent spell worth 3 or more, or removal aimed at it"
+types = "I"
+tags = ""
+dsl = []
+
+["Sudden Substitution"]
+status = "Full"
+note = "split second: exchange control of a noncreature spell and a creature; the spell resolves under its new controller; the AI gives up its cheapest creature for a noncreature permanent spell worth more, or for removal aimed at it"
+types = "I"
+tags = ""
+dsl = []
+
+["Bilbo's Gambit"]
+types = "I"
+tags = "ctr=any remand"
+dsl = []
+status = "Partial"
+note = "returns a spell to its owner's hand for {1}{W} (the Remand return); t6_counters::bilbo_bounce puts the engine cast lock (AllSpells, every player) on a promised gift, but the engine never offers the gift choice (later feature), so the lock is not reached in play"
+
+["Tibalt's Trickery"]
+status = "Partial"
+note = "counters a spell for {1}{R}; missing: its side effect (the countered spell's controller mills 1-3, exiles to a nonland card and may cast it free), written as t6_counters::tibalt_after"
+["Twincast"]
+status = "Full"
+note = "cast from hand in response to an instant or sorcery (anyone's) whose copy is worth at least 3 (draw, tutor, burn, removal, magecraft payoffs): the copy resolves first, with the AI's targets; the AI never casts it any other way"
+
+["Flare of Duplication"]
+status = "Full"
+note = "as Twincast, but the copy must be worth at least 4; pays {1}{R}{R}, or sacrifices the cheapest nontoken red creature (never a commander) worth less than the copy"
+
+["Heat Shimmer"]
+status = "Full"
+note = "a token copy of the best creature (any controller's, not a hexproof one, no legend it already has) with haste, exiled at the end step; the copy's enters effects happen; cast in main phase when the enters effect and one attack are worth at least 2.5"
+
+["Molten Duplication"]
+status = "Full"
+note = "a hasty token copy of your best artifact or creature, sacrificed at the end step; it is an artifact in addition to its other types (enters effects happen)"
+
+["Electroduplicate"]
+status = "Full"
+note = "a hasty token copy of your best creature, sacrificed at the end step; flashback {2}{R}{R} (the generic flashback option)"
+
+["Clever Impersonator"]
+status = "Full"
+note = "enters as a copy of the best nonland permanent on the battlefield, as a replacement effect (printed 0/0: no stand-in body, so only the copied permanent's enters effects happen; the card goes to the graveyard as Clever Impersonator); cast only when a copy worth 3 or more is out; with nothing to copy it enters as a 0/0 and dies"
+
+["Mockingbird"]
+status = "Full"
+note = "{X}{U}: the AI picks the cheapest X that reaches the best creature (mana value at most the mana spent, X+1; copy worth 3 or more); it enters as a copy of it, except it is a Bird in addition and has flying; the card goes to the graveyard as Mockingbird"
+
+["Phantasmal Image"]
+status = "Partial"
+note = "enters as a copy of the best creature, except it is an Illusion in addition (printed 0/0, no stand-in); missing: 'when this becomes the target of a spell or ability, sacrifice it' (needs the becomes-target event)"
+
+["Flesh Duplicate"]
+status = "Partial"
+note = "enters as a copy of the best creature (printed 0/0, no stand-in); missing: vanishing 3 (the copy lasts as long as the creature would)"
+
+["Copy Artifact"]
+status = "Full"
+note = "enters as a copy of the best artifact (rocks and enters effects count), except it is an enchantment in addition to its other types"
+
+["Mirrormade"]
+status = "Full"
+note = "enters as a copy of the best artifact or enchantment on the battlefield, as a replacement effect; the card goes to the graveyard as Mirrormade"
+
+["Sculpting Steel"]
+status = "Full"
+note = "enters as a copy of the best artifact on the battlefield, as a replacement effect (a copy of Cursed Mirror may then become a copy of a creature, with haste); the card goes to the graveyard as Sculpting Steel"
+
+["Imposter Mech"]
+status = "Partial"
+note = "not played by the AI: it needs vehicles with crew and a copy that loses its other card types (engine needs)"
+
+["Flash Photography"]
+status = "Full"
+note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
+
+["Peter Parker's Camera"]
+status = "Partial"
+note = "enters with three film counters; {2}, {T}, remove a counter: the AI copies its own important (importance 6+) triggered ability on the stack (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and its effect runs before the original (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host). Missing: copying activated abilities and choosing new targets"
+
+["Volatile Stormdrake"]
+status = "Partial"
+note = "flying; enters: exchange control with the best opposing creature whose mana value is at most the energy you will have (you get EEEE, then pay mana value in energy), else nothing happens; missing: hexproof from activated and triggered abilities only (the engine reads hexproof as full hexproof)"
+["Chromatic Star"]
+types = "A"
+tags = ""
+dsl = []
+status = "Full"
+note = "{1},{T}, sacrifice: one mana of any colour (floating, from the AI's end-of-turn / second-main window); drawing a card when it goes to a graveyard from the battlefield (sacrificed or destroyed); no longer a free mana rock"
+
+["Desperate Ritual"]
+status = "Full"
+note = "adds RRR (floating red mana); the AI casts it only through a deck plan; splice onto Arcane left out (no other Arcane spell shares a deck with it)"
+
+["Rite of Flame"]
+status = "Full"
+note = "adds RR plus R for each other Rite of Flame in any graveyard (floating red mana); the AI casts it only through a deck plan"
+
+["Simian Spirit Guide"]
+status = "Full"
+note = "2/2; exiled from hand for {R} when that mana is needed (data-driven hand mana, partials::HAND_MANA, shared with Elvish Spirit Guide)"
+
+["Manifold Key"]
+status = "Full"
+note = "{1},{T}: untaps a tapped mana artifact that makes two or more mana (when the hand holds a spell); {3},{T}: the biggest attacker can't be blocked this turn (before combat, when blockers are untapped)"
+
+["Honor-Worn Shaku"]
+status = "Full"
+note = "{T}: {C}; tapping an untapped legendary permanent untaps it, making another {C} per legendary permanent (non-creatures, or summoning-sick creatures, so attackers and blockers are not tapped)"
+
+["Metalworker"]
+tags = "pow=1 tgh=2 dork=C noatk"
+status = "Full"
+note = "{T}: {C}{C} for each artifact card in hand (a mana creature: summoning sick the turn it arrives); reveal is automatic"
+
+["Treasonous Ogre"]
+dsl = []
+status = "Full"
+note = "dethrone (keyword); pay 3 life: add {R} as a mana unit of red (3 life per mana while above 10 life, lands first, only while untapped); no pointless floating-mana activations"
+
+["_____ Goblin"]
+status = "Approximate"
+note = "when it enters, adds RRRR (the primer's guaranteed four unique vowels; the sticker sheets are not modeled)"
+
+["Ignoble Hierarch"]
+status = "Full"
+note = "{T}: {B}, {R} or {G} (dork tag); exalted is the engine's keyword"
+
+["Jeweled Amulet"]
+tags = ""
+status = "Full"
+note = "{1},{T}: a charge counter noting the colour of the mana spent (when it has none); {T}, remove it: one mana of that type later; the AI charges it in the second main phase or the end-of-turn window; no longer a free colourless rock"
+
+["Grinding Station"]
+status = "Full"
+note = "{T}, sacrifice an artifact: target player mills three; whenever any artifact enters, untaps it (always taken)"
+
+["Monumental Henge"]
+status = "Full"
+note = "enters tapped unless you control a Plains; {T}: {W}; {2}{W}{W},{T}: look at the top five, a historic card (artifact, legendary or Saga) to hand, the rest on the bottom in a random order (the AI uses it with spare mana when one is on top)"
+
+["Apple of Eden, Isu Relic"]
+status = "Approximate"
+note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an opponent's nonland cards as Opposition Agent does (any-type mana), the AI casts what it can at once and the rest go home; the owner draws for each spell played; lands stay in the hand and are never played (rust/agents/engine-needs-mana.md)"
+
+["Redirect Lightning"]
+status = "Partial"
+note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it): pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: it cannot change the target of an ability"
+
+["Ricochet Trap"]
+status = "Full"
+note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it) and aims it at the caster's best permanent, paying {R} if an opponent cast a blue spell this turn (read from the turn's cast list) else {3}{R}"
+
+["Untimely Malfunction"]
+status = "Partial"
+note = "destroys the targeted opposing artifact, else up to two of the opponents' best untapped creatures can't block this turn; the redirect mode ({1}{R}) answers removal aimed at the owner's key permanent in the removal-response hook; missing: the AI only casts it at an artifact (it never picks the can't-block mode), and it cannot re-aim an ability"
+
+["Pyrokinesis"]
+tags = "rem=dmg4 tgt=c"
+status = "Full"
+note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); cast for {4}{R}{R} or by exiling a red card from hand (alternative-cost slot); the AI pitches when it can't pay the mana (main phase and as an answer to an attack), valuing the kill 1.5 lower per card given up"
+
+["Scout's Warning"]
+status = "Full"
+note = "draws a card and lets the next creature card this turn be cast as though it had flash (cast::grants_flash; spent in on_cast; t6_redirects, tested)"
+
+["Kozilek's Command"]
+tags = "tokx rem=exile tgt=c draw=1"
+status = "Full"
+note = "X = all spare mana; takes the best two of four modes: exile the best opposing creature with mana value X or less, scry X then draw, X 0/1 Eldrazi Spawn, exile up to X creature cards from opposing graveyards (the {C}{C} in the cost is paid as any two mana, as the card data has no colourless pips)"
+
+["Eldrazi Confluence"]
+tags = "rem=shrink3 tgt=c"
+status = "Full"
+note = "three choices: +3/-3 on the opposing creatures worth the most per choice (two or three choices for a bigger creature, toughness 0 dies), then each left over exiles and returns tapped a different own permanent with an enters effect worth 3 or more, else makes a 1/1 Eldrazi Scion; cast when an opposing creature of toughness 3 or less can be killed (the {C}{C} in the cost is paid as any two mana)"
+
+["Get Lost"]
+status = "Partial"
+note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"
+
+["Erode"]
+status = "Full"
+note = "destroys the targeted opposing creature or planeswalker; its controller then fetches a basic land onto the battlefield tapped and shuffles (always, the 'may' is taken)"
+
+["Soul Partition"]
+status = "Partial"
+note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"
+
+["Calamity's Wake"]
+status = "Full"
+note = "exiles all graveyards and itself, and puts the engine cast lock (LockKind::Noncreature) on every player for the turn (castable, cast_card)"
+
+["Emerald Charm"]
+status = "Partial"
+note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"
+
+["Sunscour"]
+status = "Full"
+note = "destroys all creatures (the wipe=destroy tag); cast for {5}{W}{W} or by exiling two white cards from hand (alternative-cost slot); the AI pitches when it can't pay the mana, valuing the wipe 3 lower"
+
+["Gleaming Splendor"]
+tags = ""
+status = "Full"
+note = "an opponent's second draw each turn gives you a Treasure (the draw hook counts the turn's draws); {2}{W}: you and one opponent each draw a card, which the AI uses in the end step of an opponent's turn once that opponent has drawn exactly one card (so their card is the second and pays a Treasure)"
+["City of Brass"]
+status = "Full"
+note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
+
+["City of Traitors"]
+status = "Partial"
+note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md); Partial (lead): those lands should sacrifice it too, needs an engine you-played-a-land hook"
+
+["Gemstone Caverns"]
+status = "Partial"
+note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (start on the battlefield with a luck counter when not the starting player, exile a card) is not modeled"
+
+["Abstergo Entertainment"]
+status = "Full"
+note = "{T}: {C}; {1},{T}: any colour (any colour only when another untapped land pays the {1}); {3},{T}, exile it: a historic card from your graveyard to hand, then all graveyards exiled (t6_lands.rs; the AI needs a card worth 30+)"
+
+["Eiganjo, Seat of the Empire"]
+status = "Full"
+note = "{T}: {W}; Channel {2}{W} (less per legendary creature you control), discard: 4 damage to an attacking creature (when attacked) or a blocking creature (its own attack), used when it kills a creature worth 4+ (t6_lands.rs)"
+
+["Deserted Temple"]
+status = "Full"
+note = "{T}: {C}; {1},{T}: untap target land, used when the land untapped gives 3+ more mana (the {1} and the Temple's own mana are the cost; t6_lands.rs)"
+
+["Minamo, School at Water's Edge"]
+status = "Full"
+note = "{T}: {U}; {U},{T}: untap target legendary land or permanent, used when it gives 3+ more mana (the {U} and Minamo's own mana are the cost; t6_lands.rs)"
+
+["Emergence Zone"]
+status = "Full"
+note = "{T}: {C}; {1},{T}, sacrifice: you may cast spells this turn as though they had flash (cast::grants_flash); the AI uses it at the end of an opponent turn holding a creature spell (t6_lands.rs, tested)"
+
+["Forbidden Orchard"]
+status = "Full"
+note = "{T}: any colour of the identity; whenever tapped for mana the opponent who threatens least creates a 1/1 colorless Spirit (t6_lands.rs)"
+
+["Petrified Hamlet"]
+status = "Partial"
+note = "{T}: {C}; when it enters it names the opponents' land with the most non-mana abilities (kept on the land, t6_lands.rs hamlet_names); the ban on that name's activated abilities and the chosen lands' {T}: {C} are not modeled (engine-needs-lands.md)"
+
+["The Mycosynth Gardens"]
+status = "Partial"
+note = "{T}: {C}; {1},{T}: any colour (only when another untapped land pays the {1}; t6_lands.rs any_filter_cols); the {X},{T} copy-an-artifact ability is not modeled (engine-needs-lands.md)"
+
+["Fomori Vault"]
+status = "Full"
+note = "{T}: {C}; {3},{T}, discard a card: look at the top X (X = artifacts you control), best to hand, the rest to the bottom in random order; used when X is 3+ (2 with a spare land), t6_lands.rs"
+
+["Mount Doom"]
+status = "Full"
+note = "{T}, pay 1 life: {B} or {R} (not at 1 life); {1}{B}{R},{T}: 1 damage to each opponent (end of turn); {5}{B}{R},{T}, sacrifice it and a legendary artifact: keeps its two best creatures, destroys the rest when that nets 8+ worth (sorcery speed); t6_lands.rs. Infinite-untap loops are the combo code's"
+
+["Razorgrass Ambush // Razorgrass Field"]
+status = "Full"
+note = "Ambush: {1}{W} instant, 3 damage to an attacking or blocking creature, cast when it kills a creature worth 4+; Field: played as a land through hand_options (no other land in hand, under 4 lands, land drop free), pays 3 life for untapped or enters tapped, {T}: {W} (t6_lands.rs)"
+
+["Shatterskull Smashing"]
+status = "Full"
+note = "{X}{R}{R} sorcery: X damage (twice X from 6) divided between up to two opposing creatures / planeswalkers, exactly lethal to each, smallest X that kills the best targets; Shatterskull, the Hammer Pass is played as a land (pay 3 life or enters tapped, {T}: {R}) through hand_options (t6_lands.rs)"
+
+["Shatterskull Smashing // Shatterskull, the Hammer Pass"]
+status = "Full"
+note = "same card as Shatterskull Smashing (t6_lands.rs)"
+
+["Talon Gates of Madara"]
+status = "Full"
+note = "enter trigger phases out the best opposing creature (back at its controller's next untap); {T}: {C}; {1},{T}: any colour (when another land pays the {1}); {4}: put it onto the battlefield from hand (own turn with the land drop spent, or against a big attacker, phasing it out of the attack); t6_lands.rs"
 ["Godo, Bandit Warlord"]
 dsl = []
 status = "Full"
-note = "enters: you may search the library for an Equipment, put it onto the battlefield attached to Godo (job select pieces bring their Hero but still go on him), shuffle; the AI takes the best one on him, haste counting most while he is summoning sick (Hero's Heirloom, legendary haste and +2/+1, then Helm of Kaldra). First attack each turn: untap him and every Samurai (Gilgamesh, a creature wearing Samurai's Katana) and one additional combat; attacking again in it adds nothing (impls/tymna_cards.rs)"
+note = "enters: search for an Equipment and put it onto the battlefield (Helm first, Hammer first when a copier is out or in hand); first attack each turn: untap Godo and the Samurai, one additional combat; the combat loop is capped only at 200 phases a turn, so Helm's hasty tokens run the loop until the table is dead"
 
+["Hammer of Nazahn"]
+status = "Full"
+note = "whenever it or another Equipment you control enters, attaches that Equipment (the AI always does) to the best creature you control (Godo first, then the strongest able to attack); +2/+0, indestructible, equip {4} from the compiled abilities"
+
+["Magnetic Theft"]
+status = "Full"
+note = "attach target Equipment to target creature, free: the AI moves one of its own loose Equipment (Helm of the Host first, or Helm off another creature) onto its best creature (Godo first) and casts it only when there is such a move; it does not target opposing Equipment or creatures"
+
+["Sting, the Glinting Dagger"]
+status = "Partial"
+note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of every player's combat (before attackers, also when nobody attacks); missing: first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
+
+["Goblin Welder"]
+status = "Full"
+note = "{T}: sacrifice an artifact you control and return an artifact card from your graveyard to the battlefield, when the card is worth at least 3 more than the artifact (a spent rock for Helm of the Host or Hammer of Nazahn); the AI never targets an opponent's artifact or graveyard"
+
+["Goblin Engineer"]
+dsl = []
+status = "Full"
+note = "enters: search for an artifact and put it into the graveyard (Helm, then Hammer, with a Welder out; else Cursed Mirror; else the best artifact of mana value 3 or less); {R},{T}, sacrifice an artifact: return an artifact card of mana value 3 or less when it is worth 3 more than the sacrificed artifact (spent rocks first)"
+
+["Tezzeret, Cruel Captain"]
+dsl = []
+status = "Partial"
+note = "enters with 4 loyalty; whenever an artifact you control enters, +1 loyalty; 0: untap a spent mana rock (or tapped creature), +1/+1 counter if it is an artifact creature; -3: search for an artifact with mana value 1 or less into the hand; missing: the -7 emblem (rust/agents/engine-needs-godo.md)"
+
+["Party Thrasher"]
+status = "Partial"
+note = "first main phase: the AI discards a spare card (a second land or a spell of mana value 7+), exiles the top two, may play the better one this turn (the other stays exiled); missing: convoke for noncreature spells cast from exile (rust/agents/engine-needs-godo.md)"
+
+["Vexing Bauble"]
+status = "Full"
+note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox, a free alternative cost, either player's) is countered as it is cast: it counts as cast and goes to its owner's graveyard"
+
+["Hexing Squelcher"]
+status = "Partial"
+note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
+
+["Blood Moon"]
+status = "Full"
+note = "nonbasic lands are plain Mountains (engine::mana::moon_land): they tap for {R} only (one mana, Ancient Tomb and City of Traitors included) and lose every ability and other land type (no Tomb damage, no manland or utility ability, Urza's Saga loses its chapters and is sacrificed as a state-based action (still a Saga with final chapter 0), no enters-tapped or enters triggers, a fetch land cannot crack); the AI casts it when opponents have three more nonbasic lands than it"
+
+["Defense Grid"]
+status = "Full"
+note = "each spell costs {3} more to cast except during its caster's own turn (applies to every player, its controller on opponents' turns included); the tax is also paid by alternative-cost and free casts (pitch, Daze, Force of Will, Fierce Guardianship, Pact, Deflecting Swat; engine/altcost.rs tax)"
+
+["Final Fortune"]
+status = "Full"
+note = "extra turn queued (turn::add_extra_turn); the caster loses at that turn's end step; the AI casts it only when the extra turn wins (Godo summoning sick with Helm out, or Godo not castable this turn but castable after an untap)"
+
+["Last Chance"]
+status = "Full"
+note = "same as Final Fortune (sorcery): extra turn queued, loss at its end step, AI casts it only when the extra turn wins"
+
+["Chatterstorm"]
+status = "Full"
+note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast before it this turn (t6_green2 via t0_stella::storm_copies)"
+
+["Cloud of Faeries"]
+status = "Full"
+note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cycling {2} is a hand option the AI uses in an opponent's end step or after combat with the mana to spare (t6_green2)"
+
+["Noxious Revival"]
+status = "Full"
+note = "{G/P} (the engine pays 2 life when no green mana is free); puts a graveyard card on top of its owner's library: the AI takes the best nonland card of its own graveyard (a creature first) and casts it only when one is there (t6_green2)"
+
+["Sowing Mycospawn"]
+status = "Partial"
+note = "3/3 body; the cast trigger (even if the spell is countered) fetches a land onto the battlefield (Gaea's Cradle with two creatures out, else the land adding the most new colours) and shuffles; missing: kicker {1}{C} and its exile-target-land half (written as t6_green2::mycospawn_kicked, not yet called) and devoid colourlessness"
+
+["Endurance"]
+status = "Full"
+note = "3/4 flash reach; when it enters, a graveyard goes to the bottom of its owner's library in random order (the AI picks its own with Faerie Mastermind out, else an opponent's graveyard of 4+ cards); evoke by exiling a green card from hand, then sacrificed, is a hand option used when the full cost is out of reach (t6_green2)"
+
+["Enduring Vitality"]
+status = "Partial"
+note = "3/3 vigilance; every untapped, non-summoning-sick creature you control taps for one mana of any colour (extra_mana hook); when it dies as a creature it returns to the battlefield (once); missing: the returned permanent is an enchantment, not a creature, but the engine still counts it as a creature (Gaea's Cradle count, attacks, blocks, creature removal)"
+
+["The Cabbage Merchant"]
+status = "Full"
+note = "an opponent's noncreature spell makes you a Food; a creature's combat damage to you sacrifices a Food; two untapped Foods tap for one mana of any colour (a source worth one mana per pair; the tapped Foods are counted on the Merchant and untap at your upkeep, the Merchant itself is not tapped). Approximation: the engine keeps Foods as a count, so a tapped Food can still be eaten with {2},{T}, sacrifice (t6_green2)"
+
+["Shifting Woodland"]
+status = "Partial"
+note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the AI has it become a copy of the best creature card there (Oboro Breezecaller first) in its first main phase; missing: it is modelled as the land tapped plus a temporary token copy (exiled at the end step), so the copy's enters triggers wrongly fire and only creature cards are chosen"
+
+["Invasion of Ikoria // Zilortha, Apex of Ikoria"]
+tags = "xtutor reach"
+status = "Partial"
+note = "{X}{G}{G} (X = all spare mana): puts the best non-Human creature card with mana value X or less from the library or graveyard onto the battlefield (the deck's wish list first), shuffling if it came from the library; missing: the battle rules (the Siege stays with 6 defense counters, can be attacked, and cast transformed as Zilortha when defeated; the engine has no battles, so the card goes to the graveyard)"
+
+["Magda, Brazen Outlaw"]
+dsl = []
+status = "Partial"
+note = "other Dwarves you control get +1/+0 (creature_pt); a Dwarf you control becoming tapped makes a Treasure when it taps for mana or attacks; sacrifice five Treasures: the best artifact or Dragon card from the library onto the battlefield, shuffle (t6_legends2.rs). A Dwarf tapped by a tap cost or an effect makes no Treasure (no general becomes-tapped event; engine-needs-legends2.md)"
+
+["The Queen of Dale"]
+status = "Full"
+note = "whenever an opponent casts their first noncreature spell each turn (per caster), you recruit: draw, then discard (the AI's usual discard); a nonland discard makes a 1/1 white Human Soldier token (t6_legends2.rs recruit)"
+
+["Tataru Taru"]
+status = "Full"
+note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure for you, once each turn (tapped_treasures: no mana from it until your untap step; it can still be sacrificed)"
+
+["Teferi, Who Slows the Sunset"]
+dsl = []
+status = "Partial"
+note = "+1: the best of one artifact, one creature and one land (ours tapped: untap; theirs untapped: tap), gain 2; -2: look at three, the one the deck wants into the hand, the rest to the bottom; -7 records the emblem, but the untap-in-their-untap-step and draw-in-their-draw-step effects are not modeled, so the AI never picks it (t6_legends2.rs; engine-needs-legends2.md)"
+
+["Spider-Woman, Stunning Savior"]
+status = "Partial"
+note = "flying 2/2; Venom Blast: artifact and creature permanents and tokens that enter under an opponent's control enter tapped (enters_tapped replacement slot, t6_legends2.rs), opposing Treasures too. Only Food and Clue tokens (counters here) still enter untapped"
+
+["Ertai Resurrected"]
+status = "Full"
+note = "flash 3/2. Counter a spell: the card's ctr=any tag makes the engine cast it in response like Mystic Snake, and its enter hook gives the spell's controller the card. Counter an activated or triggered ability: the AI flashes it in against an opponent's important (importance 6+) ability or trigger on the stack (cardcode::answer_ability -> ertai_answer). Destroy mode: the opponents' best creature or planeswalker when worth 3+, its controller draws (t6_legends2.rs)"
+
+["Legolas's Quick Reflexes"]
+dsl = []
+status = "Partial"
+note = "{G} instant: untap target creature, it gains reach and hexproof until end of turn (resolve hook; the AI holds the card, legolas_cast casts it as a response) (t6_legends2.rs). Missing: the 'whenever it becomes tapped, it deals damage equal to its power to up to one target creature' trigger (engine-needs-legends2.md)"
+
+["Colossal Skyturtle"]
+dsl = []
+status = "Full"
+note = "6/5 flying, ward {2} (card data); both channels from the hand through hand_options, in a main phase: {2}{G} returns the best graveyard card worth 40+ (only when the turtle itself can't be cast), {1}{U} bounces the opponents' best creature worth 5+ (t6_legends2.rs). The data's old battlefield 'discard' abilities are dropped"
+
+["Wan Shi Tong, Librarian"]
+status = "Partial"
+note = "flash, flying, vigilance 1/1; cast with X by a hand option in the end-of-turn window for all spare mana (X = mana - 2, 2 or more): X +1/+1 counters, then draw half X; the AI never casts it for X = 0 (t6_legends2.rs). The opponent-searches trigger (a counter and a card) is written (wan_shi_tong_searched, tested) but the engine has no search event to call it (engine-needs-legends2.md)"
+
+["Fiend Hunter"]
+dsl = []
+status = "Full"
+note = "exiles the best opposing creature (the AI never takes its own); the card returns under its owner's control when Fiend Hunter leaves"
+
+["All-Fates Stalker"]
+dsl = []
+status = "Partial"
+note = "exiles the best opposing non-Assassin creature until it leaves; Warp is coded but not offered (casting from exile is not modeled)"
+
+["Touch the Spirit Realm"]
+dsl = []
+status = "Full"
+note = "ETB exiles the best opposing artifact or creature until it leaves; Channel ({1}{W}, discard) exiles one and returns it under its owner's control at the next end step (the AI channels to flicker its best ETB creature)"
+
+["Radiant Solar"]
+status = "Full"
+note = "venture whenever it or another nontoken creature you control enters, through the engine dungeon system (engine/dungeon.rs: Lost Mine of Phandelver, Tomb of Annihilation, Dungeon of the Mad Mage; the AI picks Lost Mine, Goblin Lair, Dark Pool: each opponent loses 1, you gain 1); {W}, discard: venture and gain 3 life"
+
+["Preston, the Vanisher"]
+dsl = []
+status = "Full"
+note = "another nontoken creature you control that wasn't cast gets a 0/1 white Illusion token copy (its enters trigger fires); {1}{W}, sacrifice five Illusions: exile target nonland permanent; the copy is a 0/1 white Illusion with only the Illusion creature type, as it enters (its enters trigger sees that)"
+
+["Dack Fayden, Helping Hand"]
+status = "Full"
+note = "reveals creature cards equal to the opponents, puts them onto the battlefield (their enters triggers are Dack's controller's), shuffles, hands one to each opponent (best creature to the least threatening one; control change is control::gain_control) and goads them for the rest of the game (control::goad, GoadFor::Forever)"
+
+["Gideon of the Trials"]
+status = "Partial"
+note = "+1 stops the opposing creature's combat damage until your next turn (Dovin's lock); 0: 4/4 indestructible creature until end of turn (damage to him is not prevented); 0: emblem is recorded but the can't-lose rule is not read by the engine"
+
+["Paladin Class"]
+status = "Partial"
+note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries; level 3 pumps your best attacker +1/+1 per other attacker and gives double strike; the level 2 +1/+1 for your creatures is not applied"
+
+["Oboro Breezecaller"]
+status = "Full"
+note = "{2} (less with Training Grounds / Biomancer's Familiar, never under {1}), return a land: untap target land; the AI uses it on its best tapped land (Gaea's Cradle) when that pays the cost, the returned land and 2 more, and a spell or Thrasios is waiting for the mana"
+
+["Badgermole Cub"]
+status = "Partial"
+note = "2/2 body; whenever a creature of yours is tapped for mana, an additional {G} floats (per Cub; lands are not creatures); missing: 'when it enters, earthbend 1' (a land becomes a 0/0 haste creature with a +1/+1 counter and returns tapped when it dies), see rust/agents/engine-needs-green1.md"
+
+["Biomancer's Familiar"]
+status = "Partial"
+note = "2/2 body; activated abilities of your creatures cost {2} less (never under {1}) for Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on creature abilities hard-coded elsewhere (Thrasios {4} is covered), and its adapt ability (no adapt creature in the pool); see rust/agents/engine-needs-green1.md"
+
+["Training Grounds"]
+status = "Partial"
+note = "activated abilities of your creatures cost {2} less (never under {1}), stacking with Biomancer's Familiar, applied to Oboro Breezecaller, Magus of the Candelabra and Formidable Speaker (t6_green1::creature_ability_cost); missing: the discount on creature abilities hard-coded elsewhere (Thrasios {4} is covered), see rust/agents/engine-needs-green1.md"
+
+["Earthcraft"]
+status = "Full"
+note = "tap an untapped creature you control: untap target basic land; the AI uses it with a tapped basic, a spell or Thrasios waiting for the mana, and a creature with nothing better to do (summoning sick before combat, any idle one after; never a mana creature)"
+
+["Candelabra of Tawnos"]
+status = "Full"
+note = "{X},{T}: untap X target lands; the AI picks the X best tapped lands (Gaea's Cradle first) when they make at least {2} more mana than X costs and a spell or Thrasios waits"
+
+["Magus of the Candelabra"]
+status = "Full"
+note = "{X},{T}: untap X target lands (summoning sick on the turn it enters); same AI rule as Candelabra of Tawnos; X is reduced by Training Grounds / Biomancer's Familiar (never under {1})"
+
+["Formidable Speaker"]
+dsl = []
+status = "Full"
+note = "2/4; enters: you may discard a card, and if you do search for a creature (the AI discards its worst card, only when the library has a creature; the stock data discarded unconditionally, so the generic ability is cleared); {1},{T}: untap another target permanent: a tapped land, or a tapped creature or artifact (the AI chains onto Magus / Candelabra when their lands net more than the best land, or a mana rock making 3+; cost reduced by Training Grounds / Familiar)"
+
+["Vibrance"]
+dsl = []
+status = "Partial"
+note = "evoke {R/G}{R/G} from hand, sacrificed on entry: the AI pays {R}{R} for 3 damage (when it kills a creature worth 3+ or finishes a player) or {G}{G} for a land from the library (Gaea's Cradle / Talon Gates not yet held) and 2 life; a normal cast is priced {3}{R}{R} in the card data so it always deals 3 damage and never searches; the stock data gained 2 life unconditionally, so the generic ability is cleared; missing: the hybrid cost choice on a normal cast (engine-needs-green1.md)"
+
+["Springheart Nantuko"]
+status = "Partial"
+note = "1/1 body; landfall creates a 1/1 green Insect (the unattached branch); missing: bestow {1}{G} (+1/+1) and the {1}{G} token copy of the enchanted creature (the Eternal Witness loop), see rust/agents/engine-needs-green1.md"
+["Disruptor Flute"]
+status = "Full"
+note = "flash; the AI names the card that hurts opponents most as it enters (ai::flute_pick); spells with that name cost {3} more for every player (mana::cost_of) and its activated abilities are off except mana abilities (values::stopped)"
+
+["Silence"]
+status = "Full"
+note = "opponents can't cast spells this turn: the engine cast lock (LockKind::AllSpells) on each opponent, flash creatures included (castable, cast_card); the AI never casts it (priority 0, deck plan's call)"
+
+["Orim's Chant"]
+status = "Partial"
+note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); missing: the kicker (a cost choice) and 'creatures can't attack' (a kicked resolve sets t6_stax::attack_lock, nothing reads it); the AI never casts it"
+
+["Mandate of Peace"]
+status = "Partial"
+note = "opponents can't cast spells this turn (the engine cast lock, LockKind::AllSpells); 'end the combat phase' is real; missing: 'cast only during combat' is not enforced for a card in hand; the AI never casts it"
+
+["Angel's Grace"]
+status = "Partial"
+note = "split second is real (while it is on the stack nobody can cast spells, activate non-mana abilities or respond: cast::split_second_up); missing: 'can't lose' and the damage floor (resolving sets t6_stax::grace_active, nothing reads it: later feature); the AI never casts it"
+
+["Blind Obedience"]
+status = "Partial"
+note = "extort works (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures (tokens too) enter tapped as a real replacement (enters_tapped slot, applied before any enters trigger), Treasure tokens too (a tapped Treasure makes no mana until its owner untaps). Only Food and Clue tokens (counters here) still enter untapped: a tapped Food could not be sacrificed for life until it untaps (not modeled)"
+
+["Damping Sphere"]
+status = "Full"
+note = "the {1}-more tax per other spell the caster cast this turn is exact; a land tapped for two or more mana makes one {C} instead of any other type and amount (land_colorless slot, asked after every bonus to the land; two Spheres act once)"
+
+["Pithing Needle"]
+status = "Partial"
+note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it; the engine's activation checks do not ask the Needle yet, so no ability is stopped (rust/agents/engine-needs-stax.md)"
+
+["Chalice of the Void"]
+status = "Full"
+note = "{X}{X}: the AI picks X from 1 to 3 by the cards left in the table's decks (0 only if every X would hurt it more than the table), enters with half the mana paid as charge counters; a spell with that mana value is countered as it is cast (cast, then to its owner's graveyard)"
+
+["Void Mirror"]
+status = "Full"
+note = "a spell cast with no coloured mana spent (colourless sources only, or free) is countered as it is cast; the engine picks which sources pay a generic cost"
+
+["Ioreth of the Healing House"]
+status = "Full"
+note = "{T}: untap another target permanent (a tapped land, mana creature or rock) or untap two other target legendary creatures; the AI taps only for a gain of at least one mana, six times a turn at most (t6_legends1b.rs)"
+
+["Shang-Chi, Master of Kung Fu"]
+status = "Partial"
+note = "taps for mana as a dork; 'activate abilities as though haste' is honored by the engine's creature mana sources and the card code (ability_haste); missing: the two mana of one colour is not limited to creature abilities (restricted mana, engine-needs-legends1b.md)"
+
+["Tyvar, Jubilant Brawler"]
+dsl = []
+status = "Full"
+note = "+1 untaps the best tapped creature; -2 mills three then returns the best creature with MV 2 or less from the graveyard (t6_legends1b.rs); the 'abilities as though haste' static is honored by the mana-source collection (engine/mana.rs) and the untap-ability checks (t6_legends1b::ability_haste)"
+
+["Loki's Scepter"]
+status = "Full"
+note = "enters: gain control of the best opposing creature (value 3 or more, not a commander) until end of turn, untapped and hasty (Villain type has no effect); taps for one mana of any colour (rock tag)"
+
+["Derevi, Empyrial Tactician"]
+status = "Partial"
+note = "enters and whenever a creature you control deals combat damage to a player: untap the best tapped mana source (else tap the best opposing blocker on our turn); missing: {1}{G}{W}{U} put-from-command-zone ability (t6_legends1.rs)"
+
+["Selvala, Heart of the Wilds"]
+add_tags = ["dork=A"]
+status = "Full"
+note = "{G},{T}: X mana of any colours (X = greatest power among your creatures) is a dork making X-1 (the {G} netted off); whenever another creature enters its controller draws if its power is greater than every other creature's (t6_legends1.rs)"
+
+["Emiel the Blessed"]
+status = "Full"
+note = "{3}: blink another creature you control (compiled); whenever another creature you control enters, pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs)"
+
+["Agatha's Soul Cauldron"]
+dsl = []
+status = "Partial"
+note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter on the best creature (AI, second main / end step); missing: spend mana as any colour on creature abilities, and creatures with +1/+1 counters gaining the exiled creatures' activated abilities (t6_legends1.rs)"
+
+["Deadpool, Trading Card"]
+status = "Partial"
+note = "5/3; upkeep: lose 3 life (compiled); {3}, sacrifice: each other player draws (AI uses it at 6 life or less); missing: the as-enters text box exchange with another creature (t6_legends1.rs)"
+["Borne Upon a Wind"]
+status = "Full"
+note = "draws a card and lets the caster cast spells this turn as though they had flash (cast::grants_flash: human timing and the AI end-of-turn window; tested)"
+
+["Mnemonic Betrayal"]
+status = "Partial"
+note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); missing: cards left uncast should return to their owners' graveyards at the next end step, but the end-step clean-up exiles them (engine need: delayed end-step return)"
+
+["Timetwister"]
+status = "Full"
+note = "each player shuffles hand and graveyard into the library and draws seven (cards held from an opponent go to their owner's library); Timetwister then goes to the graveyard (t6_blue.rs, tested)"
+
+["Demonic Counsel"]
+status = "Full"
+note = "searches for the Demon with the most worth, or any card (the deck's tutor pick) with delirium (4+ card types in the graveyard), then shuffles (t6_blue.rs, tested)"
+
+["Rain of Filth"]
+status = "Partial"
+note = "resolving sets the caster's one-turn flag (t6_blue::rain_of_filth_active); missing: the lands' 'Sacrifice this land: Add {B}' mana ability (engine need: a sacrifice-a-land mana source), so the AI never casts it"
+
+["Sevinne's Reclamation"]
+status = "Full"
+note = "returns the best permanent card with mana value 3 or less from the graveyard (a land enters like a played one, without the land drop); cast with flashback {4}{W} it is copied (the AI picks a second target) and exiled (t6_blue.rs, tested)"
+
+["Exhibition Tidecaller"]
+dsl = []
+status = "Partial"
+note = "Opus on the cast hook: whenever you cast an instant or sorcery the best opposing player mills three, or ten when the spell's mana value plus X is 5 or more; missing: the engine records no real mana-spent total, so a cost reduction (or a cheaper alternative cost other than the flagged ones) is not seen (engine need)"
+
+["Voice of Victory"]
+status = "Full"
+note = "Mobilize 2 on the attack hook (two tapped and attacking 1/1 red Warriors, sacrificed at the next end step) and a can_cast lock: opponents cannot cast spells during its controller's turn (t6_blue.rs, tested)"
+
+["High Fae Trickster"]
+status = "Full"
+note = "4/2 flash flyer; you may cast spells as though they had flash (cast::grants_flash via t6_blue::static_flash: human timing, AI end-of-turn window; tested)"
+
+["Drift of Phantasms"]
+status = "Full"
+note = "0/5 flying defender; Transmute {1}{U}{U} as a sorcery-speed hand option for the best card with the same mana value (3), then shuffle (t6_blue.rs, tested)"
+
+["Emrakul, the Promised End"]
+status = "Partial"
+note = "13/13 flying trample that costs {1} less per card type in the graveyard (self_cost, tested); missing: the cast trigger (control of target opponent's next turn, then that player takes an extra turn), and protection from instants (the engine has no turn control, extra turns, or protection from a card type)"
+
+["Rograkh, Son of Rohgahh"]
+status = "Full"
+note = "{0} 0/1 with first strike, menace and trample (card data, tested); partner is the engine's (the deck's commander pair)"
+
+["Silas Renn, Seeker Adept"]
+status = "Full"
+note = "2/2 deathtouch artifact creature; its own combat damage to a player marks the best artifact card in the graveyard for the turn and the AI casts it from the graveyard in a main phase if it can pay; partner is the engine's (t6_blue.rs, tested)"
+
+["Hidden Strings"]
+status = "Partial"
+note = "tap or untap up to two targets: the AI untaps two of its tapped mana sources (rocks and dorks first, then lands) or else taps down the two best opposing creatures, and casts it when three or more mana sources are tapped; missing: cipher (encoding the card on a creature for a free copy on combat damage) -- the card goes to the graveyard (engine need)"
+
+["Valley Floodcaller"]
+status = "Full"
+note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otters and Rats get +1/+1 until end of turn and untap; noncreature spells have flash (cast::grants_flash; tested)"
+
+["Louisoix's Sacrifice"]
+status = "Full"
+note = "instant {U}: additional cost sacrifice a legendary creature or pay {2}; counter target activated ability, triggered ability or noncreature spell. Spells: the ctr=nc tag, the engine pays {2} extra (stack::counter_cost). Abilities: the AI casts it against an important ability or trigger (cardcode::answer_ability -> t6_counters::louisoix_answer), paying {2}, or sacrificing its least valuable legendary creature when it cannot pay and that is worth less than the ability"
 ["Smaug the Magnificent"]
 status = "Full"
 note = "upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs)"
@@ -8306,4 +8989,13 @@ note = "first strike, trample, lifelink; Stagger on combat damage to a player do
 
 ["Marvin, Murderous Mimic"]
 status = "Partial"
-note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first"
+note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first; also has Ioreth's two untap abilities while its controller has an Ioreth (the Tier 6 DDR loop). Other creatures' activated abilities are not copied"
+
+["Staff of Compleation"]
+dsl = [
+  { type = "activated", cost = { tap = true, life = 3 }, effects = [{ do = "proliferate" }], sorcery = false, once = false },
+  { type = "activated", cost = { tap = true, life = 4 }, effects = [{ do = "draw", n = 1, who = "you" }], sorcery = false, once = false },
+  { type = "activated", cost = { mana = "5" }, effects = [{ do = "untap", what = { sel = "self" } }], sorcery = false, once = false },
+]
+status = "Full"
+note = "{T}, pay 1 life: destroy target permanent you own (card code, t6_dack.rs: the AI aims it at its own creatures an opponent controls, the ones Dack gave away; the parsed ability had read 'you control' and destroyed its own permanents); {T}, pay 3 life: proliferate; {T}, pay 4 life: draw; {5}: untap"

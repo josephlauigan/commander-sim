@@ -13,13 +13,13 @@ use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor, tutor_to_top};
 use crate::engine::values::{epow, etgh, has_type, pval, threat, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, die, discard_cards, draw, enter, enter_token_copy, leave, make_tokens, max_by, mill, minus_counter,
+    Enter, Tokens, die, discard_cards, draw, enter, enter_token_copy, make_tokens, max_by, mill, minus_counter,
     searchable,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, PermData, Val};
+use crate::state::{CopyExc, CopyOf, Ctx, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -544,15 +544,7 @@ fn conscripts(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         if crate::ai::protect_response(g, q, t, "steal", Some(o), cd)? || !g.perm(t).on_bf {
             return Ok(());
         }
-        let q = owner(g, t);
-        g.player_mut(q).perms.retain(|&x| x != t);
-        let x = g.perm_mut(t);
-        x.owner = o;
-        x.tapped = false;
-        x.sick = false;
-        g.player_mut(o).perms.push(t);
-        g.bf_ver += 1;
-        g.player_mut(o).borrowed.push(t);
+        crate::engine::control::gain_control(g, o, t, crate::engine::control::Duration::EndOfTurn);
     }
     Ok(())
 }
@@ -681,11 +673,8 @@ fn thief(g: &Game, src: Src, p: PlayerId) -> bool {
     p != owner(g, src)
 }
 
-/// copies the best enchantment on the battlefield
-fn copy_ench(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m != src {
-        return Ok(());
-    }
+/// enters as a copy of the best enchantment on the battlefield (the `enter_copy` slot)
+fn copy_ench(g: &mut Game, _p: PlayerId, _c: CardId) -> Option<CopyOf> {
     let cs: Vec<PermId> = g
         .players
         .iter()
@@ -694,16 +683,11 @@ fn copy_ench(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             g.perm(x).cd.is_some_and(|c| {
                 let d = g.db.get(c);
                 d.types.has(Types::ENCHANTMENT) && !d.has_subtype("aura")
-            }) && x != src
+            })
         })
         .collect();
-    if let Some(best) = max_by(&cs, |x| pval(g, x) + if cname(g, x) == "Necropotence" { 3.0 } else { 0.0 }) {
-        let (cd, me, o) = (g.perm(best).cd.unwrap(), g.perm(src).cd, owner(g, src));
-        leave(g, src)?;
-        let n = enter(g, o, cd, Enter::default())?;
-        g.perm_mut(n).phys = me;
-    }
-    Ok(())
+    let best = max_by(&cs, |x| pval(g, x) + if cname(g, x) == "Necropotence" { 3.0 } else { 0.0 })?;
+    Some(CopyOf { cd: g.perm(best).cd?, exc: CopyExc::default() })
 }
 
 /// +1: mill two (the opponent with the most cards), draw
@@ -973,8 +957,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.upkeep = Some(conf_up);
     r.card(db, "Notion Thief")?.steal_draw = Some(thief);
     let c = r.card(db, "Copy Enchantment")?;
-    c.etb = Some(copy_ench);
-    at_once(c, Event::Etb, true);
+    c.enter_copy = Some(copy_ench);
     super::common::walker(r, db, "Jace, Wielder of Mysteries", &JACE_WOM_ABS)?;
     // Yawgmoth, Thran Physician
     let c = r.card(db, "Yawgmoth, Thran Physician")?;
