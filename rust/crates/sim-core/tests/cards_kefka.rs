@@ -786,3 +786,48 @@ fn scarlet_spider_and_embrace_are_held_for_kefkas_trigger() {
     let g2 = table2();
     assert!(decks::deck_prio(&g2, P0, card(&g2, "Scarlet Spider, Kaine")) > 0, "without Kefka it is a body");
 }
+
+// ------------------------------------------------------------------ Oppression
+/// Oppression: "Whenever a player casts a spell, that player discards a card." Symmetric: the caster discards (and
+/// chooses), whoever it is.
+#[test]
+fn oppression_makes_every_caster_discard_a_card() {
+    let mut g = table(&["kefka", "seph", "veyran"]);
+    perm(&mut g, P0, "Oppression");
+    // an opponent casts a spell with two cards left in hand: one is discarded
+    hand(&mut g, P1, &["Swords to Plowshares", "Forest", "Island"]);
+    let c = g.player(P1).hand[0];
+    let gy0 = g.player(P1).gy.len();
+    let before = g.player(P1).hand.len();
+    assert!(cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap_or(false) || g.player(P1).hand.len() < before);
+    // the spell left the hand, then one card was discarded (the spell itself may fizzle: only the discard is checked)
+    assert_eq!(g.player(P1).hand.len(), before - 2, "the spell and a discarded card");
+    assert!(g.player(P1).gy.len() >= gy0 + 1);
+    // Kefka's own spell costs Kefka a card
+    hand(&mut g, P0, &["Duress", "Island", "Swamp"]);
+    let d = g.player(P0).hand[0];
+    let b0 = g.player(P0).hand.len();
+    cast::cast_card(&mut g, P0, d, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P0).hand.len(), b0 - 2, "Kefka discards too");
+    // an empty hand: nothing to discard, no panic
+    g.player_mut(P2).hand.clear();
+    hand(&mut g, P2, &["Counterspell"]);
+    let e = g.player(P2).hand[0];
+    cast::cast_card(&mut g, P2, e, "hand", Ctx::default()).unwrap();
+    assert!(g.player(P2).hand.is_empty());
+}
+
+/// the AI casts Oppression when the table holds more cards than Kefka can spare, never into an empty hand or with the
+/// storm cards in hand
+#[test]
+fn kefka_casts_oppression_when_opponents_hold_cards_and_not_with_a_combo_turn() {
+    let mut g = table(&["kefka", "seph", "veyran"]);
+    let c = hand(&mut g, P0, &["Oppression", "Swamp", "Island", "Duress"])[0];
+    hand(&mut g, P1, &["Forest", "Forest", "Forest", "Forest"]);
+    hand(&mut g, P2, &["Forest", "Forest", "Forest", "Forest"]);
+    assert!(decks::deck_prio(&g, P0, c) >= 40, "{}", decks::deck_prio(&g, P0, c));
+    hand(&mut g, P0, &["Grapeshot"]);
+    assert_eq!(decks::deck_prio(&g, P0, c), 0, "a storm card in hand: no tax on the combo turn");
+    g.player_mut(P0).hand.retain(|&x| x == c);
+    assert_eq!(decks::deck_prio(&g, P0, c), 0, "no spare cards");
+}

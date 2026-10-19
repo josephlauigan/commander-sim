@@ -357,3 +357,6 @@ Last Gasp|I|1B|rem=shrink3 tgt=c
 Jace Token|P|0|tokpw
 Craft with Pride|S|R|
 Awaken the Ages|S|5R|
+Primeval Titan|C|4GG|pow=6 tgh=6 trample bomb=6
+Oppression|E|1BB|
+Andúril, Narsil Reforged|A|2|leg

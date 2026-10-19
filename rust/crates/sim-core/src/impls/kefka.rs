@@ -1471,6 +1471,9 @@ pub fn flip_utility(g: &Game, p: PlayerId) -> Option<f64> {
 
 // ------------------------------------------------------------------ registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, OPPRESSION)?;
+    c.cast = Some(oppression);
+    c.prio = Some(oppression_prio);
     for (name, f) in [
         ("Duress", duress as crate::hooks::ResolveFn),
         ("Dark Inquiry", dark_inquiry),
@@ -1643,4 +1646,55 @@ pub fn tutor_win_piece(g: &Game, p: PlayerId) -> Option<[&'static str; 2]> {
         return None;
     }
     Some(if loop_safe(g, p) { [CRAWLER, NIV] } else { [NIV, CRAWLER] })
+}
+
+// ------------------------------------------------------------------ Oppression
+const OPPRESSION: &str = "Oppression";
+
+/// **Oppression**: "Whenever a player casts a spell, that player discards a card." Symmetric: Kefka's own spells
+/// cost him a card too (the discard goes through `discard_cards`, so madness, mayhem and the graveyard fuel apply).
+/// The caster chooses (`discard_worst`: Kefka bins his madness / mayhem cards first). Nothing happens on an empty hand.
+fn oppression(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    if g.player(caster).hand.is_empty() || !g.player(caster).alive {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "the caster discards a card", None)? {
+        return Ok(());
+    }
+    if g.player(caster).hand.is_empty() {
+        return Ok(());
+    }
+    crate::glog!(g, "    Oppression: {} discards a card", pname(g, caster));
+    crate::engine::cast::discard_worst(g, caster, 1)
+}
+
+/// Kefka's cast priority for Oppression: it taxes every spell, his own included, so it is cast once the table
+/// holds more cards than he can spare: the opponents' hands (a card per spell they cast, and they cast more as a
+/// table) against his own spare cards, with his discard payoffs (Kefka out, a flip, madness / mayhem cards in hand)
+/// making his own discards cheap. Never while a combo turn is in hand (the storm cards, Breach, Will: every spell of
+/// the turn would cost a card), and never into an empty hand.
+fn oppression_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let hand = &g.player(p).hand;
+    let combo = hand
+        .iter()
+        .any(|&x| matches!(cname(g, x), "Brain Freeze" | "Grapeshot" | "Underworld Breach" | "Yawgmoth's Will"));
+    if combo {
+        return 0;
+    }
+    let spare = hand.iter().filter(|&&x| x != c).count() as i32;
+    if spare < 2 {
+        return 0;
+    }
+    let opp_cards: i32 = g.opps(p).map(|q| g.player(q).hand.len() as i32).sum();
+    let gy_fuel = hand.iter().filter(|&&x| x != c && wants_gy(g, x)).count() as i32;
+    let payoff = kefka_out(g, p) || flipped(g, p) || gy_fuel > 0;
+    if payoff && opp_cards > 0 {
+        return 66;
+    }
+    // more cards across the table than in his own hand: they pay more than he does
+    if opp_cards >= 2 * spare.max(1) || opp_cards >= spare + 4 {
+        return 58;
+    }
+    if opp_cards >= spare { 40 } else { 0 }
 }

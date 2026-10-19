@@ -85,6 +85,8 @@ pub enum DataKey {
     ChosenColor,
     /// Shardmage's Rescue: the turn it entered (a `Val::Stamp`)
     Entered,
+    /// a fetch land put onto the battlefield tapped by Primeval Titan: its {T} cost can not be paid until it untaps
+    TitanTapped,
     FableGoblin,
     Final,
     Flip,

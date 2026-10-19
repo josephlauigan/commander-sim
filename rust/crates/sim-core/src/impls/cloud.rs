@@ -182,6 +182,9 @@ pub fn equip_utility_bonus(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
         if matches!(name_of(g, e), "Wrecking Ball Arm" | "Hulkbuster Armor" | "Colossus Hammer") {
             u += 1.5; // the base or the size is worth more than the +N/+N the formula counts
         }
+        if name_of(g, e) == NARSIL {
+            u += 2.0; // a counter on every creature per swing (not in the +N/+N formula)
+        }
         if g.perm(e).cd.is_some_and(|c| {
             g.db.get(c).abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Triggered { .. }))
         }) {
@@ -944,6 +947,9 @@ fn unfinished_business(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::stat
 // ------------------------------------------------------------------ Registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, CLOUD)?.etb = Some(cloud_etb);
+    let c = r.card(db, NARSIL)?;
+    c.attack = Some(narsil_attack);
+    c.prio = Some(narsil_prio);
     r.card(db, "Hero's Blade")?.etb = Some(blade_etb);
     let c = r.card(db, "Armory Automaton")?;
     c.etb = Some(armory_etb);
@@ -1075,6 +1081,7 @@ pub fn cloud_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                 58
             }
         }
+        NARSIL => narsil_prio(g, p, c),
         "Colossus Hammer" => {
             if eq_out >= 1 {
                 52
@@ -2003,4 +2010,48 @@ pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Vec<crate::sym::Sym> {
         }
     }
     out
+}
+
+// ------------------------------------------------------------------ Andúril, Narsil Reforged
+const NARSIL: &str = "Andúril, Narsil Reforged";
+
+/// Ascend: ten or more permanents (lands count; the engine's one rule for the city's blessing) give the city's
+/// blessing for the rest of the game, remembered in the player's stats once seen
+fn city_blessing(g: &mut Game, p: PlayerId) -> bool {
+    let key = intern("city_blessing");
+    if g.player(p).stats.get(&key).is_some_and(|&n| n > 0) {
+        return true;
+    }
+    if g.player(p).perms.len() + g.player(p).lands.len() >= 10 {
+        g.player_mut(p).stat(key, 1);
+        crate::glog!(g, "    {} has the city's blessing", g.player(p).name);
+        return true;
+    }
+    false
+}
+
+/// **Andúril, Narsil Reforged**: "Ascend. Whenever equipped creature attacks, put a +1/+1 counter on each creature you
+/// control. If you have the city's blessing, put two +1/+1 counters on each creature you control instead. Equip {3}."
+/// (Cloud's doubling queues this trigger twice while the Equipment is on him.)
+fn narsil_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    let Some(host) = g.perm(src).attached else { return Ok(vec![]) };
+    if g.perm(src).owner != p || !atk.contains(&host) || !live(g, host) {
+        return Ok(vec![]);
+    }
+    if !trigger_window(g, p, Some(src), "+1/+1 counters on each creature", Some(3.0))? {
+        return Ok(vec![]);
+    }
+    let n = if city_blessing(g, p) { 2 } else { 1 };
+    let mine: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    for m in mine {
+        crate::cardcode::add_counters(g, m, n);
+    }
+    Ok(vec![])
+}
+
+fn narsil_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    // two mana for a counter on every creature each swing: early, and better the wider the team (and Cloud's doubling)
+    let team = g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count();
+    if cloud_of(g, p).is_some() || team >= 2 { 79 } else { 66 }
 }
