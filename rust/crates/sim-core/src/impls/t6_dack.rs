@@ -17,22 +17,20 @@
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
+use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{epow, once_per_turn, pval, threat, untargetable};
-use crate::engine::zones::{
-    Enter, die, discard_cards, enter, enter_token_copy_with, exile_perm, max_by,
-};
+use crate::engine::zones::{Enter, die, discard_cards, enter, enter_token_copy_with, exile_perm, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{WalkerAb, best_opp_creature, oring_exile, oring_return, walker};
-use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::impls::t2::flicker_worth;
-use crate::state::{Ctx, CopyExc, DataKey, Game, Val};
+use crate::state::{CopyExc, Ctx, DataKey, Game, Val};
 use crate::sym::intern;
 
 // ================================================================== Fiend Hunter
@@ -491,7 +489,6 @@ fn flip_and_donate_inner(g: &mut Game, p: PlayerId) -> Res<Vec<PermId>> {
     Ok(pile)
 }
 
-
 // ------------------------------------------------------------------ the first flip of the turn, for the combo shortcut
 /// the seven creatures of the Dack deck, in the order of the first-flip trace's notation: Abdel, Stalker, Fiend Hunter,
 /// Solar, Werefox, Preston, Felidar (`audit/t6/dack-fayden-white-stax/SPEC.md`, "First-flip trace")
@@ -713,7 +710,54 @@ fn paladin_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Playe
 }
 
 // ================================================================== registration
+
+// ================================================================== Staff of Compleation
+/// "{T}, Pay 1 life: Destroy target permanent you own." The useful targets are the creatures Dack gave away: owned by
+/// p, controlled by an opponent. (The parsed ability read "you control" and destroyed p's own permanents; the card
+/// override drops it and this option replaces it.)
+fn staff_target(g: &Game, p: PlayerId) -> Option<PermId> {
+    let theirs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.token && x.orig == p && x.owner != p && !untargetable(g, m)
+        })
+        .collect();
+    crate::engine::zones::max_by(&theirs, |m| pval(g, m))
+}
+
+fn staff_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let s = g.perm(src);
+    if post.is_none() || s.tapped || s.owner != p || g.player(p).life <= 5 {
+        return Ok(vec![]);
+    }
+    let Some(t) = staff_target(g, p) else { return Ok(vec![]) };
+    let v = pval(g, t);
+    if v < 2.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: (v / 2.0).min(6.0),
+        label: format!("Staff of Compleation: destroy {}", g.perm(t).name),
+        act: Some(Action::Ability { src, f: staff_go, arg: 0 }),
+    }])
+}
+
+fn staff_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    let Some(t) = staff_target(g, p) else { return Ok(false) };
+    g.perm_mut(src).tapped = true;
+    crate::engine::life::lose_life(g, p, 1, Some(p), intern("pay"), None)?;
+    if !ability_window(g, p, Some(src), "Staff of Compleation: destroy", None, Some(t))? {
+        return Ok(true);
+    }
+    if g.perm(t).on_bf {
+        apply_removal(g, Some(p), t, "destroy", None)?;
+    }
+    Ok(true)
+}
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Staff of Compleation")?.options = Some(staff_options);
     let c = r.card(db, "Fiend Hunter")?;
     c.etb = Some(hunter_etb);
     c.leaves = Some(hunter_leaves);

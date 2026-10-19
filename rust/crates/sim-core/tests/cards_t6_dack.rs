@@ -99,7 +99,9 @@ fn touch_channel_needs_its_mana_and_a_legal_target() {
 
 // ======================================================== Radiant Solar
 fn room(g: &Game, p: PlayerId) -> &'static str {
-    sim_core::engine::dungeon::current(g, p).map(|(d, r)| sim_core::engine::dungeon::DUNGEONS[d].rooms[r as usize].name).unwrap_or("none")
+    sim_core::engine::dungeon::current(g, p)
+        .map(|(d, r)| sim_core::engine::dungeon::DUNGEONS[d].rooms[r as usize].name)
+        .unwrap_or("none")
 }
 
 #[test]
@@ -164,7 +166,9 @@ fn illusions_of(g: &Game, p: PlayerId) -> Vec<PermId> {
         .perms
         .iter()
         .copied()
-        .filter(|&m| g.perm(m).on_bf && g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"])
+        .filter(|&m| {
+            g.perm(m).on_bf && g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"]
+        })
         .collect()
 }
 
@@ -415,11 +419,19 @@ fn preston_with_felidar_guardian_is_capped_instead_of_overflowing() {
     let stamp = g.player(P0).grudge.get(&intern("preston_cap_round")).copied().unwrap();
     g.player_mut(P0).grudge.insert(intern("preston_cap_round"), stamp);
     g.player_mut(P0).grudge.insert(intern("preston_cap_n"), cap);
-    let before =
-        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"]).count();
+    let before = g
+        .player(P0)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"])
+        .count();
     let _x = perm(&mut g, P0, "Serra Angel");
-    let after =
-        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"]).count();
+    let after = g
+        .player(P0)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).token && sim_core::engine::values::subtypes(&g, m) == vec!["illusion"])
+        .count();
     assert_eq!(before, after, "capped: no more copies this turn");
 }
 
@@ -524,4 +536,28 @@ fn completed_dungeons_are_counted_and_the_state_is_per_player() {
     assert_eq!(g.player(P0).dungeons_done, 2);
     assert_eq!(sim_core::engine::dungeon::current(&g, P1), None);
     assert_eq!(g.player(P1).dungeons_done, 0);
+}
+
+// ======================================================== Staff of Compleation
+/// "{T}, Pay 1 life: Destroy target permanent you own." The AI aims it at its own creature an opponent controls (one
+/// Dack gave away), never at its own permanents.
+#[test]
+fn staff_of_compleation_destroys_only_a_permanent_you_own_that_an_opponent_controls() {
+    use sim_core::engine::control::{Duration, gain_control};
+    let mut g = game();
+    let staff = perm(&mut g, P0, "Staff of Compleation");
+    perm(&mut g, P0, "Sol Ring");
+    let c = g.perm(staff).cd.unwrap();
+    let opts = g.registry.get(c).unwrap().options.unwrap();
+    assert!(opts(&mut g, staff, P0, Some(true)).unwrap().is_empty(), "nothing of P0's under an opponent: no target");
+    let ox = perm(&mut g, P0, "Serra Angel");
+    assert!(gain_control(&mut g, P1, ox, Duration::Permanent));
+    let life = g.player(P0).life;
+    let o = opts(&mut g, staff, P0, Some(true)).unwrap();
+    assert_eq!(o.len(), 1, "the given-away Serra Angel is a target");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.perm(ox).on_bf, "destroyed");
+    assert!(on_bf(&g, P0, "Sol Ring").is_some(), "P0's own Sol Ring stays");
+    assert_eq!(g.player(P0).life, life - 1);
+    assert!(g.perm(staff).tapped);
 }

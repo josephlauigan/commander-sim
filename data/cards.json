@@ -97529,28 +97529,6 @@
      "type": "activated",
      "cost": {
       "tap": true,
-      "life": 1
-     },
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "permanent",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true,
       "life": 3
      },
      "effects": [
@@ -97603,7 +97581,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,

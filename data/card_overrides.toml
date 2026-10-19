@@ -8990,3 +8990,12 @@ note = "first strike, trample, lifelink; Stagger on combat damage to a player do
 ["Marvin, Murderous Mimic"]
 status = "Partial"
 note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first; also has Ioreth's two untap abilities while its controller has an Ioreth (the Tier 6 DDR loop). Other creatures' activated abilities are not copied"
+
+["Staff of Compleation"]
+dsl = [
+  { type = "activated", cost = { tap = true, life = 3 }, effects = [{ do = "proliferate" }], sorcery = false, once = false },
+  { type = "activated", cost = { tap = true, life = 4 }, effects = [{ do = "draw", n = 1, who = "you" }], sorcery = false, once = false },
+  { type = "activated", cost = { mana = "5" }, effects = [{ do = "untap", what = { sel = "self" } }], sorcery = false, once = false },
+]
+status = "Full"
+note = "{T}, pay 1 life: destroy target permanent you own (card code, t6_dack.rs: the AI aims it at its own creatures an opponent controls, the ones Dack gave away; the parsed ability had read 'you control' and destroyed its own permanents); {T}, pay 3 life: proliferate; {T}, pay 4 life: draw; {5}: untap"
