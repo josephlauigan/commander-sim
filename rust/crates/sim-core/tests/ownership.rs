@@ -2,7 +2,7 @@
 //! Voidwalker, Fallen Shinobi, Gix, Tinybones and a spell countered by Jin-Gitaxias. Before these fixes the card went
 //! to the graveyard of the player who cast it (found in a search playout of the 2026-10-12 run: Jodah cast Yuriko's
 //! Treasure Cruise with her Dauthi Voidwalker, and its delve priced itself until the stack overflowed). Also the
-//! plan milestones of the titania and sheoldred decks.
+//! plan milestones of the omnath and sheoldred decks.
 
 use sim_core::ai::act::perform;
 use sim_core::engine::{cast, zones};
@@ -105,8 +105,8 @@ fn a_spell_jin_gitaxias_counters_goes_to_its_owners_graveyard() {
 }
 
 #[test]
-fn titania_and_sheoldred_mark_their_plans() {
-    let mut g = table(&["titania", "sheoldred", "galadriel"]);
+fn omnath_and_sheoldred_mark_their_plans() {
+    let mut g = table(&["omnath", "sheoldred", "galadriel"]);
     let t = perm(&mut g, P0, "Titania, Protector of Argoth");
     let f = g.registry.get(card(&g, "Titania, Protector of Argoth")).unwrap().land_gy.unwrap();
     let forest = card(&g, "Forest");

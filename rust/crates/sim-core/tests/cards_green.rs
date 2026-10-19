@@ -14,7 +14,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn game() -> Game {
-    table(&["titania", "seph"])
+    table(&["omnath", "seph"])
 }
 
 fn options(g: &mut Game, p: PlayerId, post: bool) -> Vec<Opt> {

@@ -50,7 +50,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 12] = [
+const MAIN_STYLES: [(&str, Style); 11] = [
     ("seph", st(1.0, 0.55, 0.60)),
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
@@ -59,7 +59,6 @@ const MAIN_STYLES: [(&str, Style); 12] = [
     ("alela", st(1.0, 0.70, 0.60)),
     ("kefka", st(1.0, 0.65, 0.55)),
     ("najeela", st(1.0, 0.90, 0.30)),
-    ("titania", st(1.0, 0.70, 0.50)),
     ("omnath", st(1.0, 0.70, 0.50)),
     ("sheoldred", st(1.0, 0.60, 0.60)),
     ("cloud", st(1.0, 0.75, 0.45)),
@@ -76,7 +75,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "titania" | "omnath" | "sheoldred" | "cloud" | "kraum" | "sephfs"
+        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "kraum" | "sephfs"
     )
 }
 

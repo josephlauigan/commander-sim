@@ -103,7 +103,7 @@ fn test_the_started_app_serves_the_page_and_the_catalog() {
     let o = c.get("/api/options").json();
     assert_eq!((o["app"].clone(), o["lan"].clone()), (json!(true), json!(false)));
     let cat = o.clone(); // the options carry the catalog
-    assert_eq!(cat["decks"].as_array().unwrap().len(), 14); // JD's 13 plus Godo (Tier 6)
+    assert_eq!(cat["decks"].as_array().unwrap().len(), 13); // JD's 12 plus Godo (Tier 6)
     assert!(cat["decks"][0]["name"].as_str().is_some_and(|n| !n.is_empty()));
     assert!(stop_app());
     assert!(!stop_app());

@@ -55,7 +55,7 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
         "alela" => crate::impls::alela::alela_prio(g, p, c),
         "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
-        "titania" | "omnath" => crate::impls::titania::titania_prio(g, p, c),
+        "omnath" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
         "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
         "thrasios" => crate::impls::tymna_partners::thrasios_prio(g, p, c),
@@ -753,7 +753,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             }
             None
         }
-        "titania" | "omnath" if kind == "cre" => crate::impls::titania::worldly_pick(g, p, &okn),
+        "omnath" if kind == "cre" => crate::impls::titania::worldly_pick(g, p, &okn),
         "sauron" => sauron_tutor(g, p, &first),
         _ => None,
     }
@@ -1283,7 +1283,7 @@ fn protect_main(
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
         "alela" => crate::impls::alela::alela_protect(g, owner, m, kind, actor, spell),
-        "titania" | "omnath" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
+        "omnath" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
         "cloud" => crate::impls::cloud::cloud_protect(g, owner, m, kind, actor, spell),
         // Deflecting Swat and Slip Out the Back for Kefka, the same responses as Veyran's (a no-op without them)
