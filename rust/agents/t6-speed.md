@@ -31,3 +31,32 @@ only, no decisions, no RNG):
    many rounds), and the most common thing it did instead on its ready-but-didn't-go turns (the chosen option label).
 Then run `--calibrate within --pool t6 --games 1000 --seed 500000` and write the table in the report, deck by deck:
 is the delay AI-limited (ready/reachable early, go late) or draw-limited (ready late)?
+
+## Measure result (2026-10-19, report-t6-speed-measure.md, audit/t6/speed-2026-10-19/cal1000.txt)
+
+Lines become ready late (median round 6-7 even for the fast decks; Dack 20%, Sisay 14%, Rograkh/Thrasios 16% of
+games ever ready), and the decks go at once when ready, except Kraum/Tymna (ready 51%, go 30%: "stop (hold mana)"
+656 times). Mana is the bottleneck: ~4.4 mana on turn 4; Dack's line is Dack alone ({4}{W}{W}) and is ready at round 7.
+
+## Task `mana` — fast mana and early development, all six decks
+
+1. Measure mana available at the start of each turn 1-5 per deck (stats only) and the number of mana permanents /
+   fast-mana spells cast on turns 1-3 vs held in hand. Compare with what each list should do (its spec's "Turn by
+   turn" and mulligan sections: cEDH decks aim for 4-6 mana on turn 2-3).
+2. Find why fast mana is held or played late: plan priorities, the look-ahead's "stop", Chrome Mox / Mox Diamond
+   gates, rituals held, Lotus Petal never sacrificed, dorks cast after other spells, land drops, mulligans keeping
+   mana-light hands.
+3. Check the mana sources' models: Ancient Tomb, City of Traitors, Gemstone Caverns, Mana Vault, Grim/Basalt
+   Monolith, Lotus Petal, Elvish Spirit Guide / Simian Spirit Guide, Dark Ritual and other rituals, Gaea's Cradle,
+   Mox Amber, Mox Opal, Chrome Mox, Mox Diamond, Jeweled Lotus, the dorks. Fix rules errors.
+4. A shared Tier 6 rule is allowed (e.g. "on turns 1-3, mana first": cast every mana source that pays for itself
+   before other spells, gated to Tier 6), plus per-deck plan priorities.
+Measure: mana by turn, ready/go/win medians, win % (600 games while working, 2000 to confirm).
+
+## Task `kraum-go` — Kraum/Tymna waits with a ready line
+
+Ready in 51% of games, goes in 30%; on ready-but-didn't-go turns it chose "stop (hold mana)" 656 times or cast a
+commander. Its go_now (impls/t6_plan_kraum.rs) demands creature cover (FoW with 2 blue, Pact, Silence, Chant) while
+any opponent has cards plus mana: that is nearly always. Make it go like the spec says (when the table is tapped
+low, or with one piece of protection, or before an opponent's win), and measure win round and win %; Kraum/Tymna
+must stay inside 18-32%, so trade some of the extra speed for fewer, better-timed tries if needed.
