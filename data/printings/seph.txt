@@ -23,7 +23,7 @@
 1 Demonic Tutor (cmm) 696
 1 Diabolic Tutor (sld) 721
 1 Displacer Kitten (clb) 63
-1 Dread Return (dmr) 302
+1 Victimize (tdc) 198
 1 Elesh Norn, Grand Cenobite (mul) 3
 1 Elesh Norn, Mother of Machines (one) 416
 1 Entomb (dmr) 426

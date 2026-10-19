@@ -2560,14 +2560,17 @@
     }
    ],
    "start_loyalty": null,
-   "kws": [],
+   "kws": [
+    "ascend",
+    "equip"
+   ],
    "subtypes": [
     "equipment"
    ],
    "protfrom": "",
    "ward": 0,
-   "identity": null,
-   "game_changer": null,
+   "identity": "",
+   "game_changer": false,
    "source": "pool",
    "unparsed": [],
    "derived": {
@@ -56695,7 +56698,10 @@
     "lifelink",
     "trample"
    ],
-   "subtypes": [],
+   "subtypes": [
+    "human",
+    "soldier"
+   ],
    "protfrom": "",
    "ward": 0,
    "identity": null,
@@ -60148,7 +60154,9 @@
    "dsl": null,
    "start_loyalty": null,
    "kws": [],
-   "subtypes": [],
+   "subtypes": [
+    "toy"
+   ],
    "protfrom": "",
    "ward": 0,
    "identity": null,

@@ -82,7 +82,7 @@ Tymna, so it can't also block. The attack taxes fix that:
 Tymna wants every opponent hit each turn. **Adeline** makes a 1/1 attacking *each* opponent whenever you attack, and
 **Hero of Bladehold** makes two attacking tokens with battle cry; **Dauthi Voidwalker** (shadow), **Vampire Nighthawk**,
 **The Wasp** (taps a blocker when it attacks), **Nightwind Glider**, **Falcon and Redwing**, **Black Widow** and
-**Lightning** (menace) get through on their own. Attack the opponents you can reach, keep enough back to block what
+**Lightning, Security Sergeant** (menace) get through on their own. **Lightning, Army of One** ({1}{R}{W}, 3/2 first strike, trample, lifelink) is the other aggressor: when it connects, damage that player or their permanents take is doubled until your next turn. Attack the opponents you can reach, keep enough back to block what
 the taxes let through, and draw.
 
 ### Removal and interaction
@@ -98,7 +98,7 @@ Tymna.
 
 **Black Widow** draws when an opponent draws their second card in a turn, and **Fact or Fiction** and
 **Expressive Iteration** dig.
-**Lightning** plays the top card when it connects. **Underworld Breach** ({1}{R}) gives every nonland card in your
+**Lightning, Security Sergeant** plays the top card when it connects. **Underworld Breach** ({1}{R}) gives every nonland card in your
 graveyard escape for the turn (its mana cost plus exiling three other cards from the graveyard), so a late game with a
 full graveyard recasts a dead Elspeth, Titan, Angel or wipe (Austere Command, Avenge) in one turn. It is sacrificed at
 the end step, and Sun Titan can bring it back (mana value 2). It needs {R} and four or more cards in the graveyard, so
@@ -158,7 +158,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elemental Mascot, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Serra Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Army of One, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Serra Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -200,7 +200,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Disenchant
 1 Dragonskull Summit
 1 Drowned Catacomb
-1 Elemental Mascot
 1 Elenda, the Dusk Rose
 1 Elspeth, Sun's Champion
 1 Exotic Orchard
@@ -220,6 +219,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Isolated Chapel
 1 Kraum, Ludevic's Opus
 1 Lightning Greaves
+1 Lightning, Army of One
 1 Lightning, Security Sergeant
 1 Lyra Dawnbringer
 1 Marchesa, the Black Rose
