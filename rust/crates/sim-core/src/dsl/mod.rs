@@ -307,10 +307,8 @@ fn ask_target(
         Some(c) => g.db.get(c).name.to_string(),
         None => "An ability".to_string(),
     };
-    let labels: Vec<String> = cands
-        .iter()
-        .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
-        .collect();
+    let labels: Vec<String> =
+        cands.iter().map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m))).collect();
     let cancel = if sel.upto == Some(true) { Some("no target") } else { None };
     let k = crate::human::choices::choose(g, p, "target", &format!("{what}: choose a target"), &labels, cancel, None)
         .ok()
@@ -342,7 +340,11 @@ pub fn choose_target(
         .filter(|q| q.alive)
         .flat_map(|q| q.perms.iter().copied())
         .filter(|&m| {
-            matches(g, p, m, f, src) && !(g.perm(m).owner != p && (untargetable(g, m) || protected_from(g, m, cols) || crate::impls::tymna_cards::hexproof_from(g, m, cols)))
+            matches(g, p, m, f, src)
+                && !(g.perm(m).owner != p
+                    && (untargetable(g, m)
+                        || protected_from(g, m, cols)
+                        || crate::impls::tymna_cards::hexproof_from(g, m, cols)))
         })
         .collect();
     if crate::human::is_human(g, p) && !cands.is_empty() {
@@ -502,7 +504,10 @@ fn run(
                         .iter()
                         .flat_map(|&q| g.player(q).perms.iter().copied())
                         .filter(|&m| {
-                            g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= eff && !protected_from(g, m, cols)
+                            g.is_creature(m)
+                                && !untargetable(g, m)
+                                && etgh(g, m) <= eff
+                                && !protected_from(g, m, cols)
                                 && !crate::impls::tymna_cards::hexproof_from(g, m, cols)
                         })
                         .collect();
@@ -665,8 +670,11 @@ fn run(
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
                 // Hardened Scales: one more on a creature you control (before any doubling)
-                let extra =
-                    if k > 0 && g.is_creature(m) { crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p) } else { 0 };
+                let extra = if k > 0 && g.is_creature(m) {
+                    crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p)
+                } else {
+                    0
+                };
                 let tot = crate::cardcode::vorinclex(g, p, k + extra);
                 g.perm_mut(m).plus += tot; // Vorinclex
                 crate::impls::t0_captain::counters_put(g, m, tot); // Captain Marvel
@@ -1029,7 +1037,14 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
             if let Some(t) = f.kind.as_deref().filter(|t| *t != "any") {
                 prompt.push_str(&format!(" for {t} card"));
             }
-            let got = crate::human::choices::search(g, p, &|g: &Game, x: CardId| card_matches(g, x, Some(&fc)), 1, &prompt, true)?;
+            let got = crate::human::choices::search(
+                g,
+                p,
+                &|g: &Game, x: CardId| card_matches(g, x, Some(&fc)),
+                1,
+                &prompt,
+                true,
+            )?;
             let Some(&c) = got.first() else { return Ok(()) };
             g.player_mut(p).library.push(c); // put back: removed below like the AI's pick
             c
@@ -1066,11 +1081,7 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
         g.player_mut(p).stat("tutored", 1);
         let (pn, cn) = (g.player(p).name, g.db.get(c).name.to_string());
         if to == "hand" || to == "top" {
-            g.log_secret(
- p,
-                &format!("    {pn} searches for a card"),
-                &format!("    {pn} searches for {cn}"),
-            );
+            g.log_secret(p, &format!("    {pn} searches for a card"), &format!("    {pn} searches for {cn}"));
         } else {
             crate::glog!(g, "    {} searches for {}", pn, cn);
         }
@@ -1958,7 +1969,13 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .perms
             .iter()
             .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).noatk && !untargetable(g, m) && x.attached != Some(m))
+            .filter(|&m| {
+                g.is_creature(m)
+                    && !g.perm(m).phased
+                    && !g.perm(m).noatk
+                    && !untargetable(g, m)
+                    && x.attached != Some(m)
+            })
             .collect();
         let base = n;
         let cands: Vec<PermId> = cands
@@ -1971,9 +1988,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         let score = |m: PermId| {
             let y = g.perm(m);
             let flies = y.fly || has_kw(g, m, "flying");
-            (if y.army { 3.0 } else { 0.0 })
-                + if flies { 2.0 } else { 0.0 }
-                + 0.3 * epow(g, m) as f64
+            (if y.army { 3.0 } else { 0.0 }) + if flies { 2.0 } else { 0.0 } + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
                 + crate::impls::cloud::holder_bonus(g, p, m)
                 + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)
@@ -2038,7 +2053,12 @@ pub fn borrowed_tap_options(g: &mut Game, p: PlayerId, src: PermId, from: CardId
     }
     for (i, a) in abilities(g, from).iter().enumerate() {
         let Ability::Activated { cost, effects, sorcery, .. } = a else { continue };
-        if cost.tap != Some(true) || cost.mana.is_some() || cost.sac.is_some() || cost.life.is_some() || *sorcery == Some(true) {
+        if cost.tap != Some(true)
+            || cost.mana.is_some()
+            || cost.sac.is_some()
+            || cost.life.is_some()
+            || *sorcery == Some(true)
+        {
             continue;
         }
         if !pay_ability_cost(g, p, src, cost, true)? {

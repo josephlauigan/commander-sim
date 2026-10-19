@@ -5,3 +5,4 @@ reads it: person -> yes/no, AI -> skip when library <= 12 (dead today, must stay
 Plan: split_clauses keeps may flag (persists over ", then", resets at ". "/"; "), parse_effects sets optional on those
 effects; dsl/mod.rs `run` asks person yes/no for any optional effect; AI ignores flag; regen cards.json; tests/play_dsl_may.rs.
 Status: baseline sims started (/tmp/dslmay-*-before.txt).
+Status: DONE; committed. See report.
