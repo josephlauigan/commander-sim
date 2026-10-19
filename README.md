@@ -41,9 +41,7 @@ decklists/Avery/          Avery's decks: Alela, Galadriel
 decklists/pool/           the 25 opponent decks in five tiers, results (pool-results.md), retired/
 documents/                architecture.md, practice-mode.md, card-audit.md and the design notes
 audit/                    results of the audit and overnight runs
-ios-shell/                the Swift shell for the iPad (coming; see Practice mode)
-ios/                      the old iPad app (Briefcase, legacy; ios/README.md)
-tools/                    app_icon.py (draws the iPad app's icon)
+ios-shell/                the iPad app (Swift around the Rust server; ios-shell/README.md)
 ```
 
 ## Run
@@ -123,9 +121,8 @@ commander-practice --lan                                      # also lets a frie
 Stop the server with Ctrl+C. Without `--lan` it listens on this computer only (127.0.0.1), so it can't be reached
 from a phone or another machine.
 
-**On the iPad.** A Swift shell in `ios-shell/` (the same Rust server inside a native app, offline) is being built and
-is not finished. The Briefcase app in `ios/` is the legacy one; it still packages the old Python code and no longer
-matches this tree, so leave it until the shell works.
+**On the iPad.** The app in `ios-shell/` runs the same Rust server inside a native app, offline. Build it on a Mac
+with `ios-shell/run.sh`; `ios-shell/README.md` has the setup and how to put it on your own iPad.
 
 **Setting up a game.** Pick a tier: three opponents are drawn from it at random (always random; hover over one to
 see how it plays). Then pick your deck (each shows its simulated win rate at that tier), your seat, how much the opponents interact (loose or
