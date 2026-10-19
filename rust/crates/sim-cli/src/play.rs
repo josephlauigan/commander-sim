@@ -198,6 +198,12 @@ impl Sim {
         self.raw.get(name)
     }
 
+    /// a double-faced card typed by its front face alone ("Kuja, Genome Sorcerer"): the full "A // B" name it is stored under
+    pub fn full_face_name(&self, name: &str) -> Option<String> {
+        let pre = format!("{name} // ");
+        self.raw.keys().find(|k| k.starts_with(&pre)).map(|k| k.to_string())
+    }
+
     /// poolmode.pool_keys: one tier's deck keys, in file order
     pub fn pool_keys(&self, tier: &str) -> Vec<String> {
         self.pool.iter().filter(|d| d.tier == tier).map(|d| d.key.clone()).collect()
