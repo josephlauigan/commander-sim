@@ -1291,7 +1291,7 @@ fn chalice(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     }])
 }
 
-fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, k) = unpack(arg);
     let c = CardId(c as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2 * k, "", false) {

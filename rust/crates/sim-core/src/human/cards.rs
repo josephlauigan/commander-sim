@@ -1022,6 +1022,7 @@ pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
         "Spectacle Summit" => summit(g),
         "Barad-dûr" => baraddur(g),
         "Mistrise Village" => mistrise(g),
+        "Phyrexian Tower" => tower(g),
         _ => vec![],
     }
 }
@@ -1265,6 +1266,11 @@ fn hand_ways(name: &str) -> Option<Vec<(&'static str, HandFn)>> {
         "Whipcorder" => vec![
             ("cast it ({W}{W})", cast_normally),
             ("cast it face down as a 2/2 creature for {3} (morph)", morph_cast),
+        ],
+        "Everflowing Chalice" => vec![("cast it, kicked as many times as you choose (multikicker {2})", chalice_person)],
+        "Ragavan, Nimble Pilferer" => vec![
+            ("cast it ({R})", cast_normally),
+            ("dash it ({1}{R}): haste, back to your hand at end of turn", ragavan_dash_person),
         ],
         _ => return None,
     })
@@ -2415,4 +2421,66 @@ fn cast_or_alt(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     }
     let ways = vec![alts.into_iter().nth(k - 1).unwrap()];
     super::alt::pick_and_run(g, p, c, ways)
+}
+
+// ------------------------------------------------------------------ alternative costs the card code keeps for the AI
+/// Everflowing Chalice: multikicker {2}; it enters with a charge counter per kick and taps for {C} per counter.
+/// The person says how many kicks (the AI's `chalice` option caps it at three and judges the mana itself).
+fn chalice_person(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = legal::check_cast(g, p, c, "hand") {
+        return Ok(Some(why));
+    }
+    let max = (g.player(p).pool.total() / 2).min(8);
+    let labels: Vec<String> = (0..=max)
+        .map(|k| match k {
+            0 => "no kicks (it taps for nothing)".to_string(),
+            1 => "kick it once ({2})".to_string(),
+            _ => format!("kick it {k} times ({{{}}})", 2 * k),
+        })
+        .collect();
+    let prompt = format!("{}: multikicker {{2}}: how many times?", cname(g, c));
+    let Some(k) = pick(g, p, "choose", &prompt, &labels)? else { return Ok(None) };
+    if !crate::impls::rules::chalice_go(g, p, crate::impls::partials::pack(c.0 as u32, k as u32))? {
+        return Ok(Some(format!("Can't cast {} kicked {k} times with the mana in your pool.", cname(g, c))));
+    }
+    Ok(None)
+}
+
+/// Ragavan's dash {1}{R}: cast with haste, returned to its owner's hand at the beginning of the next end step.
+fn ragavan_dash_person(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = timing(g, p, c) {
+        return Ok(Some(why));
+    }
+    if let Some(why) = super::mana::cost_problem(g, p, 1, "R") {
+        return Ok(Some(format!("Can't dash {}. {why}", cname(g, c))));
+    }
+    crate::impls::rules2::ragavan_go(g, p, c.0 as i64)?;
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+/// Phyrexian Tower: {T}, sacrifice a creature: add {B}{B}. The person picks the creature (the AI only offers it when
+/// a death payoff makes it worth it).
+fn tower(_g: &Game) -> Vec<LandAbility> {
+    vec![ability(
+        "{T}, sacrifice a creature: add {B}{B}",
+        |g: &mut Game, p: PlayerId, l: LandId| {
+            if let Some(why) = land_tapped(g, l, "Phyrexian Tower") {
+                return Ok(Some(why));
+            }
+            let cre = my_creatures(g, p);
+            if cre.is_empty() {
+                return Ok(Some("Phyrexian Tower: you have no creature to sacrifice.".into()));
+            }
+            let labels: Vec<String> = cre.iter().map(|&m| legal::describe_target(g, p, Target::Perm(m))).collect();
+            let Some(k) = pick(g, p, "choose", "Phyrexian Tower: sacrifice which creature?", &labels)? else {
+                return Ok(None);
+            };
+            g.land_mut(l).tapped = true;
+            crate::glog!(g, "  {} sacrifices {} to Phyrexian Tower", pname(g, p), g.perm(cre[k]).name);
+            crate::engine::zones::die(g, cre[k], "sac")?;
+            g.player_mut(p).pool.add('B', 2);
+            Ok(None)
+        },
+    )]
 }
