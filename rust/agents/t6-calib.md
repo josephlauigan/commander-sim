@@ -26,3 +26,26 @@ Dack 33-34%, Kinnan 32-34, Kraum/Tymna 28-29, Rograkh/Silas 21-23, Sisay 19-21, 
   Commits with `git add -A rust data audit`, no Co-Authored-By. Timebox ~90 minutes.
 - Report in `rust/agents/report-t6-cal-<task>.md`: what was wrong (modeling vs tuning), each change, before/after
   numbers (600 and the final 2000 run), what still differs. Final message 12 lines or fewer.
+
+## Task `rthras2` — Rograkh/Thrasios: its other lines and its tutors (2026-10-18 night)
+
+`rust/agents/report-t6-cal-rthras.md` (branch t6-cal-rthras) found no modeling error in line A, and that readiness is
+draw-bound: Gaea's Cradle was missing in ~45% of checks (in the library ~90% of those), Talon Gates in ~35%. Two
+tuning changes (earlier go_now, Crop Rotation/Gamble for Gates) did nothing measurable; the deck stays ~13%.
+
+The spec (audit/t6/rograkh-thrasios-creature-combo/SPEC.md, "Win lines" and the tutor table) lists lines the sim
+doesn't model and tutors it may not use:
+
+1. Model the missing lines as combos (impls/t6_combos_t6.rs style, QUIET, per-step answer windows), Oracle-checked:
+   C. Badgermole Cub + Mockingbird (or Clever Impersonator / Phantasmal Image / Flesh Duplicate) with Oboro + Cradle;
+   D. Badgermole Cub x2 (Cub + a clone) + two earthbent lands + Eternal Witness + Snap (line B without Cradle);
+   G. Springheart Nantuko bestowed on Eternal Witness + Vibrance damage loop with the Oboro/Gates loop.
+   Count the mana exactly from the cards' Oracle text; if a line isn't unbounded with our list, say so and skip it.
+2. Check every tutor in the spec's table actually fetches the piece the line is missing: Expedition Map, Sowing
+   Mycospawn, Vibrance's land mode, Crop Rotation, Gamble for Cradle/Gates; Spellseeker for Snap or Finale (MV 2 in
+   the library); Nature's Rhythm, Chord, Finale (X=2/3), Invasion of Ikoria, Formidable Speaker for Oboro/Witness;
+   Green Sun's Zenith for Witness. Fix the ones that don't.
+3. Measure (600 then 2000 games, seed 500000): win %, wins by line, combo tries per game.
+
+Start from branch t6-cal-rthras (merge t6-cedh first). Machine: CARGO_BUILD_JOBS=8, sims --jobs 8, all in the
+background. Timebox ~2 hours.
