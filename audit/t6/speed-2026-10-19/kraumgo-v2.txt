@@ -1,0 +1,204 @@
+2,000 games (calibration: within, 1,000 per list per tier, profiles conservative and loose), lookahead AI, 7 worker threads: about 14 minutes
+
+=== Within-tier balance [conservative, n=1000 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  1m52s elapsed, ~16m53s left
+  progress  20.0%  3m16s elapsed, ~13m05s left
+  progress  30.0%  4m40s elapsed, ~10m54s left
+  progress  40.0%  6m02s elapsed, ~9m04s left
+  progress  50.0%  7m29s elapsed, ~7m29s left
+  Tier 6 (cEDH, B5): avg game 10.2 rounds, timeouts 2.3%
+    Dack Fayden                   26.9% (23.7-30.4)  [1.7 pts from round-cap wins]
+    Kinnan                        24.5% (21.4-27.9)  [0.0 pts from round-cap wins]
+    Kraum/Tymna                   33.7% (30.2-37.5)  [0.6 pts from round-cap wins]
+    Rograkh/Silas                 20.7% (17.8-23.9)  [0.2 pts from round-cap wins]
+    Rograkh/Thrasios              18.4% (15.7-21.5)  [0.7 pts from round-cap wins]
+    Sisay                         26.3% (23.1-29.8)  [0.3 pts from round-cap wins]
+  -- Tier 6 report (1000 games, 977 decisive; round-cap draws 2.3%) --
+  win share by seat of decisive games: seat 1 25.8% (real 34.1%, sim 30-38) OUT; seat 2 23.8% (real 27.3%, sim 24-31) OUT; seat 3 27.1% (real 22.5%, sim 19-26) OUT; seat 4 23.2% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 252 (25.2% of games), win round 9.7/9.0, mulligans 43.1%, tries 0.26/game, stopped 30%, taken 1.28+0.93/game, died 73%, death round 9.3, first out 56%, wins by round <=4/5/6/8: 18/30/55/107 of 252, T4 mana 4.6 hand 5.1, commander out turn 3.1
+      seat 2: wins 233 (23.3% of games), win round 10.3/10.0, mulligans 42.2%, tries 0.24/game, stopped 36%, taken 1.11+0.95/game, died 76%, death round 9.4, first out 56%, wins by round <=4/5/6/8: 8/21/45/91 of 233, T4 mana 4.5 hand 5.1, commander out turn 3.3
+      seat 3: wins 265 (26.5% of games), win round 10.2/10.0, mulligans 43.4%, tries 0.26/game, stopped 33%, taken 1.07+0.92/game, died 72%, death round 9.4, first out 53%, wins by round <=4/5/6/8: 8/17/62/110 of 265, T4 mana 4.5 hand 5.1, commander out turn 3.2
+      seat 4: wins 227 (22.7% of games), win round 9.7/9.0, mulligans 45.4%, tries 0.23/game, stopped 29%, taken 0.96+0.87/game, died 76%, death round 9.4, first out 56%, wins by round <=4/5/6/8: 12/27/54/92 of 227, T4 mana 4.5 hand 5.1, commander out turn 3.1
+  Dack Fayden: seated 665, won 179 (26.9%; 11 by the round cap)
+      wins by: Dack Fayden: the first flip wins the turn (35 piles) 124 (74%), damage 42 (25%), commander damage 2 (1%)
+      win round: average 9.4, median 8.0
+      went for a combo 132 times (0.20 per game) [Dack Fayden: the first flip wins the turn (35 piles) 132]; stopped 8 (6%)
+      stopped by: Dack Fayden: the first flip wins the turn (35 piles) by Chain of Vapor 3, Dack Fayden: the first flip wins the turn (35 piles) by Snap 2, Dack Fayden: the first flip wins the turn (35 piles) by Abrupt Decay 1, Dack Fayden: the first flip wins the turn (35 piles) by Into the Flood Maw 1, Dack Fayden: the first flip wins the turn (35 piles) by Mental Misstep 1
+      stopped by card: Chain of Vapor 3, Snap 2, Abrupt Decay 1, Into the Flood Maw 1, Mental Misstep 1
+      speed (median round): ready 7.0 (20% of games), one tutor away 7.0 (20% of games), went for a line 7.0 (20% of games), won 8.0
+      ready before go: went for it later in 0 of 133 ready games (median wait 0.0 rounds, mean 0.00); never went in 2
+      while ready and not gone it chose: combo: Dack Fayden: the first flip wins the turn (35 piles) 131, stop 17, stop (hold mana) 17, Tezzeret, Cruel Captain +0 3, Mox Diamond 3, The One Ring 2
+      mulligans: 262 of 665 hands (39.4%): one 153, two 64, three 45
+      counters resolved: 53 (Bilbo's Gambit 53); hit Sisay 18, Kinnan 17, Rograkh/Thrasios 9, Kraum/Tymna 6, Rograkh/Silas 3
+      removal resolved: 1873 (ability 494, Fiend Hunter 325, All-Fates Stalker 310, Reprieve 83, March of Otherworldly Light 81); hit Kinnan 484, Rograkh/Thrasios 431, Sisay 405, Kraum/Tymna 301, Rograkh/Silas 252
+      stax cast: 1214 (Pithing Needle 126, Defense Grid 123, Blind Obedience 120, Chalice of the Void 120, Cursed Totem 109)
+      wipes: 57 (Vanquish the Horde 57)
+  Kinnan: seated 661, won 162 (24.5%; 0 by the round cap)
+      wins by: Kinnan + Basalt Monolith + Thrasios (draw the deck) 83 (51%), damage 29 (18%), Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 26 (16%), Hullbreaker Horror + Kinnan + two rocks cast between each other 24 (15%)
+      win round: average 8.9, median 9.0
+      went for a combo 156 times (0.24 per game) [Kinnan + Basalt Monolith + Thrasios (draw the deck) 90, Hullbreaker Horror + Kinnan + two rocks cast between each other 35, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 31]; stopped 46 (29%)
+      stopped by: Kinnan + Basalt Monolith by Snap 5, Hullbreaker Horror + Kinnan + two rocks cast between each other by Mindbreak Trap 3, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) by Dismember 2, Kinnan + Basalt Monolith by Into the Flood Maw 2, Kinnan + Basalt Monolith by Red Elemental Blast 2, Kinnan + Basalt Monolith + Thrasios (draw the deck) by Louisoix's Sacrifice 2
+      stopped by card: Chain of Vapor 7, Snap 5, Into the Flood Maw 5, Mindbreak Trap 3, Louisoix's Sacrifice 3, March of Otherworldly Light 3
+      speed (median round): ready 7.0 (25% of games), one tutor away 6.0 (51% of games), went for a line 7.0 (22% of games), won 9.0
+      ready before go: went for it later in 18 of 165 ready games (median wait 0.0 rounds, mean 0.23); never went in 19
+      while ready and not gone it chose: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 84, stop 52, stop (hold mana) 35, combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 34, combo: Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 28, Basalt Monolith ability 19
+      mulligans: 315 of 661 hands (47.7%): one 189, two 79, three 47
+      counters resolved: 824 (Force of Negation 103, Force of Will 103, Disrupting Shoal 101, Fierce Guardianship 82, Mental Misstep 80); hit Dack Fayden 222, Rograkh/Silas 165, Kraum/Tymna 153, Rograkh/Thrasios 145, Sisay 139
+      removal resolved: 392 (ability 182, Snapback 96, Sink into Stupor // Soporific Springs 77, Snap 8, Into the Flood Maw 7); hit Sisay 116, Rograkh/Thrasios 89, Dack Fayden 83, Kraum/Tymna 56, Rograkh/Silas 48
+  Kraum/Tymna: seated 643, won 217 (33.7%; 4 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 169 (79%), damage 27 (13%), commander damage 6 (3%), combo (unnamed) 6 (3%), Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 5 (2%)
+      win round: average 10.0, median 9.0
+      went for a combo 240 times (0.37 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 205, Ad Nauseam into a win 21, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 7, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 7]; stopped 53 (22%)
+      stopped by: Ad Nauseam into a win by an unnamed answer 10, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 5, Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 5, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Negation 4, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 4, Thassa's Oracle + Demonic Consultation / Tainted Pact by Pact of Negation 3
+      stopped by card: (no card named: a cost, a ward or a lock) 15, Swan Song 6, Force of Negation 5, Mental Misstep 4, Pact of Negation 4, Disrupting Shoal 3
+      speed (median round): ready 7.0 (53% of games), one tutor away 6.0 (61% of games), went for a line 8.0 (35% of games), won 9.0
+      ready before go: went for it later in 126 of 342 ready games (median wait 1.0 rounds, mean 1.59); never went in 118
+      while ready and not gone it chose: stop (hold mana) 551, stop 215, combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 192, Tymna the Weaver 125, Kraum, Ludevic's Opus 61, Grand Abolisher 22
+      mulligans: 343 of 643 hands (53.3%): one 201, two 95, three 47
+      counters resolved: 796 (Force of Will 100, Pact of Negation 97, Mental Misstep 91, Fierce Guardianship 91, Force of Negation 85); hit Dack Fayden 182, Kinnan 180, Sisay 166, Rograkh/Silas 136, Rograkh/Thrasios 132
+      removal resolved: 470 (ability 163, Into the Flood Maw 116, Snapback 111, Red Elemental Blast 60, Fiend Hunter 5); hit Kinnan 145, Sisay 106, Rograkh/Thrasios 97, Dack Fayden 70, Rograkh/Silas 52
+      stax cast: 56 (Silence 37, Orim's Chant 15, Defense Grid 1, Deafening Silence 1, Pithing Needle 1)
+      wipes: 2 (Cyclonic Rift 2)
+  Rograkh/Silas: seated 663, won 137 (20.7%; 1 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 132 (97%), combo (unnamed) 3 (2%), damage 1 (1%)
+      win round: average 7.7, median 7.0
+      went for a combo 244 times (0.37 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 232, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 6, Ad Nauseam into a win 4, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 2]; stopped 108 (44%)
+      stopped by: Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 19, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 13, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mindbreak Trap 12, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 10, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Will 8, Thassa's Oracle + Demonic Consultation / Tainted Pact by Fierce Guardianship 7
+      stopped by card: (no card named: a cost, a ward or a lock) 20, Mindbreak Trap 14, Mental Misstep 13, Swan Song 10, Force of Will 8, Fierce Guardianship 7
+      speed (median round): ready 6.0 (38% of games), one tutor away 6.0 (47% of games), went for a line 7.0 (34% of games), won 7.0
+      ready before go: went for it later in 76 of 255 ready games (median wait 0.0 rounds, mean 0.64); never went in 27
+      while ready and not gone it chose: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 217, stop (hold mana) 159, stop 78, Silas Renn, Seeker Adept 60, Rograkh, Son of Rohgahh 21, Hexing Squelcher 10
+      mulligans: 273 of 663 hands (41.2%): one 169, two 85, three 19
+      counters resolved: 538 (An Offer You Can't Refuse 85, Force of Will 81, Fierce Guardianship 78, Mental Misstep 62, Mindbreak Trap 58); hit Kinnan 145, Dack Fayden 122, Sisay 100, Rograkh/Thrasios 99, Kraum/Tymna 72
+      removal resolved: 422 (ability 120, Into the Flood Maw 100, Red Elemental Blast 69, Snap 66, Pyroblast 44); hit Kinnan 125, Rograkh/Thrasios 92, Sisay 81, Kraum/Tymna 71, Dack Fayden 53
+      stax cast: 249 (Defense Grid 133, Vexing Bauble 116)
+  Rograkh/Thrasios: seated 695, won 128 (18.4%; 5 by the round cap)
+      wins by: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 72 (59%), damage 33 (27%), Eternal Witness + Snap + Gaea's Cradle 11 (9%), Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7 (6%)
+      win round: average 11.4, median 11.0
+      went for a combo 112 times (0.16 per game) [Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 91, Eternal Witness + Snap + Gaea's Cradle 13, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 8]; stopped 22 (20%)
+      stopped by: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by an unnamed answer 4, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by Pact of Negation 3, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by Mindbreak Trap 2, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by Red Elemental Blast 2, Eternal Witness + Snap + Gaea's Cradle by Flusterstorm 1, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by Cyclonic Rift 1
+      stopped by card: (no card named: a cost, a ward or a lock) 4, Pact of Negation 3, Mindbreak Trap 2, Red Elemental Blast 2, Flusterstorm 2, Force of Will 2
+      speed (median round): ready 10.0 (15% of games), one tutor away 10.0 (15% of games), went for a line 10.0 (14% of games), won 11.0
+      ready before go: went for it later in 25 of 103 ready games (median wait 0.0 rounds, mean 0.32); never went in 4
+      while ready and not gone it chose: combo: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 79, stop (hold mana) 53, stop 16, combo: Eternal Witness + Snap + Gaea's Cradle 12, combo: Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 8, Thrasios: scry 1, a land or a card 5
+      mulligans: 267 of 695 hands (38.4%): one 182, two 64, three 21
+      counters resolved: 885 (Fierce Guardianship 115, Force of Will 115, Force of Negation 102, Flare of Denial 96, Louisoix's Sacrifice 96); hit Kinnan 229, Dack Fayden 207, Sisay 173, Rograkh/Silas 138, Kraum/Tymna 138
+      removal resolved: 518 (ability 232, Snap 203, Emerald Charm 61, Into the Flood Maw 5, Snapback 3); hit Kinnan 152, Sisay 144, Kraum/Tymna 84, Dack Fayden 78, Rograkh/Silas 60
+  Sisay: seated 673, won 177 (26.3%; 2 by the round cap)
+      wins by: damage 120 (69%), Ioreth + Marvin + a legend that taps for mana (DDR) 34 (19%), Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 20 (11%), commander damage 1 (1%)
+      win round: average 12.2, median 12.0
+      went for a combo 105 times (0.16 per game) [Ioreth + Marvin + a legend that taps for mana (DDR) 57, Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 48]; stopped 78 (74%)
+      stopped by: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) by an unnamed answer 27, Ioreth + Marvin + a legend that taps for mana (DDR) by an unnamed answer 11, Ioreth + Marvin + a legend that taps for mana (DDR) by Snap 7, Ioreth + Marvin + a legend that taps for mana (DDR) by Chain of Vapor 6, Ioreth + Marvin + a legend that taps for mana (DDR) by Red Elemental Blast 6, Ioreth + Marvin + a legend that taps for mana (DDR) by Pyroblast 3
+      stopped by card: (no card named: a cost, a ward or a lock) 38, Snap 8, Chain of Vapor 8, Red Elemental Blast 7, Pyroblast 4, Pact of Negation 3
+      speed (median round): ready 8.0 (14% of games), one tutor away 8.0 (14% of games), went for a line 8.5 (14% of games), won 12.0
+      ready before go: went for it later in 6 of 97 ready games (median wait 0.0 rounds, mean 0.14); never went in 1
+      while ready and not gone it chose: stop (hold mana) 3, stop 2, combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 1, Sisay: Marvin, Murderous Mimic 1, Emiel the Blessed ability 1, combo: Ioreth + Marvin + a legend that taps for mana (DDR) 1
+      mulligans: 281 of 673 hands (41.8%): one 195, two 62, three 24
+      counters resolved: 569 (Fierce Guardianship 91, Force of Will 79, Mental Misstep 77, An Offer You Can't Refuse 76, Pact of Negation 76); hit Dack Fayden 151, Kinnan 125, Rograkh/Silas 114, Kraum/Tymna 95, Rograkh/Thrasios 84
+      removal resolved: 746 (ability 459, Abrupt Decay 96, Dismember 80, Cyclonic Rift 63, Touch the Spirit Realm 44); hit Kinnan 173, Rograkh/Thrasios 170, Kraum/Tymna 169, Dack Fayden 147, Rograkh/Silas 87
+      stax cast: 12 (Silence 12)
+      wipes: 12 (Cyclonic Rift 12)
+
+=== Within-tier balance [loose, n=1000 games per tier; each deck is seated in ~80%] ===
+  progress  60.0%  8m59s elapsed, ~5m59s left
+  progress  70.0%  10m20s elapsed, ~4m25s left
+  progress  80.0%  11m36s elapsed, ~2m54s left
+  progress  90.0%  12m53s elapsed, ~1m25s left
+  progress 100.0%  14m10s elapsed, ~0m00s left
+  Tier 6 (cEDH, B5): avg game 10.1 rounds, timeouts 2.9%
+    Dack Fayden                   28.3% (25.0-31.8)  [2.3 pts from round-cap wins]
+    Kinnan                        26.8% (23.5-30.3)  [0.0 pts from round-cap wins]
+    Kraum/Tymna                   33.0% (29.4-36.7)  [0.9 pts from round-cap wins]
+    Rograkh/Silas                 23.2% (20.2-26.6)  [0.2 pts from round-cap wins]
+    Rograkh/Thrasios              17.1% (14.5-20.1)  [0.7 pts from round-cap wins]
+    Sisay                         22.3% (19.3-25.6)  [0.3 pts from round-cap wins]
+  -- Tier 6 report (1000 games, 971 decisive; round-cap draws 2.9%) --
+  win share by seat of decisive games: seat 1 27.5% (real 34.1%, sim 30-38) OUT; seat 2 23.4% (real 27.3%, sim 24-31) OUT; seat 3 23.4% (real 22.5%, sim 19-26); seat 4 25.7% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 267 (26.7% of games), win round 9.5/9.0, mulligans 43.1%, tries 0.27/game, stopped 25%, taken 1.29+1.04/game, died 72%, death round 9.4, first out 54%, wins by round <=4/5/6/8: 9/27/65/121 of 267, T4 mana 4.5 hand 5.1, commander out turn 3.2
+      seat 2: wins 227 (22.7% of games), win round 10.2/10.0, mulligans 42.2%, tries 0.22/game, stopped 32%, taken 1.16+1.02/game, died 76%, death round 9.3, first out 58%, wins by round <=4/5/6/8: 7/17/43/89 of 227, T4 mana 4.5 hand 5.0, commander out turn 3.1
+      seat 3: wins 227 (22.7% of games), win round 9.5/9.0, mulligans 43.4%, tries 0.24/game, stopped 28%, taken 1.02+0.96/game, died 76%, death round 9.4, first out 58%, wins by round <=4/5/6/8: 10/21/55/106 of 227, T4 mana 4.4 hand 5.1, commander out turn 3.2
+      seat 4: wins 250 (25.0% of games), win round 10.0/9.0, mulligans 45.4%, tries 0.26/game, stopped 29%, taken 0.95+0.93/game, died 73%, death round 9.2, first out 57%, wins by round <=4/5/6/8: 9/18/47/103 of 250, T4 mana 4.5 hand 5.0, commander out turn 3.1
+  Dack Fayden: seated 665, won 188 (28.3%; 15 by the round cap)
+      wins by: Dack Fayden: the first flip wins the turn (35 piles) 135 (78%), damage 36 (21%), commander damage 2 (1%)
+      win round: average 9.3, median 8.0
+      went for a combo 154 times (0.23 per game) [Dack Fayden: the first flip wins the turn (35 piles) 154]; stopped 19 (12%)
+      stopped by: Dack Fayden: the first flip wins the turn (35 piles) by Snap 4, Dack Fayden: the first flip wins the turn (35 piles) by Chain of Vapor 3, Dack Fayden: the first flip wins the turn (35 piles) by Into the Flood Maw 3, Dack Fayden: the first flip wins the turn (35 piles) by Dismember 2, Dack Fayden: the first flip wins the turn (35 piles) by Mental Misstep 1, Dack Fayden: the first flip wins the turn (35 piles) by Abrupt Decay 1
+      stopped by card: Snap 4, Chain of Vapor 3, Into the Flood Maw 3, Dismember 2, Mental Misstep 1, Abrupt Decay 1
+      speed (median round): ready 7.0 (23% of games), one tutor away 7.0 (23% of games), went for a line 7.0 (23% of games), won 8.0
+      ready before go: went for it later in 1 of 153 ready games (median wait 0.0 rounds, mean 0.01); never went in 0
+      while ready and not gone it chose: combo: Dack Fayden: the first flip wins the turn (35 piles) 153, stop (hold mana) 16, stop 10, Mox Diamond 4, Mana Vault 3, Chrome Mox 3
+      mulligans: 262 of 665 hands (39.4%): one 153, two 64, three 45
+      counters resolved: 64 (Bilbo's Gambit 64); hit Rograkh/Thrasios 20, Kinnan 18, Rograkh/Silas 10, Sisay 10, Kraum/Tymna 6
+      removal resolved: 1889 (ability 518, Fiend Hunter 330, All-Fates Stalker 327, March of Otherworldly Light 83, Touch the Spirit Realm 82); hit Kinnan 473, Rograkh/Thrasios 431, Sisay 419, Kraum/Tymna 302, Rograkh/Silas 264
+      stax cast: 1212 (Defense Grid 138, Chalice of the Void 132, Pithing Needle 114, Blind Obedience 113, Cursed Totem 111)
+      wipes: 65 (Vanquish the Horde 65)
+  Kinnan: seated 661, won 177 (26.8%; 0 by the round cap)
+      wins by: Kinnan + Basalt Monolith + Thrasios (draw the deck) 87 (49%), Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 38 (21%), Hullbreaker Horror + Kinnan + two rocks cast between each other 30 (17%), damage 22 (12%)
+      win round: average 8.7, median 8.0
+      went for a combo 166 times (0.25 per game) [Kinnan + Basalt Monolith + Thrasios (draw the deck) 90, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 39, Hullbreaker Horror + Kinnan + two rocks cast between each other 37]; stopped 33 (20%)
+      stopped by: Kinnan + Basalt Monolith by Chain of Vapor 2, Kinnan + Basalt Monolith + Thrasios (draw the deck) by Snap 2, Hullbreaker Horror + Kinnan + two rocks cast between each other by Fierce Guardianship 2, Kinnan + Basalt Monolith + Thrasios (draw the deck) by Louisoix's Sacrifice 2, Kinnan + Basalt Monolith by Red Elemental Blast 2, Kinnan + Basalt Monolith by Into the Flood Maw 2
+      stopped by card: Snap 4, Chain of Vapor 3, Louisoix's Sacrifice 3, Into the Flood Maw 3, Fierce Guardianship 2, Red Elemental Blast 2
+      speed (median round): ready 7.0 (28% of games), one tutor away 6.0 (51% of games), went for a line 8.0 (25% of games), won 8.0
+      ready before go: went for it later in 36 of 182 ready games (median wait 0.0 rounds, mean 0.36); never went in 19
+      while ready and not gone it chose: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 90, stop 70, stop (hold mana) 38, combo: Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 37, combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 36, Basalt Monolith ability 23
+      mulligans: 315 of 661 hands (47.7%): one 189, two 79, three 47
+      counters resolved: 876 (Force of Negation 108, Force of Will 108, Fierce Guardianship 103, Disrupting Shoal 98, An Offer You Can't Refuse 81); hit Dack Fayden 226, Kraum/Tymna 194, Rograkh/Silas 173, Rograkh/Thrasios 142, Sisay 141
+      removal resolved: 387 (ability 183, Snapback 97, Sink into Stupor // Soporific Springs 84, Snap 5, Into the Flood Maw 4); hit Sisay 107, Rograkh/Thrasios 92, Dack Fayden 78, Kraum/Tymna 62, Rograkh/Silas 48
+  Kraum/Tymna: seated 643, won 212 (33.0%; 6 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 160 (78%), damage 31 (15%), combo (unnamed) 8 (4%), Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 5 (2%), commander damage 1 (0%), other 1 (0%)
+      win round: average 9.7, median 9.0
+      went for a combo 231 times (0.36 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 188, Ad Nauseam into a win 25, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 10, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 8]; stopped 53 (23%)
+      stopped by: Ad Nauseam into a win by an unnamed answer 17, Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 7, Thassa's Oracle + Demonic Consultation / Tainted Pact by Flusterstorm 5, Thassa's Oracle + Demonic Consultation / Tainted Pact by Fierce Guardianship 5, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) by an unnamed answer 4, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 3
+      stopped by card: (no card named: a cost, a ward or a lock) 28, Flusterstorm 5, Fierce Guardianship 5, Swan Song 3, Force of Negation 3, Mindbreak Trap 2
+      speed (median round): ready 7.0 (51% of games), one tutor away 7.0 (61% of games), went for a line 8.0 (34% of games), won 9.0
+      ready before go: went for it later in 116 of 330 ready games (median wait 1.0 rounds, mean 1.25); never went in 114
+      while ready and not gone it chose: stop (hold mana) 453, stop 261, combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 177, Tymna the Weaver 96, Kraum, Ludevic's Opus 47, combo: Ad Nauseam into a win 24
+      mulligans: 343 of 643 hands (53.3%): one 201, two 95, three 47
+      counters resolved: 882 (Force of Negation 108, An Offer You Can't Refuse 104, Fierce Guardianship 98, Pact of Negation 90, Force of Will 89); hit Dack Fayden 217, Kinnan 188, Rograkh/Silas 182, Sisay 151, Rograkh/Thrasios 144
+      removal resolved: 482 (ability 168, Snapback 129, Into the Flood Maw 105, Red Elemental Blast 62, Kozilek's Command 3); hit Kinnan 145, Sisay 117, Dack Fayden 87, Rograkh/Thrasios 83, Rograkh/Silas 50
+      stax cast: 44 (Silence 28, Orim's Chant 7, Vexing Bauble 6, Defense Grid 2, Blind Obedience 1)
+      wipes: 2 (Cyclonic Rift 2)
+  Rograkh/Silas: seated 663, won 154 (23.2%; 1 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 148 (97%), combo (unnamed) 2 (1%), damage 2 (1%), Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 1 (1%)
+      win round: average 8.4, median 8.0
+      went for a combo 234 times (0.35 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 222, Ad Nauseam into a win 5, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 4, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 3]; stopped 83 (35%)
+      stopped by: Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 12, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 8, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mindbreak Trap 7, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Negation 7, Thassa's Oracle + Demonic Consultation / Tainted Pact by Dispel 6, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 5
+      stopped by card: (no card named: a cost, a ward or a lock) 17, Mental Misstep 8, Mindbreak Trap 8, Force of Negation 7, Dispel 6, Swan Song 6
+      speed (median round): ready 7.0 (40% of games), one tutor away 6.0 (47% of games), went for a line 8.0 (34% of games), won 8.0
+      ready before go: went for it later in 88 of 267 ready games (median wait 0.0 rounds, mean 0.72); never went in 40
+      while ready and not gone it chose: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 213, stop (hold mana) 152, stop 107, Silas Renn, Seeker Adept 71, Rograkh, Son of Rohgahh 18, Hexing Squelcher 10
+      mulligans: 273 of 663 hands (41.2%): one 169, two 85, three 19
+      counters resolved: 609 (Force of Will 96, An Offer You Can't Refuse 93, Fierce Guardianship 76, Mental Misstep 71, Red Elemental Blast 54); hit Kinnan 150, Dack Fayden 117, Rograkh/Thrasios 117, Sisay 116, Kraum/Tymna 109
+      removal resolved: 424 (ability 126, Into the Flood Maw 103, Snap 82, Red Elemental Blast 48, Pyroblast 36); hit Kinnan 134, Rograkh/Thrasios 95, Sisay 86, Kraum/Tymna 65, Dack Fayden 44
+      stax cast: 254 (Defense Grid 133, Vexing Bauble 119, Damping Sphere 1, Blind Obedience 1)
+      wipes: 1 (Vanquish the Horde 1)
+  Rograkh/Thrasios: seated 695, won 119 (17.1%; 5 by the round cap)
+      wins by: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 65 (57%), damage 34 (30%), Eternal Witness + Snap + Gaea's Cradle 8 (7%), Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 6 (5%), Badgermole Cub + clone + Eternal Witness + Snap 1 (1%)
+      win round: average 11.7, median 11.0
+      went for a combo 94 times (0.14 per game) [Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 71, Eternal Witness + Snap + Gaea's Cradle 14, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 8, Badgermole Cub + clone + Eternal Witness + Snap 1]; stopped 14 (15%)
+      stopped by: Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle by an unnamed answer 2, Eternal Witness + Snap + Gaea's Cradle by Fierce Guardianship 2, Eternal Witness + Snap + Gaea's Cradle by an unnamed answer 2, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by Bilbo's Gambit 2, Eternal Witness + Snap + Gaea's Cradle by An Offer You Can't Refuse 1, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara by Swan Song 1
+      stopped by card: (no card named: a cost, a ward or a lock) 4, Fierce Guardianship 2, Bilbo's Gambit 2, An Offer You Can't Refuse 1, Swan Song 1, Flusterstorm 1
+      speed (median round): ready 10.0 (14% of games), one tutor away 10.0 (14% of games), went for a line 10.0 (13% of games), won 11.0
+      ready before go: went for it later in 18 of 95 ready games (median wait 0.0 rounds, mean 0.30); never went in 8
+      while ready and not gone it chose: combo: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 64, stop (hold mana) 55, stop 16, combo: Eternal Witness + Snap + Gaea's Cradle 14, combo: Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 8, Thrasios: scry 1, a land or a card 3
+      mulligans: 267 of 695 hands (38.4%): one 182, two 64, three 21
+      counters resolved: 920 (Force of Will 122, Force of Negation 120, Fierce Guardianship 112, Louisoix's Sacrifice 100, Flare of Denial 96); hit Dack Fayden 247, Kinnan 198, Sisay 170, Kraum/Tymna 155, Rograkh/Silas 150
+      removal resolved: 527 (ability 231, Snap 194, Emerald Charm 74, Snapback 6, All-Fates Stalker 4); hit Sisay 143, Kinnan 139, Dack Fayden 96, Kraum/Tymna 86, Rograkh/Silas 63
+  Sisay: seated 673, won 150 (22.3%; 2 by the round cap)
+      wins by: damage 95 (64%), Ioreth + Marvin + a legend that taps for mana (DDR) 40 (27%), Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 13 (9%)
+      win round: average 11.8, median 11.0
+      went for a combo 111 times (0.16 per game) [Ioreth + Marvin + a legend that taps for mana (DDR) 62, Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 49]; stopped 80 (72%)
+      stopped by: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) by an unnamed answer 32, Ioreth + Marvin + a legend that taps for mana (DDR) by an unnamed answer 15, Ioreth + Marvin + a legend that taps for mana (DDR) by Chain of Vapor 8, Ioreth + Marvin + a legend that taps for mana (DDR) by Snap 8, Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) by Snap 3, Ioreth + Marvin + a legend that taps for mana (DDR) by Red Elemental Blast 3
+      stopped by card: (no card named: a cost, a ward or a lock) 47, Snap 11, Chain of Vapor 8, Into the Flood Maw 4, Red Elemental Blast 3, Eldrazi Confluence 1
+      speed (median round): ready 8.0 (14% of games), one tutor away 8.0 (14% of games), went for a line 8.0 (14% of games), won 11.0
+      ready before go: went for it later in 1 of 94 ready games (median wait 0.0 rounds, mean 0.01); never went in 3
+      while ready and not gone it chose: Sisay: Mount Doom 2, combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 2, stop (hold mana) 1, Cyclonic Rift 1
+      mulligans: 281 of 673 hands (41.8%): one 195, two 62, three 24
+      counters resolved: 598 (Fierce Guardianship 94, Force of Will 89, An Offer You Can't Refuse 85, Pact of Negation 78, Mental Misstep 75); hit Dack Fayden 148, Kinnan 132, Kraum/Tymna 114, Rograkh/Silas 103, Rograkh/Thrasios 101
+      removal resolved: 711 (ability 418, Abrupt Decay 93, Dismember 73, Cyclonic Rift 67, Touch the Spirit Realm 55); hit Kinnan 169, Dack Fayden 166, Rograkh/Thrasios 151, Kraum/Tymna 144, Rograkh/Silas 81
+      stax cast: 10 (Silence 10)
+      wipes: 11 (Cyclonic Rift 11)
+
+(850s total)
