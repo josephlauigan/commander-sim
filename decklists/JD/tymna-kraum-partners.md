@@ -39,7 +39,7 @@ and the token makers (**Adeline**, **Hero of Bladehold**), and attack each oppon
 
 **Late game.** The finishers take over. Most of them fly, several make more bodies, and the attack taxes keep the table
 off you while they work: **Elspeth, Sun's Champion**, **Sun Titan**, **Grave Titan**, **Baneslayer Angel**, **Terror of
-the Peaks**, **Lyra Dawnbringer**, **Glorybringer**, **Thundermaw Hellkite**, **Serra Angel**, **Resplendent Angel**.
+the Peaks**, **Lyra Dawnbringer**, **Glorybringer**, **Thundermaw Hellkite**, **Resplendent Angel**.
 
 ### Defense: why it matters
 
@@ -63,7 +63,7 @@ Tymna, so it can't also block. The attack taxes fix that:
   attackers in one.
 - **Sun Titan** returns a permanent with mana value 3 or less from your graveyard whenever it enters or attacks: a dead
   Tymna, an attack tax, a rock. **Grave Titan** brings two 2/2 Zombies on entering and on each attack.
-- **Baneslayer Angel**, **Lyra Dawnbringer** and **Serra Angel** are lifelinking or vigilant fliers that race and block.
+- **Baneslayer Angel** and **Lyra Dawnbringer** are lifelinking fliers with first strike that race and block.
   **Resplendent Angel** ({1}{W}{W}, 3/3 flier) makes a 4/4 flying, vigilant Angel at each end step in which you
   gained 5 or more life, which the lifelinkers (Baneslayer, Lyra, Vampire Nighthawk, Tymna) make easy.
 - **Terror of the Peaks** turns every creature you cast into damage to any target; **Glorybringer** and **Thundermaw
@@ -82,7 +82,7 @@ Tymna, so it can't also block. The attack taxes fix that:
 Tymna wants every opponent hit each turn. **Adeline** makes a 1/1 attacking *each* opponent whenever you attack, and
 **Hero of Bladehold** makes two attacking tokens with battle cry; **Dauthi Voidwalker** (shadow), **Vampire Nighthawk**,
 **The Wasp** (taps a blocker when it attacks), **Nightwind Glider**, **Falcon and Redwing**, **Black Widow** and
-**Lightning, Security Sergeant** (menace) get through on their own. **Lightning, Army of One** ({1}{R}{W}, 3/2 first strike, trample, lifelink) is the other aggressor: when it connects, damage that player or their permanents take is doubled until your next turn. Attack the opponents you can reach, keep enough back to block what
+**Lightning, Security Sergeant** (menace) get through on their own. **Lightning, Army of One** ({1}{R}{W}, 3/2 first strike, trample, lifelink) is the other aggressor: when it connects, damage that player or their permanents take is doubled until your next turn. **Cecil, Dark Knight** ({B}, 2/3 deathtouch) attacks from turn two: nothing wants to block him, so he starts Tymna's draws early; each hit costs you that much life, and at 20 life or less he untaps and becomes **Cecil, Redeemed Paladin** (4/4 lifelink, and the other attackers are indestructible when he attacks). Attack the opponents you can reach, keep enough back to block what
 the taxes let through, and draw.
 
 ### Removal and interaction
@@ -158,7 +158,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus
 
-**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Dauthi Voidwalker, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Army of One, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Serra Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
+**Creatures (34).** Adeline, Resplendent Cathar, Archon of Absolution, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Black Widow, Agile Avenger, Cecil, Dark Knight, Dauthi Voidwalker, Elenda, the Dusk Rose, Falcon and Redwing, Firebird, Blazing Ranger, Gilgamesh, Master-at-Arms, Glorybringer, Grave Titan, Hero of Bladehold, Lightning, Army of One, Lightning, Security Sergeant, Lyra Dawnbringer, Marchesa, the Black Rose, Nightveil Predator, Nightwind Glider, Resplendent Angel, Restoration Angel, Skyclave Apparition, Smaug the Magnificent, Sphinx of New Prahv, Sun Titan, Sunblast Angel, Terror of the Peaks, The Wasp, Winsome Avenger, Thundermaw Hellkite, Vampire Nighthawk, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -189,6 +189,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Bedevil
 1 Black Widow, Agile Avenger
 1 Caves of Koilos
+1 Cecil, Dark Knight
 1 Clifftop Retreat
 1 Command Tower
 1 Conqueror's Flail
@@ -233,7 +234,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Resplendent Angel
 1 Restoration Angel
 1 Rugged Prairie
-1 Serra Angel
 1 Shield of Kaldra
 1 Skyclave Apparition
 1 Smaug the Magnificent

@@ -649,6 +649,7 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Serra Angel. In: Cecil, Dark Knight. Serra Angel -> Cecil, Dark Knight: +0.4 at T5 vs Gilgamesh in the coarse pass (noise); JD keeps Gilgamesh and cuts Serra Angel, a vanilla 5-drop, for a 1-mana deathtouch attacker that starts Tymna's draws early.
 - **2026-10-18.** Out: Elemental Mascot. In: Lightning, Army of One. Elemental Mascot -> Lightning, Army of One: -2.8 at T5 in the coarse pass (noise; JD's choice).
 - **2026-10-18.** Out: Rune-Scarred Demon. In: Underworld Breach. Band calibration 10/18 (JD approved): Rune-Scarred Demon=>Underworld Breach
 - **2026-10-17.** Out: Tocasia's Welcome. In: Smaug the Magnificent. Smaug the Magnificent (JD's card): +1.1 ±2.7 at T3, 2,000 paired look-ahead games, noise; a hasty flier for Tymna plus a Treasure each upkeep.
