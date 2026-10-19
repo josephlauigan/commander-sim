@@ -170,6 +170,7 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) -> Res {
             data: json!({
                 "hand": hand.iter().map(|&c| card_label(g, c)).collect::<Vec<_>>(),
                 "names": hand.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>(),
+                "mulligans": k, // how many mulligans so far (the hint judges a later hand as the AI would)
             }),
         };
         match h.ask(g, p, req) {
