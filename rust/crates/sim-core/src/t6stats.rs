@@ -105,6 +105,7 @@ pub fn wipe(g: &mut Game, p: PlayerId, c: Option<CardId>) {
 }
 
 pub fn combo_go(g: &mut Game, p: PlayerId, combo: &str) {
+    speed_mark(g, p, "go");
     if is_t6(g, p) {
         bump(g, p, format!("go|{combo}"));
     }
@@ -126,4 +127,38 @@ pub fn combo_stop(g: &mut Game, p: PlayerId, combo: &str, by: &str) {
 /// the card that last countered something (set by `resolve_counter` and the Tier 6 counters), for `combo_stop`
 pub fn last_counter_name(g: &Game) -> String {
     g.last_counter.map_or("?".to_string(), |c| card(g, c))
+}
+
+// ---------------------------------------------------------------------------------------------------- speed
+// Measurement for the Tier 6 speed project (stats only; nothing here decides or draws a random number).
+// - `sp|ready`, `sp|reach`, `sp|go`: the round (`g.round`) a line of the deck was first ready / one tutor away / gone
+//!   for in this game (absent: never). Set once per game.
+// - `spx|<label>`: decisions taken while a line was ready and the deck had not gone yet, by the chosen option
+// - `sp|rdy_now`: 1 while a line is ready at the current decision (transient)
+
+/// set `sp|<what>` to the current round, the first time
+pub fn speed_mark(g: &mut Game, p: PlayerId, what: &str) {
+    if is_t6(g, p) {
+        let r = g.round as i64;
+        g.player_mut(p).stats.entry(intern(&format!("sp|{what}"))).or_insert(r);
+    }
+}
+
+pub fn speed_flag(g: &mut Game, p: PlayerId, ready_now: bool) {
+    g.player_mut(p).stats.insert(intern("sp|rdy_now"), ready_now as i64);
+}
+
+/// p chose `label` at a main-phase decision: count it when a line was ready and the deck has not gone yet
+pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
+    if !g.player(p).t6 {
+        return;
+    }
+    let pl = g.player(p);
+    if pl.stats.get(&intern("sp|rdy_now")).copied().unwrap_or(0) == 0 || pl.stats.contains_key(&intern("sp|go")) {
+        return;
+    }
+    // the card or play, without target and search tags: "Cast X -> Y [search]" -> "X"
+    let l = label.split(" -> ").next().unwrap_or(label).trim_end_matches(" [search]").trim_end_matches(" [must]");
+    let l = l.strip_prefix("combo: ").map_or(l.to_string(), |c| format!("combo: {c}"));
+    bump(g, p, format!("spx|{l}"));
 }

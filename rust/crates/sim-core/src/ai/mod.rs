@@ -122,6 +122,9 @@ pub fn sample<T: Copy>(rng: &mut Rng, items: &[(f64, T)], temp: f64) -> Option<T
 
 /// brain.explain: a trace line with the distribution the AI sampled from
 pub fn explain(g: &mut Game, p: PlayerId, items: &[(f64, String)], chosen: &str, what: &str) {
+    if what == "decides" {
+        crate::t6stats::speed_decided(g, p, chosen);
+    }
     if g.log.is_none() || items.len() < 2 {
         return;
     }

@@ -29,6 +29,16 @@ pub struct DeckT6 {
     pub mulls: [u64; 4],
     /// "<kind>|<card>|<victim key>" for kind counter / removal, "<kind>|<card>" for stax / wipe
     pub ix: Counter<String>,
+    /// speed (rounds, one entry per game that reached it): a line first ready / one tutor away / gone for
+    pub ready_r: Vec<u32>,
+    pub reach_r: Vec<u32>,
+    pub go_r: Vec<u32>,
+    /// games where a line was ready and the deck went for it later: rounds waited (go - ready)
+    pub waited: Vec<u32>,
+    /// games where a line was ready and the deck never went for a line
+    pub ready_no_go: u64,
+    /// the option chosen at decisions where a line was ready and the deck had not gone yet
+    pub instead: Counter<String>,
 }
 
 /// one seat's tallies (seat 0 goes first), over all games
@@ -125,6 +135,21 @@ impl T6Tally {
             }
             let m = p.stat("mull_n").clamp(0, 3) as usize;
             d.mulls[m] += 1;
+            let sp = |k: &str| p.stats.get(k).map(|&r| r as u32);
+            let (rd, rc, go) = (sp("sp|ready"), sp("sp|reach"), sp("sp|go"));
+            d.ready_r.extend(rd);
+            d.reach_r.extend(rc);
+            d.go_r.extend(go);
+            match (rd, go) {
+                (Some(r), Some(g)) => d.waited.push(g.saturating_sub(r)),
+                (Some(_), None) => d.ready_no_go += 1,
+                _ => {}
+            }
+            for (k, &v) in &p.stats {
+                if let Some(l) = k.strip_prefix("spx|") {
+                    d.instead.add(l.to_string(), v);
+                }
+            }
             for (k, &v) in &p.stats {
                 if let Some(c) = k.strip_prefix("go|") {
                     d.go.add(c.to_string(), v);
@@ -226,6 +251,37 @@ fn median(v: &[u32]) -> f64 {
 /// "a 12, b 5, c 3" for the top entries of a counter
 fn top(c: &Counter<String>, n: usize, label: &dyn Fn(&str) -> String) -> String {
     c.most_common().into_iter().take(n).map(|(k, v)| format!("{} {v}", label(&k))).collect::<Vec<_>>().join(", ")
+}
+
+/// the speed lines of one deck: median round a line was ready / one tutor away / gone for / won, and what it did
+/// instead while ready (see `sim_core::t6stats` speed keys)
+fn render_speed(d: &DeckT6) -> String {
+    let n = d.seated.max(1);
+    let one = |v: &[u32]| {
+        if v.is_empty() { "-".to_string() } else { format!("{:.1} ({:.0}% of games)", median(v), pct(v.len() as u64, n)) }
+    };
+    let mut o = format!(
+        "      speed (median round): ready {}, one tutor away {}, went for a line {}, won {}\n",
+        one(&d.ready_r),
+        one(&d.reach_r),
+        one(&d.go_r),
+        if d.win_rounds.is_empty() { "-".to_string() } else { format!("{:.1}", median(&d.win_rounds)) }
+    );
+    if !d.ready_r.is_empty() {
+        let w = &d.waited;
+        let late = w.iter().filter(|&&x| x > 0).count() as u64;
+        o += &format!(
+            "      ready before go: went for it later in {} of {} ready games (median wait {:.1} rounds, mean {:.2}); never went in {}\n",
+            late,
+            d.ready_r.len(),
+            median(w),
+            w.iter().sum::<u32>() as f64 / w.len().max(1) as f64,
+            d.ready_no_go
+        );
+        let lbl = |s: &str| s.to_string();
+        o += &format!("      while ready and not gone it chose: {}\n", top(&d.instead, 6, &lbl));
+    }
+    o
 }
 
 /// the per-seat block: win round, mulligans, tries, stops, removal taken, deaths
@@ -333,6 +389,7 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
                 })
             );
         }
+        o += &render_speed(d);
         let m = d.mulls;
         o += &format!(
             "      mulligans: {} of {} hands ({:.1}%): one {}, two {}, three {}\n",
@@ -467,6 +524,28 @@ mod tests {
         assert!(text.contains("counters resolved: 4 (Force of Will 4); hit A 4"), "{text}");
         assert!(text.contains("A: seated 2, won 0"), "{text}");
         assert!(text.contains("removal resolved: 2 (Swords to Plowshares 2); hit B 2"), "{text}");
+    }
+
+    #[test]
+    fn the_speed_lines_give_median_ready_reach_go_and_win_rounds() {
+        let mut t = T6Tally::default();
+        for (rd, go) in [(3, Some(5)), (4, Some(4)), (6, None)] {
+            let mut g = game(Some(1), Some("combo"), 8);
+            g.players[1].stats.insert("sp|ready", rd);
+            g.players[1].stats.insert("sp|reach", rd - 1);
+            if let Some(go) = go {
+                g.players[1].stats.insert("sp|go", go);
+            }
+            g.players[1].stats.insert("spx|Cast Sol Ring", 2);
+            t.add(&g);
+        }
+        let d = &t.decks["b"];
+        assert_eq!((d.ready_r.clone(), d.waited.clone(), d.ready_no_go), (vec![3, 4, 6], vec![2, 0], 1));
+        let text = render(&t, &["b".to_string()], &|k| k.to_string());
+        assert!(text.contains("ready 4.0 (100% of games), one tutor away 3.0"), "{text}");
+        assert!(text.contains("went for a line 4.5"), "{text}");
+        assert!(text.contains("went for it later in 1 of 3 ready games"), "{text}");
+        assert!(text.contains("Cast Sol Ring 6"), "{text}");
     }
 
     #[test]
