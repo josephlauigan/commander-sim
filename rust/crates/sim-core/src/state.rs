@@ -968,6 +968,11 @@ pub struct Ctx {
     pub mana_spent: u32,
     /// some of that mana was coloured (Void Mirror, Vibrance)
     pub mana_colored: bool,
+    /// a person's extra choices at cast time (human/specs.rs): more permanent targets (Comet Storm's kicks), more
+    /// player targets, and graveyard cards (Victimize, Helping Hand, Rewrite Regrets). Empty for the AI.
+    pub perms: Vec<PermId>,
+    pub faces: Vec<PlayerId>,
+    pub cards: Vec<CardId>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).

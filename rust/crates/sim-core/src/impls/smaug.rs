@@ -66,6 +66,10 @@ fn smaug_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
     if x == 0 {
         return Ok(vec![]);
     }
+    if crate::human::is_human(g, p) {
+        crate::human::choices::deal_damage(g, p, x, "Smaug", "burn")?;
+        return Ok(vec![]);
+    }
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if let Some(q) = opps.iter().copied().filter(|&q| g.player(q).life <= x).min_by_key(|&q| g.player(q).life) {
         crate::glog!(g, "    Smaug deals {x} damage to {}", g.player(q).name);

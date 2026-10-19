@@ -248,6 +248,9 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
     if let Some(why) = super::cards::needs(g, p, c) {
         return Some(why);
     }
+    if let Some(why) = super::specs::problem(g, p, c) {
+        return Some(why);
+    }
     let (gn, pips) = base_cost(g, p, c);
     let phy = phyrexian(g, c);
     if !phy.is_empty() && !phyrexian_ways(g, p, c, gn, &pips).is_empty() {

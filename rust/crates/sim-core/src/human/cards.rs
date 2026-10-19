@@ -848,9 +848,23 @@ fn citadel(g: &Game, p: PlayerId) -> Vec<PermAbility> {
 /// abilities apply)
 pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
     let cd = g.perm(m).cd?;
+    if crate::impls::bulk_white::is_face_down(g, m) {
+        return Some(vec![ability(
+            "turn it face up (its morph / disguise cost)",
+            |g: &mut Game, p: PlayerId, m: PermId| {
+                if crate::impls::bulk_white::face_up_go(g, p, m.0 as i64)? {
+                    crate::engine::life::check_state(g)?;
+                    Ok(None)
+                } else {
+                    Ok(Some("Can't turn it face up: check the mana in your pool.".into()))
+                }
+            },
+        )]);
+    }
     let nm = cname(g, cd);
     Some(match nm.as_str() {
         "Bolas's Citadel" => citadel(g, p),
+        "Otherworld Atlas" => atlas(),
         "Carrion Feeder" => outlet("put a +1/+1 counter on Carrion Feeder", feeder),
         "Viscera Seer" => outlet("scry 1", |g, p, _m, _pw| choices::scry(g, p, 1, false)),
         "Ashnod's Altar" => outlet("add {C}{C}", |g, p, _m, _pw| {
@@ -1022,6 +1036,8 @@ pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
         "Spectacle Summit" => summit(g),
         "Barad-dûr" => baraddur(g),
         "Mistrise Village" => mistrise(g),
+        "Phyrexian Tower" => tower(g),
+        "Ghost Quarter" => ghost_quarter(g),
         _ => vec![],
     }
 }
@@ -1266,18 +1282,28 @@ fn hand_ways(name: &str) -> Option<Vec<(&'static str, HandFn)>> {
             ("cast it ({W}{W})", cast_normally),
             ("cast it face down as a 2/2 creature for {3} (morph)", morph_cast),
         ],
+        "Everflowing Chalice" => {
+            vec![("cast it, kicked as many times as you choose (multikicker {2})", chalice_person)]
+        }
+        "Ragavan, Nimble Pilferer" => vec![
+            ("cast it ({R})", cast_normally),
+            ("dash it ({1}{R}): haste, back to your hand at end of turn", ragavan_dash_person),
+        ],
         _ => return None,
     })
 }
 
 /// `c.name in cards.HAND`: a hand card whose casting card code handles
 pub fn hand_override(g: &Game, c: CardId) -> bool {
-    hand_ways(&g.db.get(c).name).is_some()
+    hand_ways(&g.db.get(c).name).is_some() || super::alt::hand_hook(g, c)
 }
 
 /// cards.cast_from_hand: a card of yours whose casting the card code keeps for the AI: pick how (when there's a
 /// choice), then cast it
 pub fn cast_from_hand(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if hand_ways(&cname(g, c)).is_none() {
+        return cast_or_alt(g, p, c);
+    }
     let ways = hand_ways(&cname(g, c)).unwrap_or_default();
     let mut k = 0;
     if ways.len() > 1 {
@@ -2395,4 +2421,153 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
         }
         _ => return None,
     })
+}
+
+/// A card with a `hand_options` hook (dash, evoke, transmute ...): the person may cast it normally or take one of the
+/// hook's ways. The hook's ways only show once their cost can be paid from the person's pool.
+fn cast_or_alt(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    let alts = super::alt::hand_alts(g, p, c)?;
+    if alts.is_empty() {
+        return cast_normally(g, p, c);
+    }
+    let mut labels = vec![format!("cast {} normally", cname(g, c).split(" // ").next().unwrap_or(""))];
+    labels.extend(alts.iter().map(|a| a.0.clone()));
+    let Some(k) = pick(g, p, "choose", &format!("{}: which?", cname(g, c)), &labels)? else { return Ok(None) };
+    if k == 0 {
+        return cast_normally(g, p, c);
+    }
+    let ways = vec![alts.into_iter().nth(k - 1).unwrap()];
+    super::alt::pick_and_run(g, p, c, ways)
+}
+
+// ------------------------------------------------------------------ alternative costs the card code keeps for the AI
+/// Everflowing Chalice: multikicker {2}; it enters with a charge counter per kick and taps for {C} per counter.
+/// The person says how many kicks (the AI's `chalice` option caps it at three and judges the mana itself).
+fn chalice_person(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = legal::check_cast(g, p, c, "hand") {
+        return Ok(Some(why));
+    }
+    let max = (g.player(p).pool.total() / 2).min(8);
+    let labels: Vec<String> = (0..=max)
+        .map(|k| match k {
+            0 => "no kicks (it taps for nothing)".to_string(),
+            1 => "kick it once ({2})".to_string(),
+            _ => format!("kick it {k} times ({{{}}})", 2 * k),
+        })
+        .collect();
+    let prompt = format!("{}: multikicker {{2}}: how many times?", cname(g, c));
+    let Some(k) = pick(g, p, "choose", &prompt, &labels)? else { return Ok(None) };
+    if !crate::impls::rules::chalice_go(g, p, crate::impls::partials::pack(c.0 as u32, k as u32))? {
+        return Ok(Some(format!("Can't cast {} kicked {k} times with the mana in your pool.", cname(g, c))));
+    }
+    Ok(None)
+}
+
+/// Ragavan's dash {1}{R}: cast with haste, returned to its owner's hand at the beginning of the next end step.
+fn ragavan_dash_person(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if let Some(why) = timing(g, p, c) {
+        return Ok(Some(why));
+    }
+    if let Some(why) = super::mana::cost_problem(g, p, 1, "R") {
+        return Ok(Some(format!("Can't dash {}. {why}", cname(g, c))));
+    }
+    crate::impls::rules2::ragavan_go(g, p, c.0 as i64)?;
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+/// Phyrexian Tower: {T}, sacrifice a creature: add {B}{B}. The person picks the creature (the AI only offers it when
+/// a death payoff makes it worth it).
+fn tower(_g: &Game) -> Vec<LandAbility> {
+    vec![ability("{T}, sacrifice a creature: add {B}{B}", |g: &mut Game, p: PlayerId, l: LandId| {
+        if let Some(why) = land_tapped(g, l, "Phyrexian Tower") {
+            return Ok(Some(why));
+        }
+        let cre = my_creatures(g, p);
+        if cre.is_empty() {
+            return Ok(Some("Phyrexian Tower: you have no creature to sacrifice.".into()));
+        }
+        let labels: Vec<String> = cre.iter().map(|&m| legal::describe_target(g, p, Target::Perm(m))).collect();
+        let Some(k) = pick(g, p, "choose", "Phyrexian Tower: sacrifice which creature?", &labels)? else {
+            return Ok(None);
+        };
+        g.land_mut(l).tapped = true;
+        crate::glog!(g, "  {} sacrifices {} to Phyrexian Tower", pname(g, p), g.perm(cre[k]).name);
+        crate::engine::zones::die(g, cre[k], "sac")?;
+        g.player_mut(p).pool.add('B', 2);
+        Ok(None)
+    })]
+}
+
+/// Ghost Quarter: {T}, sacrifice: destroy target land; its controller may search for a basic land. The person picks
+/// the land (the AI only offers it against a key land).
+fn ghost_quarter(_g: &Game) -> Vec<LandAbility> {
+    vec![ability(
+        "{T}, sacrifice: destroy target land (its controller may search for a basic)",
+        |g: &mut Game, p: PlayerId, l: LandId| {
+            if let Some(why) = land_tapped(g, l, "Ghost Quarter") {
+                return Ok(Some(why));
+            }
+            let tg: Vec<(PlayerId, LandId)> = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.lands.iter().map(move |&x| (q.id, x)))
+                .filter(|&(_, x)| x != l)
+                .collect();
+            let labels: Vec<String> = tg
+                .iter()
+                .map(|&(q, x)| {
+                    format!("{} ({})", cname(g, g.land(x).cd), if q == p { "yours".to_string() } else { pname(g, q) })
+                })
+                .collect();
+            let Some(k) = pick(g, p, "target", "Ghost Quarter: destroy which land?", &labels)? else {
+                return Ok(None);
+            };
+            let arg = crate::impls::partials::pack(l.0, tg[k].1.0);
+            crate::impls::lands::ld_land_go(g, p, arg)?;
+            Ok(None)
+        },
+    )]
+}
+
+/// Otherworld Atlas: {T}: put a charge counter on it. {T}: each player draws a card for each charge counter on it.
+fn atlas() -> Vec<PermAbility> {
+    use crate::impls::sheoldred::atlas_go;
+    vec![
+        ability("{T}: put a charge counter on Otherworld Atlas", |g: &mut Game, p: PlayerId, m: PermId| {
+            atlas_go(g, m, p, 0)?;
+            Ok(None)
+        }),
+        ability(
+            "{T}: each player draws a card for each charge counter on it",
+            |g: &mut Game, p: PlayerId, m: PermId| {
+                atlas_go(g, m, p, 1)?;
+                crate::engine::life::check_state(g)?;
+                Ok(None)
+            },
+        ),
+    ]
+}
+
+/// Demonic Embrace from the graveyard: pay {1}{B}{B} (its mana cost), 3 life and discard a card; the person chooses the
+/// discard (the AI's `embrace_go` picks). Where it goes is still chosen by the Aura's own code.
+pub fn embrace_person(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !g.player(p).gy.contains(&c) || g.player(p).life <= 3 || g.player(p).hand.is_empty() {
+        return Ok(false);
+    }
+    if !crate::engine::mana::can_pay(g, p, 1, "BB", false) {
+        return Ok(false);
+    }
+    let prompt = "Demonic Embrace: discard a card to cast it from your graveyard";
+    let hand = g.player(p).hand.clone();
+    let labels: Vec<String> = hand.iter().map(|&x| choices::card_label(g, x)).collect();
+    let Some(k) = pick(g, p, "choose", prompt, &labels)? else { return Ok(true) };
+    crate::engine::mana::pay(g, p, 1, "BB", false)?;
+    crate::engine::life::lose_life(g, p, 3, Some(p), "life", None)?;
+    crate::engine::zones::discard_cards(g, p, &[hand[k]])?;
+    crate::engine::cast::cast_card(g, p, c, "escape", crate::state::Ctx::default())?;
+    crate::impls::kefka::gy_left(g, p, 1)?;
+    Ok(true)
 }

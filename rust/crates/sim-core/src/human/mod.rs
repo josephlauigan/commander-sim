@@ -10,6 +10,7 @@
 //! gets the request (it is handed `&Game`).
 
 pub mod abilities;
+pub mod alt;
 pub mod cards;
 pub mod choices;
 pub mod combat;
@@ -17,6 +18,7 @@ pub mod human;
 pub mod legal;
 pub mod mana;
 pub mod script;
+pub mod specs;
 
 use crate::control::Human;
 use crate::ids::{PermId, PlayerId};

@@ -366,7 +366,9 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let p = owner(g, src);
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    let target = if let Some(q) = drain_target(g, p, 1) {
+    let target = if crate::human::is_human(g, p) {
+        crate::human::specs::ask_player(g, p, "Vault Plunderer")?
+    } else if let Some(q) = drain_target(g, p, 1) {
         q // Sheoldred is out: an opponent draws and loses 3 in all
     } else if g.player(p).life > 3 && g.player(p).library.len() > 2 {
         p
@@ -1063,7 +1065,7 @@ fn beckoner_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     Ok(())
 }
 
-fn warp_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn warp_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "B", false) {
         return Ok(false);
@@ -1406,7 +1408,7 @@ fn throwdown_fodder(g: &Game, p: PlayerId, target: PermId) -> Option<PermId> {
 }
 
 /// a creature with a counter on it, or with Equipment or an Aura of yours attached
-fn modified(g: &Game, p: PlayerId, m: PermId) -> bool {
+pub fn modified(g: &Game, p: PlayerId, m: PermId) -> bool {
     g.perm(m).plus != 0
         || g.perm(m).data.int(DataKey::Counters) != 0
         || g.player(p).perms.iter().any(|&a| a != m && g.perm(a).attached == Some(m))
@@ -2011,7 +2013,7 @@ fn bell_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 
 /// Otherworld Atlas: {T}: put a charge counter on it. {T}: each player draws a card for each charge counter on it (the
 /// active player first). `arg` 0 adds a counter, 1 draws.
-fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !on_bf(g, src) || g.perm(src).tapped || g.perm(src).phased {
         return Ok(false);
     }
@@ -2098,11 +2100,11 @@ fn draw_land_options(
     Ok(vec![Opt { utility: u - below_bell, label: label.into(), act: Some(Action::Plan { f: go, arg: l.0 as i64 }) }])
 }
 
-fn geier_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn geier_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     draw_land_go(g, p, LandId(arg as u32), true)
 }
 
-fn mikokoro_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn mikokoro_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     draw_land_go(g, p, LandId(arg as u32), false)
 }
 

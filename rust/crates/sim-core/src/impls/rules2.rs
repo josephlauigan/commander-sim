@@ -686,7 +686,7 @@ fn ragavan_dash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     Ok(vec![plan(2.5, "dash Ragavan".into(), ragavan_go, c.0 as i64)])
 }
 
-fn ragavan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn ragavan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
         return Ok(false);
@@ -1873,7 +1873,15 @@ fn farseek(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
             d.land && (TYPES.contains(&&*d.name.to_lowercase()) || TYPES.iter().any(|t| d.has_subtype(t)))
         })
         .collect();
-    if let Some(x) = max_by(&cs, |x| g.db.get(x).tags.str(Tag::C).map_or(0, |s| s.len()) as f64) {
+    let best = if crate::human::is_human(g, p) {
+        // the person picks which land card to fetch (or none)
+        let labels: Vec<String> = cs.iter().map(|&x| crate::human::choices::card_label(g, x)).collect();
+        let pr = "Farseek: put a Plains, Island, Swamp or Mountain card onto the battlefield tapped";
+        crate::human::choices::choose(g, p, "choose", pr, &labels, Some("none"), None)?.map(|k| cs[k])
+    } else {
+        max_by(&cs, |x| g.db.get(x).tags.str(Tag::C).map_or(0, |s| s.len()) as f64)
+    };
+    if let Some(x) = best {
         remove_card(&mut g.player_mut(p).library, x);
         shuffle_library(g, p);
         g.add_land(p, x, true);

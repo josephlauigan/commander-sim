@@ -367,6 +367,24 @@ fn comet_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0);
     let n = 1 + ctx.kicks as usize;
     crate::glog!(g, "    Comet Storm (X = {x}, {} kick(s))", ctx.kicks);
+    if crate::human::is_human(g, p) {
+        // the targets the person chose as they cast it
+        let ts: Vec<crate::human::Target> = ctx.perms.iter().map(|&m| crate::human::Target::Perm(m)).chain(ctx.faces.iter().map(|&q| crate::human::Target::Player(q))).collect();
+        for t in ts {
+            if g.over {
+                break;
+            }
+            let alive = match t {
+                crate::human::Target::Perm(m) => g.perm(m).on_bf,
+                crate::human::Target::Player(q) => g.player(q).alive,
+            };
+            if alive && x > 0 {
+                crate::human::choices::apply_damage(g, p, t, x, "Comet Storm", "burn")?;
+            }
+        }
+        crate::engine::life::check_state(g)?;
+        return Ok("gy");
+    }
     // the AI picks its targets; with none worth hitting the first opponent still takes it
     let mut tg = comet_targets(g, p, x, n);
     if tg.is_empty() {

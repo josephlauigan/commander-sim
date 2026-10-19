@@ -360,8 +360,16 @@ fn inner_fire_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 /// **Decorum Dissertation**: target player draws two cards and loses 2 life. **Paradigm**: it is exiled as it resolves,
 /// and at the beginning of each of your first main phases you may cast a copy of it for free (`paradigm`). The target
 /// is an opponent once Kefka, Ruler of Ruin is out (their loss draws you cards), yourself before.
-fn decorum(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let t = decorum_target(g, p);
+fn decorum(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let t = if crate::human::is_human(g, p) {
+        // the person names the player (a Paradigm copy asks too)
+        match ctx.face.filter(|&q| g.player(q).alive) {
+            Some(q) => q,
+            None => crate::human::specs::ask_player(g, p, "Decorum Dissertation")?,
+        }
+    } else {
+        decorum_target(g, p)
+    };
     crate::glog!(g, "    Decorum Dissertation: {} draws two and loses 2 life", pname(g, t));
     draw(g, t, 2, false)?;
     lose_life(g, t, 2, Some(p), "other", None)?;
@@ -647,6 +655,16 @@ fn stargaze(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0) as usize;
     let n = (2 * x).min(g.player(p).library.len());
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
+    if crate::human::is_human(g, p) {
+        // the person picks the X cards for their hand; the rest go to the graveyard
+        let take = crate::human::choices::pick_cards(g, p, &top, x, "Stargaze: put a card into your hand", "choose")?;
+        let rest: Vec<CardId> = top.iter().copied().filter(|c| !take.contains(c)).collect();
+        crate::glog!(g, "    Stargaze: {} takes {} card(s), {} to the graveyard", pname(g, p), take.len(), rest.len());
+        g.player_mut(p).hand.extend(take);
+        g.player_mut(p).gy.extend(rest);
+        lose_life(g, p, x as i32, Some(p), "other", None)?;
+        return Ok("gy");
+    }
     let mut left = top;
     let mut hand_cards = vec![];
     for _ in 0..x.min(left.len()) {
@@ -960,7 +978,7 @@ fn mayhem_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
     }])
 }
 
-fn mayhem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn mayhem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).gy.contains(&c) || !mayhem_ready(g, p, c) {
         return Ok(false);
@@ -1240,7 +1258,7 @@ fn voidborn_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     }])
 }
 
-fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "B", false) {
         return Ok(false);
