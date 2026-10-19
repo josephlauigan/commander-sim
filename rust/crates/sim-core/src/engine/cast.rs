@@ -969,6 +969,10 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         }
         return Ok(());
     }
+    if !perm && &*d.name == "Dark Endurance" && let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) {
+        // a person chose its target as they cast it (the AI casts it through `endurance_protect`, never here)
+        crate::impls::tymna_cards::endurance_apply(g, t);
+    }
     if has_dsl && !perm {
         crate::dsl::resolve_spell(g, p, c, ctx)?; // interpreter-driven instant / sorcery
         to_gy_or_exile(g, p, c, ctx, zone, false);

@@ -307,9 +307,14 @@ fn flier_target(g: &Game, p: PlayerId, ctx: &Ctx, max_toughness: i32) -> Option<
 /// Scout the City, {1}{G}: mill three, a permanent card from among them to your hand, gain 3 life; or destroy target
 /// creature with flying. The flier mode is chosen when an opposing flier is worth a card.
 fn scout_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    if let Some(t) = flier_target(g, p, ctx, i32::MAX)
-        && pval(g, t) >= 3.0
-    {
+    // a person chose the mode (and the flier) as they cast it
+    let human = crate::human::is_human(g, p);
+    let kill = if human {
+        ctx.target.filter(|&t| ctx.mode == Some("flier") && live(g, t))
+    } else {
+        flier_target(g, p, ctx, i32::MAX).filter(|&t| pval(g, t) >= 3.0)
+    };
+    if let Some(t) = kill {
         apply_removal(g, Some(p), t, "destroy", None)?;
     } else {
         mill_take(g, p, 3)?;

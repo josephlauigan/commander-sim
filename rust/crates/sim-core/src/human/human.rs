@@ -16,7 +16,7 @@
 //! The `view` the page wants in `data` is added by the `Human` itself (see `human/mod.rs`).
 
 use super::mana::Spending;
-use super::{Target, abilities, cards, choices, human_of, legal, mana};
+use super::{Target, abilities, cards, choices, human_of, legal, mana, specs};
 use crate::control::{Answer, Human, Request};
 use crate::engine::stack::{self, ABILITY_ANSWERS};
 use crate::engine::values::epow;
@@ -738,6 +738,12 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             Target::Perm(m) => ctx.target = Some(m),
         }
     }
+    // a card with its own resolve code and no Rem tag: what the person must choose (target, mode, cost ...)
+    let spec_costs = match specs::choose_pre(g, p, c, &mut ctx)? {
+        specs::Pre::Cancel => return Ok(None),
+        specs::Pre::Problem(why) => return Ok(Some(why)),
+        specs::Pre::Ok(costs) => costs,
+    };
     let mut flash_sac = false;
     if d.tags.str(Tag::Rean).is_some() {
         // reanimation: its target is chosen as it's cast
@@ -840,6 +846,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         mana::pay_from_pool(g, p, 3 * k, "");
         ctx.x = k as i32;
     }
+    specs::choose_post(g, p, c, &mut ctx)?;
     if d.tags.has(Tag::Tokx) || d.tags.has(Tag::Xtutor) || d.tags.has(Tag::Xdrain) {
         // X: up to what's left in the pool
         let top = g.player(p).pool.total();
@@ -859,6 +866,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
     if d.has_dsl() {
         cast::additional_cost(g, p, c, false)?;
     }
+    specs::pay_costs(g, p, c, &spec_costs)?;
     if let Some(f) = fodder {
         crate::glog!(g, "  {me} sacrifices {} for {cname}", perm_name(g, f));
         zones::die(g, f, "sac")?;

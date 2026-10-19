@@ -366,7 +366,9 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let p = owner(g, src);
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    let target = if let Some(q) = drain_target(g, p, 1) {
+    let target = if crate::human::is_human(g, p) {
+        crate::human::specs::ask_player(g, p, "Vault Plunderer")?
+    } else if let Some(q) = drain_target(g, p, 1) {
         q // Sheoldred is out: an opponent draws and loses 3 in all
     } else if g.player(p).life > 3 && g.player(p).library.len() > 2 {
         p
@@ -1406,7 +1408,7 @@ fn throwdown_fodder(g: &Game, p: PlayerId, target: PermId) -> Option<PermId> {
 }
 
 /// a creature with a counter on it, or with Equipment or an Aura of yours attached
-fn modified(g: &Game, p: PlayerId, m: PermId) -> bool {
+pub fn modified(g: &Game, p: PlayerId, m: PermId) -> bool {
     g.perm(m).plus != 0
         || g.perm(m).data.int(DataKey::Counters) != 0
         || g.player(p).perms.iter().any(|&a| a != m && g.perm(a).attached == Some(m))

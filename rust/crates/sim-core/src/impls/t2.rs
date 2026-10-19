@@ -1281,7 +1281,17 @@ fn leap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 /// sacrifice a creature: the two best creature cards return tapped
-fn victimize(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+fn victimize(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if crate::human::is_human(g, p) {
+        // the sacrifice was paid as it was cast and the two cards chosen then
+        for &x in &ctx.cards {
+            if remove_card(&mut g.player_mut(p).gy, x) {
+                let m = enter(g, p, x, Enter::default())?;
+                g.perm_mut(m).tapped = true;
+            }
+        }
+        return Ok("gy");
+    }
     let fod: Vec<PermId> =
         g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).is_cmd).collect();
     let Some(f) = min_by(&fod, |m| pval(g, m)) else { return Ok("gy") };

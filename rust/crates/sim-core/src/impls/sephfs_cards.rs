@@ -141,7 +141,14 @@ pub fn parity_choice(g: &Game, p: PlayerId) -> (u32, f64, f64) {
 }
 
 fn event_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let (par, _, _) = parity_choice(g, p);
+    let par = if crate::human::is_human(g, p) {
+        // "choose odd or even"
+        let labels = ["even".to_string(), "odd".to_string()];
+        let pr = "Extinction Event: exile each creature with an even or an odd mana value?";
+        crate::human::choices::choose_one(g, p, "choose", pr, &labels)? as u32
+    } else {
+        parity_choice(g, p).0
+    };
     crate::glog!(g, "    Extinction Event: {} creatures are exiled", if par == 0 { "even" } else { "odd" });
     for (_, m) in all_creatures(g) {
         if live(g, m) && cmc_of(g, m) % 2 == par {
@@ -175,6 +182,18 @@ fn take_from_gy(g: &mut Game, p: PlayerId, c: CardId, o: PlayerId) -> Res<Option
 fn necro_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let died = destroy_all(g)?;
     stat(g, p, "sf_wipes", 1);
+    if crate::human::is_human(g, p) {
+        // the person picks which creature card put into a graveyard this way comes back (or none)
+        let labels: Vec<String> = died.iter().map(|&(c, o)| format!("{} (from {}'s graveyard)", g.db.get(c).name, g.player(o).name)).collect();
+        if !labels.is_empty() && let Some(k) = crate::human::choices::choose(g, p, "choose", "Necromantic Selection: return which creature card under your control?", &labels, Some("none"), None)? {
+            let (c, o) = died[k];
+            if let Some(m) = take_from_gy(g, p, c, o)? {
+                crate::glog!(g, "    Necromantic Selection returns {} under {}'s control", g.perm(m).name, g.player(p).name);
+                stat(g, p, "sf_steals", 1);
+            }
+        }
+        return Ok("exile");
+    }
     if let Some(&(c, o)) = died.iter().max_by(|a, b| steal_value(g, a.0).total_cmp(&steal_value(g, b.0))) {
         if let Some(m) = take_from_gy(g, p, c, o)? {
             crate::glog!(
@@ -191,7 +210,10 @@ fn necro_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
 
 /// **Blood on the Snow**: destroy all creatures (the AI never takes the planeswalker mode), then return a creature or
 /// planeswalker card with mana value X or less from your graveyard, X being the snow mana spent: none here, so X = 0.
-fn blood_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+fn blood_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if crate::human::is_human(g, p) {
+        return blood_person(g, p, ctx);
+    }
     destroy_all(g)?;
     stat(g, p, "sf_wipes", 1);
     let own: Vec<CardId> = g
@@ -579,8 +601,13 @@ pub fn regrets_target(g: &Game, p: PlayerId) -> Option<CardId> {
 /// **Rewrite Regrets**: return the best creature (else planeswalker) card with mana value 6 or less from your
 /// graveyard to the battlefield, then Empower Jace 2 (the Jace token of the Alela deck: +2 loyalty, created first
 /// when you have none; its -1 and -3 are not used by this deck's plan, so it is only a body that soaks attacks).
-fn regrets_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    if let Some(c) = regrets_target(g, p)
+fn regrets_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let pick = if crate::human::is_human(g, p) {
+        ctx.cards.first().copied().filter(|c| g.player(p).gy.contains(c))
+    } else {
+        regrets_target(g, p)
+    };
+    if let Some(c) = pick
         && let Some(m) = take_from_gy(g, p, c, p)?
     {
         crate::glog!(g, "    Rewrite Regrets returns {}", g.perm(m).name);
@@ -824,4 +851,41 @@ fn braids_lore(g: &mut Game, src: Src, p: PlayerId) -> Res {
         die(g, src, "sac")?;
     }
     Ok(())
+}
+
+/// Blood on the Snow for a person: the mode chosen as it was cast (destroy all creatures, or all planeswalkers); then
+/// return a creature or planeswalker card with mana value X or less from their graveyard, X being the snow mana spent
+/// (none here, so 0), if they want one.
+fn blood_person(g: &mut Game, p: PlayerId, ctx: &Ctx) -> Res<Sym> {
+    if ctx.mode == Some("walkers") {
+        let ms: Vec<PermId> = g
+            .players
+            .iter()
+            .filter(|q| q.alive)
+            .flat_map(|q| q.perms.clone())
+            .filter(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::PLANESWALKER)))
+            .collect();
+        kill_all(g, ms, "destroy")?;
+    } else {
+        destroy_all(g)?;
+    }
+    stat(g, p, "sf_wipes", 1);
+    let own: Vec<CardId> = g
+        .player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| {
+            let d = g.db.get(c);
+            (d.creature || d.types.has(crate::cards::Types::PLANESWALKER)) && d.cmc == 0
+        })
+        .collect();
+    let labels: Vec<String> = own.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+    if !labels.is_empty() {
+        let pr = "Blood on the Snow: return a creature or planeswalker card with mana value 0 (no snow mana spent) from your graveyard?";
+        if let Some(k) = crate::human::choices::choose(g, p, "choose", pr, &labels, Some("none"), None)? {
+            take_from_gy(g, p, own[k], p)?;
+        }
+    }
+    Ok("gy")
 }

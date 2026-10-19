@@ -2349,6 +2349,15 @@ fn worst_gy(g: &Game, p: PlayerId) -> Option<PlayerId> {
 
 /// Bojuka Bog (Full): enters tapped; exiles the most dangerous graveyard
 fn bog(g: &mut Game, p: PlayerId, _l: LandId) -> Res {
+    if crate::human::is_human(g, p) {
+        // "exile target player's graveyard": the person picks whose (or none)
+        let ps: Vec<PlayerId> = g.players.iter().filter(|q| q.alive && !q.gy.is_empty()).map(|q| q.id).collect();
+        let labels: Vec<String> = ps.iter().map(|&q| format!("{} ({} cards)", g.player(q).name, g.player(q).gy.len())).collect();
+        if let Some(k) = crate::human::choices::choose(g, p, "target", "Bojuka Bog: exile which graveyard?", &labels, Some("none"), None)? {
+            exile_gy(g, ps[k], Some("Bojuka Bog"));
+        }
+        return Ok(());
+    }
     if let Some(q) = worst_gy(g, p)
         && gy_worth(g, p, q) > 0.0
     {
