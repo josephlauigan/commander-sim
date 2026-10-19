@@ -280,7 +280,7 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                     !d.creature && (d.cmc as i32) <= 2 && (d.tag(Tag::Rock) || d.tag(Tag::Fastmana))
                 } {
                     88.0
-                } else if pr.is_none() && g.player(p).turns <= 3 && mana_first(g, p, *card) {
+                } else if pr.is_none() && g.active == Some(p) && g.player(p).turns <= 3 && mana_first(g, p, *card) {
                     // speed project: "mana first" on turns 1-3 (dorks, three-mana rocks): the look-ahead kept
                     // voting them down for a draw engine or a stop
                     88.0

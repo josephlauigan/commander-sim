@@ -111,7 +111,7 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                 !xd.land && !xd.types.has(Types::ARTIFACT) && xd.pips.chars().any(|ch| pl.ident.has(ch))
             })
             .count();
-        let need = if crate::impls::t6_plans::is_t6(g, p) && pl.turns <= 3 { 1 } else { 2 }; // Tier 6 speed: one spare card is enough early
+        let need = if crate::impls::t6_plans::is_t6(g, p) && g.active == Some(p) && pl.turns <= 3 { 1 } else { 2 }; // Tier 6 speed: one spare card is enough early, on your own turn
         return if spare >= need { plans::ramp_prio(g, p, c, 1) } else { 0 };
     }
     if t.has(Tag::Moxd) {
