@@ -55,6 +55,9 @@ impl Inputs {
         extra.extend(self.pool.iter().map(|d| d.commander.clone()));
         extra.extend(self.pool.iter().filter_map(|d| d.commander2.clone()));
         extra.extend(self.cache.names());
+        // cards whose card code is kept after the deck that played them was retired (the titania deck, 2026-10-19):
+        // double-faced, so the cache names them "A // B" and only a deck list would have asked for the front face
+        extra.extend(["Studious First-Year", "Infestation Expert"].map(String::from));
         Wanted { main, played, extra }
     }
 
