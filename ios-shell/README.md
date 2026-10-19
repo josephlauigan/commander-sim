@@ -83,6 +83,8 @@ format); if the iPad shows two apps, delete the old one.
 - Try the AI speed setting; note whether the look-ahead AI makes you wait on your own turn, and how long.
 - Close the app from the app switcher (swipe it up), reopen it: the setup screen should offer *Continue*, and it
   should put you back where you were.
+- Mid-game, switch to another app (or lock the iPad) for 15 minutes or more, then come back: the table should still
+  be there, or (if iOS stopped the server meanwhile) the page reloads and offers *Continue*.
 - Turn the iPad (landscape and portrait); airplane mode: a game still plays (card pictures not yet downloaded are drawn
   from their names).
 

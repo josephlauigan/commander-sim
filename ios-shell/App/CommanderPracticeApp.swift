@@ -7,6 +7,7 @@ import SwiftUI
 struct CommanderPracticeApp: App {
     @State private var url: URL? = nil
     @State private var failed = false
+    @Environment(\.scenePhase) private var phase
 
     var body: some Scene {
         WindowGroup {
@@ -22,6 +23,7 @@ struct CommanderPracticeApp: App {
             .statusBarHidden()
             .persistentSystemOverlays(.hidden)
             .task { start() }
+            .onChange(of: phase) { _, now in if now == .active { Task { await revive() } } }
         }
     }
 
@@ -37,5 +39,17 @@ struct CommanderPracticeApp: App {
         else { failed = true; return }
         let port = practice_start(bundle.path, support.path, 0)
         if port == 0 { failed = true } else { url = URL(string: "http://127.0.0.1:\(port)/") }
+    }
+
+    /// Back in front after a while in the background: iOS may have closed the server's listening socket while the app
+    /// was suspended. If the server no longer answers, start it again (on a new port); the page then offers Continue.
+    private func revive() async {
+        guard let url else { return }
+        var req = URLRequest(url: url)
+        req.timeoutInterval = 2
+        if (try? await URLSession.shared.data(for: req)) != nil { return }
+        practice_stop()
+        self.url = nil
+        start()
     }
 }
