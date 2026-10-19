@@ -733,23 +733,33 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^if you don't, ~ deals (\d+) damage to each opponent$", |_| Some(eff(obj! {"do" => "noop"}))),
 ];
 
-pub fn split_clauses(sentence: &str) -> Vec<String> {
+/// the clauses of a sentence, each with whether it is (part of) a "you may" sentence: the leading "you may " is
+/// stripped, the flag carries over ", then ..." continuations and ends at ". " or "; " (a new sentence)
+pub fn split_clauses_may(sentence: &str) -> Vec<(String, bool)> {
     let s = py::strip(py::strip(sentence, " \t\n\r").trim(), ".");
     let s = s.trim();
     let mut out = vec![];
-    for p in split(r"(?:,? then |\. |; )", s) {
-        let mut p = py::strip(p.trim(), ",").trim().to_string();
-        if p.starts_with("you may ") {
-            p = p[8..].to_string();
-        }
-        if p.starts_with("then ") {
-            p = p[5..].to_string();
-        }
-        if !p.is_empty() {
-            out.push(p);
+    for part in split(r"(?:\. |; )", s) {
+        let mut may = false;
+        for p in split(r",? then ", &part) {
+            let mut p = py::strip(p.trim(), ",").trim().to_string();
+            if p.starts_with("you may ") {
+                p = p[8..].to_string();
+                may = true;
+            }
+            if p.starts_with("then ") {
+                p = p[5..].to_string();
+            }
+            if !p.is_empty() {
+                out.push((p, may));
+            }
         }
     }
     out
+}
+
+pub fn split_clauses(sentence: &str) -> Vec<String> {
+    split_clauses_may(sentence).into_iter().map(|(c, _)| c).collect()
 }
 
 const SUBJ: &str = r"^(each other player|target opponent|each opponent|target player|each player|that player|its controller|defending player) ";
@@ -794,7 +804,7 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         text = text["for each opponent, ".len()..].to_string();
         per_opp = true;
     }
-    for cl in split_clauses(&text) {
+    for (cl, may) in split_clauses_may(&text) {
         let mut got: Option<Fx> = None;
         for (rx, f) in rules() {
             if let Some(m) = matches_rule(rx, &cl) {
@@ -817,6 +827,9 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         }
         if let Some(got) = got {
             for mut e in got {
+                if may && e.get("do") != Some(&J::Str("noop".into())) {
+                    e.set("optional", true);
+                }
                 if let Some(x) = &xexpr {
                     for k in ["n", "pow", "tgh"] {
                         if e.get(k) == Some(&J::Str("X".into())) {

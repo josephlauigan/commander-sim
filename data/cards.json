@@ -6125,7 +6125,8 @@
       {
        "do": "gain_life",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -6360,7 +6361,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "dies",
@@ -13200,7 +13202,8 @@
       {
        "do": "discard",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "attack",
@@ -15089,7 +15092,8 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -29106,7 +29110,8 @@
        },
        "to": "top",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -31425,7 +31430,8 @@
        "warrior": false,
        "types": [
         "bird"
-       ]
+       ],
+       "optional": true
       }
      ],
      "event": "landfall"
@@ -32678,7 +32684,8 @@
        },
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -35280,7 +35287,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -45264,7 +45272,8 @@
        "filter": {
         "type": "creature"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -46211,7 +46220,8 @@
        "who": "you"
       },
       {
-       "do": "put_land"
+       "do": "put_land",
+       "optional": true
       }
      ]
     }
@@ -48091,7 +48101,8 @@
        "filter": {},
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -57033,7 +57044,8 @@
          "type": "creature"
         },
         "upto": false
-       }
+       },
+       "optional": true
       }
      ],
      "event": "etb",
@@ -57691,7 +57703,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -59661,7 +59674,8 @@
        "filter": {},
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -65641,7 +65655,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "cast",
@@ -72645,7 +72660,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -76458,7 +76474,8 @@
        },
        "to": "hand",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -77606,7 +77623,8 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -82235,7 +82253,8 @@
          "type": "ae"
         },
         "upto": false
-       }
+       },
+       "optional": true
       }
      ],
      "event": "etb",
@@ -84180,7 +84199,8 @@
        "filter": {
         "type": "creature"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "upkeep",
@@ -84931,7 +84951,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "combat_damage",
@@ -92517,7 +92538,8 @@
        },
        "to": "top",
        "n": 1,
-       "tapped": false
+       "tapped": false,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -95089,7 +95111,8 @@
        },
        "to": "battlefield",
        "n": 1,
-       "tapped": true
+       "tapped": true,
+       "optional": true
       }
      ],
      "event": "etb",
@@ -95101,7 +95124,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "dies",
@@ -101465,7 +101489,8 @@
        "filter": {
         "type": "creature"
        },
-       "from": "yours"
+       "from": "yours",
+       "optional": true
       }
      ],
      "event": "combat_damage",
@@ -105027,7 +105052,8 @@
       {
        "do": "discard",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "etb",
@@ -113513,7 +113539,8 @@
       {
        "do": "draw",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "cast",
@@ -118419,7 +118446,8 @@
       {
        "do": "mill",
        "n": 3,
-       "who": "you"
+       "who": "you",
+       "optional": true
       }
      ],
      "event": "attack",

@@ -427,6 +427,35 @@ fn run(
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let kind: Sym = if spell.is_some() { "burn" } else { "triggers" };
     let n = |g: &Game, ctx: &DslCtx| num(g, p, e.n.as_ref(), ctx, src);
+    // "you may ...": a person says yes or no (draws ask per drawing player below); the AI ignores the flag
+    if e.optional == Some(true) && e.kind != "draw" && crate::human::is_human(g, p) {
+        let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+            Some(c) => g.db.get(c).name.to_string(),
+            None => "An effect".to_string(),
+        };
+        let does = match e.kind.as_str() {
+            "search" => "search your library".to_string(),
+            "reanimate" => "return a creature card from your graveyard to the battlefield".to_string(),
+            "regrow" => "return a card from your graveyard to your hand".to_string(),
+            "destroy" => "destroy it".to_string(),
+            "exile" => "exile it".to_string(),
+            "bounce" => "return it to its owner's hand".to_string(),
+            "tuck" => "put it into its owner's library".to_string(),
+            "blink" => "exile it and return it to the battlefield".to_string(),
+            "put_land" => "put a land card from your hand onto the battlefield".to_string(),
+            "gain_life" => "gain life".to_string(),
+            "lose_life" => "lose life".to_string(),
+            "discard" => "discard".to_string(),
+            "sacrifice" => "sacrifice".to_string(),
+            "token" => "create the token".to_string(),
+            "counters" => "put the counters".to_string(),
+            "mill" => "mill".to_string(),
+            k => k.replace('_', " "),
+        };
+        if !crate::human::choices::yes_no(g, p, &format!("{what}: {does}?"))? {
+            return Ok(());
+        }
+    }
     match e.kind.as_str() {
         "scry" | "surveil" => {
             let k = match &e.n {
@@ -437,17 +466,14 @@ fn run(
         }
         "draw" => {
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
-                // "you may draw": a person chooses; the AI doesn't deck itself
-                if e.optional == Some(true) {
-                    if crate::human::is_human(g, q) {
-                        let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
-                            Some(c) => g.db.get(c).name.to_string(),
-                            None => "An effect".to_string(),
-                        };
-                        if !crate::human::choices::yes_no(g, q, &format!("{what}: draw?"))? {
-                            continue;
-                        }
-                    } else if g.player(q).library.len() <= 12 {
+                // "you may draw": a person chooses (the draw by someone else's "may" is asked of that player here).
+                // The AI ignores the flag (it was never set before cardgen flagged every "you may" effect).
+                if e.optional == Some(true) && crate::human::is_human(g, q) {
+                    let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                        Some(c) => g.db.get(c).name.to_string(),
+                        None => "An effect".to_string(),
+                    };
+                    if !crate::human::choices::yes_no(g, q, &format!("{what}: draw?"))? {
                         continue;
                     }
                 }
