@@ -139,7 +139,7 @@ impl Situation {
         let t6 = crate::impls::t6_plans::is_t6(g, p);
         let threat: Vec<(PlayerId, f64)> = opps
             .iter()
-            .map(|&q| (q, if t6 && super::t6_table::exp(2) { 0.0 } else { threat(g, p, q) } + if t6 { super::t6_table::threat_bonus(g, q) } else { 0.0 }))
+            .map(|&q| (q, threat(g, p, q) + if t6 { super::t6_table::threat_bonus(g, q) } else { 0.0 }))
             .collect();
         let leader = max_by(&threat, |x| x.1).map(|x| x.0);
         let max_threat =
@@ -589,7 +589,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         }
         let Some(best) = max_by(&tg, |m| pval(g, m)) else { continue };
         let mut v = pval(g, best);
-        if Some(g.perm(best).owner) == s.leader && !(super::t6_table::exp(1) && crate::impls::t6_plans::is_t6(g, p)) {
+        if Some(g.perm(best).owner) == s.leader {
             v *= 1.25;
         }
         if !main && crate::impls::t6_plans::is_t6(g, p) {
