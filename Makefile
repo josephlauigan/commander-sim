@@ -1,5 +1,6 @@
 # Commander pod simulator: set up Rust, build, test and run the programs.
 #
+#   make            everything: setup, build, then a shell with the environment active (exit to leave)
 #   make setup      install Rust (rustup) if it's missing, then the pinned toolchain (rust/rust-toolchain.toml)
 #   make build      build commander-sim, commander-practice and cardgen (release) into rust/target/release/
 #   make test       run the full test suite
@@ -14,7 +15,7 @@
 # take the machine down; elsewhere (macOS) they run directly.
 
 SHELL := /bin/bash
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := all
 
 ROOT      := $(CURDIR)
 RUST      := $(ROOT)/rust
@@ -34,10 +35,15 @@ AI      ?= adaptive
 JOBS    ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 ARGS    ?=
 
-.PHONY: help setup build test env shell sim practice cardgen clean
+.PHONY: help all setup build test env shell sim practice cardgen clean
 
 help:
-	@sed -n '3,11p' $(firstword $(MAKEFILE_LIST)) | sed 's/^# \{0,3\}//'
+	@sed -n '3,12p' $(firstword $(MAKEFILE_LIST)) | sed 's/^# \{0,3\}//'
+
+# plain `make`: install Rust if needed, build everything, then open the environment shell
+all: setup build
+	@echo
+	@$(MAKE) -s shell
 
 setup:
 	@if ! command -v rustup >/dev/null 2>&1; then \
