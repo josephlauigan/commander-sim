@@ -312,15 +312,29 @@ fn render_mana(d: &DeckT6) -> String {
         }
         top(&c, 6, &|s| s.to_string())
     };
+    let dig = {
+        let n = d.seated.max(1) as f64;
+        let g = |k: &str| d.mn.get(&format!("dig|{k}")) as f64 / n;
+        if d.mn.get(&"dig|eot".to_string()) + d.mn.get(&"dig|own".to_string()) > 0 {
+            let w = |k: &str| d.mn.get(&format!("eotw|{k}")) as f64;
+            format!(
+                "      Thrasios digs per seated game: end of the turn before its own {:.2}, own turn {:.2} (of which a land onto the battlefield {:.2}); end-of-turn windows per game {:.1}, untapped mana at them {:.1}, windows with Thrasios in play {:.1} offering {:.2} digs each\n",
+                g("eot"), g("own"), g("land"), w("n") / n, w("mana") / w("n").max(1.0), w("thr") / n, w("can") / w("thr").max(1.0)
+            )
+        } else {
+            String::new()
+        }
+    };
     format!(
-        "      mana T1-T5: {}; mana permanents: {}; mana cards in hand: {} (castable {}); cast on T1-3: {}\n      held at the end of turns 1-3 with the mana to cast (card-turns): {}; rituals and one-shots: {}\n",
+        "      mana T1-T5: {}; mana permanents: {}; mana cards in hand: {} (castable {}); cast on T1-3: {}\n      held at the end of turns 1-3 with the mana to cast (card-turns): {}; rituals and one-shots: {}\n{}",
         row(""),
         row("perm|"),
         row("hand|"),
         row("handc|"),
         cast.join(" "),
         held("held|"),
-        held("heldr|")
+        held("heldr|"),
+        dig
     )
 }
 

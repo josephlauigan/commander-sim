@@ -255,3 +255,21 @@ pub fn mana_held(g: &mut Game, p: PlayerId) {
         }
     }
 }
+
+/// stats only (`mn|eotw|...`): the mana a Tier 6 player has untapped when the end-of-turn window opens (the end of
+/// the turn before its own), and the {4} dig activations that mana could pay for when Thrasios is in play.
+/// Keys: `mn|eotw|n` windows, `mn|eotw|mana` mana summed, `mn|eotw|thr` windows with Thrasios on the battlefield,
+/// `mn|eotw|can` floor(mana / 4) summed over those, `mn|eotw|cradle` windows with Gaea's Cradle in play.
+pub fn eot_window(g: &mut Game, p: PlayerId) {
+    if !is_t6(g, p) {
+        return;
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false) as i64;
+    let thr = crate::ai::plans::on_bf(g, p, "Thrasios, Triton Hero").is_some();
+    bump(g, p, "mn|eotw|n".to_string());
+    g.player_mut(p).stat(intern("mn|eotw|mana"), mana);
+    if thr {
+        bump(g, p, "mn|eotw|thr".to_string());
+        g.player_mut(p).stat(intern("mn|eotw|can"), mana / 4);
+    }
+}
