@@ -14,3 +14,15 @@ Why: as a rock it matches Mind Stone (mana on turns 4 and 8 unchanged); it is ca
 around round 5, but the {6}{B} + exile-a-creature harness comes too late: the deck's plan is online in only ~27% of
 games and it dies to fast combo (Kinnan 23%, Urza 18%, Zur 10%, Winota 9%). A slow reanimation engine can't answer
 that. JD decided to wait on buying it.
+
+## 2026-10-18 night: Zombify => Dread Return (coarse: loose only, 500 games per list, T5, look-ahead)
+Modeled for Seph FS first (JD asked): cast from hand by the Zombify rule (a creature worth 3+ in the yard), own
+graveyard only (`rean_targets("dread")`; Seph FS's rule had taken from any graveyard), and the flashback as a deck
+option (sacrifice three: tokens and Reassembling Skeleton first, never Sephiroth or a body worth more than the target;
+the deaths' drains count in its value), exiled after. Brain fix: Seph FS may cast hand-tagged reanimation spells.
+Result: **22.6% -> 27.4% (+4.8, noise ±4.1): just past noise, the best coarse result of the day.** Raw:
+`2026-10-18-new-cards/dread-return.txt`.
+Why: cast in 48% of the games drawn (Zombify 64%: it waits for a target), wins 69% when cast vs Zombify's 45%. The
+plan came online more often (26.0 -> 29.4%), games ran a little longer (8.6 -> 8.8 rounds), and fewer losses to
+Kinnan/Urza/Zur/Winota combo. The flashback makes it a second reanimation from the graveyard, and its three deaths
+are drains with Sephiroth or a payoff out. Coarse sample: confirm with a bigger run before trusting the size.
