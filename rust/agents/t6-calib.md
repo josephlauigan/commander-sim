@@ -49,3 +49,22 @@ doesn't model and tutors it may not use:
 
 Start from branch t6-cal-rthras (merge t6-cedh first). Machine: CARGO_BUILD_JOBS=8, sims --jobs 8, all in the
 background. Timebox ~2 hours.
+
+## Task `dack` — Dack Fayden is too strong (2026-10-18 night)
+
+New baseline after main's #100 (2,000 games per profile, seed 500000; scratchpad s6/base2-s500000.txt): Dack 34.8 /
+36.3% (target 18-32), 84% of its wins by "Dack Fayden: the first flip wins the turn (35 piles)", median win round 7,
+stopped only 9-11% of its tries. The 35-pile shortcut (impls/t6_dack.rs, `record_first_flip`, `pile_wins`) was built
+from a hand trace that found ~68% same-turn wins UNOPPOSED (audit/t6/dack-fayden-white-stax/RULES-SHEET.md,
+flips-*.md). Check, in this order:
+
+1. Does the shortcut give the table every answer window a real game would (the Dack cast itself, Dack's trigger,
+   each creature that flips in, the Preston/Felidar/Solar loop steps), and is the 68% applied only when nobody
+   answers? If the shortcut wins in one step, opponents get one window where a real game gives several: fix that.
+2. Is the pile table right for our list (pieces that are removed, exiled or stolen before the flip)?
+3. Do opponents see Dack as the archenemy (piece_gain/line_progress: Dack's line is Dack alone, castable from the
+   command zone) and hold answers for it?
+4. Only then tune Dack's plan (impls/t6_plan_dack.rs).
+
+Start from a new branch t6-cal-dack off t6-cedh. Machine: CARGO_BUILD_JOBS=8, sims --jobs 8, all in the background.
+Timebox ~2 hours.
