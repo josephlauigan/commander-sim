@@ -13203,7 +13203,14 @@
        "do": "discard",
        "n": 1,
        "who": "you",
-       "optional": true
+       "optional": true,
+       "if_you_do": [
+        {
+         "do": "draw",
+         "n": 1,
+         "who": "you"
+        }
+       ]
       }
      ],
      "event": "attack",
@@ -13224,8 +13231,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "Riot",
-    "Whenever ~ attacks, you may discard a card. If you do, draw a card.   [partly: if you do, draw a card]"
+    "Riot"
    ],
    "derived": {
     "cmc": 3,
@@ -105053,7 +105059,16 @@
        "do": "discard",
        "n": 1,
        "who": "you",
-       "optional": true
+       "optional": true,
+       "if_you_do": [
+        {
+         "do": "damage",
+         "n": 2,
+         "to": {
+          "sel": "any_target"
+         }
+        }
+       ]
       }
      ],
      "event": "etb",
@@ -105073,9 +105088,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, you may discard a card. When you do, ~ deals 2 damage to any target.   [partly: when you do, ~ deals 2 damage to any target]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

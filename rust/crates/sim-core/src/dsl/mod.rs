@@ -55,7 +55,7 @@ pub struct DslCtx {
 }
 
 impl DslCtx {
-    fn base() -> DslCtx {
+    pub fn base() -> DslCtx {
         DslCtx { x: 3, x_default: true, ..DslCtx::default() }
     }
 }
@@ -403,13 +403,58 @@ pub fn execute(
     spell: Option<CardId>,
     depth: u32,
 ) -> Res {
+    // "you may X, then Y" / "you may X. If you do, Z": a person who says no to X skips Y and Z. The AI is never
+    // asked and runs X and Y as ever; Z is nested in X (`if_you_do`) and only a person who said yes runs it.
+    let human = crate::human::is_human(g, p);
+    let mut declined = false;
     for e in effects {
         if g.over || !g.player(p).alive {
             return Ok(());
         }
+        if e.cont == Some(true) && declined {
+            continue;
+        }
+        if e.optional == Some(true) && human {
+            declined = !ask_may(g, p, e, src, spell)?;
+            if declined {
+                continue;
+            }
+        }
         run(g, p, e, src, ctx, spell, depth)?;
+        if human && !e.if_you_do.is_empty() && !g.over && g.player(p).alive {
+            execute(g, p, &e.if_you_do, src, ctx, spell, depth + 1)?;
+        }
     }
     check_state(g)
+}
+
+/// "you may ...": the person's yes or no
+fn ask_may(g: &mut Game, p: PlayerId, e: &Effect, src: Option<PermId>, spell: Option<CardId>) -> Res<bool> {
+    let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+        Some(c) => g.db.get(c).name.to_string(),
+        None => "An effect".to_string(),
+    };
+    let does = match e.kind.as_str() {
+        "search" => "search your library".to_string(),
+        "reanimate" => "return a creature card from your graveyard to the battlefield".to_string(),
+        "regrow" => "return a card from your graveyard to your hand".to_string(),
+        "destroy" => "destroy it".to_string(),
+        "exile" => "exile it".to_string(),
+        "bounce" => "return it to its owner's hand".to_string(),
+        "tuck" => "put it into its owner's library".to_string(),
+        "blink" => "exile it and return it to the battlefield".to_string(),
+        "put_land" => "put a land card from your hand onto the battlefield".to_string(),
+        "gain_life" => "gain life".to_string(),
+        "lose_life" => "lose life".to_string(),
+        "discard" => "discard a card".to_string(),
+        "draw" => "draw".to_string(),
+        "sacrifice" => "sacrifice".to_string(),
+        "token" => "create the token".to_string(),
+        "counters" => "put the counters".to_string(),
+        "mill" => "mill".to_string(),
+        k => k.replace('_', " "),
+    };
+    crate::human::choices::yes_no(g, p, &format!("{what}: {does}?"))
 }
 
 fn sel_or_empty(s: &Option<Sel>) -> Sel {
@@ -429,35 +474,6 @@ fn run(
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let kind: Sym = if spell.is_some() { "burn" } else { "triggers" };
     let n = |g: &Game, ctx: &DslCtx| num(g, p, e.n.as_ref(), ctx, src);
-    // "you may ...": a person says yes or no (draws ask per drawing player below); the AI ignores the flag
-    if e.optional == Some(true) && e.kind != "draw" && crate::human::is_human(g, p) {
-        let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
-            Some(c) => g.db.get(c).name.to_string(),
-            None => "An effect".to_string(),
-        };
-        let does = match e.kind.as_str() {
-            "search" => "search your library".to_string(),
-            "reanimate" => "return a creature card from your graveyard to the battlefield".to_string(),
-            "regrow" => "return a card from your graveyard to your hand".to_string(),
-            "destroy" => "destroy it".to_string(),
-            "exile" => "exile it".to_string(),
-            "bounce" => "return it to its owner's hand".to_string(),
-            "tuck" => "put it into its owner's library".to_string(),
-            "blink" => "exile it and return it to the battlefield".to_string(),
-            "put_land" => "put a land card from your hand onto the battlefield".to_string(),
-            "gain_life" => "gain life".to_string(),
-            "lose_life" => "lose life".to_string(),
-            "discard" => "discard".to_string(),
-            "sacrifice" => "sacrifice".to_string(),
-            "token" => "create the token".to_string(),
-            "counters" => "put the counters".to_string(),
-            "mill" => "mill".to_string(),
-            k => k.replace('_', " "),
-        };
-        if !crate::human::choices::yes_no(g, p, &format!("{what}: {does}?"))? {
-            return Ok(());
-        }
-    }
     match e.kind.as_str() {
         "scry" | "surveil" => {
             let k = match &e.n {
@@ -470,7 +486,7 @@ fn run(
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
                 // "you may draw": a person chooses (the draw by someone else's "may" is asked of that player here).
                 // The AI ignores the flag (it was never set before cardgen flagged every "you may" effect).
-                if e.optional == Some(true) && crate::human::is_human(g, q) {
+                if e.optional == Some(true) && q != p && crate::human::is_human(g, q) {
                     let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
                         Some(c) => g.db.get(c).name.to_string(),
                         None => "An effect".to_string(),

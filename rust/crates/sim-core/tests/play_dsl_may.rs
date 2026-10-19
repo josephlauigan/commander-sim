@@ -81,3 +81,34 @@ fn the_ai_is_not_asked_and_still_searches() {
     perm(&mut g, P0, "Solemn Simulacrum");
     assert_eq!(lands_of(&g), before + 1, "the AI fetches the land as before");
 }
+
+/// Burning-Tree Vandal's attack trigger: "you may discard a card. If you do, draw a card."
+fn vandal(say: bool) -> (usize, usize, usize) {
+    let mut g = table(&["cloud", "seph"]);
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.choices.len() == 2 && r.choices[0] == "yes" {
+            Answer::Pick(if say { 0 } else { 1 })
+        } else {
+            Answer::Pick(0)
+        }
+    }));
+    g.humans.add(P0, h);
+    hand(&mut g, P0, &["Sol Ring", "Bonesplitter"]);
+    let m = perm(&mut g, P0, "Burning-Tree Vandal");
+    let (hand0, gy0, lib0) = (g.player(P0).hand.len(), g.player(P0).gy.len(), g.player(P0).library.len());
+    let cd = g.perm(m).cd.unwrap();
+    sim_core::dsl::run_trigger(&mut g, P0, m, cd, 0, &sim_core::dsl::DslCtx::base()).unwrap();
+    let (hand1, gy1, lib1) = (g.player(P0).hand.len(), g.player(P0).gy.len(), g.player(P0).library.len());
+    (hand1.wrapping_sub(hand0), gy1.wrapping_sub(gy0), lib0 - lib1)
+}
+
+#[test]
+fn burning_tree_vandal_yes_discards_and_draws() {
+    let (hand, gy, drawn) = vandal(true);
+    assert_eq!((gy, drawn, hand), (1, 1, 0), "discard one, draw one");
+}
+
+#[test]
+fn burning_tree_vandal_no_means_no_discard_and_no_draw() {
+    assert_eq!(vandal(false), (0, 0, 0));
+}

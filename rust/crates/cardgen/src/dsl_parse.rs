@@ -733,33 +733,66 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^if you don't, ~ deals (\d+) damage to each opponent$", |_| Some(eff(obj! {"do" => "noop"}))),
 ];
 
-/// the clauses of a sentence, each with whether it is (part of) a "you may" sentence: the leading "you may " is
-/// stripped, the flag carries over ", then ..." continuations and ends at ". " or "; " (a new sentence)
-pub fn split_clauses_may(sentence: &str) -> Vec<(String, bool)> {
+/// how a clause depends on a "you may" earlier in the text
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Dep {
+    /// independent of any "you may"
+    None,
+    /// the "you may" clause itself: the person is asked
+    May,
+    /// a ", then ..." continuation of a "you may" sentence: skipped when the person says no (the AI runs it as ever)
+    Cont,
+    /// the sentence after it, "If you do, ..." / "When you do, ...": runs only for a person who said yes
+    IfYouDo,
+}
+
+/// the clauses of a sentence with their [`Dep`]: the leading "you may " is stripped; ", then ..." continuations of a
+/// "you may" clause are `Cont`; a following sentence starting "if you do, " / "when you do, " is `IfYouDo` (prefix
+/// stripped); the group ends at ". " or "; "
+pub fn split_clauses_may(sentence: &str) -> Vec<(String, Dep, &'static str)> {
     let s = py::strip(py::strip(sentence, " \t\n\r").trim(), ".");
     let s = s.trim();
     let mut out = vec![];
+    let mut group = false; // the previous sentence was a "you may" one
     for part in split(r"(?:\. |; )", s) {
+        let mut part = part.trim().to_string();
+        let mut if_do = "";
+        for pre in ["if you do, ", "when you do, "] {
+            if group && part.starts_with(pre) {
+                part = part[pre.len()..].to_string();
+                if_do = pre;
+                break;
+            }
+        }
         let mut may = false;
         for p in split(r",? then ", &part) {
             let mut p = py::strip(p.trim(), ",").trim().to_string();
-            if p.starts_with("you may ") {
+            let mut dep = if !if_do.is_empty() {
+                Dep::IfYouDo
+            } else if may {
+                Dep::Cont
+            } else {
+                Dep::None
+            };
+            if if_do.is_empty() && p.starts_with("you may ") {
                 p = p[8..].to_string();
                 may = true;
+                dep = Dep::May;
             }
             if p.starts_with("then ") {
                 p = p[5..].to_string();
             }
             if !p.is_empty() {
-                out.push((p, may));
+                out.push((p, dep, if_do));
             }
         }
+        group = may;
     }
     out
 }
 
 pub fn split_clauses(sentence: &str) -> Vec<String> {
-    split_clauses_may(sentence).into_iter().map(|(c, _)| c).collect()
+    split_clauses_may(sentence).into_iter().map(|(c, _, _)| c).collect()
 }
 
 const SUBJ: &str = r"^(each other player|target opponent|each opponent|target player|each player|that player|its controller|defending player) ";
@@ -804,7 +837,7 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         text = text["for each opponent, ".len()..].to_string();
         per_opp = true;
     }
-    for (cl, may) in split_clauses_may(&text) {
+    for (cl, dep, pre) in split_clauses_may(&text) {
         let mut got: Option<Fx> = None;
         for (rx, f) in rules() {
             if let Some(m) = matches_rule(rx, &cl) {
@@ -827,8 +860,12 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         }
         if let Some(got) = got {
             for mut e in got {
-                if may && e.get("do") != Some(&J::Str("noop".into())) {
-                    e.set("optional", true);
+                if e.get("do") != Some(&J::Str("noop".into())) {
+                    match dep {
+                        Dep::May => e.set("optional", true),
+                        Dep::Cont => e.set("cont", true),
+                        Dep::IfYouDo | Dep::None => {}
+                    }
                 }
                 if let Some(x) = &xexpr {
                     for k in ["n", "pow", "tgh"] {
@@ -840,13 +877,31 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
                 if per_opp && e.get("do") == Some(&J::Str("token".into())) {
                     e.set("n", "opponents");
                 }
-                if e.get("do") != Some(&J::Str("noop".into())) {
+                if e.get("do") == Some(&J::Str("noop".into())) {
+                    continue;
+                }
+                if dep == Dep::IfYouDo {
+                    // nested in the "you may" effect it depends on (invisible to everything that reads the flat list:
+                    // the AI never sees it); with no such effect the clause stays unparsed, as before
+                    let head = effs.iter_mut().rev().find(|h| h.get("optional") == Some(&J::Bool(true)));
+                    match head {
+                        Some(h) => {
+                            let mut v = match h.get("if_you_do") {
+                                Some(J::Arr(v)) => v.clone(),
+                                _ => vec![],
+                            };
+                            v.push(J::Obj(e));
+                            h.set("if_you_do", J::Arr(v));
+                        }
+                        None => bad.push(format!("{pre}{cl}")),
+                    }
+                } else {
                     effs.push(e);
                 }
             }
         } else if rmatch(r"^(it|they) (?:can't be regenerated|gains? haste until end of turn)$", &cl).is_some() {
         } else {
-            bad.push(cl);
+            bad.push(format!("{pre}{cl}"));
         }
     }
     (effs, bad)
