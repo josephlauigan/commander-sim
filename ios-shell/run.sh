@@ -14,4 +14,4 @@ APP=build/derived/Build/Products/Debug-iphonesimulator/CommanderPractice.app
 xcrun simctl boot "$DEVICE" 2>/dev/null || true
 open -a Simulator
 xcrun simctl install "$DEVICE" "$APP"
-xcrun simctl launch "$DEVICE" com.josephlauigan.commander-practice
+xcrun simctl launch "$DEVICE" com.josephlauigan.commander-ipad
