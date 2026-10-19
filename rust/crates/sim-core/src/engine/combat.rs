@@ -902,6 +902,15 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             fire_trigger(g, Event::Crew, Call::Player { p })?;
         }
         let human = crate::human::is_human(g, p);
+        if human && !g.hooks.is_empty() {
+            // practice mode: the beginning of combat comes before attackers are declared (Ardenn moving Equipment,
+            // Helm of the Host ...). The tokens its triggers make have haste: the person declares them like the rest.
+            for m in cardcode::combat_start(g, p)? {
+                if g.perm(m).on_bf {
+                    g.perm_mut(m).sick = false;
+                }
+            }
+        }
         let human_groups = if human {
             // practice mode: the person declares attackers (they may attack several players)
             match crate::human::combat::human_attack(g, p, ncomb)? {
@@ -1008,8 +1017,8 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         }
         let mut atk: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();
         g.atk_targets = groups.iter().flat_map(|(q, xs)| xs.iter().map(move |&m| (m, *q))).collect(); // t0-zurgo
-        if !g.hooks.is_empty() && !atk.is_empty() {
-            // beginning of combat (Helm of the Host)
+        if !g.hooks.is_empty() && !atk.is_empty() && !human {
+            // beginning of combat (Helm of the Host): the AI's, after it picks its attackers (a person's fired above)
             let new = cardcode::combat_start(g, p)?;
             for m in new {
                 if !atk.contains(&m) {

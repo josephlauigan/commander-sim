@@ -1353,6 +1353,10 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     if owner(g, src) != p || !live(g, src) {
         return Ok(vec![]);
     }
+    if crate::human::is_human(g, p) {
+        ardenn_combat_human(g, p, src)?;
+        return Ok(vec![]);
+    }
     let Some(to) = super::cloud::best_holder(g, p) else { return Ok(vec![]) };
     let es = super::cloud::pullable(g, p, to);
     if es.is_empty() || !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
@@ -1362,6 +1366,53 @@ fn ardenn_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
         super::cloud::attach(g, e, to);
     }
     Ok(vec![])
+}
+
+/// Ardenn for the person: "you may attach any number of Auras and Equipment you control to target permanent or
+/// player". They pick the creature, then the Equipment one at a time (Auras stay put, as for the AI)
+fn ardenn_combat_human(g: &mut Game, p: PlayerId, src: Src) -> Res {
+    use crate::human::{Target, choices, legal};
+    let holders: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+    if holders.is_empty() || super::cloud::my_equipment(g, p).is_empty() {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
+        return Ok(());
+    }
+    let labels: Vec<String> = holders.iter().map(|&m| legal::describe_target(g, p, Target::Perm(m))).collect();
+    let Some(k) = choices::choose(
+        g,
+        p,
+        "choose",
+        "Ardenn (beginning of combat): attach Equipment you control to which creature?",
+        &labels,
+        Some("attach nothing"),
+        None,
+    )?
+    else {
+        return Ok(());
+    };
+    let to = holders[k];
+    loop {
+        let es: Vec<PermId> = super::cloud::my_equipment(g, p)
+            .into_iter()
+            .filter(|&e| g.perm(e).attached != Some(to))
+            .collect();
+        if es.is_empty() || !live(g, to) {
+            break;
+        }
+        let labels: Vec<String> = es
+            .iter()
+            .map(|&e| match g.perm(e).attached {
+                Some(on) => format!("{} (now on {})", g.perm(e).name, g.perm(on).name),
+                None => g.perm(e).name.to_string(),
+            })
+            .collect();
+        let prompt = format!("Ardenn: attach which Equipment to {}?", g.perm(to).name);
+        let Some(i) = choices::choose(g, p, "choose", &prompt, &labels, Some("done"), None)? else { break };
+        super::cloud::attach(g, es[i], to);
+    }
+    Ok(())
 }
 
 const PALADIN: &str = "Silverblade Paladin";
