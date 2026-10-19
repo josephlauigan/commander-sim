@@ -1,4 +1,4 @@
-//! Tier 6 planames.iter().any(|n| FINDERS.contains(n)) { slot for `rograkh-thrasios-creature-combo` (Rograkh & Thrasios, green creature combo), from
+//! Tier 6 plan slot for `rograkh-thrasios-creature-combo` (Rograkh & Thrasios, green creature combo), from
 //! `audit/t6/rograkh-thrasios-creature-combo/SPEC.md`. Contract: see `t6_plans.rs`.
 //!
 //! The plan: Rograkh ({0}) on turn 1, fast mana, cheap creatures to raise Gaea's Cradle, Thrasios; HOLD Oboro
@@ -64,6 +64,15 @@ const REACTIVE: [&str; 16] = [
     "Flare of Duplication",
 ];
 
+/// rthras4: some opponent has mana open and probably an instant answer in hand
+fn removal_open(g: &Game, p: PlayerId) -> bool {
+    use crate::ai::brain::{open_mana, prob_holding};
+    g.opps(p).any(|q| {
+        open_mana(g, q, None) >= 1
+            && prob_holding(g, q, |c| { let d = g.db.get(c); d.instant && d.tag(crate::tag::Tag::Rem) }) >= 0.4
+    })
+}
+
 fn name(g: &Game, c: CardId) -> &str {
     &g.db.get(c).name
 }
@@ -91,9 +100,17 @@ fn cradle_out(g: &Game, p: PlayerId) -> bool {
 pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
     let n = name(g, c);
     if n == ROGRAKH {
+        // rthras4 A: the third and later casts from the command zone cost 4+ extra for a 0/1: let the search decide
+        if std::env::var("RT4_A").is_ok() && g.player(p).tax_of(c) >= 4 {
+            return Some(40.0);
+        }
         return Some(97.0); // {0}: turn 1, it turns on Fierce Guardianship, Swat and Mox Amber
     }
     if n == THRASIOS {
+        // rthras4 B: after it was removed once, do not walk it back into open removal
+        if std::env::var("RT4_B").is_ok() && g.player(p).tax_of(c) >= 2 && removal_open(g, p) {
+            return Some(if std::env::var("RT4_B0").is_ok() { 0.0 } else { 60.0 });
+        }
         return Some(93.0); // the engine, and a creature for Cradle
     }
     match n {
