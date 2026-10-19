@@ -450,3 +450,62 @@ fn titania_is_cast_first_and_the_fillers_come_before_her_with_no_fetch_land_in_t
     g.player_mut(P0).gy.push(c);
     assert!(titania::titania_prio(&g, P0, rumble) < 80, "a fetch land is waiting: no hurry");
 }
+
+// ------------------------------------------------------------------ Primeval Titan
+/// Primeval Titan: "Trample. Whenever Primeval Titan enters or attacks, you may search your library for up to two land
+/// cards, put them onto the battlefield tapped, then shuffle." In the titania deck the fetch lands go first (each is a
+/// 5/3 under Titania once cracked), and a Titan-fetched fetch land stays put until it untaps ({T} to sacrifice).
+#[test]
+fn primeval_titan_enters_and_attacks_for_two_lands_each_fetch_lands_first() {
+    let mut g = game();
+    let titania = perm(&mut g, P0, "Titania, Protector of Argoth");
+    let _ = titania;
+    let t = hand(&mut g, P0, &["Primeval Titan"])[0];
+    assert!(g.db.get(t).tags.has(sim_core::tag::Tag::Trample));
+    let before = g.player(P0).lands.len();
+    zones::enter(&mut g, P0, t, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    let lands: Vec<_> = g.player(P0).lands.clone();
+    assert_eq!(lands.len(), before + 2, "two lands");
+    let names: Vec<String> = lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect();
+    assert!(lands.iter().all(|&l| g.land(l).tapped), "all enter tapped: {names:?}");
+    let fetches = ["Evolving Wilds", "Terramorphic Expanse", "Fabled Passage"];
+    assert!(names.iter().all(|n| fetches.contains(&n.as_str())), "fetch lands first: {names:?}");
+    // tapped, they cannot be cracked yet: no Elemental, and the AI offers no crack
+    assert_eq!(elementals(&g, P0).len(), 0);
+    assert!(!options(&mut g, P0, false).iter().any(|o| o.label.contains("crack the fetch")));
+    // they untap next turn: now the crack is offered and makes two 5/3s
+    for l in lands {
+        g.land_mut(l).tapped = false;
+    }
+    g.active = Some(P0);
+    let o = options(&mut g, P0, false);
+    let crack = o.iter().find(|o| o.label.contains("crack the fetch")).expect("crack offered");
+    sim_core::ai::act::perform(&mut g, P0, crack.act.as_ref().unwrap()).unwrap();
+    assert_eq!(elementals(&g, P0).len(), 2);
+    // attacking: two more lands (the last fetch land, then a basic), counted as landfall (a Forest here)
+    let titan = on_bf(&g, P0, "Primeval Titan").unwrap();
+    let lib_before = g.player(P0).library.len();
+    combat::attack_triggers(&mut g, P0, &[titan], P1).unwrap();
+    assert_eq!(g.player(P0).library.len(), lib_before - 2, "two more lands left the library");
+}
+
+#[test]
+fn primeval_titan_takes_basics_when_no_better_land_is_left_and_stops_at_an_empty_library() {
+    let mut g = game();
+    let f = card(&g, "Forest");
+    g.player_mut(P0).library = vec![f];
+    let t = hand(&mut g, P0, &["Primeval Titan"])[0];
+    zones::enter(&mut g, P0, t, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    assert_eq!(g.player(P0).lands.len(), 1, "up to two: only one land to find");
+    assert!(g.player(P0).library.is_empty());
+}
+
+#[test]
+fn the_ai_casts_primeval_titan() {
+    let mut g = game();
+    g.active = Some(P0);
+    hand(&mut g, P0, &["Primeval Titan"]);
+    lands(&mut g, P0, "Forest", 6, false);
+    let o = options(&mut g, P0, false);
+    assert!(o.iter().any(|o| o.label.contains("Primeval Titan")), "castable: {:?}", o.iter().map(|o| &o.label).collect::<Vec<_>>());
+}

@@ -98,7 +98,7 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
                 _ => 0,
             };
         }
-        "Zombify" => {
+        "Zombify" | "Dread Return" => {
             return if g.player(p).gy.iter().any(|&c| steal_value(g, c) >= 3.0) { 64 } else { 0 };
         }
         "Gray Merchant of Asphodel" => return gray_merchant_prio(g, p),
@@ -206,8 +206,11 @@ pub fn wipe_utility(g: &Game, p: PlayerId, c: CardId, kind: &str, danger: f64) -
 
 /// ais.rean_targets for the deck: the best creature card in any graveyard (our own included)
 pub fn rean_targets(g: &Game, p: PlayerId, kind: &str) -> Vec<(f64, C, PlayerId)> {
-    let _ = kind;
-    steal_targets(g, p)
+    let mut v = steal_targets(g, p);
+    if kind == "dread" {
+        v.retain(|&(_, _, src)| src == p); // Dread Return: "from your graveyard"
+    }
+    v
 }
 
 /// cmc, for tests of the plan
@@ -247,6 +250,7 @@ pub fn options(g: &mut Game, p: PlayerId, post: bool) -> crate::flow::Res<Vec<cr
     out.extend(exsanguinate_option(g, p));
     out.extend(rabid_option(g, p));
     out.extend(altar_loop_option(g, p));
+    out.extend(dread_flashback_option(g, p));
     Ok(out)
 }
 
@@ -451,4 +455,91 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
         return okn.iter().copied().find(|&c| g.db.get(c).land && name(g, c) == "Swamp");
     }
     None
+}
+
+// ------------------------------------------------------------------ Dread Return's flashback
+/// the three creatures Dread Return's flashback sacrifices: tokens and Reassembling Skeleton first, then the cheapest;
+/// never Sephiroth or the commander, never a body worth more than the card it brings back
+fn dread_fodder(g: &Game, p: PlayerId, keep_above: f64) -> Vec<PermId> {
+    let mut f: Vec<(f64, PermId)> = all_creatures(g)
+        .into_iter()
+        .filter(|&(q, m)| q == p && !is_seph(g, m) && !g.perm(m).is_cmd && pval(g, m) < keep_above)
+        .map(|(_, m)| {
+            let x = g.perm(m);
+            let skeleton = x.cd.is_some_and(|c| &*g.db.get(c).name == "Reassembling Skeleton");
+            (if x.token || skeleton { pval(g, m) - 10.0 } else { pval(g, m) }, m)
+        })
+        .collect();
+    f.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    f.into_iter().take(3).map(|(_, m)| m).collect()
+}
+
+/// Dread Return from the graveyard (flashback: sacrifice three creatures): on your turn, when a creature card in your
+/// graveyard is worth bringing back and three bodies can go. Each death is a drain with Sephiroth or a death payoff
+/// out (and counts toward his flip), so the sacrifice is worth something on its own here
+fn dread_flashback_option(g: &Game, p: PlayerId) -> Option<crate::hooks::Opt> {
+    if g.active != Some(p) {
+        return None;
+    }
+    let c = g.player(p).gy.iter().copied().find(|&c| &*g.db.get(c).name == "Dread Return")?;
+    let &(val, _, _) = rean_targets(g, p, "dread").first()?;
+    if val < 3.0 {
+        return None;
+    }
+    let fod = dread_fodder(g, p, val);
+    if fod.len() < 3 {
+        return None;
+    }
+    let payoffs = LOOP_DRAINS.iter().filter(|n| bf_named(g, p, n).is_some()).count() + usize::from(seph_state(g, p).is_some());
+    let lost: f64 = fod.iter().map(|&m| if g.perm(m).token { 0.0 } else { pval(g, m) * 0.5 }).sum();
+    let u = val + 3.0 * payoffs as f64 * 0.6 - lost;
+    if u < 3.0 {
+        return None;
+    }
+    Some(crate::hooks::Opt {
+        utility: u,
+        label: "Dread Return from the graveyard (sacrifice three creatures)".into(),
+        act: Some(crate::hooks::Action::Plan { f: dread_flashback_go, arg: c.0 as i64 }),
+    })
+}
+
+fn dread_flashback_go(g: &mut Game, p: PlayerId, arg: i64) -> crate::flow::Res<bool> {
+    let Some(c) = g.player(p).gy.iter().copied().find(|&x| x.0 as i64 == arg) else { return Ok(false) };
+    let Some(&(val, cd, src)) = rean_targets(g, p, "dread").first() else { return Ok(false) };
+    let fod = dread_fodder(g, p, val);
+    if fod.len() < 3 {
+        return Ok(false);
+    }
+    // the sacrifice is the cost: paid before the spell can be answered
+    for m in fod {
+        if g.perm(m).on_bf {
+            crate::engine::zones::die(g, m, "sac")?;
+        }
+    }
+    if g.over || !g.player(p).alive {
+        return Ok(true);
+    }
+    let gy = &mut g.player_mut(p).gy;
+    let Some(i) = gy.iter().position(|&x| x == c) else { return Ok(true) };
+    gy.remove(i);
+    g.player_mut(p).spells_this_turn += 1;
+    crate::engine::cast::on_cast(g, p, c)?;
+    if g.over || !g.player(p).alive {
+        g.player_mut(p).exile.push(c);
+        return Ok(true);
+    }
+    let pl = g.player_mut(p);
+    pl.stat("sf_dread_flashback", 1);
+    pl.stat("spells_cast", 1);
+    pl.cast_names.insert(c);
+    crate::glog!(g, "  {} flashes back Dread Return (sacrificing three creatures) for {}", g.player(p).name, g.db.get(cd).name);
+    if crate::engine::stack::counter_window(g, p, c, val, vec![])? {
+        let still = g.player(src).gy.contains(&cd);
+        if still {
+            let ctx = crate::state::Ctx { rean_target: Some(cd), rean_src: Some(src), ..crate::state::Ctx::default() };
+            crate::ai::seph_rean_resolve(g, p, c, &ctx)?;
+        }
+    }
+    g.player_mut(p).exile.push(c); // flashback: exiled whether it resolved or was countered
+    Ok(true)
 }

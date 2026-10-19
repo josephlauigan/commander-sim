@@ -82,7 +82,7 @@ With the emblem, every wipe drains once per creature:
 **Grave Betrayal** (a creature you don't control that dies comes back under your control at the next end step, with a
 +1/+1 counter), **Dread Slaver** (a creature it damaged that dies comes back), **Necromantic Selection**, **Animate
 Dead** and **Grave Researcher // Reanimate** (any graveyard), **Gonti, Lord of Luxury** (steals a card from the top four
-of an opponent's library; deathtouch) and **Zombify**, **Rewrite Regrets**, **Pull from the Grave**, **Ral Zarek, Guest
+of an opponent's library; deathtouch) and **Dread Return** (cast again from the graveyard by sacrificing three creatures, each death a drain), **Rewrite Regrets**, **Pull from the Grave**, **Ral Zarek, Guest
 Lecturer** (-2 returns a creature of mana value 3 or less) and **Braids's Frightful Return** (chapter II returns a
 creature card to hand) for your own. Stolen creatures go to Phyrexian Tower or Altar for mana, to Sephiroth for cards,
 and every death drains again.
@@ -177,7 +177,7 @@ Demon is a seven-mana tutor.
 
 **Instants (6).** Dark Ritual, Last Gasp, Presumed Dead, Sephiroth's Intervention, Vampiric Tutor, Wander Off
 
-**Sorceries (14).** Blood on the Snow, Cast Away Doubt, Crux of Fate, Demonic Tutor, End of the Hunt, Exsanguinate, Extinction Event, Living Death, Necromantic Selection, Pull from the Grave, Rewrite Regrets, Stargaze, Toxic Deluge, Zombify
+**Sorceries (14).** Blood on the Snow, Cast Away Doubt, Crux of Fate, Demonic Tutor, Dread Return, End of the Hunt, Exsanguinate, Extinction Event, Living Death, Necromantic Selection, Pull from the Grave, Rewrite Regrets, Stargaze, Toxic Deluge
 
 ## Import list (100)
 
@@ -203,6 +203,7 @@ Demon is a seven-mana tutor.
 1 Dark Ritual
 1 Demonic Tutor
 1 Dread Drone
+1 Dread Return
 1 Dread Slaver
 1 End of the Hunt
 1 Eternal Student
@@ -248,7 +249,6 @@ Demon is a seven-mana tutor.
 1 Wander Off
 1 Woe Strider
 1 Yahenni, Undying Partisan
-1 Zombify
 1 Zulaport Cutthroat
 32 Swamp
 ```

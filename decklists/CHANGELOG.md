@@ -13,6 +13,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Citizen's Arrest, Hero's Blade. In: Andúril, Narsil Reforged, Stroke of Midnight. Citizen's Arrest -> Stroke of Midnight: -1.4 over T1-T3 (instant answer to any nonland permanent). Hero's Blade -> Andúril, Narsil Reforged: -0.3 over T1-T3 (a +1/+1 counter on every creature each swing).
 - **2026-10-16.** Out: Duelist's Heritage, Ghostly Prison, Helm of Kaldra, Shield of Kaldra. In: Archangel of Tithes, Open the Armory, Silverblade Paladin, Sphere of Safety. Four swaps (JD, 10-16). Out: Helm of Kaldra, Shield of Kaldra, Ghostly Prison, Duelist's Heritage. In: Archangel of Tithes, Open the Armory, Sphere of Safety, Silverblade Paladin. JD is taking Helm and Shield of Kaldra for another deck; Ghostly Prison and Duelist's Heritage could not be found. Test: T1 29.1 -> 30.3 (+1.2, ±3.8, neutral). Buys: Sphere of Safety $4.38, Silverblade Paladin $0.87 = $5.25.
 - **2026-10-16.** Out: Bronze Guardian, Kor Duelist. In: Danitha Capashen, Paragon, Sram, Senior Edificer. Bronze Guardian -> Sram, Senior Edificer and Kor Duelist -> Danitha Capashen, Paragon (JD's choice). Tested neutral: T1 29.2 -> 29.7 (+0.5, noise ±3.8, 1,000 games paired). Buys: Sram $1.73, Danitha $0.75.
 - **2026-10-15.** Out: Crawlspace. In: Ghostly Prison. Crawlspace is in JD's Sheoldred deck (physical), so Ghostly Prison returns to its Package D slot (opponents pay {2} for each creature that attacks you). Ghostly Prison is a buy.
@@ -63,6 +64,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Feed the Swarm. In: Marvin, Murderous Mimic. Feed the Swarm -> Marvin, Murderous Mimic: +0.2 at T3 in the coarse pass (copies Niv-Mizzet's draw, Fangtail, Blightspeaker, Rummaging Goblin).
 - **2026-10-18.** Out: Blazing Firesinger, Crux of Fate. In: Bribery, Fiery Emancipation. Kefka lift (JD approved 10/18): Crux of Fate=>Fiery Emancipation; Blazing Firesinger=>Bribery
 - **2026-10-18.** Out: Bitter Triumph. In: Decorum Dissertation. Matched to the physical deck (JD's list, 2026-10-18): Decorum Dissertation back in for Bitter Triumph; the 10/14 swap was never made physically.
 - **2026-10-18.** Out: Demonic Tutor, Mystical Tutor, Vampiric Tutor. In: Expressive Iteration, Mana Leak, Sleight of Hand. Band calibration 10/18 (JD approved): Demonic Tutor=>Mana Leak;Vampiric Tutor=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
@@ -146,6 +148,7 @@ Deck key `sephfs`, `decklists/JD/sephiroth-fs-wipe-steal.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Zombify. In: Dread Return. Zombify -> Dread Return: +4.8 at T5 in the coarse pass (500 games, just past noise); same cost and job, plus a flashback (sacrifice three creatures) whose deaths drain with Sephiroth out.
 - **2026-10-18.** Out: Bitter Triumph, Masterful Flourish, Rabid Attack, Star Compass, Tome of Legends. In: Bolas's Citadel, Demonic Tutor, Gray Merchant of Asphodel, Rune-Scarred Demon, Vampiric Tutor. Band calibration 10/18 (JD approved): Star Compass=>Demonic Tutor;Tome of Legends=>Vampiric Tutor;Masterful Flourish=>Rune-Scarred Demon;Bitter Triumph=>Bolas's Citadel;Rabid Attack=>Gray Merchant of Asphodel
 - **2026-10-14 (second change).** Out: Ophiomancer, Sneering Shadewriter. In: Grave Titan, Pawn of Ulamog. JD's package
   (2026-10-14): Grave Titan for Sneering Shadewriter, Pawn of Ulamog for Ophiomancer. Measured +0.3 ±1.6 over all tiers
@@ -180,6 +183,7 @@ Deck key `seph`, `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, t
 
 ### Changes
 
+- **2026-10-18.** Out: Dread Return. In: Victimize. Dread Return -> Victimize: +0.8 over T3-T4 in the coarse pass (two creatures back for 3 mana, wins 77-82% when cast).
 - **2026-10-18.** Out: Consecrated Sphinx, Farewell, Force of Will, Teferi's Protection, Worldly Tutor. In: Arcane Denial, Austere Command, Harmonize, Hornet Queen, Tireless Tracker. Band calibration 10/18 (JD approved): Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
 - **2026-10-14.** Out: Orzhov Signet. In: Worldly Tutor. Orzhov Signet (to bulk) for Worldly Tutor (binder, from the retired Jodah deck). Measured -0.1 over all tiers (T1 -2.0, T2 +0.8, T3 +2.2, T4 -1.0, T5 -0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice to keep it. Eight Game Changers, Bracket 4.
 - **2026-10-13.** Out: Smothering Tithe. In: Momentary Blink. JD's choice: Smothering Tithe goes to the Cloud deck; Momentary Blink (bulk) is a second Ephemerate-style blink for the Kitten. Paired test, 500 games per tier: -1.8 (t1 -4.0, t2 -1.4, t3 +3.8, t4 -3.8, t5 -3.8); `audit/cloud/2026-10-13/screen/D2-*`. Game Changers 8 -> 7, still Bracket 4.
@@ -646,6 +650,8 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Serra Angel. In: Cecil, Dark Knight. Serra Angel -> Cecil, Dark Knight: +0.4 at T5 vs Gilgamesh in the coarse pass (noise); JD keeps Gilgamesh and cuts Serra Angel, a vanilla 5-drop, for a 1-mana deathtouch attacker that starts Tymna's draws early.
+- **2026-10-18.** Out: Elemental Mascot. In: Lightning, Army of One. Elemental Mascot -> Lightning, Army of One: -2.8 at T5 in the coarse pass (noise; JD's choice).
 - **2026-10-18.** Out: Rune-Scarred Demon. In: Underworld Breach. Band calibration 10/18 (JD approved): Rune-Scarred Demon=>Underworld Breach
 - **2026-10-17.** Out: Tocasia's Welcome. In: Smaug the Magnificent. Smaug the Magnificent (JD's card): +1.1 ±2.7 at T3, 2,000 paired look-ahead games, noise; a hasty flier for Tymna plus a Treasure each upkeep.
 - **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.

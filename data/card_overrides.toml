@@ -3036,6 +3036,10 @@ note = "taps for {C}; cracked for a card late (six or more lands)"
 status = "Full"
 note = "indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or the cheapest creature) at instant speed once a creature worth returning is in the graveyard; then returns the best creature card every upkeep"
 
+["The Mind Stone"]
+status = "Approximate"
+note = "indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked)"
+
 ["Mind Twist"]
 types = "S"
 tags = "xtutor"
@@ -8960,3 +8964,37 @@ note = "reach; taps for green (the chosen colour is always green in the titania 
 cost = "1GG"
 status = "Full"
 note = "{X}{G}{G} with X=1: fetch one basic Forest (X basics with different names, the deck has only Forest); never cast at X=0, which finds nothing; Domain power 1"
+
+["Primeval Titan"]
+dsl = []
+status = "Full"
+note = "6/6 trample; when it enters or attacks, up to two lands from the library onto the battlefield tapped (each a landfall), then shuffle. Titania's deck takes fetch lands first (a Titan-fetched one can be cracked once it untaps), then utility lands, then basics"
+
+["Oppression"]
+types = "E"
+dsl = []
+status = "Full"
+note = "whenever a player casts a spell, that player discards a card (the caster chooses; Kefka's own spells too, so madness, mayhem and graveyard fuel profit). Cast when the table holds more cards than Kefka can spare, never with a combo turn in hand"
+
+["Andúril, Narsil Reforged"]
+types = "A"
+tags = "leg"
+dsl = [
+  { type = "static", static = "equip_cost", mana = 3 },
+]
+status = "Full"
+note = "ascend (the city's blessing at ten permanents, lands included, kept for the game); when the equipped creature attacks, a +1/+1 counter on each creature you control, two with the blessing; equip {3}. Cloud doubles the trigger"
+
+["Cecil, Dark Knight"]
+kws = ["deathtouch"]
+status = "Full"
+note = "2/3 deathtouch; whenever it deals damage (combat, to a player or a creature) you lose that much life, then at half your starting life (20) or less it untaps and transforms into Cecil, Redeemed Paladin, a 4/4 lifelink that, whenever it attacks, gives the other attackers indestructible until end of turn (impls/newcards_b.rs)"
+
+["Lightning, Army of One"]
+kws = ["first strike", "trample", "lifelink"]
+status = "Approximate"
+note = "first strike, trample, lifelink; Stagger on combat damage to a player doubles, until its controller's next turn, all damage to that player (combat and noncombat) and to their permanents (removal damage, combat kills). Gaps: sweepers with a fixed damage kind, the AI's combat estimates, lifelink of a doubled hit, and attackers resolved before Lightning in the same damage step are not doubled"
+
+["Marvin, Murderous Mimic"]
+status = "Partial"
+note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first"

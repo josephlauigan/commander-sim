@@ -52,8 +52,7 @@ With Cloud equipped, these Equipment gain from the extra trigger:
   at Cloud, as the second would fizzle and lose its land.
 - **Mask of Memory**: two triggers of draw two then discard one.
 
-The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left) or **Hero's Blade**
-(it can't attach twice). **Champion's Helm**, **Swiftfoot Boots**,
+The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left). **Champion's Helm**, **Swiftfoot Boots**,
 **Colossus Hammer**, **Fireshrieker** and **Wrecking Ball Arm** have
 no triggers: they are plain bonuses (hexproof, double strike, +X/+X).
 
@@ -91,7 +90,7 @@ that creature indestructible.
 - **Wrecking Ball Arm** equips a legendary creature for {3}: base 7/7, and it can't be blocked by creatures with power
   2 or less. Cloud with it and a Sword of Fire and Ice is a 9/9.
 - **Sword of Kaldra** gives +5/+5 and exiles any creature it damages. **Colossus Hammer** gives +10/+10.
-- **Hero's Blade** (+3/+2) attaches itself when a legendary creature enters.
+- **Andúril, Narsil Reforged** ({2}, equip {3}): whenever the equipped creature attacks, put a +1/+1 counter on each creature you control, or two with the city's blessing (ten or more permanents).
 - **Double strike** makes every combat hit count twice: Fireshrieker (equip {2}) gives it to the equipped creature, so
   Cloud with a Sword triggers it at first-strike and regular damage (four Sword triggers per attack with his doubling)
   and deals commander damage twice. **Silverblade Paladin** ({1}{W}, soulbond) gives itself and the creature it pairs with double strike: pair it with
@@ -112,10 +111,10 @@ that creature indestructible.
 
 ### Removal
 - **Single targets:** Winds of Abandon ({1}{W}, exile; overload {4}{W}{W} exiles all your opponents' creatures), Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
-  it gets better later), Stand Up for Yourself (power 3 or more), Citizen's Arrest, Fate of the
-  Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less).
+  it gets better later), Stand Up for Yourself (power 3 or more), Fate of the
+  Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less) and Stroke of Midnight ({2}{W} instant: destroys any nonland permanent, and its controller gets a 1/1 Human).
 - **Artifacts and enchantments:** Disenchant.
-- **Attack limits and taxes:** **Sphere of Safety** ({4}{W}, enchantment: opponents pay {X} for each creature that attacks you, X being the number of enchantments you control; with Citizen's Arrest, Court of Ardenvale and Smothering Tithe, that is usually 1 to 3) and **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With these too,
+- **Attack limits and taxes:** **Sphere of Safety** ({4}{W}, enchantment: opponents pay {X} for each creature that attacks you, X being the number of enchantments you control; with Court of Ardenvale and Smothering Tithe, that is usually 1 to 3) and **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With these too,
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
   Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
   protection from white).
@@ -169,7 +168,7 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Wall of Omens, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Sphere of Safety, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Citizen's Arrest, Fate of the Sun-Cryst, Skyclave
+Interaction: Wrath of God, Day of Judgment, Fumigate, Sphere of Safety, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
 Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 11 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
@@ -186,13 +185,13 @@ on its own. Tell the table before the game that:
 
 **Creatures (31).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
 
-**Enchantments (4).** Citizen's Arrest, Court of Ardenvale, Smothering Tithe, Sphere of Safety
+**Enchantments (3).** Court of Ardenvale, Smothering Tithe, Sphere of Safety
 
-**Artifacts (18).** Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Hero's Blade, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
+**Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
-**Instants (5).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself
+**Instants (6).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Stroke of Midnight
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -203,6 +202,7 @@ on its own. Tell the table before the game that:
 ```
 1 Adelbert Steiner
 1 Akroma's Will
+1 Andúril, Narsil Reforged
 1 Arcane Signet
 1 Archangel of Tithes
 1 Archon of Absolution
@@ -217,7 +217,6 @@ on its own. Tell the table before the game that:
 1 Bastion Protector
 1 Champion's Helm
 1 Cid, Freeflier Pilot
-1 Citizen's Arrest
 1 Cloud, Midgar Mercenary
 1 Coalition Relic
 1 Colossus Hammer
@@ -237,7 +236,6 @@ on its own. Tell the table before the game that:
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
-1 Hero's Blade
 1 Jocasta, Automaton Avenger
 1 Knight of the White Orchid
 1 Kor Outfitter
@@ -259,6 +257,7 @@ on its own. Tell the table before the game that:
 1 Sphere of Safety
 1 Sram, Senior Edificer
 1 Stand Up for Yourself
+1 Stroke of Midnight
 1 Swiftfoot Boots
 1 Sword of Feast and Famine
 1 Sword of Fire and Ice

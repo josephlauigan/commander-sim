@@ -2,16 +2,15 @@
 1 Arcane Denial (msc) 147
 1 Arcane Signet (fic) 333
 1 Big Score (plst) SNC-102
-1 Blazing Firesinger (sos) 109
 1 Blightspeaker (tsr) 103
 1 Blood Crypt (rtr) 238
 1 Brain Freeze (soa) 78
+1 Bribery (cmm) 77
 1 Cackling Fiend (dmr) 76
 1 Chaos Warp (c19) 136
 1 Command Tower (mic) 170
 1 Contract Killing (xln) 95
 1 Corroding Dragonstorm (tdm) 297
-1 Crux of Fate (fic) 275
 1 Dark Ritual (fca) 8
 1 Deadly Embrace (fin) 557
 1 Decorum Dissertation (sos) 78
@@ -22,7 +21,8 @@
 1 Exotic Orchard (fic) 390
 1 Expressive Iteration (stx) 186
 1 Extinguish the Light (dmu) 94
-1 Feed the Swarm (soa) 29
+1 Marvin, Murderous Mimic (dsk) 253
+1 Fiery Emancipation (m21) 143
 1 Garrison Excavator (sos) 116
 1 Gemstone Mine (plst) TSB-119
 1 Grab the Prize (dsk) 138

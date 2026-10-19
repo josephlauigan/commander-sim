@@ -610,14 +610,14 @@ fn resolve_combat_inner(
                 Some(b) => {
                     let bt = etgh(g, b);
                     let t0 = crate::impls::t0_giada::combat_proof;
-                    let mut a_dies = (epow(g, b) * fiery(g, d) >= etgh(g, a) || g.perm(b).dt)
+                    let mut a_dies = (epow(g, b) * fiery(g, d) * crate::engine::life::stagger_mult(g, p) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
                         && !no_damage(g, a)
                         && !t0(g, a);
                     if cardcode::damage_prevented(g, b) {
                         a_dies = false;
                     }
-                    let mut b_dies = (ap * fiery(g, p) >= bt || g.perm(a).dt)
+                    let mut b_dies = (ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
                         && !no_damage(g, b)
                         && !t0(g, b);
@@ -642,6 +642,12 @@ fn resolve_combat_inner(
                     }
                     if epow(g, b) > 0 && g.perm(a).on_bf && cardcode::kaldra_exile(g, b, a)? {
                         a_dies = false;
+                    }
+                    if ap > 0 && !no_damage(g, b) {
+                        crate::impls::newcards_b::cecil_deals(g, a, ap)?; // Cecil, Dark Knight: Darkness
+                    }
+                    if epow(g, b) > 0 && !no_damage(g, a) {
+                        crate::impls::newcards_b::cecil_deals(g, b, epow(g, b))?;
                     }
                     if ap > 0 && !no_damage(g, b) && !t0(g, b) && !cardcode::damage_prevented(g, b) {
                         crate::impls::t0_giada::damaged(g, b, ap)?; // Metropolis Reformer
@@ -752,6 +758,8 @@ fn resolve_combat_inner(
                     if g.perm(a).lifelink || kw(g, a, "lifelink") {
                         gain(g, p, dmg)?;
                     }
+                    // Cecil, Dark Knight: Darkness (after lifelink: a flip here gives the other face's lifelink later)
+                    crate::impls::newcards_b::cecil_deals(g, a, dmg)?;
                     if g.perm(a).is_cmd {
                         crate::engine::values::add_cmd_dmg(g, d, p, a, dmg);
                     }

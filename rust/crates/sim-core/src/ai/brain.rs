@@ -412,10 +412,14 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     let db = g.db.clone();
     let d = db.get(c);
     let main = is_main(g.player(p).key);
+    // Seph FS has no reanimation plan of its own: it casts a hand-tagged reanimation spell (Dread Return) like any
+    // other by its priority, and the spell resolves through seph_rean_resolve (the best creature card)
+    let sephfs_rean = g.player(p).key == "sephfs" && d.tag(Tag::Rean);
     if special(g, c)
         && !d.has_dsl()
         && !(d.creature && !main)
         && !d.tags.str(Tag::Fill).is_some_and(|f| CAST_FILL.contains(&f))
+        && !sephfs_rean
     {
         return Ok(false);
     }
@@ -1233,6 +1237,7 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
         if !is_main(key) {
             u += pool::ninja_defender_bonus(g, p, q);
         }
+        u += crate::impls::newcards_b::stagger_bonus(g, p, q); // Lightning, Army of One
         // planeswalkers about to ultimate draw attacks
         u += g
             .player(q)

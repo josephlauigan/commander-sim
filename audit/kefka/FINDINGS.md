@@ -84,3 +84,12 @@ Swap: Crux of Fate => Fiery Emancipation, Blazing Firesinger => Bribery (paired,
    only 23% of draws (six mana). The cut cards won 25% (Crux) and 30-35% (Firesinger) when cast.
 Result: Kefka about 28.9 at T3: above Veyran (27.7), below band 2. The test ran on the list before #92 matched Kefka to
 the physical deck (Bitter Triumph, now Decorum Dissertation): one card different. Outputs: 2026-10-18-lift/.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+- **Feed the Swarm => Oppression: T3 +1.6 (noise ±5.2, no downgrade).** Cast in only 44% of draws (held on combo
+  turns, by design) and stuck 56%; when it lands the opponents lose cards for every spell while Kefka empties his hand.
+- **Feed the Swarm => Marvin, Murderous Mimic (Partial: copies Niv-Mizzet, Fangtail, Blightspeaker's drain, Rummaging
+  Goblin): T3 +0.2 (noise ±5.0, no downgrade).** Cast in 62% of draws, wins 33% when cast vs Feed the Swarm's 25%; a
+  cheap body whose copied ability only matters with one of those creatures out.
+Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+**JD's decision (10/18):** Marvin in for Feed the Swarm (applied to the list); Oppression not added.
