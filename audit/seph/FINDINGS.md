@@ -16,6 +16,18 @@ The deck's living list of strengths, weaknesses and what was tested. Opponents: 
 - The plan is not online at all in about 30% of games.
 
 ## Tested
+### 2026-10-18 evening: Mind Stone => The Soul Stone, re-run over t3-t4 (2,000 games per list per profile, look-ahead)
+Result: **T3 +0.2 / +1.4, T4 -0.8 / +0.2 (conservative / loose; noise ±2.1-2.3 each). About +0.25 averaged
+over t3-t4: no clear effect**, the same as the first run. Raw output: `2026-10-18-stones/soul-stone-t3t4.txt`.
+
+Why: the same picture at both tiers. Mana on turns 4, 6 and 8 is unchanged (as a rock it is Mind Stone). The
+Stone is drawn in 25-30% of games, cast in about 89% of those, around round 6-7, so the {6}{B} harness comes even
+later. Removed bombs brought back and damage dealt tick up in three of the four cells, all within noise. T3 games
+run longer (11.2 rounds vs 9.8 at T4), which is where its loose-profile +1.4 shows up. A grind card, not a speed
+card; Seph's losses (Aurelia/Tergrid/Marwyn combat at T3, Heliod combo at T4) are about speed.
+
+Verdict: a safe sidegrade for Mind Stone, not an upgrade. JD asked whether to buy it (and The Mind Stone).
+
 ### 2026-10-18: Mind Stone => The Soul Stone (vs t4, 1,500 games per list per profile, look-ahead AI)
 Result: conservative 28.1% -> 29.1% (+1.0, noise ±2.5), loose 28.9% -> 28.5% (-0.5, noise ±2.4). Averaged over
 t4: +0.25 pts, no clear effect. Raw output: `2026-10-17-soul-stone/swap-mindstone-t4.txt`.
