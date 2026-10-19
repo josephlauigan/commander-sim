@@ -109,9 +109,11 @@ fn kinnan_basalt_has_steps_and_wins_with_the_outlet_paid() {
     let i = combos::combo_index(KB).unwrap();
     assert_eq!(combos::all()[i].steps.len(), 2);
     let mut g = kinnan_table();
-    assert!(not_ready(&g, KB), "Kinnan's ability needs {{U}}{{G}} from a real source");
     lands(&mut g, P0, "Island", 1, false);
     lands(&mut g, P0, "Forest", 1, false);
+    // unbounded colourless mana is no win by itself (#100): it needs a mana sink, here Urza
+    assert!(not_ready(&g, KB), "no mana sink");
+    perm(&mut g, P0, "Urza, Lord High Artificer");
     go(&mut g, KB);
     assert_eq!(g.winner, Some(P0));
 }
@@ -119,6 +121,7 @@ fn kinnan_basalt_has_steps_and_wins_with_the_outlet_paid() {
 #[test]
 fn a_guildmage_on_kinnans_activation_stops_the_loop() {
     let mut g = kinnan_table();
+    perm(&mut g, P0, "Urza, Lord High Artificer");
     lands(&mut g, P0, "Island", 1, false);
     lands(&mut g, P0, "Forest", 1, false);
     lands(&mut g, P1, "Island", 3, false);

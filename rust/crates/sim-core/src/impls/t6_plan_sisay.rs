@@ -182,7 +182,10 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 }
 
 /// go for the combo named `combo` now: no opinion, the shared table check decides
-pub fn go_now(_g: &Game, _p: PlayerId, _combo: &str) -> Option<bool> {
+pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
+    // No opinion (A/B at 600 games: "go whenever the line needs no spell" changed neither tries nor wins; the shared
+    // table check stays in charge). `t6_combos_t6::line_needs_cast` is there for a later rule.
+    let _ = (g, p, combo);
     None
 }
 

@@ -2004,3 +2004,16 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Unclaimed Territory")?.land_cols = Some(territory_colors);
     Ok(())
 }
+
+/// Tier 6 combo step: Sisay's ability for the named card (the same activation as the normal option); true if the card
+/// left the library (the ability was not stopped)
+pub fn sisay_fetch_card(g: &mut Game, p: PlayerId, t: CardId) -> Res<bool> {
+    let Some(src) = g.player(p).perms.iter().copied().find(|&m| {
+        let x = g.perm(m);
+        x.on_bf && !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Sisay, Weatherlight Captain")
+    }) else {
+        return Ok(false);
+    };
+    sisay_go(g, src, p, t.0 as i64)?;
+    Ok(!g.player(p).library.contains(&t))
+}

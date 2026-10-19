@@ -15,5 +15,8 @@ struct WebView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ view: WKWebView, context: Context) {}
+    // a new url (the server restarted on another port): load the page from there
+    func updateUIView(_ view: WKWebView, context: Context) {
+        if view.url?.port != url.port { view.load(URLRequest(url: url)) }
+    }
 }
