@@ -137,6 +137,28 @@ pub fn annex_life(g: &mut Game, p: PlayerId, d: PlayerId, xs: Vec<PermId>) -> Re
     }
     let mut out = vec![];
     for m in xs {
+        if crate::human::is_human(g, p) {
+            let mut labels = vec![];
+            if can_pay(g, p, 0, "W", false) {
+                labels.push("pay {W}".to_string());
+            }
+            if g.player(p).life > 2 {
+                labels.push("pay 2 life".to_string());
+            }
+            let prompt = format!("Norn's Annex: attacking with {} costs {{W/P}}", g.perm(m).name);
+            match crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("don't attack with it"), None)? {
+                Some(k) if labels[k] == "pay {W}" => {
+                    pay(g, p, 0, "W", false)?;
+                    out.push(m);
+                }
+                Some(_) => {
+                    lose_life(g, p, 2, Some(p), "other", None)?;
+                    out.push(m);
+                }
+                None => {}
+            }
+            continue;
+        }
         if can_pay(g, p, 0, "W", false) {
             pay(g, p, 0, "W", false)?;
             out.push(m);

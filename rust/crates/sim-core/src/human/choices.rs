@@ -227,6 +227,11 @@ pub fn sacrifice_creature(g: &mut Game, q: PlayerId, cands: &[PermId], why: &str
     zones::die(g, cands[k], "sac")
 }
 
+/// q sacrifices one of `cands` (any permanents: the same prompt as a creature).
+pub fn sacrifice_permanent(g: &mut Game, q: PlayerId, cands: &[PermId], why: &str) -> Res {
+    sacrifice_creature(g, q, cands, why)
+}
+
 // ------------------------------------------------------------------ searching the library
 /// p searches their library for up to k cards matching `pred`; returns them (taken out of the library, not yet put
 /// anywhere). Then the library is shuffled.

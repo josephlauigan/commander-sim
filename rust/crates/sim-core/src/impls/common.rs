@@ -22,8 +22,8 @@ use crate::engine::zones::{
     sac_worth, searchable, to_zone_card,
 };
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, TurnStamp, Val};
@@ -188,7 +188,14 @@ pub fn human_aura_host(g: &Game, p: PlayerId, spec: &AuraSpec, a: PermId) -> Res
     if cands.is_empty() {
         return Ok(None);
     }
-    cards::pick_perm(g, p, "target", &format!("{}: enchant which creature?", g.db.get(g.perm(a).cd.unwrap()).name), &cands, None)
+    cards::pick_perm(
+        g,
+        p,
+        "target",
+        &format!("{}: enchant which creature?", g.db.get(g.perm(a).cd.unwrap()).name),
+        &cands,
+        None,
+    )
 }
 
 fn spec_of(g: &Game, a: PermId) -> Option<&'static AuraSpec> {
@@ -389,7 +396,9 @@ pub fn aura_fall(g: &mut Game, m: PermId) -> Res {
                 to_zone_card(g, a, Zone::Gy);
             }
             let exiled = g.exiling == Some(m) && spec_of(g, a).is_some_and(|s| s.host_exiled);
-            if (died || exiled) && let Some(f) = host_dies {
+            if (died || exiled)
+                && let Some(f) = host_dies
+            {
                 f(g, owner(g, a), a, m)?;
             }
         }
@@ -669,6 +678,13 @@ fn sentinel(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         return Ok(());
     }
     let x = epow(g, src);
+    if crate::human::is_human(g, caster) {
+        // the person decides whether to pay {X}; paying {0} is free
+        if x <= 0 || crate::human::choices::pay_tax(g, caster, x as u32, "Esper Sentinel")? {
+            return Ok(());
+        }
+        return draw(g, o, 1, false);
+    }
     if x != 0 && can_pay(g, caster, x.max(0) as u32, "", false) && total_mana(g, caster, false) as i32 >= x + 2 {
         pay(g, caster, x.max(0) as u32, "", false)?;
         return Ok(());
@@ -1322,7 +1338,6 @@ fn ophiomancer(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     }
     Ok(())
 }
-
 
 // ---- The Soul Stone
 /// Full: indestructible; taps for {B}. {6}{B}, {T}, exile a creature you control: harness it. Harnessed: at the

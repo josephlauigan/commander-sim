@@ -804,6 +804,35 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
         return Ok(true);
     }
     for q in g.opps(p).collect::<Vec<_>>() {
+        if crate::human::is_human(g, q) {
+            // their choice: any permanent, a land included
+            let perms: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
+            let lands: Vec<_> = g.player(q).lands.clone();
+            let mut labels: Vec<String> = perms
+                .iter()
+                .map(|&m| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m)))
+                .collect();
+            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.land(l).cd).name)));
+            if labels.is_empty() {
+                continue;
+            }
+            let k = crate::human::choices::choose_one(
+                g,
+                q,
+                "choose",
+                "Kefka, Ruler of Ruin: sacrifice a permanent of your choice",
+                &labels,
+            )?;
+            if k < perms.len() {
+                die(g, perms[k], "sac")?;
+            } else {
+                let l = lands[k - perms.len()];
+                crate::engine::turn::remove_land(g, q, l);
+                let cd = g.land(l).cd;
+                g.player_mut(q).gy.push(cd);
+            }
+            continue;
+        }
         let toks: Vec<PermId> =
             g.player(q).perms.iter().copied().filter(|&m| g.perm(m).token && !g.perm(m).phased).collect();
         if !toks.is_empty() {
@@ -2150,7 +2179,9 @@ fn nim_equip(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
             g.is_creature(m) && !x.phased && x.cd.is_some() && !(card_name(g, m) == Some("Triskelion") && mikaeus) // +2/+2 would stop its loop needing no outlet
         })
         .collect();
-    let Some(t) = first_max(&cre, |m| pval(g, m) + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)) else { return Ok(vec![]) };
+    let Some(t) = first_max(&cre, |m| pval(g, m) + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)) else {
+        return Ok(vec![]);
+    };
     Ok(vec![Opt {
         utility: 1.0 + 0.2 * pval(g, t),
         label: "equip Nim Deathmantle".into(),
@@ -3290,7 +3321,11 @@ pub fn deflecting_swat(
     actor: Option<PlayerId>,
     spell: Option<CardId>,
 ) -> Res<bool> {
-    if (pval(g, m) < 4.0 && !g.perm(m).is_cmd) || !spell.is_some() || !actor.is_some_and(|a| a != owner) || matches!(kind, "edict" | "wipe") {
+    if (pval(g, m) < 4.0 && !g.perm(m).is_cmd)
+        || !spell.is_some()
+        || !actor.is_some_and(|a| a != owner)
+        || matches!(kind, "edict" | "wipe")
+    {
         return Ok(false);
     }
     veyran_protect_swat(g, owner, kind, actor.unwrap(), spell.unwrap())
@@ -4400,10 +4435,20 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
     pl.stat("spells_cast", 1);
     pl.cast_names.insert(c);
     on_cast(g, p, c)?;
-    crate::glog!(g, "  {} casts Momentary Blink{} on {} ({why})", g.player(p).name, if from_hand { "" } else { " (flashback)" }, g.perm(m).name);
+    crate::glog!(
+        g,
+        "  {} casts Momentary Blink{} on {} ({why})",
+        g.player(p).name,
+        if from_hand { "" } else { " (flashback)" },
+        g.perm(m).name
+    );
     let countered = g.over || !counter_window(g, p, c, if why == "protection" { 6.0 } else { 3.0 }, vec![])?;
     let pl = g.player_mut(p);
-    if from_hand || countered { pl.gy.push(c) } else { pl.exile.push(c) }
+    if from_hand || countered {
+        pl.gy.push(c)
+    } else {
+        pl.exile.push(c)
+    }
     if countered {
         return Ok(false);
     }

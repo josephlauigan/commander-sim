@@ -1,0 +1,6 @@
+# Report practice-oppchoice
+Person-seat prompts added (AI paths untouched): each_player_sacrifice (Accursed Marauder, Executioner-style, t3.rs), Plaguecrafter (rules.rs), Phyrexian Obliterator (t3.rs), Invoke Despair (legends.rs), Kefka {8} incl. lands (mine.rs), End of the Hunt tied picks (sheoldred.rs), Intellect Devourer (kefka.rs), Esper Sentinel via pay_tax (common.rs), Norn's Annex pay W / 2 life / don't attack (rules2.rs), Sauron ward (engine/removal.rs, shared: smallest change), Eldest Reborn I creature-or-planeswalker (t0_anikthea.rs), Torment of Hailfire (threats.rs), Braids III (sephfs_cards.rs), Fact or Fiction both ways (rules.rs; common.rs fof is replaced by it and unchanged).
+Shared additive change: human/choices.rs `sacrifice_permanent`.
+Tests: tests/play_opponent_choices.rs (edict, FoF both ways, Torment, Sentinel pay/no pay). Not tested directly: Annex, Kefka, Sauron ward, Obliterator, Despair, Hunt, Devourer, Braids.
+Sims (sheoldred t3, cloud t1, kefka t3, 200 games): before/after outputs identical. Caveat: the "before" build began while the first edits were landing; all edits are person-only paths.
+Notes: Esper Sentinel with X = 0 is paid for free; FoF AI takes the better pile by its own worth; with several human opponents the first one splits.
