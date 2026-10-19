@@ -521,6 +521,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-10-19.** Out: Curiosity. In: Orcish Bowmasters. Curiosity -> Orcish Bowmasters: +2.5 at T5 (loose, 2,000 games per list, noise ±2.3), the first Y'shtola swap past the noise. Bowmasters is cast in 81% of the games it is drawn (Curiosity 68%), damage +2.3 a game, plan online +2.4 points; the ping and the Orc Army pick off fast decks' mana creatures. JD buys a second copy (the Sauron copy stays).
 - **2026-10-18.** Out: Bolas's Citadel, Dakkon, Shadow Slayer, Thought Vessel. In: Farewell, Force of Will, Teferi's Protection. Band calibration 10/18 (JD approved): Dakkon, Shadow Slayer=>Force of Will;Thought Vessel=>Farewell;Bolas's Citadel=>Teferi's Protection
 - **2026-10-14.** Out: Triplicate Spirits. In: Adarkar Wastes, Dakkon, Shadow Slayer, Underground River. Triplicate Spirits (to bulk) for Dakkon, Shadow Slayer; a Swamp and an Island for Underground River and Adarkar Wastes (all three from the binder, the retired Jodah deck's leftovers). Measured -0.7 over all tiers (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice.
 - **2026-10-11.** Out: Bastion Protector. In: Thought Vessel (from Sauron). JD's choice: no maximum hand size for the deck that draws the most each turn (Necropotence, Consecrated Sphinx, Notion Thief, Bolas's Citadel); Bastion Protector was a creature, so it never triggered Y'shtola. Not measured.

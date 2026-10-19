@@ -72,6 +72,20 @@ Band 4 (T1-T3). No change. Final: **29.6% vs T1, 26.3% vs T2, 20.4% vs T3** (avg
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **28.9 / 23.8 / 21.4% vs T1 / T2 / T3** (before 29.6 / 26.3 / 20.4). T2 -2.5 is on the edge of noise; suspects: the new turn-2 search order (Feast and Famine first only with 7+ cards) and the Austere Command mode rule. A paired check vs main is the open item.
 
+## 2026-10-19: The Mind Stone for three rocks (quick read: loose only, 700 games per list, T1-T3, look-ahead)
+| Cut (=> The Mind Stone) | T1 | T2 | T3 | Average |
+|---|---|---|---|---|
+| Mind Stone | -2.0 | +0.1 | -0.4 | -0.8 |
+| Thought Vessel | -1.0 | +1.9 | -2.9 | -0.7 |
+| Fellwar Stone | +1.9 | -0.9 | -1.6 | -0.2 |
+Noise ±2.8-3.5 per cell. **All three neutral**: no cut shows a gain at any tier beyond noise, and the averages lean
+slightly negative. Raw: `2026-10-19-mind-stone/<cut>-<tier>.txt`.
+Why: as a rock it changes nothing (mana on turn 4 3.99 -> 3.99; plan online 78%, turn 5.7, unchanged). It is drawn
+in 19-29% of games and cast in 76-88% of those, but late (average round 6.5-8.1) and stuck in hand 12-24%, as the
+deck's other cheap cards are (deployment is the bottleneck, weakness 1). The {5}{W} harness then competes with
+equipping for the same mana, and the model only blinks enters-effect creatures (Cloud's own tutor is the main one,
+and blinking him drops his Equipment), never Equipment. Verdict: not worth buying for Cloud; matches the 10/18 T1 read.
+
 ## 2026-10-18 evening: Mind Stone => The Mind Stone (quick pass, stopped after T1; loose only, 700 games per list)
 Result: **T1 29.9% -> 30.6% (+0.7, ±3.2): noise.** T2 and T3 not run (JD stopped the sims and decided to wait on
 buying the Stone). Raw: `2026-10-18-mind-stone/mind-stone-quick-STOPPED-t1only.txt`.

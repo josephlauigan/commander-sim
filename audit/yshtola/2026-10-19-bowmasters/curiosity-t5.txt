@@ -1,0 +1,116 @@
+Model status of the swapped-in cards (cardgen audit):
+  Orcish Bowmasters: Full (1 damage on entry and per extra draw of an opponent, amassing an Orc Army)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by yshtola's AI?
+  AI: Orcish Bowmasters: priority 40 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Orcish Bowmasters: drawn in 30.0% of games (60), cast in 56.7% of those (34)
+
+1,600 games (current list and the swapped one, 700 per list per tier, profile loose), lookahead AI, 22 worker threads: about 4 minutes
+  progress 100.0%  1m27s elapsed, ~0m00s left
+Swaps: Curiosity -> Orcish Bowmasters
+
+=== Y'shtola vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.9% ->  34.0%  (delta +3.1 pts, noise ±4.0, paired)   n=700
+               eliminated by (variant): Urza 16.1%  Zur the Enchanter 12.7%  Kinnan 8.7%  Winota 19.1%  Yawgmoth 9.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yshtola) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yshtola: first drain from Y'shtola's cast trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.9% ->  34.0%  +3.1pt   ±5.0 
+    Rounds survived (or game length)                   9.36 ->   9.47   +0.11  ±0.34 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.52 ->   0.54   +0.03  ±0.09 
+    Mana available on your turn 4                      4.01 ->   4.07   +0.05  ±0.12 
+    Mana available on your turn 6                      5.87 ->   5.81   -0.06  ±0.21 
+
+  Speed
+    Games where the game plan came online             61.0% ->  64.3%  +3.3pt   ±5.2 
+    Turn the game plan came online                     6.89 ->   6.92   +0.03  ±0.29 
+    Turn the commander first resolved                  5.61 ->   5.64   +0.03  ±0.25 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            16.60 ->  16.20   -0.40  ±1.13 
+    Tutors resolved per game                           0.46 ->   0.48   +0.02  ±0.07 
+    Spells cast per game                              10.04 ->  10.19   +0.15  ±0.69 
+
+  Interaction
+    Counterspells cast                                 0.29 ->   0.28   -0.01  ±0.05 
+    Spot removal cast                                  1.49 ->   1.49   -0.00  ±0.14 
+    Board wipes cast                                   0.17 ->   0.14   -0.02  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.24 ->   0.23   -0.01  ±0.06 
+    Your spells countered                              0.74 ->   0.70   -0.05  ±0.10 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.44 ->  36.02   +3.58  ±3.62 
+      ...of which combat damage                        9.95 ->  12.40   +2.45  ±1.45*
+      ...of which magecraft / burn                     0.65 ->   0.65   +0.00  ±0.19 
+      ...of which drain triggers                       8.89 ->   8.70   -0.20  ±1.64 
+      ...of which other triggers                      12.95 ->  14.28   +1.33  ±1.59 
+
+--- Reading it ---
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 700 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Orcish Bowmasters                     27.4      80.2         5.6     19.8       50.0      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Curiosity                             26.6      68.3         6.2     31.7       48.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.9      34.0     +3.1
+    rounds survived                                   9.36      9.47    +0.11
+    eliminated, % of games                            69.1      66.0     -3.1
+    opponents it eliminated, per game                 0.79      0.92    +0.13
+    damage dealt, per game                            32.4      36.0     +3.6
+    plan: first drain from Y'shtola's cast trigger
+      plan online by turn 4, %                         3.6       3.9     +0.3
+      plan online by turn 6, %                        32.0      33.0     +1.0
+      plan online by turn 8, %                        49.7      52.0     +2.3
+      plan online by turn 12, %                       59.7      62.6     +2.9
+      plan online at all, %                           61.0      64.3     +3.3
+    commander resolved by turn 4, %                   27.0      26.0     -1.0
+    commander resolved by turn 6, %                   53.1      55.7     +2.6
+    commander removals, per game                      0.16      0.13    -0.03
+    lands on the battlefield, turn 4                  3.72      3.72    -0.01
+    lands on the battlefield, turn 8                  6.57      6.56    -0.00
+    mana available, turn 4                            4.01      4.07    +0.05
+    mana available, turn 8                            7.34      7.24    -0.10
+    cards in hand after the land drop, turn 4         6.21      6.21    -0.00
+    cards in hand after the land drop, turn 8         6.62      6.60    -0.02
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Urza via combo 15.9%, Winota via combat 11.0%, Zur the Enchanter via combo 10.7%, Winota via combo 9.0%
+    eliminated by (swapped): Urza via combo 14.3%, Zur the Enchanter via combo 11.9%, Winota via combat 10.6%, Winota via combo 7.9%
+
+(88s total)

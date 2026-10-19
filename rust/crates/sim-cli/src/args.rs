@@ -69,7 +69,7 @@ const OPTS: [Opt; 24] = [
     opt("--games", false, &[], "N", "games per run (default 1500)"),
     opt("--n", false, &[], "N", "same as --games"),
     opt("--seed", false, &[], "SEED", "first seed (games use seed .. seed+n-1; default 500000)"),
-    opt("--profiles", false, &[], "LIST", "AI interaction profiles to run (default conservative,loose)"),
+    opt("--profiles", false, &[], "LIST", "AI interaction profiles to run (default loose; conservative,loose for both)"),
     opt("--profile", false, &[], "NAME", "run one profile only (conservative or loose)"),
     opt("--analyze", true, &[], "", "deep report: how the deck wins and loses, plan timing, card report"),
     opt(
@@ -275,7 +275,8 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
     a.games = games.filter(|&g| g != 0).or(n.filter(|&g| g != 0)).unwrap_or(1500);
     let profs = match profile {
         Some(p) => vec![p],
-        None => profiles.unwrap_or_else(|| "conservative,loose".into()).split(',').map(|s| s.to_string()).collect(),
+        // loose only by default (JD 2026-10-19); --profiles conservative,loose runs both
+        None => profiles.unwrap_or_else(|| "loose".into()).split(',').map(|s| s.to_string()).collect(),
     };
     a.profiles = profs;
     let cores = std::thread::available_parallelism().map_or(1, |n| n.get());
@@ -300,6 +301,8 @@ mod tests {
         assert_eq!((a.games, a.seed, a.jobs, a.ai.as_str(), a.temp), (960, 500000, 22, "lookahead", 1.0));
         let a = p("--deck seph --pool t3 --n 200").unwrap();
         assert_eq!(a.games, 200);
+        assert_eq!(a.profiles, ["loose"]); // the default (JD 2026-10-19)
+        let a = p("--deck seph --pool t3 --profiles conservative,loose").unwrap();
         assert_eq!(a.profiles, ["conservative", "loose"]);
         let a = p("--calibrate within").unwrap();
         assert_eq!(a.games, 1500);

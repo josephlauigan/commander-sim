@@ -1129,6 +1129,8 @@ pub struct Game {
     pub new_attackers: Vec<PermId>,
     /// t0-zurgo: every attacking creature and the player it attacks (set when attackers are declared; new attackers add theirs)
     pub atk_targets: Vec<(PermId, PlayerId)>,
+    /// practice mode: (attacker, planeswalker) pairs the person declared; the AI computes its own (`walker_attacks`)
+    pub human_walker_atk: Vec<(PermId, PermId)>,
     /// t0-zurgo: `enter_no` when the current turn began (tokens with a larger `born` entered this turn)
     pub turn_enter: u32,
     /// the game ran out of engine steps (a runaway loop) and was stopped
@@ -1318,6 +1320,7 @@ impl Game {
             no_prevent: None,
             new_attackers: vec![],
             atk_targets: vec![],
+            human_walker_atk: vec![],
             turn_enter: 0,
             stopped: false,
             goldfish: false,

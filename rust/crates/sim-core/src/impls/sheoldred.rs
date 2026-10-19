@@ -11,7 +11,7 @@ use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::stack::{ability_window, may_window, may_window_ask, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, pval, untargetable};
 use crate::engine::zones::{
@@ -387,10 +387,22 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 /// Seymour Flux: at the beginning of your upkeep, you may pay 1 life: draw a card and a +1/+1 counter on it
 fn seymour_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != owner(g, src) || g.player(p).life <= 8 || g.player(p).library.len() < 3 {
+    let human = crate::human::is_human(g, p); // a person decides for themselves whether it is worth the life
+    if p != owner(g, src)
+        || (!human && (g.player(p).life <= 8 || g.player(p).library.len() < 3))
+        || g.player(p).life < 1
+    {
         return Ok(());
     }
-    if trigger_window(g, p, Some(src), "pay 1 life: draw a card and a +1/+1 counter", Some(4.0))? && on_bf(g, src) {
+    if may_window_ask(
+        g,
+        p,
+        Some(src),
+        "pay 1 life: draw a card and a +1/+1 counter",
+        Some(4.0),
+        "Seymour Flux: pay 1 life to draw a card and put a +1/+1 counter on it?",
+    )? && on_bf(g, src)
+    {
         lose_life(g, p, 1, Some(p), "other", None)?;
         draw(g, p, 1, false)?;
         plus_counter(g, src, 1);
@@ -503,10 +515,7 @@ const ROOFTOP: &str = "Rooftop Assassin";
 
 /// the opposing creatures p could destroy with Rooftop Assassin: dealt damage this turn, and targetable
 fn rooftop_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
-    opp_creatures(g, p)
-        .into_iter()
-        .filter(|&m| on_bf(g, m) && g.was_damaged_now(m) && !untargetable(g, m))
-        .collect()
+    opp_creatures(g, p).into_iter().filter(|&m| on_bf(g, m) && g.was_damaged_now(m) && !untargetable(g, m)).collect()
 }
 
 /// flash, flying, lifelink: it is removal only for a creature that already took damage this turn (after combat or a
@@ -521,9 +530,10 @@ fn rooftop_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let p = owner(g, src);
-    let Some(t) = rooftop_targets(g, p).into_iter().max_by(|&a, &b| {
-        pval(g, a).partial_cmp(&pval(g, b)).unwrap_or(std::cmp::Ordering::Equal)
-    }) else {
+    let Some(t) = rooftop_targets(g, p)
+        .into_iter()
+        .max_by(|&a, &b| pval(g, a).partial_cmp(&pval(g, b)).unwrap_or(std::cmp::Ordering::Equal))
+    else {
         return Ok(());
     };
     if !trigger_window(g, p, Some(src), "destroy a damaged creature", Some(pval(g, t)))? || !on_bf(g, t) {
@@ -543,7 +553,8 @@ fn necro_prio(g: &Game, p: PlayerId) -> i32 {
         .iter()
         .filter(|&&m| {
             let x = g.perm(m);
-            x.on_bf && (x.token || (x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).creature)))
+            x.on_bf
+                && (x.token || (x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).creature)))
         })
         .count() as i32;
     (55 + 3 * fodder.min(3) + if engine { 6 } else { 0 }).min(70)
@@ -803,6 +814,38 @@ fn hunt_pick(g: &Game, p: PlayerId) -> Option<(PlayerId, PermId)> {
 
 fn hunt_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<Sym> {
     if let Some((q, m)) = hunt_pick(g, p) {
+        let mut m = m;
+        if crate::human::is_human(g, q) {
+            // the person picks among their creatures and planeswalkers tied for the greatest mana value
+            let mv = |g: &Game, x: PermId| g.perm(x).cd.map_or(0, |c| g.db.get(c).cmc);
+            let top = mv(g, m);
+            let tied: Vec<PermId> = g
+                .player(q)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&x| {
+                    on_bf(g, x)
+                        && (g.is_creature(x)
+                            || g.perm(x).cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER)))
+                        && mv(g, x) == top
+                })
+                .collect();
+            if tied.len() > 1 {
+                let labels: Vec<String> = tied
+                    .iter()
+                    .map(|&x| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(x)))
+                    .collect();
+                let k = crate::human::choices::choose_one(
+                    g,
+                    q,
+                    "choose",
+                    "End of the Hunt: exile a creature or planeswalker with the greatest mana value among yours",
+                    &labels,
+                )?;
+                m = tied[k];
+            }
+        }
         crate::glog!(g, "    {} exiles {}", pname(g, q), g.perm(m).name);
         exile_perm(g, m)?;
     }
@@ -1344,7 +1387,7 @@ fn moseo_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     let x = g.player(p).gained_turn.map_or(0, |t| t.1);
     let Some(c) = best_gy(g, p, |g, c| g.db.get(c).cmc as i32 <= x) else { return Ok(()) };
-    if trigger_window(g, p, Some(src), "return a creature card from your graveyard", Some(cv(g, c)))?
+    if may_window(g, p, Some(src), "return a creature card from your graveyard", Some(cv(g, c)))?
         && g.player(p).gy.contains(&c)
     {
         reanimate(g, p, c)?;
@@ -2277,10 +2320,8 @@ fn seph_sacrifice_human(g: &mut Game, p: PlayerId, src: PermId) -> Res {
         if cands.is_empty() {
             break;
         }
-        let labels: Vec<String> = cands
-            .iter()
-            .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
-            .collect();
+        let labels: Vec<String> =
+            cands.iter().map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m))).collect();
         let prompt = if many {
             format!("Sephiroth: sacrifice another creature to draw a card ({done} so far; any number)")
         } else {

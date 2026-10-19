@@ -20,7 +20,7 @@ use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::trigger_window;
+use crate::engine::stack::{may_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{etgh, pval, untargetable};
 use crate::engine::zones::{
@@ -919,7 +919,14 @@ fn spider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src || p != o || g.player(o).hand.is_empty() {
         return Ok(());
     }
-    if !trigger_window(g, o, Some(src), "may discard a card for a +1/+1 counter", Some(2.0))? {
+    if !may_window(g, o, Some(src), "may discard a card for a +1/+1 counter", Some(2.0))? {
+        return Ok(());
+    }
+    if crate::human::is_human(g, o) {
+        crate::human::choices::discard(g, o, 1, "Scarlet Spider, Kaine: discard a card (it gets a +1/+1 counter)")?;
+        if g.perm(src).on_bf {
+            crate::cardcode::put_plus(g, src, 1);
+        }
         return Ok(());
     }
     let hand = g.player(o).hand.clone();
@@ -1073,10 +1080,14 @@ fn alpharael_dt(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 
 /// **Stadium Tidalmage**: whenever it enters or attacks, you may draw a card; if you do, discard a card
 fn tidalmage_loot(g: &mut Game, o: PlayerId, src: PermId) -> Res {
-    if g.player(o).library.len() < 3 || !trigger_window(g, o, Some(src), "may loot", Some(2.0))? {
+    let human = crate::human::is_human(g, o);
+    if (!human && g.player(o).library.len() < 3) || !may_window(g, o, Some(src), "may loot", Some(2.0))? {
         return Ok(());
     }
     draw(g, o, 1, false)?;
+    if human {
+        return crate::human::choices::discard(g, o, 1, "Stadium Tidalmage: discard a card");
+    }
     let hand = g.player(o).hand.clone();
     if let Some(c) = discard_choice(g, o, &hand, 0) {
         discard_cards(g, o, &[c])?;
@@ -1336,7 +1347,13 @@ fn devourer_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     for q in alive_opps(g, o) {
         let hand: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&c| c != g.player(q).cmd).collect();
         // their choice: the card they miss least
-        let Some(c) = min_by(&hand, |c| card_worth(g, q, c, false)) else { continue };
+        let picked = if crate::human::is_human(g, q) && !hand.is_empty() {
+            let p = format!("Intellect Devourer: exile a card from your hand");
+            crate::human::choices::pick_cards(g, q, &hand, 1, &p, "choose")?.first().copied()
+        } else {
+            min_by(&hand, |c| card_worth(g, q, c, false))
+        };
+        let Some(c) = picked else { continue };
         remove_card(&mut g.player_mut(q).hand, c);
         take_card(g, o, c, q, "Intellect Devourer");
         held.push(Val::Card(c));
@@ -1613,7 +1630,11 @@ pub fn will_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         return vec![];
     }
     will_value(g, p)
-        .map(|u| Opt { utility: u, label: "Yawgmoth's Will (replay the graveyard)".into(), act: Some(Action::Plan { f: will_go, arg: 0 }) })
+        .map(|u| Opt {
+            utility: u,
+            label: "Yawgmoth's Will (replay the graveyard)".into(),
+            act: Some(Action::Plan { f: will_go, arg: 0 }),
+        })
         .into_iter()
         .collect()
 }

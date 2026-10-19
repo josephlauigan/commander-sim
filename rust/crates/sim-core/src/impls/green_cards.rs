@@ -21,20 +21,20 @@
 
 use crate::cards::CardDb;
 use crate::engine::cast::parse_cost;
+use crate::engine::mana::can_pay;
 use crate::engine::mana::cost_of;
 use crate::engine::mana::pay;
-use crate::engine::zones::{discard_cards, land_to_hand};
-use crate::tag::Tag;
-use crate::engine::mana::can_pay;
 use crate::engine::removal::apply_removal;
-use crate::engine::stack::{counter_window, trigger_window};
+use crate::engine::stack::{counter_window, may_window, trigger_window};
 use crate::engine::values::{card_name, epow, etgh, pval};
+use crate::engine::zones::{discard_cards, land_to_hand};
 use crate::engine::zones::{draw, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
+use crate::tag::Tag;
 
 pub const BILL: &str = "Bristly Bill, Spine Sower";
 const SILHANA: &str = "Silhana Ledgewalker";
@@ -225,7 +225,9 @@ pub fn becomes_target(g: &mut Game, m: PermId, _by: PlayerId) -> Res {
         return Ok(());
     }
     let o = g.perm(m).owner;
-    if g.player(o).library.len() > 2 && trigger_window(g, o, Some(m), "you may draw a card", Some(3.0))? {
+    if (g.player(o).library.len() > 2 || (crate::human::is_human(g, o) && !g.player(o).library.is_empty()))
+        && may_window(g, o, Some(m), "you may draw a card", Some(3.0))?
+    {
         draw(g, o, 1, false)?;
     }
     Ok(())
@@ -998,7 +1000,6 @@ fn increment(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 fn lecturer_mana(g: &Game, _p: PlayerId, m: PermId) -> u32 {
     epow(g, m).max(0) as u32
 }
-
 
 /// Vinelasher Adept, basic landcycling {2}: when the hand has no land to play, or the Adept can't be cast soon
 fn adept_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {

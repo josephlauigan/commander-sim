@@ -83,6 +83,11 @@ pub struct Effect {
     pub modes: Vec<Vec<Effect>>,
     pub unless: Option<u32>,
     pub optional: Option<bool>,
+    /// a ", then ..." continuation of a "you may" clause: a person who said no skips it
+    pub cont: Option<bool>,
+    /// the "If you do, ..." / "When you do, ..." sentence after a "you may": runs only when a person said yes (nested here so the AI never sees it)
+    #[serde(default)]
+    pub if_you_do: Vec<Effect>,
     pub random: Option<bool>,
     pub mult: Option<i32>,
 }
