@@ -11,3 +11,5 @@ Task: sisay-speed (brief rust/agents/t6-speed.md). PAUSED by lead (CPU); resume 
 ## Next (after resume)
 1. trace2.sh (traces 0-199 into /tmp/claude-1000/tr/s*.txt) was killed part way (partial); tally "stops at step" per line to find remaining Unicorn stops.
 2. 2000-game run (/tmp/claude-1000/run3.sh), t3 lock diff, FULL cargo test --release, commit (git add -A rust data audit), report rust/agents/report-t6-speed-sisay.md, SubagentHandback.
+## Paused again (lead, 2nd time). Resumed work killed mid-way.
+Lead's wrap-up order: keep changes, run /tmp/claude-1000/final.sh (build, 2000-game t6 run to audit/.../sisay-v2-2000.txt, t3 lock diff -> /tmp/claude-1000/t3.diff, full cargo test -> tests.out), write rust/agents/report-t6-speed-sisay.md (include remaining unnamed stops + Ragavan "unusable" DDR stop), commit, final message <=12 lines. Nothing from final.sh finished.
