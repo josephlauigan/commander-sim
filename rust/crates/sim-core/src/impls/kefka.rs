@@ -1336,7 +1336,13 @@ fn devourer_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     for q in alive_opps(g, o) {
         let hand: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&c| c != g.player(q).cmd).collect();
         // their choice: the card they miss least
-        let Some(c) = min_by(&hand, |c| card_worth(g, q, c, false)) else { continue };
+        let picked = if crate::human::is_human(g, q) && !hand.is_empty() {
+            let p = format!("Intellect Devourer: exile a card from your hand");
+            crate::human::choices::pick_cards(g, q, &hand, 1, &p, "choose")?.first().copied()
+        } else {
+            min_by(&hand, |c| card_worth(g, q, c, false))
+        };
+        let Some(c) = picked else { continue };
         remove_card(&mut g.player_mut(q).hand, c);
         take_card(g, o, c, q, "Intellect Devourer");
         held.push(Val::Card(c));

@@ -1565,6 +1565,11 @@ fn each_player_sacrifice(g: &mut Game, nontoken: bool) -> Res {
             continue;
         }
         let cr: Vec<PermId> = live_creatures(g, q).into_iter().filter(|&m| !(nontoken && g.perm(m).token)).collect();
+        if crate::human::is_human(g, q) && !cr.is_empty() {
+            let why = if nontoken { "Accursed Marauder: sacrifice a nontoken creature" } else { "Sacrifice a creature" };
+            crate::human::choices::sacrifice_creature(g, q, &cr, why)?;
+            continue;
+        }
         if let Some(m) = min_by(&cr, |m| pval(g, m)) {
             die(g, m, "sac")?;
         }
@@ -1660,6 +1665,13 @@ fn obliterator(g: &mut Game, src: Src, p: PlayerId, _atk: &[PermId], d: PlayerId
         if b == src {
             for _ in 0..epow(g, a) {
                 let ps: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&x| !g.perm(x).phased).collect();
+                if crate::human::is_human(g, p) {
+                    if ps.is_empty() {
+                        break;
+                    }
+                    crate::human::choices::sacrifice_permanent(g, p, &ps, "Phyrexian Obliterator: sacrifice a permanent")?;
+                    continue;
+                }
                 let Some(x) = min_by(&ps, |x| pval(g, x)) else { break };
                 die(g, x, "sac")?;
             }

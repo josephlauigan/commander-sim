@@ -248,6 +248,42 @@ fn fof(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if top.is_empty() {
         return Ok("gy");
     }
+    let human_splitter = g.opps(p).find(|&q| g.player(q).alive && crate::human::is_human(g, q));
+    if let Some(q) = human_splitter.filter(|_| !crate::human::is_human(g, p)) {
+        // the person is the opponent who splits: they divide the five, the AI takes the better pile
+        let names = |g: &Game, cs: &[CardId]| cs.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
+        let mut left = top.clone();
+        let mut pile_a: Vec<CardId> = vec![];
+        let shown = names(g, &top);
+        while !left.is_empty() {
+            let labels: Vec<String> = left.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+            let prompt = format!(
+                "Fact or Fiction ({}): split these five into two piles ({}). Pick the cards for pile 1, then done (pile 1 now: {})",
+                g.player(p).name,
+                shown,
+                if pile_a.is_empty() { "empty".to_string() } else { names(g, &pile_a) }
+            );
+            match crate::human::choices::choose(g, q, "choose", &prompt, &labels, Some("done"), None)? {
+                Some(k) => pile_a.push(left.remove(k)),
+                None => break,
+            }
+        }
+        let pile_b = left;
+        crate::glog!(g, "    {} splits Fact or Fiction: [{}] and [{}]", g.player(q).name, names(g, &pile_a), names(g, &pile_b));
+        let wa: f64 = pile_a.iter().map(|&x| card_worth(g, p, x, false).max(0.0)).psum();
+        let wb: f64 = pile_b.iter().map(|&x| card_worth(g, p, x, false).max(0.0)).psum();
+        let take_a = wa >= wb;
+        for x in pile_a.iter().chain(pile_b.iter()).copied().collect::<Vec<_>>() {
+            let pl = g.player_mut(p);
+            if pile_a.contains(&x) == take_a {
+                pl.hand.push(x);
+                pl.seen.insert(x);
+            } else {
+                pl.gy.push(x);
+            }
+        }
+        return Ok("gy");
+    }
     let w: Vec<f64> = top.iter().map(|&x| card_worth(g, p, x, false).max(0.0)).collect();
     let all = w.iter().copied().psum();
     let mut best: Option<(f64, usize, bool)> = None;
@@ -259,6 +295,31 @@ fn fof(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         }
     }
     let (_, mask, take_a) = best.unwrap();
+    if crate::human::is_human(g, p) {
+        // an opponent (the AI) splits as above; the person takes one of the two piles
+        let names = |g: &Game, cs: &[CardId]| cs.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
+        let pile_a: Vec<CardId> = (0..top.len()).filter(|&i| mask >> i & 1 == 1).map(|i| top[i]).collect();
+        let pile_b: Vec<CardId> = (0..top.len()).filter(|&i| mask >> i & 1 == 0).map(|i| top[i]).collect();
+        let labels = vec![format!("pile 1: {}", names(g, &pile_a)), format!("pile 2: {}", names(g, &pile_b))];
+        let k = crate::human::choices::choose_one(
+            g,
+            p,
+            "choose",
+            "Fact or Fiction: an opponent split the five cards into two piles. Take one pile into your hand (the other goes to the graveyard)",
+            &labels,
+        )?;
+        let pile = if k == 0 { pile_a } else { pile_b };
+        for x in top {
+            let pl = g.player_mut(p);
+            if pile.contains(&x) {
+                pl.hand.push(x);
+                pl.seen.insert(x);
+            } else {
+                pl.gy.push(x);
+            }
+        }
+        return Ok("gy");
+    }
     let pile: Vec<CardId> = (0..top.len()).filter(|&i| (mask >> i & 1 == 1) == take_a).map(|i| top[i]).collect();
     for x in top {
         let pl = g.player_mut(p);
@@ -1092,6 +1153,10 @@ fn plague(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             if !others.is_empty() {
                 cs = others;
             }
+        }
+        if crate::human::is_human(g, q) && !cs.is_empty() {
+            crate::human::choices::sacrifice_creature(g, q, &cs, "Plaguecrafter: sacrifice a creature or planeswalker")?;
+            continue;
         }
         if let Some(x) = min_by(&cs, |x| pval(g, x)) {
             die(g, x, "sac")?;

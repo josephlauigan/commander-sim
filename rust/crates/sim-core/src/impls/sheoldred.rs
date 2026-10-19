@@ -803,6 +803,37 @@ fn hunt_pick(g: &Game, p: PlayerId) -> Option<(PlayerId, PermId)> {
 
 fn hunt_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<Sym> {
     if let Some((q, m)) = hunt_pick(g, p) {
+        let mut m = m;
+        if crate::human::is_human(g, q) {
+            // the person picks among their creatures and planeswalkers tied for the greatest mana value
+            let mv = |g: &Game, x: PermId| g.perm(x).cd.map_or(0, |c| g.db.get(c).cmc);
+            let top = mv(g, m);
+            let tied: Vec<PermId> = g
+                .player(q)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&x| {
+                    on_bf(g, x)
+                        && (g.is_creature(x) || g.perm(x).cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER)))
+                        && mv(g, x) == top
+                })
+                .collect();
+            if tied.len() > 1 {
+                let labels: Vec<String> = tied
+                    .iter()
+                    .map(|&x| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(x)))
+                    .collect();
+                let k = crate::human::choices::choose_one(
+                    g,
+                    q,
+                    "choose",
+                    "End of the Hunt: exile a creature or planeswalker with the greatest mana value among yours",
+                    &labels,
+                )?;
+                m = tied[k];
+            }
+        }
         crate::glog!(g, "    {} exiles {}", pname(g, q), g.perm(m).name);
         exile_perm(g, m)?;
     }

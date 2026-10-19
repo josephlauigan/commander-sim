@@ -669,6 +669,13 @@ fn sentinel(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         return Ok(());
     }
     let x = epow(g, src);
+    if crate::human::is_human(g, caster) {
+        // the person decides whether to pay {X}; paying {0} is free
+        if x <= 0 || crate::human::choices::pay_tax(g, caster, x as u32, "Esper Sentinel")? {
+            return Ok(());
+        }
+        return draw(g, o, 1, false);
+    }
     if x != 0 && can_pay(g, caster, x.max(0) as u32, "", false) && total_mana(g, caster, false) as i32 >= x + 2 {
         pay(g, caster, x.max(0) as u32, "", false)?;
         return Ok(());

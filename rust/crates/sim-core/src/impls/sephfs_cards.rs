@@ -725,6 +725,29 @@ fn braids_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
             if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter III: sacrifice or lose 2 and they draw", Some(3.0))? {
                 return Ok(());
             }
+            if crate::human::is_human(g, q) {
+                // their choice of any nonland, nontoken permanent; lose 2 and you draw only if they have none
+                let all: Vec<PermId> = g
+                    .player(q)
+                    .perms
+                    .iter()
+                    .copied()
+                    .filter(|&m| live(g, m) && !g.perm(m).token && g.perm(m).cd.is_some_and(|c| !g.db.get(c).land))
+                    .collect();
+                if !all.is_empty() {
+                    crate::human::choices::sacrifice_permanent(
+                        g,
+                        q,
+                        &all,
+                        "Braids's Frightful Return: sacrifice a nonland, nontoken permanent",
+                    )?;
+                    return Ok(());
+                }
+                lose_life(g, q, 2, Some(p), "other", None)?;
+                draw(g, p, 1, false)?;
+                stat(g, p, "sf_braids_drains", 1);
+                return Ok(());
+            }
             // the opponent gives up a mana-value 0 or 1 permanent, not a better one
             match spare(g, q).filter(|&m| cmc_of(g, m) <= 1) {
                 Some(m) => die(g, m, "sac")?,

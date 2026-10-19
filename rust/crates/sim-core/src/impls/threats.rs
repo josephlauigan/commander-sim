@@ -172,6 +172,39 @@ fn torment_sim(g: &Game, q: PlayerId, x: i32) -> (i32, f64) {
     (lost, worth)
 }
 
+/// the person's turn in the process: lose 3 life, sacrifice a nonland permanent, or discard a card
+fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId) -> Res {
+    let perms: Vec<PermId> = g
+        .player(q)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| !g.db.get(c).land))
+        .collect();
+    let mut labels = vec!["lose 3 life".to_string()];
+    let mut kinds = vec![0];
+    if !perms.is_empty() {
+        labels.push("sacrifice a nonland permanent".into());
+        kinds.push(1);
+    }
+    if !g.player(q).hand.is_empty() {
+        labels.push("discard a card".into());
+        kinds.push(2);
+    }
+    let k = crate::human::choices::choose_one(
+        g,
+        q,
+        "choose",
+        "Torment of Hailfire: lose 3 life unless you sacrifice a nonland permanent or discard a card",
+        &labels,
+    )?;
+    match kinds[k] {
+        1 => crate::human::choices::sacrifice_permanent(g, q, &perms, "Torment of Hailfire: sacrifice a nonland permanent"),
+        2 => crate::human::choices::discard(g, q, 1, "Torment of Hailfire: discard a card"),
+        _ => lose_life(g, q, 3, Some(p), "drain", None),
+    }
+}
+
 /// {X}{B}{B}: repeat X times: each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card
 fn torment_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0);
@@ -179,6 +212,10 @@ fn torment_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym>
     for _ in 0..x {
         for q in g.opps(p).collect::<Vec<_>>() {
             if !g.player(q).alive || g.over {
+                continue;
+            }
+            if crate::human::is_human(g, q) {
+                torment_human(g, p, q)?;
                 continue;
             }
             let life = g.player(q).life;

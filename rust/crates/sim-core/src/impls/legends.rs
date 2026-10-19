@@ -1542,6 +1542,11 @@ fn despair_one(g: &mut Game, p: PlayerId, q: PlayerId, kind: Types) -> Res {
                 }
         })
         .collect();
+    if crate::human::is_human(g, q) && !pool.is_empty() {
+        let what = if kind == Types::CREATURE { "creature" } else if kind == Types::ENCHANTMENT { "enchantment" } else { "planeswalker" };
+        crate::human::choices::sacrifice_permanent(g, q, &pool, &format!("Invoke Despair: sacrifice a {what}"))?;
+        return Ok(());
+    }
     if let Some(m) = min_by(&pool, |m| pval(g, m)) {
         die(g, m, "sac")?;
     } else {

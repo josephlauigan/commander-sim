@@ -804,6 +804,33 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
         return Ok(true);
     }
     for q in g.opps(p).collect::<Vec<_>>() {
+        if crate::human::is_human(g, q) {
+            // their choice: any permanent, a land included
+            let perms: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
+            let lands: Vec<_> = g.player(q).lands.clone();
+            let mut labels: Vec<String> =
+                perms.iter().map(|&m| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m))).collect();
+            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.land(l).cd).name)));
+            if labels.is_empty() {
+                continue;
+            }
+            let k = crate::human::choices::choose_one(
+                g,
+                q,
+                "choose",
+                "Kefka, Ruler of Ruin: sacrifice a permanent of your choice",
+                &labels,
+            )?;
+            if k < perms.len() {
+                die(g, perms[k], "sac")?;
+            } else {
+                let l = lands[k - perms.len()];
+                crate::engine::turn::remove_land(g, q, l);
+                let cd = g.land(l).cd;
+                g.player_mut(q).gy.push(cd);
+            }
+            continue;
+        }
         let toks: Vec<PermId> =
             g.player(q).perms.iter().copied().filter(|&m| g.perm(m).token && !g.perm(m).phased).collect();
         if !toks.is_empty() {

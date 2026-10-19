@@ -199,11 +199,23 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     {
         // Sauron's ward: sacrifice a legendary artifact or creature
         let legs = ward_legends(g, a);
+        if crate::human::is_human(g, a) && !legs.is_empty() {
+            // the person may let the spell be countered instead
+            let labels: Vec<String> =
+                legs.iter().map(|&x| crate::human::legal::describe_target(g, a, crate::human::Target::Perm(x))).collect();
+            let prompt = format!("{}: ward - sacrifice a legendary artifact or creature, or the spell is countered", g.perm(m).name);
+            let Some(k) = crate::human::choices::choose(g, a, "choose", &prompt, &labels, Some("let it be countered"), None)? else {
+                crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
+                return Ok(());
+            };
+            die(g, legs[k], "sac")?;
+        } else {
         let Some(x) = min_by(&legs, |x| pval(g, x)) else {
             crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
             return Ok(());
         };
         die(g, x, "sac")?;
+        }
     }
     if g.perm(m).cd.is_some() && spell.is_some() && actor != Some(owner) && !cardcode::removal_taxes(g, actor, m, kind)?
     {
