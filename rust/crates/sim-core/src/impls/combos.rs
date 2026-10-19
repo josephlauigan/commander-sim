@@ -625,6 +625,9 @@ fn castable_any(g: &Game, q: PlayerId) -> bool {
 
 /// combos.combo_options: go for a ready combo (an outside deck's; ctr_risk: the chance a spell in it is countered)
 pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.player(p).t6 && post.is_some() {
+        t6_measure(g, p); // Tier 6 speed measurement: stats only
+    }
     if post.is_none() || crate::ai::is_main(g.player(p).key) {
         return Ok(vec![]); // g.combo_decks: the outside decks
     }
@@ -1324,4 +1327,81 @@ pub fn normal_play_window(g: &mut Game, p: PlayerId, acting: PermId) -> Res<bool
         return Ok(true);
     }
     Ok(false)
+}
+
+// ------------------------------------------------------------------ Tier 6 speed measurement (stats only)
+/// For the Tier 6 speed project: at each main-phase decision of a Tier 6 player, note the first round one of its deck's
+/// lines was ready (every piece in hand or in play and the mana to run it, now) and the first round one was a tutor
+/// away (exactly one piece group missing, a piece of it in the library, a tutor in hand, mana for tutor + that piece +
+/// the line). Hidden information is used: this is a measurement. Writes only `sp|` stats; no decisions, no RNG.
+fn t6_measure(g: &mut Game, p: PlayerId) {
+    use crate::t6stats::{speed_flag, speed_mark};
+    let st = |g: &Game, k: &str| g.player(p).stats.contains_key(&crate::sym::intern(k));
+    let (has_ready, has_reach, gone) = (st(g, "sp|ready"), st(g, "sp|reach"), st(g, "sp|go"));
+    if has_ready && has_reach && gone {
+        return;
+    }
+    let mut any_ready = false;
+    let mut reach = false;
+    let mine = deck_combos(g, p);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for (i, &cmb) in all().iter().enumerate() {
+        // the same gate as `combo_options` (a piece held, or a stepped line), plus the lines of p's deck
+        let in_deck = mine.contains(&i);
+        if !in_deck && !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && cmb.steps.is_empty() {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if ok && affordable(g, p, cmb, &casts) {
+            any_ready = true;
+            break;
+        }
+        if in_deck && !has_reach && !reach {
+            reach = one_tutor_away(g, p, cmb);
+        }
+    }
+    speed_flag(g, p, any_ready && !gone);
+    if any_ready {
+        speed_mark(g, p, "ready");
+        speed_mark(g, p, "reach");
+    } else if reach {
+        speed_mark(g, p, "reach");
+    }
+}
+
+/// is `cmb` one tutor away for p (see `t6_measure`)?
+fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
+    let pl = g.player(p);
+    let cmd_in_zone: Vec<&str> = pl.cmds_in_zone().map(|c| name_of(g, c)).collect();
+    let miss: Vec<&[&str]> = cmb
+        .groups
+        .iter()
+        .copied()
+        .filter(|grp| !has_piece(g, p, grp) && !grp.iter().any(|n| cmd_in_zone.contains(n)))
+        .collect();
+    if miss.len() != 1 {
+        return false;
+    }
+    let piece: Vec<CardId> =
+        pl.library.iter().copied().filter(|&c| miss[0].contains(&name_of(g, c))).collect();
+    if piece.is_empty() {
+        return false;
+    }
+    let pc = piece.iter().map(|&c| cost_of(g, p, c)).min_by_key(|(gn, pips)| *gn + pips.len() as u32).unwrap();
+    for &t in &pl.hand {
+        let d = g.db.get(t);
+        if d.land || !(d.tags.has(Tag::Tut) || d.tags.has(Tag::Xtutor)) {
+            continue;
+        }
+        let tc = cost_of(g, p, t);
+        if can_pay(g, p, tc.0 + pc.0 + cmb.mana.0, &format!("{}{}{}", tc.1, pc.1, cmb.mana.1), false) {
+            return true;
+        }
+    }
+    false
 }

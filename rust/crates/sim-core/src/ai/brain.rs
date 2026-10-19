@@ -1336,6 +1336,7 @@ fn overload_rift(g: &Game, p: PlayerId, opts: Vec<Opt>) -> Vec<Opt> {
 /// brain.end_of_turn_window: at the end of the turn before yours, spend mana you held up but didn't need:
 /// instant-speed draw, removal and token spells. Mana untaps next, so holding has no value.
 pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
+    crate::t6stats::eot_window(g, p);
     crate::engine::turn::erebos_draw(g, p)?;
     for _ in 0..6 {
         if g.over || !g.player(p).alive {

@@ -248,8 +248,8 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
     if pl.turns <= 2 {
         return Some(-2.0);
     }
-    if cover == 0 {
-        return None;
+    if cover == 0 || crate::impls::combos::line_progress(g, p).1 {
+        return None; // a line is ready: no bonus for passing
     }
     let near = g.opps(p).any(|q| crate::ai::t6_table::archenemy_score(g, q) >= 5.0);
     let engine_out = out(g, p, "Rhystic Study") || out(g, p, "Mystic Remora") || out(g, p, "Esper Sentinel");
@@ -278,11 +278,15 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
         let any_open = g
             .opps(p)
             .any(|q| !g.player(q).hand.is_empty() && (open_mana(g, q, None) >= 1 || stop_chance(g, q) >= 0.05));
-        if any_open && !creature_cover(g, p) {
+        // spec: also go with any one piece of protection, or when no opponent is likely to answer (tapped low)
+        let worst = g.opps(p).map(|q| stop_chance(g, q)).fold(0.0_f64, f64::max);
+        let tapped_low = worst < 0.2 && g.opps(p).all(|q| open_mana(g, q, None) <= 2);
+        let one_cover = cover_count(g, p) >= 1 && worst < 0.5;
+        if any_open && !creature_cover(g, p) && !tapped_low && !one_cover {
             let near = g.opps(p).any(|q| crate::ai::t6_table::archenemy_score(g, q) >= 8.0);
             return if near && g.round >= 7 { None } else { Some(false) };
         }
-        if can_answer >= 1 && !creature_cover(g, p) {
+        if can_answer >= 1 && !creature_cover(g, p) && !tapped_low && !one_cover {
             // nothing covers Oracle: wait unless the game is late and the table is about to win
             let near = g.opps(p).any(|q| crate::ai::t6_table::archenemy_score(g, q) >= 6.0);
             return if near && g.round >= 5 { None } else { Some(false) };

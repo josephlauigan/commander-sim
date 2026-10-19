@@ -109,6 +109,10 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
+    if crate::t6stats::is_t6(g, p) {
+        let when = if g.active == Some(p) { "own" } else { "eot" };
+        g.player_mut(p).stat(crate::sym::intern(&format!("mn|dig|{when}")), 1);
+    }
     pay(g, p, cost, "", false)?;
     if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
         return Ok(true);
@@ -117,6 +121,9 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let Some(&top) = g.player(p).library.last() else { return Ok(true) };
     if g.db.get(top).land {
         crate::glog!(g, "    Thrasios reveals {}: onto the battlefield tapped", g.db.get(top).name);
+        if crate::t6stats::is_t6(g, p) {
+            g.player_mut(p).stat(crate::sym::intern("mn|dig|land"), 1);
+        }
         g.player_mut(p).library.pop();
         g.player_mut(p).seen.insert(top);
         let l = g.add_land(p, top, true);
