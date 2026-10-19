@@ -401,6 +401,27 @@ const S_FLIP_SPELL: Step = step("a flicker spell on Dack when the pile needs it"
 const S_FLIP_FETCH: Step =
     step("Preston's {1}{W} ability takes Solar back when the pile needs it", StepKind::Engine, preston_fetch);
 const S_FLIP_LOOP: Step = trigger("the first flicker trigger (Felidar's, or Dack's re-entry)", flip_src);
+/// the real loop has more windows than one: each of these is a trigger the table can answer (Dack's second enters
+/// trigger, Preston's copy triggers, Radiant Solar's ventures, the next flicker)
+fn flip_dack_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    bf(g, p, DACK)
+}
+
+fn flip_solar_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.players
+        .iter()
+        .flat_map(|pl| pl.perms.iter().copied())
+        .find(|&m| live(g, m) && g.perm(m).orig == p && nm(g, m) == SOLAR)
+        .or_else(|| bf(g, p, DACK))
+}
+
+fn flip_preston_src(g: &Game, p: PlayerId) -> Option<PermId> {
+    preston_src(g, p).or_else(|| bf(g, p, DACK))
+}
+
+const S_FLIP_DACK2: Step = trigger("Dack's second enters trigger (the rest of the creatures flip)", flip_dack_src);
+const S_FLIP_PRESTON: Step = trigger("Preston copies a creature that entered uncast", flip_preston_src);
+const S_FLIP_SOLAR: Step = trigger("Radiant Solar ventures (a nontoken creature entered)", flip_solar_src);
 
 
 // ================================================================== Sisay
@@ -1078,7 +1099,18 @@ pub static COMBOS: [Combo; 9] = [
         "Dack Fayden: the first flip wins the turn (35 piles)",
         &[QUIET, &[DACK]],
         ready_dack_flip,
-        &[S_FLIP_PIECES, S_FLIP_SPELL, S_FLIP_FETCH, S_FLIP_LOOP],
+        &[
+            S_FLIP_PIECES,
+            S_FLIP_SPELL,
+            S_FLIP_FETCH,
+            S_FLIP_LOOP,
+            S_FLIP_PIECES,
+            S_FLIP_DACK2,
+            S_FLIP_PRESTON,
+            S_FLIP_SOLAR,
+            S_FLIP_PIECES,
+            S_FLIP_LOOP,
+        ],
     ),
     combo(
         "Ioreth + Marvin + a legend that taps for mana (DDR)",
