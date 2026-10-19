@@ -1074,6 +1074,9 @@ pub fn keeps_hand(g: &Game, p: PlayerId) -> bool {
 /// the card the AI puts on the bottom first from p's current hand after mulligans: a land if it holds more than
 /// four (or has no spells), else its most expensive spell
 pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
+    if crate::impls::t6_plans::is_t6(g, p) {
+        return crate::impls::t6_keep::bottom_pick(g, p); // Tier 6: keep what the hand was kept for
+    }
     let hand = g.player(p).hand.clone();
     let lands: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
     let spells: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
