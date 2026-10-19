@@ -1086,7 +1086,10 @@ fn sifter(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
 
 /// Approximate: Spawn token; its sacrifice-for-mana is not modeled
 fn pawn(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
-    if dies_guard(g, src, m, true, false, true, "create a Spawn")? {
+    if dies_guard(g, src, m, true, false, true, "create a Spawn")?
+        && (human_of(g, owner(g, src)).is_none()
+            || choices::yes_no(g, owner(g, src), "Pawn of Ulamog: create a 0/1 Eldrazi Spawn token?")?)
+    {
         let spec =
             Tokens { tgh: Some(1), color: Some(Colors::NONE), types: vec!["eldrazi", "spawn"], ..Tokens::new(1, 0) };
         make_tokens(g, owner(g, src), spec)?;

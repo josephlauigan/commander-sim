@@ -19,8 +19,8 @@ use crate::engine::zones::{
     Enter, Tokens, die, discard_cards, draw, enter, land_ramp, landfall, leave, make_tokens, max_by, min_by, searchable,
 };
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::{Sym, intern};
@@ -173,6 +173,41 @@ pub fn flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
     blink_value(g, p, m) as f64
 }
 
+/// A person's "you may exile target creature (or artifact) you control, then return it" (Conjurer's Closet,
+/// Teleportation Circle, Soulherder): any of their creatures (and, for the Circle, artifacts), or none.
+fn human_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, rocks: bool) -> Res {
+    let cands: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            (m != src || !other)
+                && !g.perm(m).phased
+                && (g.is_creature(m) || (rocks && g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))))
+        })
+        .collect();
+    if cands.is_empty() || !trigger_window(g, p, Some(src), "blink a creature", None)? {
+        return Ok(());
+    }
+    flicker_choice(g, src, p, cands)
+}
+
+/// the person picks what to flicker from `cands` (or nothing) and it is blinked
+fn flicker_choice(g: &mut Game, src: PermId, p: PlayerId, mut cands: Vec<PermId>) -> Res {
+    cands.retain(|&m| on(g, p, m));
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let labels: Vec<String> = cands.iter().map(|&m| g.perm(m).name.to_string()).collect();
+    let prompt = format!("{}: exile one of your permanents, then return it?", cname(g, src));
+    let Some(k) = crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("no"), None)? else {
+        return Ok(());
+    };
+    blink(g, p, cands[k])?;
+    Ok(())
+}
+
 /// t2.end_step_flicker: Soulherder, Conjurer's Closet, Teleportation Circle: at the beginning of your end step, you
 /// may exile a creature you control, then return it: the one with the best enters-the-battlefield effect. rocks
 /// (Teleportation Circle, which takes an artifact too): with no creature worth it, a tapped mana rock, which comes
@@ -182,6 +217,9 @@ pub fn end_step_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, roc
         return Ok(());
     }
     let sname = cname(g, src).to_string();
+    if crate::human::is_human(g, p) {
+        return human_flicker(g, src, p, other, rocks);
+    }
     stat(g, p, &format!("flicker_chance {sname}"));
     let mut cands: Vec<PermId> = g
         .player(p)
@@ -312,6 +350,14 @@ fn flickering_hound(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res 
         return Ok(());
     }
     stat(g, p, "flicker_chance Flickering Hound");
+    if crate::human::is_human(g, p) {
+        let cands: Vec<PermId> =
+            g.player(p).perms.iter().copied().filter(|&m| m != src && g.is_creature(m) && !g.perm(m).phased).collect();
+        if cands.is_empty() || !trigger_window(g, p, Some(src), "blink a creature", None)? {
+            return Ok(());
+        }
+        return flicker_choice(g, src, p, cands);
+    }
     let mut cands: Vec<PermId> = g
         .player(p)
         .perms

@@ -828,7 +828,27 @@ fn sanctuary(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         g.land_mut(l).tapped = false;
         let cs: Vec<CardId> =
             g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).instant || g.db.get(c).sorcery).collect();
-        if let Some(c) = max_by(&cs, |c| card_worth(g, p, c, false)) {
+        // "you may put target instant or sorcery card from your graveyard on top of your library": a person picks, or declines
+        let pick = if crate::human::is_human(g, p) {
+            let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+            if labels.is_empty() {
+                None
+            } else {
+                crate::human::choices::choose(
+                    g,
+                    p,
+                    "choose",
+                    "Mystic Sanctuary: put an instant or sorcery card from your graveyard on top of your library?",
+                    &labels,
+                    Some("no"),
+                    None,
+                )?
+                .map(|k| cs[k])
+            }
+        } else {
+            max_by(&cs, |c| card_worth(g, p, c, false))
+        };
+        if let Some(c) = pick {
             remove_first(&mut g.player_mut(p).gy, c);
             g.player_mut(p).library.push(c);
             crate::glog!(g, "    Mystic Sanctuary puts {} on top", name_of(g, c));

@@ -691,7 +691,7 @@ fn remora(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         return Ok(());
     }
     let name = format!("draw a card unless {} pays {{4}}", pname(g, caster));
-    if !trigger_window(g, o, Some(src), &name, None)? {
+    if !crate::engine::stack::may_window(g, o, Some(src), &name, None)? {
         return Ok(());
     }
     if human_of(g, caster).is_some() {

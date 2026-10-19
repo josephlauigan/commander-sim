@@ -21,7 +21,7 @@ use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, counter_window, trigger_window};
+use crate::engine::stack::{ability_window, counter_window, may_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{card_name, epow, pval, untargetable};
 use crate::engine::zones::{
@@ -1394,10 +1394,8 @@ fn ardenn_combat_human(g: &mut Game, p: PlayerId, src: Src) -> Res {
     };
     let to = holders[k];
     loop {
-        let es: Vec<PermId> = super::cloud::my_equipment(g, p)
-            .into_iter()
-            .filter(|&e| g.perm(e).attached != Some(to))
-            .collect();
+        let es: Vec<PermId> =
+            super::cloud::my_equipment(g, p).into_iter().filter(|&e| g.perm(e).attached != Some(to)).collect();
         if es.is_empty() || !live(g, to) {
             break;
         }
@@ -1462,7 +1460,9 @@ fn paladin_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         None
     };
     let Some(t) = pick else { return Ok(()) };
-    if soulbond_score(g, t) < 3.0 || !trigger_window(g, o, Some(src), "pair (soulbond)", Some(6.0))? {
+    if (soulbond_score(g, t) < 3.0 && !crate::human::is_human(g, o))
+        || !may_window(g, o, Some(src), "pair (soulbond)", Some(6.0))?
+    {
         return Ok(());
     }
     soulbond_pair(g, src, t);
@@ -1550,7 +1550,7 @@ fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
         g.player_mut(p).library.insert(0, c); // the bottom
     }
     let Some(c) = pick else { return Ok(vec![]) };
-    if !trigger_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
+    if !may_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
         g.player_mut(p).library.insert(0, c);
         return Ok(vec![]);
     }

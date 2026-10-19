@@ -957,9 +957,24 @@ fn mirror_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         .flat_map(|q| q.perms.iter().copied())
         .filter(|&x| x != src && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x))
         .collect();
-    let Some(t) = max_by(&all, |x| (epow(g, x) + crate::engine::values::etgh(g, x)) as f64) else { return Ok(()) };
+    let human = crate::human::is_human(g, p);
+    let t = if human {
+        // "you may have it become a copy of any creature": the person picks the creature, or declines
+        let labels: Vec<String> = all.iter().map(|&x| g.perm(x).name.to_string()).collect();
+        if labels.is_empty() {
+            return Ok(());
+        }
+        let prompt = "Cursed Mirror: have it become a copy of a creature until end of turn?";
+        match crate::human::choices::choose(g, p, "target", prompt, &labels, Some("no"), None)? {
+            Some(k) => all[k],
+            None => return Ok(()),
+        }
+    } else {
+        let Some(t) = max_by(&all, |x| (epow(g, x) + crate::engine::values::etgh(g, x)) as f64) else { return Ok(()) };
+        t
+    };
     let (tp, tt) = (epow(g, t), crate::engine::values::etgh(g, t));
-    if tp < 3 || !trigger_window(g, p, Some(src), &format!("becomes a copy of {}", g.perm(t).name), None)? {
+    if (tp < 3 && !human) || !trigger_window(g, p, Some(src), &format!("becomes a copy of {}", g.perm(t).name), None)? {
         return Ok(());
     }
     let (fly, dt, vig, life) = (g.perm(t).fly, g.perm(t).dt, g.perm(t).vig, g.perm(t).lifelink);

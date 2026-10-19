@@ -1729,9 +1729,16 @@ fn gix(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -
     let o = g.perm(src).owner;
     if g.perm(a).owner == o
         && d != o
-        && g.player(p).life > 10
-        && g.player(p).library.len() > 10
-        && trigger_window(g, p, Some(src), "pay 1 life: draw a card", None)?
+        && (crate::human::is_human(g, p) || (g.player(p).life > 10 && g.player(p).library.len() > 10))
+        && g.player(p).life > 0
+        && crate::engine::stack::may_window_ask(
+            g,
+            p,
+            Some(src),
+            "pay 1 life: draw a card",
+            None,
+            "Gix, Yawgmoth Praetor: pay 1 life to draw a card?",
+        )?
     {
         lose_life(g, p, 1, Some(p), "other", None)?;
         draw(g, p, 1, false)?;
