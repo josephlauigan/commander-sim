@@ -436,18 +436,107 @@ fn doom_available(g: &Game, p: PlayerId) -> bool {
     land_on_bf(g, p, DOOM).is_some() || (hand_card(g, p, &[DOOM]).is_some() && land_drop_open(g, p))
 }
 
-/// (the cards to cast from hand, in order) for Ioreth + Marvin + a legend that taps for mana + Mount Doom, or None
-fn ddr_plan(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
-    if !doom_available(g, p) {
-        return None;
+/// Mount Doom for the plan: out, or in hand with a land drop (the Doom step plays it), or Sisay fetches it
+fn doom_piece(g: &Game, p: PlayerId, plan: &mut Plan) -> bool {
+    if doom_available(g, p) {
+        return true;
     }
-    let mut casts: Vec<CardId> = vec![];
+    match get_piece(g, p, &[DOOM]) {
+        Some(Src::Fetch(c)) => {
+            plan.fetches.push(c);
+            true
+        }
+        _ => false,
+    }
+}
+
+const SISAY: &str = "Sisay, Weatherlight Captain";
+
+/// A plan for a Sisay line: the cards to cast from hand and the cards Sisay fetches from the library ({W}{U}{B}{R}{G}
+/// each, an ability: no spell counter can stop it, an ability answer can), both in order.
+#[derive(Default)]
+struct Plan {
+    casts: Vec<CardId>,
+    fetches: Vec<CardId>,
+}
+
+/// where a missing piece comes from: the hand (cast), or Sisay's fetch (she is out and the card's mana value is below
+/// her power)
+enum Src {
+    Cast(CardId),
+    Fetch(CardId),
+}
+
+fn get_piece(g: &Game, p: PlayerId, names: &[&str]) -> Option<Src> {
+    if let Some(c) = hand_card(g, p, names) {
+        return Some(Src::Cast(c));
+    }
+    let sis = bf(g, p, SISAY)?;
+    let power = crate::engine::values::epow(g, sis);
+    names
+        .iter()
+        .filter_map(|n| lib_card(g, p, n))
+        .find(|&c| (g.db.get(c).cmc as i32) < power)
+        .map(Src::Fetch)
+}
+
+impl Plan {
+    fn add(&mut self, s: Src) {
+        match s {
+            Src::Cast(c) => self.casts.push(c),
+            Src::Fetch(c) => self.fetches.push(c),
+        }
+    }
+
+    /// can p pay for the casts plus every fetch (5 coloured mana each) at once?
+    fn affordable(&self, g: &Game, p: PlayerId, extra: u32) -> bool {
+        let costs: Vec<Cost> = self.casts.iter().map(|&c| cost_of(g, p, c)).collect();
+        let gn: u32 = costs.iter().map(|x| x.0).sum::<u32>() + extra;
+        let mut pips: String = costs.iter().map(|x| x.1.as_str()).collect();
+        for _ in &self.fetches {
+            pips.push_str("WUBRG");
+        }
+        can_pay(g, p, gn, &pips, false)
+    }
+}
+
+/// Sisay fetches the next planned piece (a step of the Sisay lines)
+fn fetch_next(g: &mut Game, p: PlayerId, plan: Option<Plan>) -> Res<bool> {
+    let Some(plan) = plan else { return Ok(false) };
+    let Some(&c) = plan.fetches.first() else { return Ok(true) };
+    super::legends::sisay_fetch_card(g, p, c)
+}
+
+fn fetch_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
+    fetch_next(g, p, ddr_plan(g, p))
+}
+
+fn fetch_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
+    fetch_next(g, p, uni_plan(g, p))
+}
+
+/// plan slot hook: does the ready Sisay line need a spell cast (so a spell counter could stop it)?
+/// None = the line is not ready
+pub fn line_needs_cast(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
+    let plan = if combo.contains("DDR") {
+        ddr_plan(g, p)
+    } else if combo.contains("Flash Unicorn") {
+        uni_plan(g, p)
+    } else {
+        None
+    }?;
+    Some(!plan.casts.is_empty())
+}
+
+/// (the cards to cast from hand, in order) for Ioreth + Marvin + a legend that taps for mana + Mount Doom, or None
+fn ddr_plan(g: &Game, p: PlayerId) -> Option<Plan> {
+    let mut plan = Plan::default();
     let (ioreth, marvin) = (bf(g, p, IORETH), bf(g, p, MARVIN));
     if ioreth.is_none() {
-        casts.push(hand_card(g, p, &[IORETH])?);
+        plan.add(get_piece(g, p, &[IORETH])?);
     }
     if marvin.is_none() {
-        casts.push(hand_card(g, p, &[MARVIN])?);
+        plan.add(get_piece(g, p, &[MARVIN])?);
     }
     // the legend that makes the mana
     let legends_bf: Vec<PermId> = g
@@ -467,21 +556,23 @@ fn ddr_plan(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     }
     if source.is_none() {
         if let Some(c) = legends_hand.iter().copied().find(|&c| natural_source(g, c)) {
-            casts.push(c);
+            plan.casts.push(c);
+        } else if let Some(Src::Fetch(c)) = get_piece(g, p, &[SELVALA]) {
+            plan.fetches.push(c); // Sisay fetches the mana legend
         } else {
             // any other legend, with a Vitality / Cryptolith Rite / Relic of Legends to make it tap for mana
             let enab = if enab_bf { None } else { Some(enab_hand?) };
             if let Some(&m) = legends_bf.first() {
                 source = Some(m);
             } else {
-                casts.push(*legends_hand.first()?);
+                plan.casts.push(*legends_hand.first()?);
             }
-            casts.extend(enab);
+            plan.casts.extend(enab);
         }
     }
     // abilities need haste when a creature was cast this turn (Shang-Chi, Tyvar), or a bf piece is summoning sick
-    let creature_cast = casts.iter().any(|&c| g.db.get(c).creature);
-    let cast_haster = casts.iter().any(|&c| HASTERS.contains(&cname(g, c)));
+    let creature_cast = plan.casts.iter().chain(&plan.fetches).any(|&c| g.db.get(c).creature);
+    let cast_haster = plan.casts.iter().any(|&c| HASTERS.contains(&cname(g, c)));
     let mut haste = super::t6_legends1b::ability_haste(g, p) || cast_haster;
     let usable = |g: &Game, haste: bool| {
         ioreth.is_none_or(|m| can_tap(g, m, haste, false))
@@ -490,13 +581,13 @@ fn ddr_plan(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     };
     let sick_bf = !usable(g, haste);
     if (creature_cast || sick_bf) && !haste {
-        casts.push(hand_card(g, p, HASTERS)?);
+        plan.add(get_piece(g, p, HASTERS)?);
         haste = true;
     }
     if !usable(g, haste) {
         return None;
     }
-    affordable(g, p, &casts, 0).then_some(casts)
+    (doom_piece(g, p, &mut plan) && plan.affordable(g, p, 0)).then_some(plan)
 }
 
 fn ready_ddr(g: &Game, p: PlayerId) -> Ready {
@@ -505,19 +596,28 @@ fn ready_ddr(g: &Game, p: PlayerId) -> Ready {
 
 fn cast_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(plan) = ddr_plan(g, p) else { return Ok(false) };
-    let Some(&c) = plan.first() else { return Ok(true) };
+    let Some(&c) = plan.casts.first() else { return Ok(true) };
     cast_named(g, p, c)
 }
 
+/// The pieces an answer can stop: Ioreth, Marvin and ONE mana legend (the loop uses a single source; any other legend
+/// on the table, Sisay among them, is not a piece of the line). A natural mana source is preferred; with only an
+/// enabler (Enduring Vitality ...) the first legend creature serves.
 fn ddr_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
     let mut v: Vec<PermId> = [bf(g, p, IORETH), bf(g, p, MARVIN)].into_iter().flatten().collect();
-    v.extend(
-        g.player(p)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| live(g, m) && g.is_creature(m) && pb_cd(g, m).is_some_and(|c| is_legend_creature(g, c))),
-    );
+    let legends: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m) && pb_cd(g, m).is_some_and(|c| is_legend_creature(g, c)))
+        .collect();
+    let src = legends
+        .iter()
+        .copied()
+        .find(|&m| pb_cd(g, m).is_some_and(|c| natural_source(g, c)))
+        .or(legends.first().copied());
+    v.extend(src);
     v
 }
 
@@ -546,6 +646,7 @@ fn doom_ping(g: &mut Game, p: PlayerId) -> Res<bool> {
         && land_on_bf(g, p, DOOM).is_some())
 }
 
+const S_FETCH_DDR: Step = step("Sisay fetches a missing piece", StepKind::Engine, fetch_next_ddr);
 const S_CAST_NEXT_DDR: Step = step("cast a missing piece", StepKind::Spell, cast_next_ddr);
 const S_DOOM_IN: Step = step("Mount Doom is on the battlefield", StepKind::Engine, doom_in);
 const S_DOOM_PING: Step = step("Mount Doom pings, untapped by the loop", StepKind::Engine, doom_ping);
@@ -565,24 +666,21 @@ fn colors_among(g: &Game, p: PlayerId, casts: &[CardId]) -> u32 {
     cs.count()
 }
 
-fn uni_plan(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
-    if !doom_available(g, p) {
-        return None;
-    }
-    let mut casts: Vec<CardId> = vec![];
+fn uni_plan(g: &Game, p: PlayerId) -> Option<Plan> {
+    let mut plan = Plan::default();
     if bf(g, p, DEREVI).is_none() {
-        casts.push(hand_card(g, p, &[DEREVI])?);
+        plan.add(get_piece(g, p, &[DEREVI])?);
     }
     if bf(g, p, EMIEL).is_none() {
-        casts.push(hand_card(g, p, &[EMIEL])?);
+        plan.add(get_piece(g, p, &[EMIEL])?);
     }
     let engine_ok = if land_on_bf(g, p, CRADLE).is_some() {
-        creatures(g, p) + casts.len() >= 4 // 4 G a tap, {3} a blink
+        creatures(g, p) + plan.casts.len() + plan.fetches.len() >= 4 // 4 G a tap, {3} a blink
     } else {
         let haste = super::t6_legends1b::ability_haste(g, p);
-        bf(g, p, TENDER).is_some_and(|m| can_tap(g, m, haste, false)) && colors_among(g, p, &casts) >= 4
+        bf(g, p, TENDER).is_some_and(|m| can_tap(g, m, haste, false)) && colors_among(g, p, &plan.casts) >= 4
     };
-    (engine_ok && affordable(g, p, &casts, 3)).then_some(casts)
+    (engine_ok && doom_piece(g, p, &mut plan) && plan.affordable(g, p, 3)).then_some(plan)
 }
 
 fn ready_unicorn(g: &Game, p: PlayerId) -> Ready {
@@ -591,7 +689,7 @@ fn ready_unicorn(g: &Game, p: PlayerId) -> Ready {
 
 fn cast_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(plan) = uni_plan(g, p) else { return Ok(false) };
-    let Some(&c) = plan.first() else { return Ok(true) };
+    let Some(&c) = plan.casts.first() else { return Ok(true) };
     cast_named(g, p, c)
 }
 
@@ -607,6 +705,7 @@ fn derevi_src(g: &Game, p: PlayerId) -> Option<PermId> {
     bf(g, p, DEREVI)
 }
 
+const S_FETCH_UNI: Step = step("Sisay fetches a missing piece", StepKind::Engine, fetch_next_uni);
 const S_CAST_NEXT_UNI: Step = step("cast Derevi or Emiel", StepKind::Spell, cast_next_uni);
 
 // ================================================================== Rograkh & Thrasios
@@ -838,6 +937,10 @@ pub static COMBOS: [Combo; 7] = [
         &[QUIET, &[IORETH], &[MARVIN], &[SELVALA, SHANG, "Sisay, Weatherlight Captain"], &[DOOM]],
         ready_ddr,
         &[
+            S_FETCH_DDR,
+            S_FETCH_DDR,
+            S_FETCH_DDR,
+            S_FETCH_DDR,
             S_CAST_NEXT_DDR,
             S_CAST_NEXT_DDR,
             S_CAST_NEXT_DDR,
@@ -854,6 +957,9 @@ pub static COMBOS: [Combo; 7] = [
         &[QUIET, &[DEREVI], &[EMIEL], &[CRADLE, TENDER], &[DOOM]],
         ready_unicorn,
         &[
+            S_FETCH_UNI,
+            S_FETCH_UNI,
+            S_FETCH_UNI,
             S_CAST_NEXT_UNI,
             S_CAST_NEXT_UNI,
             pieces("Derevi, Emiel and the mana source survive", uni_keys),

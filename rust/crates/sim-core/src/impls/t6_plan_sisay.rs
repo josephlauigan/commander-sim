@@ -182,8 +182,13 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 }
 
 /// go for the combo named `combo` now: no opinion, the shared table check decides
-pub fn go_now(_g: &Game, _p: PlayerId, _combo: &str) -> Option<bool> {
-    None
+pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
+    // a line that needs no spell (the pieces are out, or Sisay's abilities fetch them) has no spell to be countered:
+    // go now, the table can only answer an ability. A line that casts something follows the shared table check.
+    match super::t6_combos_t6::line_needs_cast(g, p, combo) {
+        Some(false) => Some(true),
+        _ => None,
+    }
 }
 
 /// the cards still missing from a line (a group counts as done when any of its cards is out or in hand)
