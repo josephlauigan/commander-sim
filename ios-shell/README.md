@@ -12,17 +12,17 @@ ios-shell/
   include/              the Rust library's C interface (practice.h) and its module map
   Assets.xcassets/      the app icon (the same picture the Briefcase app had)
   project.yml           the Xcode project, for XcodeGen
-  build-rust.sh         builds the Rust library for iOS (build/PracticeCore.xcframework) and fills Resources/
+  build-rust.sh         builds the Rust library for iOS (build/PracticeCore.xcframework) and fills AppData/
   run.sh                build-rust.sh, then generate the project, build, and start it in the iPad simulator
-  Resources/            (made by build-rust.sh, not in git) data/, decklists/, static/ that go into the app
+  AppData/            (made by build-rust.sh, not in git) data/, decklists/, static/ that go into the app
 ```
 
-What goes into the app (`Resources/`): `data/` (cards.json, decks.json, my_decks.toml, scryfall_cache.json,
+What goes into the app (`AppData/`): `data/` (cards.json, decks.json, my_decks.toml, scryfall_cache.json,
 printings/, and `bundle.json`, this build's stamp), `decklists/` and `static/` (the page). Card images are not in git:
 if `data/images/` exists on the computer you build on, it is bundled too; otherwise the app downloads the images it
 needs when the iPad is online, and draws a card from its name when it is not.
 
-On first launch (and whenever a new build is installed) the app copies `Resources/data` and `decklists` into its own
+On first launch (and whenever a new build is installed) the app copies `AppData/data` and `decklists` into its own
 writable folder (Application Support). Files are replaced by the new build's; images downloaded since stay. Saved
 games and the autosave live in `Application Support/saves` and are never touched by a new build.
 

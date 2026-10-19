@@ -27,7 +27,7 @@ struct CommanderPracticeApp: App {
         }
     }
 
-    /// The server reads the data bundled with the app (Resources), copied on first launch into Application Support,
+    /// The server reads the data bundled with the app (AppData), copied on first launch into Application Support,
     /// where saved games (and the autosave Continue uses) live too. If iOS closes the app, the next launch starts the
     /// server again and Continue finds the autosave. There is no gesture for the two-player option: the page hides it
     /// in the app, as the Briefcase app's did; practice_set_lan(true) is there for a future one.
@@ -37,7 +37,7 @@ struct CommanderPracticeApp: App {
               let support = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask,
                                                           appropriateFor: nil, create: true)
         else { failed = true; return }
-        let port = practice_start(bundle.path, support.path, 0)
+        let port = practice_start(bundle.appendingPathComponent("AppData").path, support.path, 0)
         if port == 0 { failed = true } else { url = URL(string: "http://127.0.0.1:\(port)/") }
     }
 

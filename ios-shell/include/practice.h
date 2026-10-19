@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 // Start practice mode's server inside the app, on 127.0.0.1:port (0: any free port), in background threads.
-//   bundle_dir: the app bundle's read-only Resources folder (data/, decklists/, static/).
+//   bundle_dir: the app bundle's read-only AppData folder (data/, decklists/, static/).
 //   app_dir:    a writable folder (Application Support): the bundled data is copied to app_dir/data when this
 //               build's data/bundle.json differs from the last copy; saved games and the autosave go to app_dir/saves.
 // Returns the port it listens on, or 0 if it couldn't start (the reason is written to stderr).

@@ -20,6 +20,7 @@ fi
 cd "$(dirname "$0")"
 ./build-rust.sh
 xcodegen generate
+rm -rf build/derived/Build/Products   # no stale files (an old Resources/ folder) left in the app
 xcodebuild -project CommanderPractice.xcodeproj -scheme CommanderPractice -configuration Debug \
   -destination "platform=iOS Simulator,name=$DEVICE" -derivedDataPath build/derived build
 APP=build/derived/Build/Products/Debug-iphonesimulator/CommanderPractice.app

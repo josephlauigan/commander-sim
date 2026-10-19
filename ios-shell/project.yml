@@ -11,7 +11,7 @@ targets:
     sources:
       - App
       - path: Assets.xcassets
-      - path: Resources
+      - path: AppData
         type: folder
         buildPhase: resources
     dependencies:

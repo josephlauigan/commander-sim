@@ -93,7 +93,7 @@ fn path_arg(p: *const c_char) -> Option<PathBuf> {
     Some(PathBuf::from(unsafe { CStr::from_ptr(p) }.to_string_lossy().into_owned()))
 }
 
-/// Start practice mode's server inside the app. `bundle_dir` is the app bundle's read-only `Resources` (`data/`,
+/// Start practice mode's server inside the app. `bundle_dir` is the read-only `AppData` folder in the app bundle (`data/`,
 /// `decklists/`, `static/`), `app_dir` the writable Application Support folder (the data is copied to `app_dir/data`,
 /// saved games go to `app_dir/saves`). Listens on 127.0.0.1:`port` (0: any free port). Returns the port, or 0 if it
 /// couldn't start (the reason goes to stderr).
