@@ -1,5 +1,7 @@
 # Titania, Protector of Argoth — findings (living file)
 
+**Retired 2026-10-19: see audit/omnath/FINDINGS.md** (the Titania deck became the Omnath deck; this file is kept as history).
+
 What the simulator has taught us about this deck: strengths, weaknesses, and what was tried and why it did or didn't
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Titania's matched
 tiers (T2-T4) unless noted.
@@ -38,3 +40,5 @@ Why: the Titan is cast in 85-90% of the games it's drawn, about a round earlier 
 cracked), so it is ramp and threat in one where Ghalta needs a big board first. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
 **Correction (JD, 10/18): Primeval Titan is BANNED in Commander.** The test above should never have been proposed; the
 swap is not made. See CLAUDE.md "Check every swap before proposing it".
+
+**Retired: see audit/omnath/FINDINGS.md.** (2026-10-19: the Titania deck became the Omnath deck.)

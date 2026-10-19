@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Kraum, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -330,7 +330,9 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ## Titania, Protector of Argoth — Mono-Green Lands to the Graveyard
 
-Deck key `titania`, `decklists/JD/titania-lands.md`.
+Deck key `titania`, `decklists/JD/titania-lands.md` (both removed).
+
+**Retired 2026-10-19: became the Omnath deck** (key `omnath`, see the Omnath section below and `audit/omnath/FINDINGS.md`). Titania stays as a card in Omnath's 99; her landfall plan keeps working there. The entries below are the deck's history.
 
 ### Changes
 

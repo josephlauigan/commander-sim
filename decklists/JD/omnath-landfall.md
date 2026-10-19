@@ -1,5 +1,7 @@
 # Omnath, Locus of Rage — Red-Green Landfall Elementals
 
+> Built from the Titania deck (2026-10-19).
+
 A red-green ramp deck that turns every land drop into a 5/5. **Omnath, Locus of Rage** makes a 5/5 red and green
 Elemental each time a land enters under your control, and deals 3 damage to any target whenever Omnath or another
 Elemental you control dies. The deck is built to put lands onto the battlefield in bulk (ramp spells, Harrow, Oracle of
