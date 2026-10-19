@@ -433,6 +433,31 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         let Some(c) = index_of(act, "card").and_then(|i| g.player(p).gy.get(i).copied()) else {
             return Ok(Some("There is no such card in your graveyard.".into()));
         };
+        if super::alt::gy_hook(g, c) {
+            // graveyard abilities the card code keeps for the AI (escape, unearth ...) beside the usual cast
+            let alts = super::alt::gy_alts(g, p, c)?;
+            if !alts.is_empty() {
+                let normal = legal::check_cast_gy(g, p, c).is_none();
+                let mut labels: Vec<String> = vec![];
+                if normal {
+                    labels.push(format!("{}: cast it from your graveyard", card_name(g, c)));
+                }
+                labels.extend(alts.iter().map(|w| w.0.clone()));
+                let k = if labels.len() > 1 {
+                    let prompt = format!("{}: which?", card_name(g, c));
+                    let Some(k) = choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)? else {
+                        return Ok(None);
+                    };
+                    k
+                } else {
+                    0
+                };
+                if normal && k == 0 {
+                    return cast(g, p, c, "gy");
+                }
+                return super::alt::run(g, p, c, &alts[k - usize::from(normal)].1);
+            }
+        }
         if let Some(why) = legal::check_cast_gy(g, p, c) {
             return Ok(Some(why));
         }
@@ -580,14 +605,20 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
 pub fn use_land(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<String>> {
     let abil = abilities::land_abilities(g, p, l);
     let lname = card_name(g, g.land(l).cd);
-    if abil.is_empty() {
+    let alts = super::alt::land_alts(g, p, l)?; // the land code's own abilities (the AI's hook)
+    if abil.is_empty() && alts.is_empty() {
         return Ok(Some(format!("{lname} has no ability to activate beyond mana (tap it for mana with tap).")));
     }
-    let labels: Vec<String> = abil.iter().map(|a| a.label.clone()).collect();
+    let mut labels: Vec<String> = abil.iter().map(|a| a.label.clone()).collect();
+    labels.extend(alts.iter().map(|a| a.0.clone()));
     let Some(k) = choices::choose(g, p, "choose", &format!("{lname}: which ability?"), &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
+    if k >= abil.len() {
+        let cd = g.land(l).cd;
+        return super::alt::run(g, p, cd, &alts[k - abil.len()].1);
+    }
     (abil[k].act)(g, p, l)
 }
 

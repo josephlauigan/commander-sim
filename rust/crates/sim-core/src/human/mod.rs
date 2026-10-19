@@ -10,6 +10,7 @@
 //! gets the request (it is handed `&Game`).
 
 pub mod abilities;
+pub mod alt;
 pub mod cards;
 pub mod choices;
 pub mod combat;

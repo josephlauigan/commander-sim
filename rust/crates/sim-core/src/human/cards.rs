@@ -1272,12 +1272,15 @@ fn hand_ways(name: &str) -> Option<Vec<(&'static str, HandFn)>> {
 
 /// `c.name in cards.HAND`: a hand card whose casting card code handles
 pub fn hand_override(g: &Game, c: CardId) -> bool {
-    hand_ways(&g.db.get(c).name).is_some()
+    hand_ways(&g.db.get(c).name).is_some() || super::alt::hand_hook(g, c)
 }
 
 /// cards.cast_from_hand: a card of yours whose casting the card code keeps for the AI: pick how (when there's a
 /// choice), then cast it
 pub fn cast_from_hand(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    if hand_ways(&cname(g, c)).is_none() {
+        return cast_or_alt(g, p, c);
+    }
     let ways = hand_ways(&cname(g, c)).unwrap_or_default();
     let mut k = 0;
     if ways.len() > 1 {
@@ -2395,4 +2398,21 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
         }
         _ => return None,
     })
+}
+
+/// A card with a `hand_options` hook (dash, evoke, transmute ...): the person may cast it normally or take one of the
+/// hook's ways. The hook's ways only show once their cost can be paid from the person's pool.
+fn cast_or_alt(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
+    let alts = super::alt::hand_alts(g, p, c)?;
+    if alts.is_empty() {
+        return cast_normally(g, p, c);
+    }
+    let mut labels = vec![format!("cast {} normally", cname(g, c).split(" // ").next().unwrap_or(""))];
+    labels.extend(alts.iter().map(|a| a.0.clone()));
+    let Some(k) = pick(g, p, "choose", &format!("{}: which?", cname(g, c)), &labels)? else { return Ok(None) };
+    if k == 0 {
+        return cast_normally(g, p, c);
+    }
+    let ways = vec![alts.into_iter().nth(k - 1).unwrap()];
+    super::alt::pick_and_run(g, p, c, ways)
 }
