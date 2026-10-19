@@ -1,10 +1,11 @@
 //! Combat for the human seat: declaring attackers (and which player they attack) and declaring blockers (Python's
 //! `play/combat.py`). The engine still resolves combat (damage, first strike, trample, triggers); only the
 //! declarations are the person's. Your attackers may attack different players: each player's blocks and damage are
-//! worked out in turn. Limitations (as in Python): planeswalkers can't be attacked directly; each attacker is
+//! worked out in turn. Your attackers may also attack an opponent's planeswalkers. Limitations: each attacker is
 //! blocked by at most one creature (menace needs two, and only the first deals damage).
 
 use super::{Target, choices, human_of, legal};
+use crate::cards::Types;
 use crate::control::{Answer, Request};
 use crate::engine::combat::{can_block, has_haste, kw};
 use crate::engine::values::{chasm, epow};
@@ -41,9 +42,45 @@ pub fn attack_candidates(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 pub const SPLIT: &str = "split them: choose a player for each creature";
 
+/// the planeswalkers an opponent of p controls that p's creatures may attack (on the battlefield, not phased out)
+pub fn attackable_walkers(g: &Game, p: PlayerId) -> Vec<(PermId, PlayerId)> {
+    let mut out = vec![];
+    for q in g.opps(p).filter(|&q| g.player(q).alive) {
+        for &m in &g.player(q).perms {
+            let x = g.perm(m);
+            if x.on_bf
+                && !x.phased
+                && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER))
+                && x.loyalty.is_some()
+            {
+                out.push((m, q));
+            }
+        }
+    }
+    out
+}
+
+/// "Teferi, Hero of Dominaria (Alice) (planeswalker, 4 loyalty)": describe_target's text, so the page can find it on the table
+fn walker_label(g: &Game, p: PlayerId, w: PermId) -> String {
+    format!(
+        "{} (planeswalker, {} loyalty)",
+        legal::describe_target(g, p, Target::Perm(w)),
+        g.perm(w).loyalty.unwrap_or(0)
+    )
+}
+
+/// where one attacker goes
+#[derive(Clone, Copy)]
+enum Dest {
+    Player(PlayerId),
+    Walker(PermId, PlayerId),
+}
+
 /// ask which creatures attack and whom: [(defending player, attackers)], one entry per player attacked (in turn
-/// order), or None for no attack
+/// order), or None for no attack. Creatures that attack a planeswalker are in the group of its controller, and
+/// `g.human_walker_atk` names their planeswalker (the engine deals their damage to its loyalty).
 pub fn human_attack(g: &mut Game, p: PlayerId, ncomb: u32) -> Res<Option<Vec<(PlayerId, Vec<PermId>)>>> {
+    g.human_walker_atk.clear();
     let cands = attack_candidates(g, p);
     let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive).collect();
     if cands.is_empty() || opps.is_empty() {
@@ -76,37 +113,62 @@ pub fn human_attack(g: &mut Game, p: PlayerId, ncomb: u32) -> Res<Option<Vec<(Pl
                 atk.push(cands[i]);
             }
         }
-        if opps.len() == 1 {
+        let walkers = attackable_walkers(g, p);
+        if opps.len() == 1 && walkers.is_empty() {
             return Ok(Some(vec![(opps[0], atk)]));
         }
-        let mut who: Vec<String> = opps.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+        // everything that can be attacked: the players, then their planeswalkers
+        let mut dests: Vec<Dest> = opps.iter().map(|&q| Dest::Player(q)).collect();
+        dests.extend(walkers.iter().map(|&(w, q)| Dest::Walker(w, q)));
+        let who: Vec<String> = dests
+            .iter()
+            .map(|d| match *d {
+                Dest::Player(q) => legal::describe_target(g, p, Target::Player(q)),
+                Dest::Walker(w, _) => walker_label(g, p, w),
+            })
+            .collect();
         let mut with_split = who.clone();
         if atk.len() > 1 {
             with_split.push(SPLIT.to_string());
         }
-        let prompt = format!("Attack which player with {} creature(s)?", atk.len());
+        let prompt = if walkers.is_empty() {
+            format!("Attack which player with {} creature(s)?", atk.len())
+        } else {
+            format!("Attack which player or planeswalker with {} creature(s)?", atk.len())
+        };
         let Some(k) = choices::choose(g, p, "target", &prompt, &with_split, Some("cancel"), None)? else {
             continue; // changed their mind: declare again
         };
-        if k < opps.len() {
-            return Ok(Some(vec![(opps[k], atk)]));
+        let mut to: Vec<(PermId, Dest)> = vec![];
+        if k < dests.len() {
+            to.extend(atk.iter().map(|&m| (m, dests[k])));
+        } else {
+            for &m in &atk {
+                // split: each creature's player or planeswalker
+                let prompt = format!(
+                    "{} attacks which {}?",
+                    legal::describe_target(g, p, Target::Perm(m)),
+                    if walkers.is_empty() { "player" } else { "player or planeswalker" }
+                );
+                let Some(j) = choices::choose(g, p, "target", &prompt, &who, Some("cancel"), None)? else { break };
+                to.push((m, dests[j]));
+            }
+            if to.len() < atk.len() {
+                continue; // cancelled part way: declare again
+            }
         }
-        let mut to: Vec<(PermId, PlayerId)> = vec![];
-        for &m in &atk {
-            // split: each creature's player
-            let prompt = format!("{} attacks which player?", legal::describe_target(g, p, Target::Perm(m)));
-            let Some(j) = choices::choose(g, p, "target", &prompt, &who, Some("cancel"), None)? else { break };
-            to.push((m, opps[j]));
+        let ctl = |d: Dest| match d {
+            Dest::Player(q) | Dest::Walker(_, q) => q,
+        };
+        for &(m, d) in &to {
+            if let Dest::Walker(w, _) = d {
+                g.human_walker_atk.push((m, w));
+            }
         }
-        who.clear();
-        if to.len() < atk.len() {
-            continue; // cancelled part way: declare again
-        }
-        let dest = |m: PermId| to.iter().find(|x| x.0 == m).map(|x| x.1);
         return Ok(Some(
             opps.iter()
-                .filter(|&&q| atk.iter().any(|&m| dest(m) == Some(q)))
-                .map(|&q| (q, atk.iter().copied().filter(|&m| dest(m) == Some(q)).collect()))
+                .filter(|&&q| to.iter().any(|x| ctl(x.1) == q))
+                .map(|&q| (q, to.iter().filter(|x| ctl(x.1) == q).map(|x| x.0).collect()))
                 .collect(),
         ));
     }
