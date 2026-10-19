@@ -68,3 +68,21 @@ flips-*.md). Check, in this order:
 
 Start from a new branch t6-cal-dack off t6-cedh. Machine: CARGO_BUILD_JOBS=8, sims --jobs 8, all in the background.
 Timebox ~2 hours.
+
+## Task `rthras3` — Rograkh/Thrasios: find the pieces sooner (2026-10-18 night)
+
+After rthras and rthras2 (reports `report-t6-cal-rthras.md`, `report-t6-cal-rthras2.md`; lines A-D modeled, tutors
+fixed, the plan's on_bf now sees lands) the deck is still ~14% (target 18-32), median win round ~12, 0.13 combo tries
+per game: it assembles 3-4 specific cards too late. Try, measuring each at 600 games (seed 500000) and keeping only
+what helps:
+
+1. Keep rule: favour opening hands with Gaea's Cradle, Talon Gates or a tutor that finds them (Crop Rotation,
+   Expedition Map, Sowing Mycospawn, Gamble, Vibrance), per the spec's mulligan section.
+2. Thrasios's activation ({4}: scry 1, reveal the top card, a land onto the battlefield, else draw it): use spare
+   mana at the end of each opponent's turn (and with leftover mana on your own turn) to dig, from the first turn
+   Thrasios is out.
+3. The combo risk check: with 0.13 tries per game, check `go_ok`/`go_now` aren't refusing lines that are ready.
+4. Any other draw/tutor the spec names that the AI casts too late (Rhystic Study, Mystic Remora, Sylvan Library).
+
+Branch t6-cal-rthras (merge t6-cedh first). Machine: CARGO_BUILD_JOBS=8, sims --jobs 8, all in the background.
+Timebox ~90 minutes; confirm the kept changes once at 2000 games.
