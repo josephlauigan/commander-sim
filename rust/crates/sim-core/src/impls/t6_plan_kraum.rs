@@ -232,7 +232,8 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
         0 => false,
         1 => m.eff >= m.need_one_lander() && (engines + tutors + pay >= 1),
         2 => action >= 2 || (action >= 1 && free >= 1) || free >= 3,
-        3 | 4 => action >= 1 || free >= 1,
+        // spec: a lone engine is not a keep (Ondas); an engine needs a free counter or a second action with it
+        3 | 4 => makers + tutors + pay >= 1 || engines >= 2 || (engines >= 1 && free >= 1) || free >= 2,
         5 => action >= 1 && action + free >= 2,
         _ => false,
     };
@@ -272,6 +273,14 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
         let cards_up = g.opps(p).any(|q| !g.player(q).hand.is_empty() && open_mana(g, q, None) >= 1);
         if drawer && cards_up {
             return Some(false);
+        }
+        // spec (conditions to go): a creature counter or Silence effect (Oracle is a creature spell), unless every opponent is out of cards and mana
+        let any_open = g
+            .opps(p)
+            .any(|q| !g.player(q).hand.is_empty() && (open_mana(g, q, None) >= 1 || stop_chance(g, q) >= 0.05));
+        if any_open && !creature_cover(g, p) {
+            let near = g.opps(p).any(|q| crate::ai::t6_table::archenemy_score(g, q) >= 8.0);
+            return if near && g.round >= 7 { None } else { Some(false) };
         }
         if can_answer >= 1 && !creature_cover(g, p) {
             // nothing covers Oracle: wait unless the game is late and the table is about to win
