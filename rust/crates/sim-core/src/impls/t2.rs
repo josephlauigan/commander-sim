@@ -198,7 +198,8 @@ pub fn end_step_flicker(g: &mut Game, src: PermId, p: PlayerId, other: bool, roc
             .copied()
             .filter(|&m| {
                 let x = g.perm(m);
-                x.tapped
+                (m != src || !other)
+                    && x.tapped
                     && !x.token
                     && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))
                     && !g.is_creature(m)

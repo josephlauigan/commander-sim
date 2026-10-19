@@ -57,6 +57,7 @@ Massacre Wurm|C|3BBB|bomb=6 pow=6 tgh=5 wurm wurmdrain
 Mikaeus, the Unhallowed|C|3BBB|bomb=5 pow=5 leg mikaeus anthemnh
 Mind Stone|A|2|rock=1:C
 The Soul Stone|A|1B|rock=1:B leg
+The Mind Stone|A|1W|rock=1:W leg
 Necromancy|E|2B|rean=necro
 Night's Whisper|S|1B|draw=2
 Orzhov Signet|A|2|rock=1:WB
@@ -356,3 +357,9 @@ Last Gasp|I|1B|rem=shrink3 tgt=c
 Jace Token|P|0|tokpw
 Craft with Pride|S|R|
 Awaken the Ages|S|5R|
+Primeval Titan|C|4GG|pow=6 tgh=6 trample bomb=6
+Oppression|E|1BB|
+
+Cecil, Dark Knight|C|B|pow=2 tgh=3 dt leg
+Lightning, Army of One|C|1RW|pow=3 tgh=2 trample lifelink leg
+Marvin, Murderous Mimic|AC|2|pow=2 tgh=2 leg

@@ -54,3 +54,14 @@ after it, the swapped cards' drawn / cast / average round / stuck-in-hand number
 shape (win, survival, how it wins and dies, plan timing, commander removals, mana and hand at turns 4 and 8). It
 costs no extra games and the `delta` line is unchanged. After every run, update `audit/<deck>/FINDINGS.md`, the
 deck's living list of strengths and weaknesses and what was tested (with why it helped or not).
+
+## Check every swap before proposing it
+
+Before you propose a card for one of JD's decks (or test, model or buy-advise it), check all three, and say so:
+
+1. **Commander legality**: `legalities.commander` must be `legal` (Scryfall: `data/scryfall_cache.json`, or
+   `https://api.scryfall.com/cards/named?exact=<name>`). Banned or not legal: don't propose it (Primeval Titan,
+   10/18).
+2. **Colour identity**: the card's `color_identity` must fit the deck's `ident` in `data/decks.json` (Cloud is mono-W).
+3. **The cut is in the current list**: fetch origin/main first and check the card out is in that deck's `cards` in
+   `data/decks.json`; FINDINGS files can name cards that have since left.

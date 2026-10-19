@@ -786,3 +786,110 @@ fn scarlet_spider_and_embrace_are_held_for_kefkas_trigger() {
     let g2 = table2();
     assert!(decks::deck_prio(&g2, P0, card(&g2, "Scarlet Spider, Kaine")) > 0, "without Kefka it is a body");
 }
+
+// ------------------------------------------------------------------ Oppression
+/// Oppression: "Whenever a player casts a spell, that player discards a card." Symmetric: the caster discards (and
+/// chooses), whoever it is.
+#[test]
+fn oppression_makes_every_caster_discard_a_card() {
+    let mut g = table(&["kefka", "seph", "veyran"]);
+    perm(&mut g, P0, "Oppression");
+    // an opponent casts a spell with two cards left in hand: one is discarded
+    hand(&mut g, P1, &["Swords to Plowshares", "Forest", "Island"]);
+    let c = g.player(P1).hand[0];
+    let gy0 = g.player(P1).gy.len();
+    let before = g.player(P1).hand.len();
+    assert!(cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap_or(false) || g.player(P1).hand.len() < before);
+    // the spell left the hand, then one card was discarded (the spell itself may fizzle: only the discard is checked)
+    assert_eq!(g.player(P1).hand.len(), before - 2, "the spell and a discarded card");
+    assert!(g.player(P1).gy.len() >= gy0 + 1);
+    // Kefka's own spell costs Kefka a card
+    hand(&mut g, P0, &["Duress", "Island", "Swamp"]);
+    let d = g.player(P0).hand[0];
+    let b0 = g.player(P0).hand.len();
+    cast::cast_card(&mut g, P0, d, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P0).hand.len(), b0 - 2, "Kefka discards too");
+    // an empty hand: nothing to discard, no panic
+    g.player_mut(P2).hand.clear();
+    hand(&mut g, P2, &["Counterspell"]);
+    let e = g.player(P2).hand[0];
+    cast::cast_card(&mut g, P2, e, "hand", Ctx::default()).unwrap();
+    assert!(g.player(P2).hand.is_empty());
+}
+
+/// the AI casts Oppression when the table holds more cards than Kefka can spare, never into an empty hand or with the
+/// storm cards in hand
+#[test]
+fn kefka_casts_oppression_when_opponents_hold_cards_and_not_with_a_combo_turn() {
+    let mut g = table(&["kefka", "seph", "veyran"]);
+    let c = hand(&mut g, P0, &["Oppression", "Swamp", "Island", "Duress"])[0];
+    hand(&mut g, P1, &["Forest", "Forest", "Forest", "Forest"]);
+    hand(&mut g, P2, &["Forest", "Forest", "Forest", "Forest"]);
+    assert!(decks::deck_prio(&g, P0, c) >= 40, "{}", decks::deck_prio(&g, P0, c));
+    hand(&mut g, P0, &["Grapeshot", "Dark Inquiry", "Inner Fire", "Arcane Omens", "Stargaze"]);
+    lands(&mut g, P0, "Swamp", 6, false);
+    assert_eq!(decks::deck_prio(&g, P0, c), 0, "a storm card with spells to chain: no tax on the combo turn");
+    g.player_mut(P0).hand.retain(|&x| x == c);
+    assert!(decks::deck_prio(&g, P0, c) > 0, "an empty-handed Kefka is the one the tax spares");
+}
+
+// ======================================================== Marvin, Murderous Mimic
+/// Marvin, Murderous Mimic: "Marvin has all activated abilities of creatures you control that don't have the same name as
+/// this creature." Modeled for Niv-Mizzet, Viashino Fangtail, Blightspeaker and Rummaging Goblin only (Partial).
+#[test]
+fn marvin_uses_nivs_draw_only_while_niv_is_out() {
+    let mut g = table(&["kefka", "veyran"]);
+    fill_library(&mut g, P0, 10);
+    let marvin = perm(&mut g, P0, "Marvin, Murderous Mimic");
+    let opts = |g: &mut Game| {
+        let c = g.perm(marvin).cd.unwrap();
+        let f = g.registry.get(c).unwrap().options.unwrap();
+        f(g, marvin, P0, None).unwrap()
+    };
+    assert!(opts(&mut g).is_empty(), "no creature to copy");
+    let niv = perm(&mut g, P0, "Niv-Mizzet, the Firemind");
+    g.perm_mut(niv).tapped = true; // Niv himself is tapped: it is Marvin who draws
+    let o = opts(&mut g);
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Marvin copies Niv-Mizzet, the Firemind");
+    let hand0 = g.player(P0).hand.len();
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1);
+    assert!(g.perm(marvin).tapped);
+    assert!(opts(&mut g).is_empty(), "one tap ability a turn");
+    // Niv leaves: nothing to copy again
+    g.perm_mut(marvin).tapped = false;
+    zones::die(&mut g, niv, "destroy").unwrap();
+    assert!(opts(&mut g).is_empty());
+    // summoning sick: can't tap
+    perm(&mut g, P0, "Viashino Fangtail");
+    g.perm_mut(marvin).sick = true;
+    assert!(opts(&mut g).is_empty());
+    g.perm_mut(marvin).sick = false;
+    let o = opts(&mut g);
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Marvin copies Viashino Fangtail");
+    let life = g.player(P1).life;
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(g.player(P1).life < life || g.player(P0).life < 40, "Fangtail's ping went somewhere");
+}
+
+#[test]
+fn marvin_is_cast_sooner_with_a_creature_to_copy_and_the_ai_taps_him() {
+    let mut g = table(&["kefka", "veyran"]);
+    fill_library(&mut g, P0, 10);
+    let c = card(&g, "Marvin, Murderous Mimic");
+    let bare = decks::deck_prio(&g, P0, c);
+    assert!(bare > 0);
+    perm(&mut g, P0, "Viashino Fangtail");
+    let with_pinger = decks::deck_prio(&g, P0, c);
+    assert!(with_pinger > bare);
+    perm(&mut g, P0, "Niv-Mizzet, the Firemind");
+    assert!(decks::deck_prio(&g, P0, c) > with_pinger, "Niv's draw is the best copy");
+    let marvin = perm(&mut g, P0, "Marvin, Murderous Mimic");
+    let o = opts_of(&mut g, P0, false);
+    assert!(
+        o.iter().any(|x| x.label.starts_with("Marvin copies") && matches!(x.act, Some(sim_core::hooks::Action::Ability { src, .. }) if src == marvin)),
+        "main options offer Marvin copied ability: {:?}", o.iter().map(|x| x.label.clone()).collect::<Vec<_>>()
+    );
+}

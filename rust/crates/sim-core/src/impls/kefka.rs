@@ -1434,6 +1434,9 @@ pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             generic_prio(g, p, c)
         };
     }
+    if let Some(v) = crate::impls::newcards_b::marvin_prio(g, p, c) {
+        return v;
+    }
     if name == "Rapturous Moment" {
         // draw three, discard two (Kefka's fodder) and five red mana back: a free filter whenever the hand can spend it
         let others = g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();
@@ -1471,6 +1474,9 @@ pub fn flip_utility(g: &Game, p: PlayerId) -> Option<f64> {
 
 // ------------------------------------------------------------------ registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, OPPRESSION)?;
+    c.cast = Some(oppression);
+    c.prio = Some(oppression_prio);
     for (name, f) in [
         ("Duress", duress as crate::hooks::ResolveFn),
         ("Dark Inquiry", dark_inquiry),
@@ -1643,4 +1649,54 @@ pub fn tutor_win_piece(g: &Game, p: PlayerId) -> Option<[&'static str; 2]> {
         return None;
     }
     Some(if loop_safe(g, p) { [CRAWLER, NIV] } else { [NIV, CRAWLER] })
+}
+
+// ------------------------------------------------------------------ Oppression
+const OPPRESSION: &str = "Oppression";
+
+/// **Oppression**: "Whenever a player casts a spell, that player discards a card." Symmetric: Kefka's own spells
+/// cost him a card too (the discard goes through `discard_cards`, so madness, mayhem and the graveyard fuel apply).
+/// The caster chooses (`discard_worst`: Kefka bins his madness / mayhem cards first). Nothing happens on an empty hand.
+fn oppression(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
+    let o = g.perm(src).owner;
+    if g.player(caster).hand.is_empty() || !g.player(caster).alive {
+        return Ok(());
+    }
+    if !trigger_window(g, o, Some(src), "the caster discards a card", None)? {
+        return Ok(());
+    }
+    if g.player(caster).hand.is_empty() {
+        return Ok(());
+    }
+    crate::glog!(g, "    Oppression: {} discards a card", pname(g, caster));
+    crate::engine::cast::discard_worst(g, caster, 1)
+}
+
+/// Kefka's cast priority for Oppression: a tax on every spell, his own included, that falls on whoever holds cards. He
+/// dumps his hand (looting, discards to Kefka's trigger), the table does not, so the fewer cards he keeps the better
+/// it is for him: top priority with a discard payoff in play (Kefka out, a flip, madness / mayhem cards in hand) while
+/// the opponents hold cards; high when the opponents hold more cards than he does; low otherwise. Never while a combo
+/// turn is in hand (the storm cards, Breach, Will: every spell of the turn would cost a card).
+fn oppression_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let hand = &g.player(p).hand;
+    // a combo turn in hand: a storm card or Breach / Will with mana to go off and spells to chain (Kefka sits on the
+    // pieces for turns, so the mere presence of one is not enough)
+    let piece = hand
+        .iter()
+        .any(|&x| matches!(cname(g, x), "Brain Freeze" | "Grapeshot" | "Underworld Breach" | "Yawgmoth's Will"));
+    let chain = hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();
+    if piece && chain >= 4 && total_mana(g, p, false) >= 6 {
+        return 0;
+    }
+    let spare = hand.iter().filter(|&&x| x != c).count() as i32;
+    let opp_cards: i32 = g.opps(p).map(|q| g.player(q).hand.len() as i32).sum();
+    let gy_fuel = hand.iter().filter(|&&x| x != c && wants_gy(g, x)).count() as i32;
+    let payoff = kefka_out(g, p) || flipped(g, p) || gy_fuel > 0;
+    if payoff && opp_cards > 0 {
+        66
+    } else if opp_cards >= spare && opp_cards > 0 {
+        58
+    } else {
+        25
+    }
 }

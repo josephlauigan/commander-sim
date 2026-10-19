@@ -14,7 +14,7 @@
 1 Bastion Protector (fic) 233
 1 Champion's Helm (fic) 337
 1 Cid, Freeflier Pilot (fic) 13
-1 Citizen's Arrest (dmu) 11
+1 Stroke of Midnight (frc) 35
 1 Cloud, Midgar Mercenary (fin) 375
 1 Coalition Relic (m3c) 286
 1 Colossus Hammer (fic) 338
@@ -34,7 +34,7 @@
 1 Giver of Runes (plst) MH1-13
 1 Grand Abolisher (cmm) 27
 1 Helitrooper (fic) 22
-1 Hero's Blade (msc) 201
+1 Andúril, Narsil Reforged (ltc) 491
 1 Jocasta, Automaton Avenger (msc) 108
 1 Knight of the White Orchid (voc) 92
 1 Kor Outfitter (zen) 21

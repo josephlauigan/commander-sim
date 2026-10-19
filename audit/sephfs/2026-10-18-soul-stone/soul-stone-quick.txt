@@ -1,0 +1,112 @@
+Model status of the swapped-in cards (cardgen audit):
+  The Soul Stone: Full (indestructible rock for {B}; harnessed ({6}{B}, {T}, exile a token or the cheapest creature) at instant speed once a creature worth returning is in the graveyard; then returns the best creature card every upkeep)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sephfs's AI?
+  AI: The Soul Stone: priority 85 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: The Soul Stone: drawn in 25.0% of games (50), cast in 82.0% of those (41)
+
+1,600 games (current list and the swapped one, 700 per list per tier, profile loose), lookahead AI, 22 worker threads: about 4 minutes
+  progress 100.0%  1m04s elapsed, ~0m00s left
+Swaps: Mind Stone -> The Soul Stone
+
+=== Sephiroth FS vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.7% ->  24.9%  (delta +0.1 pts, noise ±2.5, paired)   n=700
+               eliminated by (variant): Urza 19.0%  Zur the Enchanter 11.6%  Kinnan 22.7%  Winota 15.3%  Yawgmoth 6.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sephfs) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sephfs: Sephiroth flipped (the fourth drain of a turn)
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          24.7% ->  24.9%  +0.1pt   ±4.6 
+    Rounds survived (or game length)                   8.67 ->   8.74   +0.07  ±0.38 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.50 ->   0.52   +0.01  ±0.08 
+    Mana available on your turn 4                      4.28 ->   4.27   -0.01  ±0.12 
+    Mana available on your turn 6                      5.80 ->   5.79   -0.01  ±0.17 
+
+  Speed
+    Games where the game plan came online             27.4% ->  26.9%  -0.6pt   ±4.8 
+    Turn the game plan came online                     7.62 ->   7.63   +0.01  ±0.52 
+    Turn the commander first resolved                  4.23 ->   4.24   +0.01  ±0.20 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.44 ->  12.29   -0.15  ±0.98 
+    Tutors resolved per game                           0.39 ->   0.39   -0.01  ±0.07 
+    Spells cast per game                               9.95 ->   9.90   -0.05  ±0.68 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.37 ->   0.38   +0.01  ±0.07 
+    Board wipes cast                                   0.49 ->   0.48   -0.00  ±0.08 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.45 ->   0.44   -0.01  ±0.07 
+    Your spells countered                              0.58 ->   0.56   -0.01  ±0.09 
+
+  Threat & pressure
+    Damage dealt to opponents per game                29.61 ->  28.94   -0.67  ±3.30 
+      ...of which combat damage                       13.75 ->  13.98   +0.23  ±1.69 
+      ...of which magecraft / burn                     1.90 ->   1.87   -0.03  ±0.58 
+      ...of which drain triggers                      13.80 ->  12.98   -0.82  ±1.83 
+      ...of which other triggers                       0.03 ->   0.05   +0.02  ±0.06 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 700 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Soul Stone                        19.1      82.8         5.1     17.2       36.9      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Mind Stone                            20.1      80.1         5.1     19.9       37.2      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        24.7      24.9     +0.1
+    rounds survived                                   8.67      8.74    +0.07
+    eliminated, % of games                            75.1      75.1     +0.0
+    opponents it eliminated, per game                 0.72      0.71    -0.01
+    damage dealt, per game                            29.5      28.9     -0.6
+    plan: Sephiroth flipped (the fourth drain of a turn)
+      plan online by turn 4, %                         1.9       2.0     +0.1
+      plan online by turn 6, %                        10.3      10.9     +0.6
+      plan online by turn 8, %                        19.1      18.4     -0.7
+      plan online by turn 12, %                       26.4      25.9     -0.6
+      plan online at all, %                           27.4      26.9     -0.6
+    commander resolved by turn 4, %                   55.1      54.7     -0.4
+    commander resolved by turn 6, %                   72.6      72.3     -0.3
+    commander removals, per game                      0.35      0.34    -0.02
+    lands on the battlefield, turn 4                  3.73      3.73    -0.01
+    lands on the battlefield, turn 8                  6.38      6.33    -0.05
+    mana available, turn 4                            4.28      4.27    -0.01
+    mana available, turn 8                            7.14      7.13    -0.01
+    cards in hand after the land drop, turn 4         5.62      5.62    -0.00
+    cards in hand after the land drop, turn 8         4.74      4.72    -0.02
+    wins by (current):  damage 97%, combo 3%
+    wins by (swapped):  damage 95%, combo 5%, timeout 1%
+    eliminated by (current): Kinnan via combo 22.9%, Urza via combo 17.7%, Zur the Enchanter via combo 10.6%, Winota via combo 9.4%
+    eliminated by (swapped): Kinnan via combo 22.6%, Urza via combo 18.0%, Zur the Enchanter via combo 10.4%, Winota via combo 9.1%
+
+(64s total)

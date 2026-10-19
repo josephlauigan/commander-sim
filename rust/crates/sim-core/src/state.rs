@@ -85,6 +85,8 @@ pub enum DataKey {
     ChosenColor,
     /// Shardmage's Rescue: the turn it entered (a `Val::Stamp`)
     Entered,
+    /// a fetch land put onto the battlefield tapped by Primeval Titan: its {T} cost can not be paid until it untaps
+    TitanTapped,
     FableGoblin,
     Final,
     Flip,
@@ -467,6 +469,9 @@ pub struct Player {
     pub t6: bool,
     /// this player's own turn count when it last dealt damage to an opponent
     pub hit_turn: i32,
+    /// Lightning, Army of One: (its controller, that player's turn count when it connected); all damage to this player and their
+    /// permanents is doubled until that controller's next turn begins (see `engine::life::stagger_mult`)
+    pub stagger: Option<(PlayerId, u32)>,
     /// life lost / gained this turn (Bloodsoaked Insight, Archfiend, Y'shtola)
     pub lost_turn: Option<(TurnStamp, i32)>,
     pub gained_turn: Option<(TurnStamp, i32)>,
@@ -731,6 +736,7 @@ impl Player {
             death_kind: "",
             t6: crate::t6stats::is_t6_key(key),
             hit_turn: -1,
+            stagger: None,
             lost_turn: None,
             gained_turn: None,
             creature_died: None,

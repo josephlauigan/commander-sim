@@ -2001,3 +2001,41 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
     }
     Ok(true)
 }
+
+// ------------------------------------------------------------------ borrowed abilities (Marvin, Murderous Mimic)
+/// Marvin: the `{T}` abilities (no mana cost) of the compiled creature card `from`, as (ability index, AI value)
+/// for `src`, a permanent that has them; only those `src` can pay for right now
+pub fn borrowed_tap_options(g: &mut Game, p: PlayerId, src: PermId, from: CardId) -> Res<Vec<(u16, f64)>> {
+    let mut out = vec![];
+    if !active(g) {
+        return Ok(out);
+    }
+    for (i, a) in abilities(g, from).iter().enumerate() {
+        let Ability::Activated { cost, effects, sorcery, .. } = a else { continue };
+        if cost.tap != Some(true) || cost.mana.is_some() || cost.sac.is_some() || cost.life.is_some() || *sorcery == Some(true) {
+            continue;
+        }
+        if !pay_ability_cost(g, p, src, cost, true)? {
+            continue;
+        }
+        let u = value_of(g, p, effects, None) - if cost.discard.is_some() { 0.5 } else { 0.0 };
+        out.push((i as u16, u));
+    }
+    Ok(out)
+}
+
+/// p activates ability `idx` of card `from` with permanent `src` (which doesn't have it printed): pays the cost from
+/// `src`, puts it on the stack and resolves it with `src` as the source. False if it can't be paid now.
+pub fn activate_borrowed(g: &mut Game, p: PlayerId, src: PermId, from: CardId, idx: u16) -> Res<bool> {
+    let ab = abilities(g, from);
+    let Some(Ability::Activated { cost, effects, .. }) = ab.get(idx as usize) else { return Ok(false) };
+    if !g.perm(src).on_bf || g.perm(src).owner != p || !pay_ability_cost(g, p, src, cost, false)? {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} activates {} (copied ability)", g.player(p).name, g.perm(src).name);
+    if !crate::engine::stack::ability_window(g, p, Some(src), "ability", None, None)? {
+        return Ok(true);
+    }
+    execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
+    Ok(true)
+}

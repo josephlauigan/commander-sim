@@ -22,7 +22,7 @@ She is a 7/7 that can be cast for seven, and one entry is a whole hand: up to on
 
 **Turns 1 to 3: mana and yard.** Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Chromatic Lantern, Birds of Paradise and Sakura-Tribe Elder for mana. **Tireless Tracker** ({2}{G}) turns every land drop into a Clue, and Sakura-Tribe Elder, Evolving Wilds and Fabled Passage add extra land drops, so it draws cards on its own. Stitcher's Supplier, Buried Alive, and Entomb load the graveyard. Tortured Existence keeps it filling every turn. **Gifts Ungiven** is a yard-filler and tutor in one: name four cards you're happy to have in either zone (for example four reanimation targets, or Mikaeus and Triskelion plus two reanimation spells), and whatever the table puts in your graveyard is exactly what you wanted there.
 
-**Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Dread Return point at Archon of Cruelty, Grave Titan, Hornet Queen, Sheoldred, or Sephiroth herself. **Hornet Queen** ({4}{G}{G}{G}, flying, deathtouch) enters with four 1/1 flying deathtouch Insects, a wall of blockers that also stops fliers, and every blink of her makes four more. Sheoldred, Whispering One then returns a creature every upkeep for free. **Dread Return** can be flashed back later by sacrificing three creatures, which is free with Zombie tokens or loop pieces and triggers Blood Artist and Zulaport Cutthroat three times.
+**Turns 3 to 5: cheat something out.** Reanimate, Animate Dead, Necromancy, Unburial Rites, and Victimize point at Archon of Cruelty, Grave Titan, Hornet Queen, Sheoldred, or Sephiroth herself. **Hornet Queen** ({4}{G}{G}{G}, flying, deathtouch) enters with four 1/1 flying deathtouch Insects, a wall of blockers that also stops fliers, and every blink of her makes four more. Sheoldred, Whispering One then returns a creature every upkeep for free. **Victimize** ({2}{B} sorcery) sacrifices a creature to return two creature cards from your graveyard tapped, so it is two bombs for one spell, and the sacrifice triggers Blood Artist and Zulaport Cutthroat.
 
 **Late game.** Hold up Arcane Denial, Swan Song, Ephemerate and Galadriel's Dismissal, keep Austere Command as the reset, assemble a loop, and use the grind engines (Muldrotha, Sheoldred, Whispering One, the end-step flickers) to keep the pressure on if the first plan is answered. Sheoldred's, Archon's and Elesh Norn's drains and edicts keep the table small while you do it.
 
@@ -32,7 +32,7 @@ Stitcher's Supplier mills three when it enters and again when it dies, so it is 
 
 ### Reanimation
 
-Five reanimation spells: **Reanimate** ({B}, lose life equal to the card's mana value, and it can take a creature from any graveyard), **Animate Dead** and **Necromancy** (enchantments that bring a creature back and go with it; Necromancy can be cast at instant speed, but then it is sacrificed at the next cleanup step), **Unburial Rites** (flashback {3}{W}) and **Dread Return** (flashback: sacrifice three creatures). Every one of them can take a legendary creature, so any spell reaches any bomb. **Yawgmoth's Will** replays the graveyard for a turn: use it for a big turn once the yard is deep. Everything that would go to the graveyard that turn is exiled instead, so don't try the Nim Deathmantle loop under it. Sheoldred, Whispering One, Muldrotha and Grave Pact (below) are the other half of the reanimation plan.
+Five reanimation spells: **Reanimate** ({B}, lose life equal to the card's mana value, and it can take a creature from any graveyard), **Animate Dead** and **Necromancy** (enchantments that bring a creature back and go with it; Necromancy can be cast at instant speed, but then it is sacrificed at the next cleanup step), **Unburial Rites** (flashback {3}{W}) and **Victimize** ({2}{B}: sacrifice a creature, return two creature cards from your graveyard tapped). Every one of them can take a legendary creature, so any spell reaches any bomb. **Yawgmoth's Will** replays the graveyard for a turn: use it for a big turn once the yard is deep. Everything that would go to the graveyard that turn is exiled instead, so don't try the Nim Deathmantle loop under it. Sheoldred, Whispering One, Muldrotha and Grave Pact (below) are the other half of the reanimation plan.
 
 ### The card-advantage layer
 
@@ -68,7 +68,7 @@ Swords to Plowshares, Path to Exile, Anguished Unmaking ({1}{W}{B}, exile any no
 
 ### Mana, lands and utility
 
-Chromatic Lantern lets every land tap for any colour. Exotic Orchard, Command Tower and Ash Barrens (basic landcycling) fix colours; Evolving Wilds and Fabled Passage fetch basics, and Muldrotha can replay them. Strip Mine is optional land destruction. Treno, Dark City is a tapped blue-black Town. Blood Artist and Zulaport Cutthroat drain whenever creatures die, so Dread Return's flashback, Grave Pact, Skullclamp and the loops all become life loss for the table. Viscera Seer is a one-mana free sacrifice outlet. Mikaeus, Kitchen Finks, Melira, Triskelion, Nim Deathmantle, Ashnod's Altar, Altar of Dementia and Grave Titan are the combo pieces below. Archon of Cruelty, Hornet Queen and Sheoldred, Whispering One are bombs to reanimate rather than hard-cast.
+Chromatic Lantern lets every land tap for any colour. Exotic Orchard, Command Tower and Ash Barrens (basic landcycling) fix colours; Evolving Wilds and Fabled Passage fetch basics, and Muldrotha can replay them. Strip Mine is optional land destruction. Treno, Dark City is a tapped blue-black Town. Blood Artist and Zulaport Cutthroat drain whenever creatures die, so Victimize's sacrifice, Grave Pact, Skullclamp and the loops all become life loss for the table. Viscera Seer is a one-mana free sacrifice outlet. Mikaeus, Kitchen Finks, Melira, Triskelion, Nim Deathmantle, Ashnod's Altar, Altar of Dementia and Grave Titan are the combo pieces below. Archon of Cruelty, Hornet Queen and Sheoldred, Whispering One are bombs to reanimate rather than hard-cast.
 
 ### How it wins
 
@@ -136,7 +136,7 @@ Three tutors: **Demonic Tutor** and **Diabolic Tutor** (any card to hand) and **
 - **Long game, combo answered → Muldrotha.** She replays the loop pieces, Aura Shards, and a reanimation spell from the graveyard every turn.
 - **Under pressure → tutor interaction.** Toxic Deluge or Austere Command to reset, or Swords / Path / Anguished Unmaking / Assassin's Trophy for one problem.
 
-Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also work as combo tutors here: they put a creature piece in the yard for Reanimate, Animate Dead, Necromancy, or Dread Return.
+Diabolic Tutor is the least efficient at four mana. Entomb and Buried Alive also work as combo tutors here: they put a creature piece in the yard for Reanimate, Animate Dead, Necromancy, or Victimize.
 
 ## Mana and consistency
 
@@ -146,7 +146,7 @@ Mana: five rocks (Sol Ring, Arcane Signet, Talisman of Hierarchy, Mind Stone, Ch
 
 **Graveyard fill.** Stitcher's Supplier, Buried Alive, Entomb, Tortured Existence and Gifts Ungiven fill the yard. Displacer Kitten and the flicker cards replace some of the filling with value.
 
-**Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Dread Return) plus Sheoldred, Whispering One, Yawgmoth's Will, and Muldrotha (Animate Dead or Necromancy again from the graveyard every turn). Every reanimation spell can take a legendary creature.
+**Reanimation count is five** (Reanimate, Animate Dead, Necromancy, Unburial Rites, Victimize) plus Sheoldred, Whispering One, Yawgmoth's Will, and Muldrotha (Animate Dead or Necromancy again from the graveyard every turn). Every reanimation spell can take a legendary creature (Victimize takes two creature cards from your own graveyard).
 
 **Card draw.** Harmonize, Tireless Tracker, Phyrexian Arena, Skullclamp, Mind Stone, Sheoldred (gain life per draw), and Atraxa's own enter trigger.
 
@@ -179,7 +179,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (10).** Austere Command, Buried Alive, Demonic Tutor, Diabolic Tutor, Dread Return, Harmonize, Reanimate, Toxic Deluge, Unburial Rites, Yawgmoth's Will
+**Sorceries (10).** Austere Command, Buried Alive, Demonic Tutor, Diabolic Tutor, Harmonize, Reanimate, Toxic Deluge, Unburial Rites, Victimize, Yawgmoth's Will
 
 **Instants (11).** Anguished Unmaking, Arcane Denial, Assassin's Trophy, Entomb, Ephemerate, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares
 
@@ -213,7 +213,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Demonic Tutor
 1 Diabolic Tutor
 1 Displacer Kitten
-1 Dread Return
 1 Elesh Norn, Grand Cenobite
 1 Elesh Norn, Mother of Machines
 1 Entomb
@@ -268,6 +267,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Triskelion
 1 Unburial Rites
 1 Underground River
+1 Victimize
 1 Viscera Seer
 1 Watery Grave
 1 Woodland Cemetery

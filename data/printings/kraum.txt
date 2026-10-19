@@ -23,7 +23,7 @@
 1 Disenchant (ath) 5
 1 Dragonskull Summit (m11) 223
 1 Drowned Catacomb (m11) 224
-1 Elemental Mascot (sos) 185
+1 Lightning, Army of One (fin) 233
 1 Elenda, the Dusk Rose (2x2) 377
 1 Elspeth, Sun's Champion (ths) 9
 1 Exotic Orchard (ltc) 307
@@ -59,7 +59,7 @@
 1 Resplendent Angel (lci) 32
 1 Restoration Angel (khc) 31
 1 Rugged Prairie (fic) 417
-1 Serra Angel (3ed) 40
+1 Cecil, Dark Knight (fin) 91
 1 Shield of Kaldra (dst) 139
 1 Skyclave Apparition (m3c) 172
 1 Smaug the Magnificent (hob) 110
