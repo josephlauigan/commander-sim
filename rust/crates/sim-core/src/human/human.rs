@@ -996,6 +996,9 @@ pub fn order_triggers(g: &mut Game, real: Vec<crate::hooks::Trigger>) -> Res<Vec
             });
             while left.len() > 1 {
                 let labels: Vec<String> = left.iter().map(|t| trig_label(g, t)).collect();
+                if labels.iter().all(|l| *l == labels[0]) {
+                    break; // the rest are the same trigger (four Sephiroth drains): their order can't matter
+                }
                 let extra: Vec<String> = match (&last, same) {
                     (Some(l), true) => vec![format!("Same order as last time ({})", l.join(", then "))],
                     _ => vec![],

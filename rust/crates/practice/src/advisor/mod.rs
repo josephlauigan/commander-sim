@@ -5,6 +5,9 @@
 //!
 //! `hint(g, p, req)` returns `{"text": one line, "detail": [lines], "choice": the AI's pick or null}`.
 
+pub mod mulligan;
+mod other;
+
 use crate::view::seam::pool_total;
 use serde_json::{Value, json};
 use sim_core::ai::{brain, search};
@@ -25,7 +28,10 @@ pub fn copy(g: &mut Game, p: PlayerId) -> Game {
 
 fn label(lbl: &str, hand: &HashSet<String>) -> String {
     if lbl.starts_with("stop") {
-        return format!("Pass: play nothing more this phase{}", if lbl.contains("hold") { " (hold your mana up)" } else { "" });
+        return format!(
+            "Pass: play nothing more this phase{}",
+            if lbl.contains("hold") { " (hold your mana up)" } else { "" }
+        );
     }
     if hand.contains(lbl) {
         return format!("Cast {lbl}");
@@ -62,7 +68,8 @@ fn main_phase(g: &mut Game, p: PlayerId) -> Value {
         let mut ranked = search::LAST_SCORES.with(|l| l.borrow().clone());
         ranked.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
         let mut d = vec![
-            "Look-ahead (each play tried on six copies of the game, played on to the end of your next turn):".to_string(),
+            "Look-ahead (each play tried on six copies of the game, played on to the end of your next turn):"
+                .to_string(),
         ];
         d.extend(ranked.iter().map(|(l, v)| format!("{}: {v:+.1}", label(l, &names))));
         pick = o.unwrap_or_else(|| best_utility(&opts));
@@ -114,7 +121,9 @@ fn counter(g: &mut Game, p: PlayerId, spell: sim_core::ids::CardId) -> Option<Va
     }
     let sname = g.db.get(spell).name.to_string();
     let Some(ctr) = pick_counter(g, p, spell) else {
-        return Some(json!({"text": format!("Let {sname} resolve: you can't counter it now."), "detail": [], "choice": false}));
+        return Some(
+            json!({"text": format!("Let {sname} resolve: you can't counter it now."), "detail": [], "choice": false}),
+        );
     };
     let cname = g.db.get(ctr).name.to_string();
     let active = g.active?;
@@ -125,8 +134,10 @@ fn counter(g: &mut Game, p: PlayerId, spell: sim_core::ids::CardId) -> Option<Va
     g2.player_mut(p).floating.any += pool;
     g2.player_mut(p).pool = Default::default(); // the copy pays like the AI, from its lands
     if !search::enabled(&mut g2, p) {
-        return Some(json!({"text": format!("You could counter {sname} with {cname}; the hint needs the look-ahead AI to weigh it."),
-                           "detail": [], "choice": null}));
+        return Some(
+            json!({"text": format!("You could counter {sname} with {cname}; the hint needs the look-ahead AI to weigh it."),
+                           "detail": [], "choice": null}),
+        );
     }
     let yes = search::choose_counter(&mut g2, p, active, spell);
     Some(json!({"text": if yes { format!("Counter {sname} with {cname}.") } else { format!("Let {sname} resolve.") },
@@ -134,8 +145,25 @@ fn counter(g: &mut Game, p: PlayerId, spell: sim_core::ids::CardId) -> Option<Va
                 "choice": yes}))
 }
 
-/// the AI's advice for request req (the game is waiting on it, so it holds still)
+/// the AI's advice for request req (the game is waiting on it, so it holds still). Always `text` (a non-empty
+/// string), `detail` (an array) and `choice`; a panic while working it out on the copy becomes a plain sentence.
 pub fn hint(g: &mut Game, p: PlayerId, req: &Request) -> Value {
+    let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| hint_inner(g, p, req)));
+    let mut v = r.unwrap_or_else(|_| json!({"text": format!("The AI could not weigh this {} decision; read the prompt and pick what helps you most.", req.kind), "detail": [], "choice": null}));
+    let ok = v.get("text").and_then(Value::as_str).is_some_and(|t| !t.trim().is_empty() && t != "null");
+    if !ok {
+        v["text"] = json!(format!("Weigh the options for this {} decision against your plan.", req.kind));
+    }
+    if !v.get("detail").is_some_and(Value::is_array) {
+        v["detail"] = json!([]);
+    }
+    if v.get("choice").is_none() {
+        v["choice"] = Value::Null;
+    }
+    v
+}
+
+fn hint_inner(g: &mut Game, p: PlayerId, req: &Request) -> Value {
     match &*req.kind {
         "priority" => {
             let stack_empty = req.data.get("stack").and_then(|s| s.as_array()).is_none_or(|a| a.is_empty());
@@ -154,6 +182,6 @@ pub fn hint(g: &mut Game, p: PlayerId, req: &Request) -> Value {
                    "detail": ["(the AI only plays instants at this point in answer to something)"], "choice": null})
         }
         "attack" => attack(g, p),
-        _ => json!({"text": "No hint for this kind of decision yet.", "detail": [], "choice": null}),
+        _ => other::hint(g, p, req),
     }
 }

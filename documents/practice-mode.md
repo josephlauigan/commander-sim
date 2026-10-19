@@ -204,7 +204,7 @@ Two people, each on their own computer, play two different decks of your deck fo
 
 ### The iPad
 
-`practice` also builds as a static library exporting `practice_start(data_dir, port)`, which starts this same server on 127.0.0.1 inside an app. The Swift shell in `ios-shell/` (not finished; see its README) opens the port in a web view, and copies the page and the card data into the app's writable folder on first launch so saves survive updates. The Briefcase app in `ios/` is the legacy Python-based one.
+`practice` also builds as a static library exporting `practice_start(bundle_dir, app_dir, port)`, `practice_stop()` and `practice_set_lan(bool)` (`src/lib.rs`). `practice_start` copies the data bundled with the app into its writable folder when the build is new (`src/bundle.rs`; saves are never touched) and starts this same server on 127.0.0.1 in app mode. The Swift app in `ios-shell/` shows that port in a web view; its README has the build steps.
 
 ## Tests
 
