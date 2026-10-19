@@ -90,6 +90,7 @@ pub fn removal_hit(g: &mut Game, actor: PlayerId, spell: Option<CardId>, owner: 
 
 /// p cast a card: count the stax pieces
 pub fn cast(g: &mut Game, p: PlayerId, c: CardId) {
+    mana_cast(g, p, c);
     if is_t6(g, p) && STAX.contains(&&*g.db.get(c).name) {
         let k = format!("ix|stax|{}", card(g, c));
         bump(g, p, k);
@@ -163,4 +164,94 @@ pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
     let l = label.split(" -> ").next().unwrap_or(label).trim_end_matches(" [search]").trim_end_matches(" [must]");
     let l = l.strip_prefix("combo: ").map_or(l.to_string(), |c| format!("combo: {c}"));
     bump(g, p, format!("spx|{l}"));
+}
+
+// ---------------------------------------------------------------------------------------------------- mana (speed project)
+// - `mn|T<n>`: mana available after the land drop on the player's turn n (1-5)
+// - `mn|perm|T<n>`: mana permanents (non-land: rocks, dorks, moxen) in play then
+// - `mn|hand|T<n>`: mana cards in hand then (rocks, dorks, moxen, rituals, spirit guides); `mn|handc|T<n>` of those, the
+//   ones with a cost within the mana available
+// - `mn|cast|T<n>`: mana cards cast on turn n (n = 1-3)
+// - `mn|n|T<n>`: 1 when the player reached turn n (the divisor)
+
+const RITUALS: [&str; 14] = [
+    "Dark Ritual",
+    "Cabal Ritual",
+    "Rite of Flame",
+    "Desperate Ritual",
+    "Pyretic Ritual",
+    "Seething Song",
+    "Elvish Spirit Guide",
+    "Simian Spirit Guide",
+    "Jeweled Lotus",
+    "Lion's Eye Diamond",
+    "Lotus Petal",
+    "Culling the Weak",
+    "Sol Ring",
+    "Mana Geode",
+];
+
+/// a mana source card that is not a land: rock, dork, mox, fast mana, ritual
+pub fn is_mana_card(g: &Game, c: CardId) -> bool {
+    use crate::tag::Tag;
+    let d = g.db.get(c);
+    !d.land
+        && (d.tag(Tag::Rock)
+            || d.tag(Tag::Dork)
+            || d.tag(Tag::Fastmana)
+            || d.tag(Tag::Moxd)
+            || d.tag(Tag::Chromemox)
+            || d.tag(Tag::Lr)
+            || RITUALS.contains(&&*d.name))
+}
+
+/// stats-only snapshot at the start of p's main phase (after the land drop)
+pub fn mana_snapshot(g: &mut Game, p: PlayerId) {
+    if !is_t6(g, p) {
+        return;
+    }
+    let t = g.player(p).turns;
+    let mana = crate::engine::mana::total_mana(g, p, false) as i64;
+    let perms = g.player(p).perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| is_mana_card(g, c))).count() as i64;
+    let hand: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| is_mana_card(g, c)).collect();
+    let cheap = hand.iter().filter(|&&c| (g.db.get(c).cmc as i64) <= mana).count() as i64;
+    let pl = g.player_mut(p);
+    pl.stat(intern(&format!("mn|T{t}")), mana);
+    pl.stat(intern(&format!("mn|perm|T{t}")), perms);
+    pl.stat(intern(&format!("mn|hand|T{t}")), hand.len() as i64);
+    pl.stat(intern(&format!("mn|handc|T{t}")), cheap);
+    pl.stat(intern(&format!("mn|n|T{t}")), 1);
+}
+
+/// p cast a mana card on its own turn 1-3
+fn mana_cast(g: &mut Game, p: PlayerId, c: CardId) {
+    if is_t6(g, p) && g.active == Some(p) && g.player(p).turns <= 3 && is_mana_card(g, c) {
+        let t = g.player(p).turns;
+        bump(g, p, format!("mn|cast|T{t}"));
+    }
+}
+
+/// stats-only: at the end of p's second main phase on turns 1-3, the mana cards still in hand that p could pay for
+/// (`mn|held|T<n>|<card>`), so the report can say which fast mana is held
+pub fn mana_held(g: &mut Game, p: PlayerId) {
+    if !is_t6(g, p) || g.player(p).turns > 3 {
+        return;
+    }
+    let t = g.player(p).turns;
+    let hand: Vec<CardId> = g.player(p).hand.clone();
+    for c in hand {
+        if !is_mana_card(g, c) {
+            continue;
+        }
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        g.pay_for = Some(c);
+        let ok = crate::engine::mana::can_pay(g, p, cg, &cp, false);
+        g.pay_for = None;
+        let d = g.db.get(c);
+        let ritual = d.instant || d.sorcery;
+        let k = format!("mn|held{}|T{t}|{}", if ritual { "r" } else { "" }, card(g, c));
+        if ok {
+            bump(g, p, k);
+        }
+    }
 }

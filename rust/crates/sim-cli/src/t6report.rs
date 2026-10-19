@@ -39,6 +39,8 @@ pub struct DeckT6 {
     pub ready_no_go: u64,
     /// the option chosen at decisions where a line was ready and the deck had not gone yet
     pub instead: Counter<String>,
+    /// sums of the `mn|...` mana stats (see `sim_core::t6stats`)
+    pub mn: Counter<String>,
 }
 
 /// one seat's tallies (seat 0 goes first), over all games
@@ -146,6 +148,9 @@ impl T6Tally {
                 _ => {}
             }
             for (k, &v) in &p.stats {
+                if let Some(l) = k.strip_prefix("mn|") {
+                    d.mn.add(l.to_string(), v);
+                }
                 if let Some(l) = k.strip_prefix("spx|") {
                     d.instead.add(l.to_string(), v);
                 }
@@ -284,6 +289,41 @@ fn render_speed(d: &DeckT6) -> String {
     o
 }
 
+/// mean mana at the start of turns 1-5, mana permanents in play, mana cards held and cast (see `sim_core::t6stats`)
+fn render_mana(d: &DeckT6) -> String {
+    let row = |pre: &str| -> String {
+        (1..=5)
+            .map(|t| {
+                let n = d.mn.get(&format!("n|T{t}")).max(1) as f64;
+                format!("{:.2}", d.mn.get(&format!("{pre}T{t}")) as f64 / n)
+            })
+            .collect::<Vec<_>>()
+            .join(" ")
+    };
+    let cast: Vec<String> = (1..=3)
+        .map(|t| format!("{:.2}", d.mn.get(&format!("cast|T{t}")) as f64 / d.mn.get(&format!("n|T{t}")).max(1) as f64))
+        .collect();
+    let held = |pre: &str| -> String {
+        let mut c: Counter<String> = Counter::new();
+        for (k, v) in d.mn.most_common() {
+            if let Some(r) = k.strip_prefix(pre) {
+                c.add(r.split('|').nth(1).unwrap_or("?").to_string(), v);
+            }
+        }
+        top(&c, 6, &|s| s.to_string())
+    };
+    format!(
+        "      mana T1-T5: {}; mana permanents: {}; mana cards in hand: {} (castable {}); cast on T1-3: {}\n      held at the end of turns 1-3 with the mana to cast (card-turns): {}; rituals and one-shots: {}\n",
+        row(""),
+        row("perm|"),
+        row("hand|"),
+        row("handc|"),
+        cast.join(" "),
+        held("held|"),
+        held("heldr|")
+    )
+}
+
 /// the per-seat block: win round, mulligans, tries, stops, removal taken, deaths
 fn render_seats(t: &T6Tally) -> String {
     let mut o = String::from("  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out\n");
@@ -390,6 +430,7 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
             );
         }
         o += &render_speed(d);
+        o += &render_mana(d);
         let m = d.mulls;
         o += &format!(
             "      mulligans: {} of {} hands ({:.1}%): one {}, two {}, three {}\n",
@@ -546,6 +587,30 @@ mod tests {
         assert!(text.contains("went for a line 4.5"), "{text}");
         assert!(text.contains("went for it later in 1 of 3 ready games"), "{text}");
         assert!(text.contains("Cast Sol Ring 6"), "{text}");
+    }
+
+    #[test]
+    fn the_mana_line_gives_mean_mana_by_turn_and_the_held_cards() {
+        let mut t = T6Tally::default();
+        for m2 in [2, 4] {
+            let mut g = game(Some(1), Some("combo"), 8);
+            let p = &mut g.players[1];
+            p.stats.insert("mn|T1", 1);
+            p.stats.insert("mn|n|T1", 1);
+            p.stats.insert("mn|T2", m2);
+            p.stats.insert("mn|n|T2", 1);
+            p.stats.insert("mn|perm|T2", 1);
+            p.stats.insert("mn|cast|T1", 1);
+            p.stats.insert("mn|held|T2|Mox Diamond", 1);
+            p.stats.insert("mn|heldr|T1|Dark Ritual", 1);
+            t.add(&g);
+        }
+        let text = render(&t, &["b".to_string()], &|k| k.to_string());
+        assert!(text.contains("mana T1-T5: 1.00 3.00 0.00"), "{text}");
+        assert!(text.contains("mana permanents: 0.00 1.00"), "{text}");
+        assert!(text.contains("cast on T1-3: 1.00"), "{text}");
+        assert!(text.contains("Mox Diamond 2"), "{text}");
+        assert!(text.contains("rituals and one-shots: Dark Ritual 2"), "{text}");
     }
 
     #[test]
