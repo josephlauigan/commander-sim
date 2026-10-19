@@ -747,3 +747,62 @@ fn plan_milestone_needs_an_equipped_cloud() {
     cloud::plan_milestone(&mut g, P0, &[cl]);
     assert_eq!(g.player(P0).milestone.get("cloud"), Some(&4));
 }
+
+// ------------------------------------------------------------------ Andúril, Narsil Reforged
+/// Andúril, Narsil Reforged: "Ascend. Whenever equipped creature attacks, put a +1/+1 counter on each creature you
+/// control. If you have the city's blessing, put two +1/+1 counters on each creature you control instead. Equip {3}."
+#[test]
+fn anduril_narsil_puts_counters_on_every_creature_and_two_with_the_blessing() {
+    let mut g = game();
+    let e = perm(&mut g, P0, "Andúril, Narsil Reforged");
+    let a = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    let b = token(&mut g, P0, 1);
+    g.perm_mut(e).attached = Some(a);
+    // an unequipped creature attacking does nothing
+    attack_triggers(&mut g, P0, &[b], P1);
+    assert_eq!((g.perm(a).plus, g.perm(b).plus), (0, 0));
+    // the equipped creature attacks: one counter on each (fewer than ten permanents)
+    attack_triggers(&mut g, P0, &[a], P1);
+    assert_eq!((g.perm(a).plus, g.perm(b).plus), (2, 2), "one counter each, doubled: Narsil is on Cloud, who doubles its trigger");
+}
+
+#[test]
+fn anduril_narsil_city_blessing_at_ten_permanents_is_kept() {
+    let mut g = game();
+    let e = perm(&mut g, P0, "Andúril, Narsil Reforged");
+    let a = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    g.perm_mut(e).attached = Some(a);
+    lands(&mut g, P0, "Plains", 8, false); // 3 permanents + 8 lands
+    let before = g.perm(a).plus;
+    attack_triggers(&mut g, P0, &[a], P1);
+    assert!(g.perm(a).plus - before >= 2, "two counters with the city's blessing");
+    // ascend is for the rest of the game: still two after dropping below ten
+    for l in g.player(P0).lands.clone() {
+        sim_core::engine::turn::remove_land(&mut g, P0, l);
+    }
+    let before = g.perm(a).plus;
+    attack_triggers(&mut g, P0, &[a], P1);
+    assert!(g.perm(a).plus - before >= 2, "the blessing stays");
+}
+
+#[test]
+fn anduril_narsil_is_cast_and_equipped_to_cloud() {
+    let mut g = game();
+    g.active = Some(P0);
+    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    token(&mut g, P0, 2);
+    let e = perm(&mut g, P0, "Andúril, Narsil Reforged");
+    lands(&mut g, P0, "Plains", 3, false);
+    let all = brain::main_options(&mut g, P0, false).unwrap();
+    let eq = all.iter().find(|o| o.label == "equip Andúril, Narsil Reforged").expect("equip offered");
+    run(&mut g, P0, eq);
+    assert_eq!(g.perm(e).attached, Some(cl), "equipped to Cloud for {{3}}");
+    // and from the hand
+    let mut g = game();
+    g.active = Some(P0);
+    perm(&mut g, P0, "Cloud, Midgar Mercenary");
+    hand(&mut g, P0, &["Andúril, Narsil Reforged"]);
+    lands(&mut g, P0, "Plains", 2, false);
+    let all = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(all.iter().any(|o| o.label.contains("Andúril, Narsil Reforged")), "castable");
+}

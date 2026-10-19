@@ -1,0 +1,117 @@
+Model status of the swapped-in cards (cardgen audit):
+  Dread Return: Full (hand-tagged)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sephfs's AI?
+  WARNING AI: Dread Return: priority 0 and no response path: the AI may never cast it
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Dread Return: drawn in 18.0% of games (36), cast in 52.8% of those (19)
+  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)
+
+1,200 games (current list and the swapped one, 500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 3 minutes
+  progress 100.0%  0m50s elapsed, ~0m00s left
+Swaps: Zombify -> Dread Return
+
+=== Sephiroth FS vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.6% ->  27.4%  (delta +4.8 pts, noise ±4.1, paired)   n=500
+               eliminated by (variant): Urza 19.8%  Zur the Enchanter 12.4%  Winota 13.8%  Kinnan 20.6%  Yawgmoth 6.0%
+VERDICT: BETTER under the loose profile (the only one run)
+
+--- What changed, by strength axis (sephfs) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sephfs: Sephiroth flipped (the fourth drain of a turn)
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          22.6% ->  27.4%  +4.8pt   ±5.5 
+    Rounds survived (or game length)                   8.63 ->   8.82   +0.19  ±0.45 
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.50 ->   0.49   -0.01  ±0.10 
+    Mana available on your turn 4                      4.27 ->   4.24   -0.03  ±0.14 
+    Mana available on your turn 6                      5.81 ->   5.78   -0.03  ±0.20 
+
+  Speed
+    Games where the game plan came online             26.0% ->  29.4%  +3.4pt   ±5.7 
+    Turn the game plan came online                     7.55 ->   7.68   +0.13  ±0.62 
+    Turn the commander first resolved                  4.28 ->   4.25   -0.03  ±0.24 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.29 ->  12.50   +0.21  ±1.15 
+    Tutors resolved per game                           0.39 ->   0.48   +0.09  ±0.09*
+    Spells cast per game                               9.87 ->  10.17   +0.30  ±0.81 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.37 ->   0.38   +0.01  ±0.08 
+    Board wipes cast                                   0.51 ->   0.47   -0.03  ±0.09 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.45 ->   0.50   +0.05  ±0.09 
+    Your spells countered                              0.56 ->   0.55   -0.01  ±0.10 
+
+  Threat & pressure
+    Damage dealt to opponents per game                28.66 ->  30.28   +1.62  ±3.85 
+      ...of which combat damage                       13.27 ->  13.63   +0.36  ±1.94 
+      ...of which magecraft / burn                     1.85 ->   2.33   +0.48  ±0.78 
+      ...of which drain triggers                      13.38 ->  14.07   +0.69  ±2.21 
+      ...of which other triggers                       0.03 ->   0.06   +0.03  ±0.10 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    better - Tutors resolved per game (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Dread Return                          21.2      48.1         9.5     51.9       68.6      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Zombify                               21.0      63.8         8.1     36.2       44.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        22.6      27.4     +4.8
+    rounds survived                                   8.63      8.82    +0.19
+    eliminated, % of games                            77.2      72.6     -4.6
+    opponents it eliminated, per game                 0.69      0.77    +0.08
+    damage dealt, per game                            28.5      30.1     +1.6
+    plan: Sephiroth flipped (the fourth drain of a turn)
+      plan online by turn 4, %                         1.8       2.8     +1.0
+      plan online by turn 6, %                        10.0      10.6     +0.6
+      plan online by turn 8, %                        18.4      20.6     +2.2
+      plan online by turn 12, %                       25.4      28.2     +2.8
+      plan online at all, %                           26.0      29.4     +3.4
+    commander resolved by turn 4, %                   52.8      55.6     +2.8
+    commander resolved by turn 6, %                   71.8      74.4     +2.6
+    commander removals, per game                      0.35      0.39    +0.04
+    lands on the battlefield, turn 4                  3.73      3.73    -0.00
+    lands on the battlefield, turn 8                  6.33      6.25    -0.08
+    mana available, turn 4                            4.27      4.24    -0.03
+    mana available, turn 8                            7.06      6.97    -0.09
+    cards in hand after the land drop, turn 4         5.62      5.64    +0.03
+    cards in hand after the land drop, turn 8         4.74      4.90    +0.16
+    wins by (current):  damage 97%, combo 3%
+    wins by (swapped):  damage 96%, combo 4%
+    eliminated by (current): Kinnan via combo 23.2%, Urza via combo 19.0%, Zur the Enchanter via combo 11.6%, Winota via combo 8.2%
+    eliminated by (swapped): Kinnan via combo 20.6%, Urza via combo 18.6%, Zur the Enchanter via combo 10.4%, Winota via combo 7.4%
+
+(51s total)

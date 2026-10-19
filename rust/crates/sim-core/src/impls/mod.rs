@@ -48,6 +48,7 @@ pub mod t0_giada;
 pub mod t0_anikthea;
 pub mod zur;
 pub mod threats;
+pub mod newcards_b;
 pub mod tymna_cards;
 pub mod tymna_partners;
 pub mod smaug;
@@ -96,6 +97,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t0_anikthea::register(&mut r, db)?;
     threats::register(&mut r, db)?;
     tymna_cards::register(&mut r, db)?;
+    newcards_b::register(&mut r, db)?;
     garland::register(&mut r, db)?;
     garland_cards::register(&mut r, db)?;
     garland_cards::register_more(&mut r, db)?;

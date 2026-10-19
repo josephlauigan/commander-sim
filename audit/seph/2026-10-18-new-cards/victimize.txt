@@ -1,0 +1,206 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Victimize [pool] S 2B :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Victimize: Full (sacrifice a creature: the two best creature cards return tapped)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by seph's AI?
+  WARNING AI: Victimize: priority 0 and no response path: the AI may never cast it
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Victimize: drawn in 27.5% of games (55), cast in 47.3% of those (26)
+  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)
+
+2,200 games (current list and the swapped one, 500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+Swaps: Dread Return -> Victimize
+
+=== Sephiroth vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.6% ->  36.4%  (delta +1.8 pts, noise ±4.6, paired)   n=500
+               eliminated by (variant): Aurelia 20.8%  Tergrid 16.0%  Korvold 8.0%  Atraxa 7.0%  Marwyn 11.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.6% ->  36.4%  +1.8pt   ±6.1 
+    Rounds survived (or game length)                  11.22 ->  11.47   +0.25  ±0.43 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.66 ->   0.67   +0.01  ±0.11 
+    Mana available on your turn 4                      4.07 ->   4.08   +0.00  ±0.16 
+    Mana available on your turn 6                      5.54 ->   5.53   -0.01  ±0.21 
+
+  Speed
+    Games where the game plan came online             79.6% ->  78.6%  -1.0pt   ±5.1 
+    Turn the game plan came online                     6.83 ->   6.98   +0.15  ±0.31 
+    Turn the commander first resolved                  8.50 ->   8.61   +0.11  ±0.41 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.42 ->  14.65   +0.24  ±0.85 
+    Tutors resolved per game                           0.50 ->   0.52   +0.03  ±0.08 
+    Spells cast per game                              12.87 ->  12.99   +0.13  ±1.03 
+
+  Interaction
+    Counterspells cast                                 0.43 ->   0.46   +0.03  ±0.08 
+    Spot removal cast                                  1.12 ->   1.18   +0.06  ±0.13 
+    Board wipes cast                                   0.30 ->   0.34   +0.04  ±0.07 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.09 ->   0.12   +0.03  ±0.05 
+    Your key permanents removed by opponents           0.74 ->   0.74   +0.01  ±0.13 
+    Your spells countered                              0.13 ->   0.12   -0.01  ±0.05 
+    Removed bombs brought back                         0.30 ->   0.26   -0.04  ±0.08 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.73 ->   2.63   -0.09  ±0.32 
+    Damage dealt to opponents per game                28.13 ->  32.45   +4.33  ±5.22 
+      ...of which combat damage                       18.26 ->  22.24   +3.98  ±4.26 
+      ...of which drain triggers                       8.57 ->   8.67   +0.10  ±1.60 
+      ...of which other triggers                       1.30 ->   1.54   +0.24  ±1.02 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Victimize                             27.6      48.6        10.8     51.4       82.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Dread Return                          28.4      71.8         9.7     28.2       66.7      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.6      36.4     +1.8
+    rounds survived                                  11.22     11.47    +0.25
+    eliminated, % of games                            65.2      62.8     -2.4
+    opponents it eliminated, per game                 0.86      0.95    +0.09
+    damage dealt, per game                            28.1      32.5     +4.3
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        10.4      10.0     -0.4
+      plan online by turn 6, %                        36.8      34.6     -2.2
+      plan online by turn 8, %                        64.2      61.0     -3.2
+      plan online by turn 12, %                       78.4      77.4     -1.0
+      plan online at all, %                           79.6      78.6     -1.0
+    commander resolved by turn 4, %                    2.2       2.2     +0.0
+    commander resolved by turn 6, %                   11.6      12.2     +0.6
+    commander removals, per game                      0.32      0.30    -0.02
+    lands on the battlefield, turn 4                  3.79      3.79    -0.00
+    lands on the battlefield, turn 8                  6.33      6.28    -0.05
+    mana available, turn 4                            4.07      4.08    +0.00
+    mana available, turn 8                            6.99      6.87    -0.11
+    cards in hand after the land drop, turn 4         5.48      5.47    -0.01
+    cards in hand after the land drop, turn 8         4.93      5.01    +0.08
+    wins by (current):  damage 61%, combo 38%, timeout 1%
+    wins by (swapped):  damage 60%, combo 38%, timeout 2%
+    eliminated by (current): Aurelia via combat 15.6%, Tergrid via combat 13.2%, Marwyn via combat 11.6%, Atraxa via combat 5.0%
+    eliminated by (swapped): Aurelia via combat 17.0%, Tergrid via combat 12.4%, Marwyn via combat 10.8%, Atraxa via combat 4.8%
+  progress 100.0%  2m54s elapsed, ~0m00s left
+Swaps: Dread Return -> Victimize
+
+=== Sephiroth vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.8% ->  29.6%  (delta -0.2 pts, noise ±4.1, paired)   n=500
+               eliminated by (variant): Heliod 20.0%  Yuriko 14.6%  Krenko 17.2%  Chulane 8.4%  Prosper 10.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.8% ->  29.6%  -0.2pt   ±5.8 
+    Rounds survived (or game length)                   9.83 ->   9.70   -0.12  ±0.41 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.06 
+    Missed land drops, turns 1-5                       0.57 ->   0.57   +0.00  ±0.10 
+    Mana available on your turn 4                      4.02 ->   4.02   +0.00  ±0.15 
+    Mana available on your turn 6                      5.63 ->   5.66   +0.03  ±0.21 
+
+  Speed
+    Games where the game plan came online             69.0% ->  68.4%  -0.6pt   ±5.9 
+    Turn the game plan came online                     6.49 ->   6.58   +0.09  ±0.30 
+    Turn the commander first resolved                  8.25 ->   8.15   -0.11  ±0.39 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.68 ->  12.46   -0.22  ±0.85 
+    Tutors resolved per game                           0.41 ->   0.42   +0.01  ±0.08 
+    Spells cast per game                              10.47 ->  10.04   -0.42  ±0.88 
+
+  Interaction
+    Counterspells cast                                 0.41 ->   0.39   -0.02  ±0.08 
+    Spot removal cast                                  0.86 ->   0.89   +0.02  ±0.12 
+    Board wipes cast                                   0.27 ->   0.24   -0.02  ±0.06 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.15 ->   0.12   -0.03  ±0.05 
+    Your key permanents removed by opponents           0.64 ->   0.62   -0.02  ±0.12 
+    Your spells countered                              0.37 ->   0.34   -0.03  ±0.08 
+    Removed bombs brought back                         0.16 ->   0.13   -0.03  ±0.05 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.16 ->   1.91   -0.25  ±0.27 
+    Damage dealt to opponents per game                24.72 ->  23.36   -1.36  ±4.36 
+      ...of which combat damage                       16.57 ->  15.28   -1.28  ±3.25 
+      ...of which drain triggers                       7.18 ->   6.49   -0.69  ±1.55 
+      ...of which other triggers                       0.97 ->   1.59   +0.62  ±1.01 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Victimize                             22.4      42.0         9.2     58.0       76.6      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Dread Return                          24.0      66.7         9.8     33.3       62.5      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.8      29.6     -0.2
+    rounds survived                                   9.83      9.70    -0.12
+    eliminated, % of games                            70.0      70.4     +0.4
+    opponents it eliminated, per game                 0.76      0.78    +0.02
+    damage dealt, per game                            24.7      23.4     -1.4
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                         9.8       9.0     -0.8
+      plan online by turn 6, %                        37.6      35.4     -2.2
+      plan online by turn 8, %                        57.6      57.6     +0.0
+      plan online by turn 12, %                       68.6      68.0     -0.6
+      plan online at all, %                           69.0      68.4     -0.6
+    commander resolved by turn 4, %                    1.2       1.2     +0.0
+    commander resolved by turn 6, %                   10.0      11.4     +1.4
+    commander removals, per game                      0.23      0.23    +0.00
+    lands on the battlefield, turn 4                  3.77      3.78    +0.00
+    lands on the battlefield, turn 8                  6.53      6.64    +0.11
+    mana available, turn 4                            4.02      4.02    +0.00
+    mana available, turn 8                            7.07      7.20    +0.13
+    cards in hand after the land drop, turn 4         5.66      5.66    +0.00
+    cards in hand after the land drop, turn 8         5.48      5.53    +0.04
+    wins by (current):  damage 68%, combo 32%
+    wins by (swapped):  damage 64%, combo 36%
+    eliminated by (current): Heliod via combo 18.4%, Krenko via combat 13.2%, Chulane via combat 7.4%, Yuriko via triggers 6.4%
+    eliminated by (swapped): Heliod via combo 17.6%, Krenko via combat 12.6%, Yuriko via triggers 8.6%, Prosper via combo 7.0%
+
+(175s total)

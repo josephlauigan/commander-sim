@@ -495,3 +495,37 @@ fn zombify_returns_a_creature_from_our_graveyard() {
     assert!(has(&g, P0, "Massacre Wurm"));
     assert!(!has(&g, P0, "Dread Slaver"));
 }
+
+// ================================================================== Dread Return (JD's 10/18 swap test)
+/// Dread Return: "Return target creature card from your graveyard to the battlefield. Flashback—Sacrifice three
+/// creatures." Cast from hand it takes from p's own graveyard only, never an opponent's
+#[test]
+fn dread_return_from_hand_takes_only_from_your_graveyard() {
+    let mut g = game();
+    lands(&mut g, P0, "Swamp", 4, false);
+    bury(&mut g, P1, "Grave Titan"); // the better card, but in the opponent's graveyard
+    bury(&mut g, P0, "Gray Merchant of Asphodel");
+    cast_spell(&mut g, P0, "Dread Return");
+    assert!(has(&g, P0, "Gray Merchant of Asphodel"), "its own creature card comes back");
+    assert!(in_gy(&g, P1, "Grave Titan"), "the opponent's graveyard is out of reach");
+}
+
+/// the flashback: offered on p's turn with three spare bodies and a creature card worth it in the graveyard; the
+/// three are sacrificed, the creature returns, and Dread Return is exiled
+#[test]
+fn dread_return_flashback_sacrifices_three_and_is_exiled() {
+    let mut g = game();
+    g.active = Some(P0);
+    bury(&mut g, P0, "Dread Return");
+    bury(&mut g, P0, "Grave Titan");
+    let a = token(&mut g, P0, 1);
+    let b = token(&mut g, P0, 1);
+    assert!(opt(&mut g, P0, "Dread Return from the graveyard").is_none(), "two bodies: no flashback");
+    let c = token(&mut g, P0, 1);
+    let o = opt(&mut g, P0, "Dread Return from the graveyard").expect("three bodies: flashback offered");
+    assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(!alive(&g, a) && !alive(&g, b) && !alive(&g, c), "the three tokens were sacrificed");
+    assert!(has(&g, P0, "Grave Titan"), "Grave Titan returned");
+    assert!(!in_gy(&g, P0, "Dread Return"), "Dread Return left the graveyard");
+    assert!(g.player(P0).exile.iter().any(|&x| &*g.db.get(x).name == "Dread Return"), "flashback exiles it");
+}

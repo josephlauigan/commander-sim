@@ -65,5 +65,5 @@
 1 Wander Off (sos) 104
 1 Woe Strider (clb) 774
 1 Yahenni, Undying Partisan (lcc) 214
-1 Zombify (soa) 36
+1 Dread Return (dmr) 302
 1 Zulaport Cutthroat (soc) 233

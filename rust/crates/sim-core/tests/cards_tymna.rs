@@ -1521,3 +1521,89 @@ fn godo_prefers_the_legendary_heirloom_to_the_helm() {
     let heirloom = on_bf(&g, P0, "Hero's Heirloom").expect("+2/+1, trample and haste on a legendary creature");
     assert_eq!(g.perm(heirloom).attached, Some(godo));
 }
+
+// ======================================================== Cecil, Dark Knight // Cecil, Redeemed Paladin
+/// Cecil, Dark Knight: "Deathtouch. Darkness — Whenever Cecil deals damage, you lose that much life. Then if your life
+/// total is less than or equal to half your starting life total, untap Cecil and transform it." Redeemed Paladin: 4/4,
+/// "Lifelink. Protect — Whenever Cecil attacks, other attacking creatures gain indestructible until end of turn."
+#[test]
+fn cecil_loses_life_per_damage_and_flips_at_half_of_forty() {
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Cecil, Dark Knight");
+    assert!(g.perm(c).dt && values::epow(&g, c) == 2 && values::etgh(&g, c) == 3);
+    g.player_mut(P0).life = 23;
+    combat::resolve_combat(&mut g, P0, &[c], P1, &[c]).unwrap();
+    assert_eq!(g.player(P1).life, 38, "2 damage to the opponent");
+    assert_eq!(g.player(P0).life, 21, "Cecil's controller loses 2");
+    assert!(!g.perm(c).data.truthy(DataKey::Flipped), "21 is more than half of 40");
+    g.perm_mut(c).tapped = false;
+    combat::resolve_combat(&mut g, P0, &[c], P1, &[c]).unwrap();
+    assert_eq!(g.player(P0).life, 19, "19 is 20 or less");
+    assert!(g.perm(c).data.truthy(DataKey::Flipped));
+    assert!(!g.perm(c).tapped, "untapped by the transform");
+    assert_eq!((values::epow(&g, c), values::etgh(&g, c)), (4, 4));
+    assert!(g.perm(c).lifelink && !g.perm(c).dt);
+    // the 4/4 lifelinker: damage no longer costs life; it gains it
+    combat::resolve_combat(&mut g, P0, &[c], P1, &[c]).unwrap();
+    assert_eq!(g.player(P0).life, 23);
+}
+
+#[test]
+fn cecil_redeemed_gives_the_other_attackers_indestructible_this_turn() {
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Cecil, Dark Knight");
+    let t = token(&mut g, P0, 1);
+    combat::attack_triggers(&mut g, P0, &[c, t], P1).unwrap();
+    assert!(!values::indestructible(&g, t), "the Dark Knight protects nobody");
+    g.player_mut(P0).life = 20;
+    combat::resolve_combat(&mut g, P0, &[c], P1, &[c]).unwrap(); // flips
+    g.perm_mut(c).tapped = false;
+    combat::attack_triggers(&mut g, P0, &[c, t], P1).unwrap();
+    assert!(values::indestructible(&g, t), "the other attacker");
+    assert!(!values::indestructible(&g, c), "not Cecil himself");
+}
+
+// ======================================================== Lightning, Army of One
+/// Lightning, Army of One: "First strike, trample, lifelink. Stagger — Whenever Lightning deals combat damage to a
+/// player, until your next turn, if a source would deal damage to that player or a permanent that player controls, it
+/// deals double that damage instead."
+#[test]
+fn lightning_stagger_doubles_all_damage_to_the_player_and_their_permanents_until_its_next_turn() {
+    use sim_core::engine::life::lose_life;
+    let mut g = tbl();
+    let l = perm(&mut g, P0, "Lightning, Army of One");
+    let bear = token(&mut g, P1, 1);
+    g.perm_mut(bear).tgh = 4;
+    // before it connects: nothing doubles
+    lose_life(&mut g, P1, 3, Some(P2), "burn", Some(true)).unwrap();
+    assert_eq!(g.player(P1).life, 37);
+    combat::resolve_combat(&mut g, P0, &[l], P1, &[l]).unwrap();
+    assert_eq!(g.player(P1).life, 34, "Lightning's own 3 combat damage isn't doubled");
+    assert_eq!(g.player(P0).life, 43, "lifelink");
+    // noncombat damage from any source, to the player: doubled; to a permanent: doubled
+    lose_life(&mut g, P1, 3, Some(P2), "burn", Some(true)).unwrap();
+    assert_eq!(g.player(P1).life, 28);
+    lose_life(&mut g, P1, 3, Some(P2), "drain", Some(false)).unwrap();
+    assert_eq!(g.player(P1).life, 25, "life loss isn't damage");
+    removal::apply_removal(&mut g, Some(P2), bear, "dmg2", None).unwrap();
+    assert!(!g.perm(bear).on_bf, "2 damage doubled kills the 4-toughness token");
+    // other players are unaffected
+    lose_life(&mut g, P2, 3, Some(P1), "burn", Some(true)).unwrap();
+    assert_eq!(g.player(P2).life, 37);
+    // damage to a creature in combat counts too: a 2-power blocker needs 2 damage, doubled 4
+    // until P0's next turn begins: then it stops
+    g.player_mut(P0).turns += 1;
+    lose_life(&mut g, P1, 3, Some(P2), "burn", Some(true)).unwrap();
+    assert_eq!(g.player(P1).life, 22);
+}
+
+#[test]
+fn cecil_and_lightning_are_cast_early_cheap_attackers() {
+    let mut g = table(&["kraum", "veyran", "seph"]);
+    for n in ["Cecil, Dark Knight", "Lightning, Army of One"] {
+        let c = card(&g, n);
+        assert!(decks::deck_prio(&g, P0, c) >= 70, "{n}");
+    }
+    g.player_mut(P0).life = 24; // Cecil would flip within a hit or two with no way back: he waits
+    assert!(decks::deck_prio(&g, P0, card(&g, "Cecil, Dark Knight")) < 50);
+}

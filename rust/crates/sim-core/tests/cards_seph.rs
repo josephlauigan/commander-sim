@@ -1111,3 +1111,35 @@ fn soul_stone_harness_and_upkeep_return() {
     assert!(!g.player(P0).gy.contains(&titan));
     assert!(named(&g, P0, "Grave Titan").is_some());
 }
+
+/// The Mind Stone: "Indestructible. {T}: Add {W}. {5}{W}, {T}: Harness The Mind Stone. ∞ — At the beginning of your
+/// end step, exile up to one other target nonland permanent you control, then return that card to the battlefield
+/// under its owner's control."
+#[test]
+fn mind_stone_harness_and_end_step_blink() {
+    let mut g = table(&["seph", "veyran"]);
+    let st = perm(&mut g, P0, "The Mind Stone");
+    assert!(values::indestructible(&g, st));
+    let titan = perm(&mut g, P0, "Grave Titan");
+    // five lands: the Stone taps as part of the cost, so its own {W} can't make the sixth mana
+    lands(&mut g, P0, "Plains", 5, false);
+    assert!(!labels(&options(&mut g, P0, true)).contains(&"harness The Mind Stone".to_string()));
+    // unharnessed, its end step does nothing
+    hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P0 }).unwrap();
+    assert!(on_bf(&g, titan));
+    lands(&mut g, P0, "Plains", 1, false);
+    let opts = options(&mut g, P0, true);
+    let o = opts.iter().find(|o| o.label == "harness The Mind Stone").expect("harness offered");
+    assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(g.perm(st).tapped && g.perm(st).data.truthy(DataKey::Harnessed));
+    let zombies = |g: &Game| g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count();
+    let before = zombies(&g); // Grave Titan entered once already
+    // an opponent's end step does nothing; yours blinks Grave Titan (a new object: two more Zombies), not the Stone
+    hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P1 }).unwrap();
+    assert_eq!(zombies(&g), before);
+    hooks::fire_trigger(&mut g, Event::EndStep, Call::Player { p: P0 }).unwrap();
+    assert!(!on_bf(&g, titan), "the old Grave Titan left");
+    assert!(named(&g, P0, "Grave Titan").is_some());
+    assert_eq!(zombies(&g), before + 2);
+    assert!(on_bf(&g, st) && g.perm(st).data.truthy(DataKey::Harnessed), "the Stone wasn't blinked");
+}
