@@ -1,163 +1,129 @@
-//! Practice mode's server, in Rust (documents/rust-rewrite-scope.md, phases 9–13). For now (M6) it is the iOS proof:
-//! the iPad app (ios-shell/) links this library, calls `practice_start` to start a server on the device, and shows
-//! `http://127.0.0.1:<port>` in a web view, as the practice app will. The page plays games with the Rust engine, so
-//! it shows the engine and its card data working on the device. The table, the JSON API, saving and the rest come
-//! with phases 9–13.
+//! Practice mode's server, in Rust. The commander-practice binary (`main.rs`) runs it on a computer; the iPad app
+//! (`ios-shell/`) links this library as a static library and calls the C functions below: `practice_start` starts the
+//! server on the device and the app shows `http://127.0.0.1:<port>` in a web view.
 
+pub mod advisor;
+pub mod bundle;
 pub mod catalog;
 pub mod images;
 pub mod server;
-pub mod advisor;
 pub mod session;
 pub mod shadow;
 pub mod text;
 pub mod view;
 
-use sim_core::run::{Engine, settings, summary};
+use server::{Config, ServerHandle};
+use session::api_impl::RealSessions;
+use sim_core::run::Engine;
 use std::ffi::{CStr, c_char};
-use std::io::{BufRead, BufReader, Write};
-use std::net::{TcpListener, TcpStream};
 use std::path::{Path, PathBuf};
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::{Arc, OnceLock};
-use std::time::Instant;
+use std::sync::{Arc, Mutex};
 
-/// The server's state: where the card data is, the engine once loaded, and the next game's seed.
-struct Server {
-    data: PathBuf,
-    engine: OnceLock<Result<Engine, String>>,
-    seed: AtomicU64,
+/// the running server (the iPad app has one) and what it needs to restart
+struct Running {
+    handle: ServerHandle,
+    cfg: Config,
+    engine: Arc<Engine>,
 }
 
-impl Server {
-    fn engine(&self) -> Result<&Engine, String> {
-        self.engine.get_or_init(|| Engine::load(&self.data)).as_ref().map_err(|e| e.clone())
+static RUNNING: Mutex<Option<Running>> = Mutex::new(None);
+
+fn running() -> std::sync::MutexGuard<'static, Option<Running>> {
+    RUNNING.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+/// Start the app's server: copy the bundled data into `app_dir` when this build's is new, load the engine from
+/// there and listen on 127.0.0.1:`port` (0: any free port). Returns the port. A server already running is stopped
+/// first. For Rust callers (the C function and the tests).
+pub fn start_app(bundle_dir: &Path, app_dir: &Path, port: u16) -> Result<u16, String> {
+    let data = app_dir.join("data");
+    std::fs::create_dir_all(app_dir).map_err(|e| format!("{}: {e}", app_dir.display()))?;
+    bundle::sync_data(bundle_dir, app_dir).map_err(|e| format!("copying the bundled data: {e}"))?;
+    let engine = Arc::new(Engine::load(&data)?);
+    let cfg = Config {
+        saves: app_dir.join("saves"),
+        data: data.clone(),
+        static_dir: bundle_dir.join("static"),
+        lan: false,
+        app: true,
+        port,
+    };
+    let mut slot = running();
+    if let Some(old) = slot.take() {
+        old.handle.stop();
     }
-}
-
-/// Start the server on 127.0.0.1:`port` (0: any free port) in a background thread, with the card data
-/// (cards.json, decks.json) in `data_dir`. Returns the port it listens on, or 0 if it couldn't start.
-///
-/// # Safety
-/// `data_dir` must be a valid NUL-terminated string.
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn practice_start(data_dir: *const c_char, port: u16) -> u16 {
-    if data_dir.is_null() {
-        return 0;
-    }
-    let data = unsafe { CStr::from_ptr(data_dir) }.to_string_lossy().into_owned();
-    start(Path::new(&data), port).unwrap_or(0)
-}
-
-/// `practice_start` for Rust callers (the commander-practice binary)
-pub fn start(data: &Path, port: u16) -> Result<u16, String> {
-    let listener = TcpListener::bind(("127.0.0.1", port)).map_err(|e| e.to_string())?;
-    let port = listener.local_addr().map_err(|e| e.to_string())?.port();
-    let server = Arc::new(Server { data: data.to_path_buf(), engine: OnceLock::new(), seed: AtomicU64::new(500_000) });
-    std::thread::spawn(move || {
-        for stream in listener.incoming().flatten() {
-            let server = server.clone();
-            std::thread::spawn(move || {
-                let _ = serve(&server, stream);
-            });
-        }
-    });
+    let handle = server::start_with(cfg.clone(), Arc::new(RealSessions { engine: engine.clone() }))?;
+    server::fetch_commanders(&handle, &data);
+    let port = handle.port;
+    *slot = Some(Running { handle, cfg, engine });
     Ok(port)
 }
 
-fn serve(server: &Server, mut stream: TcpStream) -> std::io::Result<()> {
-    let mut line = String::new();
-    let mut reader = BufReader::new(stream.try_clone()?);
-    reader.read_line(&mut line)?;
-    loop {
-        // the rest of the request's headers
-        let mut h = String::new();
-        if reader.read_line(&mut h)? == 0 || h == "\r\n" || h == "\n" {
-            break;
+/// Stop the server (it ends the game in progress; the autosave stays for *Continue*). Returns whether one ran.
+pub fn stop_app() -> bool {
+    match running().take() {
+        Some(r) => {
+            r.handle.stop();
+            true
         }
+        None => false,
     }
-    let path = line.split_whitespace().nth(1).unwrap_or("/");
-    let (status, kind, body) = match path {
-        "/" => ("200 OK", "text/html; charset=utf-8", PAGE.to_string()),
-        "/game" => match play(server) {
-            Ok(json) => ("200 OK", "application/json", json),
-            Err(e) => ("500 Internal Server Error", "application/json", serde_json::json!({ "error": e }).to_string()),
-        },
-        _ => ("404 Not Found", "text/plain", "not found".to_string()),
+}
+
+/// Restart the server listening on the local network too (`lan`) or on this device only. Because the old listener
+/// may still hold its port for a moment, the new server takes a free port: returns it.
+pub fn set_lan_app(lan: bool) -> Result<u16, String> {
+    let mut slot = running();
+    let r = slot.as_mut().ok_or("the server isn't running")?;
+    if r.cfg.lan == lan {
+        return Ok(r.handle.port);
+    }
+    r.handle.stop();
+    let cfg = Config { lan, port: 0, ..r.cfg.clone() };
+    let handle = server::start_with(cfg.clone(), Arc::new(RealSessions { engine: r.engine.clone() }))?;
+    r.handle = handle;
+    r.cfg = cfg;
+    Ok(r.handle.port)
+}
+
+fn path_arg(p: *const c_char) -> Option<PathBuf> {
+    if p.is_null() {
+        return None;
+    }
+    Some(PathBuf::from(unsafe { CStr::from_ptr(p) }.to_string_lossy().into_owned()))
+}
+
+/// Start practice mode's server inside the app. `bundle_dir` is the read-only `AppData` folder in the app bundle (`data/`,
+/// `decklists/`, `static/`), `app_dir` the writable Application Support folder (the data is copied to `app_dir/data`,
+/// saved games go to `app_dir/saves`). Listens on 127.0.0.1:`port` (0: any free port). Returns the port, or 0 if it
+/// couldn't start (the reason goes to stderr).
+///
+/// # Safety
+/// `bundle_dir` and `app_dir` must be valid NUL-terminated strings.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn practice_start(bundle_dir: *const c_char, app_dir: *const c_char, port: u16) -> u16 {
+    let (Some(b), Some(a)) = (path_arg(bundle_dir), path_arg(app_dir)) else {
+        eprintln!("practice_start: a folder is missing");
+        return 0;
     };
-    let head = format!(
-        "HTTP/1.1 {status}\r\nContent-Type: {kind}\r\nContent-Length: {}\r\nCache-Control: no-store\r\nConnection: close\r\n\r\n",
-        body.len()
-    );
-    stream.write_all(head.as_bytes())?;
-    stream.write_all(body.as_bytes())
-}
-
-/// one game of Sauron against three Tier 1 decks with the look-ahead AI, as JSON: who won, how, and how long it took
-fn play(server: &Server) -> Result<String, String> {
-    let e = server.engine()?;
-    let seed = server.seed.fetch_add(1, Ordering::Relaxed);
-    let mut keys: Vec<&str> = vec!["sauron"];
-    let mut t1: Vec<&str> = e.decks.values().filter(|d| d.tier.as_deref() == Some("t1")).map(|d| &*d.key).collect();
-    t1.sort();
-    let k = (seed as usize) % t1.len();
-    keys.extend((0..3).map(|i| t1[(k + i) % t1.len()]));
-    let seats = keys
-        .iter()
-        .map(|&k| {
-            let d = &e.decks[k];
-            e.seat(k, &d.cards, &d.commander)
-        })
-        .collect::<Result<Vec<_>, _>>()?;
-    let t0 = Instant::now();
-    let g = e.play(seed, &seats, settings("loose", "lookahead", 1.0)?, 20, false);
-    let ms = t0.elapsed().as_secs_f64() * 1000.0;
-    let s = summary(&g);
-    let names: Vec<String> = keys.iter().map(|&k| e.decks[k].name.clone()).collect();
-    let winner = s.winner.as_ref().map(|w| e.decks[w].name.clone());
-    Ok(serde_json::json!({
-        "seed": seed, "seats": names, "winner": winner, "wintype": s.wintype, "rounds": s.round,
-        "decisions": s.search_n, "ms": ms.round(), "cards": e.db.len(),
+    start_app(&b, &a, port).unwrap_or_else(|e| {
+        eprintln!("practice_start: {e}");
+        0
     })
-    .to_string())
 }
 
-/// The page: true black, as the iPad app is. It asks /game for a game and shows how it went.
-const PAGE: &str = r#"<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Commander Practice</title>
-<style>
-  :root { color-scheme: dark; }
-  body { margin: 0; background: #000; color: #e8e6e3; font: 17px/1.5 -apple-system, system-ui, sans-serif;
-         padding: max(24px, env(safe-area-inset-top)) 24px 24px; }
-  h1 { font-size: 26px; font-weight: 600; margin: 0 0 4px; }
-  p.sub { color: #9a9790; margin: 0 0 24px; }
-  button { font: inherit; color: #000; background: #e8e6e3; border: 0; border-radius: 10px; padding: 12px 20px; }
-  button:disabled { opacity: .5; }
-  ol { padding-left: 20px; } li { margin: 10px 0; }
-  .muted { color: #9a9790; }
-</style></head>
-<body>
-<h1>Commander Practice</h1>
-<p class="sub">The Rust engine, running on this device. The practice table comes later; this page checks that the
-engine and its card data work here.</p>
-<button id="go">Play a game</button>
-<ol id="games"></ol>
-<script>
-const go = document.getElementById('go'), list = document.getElementById('games');
-go.onclick = async () => {
-  go.disabled = true; go.textContent = 'Playing…';
-  try {
-    const r = await (await fetch('/game')).json();
-    const li = document.createElement('li');
-    li.innerHTML = r.error ? 'Error: ' + r.error :
-      `<b>${r.winner ?? 'No one'}</b> won (${r.wintype ?? 'damage'}) in ${r.rounds} rounds` +
-      `<br><span class="muted">${r.seats.join(', ')} · seed ${r.seed} · ${r.decisions} look-ahead decisions · ` +
-      `${(r.ms / 1000).toFixed(1)} s · ${r.cards} cards loaded</span>`;
-    list.prepend(li);
-  } finally { go.disabled = false; go.textContent = 'Play a game'; }
-};
-</script>
-</body></html>
-"#;
+/// Stop the server. Safe to call when none runs.
+#[unsafe(no_mangle)]
+pub extern "C" fn practice_stop() {
+    stop_app();
+}
+
+/// The hidden two-player option: listen on the local network too (`true`) or on this device only. Restarts the
+/// server on a new port and returns it (the app reloads its page from there), or 0 on failure.
+#[unsafe(no_mangle)]
+pub extern "C" fn practice_set_lan(lan: bool) -> u16 {
+    set_lan_app(lan).unwrap_or_else(|e| {
+        eprintln!("practice_set_lan: {e}");
+        0
+    })
+}
