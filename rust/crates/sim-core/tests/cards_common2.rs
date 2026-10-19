@@ -549,3 +549,16 @@ fn rishkar_puts_counters_and_makes_mana() {
     assert!(units.iter().any(|u| u.src == mana::Source::Perm(zombie)));
     assert!(!units.iter().any(|u| u.src == mana::Source::Perm(b)));
 }
+
+// ------------------------------------------------------------------ Solitude
+#[test]
+fn solitude_exiles_a_creature_and_its_controller_gains_life_equal_to_its_power() {
+    let mut g = table(&[LP, TATYOVA]);
+    let t = perm(&mut g, P1, "Sheoldred, the Apocalypse");
+    let power = values::epow(&g, t);
+    let life = g.player(P1).life;
+    let s = take(&mut g, P0, "Solitude");
+    zones::enter(&mut g, P0, s, zones::Enter::default()).unwrap();
+    assert!(!g.perm(t).on_bf);
+    assert_eq!(g.player(P1).life, life + power);
+}
