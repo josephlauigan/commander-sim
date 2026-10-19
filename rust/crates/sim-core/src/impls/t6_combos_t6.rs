@@ -523,26 +523,29 @@ impl Plan {
 
 /// Sisay fetches the next planned piece (a step of the Sisay lines)
 fn fetch_next(g: &mut Game, p: PlayerId, plan: Option<Plan>) -> Res<bool> {
-    let Some(plan) = plan else { return Ok(false) };
+    let Some(plan) = plan else {
+        crate::glog!(g, "    (the line is no longer ready: the plan found no way to finish it)");
+        return Ok(false);
+    };
     let Some(&c) = plan.fetches.first() else { return Ok(true) };
     super::legends::sisay_fetch_card(g, p, c)
 }
 
 fn fetch_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
-    fetch_next(g, p, ddr_plan(g, p))
+    fetch_next(g, p, ddr_plan(g, p, true))
 }
 
 fn fetch_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
-    fetch_next(g, p, uni_plan(g, p))
+    fetch_next(g, p, uni_plan(g, p, true))
 }
 
 /// plan slot hook: does the ready Sisay line need a spell cast (so a spell counter could stop it)?
 /// None = the line is not ready
 pub fn line_needs_cast(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     let plan = if combo.contains("DDR") {
-        ddr_plan(g, p)
+        ddr_plan(g, p, false)
     } else if combo.contains("Flash Unicorn") {
-        uni_plan(g, p)
+        uni_plan(g, p, false)
     } else {
         None
     }?;
@@ -550,7 +553,9 @@ pub fn line_needs_cast(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
 }
 
 /// (the cards to cast from hand, in order) for Ioreth + Marvin + a legend that taps for mana + Mount Doom, or None
-fn ddr_plan(g: &Game, p: PlayerId) -> Option<Plan> {
+/// `in_line`: a step of the line already running: the mana was checked when it began (each fetch or cast pays for itself and
+/// fails if it can't), and a piece fetched on the way (a haste legend) changes what the plan would need now
+fn ddr_plan(g: &Game, p: PlayerId, in_line: bool) -> Option<Plan> {
     let mut plan = Plan::default();
     let (ioreth, marvin) = (bf(g, p, IORETH), bf(g, p, MARVIN));
     if ioreth.is_none() {
@@ -608,15 +613,15 @@ fn ddr_plan(g: &Game, p: PlayerId) -> Option<Plan> {
     if !usable(g, haste) {
         return None;
     }
-    (doom_piece(g, p, &mut plan) && plan.affordable(g, p, 0)).then_some(plan)
+    (doom_piece(g, p, &mut plan) && (in_line || plan.affordable(g, p, 0))).then_some(plan)
 }
 
 fn ready_ddr(g: &Game, p: PlayerId) -> Ready {
-    ready_with(ddr_plan(g, p).is_some())
+    ready_with(ddr_plan(g, p, false).is_some())
 }
 
 fn cast_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(plan) = ddr_plan(g, p) else { return Ok(false) };
+    let Some(plan) = ddr_plan(g, p, true) else { return Ok(false) };
     let Some(&c) = plan.casts.first() else { return Ok(true) };
     cast_named(g, p, c)
 }
@@ -687,7 +692,10 @@ fn colors_among(g: &Game, p: PlayerId, casts: &[CardId]) -> u32 {
     cs.count()
 }
 
-fn uni_plan(g: &Game, p: PlayerId) -> Option<Plan> {
+/// `in_line`: a step of the line already running. The mana for earlier steps may have tapped the Tender, and Derevi's
+/// enter trigger untaps it again, so a tapped Tender no longer makes the line not ready (it stopped Unicorn "for no
+/// game reason" after the first fetch)
+fn uni_plan(g: &Game, p: PlayerId, in_line: bool) -> Option<Plan> {
     let mut plan = Plan::default();
     if bf(g, p, DEREVI).is_none() {
         plan.add(get_piece(g, p, &[DEREVI])?);
@@ -699,17 +707,17 @@ fn uni_plan(g: &Game, p: PlayerId) -> Option<Plan> {
         creatures(g, p) + plan.casts.len() + plan.fetches.len() >= 4 // 4 G a tap, {3} a blink
     } else {
         let haste = super::t6_legends1b::ability_haste(g, p);
-        bf(g, p, TENDER).is_some_and(|m| can_tap(g, m, haste, false)) && colors_among(g, p, &plan.casts) >= 4
+        bf(g, p, TENDER).is_some_and(|m| can_tap(g, m, haste, in_line)) && colors_among(g, p, &plan.casts) >= 4
     };
     (engine_ok && doom_piece(g, p, &mut plan) && plan.affordable(g, p, 3)).then_some(plan)
 }
 
 fn ready_unicorn(g: &Game, p: PlayerId) -> Ready {
-    ready_with(uni_plan(g, p).is_some())
+    ready_with(uni_plan(g, p, false).is_some())
 }
 
 fn cast_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(plan) = uni_plan(g, p) else { return Ok(false) };
+    let Some(plan) = uni_plan(g, p, true) else { return Ok(false) };
     let Some(&c) = plan.casts.first() else { return Ok(true) };
     cast_named(g, p, c)
 }

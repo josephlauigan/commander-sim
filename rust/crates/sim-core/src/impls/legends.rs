@@ -396,7 +396,9 @@ pub fn sisay_pick(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
 /// {W}{U}{B}{R}{G}: a legendary permanent card with mana value below Sisay's power onto the battlefield. On your turn,
 /// never while Jodah could be cast with the same mana
 fn sisay(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != owner(g, src) || post.is_none() || g.active != Some(p) || !can_pay(g, p, 0, "WUBRG", false) {
+    // Tier 6 also offers it in the end-of-turn window (`post` None: instant speed, the mana untaps next); other decks only on their own turn
+    let eot = post.is_none() && crate::impls::t6_plans::is_t6(g, p);
+    if p != owner(g, src) || (!eot && (post.is_none() || g.active != Some(p))) || !can_pay(g, p, 0, "WUBRG", false) {
         return Ok(vec![]);
     }
     if jodah_payable(g, p) {
