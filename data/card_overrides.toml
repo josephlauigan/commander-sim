@@ -8281,8 +8281,8 @@ note = "2/3 deathtouch; whenever it deals damage (combat, to a player or a creat
 
 ["Lightning, Army of One"]
 kws = ["first strike", "trample", "lifelink"]
-status = "Full"
-note = "first strike, trample, lifelink; when it deals combat damage to a player, until its controller's next turn all damage to that player and their permanents is doubled (player life loss in life.rs, damage removal in removal.rs, combat kills in combat.rs; the lifelink of the doubled hit still counts the undoubled damage)"
+status = "Approximate"
+note = "first strike, trample, lifelink; Stagger on combat damage to a player doubles, until its controller's next turn, all damage to that player (combat and noncombat) and to their permanents (removal damage, combat kills). Gaps: sweepers with a fixed damage kind, the AI's combat estimates, lifelink of a doubled hit, and attackers resolved before Lightning in the same damage step are not doubled"
 
 ["Marvin, Murderous Mimic"]
 status = "Partial"

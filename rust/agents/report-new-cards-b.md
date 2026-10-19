@@ -7,7 +7,7 @@ Code: `impls/newcards_b.rs` (all three cards + AI priorities), registered in `im
 - **Cecil, Dark Knight** (Full). Darkness via `cecil_deals`, called from combat.rs for every combat damage event (unblocked player
   damage after lifelink; blocked damage both ways): life loss (not damage), flip at life <= 20: untap, 4/4, lifelink, no deathtouch
   (`DataKey::Flipped`). Protect: attack hook gives the other attackers `eot_kw indestructible`. Kraum prio 76 (40 when life <= 26 and unflipped).
-- **Lightning, Army of One** (Approximate in practice: marked Full in overrides; gaps below). Stagger = `Player::stagger: Option<(controller, controller turns)>`,
+- **Lightning, Army of One** (Approximate; gaps below). Stagger = `Player::stagger: Option<(controller, controller turns)>`,
   active while that controller's turn count is unchanged (so it expires when their next turn begins). `engine::life::stagger_mult` doubles:
   `lose_life` damage (all player damage, combat and noncombat), `apply_removal` dmgN, and the combat kill checks (both directions).
   Gaps: sweepers that kill by fixed damage (dmg13, Austere-style kinds), AI estimates in combat.rs, lifelink of a doubled hit counts the
