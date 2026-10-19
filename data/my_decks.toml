@@ -50,13 +50,6 @@ commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
 ident = "UBR"
 tiers = ["t3"]
 
-[titania]
-file = "JD/titania-lands.md"
-name = "Titania"
-commander = "Titania, Protector of Argoth"
-ident = "G"
-tiers = ["t1", "t2", "t3"]
-
 [sheoldred]
 file = "JD/sheoldred-mono-black.md"
 name = "Sheoldred"
