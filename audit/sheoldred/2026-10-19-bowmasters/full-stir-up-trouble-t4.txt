@@ -1,0 +1,118 @@
+Model status of the swapped-in cards (cardgen audit):
+  Orcish Bowmasters: Full (1 damage on entry and per extra draw of an opponent, amassing an Orc Army)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sheoldred's AI?
+  AI: Orcish Bowmasters: priority 44 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t4), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 4 (Low B4)
+  dry run: Orcish Bowmasters: drawn in 22.5% of games (45), cast in 66.7% of those (30)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 10 minutes
+  progress 100.0%  4m55s elapsed, ~0m00s left
+Swaps: Stir Up Trouble -> Orcish Bowmasters
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.8% ->  32.2%  (delta +0.5 pts, noise ±2.4, paired)   n=2000
+               eliminated by (variant): Yuriko 12.6%  Chulane 8.3%  Heliod 18.7%  Prosper 11.2%  Krenko 16.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.8% ->  32.2%  +0.5pt   ±3.0 
+    Rounds survived (or game length)                   9.72 ->   9.72   +0.01  ±0.20 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.54 ->   0.54   +0.00  ±0.05 
+    Mana available on your turn 4                      4.12 ->   4.11   -0.01  ±0.05 
+    Mana available on your turn 6                      5.61 ->   5.58   -0.03  ±0.08 
+
+  Speed
+    Games where the game plan came online             81.0% ->  80.8%  -0.2pt   ±2.5 
+    Turn the game plan came online                     5.97 ->   6.03   +0.05  ±0.14 
+    Turn the commander first resolved                  5.89 ->   5.95   +0.06  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.81 ->  14.64   -0.17  ±0.48 
+    Tutors resolved per game                           0.00 ->   0.00   -0.00  ±0.00 
+    Spells cast per game                              10.97 ->  10.87   -0.09  ±0.36 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.60 ->   1.42   -0.18  ±0.08*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.67 ->   0.67   +0.01  ±0.05 
+    Your spells countered                              0.34 ->   0.34   -0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                47.03 ->  47.95   +0.92  ±2.52 
+      ...of which combat damage                        9.04 ->   9.83   +0.80  ±0.61*
+      ...of which magecraft / burn                     1.44 ->   1.37   -0.07  ±0.19 
+      ...of which drain triggers                      29.46 ->  28.78   -0.69  ±1.93 
+      ...of which other triggers                       6.08 ->   6.78   +0.70  ±0.85 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Orcish Bowmasters                     23.1      87.9         5.4     12.1       42.0      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Stir Up Trouble                       23.4      78.8         6.1     21.2       38.2      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.8      32.2     +0.5
+    rounds survived                                   9.72      9.72    +0.01
+    eliminated, % of games                            68.2      67.4     -0.8
+    opponents it eliminated, per game                 0.93      0.96    +0.03
+    damage dealt, per game                            46.0      46.8     +0.7
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        22.3      21.1     -1.2
+      plan online by turn 6, %                        52.4      52.2     -0.2
+      plan online by turn 8, %                        72.2      71.7     -0.6
+      plan online by turn 12, %                       80.5      80.2     -0.4
+      plan online at all, %                           81.0      80.8     -0.2
+    commander resolved by turn 4, %                   23.8      22.5     -1.3
+    commander resolved by turn 6, %                   54.8      54.2     -0.5
+    commander removals, per game                      0.63      0.63    -0.01
+    lands on the battlefield, turn 4                  3.74      3.74    +0.00
+    lands on the battlefield, turn 8                  6.61      6.55    -0.06
+    mana available, turn 4                            4.12      4.11    -0.01
+    mana available, turn 8                            7.02      6.99    -0.03
+    cards in hand after the land drop, turn 4         5.80      5.80    +0.00
+    cards in hand after the land drop, turn 8         5.19      5.21    +0.02
+    wins by (current):  damage 100%, timeout 0%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Heliod via combo 16.7%, Krenko via combat 11.5%, Prosper via combo 8.8%, Yuriko via combat 7.0%
+    eliminated by (swapped): Heliod via combo 17.1%, Krenko via combat 12.6%, Prosper via combo 7.3%, Yuriko via combat 6.8%
+
+(296s total)

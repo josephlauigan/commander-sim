@@ -12,6 +12,14 @@ Look-ahead, loose, current list: **T5 23.3–23.6%** (the baselines of the swap 
   Sentence, Esper Sentinel, Curiosity, Chromatic Lantern, Thought Vessel (43–44%).
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Curiosity => Orcish Bowmasters, confirmed (T5, loose, 2,000 games per list, look-ahead)
+Result: **31.6% -> 34.1%, +2.5 (noise ±2.3): BETTER**, the first swap to clear the noise for her. Raw:
+`2026-10-19-bowmasters/full-curiosity-t5.txt`.
+Why: Bowmasters is cast in 81% of the games it is drawn (Curiosity 68%, stuck in hand 32%), around round 5.9, and
+wins 48% of the games it is cast in. Damage to opponents +2.3 a game and the plan online +2.4 points (60.3 -> 62.7%),
+same game length (9.4 rounds). The losses to Urza, Zur and Winota combo fall slightly (all within noise): the ping
+and the Orc Army pick off the fast decks' mana creatures and small pieces. Recommended: buy a second Bowmasters for her.
+
 ### 2026-10-19: Orcish Bowmasters for three cards (quick read: T5, loose only, 700 games per list, look-ahead)
 | Cut (=> Orcish Bowmasters) | T5 (noise ±4.0-4.1) |
 |---|---|

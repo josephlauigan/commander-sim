@@ -20,6 +20,14 @@ Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 3. **Combat decks:** Krenko (12%) and Yuriko (7%) by combat.
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Stir Up Trouble => Orcish Bowmasters, full run (T3-T4, loose, 2,000 games per list, look-ahead)
+Result: **T3 +2.0 (±2.6), T4 +0.5 (±2.4): about +1.2 over t3-t4, positive but within noise.** Raw:
+`2026-10-19-bowmasters/full-stir-up-trouble-t3.txt`, `t4.txt`.
+Why: Bowmasters is cast in 88-91% of the games it is drawn, around round 5.4-6.1, against Stir Up Trouble's 79-86%
+(stuck 14-21%). Damage +0.9 to +1.7 a game; plan timing and game length unchanged. At T3 the Atraxa losses drop
+(8.2 -> 6.4%); at T4 the deck still dies to Heliod combo (17%) and Krenko (12%) as before, which a 1/1 pinger doesn't
+stop. A small, real-looking edge over a weak card, smaller than the quick read suggested.
+
 ### 2026-10-19: Orcish Bowmasters for three cards (quick read: T3-T4, loose only, 700 games per list, look-ahead)
 | Cut (=> Orcish Bowmasters) | T3 | T4 | Average |
 |---|---|---|---|
