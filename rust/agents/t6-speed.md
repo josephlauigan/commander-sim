@@ -60,3 +60,28 @@ commander. Its go_now (impls/t6_plan_kraum.rs) demands creature cover (FoW with 
 any opponent has cards plus mana: that is nearly always. Make it go like the spec says (when the table is tapped
 low, or with one piece of protection, or before an opponent's win), and measure win round and win %; Kraum/Tymna
 must stay inside 18-32%, so trade some of the extra speed for fewer, better-timed tries if needed.
+
+## Retarget (JD, 2026-10-19 morning)
+
+`mana` (report-t6-speed-mana.md) found no hold or model error: decks cast fast mana at once; supply is the limit.
+Real data on cEDH game length is thin, but points to about turn 7 (one player's tracked average 7.18; MTGO "turns 5-8"),
+not 5-6. **New target: median win round about 7.** The fast decks (Dack, Kinnan, Kraum/Tymna, Rograkh/Silas: 7-9)
+are close; Sisay and Rograkh/Thrasios (12-13) are the slow outliers. Work only on those two.
+
+## Task `sisay-speed`
+
+Sisay's ability ({W}{U}{B}{R}{G}: search for a legendary permanent card with mana value less than Sisay's power) is
+an instant-speed activated ability, and the real play is to fetch at the end of each opponent's turn with untapped
+mana, then untap and fetch again on your own turn. The sim offers it only on Sisay's own turn (impls/legends.rs
+`sisay`, `sisay_pick`; Tier 6 plan impls/t6_plan_sisay.rs). Model the end-of-turn activation for Tier 6 (the AI's
+end-of-turn window, brain::end_of_turn_window or a Tier 6 hook), fetching the line's missing piece, and check the
+fetch chain reaches the lines (Mount Doom, Derevi, Emiel, Ioreth, Marvin) sooner. Also look again at the unexplained
+stops (about half of Sisay's stopped tries name no card, mostly the Flash Unicorn line: a step failing for no game
+reason?). Measure: ready/go/win medians, win %, at 600 then 2000 games. Sisay must stay inside 18-32%.
+
+## Task `rthras-speed`
+
+Thrasios's ability ({4}: scry 1, reveal the top card, a land onto the battlefield, else draw it) is instant speed.
+rthras3 measured digging on its OWN turn as worse; the real play is digging at the end of each opponent's turn with
+the mana left over. Model that for Tier 6 (end-of-turn window), and check Gaea's Cradle's mana is used for it.
+Measure as above; Rograkh/Thrasios should rise toward 18-25% with a faster median win round.

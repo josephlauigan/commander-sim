@@ -55,6 +55,7 @@ balance rather than the exact values:
 
 - each deck wins **18–32%** of the decisive games it plays in, in Tier 6 pods (an even share is 25%). Dack Fayden is held to the same range: its 49% comes from only 32 entries in its first two weeks;
 - the gap between the best and worst deck is **8 points or less** (the real gap is 4 points);
+- **Speed (JD, 2026-10-19):** median win round about 7 for the table (real cEDH game length is thin data, about turn 7). Each deck's median win round is in the Tier 6 report.
 - Kinnan is held to the same band and gap as the others (JD, 2026-10-18, late): its earlier lead came from a modeling error (Kinnan + Basalt counted as a win without a mana sink, fixed in #100), so the earlier "Kinnan may stay the strongest" exception is withdrawn;
 - no deck wins more than half its games through one line the primer calls a backup.
 
