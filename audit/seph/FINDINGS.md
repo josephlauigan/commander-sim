@@ -50,3 +50,12 @@ Band 2 (T3-T4). Proposed: Force of Will, Farewell, Teferi's Protection (to Y'sht
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **36.3% vs T3, 27.6% vs T4** (before 35.1 / 28.3): within noise. Hornet Queen and Muldrotha now valued as bombs; Momentary Blink protection; Abolisher timing; Tracker before the land drop.
+
+## 2026-10-18 evening: Mind Stone => The Mind Stone (quick pass: loose only, 700 games per list per tier, look-ahead)
+Modeled Approximate (`2e93440`): {W} rock, harness {5}{W}, then each end step blinks the best enters-effect creature
+(else a tapped rock). Result: **T3 +3.1 (±3.8), T4 -1.7 (±3.5): noise**, about +0.7 over t3-t4. Raw:
+`2026-10-18-stones/mind-stone-quick.txt` (a 2,000-game run was stopped a third in, no result: `*-STOPPED.txt`).
+Why: cast in 86-88% of the games it's drawn, around round 6.5-7.3, so with the 6-mana harness the free flicker starts
+around turns 8-9. At T3 (games ~11 rounds) the plan came online a little more often (+2.3 pts) and it won 56% when
+cast vs Mind Stone's 46%; at T4 (games ~10 rounds, Heliod combo, Krenko) it's too slow to matter. Same shape as The
+Soul Stone: a long-game card. JD decided to wait on buying either Stone.

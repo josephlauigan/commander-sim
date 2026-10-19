@@ -71,3 +71,7 @@ Band 4 (T1-T3). No change. Final: **29.6% vs T1, 26.3% vs T2, 20.4% vs T3** (avg
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **28.9 / 23.8 / 21.4% vs T1 / T2 / T3** (before 29.6 / 26.3 / 20.4). T2 -2.5 is on the edge of noise; suspects: the new turn-2 search order (Feast and Famine first only with 7+ cards) and the Austere Command mode rule. A paired check vs main is the open item.
+
+## 2026-10-18 evening: Mind Stone => The Mind Stone (quick pass, stopped after T1; loose only, 700 games per list)
+Result: **T1 29.9% -> 30.6% (+0.7, ±3.2): noise.** T2 and T3 not run (JD stopped the sims and decided to wait on
+buying the Stone). Raw: `2026-10-18-mind-stone/mind-stone-quick-STOPPED-t1only.txt`.
