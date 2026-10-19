@@ -105,6 +105,8 @@ pub fn wipe(g: &mut Game, p: PlayerId, c: Option<CardId>) {
 }
 
 pub fn combo_go(g: &mut Game, p: PlayerId, combo: &str) {
+    speed_mark(g, p, "ready"); // a line that is gone for was ready (also when the measure missed it)
+    speed_mark(g, p, "reach");
     speed_mark(g, p, "go");
     if is_t6(g, p) {
         bump(g, p, format!("go|{combo}"));
@@ -132,7 +134,7 @@ pub fn last_counter_name(g: &Game) -> String {
 // ---------------------------------------------------------------------------------------------------- speed
 // Measurement for the Tier 6 speed project (stats only; nothing here decides or draws a random number).
 // - `sp|ready`, `sp|reach`, `sp|go`: the round (`g.round`) a line of the deck was first ready / one tutor away / gone
-//!   for in this game (absent: never). Set once per game.
+//   for in this game (absent: never). Set once per game.
 // - `spx|<label>`: decisions taken while a line was ready and the deck had not gone yet, by the chosen option
 // - `sp|rdy_now`: 1 while a line is ready at the current decision (transient)
 

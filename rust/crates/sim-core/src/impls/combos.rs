@@ -1343,14 +1343,25 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
     }
     let mut any_ready = false;
     let mut reach = false;
-    for i in deck_combos(g, p) {
-        let cmb = all()[i];
+    let mine = deck_combos(g, p);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for (i, &cmb) in all().iter().enumerate() {
+        // the same gate as `combo_options` (a piece held, or a stepped line), plus the lines of p's deck
+        let in_deck = mine.contains(&i);
+        if !in_deck && !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && cmb.steps.is_empty() {
+            continue;
+        }
         let (ok, _, casts) = (cmb.ready)(g, p);
         if ok && affordable(g, p, cmb, &casts) {
             any_ready = true;
             break;
         }
-        if !has_reach && !reach {
+        if in_deck && !has_reach && !reach {
             reach = one_tutor_away(g, p, cmb);
         }
     }
