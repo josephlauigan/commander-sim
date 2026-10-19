@@ -826,8 +826,9 @@ fn kefka_casts_oppression_when_opponents_hold_cards_and_not_with_a_combo_turn() 
     hand(&mut g, P1, &["Forest", "Forest", "Forest", "Forest"]);
     hand(&mut g, P2, &["Forest", "Forest", "Forest", "Forest"]);
     assert!(decks::deck_prio(&g, P0, c) >= 40, "{}", decks::deck_prio(&g, P0, c));
-    hand(&mut g, P0, &["Grapeshot"]);
-    assert_eq!(decks::deck_prio(&g, P0, c), 0, "a storm card in hand: no tax on the combo turn");
+    hand(&mut g, P0, &["Grapeshot", "Dark Inquiry", "Inner Fire", "Arcane Omens", "Stargaze"]);
+    lands(&mut g, P0, "Swamp", 6, false);
+    assert_eq!(decks::deck_prio(&g, P0, c), 0, "a storm card with spells to chain: no tax on the combo turn");
     g.player_mut(P0).hand.retain(|&x| x == c);
-    assert_eq!(decks::deck_prio(&g, P0, c), 0, "no spare cards");
+    assert!(decks::deck_prio(&g, P0, c) > 0, "an empty-handed Kefka is the one the tax spares");
 }

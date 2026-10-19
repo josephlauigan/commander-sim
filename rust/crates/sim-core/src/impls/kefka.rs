@@ -1669,32 +1669,31 @@ fn oppression(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
     crate::engine::cast::discard_worst(g, caster, 1)
 }
 
-/// Kefka's cast priority for Oppression: it taxes every spell, his own included, so it is cast once the table
-/// holds more cards than he can spare: the opponents' hands (a card per spell they cast, and they cast more as a
-/// table) against his own spare cards, with his discard payoffs (Kefka out, a flip, madness / mayhem cards in hand)
-/// making his own discards cheap. Never while a combo turn is in hand (the storm cards, Breach, Will: every spell of
-/// the turn would cost a card), and never into an empty hand.
+/// Kefka's cast priority for Oppression: a tax on every spell, his own included, that falls on whoever holds cards. He
+/// dumps his hand (looting, discards to Kefka's trigger), the table does not, so the fewer cards he keeps the better
+/// it is for him: top priority with a discard payoff in play (Kefka out, a flip, madness / mayhem cards in hand) while
+/// the opponents hold cards; high when the opponents hold more cards than he does; low otherwise. Never while a combo
+/// turn is in hand (the storm cards, Breach, Will: every spell of the turn would cost a card).
 fn oppression_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let hand = &g.player(p).hand;
-    let combo = hand
+    // a combo turn in hand: a storm card or Breach / Will with mana to go off and spells to chain (Kefka sits on the
+    // pieces for turns, so the mere presence of one is not enough)
+    let piece = hand
         .iter()
         .any(|&x| matches!(cname(g, x), "Brain Freeze" | "Grapeshot" | "Underworld Breach" | "Yawgmoth's Will"));
-    if combo {
+    let chain = hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();
+    if piece && chain >= 4 && total_mana(g, p, false) >= 6 {
         return 0;
     }
     let spare = hand.iter().filter(|&&x| x != c).count() as i32;
-    if spare < 2 {
-        return 0;
-    }
     let opp_cards: i32 = g.opps(p).map(|q| g.player(q).hand.len() as i32).sum();
     let gy_fuel = hand.iter().filter(|&&x| x != c && wants_gy(g, x)).count() as i32;
     let payoff = kefka_out(g, p) || flipped(g, p) || gy_fuel > 0;
     if payoff && opp_cards > 0 {
-        return 66;
+        66
+    } else if opp_cards >= spare && opp_cards > 0 {
+        58
+    } else {
+        25
     }
-    // more cards across the table than in his own hand: they pay more than he does
-    if opp_cards >= 2 * spare.max(1) || opp_cards >= spare + 4 {
-        return 58;
-    }
-    if opp_cards >= spare { 40 } else { 0 }
 }
