@@ -230,3 +230,28 @@ fn mana_cast(g: &mut Game, p: PlayerId, c: CardId) {
         bump(g, p, format!("mn|cast|T{t}"));
     }
 }
+
+/// stats-only: at the end of p's second main phase on turns 1-3, the mana cards still in hand that p could pay for
+/// (`mn|held|T<n>|<card>`), so the report can say which fast mana is held
+pub fn mana_held(g: &mut Game, p: PlayerId) {
+    if !is_t6(g, p) || g.player(p).turns > 3 {
+        return;
+    }
+    let t = g.player(p).turns;
+    let hand: Vec<CardId> = g.player(p).hand.clone();
+    for c in hand {
+        if !is_mana_card(g, c) {
+            continue;
+        }
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        g.pay_for = Some(c);
+        let ok = crate::engine::mana::can_pay(g, p, cg, &cp, false);
+        g.pay_for = None;
+        let d = g.db.get(c);
+        let ritual = d.instant || d.sorcery;
+        let k = format!("mn|held{}|T{t}|{}", if ritual { "r" } else { "" }, card(g, c));
+        if ok {
+            bump(g, p, k);
+        }
+    }
+}

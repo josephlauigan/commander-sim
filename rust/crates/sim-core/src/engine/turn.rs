@@ -988,6 +988,10 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if pl.lands.len() == nl && pl.turns <= 5 {
         pl.stat("land_miss", 1);
     }
+    if pl.t6 && pl.turns <= 5 {
+        crate::t6stats::mana_snapshot(g, p);
+    }
+    let pl = g.player_mut(p);
     if matches!(pl.turns, 4 | 6 | 8) {
         let mana = total_mana(g, p, false) as i64;
         let pl = g.player_mut(p);
@@ -1027,6 +1031,7 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
         return crate::human::human::human_main(g, p, true);
     }
     ai::main(g, p, true)?;
+    crate::t6stats::mana_held(g, p);
     if g.player(p).key == "veyran" && has(g, p, Tag::Veyran) && ai::engine_payoff(g, p) {
         let t = g.player(p).turns;
         g.player_mut(p).milestone.entry("engine").or_insert(t);

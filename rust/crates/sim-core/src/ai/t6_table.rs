@@ -275,10 +275,14 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                 {
                     89.0
                 } else if pr.is_none() && g.player(p).turns <= 4 && {
-                    // a cheap mana rock or dork in the opening turns (Sol Ring lost to "stop (hold mana)" at 100%)
+                    // a cheap mana rock in the opening turns (Sol Ring lost to "stop (hold mana)" at 100%)
                     let d = g.db.get(*card);
                     !d.creature && (d.cmc as i32) <= 2 && (d.tag(Tag::Rock) || d.tag(Tag::Fastmana))
                 } {
+                    88.0
+                } else if pr.is_none() && g.player(p).turns <= 3 && mana_first(g, p, *card) {
+                    // speed project: "mana first" on turns 1-3 (dorks, three-mana rocks): the look-ahead kept
+                    // voting them down for a draw engine or a stop
                     88.0
                 } else {
                     continue;
@@ -298,4 +302,15 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
         }
     }
     best.map(|b| b.2)
+}
+
+/// Tier 6 speed project, "mana first" on turns 1-3: a mana creature (one or two mana) or a three-mana rock the plan
+/// has no opinion about is cast before the other plays. Never a commander, never when the card needs a gate
+/// (Chrome Mox, Mox Diamond have their own priority).
+fn mana_first(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    if d.land || g.player(p).is_commander(c) {
+        return false;
+    }
+    (d.creature && d.tag(Tag::Dork) && d.cmc <= 2) || (!d.creature && d.tag(Tag::Rock) && d.cmc == 3)
 }
