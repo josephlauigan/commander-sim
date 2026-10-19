@@ -1156,6 +1156,7 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
         if !is_main(key) {
             u += pool::ninja_defender_bonus(g, p, q);
         }
+        u += crate::impls::newcards_b::stagger_bonus(g, p, q); // Lightning, Army of One
         // planeswalkers about to ultimate draw attacks
         u += g
             .player(q)

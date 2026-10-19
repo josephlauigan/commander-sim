@@ -786,3 +786,64 @@ fn scarlet_spider_and_embrace_are_held_for_kefkas_trigger() {
     let g2 = table2();
     assert!(decks::deck_prio(&g2, P0, card(&g2, "Scarlet Spider, Kaine")) > 0, "without Kefka it is a body");
 }
+
+// ======================================================== Marvin, Murderous Mimic
+/// Marvin, Murderous Mimic: "Marvin has all activated abilities of creatures you control that don't have the same name as
+/// this creature." Modeled for Niv-Mizzet, Viashino Fangtail, Blightspeaker and Rummaging Goblin only (Partial).
+#[test]
+fn marvin_uses_nivs_draw_only_while_niv_is_out() {
+    let mut g = table(&["kefka", "veyran"]);
+    fill_library(&mut g, P0, 10);
+    let marvin = perm(&mut g, P0, "Marvin, Murderous Mimic");
+    let opts = |g: &mut Game| {
+        let c = g.perm(marvin).cd.unwrap();
+        let f = g.registry.get(c).unwrap().options.unwrap();
+        f(g, marvin, P0, None).unwrap()
+    };
+    assert!(opts(&mut g).is_empty(), "no creature to copy");
+    let niv = perm(&mut g, P0, "Niv-Mizzet, the Firemind");
+    g.perm_mut(niv).tapped = true; // Niv himself is tapped: it is Marvin who draws
+    let o = opts(&mut g);
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Marvin copies Niv-Mizzet, the Firemind");
+    let hand0 = g.player(P0).hand.len();
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1);
+    assert!(g.perm(marvin).tapped);
+    assert!(opts(&mut g).is_empty(), "one tap ability a turn");
+    // Niv leaves: nothing to copy again
+    g.perm_mut(marvin).tapped = false;
+    zones::die(&mut g, niv, "destroy").unwrap();
+    assert!(opts(&mut g).is_empty());
+    // summoning sick: can't tap
+    perm(&mut g, P0, "Viashino Fangtail");
+    g.perm_mut(marvin).sick = true;
+    assert!(opts(&mut g).is_empty());
+    g.perm_mut(marvin).sick = false;
+    let o = opts(&mut g);
+    assert_eq!(o.len(), 1);
+    assert_eq!(o[0].label, "Marvin copies Viashino Fangtail");
+    let life = g.player(P1).life;
+    assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(g.player(P1).life < life || g.player(P0).life < 40, "Fangtail's ping went somewhere");
+}
+
+#[test]
+fn marvin_is_cast_sooner_with_a_creature_to_copy_and_the_ai_taps_him() {
+    let mut g = table(&["kefka", "veyran"]);
+    fill_library(&mut g, P0, 10);
+    let c = card(&g, "Marvin, Murderous Mimic");
+    let bare = decks::deck_prio(&g, P0, c);
+    assert!(bare > 0);
+    perm(&mut g, P0, "Viashino Fangtail");
+    let with_pinger = decks::deck_prio(&g, P0, c);
+    assert!(with_pinger > bare);
+    perm(&mut g, P0, "Niv-Mizzet, the Firemind");
+    assert!(decks::deck_prio(&g, P0, c) > with_pinger, "Niv's draw is the best copy");
+    let marvin = perm(&mut g, P0, "Marvin, Murderous Mimic");
+    let o = opts_of(&mut g, P0, false);
+    assert!(
+        o.iter().any(|x| x.label.starts_with("Marvin copies") && matches!(x.act, Some(sim_core::hooks::Action::Ability { src, .. }) if src == marvin)),
+        "main options offer Marvin copied ability: {:?}", o.iter().map(|x| x.label.clone()).collect::<Vec<_>>()
+    );
+}

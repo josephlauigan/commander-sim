@@ -31,6 +31,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
             .count() as u32;
         n *= 3i32.pow(k);
     }
+    if damage {
+        n *= stagger_mult(g, p); // Lightning, Army of One
+    }
     if damage && prevents_damage(g, p, src) {
         g.player_mut(p).stat("dmg_prevented", n as i64);
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
@@ -68,6 +71,15 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     }
     crate::ai::note_damage(g, p, src, n);
     Ok(())
+}
+
+/// Lightning, Army of One's Stagger: 2 while damage to player `p` (and their permanents) is doubled, else 1. It lasts
+/// until the controller of Lightning's next turn begins, i.e. while their turn count is still what it was on the hit.
+pub fn stagger_mult(g: &Game, p: PlayerId) -> i32 {
+    match g.player(p).stagger {
+        Some((c, t)) if g.player(c).turns == t => 2,
+        _ => 1,
+    }
 }
 
 /// Glacial Chasm prevents all damage to you; The One Ring's protection prevents damage from any source, the controller's own too

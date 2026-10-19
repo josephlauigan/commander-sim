@@ -357,3 +357,6 @@ Last Gasp|I|1B|rem=shrink3 tgt=c
 Jace Token|P|0|tokpw
 Craft with Pride|S|R|
 Awaken the Ages|S|5R|
+Cecil, Dark Knight|C|B|pow=2 tgh=3 dt leg
+Lightning, Army of One|C|1RW|pow=3 tgh=2 trample lifelink leg
+Marvin, Murderous Mimic|AC|2|pow=2 tgh=2 leg

@@ -57,6 +57,9 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             _ => base,
         };
     }
+    if let Some(v) = crate::impls::newcards_b::partner_prio(g, p, c) {
+        return v;
+    }
     let ramp = t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) || t.has(Tag::Fastmana);
     if ramp && pl.turns <= 5 {
         // one-mana ramp first, then two-mana ramp (turns 1-2: mana creatures and rocks)

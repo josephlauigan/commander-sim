@@ -8273,3 +8273,17 @@ note = "reach; taps for green (the chosen colour is always green in the titania 
 cost = "1GG"
 status = "Full"
 note = "{X}{G}{G} with X=1: fetch one basic Forest (X basics with different names, the deck has only Forest); never cast at X=0, which finds nothing; Domain power 1"
+
+["Cecil, Dark Knight"]
+kws = ["deathtouch"]
+status = "Full"
+note = "2/3 deathtouch; whenever it deals damage (combat, to a player or a creature) you lose that much life, then at half your starting life (20) or less it untaps and transforms into Cecil, Redeemed Paladin, a 4/4 lifelink that, whenever it attacks, gives the other attackers indestructible until end of turn (impls/newcards_b.rs)"
+
+["Lightning, Army of One"]
+kws = ["first strike", "trample", "lifelink"]
+status = "Full"
+note = "first strike, trample, lifelink; when it deals combat damage to a player, until its controller's next turn all damage to that player and their permanents is doubled (player life loss in life.rs, damage removal in removal.rs, combat kills in combat.rs; the lifelink of the doubled hit still counts the undoubled damage)"
+
+["Marvin, Murderous Mimic"]
+status = "Partial"
+note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first"
