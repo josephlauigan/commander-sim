@@ -134,7 +134,7 @@ export function card(images, name, o = {}) {
   if (o.pt) badges.push(el('span', { class: 'badge pt' }, o.pt));
   if (o.count > 1) badges.push(el('span', { class: 'badge count' }, `×${o.count}`));
   const cls = ['card', o.size || 'md', o.tapped ? 'tapped' : '', o.sick ? 'sick' : '', o.commander ? 'cmdr' : '', o.cls || ''].join(' ');
-  const title = [name, o.pt, o.tapped ? 'tapped' : '', o.sick ? 'summoning sick' : '', o.attached_to ? `attached to ${o.attached_to}` : '']
+  const title = [name, o.transformed ? 'transformed' : '', o.pt,o.tapped ? 'tapped' : '', o.sick ? 'summoning sick' : '', o.attached_to ? `attached to ${o.attached_to}` : '']
     .filter(Boolean).join(' · ');
   const c = el('div', { class: cls, title, 'data-name': name, ...(o.attrs || {}) }, el('div', { class: 'face' }, face, badges));
   c.addEventListener('mouseenter', (e) => { if (lastPointer === 'mouse') showPreview(src, name, e, all); });
@@ -186,6 +186,7 @@ function battlefield(p, images, size, mine) {
   const perms = p.battlefield.filter((m) => !m.phased_out);
   const creatures = perms.filter((m) => m.pt), others = perms.filter((m) => !m.pt);
   const opts = (m) => ({ size, tapped: m.tapped, sick: m.sick, counters: m.counters, loyalty: m.loyalty, pt: m.pt,
+    face: m.face, transformed: m.transformed,
     commander: m.commander, attached_to: m.attached_to, attrs: Object.assign({ 'data-seat': p.key, 'data-i': m.i }, mine ? { 'data-perm': m.i } : {}) });
   const imOf = (m) => (m.owner ? forSeat(baseImages, m.owner) : images);   // a stolen card: its owner's printing
   const treasure = p.treasures ? card(images, 'Treasure', { size, count: p.treasures, cls: 'token',

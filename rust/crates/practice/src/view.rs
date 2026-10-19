@@ -52,6 +52,10 @@ fn perm(g: &Game, m: sim_core::ids::PermId) -> Map<String, Value> {
     if m_.phased {
         d.insert("phased_out".into(), true.into());
     }
+    if m_.data.truthy(sim_core::state::DataKey::Flipped) {
+        d.insert("face".into(), 1.into()); // transformed (Sephiroth, One-Winged Angel): show the back face
+        d.insert("transformed".into(), true.into());
+    }
     d
 }
 
