@@ -115,6 +115,7 @@ Archmage Emeritus|C|2UU|pow=2 spelldraw noatk wizard
 Banishing Betrayal|I|1U|rem=bounce tgt=nl
 Blasphemous Act|S|8R|wipe=dmg13 perCreature
 Blazing Firesinger // Seething Song|C|2R|vfire pow=2 tgh=3 noatk prepare
+Blazing Firesinger|C|2R|pow=2 tgh=3 prepare
 Burning Prophet|C|1R|pow=1 tgh=3 noatk
 Burst Lightning|I|R|rem=dmg2 tgt=c face kick=4
 Chaos Warp|I|2R|rem=tuck tgt=p

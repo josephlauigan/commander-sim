@@ -1,0 +1,166 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Fiery Emancipation [pool] E 3RRR :: (no tags)
+   Bribery [pool] S 3UU :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  Fiery Emancipation: Full (damage your sources deal to opponents and their permanents is tripled (pings, burn, combat))
+  Bribery: Full (the best creature in an opponent's library onto the battlefield under your control (you choose the opponent and the card))
+
+8,000 games (current list and the swapped one, 2,000 per list per tier, profiles conservative and loose), lookahead AI, 10 worker threads: about 40 minutes
+  progress  10.0%  2m09s elapsed, ~19m21s left
+  progress  20.0%  4m18s elapsed, ~17m14s left
+  progress  30.0%  6m27s elapsed, ~15m03s left
+  progress  40.0%  8m29s elapsed, ~12m44s left
+  progress  50.0%  10m36s elapsed, ~10m36s left
+  progress  60.0%  13m23s elapsed, ~8m55s left
+  progress  70.0%  15m40s elapsed, ~6m42s left
+  progress  80.0%  17m59s elapsed, ~4m29s left
+  progress  90.0%  20m12s elapsed, ~2m14s left
+  progress 100.0%  22m29s elapsed, ~0m00s left
+Swaps: Crux of Fate -> Fiery Emancipation; Blazing Firesinger -> Bribery
+
+=== Kefka vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[conservative] win  27.4% ->  28.6%  (delta +1.3 pts, noise ±2.5, paired)   n=2000
+               eliminated by (variant): Tergrid 22.2%  Atraxa 8.3%  Aurelia 22.5%  Marwyn 10.9%  Korvold 7.0%
+[loose       ] win  27.1% ->  29.1%  (delta +1.9 pts, noise ±2.6, paired)   n=2000
+               eliminated by (variant): Tergrid 21.9%  Atraxa 8.8%  Aurelia 21.2%  Marwyn 10.8%  Korvold 7.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                 [conservative]                                [loose]                
+
+  Outcome
+    Win rate                                          27.4% ->  28.6%  +1.3pt   ±2.8     27.1% ->  29.0%  +1.9pt   ±2.8 
+    Rounds survived (or game length)                  11.06 ->  10.82   -0.25  ±0.20*    11.13 ->  10.78   -0.36  ±0.20*
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03      0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.51 ->   0.52   +0.00  ±0.05      0.51 ->   0.51   +0.01  ±0.05 
+    Mana available on your turn 4                      3.95 ->   3.95   -0.01  ±0.05      3.96 ->   3.96   +0.00  ±0.05 
+    Mana available on your turn 6                      5.49 ->   5.50   +0.02  ±0.08      5.50 ->   5.49   -0.01  ±0.08 
+
+  Speed
+    Games where the game plan came online             32.9% ->  32.8%  -0.1pt   ±3.0     33.5% ->  30.4%  -3.1pt   ±2.9*
+    Turn the game plan came online                    10.84 ->  10.67   -0.17  ±0.28     10.74 ->  10.50   -0.25  ±0.27 
+    Turn the commander first resolved                  6.10 ->   6.13   +0.03  ±0.14      6.15 ->   6.11   -0.04  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            30.81 ->  30.26   -0.55  ±1.32     30.79 ->  29.65   -1.14  ±1.29 
+    Tutors resolved per game                           0.54 ->   0.50   -0.04  ±0.05      0.58 ->   0.54   -0.04  ±0.05 
+    Spells cast per game                              14.74 ->  14.27   -0.46  ±0.55     15.25 ->  14.14   -1.11  ±0.57*
+
+  Interaction
+    Counterspells cast                                 0.38 ->   0.36   -0.02  ±0.04      0.38 ->   0.34   -0.03  ±0.03*
+    Spot removal cast                                  1.85 ->   1.76   -0.09  ±0.09*     1.86 ->   1.78   -0.08  ±0.09 
+    Board wipes cast                                   0.12 ->   0.00   -0.11  ±0.01*     0.13 ->   0.00   -0.12  ±0.02*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00      0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.37 ->   0.40   +0.04  ±0.04      0.39 ->   0.39   -0.00  ±0.05 
+    Your spells countered                              0.12 ->   0.12   -0.00  ±0.02      0.12 ->   0.11   -0.02  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.39 ->  34.62   +2.23  ±2.13*    31.88 ->  34.50   +2.62  ±2.05*
+      ...of which combat damage                       13.48 ->  15.53   +2.05  ±1.13*    12.96 ->  15.42   +2.46  ±1.08*
+      ...of which magecraft / burn                     2.23 ->   2.54   +0.31  ±0.31      2.51 ->   2.71   +0.20  ±0.39 
+      ...of which drain triggers                      14.19 ->  14.21   +0.02  ±1.23     14.51 ->  14.10   -0.41  ±1.20 
+      ...of which other triggers                       2.49 ->   2.34   -0.15  ±0.53      1.90 ->   2.27   +0.36  ±0.50 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (loose profile only)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Spells cast per game (loose profile only)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Counterspells cast (loose profile only)
+    worse  - Spot removal cast (conservative profile only)
+    worse  - Board wipes cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [conservative profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Fiery Emancipation                    39.8      23.9        10.0     76.1       52.6      0.00
+    Bribery                               37.4      54.0         8.6     46.0       46.5      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Crux of Fate                          39.0      29.1         8.9     70.9       25.6      0.00
+    Blazing Firesinger                    39.5      53.0         7.1     47.0       34.7      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        27.4      28.6     +1.3
+    rounds survived                                  11.06     10.82    -0.25
+    eliminated, % of games                            72.0      71.0     -1.0
+    opponents it eliminated, per game                 0.70      0.78    +0.07
+    damage dealt, per game                            32.4      34.6     +2.2
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.5       0.5     -0.0
+      plan online by turn 8, %                         5.7       6.8     +1.2
+      plan online by turn 12, %                       25.2      25.2     -0.1
+      plan online at all, %                           32.9      32.8     -0.1
+    commander resolved by turn 4, %                   14.3      14.3     +0.0
+    commander resolved by turn 6, %                   57.0      56.5     -0.5
+    commander removals, per game                      0.26      0.24    -0.02
+    lands on the battlefield, turn 4                  3.73      3.73    -0.00
+    lands on the battlefield, turn 8                  6.64      6.71    +0.07
+    mana available, turn 4                            3.95      3.95    -0.01
+    mana available, turn 8                            6.92      7.03    +0.11
+    cards in hand after the land drop, turn 4         5.80      5.82    +0.02
+    cards in hand after the land drop, turn 8         5.67      5.68    +0.02
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 19.9%, Tergrid via combat 14.4%, Marwyn via combat 10.9%, Atraxa via combat 6.6%
+    eliminated by (swapped): Aurelia via combat 19.5%, Tergrid via combat 14.5%, Marwyn via combat 10.8%, Atraxa via combat 6.7%
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Fiery Emancipation                    39.3      22.8         9.6     77.2       60.3      0.01
+    Bribery                               37.1      51.3         8.4     48.7       49.6      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Crux of Fate                          39.1      30.9         8.6     69.1       25.2      0.00
+    Blazing Firesinger                    39.3      55.2         7.4     44.8       29.7      0.03
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        27.1      29.1     +1.9
+    rounds survived                                  11.13     10.78    -0.36
+    eliminated, % of games                            72.3      70.7     -1.6
+    opponents it eliminated, per game                 0.71      0.76    +0.05
+    damage dealt, per game                            31.9      34.5     +2.6
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.5       0.4     -0.0
+      plan online by turn 8, %                         5.6       6.3     +0.7
+      plan online by turn 12, %                       26.4      25.1     -1.2
+      plan online at all, %                           33.5      30.4     -3.1
+    commander resolved by turn 4, %                   13.9      13.7     -0.2
+    commander resolved by turn 6, %                   58.9      57.4     -1.5
+    commander removals, per game                      0.26      0.21    -0.05
+    lands on the battlefield, turn 4                  3.74      3.74    -0.00
+    lands on the battlefield, turn 8                  6.69      6.65    -0.04
+    mana available, turn 4                            3.96      3.96    +0.00
+    mana available, turn 8                            6.98      6.95    -0.04
+    cards in hand after the land drop, turn 4         5.79      5.82    +0.03
+    cards in hand after the land drop, turn 8         5.68      5.70    +0.02
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 19.0%, Tergrid via combat 13.8%, Marwyn via combat 11.3%, Atraxa via combat 7.0%
+    eliminated by (swapped): Aurelia via combat 18.2%, Tergrid via combat 14.2%, Marwyn via combat 10.7%, Atraxa via combat 7.1%
+
+(1350s total)

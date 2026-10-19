@@ -63,6 +63,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Blazing Firesinger, Crux of Fate. In: Bribery, Fiery Emancipation. Kefka lift (JD approved 10/18): Crux of Fate=>Fiery Emancipation; Blazing Firesinger=>Bribery
 - **2026-10-18.** Out: Bitter Triumph. In: Decorum Dissertation. Matched to the physical deck (JD's list, 2026-10-18): Decorum Dissertation back in for Bitter Triumph; the 10/14 swap was never made physically.
 - **2026-10-18.** Out: Demonic Tutor, Mystical Tutor, Vampiric Tutor. In: Expressive Iteration, Mana Leak, Sleight of Hand. Band calibration 10/18 (JD approved): Demonic Tutor=>Mana Leak;Vampiric Tutor=>Expressive Iteration;Mystical Tutor=>Sleight of Hand
 - **2026-10-14.** Out: Decorum Dissertation. In: Bitter Triumph, Shivan Reef, Sulfurous Springs. Decorum Dissertation (to bulk) for Bitter Triumph; two Swamps for Sulfurous Springs and Shivan Reef (all three from the binder, the retired Jodah deck's leftovers). Measured -1.9 over all tiers (T1 -6.0, T2 -3.4, T3 -2.6, T4 +2.2, T5 +0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); within noise; JD's choice to apply it. A pool run is pending.

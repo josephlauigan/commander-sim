@@ -16,6 +16,7 @@ mod explain;
 mod play;
 mod poolmode;
 mod progress;
+mod preflight;
 mod pyrand;
 mod report;
 mod stats;
@@ -67,7 +68,7 @@ fn compare(argv: &[String]) -> i32 {
     let r = run(&sim, a);
     report_errors(&sim);
     match r {
-        Ok(()) => 0,
+        Ok(code) => code,
         Err(e) => {
             eprintln!("{e}");
             1
@@ -109,7 +110,7 @@ fn swap_in_place(list: &[String], swaps: &[(String, String)]) -> Vec<String> {
 }
 
 /// compare.main
-fn run(sim: &Sim, mut a: Args) -> Result<(), String> {
+fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
     let mut swaps = vec![];
     let (mut base, mut var) = (vec![], vec![]);
     if let Some(deck) = a.deck.clone()
@@ -158,7 +159,7 @@ fn run(sim: &Sim, mut a: Args) -> Result<(), String> {
     if a.cards {
         let deck = a.deck.as_deref().ok_or("--cards needs --deck")?;
         print_cards(sim, deck, if swaps.is_empty() { &base } else { &var });
-        return Ok(());
+        return Ok(0);
     }
 
     if a.pool.is_none() && a.calibrate.is_none() && !a.all_decks {
@@ -176,9 +177,14 @@ fn run(sim: &Sim, mut a: Args) -> Result<(), String> {
         var = swap_in_place(&base, &swaps);
     }
     if a.trace.is_some() {
-        return poolmode::trace(sim, &a, if swaps.is_empty() { &base } else { &var });
+        return poolmode::trace(sim, &a, if swaps.is_empty() { &base } else { &var }).map(|()| 0);
     }
-    poolmode::main(sim, &a, &swaps, &base, &var)
+    if preflight::wanted(&a, &swaps) {
+        if let preflight::Outcome::Stop(code) = preflight::run(sim, &a, &swaps, &var)? {
+            return Ok(code);
+        }
+    }
+    poolmode::main(sim, &a, &swaps, &base, &var).map(|()| 0)
 }
 
 /// --cards: every card in the deck with its tags, source and unmodeled text, and its Game Changers
