@@ -13,6 +13,13 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Mana combo with creat
 
 Second by meta share (6.9%, 19.2% conversion). It wins through Kinnan's extra mana (Basalt Monolith with Kinnan is unbounded) or Hullbreaker Horror loops, on a creature base. (This list has no Isochron Scepter, so Dramatic Reversal is ramp only.) It tests Godo against a deck that races it with mana dorks rather than fighting the stack.
 
+## At the table
+
+- **Plan:** Make lots of mana with dorks and rocks (Birds of Paradise, Elvish Mystic, Sol Ring, Mana Vault), doubled by Kinnan, Bonder Prodigy. It draws with Rhystic Study, Mystic Remora and The One Ring while it waits for a safe window.
+- **Wins by:** Kinnan with Basalt Monolith makes unbounded colorless mana, and Hullbreaker Horror with two rocks is a second loop. It finishes with Finale of Devastation or by decking you with Faerie Mastermind. It can win on turn three to five.
+- **Watch out for:** Kill or counter Kinnan and the mana creatures early, and keep a counter ready for the combo. Few tutors means it digs slowly, so tax its draw engines. A creature and artifact wipe hurts it badly.
+- **Interaction:** Force of Will, Fierce Guardianship, Force of Negation, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Dispel, Misdirection, Mindbreak Trap, Chain of Vapor and An Offer You Can't Refuse.
+
 ## Strategy
 
 Written in Stage 2 from the deck's primer.

@@ -13,6 +13,13 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Turbo combo.
 
 The fastest deck in the field (4.4%, 16.1% conversion). It runs the same Oracle and Breach finish as Kraum & Tymna but with less interaction and more speed, so it tests whether Godo can win the race.
 
+## At the table
+
+- **Plan:** Rograkh costs 0, so it has a creature on turn one and turns on its free spells (Fierce Guardianship, Deflecting Swat, Flare of Duplication). It bursts mana from rituals, Moxen and Lion's Eye Diamond, digs, and goes off on turn one to three.
+- **Wins by:** Thassa's Oracle with Demonic Consultation or Tainted Pact, or Underworld Breach with Lion's Eye Diamond and Brain Freeze. Ad Nauseam and Necropotence dig, and Final Fortune or Last Chance give an extra turn.
+- **Watch out for:** A very fast kill, often before you can act, so keep a free counter up from turn one. Stax that limits you to one spell per turn, Collector Ouphe, Null Rod and graveyard hate are what it fears. It runs few permanents, so removal on Rograkh does little.
+- **Interaction:** Force of Will, Fierce Guardianship, Daze, Deflecting Swat, Misdirection, Flusterstorm, Mental Misstep, Pact of Negation, Mindbreak Trap, Pyroblast, Red Elemental Blast and Hexing Squelcher.
+
 ## Strategy
 
 Written in Stage 2 from the deck's primer.

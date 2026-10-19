@@ -13,6 +13,13 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Blue midrange: intera
 
 The most-played cEDH deck in the six-month window (7.5% of entries, 23.8% top-cut conversion). It holds up free counterspells and wins with Thassa's Oracle or Underworld Breach once the table is tapped down, so it tests whether Godo can resolve through a full counter suite.
 
+## At the table
+
+- **Plan:** Land a draw engine early (Rhystic Study, Mystic Remora, Esper Sentinel, Tymna, Kraum) and hold a deep stack of free counters. Then it picks a window and goes off in one turn, usually turn three to five.
+- **Wins by:** Thassa's Oracle with Demonic Consultation or Tainted Pact on an empty library. The backup is Underworld Breach with Lion's Eye Diamond and Brain Freeze. Necropotence and Ad Nauseam dig for the pieces.
+- **Watch out for:** It holds counters and waits until you tap out or fail to stop it. Kill Kraum and Esper Sentinel before it goes off. Stax such as Rule of Law, Collector Ouphe, Chalice and graveyard hate hurt it, but Oracle with Consultation dodges graveyard hate.
+- **Interaction:** Force of Will, Fierce Guardianship, Force of Negation, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Misdirection, Mindbreak Trap, Red Elemental Blast, Silence, Orim's Chant, Grand Abolisher and Orcish Bowmasters.
+
 ## Strategy
 
 Written in Stage 2 from the deck's primer.

@@ -13,6 +13,13 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Taxing toolbox.
 
 Fourth by meta share (3.8%) with the best conversion of the five (24.3%). Sisay fetches legends on demand, including Teferi, Time Raveler, Lotho and Kinnan, and plays Silence and Esper Sentinel. It is the most taxing of the top-meta decks and tests Godo against taxes and sorcery-speed locks. (The dedicated stax slot is Dack Fayden.)
 
+## At the table
+
+- **Plan:** Ramp with Moxen, Sol Ring, Birds of Paradise and the Hierarchs, then land Sisay, Weatherlight Captain. Sisay puts cheap legends onto the battlefield, so it is a toolbox that grinds first and goes off once it is protected.
+- **Wins by:** Mana loops: Bloom Tender, Derevi and Emiel; or Gaea's Cradle with Agatha's Soul Cauldron; or Marvin with Ioreth and a legendary mana creature. It finishes with Mount Doom or Deadpool. A win threat appears around turn three to four.
+- **Watch out for:** Removal on Sisay or the mana engine, since tutored legends arrive without being cast and counters miss them. Stax such as Cursed Totem and graveyard or ability hate slow it. Teferi, Time Raveler, Lavinia, Esper Sentinel and Rhystic Study tax you while it sets up.
+- **Interaction:** Force of Will, Fierce Guardianship, Swan Song, Pact of Negation, Flusterstorm, Mental Misstep, Silence, Deafening Silence, Cyclonic Rift, Abrupt Decay, Dismember and Touch the Spirit Realm.
+
 ## Strategy
 
 Written in Stage 2 from the deck's primer.

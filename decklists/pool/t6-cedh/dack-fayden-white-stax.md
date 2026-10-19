@@ -13,6 +13,13 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Stax.
 
 Added at JD's request on 2026-10-17 as the field's true stax deck. Dack Fayden, Helping Hand was released on 2026-10-02 and has 32 entries in its first two weeks with a 37.2% game win rate and 53.1% top-cut conversion, the best of any deck here but on a very small sample. It locks the table with taxes and colourless-mana hate (Trinisphere, Chalice of the Void, The Tabernacle at Pendrell Vale, Static Prison, Blind Obedience, Deafening Silence, Cursed Totem) and wins through creatures. It tests whether Godo's artifact-heavy turbo can function under real stax.
 
+## At the table
+
+- **Plan:** Ramp out fast mana (Sol Ring, Mana Vault, Chrome Mox, Ancient Tomb) and cast Dack Fayden as early as turn two. If that fails, it falls back on white stax and taxes.
+- **Wins by:** Dack's enter trigger flips creatures such as Felidar Guardian, Preston, the Vanisher and Radiant Solar onto the battlefield, and the loop of flickers and ventures ends the game. Slower games are won with Smothering Tithe, Gleaming Splendor and Blind Obedience drain.
+- **Watch out for:** Dack resolving on turn two to four. Orim's Chant and Silence are cast before Dack so you cannot answer the cast. Trinisphere, Chalice of the Void, Damping Sphere, Pithing Needle and Cursed Totem slow you down, and its creatures can be donated to you.
+- **Interaction:** Swords to Plowshares, Path to Exile, Get Lost, Erode, Portable Hole, Static Prison, Fiend Hunter, Touch the Spirit Realm, Angel's Grace, Cloudshift and Ephemerate. Counter or remove Dack before the trigger resolves; a wipe leaves the stax pieces.
+
 ## Strategy
 
 Written in Stage 2 from the deck's primer.

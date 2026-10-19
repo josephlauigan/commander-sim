@@ -13,6 +13,13 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Creature engine combo
 
 Third by meta share (5.1%, 20.6% conversion). It assembles creature and land engines (Earthcraft, Training Grounds, Formidable Speaker, Gaea's Cradle) into unbounded mana for Thrasios. Its wins don't use the stack the way Oracle does, so it tests Godo's creature removal and redirects.
 
+## At the table
+
+- **Plan:** Make a huge amount of mana with Gaea's Cradle, Birds of Paradise, Sol Ring and Moxen, then spend it with Thrasios, Triton Hero to draw the library. Rograkh comes down on turn one for free and turns on Fierce Guardianship and Deflecting Swat.
+- **Wins by:** Infinite mana loops: Oboro Breezecaller with Gaea's Cradle and Talon Gates of Madara, or Eternal Witness with Snap and Cradle, or Badgermole Cub with Mockingbird. Thrasios then draws the library and finishes. Green Sun's Zenith and Chord of Calling find the pieces.
+- **Watch out for:** Gaea's Cradle and the creature loops. Kill Thrasios and Oboro Breezecaller or hold artifact removal for Cursed Totem effects, and Rule of Law style stax stops the spell loops. Board wipes and Orcish Bowmasters hurt it.
+- **Interaction:** Force of Will, Fierce Guardianship, Force of Negation, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Misdirection, Flare of Denial, Deflecting Swat, Veil of Summer, Mindbreak Trap, Hexing Squelcher and Chain of Vapor.
+
 ## Strategy
 
 Written in Stage 2 from the deck's primer.
