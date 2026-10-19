@@ -1938,6 +1938,12 @@ fn archfiend_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
 }
 
 // ================================================================== the kraum seat: Dark Endurance
+/// Dark Endurance resolves: +2/+0 and indestructible until end of turn
+pub fn endurance_apply(g: &mut Game, m: PermId) {
+    eot_kw(g, m, intern("indestructible"));
+    g.perm_mut(m).eot_pt.0 += 2;
+}
+
 /// **Dark Endurance** ({1}{B} instant, {1} less when it targets a blocking creature): target creature gets +2/+0 and
 /// indestructible until end of turn. The kraum seat casts it in response to destroy or damage removal aimed at a
 /// commander or a permanent worth 4 or more (Tymna is the most-removed card of the deck); exile, -X/-X and sacrifice
@@ -1979,8 +1985,7 @@ fn endurance_protect(
     let ok = crate::engine::stack::counter_window(g, owner_p, c, 6.0, vec![])?;
     g.player_mut(owner_p).gy.push(c);
     if ok && g.perm(m).on_bf {
-        eot_kw(g, m, intern("indestructible"));
-        g.perm_mut(m).eot_pt.0 += 2;
+        endurance_apply(g, m);
     }
     Ok(ok && g.perm(m).on_bf)
 }

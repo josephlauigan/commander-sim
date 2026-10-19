@@ -1158,8 +1158,14 @@ fn helping_hand_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 /// Helping Hand: returns the best creature card with MV 3 or less from your graveyard, tapped
-pub fn helping_hand(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let Some(x) = pick_reanimate(g, p, |x| g.db.get(x).cmc <= 3) else { return Ok("gy") };
+pub fn helping_hand(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let pick = if crate::human::is_human(g, p) {
+        // the card the person chose as they cast it
+        ctx.cards.first().copied().filter(|c| g.player(p).gy.contains(c))
+    } else {
+        pick_reanimate(g, p, |x| g.db.get(x).cmc <= 3)
+    };
+    let Some(x) = pick else { return Ok("gy") };
     remove_first(&mut g.player_mut(p).gy, x);
     let m = enter(g, p, x, Enter::default())?;
     g.perm_mut(m).tapped = true;
@@ -1184,8 +1190,13 @@ fn daydream_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 /// Daydream: blinks your creature with the best entry ability (+1/+1 counter); flashback {2}{W}
-pub fn daydream(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let Some(t) = daydream_target(g, p) else { return Ok("gy") };
+pub fn daydream(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let t = if crate::human::is_human(g, p) {
+        ctx.target.filter(|&t| g.perm(t).on_bf && g.perm(t).cd.is_some())
+    } else {
+        daydream_target(g, p)
+    };
+    let Some(t) = t else { return Ok("gy") };
     if let Some(n) = blink(g, p, t)? {
         crate::cardcode::put_plus(g, n, 1);
     }

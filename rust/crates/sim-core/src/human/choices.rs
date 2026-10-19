@@ -438,7 +438,13 @@ pub fn deal_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) 
     }
     let labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
     let k = choose_one(g, p, "target", &format!("{source}: deal {n} damage to which target?"), &labels)?;
-    let m = match tg[k] {
+    apply_damage(g, p, tg[k], n, source, kind)
+}
+
+/// `n` damage from p's `source` to one target (a creature dies if n reaches its toughness, a planeswalker loses that
+/// much loyalty, a player loses that much life).
+pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, kind: &str) -> Res {
+    let m = match t {
         Target::Player(q) => return engine::life::lose_life(g, q, n, Some(p), intern(kind), None),
         Target::Perm(m) => m,
     };
@@ -462,6 +468,32 @@ pub fn deal_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) 
         }
     }
     engine::life::check_state(g)
+}
+
+/// "N damage divided as you choose among any number of targets" (Inferno Titan): one question per point, so a
+/// target may take several. Damage is dealt to each target chosen, in the order first picked.
+pub fn divide_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) -> Res {
+    let tg = damage_targets(g, p, Default::default());
+    if tg.is_empty() || n <= 0 {
+        return Ok(());
+    }
+    let labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
+    let mut shares: Vec<(Target, i32)> = vec![];
+    for i in 0..n {
+        let pr = format!("{source}: point {} of {n} of the damage goes to which target?", i + 1);
+        let k = choose_one(g, p, "target", &pr, &labels)?;
+        match shares.iter_mut().find(|s| s.0 == tg[k]) {
+            Some(s) => s.1 += 1,
+            None => shares.push((tg[k], 1)),
+        }
+    }
+    for (t, d) in shares {
+        if g.over {
+            break;
+        }
+        apply_damage(g, p, t, d, source, kind)?;
+    }
+    Ok(())
 }
 
 // ------------------------------------------------------------------ the Ring

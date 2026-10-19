@@ -218,6 +218,9 @@ fn titan_damage(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     if !trigger_window(g, p, Some(src), "3 damage divided", Some(5.0))? {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        return crate::human::choices::divide_damage(g, p, 3, "Inferno Titan", "burn");
+    }
     let mut left = 3;
     // lethal to a player: all of it at that player
     if let Some(q) = opps.iter().copied().filter(|&q| g.player(q).life <= 3).min_by_key(|&q| g.player(q).life) {

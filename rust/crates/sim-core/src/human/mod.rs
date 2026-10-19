@@ -18,6 +18,7 @@ pub mod human;
 pub mod legal;
 pub mod mana;
 pub mod script;
+pub mod specs;
 
 use crate::control::Human;
 use crate::ids::{PermId, PlayerId};
