@@ -272,9 +272,10 @@ mod tests {
     fn a_card_the_deck_ranks_positive_does_not() {
         let s = sim();
         let out = s.mine["kefka"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
-        let bribery = rules(&s, "kefka", &out, "Bribery", "t3");
-        assert!(!bribery.warns() && bribery.prio == 62 && bribery.deck_rule, "{bribery:?}");
-        assert_eq!(bribery.line(), "AI: Bribery: priority 62 (deck rule)");
+        // Psychosis Crawler: Kefka's own rule ranks it (kefka_prio), so no warning
+        let crawler = rules(&s, "kefka", &out, "Psychosis Crawler", "t3");
+        assert!(!crawler.warns() && crawler.prio > 0 && crawler.deck_rule, "{crawler:?}");
+        assert!(crawler.line().ends_with("(deck rule)"), "{}", crawler.line());
         let ring = rules(&s, "kefka", &out, "Sol Ring", "t3");
         assert!(!ring.warns() && ring.prio > 0 && !ring.deck_rule, "{ring:?}");
         assert!(ring.line().ends_with("(generic)"));
