@@ -114,7 +114,7 @@ fn jaces_archivist_wheel_is_worth_it_with_sheoldred_out() {
 // ------------------------------------------------------------------ Titania: Kura, the Boundless Sky
 #[test]
 fn kura_dies_into_three_lands_while_there_are_land_drops_to_make() {
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     let before = g.player(P0).hand.len();
     lands(&mut g, P0, "Forest", 3, false);
     let k = perm(&mut g, P0, "Kura, the Boundless Sky");
@@ -127,7 +127,7 @@ fn kura_dies_into_three_lands_while_there_are_land_drops_to_make() {
 
 #[test]
 fn kura_dies_into_a_big_spirit_once_the_lands_are_down() {
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     lands(&mut g, P0, "Forest", 6, false);
     hand(&mut g, P0, &["Forest", "Forest"]);
     let before = g.player(P0).hand.len();
@@ -140,7 +140,7 @@ fn kura_dies_into_a_big_spirit_once_the_lands_are_down() {
 
 #[test]
 fn kura_late_game_makes_the_spirit_even_with_an_empty_hand() {
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     lands(&mut g, P0, "Forest", 9, false);
     let before = g.player(P0).hand.len();
     let k = perm(&mut g, P0, "Kura, the Boundless Sky");
@@ -152,7 +152,7 @@ fn kura_late_game_makes_the_spirit_even_with_an_empty_hand() {
 
 #[test]
 fn titania_casts_survey_early_and_vorinclex_as_a_top_end_threat() {
-    let mut g = table(&["titania", "seph"]);
+    let mut g = table(&["omnath", "seph"]);
     lands(&mut g, P0, "Forest", 3, false);
     let hs = hand(&mut g, P0, &["Cartographer's Survey", "Tireless Tracker", "Vorinclex, Monstrous Raider"]);
     let pr = |g: &Game, c| sim_core::ai::decks::deck_prio(g, P0, c);

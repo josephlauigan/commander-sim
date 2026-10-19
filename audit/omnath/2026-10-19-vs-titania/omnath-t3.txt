@@ -1,0 +1,26 @@
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m18s elapsed, ~2m49s left
+  progress  20.0%  0m36s elapsed, ~2m25s left
+  progress  30.0%  0m56s elapsed, ~2m10s left
+  progress  40.0%  1m14s elapsed, ~1m51s left
+  progress  50.0%  1m34s elapsed, ~1m34s left
+  progress  60.0%  1m53s elapsed, ~1m15s left
+  progress  70.0%  2m12s elapsed, ~0m56s left
+  progress  80.0%  2m31s elapsed, ~0m37s left
+  progress  90.0%  2m53s elapsed, ~0m19s left
+  progress 100.0%  3m14s elapsed, ~0m00s left
+
+=== Omnath vs Tier 3 (High B3) [loose, lookahead AI, 2000 games] ===
+Win rate  25.4%   95% CI 23.5-27.3%   (even share 25%: +0.4 pts)
+Average turn (your own turn count) of wins 14.2, of losses 11.2
+Plan online (first 5/5 Elemental from Omnath): 49.5% of games
+Wins by: damage 92%, timeout 8%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      61.0%            29.5%           16.9%
+  Atraxa (atraxa-superfriends)                 60.4%            27.6%           11.8%
+  Aurelia (aurelia-boros-extra-combats)        60.4%            30.2%           20.9%
+  Marwyn (marwyn-mono-green-elves)             59.7%            19.8%           14.2%
+  Korvold (korvold-jund-sacrifice)             58.6%            17.0%            9.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(195s total)

@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Titania, Tymna/Kraum, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Kraum, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -330,7 +330,9 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ## Titania, Protector of Argoth — Mono-Green Lands to the Graveyard
 
-Deck key `titania`, `decklists/JD/titania-lands.md`.
+Deck key `titania`, `decklists/JD/titania-lands.md` (both removed).
+
+**Retired 2026-10-19: became the Omnath deck** (key `omnath`, see the Omnath section below and `audit/omnath/FINDINGS.md`). Titania stays as a card in Omnath's 99; her landfall plan keeps working there. The entries below are the deck's history.
 
 ### Changes
 
@@ -657,3 +659,11 @@ Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
 - **2026-10-17.** Out: Tocasia's Welcome. In: Smaug the Magnificent. Smaug the Magnificent (JD's card): +1.1 ±2.7 at T3, 2,000 paired look-ahead games, noise; a hasty flier for Tymna plus a Treasure each upkeep.
 - **2026-10-17.** Out: Dream Trawler. In: Resplendent Angel. JD got Resplendent Angel instead of Dream Trawler. Measured at T3 (2,000 paired games): -1.8 (±2.6), inside the noise.
 - **2026-10-17.** Out: Rip Apart. In: Avenge (from bulk). Measured at T3 (2,000 paired games): +3.1 (±2.6), list 31.7 → 34.8%: a second creature wipe, so the deck dies to combat less (eliminated 67.0 → 63.7%).
+
+## Omnath, Locus of Rage — Red-Green Landfall Elementals
+
+Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
+
+### Changes
+
+- **2026-10-19.** New deck: Omnath, Locus of Rage red-green landfall, built from the Titania list.

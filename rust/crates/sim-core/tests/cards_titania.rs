@@ -14,7 +14,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn game() -> Game {
-    table(&["titania", "seph"])
+    table(&["omnath", "seph"])
 }
 
 fn options(g: &mut Game, p: PlayerId, post: bool) -> Vec<Opt> {
@@ -128,8 +128,9 @@ fn a_fetch_land_is_held_while_titania_can_be_cast_next_turn_and_cracked_when_she
     let mut g = game();
     g.player_mut(P0).turns = 5;
     lands(&mut g, P0, "Forest", 5, false);
+    hand(&mut g, P0, &["Titania, Protector of Argoth"]); // the omnath deck: she is a card in hand, not the commander
     let fetch = hand(&mut g, P0, &["Evolving Wilds"])[0];
-    assert!(titania::hold_fetch(&g, P0), "five mana and Titania in the command zone: hold");
+    assert!(titania::hold_fetch(&g, P0), "five mana and Titania in hand: hold");
     assert!(titania::land_adjust(&g, P0, fetch) > 0.0);
     // with only two lands there is no Titania in sight: crack for mana
     let mut g2 = game();
@@ -421,7 +422,7 @@ fn blossoming_defense_is_the_second_answer_and_the_fetch_lands_are_cracked_when_
 // ------------------------------------------------------------------ the finishers
 #[test]
 fn the_finisher_waits_until_the_attack_is_lethal_through_the_blockers() {
-    let mut g = table_with(&["titania", "seph"], 1, 40);
+    let mut g = table_with(&["omnath", "seph"], 1, 40);
     let c = hand(&mut g, P0, &["Overwhelming Stampede"])[0];
     token(&mut g, P0, 5);
     token(&mut g, P0, 5);

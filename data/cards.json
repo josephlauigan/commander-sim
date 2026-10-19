@@ -55939,7 +55939,8 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "RG"
+    "c": "RG",
+    "pain": true
    },
    "pow": 0,
    "tgh": 0,

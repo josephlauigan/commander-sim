@@ -1,0 +1,26 @@
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m32s elapsed, ~4m54s left
+  progress  20.0%  1m02s elapsed, ~4m08s left
+  progress  30.0%  1m34s elapsed, ~3m39s left
+  progress  40.0%  2m06s elapsed, ~3m09s left
+  progress  50.0%  2m39s elapsed, ~2m39s left
+  progress  60.0%  3m10s elapsed, ~2m06s left
+  progress  70.0%  3m40s elapsed, ~1m34s left
+  progress  80.0%  4m14s elapsed, ~1m03s left
+  progress  90.0%  4m45s elapsed, ~0m31s left
+  progress 100.0%  5m19s elapsed, ~0m00s left
+
+=== Titania vs Tier 2 (Mid B3) [loose, lookahead AI, 2000 games] ===
+Win rate  26.4%   95% CI 24.6-28.4%   (even share 25%: +1.5 pts)
+Average turn (your own turn count) of wins 15.3, of losses 12.5
+Plan online (first 5/3 Elemental from Titania): 60.4% of games
+Wins by: damage 87%, timeout 13%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         61.0%            25.7%           12.4%
+  Brago (brago-azorius-blink-control)          60.4%            25.4%           13.8%
+  Kaalia of the Vast (kaalia-mardu-creature-   60.4%            21.7%           16.8%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.7%            23.0%           12.2%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.6%            26.8%           15.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(319s total)

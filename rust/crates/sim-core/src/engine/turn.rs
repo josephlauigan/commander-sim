@@ -321,7 +321,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         }
     };
     if cands.is_empty() {
-        if g.player(p).key == "titania" {
+        if crate::impls::titania::is_deck(g.player(p).key) {
             // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
             remove_land(g, p, l);
             let fetch = g.land(l).cd;

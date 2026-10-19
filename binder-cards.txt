@@ -1,7 +1,6 @@
 1x Arcane Sanctum
 1x Arnim Zola, Bio-Fanatic
 1x Battlefield Forge
-1x Birds of Paradise
 1x Bitter Triumph
 1x Brushland
 1x Call of the Ring
@@ -9,7 +8,6 @@
 1x Carth the Lion
 1x Caves of Koilos
 1x Chromatic Lantern
-1x Command Tower
 1x Cromat
 1x Crumbling Necropolis
 1x Dakkon Blackblade
@@ -26,7 +24,6 @@
 1x Elrond, Lord of Rivendell
 1x Fact or Fiction
 1x Frontier Bivouac
-1x Fyndhorn Elder
 1x Gandalf, Friend of the Shire
 1x Garland, Royal Kidnapper
 1x Helm of Kaldra
@@ -34,7 +31,6 @@
 1x Jester's Cap
 1x Jodah, the Unifier
 1x Jungle Shrine
-1x Karplusan Forest
 1x King Darien XLVIII
 1x Korlash, Heir to Blackblade
 1x Lagrella, the Magpie
@@ -71,13 +67,11 @@
 1x Stinkweed Imp
 1x Szadek, Lord of Secrets
 1x Talisman of Hierarchy
-1x Terror of the Peaks
 1x The Aetherspark
 1x Tolsimir Wolfblood
 1x Triskelion
 1x Unclaimed Territory
 1x Urza, Powerstone Prodigy
 1x Vivid Creek
-1x Wrenn and Six
 1x Yavimaya Coast
 2x Underground River
