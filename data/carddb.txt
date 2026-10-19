@@ -295,6 +295,7 @@ Shamanic Revelation|S|3GG|drawcre
 Skyclave Apparition|C|1WW|pow=2 rem=exile tgt=nl etb mv4
 Skyshroud Claim|S|3G|lr=2
 Spectator Seating|L|-|c=RW
+Undergrowth Stadium|L|-|c=BG
 Spire of Industry|L|-|c=A
 Sterling Grove|E|GW|x
 Sun Titan|C|4WW|pow=6 vig suntitan
@@ -363,3 +364,4 @@ Oppression|E|1BB|
 Cecil, Dark Knight|C|B|pow=2 tgh=3 dt leg
 Lightning, Army of One|C|1RW|pow=3 tgh=2 trample lifelink leg
 Marvin, Murderous Mimic|AC|2|pow=2 tgh=2 leg
+Kuja, Genome Sorcerer // Trance Kuja, Fate Defied|C|2BR|pow=3 tgh=4 leg human wizard

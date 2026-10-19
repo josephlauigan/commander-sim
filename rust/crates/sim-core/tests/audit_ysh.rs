@@ -59,8 +59,8 @@ fn dark_endurance_is_not_cast_against_exile_or_for_a_small_creature() {
 }
 
 #[test]
-fn dark_endurance_is_only_for_the_kraum_seat() {
-    let mut g = table(&["thrasios", "galadriel", "veyran", "seph"]);
+fn dark_endurance_is_only_for_the_tymna_partner_seats() {
+    let mut g = table(&["galadriel", "veyran", "seph", "sauron"]);
     lands(&mut g, P0, "Swamp", 2, false);
     let t = perm(&mut g, P0, "Tymna the Weaver");
     g.perm_mut(t).is_cmd = true;
@@ -237,4 +237,17 @@ fn farewell_without_the_mana_for_teferis_is_not_planned_around_it() {
     perm(&mut g, P0, "Sanguine Bond");
     perm(&mut g, P1, "Baneslayer Angel");
     assert!(!ysh_mod::teferis_first(&g, P0, far[0], "farewell"));
+}
+
+#[test]
+fn the_thrasios_seat_casts_dark_endurance_for_tymna_too() {
+    // Tymna/Thrasios plays Dark Endurance like the kraum seat (thrasios deck, 10/19)
+    let mut g = table(&["thrasios", "galadriel", "veyran", "seph"]);
+    lands(&mut g, P0, "Swamp", 2, false);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).is_cmd = true;
+    hand(&mut g, P0, &["Dark Endurance"]);
+    let doom = card(&g, "Murder");
+    removal::apply_removal(&mut g, Some(P1), t, "destroy", Some(doom)).unwrap();
+    assert!(on(&g, t), "indestructible in response");
 }

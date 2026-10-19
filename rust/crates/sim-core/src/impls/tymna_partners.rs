@@ -78,7 +78,7 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         return base.max(66);
     }
-    if pl.key == "kraum" {
+    if matches!(pl.key, "kraum" | "thrasios") {
         if t.has(Tag::Breach) && !d.creature {
             return breach_prio(g, p);
         }

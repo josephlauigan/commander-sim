@@ -601,6 +601,8 @@ fn resolve_combat_inner(
             if cardcode::damage_prevented(g, a) || cardcode::dovin_blocked(g, a) {
                 ap = 0; // Old Fat Spider's chapter II, Dovin's lock
             }
+            let fs = crate::impls::kuja::flare_star(g, Some(a)); // Trance Kuja: a Wizard's damage is doubled
+            let (ap_raw, ap) = (ap, ap * fs);
             let tr =
                 g.player(p).trample || has(g, p, Tag::Uprising) || card_tag(g, a, Tag::Trample) || kw(g, a, "trample");
             let mut dmg = match blocker_of(&assign, a) {
@@ -611,7 +613,7 @@ fn resolve_combat_inner(
                 Some(b) => {
                     let bt = etgh(g, b);
                     let t0 = crate::impls::t0_giada::combat_proof;
-                    let mut a_dies = (epow(g, b) * fiery(g, d) * crate::engine::life::stagger_mult(g, p) >= etgh(g, a) || g.perm(b).dt)
+                    let mut a_dies = (epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
                         && !no_damage(g, a)
                         && !t0(g, a);
@@ -637,7 +639,7 @@ fn resolve_combat_inner(
                     } else if fb && !fa && a_dies {
                         b_dies = false;
                     }
-                    let dmg = if tr { (ap - bt).max(0) } else { 0 };
+                    let dmg = if tr { (ap_raw - bt).max(0) * fs } else { 0 };
                     if ap > 0 && cardcode::kaldra_exile(g, a, b)? {
                         b_dies = false; // Sword of Kaldra: exiles what it damages
                     }

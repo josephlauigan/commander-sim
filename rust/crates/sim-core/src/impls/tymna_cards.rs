@@ -1189,7 +1189,7 @@ fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
 /// creature already connects, or already flies); the pieces that add size and keywords go on a creature that connects
 /// anyway, since its hit is the card Tymna draws.
 pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
-    if g.player(p).key != "kraum" {
+    if !matches!(g.player(p).key, "kraum" | "thrasios") {
         return 0.0;
     }
     let name = name_of(g, e);
@@ -1223,7 +1223,7 @@ pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
 
 /// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's)
 pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
-    if g.player(p).key != "kraum" {
+    if !matches!(g.player(p).key, "kraum" | "thrasios") {
         return 0.0;
     }
     // capped so that casting a creature (priority 66 and up, utility 6.6 and up) still comes before an equip
@@ -1242,7 +1242,7 @@ fn best_wearer(g: &Game, p: PlayerId, e: PermId) -> Option<PermId> {
 /// The Nim Deathmantle equip picks its wearer with `equip_holder_value` (in mine.rs).
 pub fn kraum_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let mut out = vec![];
-    if g.player(p).key != "kraum" || crate::human::is_human(g, p) || post {
+    if !matches!(g.player(p).key, "kraum" | "thrasios") || crate::human::is_human(g, p) || post {
         return Ok(out);
     }
     for e in g.player(p).perms.clone() {
@@ -1286,7 +1286,7 @@ fn land_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
     let lands: Vec<CardId> = okn.iter().copied().filter(|&c| g.db.get(c).land).collect();
     max_by(&lands, |c| {
         let cs = cols(c);
-        let new = "WUBR".chars().filter(|&ch| cs.contains(ch) && !have.contains(ch)).count() as f64;
+        let new = (if g.player(p).key == "thrasios" { "WUBG" } else { "WUBR" }).chars().filter(|&ch| cs.contains(ch) && !have.contains(ch)).count() as f64;
         3.0 * new + cs.len() as f64 - if g.db.get(c).tag(Tag::T) { 1.5 } else { 0.0 }
     })
 }
@@ -1963,7 +1963,7 @@ fn endurance_protect(
     actor: Option<PlayerId>,
 ) -> Res<bool> {
     const ENDURANCE: &str = "Dark Endurance";
-    if g.player(owner_p).key != "kraum"
+    if !matches!(g.player(owner_p).key, "kraum" | "thrasios")
         || actor.is_none()
         || actor == Some(owner_p)
         || !(kind == "destroy" || kind.starts_with("dmg"))

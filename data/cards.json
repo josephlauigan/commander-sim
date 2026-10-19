@@ -58635,6 +58635,51 @@
    "spell_prio": false
   },
   {
+   "name": "Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+   "types": "C",
+   "generic": 2,
+   "pips": "BR",
+   "tags": {
+    "pow": "3",
+    "tgh": "4",
+    "leg": true,
+    "human": true,
+    "wizard": true
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "mutant",
+    "wizard"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Kuldotha Cackler",
    "types": "C",
    "generic": 2,
@@ -102983,6 +103028,44 @@
    "spell_prio": false
   },
   {
+   "name": "Talisman of Unity",
+   "types": "A",
+   "generic": 2,
+   "pips": "",
+   "tags": {
+    "rock": "1:GW",
+    "pain": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Talon Gates of Madara",
    "types": "L",
    "generic": 0,
@@ -111223,6 +111306,46 @@
     "island",
     "swamp"
    ],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Undergrowth Stadium",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "BG"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": [
+    "opponents",
+    2
+   ],
+   "land_types": [],
    "basic": false,
    "python_hooks": [],
    "spell_prio": false

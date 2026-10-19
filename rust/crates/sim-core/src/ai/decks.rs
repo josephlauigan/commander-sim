@@ -724,7 +724,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         "seph" => super::seph::seph_tutor_target(g, p).and_then(|n| g.db.id(n)).filter(|c| okn.contains(c)),
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
         "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
-        "kraum" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
+        "kraum" | "thrasios" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
         "sephfs" => crate::impls::sephfs::tutor_pick(g, p, kind, &okn),
         "veyran" => {
             if kind == "art" {

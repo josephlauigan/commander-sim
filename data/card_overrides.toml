@@ -4741,8 +4741,7 @@ status = "Full"
 note = "{T}: {C}, or {U}/{R} for 1 damage to you"
 
 ["Talisman of Curiosity"]
-add_tags = ["pain"]
-pool_add_tags = ["rock=1:GU"]
+add_tags = ["pain", "rock=1:GU"]
 status = "Full"
 note = "{T}: {C}, or one of its colours for 1 damage"
 
@@ -8999,3 +8998,16 @@ dsl = [
 ]
 status = "Full"
 note = "{T}, pay 1 life: destroy target permanent you own (card code, t6_dack.rs: the AI aims it at its own creatures an opponent controls, the ones Dack gave away; the parsed ability had read 'you control' and destroyed its own permanents); {T}, pay 3 life: proliferate; {T}, pay 4 life: draw; {5}: untap"
+
+["Talisman of Unity"]
+add_tags = ["pain", "rock=1:GW"]
+status = "Full"
+note = "{T}: {C}, or {G}/{W} for 1 damage"
+
+["Undergrowth Stadium"]
+status = "Full"
+note = "{T}: {B} or {G}; enters tapped unless you have two or more opponents"
+
+["Kuja, Genome Sorcerer // Trance Kuja, Fate Defied"]
+status = "Full"
+note = "3/4 for {2}{B}{R}; at the beginning of your end step it makes a tapped 0/1 black Wizard token (whenever you cast a noncreature spell, the token deals 1 damage to each opponent), then transforms into Trance Kuja, Fate Defied (4/6) once you control four or more Wizards (Kefka and Niv-Mizzet count); Flare Star: damage a Wizard you control would deal to a player or permanent is doubled (the tokens' pings, Wizard creatures in combat, Niv-Mizzet's draw trigger) (impls/kuja.rs)"
