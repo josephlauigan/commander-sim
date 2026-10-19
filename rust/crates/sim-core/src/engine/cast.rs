@@ -332,7 +332,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         }
         if has(g, q, Tag::Rhystic) {
             let src = find(g, q, Tag::Rhystic)[0];
-            if trigger_window(g, q, Some(src), "draw unless they pay {1}", None)? && cardcode::rhystic_unpaid(g, p)? {
+            if crate::engine::stack::may_window(g, q, Some(src), "draw unless they pay {1}", None)? && cardcode::rhystic_unpaid(g, p)? {
                 draw(g, q, 1, false)?;
             }
         }

@@ -1136,7 +1136,11 @@ fn ragavan(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i3
     if let Some(c) = g.player_mut(d).library.pop() {
         g.player_mut(d).exile.push(c);
         let (gen_, pips) = cost_of(g, p, c);
-        if !g.db.get(c).land && can_pay(g, p, gen_, &pips, false) && g.db.get(c).perm {
+        if !g.db.get(c).land
+            && can_pay(g, p, gen_, &pips, false)
+            && g.db.get(c).perm
+            && (!crate::human::is_human(g, p) || choices::yes_no(g, p, &format!("Ragavan, Nimble Pilferer: cast {} from exile now?", g.db.get(c).name))?)
+        {
             pay(g, p, gen_, &pips, false)?;
             remove_first(&mut g.player_mut(d).exile, c);
             enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;

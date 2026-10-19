@@ -706,7 +706,16 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
 fn vault_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let o = g.perm(src).owner;
     let x = g.perm(src);
-    if p != o || !x.tapped || x.phased || g.player(o).life > 20 || !can_pay(g, o, 4, "", false) {
+    let human = crate::human::is_human(g, o);
+    if p != o || !x.tapped || x.phased || (!human && g.player(o).life > 20) || !can_pay(g, o, 4, "", false) {
+        return Ok(());
+    }
+    if human {
+        // "you may pay {4}. If you do, untap this artifact": the person decides, not the life and best-spell test
+        if crate::human::choices::yes_no(g, o, "Mana Vault: pay {4} to untap it?")? {
+            pay(g, o, 4, "", false)?;
+            g.perm_mut(src).tapped = false;
+        }
         return Ok(());
     }
     let avail = total_mana(g, o, false) as i64;

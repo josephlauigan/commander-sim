@@ -17,7 +17,7 @@
 
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::stack::{ability_window, may_window, may_window_card, trigger_window};
 use crate::engine::values::{epow, etgh, has_type, pval};
 use crate::engine::zones::{Enter, Tokens, draw, enter, make_tokens, max_by};
 use crate::flow::Res;
@@ -452,7 +452,7 @@ fn blade_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         None => true,
         Some(t) => t != m && holder_score(g, m) > holder_score(g, t) + 1.0,
     };
-    if better && trigger_window(g, o, Some(src), "attach to the legendary creature", Some(6.0))? {
+    if (better || crate::human::is_human(g, o)) && may_window(g, o, Some(src), "attach to the legendary creature", Some(6.0))? {
         attach(g, src, m);
     }
     Ok(())
@@ -487,7 +487,7 @@ fn armory_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
 fn armory_attach(g: &mut Game, src: PermId) -> Res {
     let o = owner(g, src);
     let es: Vec<PermId> = pullable(g, o, src).into_iter().filter(|&e| g.perm(e).attached != Some(src)).collect();
-    if es.is_empty() || !trigger_window(g, o, Some(src), "attach Equipment to itself", Some(5.0))? {
+    if es.is_empty() || !may_window(g, o, Some(src), "attach Equipment to itself", Some(5.0))? {
         return Ok(());
     }
     for e in es {
@@ -504,7 +504,7 @@ fn beatrix_combat(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
     }
     let Some(to) = best_holder(g, p) else { return Ok(vec![]) };
     let es = pullable(g, p, to);
-    if es.is_empty() || !trigger_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
+    if es.is_empty() || !may_window(g, p, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(vec![]);
     }
     for e in es {
@@ -533,7 +533,7 @@ fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = owner(g, src);
     let Some(to) = best_holder(g, o) else { return Ok(()) };
-    if best_pull(g, o, to).is_none() || !trigger_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
+    if best_pull(g, o, to).is_none() || !may_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(());
     }
     // targets are chosen again as it resolves: the same choice, if still legal
@@ -608,7 +608,7 @@ fn puresteel_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if owner(g, m) == o
         && live(g, src)
         && is_equipment(g, m)
-        && trigger_window(g, o, Some(src), "draw a card", Some(4.0))?
+        && may_window(g, o, Some(src), "draw a card", Some(4.0))?
     {
         draw(g, o, 1, false)?;
     }
@@ -624,7 +624,7 @@ fn scythe_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = owner(g, src);
     let Some(to) = best_holder(g, o) else { return Ok(()) };
-    if trigger_window(g, o, Some(src), "attach to a creature", Some(5.0))? && attach(g, src, to) {
+    if may_window(g, o, Some(src), "attach to a creature", Some(5.0))? && attach(g, src, to) {
         super::partials::eot_kw(g, to, "first strike");
         super::partials::eot_kw(g, to, "must be blocked");
     }
@@ -850,7 +850,7 @@ pub fn jocasta_attack(g: &mut Game, p: PlayerId, atk: &[PermId]) -> Res<Vec<Perm
     let Some(c) = g.player(p).gy.iter().copied().find(|&c| card_name(g, c) == "Jocasta, Automaton Avenger") else {
         return Ok(vec![]);
     };
-    if !crate::engine::stack::trigger_window_card(g, p, c, "return Jocasta attacking")? {
+    if !may_window_card(g, p, c, "return Jocasta attacking", "Jocasta, Automaton Avenger: return her to the battlefield tapped and attacking?")? {
         return Ok(vec![]);
     }
     let Some(i) = g.player(p).gy.iter().position(|&x| x == c) else { return Ok(vec![]) };

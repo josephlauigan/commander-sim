@@ -27,7 +27,7 @@ use crate::engine::zones::{discard_cards, land_to_hand};
 use crate::tag::Tag;
 use crate::engine::mana::can_pay;
 use crate::engine::removal::apply_removal;
-use crate::engine::stack::{counter_window, trigger_window};
+use crate::engine::stack::{counter_window, may_window, trigger_window};
 use crate::engine::values::{card_name, epow, etgh, pval};
 use crate::engine::zones::{draw, max_by};
 use crate::flow::Res;
@@ -225,7 +225,8 @@ pub fn becomes_target(g: &mut Game, m: PermId, _by: PlayerId) -> Res {
         return Ok(());
     }
     let o = g.perm(m).owner;
-    if g.player(o).library.len() > 2 && trigger_window(g, o, Some(m), "you may draw a card", Some(3.0))? {
+    if (g.player(o).library.len() > 2 || (crate::human::is_human(g, o) && !g.player(o).library.is_empty()))
+        && may_window(g, o, Some(m), "you may draw a card", Some(3.0))? {
         draw(g, o, 1, false)?;
     }
     Ok(())

@@ -318,7 +318,7 @@ fn kotwo(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let n = g.player(o).lands.len();
         g.opps(o).any(|q| g.player(q).lands.len() > n)
     };
-    if behind(g) && trigger_window(g, o, Some(src), "search for a Plains", None)? && behind(g) {
+    if behind(g) && crate::engine::stack::may_window(g, o, Some(src), "search for a Plains", None)? && behind(g) {
         let cs: Vec<CardId> = searchable(g, o)
             .into_iter()
             .filter(|&x| {

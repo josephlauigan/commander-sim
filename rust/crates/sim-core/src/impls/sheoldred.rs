@@ -11,7 +11,7 @@ use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::stack::{ability_window, may_window, may_window_ask, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, pval, untargetable};
 use crate::engine::zones::{
@@ -387,10 +387,11 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 /// Seymour Flux: at the beginning of your upkeep, you may pay 1 life: draw a card and a +1/+1 counter on it
 fn seymour_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != owner(g, src) || g.player(p).life <= 8 || g.player(p).library.len() < 3 {
+    let human = crate::human::is_human(g, p); // a person decides for themselves whether it is worth the life
+    if p != owner(g, src) || (!human && (g.player(p).life <= 8 || g.player(p).library.len() < 3)) || g.player(p).life < 1 {
         return Ok(());
     }
-    if trigger_window(g, p, Some(src), "pay 1 life: draw a card and a +1/+1 counter", Some(4.0))? && on_bf(g, src) {
+    if may_window_ask(g, p, Some(src), "pay 1 life: draw a card and a +1/+1 counter", Some(4.0), "Seymour Flux: pay 1 life to draw a card and put a +1/+1 counter on it?")? && on_bf(g, src) {
         lose_life(g, p, 1, Some(p), "other", None)?;
         draw(g, p, 1, false)?;
         plus_counter(g, src, 1);
@@ -1344,7 +1345,7 @@ fn moseo_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     let x = g.player(p).gained_turn.map_or(0, |t| t.1);
     let Some(c) = best_gy(g, p, |g, c| g.db.get(c).cmc as i32 <= x) else { return Ok(()) };
-    if trigger_window(g, p, Some(src), "return a creature card from your graveyard", Some(cv(g, c)))?
+    if may_window(g, p, Some(src), "return a creature card from your graveyard", Some(cv(g, c)))?
         && g.player(p).gy.contains(&c)
     {
         reanimate(g, p, c)?;
