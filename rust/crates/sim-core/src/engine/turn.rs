@@ -1010,6 +1010,28 @@ fn step_end(g: &mut Game, p: PlayerId) -> Res {
 }
 
 // ------------------------------------------------------------------ a game
+/// the AI's keep rule for p's current hand: 2 to 5 lands (Cloud's deck has its own, `cloud::keep_hand`)
+pub fn keeps_hand(g: &Game, p: PlayerId) -> bool {
+    let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
+    if g.player(p).key == "cloud" {
+        return crate::impls::cloud::keep_hand(g, p);
+    }
+    (2..=5).contains(&n)
+}
+
+/// the card the AI puts on the bottom first from p's current hand after mulligans: a land if it holds more than
+/// four (or has no spells), else its most expensive spell
+pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
+    let hand = g.player(p).hand.clone();
+    let lands: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+    let spells: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+    if lands.len() > 4 || spells.is_empty() {
+        lands.first().copied()
+    } else {
+        max_by(&spells, |c| g.db.get(c).cmc as f64)
+    }
+}
+
 /// Python's `mulligan`: keep 2 to 5 lands (Cloud's deck has its own keep, `cloud::keep_hand`); after two mulligans, bottom one or two cards.
 pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
     let draw7 = |g: &mut Game, rng: &mut crate::rng::Rng| {
@@ -1022,13 +1044,7 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
             pl.hand.push(c);
         }
     };
-    let ok = |g: &Game| {
-        let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
-        if g.player(p).key == "cloud" {
-            return crate::impls::cloud::keep_hand(g, p);
-        }
-        (2..=5).contains(&n)
-    };
+    let ok = |g: &Game| keeps_hand(g, p);
     draw7(g, rng);
     if ok(g) {
         return;
@@ -1041,14 +1057,7 @@ pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
         draw7(g, rng);
         if ok(g) || bottom == 2 {
             for _ in 0..bottom {
-                let hand = g.player(p).hand.clone();
-                let lands: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
-                let spells: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
-                let c = if lands.len() > 4 || spells.is_empty() {
-                    lands[0]
-                } else {
-                    max_by(&spells, |c| g.db.get(c).cmc as f64).unwrap()
-                };
+                let c = bottom_pick(g, p).unwrap();
                 let pl = g.player_mut(p);
                 let i = pl.hand.iter().position(|&x| x == c).unwrap();
                 pl.hand.remove(i);
