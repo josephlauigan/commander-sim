@@ -9294,17 +9294,15 @@
    "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
-   "kws": [
-    "prepared"
-   ],
+   "kws": [],
    "subtypes": [
     "bard",
     "dwarf"
    ],
    "protfrom": "",
    "ward": 0,
-   "identity": "R",
-   "game_changer": false,
+   "identity": null,
+   "game_changer": null,
    "source": "pool",
    "unparsed": [],
    "derived": {
