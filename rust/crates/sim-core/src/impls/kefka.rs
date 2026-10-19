@@ -978,7 +978,7 @@ fn mayhem_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
     }])
 }
 
-fn mayhem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn mayhem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).gy.contains(&c) || !mayhem_ready(g, p, c) {
         return Ok(false);
@@ -1258,7 +1258,7 @@ fn voidborn_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     }])
 }
 
-fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "B", false) {
         return Ok(false);

@@ -686,7 +686,7 @@ fn ragavan_dash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     Ok(vec![plan(2.5, "dash Ragavan".into(), ragavan_go, c.0 as i64)])
 }
 
-fn ragavan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn ragavan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
         return Ok(false);
