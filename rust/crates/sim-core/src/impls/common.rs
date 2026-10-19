@@ -3136,7 +3136,8 @@ pub fn tutor_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// Solitude (Approximate): exiles the best opposing creature on entry (rules2.py's evoke is its hand option)
+/// Solitude (Approximate): exiles the best opposing creature on entry, and its controller gains life equal to its power
+/// (rules2.py's evoke is its hand option)
 fn solitude(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
@@ -3150,8 +3151,12 @@ fn solitude(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     if let Some(t) = best_opp_creature(g, o, |_| true).filter(|&t| pval(g, t) >= 2.0) {
+        let (who, power) = (g.perm(t).owner, epow(g, t));
         let cd = g.perm(src).cd;
         apply_removal(g, Some(o), t, "exile", cd)?;
+        if !g.perm(t).on_bf {
+            gain(g, who, power)?; // Oracle: "That creature's controller gains life equal to its power."
+        }
     }
     Ok(())
 }
