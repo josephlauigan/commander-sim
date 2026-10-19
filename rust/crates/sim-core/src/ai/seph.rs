@@ -237,6 +237,10 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if d.creature && sbomb(g, c) == 0 {
         return 30;
     }
+    if &*d.name == "Victimize" {
+        // its own rule (impls/t2.rs): a big creature card in the graveyard and a cheap body to sacrifice
+        return g.registry.get(c).and_then(|i| i.prio).map_or(0, |f| f(g, p, c));
+    }
     0
 }
 
