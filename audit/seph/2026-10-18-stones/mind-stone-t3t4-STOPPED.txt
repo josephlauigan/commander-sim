@@ -1,0 +1,20 @@
+Model status of the swapped-in cards (cardgen audit):
+  The Mind Stone: Approximate (indestructible rock for {W}; harnessed ({5}{W}, {T}) once a creature with an enters effect worth repeating is out; then each end step blinks the best enters-effect creature, else a tapped mana rock (other noncreature permanents are never picked))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by seph's AI?
+  AI: The Mind Stone: priority 80 (deck rule)
+400 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 22 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (conservative, loose) of the swapped list vs Tier 3 (High B3)
+  dry run: The Mind Stone: drawn in 30.2% of games (121), cast in 86.0% of those (104)
+
+16,400 games (current list and the swapped one, 2,000 per list per tier, profiles conservative and loose), lookahead AI, 22 worker threads: about 37 minutes

@@ -45,3 +45,11 @@ for Kaervek, or Sauron with a small hand.
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **30.4% vs T3, 32.0% vs T4** (before 30.2 / 31.6): no change. Board-state tutors; its own sweepers spare the Army; Force of Will pitches draw spells first; mana held for counters.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+**Relic of Legends + Bitter Triumph => Basalt Monolith + Rings of Brighthearth: T3 +1.6, T4 +2.2 (noise ±5, no
+downgrade).** Basalt is cast in 82-84% of draws (a 3-mana rock that taps for 3 once), Rings in 52-57% (low priority
+until the combo is near). With Urza out the pair is infinite colorless mana into Urza's free plays (the loop is
+abstracted). Wins stayed by damage, so the combo itself rarely assembles in 500 games: the gain, if real, is mostly
+Basalt's burst mana. Rings of Brighthearth is not owned yet. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+**PINNED (JD, 10/18):** JD owns Basalt Monolith but not Rings of Brighthearth yet; the package waits until he has Rings.

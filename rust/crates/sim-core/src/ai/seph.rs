@@ -171,8 +171,8 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         let going = !mine::loop_need(g, p, &hand).is_empty() || (own_bomb_in_gy(g, p) && has_rean_access(g, p));
         return if going || bomb_on_bf(g, p) { 70 } else { 35 };
     }
-    if &*d.name == "The Soul Stone" {
-        return if pl.turns <= 5 { 80 } else { 55 }; // still worth casting late: its harnessed upkeep reanimation
+    if &*d.name == "The Soul Stone" || &*d.name == "The Mind Stone" {
+        return if pl.turns <= 5 { 80 } else { 55 }; // still worth casting late: its harnessed ability (reanimation, flicker)
     }
     if t.has(Tag::Rock) || t.has(Tag::Dork) || t.has(Tag::Lr) {
         return if pl.turns <= 5 { 80 } else { 30 };
@@ -236,6 +236,10 @@ pub fn seph_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     // ('tide': Tishana's Tidebinder, no longer in the list and no card has the tag)
     if d.creature && sbomb(g, c) == 0 {
         return 30;
+    }
+    if &*d.name == "Victimize" {
+        // its own rule (impls/t2.rs): a big creature card in the graveyard and a cheap body to sacrifice
+        return g.registry.get(c).and_then(|i| i.prio).map_or(0, |f| f(g, p, c));
     }
     0
 }

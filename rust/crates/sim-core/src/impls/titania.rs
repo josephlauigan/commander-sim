@@ -60,7 +60,16 @@ fn is_fetch(g: &Game, c: CardId) -> bool {
 
 /// the fetch lands p has on the battlefield (not cracked yet)
 fn fetch_lands(g: &Game, p: PlayerId) -> Vec<LandId> {
-    g.player(p).lands.iter().copied().filter(|&l| g.land(l).on_bf && is_fetch(g, g.land(l).cd)).collect()
+    g.player(p)
+        .lands
+        .iter()
+        .copied()
+        .filter(|&l| {
+            let x = g.land(l);
+            // a fetch land Primeval Titan put in tapped can not pay its {T} until it untaps
+            x.on_bf && is_fetch(g, x.cd) && !(x.tapped && x.data.truthy(DataKey::TitanTapped))
+        })
+        .collect()
 }
 
 fn in_hand(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
@@ -749,5 +758,85 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, EXPERT)?;
     c.etb = Some(expert_etb);
     c.attack = Some(expert_attack);
+    register_titan(r, db)?;
+    Ok(())
+}
+
+// ================================================================== Primeval Titan
+const TITAN: &str = "Primeval Titan";
+
+/// how much a land is worth to the Titan's search: the titania deck wants fetch lands first (each is a landfall now
+/// and, cracked, a land in the graveyard: a 5/3 under Titania), then utility lands, then basics; every other deck
+/// takes the land with the most colors
+fn titan_land_score(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    let d = g.db.get(c);
+    let cols = d.tags.str(Tag::C).map_or(0, |s| s.chars().count()) as f64;
+    let basic = crate::engine::zones::BASIC_LANDS.contains(&&*d.name);
+    if g.player(p).key == KEY {
+        let fetch = if is_fetch(g, c) { 100.0 } else { 0.0 };
+        return fetch + if basic { 0.0 } else { 10.0 } + cols;
+    }
+    cols * 10.0 + if basic { 0.0 } else { 1.0 }
+}
+
+/// Primeval Titan's trigger: up to two land cards from the library onto the battlefield tapped (each is a landfall),
+/// then shuffle. A person is not asked (the best lands are taken); Opposition Agent takes what it can
+fn titan_search(g: &mut Game, p: PlayerId) -> Res {
+    for _ in 0..2 {
+        let lands: Vec<CardId> =
+            crate::engine::zones::searchable(g, p).into_iter().filter(|&c| g.db.get(c).land).collect();
+        let Some(c) = max_by(&lands, |c| titan_land_score(g, p, c)) else { break };
+        let lib = &mut g.player_mut(p).library;
+        if let Some(i) = lib.iter().position(|&x| x == c) {
+            lib.remove(i);
+        }
+        if let Some(a) = crate::engine::zones::agent_for(g, p) {
+            crate::engine::zones::agent_take(g, a, p, c);
+            continue;
+        }
+        let l = g.add_land_entering(p, c, true);
+        if is_fetch(g, c) {
+            g.land_mut(l).data.set(DataKey::TitanTapped, Val::Bool(true));
+        }
+        crate::glog!(g, "    {} puts {} onto the battlefield tapped", g.player(p).name, g.db.get(c).name);
+        crate::engine::zones::landfall(g, p)?;
+    }
+    crate::engine::tutors::shuffle_library(g, p);
+    Ok(())
+}
+
+fn titan_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m == src && g.perm(src).owner == p && trigger_window(g, p, Some(src), "search for two lands", Some(3.0))? {
+        titan_search(g, p)?;
+    }
+    Ok(())
+}
+
+fn titan_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
+    if atk.contains(&src)
+        && g.perm(src).owner == p
+        && trigger_window(g, p, Some(src), "search for two lands", Some(3.0))?
+    {
+        titan_search(g, p)?;
+    }
+    Ok(vec![])
+}
+
+/// Titania's cast priority for the Titan: the six-mana threat that is also ramp, landfall and (with fetch lands left in
+/// the library) two 5/3s a swing; ahead of the other top-end cards, behind Titania herself
+fn titan_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    let fetch_left = g.player(p).library.iter().any(|&x| is_fetch(g, x));
+    if titania_of(g, p).is_some() && fetch_left {
+        72
+    } else {
+        64
+    }
+}
+
+fn register_titan(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, TITAN)?;
+    c.etb = Some(titan_etb);
+    c.attack = Some(titan_attack);
+    c.prio = Some(titan_prio);
     Ok(())
 }

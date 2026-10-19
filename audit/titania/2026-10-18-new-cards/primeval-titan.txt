@@ -1,0 +1,287 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Primeval Titan [pool] C 4GG :: pow=6 tgh=6 trample bomb=6
+Model status of the swapped-in cards (cardgen audit):
+  Primeval Titan: Full (6/6 trample; when it enters or attacks, up to two lands from the library onto the battlefield tapped (each a landfall), then shuffle. Titania's deck takes fetch lands first (a Titan-fetched one can be cracked once it untaps), then utility lands, then basics)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by titania's AI?
+  AI: Primeval Titan: priority 72 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t1), adaptive AI, 22 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 1 (High B2 / Low B3)
+  dry run: Primeval Titan: drawn in 24.5% of games (49), cast in 87.8% of those (43)
+
+3,200 games (current list and the swapped one, 500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 7 minutes
+Swaps: Ghalta the Unstoppable -> Primeval Titan
+
+=== Titania vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  19.2% ->  20.2%  (delta +1.0 pts, noise ±4.0, paired)   n=500
+               eliminated by (variant): Lathril 16.0%  Teysa Karlov 12.0%  Light-Paws 28.2%  Isshin 14.4%  Tatyova 8.8%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          19.2% ->  20.2%  +1.0pt   ±5.0 
+    Rounds survived (or game length)                  10.99 ->  10.82   -0.16  ±0.43 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.43 ->   0.42   -0.01  ±0.09 
+    Mana available on your turn 4                      4.60 ->   4.60   +0.00  ±0.12 
+    Mana available on your turn 6                      6.90 ->   7.02   +0.11  ±0.23 
+
+  Speed
+    Games where the game plan came online             53.2% ->  59.0%  +5.8pt   ±6.3 
+    Turn the game plan came online                     7.51 ->   7.80   +0.29  ±0.45 
+    Turn the commander first resolved                  6.72 ->   6.78   +0.06  ±0.28 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.88 ->  13.63   -0.25  ±0.94 
+    Tutors resolved per game                           0.19 ->   0.18   -0.02  ±0.05 
+    Spells cast per game                              13.75 ->  13.71   -0.04  ±0.89 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.70 ->   0.71   +0.02  ±0.10 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.81 ->   0.71   -0.09  ±0.12 
+    Your spells countered                              0.17 ->   0.16   -0.01  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                32.44 ->  33.23   +0.79  ±4.78 
+      ...of which combat damage                       32.44 ->  33.23   +0.79  ±4.78 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Primeval Titan                        22.4      86.6         7.9     13.4       36.1      0.06
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ghalta the Unstoppable                30.8      81.8         9.1     18.2       33.3      0.09
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        19.2      20.2     +1.0
+    rounds survived                                  10.99     10.82    -0.16
+    eliminated, % of games                            80.2      79.4     -0.8
+    opponents it eliminated, per game                 0.52      0.52    +0.00
+    damage dealt, per game                            32.4      33.2     +0.8
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         3.0       2.8     -0.2
+      plan online by turn 6, %                        21.4      22.4     +1.0
+      plan online by turn 8, %                        37.6      40.0     +2.4
+      plan online by turn 12, %                       50.4      54.6     +4.2
+      plan online at all, %                           53.2      59.0     +5.8
+    commander resolved by turn 4, %                   10.2      10.4     +0.2
+    commander resolved by turn 6, %                   44.6      42.6     -2.0
+    commander removals, per game                      0.52      0.47    -0.05
+    lands on the battlefield, turn 4                  4.11      4.12    +0.00
+    lands on the battlefield, turn 8                  8.27      8.57    +0.30
+    mana available, turn 4                            4.60      4.60    +0.00
+    mana available, turn 8                            8.99      9.34    +0.35
+    cards in hand after the land drop, turn 4         5.85      5.85    +0.00
+    cards in hand after the land drop, turn 8         3.94      3.89    -0.05
+    wins by (current):  damage 97%, timeout 3%
+    wins by (swapped):  damage 93%, timeout 7%
+    eliminated by (current): Light-Paws via commander damage 23.2%, Isshin via combat 9.8%, Lathril via combat 9.8%, Teysa Karlov via drain 9.2%
+    eliminated by (swapped): Light-Paws via commander damage 25.4%, Isshin via combat 11.2%, Lathril via combat 9.2%, Tatyova via combat 8.6%
+Swaps: Ghalta the Unstoppable -> Primeval Titan
+
+=== Titania vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.8% ->  28.4%  (delta +1.6 pts, noise ±5.2, paired)   n=500
+               eliminated by (variant): Kaalia of the Vast 14.2%  Sythis 13.6%  Lord Windgrace 17.0%  Brago 11.0%  Meren of Clan Nel Toth 12.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.8% ->  28.4%  +1.6pt   ±5.7 
+    Rounds survived (or game length)                  13.63 ->  13.90   +0.27  ±0.44 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.42 ->   0.43   +0.01  ±0.10 
+    Mana available on your turn 4                      4.64 ->   4.64   -0.00  ±0.13 
+    Mana available on your turn 6                      6.72 ->   6.87   +0.15  ±0.22 
+
+  Speed
+    Games where the game plan came online             60.6% ->  69.6%  +9.0pt   ±6.0*
+    Turn the game plan came online                     7.99 ->   8.06   +0.06  ±0.47 
+    Turn the commander first resolved                  6.94 ->   6.94   -0.00  ±0.29 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.08 ->  18.87   +0.78  ±1.12 
+    Tutors resolved per game                           0.25 ->   0.24   -0.00  ±0.05 
+    Spells cast per game                              18.56 ->  19.46   +0.90  ±1.02 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.95 ->   1.00   +0.05  ±0.12 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           2.13 ->   2.23   +0.10  ±0.25 
+    Your spells countered                              0.22 ->   0.22   +0.00  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                45.85 ->  48.79   +2.94  ±5.64 
+      ...of which combat damage                       45.85 ->  48.79   +2.94  ±5.64 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    better - Games where the game plan came online (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Primeval Titan                        30.0      90.0         9.1     10.0       43.0      0.12
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ghalta the Unstoppable                39.6      85.4        10.3     14.6       34.9      0.23
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.8      28.4     +1.6
+    rounds survived                                  13.63     13.90    +0.27
+    eliminated, % of games                            71.2      68.4     -2.8
+    opponents it eliminated, per game                 0.81      0.83    +0.02
+    damage dealt, per game                            45.8      48.8     +2.9
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         3.6       3.2     -0.4
+      plan online by turn 6, %                        23.4      24.0     +0.6
+      plan online by turn 8, %                        39.8      45.4     +5.6
+      plan online by turn 12, %                       55.2      64.2     +9.0
+      plan online at all, %                           60.6      69.6     +9.0
+    commander resolved by turn 4, %                   12.4      11.6     -0.8
+    commander resolved by turn 6, %                   45.6      44.4     -1.2
+    commander removals, per game                      1.25      1.38    +0.13
+    lands on the battlefield, turn 4                  4.16      4.15    -0.00
+    lands on the battlefield, turn 8                  8.29      8.64    +0.35
+    mana available, turn 4                            4.64      4.64    -0.00
+    mana available, turn 8                            8.75      9.08    +0.33
+    cards in hand after the land drop, turn 4         5.80      5.80    +0.00
+    cards in hand after the land drop, turn 8         3.96      3.98    +0.02
+    wins by (current):  damage 93%, timeout 7%
+    wins by (swapped):  damage 87%, timeout 13%
+    eliminated by (current): Lord Windgrace via combat 14.0%, Brago via combat 12.6%, Kaalia of the Vast via combat 10.6%, Sythis via combat 8.2%
+    eliminated by (swapped): Lord Windgrace via combat 16.2%, Brago via combat 11.0%, Kaalia of the Vast via combat 9.4%, Sythis via combat 9.0%
+  progress 100.0%  7m08s elapsed, ~0m00s left
+Swaps: Ghalta the Unstoppable -> Primeval Titan
+
+=== Titania vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.4% ->  27.0%  (delta +3.6 pts, noise ±4.8, paired)   n=500
+               eliminated by (variant): Aurelia 21.8%  Tergrid 19.2%  Korvold 8.0%  Atraxa 8.0%  Marwyn 15.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (titania) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for titania: first 5/3 Elemental from Titania
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.4% ->  27.0%  +3.6pt   ±5.5 
+    Rounds survived (or game length)                  12.14 ->  12.20   +0.06  ±0.47 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.05 
+    Missed land drops, turns 1-5                       0.39 ->   0.39   +0.00  ±0.09 
+    Mana available on your turn 4                      4.55 ->   4.55   -0.00  ±0.12 
+    Mana available on your turn 6                      6.77 ->   6.83   +0.06  ±0.21 
+
+  Speed
+    Games where the game plan came online             57.0% ->  61.2%  +4.2pt   ±6.2 
+    Turn the game plan came online                     7.90 ->   7.68   -0.22  ±0.47 
+    Turn the commander first resolved                  6.66 ->   6.68   +0.01  ±0.27 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.16 ->  15.50   +0.34  ±0.92 
+    Tutors resolved per game                           0.20 ->   0.22   +0.02  ±0.05 
+    Spells cast per game                              14.76 ->  15.18   +0.42  ±0.87 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.79 ->   0.80   +0.01  ±0.11 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.90 ->   0.86   -0.04  ±0.15 
+    Your spells countered                              0.12 ->   0.14   +0.01  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                34.00 ->  36.44   +2.45  ±4.92 
+      ...of which combat damage                       34.00 ->  36.44   +2.45  ±4.92 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Primeval Titan                        26.2      84.7         8.1     15.3       47.7      0.05
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ghalta the Unstoppable                34.6      76.9         9.3     23.1       35.3      0.07
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.4      27.0     +3.6
+    rounds survived                                  12.14     12.20    +0.06
+    eliminated, % of games                            75.0      72.0     -3.0
+    opponents it eliminated, per game                 0.64      0.71    +0.07
+    damage dealt, per game                            34.0      36.4     +2.4
+    plan: first 5/3 Elemental from Titania
+      plan online by turn 4, %                         3.4       3.6     +0.2
+      plan online by turn 6, %                        23.6      23.8     +0.2
+      plan online by turn 8, %                        37.4      43.2     +5.8
+      plan online by turn 12, %                       52.6      58.4     +5.8
+      plan online at all, %                           57.0      61.2     +4.2
+    commander resolved by turn 4, %                   11.6      11.8     +0.2
+    commander resolved by turn 6, %                   51.4      49.4     -2.0
+    commander removals, per game                      0.60      0.59    -0.01
+    lands on the battlefield, turn 4                  4.14      4.14    -0.00
+    lands on the battlefield, turn 8                  8.18      8.49    +0.32
+    mana available, turn 4                            4.55      4.55    -0.00
+    mana available, turn 8                            8.38      8.69    +0.31
+    cards in hand after the land drop, turn 4         5.73      5.73    +0.00
+    cards in hand after the land drop, turn 8         3.77      3.82    +0.05
+    wins by (current):  damage 91%, timeout 9%
+    wins by (swapped):  damage 90%, timeout 10%
+    eliminated by (current): Aurelia via combat 18.6%, Marwyn via combat 17.2%, Tergrid via combat 12.8%, Atraxa via combat 8.4%
+    eliminated by (swapped): Aurelia via combat 19.4%, Tergrid via combat 16.4%, Marwyn via combat 15.0%, Atraxa via combat 6.8%
+
+(429s total)

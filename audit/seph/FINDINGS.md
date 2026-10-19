@@ -16,6 +16,18 @@ The deck's living list of strengths, weaknesses and what was tested. Opponents: 
 - The plan is not online at all in about 30% of games.
 
 ## Tested
+### 2026-10-18 evening: Mind Stone => The Soul Stone, re-run over t3-t4 (2,000 games per list per profile, look-ahead)
+Result: **T3 +0.2 / +1.4, T4 -0.8 / +0.2 (conservative / loose; noise ±2.1-2.3 each). About +0.25 averaged
+over t3-t4: no clear effect**, the same as the first run. Raw output: `2026-10-18-stones/soul-stone-t3t4.txt`.
+
+Why: the same picture at both tiers. Mana on turns 4, 6 and 8 is unchanged (as a rock it is Mind Stone). The
+Stone is drawn in 25-30% of games, cast in about 89% of those, around round 6-7, so the {6}{B} harness comes even
+later. Removed bombs brought back and damage dealt tick up in three of the four cells, all within noise. T3 games
+run longer (11.2 rounds vs 9.8 at T4), which is where its loose-profile +1.4 shows up. A grind card, not a speed
+card; Seph's losses (Aurelia/Tergrid/Marwyn combat at T3, Heliod combo at T4) are about speed.
+
+Verdict: a safe sidegrade for Mind Stone, not an upgrade. JD asked whether to buy it (and The Mind Stone).
+
 ### 2026-10-18: Mind Stone => The Soul Stone (vs t4, 1,500 games per list per profile, look-ahead AI)
 Result: conservative 28.1% -> 29.1% (+1.0, noise ±2.5), loose 28.9% -> 28.5% (-0.5, noise ±2.4). Averaged over
 t4: +0.25 pts, no clear effect. Raw output: `2026-10-17-soul-stone/swap-mindstone-t4.txt`.
@@ -38,3 +50,18 @@ Band 2 (T3-T4). Proposed: Force of Will, Farewell, Teferi's Protection (to Y'sht
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **36.3% vs T3, 27.6% vs T4** (before 35.1 / 28.3): within noise. Hornet Queen and Muldrotha now valued as bombs; Momentary Blink protection; Abolisher timing; Tracker before the land drop.
+
+## 2026-10-18 evening: Mind Stone => The Mind Stone (quick pass: loose only, 700 games per list per tier, look-ahead)
+Modeled Approximate (`2e93440`): {W} rock, harness {5}{W}, then each end step blinks the best enters-effect creature
+(else a tapped rock). Result: **T3 +3.1 (±3.8), T4 -1.7 (±3.5): noise**, about +0.7 over t3-t4. Raw:
+`2026-10-18-stones/mind-stone-quick.txt` (a 2,000-game run was stopped a third in, no result: `*-STOPPED.txt`).
+Why: cast in 86-88% of the games it's drawn, around round 6.5-7.3, so with the 6-mana harness the free flicker starts
+around turns 8-9. At T3 (games ~11 rounds) the plan came online a little more often (+2.3 pts) and it won 56% when
+cast vs Mind Stone's 46%; at T4 (games ~10 rounds, Heliod combo, Krenko) it's too slow to matter. Same shape as The
+Soul Stone: a long-game card. JD decided to wait on buying either Stone.
+
+## 2026-10-18 evening: JD's new cards, coarse check (loose only, 500 games per list per tier, look-ahead; only big downgrades show, noise ±4-5 per tier)
+**Dread Return => Victimize: T3 +1.8, T4 -0.2 (noise ±4.1-4.6, no downgrade).** The Seph AI never cast it at first
+(priority 0); fixed in `6e7ac4d` (its own rule: a big creature card in the yard and a cheap body to sacrifice). Cast
+in 42-49% of draws (Dread Return 67-72%: the AI waits for two good targets plus fodder), but wins 77-82% when cast:
+two bombs back for 3 mana. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
