@@ -422,6 +422,24 @@ mod tests {
     }
 
     #[test]
+    fn the_seat_block_counts_wins_rounds_and_removal_taken_per_seat() {
+        let mut g = game(Some(1), Some("combo"), 6);
+        g.players[0].stats.insert("mull_n", 1);
+        g.players[0].stats.insert("elim_round", 4);
+        g.players[2].stats.insert("ix|removal|Swords to Plowshares|a", 3);
+        g.players[1].stats.insert("go|X", 2);
+        g.players[1].stats.insert("stop|X|Force of Will", 1);
+        let mut t = T6Tally::default();
+        t.add(&g);
+        assert_eq!((t.seats[1].wins, t.seats[1].win_rounds.clone(), t.seats[0].wins), (1, vec![6], 0));
+        assert_eq!((t.seats[0].mull_hands, t.seats[0].dead, t.seats[0].first_out), (1, 1, 1));
+        assert_eq!((t.seats[0].removal_in, t.seats[1].go, t.seats[1].stops), (3, 2, 1));
+        let text = render(&t, &[], &|k| k.to_string());
+        assert!(text.contains("seat 2: wins 1 (100.0% of games), win round 6.0/6.0"), "{text}");
+        assert!(text.contains("seat 1: wins 0 (0.0% of games)"), "{text}");
+    }
+
+    #[test]
     fn a_combo_win_is_named_by_its_line_and_counters_are_summed() {
         let mut g = game(Some(1), Some("combo"), 6);
         g.players[1].stats.insert("win|Breach + Oracle", 1);
