@@ -1,4 +1,4 @@
-//! Tier 6 plan slot for `rograkh-thrasios-creature-combo` (Rograkh & Thrasios, green creature combo), from
+//! Tier 6 planames.iter().any(|n| FINDERS.contains(n)) { slot for `rograkh-thrasios-creature-combo` (Rograkh & Thrasios, green creature combo), from
 //! `audit/t6/rograkh-thrasios-creature-combo/SPEC.md`. Contract: see `t6_plans.rs`.
 //!
 //! The plan: Rograkh ({0}) on turn 1, fast mana, cheap creatures to raise Gaea's Cradle, Thrasios; HOLD Oboro
@@ -31,6 +31,18 @@ const ENGINE: [&str; 9] = [
     "Mystic Remora",
     "Gaea's Cradle",
     "Wan Shi Tong, Librarian",
+];
+/// Cradle, Talon Gates and the cards that fetch them
+const FINDERS: [&str; 9] = [
+    "Gaea's Cradle",
+    "Talon Gates of Madara",
+    "Crop Rotation",
+    "Gamble",
+    "Expedition Map",
+    "Sowing Mycospawn",
+    "Vibrance",
+    "Chord of Calling",
+    "Spellseeker",
 ];
 /// purely reactive cards: two of these and no acceleration is a ship
 const REACTIVE: [&str; 16] = [
@@ -160,6 +172,11 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
     // a dork is summoning sick
     let m = crate::impls::t6_keep::mana(g, p);
     if m.settle() {
+        return Some(true);
+    }
+    // rthras3: a hand that holds Cradle, Gates or a way to fetch them is kept with 2+ lands whatever else it holds
+    if (2..6).contains(&lands) && names.iter().any(|n| FINDERS.contains(n))
+    {
         return Some(true);
     }
     let accel = m.n_mana + usize::from(names.contains(&"Ancient Tomb"));
