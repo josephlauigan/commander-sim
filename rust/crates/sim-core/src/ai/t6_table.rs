@@ -299,3 +299,9 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
     }
     best.map(|b| b.2)
 }
+
+/// EXPERIMENT switches for the seat study (env T6_SEAT_EXP, bit mask); removed before the final commit
+pub fn exp(bit: u32) -> bool {
+    static V: std::sync::OnceLock<u32> = std::sync::OnceLock::new();
+    *V.get_or_init(|| std::env::var("T6_SEAT_EXP").ok().and_then(|s| s.parse().ok()).unwrap_or(0)) & bit != 0
+}

@@ -9,3 +9,6 @@ Task `seats` in t6-calib.md: why is going first worth so little (seat 1 26-28% v
 ## Status
 - started
 - 10/19: per-seat block added to t6report.rs (uncommitted->commit next). Baseline 600 (seed 500000, /tmp/claude-1000/t6cal-seats/base600.txt): seat1 26.2/24.6, seat4 21.5/23.1. Per seat: win round, tries/game, mulligans identical across seats; seat 1 takes MORE removal (1.28 vs 0.99/game). Games last 10 rounds, so tempo washes out. Next: trace rounds 1-4 for fast-mana/tempo, check mulligan rate (43%).
+- 1200-game baseline (conservative, s500000): seat 26.4/25.7/25.7/22.2. Per seat identical: win round ~10, tries .23-.26/game, T4 mana 4.4-4.6, commander out turn 3.1-3.4, mulligans 42-44%. Differences: removal taken 1.29 (s1) vs 0.97 (s4); stopped 28-36%. Wins by round 6 only ~21% in every seat.
+- Rules check: T1 draw in multiplayer (right), free first mulligan then London bottoms (right). No seat-specific code.
+- EXPERIMENTS (env T6_SEAT_EXP bit 1 = no x1.25 leader bonus on T6 removal, bit 2 = T6 leader threat ignores board; code in ai/t6_table.rs `exp`, brain.rs) -> /tmp/claude-1000/t6cal-seats/exp{0,1,2,3}.txt. REMOVE the exp switches or turn the winner into a Tier-6-gated rule before final.

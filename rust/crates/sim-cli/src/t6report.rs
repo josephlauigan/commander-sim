@@ -48,6 +48,10 @@ pub struct SeatT6 {
     /// this seat was the first one out
     pub first_out: u64,
     pub games_distinct: u64,
+    /// (sum, games) of mana and hand size on the seat's turn 4, and of the turn its commander first resolved
+    pub mana4: (i64, i64),
+    pub hand4: i64,
+    pub cmd_turn: (i64, i64),
 }
 
 /// a whole calibration run of one tier
@@ -149,6 +153,15 @@ impl T6Tally {
                 s.wins += 1;
                 s.win_rounds.push(g.round);
             }
+            if p.stat("had_T4") > 0 {
+                s.mana4.0 += p.stat("mana_T4");
+                s.mana4.1 += 1;
+                s.hand4 += p.stat("hand_T4");
+            }
+            if let Some(&t) = p.milestone.get("cmd_cast") {
+                s.cmd_turn.0 += t as i64;
+                s.cmd_turn.1 += 1;
+            }
             s.mull_hands += (p.stat("mull_n") > 0) as u64;
             for (k, &v) in &p.stats {
                 if k.starts_with("go|") {
@@ -224,7 +237,7 @@ fn render_seats(t: &T6Tally) -> String {
         }
         let avg = |v: &[u32]| if v.is_empty() { 0.0 } else { v.iter().sum::<u32>() as f64 / v.len() as f64 };
         o += &format!(
-            "      seat {}: wins {} ({:.1}% of games), win round {:.1}/{:.1}, mulligans {:.1}%, tries {:.2}/game, stopped {:.0}%, taken {:.2}+{:.2}/game, died {:.0}%, death round {:.1}, first out {:.0}%\n",
+            "      seat {}: wins {} ({:.1}% of games), win round {:.1}/{:.1}, mulligans {:.1}%, tries {:.2}/game, stopped {:.0}%, taken {:.2}+{:.2}/game, died {:.0}%, death round {:.1}, first out {:.0}%, wins by round <=4/5/6/8: {}/{}/{}/{} of {}, T4 mana {:.1} hand {:.1}, commander out turn {:.1}\n",
             i + 1,
             s.wins,
             pct(s.wins, s.games),
@@ -238,6 +251,14 @@ fn render_seats(t: &T6Tally) -> String {
             pct(s.dead, s.games),
             avg(&s.death_rounds),
             pct(s.first_out, s.games),
+            s.win_rounds.iter().filter(|&&r| r <= 4).count(),
+            s.win_rounds.iter().filter(|&&r| r <= 5).count(),
+            s.win_rounds.iter().filter(|&&r| r <= 6).count(),
+            s.win_rounds.iter().filter(|&&r| r <= 8).count(),
+            s.wins,
+            s.mana4.0 as f64 / s.mana4.1.max(1) as f64,
+            s.hand4 as f64 / s.mana4.1.max(1) as f64,
+            s.cmd_turn.0 as f64 / s.cmd_turn.1.max(1) as f64,
         );
     }
     o
