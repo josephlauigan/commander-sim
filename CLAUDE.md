@@ -46,6 +46,13 @@ alela and galadriel t1 (Avery's). `--pool all`, `--all-decks`, `--analyze`, swap
 `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over the deck's own
 tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.
 
+## Loose profile only
+
+Sims run the **loose** interaction profile only (JD, 2026-10-19): loose opponents counter and remove more freely, the
+more interactive table and the worst case for JD's decks. It is the CLI default (`--profiles` defaults to `loose`, and
+`swaptest` uses it too); don't pass `--profiles conservative,loose` or `--profile conservative` unless JD asks for it.
+Report one number per tier.
+
 ## Swap tests explain themselves
 
 `--swap` (and every package test built on it) runs with the paired breakdown by default (`--no-explain` turns it
