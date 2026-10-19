@@ -87,7 +87,7 @@ pub fn hint(g: &mut Game, p: PlayerId, req: &Request) -> Value {
     let choices = &req.choices;
     let kind = &*req.kind;
     if kind == "mulligan" {
-        return super::mulligan::hint(g, p, &prompt);
+        return super::mulligan::hint(g, p, &prompt, super::mulligan::tries_of(&req.data, &prompt));
     }
     if low.starts_with("put a card on the bottom") {
         return super::mulligan::bottom(g, p, choices);

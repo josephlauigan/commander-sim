@@ -119,23 +119,54 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
 
 /// mulligan keep rule for the current opening hand (spec "Mulligan"): reach six mana fast and see a way to win
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
+    Some(keep_reasons(g, p).0)
+}
+
+/// `keep`'s verdict with its reasons in plain words (practice mode's mulligan hint explains the hand with them)
+pub fn keep_reasons(g: &Game, p: PlayerId) -> (bool, Vec<String>) {
     let lands = lands_in_hand(g, p);
     let accel = count(g, p, ACCEL);
     let rituals = count(g, p, RITUALS);
     let path = count(g, p, PATH) + (count(g, p, &["Dualcaster Mage"]) > 0 && count(g, p, TOKEN_COPIERS) > 0) as usize;
     let sources = lands + accel;
-    if lands == 0 && accel < 2 {
-        return Some(false);
-    }
     let tutor = count(g, p, &["Gamble", "Imperial Recruiter", "Goblin Engineer"]);
-    if lands == 1 && (accel < 2 && !(accel == 1 && rituals + tutor >= 2)) {
-        return Some(false); // one land needs two accelerators (or one plus a ritual and a tutor) to reach Godo
-    }
-    if sources < 2 || lands >= 6 {
-        return Some(false);
-    }
-    // spec scenario 16: ramp without a path to victory is shipped, however much of it there is
-    Some(path >= 1)
+    let in_hand = |names: &[&str]| -> String {
+        let v: Vec<&str> =
+            g.player(p).hand.iter().map(|&c| cname(g, c)).filter(|n| names.contains(n)).collect();
+        if v.is_empty() { "none".to_string() } else { v.join(", ") }
+    };
+    let mut why = vec![
+        "Godo's rule: reach six mana fast and see a way to win. It counts lands, fast mana and a path to victory \
+         (Helm of the Host, Hammer of Nazahn, the tutors that find them, or Dualcaster Mage with a token copier)."
+            .to_string(),
+        format!("Lands: {lands}. Fast mana: {accel} ({}). Rituals: {rituals}. Tutors: {tutor}.", in_hand(ACCEL)),
+        format!("Path to victory: {path} ({}).", in_hand(PATH)),
+    ];
+    let verdict = if lands == 0 && accel < 2 {
+        why.push("No land and fewer than two fast-mana pieces: ship it.".into());
+        false
+    } else if lands == 1 && (accel < 2 && !(accel == 1 && rituals + tutor >= 2)) {
+        // one land needs two accelerators (or one plus a ritual and a tutor) to reach Godo
+        why.push(
+            "One land needs two fast-mana pieces (or one plus two rituals or tutors) to reach Godo: ship it.".into(),
+        );
+        false
+    } else if sources < 2 || lands >= 6 {
+        why.push(if lands >= 6 {
+            "Six or more lands: too little action, ship it.".into()
+        } else {
+            "Fewer than two mana sources: ship it.".into()
+        });
+        false
+    } else if path >= 1 {
+        why.push("Enough mana and a path to victory: keep.".into());
+        true
+    } else {
+        // spec scenario 16: ramp without a path to victory is shipped, however much of it there is
+        why.push("Enough mana but no path to victory: the rule ships ramp without a way to win.".into());
+        false
+    };
+    (verdict, why)
 }
 
 /// extra value of passing with mana up this turn (added to the shared hold value); None = no opinion

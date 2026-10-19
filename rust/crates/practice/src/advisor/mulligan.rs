@@ -39,7 +39,31 @@ fn cards_to_keep(prompt: &str) -> usize {
     prompt.split('(').nth(1).and_then(|s| s.split(' ').next()).and_then(|s| s.parse().ok()).unwrap_or(7)
 }
 
-pub fn hint(g: &mut Game, p: PlayerId, prompt: &str) -> Value {
+/// which draw this is, as the engine numbers it for Tier 6 keeps (`mull_try`: 0 the first seven, 1 the second, 2 and
+/// 3 the hands that bottom cards): from the request's `mulligans`, else from the hand size in the prompt
+pub fn tries_of(data: &Value, prompt: &str) -> i64 {
+    data.get("mulligans").and_then(Value::as_i64).unwrap_or_else(|| match 7usize.saturating_sub(cards_to_keep(prompt)) {
+        0 => 0,
+        b => b as i64 + 1,
+    })
+}
+
+/// `keeps_hand` with a Tier 6 deck told which draw this is, as `engine::turn::mulligan` tells it
+fn keeps_at(g: &mut Game, p: PlayerId, tries: i64) -> bool {
+    if !g.player(p).t6 {
+        return keeps_hand(g, p);
+    }
+    let old = g.player(p).stats.get("mull_try").copied();
+    g.player_mut(p).stats.insert("mull_try", tries);
+    let k = keeps_hand(g, p);
+    match old {
+        Some(v) => g.player_mut(p).stats.insert("mull_try", v),
+        None => g.player_mut(p).stats.shift_remove("mull_try"),
+    };
+    k
+}
+
+pub fn hint(g: &mut Game, p: PlayerId, prompt: &str, tries: i64) -> Value {
     let hand = g.player(p).hand.clone();
     let keep_n = cards_to_keep(prompt);
     let bottom = 7usize.saturating_sub(keep_n);
@@ -47,13 +71,25 @@ pub fn hint(g: &mut Game, p: PlayerId, prompt: &str) -> Value {
     let spells: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
     let rocks: Vec<CardId> =
         spells.iter().copied().filter(|&c| g.db.get(c).tag(Tag::Rock) || g.db.get(c).tag(Tag::Dork)).collect();
-    let keeps = keeps_hand(g, p);
+    let keeps = keeps_at(g, p, tries);
     let forced = bottom >= 2; // the AI keeps its fourth hand whatever it holds
     let key = g.player(p).key.to_string();
+    let t6 = g.player(p).t6;
     let n = lands.len();
+    // Godo (and the other Tier 6 decks) have their own keep rule, which does look at fast mana, tutors and win lines
+    let godo = (key == "godo").then(|| sim_core::impls::t6_plan_godo::keep_reasons(g, p));
 
     let mut d: Vec<String> = vec![];
-    if key == "cloud" {
+    if let Some((_, why)) = &godo {
+        d.extend(why.iter().cloned());
+    } else if t6 {
+        d.push(
+            "This Tier 6 deck has its own keep rule: it counts lands and the mana the hand makes by turn 2 (Moxen, Sol \
+             Ring, cheap rocks), wants spells beside them, and keeps more easily after each mulligan (after one, any \
+             2-4 land hand)."
+                .into(),
+        );
+    } else if key == "cloud" {
         d.push(format!(
             "The AI's rule for this deck: keep 3 to 5 lands, or 2 lands plus a mana rock, a mana creature or a creature that costs 2 or less. This hand has {n} land(s){}.",
             if n == 2 {
@@ -71,7 +107,9 @@ pub fn hint(g: &mut Game, p: PlayerId, prompt: &str) -> Value {
     if n > 0 {
         d.push(format!("Lands: {}.", names(g, &lands)));
     }
-    if rocks.is_empty() {
+    if t6 {
+        // the Tier 6 rules count the mana pieces themselves (the line above already says how)
+    } else if rocks.is_empty() {
         d.push("Mana help: no mana rock or mana creature in this hand (the AI's rule doesn't count them, except for Cloud).".into());
     } else {
         d.push(format!(
@@ -132,19 +170,29 @@ pub fn hint(g: &mut Game, p: PlayerId, prompt: &str) -> Value {
         format!("only after drawing {} more mana source(s)", cd.cmc as usize - sources)
     };
     d.push(format!("Commander {} costs {}: it comes down {when}.", cd.name, cd.cmc));
-    d.push("The AI's rule does not look at key cards (tutors, ramp, win conditions); neither does this hint.".into());
+    if !t6 {
+        d.push("The AI's rule does not look at key cards (tutors, ramp, win conditions); neither does this hint.".into());
+    }
 
     let text;
     if keeps {
         text = format!("Keep ({n} lands, {} spells).", spells.len());
     } else if forced {
         text = "Keep: this is a small hand, and the AI keeps its fourth hand whatever it holds.".to_string();
+    } else if let Some((_, why)) = &godo {
+        text = format!("Mulligan: {}", why.last().map(String::as_str).unwrap_or("Godo's rule ships this hand."));
+    } else if t6 {
+        text = "Mulligan: this Tier 6 deck's keep rule ships this hand.".to_string();
     } else {
         text = format!("Mulligan ({n} land{} is outside the AI's keep range).", if n == 1 { "" } else { "s" });
     }
     if bottom > 0 {
         let pick = bottom_pick(g, p);
         let bottom_note = match pick {
+            Some(c) if t6 => format!(
+                "If you keep, you put {bottom} card(s) on the bottom; the AI would start with {} (the card its plan needs least).",
+                card_label(g, c)
+            ),
             Some(c) => format!(
                 "If you keep, you put {bottom} card(s) on the bottom; the AI would start with {}: it bottoms a land when it holds more than four, otherwise its most expensive spell.",
                 card_label(g, c)
@@ -181,6 +229,15 @@ pub fn verdict(g: &Game, p: PlayerId, prompt: &str) -> (bool, String) {
     let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
     let bottom = 7usize.saturating_sub(cards_to_keep(prompt));
     let keeps = keeps_hand(g, p);
+    if g.player(p).key == "godo" {
+        let (k, why) = sim_core::impls::t6_plan_godo::keep_reasons(g, p);
+        let last = why.last().cloned().unwrap_or_default();
+        return if k || bottom >= 2 {
+            (true, if k { format!("Keep (Godo's rule: {last})") } else { "Keep (the AI keeps its fourth hand)".into() })
+        } else {
+            (false, format!("Mulligan (Godo's rule: {last})"))
+        };
+    }
     if keeps {
         (true, format!("Keep ({n} lands is inside the AI's range)"))
     } else if bottom >= 2 {
