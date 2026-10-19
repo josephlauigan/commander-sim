@@ -8,7 +8,7 @@
 //! combo decks get tutor wish lists for their missing pieces. search.deck_combos and search.combo_progress (the
 //! look-ahead's reading of a combo in the making) are here too.
 
-use crate::ai::plans::{DRAIN_PAYOFFS, drain_payoff};
+use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
@@ -21,7 +21,7 @@ use crate::engine::zones::{Enter, die, draw, enter, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, Val};
+use crate::state::{Ctx, DataKey, Game, Step, Val};
 use crate::tag::Tag;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -328,15 +328,46 @@ fn has_piece(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
     grp.iter().any(|n| on_bf(g, p, n).is_some() || in_hand(g, p, n).is_some())
 }
 
-/// combos.free_outlet: a sacrifice outlet of p's (common.outlets)
-fn free_outlet(g: &Game, p: PlayerId) -> Option<PermId> {
+/// combos.free_outlet: a sacrifice outlet of p's (common.outlets); `only`: one of these
+fn free_outlet(g: &Game, p: PlayerId, only: Option<&[&str]>) -> Option<PermId> {
     g.player(p).perms.iter().copied().find(|&m| {
         let x = g.perm(m);
         x.cd.is_some_and(|c| {
             let n = name_of(g, c);
-            crate::cardcode::is_sac_outlet(n) && !crate::engine::values::stopped(g, n)
+            crate::cardcode::is_sac_outlet(n)
+                && only.is_none_or(|o| o.contains(&n))
+                && !crate::engine::values::stopped(g, n)
         }) && !x.phased
     })
+}
+
+/// p's turn, before combat: a combo that wins by attacking needs a combat still to come
+fn precombat(g: &Game, p: PlayerId) -> bool {
+    g.active == Some(p) && matches!(g.step, Step::Start | Step::Main1)
+}
+
+/// a payoff that drains on each death of a loop. Goblin Bombardment isn't one: it is an outlet (its damage comes
+/// from sacrificing to it, which no loop here does), and sacrificing to it makes no mana to keep a loop going.
+fn loop_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
+    let bomb = |m: PermId| g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Goblin Bombardment");
+    DRAIN_PAYOFFS.iter().filter_map(|n| on_bf(g, p, n)).find(|&m| !bomb(m)).or_else(|| {
+        g.player(p).perms.iter().copied().find(|&m| {
+            !bomb(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Bartist) || g.db.get(c).tag(Tag::Drain))
+        })
+    })
+}
+
+/// unbounded mana of any kind wins: Walking Ballista (on the battlefield, or cast from hand for any X), Urza (his
+/// {5} plays the whole library), or a tutor in hand that puts the Ballista in hand. Not Kinnan: his {5}{G}{U} needs
+/// green and blue each time, and digging the library puts creatures onto the battlefield (a Ballista found that way
+/// enters with no counters). Not Thassa's Oracle: mana doesn't empty the library.
+fn mana_sink(g: &Game, p: PlayerId) -> bool {
+    if any_bf(g, p, &["Walking Ballista", "Urza, Lord High Artificer"]).is_some()
+        || in_hand(g, p, "Walking Ballista").is_some()
+    {
+        return true;
+    }
+    any_hand(g, p, &SINK_TUTORS).is_some() && g.player(p).library.iter().any(|&c| name_of(g, c) == "Walking Ballista")
 }
 
 fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
@@ -768,8 +799,12 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
 }
 
 // ================================================================== the combos
-/// infinite hasty copies
+/// infinite hasty copies: they win by attacking, so only before combat on p's turn (the tokens are sacrificed at
+/// the end step)
 fn kiki(g: &Game, p: PlayerId) -> Ready {
+    if !precombat(g, p) {
+        return NOT_READY();
+    }
     let mut k = on_bf_with(g, p, KIKI, true, true);
     if k.is_none()
         && let Some(f) = on_bf_with(g, p, FABLE, true, false)
@@ -792,8 +827,7 @@ fn kiki(g: &Game, p: PlayerId) -> Ready {
     NOT_READY()
 }
 
-/// infinite mana with 3+ mana from nonland permanents; wins with a mana sink (Walking Ballista, Urza, Kinnan,
-/// Thassa's Oracle in hand ...)
+/// infinite mana with 3+ mana from nonland permanents; wins with a mana sink (Walking Ballista, Urza)
 fn scepter(g: &Game, p: PlayerId) -> Ready {
     let sc = on_bf(g, p, "Isochron Scepter");
     let mut casts = vec![];
@@ -854,41 +888,11 @@ fn nonland_mana(g: &Game, p: PlayerId) -> i32 {
     n
 }
 
-/// combos.SINK_TUTORS: tutors that find a mana sink (None: any sink)
-const SINK_TUTORS: [(&str, Option<&str>); 6] = [
-    ("Recruiter of the Guard", Some("Walking Ballista")),
-    ("Enlightened Tutor", Some("Walking Ballista")),
-    ("Demonic Tutor", None),
-    ("Diabolic Intent", None),
-    ("Mystical Tutor", None),
-    ("Spellseeker", None),
-];
+/// combos.SINK_TUTORS: tutors that put Walking Ballista into hand (not to the top of the library, like Enlightened
+/// Tutor, and not an instant or sorcery, like Mystical Tutor and Spellseeker)
+const SINK_TUTORS: [&str; 3] = ["Recruiter of the Guard", "Demonic Tutor", "Diabolic Intent"];
 
-/// combos.mana_sink: infinite mana wins: a sink on the battlefield or in hand, or a tutor in hand that finds one
-/// (with infinite mana, Recruiter of the Guard or Enlightened Tutor fetches Walking Ballista and casts it for any X)
-fn mana_sink(g: &Game, p: PlayerId) -> bool {
-    if any_bf(g, p, &["Walking Ballista", "Urza, Lord High Artificer", "Kinnan, Bonder Prodigy"]).is_some() {
-        return true;
-    }
-    if in_hand(g, p, "Walking Ballista").is_some() || in_hand(g, p, "Thassa's Oracle").is_some() {
-        return true;
-    }
-    let lib: Vec<&str> = g.player(p).library.iter().map(|&c| name_of(g, c)).collect();
-    for &c in &g.player(p).hand {
-        if let Some((_, t)) = SINK_TUTORS.iter().find(|x| x.0 == name_of(g, c)) {
-            let found = match t {
-                Some(t) => lib.contains(t),
-                None => ["Walking Ballista", "Thassa's Oracle"].iter().any(|n| lib.contains(n)),
-            };
-            if found {
-                return true;
-            }
-        }
-    }
-    false
-}
-
-/// infinite colourless mana; wins with Urza / Kinnan / Walking Ballista
+/// infinite colourless mana; wins with Urza / Walking Ballista
 fn power_artifact(g: &Game, p: PlayerId) -> Ready {
     let pa = any_bf(g, p, &["Power Artifact", "Rings of Brighthearth"]);
     let mono = any_bf(g, p, &["Basalt Monolith", "Grim Monolith"]);
@@ -897,29 +901,44 @@ fn power_artifact(g: &Game, p: PlayerId) -> Ready {
     if cd_name(pa) == "Rings of Brighthearth" && cd_name(mono) != "Basalt Monolith" {
         return NOT_READY();
     }
-    let sink = any_bf(g, p, &["Urza, Lord High Artificer", "Kinnan, Bonder Prodigy", "Walking Ballista"]).is_some()
-        || in_hand(g, p, "Walking Ballista").is_some();
-    if !sink {
+    if !mana_sink(g, p) {
         return NOT_READY();
     }
     (true, vec![pa, mono], vec![])
 }
 
-/// infinite colourless mana; Kinnan's activation (its {U}{G} paid from real sources) finds a winner. Without {U}{G} the
-/// Thrasios / Mirage Mirror outlets (t6_combos_extra) take over
+/// Kinnan's extra mana makes Basalt Monolith net one colourless per untap: infinite colourless mana (a tapped
+/// Monolith needs {3} to start); wins with Urza / Walking Ballista
 fn kinnan_basalt(g: &Game, p: PlayerId) -> Ready {
-    match (on_bf(g, p, "Kinnan, Bonder Prodigy"), on_bf(g, p, "Basalt Monolith")) {
-        (Some(k), Some(b)) if super::t6_combos_extra::can_pay_ug(g, p) => (true, vec![k, b], vec![]),
-        _ => NOT_READY(),
+    let (Some(k), Some(b)) = (on_bf(g, p, "Kinnan, Bonder Prodigy"), on_bf(g, p, "Basalt Monolith")) else {
+        return NOT_READY();
+    };
+    if g.perm(b).tapped && !can_pay(g, p, 3, "", false) || !mana_sink(g, p) {
+        return NOT_READY();
     }
+    (true, vec![k, b], vec![])
 }
 
-/// a mana creature that nets extra mana untaps for U: infinite mana; Kinnan's activation finds a winner
+/// the aura goes on a mana creature that makes blue: two mana with Kinnan, {U} to untap it, so infinite mana; wins
+/// with Urza / Walking Ballista
 fn kinnan_aura(g: &Game, p: PlayerId) -> Ready {
-    match (on_bf(g, p, "Kinnan, Bonder Prodigy"), any_bf(g, p, &["Freed from the Real", "Pemmin's Aura"])) {
-        (Some(k), Some(a)) => (true, vec![k, a], vec![]),
-        _ => NOT_READY(),
+    let (Some(k), Some(a)) =
+        (on_bf(g, p, "Kinnan, Bonder Prodigy"), any_bf(g, p, &["Freed from the Real", "Pemmin's Aura"]))
+    else {
+        return NOT_READY();
+    };
+    let dork = g.player(p).perms.iter().copied().find(|&m| {
+        let x = g.perm(m);
+        !x.phased
+            && g.is_creature(m)
+            && (!x.sick || crate::dsl::has_kw(g, m, "haste"))
+            && x.cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Dork).is_some_and(|s| s.contains(['U', 'A'])))
+    });
+    let Some(d) = dork else { return NOT_READY() };
+    if !mana_sink(g, p) {
+        return NOT_READY();
     }
+    (true, vec![k, a, d], vec![])
 }
 
 /// free creatures bounce themselves: infinite draws, land drops and ETBs
@@ -1042,7 +1061,9 @@ fn helm(g: &Game, p: PlayerId) -> Ready {
 /// infinite death triggers
 fn gravecrawler(g: &Game, p: PlayerId) -> Ready {
     let Some(altar) = on_bf(g, p, "Phyrexian Altar") else { return NOT_READY() };
-    let gc = on_bf(g, p, "Gravecrawler").is_some() || g.player(p).gy.iter().any(|&c| name_of(g, c) == "Gravecrawler");
+    // on the battlefield the Altar pays for the first recast; from the graveyard it needs its own {B}
+    let gc = on_bf(g, p, "Gravecrawler").is_some()
+        || g.player(p).gy.iter().any(|&c| name_of(g, c) == "Gravecrawler") && can_pay(g, p, 0, "B", false);
     if !gc {
         return NOT_READY();
     }
@@ -1051,7 +1072,7 @@ fn gravecrawler(g: &Game, p: PlayerId) -> Ready {
         .perms
         .iter()
         .any(|&m| has_type(g, m, "zombie") && !g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Gravecrawler"));
-    let Some(payoff) = drain_payoff(g, p) else { return NOT_READY() };
+    let Some(payoff) = loop_payoff(g, p) else { return NOT_READY() };
     if !zombies {
         return NOT_READY();
     }
@@ -1061,7 +1082,7 @@ fn gravecrawler(g: &Game, p: PlayerId) -> Ready {
 /// combos._yawg_payoff: a death payoff for the Yawgmoth loop; Geralf's Messenger in the loop is its own (each
 /// return drains 2)
 fn yawg_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
-    drain_payoff(g, p).or_else(|| on_bf(g, p, "Geralf's Messenger"))
+    loop_payoff(g, p).or_else(|| on_bf(g, p, "Geralf's Messenger"))
 }
 
 /// the loop with a death payoff wins; without one it kills every opposing creature and draws ten
@@ -1117,12 +1138,15 @@ fn yawg(g: &Game, p: PlayerId) -> Ready {
     (true, keys, vec![])
 }
 
-/// each Goblin sacrificed untaps Krenko: infinite Goblins
+/// each Goblin sacrificed untaps Krenko: infinite Goblins (summoning sick). They win through an outlet that makes
+/// mana for the Staff's {2} ping or deals damage itself, or through a death payoff; Viscera Seer alone only scries.
 fn staff(g: &Game, p: PlayerId) -> Ready {
     let k = on_bf_with(g, p, "Krenko, Mob Boss", true, true);
     let st = on_bf(g, p, "Thornbite Staff");
     let (Some(k), Some(st)) = (k, st) else { return NOT_READY() };
-    if g.perm(st).attached != Some(k) || free_outlet(g, p).is_none() {
+    let wins = free_outlet(g, p, Some(STAFF_OUTLETS)).is_some()
+        || free_outlet(g, p, None).is_some() && loop_payoff(g, p).is_some();
+    if g.perm(st).attached != Some(k) || !wins {
         return NOT_READY();
     }
     (true, vec![k], vec![])
