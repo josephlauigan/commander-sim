@@ -45,7 +45,7 @@ const SWAPTEST: &str = "Test proposed list changes for an opponent-pool deck wit
     commander-sim swaptest <deck key> <tier the deck plays against> <games> \"Out Card>In Card; Out>In; ...\" [jobs]
 
 Runs the deck alone against three decks of that tier, paired (same seeds, seats and opponents' draws), once with
-the list as written and once with the swaps, and reports both win rates (adaptive AI, conservative profile). The
+the list as written and once with the swaps, and reports both win rates (adaptive AI, loose profile). The
 variant list is checked as the real lists are: 100 cards, singleton, every card in data/cards.json, colour identity
 and the tier's Game Changer limit (Scryfall's legality data isn't exported, so bans aren't checked).";
 
@@ -137,7 +137,7 @@ pub fn swaptest(argv: &[String]) -> i32 {
             return Err(format!("variant list fails validation: {}", probs.join("; ")));
         }
         let vseat = sim.seat(me, &cards)?;
-        let st = sim.settings(Profile::Conservative);
+        let st = sim.settings(Profile::Loose); // loose only (JD 2026-10-19)
         sim.prog.lock().unwrap().on = false;
         let seeds: Vec<u64> = (500000..500000 + n).collect();
         let res = sim.run_seeds(&seeds, |s| {
