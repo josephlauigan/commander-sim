@@ -34,6 +34,9 @@ fn timing_ok(g: &Game, p: PlayerId, c: CardId) -> bool {
 /// The hook options for a card in p's hand, as (label, option).
 pub fn hand_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>> {
     let Some(f) = g.registry.get(c).and_then(|i| i.hand_options) else { return Ok(vec![]) };
+    if super::specs::spec(&g.db.get(c).name).is_some() {
+        return Ok(vec![]); // its own cast asks the person (specs.rs); the hook is only the AI's plan for that cast
+    }
     if !timing_ok(g, p, c) || crate::engine::values::silenced(g, p) {
         return Ok(vec![]);
     }
@@ -82,7 +85,7 @@ pub fn land_alts(g: &mut Game, p: PlayerId, l: LandId) -> Res<Vec<(String, Opt)>
 
 /// Does the card have a hook the person's menus should look at? (a cheap test for the page)
 pub fn hand_hook(g: &Game, c: CardId) -> bool {
-    g.registry.get(c).is_some_and(|i| i.hand_options.is_some())
+    super::specs::spec(&g.db.get(c).name).is_none() && g.registry.get(c).is_some_and(|i| i.hand_options.is_some())
 }
 pub fn gy_hook(g: &Game, c: CardId) -> bool {
     g.registry.get(c).is_some_and(|i| i.gy_options.is_some())
