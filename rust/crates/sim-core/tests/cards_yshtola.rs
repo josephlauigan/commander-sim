@@ -492,6 +492,11 @@ fn zur_in_the_99_fetches_for_this_deck() {
         })
         .collect();
     g.player_mut(P0).library = keep;
+    // Curiosity left her list (2026-10-19, for Orcish Bowmasters): put one in, so Zur's preference is still tested
+    if !g.player(P0).library.iter().any(|&c| &*g.db.get(c).name == "Curiosity") {
+        let c = card(&g, "Curiosity");
+        g.player_mut(P0).library.push(c);
+    }
     combat::attack_triggers(&mut g, P0, &[z], P1).unwrap();
     let got: Vec<PermId> = g
         .player(P0)
