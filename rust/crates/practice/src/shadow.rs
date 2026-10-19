@@ -54,6 +54,8 @@ pub struct Entry {
     pub cmd2: Option<String>,
     pub ai_plan: Option<(usize, String)>,
     pub n_choices: usize,
+    /// a mulligan's one-line AI verdict with its reason
+    pub ai_note: String,
 }
 
 impl Entry {
@@ -67,7 +69,7 @@ impl Entry {
             "n": self.n, "round": self.round, "step": self.step, "kind": self.kind, "situation": self.situation,
             "yours": self.yours, "ai": self.ai, "scores": self.scores.iter().map(|(k, v)| json!([k, v])).collect::<Vec<_>>(),
             "scored": self.scored, "note": self.note, "yours_key": self.yours_key, "hand": self.hand, "cmd": self.cmd, "cmd2": self.cmd2,
-            "ai_plan": self.ai_plan.as_ref().map(|(i, m)| json!([i, m])), "n_choices": self.n_choices,
+            "ai_plan": self.ai_plan.as_ref().map(|(i, m)| json!([i, m])), "n_choices": self.n_choices, "ai_note": self.ai_note,
         })
     }
 
@@ -98,6 +100,7 @@ impl Entry {
             cmd2: s("cmd2"),
             ai_plan: d.get("ai_plan").and_then(|p| Some((p.get(0)?.as_u64()? as usize, p.get(1)?.as_str()?.to_string()))),
             n_choices: d.get("n_choices").and_then(Value::as_u64).unwrap_or(0) as usize,
+            ai_note: s("ai_note").unwrap_or_default(),
         })
     }
 
@@ -128,6 +131,9 @@ impl Entry {
     }
 
     pub fn ai_text(&self) -> Option<String> {
+        if self.kind == "mulligan" {
+            return Some(self.ai_note.clone());
+        }
         let ai = self.ai.as_deref()?;
         if self.kind == "main" {
             if ai.starts_with("stop") {
@@ -152,13 +158,17 @@ impl Entry {
         let yk = self.yours_key.as_deref();
         let score_yours = if self.scored { yk.and_then(|k| self.score(k)) } else { None };
         let score_ai = if self.scored { self.ai.as_deref().and_then(|k| self.score(k)) } else { None };
-        let differs = self.scored
+        let differs = if self.kind == "mulligan" {
+            self.ai.as_deref() != yk
+        } else {
+            self.scored
             && self.ai.as_deref() != yk
             && yk.is_some_and(|k| self.score(k).is_some())
             && match (score_ai, score_yours) {
                 (Some(a), Some(y)) => a - y >= SAME,
                 _ => false,
-            };
+            }
+        };
         json!({
             "n": self.n, "round": self.round, "step": self.step, "kind": self.kind, "situation": self.situation,
             "key": self.yours_key, "ai_text": self.ai_text(), "can_try": self.scored && self.ai.is_some(),
@@ -288,6 +298,28 @@ impl Shadow {
                 };
                 e.yours_key = None;
                 Slot { e, job: Some(Job::Attack { snap: snapshot(g, p), sp: p, label }), running: false }
+            }
+            "mulligan" => {
+                let (ai_keeps, why) = crate::advisor::mulligan::verdict(g, p, &req.prompt);
+                let you_keep = matches!(ans, Answer::Pick(0) | Answer::Yes);
+                let word = |k: bool| if k { "keep" } else { "mulligan" };
+                let hand: Vec<String> = g.player(p).hand.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+                let lands = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
+                let e = Entry {
+                    n,
+                    round: g.round,
+                    step: "opening hand".into(),
+                    kind: "mulligan".into(),
+                    situation: format!("{} cards, {lands} lands", hand.len()),
+                    yours: if you_keep { "Keep" } else { "Mulligan" }.into(),
+                    ai: Some(word(ai_keeps).into()),
+                    yours_key: Some(word(you_keep).into()),
+                    ai_note: why,
+                    note: "the AI's keep rule, not a playout".into(),
+                    hand,
+                    ..Default::default()
+                };
+                Slot { e, job: None, running: false }
             }
             _ => return,
         };

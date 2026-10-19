@@ -605,9 +605,12 @@ async function hint() {
   const box = $('#hintbox');
   box.hidden = false; box.replaceChildren(el('h3', {}, 'Hint'), el('p', {}, 'The AI is thinking…'));
   const r = await api('/api/hint', {});
-  if (!r.ok) { box.replaceChildren(el('h3', {}, 'Hint'), el('p', {}, r.data.error)); return; }
-  box.replaceChildren(el('h3', {}, 'The AI would: ' + r.data.text),
-    r.data.detail.length ? el('ul', {}, r.data.detail.map((d, i) => (i === 0 ? el('li', { class: 'lead' }, d) : el('li', {}, d)))) : null,
+  if (!r.ok) { box.replaceChildren(el('h3', {}, 'Hint'), el('p', {}, (r.data && r.data.error) || 'No hint for this decision.')); return; }
+  const d = r.data || {};
+  const said = typeof d.text === 'string' && d.text.trim() && d.text !== 'null' ? d.text : null;   // never print "null"
+  const detail = Array.isArray(d.detail) ? d.detail.filter((x) => typeof x === 'string' && x) : [];
+  box.replaceChildren(el('h3', {}, said ? 'The AI would: ' + said : 'No hint for this decision.'),
+    detail.length ? el('ul', {}, detail.map((d, i) => (i === 0 ? el('li', { class: 'lead' }, d) : el('li', {}, d)))) : null,
     el('button', { type: 'button', onclick: () => { box.hidden = true; } }, 'Hide'));
 }
 

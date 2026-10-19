@@ -45,7 +45,7 @@ fn the_hint_names_a_play() {
     }
     let (mut g, p) = main_phase_game("adaptive");
     let h = advisor::hint(&mut g, p, &req("mulligan"));
-    assert_eq!(h["text"], "No hint for this kind of decision yet.");
+    assert!(h["text"].as_str().unwrap().starts_with("Keep") || h["text"].as_str().unwrap().starts_with("Mulligan"), "{h}");
     g.step = Step::Combat;
     let h = advisor::hint(&mut g, p, &req("priority"));
     assert_eq!(h["text"], "Pass, unless you have an instant you want to use now.");
@@ -111,4 +111,29 @@ fn the_ais_choice_becomes_your_answer_when_it_is_one_action() {
     assert_eq!(a.ai_answer(), Some(Answer::Picks(vec![])));
     a.ai_plan = Some((1, "filtered".into()));
     assert_eq!(a.ai_answer(), None);
+}
+
+#[test]
+fn the_review_compares_your_mulligans_with_the_ais() {
+    let (mut g, p) = main_phase_game("adaptive");
+    // a hand of seven lands: the AI mulligans it
+    let pl = g.player_mut(p);
+    let all: Vec<_> = pl.hand.drain(..).chain(pl.library.drain(..)).collect();
+    let (lands, spells): (Vec<_>, Vec<_>) = all.into_iter().partition(|&c| g.db.get(c).land);
+    let pl = g.player_mut(p);
+    pl.hand = lands.iter().copied().take(7).collect();
+    pl.library = lands.into_iter().skip(7).chain(spells).collect();
+    let mut r = req("mulligan");
+    r.prompt = "Your opening hand (7 to keep).".into();
+    let sh = Arc::new(Shadow::new());
+    sh.record(&g, p, &r, &Answer::Pick(0), 1); // you keep
+    sh.record(&g, p, &r, &Answer::Pick(1), 2); // you mulligan
+    let es = sh.entries();
+    assert_eq!((es[0].kind.as_str(), es[0].yours.as_str()), ("mulligan", "Keep"));
+    let (a, b) = (es[0].as_dict(), es[1].as_dict());
+    assert_eq!(a["differs"], true, "{a}");
+    assert!(a["ai_text"].as_str().unwrap().starts_with("Mulligan (7 lands"), "{a}");
+    assert_eq!(b["differs"], false, "{b}");
+    let back = Entry::from_saved(&es[0].saved()).unwrap();
+    assert_eq!(back.as_dict(), a, "a saved game keeps the mulligan comparison");
 }
