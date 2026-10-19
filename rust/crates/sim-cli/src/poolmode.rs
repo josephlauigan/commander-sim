@@ -11,7 +11,7 @@ use crate::play::{GameOut, Sim, ai_name, profile};
 use crate::report::{self, Analysis, Axes, CardInfo};
 use crate::stats::{Counter, paired_delta, wilson};
 use sim_core::engine::turn::Seat;
-use sim_core::settings::AiMode;
+use sim_core::settings::{AiMode, Settings};
 use std::collections::HashMap;
 use std::time::Instant;
 
@@ -239,8 +239,12 @@ impl Ctx<'_> {
 
     /// poolmode.analyze
     pub fn analyze(&self, me: &str, my_seat: &Seat, opp_keys: &[String], prof: &str, n: u64, seed0: u64) -> Analysis {
+        self.analyze_with(me, my_seat, opp_keys, self.sim.settings(profile(prof).unwrap()), n, seed0)
+    }
+
+    /// analyze with these settings (the preflight dry run plays the adaptive AI whatever --ai says)
+    pub fn analyze_with(&self, me: &str, my_seat: &Seat, opp_keys: &[String], st: Settings, n: u64, seed0: u64) -> Analysis {
         let sim = self.sim;
-        let st = sim.settings(profile(prof).unwrap());
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
             let seats = sim.seats_for(s, Some(me), Some(my_seat), opp_keys, 3);
             let g = GameOut::from_game(&sim.play(s, &seats, &st, false), true);

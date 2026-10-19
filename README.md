@@ -71,6 +71,13 @@ Options:
 - `--deck`: `seph`, `veyran`, `sauron`, `yshtola`, `galadriel` or `alela`.
 - `--pool`: `t1` to `t5`, or `all`. Required, unless you use `--all-decks` or `--calibrate`.
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
+- `--no-explain`: with `--swap`, skip the paired breakdown (it is on by default and costs no extra games).
+- `--no-preflight`, `--preflight-only`: every `--swap` run first does a two-step preflight. (1) The AI-rule check (instant):
+  for each swapped-in card, the deck's cast priority on mid-game boards, printed as `AI: <card>: priority N (deck rule|generic)`,
+  or `WARNING AI: <card>: priority 0 and no response path` when the deck's AI would never rank it and it is not an
+  instant or ctr / rem / wipe / prot card. (2) A quick dry run (200 adaptive-AI games per profile on the first tier, about
+  a minute) printing each card's drawn and cast share; a card drawn in 20+ games and cast in under 5% of them stops the
+  run with exit code 3. `--no-preflight` skips both and `--preflight-only` exits after them.
 - `--games`: games per list per profile (default 1500). `--n` is the same.
 - `--seed`: the first seed (default 500000).
 - `--jobs`: worker threads (default: every CPU core).
