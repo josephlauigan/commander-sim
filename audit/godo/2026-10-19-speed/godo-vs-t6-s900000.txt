@@ -1,0 +1,50 @@
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 6 minutes
+  progress  10.0%  0m31s elapsed, ~4m47s left
+  progress  20.0%  0m56s elapsed, ~3m46s left
+  progress  30.0%  1m26s elapsed, ~3m21s left
+  progress  40.0%  1m50s elapsed, ~2m46s left
+  progress  50.0%  2m23s elapsed, ~2m23s left
+  progress  60.0%  2m51s elapsed, ~1m54s left
+  progress  70.0%  3m21s elapsed, ~1m26s left
+  progress  80.0%  3m49s elapsed, ~0m57s left
+  progress  90.0%  4m20s elapsed, ~0m28s left
+  progress 100.0%  4m53s elapsed, ~0m00s left
+
+=== Godo vs Tier 6 (cEDH, B5) [loose, lookahead AI, 2000 games] ===
+Win rate  49.1%   95% CI 46.9-51.3%   (even share 25%: +24.1 pts)
+Average turn (your own turn count) of wins 6.9, of losses 7.2
+Plan online (): 35.2% of games
+Wins by: combo 59%, damage 41%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-bonder-mana-combo)            51.0%            17.4%            8.9%
+  Kraum/Tymna (kraum-tymna-blue-breach-midra   50.5%            19.8%           10.3%
+  Dack Fayden (dack-fayden-white-stax)         50.3%            26.1%           13.2%
+  Rograkh/Silas (rograkh-silas-turbo-breach)   50.2%            18.8%            8.7%
+  Rograkh/Thrasios (rograkh-thrasios-creatur   49.8%             7.7%            3.8%
+  Sisay (sisay-legends-toolbox)                48.2%            11.5%            5.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  -- Tier 6 report (2000 games, 1983 decisive; round-cap draws 0.8%) --
+  win share by seat of decisive games: seat 1 27.5% (real 34.1%, sim 30-38) OUT; seat 2 25.5% (real 27.3%, sim 24-31); seat 3 25.1% (real 22.5%, sim 19-26); seat 4 21.9% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 546 (27.3% of games), win round 7.6/7.0, mulligans 43.5%, tries 0.24/game, stopped 28%, taken 0.82+0.63/game, died 72%, death round 7.3, first out 63%, wins by round <=4/5/6/8: 78/139/261/384 of 546, T4 mana 4.7 hand 4.8, commander out turn 3.5
+      seat 2: wins 506 (25.3% of games), win round 7.4/7.0, mulligans 44.8%, tries 0.24/game, stopped 24%, taken 0.79+0.60/game, died 74%, death round 7.4, first out 64%, wins by round <=4/5/6/8: 73/148/251/357 of 506, T4 mana 4.7 hand 4.9, commander out turn 3.4
+      seat 3: wins 497 (24.9% of games), win round 7.9/7.0, mulligans 42.4%, tries 0.22/game, stopped 25%, taken 0.68+0.59/game, died 75%, death round 7.3, first out 66%, wins by round <=4/5/6/8: 49/114/213/337 of 497, T4 mana 4.7 hand 4.8, commander out turn 3.4
+      seat 4: wins 434 (21.7% of games), win round 7.6/7.0, mulligans 44.9%, tries 0.20/game, stopped 28%, taken 0.62+0.60/game, died 78%, death round 7.4, first out 68%, wins by round <=4/5/6/8: 64/124/212/306 of 434, T4 mana 4.6 hand 4.9, commander out turn 3.4
+  Godo: seated 2000, won 982 (49.1%; 2 by the round cap)
+      wins by: damage 378 (39%), Godo already out, Hammer out: a token copy spell on Godo 135 (14%), Godo + Helm of the Host (Hammer of Nazahn out) 102 (10%), Godo + Helm of the Host (equip {5}) 81 (8%), Godo + Helm of the Host (Brass Squire attaches) 45 (5%), Dualcaster Mage + a copy spell 42 (4%), Godo + Hammer first, then a copy spell on Godo 39 (4%), Godo already out, Hammer out: Jaxis blitzes a copy of Godo 39 (4%), Godo + Peter Parker's Camera copies the enter trigger 34 (3%), commander damage 23 (2%), Godo + Helm of the Host (Magnetic Theft attaches) 22 (2%), Godo already out, Hammer out: Cursed Mirror / Sculpting Steel as a second Godo 16 (2%), Godo + Hammer first, then Jaxis copies Godo 15 (2%), Godo + Basalt Monolith + a copied Kinnan 6 (1%), Godo + Hammer first, then Cursed Mirror / Sculpting Steel as Godo 2 (0%), Goblin Welder + Goblin Engineer, then Godo 1 (0%)
+      win round: average 6.9, median 6.0
+      went for a combo 764 times (0.38 per game) [Godo already out, Hammer out: a token copy spell on Godo 178, Godo + Helm of the Host (Hammer of Nazahn out) 127, Godo + Helm of the Host (equip {5}) 93, Godo + Hammer first, then a copy spell on Godo 66]; stopped 238 (31%)
+      stopped by: Godo + Helm of the Host (Hammer of Nazahn out) by Snap 12, Godo + Hammer first, then a copy spell on Godo by an unnamed answer 11, Godo already out, Hammer out: a token copy spell on Godo by Fierce Guardianship 8, Godo + Helm of the Host (Hammer of Nazahn out) by Chain of Vapor 7, Godo already out, Hammer out: a token copy spell on Godo by An Offer You Can't Refuse 6, Godo already out, Hammer out: a token copy spell on Godo by Swan Song 6
+      stopped by card: (no card named: a cost, a ward or a lock) 26, Snap 23, Chain of Vapor 18, Force of Will 18, Fierce Guardianship 17, An Offer You Can't Refuse 13
+      speed (median round): ready 5.0 (45% of games), one tutor away 5.0 (45% of games), went for a line 6.0 (35% of games), won 6.0
+      ready before go: went for it later in 224 of 898 ready games (median wait 0.0 rounds, mean 0.50); never went in 194
+      while ready and not gone it chose: stop 375, Godo, Bandit Warlord 174, combo: Godo already out, Hammer out: a token copy spell on Godo 161, stop (hold mana) 131, combo: Godo + Helm of the Host (Hammer of Nazahn out) 114, combo: Godo + Helm of the Host (equip {5}) 91
+      mana T1-T5: 1.07 2.62 3.69 4.83 5.56; mana permanents: 0.00 0.42 0.70 1.06 1.26; mana cards in hand: 1.51 1.19 1.07 0.92 0.92 (castable 0.71 0.80 0.91 0.84 0.86); cast on T1-3: 0.48 0.35 0.41
+      held at the end of turns 1-3 with the mana to cast (card-turns): Lion's Eye Diamond 503, Everflowing Chalice 311, Mox Diamond 288, Chrome Mox 73, Simian Spirit Guide 21, Metalworker 7; rituals and one-shots: Rite of Flame 190, Desperate Ritual 116, Pyretic Ritual 45, Seething Song 14
+      mulligans: 829 of 2000 hands (41.5%): one 473, two 197, three 159
+      counters resolved: 331 (Tibalt's Trickery 162, Red Elemental Blast 90, Pyroblast 79); hit Kinnan 102, Rograkh/Thrasios 81, Rograkh/Silas 49, Sisay 39, Dack Fayden 31
+      removal resolved: 962 (Pyrokinesis 337, ability 223, Chaos Warp 157, Pyroblast 106, Red Elemental Blast 99); hit Kinnan 228, Rograkh/Thrasios 213, Sisay 148, Rograkh/Silas 143, Kraum/Tymna 126
+      stax cast: 668 (Vexing Bauble 248, Defense Grid 245, Trinisphere 175)
+      wipes: 109 (Blasphemous Act 109)
+
+(294s total)

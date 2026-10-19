@@ -2,6 +2,14 @@
 
 The deck's living list of strengths, weaknesses and what was tested. Godo plays Tier 6 (cEDH) only.
 
+## 2026-10-19: re-run after the Tier 6 speed-up (2,000 games, loose, look-ahead, two seeds)
+
+**49.8% (seed 500000), 49.1% (seed 900000)**, against 50.9 / 49.3% loose before. Unchanged within noise, because the
+Tier 6 table is not faster (median win round still 9; audit/t6/speed-2026-10-19/REPORT.md). Godo's games end at median
+round 7 (seat 1); it wins combo 58-59%, damage 41%. It loses most to Dack (12-13% of games) and Kinnan, Kraum/Tymna
+(9-10%), least to Rograkh/Thrasios (4-5%). The baseline note below still holds: the number is inflated by the slow
+table, so use it comparatively. Raw: `2026-10-19-speed/godo-vs-t6-s500000.txt`, `godo-vs-t6-s900000.txt`.
+
 ## 2026-10-19: baseline vs Tier 6 (Stage 7; 2,000 games per profile, look-ahead, two seeds)
 
 **49.5 / 50.9% (seed 500000, conservative / loose); 49.8 / 49.3% (seed 900000).** The result repeats across seeds.
