@@ -148,6 +148,7 @@ Deck key `sephfs`, `decklists/JD/sephiroth-fs-wipe-steal.md`.
 
 ### Changes
 
+- **2026-10-18.** Out: Zombify. In: Dread Return. Zombify -> Dread Return: +4.8 at T5 in the coarse pass (500 games, just past noise); same cost and job, plus a flashback (sacrifice three creatures) whose deaths drain with Sephiroth out.
 - **2026-10-18.** Out: Bitter Triumph, Masterful Flourish, Rabid Attack, Star Compass, Tome of Legends. In: Bolas's Citadel, Demonic Tutor, Gray Merchant of Asphodel, Rune-Scarred Demon, Vampiric Tutor. Band calibration 10/18 (JD approved): Star Compass=>Demonic Tutor;Tome of Legends=>Vampiric Tutor;Masterful Flourish=>Rune-Scarred Demon;Bitter Triumph=>Bolas's Citadel;Rabid Attack=>Gray Merchant of Asphodel
 - **2026-10-14 (second change).** Out: Ophiomancer, Sneering Shadewriter. In: Grave Titan, Pawn of Ulamog. JD's package
   (2026-10-14): Grave Titan for Sneering Shadewriter, Pawn of Ulamog for Ophiomancer. Measured +0.3 ±1.6 over all tiers

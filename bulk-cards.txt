@@ -203,7 +203,6 @@
 3x Dosan's Oldest Chant (sok)
 1x Dragoon's Lance (fin)
 5x Dread Drone (mm2)
-1x Dread Return (dmr)
 1x Dreadhorde Arcanist (tsr)
 1x Dreams of Laguna (fin)
 1x Dreamscape Artist (tsr)
@@ -920,4 +919,4 @@
 2x Zealous Lorecaster (sos)
 1x Zhao, Ruthless Admiral (tla)
 1x Zof Shade (m15)
-1x Zombify (soa)
+2x Zombify (soa)
