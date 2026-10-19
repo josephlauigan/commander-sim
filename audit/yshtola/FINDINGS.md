@@ -12,6 +12,19 @@ Look-ahead, loose, current list: **T5 23.3–23.6%** (the baselines of the swap 
   Sentence, Esper Sentinel, Curiosity, Chromatic Lantern, Thought Vessel (43–44%).
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Orcish Bowmasters for three cards (quick read: T5, loose only, 700 games per list, look-ahead)
+| Cut (=> Orcish Bowmasters) | T5 (noise ±4.0-4.1) |
+|---|---|
+| Curiosity | +3.1 |
+| Mystic Remora | +2.0 |
+| Lightning Greaves | +3.3 |
+**Leans good: about +2.8, every cut positive, none beyond noise alone.** The three share one baseline (30.9%), so they
+are not independent; a full run of one cut is needed to confirm. Raw: `2026-10-19-bowmasters/<cut>-t5.txt`.
+Why: Bowmasters is cast in 79-86% of the games it is drawn, early (round 5.4-5.8), and wins 45-56% of the games it
+is cast in (the deck averages about 31%). Damage to opponents rises 1.8-3.6 a game in all three, and the plan comes
+online slightly more often (+0.9 to +3.3). The ping kills T5's mana creatures and 1-toughness pieces, and the fast
+tables' own extra draws feed it. JD would buy a second copy (the Sauron copy stays).
+
 ### 2026-10-19: Talisman of Progress => The Mind Stone (T5, 2,000 games per list per profile, look-ahead)
 Result: **+2.5 conservative (±2.0) / -1.0 loose (±1.9): about +0.75 averaged, no clear effect** (the tool's
 "leans better" rests on one profile, and the other goes the other way). Raw: `2026-10-19-mind-stone/t5.txt`.
