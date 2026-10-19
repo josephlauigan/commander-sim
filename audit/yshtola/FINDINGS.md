@@ -12,6 +12,16 @@ Look-ahead, loose, current list: **T5 23.3–23.6%** (the baselines of the swap 
   Sentence, Esper Sentinel, Curiosity, Chromatic Lantern, Thought Vessel (43–44%).
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Talisman of Progress => The Mind Stone (T5, 2,000 games per list per profile, look-ahead)
+Result: **+2.5 conservative (±2.0) / -1.0 loose (±1.9): about +0.75 averaged, no clear effect** (the tool's
+"leans better" rests on one profile, and the other goes the other way). Raw: `2026-10-19-mind-stone/t5.txt`.
+Why: a rock for a rock. Mana on turns 4 and 6 and the plan (online in about 61% of games, turn 6.9) are unchanged.
+The Mind Stone is cast in 67-73% of the games it is drawn (Talisman 67-68%), around round 5.2-5.5, and stuck in hand
+in 27-33%, as much as the Talisman: her rocks are often skipped for better plays, so it is not a Mind Stone priority
+problem. Her losses are the same fast combo either way (Urza 15%, Zur 13%, Winota 11-20%), which ends T5 games at
+about 9.4 rounds, before the {5}{W} harness matters. The 10/18 quick test (Chromatic Lantern out, loose only) was
+also noise (+0.4). Verdict: not an upgrade for her.
+
 ### AI fix: cards her rules don't name (2026-10-17, `9b7e19a`)
 `yshtola_prio` returned 0 (never cast by priority) for any card it didn't name: a swapped-in Ad Nauseam was cast in
 0.5% of the games it was drawn, and **Dakkon, Shadow Slayer in her list was never cast**. Unnamed cards now get the
