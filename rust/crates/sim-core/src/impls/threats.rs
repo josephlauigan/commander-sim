@@ -199,7 +199,12 @@ fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId) -> Res {
         &labels,
     )?;
     match kinds[k] {
-        1 => crate::human::choices::sacrifice_permanent(g, q, &perms, "Torment of Hailfire: sacrifice a nonland permanent"),
+        1 => crate::human::choices::sacrifice_permanent(
+            g,
+            q,
+            &perms,
+            "Torment of Hailfire: sacrifice a nonland permanent",
+        ),
         2 => crate::human::choices::discard(g, q, 1, "Torment of Hailfire: discard a card"),
         _ => lose_life(g, q, 3, Some(p), "drain", None),
     }

@@ -177,7 +177,12 @@ fn necro_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     stat(g, p, "sf_wipes", 1);
     if let Some(&(c, o)) = died.iter().max_by(|a, b| steal_value(g, a.0).total_cmp(&steal_value(g, b.0))) {
         if let Some(m) = take_from_gy(g, p, c, o)? {
-            crate::glog!(g, "    Necromantic Selection returns {} under {}'s control", g.perm(m).name, g.player(p).name);
+            crate::glog!(
+                g,
+                "    Necromantic Selection returns {} under {}'s control",
+                g.perm(m).name,
+                g.player(p).name
+            );
             stat(g, p, "sf_steals", 1);
         }
     }
@@ -214,9 +219,8 @@ fn living_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym>
         if !g.player(q).alive {
             continue;
         }
-        let (cre, rest): (Vec<CardId>, Vec<CardId>) = std::mem::take(&mut g.player_mut(q).gy)
-            .into_iter()
-            .partition(|&c| g.db.get(c).creature);
+        let (cre, rest): (Vec<CardId>, Vec<CardId>) =
+            std::mem::take(&mut g.player_mut(q).gy).into_iter().partition(|&c| g.db.get(c).creature);
         g.player_mut(q).gy = rest;
         exiled.extend(cre.into_iter().map(|c| (q, c)));
     }
@@ -269,7 +273,12 @@ fn betrayal_end(g: &mut Game, src: Src, _active: PlayerId) -> Res {
         g.player_mut(*o).gy.remove(i);
         let how = Enter { orig: (*o != p).then_some(*o), plus: 1, ..Enter::default() };
         let n = enter(g, p, *c, how)?;
-        crate::glog!(g, "    Grave Betrayal returns {} under {}'s control with a +1/+1 counter", g.perm(n).name, g.player(p).name);
+        crate::glog!(
+            g,
+            "    Grave Betrayal returns {} under {}'s control with a +1/+1 counter",
+            g.perm(n).name,
+            g.player(p).name
+        );
         stat(g, p, "sf_steals", 1);
         stat(g, p, "sf_betrayals", 1);
     }
@@ -470,7 +479,12 @@ fn researcher_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 fn researcher_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || p != owner(g, src) || g.active != Some(p) || !live(g, src) || !g.perm(src).data.truthy(DataKey::Prepared) {
+    if post.is_none()
+        || p != owner(g, src)
+        || g.active != Some(p)
+        || !live(g, src)
+        || !g.perm(src).data.truthy(DataKey::Prepared)
+    {
         return Ok(vec![]);
     }
     let life = g.player(p).life;
@@ -683,7 +697,13 @@ fn braids_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
         1 => {
             // you may sacrifice a creature; if you do, each opponent discards a card
             if let Some(f) = braids_fodder(g, p)
-                && crate::engine::stack::trigger_window(g, p, Some(src), "chapter I: sacrifice, each opponent discards", Some(3.0))?
+                && crate::engine::stack::trigger_window(
+                    g,
+                    p,
+                    Some(src),
+                    "chapter I: sacrifice, each opponent discards",
+                    Some(3.0),
+                )?
                 && live(g, f)
             {
                 die(g, f, "sac")?;
@@ -701,7 +721,13 @@ fn braids_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
                 .filter(|&c| g.db.get(c).creature)
                 .max_by(|&a, &b| steal_value(g, a).total_cmp(&steal_value(g, b)));
             if let Some(c) = best
-                && crate::engine::stack::trigger_window(g, p, Some(src), "chapter II: creature card to hand", Some(3.0))?
+                && crate::engine::stack::trigger_window(
+                    g,
+                    p,
+                    Some(src),
+                    "chapter II: creature card to hand",
+                    Some(3.0),
+                )?
                 && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
             {
                 g.player_mut(p).gy.remove(i);
@@ -720,9 +746,16 @@ fn braids_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
                     .filter(|&m| live(g, m) && !g.perm(m).token && g.perm(m).cd.is_some_and(|c| !g.db.get(c).land))
                     .min_by_key(|&m| cmc_of(g, m))
             };
-            let count = |g: &Game, q: PlayerId| g.player(q).perms.iter().filter(|&&m| live(g, m) && !g.perm(m).token).count();
+            let count =
+                |g: &Game, q: PlayerId| g.player(q).perms.iter().filter(|&&m| live(g, m) && !g.perm(m).token).count();
             let Some(q) = g.opps(p).filter(|&q| g.player(q).alive).max_by_key(|&q| count(g, q)) else { return Ok(()) };
-            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter III: sacrifice or lose 2 and they draw", Some(3.0))? {
+            if !crate::engine::stack::trigger_window(
+                g,
+                p,
+                Some(src),
+                "chapter III: sacrifice or lose 2 and they draw",
+                Some(3.0),
+            )? {
                 return Ok(());
             }
             if crate::human::is_human(g, q) {

@@ -1254,7 +1254,12 @@ fn cromat_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// Korlash: power and toughness equal to your Swamps (grandeur needs a second copy: never in a singleton deck)
 fn korlash_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
-    let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B') && !crate::engine::mana::moon_land(g, l)).count() as i32;
+    let n = g
+        .player(p)
+        .lands
+        .iter()
+        .filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B') && !crate::engine::mana::moon_land(g, l))
+        .count() as i32;
     (n, n)
 }
 
@@ -1543,7 +1548,13 @@ fn despair_one(g: &mut Game, p: PlayerId, q: PlayerId, kind: Types) -> Res {
         })
         .collect();
     if crate::human::is_human(g, q) && !pool.is_empty() {
-        let what = if kind == Types::CREATURE { "creature" } else if kind == Types::ENCHANTMENT { "enchantment" } else { "planeswalker" };
+        let what = if kind == Types::CREATURE {
+            "creature"
+        } else if kind == Types::ENCHANTMENT {
+            "enchantment"
+        } else {
+            "planeswalker"
+        };
         crate::human::choices::sacrifice_permanent(g, q, &pool, &format!("Invoke Despair: sacrifice a {what}"))?;
         return Ok(());
     }
@@ -1852,7 +1863,8 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
     }
     let pl = g.player(p);
     let perms = pl.perms.iter().filter_map(|&m| g.perm(m).cd);
-    let cards = pl.library.iter().chain(&pl.hand).chain(&pl.gy).chain(&pl.exile).copied().chain(perms).chain(pl.commanders());
+    let cards =
+        pl.library.iter().chain(&pl.hand).chain(&pl.gy).chain(&pl.exile).copied().chain(perms).chain(pl.commanders());
     let mut n: Vec<(&str, i32)> = vec![];
     for c in cards {
         let d = g.db.get(c);

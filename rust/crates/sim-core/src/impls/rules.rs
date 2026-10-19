@@ -27,8 +27,8 @@ use crate::engine::zones::{
     searchable, to_zone_card,
 };
 use crate::flow::Res;
-use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
+use crate::human::{choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Val};
@@ -88,7 +88,8 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 11] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "titania", "sheoldred", "cloud"];
+const CTHRESH: [&str; 11] =
+    ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "titania", "sheoldred", "cloud"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)
@@ -251,7 +252,8 @@ fn fof(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let human_splitter = g.opps(p).find(|&q| g.player(q).alive && crate::human::is_human(g, q));
     if let Some(q) = human_splitter.filter(|_| !crate::human::is_human(g, p)) {
         // the person is the opponent who splits: they divide the five, the AI takes the better pile
-        let names = |g: &Game, cs: &[CardId]| cs.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
+        let names =
+            |g: &Game, cs: &[CardId]| cs.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
         let mut left = top.clone();
         let mut pile_a: Vec<CardId> = vec![];
         let shown = names(g, &top);
@@ -269,7 +271,13 @@ fn fof(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
             }
         }
         let pile_b = left;
-        crate::glog!(g, "    {} splits Fact or Fiction: [{}] and [{}]", g.player(q).name, names(g, &pile_a), names(g, &pile_b));
+        crate::glog!(
+            g,
+            "    {} splits Fact or Fiction: [{}] and [{}]",
+            g.player(q).name,
+            names(g, &pile_a),
+            names(g, &pile_b)
+        );
         let wa: f64 = pile_a.iter().map(|&x| card_worth(g, p, x, false).max(0.0)).psum();
         let wb: f64 = pile_b.iter().map(|&x| card_worth(g, p, x, false).max(0.0)).psum();
         let take_a = wa >= wb;
@@ -297,7 +305,8 @@ fn fof(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let (_, mask, take_a) = best.unwrap();
     if crate::human::is_human(g, p) {
         // an opponent (the AI) splits as above; the person takes one of the two piles
-        let names = |g: &Game, cs: &[CardId]| cs.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
+        let names =
+            |g: &Game, cs: &[CardId]| cs.iter().map(|&c| g.db.get(c).name.to_string()).collect::<Vec<_>>().join(", ");
         let pile_a: Vec<CardId> = (0..top.len()).filter(|&i| mask >> i & 1 == 1).map(|i| top[i]).collect();
         let pile_b: Vec<CardId> = (0..top.len()).filter(|&i| mask >> i & 1 == 0).map(|i| top[i]).collect();
         let labels = vec![format!("pile 1: {}", names(g, &pile_a)), format!("pile 2: {}", names(g, &pile_b))];
@@ -392,11 +401,7 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
                 // Oracle: abilities of artifacts, creatures and enchantments. (Only Sephiroth's own Abolisher is held to the
                 // type list; the pool decks keep the old blanket lock)
                 "Grand Abolisher" if p != q.id && g.active == Some(q.id) => {
-                    if q.key != "seph"
-                        || art
-                        || g.is_creature(src)
-                        || of_type(g, src, Types::ENCHANTMENT)
-                    {
+                    if q.key != "seph" || art || g.is_creature(src) || of_type(g, src, Types::ENCHANTMENT) {
                         return true;
                     }
                 }
@@ -1155,7 +1160,12 @@ fn plague(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             }
         }
         if crate::human::is_human(g, q) && !cs.is_empty() {
-            crate::human::choices::sacrifice_creature(g, q, &cs, "Plaguecrafter: sacrifice a creature or planeswalker")?;
+            crate::human::choices::sacrifice_creature(
+                g,
+                q,
+                &cs,
+                "Plaguecrafter: sacrifice a creature or planeswalker",
+            )?;
             continue;
         }
         if let Some(x) = min_by(&cs, |x| pval(g, x)) {
