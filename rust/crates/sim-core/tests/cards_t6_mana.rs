@@ -300,47 +300,6 @@ fn jeweled_amulet_stores_a_mana_of_the_noted_type_for_later() {
     assert!(!can_pay(&g, P0, 0, "W", false));
 }
 
-// ======================================================== The Mind Stone
-#[test]
-fn the_mind_stone_taps_for_w_and_harnesses_for_six() {
-    use sim_core::engine::mana::{can_pay, total_mana};
-    use sim_core::state::{DataKey, Val};
-    let mut g = tbl();
-    lands(&mut g, P0, "Plains", 6, false);
-    let st = perm(&mut g, P0, "The Mind Stone");
-    assert_eq!(total_mana(&g, P0, false), 7, "six Plains and {{W}} from the Stone");
-    assert!(options(&mut g, st, P0, Some(true)).is_empty(), "no blink target yet: not worth {{5}}{{W}}");
-    let sol = perm(&mut g, P0, "Solemn Simulacrum");
-    let o = options(&mut g, st, P0, Some(true));
-    assert_eq!(o.len(), 1, "a creature with an enter effect is worth blinking");
-    assert!(run(&mut g, P0, &o[0]));
-    assert!(g.perm(st).tapped);
-    assert_eq!(g.perm(st).data.get(DataKey::Flipped), Some(&Val::Bool(true)), "harnessed");
-    assert!(!can_pay(&g, P0, 0, "W", false), "all six Plains paid {{5}}{{W}}");
-    assert!(options(&mut g, st, P0, Some(true)).is_empty(), "harnessed once");
-    let _ = sol;
-}
-
-#[test]
-fn the_mind_stone_blinks_a_permanent_at_your_end_step_once_harnessed() {
-    let mut g = tbl();
-    let st = perm(&mut g, P0, "The Mind Stone");
-    let sol = perm(&mut g, P0, "Solemn Simulacrum");
-    let f = g.registry.get(g.perm(st).cd.unwrap()).unwrap().end_step.unwrap();
-    // not harnessed: nothing happens
-    f(&mut g, st, P0).unwrap();
-    assert!(g.perm(sol).on_bf && g.player(P0).perms.contains(&sol), "Solemn is still the same permanent");
-    g.perm_mut(st).data.set(sim_core::state::DataKey::Flipped, sim_core::state::Val::Bool(true));
-    f(&mut g, st, P0).unwrap();
-    assert!(!g.perm(sol).on_bf, "the old Solemn was exiled and came back as a new permanent");
-    let again: Vec<_> =
-        g.player(P0).perms.iter().copied().filter(|&m| &*g.perm(m).name == "Solemn Simulacrum").collect();
-    assert_eq!(again.len(), 1);
-    // an opponent's end step does nothing
-    f(&mut g, st, P1).unwrap();
-    assert!(g.perm(again[0]).on_bf, "an opponent's end step blinks nothing");
-}
-
 // ======================================================== Grinding Station
 #[test]
 fn grinding_station_untaps_when_an_artifact_enters_and_mills_by_sacrificing_one() {

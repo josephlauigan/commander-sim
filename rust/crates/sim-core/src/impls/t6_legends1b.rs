@@ -125,6 +125,13 @@ fn has_ability(g: &Game, p: PlayerId, src: PermId) -> bool {
     }
 }
 
+/// Marvin has two jobs: Ioreth's untap (Sisay) and copying Kefka's creatures' {T} abilities (newcards_b); both option lists apply
+fn marvin_both(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut v = untap_options(g, src, p, post)?;
+    v.extend(super::newcards_b::marvin_options(g, src, p, post)?);
+    Ok(v)
+}
+
 fn untap_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none() || owner(g, src) != p || !can_tap(g, src) || uses(g, p) >= UNTAP_CAP || !has_ability(g, p, src) {
         return Ok(vec![]);
@@ -258,7 +265,7 @@ fn loki_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, IORETH)?.options = Some(untap_options);
-    r.card(db, MARVIN)?.options = Some(untap_options);
+    r.card(db, MARVIN)?.options = Some(marvin_both);
     walker(r, db, TYVAR, &TYVAR_AB)?;
     r.card(db, "Loki's Scepter")?.etb = Some(loki_etb);
     Ok(())
