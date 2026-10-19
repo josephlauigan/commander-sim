@@ -46,7 +46,7 @@
 1 Necropotence (wot) 74
 1 Night's Whisper (plst) EMA-100
 1 Notion Thief (spg) 36
-1 Orcish Bowmasters (ltr) 103
+1 Orcish Bowmasters (hoc) 19
 1 Path to Exile (ss2) 3
 8 Plains (trk) 318
 1 Polluted Bonds (wot) 75
