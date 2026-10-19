@@ -101,15 +101,15 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
     let n = name(g, c);
     if n == ROGRAKH {
         // rthras4 A: the third and later casts from the command zone cost 4+ extra for a 0/1: let the search decide
-        if std::env::var("RT4_A").is_ok() && g.player(p).tax_of(c) >= 4 {
+        if g.player(p).tax_of(c) >= 4 {
             return Some(40.0);
         }
         return Some(97.0); // {0}: turn 1, it turns on Fierce Guardianship, Swat and Mox Amber
     }
     if n == THRASIOS {
         // rthras4 B: after it was removed once, do not walk it back into open removal
-        if std::env::var("RT4_B").is_ok() && g.player(p).tax_of(c) >= 2 && removal_open(g, p) {
-            return Some(if std::env::var("RT4_B0").is_ok() { 0.0 } else { 60.0 });
+        if g.player(p).tax_of(c) >= 2 && removal_open(g, p) {
+            return Some(60.0);
         }
         return Some(93.0); // the engine, and a creature for Cradle
     }
