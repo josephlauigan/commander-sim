@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Sacrifice value engine.
 
 A snowballing value engine that punishes letting the commander live a turn cycle, with a real late-game combo kill.
 
+## At the table
+
+- **Plan:** Mana dorks and Sol Ring into Korvold, Fae-Cursed King, then a stream of sacrifice fodder: Treasure, Food, Clues and recursive creatures like Bloodghast and Reassembling Skeleton. Each sacrifice grows Korvold and draws a card.
+- **Wins by:** Drain from every sacrifice: Blood Artist, Zulaport Cutthroat, Mayhem Devil and Goblin Bombardment. Late, Gravecrawler with Phyrexian Altar and another Zombie loops sacrifices into a kill.
+- **Watch out for:** Korvold is a flying threat that draws a card every sacrifice, so kill him early. Watch for Gravecrawler and a Zombie with Phyrexian Altar. Grave Pact and Pernicious Deed punish boards of small creatures. Vampiric Tutor and Demonic Tutor find missing pieces.
+- **Interaction:** Terminate, Infernal Grasp, Putrefy, Assassin's Trophy, Kolaghan's Command, Chaos Warp and Beast Within, plus Toxic Deluge and Pernicious Deed as sweepers. Heroic Intervention, Deflecting Swat and Swiftfoot Boots protect its pieces.
+
 ## Strategy
 
 Korvold draws a card and grows on every sacrifice, so Treasure, Food, Clues, and recursive bodies all become card draw. Mayhem Devil and Goblin Bombardment turn each sacrifice into damage; Pitiless Plunderer and Chatterfang turn each death into more fodder. Late in the game, Gravecrawler plus Phyrexian Altar (with a second Zombie) is an unbounded sacrifice loop that kills through Blood Artist, Zulaport, or Mayhem Devil.

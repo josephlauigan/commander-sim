@@ -120,8 +120,8 @@ from a phone or another machine.
 is not finished. The Briefcase app in `ios/` is the legacy one; it still packages the old Python code and no longer
 matches this tree, so leave it until the shell works.
 
-**Setting up a game.** Pick your deck and a tier (each shows your simulated win rate against it), then the
-opponents (three drawn at random, or pick three), your seat, how much the opponents interact (loose or
+**Setting up a game.** Pick a tier: three opponents are drawn from it at random (always random; hover over one to
+see how it plays). Then pick your deck (each shows its simulated win rate at that tier), your seat, how much the opponents interact (loose or
 conservative), the opponent AI, and a seed. *Opponent AI*: look-ahead is the stronger opponent but thinks for a few
 seconds at its decisions; adaptive is much faster. The first game with a set of decks downloads their card images
 from Scryfall (about a minute, once); after that they load from `data/images/`. Your decks show the exact printings
@@ -218,7 +218,7 @@ card per line:
 cardgen deck sauron new-list.txt --dry-run    # check it and show what would change
 cardgen deck sauron new-list.txt              # write it
 cardgen deck sauron -                         # or paste the list, then Ctrl-D
-cardgen deck sauron new-list.txt --log "Why." # also add an "Updated <date>" line
+cardgen deck sauron new-list.txt --log "Why." # also log it in the changelog (decklists/CHANGELOG.md, pool decks: decklists/pool/CHANGELOG.md)
 cardgen export                                # then rebuild the card data
 ```
 

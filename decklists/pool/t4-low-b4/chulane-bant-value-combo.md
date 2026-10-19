@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Value engine / Aluren co
 
 A value deck that goes infinite once Aluren resolves. Tests enchantment removal and counterspells on key pieces.
 
+## At the table
+
+- **Plan:** Casts cheap creatures and Chulane, Teller of Tales draws a card and puts a land onto the battlefield with each one, so it ramps and refills. Mana creatures and Sylvan Library, Rhystic Study and Oko, Thief of Crowns grind value.
+- **Wins by:** The Aluren combo: Aluren with Shrieking Drake or Whitemane Lion and Chulane draws and plays lands without end, into Craterhoof Behemoth or Avenger of Zendikar.
+- **Watch out for:** Aluren on the table: destroy or counter it immediately. Survival of the Fittest, Chord of Calling and Worldly Tutor find the pieces. Consecrated Sphinx and Rhystic Study bury you in cards. Cyclonic Rift can clear your board late.
+- **Interaction:** Counterspell, Mana Drain, Arcane Denial, Swan Song, Swords to Plowshares, Path to Exile, Generous Gift, Beast Within, Reflector Mage, Skyclave Apparition, Cyclonic Rift, Supreme Verdict. Teferi's Protection and Heroic Intervention protect its board.
+
 ## Strategy
 
 Every creature spell draws a card and ramps a land with Chulane, so cheap bounce creatures (Shrieking Drake, Whitemane Lion, Kor Skyfisher) turn into repeatable draw-and-ramp. The combo is Aluren + Shrieking Drake (or Whitemane Lion) with Chulane: cast the Drake for free, return itself, repeat for unbounded card draw and landfall into Avenger or Craterhoof. Survival, Birthing Pod, and the creature tutors assemble it.

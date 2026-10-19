@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Voltron
 
 Whether your decks carry enough spot removal, instant-speed answers, and chump blockers for a single huge threat. Also brings Rest in Peace, which directly hits Sephiroth.
 
+## At the table
+
+- **Plan:** Plays small protective creatures, then casts an Aura on Light-Paws, Emperor's Voice. Each cast Aura tutors a cheaper Aura onto her. Mother of Runes, Giver of Runes and Sigarda's Aid guard her.
+- **Wins by:** Stacks Auras on one creature and kills by commander damage: All That Glitters, Ethereal Armor, Sage's Reverie and On Serra's Wings make her huge in two or three hits, while Unquestioned Authority gives protection from creatures.
+- **Watch out for:** Everything rides on one creature, so exile or Wrath her in response to the Aura chain. Mother of Runes and the Wards counter spot removal and the Umbras give her totem armor. Keep chump blockers for the big swing.
+- **Interaction:** Swords to Plowshares, Path to Exile, Journey to Nowhere, Oblivion Ring, Cast Out, Council's Judgment, Wrath of God and Sunfall. Rest in Peace hits graveyards. Flickering Ward, Spectra Ward, Timely Ward, Valorous Stance and Gods Willing protect her.
+
 ## Strategy
 
 Cast an Aura, and Light-Paws tutors another Aura onto the battlefield; stack four or five on the commander and swing for 21 commander damage in two or three hits. All That Glitters, Ethereal Armor, and Sage's Reverie scale with enchantment count, the Umbras give totem armor, and Spectra Ward / Timely Ward / Flickering Ward protect the stack. Mother and Giver of Runes and Sigarda's Aid (flash Auras) are the protection layer. Rest in Peace is in as real graveyard hate.

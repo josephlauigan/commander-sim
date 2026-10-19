@@ -2,8 +2,6 @@
 
 Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Fast threats / combat.
 
-Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the look-ahead AI: Black Market Connections, Faithless Looting and Night's Whisper made way for Sheoldred, the Apocalypse, Inferno Titan and Skyclave Apparition (a faster clock and removal behind the cheat). Within Tier 2 (conservative): 19.3% before, 24.4% after.
-
 - **Commander:** Kaalia of the Vast
 - **Color identity:** White, Black, Red
 - **Game Changers (2):** Smothering Tithe, Demonic Tutor
@@ -13,6 +11,13 @@ Tuned in October 2026 (with JD's approval) for within-Tier-2 balance under the l
 ## Role in the pool
 
 A turn-four seven-drop. A direct race against Sephiroth's reanimation speed, and a check on how much instant-speed removal your decks keep up.
+
+## At the table
+
+- **Plan:** Ramps with Sol Ring, signets and talismans and lands Kaalia of the Vast, then attacks to put a big Angel, Demon or Dragon from hand onto the battlefield attacking. Greaves, Swiftfoot Boots, Whispersilk Cloak, Mother of Runes and Giver of Runes protect her.
+- **Wins by:** Cheats out Glorybringer, Terror of the Peaks, Goldspan Dragon, Archangel Avacyn, Lyra Dawnbringer, Sheoldred, the Apocalypse and Inferno Titan, plus Master of Cruelties, which sets a blocked-nothing opponent to 1 life. Dragon Tempest pings with each Dragon.
+- **Watch out for:** Kaalia can bring a huge threat down on turn four, so kill her on sight or keep a flying blocker and removal ready. The creature she puts in attacks immediately, and Master of Cruelties can leave a player at 1 life.
+- **Interaction:** Swords to Plowshares, Path to Exile, Terminate, Vindicate, Anguished Unmaking, Despark, Chaos Warp, Crackling Doom, Kolaghan's Command, Blasphemous Act, Skyclave Apparition and Deflecting Swat. Selfless Spirit, Flawless Maneuver and the equipment protect Kaalia.
 
 ## Strategy
 

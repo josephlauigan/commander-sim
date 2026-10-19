@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Aggro /
 
 Early combat pressure. Whether your decks can block, sweep, or race a board that grows every attack step.
 
+## At the table
+
+- **Plan:** Curves out with cheap attackers that make bodies when they swing: Goblin Rabblemaster, Legion Warboss, Adeline, Resplendent Cathar and Hero of Bladehold. Isshin, Two Heavens as One makes every attack trigger happen twice.
+- **Wins by:** Swarms the table with doubled tokens, then finishes with Hellrider, Brutal Hordechief and Caesar, Legion's Emperor. Aurelia, the Warleader and Scourge of the Throne add extra combats for a surprise kill.
+- **Watch out for:** Hero of Bladehold and Adeline with Isshin out double the board in a single combat, so kill Isshin or the token makers before they attack. Keep blockers and a sweeper ready from turn four. Hellrider turns a wide board into direct damage.
+- **Interaction:** Swords to Plowshares, Path to Exile, Lightning Helix, Terminate, Vindicate, Anguished Unmaking, Despark, Chaos Warp, Kolaghan's Command, Crackling Doom and Blasphemous Act. Flawless Maneuver, Selfless Spirit and Swiftfoot Boots protect its team.
+
 ## Strategy
 
 Go wide early, then let Isshin double every attack trigger. Rabblemaster, Warboss, Hero of Bladehold, Brimaz, Adeline, Anim Pakal, and Rabble Rousing each make bodies on attack, so a turn-four swing with Isshin out can double the board mid-combat. Hellrider, Brutal Hordechief, and Caesar turn the width into direct damage. Aurelia, Karlach, and Scourge of the Throne add extra combats as the top end.

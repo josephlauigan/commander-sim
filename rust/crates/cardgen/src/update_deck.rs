@@ -20,7 +20,7 @@
 //!  2. rewrites '## Import list' and the card lines of '## Decklist by type' (keeping the file's own groups and any
 //!     notes after them), and the Game Changers / Lands lines of a pool deck's header;
 //!  3. with --log, adds a dated line naming the cards out and in: to decklists/CHANGELOG.md (under the deck's title) for
-//!     your decks, as an '**Updated <date>.**' line at the top of the file for a pool deck;
+//!     your decks, to decklists/pool/CHANGELOG.md for a pool deck (deck files describe only the current list);
 //!  4. for your decks, records the new list in tests/fixtures/my_decks_parsed.json (the deck guard test);
 //!  5. reports what changed, how completely the simulator models the new cards, and where the rest of the file still
 //!     mentions cards that left (strategy text isn't rewritten);
@@ -558,13 +558,14 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let singles_old: Vec<String> =
         old.iter().filter(|n| !BASICS.contains(&n.as_str()) && old_count(n) == 1).cloned().collect();
     let key = sort_key(&singles_old);
-    // your decks keep their history in decklists/CHANGELOG.md; a pool deck's log line stays in its own file
+    // deck files describe the deck as it is: your decks keep their history in decklists/CHANGELOG.md, pool decks in
+    // decklists/pool/CHANGELOG.md; only a deck file elsewhere gets its log line at its own top
     let my_deck = inp
         .my
         .iter()
         .find(|d| std::fs::canonicalize(decks::deck_path(project, d)).ok().as_deref() == Some(path.as_path()))
         .cloned();
-    let file_note = if my_deck.is_some() { None } else { note.as_deref() };
+    let file_note = if my_deck.is_some() || in_pool { None } else { note.as_deref() };
     let new_text = rewrite(&text, &commander, commander2.as_deref(), &counts, &recs, commas, &today, file_note, key)?;
 
     let rel = path
@@ -626,16 +627,25 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
         std::fs::write(&path, &new_text).map_err(|e| format!("{}: {e}", path.display()))?;
         say!("Wrote {rel}.");
     }
-    if let (Some(d), Some(note)) = (&my_deck, &note) {
-        let log_path = project.decklists().join(CHANGELOG);
+    // (changelog under decklists/, deck key, deck file under decklists/, fallback title)
+    let log_to: Option<(String, String, String, String)> = match &my_deck {
+        Some(d) => Some((CHANGELOG.into(), d.key.clone(), d.file.clone(), d.name.clone())),
+        None if in_pool => {
+            let stem = path.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
+            Some((format!("pool/{CHANGELOG}"), stem.clone(), rel.trim_start_matches("decklists/").to_string(), stem))
+        }
+        None => None,
+    };
+    if let (Some((log_rel, key, file, name)), Some(note)) = (&log_to, &note) {
+        let log_path = project.decklists().join(log_rel);
         let log = if log_path.exists() { read(&log_path)? } else { String::new() };
-        let title = text.split('\n').find_map(|l| l.strip_prefix("# ")).unwrap_or(&d.name).trim();
-        let new_log = add_changelog(&log, title, &d.key, &d.file, &today, note);
+        let title = text.split('\n').find_map(|l| l.strip_prefix("# ")).unwrap_or(name).trim();
+        let new_log = add_changelog(&log, title, key, file, &today, note);
         if opts.dry {
-            say!("(--dry-run: would add to decklists/{CHANGELOG}: - **{today}.** {note})");
+            say!("(--dry-run: would add to decklists/{log_rel}: - **{today}.** {note})");
         } else {
             std::fs::write(&log_path, new_log).map_err(|e| format!("{}: {e}", log_path.display()))?;
-            say!("Logged the change in decklists/{CHANGELOG}.");
+            say!("Logged the change in decklists/{log_rel}.");
         }
     }
     // how well the new cards are modeled, and where the file still mentions cards that left

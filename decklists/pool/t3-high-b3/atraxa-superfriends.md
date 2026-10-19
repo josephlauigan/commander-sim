@@ -12,17 +12,22 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Planeswalker value / pr
 
 Pressure on non-creature permanents. Your decks need to attack planeswalkers through a tax, or they lose to ultimates by turn eight or nine.
 
+## At the table
+
+- **Plan:** Ramps with Sol Ring, Birds of Paradise, Cultivate and the talismans, then lands planeswalkers behind Ghostly Prison and Propaganda. Atraxa proliferates every end step, so loyalty climbs fast.
+- **Wins by:** Ultimating walkers: Elspeth, Sun's Champion makes an army, Teferi, Hero of Dominaria exiles your permanents, and Ugin, the Spirit Dragon clears the board while the deck keeps its own walkers.
+- **Watch out for:** Walkers that go unattacked: you must get through Propaganda and Ghostly Prison to reach them. Rhystic Study taxes your spells. Oko, Thief of Crowns turns your best permanent into an Elk, and Teferi's Protection saves its board from your sweeper.
+- **Interaction:** Counterspell, Arcane Denial, Swan Song, Swords to Plowshares, Path to Exile, Anguished Unmaking, Assassin's Trophy, Utter End, Beast Within, and sweepers Supreme Verdict, Austere Command, Hour of Revelation and Toxic Deluge. Teferi's Protection and Heroic Intervention protect its board.
+
 ## Strategy
 
-Protect a growing stable of planeswalkers behind Ghostly Prison, Propaganda, and board wipes, and proliferate every turn with Atraxa so loyalty climbs to ultimates. Doubling Season makes walkers enter at double loyalty, often ultimating on the spot. Wins come from Elspeth's army, Teferi's emblem lock, Jace, or Ugin clearing the board. No combo.
-
-Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Doubling Season, Ichormoon Gauntlet, Vraska, Golgari Queen, Tekuthal, Inquiry Dominus and Garruk Wildspeaker made way for Explore, Mind Stone, Kaito Shizuki, Courser of Kruphix and Grow from the Ashes (a lighter proliferate engine). Within Tier 3: 38-40% before, 25% after.
+Protect a growing stable of planeswalkers behind Ghostly Prison, Propaganda, and board wipes, and proliferate every turn with Atraxa so loyalty climbs to ultimates. Wins come from Elspeth's army, Teferi's emblem lock, Jace, or Ugin clearing the board. No combo.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Planeswalker loyalty and ultimates; proliferate (Atraxa, Evolution Sage, Flux Channeler, Tekuthal doubling); Doubling Season; attack taxes.
+Planeswalker loyalty and ultimates; proliferate (Atraxa, Evolution Sage, Flux Channeler, Grow from the Ashes); attack taxes.
 
 ## Decklist by type (100)
 

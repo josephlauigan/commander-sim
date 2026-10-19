@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 0: Bracket 2 (unmodified precon)**. Axis: Spells /
 
 The Bracket 2 baseline: an unmodified preconstructed deck, the power level WotC uses to define Bracket 2.
 
+## At the table
+
+- **Plan:** Cantrips with Ponder, Preordain, Opt and Serum Visions while building a spell count. Stella Lee, Wild Card turns the second spell of a turn into a free card, and Guttersnipe and Young Pyromancer punish every spell.
+- **Wins by:** Chains spells into Eris, Roar of the Storm Dragons, Niv-Mizzet, Parun pings, and Thunderclap Drake or Talrand, Sky Summoner tokens. Mizzix's Mastery and Finale of Promise copy or recast spells.
+- **Watch out for:** A big turn comes from Stella Lee copying a spell after three casts. Eris makes a 4/4 Dragon on every second spell, so kill her early. Niv-Mizzet, Parun is the main burn finisher. Windfall refills its hand.
+- **Interaction:** Counterspells: Arcane Denial. Removal: Chaos Warp, Pongify, Vandalblast and Volcanic Torrent. Propaganda taxes your attacks.
+
 ## Decklist by type (100)
 
 **Commander (1).** Stella Lee, Wild Card

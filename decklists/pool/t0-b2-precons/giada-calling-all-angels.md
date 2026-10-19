@@ -12,6 +12,13 @@ Opponent pool deck — **Tier 0: Bracket 2 (unmodified precon)**. Axis: Angels /
 
 The Bracket 2 baseline: an unmodified preconstructed deck, the power level WotC uses to define Bracket 2.
 
+## At the table
+
+- **Plan:** Casts Angels off mono-white mana and rocks like Sol Ring, Mind Stone, Arcane Signet and Marble Diamond. Giada, Font of Hope taps for white mana only for Angel spells and makes each new Angel enter bigger.
+- **Wins by:** Flies over the table with Lyra Dawnbringer, Archangel of Tithes, Angel of Finality and Sunblast Angel, with Angelic Field Marshal, Heraldic Banner and Vanquisher's Banner as team pumps.
+- **Watch out for:** Every Angel flies, so hold removal for Lyra Dawnbringer and Archangel of Tithes. Giada's extra counters get large fast. Day of Judgment and Austere Command reset a board it has overcommitted to.
+- **Interaction:** Swords to Plowshares, Fateful Absence, Valorous Stance, Destroy Evil, Grasp of Fate, Exorcise, Day of Judgment, Cleansing Nova and Austere Command. No counterspells; Swiftfoot Boots protects the commander.
+
 ## Decklist by type (100)
 
 **Commander (1).** Giada, Font of Hope

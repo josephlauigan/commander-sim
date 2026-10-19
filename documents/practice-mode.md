@@ -33,9 +33,9 @@ Other options: `--data DIR` (the card data folder, default `data/`), `--static D
 The mockup has one artboard per screen.
 
 1. **New game (setup).**
-   - **Your deck:** your decks, each shown with its commander's art, bracket, Game Changer count and its average win rate from the latest overnight run.
-   - **The table:** the five tiers, each with its five decks and the chosen deck's sim win rate against that tier.
-   - **Opponents:** three drawn at random from the tier (the default), or you pick three.
+   - **The table:** the tiers, each with its five decks.
+   - **Your opponents:** three drawn at random from the chosen tier (two in a game with a friend), always at random: a new draw when the tier or the number of players changes, and each time you come back to this screen. Hovering over one (or tapping it) shows a box with how it plays: its plan, how it wins, what to watch out for and its interaction (the deck file's "At the table" section), plus its Game Changers and combos.
+   - **Your deck:** chosen after you see the opponents; each shows its commander's art, bracket, Game Changer count and its sim win rate at the chosen tier.
    - **Options:**
      - your seat: random, or 1st–4th
      - the opponents' interaction profile: conservative or loose
