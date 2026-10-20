@@ -4,8 +4,8 @@
 use sim_core::ai::{act, brain};
 use sim_core::engine::{cast, combat, life, values, zones};
 use sim_core::hooks::Opt;
-use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::state::{Ctx, DataKey, Game, Val};
+use sim_core::ids::{PermId, PlayerId};
+use sim_core::state::{Ctx, DataKey, Game};
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
@@ -467,13 +467,14 @@ fn cityscape_leveler_destroys_on_cast_and_on_attack_and_unearths() {
 // ======================================================== the Basalt Monolith + Rings combo
 #[test]
 fn basalt_monolith_and_rings_of_brighthearth_are_a_known_combo() {
-    let mut g = tbl();
+    let mut g = table(&["karn", "seph", "sauron"]);
     lands(&mut g, P0, "Wastes", 6, false);
-    perm(&mut g, P0, "Walking Ballista");
     perm(&mut g, P0, "Basalt Monolith");
-    hand(&mut g, P0, &["Rings of Brighthearth"]);
+    hand(&mut g, P0, &["Rings of Brighthearth", "Walking Ballista"]);
     let o = brain::main_options(&mut g, P0, false).unwrap();
-    println!("{:?}", labels(&o));
-    let _ = (CardId(0), Val::None, P2);
+    assert!(labels(&o).contains(&"Rings of Brighthearth".to_string()), "{:?}", labels(&o));
+    // the AI plays it out: Rings is cast, the loop runs with Walking Ballista as the outlet, the table loses
+    brain::main(&mut g, P0, false).unwrap();
+    assert!(g.over && g.winner == Some(P0), "the combo wins: over={} winner={:?}", g.over, g.winner);
 }
 
