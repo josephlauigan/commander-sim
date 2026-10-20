@@ -9030,3 +9030,29 @@ dsl = [
 ]
 status = "Approximate"
 note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"
+
+["Karn, Scion of Urza"]
+status = "Full"
+note = "loyalty 5. +1 reveals the top two cards: an opponent chooses which goes to your hand (the AI opponent gives the card you want less), the other is exiled with a silver counter. -1 puts the best silver-counter card from exile into your hand. -2 makes a 0/0 Construct artifact token that gets +1/+1 per artifact you control. Silver counters outlive the planeswalker (a later Karn can fetch them). impls/karn_engines.rs"
+
+["Mazemind Tome"]
+status = "Full"
+note = "{T}, page counter: scry 1; {2}, {T}, page counter: draw a card; at the fourth page counter it is exiled and you gain 4 life. The AI draws when it can pay {2} and scrys only when it cannot (and the Tome is young). impls/karn_engines.rs"
+
+["Mirrorworks"]
+status = "Approximate"
+note = "whenever another nontoken artifact you control enters, pay {2} for a token copy (not for legends, or Walking Ballista / Hangarback Walker / the Self-Replicator, whose copy would be empty; the AI wants rocks and creatures). Missing: artifact lands (Darksteel Citadel) are not copied. impls/karn_engines.rs"
+
+["Mystic Forge"]
+dsl = []
+status = "Approximate"
+note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), and {T}, 1 life exiles the top card (used to dig past a land it does not need). Missing: removal, wipes, X spells and counterspells on top are left alone (their targets are chosen by the hand options); a land on top is never played (the Forge does not allow it). impls/karn_engines.rs"
+
+["Urza's Blueprints"]
+status = "Full"
+note = "{T}: draw a card (compiled). Echo {6}: at the first upkeep the AI pays when the mana is there and spare (nine or more, or two cards or fewer in hand), otherwise it sacrifices the Blueprints (it still drew the turn it was cast). impls/karn_engines.rs"
+
+["Urza's Tome"]
+dsl = []
+status = "Full"
+note = "{3}, {T}: draw a card, then discard a card unless you exile a historic card (artifact, legendary or Saga) from your graveyard. The AI exiles the cheapest non-creature historic card, else discards its worst card. impls/karn_engines.rs"

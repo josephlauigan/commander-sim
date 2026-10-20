@@ -52,6 +52,7 @@ pub mod t0_anikthea;
 pub mod zur;
 pub mod threats;
 pub mod kuja;
+pub mod karn_engines;
 pub mod newcards_b;
 pub mod tymna_cards;
 pub mod tymna_partners;
@@ -149,5 +150,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t6_legends1::register(&mut r, db)?;
     t6_blue::register(&mut r, db)?;
     smaug::register(&mut r, db)?;
+    karn_engines::register(&mut r, db)?;
     Ok(r)
 }

@@ -586,6 +586,8 @@ pub struct Player {
     pub t0s: crate::impls::t0_stella::StellaState,
     /// cards playable until the end of a later turn (Prosper): (card, the turn count it lasts to)
     pub impulse_long: Vec<(CardId, u32)>,
+    /// cards in exile with a silver counter (Karn, Scion of Urza; impls/karn_engines.rs)
+    pub silver: Vec<CardId>,
     /// Erebos's draw this turn
     pub erebos_t: Option<TurnStamp>,
     /// no maximum hand size this turn (its turn count)
@@ -796,6 +798,7 @@ impl Player {
             cmd_atk: None,
             neriv: vec![],
             impulse_long: vec![],
+            silver: vec![],
             erebos_t: None,
             nomax_turn: None,
             skip_turns: 0,
