@@ -7928,10 +7928,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Living weapon",
-    "{3}: Return ~ to its owner's hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -47378,9 +47375,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ dies, create a 1/1 colorless Thopter artifact creature token with flying for each +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": false,
