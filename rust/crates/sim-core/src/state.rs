@@ -42,6 +42,8 @@ pub enum DataKey {
     Bound,
     Burden,
     Charge,
+    /// fate counters (Oblivion Stone)
+    Fate,
     Construct,
     Copy,
     /// Spark Double entered as a copy (its own enter hook doesn't copy again)
@@ -1547,7 +1549,9 @@ impl Game {
     /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
     pub fn is_creature(&self, m: PermId) -> bool {
         let m = self.perm(m);
-        m.token || m.cd.is_some_and(|c| self.db.get(c).creature) || m.data.truthy(DataKey::Anim)
+        (m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
+            || m.cd.is_some_and(|c| self.db.get(c).creature)
+            || m.data.truthy(DataKey::Anim)
     }
 }
 

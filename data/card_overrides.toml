@@ -9189,3 +9189,114 @@ note = "{2}, {T}, sacrifice: a basic land onto the battlefield tapped (compiled)
 ["Wurmcoil Engine"]
 status = "Full"
 note = "deathtouch, lifelink (tags); when it dies, a 3/3 deathtouch Wurm and a 3/3 lifelink Wurm, colourless Phyrexian Wurm artifact creature tokens (they were not artifacts before: Karn's count, Mirrorworks and the Constructs miss them)"
+# ---- Karn, Legacy Reforged deck: threats, removal and wipes (impls/karn_cards.rs)
+
+["All Is Dust"]
+tags = "wipe=dust"
+dsl = []
+status = "Full"
+note = "each player sacrifices every coloured permanent (the dust kind of impls/sweepers.rs; colourless permanents, ours, stay; the AI casts it when the opponents' coloured permanents are worth more than ours)"
+
+["Blightsteel Colossus"]
+tags = "pow=11 bomb=9 trample"
+dsl = []
+status = "Approximate"
+note = "infect: combat damage to a player is poison counters (10 kills), indestructible from its keyword, shuffled into the library instead of the graveyard from the battlefield; damage to creatures is plain damage (no -1/-1 counters) and a mill or discard still puts it in the graveyard"
+
+["Cityscape Leveler"]
+tags = "pow=8 bomb=8 trample"
+dsl = []
+status = "Approximate"
+note = "when cast and on each attack it destroys the opposing nonland permanent worth most (3 or more), whose controller gets a tapped Powerstone; unearth {8} at sorcery speed (haste, exiled at the end step; the 'exile instead of leaving' clause is not modeled)"
+
+["Darksteel Forge"]
+status = "Full"
+note = "artifacts you control (tokens that are artifacts too) have indestructible"
+
+["Duplicant"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "when it enters it exiles the best opposing nontoken creature (worth 3 or more) and takes its power, toughness and creature types"
+
+["Kuldotha Forgemaster"]
+tags = "pow=3 tgh=5"
+dsl = []
+status = "Full"
+note = "{T}, sacrifice the three cheapest other artifacts (not the commander): the best artifact card of the library onto the battlefield, then shuffle; the AI does it when the card is worth more than the three artifacts"
+
+["Liberator, Urza's Battlethopter"]
+status = "Approximate"
+note = "flash; colourless and artifact spells can be cast as though they had flash (the AI casts them in the end-of-turn window); +1/+1 counter when the mana spent is greater than its power"
+
+["Mishra's Self-Replicator"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "whenever you cast a historic spell (artifact, legendary, Saga) you may pay {1} for a token copy; every copy triggers, and the AI pays whenever it can"
+
+["Nevinyrral's Disk"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enters tapped; {1}, {T}: destroy all artifacts, creatures and enchantments (indestructible survives); the AI uses it when the opponents lose clearly more than we do"
+
+["Oblivion Stone"]
+tags = ""
+dsl = []
+status = "Full"
+note = "{4},{T}: a fate counter on our best permanent; {5},{T}, sacrifice: destroy each nonland permanent without a fate counter, then remove all fate counters; the AI marks its best permanent when the wipe is better for it, and wipes when the swing is clear"
+
+["Platinum Angel"]
+tags = "pow=4 fly bomb=7"
+dsl = []
+status = "Full"
+note = "its controller can't lose the game (state-based check in engine/life.rs via t0_giada::cant_lose); the engine ends the game by elimination, so opponents can't win while a live opponent remains"
+
+["Portal to Phyrexia"]
+tags = "bomb=8"
+dsl = []
+status = "Full"
+note = "enter: each opponent sacrifices their three least valuable creatures; upkeep: the best creature card from any graveyard returns under your control as a Phyrexian too"
+
+["Ratchet Bomb"]
+tags = ""
+dsl = []
+status = "Full"
+note = "{T}: a charge counter (the AI winds it up when a higher count would hit more); {T}, sacrifice: destroy each nonland permanent with mana value equal to the counters (tokens are 0)"
+
+["Spine of Ish Sah"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enter: destroys the opposing permanent worth most (2 or more); when it goes from the battlefield to the graveyard it returns to its owner's hand"
+
+["Steel Hellkite"]
+tags = "pow=5 bomb=5 fly"
+dsl = []
+status = "Approximate"
+note = "{X}: destroy each nonland permanent with mana value X controlled by a player it dealt combat damage to this turn (once a turn; the AI picks the X that hits most); the {2}: +1/+0 pump is not modeled"
+
+["Steel Overseer"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "{T}: a +1/+1 counter on each artifact creature you control (cast precombat when not summoning sick)"
+
+["Triplicate Titan"]
+tags = "pow=9 bomb=9 fly vig trample"
+dsl = []
+status = "Full"
+note = "when it dies: three 3/3 colourless Golem artifact creature tokens, one with flying, one with vigilance and one with trample"
+
+["Ugin, the Ineffable"]
+tags = "leg"
+dsl = []
+status = "Approximate"
+note = "colourless spells you cast cost {2} less; +1: exile the top card and make a 2/2 Spirit (the card goes to hand when that Spirit dies, or when Ugin leaves); -3: destroy the opposing coloured permanent worth most"
+
+["Unstable Obelisk"]
+tags = "rock=1:C"
+dsl = []
+status = "Full"
+note = "{T}: add {C}; {7}, {T}, sacrifice: destroy the opposing permanent worth most (4 or more)"
