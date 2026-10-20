@@ -1033,11 +1033,13 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
     };
     let tapped = e.tapped == Some(true);
     for _ in 0..k {
-        if f.kind.as_deref() == Some("land") && to == "battlefield" {
+        // the karn deck's nonbasic land searches (Expedition Map, Urza's Cave) take the land it wants (`karn::search_pick`)
+        let karn_pick = f.basic == Some(false) && crate::impls::karn::is_deck(g.player(p).key);
+        if f.kind.as_deref() == Some("land") && to == "battlefield" && !karn_pick {
             zones::land_ramp(g, p, 1, tapped)?;
             continue;
         }
-        if f.kind.as_deref() == Some("land") && to == "hand" {
+        if f.kind.as_deref() == Some("land") && to == "hand" && !karn_pick {
             zones::land_to_hand(g, p)?;
             continue;
         }
@@ -1826,9 +1828,13 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
             continue;
         }
         let name = g.db.get(cd).name.to_string();
+        let held = crate::impls::karn::hold_ability(g, p, &name); // the karn deck keeps its Baubles
         for (i, a) in abilities(g, cd).iter().enumerate() {
             match a {
                 Ability::Activated { cost, effects, sorcery, once, ai_min } => {
+                    if held {
+                        continue;
+                    }
                     if *sorcery == Some(true) && !sorcery_ok {
                         continue;
                     }

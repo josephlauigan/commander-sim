@@ -1,4 +1,4 @@
-//! The human seat's mana pool: tap sources yourself, pay costs from the pool, and the pool empties between steps
+//! The huplan_plain(self.m, generic, pips).map(|m| Left { m, k: None, art })an seat's mana pool: tap sources yourself, pay costs from the pool, and the pool empties between steps
 //! (Python's `play/mana.py`).
 //!
 //! The AI seats keep the engine's automatic payment (`engine::mana::pay`). A tapped source goes through
@@ -49,6 +49,8 @@ pub struct ManaPool {
     /// restricted mana (Secluded Courtyard), by colour: for creature spells of type `ktype`
     pub k: [u32; 6],
     pub ktype: Option<Sym>,
+    /// colourless from Karn, Legacy Reforged: not for nonartifact spells, and it stays all turn (`empty` leaves it)
+    pub art: u32,
     pub spending: Option<Spending>,
 }
 
@@ -56,6 +58,7 @@ pub struct ManaPool {
 struct Left {
     m: [u32; 7],
     k: Option<[u32; 6]>,
+    art: u32,
 }
 
 fn plan_plain(mut m: [u32; 7], generic: u32, pips: &str) -> Option<[u32; 7]> {
@@ -97,7 +100,7 @@ impl ManaPool {
     }
 
     pub fn total(&self) -> u32 {
-        self.m.iter().sum::<u32>() + self.k.iter().sum::<u32>()
+        self.m.iter().sum::<u32>() + self.k.iter().sum::<u32>() + self.art
     }
 
     pub fn empty(&mut self) {
@@ -115,6 +118,9 @@ impl ManaPool {
         }
         if self.m[6] > 0 {
             out.push_str(&format!(" +{} any", self.m[6]));
+        }
+        if self.art > 0 {
+            out.push_str(&format!(" +{} for artifact spells and abilities", self.art));
         }
         if self.k.iter().any(|&x| x > 0) {
             out.push_str(" +");
@@ -140,10 +146,22 @@ impl ManaPool {
         }
     }
 
+    /// may the artifact-only mana (Karn) pay for what is being paid for now: anything but a nonartifact spell
+    fn art_ok(&self, g: &Game) -> bool {
+        match self.spending {
+            Some(Spending::Card(c)) => g.db.get(c).types.has(crate::cards::Types::ARTIFACT),
+            _ => true,
+        }
+    }
+
     /// The pool left after paying {generic}+pips, or None if it can't: each coloured pip from its own colour
     /// (any-colour mana last); generic from colourless first, then the most plentiful colour, then any-colour.
     /// Restricted mana (Secluded Courtyard) is spent first when it may be.
     fn plan(&self, g: &Game, owner: PlayerId, generic: u32, pips: &str) -> Option<Left> {
+        // Karn's mana first (it is gone at the end of the turn): it pays generic mana only
+        let used_art = if self.art_ok(g) { self.art.min(generic) } else { 0 };
+        let art = self.art - used_art;
+        let generic = generic - used_art;
         if self.k_ok(g, owner) {
             let mut k = self.k;
             let mut rest = String::new();
@@ -160,9 +178,9 @@ impl ManaPool {
                 need -= t;
             }
             let m = plan_plain(self.m, need, &rest)?;
-            return Some(Left { m, k: Some(k) });
+            return Some(Left { m, k: Some(k), art });
         }
-        plan_plain(self.m, generic, pips).map(|m| Left { m, k: None })
+        plan_plain(self.m, generic, pips).map(|m| Left { m, k: None, art })
     }
 
     pub fn can_pay(&self, g: &Game, owner: PlayerId, generic: u32, pips: &str) -> bool {
@@ -174,6 +192,7 @@ impl ManaPool {
             None => false,
             Some(l) => {
                 self.m = l.m;
+                self.art = l.art;
                 if let Some(k) = l.k {
                     self.k = k;
                 }
@@ -212,6 +231,7 @@ fn gathered(g: &Game, p: PlayerId) -> ManaPool {
     let pl = g.player(p);
     let mut pool = pl.pool.clone();
     let f = pl.floating;
+    pool.art += f.art;
     for (n, c) in [(f.r, 'R'), (f.u, 'U'), (f.c, 'C'), (f.any, 'A'), (f.g, 'G'), (f.b, 'B')] {
         pool.add(c, n);
     }
@@ -296,7 +316,7 @@ pub struct SourceInfo {
 
 /// engine units that are already floating mana, not sources to tap (Python's FLOATS: it leaves out the black one)
 fn is_float(s: Source) -> bool {
-    matches!(s, Source::FloatR | Source::FloatAny | Source::FloatU | Source::FloatC | Source::FloatG)
+    matches!(s, Source::FloatR | Source::FloatAny | Source::FloatU | Source::FloatC | Source::FloatG | Source::FloatArt)
 }
 
 /// the colours unit u can make; painlands and Talismans can also make colourless, without the pain

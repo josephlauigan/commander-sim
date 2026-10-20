@@ -306,6 +306,8 @@ pub struct Floating {
     pub c: u32,
     /// any colour (rituals, the ability language)
     pub any: u32,
+    /// colourless that can't be spent to cast a nonartifact spell (Karn, Legacy Reforged; Mightstone), kept all turn
+    pub art: u32,
 }
 
 // ------------------------------------------------------------------ permanents and lands

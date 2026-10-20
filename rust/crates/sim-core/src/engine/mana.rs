@@ -30,6 +30,8 @@ pub enum Source {
     FloatC,
     FloatG,
     FloatB,
+    /// colourless mana that can't be spent on nonartifact spells (Karn, Legacy Reforged): `floating.art`
+    FloatArt,
     /// an Eldrazi Scion or Spawn: sacrifice for {C} ('SC')
     Scion(PermId),
     /// a card in hand that makes mana when exiled (Elvish Spirit Guide: 'H')
@@ -180,8 +182,8 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if no_art_mana && d.types.has(crate::cards::Types::ARTIFACT) {
                 continue;
             }
-            if t.has(Tag::Pstone) && !art {
-                continue; // Powerstone: artifact spells and abilities only
+            if t.has(Tag::Pstone) && !art_mana_ok(g) {
+                continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells
             }
             let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or_else(|| a.parse().unwrap_or(1));
@@ -241,6 +243,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     u.extend(float(f.c, Source::FloatC, Colors::NONE));
     u.extend(float(f.g, Source::FloatG, Colors::from_letters("G")));
     u.extend(float(f.b, Source::FloatB, Colors::from_letters("B")));
+    if f.art > 0 && art_mana_ok(g) {
+        u.extend(float(f.art, Source::FloatArt, Colors::NONE));
+    }
     if convoke {
         // each untapped creature pays for {1} or one coloured pip
         for &m in &pl.perms {
@@ -251,6 +256,12 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         }
     }
     u
+}
+
+/// may mana that can't be spent to cast a nonartifact spell pay for what is being paid for now: yes for an artifact
+/// spell and for anything that isn't a spell (an ability, a tax); `pay_for` is the spell being cast, if any
+pub fn art_mana_ok(g: &Game) -> bool {
+    g.pay_for.is_none_or(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT))
 }
 
 /// mana locks and bonuses from card code (Karn + Lattice, Collector Ouphe, Cursed Totem, Kinnan, Urza), and
@@ -322,7 +333,7 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             .iter()
             .map(|&c| (c, (0..u.len()).filter(|&i| u[i].cols.has(c)).map(|i| rem[i]).sum::<u32>()))
             .collect();
-        type Key = (bool, bool, u32, u32, i64); // Treasure last, pain late, waste, colours, scarcity
+        type Key = (bool, bool, bool, u32, u32, i64); // Karn's mana first, Treasure last, pain late, waste, colours, scarcity
         let mut best: Option<(usize, Key)> = None;
         for (i, w) in u.iter().enumerate() {
             if rem[i] == 0 {
@@ -330,7 +341,7 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             }
             let waste = if used[i] > 0 { 0 } else { rem[i].saturating_sub(need) };
             let scarce = avail.iter().filter(|(c, _)| w.cols.has(*c)).map(|x| x.1).min().unwrap_or(0);
-            let k = (w.src == Source::Treasure, is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
+            let k = (w.src != Source::FloatArt, w.src == Source::Treasure, is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
             if best.is_none_or(|b| k < b.1) {
                 best = Some((i, k));
             }
@@ -409,6 +420,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         Source::FloatC => g.player_mut(p).floating.c = g.player(p).floating.c.saturating_sub(1),
         Source::FloatG => g.player_mut(p).floating.g = g.player(p).floating.g.saturating_sub(1),
         Source::FloatB => g.player_mut(p).floating.b = g.player(p).floating.b.saturating_sub(1),
+        Source::FloatArt => g.player_mut(p).floating.art = g.player(p).floating.art.saturating_sub(1),
         Source::Scion(_) | Source::HandCard(_) | Source::Quirion(..) | Source::Symbiote(..) => {
             cardcode::special_unit_paid(g, p, w)?
         }

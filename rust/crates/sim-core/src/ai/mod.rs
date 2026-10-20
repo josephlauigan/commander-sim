@@ -654,6 +654,9 @@ pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
 /// deck's named list or an outside deck's wish list. None: the interpreter takes the card it values most.
 pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, cands: &[CardId]) -> Option<CardId> {
     let ty = f.kind.as_deref();
+    if ty == Some("land") && let Some(c) = crate::impls::karn::search_pick(g, p, cands) {
+        return Some(c); // the karn deck: the Tron piece it lacks
+    }
     if ty.is_none() || ty == Some("any") {
         if g.player(p).key == "kefka" && decks::deck_has_storm(g, p) {
             let wish = decks::kefka_wish(g, p);
