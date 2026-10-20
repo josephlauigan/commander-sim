@@ -16,6 +16,14 @@ The deck's living list of strengths, weaknesses and what was tested. Opponents: 
 - The plan is not online at all in about 30% of games.
 
 ## Tested
+### 2026-10-19: Talisman of Hierarchy => Priest of Gix (T3, loose, 2,000 games per list, look-ahead; T4 stopped by JD)
+Result: **T3 35.2% -> 35.2%, -0.1 (noise ±2.5): neutral.** Raw: `2026-10-19-priest-of-gix/t3.txt`. Priest is
+modeled Approximate (its {B}{B}{B} is any-colour mana in the sim) and the deck's fifth loop (Priest + Nim Deathmantle
++ Ashnod's Altar, a win with Blood Artist / Zulaport Cutthroat / Altar of Dementia out) is wired into the plan,
+tutors and blinks. Even so the swap does nothing measurable at T3: the loop needs three specific cards plus a drain
+payoff, and the deck's four existing loops and reanimation plan already win the games a fifth loop would. Not worth
+the slot over a rock.
+
 ### 2026-10-19: Mind Stone => The Mind Stone over t3-t4 (2,000 games per list per profile, look-ahead)
 Result: **T3 -0.5 / +1.1, T4 -1.6 / +1.4 (conservative / loose; noise ±2.1-2.2 each). About +0.1 averaged over
 t3-t4: no clear effect.** Raw output: `2026-10-19-mind-stone/t3.txt`, `t4.txt`. The model is Approximate (blinks the
