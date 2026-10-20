@@ -215,7 +215,7 @@ fn options_and_saves_shapes() {
     let (st, _, o) = call(r.h.port, "GET", "/api/options", None, None);
     assert_eq!(st, 200);
     assert_eq!((o["lan"].clone(), o["host"].clone(), o["app"].clone()), (json!(false), json!(true), json!(false)));
-    assert_eq!(o["decks"].as_array().unwrap().len(), 14);
+    assert_eq!(o["decks"].as_array().unwrap().len(), 13);
     assert_eq!(o["tiers"].as_array().unwrap().len(), 7);
     assert!(o["images"].is_object());
     let (_, _, s) = call(r.h.port, "GET", "/api/saves", None, None);
@@ -229,7 +229,7 @@ fn a_game_through_the_routes() {
     let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "nope", "tier": "t1"})));
     assert_eq!(
         (st, b["error"].as_str()),
-        (400, Some("deck: one of seph, veyran, sauron, yshtola, galadriel, alela, kefka, omnath, sheoldred, cloud, kraum, thrasios, sephfs, godo"))
+        (400, Some("deck: one of seph, veyran, sauron, yshtola, galadriel, alela, kefka, omnath, sheoldred, cloud, thrasios, sephfs, godo"))
     );
     assert_eq!(
         call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t9"}))).2["error"],
@@ -422,7 +422,7 @@ fn lobby_and_join_with_lan() {
     assert_eq!(join("host", &code, "veyran")["error"], "This browser is the host's: join from the other computer.");
     assert_eq!(
         join("guest", &code, "bogus")["error"],
-        "deck: one of seph, veyran, sauron, yshtola, galadriel, alela, kefka, omnath, sheoldred, cloud, kraum, thrasios, sephfs, godo"
+        "deck: one of seph, veyran, sauron, yshtola, galadriel, alela, kefka, omnath, sheoldred, cloud, thrasios, sephfs, godo"
     );
     assert_eq!(join("guest", &code, "veyran")["ok"], true);
     assert_eq!(join("guest", &code, "veyran")["error"], "There is no game waiting for a second player.");

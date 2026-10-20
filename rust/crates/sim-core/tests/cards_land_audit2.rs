@@ -56,7 +56,7 @@ fn sungrass_prairie_and_ferrous_lake_need_another_untapped_land_and_net_one_mana
     assert_eq!(amt(&g, sp), 0, "a tapped Forest cannot pay");
     g.land_mut(f).tapped = false;
     assert_eq!(amt(&g, sp), 1);
-    let mut g = table(&["kraum", "veyran"]);
+    let mut g = table(&["thrasios", "veyran"]);
     let fl = lands(&mut g, P0, "Ferrous Lake", 1, false)[0];
     assert_eq!(amt(&g, fl), 0);
     lands(&mut g, P0, "Island", 1, false);
@@ -124,7 +124,7 @@ fn cavern_of_souls_makes_coloured_mana_for_creature_spells_of_one_type_only() {
 
 #[test]
 fn spectator_seating_makes_red_or_white_and_sulfur_falls_deals_no_damage() {
-    let mut g = table(&["kraum", "veyran"]);
+    let mut g = table(&["thrasios", "veyran"]);
     let ss = lands(&mut g, P0, "Spectator Seating", 1, false)[0];
     assert_eq!(cols(&g, ss), "WR");
     assert!(!g.db.get(g.land(ss).cd).tag(Tag::Pain));

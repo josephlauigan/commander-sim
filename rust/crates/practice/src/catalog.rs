@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
-pub const MY_DECKS: [&str; 14] = ["seph", "veyran", "sauron", "yshtola", "galadriel", "alela", "kefka", "omnath", "sheoldred", "cloud", "kraum", "thrasios", "sephfs", "godo"];
+pub const MY_DECKS: [&str; 13] = ["seph", "veyran", "sauron", "yshtola", "galadriel", "alela", "kefka", "omnath", "sheoldred", "cloud", "thrasios", "sephfs", "godo"];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()

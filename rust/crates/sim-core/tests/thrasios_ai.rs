@@ -60,14 +60,14 @@ fn blossoming_defense_needs_its_green_mana_and_is_not_cast_against_an_edict() {
 }
 
 #[test]
-fn the_kraum_seat_does_not_cast_blossoming_defense() {
-    let mut g = table(&["kraum", "seph", "veyran"]);
+fn the_thrasios_seat_casts_blossoming_defense_to_save_a_commander() {
+    let mut g = table(&["thrasios", "seph", "veyran"]);
     let t = perm(&mut g, P0, TYMNA);
     g.perm_mut(t).is_cmd = true;
     lands(&mut g, P0, "Forest", 1, false);
     hand(&mut g, P0, &["Blossoming Defense"]);
     apply_removal(&mut g, Some(P1), t, "exile", None).unwrap();
-    assert!(!g.perm(t).on_bf);
+    assert!(g.perm(t).on_bf, "Thrasios's list has Blossoming Defense: the commander is saved");
 }
 
 #[test]

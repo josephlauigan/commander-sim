@@ -7,8 +7,8 @@ use sim_core::tag::Tag;
 use sim_core::ids::PlayerId;
 use sim_core::testkit::*;
 
-const JD: [&str; 11] =
-    ["seph", "veyran", "sauron", "yshtola", "kefka", "omnath", "sheoldred", "cloud", "kraum", "thrasios", "sephfs"];
+const JD: [&str; 10] =
+    ["seph", "veyran", "sauron", "yshtola", "kefka", "omnath", "sheoldred", "cloud", "thrasios", "sephfs"];
 
 #[test]
 fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {

@@ -11,7 +11,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn kraum_tbl() -> Game {
-    table(&["kraum", "galadriel", "veyran", "seph"])
+    table(&["thrasios", "galadriel", "veyran", "seph"])
 }
 
 fn on(g: &Game, m: PermId) -> bool {
@@ -88,21 +88,7 @@ fn breach_is_cast_when_a_card_can_be_escaped_and_kept_when_not() {
     assert_eq!(decks::deck_prio(&g2, P0, h2[0]), 0, "one land: nothing to escape with");
 }
 
-#[test]
-fn breach_candidates_include_the_decks_wipe_only_when_the_table_is_ahead() {
-    let mut g = kraum_tbl();
-    g.active = Some(P0);
-    lands(&mut g, P0, "Plains", 7, false);
-    gy(&mut g, P0, &["Austere Command", "Plains", "Plains", "Plains", "Plains"]);
-    let names = |g: &Game| -> Vec<String> {
-        decks::breach_candidates(g, P0, true).iter().map(|x| g.db.get(x.1).name.to_string()).collect()
-    };
-    assert!(!names(&g).contains(&"Austere Command".to_string()), "no board to wipe");
-    for _ in 0..3 {
-        perm(&mut g, P1, "Baneslayer Angel");
-    }
-    assert!(names(&g).contains(&"Austere Command".to_string()), "{:?}", names(&g));
-}
+// (dropped 2026-10-19 with the Kraum deck: breach_candidates' wipe rule is keyed to the `kraum` seat, which no longer exists)
 
 // ---------------------------------------------------------------- Baird
 #[test]

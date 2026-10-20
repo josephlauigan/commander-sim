@@ -20,7 +20,7 @@ fn on(g: &Game, m: sim_core::ids::PermId) -> bool {
 
 #[test]
 fn lagrella_is_cast_when_opponents_have_creatures_and_not_valued_zero() {
-    for key in ["thrasios", "kraum"] {
+    for key in ["thrasios"] {
         let mut g = tbl(key);
         let c = hand(&mut g, P0, &["Lagrella, the Magpie"])[0];
         let empty = deck_prio(&g, P0, c);
@@ -72,7 +72,7 @@ fn witherbloom_charm_is_offered_as_a_hand_play() {
 
 #[test]
 fn the_partner_decks_answer_removal_and_wipes_with_their_white_spells() {
-    for key in ["thrasios", "kraum"] {
+    for key in ["thrasios"] {
         // Shardmage's Rescue: hexproof for a creature that targeted removal is aimed at
         let mut g = tbl(key);
         let tymna = perm(&mut g, P0, "Tymna the Weaver");

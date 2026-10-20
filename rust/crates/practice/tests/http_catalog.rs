@@ -21,7 +21,7 @@ fn test_your_decks() {
         o["decks"].as_array().unwrap().iter().map(|x| (x["key"].as_str().unwrap(), x)).collect();
     assert_eq!(
         d.keys().copied().collect::<Vec<_>>(),
-        ["alela", "cloud", "galadriel", "godo", "kefka", "kraum", "omnath", "sauron", "seph", "sephfs", "sheoldred", "thrasios", "veyran", "yshtola"]
+        ["alela", "cloud", "galadriel", "godo", "kefka", "omnath", "sauron", "seph", "sephfs", "sheoldred", "thrasios", "veyran", "yshtola"]
     );
     assert_eq!(d["seph"]["name"], "Sephiroth, the Savior"); // the deck file's name for Atraxa
     assert_eq!(d["seph"]["commander"], "Atraxa, Grand Unifier"); // the card the engine (and image) uses
