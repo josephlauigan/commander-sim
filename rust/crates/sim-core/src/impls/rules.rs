@@ -1303,6 +1303,10 @@ pub(crate) fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     remove_card(&mut g.player_mut(p).hand, c);
     pay(g, p, 2 * k, "", false)?;
     crate::glog!(g, "  {} casts Everflowing Chalice kicked {} times", pname(g, p), k);
+    let pl = g.player_mut(p);
+    pl.cast_names.insert(c); // the card report counts it as cast (it read "never cast: untagged")
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 2.0, vec![])? {
         g.player_mut(p).gy.push(c);
