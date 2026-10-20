@@ -65,6 +65,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "sheoldred" => "first opponent drained by Sheoldred",
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
         "cloud" => "first attack by an equipped Cloud",
+        "thrasios" | "kraum" => "first Tymna draw, or the infinite-mana combo going off",
         "najeela" => "first WUBRG extra combat",
         _ => "",
     }
@@ -101,6 +102,11 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "sheoldred" => ms("sheoldred"),
         "sephfs" => ms("sephfs"),
         "cloud" => ms("cloud"),
+        // the Tymna partner decks: Tymna's first draw, or the Basalt + Rings combo going off, whichever is first
+        "thrasios" | "kraum" => match (ms("tymna").filter(|&t| t != 0), ms("combo").filter(|&t| t != 0)) {
+            (Some(a), Some(b)) => Some(a.min(b)),
+            (a, b) => a.or(b),
+        },
         _ => ms("combo"),
     };
     t.filter(|&t| t != 0)
@@ -585,7 +591,7 @@ pub fn print_analysis(
             held: c.held,
         })
         .collect();
-    let minn = 100.max(nn / 50);
+    let minn = std::env::var("CARD_REPORT_MIN").ok().and_then(|v| v.parse().ok()).unwrap_or(100.max(nn / 50)); // the env var: a small diagnostic run
     let mut rated: Vec<&Row> = rows.iter().filter(|x| x.cast >= minn).collect();
     let wr = |x: &Row| x.win_cast as f64 / x.cast as f64;
     rated.sort_by(|a, b| (-wr(a)).partial_cmp(&-wr(b)).unwrap());

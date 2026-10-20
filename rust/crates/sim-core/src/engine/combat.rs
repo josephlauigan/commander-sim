@@ -559,6 +559,7 @@ fn resolve_combat_inner(
     let to_walker =
         if crate::human::is_human(g, p) { g.human_walker_atk.clone() } else { walker_attacks(g, p, &atk, d, &assign) };
     cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
+    crate::impls::tymna_partners::combat_trick(g, p, &atk, &assign)?; // thrasios, kraum: Blossoming Defense, Dark Endurance
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
         if g.end_combat {

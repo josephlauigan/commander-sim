@@ -89,7 +89,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
             .player(p)
             .hand
             .iter()
-            .filter(|&&c| g.db.get(c).tag(Tag::Ctr) && !g.db.get(c).creature)
+            .filter(|&&c| g.db.get(c).tag(Tag::Ctr) && !g.db.get(c).creature || super::tymna_partners::protection_held(g, p, c))
             .map(|&c| g.db.get(c).cmc)
             .min()
             .unwrap_or(0);
@@ -504,7 +504,7 @@ pub fn protect(
     if skrelv_protect(g, owner_p, m, actor, spell)? {
         return Ok(true);
     }
-    if endurance_protect(g, owner_p, m, kind, actor)? {
+    if endurance_protect(g, owner_p, m, kind, actor)? || blossom_protect(g, owner_p, m, kind, actor)? {
         return Ok(true);
     }
     if g.hooks.is_empty() {
@@ -1297,6 +1297,11 @@ fn land_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
 /// when ahead, Conqueror's Flail if it isn't out yet, else the best finisher; else the evasive creature that brings
 /// the next opponent into Tymna's reach, else the generic pick (None).
 pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
+    if matches!(kind, "any" | "cre")
+        && let Some(c) = super::tymna_partners::combo_tutor_pick(g, p, okn)
+    {
+        return Some(c); // the missing piece of Basalt + Rings + a mana sink
+    }
     if kind != "any" {
         return None;
     }
@@ -1981,6 +1986,12 @@ fn endurance_protect(
     if !(g.perm(m).is_cmd || pval(g, m) >= 4.0) || !castable(g, owner_p, c, "hand") || !can_pay(g, owner_p, 1, "B", false) {
         return Ok(false);
     }
+    cast_endurance(g, owner_p, c, m)
+}
+
+/// pay for and cast Dark Endurance `c` on m ({1}{B}), apply it if it resolves; true when m has it
+pub fn cast_endurance(g: &mut Game, owner_p: PlayerId, c: CardId, m: PermId) -> Res<bool> {
+    const ENDURANCE: &str = "Dark Endurance";
     crate::ai::decks::remove_from_hand(g, owner_p, c);
     pay(g, owner_p, 1, "B", false)?;
     let pl = g.player_mut(owner_p);
@@ -1995,6 +2006,25 @@ fn endurance_protect(
         endurance_apply(g, m);
     }
     Ok(ok && g.perm(m).on_bf)
+}
+
+/// **Blossoming Defense** ({G} instant: +2/+2 and hexproof until end of turn). The thrasios seat casts it in response to
+/// targeted removal (any kind: hexproof fizzles it) aimed at a commander or a permanent worth 4 or more; edicts and
+/// sweepers don't target. Held mana for it: `tymna_partners::protection_held`. The combat use is `combat_trick`.
+fn blossom_protect(g: &mut Game, p: PlayerId, m: PermId, kind: Sym, actor: Option<PlayerId>) -> Res<bool> {
+    if g.player(p).key != "thrasios"
+        || actor.is_none()
+        || actor == Some(p)
+        || matches!(&*kind, "edict" | "wipe" | "sacrifice")
+        || !g.perm(m).on_bf
+        || g.perm(m).owner != p
+        || !g.is_creature(m)
+        || silenced(g, p)
+        || !(g.perm(m).is_cmd || pval(g, m) >= 4.0)
+    {
+        return Ok(false);
+    }
+    super::titania::cast_protect(g, p, "Blossoming Defense", m, super::titania::blossom_apply)
 }
 
 // ================================================================== Firebird, Blazing Ranger and Lightning, Security Sergeant
