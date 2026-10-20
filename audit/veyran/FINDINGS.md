@@ -23,3 +23,5 @@ The first try was stopped by the preflight: Veyran's priority had no Breach rule
 Why: Breach is cast in 41-53% of the games it's drawn (first cast round 10.6-11.6: it waits for a stocked graveyard)
 and wins 45-46% when cast, against Greaves' 31-38%. The cost is protection: Veyran is removed 0.09-0.13 more times per
 game without Greaves. Positive in every tier but inside the noise. Breach is a Game Changer: Veyran goes to 3 (Bracket 3).
+**JD (10/19): not applied.** Underworld Breach and Thought Vessel stay in the binder; Veyran keeps Lightning Greaves.
+The Breach priority rule stays, so a later test measures a live card.
