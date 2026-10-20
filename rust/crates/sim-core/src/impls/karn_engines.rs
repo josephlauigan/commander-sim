@@ -894,9 +894,14 @@ pub fn staff_draw_down(g: &mut Game, p: PlayerId) -> Res<u32> {
                 .iter()
                 .any(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Walking Ballista"))
     };
-    while g.player(p).library.len() > SAFE_LIBRARY && !have_ballista(g) && !g.over {
+    let cap = g.player(p).library.len() as u32; // never more draws than cards
+    while g.player(p).library.len() > SAFE_LIBRARY && !have_ballista(g) && !g.over && n < cap {
+        let before = g.player(p).library.len();
         draw(g, p, 1, false)?;
         n += 1;
+        if g.player(p).library.len() >= before {
+            break; // the draw took no card (the look-ahead's copies can't see the library): it looped forever
+        }
     }
     Ok(n)
 }
