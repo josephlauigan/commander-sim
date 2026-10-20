@@ -9011,3 +9011,11 @@ note = "{T}: {B} or {G}; enters tapped unless you have two or more opponents"
 ["Kuja, Genome Sorcerer // Trance Kuja, Fate Defied"]
 status = "Full"
 note = "3/4 for {2}{B}{R}; at the beginning of your end step it makes a tapped 0/1 black Wizard token (whenever you cast a noncreature spell, the token deals 1 damage to each opponent), then transforms into Trance Kuja, Fate Defied (4/6) once you control four or more Wizards (Kefka and Niv-Mizzet count); Flare Star: damage a Wizard you control would deal to a player or permanent is doubled (the tokens' pings, Wizard creatures in combat, Niv-Mizzet's draw trigger) (impls/kuja.rs)"
+
+["Priest of Gix"]
+tags = "pow=2 tgh=1"
+dsl = [
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "add_mana", n = 3 }] },
+]
+status = "Full"
+note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"

@@ -78324,6 +78324,61 @@
    "spell_prio": false
   },
   {
+   "name": "Priest of Gix",
+   "types": "C",
+   "generic": 2,
+   "pips": "B",
+   "tags": {
+    "pow": "2",
+    "tgh": "1"
+   },
+   "pow": 2,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "event": "etb",
+     "source": "self",
+     "effects": [
+      {
+       "do": "add_mana",
+       "n": 3
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cleric",
+    "human",
+    "minion",
+    "phyrexian"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Priest of Titania",
    "types": "C",
    "generic": 1,
