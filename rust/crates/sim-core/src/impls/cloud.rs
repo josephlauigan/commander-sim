@@ -35,6 +35,19 @@ const PLAZA: &str = "Plaza of Heroes";
 /// Champion's Helm) when removal is likely, and a recast after a death waits until protection can follow
 pub const PROTECT_FIRST: bool = true;
 
+/// The Swords the list doesn't run, in the order Cloud's search takes them after Fire and Ice, Hearth and Home and
+/// Feast and Famine: War and Peace (its hand damage is doubled), Forge and Frontier (cards and a land), Truth and Justice
+/// (counters, proliferate), Light and Shadow, Sinew and Steel, Once and Future (few cheap instants here), Body and Mind
+const MORE_SWORDS: [&str; 7] = [
+    "Sword of War and Peace",
+    "Sword of Forge and Frontier",
+    "Sword of Truth and Justice",
+    "Sword of Light and Shadow",
+    "Sword of Sinew and Steel",
+    "Sword of Once and Future",
+    "Sword of Body and Mind",
+];
+
 // ------------------------------------------------------------------ small helpers
 fn live(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
@@ -366,7 +379,7 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     // Sword of Feast and Famine untaps the lands (the mana to equip or cast the next piece) and its discard is cheap
     // with a clogged hand; it also brings a different protection pair, so it comes before Hearth and Home once a Sword
     // is already out or held, and first of all with a truly clogged hand (7+ cards)
-    let sword_held = ["Sword of Fire and Ice", "Sword of Hearth and Home"].iter().any(|n| have(n));
+    let sword_held = ["Sword of Fire and Ice", "Sword of Hearth and Home"].iter().chain(&MORE_SWORDS).any(|n| have(n));
     let clogged = g.player(p).hand.len() >= CLOGGED_HAND; // a typical turn-2 hand is 5-6 cards: not clogged
     let mut order: Vec<&str> = if clogged {
         vec!["Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
@@ -375,6 +388,7 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     } else {
         vec!["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"]
     };
+    order.extend(MORE_SWORDS); // the other Swords, after the deck's three (none is in the list today)
     if exposed && held >= 1 {
         order.insert(0, "Champion's Helm"); // hexproof for the legend
     } else {

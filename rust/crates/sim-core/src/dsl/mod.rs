@@ -110,6 +110,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             .count() as i32,
         "creatures_you_control" => pl.perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32,
         "cards_in_hand" => pl.hand.len() as i32,
+        "event_player_hand" => ctx.event_player.map_or(0, |q| g.player(q).hand.len() as i32), // that player's hand
         "opponents" => g.opps(p).count() as i32,
         "spells_this_turn" => pl.spells_this_turn as i32,
         "devotion_B" => pl
@@ -992,6 +993,18 @@ fn run(
             }
             g.rng.shuffle(&mut top);
             g.player_mut(p).library.splice(0..0, top);
+        }
+        "impulse" => {
+            // exile the top n cards of your library; you may play them this turn (held in hand, `impulse`: the end
+            // step exiles those not played)
+            let k = (n(g, ctx).max(0) as usize).min(g.player(p).library.len());
+            let pl = g.player_mut(p);
+            let top: Vec<CardId> = (0..k).map(|_| pl.library.pop().unwrap()).collect();
+            for &c in &top {
+                pl.hand.push(c);
+                pl.seen.insert(c);
+            }
+            pl.impulse.extend(&top);
         }
         "extra_land" => {
             // you may play an additional land this turn. The AI plays it at once (it plays no lands after combat);
