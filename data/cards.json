@@ -7928,10 +7928,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Living weapon",
-    "{3}: Return ~ to its owner's hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -32576,24 +32573,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -32601,7 +32581,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -34431,30 +34411,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": false
-       },
-       "to": "hand",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -34462,7 +34419,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,
@@ -47418,9 +47375,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ dies, create a 1/1 colorless Thopter artifact creature token with flying for each +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": false,
@@ -56347,10 +56302,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "+1: Reveal the top two cards of your library. An opponent chooses one of them. Put that card into your hand and exile the other with a silver counter on it.",
-    "−1: Put a card you own with a silver counter on it from exile into your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -70503,24 +70455,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true,
-      "life": 1
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -70528,11 +70463,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "You may look at the top card of your library any time.",
-    "You may cast artifact spells and colorless spells from the top of your library."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -114007,9 +113939,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Echo {6}"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -114032,36 +113962,12 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "f": true,
-    "c": "A"
+    "c": "C"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "3",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": false
-       },
-       "to": "battlefield",
-       "n": 1,
-       "tapped": true
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -114072,7 +113978,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -114286,24 +114192,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "3",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -114313,10 +114202,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{3}, {T}: Draw a card. Then discard a card unless you exile a historic card from your graveyard.   [partly: discard a card unless you exile a historic card from your graveyard]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

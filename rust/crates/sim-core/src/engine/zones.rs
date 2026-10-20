@@ -860,8 +860,12 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
         }
     }
     if card_tag(g, m, Tag::Wurmcoil) && trigger_window(g, p, Some(m), "two 3/3 Wurms", Some(5.0))? {
-        make_tokens(g, p, Tokens { dt: true, color: Some(Colors::NONE), ..Tokens::new(1, 3) })?;
-        make_tokens(g, p, Tokens { lifelink: true, color: Some(Colors::NONE), ..Tokens::new(1, 3) })?;
+        // Oracle: colorless Phyrexian Wurm *artifact* creature tokens (they count for Karn, Mirrorworks, a Construct)
+        let mut art = PermData::default();
+        art.set(DataKey::Artifact, Val::Bool(true));
+        let wurm = Tokens { color: Some(Colors::NONE), types: vec!["phyrexian", "wurm"], data: art, ..Tokens::new(1, 3) };
+        make_tokens(g, p, Tokens { dt: true, ..wurm.clone() })?;
+        make_tokens(g, p, Tokens { lifelink: true, ..wurm })?;
     }
     let x = g.perm(m).clone();
     if x.token {
@@ -1568,7 +1572,8 @@ pub fn edict(g: &mut Game, q: PlayerId, least_power: bool) -> Res {
 }
 
 // ------------------------------------------------------------------ lands
-pub const BASIC_LANDS: [&str; 5] = ["Forest", "Island", "Plains", "Swamp", "Mountain"];
+/// the basic land cards (Wastes is basic: a colourless deck's Wayfarer's Bauble, Solemn Simulacrum and Burnished Hart find it)
+pub const BASIC_LANDS: [&str; 6] = ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"];
 
 fn basics_in(g: &Game, p: PlayerId) -> Vec<CardId> {
     searchable(g, p).into_iter().filter(|&c| BASIC_LANDS.contains(&&*g.db.get(c).name)).collect()
