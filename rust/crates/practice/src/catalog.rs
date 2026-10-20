@@ -11,7 +11,21 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
-pub const MY_DECKS: [&str; 13] = ["seph", "veyran", "sauron", "yshtola", "galadriel", "alela", "kefka", "omnath", "sheoldred", "cloud", "thrasios", "sephfs", "godo"];
+pub const MY_DECKS: [&str; 13] = [
+    "seph",
+    "veyran",
+    "sauron",
+    "yshtola",
+    "galadriel",
+    "alela",
+    "kefka",
+    "omnath",
+    "sheoldred",
+    "cloud",
+    "thrasios",
+    "sephfs",
+    "godo",
+];
 
 fn read(path: &Path) -> Option<String> {
     std::fs::read_to_string(path).ok()
@@ -149,6 +163,14 @@ pub fn tier_label(tier: &str, folder: Option<&str>) -> String {
     format!("{} · {}", tier.to_uppercase(), words.join(" ").replace(" Low", " / Low"))
 }
 
+/// a pool deck's name: "Rograkh", or "Rograkh and Silas Renn" for a partner pair
+fn pool_deck_name(c1: &str, c2: Option<&str>) -> String {
+    match c2 {
+        Some(b) => format!("{} and {}", short_name(c1), short_name(b)),
+        None => short_name(c1).to_string(),
+    }
+}
+
 fn short_name(commander: &str) -> &str {
     commander.split(" // ").next().unwrap_or("").split(',').next().unwrap_or("")
 }
@@ -210,9 +232,12 @@ pub fn catalog(data: &Path) -> Result<Value, String> {
                 "key": t, "label": tier_label(t, folder.map(String::as_str)),
                 "decks": ds.iter().map(|d| {
                     let file = folder.map(|f| root.join("decklists/pool").join(f).join(format!("{}.md", d["key"].as_str().unwrap_or(""))));
+                    let c1 = d["commander"].as_str().unwrap_or("");
+                    let c2 = d["commander2"].as_str();
                     json!({
-                        "key": d["key"], "commander": d["commander"],
-                        "name": short_name(d["commander"].as_str().unwrap_or("")),
+                        "key": d["key"], "commander": d["commander"], "commander2": d.get("commander2").cloned().unwrap_or(Value::Null),
+                        "commanders": std::iter::once(c1).chain(c2).collect::<Vec<_>>(),
+                        "name": pool_deck_name(c1, c2),
                         "summary": file.and_then(|f| read(&f)).map(|t| pool_summary(&t)),
                     })
                 }).collect::<Vec<_>>(),
@@ -267,9 +292,16 @@ pub fn commanders(cat: &Value) -> Vec<String> {
         .collect();
     for t in cat["tiers"].as_array().into_iter().flatten() {
         out.extend(
-            t["decks"].as_array().into_iter().flatten().filter_map(|d| d["commander"].as_str()).map(String::from),
+            t["decks"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .flat_map(|d| d["commanders"].as_array().into_iter().flatten().filter_map(|c| c.as_str()))
+                .map(String::from),
         );
     }
+    let mut seen = BTreeSet::new();
+    out.retain(|n| seen.insert(n.clone())); // partners share a commander
     out
 }
 
@@ -309,6 +341,18 @@ mod tests {
         // no "At the table" yet: the Strategy's first paragraph
         let s = pool_summary(&format!("{head}## Strategy\n\nOld text.\n\nMore.\n\n## Import list (100)\n"));
         assert_eq!((s["table"].clone(), s["strategy"].clone()), (json!([]), json!("Old text.")));
+    }
+
+    #[test]
+    fn partner_pool_decks_are_named_and_pictured_with_both_commanders() {
+        assert_eq!(
+            pool_deck_name("Rograkh, Son of Rohgahh", Some("Silas Renn, Seeker Adept")),
+            "Rograkh and Silas Renn"
+        );
+        assert_eq!(pool_deck_name("Kraum, Ludevic's Opus", Some("Tymna the Weaver")), "Kraum and Tymna the Weaver");
+        assert_eq!(pool_deck_name("Atraxa, Grand Unifier", None), "Atraxa");
+        let cat = json!({"decks": [{"commanders": ["A", "B"]}], "tiers": [{"decks": [{"commanders": ["Rograkh, Son of Rohgahh", "Thrasios, Triton Hero"]}, {"commanders": ["C"]}]}]});
+        assert_eq!(commanders(&cat), ["A", "B", "Rograkh, Son of Rohgahh", "Thrasios, Triton Hero", "C"]);
     }
 
     #[test]

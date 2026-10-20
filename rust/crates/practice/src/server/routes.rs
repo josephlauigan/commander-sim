@@ -49,6 +49,11 @@ impl Site {
         for m in self.images.cached_printed(&catalog::commander_printings(&self.data, &cat)).into_values() {
             images.extend(m.into_iter().filter_map(|(n, copies)| copies.into_iter().next().map(|f| (n, f))));
         }
+        // pictures not downloaded yet (decks never played here): one background download, the page asks again
+        let missing = names.iter().any(|n| !images.contains_key(n));
+        if missing && std::env::var_os("PRACTICE_NO_FETCH").is_none() {
+            self.images.fetch_online_in_background(names, catalog::commander_printings(&self.data, &cat));
+        }
         c.insert("images".into(), json!(images));
         Ok(Value::Object(c))
     }

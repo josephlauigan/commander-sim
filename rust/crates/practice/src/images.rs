@@ -45,11 +45,13 @@ fn agent() -> ureq::Agent {
 #[derive(Clone, Debug)]
 pub struct Images {
     pub dir: PathBuf,
+    /// set while a background download runs (shared by clones), so a second one never starts
+    fetching: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
 
 impl Images {
     pub fn new(dir: impl Into<PathBuf>) -> Images {
-        Images { dir: dir.into() }
+        Images { dir: dir.into(), fetching: Default::default() }
     }
 
     fn index_path(&self) -> PathBuf {
@@ -66,7 +68,10 @@ impl Images {
 
     pub fn save_index(&self, idx: &serde_json::Map<String, Value>) -> std::io::Result<()> {
         std::fs::create_dir_all(&self.dir)?;
-        let tmp = self.dir.join("index.json.tmp");
+        // a temp file of its own per save: the background commander fetch and a game's image download can save at once
+        static SAVES: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let n = SAVES.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let tmp = self.dir.join(format!("index.json.{}.{n}.tmp", std::process::id()));
         std::fs::write(&tmp, serde_json::to_string(idx).unwrap_or_default())?;
         std::fs::rename(tmp, self.index_path())
     }
@@ -218,6 +223,54 @@ impl Images {
         progress: &mut dyn FnMut(usize, usize),
     ) -> Result<(BTreeMap<String, Vec<String>>, SeatImages), String> {
         self.prepare_printed(names, printed, progress, &scryfall_lookup, &scryfall_download)
+    }
+
+    /// Download `names` and the `printed` pictures in a background thread, without blocking the caller; fails
+    /// quietly (offline: nothing is cached and the page draws the cards from their names). Returns None, doing
+    /// nothing, when a background download already runs.
+    pub fn fetch_in_background(
+        &self,
+        names: Vec<String>,
+        printed: Printings,
+        lookup: std::sync::Arc<dyn Fn(Vec<Value>) -> Vec<Value> + Send + Sync>,
+        download: std::sync::Arc<dyn Fn(&str, &Path) -> Result<(), String> + Send + Sync>,
+    ) -> Option<std::thread::JoinHandle<()>> {
+        use std::sync::atomic::Ordering;
+        if self.fetching.compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst).is_err() {
+            return None;
+        }
+        struct Done(std::sync::Arc<std::sync::atomic::AtomicBool>);
+        impl Drop for Done {
+            fn drop(&mut self) {
+                self.0.store(false, Ordering::SeqCst);
+            }
+        }
+        let (me, done) = (self.clone(), Done(self.fetching.clone()));
+        let spawned = std::thread::Builder::new().name("practice-images".into()).spawn(move || {
+            let _done = done;
+            let _ = me.prepare_printed(&names, &printed, &mut |_, _| {}, &*lookup, &*download);
+        });
+        match spawned {
+            Ok(h) => Some(h),
+            Err(_) => {
+                self.fetching.store(false, Ordering::SeqCst);
+                None
+            }
+        }
+    }
+
+    /// `fetch_in_background` against Scryfall (or `PRACTICE_SCRYFALL`)
+    pub fn fetch_online_in_background(
+        &self,
+        names: Vec<String>,
+        printed: Printings,
+    ) -> Option<std::thread::JoinHandle<()>> {
+        self.fetch_in_background(
+            names,
+            printed,
+            std::sync::Arc::new(scryfall_lookup),
+            std::sync::Arc::new(scryfall_download),
+        )
     }
 
     /// `{deck key: {card name: [image files of each copy]}}` for the printings already on disk (no network)
@@ -389,6 +442,56 @@ mod tests {
     fn card(name: &str, id: &str) -> Value {
         json!({"id": id, "name": name, "image_uris": {"normal": format!("http://x/{id}.jpg")}, "type_line": "Creature",
                "all_parts": [{"component": "token", "id": "tok1"}]})
+    }
+
+    #[test]
+    fn background_fetch_runs_once_at_a_time_and_fails_quietly_offline() {
+        use std::sync::{
+            Arc,
+            atomic::{AtomicUsize, Ordering},
+        };
+        let im = Images::new(temp("bg"));
+        let names = vec!["Sol Ring".to_string()];
+        // offline: nothing found, nothing cached, no panic
+        let h = im
+            .fetch_in_background(
+                names.clone(),
+                Printings::new(),
+                Arc::new(|_| vec![]),
+                Arc::new(|_, _| Err("offline".into())),
+            )
+            .unwrap();
+        h.join().unwrap();
+        assert!(im.cached(&names).is_empty());
+        // a download that is still running blocks a second one
+        let (tx, rx) = std::sync::mpsc::channel::<()>();
+        let rx = std::sync::Mutex::new(rx);
+        let n = Arc::new(AtomicUsize::new(0));
+        let n2 = n.clone();
+        let slow = Arc::new(move |ids: Vec<Value>| -> Vec<Value> {
+            if n2.fetch_add(1, Ordering::SeqCst) > 0 {
+                return vec![]; // the token lookup, after the first
+            }
+            let _ = rx.lock().unwrap().recv();
+            ids.iter().filter_map(|i| i["name"].as_str()).map(|nm| card(nm, "id9")).collect()
+        });
+        let h = im
+            .fetch_in_background(
+                names.clone(),
+                Printings::new(),
+                slow.clone(),
+                Arc::new(|_, p| std::fs::write(p, b"x").map_err(|e| e.to_string())),
+            )
+            .unwrap();
+        assert!(im.fetch_in_background(names.clone(), Printings::new(), slow, Arc::new(|_, _| Ok(()))).is_none());
+        tx.send(()).unwrap();
+        h.join().unwrap();
+        assert!(n.load(Ordering::SeqCst) >= 1);
+        assert_eq!(im.cached(&names).get("Sol Ring").map(Vec::len), Some(1));
+        // and once it finished another may start
+        assert!(
+            im.fetch_in_background(vec![], Printings::new(), Arc::new(|_| vec![]), Arc::new(|_, _| Ok(()))).is_some()
+        );
     }
 
     #[test]

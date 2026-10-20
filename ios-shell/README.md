@@ -43,6 +43,9 @@ Then, from the `commander-sim` folder:
 ios-shell/run.sh
 ```
 
+To start clean (after an Xcode or toolchain change, or when something looks stale): `make ios-clean`, then
+`ios-shell/run.sh` again. In Xcode, also use Product > Clean Build Folder.
+
 The first build takes a few minutes, because it compiles the Rust library three times (iPad, and simulators for
 Apple silicon and Intel Macs). After that, the Simulator opens on an iPad Pro 13-inch (M5) with the app running: the
 setup screen appears. To use another simulator, pass its name, for example
@@ -76,7 +79,7 @@ format); if the iPad shows two apps, delete the old one.
 
 ## Checklist for the first run on the iPad
 
-- The app opens full screen on black, no status bar; the setup screen lists your 12 decks with their win rates and
+- The app opens full screen on black, no status bar; the setup screen lists your 13 decks with their win rates and
   the tiers.
 - Start a game; play a few turns: tap a card in your hand, a land to tap it, a permanent for its abilities.
 - Long press a card: it should enlarge. Check that touch targets feel right and nothing scrolls or zooms by accident.
