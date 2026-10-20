@@ -576,6 +576,7 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
         return;
     }
     let cd = x.cd.unwrap();
+    let zone = if zone == Zone::Gy && crate::impls::karn_cards::shuffles_back(g, cd) { Zone::Lib } else { zone }; // Blightsteel Colossus
     if g.player(owner).is_commander(cd) {
         if zone == Zone::Hand && crate::impls::cloud::cmd_stays_in_hand(g, owner) {
             g.player_mut(owner).hand.push(cd); // rule 903.9b: the owner may leave the commander in hand (no tax)

@@ -223,6 +223,7 @@ pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
         return false;
     }
     crate::impls::t0_captain::as_flash(g, p)
+        || crate::impls::karn_cards::liberator_flash(g, p, c)
         || crate::impls::t6_blue::static_flash(g, p, d.creature)
         || (d.creature && crate::impls::t6_redirects::scout_flash_active(g, p))
 }

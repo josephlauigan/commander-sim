@@ -42,6 +42,8 @@ pub enum DataKey {
     Bound,
     Burden,
     Charge,
+    /// fate counters (Oblivion Stone)
+    Fate,
     Construct,
     Copy,
     /// Spark Double entered as a copy (its own enter hook doesn't copy again)

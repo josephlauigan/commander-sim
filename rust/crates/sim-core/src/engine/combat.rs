@@ -719,6 +719,14 @@ fn resolve_combat_inner(
                 crate::glog!(g, "    Szadek: {} +1/+1 counters, {} mills {}", dmg, g.player(d).name, dmg);
                 dmg = 0;
             }
+            if dmg > 0 && kw(g, a, "infect") {
+                // infect (Blightsteel Colossus): poison counters instead of life loss (no creature -1/-1 counters: blocked
+                // damage is plain damage)
+                crate::impls::karn_cards::infect_hit(g, a, d, dmg)?;
+                conn.push(a);
+                *tot += dmg;
+                dmg = 0;
+            }
             // double strike, unblocked: two damage steps (first strike, then regular), so every "deals combat damage to a
             // player" trigger happens twice (Swords, Cloud's doubling on top: four)
             let hits = if double_strike(g, a) && blocker_of(&assign, a).is_none() && dmg % 2 == 0 { 2 } else { 1 };
