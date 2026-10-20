@@ -4,7 +4,7 @@
 
 A red-green ramp deck that turns every land drop into a 5/5. **Omnath, Locus of Rage** makes a 5/5 red and green
 Elemental each time a land enters under your control, and deals 3 damage to any target whenever Omnath or another
-Elemental you control dies. The deck is built to put lands onto the battlefield in bulk (ramp spells, Harrow, Oracle of
+Elemental you control dies. The deck is built to put lands onto the battlefield in bulk (ramp spells, Oracle of
 Mul Daya, fetch lands) and to make the Elementals die on purpose (Goblin Bombardment, Terror of the Peaks, Blasphemous
 Act). **Titania, Protector of Argoth** is in the 99: her 5/3 green Elementals are Elementals too, so each one that dies
 is another 3 damage. It wins through the board, not through a combo, and it is weak to fast decks, to sweepers that
@@ -24,7 +24,7 @@ get Omnath before the tokens come, and to graveyard hate.
 creature token. Whenever Omnath or another Elemental you control dies, Omnath deals 3 damage to any target.*
 
 - Every land that enters is a 5/5 body: land drops, ramp spells that put lands onto the battlefield, fetch lands and
-  their basics, Harrow, Oracle of Mul Daya's lands from the top of the library, and Titania's returned land.
+  their basics, Oracle of Mul Daya's lands from the top of the library, and Titania's returned land.
 - Every Elemental that dies is 3 damage at anything: a creature, a planeswalker or a player. The tokens, Titania's
   5/3s and Omnath himself all count.
 - He costs five. If he dies, recast him: the tokens he already made keep their trigger only while he is on the
@@ -34,7 +34,7 @@ creature token. Whenever Omnath or another Elemental you control dies, Omnath de
 - **Turns 1-3.** Mana creature or ramp spell every turn (Llanowar Elves, Birds of Paradise, Rampant Growth, Nature's
   Lore). Play a land every turn; with Omnath out each is a 5/5.
 - **Turns 4-6.** Cast Omnath, then play lands: every land drop, fetch land and ramp spell that fetches a land is
-  another 5/5. Cast Titania so that fetch lands (and Harrow's sacrificed land) make 5/3s as well.
+  another 5/5. Cast Titania so that fetch lands make 5/3s as well.
 - **Late game.** The 5/5s attack. When a sweeper or a block kills them, each death is 3 damage. Finish with Terror of
   the Peaks, Hellkite Tyrant, or Overwhelming Stampede, or burn the last life points out with Goblin Bombardment and the
   3-damage triggers.
@@ -42,8 +42,8 @@ creature token. Whenever Omnath or another Elemental you control dies, Omnath de
 ### Landfall and the two Elemental engines
 - **Fetch lands** (Evolving Wilds, Terramorphic Expanse, Fabled Passage) are two landfalls each (the fetch land, then
   the basic) and, with Titania out, a 5/3.
-- **Harrow** sacrifices a land (a Titania trigger, a land in the graveyard) and puts two basic lands onto the battlefield
-  untapped: two 5/5s with Omnath out, and the mana to cast something else the same turn.
+- **Lightning Bolt** ({R}, 3 damage to any target) is the cheap answer to a mana creature or a utility creature, and
+  finishes a player Omnath's Elementals have already hit.
 - **Oracle of Mul Daya** gives an extra land drop and lets you play lands from the top of the library: land after land,
   each a 5/5.
 - **Wrenn and Six** returns a fetch land from the graveyard to hand (+1), to be played again for another landfall, and
@@ -63,7 +63,7 @@ creature token. Whenever Omnath or another Elemental you control dies, Omnath de
 ### Ramp and land drops
 - **Mana creatures:** Llanowar Elves, Fyndhorn Elder, Birds of Paradise, Noxious Newt, Paradise Druid, Hardbristle Bandit, Topiary
   Lecturer, Silhana Starfletcher, Greenhouse Propagator and Bugenhagen, Wise Elder.
-- **Spells:** Rampant Growth, Nature's Lore, Cultivate, Skyshroud Claim and Harrow, each a land onto the battlefield.
+- **Spells:** Rampant Growth, Nature's Lore, Cultivate, and Skyshroud Claim, each a land onto the battlefield.
 - **Creatures that find land:** Fblthp, Knows the Way, Vinelasher Adept (basic landcycling {2}), Cartographer's Survey
   (two lands from the top seven), Track Down, Boughside Wanderers and Follow the Lumarets.
 - **Fill the graveyard:** Satyr Wayfinder, Malevolent Rumble, Something Worth Saving, Scout the City and Pothole Mole
@@ -89,21 +89,21 @@ Targets: Terror of the Peaks or Oracle of Mul Daya for the engine, Ghalta or Ann
 
 ### Weak spots and how to play around them
 - **Omnath dying early.** The engine is five mana. Keep Blossoming Defense and Royal Treatment for him and recast him.
-- **Graveyard hate** turns off Titania, Wrenn and Six and the Harrow value. The Elemental engine still works.
+- **Graveyard hate** turns off Titania, and Wrenn and Six. The Elemental engine still works.
 - **Slow starts.** Mulligan hands without a land or a mana creature.
 
 ## Key lines
 
 - **Turns 1-4:** ramp and graveyard fillers; hold nothing back. Play a fetch land when Omnath is out.
-- **Omnath turn:** cast him, then play a land (a 5/5), crack a fetch land (two more) and cast Harrow if you have it.
-- **Titania turn:** every fetch land and Harrow's sacrifice is a 5/3 as well as a landfall for Omnath.
+- **Omnath turn:** cast him, then play a land (a 5/5), crack a fetch land (two more) and cast a ramp spell if you have one.
+- **Titania turn:** every fetch land you crack is a 5/3 as well as a landfall for Omnath.
 - **Sweeper (yours or theirs):** every Elemental that dies is 3 damage: Blasphemous Act with a full board is the
   finisher.
 - **Ghalta turn:** once you control a 5/5, Ghalta costs {3}{G}.
 
 ## Mana and consistency
 
-37 lands: 17 Forest, 12 Mountain, Command Tower, Exotic Orchard, Cinder Glade, Karplusan Forest, Rootbound Crag,
+37 lands: 17 Forest, 12 Mountain, Command Tower, Game Trail (untapped if you reveal a Mountain or Forest), Cinder Glade, Karplusan Forest, Rootbound Crag,
 and the three fetch lands (Evolving Wilds, Terramorphic Expanse, Fabled Passage) that find the basics. Birds of Paradise, Paradise Druid and Bugenhagen fix red.
 
 ## Bracket and Rule 0
@@ -113,7 +113,7 @@ the deck makes many large creatures and that a sweeper turns them into burn.
 
 ## Cards to confirm
 
-Terror of the Peaks, Blasphemous Act, Birds of Paradise, Command Tower and Exotic Orchard come from JD's spares and each
+Terror of the Peaks, Blasphemous Act, Birds of Paradise and Command Tower come from JD's spares and each
 also appears in another deck. JD is checking he owns a second copy of each.
 
 ## Decklist by type (100)
@@ -128,9 +128,9 @@ also appears in another deck. JD is checking he owns a second copy of each.
 
 **Sorceries (17).** Bestial Incursion, Blasphemous Act, Carnivorous Canopy, Cartographer's Survey, Cultivate, Decimate, Disintegrate, Follow the Lumarets, Malevolent Rumble, Nature's Lore, Overwhelming Stampede, Rampant Growth, Scout the City, Shamanic Revelation, Skyshroud Claim, Track Down, Tumbleweed Rising
 
-**Instants (11).** Arachnogenesis, Bite Down, Blossoming Defense, Compel Brutality, Harrow, Lifestream's Blessing, Rending Vines, Royal Treatment, Scorching Dragonfire, Something Worth Saving, Worldly Tutor
+**Instants (11).** Arachnogenesis, Bite Down, Blossoming Defense, Compel Brutality, Lifestream's Blessing, Lightning Bolt, Rending Vines, Royal Treatment, Scorching Dragonfire, Something Worth Saving, Worldly Tutor
 
-**Lands (37).** Cinder Glade, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Karplusan Forest, Rootbound Crag, Terramorphic Expanse, 17 Forest, 12 Mountain
+**Lands (37).** Cinder Glade, Command Tower, Evolving Wilds, Fabled Passage, Game Trail, Karplusan Forest, Rootbound Crag, Terramorphic Expanse, 17 Forest, 12 Mountain
 
 ## Import list (100)
 
@@ -155,11 +155,11 @@ also appears in another deck. JD is checking he owns a second copy of each.
 1 Disintegrate
 1 End-Raze Forerunners
 1 Evolving Wilds
-1 Exotic Orchard
 1 Fabled Passage
 1 Fblthp, Knows the Way
 1 Follow the Lumarets
 1 Fyndhorn Elder
+1 Game Trail
 1 Garruk's Uprising
 1 Genesis Hydra
 1 Ghalta the Unstoppable
@@ -167,12 +167,12 @@ also appears in another deck. JD is checking he owns a second copy of each.
 1 Greenbelt Radical
 1 Greenhouse Propagator
 1 Hardbristle Bandit
-1 Harrow
 1 Hellkite Tyrant
 1 Karplusan Forest
 1 Kura, the Boundless Sky
 1 Lashwhip Predator
 1 Lifestream's Blessing
+1 Lightning Bolt
 1 Llanowar Elves
 1 Malevolent Rumble
 1 Nature's Lore

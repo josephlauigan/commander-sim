@@ -666,4 +666,5 @@ Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
 
 ### Changes
 
+- **2026-10-19.** Out: Exotic Orchard, Harrow. In: Game Trail, Lightning Bolt. Exotic Orchard -> Game Trail (JD has no spare Orchard; Game Trail is a real R/G dual from his bulk, untapped by revealing a Mountain or Forest), Harrow -> Lightning Bolt (JD's spare; saves a buy). Not simulated yet.
 - **2026-10-19.** New deck: Omnath, Locus of Rage red-green landfall, built from the Titania list.
