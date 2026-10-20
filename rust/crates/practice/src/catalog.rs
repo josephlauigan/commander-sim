@@ -1,4 +1,4 @@
-//! What the setup screen shows (Python's `play/catalog.py`): your filter_map(|t["decks"].as_array().into_iter().flatten().flat_map(|d| d["commanders"].as_array().into_iter().flatten()).filter_map(|c| c.as_str()).map(String::from),| d["commanders"].as_array()).flatten().filter_map(|c| c.as_str()).map(String::from),ecks (commander, bracket, Game Changers, how they
+//! What the setup screen shows (Python's `play/catalog.py`): your decks (commander, bracket, Game Changers, how they
 //! do in the simulations) and the five tiers (their decks). Read from the card data folder (`decks.json`,
 //! `my_decks.toml`, `scryfall_cache.json`) and, when the repository's `decklists/` folder sits next to it, from the
 //! deck files (the bracket line, the commander's display name, the tier folders' names) and the look-ahead results

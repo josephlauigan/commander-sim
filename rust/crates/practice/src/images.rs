@@ -68,7 +68,10 @@ impl Images {
 
     pub fn save_index(&self, idx: &serde_json::Map<String, Value>) -> std::io::Result<()> {
         std::fs::create_dir_all(&self.dir)?;
-        let tmp = self.dir.join("index.json.tmp");
+        // a temp file of its own per save: the background commander fetch and a game's image download can save at once
+        static SAVES: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let n = SAVES.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let tmp = self.dir.join(format!("index.json.{}.{n}.tmp", std::process::id()));
         std::fs::write(&tmp, serde_json::to_string(idx).unwrap_or_default())?;
         std::fs::rename(tmp, self.index_path())
     }
