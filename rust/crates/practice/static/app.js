@@ -1,4 +1,4 @@
-el('h3', {}, s.title || x.name)// The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
+// The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
 import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards, commandersOf, setPrinted, forSeat } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
@@ -700,7 +700,7 @@ function renderSetup() {
     type: 'button', class: 'tier', role: 'radio', 'aria-checked': String(t.key === chosen.tier),
     onclick: () => { if (chosen.tier !== t.key) { chosen.tier = t.key; drawOpponents(); } renderSetup(); },
   }, el('span', {}, el('b', {}, t.label)),
-    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: (x.commanders || [x.commander]).join(' + ') }, (x.commanders || [x.commander]).map((n) => cardImage(n)), x.name)))));
+    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: (x.commanders || [x.commander]).join(' + ') }, (x.commanders || [x.commander]).map((n) => cardImage(n)), x.name))))));
   $('#opponents').replaceChildren(...chosen.opponents.map((k) => opponentCard(tier.decks.find((x) => x.key === k))));
   $('#decks').replaceChildren(...catalog.decks.map((d) => el('button', {
     type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
