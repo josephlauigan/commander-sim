@@ -1,0 +1,121 @@
+Model status of the swapped-in cards (cardgen audit):
+  Kuja, Genome Sorcerer // Trance Kuja, Fate Defied: Full (3/4 for {2}{B}{R}; at the beginning of your end step it makes a tapped 0/1 black Wizard token (whenever you cast a noncreature spell, the token deals 1 damage to each opponent), then transforms into Trance Kuja, Fate Defied (4/6) once you control four or more Wizards (Kefka and Niv-Mizzet count); Flare Star: damage a Wizard you control would deal to a player or permanent is doubled (the tokens' pings, Wizard creatures in combat, Niv-Mizzet's draw trigger) (impls/kuja.rs))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by kefka's AI?
+  AI: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied: priority 70 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 10 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied: drawn in 45.5% of games (91), cast in 60.4% of those (55)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 21 minutes
+  progress 100.0%  10m53s elapsed, ~0m00s left
+Swaps: Hallway Heckler -> Kuja, Genome Sorcerer // Trance Kuja, Fate Defied
+
+=== Kefka vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.2% ->  32.5%  (delta +2.2 pts, noise ±2.4, paired)   n=2000
+               eliminated by (variant): Tergrid 21.1%  Atraxa 8.2%  Aurelia 21.0%  Marwyn 10.1%  Korvold 7.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (kefka) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for kefka: Kefka flipped into Ruler of Ruin
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.2% ->  32.5%  +2.2pt   ±2.9 
+    Rounds survived (or game length)                  10.87 ->  10.68   -0.19  ±0.19*
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.50 ->   0.50   -0.00  ±0.05 
+    Mana available on your turn 4                      3.97 ->   3.96   -0.00  ±0.05 
+    Mana available on your turn 6                      5.54 ->   5.54   -0.00  ±0.08 
+
+  Speed
+    Games where the game plan came online             31.4% ->  30.2%  -1.1pt   ±2.9 
+    Turn the game plan came online                    10.71 ->  10.30   -0.41  ±0.28*
+    Turn the commander first resolved                  6.07 ->   6.07   -0.01  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            30.92 ->  29.96   -0.97  ±1.31 
+    Tutors resolved per game                           0.56 ->   0.52   -0.04  ±0.05 
+    Spells cast per game                              14.83 ->  14.36   -0.47  ±0.57 
+
+  Interaction
+    Counterspells cast                                 0.37 ->   0.36   -0.01  ±0.03 
+    Spot removal cast                                  1.39 ->   1.36   -0.03  ±0.08 
+    Board wipes cast                                   0.00 ->   0.01   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.39 ->   0.37   -0.03  ±0.04 
+    Your spells countered                              0.11 ->   0.11   -0.00  ±0.02 
+
+  Threat & pressure
+    Damage dealt to opponents per game                35.58 ->  38.41   +2.82  ±2.25*
+      ...of which combat damage                       15.98 ->  16.64   +0.66  ±1.23 
+      ...of which magecraft / burn                     2.73 ->   5.73   +3.00  ±0.66*
+      ...of which drain triggers                      14.50 ->  13.70   -0.80  ±1.19 
+      ...of which other triggers                       2.32 ->   2.26   -0.06  ±0.54 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    better - Turn the game plan came online (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Kuja, Genome Sorcerer // Trance Ku    41.9      62.1         7.5     37.9       46.2      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Hallway Heckler                       40.5      55.3         7.1     44.7       33.9      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.2      32.5     +2.2
+    rounds survived                                  10.87     10.68    -0.19
+    eliminated, % of games                            69.4      67.3     -2.1
+    opponents it eliminated, per game                 0.80      0.85    +0.05
+    damage dealt, per game                            35.5      38.3     +2.8
+    plan: Kefka flipped into Ruler of Ruin
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         0.3       0.5     +0.1
+      plan online by turn 8, %                         6.3       6.2     -0.0
+      plan online by turn 12, %                       24.9      25.8     +0.9
+      plan online at all, %                           31.4      30.2     -1.1
+    commander resolved by turn 4, %                   14.8      14.7     -0.1
+    commander resolved by turn 6, %                   58.6      58.8     +0.1
+    commander removals, per game                      0.23      0.22    -0.01
+    lands on the battlefield, turn 4                  3.75      3.75    -0.00
+    lands on the battlefield, turn 8                  6.71      6.74    +0.03
+    mana available, turn 4                            3.97      3.96    -0.00
+    mana available, turn 8                            7.03      7.03    +0.01
+    cards in hand after the land drop, turn 4         5.82      5.86    +0.04
+    cards in hand after the land drop, turn 8         5.83      5.86    +0.03
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 18.8%, Tergrid via combat 15.1%, Marwyn via combat 10.6%, Atraxa via combat 6.8%
+    eliminated by (swapped): Aurelia via combat 18.9%, Tergrid via combat 13.1%, Marwyn via combat 10.1%, Atraxa via combat 6.3%
+
+(653s total)

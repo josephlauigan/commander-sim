@@ -1,0 +1,133 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Glorybringer [pool] C 3RR :: pow=4 fly haste
+   Thundermaw Hellkite [pool] C 3RR :: pow=5 fly haste bomb=5
+   Smaug the Magnificent [scryfall+dsl] C 2RR :: leg pow=4 tgh=3 fly haste
+      ability: triggered upkeep -> treasure
+Model status of the swapped-in cards (cardgen audit):
+  Glorybringer: Full (flying, haste; exert for 4 damage to a creature)
+  Thundermaw Hellkite: Full ()
+  Smaug the Magnificent: Full (upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by omnath's AI?
+  AI: Glorybringer: priority 54 (generic)
+  AI: Thundermaw Hellkite: priority 56 (generic)
+  AI: Smaug the Magnificent: priority 54 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t1), adaptive AI, 10 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 1 (High B2 / Low B3)
+  dry run: Glorybringer: drawn in 24.5% of games (49), cast in 75.5% of those (37)
+  dry run: Thundermaw Hellkite: drawn in 21.5% of games (43), cast in 95.3% of those (41)
+  dry run: Smaug the Magnificent: drawn in 19.5% of games (39), cast in 84.6% of those (33)
+
+2,200 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 11 minutes
+  progress 100.0%  6m57s elapsed, ~0m00s left
+Swaps: Worldly Tutor -> Glorybringer; Blossoming Defense -> Thundermaw Hellkite; Bite Down -> Smaug the Magnificent
+
+=== Omnath vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  21.0% ->  23.7%  (delta +2.7 pts, noise ±3.5, paired)   n=1000
+               eliminated by (variant): Lathril 14.1%  Teysa Karlov 12.2%  Light-Paws 24.9%  Isshin 15.3%  Tatyova 9.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (omnath) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for omnath: first 5/5 Elemental from Omnath
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          21.0% ->  23.7%  +2.7pt   ±3.7 
+    Rounds survived (or game length)                  11.27 ->  11.31   +0.04  ±0.31 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.46 ->   0.46   -0.00  ±0.07 
+    Mana available on your turn 4                      4.66 ->   4.64   -0.02  ±0.10 
+    Mana available on your turn 6                      6.85 ->   6.88   +0.03  ±0.15 
+
+  Speed
+    Games where the game plan came online             47.7% ->  44.6%  -3.1pt   ±4.5 
+    Turn the game plan came online                     9.55 ->   9.67   +0.12  ±0.38 
+    Turn the commander first resolved                  7.58 ->   7.66   +0.08  ±0.22 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.44 ->  14.78   +0.35  ±0.73 
+    Tutors resolved per game                           0.18 ->   0.00   -0.18  ±0.02*
+    Spells cast per game                              13.02 ->  13.22   +0.20  ±0.60 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.58 ->   0.55   -0.03  ±0.06 
+    Board wipes cast                                   0.18 ->   0.18   +0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.89 ->   0.96   +0.07  ±0.09 
+    Your spells countered                              0.17 ->   0.17   +0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                34.80 ->  38.73   +3.93  ±3.82*
+      ...of which combat damage                       33.37 ->  36.90   +3.53  ±3.69 
+      ...of which magecraft / burn                     0.17 ->   0.31   +0.14  ±0.12*
+      ...of which other triggers                       1.27 ->   1.52   +0.26  ±0.41 
+
+--- Reading it ---
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Tutors resolved per game (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Glorybringer                          24.6      79.7         8.6     20.3       38.8      0.02
+    Thundermaw Hellkite                   25.5      80.8         8.4     19.2       36.4      0.03
+    Smaug the Magnificent                 22.9      86.9         7.9     13.1       41.2      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Worldly Tutor                         20.7      86.5         6.2     13.5       24.0      0.00
+    Blossoming Defense                    21.9      35.6        10.1     64.4       34.6      0.00
+    Bite Down                             22.4      78.1         8.7     21.9       32.0      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        21.0      23.7     +2.7
+    rounds survived                                  11.27     11.31    +0.04
+    eliminated, % of games                            78.1      75.6     -2.5
+    opponents it eliminated, per game                 0.59      0.66    +0.07
+    damage dealt, per game                            34.8      38.7     +3.9
+    plan: first 5/5 Elemental from Omnath
+      plan online by turn 4, %                         0.0       0.0     +0.0
+      plan online by turn 6, %                         5.6       5.1     -0.5
+      plan online by turn 8, %                        20.0      19.0     -1.0
+      plan online by turn 12, %                       40.9      37.0     -3.9
+      plan online at all, %                           47.7      44.6     -3.1
+    commander resolved by turn 4, %                    2.7       2.0     -0.7
+    commander resolved by turn 6, %                   25.6      23.5     -2.1
+    commander removals, per game                      0.52      0.54    +0.02
+    lands on the battlefield, turn 4                  4.06      4.06    +0.00
+    lands on the battlefield, turn 8                  7.64      7.71    +0.08
+    mana available, turn 4                            4.66      4.64    -0.02
+    mana available, turn 8                            8.46      8.60    +0.14
+    cards in hand after the land drop, turn 4         5.94      6.05    +0.11
+    cards in hand after the land drop, turn 8         4.26      4.31    +0.05
+    wins by (current):  damage 97%, timeout 3%
+    wins by (swapped):  damage 97%, timeout 3%
+    eliminated by (current): Light-Paws via commander damage 23.1%, Tatyova via combat 10.9%, Isshin via combat 10.3%, Lathril via combat 7.8%
+    eliminated by (swapped): Light-Paws via commander damage 21.0%, Isshin via combat 11.1%, Lathril via combat 9.7%, Tatyova via combat 9.0%
+
+(417s total)
