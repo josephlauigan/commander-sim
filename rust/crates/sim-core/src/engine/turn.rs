@@ -930,6 +930,11 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         g.player(p).hand.len(),
         g.player(p).lands.len()
     );
+    if g.log.is_some() && std::env::var_os("TRACE_HAND").is_some() {
+        // a diagnostic for reading traces: the hand at the start of each turn (set TRACE_HAND=1)
+        let names: Vec<String> = g.player(p).hand.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+        crate::glog!(g, "    hand: {}", names.join(", "));
+    }
     upkeep(g, p)?;
     if g.over || !g.player(p).alive {
         return Ok(());

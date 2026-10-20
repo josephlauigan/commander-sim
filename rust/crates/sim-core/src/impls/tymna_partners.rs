@@ -332,10 +332,9 @@ pub fn thrasios_sink(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Optio
 }
 
 // ------------------------------------------------------------------ protection spells
-/// a protection instant the seat keeps mana up for (`brain::hold_value`): Dark Endurance (both seats) and Blossoming
-/// Defense (thrasios), while a commander or a creature worth 4 or more is out to protect. Dark Endurance's tag
-/// (`prot=ind`) is not one of the kinds the generic hold knows, and Blossoming Defense has no tag, so neither was
-/// ever held: the AI tapped out on its own turn and had nothing to cast when removal came.
+/// a protection instant the seat keeps mana for when it spends the spare on Thrasios: Dark Endurance (both seats) and
+/// Blossoming Defense (thrasios), while a commander or a creature worth 4 or more is out to protect. (Not part of
+/// `brain::hold_value`: there the look-ahead's hold bonus beat casting two creatures with ten lands in play.)
 pub fn protection_held(g: &Game, p: PlayerId, c: CardId) -> bool {
     let key = g.player(p).key;
     if !matches!(key, "thrasios" | "kraum") {

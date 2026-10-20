@@ -538,6 +538,9 @@ pub fn darien_wipe(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Re
     if w > 0.0 {
         darien_save(g, q, w)?;
     }
+    if kind != "vandal" {
+        endurance_wipe(g, q)?;
+    }
     Ok(())
 }
 
@@ -2008,9 +2011,31 @@ pub fn cast_endurance(g: &mut Game, owner_p: PlayerId, c: CardId, m: PermId) -> 
     Ok(ok && g.perm(m).on_bf)
 }
 
+/// Dark Endurance for a commander a destroy sweeper would kill (the thrasios and kraum seats): indestructible until the
+/// end of the turn. A commander the sweeper can't kill (indestructible already, or tokens only) is left alone.
+fn endurance_wipe(g: &mut Game, q: PlayerId) -> Res {
+    if !matches!(g.player(q).key, "kraum" | "thrasios") || silenced(g, q) {
+        return Ok(());
+    }
+    let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == "Dark Endurance") else {
+        return Ok(());
+    };
+    let cmd = g.player(q).perms.iter().copied().find(|&m| {
+        let x = g.perm(m);
+        x.on_bf && !x.phased && x.is_cmd && g.is_creature(m) && !crate::engine::values::indestructible(g, m)
+    });
+    if let Some(m) = cmd
+        && castable(g, q, c, "hand")
+        && can_pay(g, q, 1, "B", false)
+    {
+        cast_endurance(g, q, c, m)?;
+    }
+    Ok(())
+}
+
 /// **Blossoming Defense** ({G} instant: +2/+2 and hexproof until end of turn). The thrasios seat casts it in response to
 /// targeted removal (any kind: hexproof fizzles it) aimed at a commander or a permanent worth 4 or more; edicts and
-/// sweepers don't target. Held mana for it: `tymna_partners::protection_held`. The combat use is `combat_trick`.
+/// sweepers don't target. Mana kept for it: `tymna_partners::protection_held`. The combat use is `combat_trick`.
 fn blossom_protect(g: &mut Game, p: PlayerId, m: PermId, kind: Sym, actor: Option<PlayerId>) -> Res<bool> {
     if g.player(p).key != "thrasios"
         || actor.is_none()

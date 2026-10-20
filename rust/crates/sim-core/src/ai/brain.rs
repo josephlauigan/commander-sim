@@ -193,9 +193,7 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
         .copied()
         .filter(|&c| {
             let d = g.db.get(c);
-            (held(g, c) || crate::impls::tymna_partners::protection_held(g, p, c))
-                && !free_counter(g, p, c)
-                && can_pay(g, p, d.generic, &d.pips, false)
+            held(g, c) && !free_counter(g, p, c) && can_pay(g, p, d.generic, &d.pips, false)
         })
         .collect();
     let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };

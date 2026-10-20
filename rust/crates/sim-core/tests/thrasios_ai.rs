@@ -195,3 +195,22 @@ fn thrasios_ability_is_found_among_the_options_and_left_out_of_the_search() {
     assert_eq!(tymna_partners::thrasios_sink(&g, P0, &opts), Some(1));
     assert_eq!(tymna_partners::thrasios_sink(&g, P1, &opts), None, "only the thrasios and kraum seats");
 }
+
+// ---------------------------------------------------------------- Dark Endurance against a sweeper
+#[test]
+fn dark_endurance_keeps_the_commander_out_of_a_destroy_sweeper() {
+    let mut g = tbl();
+    let t = tymna(&mut g);
+    lands(&mut g, P0, "Swamp", 2, false);
+    hand(&mut g, P0, &["Dark Endurance"]);
+    tymna_cards::darien_wipe(&mut g, P0, "destroy".into(), P1).unwrap();
+    assert!(in_gy(&g, P0, "Dark Endurance"));
+    assert!(sim_core::engine::values::indestructible(&g, t));
+    // a Vandalblast-style sweeper (artifacts only) is no reason
+    let mut g = tbl();
+    tymna(&mut g);
+    lands(&mut g, P0, "Swamp", 2, false);
+    hand(&mut g, P0, &["Dark Endurance"]);
+    tymna_cards::darien_wipe(&mut g, P0, "vandal".into(), P1).unwrap();
+    assert!(!in_gy(&g, P0, "Dark Endurance"));
+}
