@@ -9017,5 +9017,5 @@ tags = "pow=2 tgh=1"
 dsl = [
   { type = "triggered", event = "etb", source = "self", effects = [{ do = "add_mana", n = 3 }] },
 ]
-status = "Full"
+status = "Approximate"
 note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"
