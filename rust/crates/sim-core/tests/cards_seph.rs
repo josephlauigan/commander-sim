@@ -1143,3 +1143,72 @@ fn mind_stone_harness_and_end_step_blink() {
     assert_eq!(zombies(&g), before + 2);
     assert!(on_bf(&g, st) && g.perm(st).data.truthy(DataKey::Harnessed), "the Stone wasn't blinked");
 }
+
+// --- Priest of Gix: enters and adds BBB; the Nim Deathmantle + Ashnod's Altar + Priest of Gix loop
+#[test]
+fn priest_of_gix_adds_three_mana_each_time_it_enters() {
+    let mut g = table(&["seph", "veyran", "sauron"]);
+    let before = g.player(P0).floating.any;
+    let m = perm(&mut g, P0, "Priest of Gix");
+    assert_eq!(g.player(P0).floating.any, before + 3);
+    mine::t2_blink(&mut g, P0, m).unwrap(); // re-entering (Deathmantle, a flicker) adds three more
+    assert_eq!(g.player(P0).floating.any, before + 6);
+}
+
+#[test]
+fn priest_loop_kills_with_a_drain_and_is_infinite_mana_without() {
+    let base = ["Nim Deathmantle", "Ashnod's Altar", "Priest of Gix"];
+    let (_, l) = loops_with(&base, &[]);
+    assert_eq!(l, vec![("Nim Deathmantle + Ashnod's Altar + Priest of Gix", false)]);
+    let (mut g, l) = loops_with(&[base[0], base[1], base[2], "Blood Artist"], &[]);
+    assert_eq!(l, vec![("Nim Deathmantle + Ashnod's Altar + Priest of Gix", true)]);
+    assert!(take_option(&mut g, P0, "loop: Nim Deathmantle + Ashnod's Altar + Priest of Gix"));
+    assert!(g.over);
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn priest_loop_without_a_payoff_floats_black_mana_and_no_zombies() {
+    let (mut g, _) = loops_with(&["Nim Deathmantle", "Ashnod's Altar", "Priest of Gix"], &[]);
+    let (i, keys, kills) = mine::seph_loops(&g, P0)[0].clone();
+    let b = g.player(P0).floating.b;
+    mine::run_loop(&mut g, P0, i, &keys, kills).unwrap();
+    assert!(!g.over);
+    assert_eq!(g.player(P0).floating.b, b + 20);
+    assert_eq!(tokens(&g, P0), 0);
+}
+
+#[test]
+fn priest_loop_is_not_claimed_with_a_piece_missing() {
+    for missing in 0..3 {
+        let mut cards = vec!["Nim Deathmantle", "Ashnod's Altar", "Priest of Gix", "Blood Artist"];
+        cards.remove(missing);
+        let (_, l) = loops_with(&cards, &[]);
+        assert!(l.is_empty(), "{cards:?} -> {l:?}");
+    }
+    // graveyard hate stops it
+    let (_, l) = loops_with(&["Nim Deathmantle", "Ashnod's Altar", "Priest of Gix"], &["Rest in Peace"]);
+    assert!(l.is_empty());
+}
+
+#[test]
+fn tutors_and_priorities_see_priest_as_the_last_piece() {
+    let (mut g, _) = loops_with(&["Nim Deathmantle", "Ashnod's Altar", "Blood Artist"], &[]);
+    // a list without Priest never wants it (it could not be fetched or reanimated)
+    assert!(!mine::loop_need(&g, P0, &[]).contains(&"Priest of Gix"));
+    let c = take(&mut g, P0, "Priest of Gix");
+    let mut deck = g.player(P0).deck_names.to_vec();
+    deck.push(c);
+    g.player_mut(P0).deck_names = deck.into();
+    assert!(mine::loop_need(&g, P0, &[]).contains(&"Priest of Gix"));
+    g.player_mut(P0).hand.push(c);
+    assert_eq!(mine::loop_prio(&g, P0, c), Some(85)); // it completes the loop
+    assert!(!mine::loop_need(&g, P0, &["Priest of Gix"]).contains(&"Priest of Gix"));
+}
+
+#[test]
+fn priest_is_a_good_blink_target() {
+    let mut g = table(&["seph", "veyran", "sauron"]);
+    let m = perm(&mut g, P0, "Priest of Gix");
+    assert!(mine::flicker_worth(&g, P0, m) >= 3.0, "{}", mine::flicker_worth(&g, P0, m));
+}
