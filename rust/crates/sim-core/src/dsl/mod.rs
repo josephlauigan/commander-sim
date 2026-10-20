@@ -993,6 +993,20 @@ fn run(
             g.rng.shuffle(&mut top);
             g.player_mut(p).library.splice(0..0, top);
         }
+        "extra_land" => {
+            // you may play an additional land this turn. The AI plays it at once (it plays no lands after combat);
+            // a person plays it in a main phase
+            g.player_mut(p).extra_land_now += 1;
+            if !crate::human::is_human(g, p) && g.active == Some(p) {
+                crate::engine::turn::more_lands(g, p)?;
+            }
+        }
+        "free_gy_spell" => {
+            // you may cast an instant or sorcery card with mana value n or less from your graveyard free; exiled
+            // instead of going to the graveyard (Sword of Once and Future)
+            let k = n(g, ctx).max(0) as u32;
+            crate::impls::t0_stella::free_from_gy(g, p, k)?;
+        }
         "put_land" => {
             // put a land card from your hand onto the battlefield
             let ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();

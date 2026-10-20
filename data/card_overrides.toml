@@ -4659,6 +4659,16 @@ note = "equip {1}: hexproof and haste (on the commander / best creature)"
 status = "Full"
 note = "equipped creature +2/+2, protection from red and blue; on combat damage to a player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}"
 
+["Sword of Forge and Frontier"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "RG" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "draw", n = 2, who = "you" }, { do = "extra_land" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Approximate"
+note = "equipped creature +2/+2, protection from red and green; on combat damage to a player: the top two cards are drawn (the engine's stand-in for 'exile them, you may play them this turn': cards not played are kept) and an additional land drop this turn (the AI plays the land at once, during combat); equip {2}"
+
 ["Sword of Kaldra"]
 types = "A"
 tags = "leg"
@@ -4668,6 +4678,16 @@ dsl = [
 ]
 status = "Full"
 note = "equipped creature +5/+5; exiles any creature it deals damage to; equip {4}"
+
+["Sword of Once and Future"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "UB" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "surveil", n = 2 }, { do = "free_gy_spell", n = 2 }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from blue and black; on combat damage to a player: surveil 2, then the best instant or sorcery card with mana value 2 or less in your graveyard is cast free and exiled instead of going to the graveyard (the AI picks it, as for Commitment of Promise); equip {2}"
 
 ["Sword of Truth and Justice"]
 types = "A"

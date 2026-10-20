@@ -101450,6 +101450,77 @@
    "spell_prio": false
   },
   {
+   "name": "Sword of Forge and Frontier",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 2
+    },
+    {
+     "type": "static",
+     "static": "equip_protection",
+     "colors": "RG"
+    },
+    {
+     "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 2,
+       "who": "you"
+      },
+      {
+       "do": "extra_land"
+      }
+     ]
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Sword of Hearth and Home",
    "types": "A",
    "generic": 3,
@@ -101645,6 +101716,78 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Sword of Once and Future",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 2
+    },
+    {
+     "type": "static",
+     "static": "equip_protection",
+     "colors": "UB"
+    },
+    {
+     "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "surveil",
+       "n": 2
+      },
+      {
+       "do": "free_gy_spell",
+       "n": 2
+      }
+     ]
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "surveil"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
