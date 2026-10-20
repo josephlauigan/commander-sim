@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
-pub const FILES: [(&str, &str, &str); 13] = [
+pub const FILES: [(&str, &str, &str); 14] = [
     ("seph", "JD", "sephiroth-phyrexian-reanimator.md"),
     ("veyran", "JD", "veyran-izzet-spellslinger.md"),
     ("sauron", "JD", "sauron-grixis-amass.md"),
@@ -23,10 +23,11 @@ pub const FILES: [(&str, &str, &str); 13] = [
     ("thrasios", "JD", "tymna-thrasios-partners.md"),
     ("sephfs", "JD", "sephiroth-fs-wipe-steal.md"),
     ("godo", "JD", "godo-cedh-equipment.md"),
+    ("karn", "JD", "karn-colorless-artifacts.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 13] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "omnath", "sheoldred", "cloud", "thrasios", "sephfs", "godo"];
+pub const MINE: [&str; 14] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "omnath", "sheoldred", "cloud", "thrasios", "sephfs", "godo", "karn"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
