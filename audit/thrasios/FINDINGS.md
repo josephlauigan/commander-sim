@@ -65,3 +65,8 @@ shares the Dark Endurance fix): the gap is **-3.4** (noise about ±2.8). JD comm
 |---|---|---|
 | Coiling Oracle => Urza | -1.5 (26.6% -> 25.1%, ±2.2) | Noise, leaning worse. Urza is stuck in hand 53% of the games he's drawn and first cast in round 8.6: {U}{U} in a four-colour deck with 6 Islands. Mana on turns 4 and 6 unchanged, so his artifact mana doesn't arrive in time to feed Thrasios. Wins 50% when cast (correlation). |
 **Reading it:** not adopted. Urza stays in Sauron (Sauron's side: `audit/sauron/FINDINGS.md`, Spell Pierce back +0.5/+1.2, noise).
+
+## 2026-10-19: Thought Vessel (JD's spare) for Lightning Greaves (paired, 2,000 games, T5; `2026-10-19-vessel/`)
+**-1.9 (26.9% -> 24.9%, ±2.3): noise, leaning worse; not adopted.** Vessel adds mana (+0.06 on turn 4, +0.13 on
+turn 6, beyond noise) but it doesn't turn into Thrasios activations or damage (-0.5 per game), and Greaves, cast in 81%
+of its draws, did as well when cast (35% vs Vessel's 36%). The deck's limit is spare mana late, not early ramp.

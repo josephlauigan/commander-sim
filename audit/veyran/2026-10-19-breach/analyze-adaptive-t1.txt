@@ -1,0 +1,101 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), adaptive AI, 20 worker threads: about 2 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== veyran analysis [loose profile, adaptive AI, 1000 games] ===========
+Win rate 24.2%   (4-player baseline 25%)   average rounds survived 11.6
+
+-- How it wins --
+  damage      99.2% of wins
+  timeout      0.8% of wins
+  Opponents it eliminated: 0.65 per game, by
+    combat             45.7%
+    burn               38.2%
+    triggers            6.0%
+    decked              5.7%
+    aether              3.2%
+    commander damage    1.1%
+    drain               0.2%
+  Damage dealt per game: 37.3, from
+    combat              20.3  (54%)
+    burn                13.8  (37%)
+    aether               1.7  (5%)
+    triggers             1.5  (4%)
+    drain                0.0  (0%)
+
+-- How it loses --
+  Eliminated in 74.3% of games, on average in round 10.7
+    by Light-Paws via commander damage   17.7% of games
+    by Tatyova  via combat             11.6% of games
+    by Isshin   via combat             11.0% of games
+    by Lathril  via combat              8.1% of games
+    by Lathril  via drain               5.7% of games
+    by Teysa Karlov via combat              4.8% of games
+    by Light-Paws via combat              4.7% of games
+    by Teysa Karlov via drain               3.7% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 6%  T4 20%  T5 34%  T6 45%  T7 54%  T8 60%  T9 65%  T10 69%  T11 72%  T12 74%
+  Online at all: 77.1% of games
+  Commander resolves on turn: median 4.0, mean 4.1 (over the 97.5% of games it resolves)
+  Commander resolved by turn:  T4 70%  T5 85%  T6 90%  T7 94%  T8 96%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 2.7% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Rite of the Dragoncaller                   cast in  16.0% of games, win rate when cast  53.1% (+28.9)
+    Niv-Mizzet, Parun                          cast in  13.3% of games, win rate when cast  52.6% (+28.4)
+    Crackle with Power                         cast in  14.1% of games, win rate when cast  49.6% (+25.4)
+    Emeritus of Ideation // Ancestral Recall   cast in  15.1% of games, win rate when cast  47.7% (+23.5)
+    Eris, Roar of the Storm                    cast in  12.0% of games, win rate when cast  45.8% (+21.6)
+    Mizzix's Mastery                           cast in  14.0% of games, win rate when cast  45.7% (+21.5)
+    Docent of Perfection // Final Iteration    cast in  16.4% of games, win rate when cast  45.1% (+20.9)
+    Propaganda                                 cast in  24.5% of games, win rate when cast  44.5% (+20.3)
+    Fiery Emancipation                         cast in  13.2% of games, win rate when cast  43.9% (+19.7)
+    Stock Up                                   cast in  30.5% of games, win rate when cast  43.0% (+18.8)
+  Lowest win rate when cast:
+    Veyran, Voice of Duality                   cast in  97.9% of games, win rate when cast  24.7% (+0.5)
+    Fellwar Stone                              cast in  22.2% of games, win rate when cast  27.9% (+3.7)
+    Lightning Greaves                          cast in  40.6% of games, win rate when cast  28.1% (+3.9)
+    Emeritus of Conflict // Lightning Bolt     cast in  20.3% of games, win rate when cast  29.1% (+4.9)
+    Third Path Iconoclast                      cast in  25.1% of games, win rate when cast  29.1% (+4.9)
+    Burst Lightning                            cast in  22.3% of games, win rate when cast  30.0% (+5.8)
+    Abrade                                     cast in  16.7% of games, win rate when cast  30.5% (+6.3)
+    Arcane Signet                              cast in  20.9% of games, win rate when cast  30.6% (+6.4)
+    Unsummon                                   cast in  22.5% of games, win rate when cast  30.7% (+6.5)
+    Spell Pierce                               cast in  13.9% of games, win rate when cast  30.9% (+6.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Mystic Confluence                          cast  18.6% of the games it was drawn [reactive: only cast in response]
+    Consecrated Sphinx                         cast  30.5% of the games it was drawn
+    Triple Triad                               cast  39.0% of the games it was drawn
+    Niv-Mizzet, Parun                          cast  48.5% of the games it was drawn
+    Eris, Roar of the Storm                    cast  49.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   0.94
+    Ral, Storm Conduit                         0.13
+    Aetherflux Reservoir                       0.09
+    Propaganda                                 0.08
+    Lightning Greaves                          0.06
+    Guttersnipe                                0.06
+    Kessig Flamebreather                       0.05
+    Rite of the Dragoncaller                   0.04
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+
+(1s total)

@@ -1,0 +1,124 @@
+Model status of the swapped-in cards (cardgen audit):
+  Underworld Breach: Full (nonland cards in your graveyard can be cast with escape (mana cost + exile three others) and go back to the graveyard; sacrificed at your end step. Counterspells and wipes aren't escaped by the AI)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by veyran's AI?
+  WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 20 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Underworld Breach: drawn in 27.5% of games (55), cast in 70.9% of those (39)
+  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)
+
+2,200 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 6 minutes
+  progress 100.0%  3m52s elapsed, ~0m00s left
+Swaps: Lightning Greaves -> Underworld Breach
+
+=== Veyran vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.1% ->  26.7%  (delta +0.6 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Aurelia 24.0%  Tergrid 19.5%  Korvold 8.8%  Atraxa 9.3%  Marwyn 10.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (veyran) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for veyran: Veyran + a magecraft payoff on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.1% ->  26.7%  +0.6pt   ±3.9 
+    Rounds survived (or game length)                  12.34 ->  12.35   +0.02  ±0.32 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.70 ->   0.70   -0.00  ±0.08 
+    Mana available on your turn 4                      3.79 ->   3.79   -0.00  ±0.08 
+    Mana available on your turn 6                      5.18 ->   5.18   +0.01  ±0.12 
+
+  Speed
+    Games where the game plan came online             66.0% ->  65.5%  -0.5pt   ±4.2 
+    Turn the game plan came online                     7.79 ->   7.67   -0.12  ±0.33 
+    Turn the commander first resolved                  5.55 ->   5.55   -0.00  ±0.24 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            20.20 ->  19.99   -0.21  ±1.04 
+    Tutors resolved per game                           1.13 ->   1.10   -0.03  ±0.12 
+    Spells cast per game                              17.02 ->  17.00   -0.02  ±0.83 
+
+  Interaction
+    Counterspells cast                                 0.72 ->   0.74   +0.02  ±0.07 
+    Spot removal cast                                  1.76 ->   1.77   +0.01  ±0.12 
+    Board wipes cast                                   0.42 ->   0.45   +0.03  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   -0.00  ±0.00 
+    Your key permanents removed by opponents           0.84 ->   0.94   +0.10  ±0.09*
+    Your spells countered                              0.16 ->   0.16   -0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                30.61 ->  35.11   +4.50  ±5.28 
+      ...of which combat damage                       15.53 ->  16.43   +0.90  ±2.72 
+      ...of which magecraft / burn                    11.85 ->  14.36   +2.51  ±4.10 
+      ...of which drain triggers                       0.05 ->   0.02   -0.03  ±0.07 
+      ...of which Aetherflux shots                     2.05 ->   3.20   +1.15  ±1.26 
+      ...of which other triggers                       1.13 ->   1.09   -0.04  ±0.44 
+
+  Speed
+    Games with a combo attempt                         0.0% ->   0.0%  +0.0pt   ±0.0 
+
+  Threat & pressure
+    Aetherflux shots per game                          0.04 ->   0.06   +0.02  ±0.02 
+
+--- Reading it ---
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Underworld Breach                     25.5      45.1        11.4     54.9       46.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Lightning Greaves                     46.5      86.5         8.4     13.5       30.6      0.05
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.1      26.7     +0.6
+    rounds survived                                  12.34     12.35    +0.02
+    eliminated, % of games                            72.5      71.8     -0.7
+    opponents it eliminated, per game                 0.68      0.72    +0.04
+    damage dealt, per game                            30.6      35.1     +4.5
+    plan: Veyran + a magecraft payoff on the battlefield
+      plan online by turn 4, %                         8.9       8.4     -0.5
+      plan online by turn 6, %                        25.7      25.9     +0.2
+      plan online by turn 8, %                        42.6      42.6     +0.0
+      plan online by turn 12, %                       60.0      60.8     +0.8
+      plan online at all, %                           66.0      65.5     -0.5
+    commander resolved by turn 4, %                   40.8      39.7     -1.1
+    commander resolved by turn 6, %                   63.3      63.1     -0.2
+    commander removals, per game                      0.59      0.68    +0.10
+    lands on the battlefield, turn 4                  3.70      3.70    -0.00
+    lands on the battlefield, turn 8                  6.08      6.04    -0.04
+    mana available, turn 4                            3.79      3.79    -0.00
+    mana available, turn 8                            6.42      6.44    +0.02
+    cards in hand after the land drop, turn 4         5.81      5.84    +0.03
+    cards in hand after the land drop, turn 8         5.00      4.96    -0.03
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 96%, timeout 4%
+    eliminated by (current): Aurelia via combat 18.6%, Tergrid via combat 12.4%, Marwyn via combat 11.7%, Atraxa via combat 8.6%
+    eliminated by (swapped): Aurelia via combat 19.2%, Tergrid via combat 13.3%, Marwyn via combat 10.1%, Atraxa via combat 7.5%
+
+(232s total)

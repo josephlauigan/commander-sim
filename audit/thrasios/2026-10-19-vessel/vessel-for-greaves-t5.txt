@@ -1,0 +1,116 @@
+Model status of the swapped-in cards (cardgen audit):
+  Thought Vessel: Full (tags: `rock=1:C`)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by thrasios's AI?
+  AI: Thought Vessel: priority 83 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 20 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Thought Vessel: drawn in 22.5% of games (45), cast in 86.7% of those (39)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 10 minutes
+  progress 100.0%  5m51s elapsed, ~0m00s left
+Swaps: Lightning Greaves -> Thought Vessel
+
+=== Tymna/Thrasios vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.9% ->  24.9%  (delta -1.9 pts, noise ±2.3, paired)   n=2000
+               eliminated by (variant): Zur the Enchanter 15.2%  Kinnan 8.0%  Urza 17.6%  Yawgmoth 12.4%  Winota 21.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (thrasios) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for thrasios: first Tymna draw, or the infinite-mana combo going off
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.9% ->  24.9%  -2.0pt   ±2.8 
+    Rounds survived (or game length)                   9.41 ->   9.41   +0.00  ±0.22 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.50 ->   0.51   +0.01  ±0.05 
+    Mana available on your turn 4                      4.11 ->   4.16   +0.06  ±0.06*
+    Mana available on your turn 6                      5.93 ->   6.06   +0.13  ±0.11*
+
+  Speed
+    Games where the game plan came online             76.5% ->  75.4%  -1.1pt   ±2.7 
+    Turn the game plan came online                     4.99 ->   5.00   +0.01  ±0.12 
+    Turn the commander first resolved                  3.15 ->   3.15   -0.00  ±0.07 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.47 ->  13.34   -0.12  ±0.45 
+    Tutors resolved per game                           0.23 ->   0.21   -0.01  ±0.03 
+    Spells cast per game                              11.13 ->  11.23   +0.10  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.14 ->   0.15   +0.01  ±0.02 
+    Spot removal cast                                  0.61 ->   0.64   +0.03  ±0.05 
+    Board wipes cast                                   0.16 ->   0.15   -0.01  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.14 ->   0.16   +0.02  ±0.03 
+    Your spells countered                              0.59 ->   0.59   +0.00  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.66 ->  26.11   -0.54  ±2.16 
+      ...of which combat damage                       26.64 ->  26.07   -0.57  ±2.16 
+      ...of which drain triggers                       0.00 ->   0.03   +0.03  ±0.03 
+      ...of which other triggers                       0.01 ->   0.01   -0.01  ±0.02 
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    better - Mana available on your turn 4 (both profiles)
+    better - Mana available on your turn 6 (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Thought Vessel                        22.2      78.4         5.8     21.6       36.2      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Lightning Greaves                     21.6      80.6         5.7     19.4       34.7      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.9      24.9     -1.9
+    rounds survived                                   9.41      9.41    +0.00
+    eliminated, % of games                            73.0      75.0     +2.0
+    opponents it eliminated, per game                 0.69      0.65    -0.04
+    damage dealt, per game                            26.7      26.1     -0.5
+    plan: first Tymna draw, or the infinite-mana combo going off
+      plan online by turn 4, %                        38.1      36.5     -1.6
+      plan online by turn 6, %                        65.8      64.7     -1.0
+      plan online by turn 8, %                        73.3      72.8     -0.6
+      plan online by turn 12, %                       76.0      75.2     -0.8
+      plan online at all, %                           76.5      75.4     -1.1
+    commander resolved by turn 4, %                   88.3      87.7     -0.6
+    commander resolved by turn 6, %                   94.7      94.6     -0.1
+    commander removals, per game                      0.51      0.53    +0.02
+    lands on the battlefield, turn 4                  3.75      3.76    +0.00
+    lands on the battlefield, turn 8                  6.73      6.73    -0.00
+    mana available, turn 4                            4.11      4.16    +0.06
+    mana available, turn 8                            7.55      7.69    +0.14
+    cards in hand after the land drop, turn 4         6.42      6.38    -0.03
+    cards in hand after the land drop, turn 8         5.96      5.92    -0.04
+    wins by (current):  damage 82%, combo 17%, timeout 1%
+    wins by (swapped):  damage 84%, combo 16%, timeout 1%
+    eliminated by (current): Urza via combo 14.9%, Zur the Enchanter via combo 13.9%, Yawgmoth via combo 11.2%, Winota via combo 10.8%
+    eliminated by (swapped): Urza via combo 16.1%, Zur the Enchanter via combo 13.6%, Yawgmoth via combo 10.9%, Winota via combo 10.8%
+
+(351s total)

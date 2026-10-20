@@ -150,6 +150,12 @@ pub fn veyran_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         let tg = mine::reenact_target(g, p, Some(c));
         return if tg.is_some_and(|(x, _)| card_worth(g, p, x, false) >= 4.0) { 50 } else { 0 };
     }
+    if t.has(Tag::Breach) {
+        // Underworld Breach (10/19 test): the spent instants and sorceries come back with escape, each recast
+        // retriggering Veyran's magecraft doubling; once two are worth recasting and there is mana for the turn
+        let k = super::decks::breach_candidates(g, p, false).len();
+        return if k >= 2 && total_mana(g, p, false) >= 5 { 56 } else { 0 };
+    }
     0
 }
 
@@ -184,9 +190,8 @@ pub fn options(g: &mut Game, p: PlayerId, _s: &Situation, _post: bool) -> Res<Ve
         g.perm(e).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Prot) == Some("boots"))
             && g.perm(e).attached.is_none_or(|a| !g.perm(a).on_bf || g.perm(a).owner != p)
     });
-    let key_creature = pl.perms.iter().any(|&m| {
-        g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Veyran))
-    });
+    let key_creature =
+        pl.perms.iter().any(|&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Veyran)));
     if can_pay(g, p, 1, "", false) && loose_boots && key_creature {
         o.push(plan(3.0 + 5.0 * removal_risk(g, p), "equip Boots".into(), boots_go, 0));
     }
@@ -354,11 +359,7 @@ pub fn protect(
 
 // ------------------------------------------------------------------ audit fixes (ai-audit cv)
 fn spells_in_hand(g: &Game, p: PlayerId, except: Option<CardId>) -> usize {
-    g.player(p)
-        .hand
-        .iter()
-        .filter(|&&x| Some(x) != except && (g.db.get(x).instant || g.db.get(x).sorcery))
-        .count()
+    g.player(p).hand.iter().filter(|&&x| Some(x) != except && (g.db.get(x).instant || g.db.get(x).sorcery)).count()
 }
 
 /// Blazing Firesinger // Seething Song is a 2/3 body and a mid-chain ritual (it only paired with the Kitten loop, which
