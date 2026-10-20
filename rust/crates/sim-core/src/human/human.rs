@@ -853,7 +853,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         pips = ways[k].1.clone();
     }
     if let Some(why) = mana::pay_from_pool(g, p, gn, &pips) {
-        return Ok(Some(format!("Can't cast {cname}. {why}")));
+        return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
     }
     if life > 0 {
         engine::life::lose_life(g, p, life, Some(p), "other", None)?;

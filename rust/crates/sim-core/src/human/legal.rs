@@ -142,6 +142,29 @@ pub fn phyrexian(g: &Game, p: PlayerId, c: CardId) -> String {
     crate::impls::krrik::life_pips(g, p, c) // K'rrik out: every {B} of a black spell too
 }
 
+/// For messages: the permanents that change what c costs p right now (Trinisphere, Thalia, Defense Grid ...), as
+/// ' Trinisphere changes its cost.', or '' when none do
+pub fn cost_changers(g: &Game, p: PlayerId, c: CardId) -> String {
+    let printed = g.db.get(c).generic as i32 + g.db.get(c).pips.chars().count() as i32;
+    let mut names: Vec<String> = vec![];
+    for (m, imp) in hooks::hooked(g, Event::Cost) {
+        if (imp.cost.unwrap())(g, m, p, c) != 0 {
+            names.push(g.perm(m).name.to_string());
+        }
+    }
+    for (m, imp) in hooks::hooked(g, Event::MinCost) {
+        if (imp.min_cost.unwrap())(g, m, p, c) > printed {
+            names.push(g.perm(m).name.to_string());
+        }
+    }
+    names.dedup();
+    match names.len() {
+        0 => String::new(),
+        1 => format!(" {} changes its cost.", names[0]),
+        _ => format!(" {} change its cost.", names.join(", ")),
+    }
+}
+
 /// What c costs to cast (before target-dependent extras), with every Phyrexian symbol counted as its mana (the
 /// person chooses mana or life as they cast it: `phyrexian_ways`). The engine stores a few cards at the cost the AI
 /// always pays; the person pays the printed cost.
@@ -263,7 +286,7 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
             let syms: Vec<String> = phy.chars().map(|x| format!("{x}/P")).collect();
             format!(" Its {{{}}} can be paid with 2 life each instead.", syms.join("}{"))
         };
-        return Some(format!("Can't cast {name}. {why}{extra}"));
+        return Some(format!("Can't cast {name}. {why}{}{extra}", cost_changers(g, p, c)));
     }
     None
 }

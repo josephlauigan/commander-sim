@@ -3013,9 +3013,9 @@ pub fn tax_spell(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
     if pred(g.db.get(c)) { amount } else { 0 }
 }
 
-/// Trinisphere (Full): every spell costs at least three
-fn trinisphere(g: &Game, _src: Src, _caster: PlayerId, c: CardId) -> i32 {
-    if !g.db.get(c).land { 3 } else { 0 }
+/// Trinisphere (Full): while it is untapped, every spell costs at least three
+fn trinisphere(g: &Game, src: Src, _caster: PlayerId, c: CardId) -> i32 {
+    if !g.db.get(c).land && !g.perm(src).tapped { 3 } else { 0 }
 }
 
 /// Grand Arbiter Augustin IV (Full): your white and blue spells cost {1} less each; opponents' spells cost {1} more
