@@ -15,7 +15,7 @@
 1 Fabled Passage (frc) 71
 1 Fblthp, Knows the Way (fra) 258
 1 Follow the Lumarets (sos) 148
-35 Forest (mdd) 301
+17 Forest (mdd) 301
 1 Garruk's Uprising (ecc) 109
 1 Genesis Hydra (otc) 193
 1 Ghalta the Unstoppable (fra) 260
@@ -73,8 +73,7 @@
 1 Blasphemous Act (msc) 163
 # set not in JD's lists: default printing
 1 Disintegrate (tsb) 58
-# set not in JD's lists: default printing
-1 Exotic Orchard (mbc) 79
+1 Game Trail (fic) 398
 # placeholder until JD's copy is known
 1 Omnath, Locus of Rage (ecc) 129
 # placeholder until JD's copy is known
@@ -82,4 +81,6 @@
 # placeholder until JD's copy is known
 1 Oracle of Mul Daya (eoc) 102
 # placeholder until JD's copy is known
-1 Harrow (eoc) 98
+1 Lightning Bolt (clu) 141
+# placeholder until JD's Mountain printing is known
+12 Mountain (fdn) 279
