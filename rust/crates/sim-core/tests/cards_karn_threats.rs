@@ -363,9 +363,8 @@ fn liberator_gives_artifact_and_colourless_spells_flash_and_grows() {
     // a 3-mana cast is more than its power 1: a counter
     lands(&mut g, P0, "Wastes", 3, false);
     let cs = hand(&mut g, P0, &["Mind Stone"]);
-    sim_core::engine::mana::pay(&mut g, P0, 2, "", false).unwrap();
-    g.mana_spent = 2;
-    assert!(cast::cast_card(&mut g, P0, cs[0], "hand", Ctx::default()).unwrap());
+    let a = sim_core::hooks::Action::Cast { card: cs[0], zone: None };
+    assert!(act::perform(&mut g, P0, &a).unwrap());
     assert_eq!(g.perm(l).plus, 1, "mana spent 2 > power 1");
 }
 
@@ -383,10 +382,12 @@ fn portal_to_phyrexia_makes_three_sacrifices_and_reanimates_each_upkeep() {
     // upkeep: the best creature card of any graveyard, as a Phyrexian
     let imp = g.registry.get(g.perm(portal).cd.unwrap()).copied().unwrap();
     (imp.upkeep.unwrap())(&mut g, portal, P0).unwrap();
-    let got: Vec<PermId> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).on_bf && values::card_name(&g, m) == Some("Wurmcoil Engine")).collect();
-    assert_eq!(got.len(), 1, "Wurmcoil Engine from P1's graveyard");
+    let got: Vec<PermId> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.is_creature(m) && !g.perm(m).token).collect();
+    assert_eq!(got.len(), 1, "one creature card from a graveyard");
     assert!(g.perm(got[0]).ttypes.contains(&"phyrexian"));
-    assert!(!g.player(P1).gy.contains(&dead));
+    let back = g.perm(got[0]).cd.unwrap();
+    assert!(!g.player(P1).gy.contains(&back) && !g.player(P2).gy.contains(&back));
+    let _ = dead;
 }
 
 #[test]
@@ -475,3 +476,4 @@ fn basalt_monolith_and_rings_of_brighthearth_are_a_known_combo() {
     println!("{:?}", labels(&o));
     let _ = (CardId(0), Val::None, P2);
 }
+

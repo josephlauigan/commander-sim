@@ -399,10 +399,10 @@ const LIBERATOR: &str = "Liberator, Urza's Battlethopter";
 
 /// Liberator: whenever you cast a spell, if the mana spent is greater than its power, +1/+1 counter on it
 fn liberator_cast(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
-    if p != owner(g, src) || !live(g, src) || g.mana_spent as i32 <= epow(g, src) {
+    let spent = g.cur_cast.as_ref().filter(|x| x.0 == c).map_or(0, |x| x.1.mana_spent) as i32; // the mana the payment spent
+    if p != owner(g, src) || !live(g, src) || spent <= epow(g, src) {
         return Ok(());
     }
-    let _ = c;
     if trigger_window(g, p, Some(src), "+1/+1 counter", Some(2.0))? && live(g, src) {
         crate::cardcode::put_plus(g, src, 1);
         crate::glog!(g, "    Liberator grows (+1/+1 counter)");
@@ -536,6 +536,14 @@ fn forge_pick(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
     Some((c, v(c)))
 }
 
+/// what sacrificing m costs the Forgemaster: a token or a cheap rock is nearly free, a creature costs its size
+fn fodder_cost(g: &Game, m: PermId) -> f64 {
+    if g.perm(m).token {
+        return 0.2;
+    }
+    0.4 + 0.25 * mv(g, m) as f64 + if g.is_creature(m) { 0.3 * epow(g, m).max(0) as f64 } else { 0.0 }
+}
+
 /// the three artifacts to sacrifice: the cheapest ones that are not the Forgemaster or the commander
 fn forge_fodder(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     let mut v: Vec<PermId> = g
@@ -545,7 +553,7 @@ fn forge_fodder(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
         .copied()
         .filter(|&m| m != src && live(g, m) && is_art(g, m) && !g.perm(m).is_cmd && !g.perm(m).phased)
         .collect();
-    v.sort_by(|&a, &b| worth(g, a).total_cmp(&worth(g, b)));
+    v.sort_by(|&a, &b| fodder_cost(g, a).total_cmp(&fodder_cost(g, b)));
     v.truncate(3);
     v
 }
@@ -563,7 +571,7 @@ fn forgemaster_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) 
     if fodder.len() < 3 {
         return Ok(vec![]);
     }
-    let cost: f64 = fodder.iter().map(|&m| worth(g, m)).sum();
+    let cost: f64 = fodder.iter().map(|&m| fodder_cost(g, m)).sum();
     let swing = v - 0.8 * cost;
     if swing < 2.0 {
         return Ok(vec![]);
