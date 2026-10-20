@@ -26,3 +26,12 @@ Why: cast in 48% of the games drawn (Zombify 64%: it waits for a target), wins 6
 plan came online more often (26.0 -> 29.4%), games ran a little longer (8.6 -> 8.8 rounds), and fewer losses to
 Kinnan/Urza/Zur/Winota combo. The flashback makes it a second reanimation from the graveyard, and its three deaths
 are drains with Sephiroth or a payoff out. Coarse sample: confirm with a bigger run before trusting the size.
+
+## 2026-10-19: The Cruelty of Gix modeled (smoke run only: Mind Stone => Cruelty, T5, loose, 50 games, adaptive)
+Modeled (impls/sephfs_cards.rs): read ahead picked by the AI (III when any graveyard holds a creature worth 3+, II when
+the deck has a wanted tutor target and 14+ life, else I); I takes the best creature or planeswalker card from an
+opponent's hand, II is the shared "any" tutor and 3 life, III takes the best creature from any graveyard. Cast priority 56.
+Smoke result: 36.0% -> 42.0% (+6.0, noise ±6.8): no clear effect at 50 games, this was a functionality check, not a
+measurement. Why: drawn in 16% of games, cast in only 37.5% of those (stuck 62.5%: five mana, and it ranks below
+the wipes and the commander); Mind Stone was cast in 90%. Wins when cast 66.7% (3 games: no signal). The real
+test is a full-size run; the likely strength is chapter III after one of the deck's own wipes (an opponent's yard too).

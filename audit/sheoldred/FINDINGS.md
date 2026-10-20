@@ -66,3 +66,12 @@ Band 2 (T3-T4). Proposed: Gray Merchant of Asphodel to Seph FS, Necrosquito (spa
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **31.9% vs T3, 31.6% vs T4** (before 30.6 / 30.8): +1, within noise. Protection held for Sheoldred; Ad Nauseam in the second main; Memory Jar waits for a punisher; Seizan, Necrosquito valued; Rooftop Assassin condition.
+
+## 2026-10-19: K'rrik, Son of Yawgmoth modeled (smoke run only: Stir Up Trouble => K'rrik, T3, loose, 50 games, adaptive)
+Modeled (impls/krrik.rs, engine/mana.rs): with K'rrik out the AI pays 2 life for a black pip its mana cannot pay,
+only while its life stays at 15 or more afterwards; his own {B/P} costs use the 10-life Phyrexian rule; each black
+spell adds a +1/+1 counter. Floor 15: Sheoldred's drain/gain plan makes life a resource, but at T3 the table kills from
+around 12 in one round, and 15 stays clear of that. Cast priority 70 at 16+ life.
+Smoke result: 32.0% -> 32.0% (0.0, noise ±5.7). Why: drawn 28% of games, cast in 64% of those (Stir Up Trouble 79%),
+first cast round 6.3 vs 4.4: a 7-mana body that comes down later than the cheap spell it replaced; wins when cast
+33% vs 36%. Needs a full-size run before judging.
