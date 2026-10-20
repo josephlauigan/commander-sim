@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Kraum, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -374,7 +374,9 @@ Deck key `titania`, `decklists/JD/titania-lands.md` (both removed).
 
 ## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners
 
-Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
+
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see the Tymna/Thrasios section below and `audit/thrasios/FINDINGS.md`). The entries below are the deck's history.
 
 ### Changes
 
@@ -650,7 +652,9 @@ Deck key `galadriel`, `decklists/Avery/galadriel-bant-rebels.md`.
 
 ## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners (W/U/B/R)
 
-Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
+
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see `audit/thrasios/FINDINGS.md`). The entries below are the deck's history.
 
 ### Changes
 

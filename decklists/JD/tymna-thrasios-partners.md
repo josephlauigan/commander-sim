@@ -1,5 +1,7 @@
 # Tymna the Weaver & Thrasios, Triton Hero — Four-Colour Partners (W/U/B/G)
 
+> Built from the Tymna/Kraum deck (2026-10-19).
+
 Two commanders that turn spare mana into cards: Tymna draws one card for each opponent your creatures hit in combat, and
 Thrasios turns any four spare mana into a scry, a land or a card. Behind a wall of attack taxes (Ghostly Prison,
 Propaganda, Crawlspace and their friends) and a green ramp and draw package, the deck wins with flying finishers: Elspeth,
@@ -11,7 +13,7 @@ turn, to fast combo, and to falling behind on mana.
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
 | **Bracket** | 3 (1 Game Changer: Worldly Tutor); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
-| **Simulator** | deck key `thrasios`, matched tier T5; the Kraum build of the same shell is `kraum` |
+| **Simulator** | deck key `thrasios`, matched tier T5; built from the retired Tymna/Kraum deck |
 
 ## Strategy
 

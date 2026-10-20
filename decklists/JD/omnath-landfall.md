@@ -114,8 +114,8 @@ the deck makes many large creatures and that a sweeper turns them into burn.
 
 ## Cards to confirm
 
-Terror of the Peaks, Blasphemous Act, Birds of Paradise and Command Tower come from JD's spares and each
-also appears in another deck. JD is checking he owns a second copy of each.
+Blasphemous Act, Birds of Paradise and Command Tower come from JD's spares and each
+also appears in another deck. JD is checking he owns a second copy of each. (Terror of the Peaks is Omnath's own copy now, since Tymna/Kraum retired.)
 
 ## Decklist by type (100)
 
