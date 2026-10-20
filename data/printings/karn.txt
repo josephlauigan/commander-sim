@@ -1,0 +1,47 @@
+# placeholder until JD's copy is known: Scryfall's default printing of each card
+# '# proxy' above a line marks the eight proxies
+1 Darksteel Citadel (c21) 285
+# proxy
+1 Darksteel Forge (2xm) 248
+1 Duplicant (cmm) 946
+1 Endless Atlas (cmm) 947
+1 Everflowing Chalice (eoc) 137
+1 Expedition Map (fdn) 724
+1 Ghost Quarter (cm2) 253
+1 Gilded Lotus (msc) 199
+# proxy
+1 Grim Monolith (ulg) 126
+1 Hangarback Walker (soc) 348
+1 Hedron Archive (fdn) 726
+1 Inventors' Fair (kld) 247
+1 Karn, Legacy Reforged (mat) 49
+1 Karn Liberated (2xm) 1
+1 Karn, Scion of Urza (dom) 1
+1 Karn, the Great Creator (rvr) 1
+1 Kuldotha Forgemaster (2xm) 266
+1 Liberator, Urza's Battlethopter (bro) 237
+1 Lightning Greaves (msc) 202
+1 Liquimetal Torque (mh2) 228
+# proxy
+1 Portal to Phyrexia (bro) 240
+1 Ratchet Bomb (2xm) 284
+1 Reliquary Tower (soc) 398
+1 Rings of Brighthearth (cmr) 335
+1 Rogue's Passage (hoc) 212
+1 Sculpting Steel (moc) 374
+1 Skullclamp (msc) 210
+1 Solemn Simulacrum (msc) 215
+1 Sol Ring (frc) 21
+1 Soul-Guide Lantern (eoc) 143
+1 Spine of Ish Sah (moc) 383
+1 Staff of Domination (cmr) 343
+1 Steel Hellkite (tdc) 327
+1 Steel Overseer (eoc) 144
+1 Swiftfoot Boots (mbc) 77
+1 The Mightstone and Weakstone (bro) 238
+# proxy
+1 The One Ring (ltr) 246
+1 Thought Vessel (mbc) 78
+1 Thran Dynamo (cmm) 415
+1 Treasure Vault (afr) 261
+1 Triplicate Titan (c21) 79

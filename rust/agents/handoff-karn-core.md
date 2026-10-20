@@ -1,6 +1,11 @@
 # Handoff: karn-core
-Done: key wiring (practice, sim-cli, ai, engine key lists) for `karn` (uncommitted until noted below).
-Plan: (1) engine mechanism: Floating.art + Source::FloatArt (artifact-only colourless, whole turn; AI) and ManaPool.art (practice);
-(2) impls/karn.rs: Karn card (self_pt, upkeep, milestone), Mightstone/Weakstone, Tron lands, Urza's Workshop, factories, karn_prio/special;
-(3) printings/karn.txt; (4) practice check; (5) 100-game run, report.
-Gotchas: engine floating mana only empties at turn start (turn.rs ~864); human gather_floating moves floating into the pool, which empties each step.
+Done (committed): key `karn` wired (practice catalog/setup/tests, sim-cli decks/args/poolmode/report, ai styles/prio/jd_deck,
+engine key lists); artifact-only mana (`Floating::art`, `Source::FloatArt`, `ManaPool::art`, `mana::art_mana_ok`);
+`impls/karn.rs` (Karn, Mightstone ETB, Tron + Urza's Workshop dyn mana, Factory/Foundry manlands + block response, karn_prio,
+Bauble hold, Tron land search pick); overrides (Mightstone pstone, Gilded Lotus, Urza's Factory artifact token, statuses);
+tests/cards_karn.rs (11 tests, pass).
+Next: full `cargo test --release` (was running), data/printings/karn.txt (script in scratchpad; rate-limited Scryfall:
+retry missing cards), 100-game run `commander-sim --deck karn --pool t3 --games 100 --jobs 7`, check Karn is cast and his mana
+is spent (--cards), practice check, write report-karn-core.md.
+Gotchas: engine floating mana empties only at turn start; spells must set `g.pay_for` (brain do_cast, cast_removal, cast_wipe do)
+or Karn's mana leaks to nonartifact spells; DSL token types never include "artifact" (cardgen drops it) - Factory token via override.
