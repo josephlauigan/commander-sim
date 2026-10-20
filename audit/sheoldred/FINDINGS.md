@@ -20,6 +20,15 @@ Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 3. **Combat decks:** Krenko (12%) and Yuriko (7%) by combat.
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Ulna Alley Shopkeep => K'rrik, Son of Yawgmoth (T3, loose, 2,000 games per list, look-ahead; T4 stopped by JD)
+Result: **T3 32.2% -> 31.5%, -0.7 (noise ±2.4): neutral.** Raw: `2026-10-19-krrik/t3.txt`. Ulna Alley Shopkeep was
+the cut (second-lowest win rate when cast in the 10/19 card report).
+Why: K'rrik is cast in 62% of the games it is drawn (Shopkeep 76%), around round 7.6, and stuck 38%; Sheoldred's
+timing (turn 6.4), the plan rate and damage are unchanged. By the time the 7-mana legend is down most of the deck's
+black spells are already cast, so paying life for {B} rarely matters; the AI also casts him eagerly only at 16+ life.
+Found on the way: the shared Phyrexian-mana rule checked the starting life for every pip, so three {B/P} at 12 life
+could go to 6; fixed on this branch (9c68a6a) to count the life already paid.
+
 ### 2026-10-19: Stir Up Trouble => Orcish Bowmasters, full run (T3-T4, loose, 2,000 games per list, look-ahead)
 Result: **T3 +2.0 (±2.6), T4 +0.5 (±2.4): about +1.2 over t3-t4, positive but within noise.** Raw:
 `2026-10-19-bowmasters/full-stir-up-trouble-t3.txt`, `t4.txt`.
@@ -66,3 +75,12 @@ Band 2 (T3-T4). Proposed: Gray Merchant of Asphodel to Seph FS, Necrosquito (spa
 
 ## 2026-10-18: AI audit re-measure (branch ai-audit; 2,000 games per profile, look-ahead)
 **31.9% vs T3, 31.6% vs T4** (before 30.6 / 30.8): +1, within noise. Protection held for Sheoldred; Ad Nauseam in the second main; Memory Jar waits for a punisher; Seizan, Necrosquito valued; Rooftop Assassin condition.
+
+## 2026-10-19: K'rrik, Son of Yawgmoth modeled (smoke run only: Stir Up Trouble => K'rrik, T3, loose, 50 games, adaptive)
+Modeled (impls/krrik.rs, engine/mana.rs): with K'rrik out the AI pays 2 life for a black pip its mana cannot pay,
+only while its life stays at 15 or more afterwards; his own {B/P} costs use the 10-life Phyrexian rule; each black
+spell adds a +1/+1 counter. Floor 15: Sheoldred's drain/gain plan makes life a resource, but at T3 the table kills from
+around 12 in one round, and 15 stays clear of that. Cast priority 70 at 16+ life.
+Smoke result: 32.0% -> 32.0% (0.0, noise ±5.7). Why: drawn 28% of games, cast in 64% of those (Stir Up Trouble 79%),
+first cast round 6.3 vs 4.4: a 7-mana body that comes down later than the cheap spell it replaced; wins when cast
+33% vs 36%. Needs a full-size run before judging.

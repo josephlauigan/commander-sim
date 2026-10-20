@@ -1,0 +1,114 @@
+Cards modeled from Scryfall text (check the abilities below):
+   K'rrik, Son of Yawgmoth [pool] C 4BBB :: leg pow=2 lifelink
+Model status of the swapped-in cards (cardgen audit):
+  K'rrik, Son of Yawgmoth: Full (lifelink 2/2; with K'rrik out, each {B} of a black spell may be paid with 2 life: the AI does so only for a pip its mana cannot pay and only while its life stays at 15 or more afterwards (a person chooses mana or life per pip, no floor); his own {B/P} costs can be paid with life too (10 life floor, the existing Phyrexian rule); a +1/+1 counter whenever you cast a black spell (code: impls/krrik.rs, engine/mana.rs cost_of / phyrexian_life). Not modeled: life for {B} in abilities' costs and in removal spells' costs)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sheoldred's AI?
+  AI: K'rrik, Son of Yawgmoth: priority 70 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 7 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: K'rrik, Son of Yawgmoth: drawn in 22.5% of games (45), cast in 68.9% of those (31)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 7 worker threads: about 30 minutes
+  progress 100.0%  14m43s elapsed, ~0m00s left
+Swaps: Ulna Alley Shopkeep -> K'rrik, Son of Yawgmoth
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.2% ->  31.5%  (delta -0.7 pts, noise ±2.4, paired)   n=2000
+               eliminated by (variant): Tergrid 16.1%  Atraxa 10.1%  Aurelia 22.9%  Marwyn 12.2%  Korvold 6.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          32.2% ->  31.5%  -0.7pt   ±2.9 
+    Rounds survived (or game length)                  11.36 ->  11.29   -0.07  ±0.20 
+
+  Mana & consistency
+    Extra mulligans per game                           0.07 ->   0.07   +0.00  ±0.02 
+    Missed land drops, turns 1-5                       0.57 ->   0.57   +0.00  ±0.05 
+    Mana available on your turn 4                      4.14 ->   4.14   -0.00  ±0.05 
+    Mana available on your turn 6                      5.63 ->   5.63   +0.00  ±0.08 
+
+  Speed
+    Games where the game plan came online             91.1% ->  91.0%  -0.2pt   ±1.8 
+    Turn the game plan came online                     6.44 ->   6.42   -0.02  ±0.14 
+    Turn the commander first resolved                  6.40 ->   6.38   -0.02  ±0.14 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.76 ->  17.77   +0.01  ±0.49 
+    Tutors resolved per game                           0.00 ->   0.00   +0.00  ±0.00 
+    Spells cast per game                              13.35 ->  13.17   -0.18  ±0.35 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  1.93 ->   1.90   -0.03  ±0.09 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.71 ->   0.70   -0.00  ±0.06 
+    Your spells countered                              0.14 ->   0.13   -0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                56.86 ->  57.02   +0.17  ±2.51 
+      ...of which combat damage                        7.67 ->   7.65   -0.01  ±0.52 
+      ...of which magecraft / burn                     1.52 ->   1.52   +0.01  ±0.18 
+      ...of which drain triggers                      38.63 ->  38.72   +0.09  ±2.06 
+      ...of which other triggers                       7.62 ->   7.71   +0.10  ±0.93 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    K'rrik, Son of Yawgmoth               26.3      62.4         7.6     37.6       37.8      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Ulna Alley Shopkeep                   26.3      75.5         7.2     24.5       35.0      0.02
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.2      31.5     -0.7
+    rounds survived                                  11.36     11.29    -0.07
+    eliminated, % of games                            67.2      67.7     +0.5
+    opponents it eliminated, per game                 0.97      0.97    -0.00
+    damage dealt, per game                            55.4      55.6     +0.2
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        18.9      18.7     -0.2
+      plan online by turn 6, %                        52.1      52.0     -0.1
+      plan online by turn 8, %                        75.6      76.2     +0.7
+      plan online by turn 12, %                       90.2      90.0     -0.2
+      plan online at all, %                           91.2      91.0     -0.2
+    commander resolved by turn 4, %                   19.6      19.4     -0.3
+    commander resolved by turn 6, %                   53.1      52.9     -0.2
+    commander removals, per game                      0.66      0.65    -0.01
+    lands on the battlefield, turn 4                  3.73      3.73    +0.00
+    lands on the battlefield, turn 8                  6.56      6.55    -0.01
+    mana available, turn 4                            4.14      4.14    -0.00
+    mana available, turn 8                            7.00      6.99    -0.02
+    cards in hand after the land drop, turn 4         5.65      5.66    +0.02
+    cards in hand after the land drop, turn 8         4.50      4.53    +0.03
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 99%, timeout 1%
+    eliminated by (current): Aurelia via combat 18.4%, Tergrid via combat 12.7%, Marwyn via combat 11.8%, Atraxa via combat 8.1%
+    eliminated by (swapped): Aurelia via combat 17.6%, Marwyn via combat 12.2%, Tergrid via combat 11.8%, Atraxa via combat 8.0%
+
+(883s total)

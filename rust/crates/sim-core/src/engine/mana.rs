@@ -451,16 +451,17 @@ pub fn total_mana(g: &Game, p: PlayerId, convoke: bool) -> u32 {
 }
 
 /// life a cast of c paid for Phyrexian symbols, given the pips it paid with mana (cost_of)
-pub fn phyrexian_life(g: &Game, c: CardId, pips: &str) -> i32 {
+pub fn phyrexian_life(g: &Game, p: PlayerId, c: CardId, pips: &str) -> i32 {
     let d = g.db.get(c);
     let mut seen = vec![];
     let mut life = 0;
-    for col in d.phyrexian.chars() {
+    let phys = crate::impls::krrik::life_pips(g, p, c); // K'rrik: every {B} of a black spell too
+    for col in phys.chars() {
         if seen.contains(&col) {
             continue;
         }
         seen.push(col);
-        let phy = d.phyrexian.chars().filter(|&x| x == col).count() as i32;
+        let phy = phys.chars().filter(|&x| x == col).count() as i32;
         let printed = d.pips.chars().filter(|&x| x == col).count() as i32;
         let paid = pips.chars().filter(|&x| x == col).count() as i32;
         life += 2 * phy.min((printed - paid).max(0));
@@ -501,12 +502,16 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
         gn = 0;
         pips = "R".into();
     }
+    let mut paid_life = 0;
     for col in d.phyrexian.chars() {
-        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there
-        if pl.life > 10 && pips.contains(col) && !can_pay(g, p, gn.max(0) as u32, &pips, false) {
+        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
+        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
+        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay(g, p, gn.max(0) as u32, &pips, false) {
             pips = pips.replacen(col, "", 1);
+            paid_life += 2;
         }
     }
+    crate::impls::krrik::drop_black(g, p, c, gn, &mut pips); // K'rrik: 2 life for a {B}
     gn = (gn + crate::dsl::cost_delta(g, p, c)).max(0);
     gn = (gn + crate::impls::t0_stella::kaza_delta(g, p, c)).max(0); // Kaza, Roil Chaser
     if !g.hooks.is_empty() {

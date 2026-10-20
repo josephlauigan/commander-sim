@@ -2213,6 +2213,10 @@ fn pkg2_prio(g: &Game, p: PlayerId, name: &str) -> Option<i32> {
             }
         }
         UNRAVELER => 88,
+        super::krrik::KRRIK => {
+            // a body that grows with every black spell; cast it early, with life to spare when the mana is short
+            if g.player(p).life >= 16 { 70 } else { 44 }
+        }
         "Ambition's Cost" if g.player(p).life <= 6 => 0,
         _ => return None,
     })

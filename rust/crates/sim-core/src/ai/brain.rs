@@ -484,9 +484,9 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     {
         lose_life(g, p, l, Some(p), "life", None)?;
     }
-    if matches!(zone, "hand" | "cmd") && !d.phyrexian.is_empty() {
+    if matches!(zone, "hand" | "cmd") && !crate::impls::krrik::life_pips(g, p, c).is_empty() {
         // Phyrexian symbols paid with 2 life each
-        let life = phyrexian_life(g, c, &cp);
+        let life = phyrexian_life(g, p, c, &cp);
         if life > 0 {
             lose_life(g, p, life, Some(p), "life", None)?;
         }
@@ -533,7 +533,7 @@ fn rem_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String, i32) {
         return (d.generic, d.pips.to_string(), 0);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let life = phyrexian_life(g, c, &pips);
+    let life = phyrexian_life(g, p, c, &pips);
     (gn, pips, life)
 }
 
