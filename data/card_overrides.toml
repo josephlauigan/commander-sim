@@ -9011,3 +9011,14 @@ note = "{T}: {B} or {G}; enters tapped unless you have two or more opponents"
 ["Kuja, Genome Sorcerer // Trance Kuja, Fate Defied"]
 status = "Full"
 note = "3/4 for {2}{B}{R}; at the beginning of your end step it makes a tapped 0/1 black Wizard token (whenever you cast a noncreature spell, the token deals 1 damage to each opponent), then transforms into Trance Kuja, Fate Defied (4/6) once you control four or more Wizards (Kefka and Niv-Mizzet count); Flare Star: damage a Wizard you control would deal to a player or permanent is doubled (the tokens' pings, Wizard creatures in combat, Niv-Mizzet's draw trigger) (impls/kuja.rs)"
+
+["The Cruelty of Gix"]
+tags = ""
+dsl = []
+status = "Full"
+note = "read ahead Saga: the AI starts on III at once when any graveyard (an opponent's too) holds a creature worth 3 or more to take, on II when the deck has a piece it wants and 14 life remains, else on I; a person is asked the chapter, the opponent, and the card. I: target opponent reveals their hand and you choose a creature or planeswalker card there, which they discard (the AI takes the best by value). II: search for any card, lose 3 life. III: a creature card from any graveyard onto the battlefield under your control (the best). Lore counters are added at the upkeep, not after the draw step; no proliferate (code: impls/sephfs_cards.rs, gix_*)"
+
+["K'rrik, Son of Yawgmoth"]
+dsl = []
+status = "Full"
+note = "lifelink 2/2; with K'rrik out, each {B} of a black spell may be paid with 2 life: the AI does so only for a pip its mana cannot pay and only while its life stays at 15 or more afterwards (a person chooses mana or life per pip, no floor); his own {B/P} costs can be paid with life too (10 life floor, the existing Phyrexian rule); a +1/+1 counter whenever you cast a black spell (code: impls/krrik.rs, engine/mana.rs cost_of / phyrexian_life). Not modeled: life for {B} in abilities' costs and in removal spells' costs"

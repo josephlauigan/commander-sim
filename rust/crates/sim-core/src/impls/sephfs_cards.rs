@@ -559,6 +559,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, BRAIDS)?;
     c.etb = Some(braids_etb);
     c.upkeep = Some(braids_lore);
+    let c = r.card(db, GIX)?;
+    c.etb = Some(gix_etb);
+    c.upkeep = Some(gix_lore);
     let c = r.card(db, "Grave Betrayal")?;
     c.dies = Some(betrayal_dies);
     c.end_step = Some(betrayal_end);
@@ -888,4 +891,158 @@ fn blood_person(g: &mut Game, p: PlayerId, ctx: &Ctx) -> Res<Sym> {
         }
     }
     Ok("gy")
+}
+
+// ================================================================== The Cruelty of Gix
+pub const GIX: &str = "The Cruelty of Gix";
+/// the AI reads ahead to chapter II (the tutor, 3 life) only with at least this much life
+const GIX_TUTOR_LIFE: i32 = 14;
+
+fn is_pw(g: &Game, c: CardId) -> bool {
+    g.db.get(c).types.has(crate::cards::Types::PLANESWALKER)
+}
+
+/// what chapter I takes from a hand: a creature by its steal value, a planeswalker by mana value and bomb rating
+fn gix_hand_value(g: &Game, c: CardId) -> f64 {
+    let d = g.db.get(c);
+    if d.creature {
+        steal_value(g, c)
+    } else if is_pw(g, c) {
+        1.0 + 0.5 * d.cmc as f64 + 0.8 * d.bomb as f64
+    } else {
+        0.0
+    }
+}
+
+/// chapter I for the AI: the opponent and the creature or planeswalker card in their hand worth most, if any
+fn gix_hand_pick(g: &Game, p: PlayerId) -> Option<(PlayerId, CardId)> {
+    g.opps(p)
+        .filter(|&q| g.player(q).alive)
+        .flat_map(|q| g.player(q).hand.iter().map(move |&c| (q, c)))
+        .filter(|&(_, c)| gix_hand_value(g, c) > 0.0)
+        .max_by(|a, b| gix_hand_value(g, a.1).total_cmp(&gix_hand_value(g, b.1)))
+}
+
+/// the chapter the AI reads ahead to: III at once when any graveyard (an opponent's too, after a wipe) holds a creature
+/// worth taking (steal value 3 or more, as Braids's chapter II and Rewrite Regrets judge it); II when the deck has a
+/// piece it wants (`tutor_pick_named`: the finisher, a sweeper, an outlet, mana) and 14 life is left to pay 3; else I,
+/// which still gets II and III on the next two turns.
+pub fn gix_start(g: &Game, p: PlayerId) -> i64 {
+    if !steal_targets(g, p).is_empty() {
+        3
+    } else if g.player(p).life >= GIX_TUTOR_LIFE && crate::ai::decks::tutor_pick_named(g, p, "any").is_some() {
+        2
+    } else {
+        1
+    }
+}
+
+/// one chapter of The Cruelty of Gix
+fn gix_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
+    let human = crate::human::is_human(g, p);
+    match n {
+        1 => {
+            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter I: look at a hand, discard a creature or planeswalker", Some(3.0))? {
+                return Ok(());
+            }
+            let pick = if human {
+                let q = crate::human::choices::target_opponent(g, p, GIX)?;
+                let cands: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&c| g.db.get(c).creature || is_pw(g, c)).collect();
+                let labels: Vec<String> = cands.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+                if labels.is_empty() {
+                    None
+                } else {
+                    let k = crate::human::choices::choose_one(g, p, "choose", "The Cruelty of Gix: that player discards which creature or planeswalker card?", &labels)?;
+                    Some((q, cands[k]))
+                }
+            } else {
+                gix_hand_pick(g, p)
+            };
+            if let Some((q, c)) = pick {
+                crate::glog!(g, "    The Cruelty of Gix: {} discards {}", g.player(q).name, g.db.get(c).name);
+                crate::engine::zones::discard_cards(g, q, &[c])?;
+                stat(g, p, "sf_gix_discards", 1);
+            }
+        }
+        2 => {
+            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter II: tutor, lose 3 life", Some(3.0))? {
+                return Ok(());
+            }
+            crate::engine::tutors::tutor(g, p, "any")?;
+            lose_life(g, p, 3, Some(p), "life", None)?;
+            stat(g, p, "sf_gix_tutors", 1);
+        }
+        _ => {
+            let cands = crate::human::choices::rean_candidates(g, p, "animate"); // any graveyard
+            if cands.is_empty() {
+                return Ok(());
+            }
+            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter III: a creature card from a graveyard to the battlefield", Some(3.0))? {
+                return Ok(());
+            }
+            let pick = if human {
+                let labels: Vec<String> = cands
+                    .iter()
+                    .map(|&(c, q)| {
+                        let whose = if q == p { "your graveyard".to_string() } else { format!("{}'s graveyard", g.player(q).name) };
+                        format!("{} ({whose})", crate::human::choices::card_label(g, c))
+                    })
+                    .collect();
+                let k = crate::human::choices::choose_one(g, p, "target", "The Cruelty of Gix: put which creature card onto the battlefield under your control?", &labels)?;
+                Some(cands[k])
+            } else {
+                cands.iter().copied().max_by(|a, b| steal_value(g, a.0).total_cmp(&steal_value(g, b.0)))
+            };
+            if let Some((c, o)) = pick
+                && let Some(m) = take_from_gy(g, p, c, o)?
+            {
+                crate::glog!(g, "    The Cruelty of Gix returns {} under {}'s control", g.perm(m).name, g.player(p).name);
+                stat(g, p, "sf_gix_returns", 1);
+            }
+        }
+    }
+    Ok(())
+}
+
+/// **The Cruelty of Gix** (read ahead Saga): enters on the chapter `gix_start` picks (a person is asked), with that many
+/// lore counters; skipped chapters don't trigger; sacrificed after III. As with Braids's Frightful Return, the lore
+/// counter is added at the upkeep rather than after the draw step.
+fn gix_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = g.perm(src).owner;
+    let n = if crate::human::is_human(g, o) {
+        let labels: Vec<String> = [
+            "I: target opponent reveals their hand; you choose a creature or planeswalker card there to be discarded",
+            "II: search your library for a card, put it into your hand, lose 3 life",
+            "III: put a creature card from a graveyard onto the battlefield under your control",
+        ]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+        1 + crate::human::choices::choose_one(g, o, "choose", "The Cruelty of Gix (read ahead): start on which chapter?", &labels)? as i64
+    } else {
+        gix_start(g, o)
+    };
+    g.perm_mut(src).data.set(DataKey::Lore, Val::Int(n));
+    crate::glog!(g, "    {} reads ahead to chapter {n}", g.perm(src).name);
+    gix_chapter(g, src, o, n)?;
+    if n >= 3 && live(g, src) {
+        die(g, src, "sac")?;
+    }
+    Ok(())
+}
+
+fn gix_lore(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != g.perm(src).owner || !live(g, src) || g.perm(src).data.get(DataKey::Lore).is_none() {
+        return Ok(());
+    }
+    let n = g.perm(src).data.int(DataKey::Lore) + 1;
+    g.perm_mut(src).data.set(DataKey::Lore, Val::Int(n));
+    gix_chapter(g, src, p, n)?;
+    if n >= 3 && live(g, src) {
+        die(g, src, "sac")?;
+    }
+    Ok(())
 }

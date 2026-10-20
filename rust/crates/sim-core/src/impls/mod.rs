@@ -36,6 +36,7 @@ pub mod bites;
 pub mod green_cards;
 pub mod titania;
 pub mod sheoldred;
+pub mod krrik;
 pub mod blue_cards;
 pub mod cloud;
 pub mod sweepers;
@@ -113,6 +114,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     green_cards::register(&mut r, db)?;
     titania::register(&mut r, db)?;
     sheoldred::register(&mut r, db)?;
+    krrik::register(&mut r, db)?;
     blue_cards::register(&mut r, db)?;
     cloud::register(&mut r, db)?;
     sweepers::register(&mut r, db)?;

@@ -109,6 +109,7 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         "Call of the Ring" => return 50,
         "Braids's Frightful Return" => return 52,
+        "The Cruelty of Gix" => return 56, // every chapter pays; the cast picks the chapter (sephfs_cards::gix_start)
         "Massacre Girl" => return massacre_prio(g, p, base),
         "Pestilence" => {
             return if seph.is_some() || g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && g.is_creature(m)) {

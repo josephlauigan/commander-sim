@@ -824,7 +824,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         return Ok(Some(format!("You can't pay {cname}'s additional cost.")));
     }
     let mut life = 0;
-    let phy = legal::phyrexian(g, c);
+    let phy = legal::phyrexian(g, p, c);
     if !phy.is_empty() && !cit {
         // {B/P}: its colour, or 2 life (your choice)
         let ways = legal::phyrexian_ways(g, p, c, gn, &pips);

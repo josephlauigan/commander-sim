@@ -138,8 +138,8 @@ pub fn instant_speed(g: &Game, p: PlayerId, c: CardId) -> bool {
 }
 
 /// the colours of c's Phyrexian mana symbols ({B/P}: 'B'), from its printed mana cost; '' if none
-pub fn phyrexian(g: &Game, c: CardId) -> String {
-    g.db.get(c).phyrexian.to_string()
+pub fn phyrexian(g: &Game, p: PlayerId, c: CardId) -> String {
+    crate::impls::krrik::life_pips(g, p, c) // K'rrik out: every {B} of a black spell too
 }
 
 /// What c costs to cast (before target-dependent extras), with every Phyrexian symbol counted as its mana (the
@@ -152,7 +152,7 @@ pub fn base_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
     let (gn, mut pips) = engine::mana::cost_of(g, p, c);
     let d = g.db.get(c);
     let mut seen = vec![];
-    for col in phyrexian(g, c).chars() {
+    for col in phyrexian(g, p, c).chars() {
         if seen.contains(&col) {
             continue;
         }
@@ -167,7 +167,7 @@ pub fn base_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
 /// The ways to pay c's Phyrexian symbols you can afford now: [(life paid, pips left to pay with mana)], each symbol
 /// paid with its colour or with 2 life (and you need that much life to pay it).
 pub fn phyrexian_ways(g: &Game, p: PlayerId, c: CardId, gn: u32, pips: &str) -> Vec<(i32, String)> {
-    let phy: Vec<char> = phyrexian(g, c).chars().collect();
+    let phy: Vec<char> = phyrexian(g, p, c).chars().collect();
     let mut out = vec![];
     for k in 0..=phy.len() {
         let mut left = pips.to_string();
@@ -252,7 +252,7 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
         return Some(why);
     }
     let (gn, pips) = base_cost(g, p, c);
-    let phy = phyrexian(g, c);
+    let phy = phyrexian(g, p, c);
     if !phy.is_empty() && !phyrexian_ways(g, p, c, gn, &pips).is_empty() {
         return None; // mana, life, or a mix
     }
