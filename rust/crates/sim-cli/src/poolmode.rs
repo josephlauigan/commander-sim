@@ -790,7 +790,7 @@ mod tier_tests {
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),
             ("godo", &["t6"]),
-            ("karn", &["t3", "t4"]),
+            ("karn", &["t4", "t5"]),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t) in want {

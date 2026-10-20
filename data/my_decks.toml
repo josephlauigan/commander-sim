@@ -99,4 +99,4 @@ file = "JD/karn-colorless-artifacts.md"
 name = "Karn"
 commander = "Karn, Legacy Reforged"
 ident = ""
-tiers = ["t3", "t4"] # placeholder until the tier run sets them
+tiers = ["t4", "t5"]
