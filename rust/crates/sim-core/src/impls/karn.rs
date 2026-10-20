@@ -21,8 +21,8 @@
 
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::total_mana;
-use crate::engine::stack::trigger_window;
 use crate::engine::removal::apply_removal;
+use crate::engine::stack::trigger_window;
 use crate::engine::values::{colors_of, epow, etgh, pval, untargetable};
 use crate::engine::zones::draw;
 use crate::flow::Res;
@@ -94,7 +94,9 @@ fn karn_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     let n = artifacts(g, p);
-    if n == 0 || !trigger_window(g, p, Some(src), "add {C} for each artifact (artifact spells and abilities)", Some(5.0))? {
+    if n == 0
+        || !trigger_window(g, p, Some(src), "add {C} for each artifact (artifact spells and abilities)", Some(5.0))?
+    {
         return Ok(());
     }
     g.player_mut(p).floating.art += n;
@@ -141,7 +143,12 @@ fn mightstone_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         let labels = vec!["Draw two cards".to_string(), "Target creature gets -5/-5 until end of turn".to_string()];
         let k = crate::human::choices::choose_one(g, p, "mode", "The Mightstone and Weakstone: choose one", &labels)?;
         if k == 1 {
-            let all: Vec<PermId> = g.players.iter().flat_map(|q| q.perms.clone()).filter(|&x| live(g, x) && g.is_creature(x) && !untargetable(g, x)).collect();
+            let all: Vec<PermId> = g
+                .players
+                .iter()
+                .flat_map(|q| q.perms.clone())
+                .filter(|&x| live(g, x) && g.is_creature(x) && !untargetable(g, x))
+                .collect();
             if let Some(t) = crate::human::cards::pick_perm(g, p, "target", "-5/-5 on which creature?", &all, None)? {
                 return shrink5(g, p, t);
             }
@@ -337,7 +344,8 @@ fn behind(g: &Game, p: PlayerId) -> bool {
     let mine = nonland_perms(g, p);
     let life = g.player(p).life;
     g.opps(p).any(|q| {
-        let power: i32 = g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum();
+        let power: i32 =
+            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum();
         nonland_perms(g, q) >= mine + 3 || power * 3 >= life
     })
 }
@@ -388,11 +396,7 @@ pub fn karn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             }
         }
         "Ugin, the Spirit Dragon" => {
-            if coloured_opp_perms(g, p) >= 4 || (behind(g, p) && coloured_opp_perms(g, p) >= 2) {
-                92
-            } else {
-                38
-            }
+            if coloured_opp_perms(g, p) >= 4 || (behind(g, p) && coloured_opp_perms(g, p) >= 2) { 92 } else { 38 }
         }
         _ => {
             let v = crate::ai::pool::generic_prio(g, p, c);
@@ -433,4 +437,20 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+/// look-ahead score bonus for a main-phase option of the karn deck (added to the rollout average in
+/// `search::choose_inner`): the position score can't see what Karn's upkeep mana is worth, so casting him gets a flat
+/// bonus (as early as possible: the paper plan), and each cheap artifact cast with Karn out (another {C} every
+/// upkeep) a smaller one
+pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
+    let Some(Action::Cast { card, .. }) = &o.act else { return 0.0 };
+    let d = g.db.get(*card);
+    if &*d.name == KARN {
+        return 10.0;
+    }
+    if karn_of(g, p).is_some() && d.types.has(Types::ARTIFACT) && !d.land && d.cmc <= 2 {
+        return 1.5;
+    }
+    0.0
 }

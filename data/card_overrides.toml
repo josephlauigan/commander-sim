@@ -9072,3 +9072,15 @@ dsl = [
 ]
 status = "Full"
 note = "{T}: {C}; {7},{T}: a 2/2 Assembly-Worker artifact creature token (it counts for Karn's artifacts)"
+
+["Karn, Legacy Reforged"]
+status = "Full"
+note = "power and toughness each equal the greatest mana value among your artifacts (a bonus on the printed 1/1); at your upkeep {C} for each artifact you control that can't pay for nonartifact spells (artifact spells, abilities and taxes only) and lasts until the turn ends (code: impls/karn.rs, engine::mana Floating::art / FloatArt, practice ManaPool::art); the AI casts him as early as possible (karn_prio, search_bonus)"
+
+["Mishra's Factory"]
+status = "Approximate"
+note = "{T}: {C}; {1}: becomes a 2/2 Assembly-Worker artifact creature (the AI animates it to attack when the way is open and to block a dangerous attack, and it counts for Karn); not modeled: {T}: target Assembly-Worker gets +1/+1"
+
+["Mishra's Foundry"]
+status = "Approximate"
+note = "{T}: {C}; {2}: becomes a 2/2 Assembly-Worker artifact creature (animated to attack when open, and to block a dangerous attack; it counts for Karn); not modeled: {1},{T}: target attacking Assembly-Worker gets +2/+2"

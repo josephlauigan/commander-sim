@@ -213,3 +213,30 @@ fn karn_prio_casts_him_first_and_holds_the_sweepers() {
     perm(&mut g, P0, "Karn, Legacy Reforged");
     assert!(p(&g, "Lightning Greaves") > 80);
 }
+
+#[test]
+fn the_land_searches_take_the_missing_tron_piece_then_wastes() {
+    let mut g = game();
+    lands(&mut g, P0, "Urza's Mine", 1, false);
+    let names = ["Wastes", "Urza's Tower", "Urza's Power Plant", "Mishra's Workshop"];
+    let cands: Vec<_> = names.iter().map(|n| card(&g, n)).collect();
+    let pick = |g: &Game, c: &[sim_core::ids::CardId]| g.db.get(karn::search_pick(g, P0, c).unwrap()).name.to_string();
+    assert!(["Urza's Tower", "Urza's Power Plant"].contains(&pick(&g, &cands).as_str()), "a Tron piece first");
+    lands(&mut g, P0, "Urza's Tower", 1, false);
+    assert_eq!(pick(&g, &cands), "Urza's Power Plant");
+    lands(&mut g, P0, "Urza's Power Plant", 1, false);
+    assert_eq!(pick(&g, &cands), "Mishra's Workshop", "Tron whole: a land that does something");
+    assert_eq!(pick(&g, &cands[..1]), "Wastes");
+    // the other decks' searches are left alone
+    assert!(karn::search_pick(&table(&["seph", "karn"]), P0, &cands).is_none());
+}
+
+#[test]
+fn the_baubles_stay_out_while_karn_is_coming() {
+    let mut g = game();
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone"]);
+    assert!(karn::hold_ability(&g, P0, "Mishra's Bauble"), "Karn is in the command zone");
+    assert!(!karn::hold_ability(&g, P0, "Sol Ring"));
+    g.player_mut(P0).hand.clear();
+    assert!(!karn::hold_ability(&g, P0, "Mishra's Bauble"), "an empty hand digs");
+}
