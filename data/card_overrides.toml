@@ -9030,3 +9030,45 @@ dsl = [
 ]
 status = "Approximate"
 note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"
+
+["The Mightstone and Weakstone"]
+add_tags = ["pstone"]
+dsl = []
+status = "Full"
+note = "enters: the AI kills the best opposing creature -5/-5 can handle when it is worth a card, else draws two (a person chooses); {T}: {C}{C} that can't be spent to cast nonartifact spells (artifact spells and abilities)"
+
+["Gilded Lotus"]
+tags = "rock=3:A"
+status = "Full"
+note = "{T}: three mana of any one colour (colourless in the colourless Karn deck)"
+
+["Urza's Mine"]
+status = "Full"
+note = "{T}: {C}; {C}{C} instead with an Urza's Power-Plant and an Urza's Tower (Tron)"
+
+["Urza's Power Plant"]
+status = "Full"
+note = "{T}: {C}; {C}{C} instead with an Urza's Mine and an Urza's Tower (Tron)"
+
+["Urza's Tower"]
+status = "Full"
+note = "{T}: {C}; {C}{C}{C} instead with an Urza's Mine and an Urza's Power-Plant (Tron)"
+
+["Urza's Workshop"]
+status = "Full"
+note = "{T}: {C}; with three or more artifacts, {C} for each Urza's land you control"
+
+["Mishra's Workshop"]
+status = "Full"
+note = "{T}: {C}{C}{C}, spent only to cast artifact spells (not for abilities)"
+
+["Darksteel Citadel"]
+status = "Approximate"
+note = "artifact land ({T}: {C}) that counts for Karn's artifacts; indestructible is not modeled"
+
+["Urza's Factory"]
+dsl = [
+  { type = "activated", cost = { mana = "7", tap = true }, effects = [{ do = "token", n = 1, pow = 2, tgh = 2, keywords = [], attacking = false, warrior = false, types = ["artifact", "assembly-worker"] }], sorcery = false, once = false },
+]
+status = "Full"
+note = "{T}: {C}; {7},{T}: a 2/2 Assembly-Worker artifact creature token (it counts for Karn's artifacts)"

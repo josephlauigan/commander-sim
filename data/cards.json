@@ -42158,7 +42158,7 @@
    "generic": 5,
    "pips": "",
    "tags": {
-    "rock": "1:C"
+    "rock": "3:A"
    },
    "pow": 0,
    "tgh": 0,
@@ -42171,7 +42171,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -107637,33 +107637,13 @@
    "pips": "",
    "tags": {
     "leg": true,
-    "rock": "2:C"
+    "rock": "2:C",
+    "pstone": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "modal",
-       "choose": 1,
-       "modes": [
-        [
-         {
-          "do": "draw",
-          "n": 2,
-          "who": "you"
-         }
-        ]
-       ]
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -107673,7 +107653,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,
@@ -114141,6 +114121,7 @@
        "attacking": false,
        "warrior": false,
        "types": [
+        "artifact",
         "assembly-worker"
        ]
       }
@@ -114158,7 +114139,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,

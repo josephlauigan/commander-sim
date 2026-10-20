@@ -22,7 +22,9 @@
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::total_mana;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{colors_of, epow};
+use crate::engine::removal::apply_removal;
+use crate::engine::values::{colors_of, epow, etgh, pval, untargetable};
+use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
@@ -100,6 +102,56 @@ fn karn_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     g.player_mut(p).milestone.entry("karn").or_insert(turns); // the plan report: Karn's first mana
     crate::glog!(g, "  {} adds {} for Karn (artifacts only)", g.player(p).name, "{C}".repeat(n as usize));
     Ok(())
+}
+
+// ================================================================== The Mightstone and Weakstone
+pub const MIGHTSTONE: &str = "The Mightstone and Weakstone";
+
+/// -5/-5 until end of turn on m (a lethal one goes through the removal code)
+fn shrink5(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    if !g.perm(m).on_bf {
+        return Ok(());
+    }
+    if etgh(g, m) <= 5 {
+        return apply_removal(g, Some(p), m, "shrink5", None);
+    }
+    let x = g.perm_mut(m);
+    x.eot_pt = (x.eot_pt.0 - 5, x.eot_pt.1 - 5);
+    Ok(())
+}
+
+/// When it enters, choose one: draw two cards; or target creature gets -5/-5 until end of turn. (The {T}: add {C}{C}
+/// that can't be spent on nonartifact spells is the `rock` tag with `pstone`: `engine::mana`.) The AI kills the best
+/// opposing creature the -5/-5 handles when it is worth a card (a threat of 5 or more), else it draws.
+fn mightstone_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m != src || g.perm(src).owner != p {
+        return Ok(());
+    }
+    let victims: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.clone())
+        .filter(|&x| live(g, x) && g.is_creature(x) && !untargetable(g, x))
+        .collect();
+    let human = crate::human::is_human(g, p);
+    let best = victims.iter().copied().filter(|&x| etgh(g, x) <= 5).max_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)));
+    if !trigger_window(g, p, Some(src), "draw two cards, or -5/-5 on a creature", Some(5.0))? {
+        return Ok(());
+    }
+    if human {
+        let labels = vec!["Draw two cards".to_string(), "Target creature gets -5/-5 until end of turn".to_string()];
+        let k = crate::human::choices::choose_one(g, p, "mode", "The Mightstone and Weakstone: choose one", &labels)?;
+        if k == 1 {
+            let all: Vec<PermId> = g.players.iter().flat_map(|q| q.perms.clone()).filter(|&x| live(g, x) && g.is_creature(x) && !untargetable(g, x)).collect();
+            if let Some(t) = crate::human::cards::pick_perm(g, p, "target", "-5/-5 on which creature?", &all, None)? {
+                return shrink5(g, p, t);
+            }
+        }
+        return draw(g, p, 2, false);
+    }
+    match best {
+        Some(t) if pval(g, t) >= 5.0 => shrink5(g, p, t),
+        _ => draw(g, p, 2, false),
+    }
 }
 
 // ================================================================== Tron and Urza's Workshop
@@ -365,6 +417,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.self_pt = Some(karn_pt);
         c.as_enters = Some(selfpt_as);
         c.upkeep = Some(karn_upkeep);
+    }
+    if db.id(MIGHTSTONE).is_some() {
+        r.card(db, MIGHTSTONE)?.etb = Some(mightstone_etb);
     }
     if db.id("Urza's Mine").is_some() {
         r.card(db, "Urza's Mine")?.dyn_mana_land = Some(mine_mana);
