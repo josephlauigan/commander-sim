@@ -26,7 +26,11 @@ fn go(g: &mut Game, o: &Opt) -> bool {
 }
 
 fn on(g: &Game, p: PlayerId, name: &str) -> usize {
-    g.player(p).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == name)).count()
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == name))
+        .count()
 }
 
 /// put these cards on top of p's library, the last name on top
@@ -93,9 +97,14 @@ fn karn_minus_one_returns_the_silver_card_and_minus_two_makes_a_construct() {
     let m2 = opts(&mut g, k, Some(false)).into_iter().find(|o| o.label.contains("-2")).expect("-2");
     assert!(go(&mut g, &m2));
     assert_eq!(g.perm(k).loyalty, Some(3));
-    let con = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).data.truthy(DataKey::Construct)).expect("a Construct");
+    let con =
+        g.player(P0).perms.iter().copied().find(|&m| g.perm(m).data.truthy(DataKey::Construct)).expect("a Construct");
     assert!(g.perm(con).token);
-    assert_eq!((sim_core::engine::values::epow(&g, con), sim_core::engine::values::etgh(&g, con)), (3, 3), "Sol Ring, Mind Stone and itself");
+    assert_eq!(
+        (sim_core::engine::values::epow(&g, con), sim_core::engine::values::etgh(&g, con)),
+        (3, 3),
+        "Sol Ring, Mind Stone and itself"
+    );
 }
 
 // ======================================================== Mazemind Tome

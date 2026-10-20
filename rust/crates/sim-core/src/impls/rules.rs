@@ -377,6 +377,9 @@ fn boros_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// rules.ability_locked: can src's activated abilities not be used right now? (Arrest, Encrust; Collector Ouphe /
 /// Karn: artifacts; Cursed Totem: creatures; Grand Abolisher: nothing of yours during its controller's turn)
 pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
+    if crate::impls::t6_stax::needle_stops(g, &g.perm(src).name) {
+        return true; // Pithing Needle: not a mana ability (those go through the mana code)
+    }
     if g.locks_used && (crate::engine::cast::abilities_locked(g, p) || crate::engine::cast::split_second_up(g)) {
         return true; // Abeyance / split second (mana abilities are used through the mana code, not here)
     }
