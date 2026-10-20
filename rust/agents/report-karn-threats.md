@@ -39,3 +39,7 @@ Tests: `rust/crates/sim-core/tests/cards_karn_threats.rs` (22 tests).
 ## Notes for the merge
 - Karn, the commander, and the AI plan (karn-core) are not touched. Karn's restricted mana: my abilities use the normal `pay`.
 - Not run: sims (only unit tests). Smoke runs noted in the final line of the report.
+
+## Checks
+- `cargo build --release -j 7 --all-targets`: no warnings. `cargo test --release -j 7 --no-fail-fast`: all pass except 8 tests that count the decks (13 -> 14 with the new `karn` entry in decks.json / my_decks.toml): cardgen `deck_guard_fixture_is_current` (tests/fixtures/my_decks_parsed.json needs regenerating), practice `app_entry`, `http_catalog`, `http_server::test_options`, `server_fake::options_and_saves_shapes`, `session_partners` (deck lists), sim-cli `the_repository_decks_have_their_tiers`, sim-core `game::every_deck_finishes_games_at_every_tier`. They belong to the deck wiring (karn-core), not to these cards.
+- `all_decks adaptive 3` (75 games) and `all_decks lookahead 1` (25 games): no panic.
