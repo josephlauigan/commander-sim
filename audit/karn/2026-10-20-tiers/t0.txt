@@ -1,0 +1,15 @@
+
+=== Karn vs Tier 0 (Bracket 2 precons) [loose, lookahead AI, 1000 games] ===
+Win rate  22.6%   95% CI 20.1-25.3%   (even share 25%: -2.4 pts)
+Average turn (your own turn count) of wins 12.0, of losses 9.2
+Plan online (Karn first adds mana at upkeep): 78.6% of games
+Wins by: damage 91%, combo 9%
+  Opponent                                    seated  won when seated  eliminated you
+  Captain America (captain-america-avengers-   61.3%            25.0%           17.4%
+  Zurgo Stormrender (zurgo-mardu-surge)        60.9%            25.0%           15.4%
+  Giada (giada-calling-all-angels)             59.8%            32.9%           20.4%
+  Anikthea (anikthea-enduring-enchantments)    59.4%            30.5%           16.1%
+  Stella Lee (stella-lee-quick-draw)           58.6%            15.5%            8.1%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(185s total)

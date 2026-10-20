@@ -1,0 +1,24 @@
+
+=== Karn vs Tier 4 (Low B4) [loose, lookahead AI, 994 games] ===
+Win rate  23.8%   95% CI 21.3-26.6%   (even share 25%: -1.2 pts)
+Average turn (your own turn count) of wins 12.6, of losses 8.2
+Plan online (Karn first adds mana at upkeep): 73.6% of games
+Wins by: damage 97%, combo 3%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Heliod (heliod-mono-white-stax)              61.1%            33.4%           19.9%
+  Yuriko (yuriko-dimir-ninjas)                 60.9%            26.6%           17.2%
+  Krenko (krenko-mono-red-goblins)             60.0%            27.2%           17.5%
+  Chulane (chulane-bant-value-combo)           59.4%            19.2%           10.9%
+  Prosper (prosper-rakdos-exile-treasure)      58.8%            20.2%           10.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(371s total)
+
+WARNING: 6 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500220  panic: attempt to add with overflow
+   seed 500301  panic: attempt to add with overflow
+   seed 500471  panic: attempt to add with overflow
+   seed 500564  panic: attempt to add with overflow
+   seed 500657  panic: attempt to add with overflow
+  Please send me that output so I can fix the cause.
