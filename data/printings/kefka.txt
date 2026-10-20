@@ -34,8 +34,7 @@
 1 Jeska's Will (cmr) 187
 1 Jin-Gitaxias, Progress Tyrant (neo) 445
 1 Kefka, Court Mage // Kefka, Ruler of Ruin (fin) 322
-# placeholder until JD's copy is known
-1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied (fin) 232
+1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied (fin) 399
 1 Lightning Bolt (3ed) 162
 1 Lightning Greaves (fic) 349
 1 Lotus Petal (p30m) 2
