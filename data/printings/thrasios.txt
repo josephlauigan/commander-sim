@@ -2,18 +2,20 @@
 1 Arcane Denial (all) 22b
 1 Arcane Signet (p30m) 1P
 1 Archon of Absolution (eld) 3
-1 Austere Command (msc) 121
-1 Avacyn's Pilgrim (plst) MIC-132
-1 Avenge (msc) 11
+1 Austere Command (brc) 69
+1 Avacyn's Pilgrim (isd) 170
 1 Aven Mindcensor (clb) 688
+1 Avenge (msc) 11
 1 Baird, Steward of Argive (plst) DOM-4
 1 Baneslayer Angel (m21) 6
+1 Basalt Monolith (3ed) 235
 1 Bastion Protector (msc) 122
-1 Bite Down (fdn) 212
-1 Blossoming Defense (ecl) 167
+1 Bite Down (dmu) 155
+1 Blossoming Defense (kld) 146
+1 Breeding Pool (eoe) 251
 1 Brushland (bro) 259
 1 Caves of Koilos (drc) 148
-1 Cecil, Dark Knight (fin) 91
+1 Cecil, Dark Knight (fin) 525
 1 Coiling Oracle (rvr) 172
 1 Command Tower (pip) 259
 1 Conqueror's Flail (fic) 340
@@ -24,15 +26,16 @@
 1 Deathcap Glade (sos) 253
 1 Diabolic Tutor (sld) 1592
 1 Disenchant (ath) 5
+1 Dragonlord Dromoka (2x2) 376
 1 Drowned Catacomb (m11) 224
 1 Elenda, the Dusk Rose (2x2) 377
 1 Elspeth, Sun's Champion (ths) 9
 1 Exotic Orchard (ltc) 307
 1 Fact or Fiction (cmm) 631
-1 Faeburrow Elder (peld) 190p
+1 Faeburrow Elder (plst) ELD-190
 1 Falcon and Redwing (msc) 14
 1 Fellwar Stone (cmm) 657
-3 Forest (2ed) 302
+3 Forest (mdd) 301
 1 Ghostly Prison (soc) 146
 1 Glacial Fortress (msc) 248
 1 Grave Titan (pdp12) 2
@@ -41,7 +44,7 @@
 6 Island (mdd) 294
 1 Isolated Chapel (isd) 242
 1 Lightning Greaves (cmm) 398
-1 Llanowar Wastes (blc) 315
+1 Llanowar Wastes (c19) 258
 1 Lyra Dawnbringer (dmr) 413
 1 Memory Trap (fra) 15
 1 Nightveil Predator (rvr) 206
@@ -54,38 +57,26 @@
 1 Propaganda (plst) C16-94
 1 Resplendent Angel (lci) 32
 1 Restoration Angel (khc) 31
+1 Rings of Brighthearth (ltc) 352
 1 Shield of Kaldra (dst) 139
 1 Skyclave Apparition (m3c) 172
 1 Sphinx of New Prahv (rvr) 227
-1 Sunblast Angel (ddi) 21
-1 Sunpetal Grove (fic) 432
 1 Sun Titan (afc) 73
+1 Sunblast Angel (ddi) 21
+1 Sunpetal Grove (ltc) 336
 6 Swamp (mdd) 296
 1 Swords to Plowshares (ice) 54
+1 Talisman of Curiosity (pip) 245
+1 Talisman of Unity (mrd) 257
 1 The Wasp, Winsome Avenger (msc) 39
+1 Thrasios, Triton Hero (fca) 58
 1 Tymna the Weaver (fca) 18
 1 Unclaimed Territory (msc) 275
 1 Underground River (wc98) bs362
+1 Undergrowth Stadium (cmr) 359
 1 Vampire Nighthawk (m13) 112
+1 Walking Ballista (sld) 58
 1 Windborn Muse (lgn) 28
 1 Witherbloom Charm (sos) 244
 1 Worldly Tutor (dmr) 442
-1 Yavimaya Coast (soc) 425
-# placeholder until JD's copy is known
-1 Basalt Monolith (2xm) 232
-# placeholder until JD's copy is known
-1 Breeding Pool (trk) 279
-# placeholder until JD's copy is known
-1 Dragonlord Dromoka (tdc) 286
-# placeholder until JD's copy is known
-1 Rings of Brighthearth (cmr) 335
-# placeholder until JD's copy is known
-1 Talisman of Curiosity (mkc) 241
-# placeholder until JD's copy is known
-1 Talisman of Unity (mkc) 244
-# placeholder until JD's copy is known
-1 Thrasios, Triton Hero (c16) 46
-# placeholder until JD's copy is known
-1 Undergrowth Stadium (tmc) 80
-# placeholder until JD's copy is known
-1 Walking Ballista (2xm) 306
+1 Yavimaya Coast (c21) 409
