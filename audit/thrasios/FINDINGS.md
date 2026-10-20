@@ -51,3 +51,17 @@ First run (2,000 games, T5): 24.6% against Tymna/Kraum's 29.9% on the same seeds
 ## Weaknesses (by evidence, 10/19 traces)
 - Board wipes (Cyclonic Rift overload, -X/-X) take Tymna and Thrasios together (7 of 14 traced games).
 - Hands clog on colour: WW/BB/UU cards sit with 7-10 cards in hand and 8+ lands.
+
+## 2026-10-19: rerun after the AI fixes (loose, look-ahead, 2,000 games each, same seeds, T5)
+Raw: `2026-10-19-rerun/<deck>-t5.txt`. **Tymna/Thrasios 26.6%** (was 24.6%), **Tymna/Kraum 30.0%** (was 29.9%; it
+shares the Dark Endurance fix): the gap is **-3.4** (noise about ±2.8). JD committed to Thrasios anyway (10/19).
+- The fixes are worth about +2: combo wins 10.6% -> 16.2% of wins, plan online 76.5% of games, Blossoming Defense
+  and Ballista now cast in about 41-43% of their draws (Dark Endurance 31%).
+- What's left of the gap is pressure: 26.9 damage per game vs Kraum's 34.2 (the red dragons).
+- Thrasios still activates 0.54 times a game: the deck rarely has {4} spare.
+
+## 2026-10-19: Urza, Lord High Artificer from Sauron (paired, 2,000 games, T5; `2026-10-19-urza/`)
+| Swap | Result | Why |
+|---|---|---|
+| Coiling Oracle => Urza | -1.5 (26.6% -> 25.1%, ±2.2) | Noise, leaning worse. Urza is stuck in hand 53% of the games he's drawn and first cast in round 8.6: {U}{U} in a four-colour deck with 6 Islands. Mana on turns 4 and 6 unchanged, so his artifact mana doesn't arrive in time to feed Thrasios. Wins 50% when cast (correlation). |
+**Reading it:** not adopted. Urza stays in Sauron (Sauron's side: `audit/sauron/FINDINGS.md`, Spell Pierce back +0.5/+1.2, noise).

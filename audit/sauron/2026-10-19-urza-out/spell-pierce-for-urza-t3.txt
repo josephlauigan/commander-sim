@@ -1,0 +1,116 @@
+Model status of the swapped-in cards (cardgen audit):
+  Spell Pierce: Full (tags: `ctr=nc soft=2`)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sauron's AI?
+  AI: Spell Pierce: priority 0 (generic), cast as a response / removal only
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 16 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Spell Pierce: drawn in 27.5% of games (55), cast in 47.3% of those (26)
+
+2,200 games (current list and the swapped one, 1,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 7 minutes
+  progress 100.0%  3m30s elapsed, ~0m00s left
+Swaps: Urza, Lord High Artificer -> Spell Pierce
+
+=== Sauron vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  30.8% ->  31.3%  (delta +0.5 pts, noise ±3.7, paired)   n=1000
+               eliminated by (variant): Aurelia 22.1%  Tergrid 17.8%  Korvold 7.2%  Atraxa 9.8%  Marwyn 10.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sauron) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sauron: first combat damage to a player by an Army
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          30.8% ->  31.3%  +0.5pt   ±4.1 
+    Rounds survived (or game length)                  11.67 ->  11.88   +0.21  ±0.31 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.92 ->   0.92   +0.00  ±0.11 
+    Mana available on your turn 4                      4.04 ->   4.00   -0.05  ±0.14 
+    Mana available on your turn 6                      5.67 ->   5.70   +0.02  ±0.18 
+
+  Speed
+    Games where the game plan came online             63.6% ->  61.5%  -2.1pt   ±4.3 
+    Turn the game plan came online                     7.58 ->   7.58   +0.01  ±0.33 
+    Turn the commander first resolved                  6.78 ->   6.76   -0.02  ±0.23 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.78 ->  17.91   +0.13  ±0.84 
+    Tutors resolved per game                           0.45 ->   0.43   -0.02  ±0.06 
+    Spells cast per game                              11.92 ->  11.88   -0.04  ±0.55 
+
+  Interaction
+    Counterspells cast                                 0.83 ->   0.96   +0.13  ±0.08*
+    Spot removal cast                                  1.43 ->   1.50   +0.07  ±0.11 
+    Board wipes cast                                   0.35 ->   0.34   -0.01  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.01   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.78 ->   0.79   +0.02  ±0.10 
+    Your spells countered                              0.14 ->   0.14   -0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                45.03 ->  44.14   -0.89  ±3.88 
+      ...of which combat damage                       28.28 ->  27.77   -0.50  ±2.90 
+      ...of which magecraft / burn                     3.59 ->   3.55   -0.04  ±0.78 
+      ...of which drain triggers                       9.89 ->   9.44   -0.46  ±1.26 
+      ...of which other triggers                       3.23 ->   3.34   +0.11  ±0.67 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    better - Counterspells cast (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Spell Pierce                          23.7      67.5         7.2     32.5       38.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Urza, Lord High Artificer             24.0      69.2         8.1     30.8       39.2      0.05
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        30.8      31.3     +0.5
+    rounds survived                                  11.67     11.88    +0.21
+    eliminated, % of games                            68.7      67.3     -1.4
+    opponents it eliminated, per game                 0.94      0.92    -0.02
+    damage dealt, per game                            45.0      44.1     -0.9
+    plan: first combat damage to a player by an Army
+      plan online by turn 4, %                         9.2       8.4     -0.8
+      plan online by turn 6, %                        25.0      25.3     +0.3
+      plan online by turn 8, %                        43.5      40.6     -2.9
+      plan online by turn 12, %                       59.3      57.8     -1.5
+      plan online at all, %                           63.6      61.5     -2.1
+    commander resolved by turn 4, %                    9.7       9.9     +0.2
+    commander resolved by turn 6, %                   41.1      43.2     +2.1
+    commander removals, per game                      0.39      0.41    +0.02
+    lands on the battlefield, turn 4                  3.45      3.46    +0.00
+    lands on the battlefield, turn 8                  5.86      5.86    -0.00
+    mana available, turn 4                            4.04      4.00    -0.05
+    mana available, turn 8                            7.09      6.99    -0.10
+    cards in hand after the land drop, turn 4         5.63      5.65    +0.02
+    cards in hand after the land drop, turn 8         4.10      4.15    +0.05
+    wins by (current):  damage 96%, timeout 4%
+    wins by (swapped):  damage 96%, timeout 4%
+    eliminated by (current): Aurelia via combat 17.9%, Tergrid via combat 12.4%, Marwyn via combat 11.8%, Atraxa via combat 7.5%
+    eliminated by (swapped): Aurelia via combat 19.2%, Tergrid via combat 12.2%, Marwyn via combat 10.3%, Atraxa via combat 7.6%
+
+(210s total)
