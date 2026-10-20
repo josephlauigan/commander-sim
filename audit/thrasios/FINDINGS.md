@@ -70,3 +70,11 @@ shares the Dark Endurance fix): the gap is **-3.4** (noise about ±2.8). JD comm
 **-1.9 (26.9% -> 24.9%, ±2.3): noise, leaning worse; not adopted.** Vessel adds mana (+0.06 on turn 4, +0.13 on
 turn 6, beyond noise) but it doesn't turn into Thrasios activations or damage (-0.5 per game), and Greaves, cast in 81%
 of its draws, did as well when cast (35% vs Vessel's 36%). The deck's limit is spare mana late, not early ramp.
+
+## 2026-10-20: Walking Ballista fix (main vs branch karn-deck, same seed 4242, 3,000 games, T5)
+**-0.4 (25.7% -> 25.3%, ±1.5): no change.** Until now a cast Walking Ballista died at once as a 0/0 (its counters
+came after the 0/0 check, a bug kept from the Python port), so the 41-43% of drawn Ballistas cast since the 10/19
+AI fixes were wasted mana. The combo was never affected: the engine resolves Basalt Monolith + Rings + Ballista as
+one combo action, so Ballista never had to survive (combo wins 15% -> 14% of wins, unchanged). The fix also helps
+the opponents that run Ballista (Urza +1.2, Yawgmoth +0.4 won-when-seated), which offsets the deck's own gain.
+**Reading it:** Ballista as a plain creature (pinging dorks) is worth little here; its value is the combo.
