@@ -10,6 +10,7 @@
 #   make practice   practice mode in the browser (extra flags: ARGS="--port 9000")
 #   make cardgen    run cardgen:  make cardgen ARGS="audit --mine"
 #   make clean      remove the build output
+#   make ios-clean  remove the iPad app's build files (ios-shell/run.sh rebuilds them)
 #
 # Builds, tests and runs go through a memory cap (systemd-run, 24G) where systemd is available, so a runaway can't
 # take the machine down; elsewhere (macOS) they run directly.
@@ -35,10 +36,10 @@ AI      ?= adaptive
 JOBS    ?= $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
 ARGS    ?=
 
-.PHONY: help setup build test env shell sim practice cardgen clean
+.PHONY: help setup build test env shell sim practice cardgen clean ios-clean
 
 help:
-	@sed -n '3,12p' $(firstword $(MAKEFILE_LIST)) | sed 's/^# \{0,3\}//'
+	@sed -n '3,13p' $(firstword $(MAKEFILE_LIST)) | sed 's/^# \{0,3\}//'
 
 setup:
 	@if ! command -v rustup >/dev/null 2>&1; then \
@@ -75,3 +76,7 @@ cardgen: build
 
 clean:
 	cd $(RUST) && cargo clean
+
+ios-clean:
+	rm -rf ios-shell/build ios-shell/AppData ios-shell/Resources ios-shell/CommanderPractice.xcodeproj
+	@echo "Removed the iPad app build files. ios-shell/run.sh rebuilds everything."

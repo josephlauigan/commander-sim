@@ -1,4 +1,4 @@
-// The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
+el('h3', {}, s.title || x.name)// The browser table: the setup screen, the loading screen, the table (table.js), the log, and your decisions.
 import { el, icon, card as cardOf, renderTable as drawTable, renderSteps, fitBoards, commandersOf, setPrinted, forSeat } from './table.js';
 const $ = (sel) => document.querySelector(sel);
 let lastId = 0, pending = null, source = null;
@@ -684,10 +684,10 @@ function opponentCard(x) {
   const s = x.summary || {};
   const rows = (s.table || []).map(([label, text]) => el('p', {}, el('b', {}, `${label}: `), rich(text)));
   return el('button', { type: 'button', class: 'oppcard', 'aria-label': `${x.name}: how it plays` },
-    cardImage(x.commander),
+    deckImages(x),
     el('span', {}, el('b', {}, x.name), el('small', {}, s.axis || '')),
     el('div', { class: 'summary', role: 'tooltip' },
-      el('h3', {}, s.title || x.commander),
+      el('h3', {}, s.title || x.name),
       rows.length ? rows : el('p', {}, s.strategy ? rich(s.strategy) : 'No summary for this deck yet.'),
       el('p', { class: 'meta' }, el('b', {}, 'Game Changers: '), s.game_changers || 'none'),
       el('p', { class: 'meta' }, el('b', {}, 'Combos: '), rich(s.combos || 'None.'))));
@@ -700,7 +700,7 @@ function renderSetup() {
     type: 'button', class: 'tier', role: 'radio', 'aria-checked': String(t.key === chosen.tier),
     onclick: () => { if (chosen.tier !== t.key) { chosen.tier = t.key; drawOpponents(); } renderSetup(); },
   }, el('span', {}, el('b', {}, t.label)),
-    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: x.commander }, cardImage(x.commander), x.name))))));
+    el('span', { class: 'names' }, t.decks.map((x) => el('span', { title: (x.commanders || [x.commander]).join(' + ') }, (x.commanders || [x.commander]).map((n) => cardImage(n)), x.name)))));
   $('#opponents').replaceChildren(...chosen.opponents.map((k) => opponentCard(tier.decks.find((x) => x.key === k))));
   $('#decks').replaceChildren(...catalog.decks.map((d) => el('button', {
     type: 'button', class: 'deck', role: 'radio', 'aria-checked': String(d.key === chosen.deck),
@@ -756,6 +756,16 @@ function setZoom(z) {
   try { localStorage.setItem('cardZoom', String(zoom)); } catch (e) { /* private window: not remembered */ }
 }
 
+// commanders whose pictures are still downloading (decks not played yet): ask again a few times
+function watchImages(tries) {
+  const names = [...catalog.decks, ...catalog.tiers.flatMap((t) => t.decks)].flatMap((d) => d.commanders || [d.commander]);
+  if (tries >= 12 || names.every((n) => catalog.images[n])) return;
+  setTimeout(async () => {
+    try { catalog = (await api('/api/options')).data; renderSetup(); } catch (e) { /* offline: keep the names */ }
+    watchImages(tries + 1);
+  }, 5000);
+}
+
 async function init() {
   for (const b of document.querySelectorAll('[data-icon]')) b.prepend(icon(b.dataset.icon), ' ');
   try { setZoom(parseFloat(localStorage.getItem('cardZoom')) || 1); } catch (e) { setZoom(1); }
@@ -784,9 +794,7 @@ async function init() {
   });
   document.addEventListener('click', (e) => { if (!e.target.closest('#menu') && !e.target.closest('#table')) closeMenu(); });
   renderSetup();
-  if (Object.keys(catalog.images).length < catalog.decks.length) {      // the commanders' images arrive shortly after start-up
-    setTimeout(async () => { catalog = (await api('/api/options')).data; renderSetup(); }, 6000);
-  }
+  watchImages(0);
   const st = (await api('/api/state')).data;
   images = st.images || {};
   setPrinted(st.printed);

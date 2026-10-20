@@ -245,6 +245,9 @@ button, select, .card, [data-choice], .deck, .tier { touch-action: manipulation;
 }
 .deck .pair { display: flex; flex: none; }
 .deck .pair img, .deck .pair .noimg { width: 52px; height: 72px; }
+.oppcard .pair { display: flex; flex: none; }
+.oppcard .pair img, .oppcard .pair .noimg { width: 56px; height: 78px; }
+.oppcard .pair > :nth-child(2) { margin-left: -26px; box-shadow: -3px 0 6px #0008; }
 .deck .pair > :nth-child(2) { margin-left: -22px; box-shadow: -3px 0 6px #0008; }
 
 /* the opponents drawn for this game; hover (or tap: focus) shows how each one plays */
