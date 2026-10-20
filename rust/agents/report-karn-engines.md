@@ -40,3 +40,7 @@ Expedition Map, Endless Atlas: their compiled text was dropped or fixed).
 - `data/cards.json` is generated: on a merge conflict, take either side and re-run `cardgen export`.
 - Hangarback's `prio` (44) and `self_cost` are registered here; karn-core's AI plan may want to override the priority.
 - FINDINGS (audit/karn/FINDINGS.md) not written: no sim was run (brief: smoke runs only).
+
+## Checks
+- `cargo build --release --all-targets`: no warnings. All sim-core tests pass (46 new). `all_decks adaptive 3` (75 games) and `lookahead 1` (25 games) finish, no panic.
+- Workspace tests that fail, all because the `karn` deck is in decks.json / my_decks.toml and not wired elsewhere (not caused by these cards; karn-core's wiring): cardgen `deck_guard_fixture_is_current` (tests/fixtures/my_decks_parsed.json lacks karn), sim-cli `the_repository_decks_have_their_tiers` (14 decks vs 13 expected), practice `session_partners`, `app_entry`, `http_catalog`, `http_server::test_options`, `server_fake::options_and_saves_shapes` (the deck list now has karn).
