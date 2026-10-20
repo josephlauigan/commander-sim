@@ -3073,11 +3073,11 @@ fn thalia_hc(g: &Game, src: Src, p: PlayerId, m: Option<PermId>) -> bool {
 }
 
 // ======================================================== staples: Walking Ballista, tutors, Solitude, Magus
-/// Walking Ballista (Approximate): cast with X = spare mana ({X}{X}: two mana per counter)
+/// Walking Ballista (Approximate): cast with X = spare mana ({X}{X}: two mana per counter). The counters are given as
+/// it enters (`karn_engines::enters_with`, before the 0/0 check; Python added them here, after it, so a cast Ballista
+/// died); this only clears the X so it isn't read again
 fn ballista(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        let x = g.last_x;
-        crate::cardcode::put_plus(g, src, x.div_euclid(2));
         g.last_x = 0;
     }
     Ok(())

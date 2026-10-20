@@ -361,9 +361,28 @@ fn karn_soon(g: &Game, p: PlayerId) -> bool {
 
 /// ais.deck_prio for the karn deck: its own order for the plan's cards, the generic priority for the rest (the cards'
 /// own priority slots, rocks, the commander)
+/// Can p win with the infinite-mana combo this turn: Basalt Monolith, Rings of Brighthearth and Walking Ballista each in
+/// hand or on the battlefield, and mana for the pieces still in hand plus Basalt's own {C}{C}{C} and the {2} the loop
+/// needs to start (Ballista is then cast with the infinite mana)
+pub fn combo_this_turn(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    let in_hand = |n: &str| pl.hand.iter().any(|&c| &*g.db.get(c).name == n);
+    let out = |n: &str| pl.perms.iter().any(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == n));
+    let pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista"];
+    if !pieces.iter().all(|n| in_hand(n) || out(n)) {
+        return false;
+    }
+    let need =
+        5 + if in_hand("Basalt Monolith") { 3 } else { 0 } + if in_hand("Rings of Brighthearth") { 3 } else { 0 };
+    total_mana(g, p, false) >= need
+}
+
 pub fn karn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let pl = g.player(p);
     if c == pl.cmd {
+        if combo_this_turn(g, p) {
+            return 0; // Basalt Monolith + Rings of Brighthearth + Walking Ballista wins now: keep the mana for it
+        }
         // as early as possible: well above anything else
         return if pl.turns >= 1 { (130 - 3 * pl.tax as i32).max(70) } else { 0 };
     }

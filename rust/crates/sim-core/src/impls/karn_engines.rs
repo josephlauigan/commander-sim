@@ -749,7 +749,11 @@ fn hangar_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// before the creature check, which would kill a 0/0 (a copy, or a card put onto the battlefield, enters with none and
 /// dies as the Oracle says)
 pub fn enters_with(g: &Game, cd: CardId, was_cast: bool) -> i32 {
-    if was_cast && &*g.db.get(cd).name == "Hangarback Walker" { (g.entering_spent / 2) as i32 } else { 0 }
+    match &*g.db.get(cd).name {
+        "Hangarback Walker" if was_cast => (g.entering_spent / 2) as i32,
+        "Walking Ballista" if was_cast => g.last_x.div_euclid(2), // {X}{X}: the X mana its cast paid (`last_x`)
+        _ => 0,
+    }
 }
 
 /// When it dies, create a 1/1 colorless Thopter artifact creature token with flying for each +1/+1 counter on it.
