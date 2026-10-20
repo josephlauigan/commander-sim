@@ -12,7 +12,7 @@ to artifact wipes and artifact hate (Vandalblast, Collector Ouphe, Null Rod), an
 | **Commander** | Karn, Legacy Reforged ({5}, legendary artifact creature, colourless) |
 | **Bracket** | 4 (five Game Changers and a two-card infinite combo) |
 | **Proxies** | Ancient Tomb, Darksteel Forge, Grim Monolith, Mana Vault, Mishra's Workshop, Mox Opal, Portal to Phyrexia, The One Ring |
-| **Simulator** | not in the simulator; many of its cards are not modeled yet |
+| **Simulator** | deck key `karn` (colourless); no results yet, opponent tiers t3-t4 are a placeholder in `data/my_decks.toml` |
 
 ## Strategy
 
