@@ -194,7 +194,7 @@ fn krrik_own_phyrexian_cost_can_be_paid_with_life() {
 #[test]
 fn krrik_gives_a_person_the_choice_for_every_black_pip() {
     let mut g = krrik_game(40);
-    lands(&mut g, P0, "Swamp", 3, false);
+    pool(&mut g, P0, &[('C', 3)]); // a person pays from the mana pool
     let c = hand(&mut g, P0, &["Dread Slaver"])[0];
     assert_eq!(legal::phyrexian(&g, P0, c), "BB");
     let ways = legal::phyrexian_ways(&g, P0, c, 3, "BB");

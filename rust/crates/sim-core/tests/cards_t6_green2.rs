@@ -126,8 +126,8 @@ fn noxious_revival_costs_g_or_two_life() {
     let mut g = game();
     let c = hand(&mut g, P0, &["Noxious Revival"])[0];
     assert_eq!(sim_core::engine::mana::cost_of(&g, P0, c).0, 0);
-    assert_eq!(sim_core::engine::mana::phyrexian_life(&g, c, ""), 2, "unpaid {{G/P}} is 2 life");
-    assert_eq!(sim_core::engine::mana::phyrexian_life(&g, c, "G"), 0);
+    assert_eq!(sim_core::engine::mana::phyrexian_life(&g, P0, c, ""), 2, "unpaid {{G/P}} is 2 life");
+    assert_eq!(sim_core::engine::mana::phyrexian_life(&g, P0, c, "G"), 0);
 }
 
 #[test]
