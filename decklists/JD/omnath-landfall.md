@@ -12,9 +12,9 @@ get Omnath before the tokens come, and to graveyard hate.
 
 | | |
 |---|---|
-| **Commander** | Omnath, Locus of Rage ({3}{R}{G}, 5/5, red-green) |
+| **Commander** | Omnath, Locus of Rage ({3}{R}{R}{G}{G}, 5/5, red-green) |
 | **Colour identity** | Red-green |
-| **Bracket** | 3 (1 Game Changer: Worldly Tutor; no infinite combo) |
+| **Bracket** | 3 (no Game Changers; no infinite combo) |
 | **Simulator** | deck key `omnath`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -77,9 +77,10 @@ Lifestream's Blessing, Track Down, Tenured Concocter and Kura, the Boundless Sky
 Annoyed Altisaur, Cactarantula, Ghalta the Unstoppable (costs {X} less for your greatest power: with a 5/5 out she costs {3}{G}), Hellkite Tyrant, Genesis Hydra, Paladin of Predation, Symbiotic Beast, Vorinclex, Monstrous Raider
 and Lashwhip Predator. Tumbleweed Rising makes a token as big as your greatest power.
 
-### Worldly Tutor
-**Worldly Tutor** ({G}, instant) puts a creature on top of the library. Use it at the end of an opponent's turn.
-Targets: Terror of the Peaks or Oracle of Mul Daya for the engine, Ghalta or Annoyed Altisaur for a top end.
+### Hasty dragons
+**Glorybringer**, **Thundermaw Hellkite** and **Smaug the Magnificent** attack the turn they land, so the deck has
+pressure before the Elementals pile up. Glorybringer exerts to deal 4 to a creature; Thundermaw taps every flier the
+opponents have; Smaug makes a Treasure each upkeep and deals damage equal to your Treasures when he attacks.
 
 ### How it wins
 - **Elemental swarm.** Four or five 5/5s plus Overwhelming Stampede (all creatures gain trample and +X/+X) or
@@ -88,7 +89,7 @@ Targets: Terror of the Peaks or Oracle of Mul Daya for the engine, Ghalta or Ann
   when the board is in the way.
 
 ### Weak spots and how to play around them
-- **Omnath dying early.** The engine is five mana. Keep Blossoming Defense and Royal Treatment for him and recast him.
+- **Omnath dying early.** The engine is seven mana. Keep Royal Treatment for him and recast him.
 - **Graveyard hate** turns off Titania, and Wrenn and Six. The Elemental engine still works.
 - **Slow starts.** Mulligan hands without a land or a mana creature.
 
@@ -108,7 +109,7 @@ and the three fetch lands (Evolving Wilds, Terramorphic Expanse, Fabled Passage)
 
 ## Bracket and Rule 0
 
-One Game Changer (**Worldly Tutor**), one tutor and no infinite combo: Bracket 3. Tell the table before the game that
+No Game Changers, no tutors and no infinite combo: Bracket 3. Tell the table before the game that
 the deck makes many large creatures and that a sweeper turns them into burn.
 
 ## Cards to confirm
@@ -120,7 +121,7 @@ also appears in another deck. JD is checking he owns a second copy of each.
 
 **Commander (1).** Omnath, Locus of Rage
 
-**Creatures (31).** Annoyed Altisaur, Birds of Paradise, Boughside Wanderers, Bugenhagen Wise Elder, Cactarantula, End-Raze Forerunners, Fblthp Knows the Way, Fyndhorn Elder, Genesis Hydra, Ghalta the Unstoppable, Greenbelt Radical, Greenhouse Propagator, Hardbristle Bandit, Hellkite Tyrant, Kura the Boundless Sky, Lashwhip Predator, Llanowar Elves, Noxious Newt, Oracle of Mul Daya, Paladin of Predation, Paradise Druid, Pothole Mole, Satyr Wayfinder, Silhana Starfletcher, Symbiotic Beast, Terror of the Peaks, Thrashing Brontodon, Titania Protector of Argoth, Topiary Lecturer, Vinelasher Adept, Vorinclex Monstrous Raider
+**Creatures (34).** Annoyed Altisaur, Birds of Paradise, Boughside Wanderers, Bugenhagen Wise Elder, Cactarantula, End-Raze Forerunners, Fblthp Knows the Way, Fyndhorn Elder, Genesis Hydra, Ghalta the Unstoppable, Glorybringer, Greenbelt Radical, Greenhouse Propagator, Hardbristle Bandit, Hellkite Tyrant, Kura the Boundless Sky, Lashwhip Predator, Llanowar Elves, Noxious Newt, Oracle of Mul Daya, Paladin of Predation, Paradise Druid, Pothole Mole, Satyr Wayfinder, Silhana Starfletcher, Smaug the Magnificent, Symbiotic Beast, Terror of the Peaks, Thrashing Brontodon, Thundermaw Hellkite, Titania Protector of Argoth, Topiary Lecturer, Vinelasher Adept, Vorinclex Monstrous Raider
 
 **Planeswalkers (1).** Wrenn and Six
 
@@ -128,7 +129,7 @@ also appears in another deck. JD is checking he owns a second copy of each.
 
 **Sorceries (17).** Bestial Incursion, Blasphemous Act, Carnivorous Canopy, Cartographer's Survey, Cultivate, Decimate, Disintegrate, Follow the Lumarets, Malevolent Rumble, Nature's Lore, Overwhelming Stampede, Rampant Growth, Scout the City, Shamanic Revelation, Skyshroud Claim, Track Down, Tumbleweed Rising
 
-**Instants (11).** Arachnogenesis, Bite Down, Blossoming Defense, Compel Brutality, Lifestream's Blessing, Lightning Bolt, Rending Vines, Royal Treatment, Scorching Dragonfire, Something Worth Saving, Worldly Tutor
+**Instants (8).** Arachnogenesis, Compel Brutality, Lifestream's Blessing, Lightning Bolt, Rending Vines, Royal Treatment, Scorching Dragonfire, Something Worth Saving
 
 **Lands (37).** Cinder Glade, Command Tower, Evolving Wilds, Fabled Passage, Game Trail, Karplusan Forest, Rootbound Crag, Terramorphic Expanse, 17 Forest, 12 Mountain
 
@@ -139,9 +140,7 @@ also appears in another deck. JD is checking he owns a second copy of each.
 1 Arachnogenesis
 1 Bestial Incursion
 1 Birds of Paradise
-1 Bite Down
 1 Blasphemous Act
-1 Blossoming Defense
 1 Boughside Wanderers
 1 Bugenhagen, Wise Elder
 1 Cactarantula
@@ -163,6 +162,7 @@ also appears in another deck. JD is checking he owns a second copy of each.
 1 Garruk's Uprising
 1 Genesis Hydra
 1 Ghalta the Unstoppable
+1 Glorybringer
 1 Goblin Bombardment
 1 Greenbelt Radical
 1 Greenhouse Propagator
@@ -193,18 +193,19 @@ also appears in another deck. JD is checking he owns a second copy of each.
 1 Shamanic Revelation
 1 Silhana Starfletcher
 1 Skyshroud Claim
+1 Smaug the Magnificent
 1 Something Worth Saving
 1 Symbiotic Beast
 1 Terramorphic Expanse
 1 Terror of the Peaks
 1 Thrashing Brontodon
+1 Thundermaw Hellkite
 1 Titania, Protector of Argoth
 1 Topiary Lecturer
 1 Track Down
 1 Tumbleweed Rising
 1 Vinelasher Adept
 1 Vorinclex, Monstrous Raider
-1 Worldly Tutor
 1 Wrenn and Six
 17 Forest
 12 Mountain

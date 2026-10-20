@@ -91,7 +91,7 @@ fn silhana_starfletcher_taps_for_green() {
 }
 
 #[test]
-fn fblthp_costs_x_gg_and_fetches_one_forest() {
+fn fblthp_costs_x_gg_and_fetches_one_basic() {
     let mut g = table(&["omnath", "seph"]);
     let f = card(&g, "Fblthp, Knows the Way");
     assert_eq!(g.db.get(f).cmc, 3, "{{1}}{{G}}{{G}}: X = 1");
@@ -100,9 +100,10 @@ fn fblthp_costs_x_gg_and_fetches_one_forest() {
     assert!(!mana::can_pay(&g, P0, 1, "GG", false), "two lands can't pay X=1");
     let _ = c;
     lands(&mut g, P0, "Forest", 1, false);
-    let before = g.player(P0).hand.iter().filter(|&&x| &*g.db.get(x).name == "Forest").count();
+    let basic = |g: &Game, x: CardId| matches!(&*g.db.get(x).name, "Forest" | "Mountain"); // either colour: the AI fetches what its hand needs (red since the 10/19 dragons)
+    let before = g.player(P0).hand.iter().filter(|&&x| basic(&g, x)).count();
     cast_hand_existing(&mut g, c);
-    let after = g.player(P0).hand.iter().filter(|&&x| &*g.db.get(x).name == "Forest").count();
+    let after = g.player(P0).hand.iter().filter(|&&x| basic(&g, x)).count();
     assert_eq!(after, before + 1);
 }
 
@@ -159,7 +160,10 @@ fn worldly_tutor_fetches_a_mana_creature_early_and_a_big_body_late() {
     lands(&mut g, P0, "Forest", 2, false);
     let early = tutor_pick_named(&g, P0, "cre").unwrap();
     assert!(
-        matches!(&*g.db.get(early).name, "Llanowar Elves" | "Paradise Druid" | "Bugenhagen, Wise Elder" | "Silhana Starfletcher"),
+        matches!(
+            &*g.db.get(early).name,
+            "Llanowar Elves" | "Paradise Druid" | "Bugenhagen, Wise Elder" | "Silhana Starfletcher"
+        ),
         "got {}",
         g.db.get(early).name
     );
