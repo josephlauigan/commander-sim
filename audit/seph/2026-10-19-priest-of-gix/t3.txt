@@ -1,0 +1,124 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Priest of Gix [pool] C 2B :: pow=2 tgh=1
+      ability: triggered etb -> add_mana
+Model status of the swapped-in cards (cardgen audit):
+  Priest of Gix: Approximate (enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by seph's AI?
+  AI: Priest of Gix: priority 30 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 10 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Priest of Gix: drawn in 25.5% of games (51), cast in 84.3% of those (43)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 10 worker threads: about 21 minutes
+  progress 100.0%  10m39s elapsed, ~0m00s left
+Swaps: Talisman of Hierarchy -> Priest of Gix
+
+=== Sephiroth vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  35.2% ->  35.2%  (delta -0.1 pts, noise ±2.5, paired)   n=2000
+               eliminated by (variant): Tergrid 17.6%  Atraxa 7.8%  Aurelia 20.0%  Marwyn 11.6%  Korvold 7.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (seph) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for seph: first 6+ power bomb on the battlefield
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          35.2% ->  35.2%  -0.1pt   ±3.0 
+    Rounds survived (or game length)                  11.29 ->  11.31   +0.02  ±0.22 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.59 ->   0.59   -0.00  ±0.05 
+    Mana available on your turn 4                      4.08 ->   4.01   -0.07  ±0.07 
+    Mana available on your turn 6                      5.64 ->   5.53   -0.12  ±0.10*
+
+  Speed
+    Games where the game plan came online             78.2% ->  77.8%  -0.4pt   ±2.6 
+    Turn the game plan came online                     6.75 ->   6.82   +0.07  ±0.16 
+    Turn the commander first resolved                  8.54 ->   8.54   +0.01  ±0.21 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            14.38 ->  14.26   -0.12  ±0.42 
+    Tutors resolved per game                           0.48 ->   0.47   -0.01  ±0.04 
+    Spells cast per game                              12.59 ->  12.32   -0.27  ±0.50 
+
+  Interaction
+    Counterspells cast                                 0.44 ->   0.42   -0.02  ±0.04 
+    Spot removal cast                                  1.09 ->   1.07   -0.02  ±0.06 
+    Board wipes cast                                   0.31 ->   0.35   +0.03  ±0.03*
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.11 ->   0.12   +0.00  ±0.03 
+    Your key permanents removed by opponents           0.76 ->   0.73   -0.03  ±0.06 
+    Your spells countered                              0.13 ->   0.12   -0.01  ±0.02 
+    Removed bombs brought back                         0.28 ->   0.25   -0.03  ±0.04 
+
+  Threat & pressure
+    Bombs put on the battlefield                       2.61 ->   2.48   -0.13  ±0.15 
+    Damage dealt to opponents per game                29.52 ->  27.86   -1.66  ±2.44 
+      ...of which combat damage                       18.88 ->  18.23   -0.65  ±1.81 
+      ...of which drain triggers                       8.29 ->   8.20   -0.09  ±0.81 
+      ...of which other triggers                       2.35 ->   1.43   -0.92  ±0.63*
+
+--- Reading it ---
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    better - Board wipes cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Priest of Gix                         24.9      87.2         7.6     12.8       49.9      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Talisman of Hierarchy                 26.0      85.6         6.4     14.4       48.1      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        35.2      35.2     -0.0
+    rounds survived                                  11.29     11.31    +0.02
+    eliminated, % of games                            64.4      64.3     -0.1
+    opponents it eliminated, per game                 0.92      0.90    -0.02
+    damage dealt, per game                            29.5      27.9     -1.7
+    plan: first 6+ power bomb on the battlefield
+      plan online by turn 4, %                        10.8      10.3     -0.5
+      plan online by turn 6, %                        40.0      37.6     -2.3
+      plan online by turn 8, %                        63.4      62.0     -1.3
+      plan online by turn 12, %                       76.7      76.8     +0.1
+      plan online at all, %                           78.2      77.8     -0.4
+    commander resolved by turn 4, %                    1.1       1.3     +0.2
+    commander resolved by turn 6, %                   11.8      11.4     -0.4
+    commander removals, per game                      0.31      0.30    -0.01
+    lands on the battlefield, turn 4                  3.80      3.80    +0.01
+    lands on the battlefield, turn 8                  6.54      6.51    -0.03
+    mana available, turn 4                            4.08      4.01    -0.07
+    mana available, turn 8                            6.99      6.82    -0.17
+    cards in hand after the land drop, turn 4         5.57      5.60    +0.03
+    cards in hand after the land drop, turn 8         4.86      4.87    +0.02
+    wins by (current):  damage 61%, combo 38%, timeout 1%
+    wins by (swapped):  damage 58%, combo 40%, timeout 2%
+    eliminated by (current): Aurelia via combat 17.6%, Tergrid via combat 12.9%, Marwyn via combat 12.1%, Atraxa via combat 6.9%
+    eliminated by (swapped): Aurelia via combat 17.1%, Tergrid via combat 13.3%, Marwyn via combat 11.3%, Atraxa via combat 6.5%
+
+(640s total)

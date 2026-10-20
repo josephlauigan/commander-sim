@@ -9022,3 +9022,11 @@ note = "read ahead Saga: the AI starts on III at once when any graveyard (an opp
 dsl = []
 status = "Full"
 note = "lifelink 2/2; with K'rrik out, each {B} of a black spell may be paid with 2 life: the AI does so only for a pip its mana cannot pay and only while its life stays at 15 or more afterwards (a person chooses mana or life per pip, no floor); his own {B/P} costs can be paid with life too (10 life floor, the existing Phyrexian rule); a +1/+1 counter whenever you cast a black spell (code: impls/krrik.rs, engine/mana.rs cost_of / phyrexian_life). Not modeled: life for {B} in abilities' costs and in removal spells' costs"
+
+["Priest of Gix"]
+tags = "pow=2 tgh=1"
+dsl = [
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "add_mana", n = 3 }] },
+]
+status = "Approximate"
+note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"

@@ -2006,6 +2006,9 @@ pub fn etb_value(g: &Game, p: PlayerId, m: PermId) -> f64 {
     if t.has(Tag::Draw) && d.perm {
         v += 1.5 * t.int_or_0(Tag::Draw) as f64;
     }
+    if &*d.name == "Priest of Gix" {
+        v = v.max(3.5); // three mana back each time it enters (its dsl trigger is not a tag)
+    }
     if g.registry.get(cd).is_some_and(|i| i.etb.is_some()) {
         v = v.max(2.0);
     }
@@ -4017,7 +4020,7 @@ pub struct Loop {
 }
 
 /// mine.LOOPS
-pub const LOOPS: [Loop; 4] = [
+pub const LOOPS: [Loop; 5] = [
     // outlet: trisk_needs_outlet
     Loop { name: "Mikaeus + Triskelion", groups: &[&[MIKAEUS], &["Triskelion"]], kills: true },
     Loop { name: "Mikaeus + Kitchen Finks", groups: &[&[MIKAEUS], &["Kitchen Finks"], &OUTLETS], kills: false },
@@ -4025,6 +4028,13 @@ pub const LOOPS: [Loop; 4] = [
     Loop {
         name: "Nim Deathmantle + Ashnod's Altar + Grave Titan",
         groups: &[&["Nim Deathmantle"], &["Ashnod's Altar"], &["Grave Titan"]],
+        kills: false,
+    },
+    // sacrifice Priest to the Altar (CC), Deathmantle returns it for 4, it adds BBB: one more mana and one more death a
+    // turn of the loop (a drain on the battlefield kills; otherwise infinite mana)
+    Loop {
+        name: "Nim Deathmantle + Ashnod's Altar + Priest of Gix",
+        groups: &[&["Nim Deathmantle"], &["Ashnod's Altar"], &["Priest of Gix"]],
         kills: false,
     },
 ];
@@ -4155,6 +4165,10 @@ pub fn run_loop(g: &mut Game, p: PlayerId, i: usize, keys: &[PermId], kills: boo
     if name.contains("Finks") {
         crate::engine::life::gain(g, p, 1000)?;
         crate::glog!(g, "    {} gains 1000 life (as good as infinite)", g.player(p).name);
+    } else if name.ends_with("Priest of Gix") {
+        // infinite black mana (BBB back each loop, net one more than it cost), no Zombies
+        g.player_mut(p).floating.b += 20;
+        crate::glog!(g, "    {} floats 20 black mana", g.player(p).name);
     } else {
         // infinite colourless mana, a Zombie kept each loop
         let spec = Tokens { color: Some(crate::cards::Colors::from_letters("B")), ..Tokens::new(20, 2) };
@@ -4222,7 +4236,10 @@ pub fn loop_need<'a>(g: &'a Game, p: PlayerId, extra: &[&'a str]) -> Vec<&'stati
                 groups.iter().copied().filter(|grp| !grp.iter().any(|n| names.contains(n))).collect();
             if missing.len() == 1 && (loop_kills(l.name, &names) || l.name.ends_with("Finks")) {
                 for &n in missing[0] {
-                    if !want.contains(&n) {
+                    // a piece the deck does not play can never be fetched or reanimated (Priest of Gix in a list without it)
+                    let played = g.player(p).deck_names.is_empty()
+                        || g.player(p).deck_names.iter().any(|&c| &*g.db.get(c).name == n);
+                    if played && !want.contains(&n) {
                         want.push(n);
                     }
                 }
