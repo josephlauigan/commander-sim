@@ -16,10 +16,8 @@ use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
-use crate::engine::values::{
-    card_name, colors_of, epow, etgh, indestructible, pval, ptypes, untargetable,
-};
-use crate::engine::zones::{Enter, Tokens, die, enter, enter_token_copy, exile_perm, make_tokens, max_by, to_zone_card};
+use crate::engine::values::{card_name, colors_of, epow, indestructible, ptypes, pval, untargetable};
+use crate::engine::zones::{Enter, Tokens, die, enter, enter_token_copy, exile_perm, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -363,7 +361,8 @@ fn bomb_blow(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let n = charges(g, src);
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), &format!("destroy each nonland permanent with mana value {n}"), Some(7.0), None)? {
+    if ability_window(g, p, Some(src), &format!("destroy each nonland permanent with mana value {n}"), Some(7.0), None)?
+    {
         run(g, p, Wipe::Bomb(n), Some(src))?;
     }
     Ok(true)
@@ -414,7 +413,14 @@ fn liberator_cast(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
 /// Called by `engine/combat.rs` for a creature with infect; true if it was applied.
 pub fn infect_hit(g: &mut Game, a: PermId, d: PlayerId, dmg: i32) -> Res {
     g.player_mut(d).poison += dmg.max(0) as u32;
-    crate::glog!(g, "    {} deals {} to {}: {} poison counters (infect)", name_of(g, a), dmg, g.player(d).name, g.player(d).poison);
+    crate::glog!(
+        g,
+        "    {} deals {} to {}: {} poison counters (infect)",
+        name_of(g, a),
+        dmg,
+        g.player(d).name,
+        g.player(d).poison
+    );
     check_state(g)
 }
 
@@ -691,7 +697,12 @@ fn portal_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !g.perm(m).ttypes.contains(&ty) {
         g.perm_mut(m).ttypes.push(ty);
     }
-    crate::glog!(g, "    Portal to Phyrexia returns {} to the battlefield under {}'s control", name_of(g, m), g.player(p).name);
+    crate::glog!(
+        g,
+        "    Portal to Phyrexia returns {} to the battlefield under {}'s control",
+        name_of(g, m),
+        g.player(p).name
+    );
     Ok(())
 }
 
@@ -759,7 +770,9 @@ fn obelisk_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), "destroy target permanent", Some(6.0), Some(t))? && live(g, t) && !untargetable(g, t)
+    if ability_window(g, p, Some(src), "destroy target permanent", Some(6.0), Some(t))?
+        && live(g, t)
+        && !untargetable(g, t)
     {
         crate::engine::removal::apply_removal(g, Some(p), t, "destroy", None)?;
     }
@@ -860,16 +873,14 @@ fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
     }
     let st = g.turn_stamp();
     g.perm_mut(src).data.set(DataKey::Used, Val::Stamp(st));
-    if ability_window(g, p, Some(src), &format!("destroy each nonland permanent with mana value {x}"), Some(7.0), None)? {
+    if ability_window(g, p, Some(src), &format!("destroy each nonland permanent with mana value {x}"), Some(7.0), None)?
+    {
         g.batch += 1;
         let prev_batch = g.cur_batch.replace(g.batch);
         let prev = g.destroyer.replace(p);
         g.resolving += 1;
-        let doomed: Vec<PermId> = all_perms(g)
-            .into_iter()
-            .filter(|&(q, m)| hit.contains(&q) && mv(g, m) == x as i32)
-            .map(|y| y.1)
-            .collect();
+        let doomed: Vec<PermId> =
+            all_perms(g).into_iter().filter(|&(q, m)| hit.contains(&q) && mv(g, m) == x as i32).map(|y| y.1).collect();
         let mut r = Ok(());
         for m in doomed {
             if live(g, m) {
@@ -885,12 +896,6 @@ fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
         }
     }
     Ok(true)
-}
-
-/// {2}: +1/+0 until end of turn. The AI pumps with spare mana once it is attacking unblocked (after blockers).
-fn hellkite_pump(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    let _ = (g, src, p, post);
-    Ok(vec![])
 }
 
 // ================================================================== Cityscape Leveler
@@ -1110,7 +1115,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, HELLKITE)?;
     c.combat_damage = Some(hellkite_hit);
     c.options = Some(hellkite_options);
-    let _ = hellkite_pump;
     let c = r.card(db, LEVELER)?;
     c.self_cast = Some(leveler_cast);
     c.attack = Some(leveler_attack);
@@ -1121,7 +1125,5 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.cost = Some(ugin_cost);
     c.dies = Some(ugin_dies);
     c.leaves = Some(ugin_leaves);
-    let _ = to_zone_card;
-    let _ = (etgh, epow);
     Ok(())
 }

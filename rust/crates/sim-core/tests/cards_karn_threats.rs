@@ -382,7 +382,13 @@ fn portal_to_phyrexia_makes_three_sacrifices_and_reanimates_each_upkeep() {
     // upkeep: the best creature card of any graveyard, as a Phyrexian
     let imp = g.registry.get(g.perm(portal).cd.unwrap()).copied().unwrap();
     (imp.upkeep.unwrap())(&mut g, portal, P0).unwrap();
-    let got: Vec<PermId> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.is_creature(m) && !g.perm(m).token).collect();
+    let got: Vec<PermId> = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && g.is_creature(m) && !g.perm(m).token)
+        .collect();
     assert_eq!(got.len(), 1, "one creature card from a graveyard");
     assert!(g.perm(got[0]).ttypes.contains(&"phyrexian"));
     let back = g.perm(got[0]).cd.unwrap();
@@ -441,12 +447,14 @@ fn cityscape_leveler_destroys_on_cast_and_on_attack_and_unearths() {
     let lyra = perm(&mut g, P1, BIG);
     assert!(cast_free(&mut g, P0, "Cityscape Leveler"));
     assert!(!on(&g, lyra), "when you cast it");
-    let ps: Vec<PermId> = g.player(P1).perms.iter().copied().filter(|&m| values::card_name(&g, m) == Some("Powerstone")).collect();
+    let ps: Vec<PermId> =
+        g.player(P1).perms.iter().copied().filter(|&m| values::card_name(&g, m) == Some("Powerstone")).collect();
     assert_eq!(ps.len(), 1, "its controller gets a Powerstone");
     assert!(g.perm(ps[0]).tapped);
     // attack
     let titan = perm(&mut g, P2, BOMB2);
-    let lev = g.player(P0).perms.iter().copied().find(|&m| values::card_name(&g, m) == Some("Cityscape Leveler")).unwrap();
+    let lev =
+        g.player(P0).perms.iter().copied().find(|&m| values::card_name(&g, m) == Some("Cityscape Leveler")).unwrap();
     g.perm_mut(lev).sick = false;
     combat::resolve_combat(&mut g, P0, &[lev], P2, &[]).unwrap();
     assert!(!on(&g, titan), "whenever it attacks");
@@ -459,7 +467,8 @@ fn cityscape_leveler_destroys_on_cast_and_on_attack_and_unearths() {
     let os = f(&mut g, c, P0, Some(false)).unwrap();
     assert_eq!(os.len(), 1);
     assert!(run(&mut g, P0, &os[0]));
-    let back = g.player(P0).perms.iter().copied().find(|&m| values::card_name(&g, m) == Some("Cityscape Leveler")).unwrap();
+    let back =
+        g.player(P0).perms.iter().copied().find(|&m| values::card_name(&g, m) == Some("Cityscape Leveler")).unwrap();
     assert!(!g.perm(back).sick, "haste");
     assert!(g.perm(back).data.truthy(DataKey::Unearth));
 }
@@ -477,4 +486,3 @@ fn basalt_monolith_and_rings_of_brighthearth_are_a_known_combo() {
     brain::main(&mut g, P0, false).unwrap();
     assert!(g.over && g.winner == Some(P0), "the combo wins: over={} winner={:?}", g.over, g.winner);
 }
-
