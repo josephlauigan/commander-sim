@@ -1,0 +1,95 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), adaptive AI, 20 worker threads: about 2 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m02s elapsed, ~0m00s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== veyran analysis [loose profile, adaptive AI, 1000 games] ===========
+Win rate 30.1%   (4-player baseline 25%)   average rounds survived 14.2
+
+-- How it wins --
+  damage      92.0% of wins
+  timeout      8.0% of wins
+  Opponents it eliminated: 0.86 per game, by
+    combat             45.3%
+    burn               42.2%
+    triggers            4.9%
+    aether              3.8%
+    decked              3.0%
+    commander damage    0.8%
+  Damage dealt per game: 40.9, from
+    combat              20.8  (51%)
+    burn                16.9  (41%)
+    aether               1.9  (5%)
+    triggers             1.3  (3%)
+
+-- How it loses --
+  Eliminated in 66.1% of games, on average in round 13.2
+    by Lord Windgrace via combat             16.7% of games
+    by Brago    via combat             13.2% of games
+    by Kaalia of the Vast via combat             12.2% of games
+    by Sythis   via combat              6.5% of games
+    by Meren of Clan Nel Toth via combat              6.1% of games
+    by Kaalia of the Vast via drain               3.1% of games
+    by Meren of Clan Nel Toth via triggers            1.8% of games
+    by Kaalia of the Vast via burn                1.6% of games
+
+-- Game plan timing --
+  Plan: Veyran + a magecraft payoff on the battlefield
+  Online by turn:  T2 0%  T3 5%  T4 19%  T5 32%  T6 43%  T7 51%  T8 59%  T9 64%  T10 67%  T11 70%  T12 72%
+  Online at all: 80.3% of games
+  Commander resolves on turn: median 4.0, mean 4.2 (over the 99.0% of games it resolves)
+  Commander resolved by turn:  T4 69%  T5 84%  T6 91%  T7 94%  T8 96%
+  Combo attempted in 0.0% of games
+  Aetherflux fired in 3.2% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Consecrated Sphinx                         cast in  14.6% of games, win rate when cast  54.8% (+24.7)
+    Crackle with Power                         cast in  23.5% of games, win rate when cast  50.2% (+20.1)
+    Mizzix's Mastery                           cast in  19.9% of games, win rate when cast  48.7% (+18.6)
+    Niv-Mizzet, Parun                          cast in  17.4% of games, win rate when cast  48.3% (+18.2)
+    Emeritus of Ideation // Ancestral Recall   cast in  19.1% of games, win rate when cast  48.2% (+18.1)
+    Flow State                                 cast in  35.2% of games, win rate when cast  46.3% (+16.2)
+    Plunder the Trollshaws                     cast in  28.8% of games, win rate when cast  45.5% (+15.4)
+    Deduce                                     cast in  29.6% of games, win rate when cast  44.6% (+14.5)
+    Eris, Roar of the Storm                    cast in  19.3% of games, win rate when cast  44.6% (+14.5)
+    Rite of the Dragoncaller                   cast in  22.7% of games, win rate when cast  44.5% (+14.4)
+  Lowest win rate when cast:
+    Veyran, Voice of Duality                   cast in  99.0% of games, win rate when cast  30.4% (+0.3)
+    Blasphemous Act                            cast in  38.7% of games, win rate when cast  33.1% (+3.0)
+    Lightning Greaves                          cast in  50.8% of games, win rate when cast  33.3% (+3.2)
+    Abrade                                     cast in  22.2% of games, win rate when cast  33.3% (+3.2)
+    Chaos Warp                                 cast in  28.3% of games, win rate when cast  33.6% (+3.5)
+    Fellwar Stone                              cast in  23.6% of games, win rate when cast  33.9% (+3.8)
+    Archmage Emeritus                          cast in  26.8% of games, win rate when cast  34.0% (+3.9)
+    Flux Channeler                             cast in  27.0% of games, win rate when cast  34.1% (+4.0)
+    Old Fat Spider Can't See Me                cast in  21.4% of games, win rate when cast  34.6% (+4.5)
+    Blazing Firesinger // Seething Song        cast in  26.7% of games, win rate when cast  34.8% (+4.7)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Mystic Confluence                          cast  28.4% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Veyran, Voice of Duality                   1.69
+    Ral, Storm Conduit                         0.21
+    Guttersnipe                                0.19
+    Aetherflux Reservoir                       0.18
+    Lightning Greaves                          0.17
+    Propaganda                                 0.16
+    Kessig Flamebreather                       0.14
+    Rite of the Dragoncaller                   0.11
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+
+(2s total)

@@ -569,7 +569,8 @@ fn lightning_greaves_comes_before_veyran() {
 #[test]
 fn fabricate_fetches_greaves_first_then_aetherflux() {
     let mut g = table(&["veyran", "seph"]);
-    g.player_mut(P0).library = ["Aetherflux Reservoir", "Sol Ring", "Lightning Greaves"].iter().map(|n| card(&g, n)).collect();
+    g.player_mut(P0).library =
+        ["Aetherflux Reservoir", "Sol Ring", "Lightning Greaves"].iter().map(|n| card(&g, n)).collect();
     let pick = |g: &Game| decks::tutor_pick(g, P0, "art").map(|c| g.db.get(c).name.to_string()).unwrap();
     assert_eq!(pick(&g), "Lightning Greaves");
     perm(&mut g, P0, "Lightning Greaves");
@@ -580,7 +581,9 @@ fn fabricate_fetches_greaves_first_then_aetherflux() {
 fn engine_creatures_beat_cantrips_with_spells_in_hand() {
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Lightning Bolt", "Burst Lightning", "Counterspell"]);
-    for n in ["Docent of Perfection // Final Iteration", "Alania, Divergent Storm", "Harmonic Prodigy", "Niv-Mizzet, Parun"] {
+    for n in
+        ["Docent of Perfection // Final Iteration", "Alania, Divergent Storm", "Harmonic Prodigy", "Niv-Mizzet, Parun"]
+    {
         let v = veyran::veyran_prio(&g, P0, card(&g, n));
         assert!(v > 48, "{n} is {v}: it should sit above a draw spell (48)");
     }
@@ -613,4 +616,19 @@ fn solve_the_equation_needs_a_real_target() {
         perm(&mut g, P1, "Grave Titan");
     }
     assert_eq!(veyran::veyran_prio(&g, P0, solve), 40, "a wipe to find");
+}
+
+#[test]
+fn veyran_casts_underworld_breach_with_spells_to_escape() {
+    // 10/19: Veyran's priority had no Breach rule (0, never cast); now cast with two spells worth escaping and 5 mana
+    let mut g = table(&["veyran", "seph"]);
+    let b = hand(&mut g, P0, &["Underworld Breach"])[0];
+    lands(&mut g, P0, "Island", 3, false);
+    lands(&mut g, P0, "Mountain", 2, false);
+    assert_eq!(veyran::veyran_prio(&g, P0, b), 0, "empty graveyard: nothing to escape");
+    for n in ["Expressive Iteration", "Flow State", "Quick Study", "Stock Up"] {
+        let c = card(&g, n);
+        g.player_mut(P0).gy.push(c);
+    }
+    assert_eq!(veyran::veyran_prio(&g, P0, b), 56, "four draw spells in the graveyard and 5 mana");
 }

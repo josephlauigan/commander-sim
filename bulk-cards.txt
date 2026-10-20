@@ -813,7 +813,6 @@
 1x Thermal Glider (mmq)
 1x Thirsting Roots (one)
 1x Thornfist Striker (sos)
-1x Thought Vessel
 1x Thraben Charm (mh3)
 1x Thriving Skyclaw (mh3)
 1x Thrummingbird (one)
@@ -853,7 +852,6 @@
 1x Unctus, Grand Metatect (ppone)
 3x Undercity Dire Rat (fin)
 1x Undercover Crocodelf (mkm)
-1x Underworld Breach (mb2)
 1x Undulating Witness (fra)
 2x Unfathomable Truths (mh3)
 1x Unfinished Business
