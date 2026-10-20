@@ -1,0 +1,114 @@
+Cards modeled from Scryfall text (check the abilities below):
+   The Cruelty of Gix [pool] E 3BB :: (no tags)
+Model status of the swapped-in cards (cardgen audit):
+  The Cruelty of Gix: Full (read ahead Saga: the AI starts on III at once when any graveyard (an opponent's too) holds a creature worth 3 or more to take, on II when the deck has a piece it wants and 14 life remains, else on I; a person is asked the chapter, the opponent, and the card. I: target opponent reveals their hand and you choose a creature or planeswalker card there, which they discard (the AI takes the best by value). II: search for any card, lose 3 life. III: a creature card from any graveyard onto the battlefield under your control (the best). Lore counters are added at the upkeep, not after the draw step; no proliferate (code: impls/sephfs_cards.rs, gix_*))
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sephfs's AI?
+  AI: The Cruelty of Gix: priority 56 (deck rule)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 7 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: The Cruelty of Gix: drawn in 20.5% of games (41), cast in 70.7% of those (29)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 7 worker threads: about 30 minutes
+  progress 100.0%  11m32s elapsed, ~0m00s left
+Swaps: Fellwar Stone -> The Cruelty of Gix
+
+=== Sephiroth FS vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  32.8% ->  31.9%  (delta -0.9 pts, noise ±2.5, paired)   n=2000
+               eliminated by (variant): Zur the Enchanter 15.8%  Kinnan 6.8%  Urza 19.2%  Yawgmoth 9.2%  Winota 17.0%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sephfs) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sephfs: Sephiroth flipped (the fourth drain of a turn)
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          32.8% ->  31.9%  -0.9pt   ±3.0 
+    Rounds survived (or game length)                   9.77 ->   9.78   +0.01  ±0.22 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.56 ->   0.56   -0.00  ±0.05 
+    Mana available on your turn 4                      4.19 ->   4.14   -0.06  ±0.06 
+    Mana available on your turn 6                      5.69 ->   5.60   -0.08  ±0.10 
+
+  Speed
+    Games where the game plan came online             34.2% ->  32.9%  -1.4pt   ±3.0 
+    Turn the game plan came online                     7.93 ->   7.83   -0.10  ±0.30 
+    Turn the commander first resolved                  4.39 ->   4.37   -0.02  ±0.12 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.87 ->  14.02   +0.14  ±0.57 
+    Tutors resolved per game                           0.46 ->   0.49   +0.03  ±0.04 
+    Spells cast per game                              11.42 ->  11.33   -0.09  ±0.40 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.42 ->   0.44   +0.02  ±0.04 
+    Board wipes cast                                   0.54 ->   0.52   -0.01  ±0.05 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.51 ->   0.53   +0.02  ±0.05 
+    Your spells countered                              0.62 ->   0.66   +0.04  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                36.76 ->  36.37   -0.39  ±2.08 
+      ...of which combat damage                       16.33 ->  16.30   -0.03  ±1.09 
+      ...of which magecraft / burn                     2.85 ->   2.63   -0.22  ±0.46 
+      ...of which drain triggers                      17.32 ->  17.18   -0.14  ±1.20 
+      ...of which other triggers                       0.07 ->   0.07   +0.01  ±0.05 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    The Cruelty of Gix                    21.4      52.0         8.3     48.0       50.9      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Fellwar Stone                         21.6      78.2         5.3     21.8       44.4      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        32.8      31.9     -0.9
+    rounds survived                                   9.77      9.78    +0.01
+    eliminated, % of games                            67.2      68.0     +0.8
+    opponents it eliminated, per game                 0.93      0.92    -0.00
+    damage dealt, per game                            36.6      36.2     -0.4
+    plan: Sephiroth flipped (the fourth drain of a turn)
+      plan online by turn 4, %                         2.2       2.0     -0.2
+      plan online by turn 6, %                        12.0      11.8     -0.2
+      plan online by turn 8, %                        22.1      21.9     -0.2
+      plan online by turn 12, %                       32.0      30.6     -1.4
+      plan online at all, %                           34.2      32.9     -1.4
+    commander resolved by turn 4, %                   57.8      59.4     +1.6
+    commander resolved by turn 6, %                   78.4      78.7     +0.3
+    commander removals, per game                      0.39      0.40    +0.01
+    lands on the battlefield, turn 4                  3.73      3.73    +0.00
+    lands on the battlefield, turn 8                  6.25      6.26    +0.01
+    mana available, turn 4                            4.19      4.14    -0.06
+    mana available, turn 8                            6.96      6.85    -0.11
+    cards in hand after the land drop, turn 4         5.69      5.76    +0.07
+    cards in hand after the land drop, turn 8         4.99      5.08    +0.09
+    wins by (current):  damage 97%, combo 2%, timeout 1%
+    wins by (swapped):  damage 96%, combo 3%, timeout 1%
+    eliminated by (current): Urza via combo 17.4%, Zur the Enchanter via combo 13.7%, Winota via combat 9.3%, Winota via combo 8.4%
+    eliminated by (swapped): Urza via combo 18.2%, Zur the Enchanter via combo 14.2%, Winota via combat 8.8%, Yawgmoth via combo 8.4%
+
+(693s total)

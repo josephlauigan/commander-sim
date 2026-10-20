@@ -20,6 +20,15 @@ Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 3. **Combat decks:** Krenko (12%) and Yuriko (7%) by combat.
 
 ## What was tried, and why it did or didn't work
+### 2026-10-19: Ulna Alley Shopkeep => K'rrik, Son of Yawgmoth (T3, loose, 2,000 games per list, look-ahead; T4 stopped by JD)
+Result: **T3 32.2% -> 31.5%, -0.7 (noise ±2.4): neutral.** Raw: `2026-10-19-krrik/t3.txt`. Ulna Alley Shopkeep was
+the cut (second-lowest win rate when cast in the 10/19 card report).
+Why: K'rrik is cast in 62% of the games it is drawn (Shopkeep 76%), around round 7.6, and stuck 38%; Sheoldred's
+timing (turn 6.4), the plan rate and damage are unchanged. By the time the 7-mana legend is down most of the deck's
+black spells are already cast, so paying life for {B} rarely matters; the AI also casts him eagerly only at 16+ life.
+Found on the way: the shared Phyrexian-mana rule checked the starting life for every pip, so three {B/P} at 12 life
+could go to 6; fixed on this branch (9c68a6a) to count the life already paid.
+
 ### 2026-10-19: Stir Up Trouble => Orcish Bowmasters, full run (T3-T4, loose, 2,000 games per list, look-ahead)
 Result: **T3 +2.0 (±2.6), T4 +0.5 (±2.4): about +1.2 over t3-t4, positive but within noise.** Raw:
 `2026-10-19-bowmasters/full-stir-up-trouble-t3.txt`, `t4.txt`.

@@ -27,6 +27,14 @@ plan came online more often (26.0 -> 29.4%), games ran a little longer (8.6 -> 8
 Kinnan/Urza/Zur/Winota combo. The flashback makes it a second reanimation from the graveyard, and its three deaths
 are drains with Sephiroth or a payoff out. Coarse sample: confirm with a bigger run before trusting the size.
 
+## 2026-10-19: Fellwar Stone => The Cruelty of Gix, full run (T5, loose, 2,000 games per list, look-ahead)
+Result: **32.8% -> 31.9%, -0.9 (noise ±2.5): neutral.** Raw: `2026-10-19-cruelty-of-gix/t5.txt`. Fellwar Stone was
+the cut (lowest-win-rate rock in the 10/19 card report; in mono-black it only makes the opponents' colours).
+Why: Cruelty is cast in only 52% of the games it is drawn (stuck 48%), around round 8.3, against games that last 9.8
+rounds; Fellwar Stone was cast in 78% around round 5.3, and the plan comes online a little less often without it
+(34.2% -> 32.9%). The deck still dies to the same fast combo (Urza 17-18%, Zur 14%, Winota). When Cruelty is cast the
+deck wins 51% (deck average 32%): strong when it lands, too slow for T5. Not worth the slot.
+
 ## 2026-10-19: The Cruelty of Gix modeled (smoke run only: Mind Stone => Cruelty, T5, loose, 50 games, adaptive)
 Modeled (impls/sephfs_cards.rs): read ahead picked by the AI (III when any graveyard holds a creature worth 3+, II when
 the deck has a wanted tutor target and 14+ life, else I); I takes the best creature or planeswalker card from an
