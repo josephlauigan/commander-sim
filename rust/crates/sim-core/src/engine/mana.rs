@@ -502,10 +502,13 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
         gn = 0;
         pips = "R".into();
     }
+    let mut paid_life = 0;
     for col in d.phyrexian.chars() {
-        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there
-        if pl.life > 10 && pips.contains(col) && !can_pay(g, p, gn.max(0) as u32, &pips, false) {
+        // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
+        // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
+        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay(g, p, gn.max(0) as u32, &pips, false) {
             pips = pips.replacen(col, "", 1);
+            paid_life += 2;
         }
     }
     crate::impls::krrik::drop_black(g, p, c, gn, &mut pips); // K'rrik: 2 life for a {B}

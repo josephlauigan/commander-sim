@@ -204,3 +204,16 @@ fn krrik_gives_a_person_the_choice_for_every_black_pip() {
     let c2 = g2.db.id("Dread Slaver").unwrap();
     assert_eq!(legal::phyrexian(&g2, P0, c2), "");
 }
+
+#[test]
+fn phyrexian_pips_stop_paying_life_at_ten() {
+    // the life check counts the pips already paid: at 12 life only one {B/P} goes to life (12 -> 10), not three (-> 6)
+    let mut g = table(&["sheoldred", "sephfs"]);
+    g.player_mut(P0).life = 12;
+    lands(&mut g, P0, "Swamp", 4, false);
+    let c = hand(&mut g, P0, &[KRRIK])[0];
+    let (_, pips) = sim_core::engine::mana::cost_of(&g, P0, c);
+    assert_eq!(pips.len(), 2, "two {{B/P}} are left to pay with mana: {pips}");
+    assert!(!brain::do_cast(&mut g, P0, c, None).unwrap_or(false), "4 Swamps can't pay {{4}}{{B}}{{B}}");
+    assert_eq!(g.player(P0).life, 12);
+}
