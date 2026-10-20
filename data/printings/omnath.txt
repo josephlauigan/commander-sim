@@ -1,8 +1,8 @@
 1 Annoyed Altisaur (mh3) 284
 1 Arachnogenesis (fdc) 187
 1 Bestial Incursion (fra) 98
-1 Bite Down (fdn) 212
-1 Blossoming Defense (ecl) 167
+1 Smaug the Magnificent (hob) 110
+1 Thundermaw Hellkite (scd) 164
 1 Boughside Wanderers (hob) 121
 1 Bugenhagen, Wise Elder (fic) 66
 1 Cactarantula (otj) 158
@@ -51,7 +51,7 @@
 1 Tumbleweed Rising (otj) 187
 1 Vinelasher Adept (fra) 119
 1 Vorinclex, Monstrous Raider (khm) 406
-1 Worldly Tutor (dmr) 442
+1 Glorybringer (akh) 134
 1 Cinder Glade (fic) 380
 1 Decimate (fic) 323
 1 Hellkite Tyrant (fic) 295

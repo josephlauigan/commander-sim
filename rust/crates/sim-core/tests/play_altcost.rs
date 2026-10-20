@@ -121,7 +121,7 @@ fn you_flashback_twinned_vision() {
 #[ignore]
 fn probe_jd_cards() {
     use sim_core::human::alt;
-    let keys: Vec<String> = sim_core::testkit::decks().iter().take(13).map(|d| d.key.clone()).collect();
+    let keys: Vec<String> = sim_core::testkit::decks().iter().take(14).map(|d| d.key.clone()).collect();
     let mut seen = std::collections::BTreeSet::new();
     for key in keys {
         for name in sim_core::testkit::deck(&key).cards.clone() {

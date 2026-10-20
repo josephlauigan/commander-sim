@@ -53,3 +53,8 @@ until the combo is near). With Urza out the pair is infinite colorless mana into
 abstracted). Wins stayed by damage, so the combo itself rarely assembles in 500 games: the gain, if real, is mostly
 Basalt's burst mana. Rings of Brighthearth is not owned yet. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
 **PINNED (JD, 10/18):** JD owns Basalt Monolith but not Rings of Brighthearth yet; the package waits until he has Rings.
+
+## 2026-10-19: Urza out to Tymna/Thrasios? (paired, loose, look-ahead, 1,000 games per tier; `2026-10-19-urza-out/`)
+**Urza, Lord High Artificer => Spell Pierce: T3 +0.5 (±3.7), T4 +1.2 (±3.5); noise.** Urza cast in 65-69% of his
+draws, Spell Pierce in 68-70%. The move tested -1.5 in Tymna/Thrasios (`audit/thrasios/FINDINGS.md`), so on both sides
+it's a wash: not adopted, Urza stays.

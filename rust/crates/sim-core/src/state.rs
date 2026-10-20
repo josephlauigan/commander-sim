@@ -91,6 +91,8 @@ pub enum DataKey {
     Final,
     Flip,
     Flipped,
+    /// a Wizard token made by Kuja, Genome Sorcerer: it pings when its controller casts a noncreature spell
+    KujaWiz,
     Frozen,
     GarlandHit,
     Held,

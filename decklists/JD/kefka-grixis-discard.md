@@ -53,11 +53,16 @@ is removed.
   trigger with no mana spent.
 
 ### Outlets and looting
-Rummaging Goblin, Hallway Heckler, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
+Rummaging Goblin, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
 isn't a land), Stadium Tidalmage, Alpharael, Rapturous Moment, Big Score and Seize the Spoils. They pick the right
 card to bin before Kefka's trigger and fix the hand after it. Rapturous Moment, Big Score and Seize the Spoils also
-make mana or Treasure toward the {8}. Hallway Heckler's prepared spell is a one-damage ping at an opponent, so it
-counts as life loss after the flip. **Skullclamp** and **Rhystic Study** keep the hand full between triggers.
+make mana or Treasure toward the {8}. **Skullclamp** and **Rhystic Study** keep the hand full between triggers.
+
+### Kuja
+**Kuja, Genome Sorcerer** ({2}{B}{R}, 3/4) makes a tapped 0/1 Wizard at each of your end steps. Each token deals 1
+damage to each opponent whenever you cast a noncreature spell, so every discard outlet, ritual and Kefka spell burns
+the table. With four Wizards (Kefka and Niv-Mizzet count) he flips into Trance Kuja, Fate Defied, a 4/6 that doubles
+Wizard damage. Cast him before a spell-heavy turn.
 
 ### Pressure on their hands
 **Rank Rat** and **Cackling Fiend** each make every opponent discard a card when they enter. **Intellect Devourer**
@@ -177,7 +182,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (24).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Hallway Heckler, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
+**Creatures (24).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
 
 **Enchantments (5).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Rhystic Study, Underworld Breach
 
@@ -221,12 +226,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grab the Prize
 1 Grapeshot
 1 Grim Servant
-1 Hallway Heckler
 1 Haunted Ridge
 1 Intellect Devourer
 1 Jeska's Will
 1 Jin-Gitaxias, Progress Tyrant
 1 Kefka, Court Mage // Kefka, Ruler of Ruin
+1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied
 1 Lightning Bolt
 1 Lightning Greaves
 1 Lotus Petal

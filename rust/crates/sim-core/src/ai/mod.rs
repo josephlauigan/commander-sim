@@ -75,7 +75,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "kraum" | "sephfs"
+        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs"
     )
 }
 

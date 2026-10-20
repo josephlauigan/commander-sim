@@ -367,7 +367,13 @@ fn mana_sink(g: &Game, p: PlayerId) -> bool {
     {
         return true;
     }
-    any_hand(g, p, &SINK_TUTORS).is_some() && g.player(p).library.iter().any(|&c| name_of(g, c) == "Walking Ballista")
+    let ballista_in_library = g.player(p).library.iter().any(|&c| name_of(g, c) == "Walking Ballista");
+    // Thrasios, Triton Hero turns unbounded mana into the whole library: each {4} puts the top card in hand (a land goes
+    // onto the battlefield), so a Ballista in the library is found, then cast for any X (Rust only, and only JD's `thrasios` seat: the Tier 6 pool decks keep their lines)
+    if ballista_in_library && g.player(p).key == "thrasios" && on_bf(g, p, "Thrasios, Triton Hero").is_some() {
+        return true;
+    }
+    any_hand(g, p, &SINK_TUTORS).is_some() && ballista_in_library
 }
 
 fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
@@ -903,6 +909,16 @@ fn power_artifact(g: &Game, p: PlayerId) -> Ready {
     let cd_name = |m: PermId| g.perm(m).cd.map_or("", |c| name_of(g, c));
     if cd_name(pa) == "Rings of Brighthearth" && cd_name(mono) != "Basalt Monolith" {
         return NOT_READY();
+    }
+    // the first loop (Rust only; Python started it with no mana): Basalt taps for {C}{C}{C}, {3} untaps it and Rings' copy
+    // costs {2}, so the copy and the original untap it twice and it taps twice more: {6} for {5}, one more mana each loop. It
+    // takes {5} in all (Basalt's own three, untapped, plus {2} from elsewhere; or {5} from elsewhere when it is tapped).
+    // Power Artifact makes the untap {1}, so a tapped Monolith only needs {1}.
+    if cd_name(mono) == "Basalt Monolith" {
+        let need = if cd_name(pa) == "Rings of Brighthearth" { 5 } else { 1 };
+        if (g.perm(mono).tapped || need == 5) && crate::engine::mana::total_mana(g, p, false) < need {
+            return NOT_READY();
+        }
     }
     if !mana_sink(g, p) {
         return NOT_READY();

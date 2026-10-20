@@ -1,4 +1,4 @@
-//! A person playing the Partner deck `kraum` (Tymna the Weaver + Kraum, Ludevic's Opus): the setup list shows both
+//! A person playing the Partner deck `thrasios` (Tymna the Weaver + Thrasios, Triton Hero): the setup list shows both
 //! commanders, the view gives both zones and taxes, and the commanders are cast from the command zone with
 //! `{"do": "cast", "zone": "cmd", "cmd": i}`.
 
@@ -13,33 +13,33 @@ use std::time::Duration;
 const LIMIT: Duration = Duration::from_secs(120);
 
 #[test]
-fn the_catalog_lists_kraum_with_both_commanders() {
+fn the_catalog_lists_thrasios_with_both_commanders() {
     let data = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../data");
     let cat = practice::catalog::catalog(&data).unwrap();
     let keys: Vec<&str> = cat["decks"].as_array().unwrap().iter().map(|d| d["key"].as_str().unwrap()).collect();
-    assert!(keys.contains(&"kraum"), "{keys:?}");
-    let k = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "kraum").unwrap();
-    assert_eq!(k["commanders"], json!(["Tymna the Weaver", "Kraum, Ludevic's Opus"]));
+    assert!(keys.contains(&"thrasios"), "{keys:?}");
+    let k = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "thrasios").unwrap();
+    assert_eq!(k["commanders"], json!(["Tymna the Weaver", "Thrasios, Triton Hero"]));
     assert_eq!(
         (k["commander"].as_str(), k["commander2"].as_str()),
-        (Some("Tymna the Weaver"), Some("Kraum, Ludevic's Opus"))
+        (Some("Tymna the Weaver"), Some("Thrasios, Triton Hero"))
     );
-    assert_eq!(k["ident"], "WUBR");
-    assert_eq!(k["name"], "Tymna the Weaver and Kraum"); // the deck file's two commanders
+    assert_eq!(k["ident"], "WUBG");
+    assert_eq!(k["name"], "Tymna the Weaver and Thrasios"); // the deck file's two commanders
     // one commander elsewhere: no second one
     let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "sauron").unwrap();
     assert_eq!(s["commander2"], Value::Null);
     assert_eq!(s["commanders"].as_array().unwrap().len(), 1);
     // both commanders get their images fetched
     let names = practice::catalog::commanders(&cat);
-    assert!(names.contains(&"Tymna the Weaver".to_string()) && names.contains(&"Kraum, Ludevic's Opus".to_string()));
+    assert!(names.contains(&"Tymna the Weaver".to_string()) && names.contains(&"Thrasios, Triton Hero".to_string()));
 }
 
 #[test]
 fn the_deck_file_line_with_two_commanders() {
     assert_eq!(
-        practice::catalog::display_name("x\n**Commanders (2).** Tymna the Weaver, Kraum, Ludevic's Opus\n").unwrap(),
-        "Tymna the Weaver and Kraum"
+        practice::catalog::display_name("x\n**Commanders (2).** Tymna the Weaver, Thrasios, Triton Hero\n").unwrap(),
+        "Tymna the Weaver and Thrasios"
     );
 }
 
@@ -51,7 +51,7 @@ fn me(req: &Value) -> Option<&Value> {
 /// One game of that policy with this seed: the casts of the person's commanders from the log, and the taxes at the end
 fn play(seed: u64) -> (Vec<String>, u64, u64) {
     let mut o = opts("adaptive");
-    o.deck = "kraum".into();
+    o.deck = "thrasios".into();
     o.tier = "t3".into();
     o.seed = Some(seed);
     o.max_rounds = 14;
@@ -68,7 +68,7 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
         if !seen_first_view.get() {
             // the view has both commanders, both in the zone, no tax yet
             assert_eq!(m["commander"], "Tymna the Weaver");
-            assert_eq!(m["commander2"], "Kraum, Ludevic's Opus");
+            assert_eq!(m["commander2"], "Thrasios, Triton Hero");
             assert!(m["commander_in_zone"] == true && m["commander2_in_zone"] == true);
             assert_eq!((m["tax"].as_u64(), m["tax2"].as_u64()), (Some(0), Some(0)));
             seen_first_view.set(true);
@@ -93,9 +93,9 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
         }
         let pool = m["mana_pool"].as_str().unwrap_or("").chars().count() as u64;
         if !tried.get() && pool > 0 {
-            let (t1, t2) = (3 + m["tax"].as_u64().unwrap(), 5 + m["tax2"].as_u64().unwrap());
+            let (t1, t2) = (3 + m["tax"].as_u64().unwrap(), 2 + m["tax2"].as_u64().unwrap());
             let has = |cs: &str| cs.chars().all(|c| m["mana_pool"].as_str().unwrap_or("").contains(c));
-            if in_zone("commander2_in_zone") && pool >= t2 && has("UR") {
+            if in_zone("commander2_in_zone") && pool >= t2 && has("UG") {
                 tried.set(true);
                 return Some(json!({"do": "cast", "zone": "cmd", "cmd": 1}));
             }
@@ -112,7 +112,7 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
     let cast: Vec<String> = evs
         .iter()
         .filter_map(|e| e["text"].as_str())
-        .filter(|t| t.contains("Tymna/Kraum casts Tymna the Weaver") || t.contains("Tymna/Kraum casts Kraum"))
+        .filter(|t| t.contains("Tymna/Thrasios casts Tymna the Weaver") || t.contains("Tymna/Thrasios casts Thrasios"))
         .map(String::from)
         .collect();
     s.close(Duration::from_secs(10));
@@ -120,19 +120,19 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
 }
 
 #[test]
-fn a_person_on_kraum_casts_either_commander_from_the_command_zone_and_pays_its_own_tax() {
-    let (mut tymna_recast, mut kraum_seen) = (false, false);
+fn a_person_on_thrasios_casts_either_commander_from_the_command_zone_and_pays_its_own_tax() {
+    let (mut tymna_recast, mut thrasios_seen) = (false, false);
     for seed in 1..=24 {
         let (cast, tax, tax2) = play(seed);
-        let of = |n: &str| cast.iter().filter(|t| t.contains(&format!("Tymna/Kraum casts {n}"))).count() as u64;
+        let of = |n: &str| cast.iter().filter(|t| t.contains(&format!("Tymna/Thrasios casts {n}"))).count() as u64;
         // every cast raised that commander's own tax, and only its own
         assert_eq!(tax, 2 * of("Tymna the Weaver"), "seed {seed}: {cast:?}");
-        assert_eq!(tax2, 2 * of("Kraum"), "seed {seed}: {cast:?}");
+        assert_eq!(tax2, 2 * of("Thrasios"), "seed {seed}: {cast:?}");
         tymna_recast |= of("Tymna the Weaver") >= 2;
-        kraum_seen |= of("Kraum") >= 1;
+        thrasios_seen |= of("Thrasios") >= 1;
     }
     assert!(tymna_recast, "no game recast Tymna");
-    assert!(kraum_seen, "no game cast Kraum");
+    assert!(thrasios_seen, "no game cast Thrasios");
 }
 
 #[test]

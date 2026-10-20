@@ -41,7 +41,7 @@ fn each_opponent_gets_a_flier_while_tymna_is_out() {
 
 #[test]
 fn the_cheapest_attacker_is_sent_and_a_ground_creature_stays() {
-    let mut g = tbl("kraum");
+    let mut g = tbl("thrasios");
     perm(&mut g, P0, "Tymna the Weaver");
     let f = fliers(&mut g);
     let big = perm(&mut g, P0, "Lyra Dawnbringer"); // a flier too, but the most valuable
@@ -91,7 +91,7 @@ fn nothing_changes_without_tymna_or_for_other_decks() {
 
 #[test]
 fn reconnaissance_mission_also_spreads() {
-    let mut g = tbl("kraum");
+    let mut g = tbl("thrasios");
     perm(&mut g, P0, "Reconnaissance Mission");
     let f = fliers(&mut g);
     let groups = spread(&g, P0, vec![(P1, f.clone())], &f);
@@ -122,7 +122,7 @@ fn priorities_follow_the_plan() {
 
 #[test]
 fn equipment_is_cast_after_the_creatures_but_never_left_in_the_hand() {
-    let mut g = tbl("kraum");
+    let mut g = tbl("thrasios");
     let h = hand(
         &mut g,
         P0,

@@ -46880,71 +46880,6 @@
    "spell_prio": false
   },
   {
-   "name": "Hallway Heckler",
-   "types": "C",
-   "generic": 2,
-   "pips": "R",
-   "tags": {
-    "pow": "2",
-    "tgh": "3"
-   },
-   "pow": 2,
-   "tgh": 3,
-   "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters prepared"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true,
-      "discard": 1
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
-   "start_loyalty": null,
-   "kws": [
-    "prepared"
-   ],
-   "subtypes": [
-    "elemental",
-    "sorcerer"
-   ],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "BR",
-   "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [],
-   "derived": {
-    "cmc": 3,
-    "land": false,
-    "creature": true,
-    "instant": false,
-    "sorcery": false,
-    "perm": true
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Hallway Heckler // Vicious Verse",
    "types": "C",
    "generic": 2,
@@ -58625,6 +58560,51 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kuja, Genome Sorcerer // Trance Kuja, Fate Defied",
+   "types": "C",
+   "generic": 2,
+   "pips": "BR",
+   "tags": {
+    "pow": "3",
+    "tgh": "4",
+    "leg": true,
+    "human": true,
+    "wizard": true
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "mutant",
+    "wizard"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -102646,7 +102626,7 @@
    "generic": 2,
    "pips": "",
    "tags": {
-    "rock": "1:C",
+    "rock": "1:RW",
     "pain": true
    },
    "pow": 0,
@@ -102963,6 +102943,44 @@
    "protfrom": "",
    "ward": 0,
    "identity": "BG",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Talisman of Unity",
+   "types": "A",
+   "generic": 2,
+   "pips": "",
+   "tags": {
+    "rock": "1:GW",
+    "pain": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
    "game_changer": false,
    "source": "scryfall",
    "unparsed": [],
@@ -111223,6 +111241,46 @@
     "island",
     "swamp"
    ],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Undergrowth Stadium",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "BG"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": [
+    "opponents",
+    2
+   ],
+   "land_types": [],
    "basic": false,
    "python_hooks": [],
    "spell_prio": false

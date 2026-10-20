@@ -542,7 +542,7 @@ fn expert_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
 
 // ================================================================== protecting Titania
 /// cast an instant from the hand for {G} in response to removal on m (`gives`: what it does to m)
-fn cast_protect(g: &mut Game, p: PlayerId, name: &str, m: PermId, gives: fn(&mut Game, PermId)) -> Res<bool> {
+pub fn cast_protect(g: &mut Game, p: PlayerId, name: &str, m: PermId, gives: fn(&mut Game, PermId)) -> Res<bool> {
     let Some(c) = in_hand(g, p, name) else { return Ok(false) };
     if !can_pay(g, p, 0, "G", false) || !crate::engine::cast::castable(g, p, c, "hand") {
         return Ok(false);
@@ -568,7 +568,7 @@ fn cast_protect(g: &mut Game, p: PlayerId, name: &str, m: PermId, gives: fn(&mut
     Ok(true)
 }
 
-fn blossom_apply(g: &mut Game, m: PermId) {
+pub fn blossom_apply(g: &mut Game, m: PermId) {
     super::partials::eot_kw(g, m, "hexproof");
     let x = g.perm_mut(m);
     x.eot_pt = (x.eot_pt.0 + 2, x.eot_pt.1 + 2);

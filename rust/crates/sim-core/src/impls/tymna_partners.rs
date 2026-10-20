@@ -3,6 +3,7 @@
 //! zone with the generic commander priority. The decks' own AI plans are written later: for now both use the
 //! default priority.
 
+use crate::engine::mana::can_pay;
 use crate::engine::values::card_name;
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
@@ -78,7 +79,12 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         return base.max(66);
     }
-    if pl.key == "kraum" {
+    if pl.key == "thrasios"
+        && let Some(v) = combo_prio(g, p, &d.name)
+    {
+        return v;
+    }
+    if matches!(pl.key, "kraum" | "thrasios") {
         if t.has(Tag::Breach) && !d.creature {
             return breach_prio(g, p);
         }
@@ -287,9 +293,6 @@ pub fn commander_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Opt
         {
             Some(i)
         }
-        // Thrasios's {4} when nothing else is worth doing: the search's score doesn't count the card or land it
-        // gives, and it kept choosing "stop" with the mana unspent (0.4-0.6 activations a game)
-        Some(crate::hooks::Action::Ability { .. }) if o.label.starts_with("Thrasios:") => Some(i),
         _ => None,
     }
 }
@@ -314,4 +317,148 @@ fn can_pay_r(g: &Game, p: PlayerId, cg: u32, cp: &str) -> bool {
     let with_r = format!("{cp}R");
     let cg = cg + 1; // Breach is {1}{R}
     crate::engine::mana::can_pay(g, p, cg, &with_r, false)
+}
+
+// ------------------------------------------------------------------ Thrasios's {4} sink
+/// `ai::search::choose_inner`, thrasios and kraum seats: the index of Thrasios's {4} ability among the main-phase
+/// options. The search's position score doesn't count the card or land it gives, and it kept choosing "stop" with the
+/// mana unspent (0.4-0.7 activations a game), so the ability is left out of the search and made when the search's
+/// best play among the others is "stop": the spare mana is spent after everything else the deck wanted to do.
+pub fn thrasios_sink(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
+    if !matches!(g.player(p).key, "thrasios" | "kraum") {
+        return None;
+    }
+    opts.iter().position(|o| o.act.is_some() && o.label.starts_with("Thrasios:"))
+}
+
+// ------------------------------------------------------------------ protection spells
+/// a protection instant the seat keeps mana for when it spends the spare on Thrasios: Dark Endurance (both seats) and
+/// Blossoming Defense (thrasios), while a commander or a creature worth 4 or more is out to protect. (Not part of
+/// `brain::hold_value`: there the look-ahead's hold bonus beat casting two creatures with ten lands in play.)
+pub fn protection_held(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let key = g.player(p).key;
+    if !matches!(key, "thrasios" | "kraum") {
+        return false;
+    }
+    let ok = match &*g.db.get(c).name {
+        "Dark Endurance" => true,
+        "Blossoming Defense" => key == "thrasios",
+        _ => false,
+    };
+    ok && g.player(p).perms.iter().any(|&m| {
+        let x = g.perm(m);
+        x.on_bf && !x.phased && g.is_creature(m) && (x.is_cmd || pval(g, m) >= 4.0)
+    })
+}
+
+/// engine/combat.rs, after the blockers are declared (thrasios and kraum seats): Blossoming Defense (+2/+2) or Dark
+/// Endurance (+2/+0, indestructible) on an attacker that would die in its block and is worth saving (a commander or
+/// worth 3 or more), or that would win a trade it was losing against a blocker worth 3 or more. `assign` is the
+/// (attacker, blocker) pairs. First strike and trample are not worked through: those blocks are left alone.
+pub fn combat_trick(g: &mut Game, p: PlayerId, atk: &[PermId], assign: &[(PermId, PermId)]) -> crate::flow::Res {
+    let key = g.player(p).key;
+    if !matches!(key, "thrasios" | "kraum") || crate::human::is_human(g, p) {
+        return Ok(());
+    }
+    let find = |g: &Game, name: &str| g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == name);
+    for &a in atk {
+        let Some(&(_, b)) = assign.iter().find(|x| x.0 == a) else { continue };
+        if g.over
+            || !g.perm(a).on_bf
+            || g.perm(a).owner != p
+            || !g.perm(b).on_bf
+            || first_strike_either(g, a, b)
+            || crate::engine::values::silenced(g, p)
+        {
+            continue;
+        }
+        let (pa, ta, pb, tb) = (epow(g, a), crate::engine::values::etgh(g, a), epow(g, b), crate::engine::values::etgh(g, b));
+        let dt = g.perm(b).dt;
+        let a_dies = pb >= ta || dt;
+        let b_dies = pa >= tb;
+        let worth_a = g.perm(a).is_cmd || pval(g, a) >= 3.0;
+        let worth_b = pval(g, b) >= 3.0;
+        let blossom = key == "thrasios" && find(g, "Blossoming Defense").is_some() && can_pay(g, p, 0, "G", false);
+        let endure = find(g, "Dark Endurance").is_some() && can_pay(g, p, 1, "B", false);
+        // Blossoming Defense saves it only from a blocker that can't kill a creature two toughness bigger
+        let blossom_saves = blossom && !dt && pb < ta + 2;
+        let save = a_dies && worth_a;
+        let trade = !b_dies && worth_b && pa + 2 >= tb && (!a_dies || worth_a);
+        if !(save || trade) {
+            continue;
+        }
+        // the pump that wins the fight: Blossoming Defense does both jobs when it keeps the attacker alive
+        let use_blossom = blossom && (blossom_saves || !a_dies) && (!trade || pa + 2 >= tb);
+        if use_blossom {
+            if super::titania::cast_protect(g, p, "Blossoming Defense", a, super::titania::blossom_apply)? {
+                crate::glog!(g, "    {} pumps {} in its block", g.player(p).name, g.perm(a).name);
+            }
+        } else if endure && let Some(c) = find(g, "Dark Endurance") {
+            if crate::engine::cast::castable(g, p, c, "hand") && super::tymna_cards::cast_endurance(g, p, c, a)? {
+                crate::glog!(g, "    {} pumps {} in its block", g.player(p).name, g.perm(a).name);
+            }
+        }
+    }
+    Ok(())
+}
+
+fn first_strike_either(g: &Game, a: PermId, b: PermId) -> bool {
+    crate::engine::combat::first_strike(g, a) || crate::engine::combat::first_strike(g, b)
+}
+
+// ------------------------------------------------------------------ the Basalt Monolith + Rings of Brighthearth combo
+const BASALT: &str = "Basalt Monolith";
+const RINGS: &str = "Rings of Brighthearth";
+const BALLISTA: &str = "Walking Ballista";
+
+fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
+}
+
+/// the card is in the hand or on the battlefield
+fn have(g: &Game, p: PlayerId, name: &str) -> bool {
+    in_hand(g, p, name) || out(g, p, name)
+}
+
+/// the `thrasios` seat's priority for the combo cards: Basalt Monolith is ramp (cast on any turn); Rings of Brighthearth
+/// is worth a turn once Basalt is there to pair with; Walking Ballista is the kill when Basalt and Rings are both
+/// in reach (held, unless the mana is huge), else a mana sink cast with spare mana (X of at least 2 from four mana).
+fn combo_prio(g: &Game, p: PlayerId, name: &str) -> Option<i32> {
+    match name {
+        BASALT => Some(if g.player(p).turns <= 5 { 82 } else { 74 }),
+        RINGS => Some(if have(g, p, BASALT) { 72 } else { 38 }),
+        BALLISTA => {
+            let mana = crate::engine::mana::total_mana(g, p, false);
+            if have(g, p, BASALT) && have(g, p, RINGS) && mana < 8 {
+                return Some(0); // the combo turn is near: the Ballista is the kill, not a body
+            }
+            Some(if mana < 4 { 0 } else if mana < 6 { 50 } else { 56 })
+        }
+        _ => None,
+    }
+}
+
+/// the card `tutor_pick` fetches for the combo: once two of its three pieces (Basalt, Rings, an outlet: the Ballista in
+/// hand or out, or Thrasios out) are in hand or on the battlefield, the third
+fn combo_piece(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    let outlet = have(g, p, BALLISTA) || out(g, p, THRASIOS);
+    let pieces = [have(g, p, BASALT), have(g, p, RINGS), outlet];
+    if pieces.iter().filter(|&&x| x).count() != 2 {
+        return None;
+    }
+    let want = if !pieces[0] {
+        BASALT
+    } else if !pieces[1] {
+        RINGS
+    } else {
+        BALLISTA
+    };
+    g.db.id(want).filter(|c| okn.contains(c))
+}
+
+pub fn combo_tutor_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
+    if g.player(p).key != "thrasios" {
+        return None;
+    }
+    combo_piece(g, p, okn)
 }

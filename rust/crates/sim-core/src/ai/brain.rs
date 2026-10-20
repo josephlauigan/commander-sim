@@ -884,7 +884,7 @@ pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> 
         "omnath" => crate::impls::titania::titania_special(g, p, post),
         "sheoldred" => crate::impls::sheoldred::sheoldred_special(g, p, post),
         "cloud" => crate::impls::cloud::cloud_special(g, p, post),
-        "kraum" => crate::impls::tymna_cards::kraum_special(g, p, post),
+        "kraum" | "thrasios" => crate::impls::tymna_cards::kraum_special(g, p, post),
         "sephfs" => crate::impls::sephfs::options(g, p, post),
         _ => Ok(vec![]),
     }

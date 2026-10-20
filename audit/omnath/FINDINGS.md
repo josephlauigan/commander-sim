@@ -29,3 +29,19 @@ Why (first read, from the runs' summaries; a deeper `--analyze` pass is still to
 ## Cards to confirm (JD)
 Terror of the Peaks, Blasphemous Act, Birds of Paradise, Command Tower, Exotic Orchard come from JD's spares and each
 also appears in another deck: JD is checking he owns a second copy.
+
+## 2026-10-19: trade with Tymna/Thrasios (paired swap, loose, look-ahead, 1,000 games per tier)
+Worldly Tutor, Blossoming Defense, Bite Down out (to Tymna/Thrasios); Glorybringer, Thundermaw Hellkite, Smaug the
+Magnificent in (from Tymna/Kraum). Raw: `2026-10-19-thrasios-trade/omnath-<tier>.txt`.
+| Tier | Current | Swapped | Change |
+|---|---|---|---|
+| T1 | 21.0% | 23.7% | +2.7 (±3.5) |
+| T2 | 27.2% | 32.3% | **+5.1 (±3.8)** |
+| T3 | 26.4% | 27.8% | +1.4 (±3.8) |
+| **Average over t1-t3** | **24.9%** | **27.9%** | **+3.1** |
+
+Why (T2 breakdown): the dragons are cast in 87-90% of the games they're drawn and win 42-48% when cast; damage dealt
++4.0 per game (combat +3.6), eliminated 69% -> 65% of games. Blossoming Defense was stuck in hand 46% of its draws. The
+cost: without Worldly Tutor, Omnath resolves 0.37 turns later (tutors 0.22 -> 0 per game). Hasty fliers give the deck
+pressure while it waits for landfall, which it lacked (Weakness: loses to fast decks before Elementals pile up).
+Also settles "Cards to confirm": Tymna's Terror of the Peaks copy frees up for Omnath if the trade goes ahead.

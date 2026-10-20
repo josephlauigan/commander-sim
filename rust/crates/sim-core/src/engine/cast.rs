@@ -387,6 +387,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     crate::impls::t0_stella::on_cast_next(g, p, c)?; // Tier 0 Stella: "the next instant or sorcery spell you cast" effects
     if !creature {
         prowess(g, p);
+        crate::impls::kuja::wizard_pings(g, p)?; // Kuja's Wizard tokens
     }
     if instant_or_sorcery {
         if !crate::human::is_human(g, p) {

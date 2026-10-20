@@ -785,7 +785,7 @@ mod tier_tests {
             ("sephfs", &["t5"]),
             ("veyran", &["t1", "t2", "t3"]),
             ("cloud", &["t1", "t2", "t3"]),
-            ("kraum", &["t5"]),
+            ("thrasios", &["t5"]),
             ("omnath", &["t1", "t2", "t3"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),

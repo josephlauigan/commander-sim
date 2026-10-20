@@ -65,12 +65,12 @@ ident = "W"
 tiers = ["t1", "t2", "t3"]
 
 # Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
-[kraum]
-file = "JD/tymna-kraum-partners.md"
-name = "Tymna/Kraum"
+[thrasios]
+file = "JD/tymna-thrasios-partners.md"
+name = "Tymna/Thrasios"
 commander = "Tymna the Weaver"
-commander2 = "Kraum, Ludevic's Opus"
-ident = "WUBR"
+commander2 = "Thrasios, Triton Hero"
+ident = "WUBG"
 tiers = ["t5"]
 
 [sephfs]

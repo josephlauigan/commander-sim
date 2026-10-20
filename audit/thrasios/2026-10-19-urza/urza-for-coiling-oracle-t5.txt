@@ -1,0 +1,117 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Urza, Lord High Artificer [pool] C 2UU :: leg human pow=1 tgh=4
+Model status of the swapped-in cards (cardgen audit):
+  Urza, Lord High Artificer: Full (Construct token (+1/+1 per artifact); artifacts tap for U; {5}: a free card off the top)
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by thrasios's AI?
+  AI: Urza, Lord High Artificer: priority 44 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 16 worker threads: about 1 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Urza, Lord High Artificer: drawn in 19.0% of games (38), cast in 47.4% of those (18)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 13 minutes
+  progress 100.0%  7m04s elapsed, ~0m00s left
+Swaps: Coiling Oracle -> Urza, Lord High Artificer
+
+=== Tymna/Thrasios vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  26.6% ->  25.1%  (delta -1.5 pts, noise ±2.2, paired)   n=2000
+               eliminated by (variant): Zur the Enchanter 15.2%  Kinnan 8.9%  Urza 17.2%  Yawgmoth 12.8%  Winota 20.6%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (thrasios) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for thrasios: first Tymna draw, or the infinite-mana combo going off
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          26.6% ->  25.1%  -1.5pt   ±2.8 
+    Rounds survived (or game length)                   9.39 ->   9.46   +0.06  ±0.22 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.50 ->   0.50   +0.00  ±0.05 
+    Mana available on your turn 4                      4.11 ->   4.10   -0.01  ±0.06 
+    Mana available on your turn 6                      5.95 ->   5.94   -0.00  ±0.11 
+
+  Speed
+    Games where the game plan came online             76.5% ->  75.9%  -0.6pt   ±2.7 
+    Turn the game plan came online                     4.98 ->   4.96   -0.02  ±0.12 
+    Turn the commander first resolved                  3.13 ->   3.13   +0.00  ±0.07 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.50 ->  13.42   -0.08  ±0.45 
+    Tutors resolved per game                           0.22 ->   0.22   -0.00  ±0.03 
+    Spells cast per game                              11.14 ->  11.22   +0.08  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.15 ->   0.14   -0.00  ±0.02 
+    Spot removal cast                                  0.60 ->   0.62   +0.02  ±0.05 
+    Board wipes cast                                   0.15 ->   0.15   -0.00  ±0.02 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.14 ->   0.18   +0.04  ±0.03*
+    Your spells countered                              0.60 ->   0.61   +0.01  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                26.92 ->  26.79   -0.13  ±2.18 
+      ...of which combat damage                       26.91 ->  26.78   -0.12  ±2.18 
+      ...of which drain triggers                       0.00 ->   0.01   +0.01  ±0.01 
+      ...of which other triggers                       0.01 ->   0.00   -0.01  ±0.01 
+
+--- Reading it ---
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Your key permanents removed by opponents (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Urza, Lord High Artificer             21.8      47.4         8.6     52.6       50.0      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Coiling Oracle                        20.9      58.6         7.9     41.4       39.2      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        26.6      25.1     -1.5
+    rounds survived                                   9.39      9.46    +0.06
+    eliminated, % of games                            73.3      74.8     +1.5
+    opponents it eliminated, per game                 0.68      0.65    -0.03
+    damage dealt, per game                            26.9      26.8     -0.1
+    plan: first Tymna draw, or the infinite-mana combo going off
+      plan online by turn 4, %                        38.5      38.4     -0.1
+      plan online by turn 6, %                        66.0      65.0     -1.0
+      plan online by turn 8, %                        73.5      73.3     -0.1
+      plan online by turn 12, %                       76.0      75.5     -0.5
+      plan online at all, %                           76.5      75.9     -0.6
+    commander resolved by turn 4, %                   88.5      88.0     -0.5
+    commander resolved by turn 6, %                   94.5      94.3     -0.2
+    commander removals, per game                      0.50      0.53    +0.03
+    lands on the battlefield, turn 4                  3.76      3.76    -0.00
+    lands on the battlefield, turn 8                  6.74      6.63    -0.11
+    mana available, turn 4                            4.11      4.10    -0.01
+    mana available, turn 8                            7.58      7.53    -0.06
+    cards in hand after the land drop, turn 4         6.42      6.41    -0.00
+    cards in hand after the land drop, turn 8         5.98      5.94    -0.04
+    wins by (current):  damage 84%, combo 16%, timeout 0%
+    wins by (swapped):  damage 83%, combo 16%, timeout 1%
+    eliminated by (current): Urza via combo 14.7%, Zur the Enchanter via combo 14.2%, Yawgmoth via combo 11.1%, Winota via combo 10.7%
+    eliminated by (swapped): Urza via combo 15.9%, Zur the Enchanter via combo 13.7%, Yawgmoth via combo 11.7%, Winota via combo 10.6%
+
+(425s total)

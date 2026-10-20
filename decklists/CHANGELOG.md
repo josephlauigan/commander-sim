@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Kraum, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -64,6 +64,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-19.** Out: Hallway Heckler. In: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied. Out: Hallway Heckler. In: Kuja, Genome Sorcerer. JD approved 10/19: +2.2 at T3 (30.2% -> 32.5%, ±2.4; 2,000 paired games, look-ahead, loose; audit/kefka/2026-10-19-kuja/). Kuja's Wizard tokens double the deck's burn damage (2.7 -> 5.7 per game).
 - **2026-10-18.** Out: Feed the Swarm. In: Marvin, Murderous Mimic. Feed the Swarm -> Marvin, Murderous Mimic: +0.2 at T3 in the coarse pass (copies Niv-Mizzet's draw, Fangtail, Blightspeaker, Rummaging Goblin).
 - **2026-10-18.** Out: Blazing Firesinger, Crux of Fate. In: Bribery, Fiery Emancipation. Kefka lift (JD approved 10/18): Crux of Fate=>Fiery Emancipation; Blazing Firesinger=>Bribery
 - **2026-10-18.** Out: Bitter Triumph. In: Decorum Dissertation. Matched to the physical deck (JD's list, 2026-10-18): Decorum Dissertation back in for Bitter Triumph; the 10/14 swap was never made physically.
@@ -373,7 +374,9 @@ Deck key `titania`, `decklists/JD/titania-lands.md` (both removed).
 
 ## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners
 
-Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
+
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see the Tymna/Thrasios section below and `audit/thrasios/FINDINGS.md`). The entries below are the deck's history.
 
 ### Changes
 
@@ -649,10 +652,13 @@ Deck key `galadriel`, `decklists/Avery/galadriel-bant-rebels.md`.
 
 ## Tymna the Weaver & Kraum, Ludevic's Opus — Four-Colour Partners (W/U/B/R)
 
-Deck key `kraum`, `decklists/JD/tymna-kraum-partners.md`.
+Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
+
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see `audit/thrasios/FINDINGS.md`). The entries below are the deck's history.
 
 ### Changes
 
+- **2026-10-19.** Out: Battlefield Forge, Bedevil, Black Widow, Agile Avenger, Clifftop Retreat, Dragonskull Summit, Expressive Iteration, Firebird, Blazing Ranger, Furycalm Snarl, Gilgamesh, Master-at-Arms, Glorybringer, Kraum, Ludevic's Opus, Lightning, Army of One, Lightning, Security Sergeant, Marchesa, the Black Rose, Mountain, Rugged Prairie, Smaug the Magnificent, Spectator Seating, Sulfur Falls, Talisman of Conviction, Terror of the Peaks, Thundermaw Hellkite, Underworld Breach. In: Avacyn's Pilgrim, Basalt Monolith, Bite Down, Blossoming Defense, Breeding Pool, Brushland, Coiling Oracle, Deathcap Glade, Dragonlord Dromoka, Faeburrow Elder, Forest, Llanowar Wastes, Paradox Surveyor, Rings of Brighthearth, Sunpetal Grove, Talisman of Curiosity, Talisman of Unity, Thrasios, Triton Hero, Undergrowth Stadium, Walking Ballista, Witherbloom Charm, Worldly Tutor, Yavimaya Coast. Tymna/Thrasios deck added (kraum list with the red cards swapped for green and colourless ones)
 - **2026-10-18.** Out: Serra Angel. In: Cecil, Dark Knight. Serra Angel -> Cecil, Dark Knight: +0.4 at T5 vs Gilgamesh in the coarse pass (noise); JD keeps Gilgamesh and cuts Serra Angel, a vanilla 5-drop, for a 1-mana deathtouch attacker that starts Tymna's draws early.
 - **2026-10-18.** Out: Elemental Mascot. In: Lightning, Army of One. Elemental Mascot -> Lightning, Army of One: -2.8 at T5 in the coarse pass (noise; JD's choice).
 - **2026-10-18.** Out: Rune-Scarred Demon. In: Underworld Breach. Band calibration 10/18 (JD approved): Rune-Scarred Demon=>Underworld Breach
@@ -667,4 +673,5 @@ Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
 ### Changes
 
 - **2026-10-19.** Out: Exotic Orchard, Harrow. In: Game Trail, Lightning Bolt. Exotic Orchard -> Game Trail (JD has no spare Orchard; Game Trail is a real R/G dual from his bulk, untapped by revealing a Mountain or Forest), Harrow -> Lightning Bolt (JD's spare; saves a buy). Not simulated yet.
+- **2026-10-19.** Out: Bite Down, Blossoming Defense, Worldly Tutor. In: Glorybringer, Smaug the Magnificent, Thundermaw Hellkite. Out: Worldly Tutor, Blossoming Defense, Bite Down (to Tymna/Thrasios). In: Glorybringer, Thundermaw Hellkite, Smaug the Magnificent (from Tymna/Kraum). JD approved 10/19 with the Thrasios switch: +3.1 over t1-t3 (T1 +2.7, T2 +5.1, T3 +1.4; 1,000 paired games per tier, look-ahead, loose; audit/omnath/2026-10-19-thrasios-trade/). The hasty dragons add about 4 damage per game while Omnath waits for landfall.
 - **2026-10-19.** New deck: Omnath, Locus of Rage red-green landfall, built from the Titania list.

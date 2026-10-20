@@ -500,7 +500,7 @@ fn run(
             }
         }
         "damage" => {
-            let dmg = n(g, ctx) + has(g, p, Tag::Thor) as i32;
+            let dmg = (n(g, ctx) + has(g, p, Tag::Thor) as i32) * crate::impls::kuja::flare_star(g, src); // Trance Kuja: a Wizard's damage is doubled
             let eff = dmg;
             let to = match &e.to {
                 Some(To::Sel(s)) => (**s).clone(),

@@ -1,4 +1,4 @@
-//! Practice mode with a Partner deck (kraum: Tymna the Weaver + Kraum, Ludevic's Opus): the person casts either
+//! Practice mode with a Partner deck (kraum: Tymna the Weaver + Thrasios, Triton Hero): the person casts either
 //! commander from the command zone, each with its own tax, and each goes back to the command zone when it dies.
 //! (`{"do": "cast", "zone": "cmd", "cmd": i}`: i is the index among the seat's commanders, or the commander's name.)
 
@@ -9,7 +9,7 @@ use sim_core::human::{human::human_main, mana};
 
 /// more lands of every colour, all tapped for mana into the pool
 fn fund(g: &mut Game, p: PlayerId, each: usize) {
-    for n in ["Plains", "Swamp", "Island", "Mountain"] {
+    for n in ["Plains", "Swamp", "Island", "Forest"] {
         lands(g, p, n, each, false);
     }
     while let Some(s) = mana::sources(g, p).first() {
@@ -30,8 +30,8 @@ fn run(g: &mut Game, answers: Vec<F>) -> std::sync::Arc<ScriptHuman> {
 
 #[test]
 fn either_commander_is_cast_from_the_command_zone_with_its_own_tax() {
-    let mut g = table(&["kraum", "veyran"]);
-    let (tymna, kraum) = (card(&g, "Tymna the Weaver"), card(&g, "Kraum, Ludevic's Opus"));
+    let mut g = table(&["thrasios", "veyran"]);
+    let (tymna, kraum) = (card(&g, "Tymna the Weaver"), card(&g, "Thrasios, Triton Hero"));
     assert_eq!(g.player(P0).cmds_in_zone().collect::<Vec<_>>(), vec![tymna, kraum]);
     fund(&mut g, P0, 6);
     // the second commander first, by index; the first one is still in the zone
@@ -53,13 +53,13 @@ fn either_commander_is_cast_from_the_command_zone_with_its_own_tax() {
 
 #[test]
 fn a_recast_pays_that_commanders_tax_and_each_returns_to_the_zone() {
-    let mut g = table(&["kraum", "veyran"]);
-    let (tymna, kraum) = (card(&g, "Tymna the Weaver"), card(&g, "Kraum, Ludevic's Opus"));
+    let mut g = table(&["thrasios", "veyran"]);
+    let (tymna, kraum) = (card(&g, "Tymna the Weaver"), card(&g, "Thrasios, Triton Hero"));
     fund(&mut g, P0, 6);
     run(&mut g, vec![act(json!({"do": "cast", "zone": "cmd"})), pass()]); // no "cmd": the first in the zone, Tymna
     assert!(on_battlefield(&g, tymna).is_some() && on_battlefield(&g, kraum).is_none());
-    run(&mut g, vec![act(json!({"do": "cast", "zone": "cmd"})), pass()]); // now the only one left in the zone
-    assert!(on_battlefield(&g, kraum).is_some());
+    let h = run(&mut g, vec![act(json!({"do": "cast", "zone": "cmd"})), pass()]); // now the only one left in the zone
+    assert!(on_battlefield(&g, kraum).is_some(), "{:?}", h.told());
     // both die: each goes back to the command zone, the engine's usual answer to a commander leaving
     for c in [tymna, kraum] {
         let m = on_battlefield(&g, c).unwrap();
@@ -70,8 +70,8 @@ fn a_recast_pays_that_commanders_tax_and_each_returns_to_the_zone() {
     // the recasts cost the base plus 2 for each earlier cast of that commander only
     let (t0, k0) = (emana::cost_of(&g, P0, tymna), emana::cost_of(&g, P0, kraum));
     assert_eq!(t0.0, 3, "Tymna {{1}}{{W}}{{B}} + 2");
-    assert_eq!(k0.0, 5, "Kraum {{3}}{{U}}{{R}} + 2 (Kraum's own cast is its first: tax 2)");
-    // pay for Kraum's recast; Tymna stays in the zone and keeps her own tax
+    assert_eq!(k0.0, 2, "Thrasios {{{{G}}}}{{{{U}}}} generic 0 + 2 (Thrasios's own cast is its first: tax 2)");
+    // pay for Thrasios's recast; Tymna stays in the zone and keeps her own tax
     fund(&mut g, P0, 6);
     run(&mut g, vec![act(json!({"do": "cast", "zone": "cmd", "cmd": 1})), pass()]);
     assert!(on_battlefield(&g, kraum).is_some() && g.player(P0).cmd_zone_of(tymna));

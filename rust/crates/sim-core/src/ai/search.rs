@@ -318,6 +318,13 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     if let Some(i) = crate::impls::tymna_partners::commander_first(g, p, opts) {
         return Some(i); // thrasios, kraum: the commander comes down when it is the best play (no search)
     }
+    let sink = crate::impls::tymna_partners::thrasios_sink(g, p, opts);
+    if let Some(i) = sink {
+        real.retain(|&x| x != i); // made after the search's best play when that is "stop"
+        if real.is_empty() {
+            return Some(i);
+        }
+    }
     real.sort_by(|&a, &b| opts[b].utility.partial_cmp(&opts[a].utility).unwrap_or(std::cmp::Ordering::Equal));
     real.truncate(g.settings.search.top_k);
     let stop = opts.iter().position(|o| o.act.is_none())?;
@@ -363,6 +370,11 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     let top = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
     if keyed[best].0 != top {
         stat(|x| x.changed += 1);
+    }
+    if let Some(i) = sink
+        && opts[keyed[best].0].act.is_none()
+    {
+        return Some(i);
     }
     Some(keyed[best].0)
 }

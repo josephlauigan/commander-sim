@@ -21,6 +21,16 @@ T5 23.1% (26.8% over t3–t5).**
    Rank Rat, Hallway Heckler, Grim Servant (t4).
 
 ## What was tried, and why it did or didn't work
+
+### Kuja, Genome Sorcerer (2026-10-19; JD bought it; modeled Full in `impls/kuja.rs`, branch `thrasios-deck`)
+Look-ahead, loose, T3, 2,000 paired games per swap (`audit/kefka/2026-10-19-kuja/`).
+| Swap (Kuja in for) | Result at T3 | Why |
+|---|---|---|
+| **Hallway Heckler** | **+2.2 (30.2% -> 32.5%, ±2.4)** | Best of the two, just inside noise. Kuja is cast in 62% of the games he's drawn (round 7.5) and wins 46% when cast vs Heckler's 34%. His Wizard tokens double the deck's burn damage (2.7 -> 5.7 per game, beyond noise); total damage +2.8 per game. Heckler was stuck 45% of its draws. |
+| Rank Rat | +1.7 (30.2% -> 31.9%, ±2.5) | Same picture (burn 2.7 -> 5.3 per game). |
+**Reading it:** Kuja adds a steady burn clock to a deck that casts many noncreature spells. Like Smaug he's stuck in hand
+38% of the time: {B}{R} in a mostly black deck. Proposed: Kuja in for Hallway Heckler (JD to approve).
+
 ### 2026-10-18: list matched to the physical deck (Decorum Dissertation in, Bitter Triumph out; no new run)
 The 10/14 Jodah-leftover swap (Bitter Triumph for Decorum Dissertation) was never made in the physical deck, so the
 repo list goes back to Decorum Dissertation (branch `printings`). That swap tested as noise (`audit/leftovers`), and

@@ -646,6 +646,8 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
     lose_life(g, p, x, Some(p), "other", None)?;
     draw(g, p, x as u32, false)?;
     stat(g, p, "jr_tymna_draws", x as i64);
+    let turns = g.player(p).turns;
+    g.player_mut(p).milestone.entry("tymna").or_insert(turns); // the partner decks' plan milestone (report::plan_turn)
     crate::glog!(g, "    {} pays {x} life to Tymna the Weaver and draws {x}", pname(g, p));
     Ok(())
 }

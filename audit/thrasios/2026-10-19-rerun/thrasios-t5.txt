@@ -1,0 +1,112 @@
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 6 minutes
+  progress  10.0%  0m20s elapsed, ~3m03s left
+  progress  20.0%  0m41s elapsed, ~2m45s left
+  progress  30.0%  1m03s elapsed, ~2m28s left
+  progress  40.0%  1m23s elapsed, ~2m04s left
+  progress  50.0%  1m42s elapsed, ~1m42s left
+  progress  60.0%  2m04s elapsed, ~1m22s left
+  progress  70.0%  2m24s elapsed, ~1m01s left
+  progress  80.0%  2m45s elapsed, ~0m41s left
+  progress  90.0%  3m05s elapsed, ~0m20s left
+  progress 100.0%  3m29s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== thrasios analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 26.6%   (4-player baseline 25%)   average rounds survived 9.4
+
+-- How it wins --
+  damage      83.6% of wins
+  combo       16.2% of wins
+  timeout      0.2% of wins
+  Opponents it eliminated: 0.68 per game, by
+    combat             85.6%
+    combo              14.1%
+    commander damage    0.2%
+    triggers            0.1%
+  Damage dealt per game: 26.9, from
+    combat              26.9  (100%)
+    triggers             0.0  (0%)
+    drain                0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 3.37; Tymna turns per game 4.38; opponents hit per Tymna turn 0.82
+  Thrasios activations per game 0.54
+    ty_th_spare4_eot per game 0.05
+    ty_th_spare4_main2 per game 0.86
+    ty_th_turns_eot per game 2.70
+    ty_th_turns_main2 per game 3.71
+  Tymna_the_Weaver lands on turn 3.69 (in 91% of games)
+  Thrasios lands on turn 4.21 (in 85% of games)
+
+-- How it loses --
+  Eliminated in 73.3% of games, on average in round 8.2
+    by Urza     via combo              14.7% of games
+    by Zur the Enchanter via combo              14.2% of games
+    by Yawgmoth via combo              11.1% of games
+    by Winota   via combo              10.7% of games
+    by Winota   via combat             10.3% of games
+    by Kinnan   via combo               7.8% of games
+    by Urza     via combat              1.1% of games
+    by Zur the Enchanter via commander damage    0.8% of games
+
+-- Game plan timing --
+  Plan: first Tymna draw, or the infinite-mana combo going off
+  Online by turn:  T2 0%  T3 9%  T4 38%  T5 57%  T6 66%  T7 70%  T8 73%  T9 75%  T10 75%  T11 76%  T12 76%
+  Online at all: 76.5% of games
+  Commander resolves on turn: median 3.0, mean 3.1 (over the 96.1% of games it resolves)
+  Commander resolved by turn:  T4 88%  T5 92%  T6 94%  T7 95%  T8 96%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Sunblast Angel                             cast in   8.8% of games, win rate when cast  66.7% (+40.1)
+    Grave Titan                                cast in  10.2% of games, win rate when cast  61.5% (+34.9)
+    Austere Command                            cast in  10.2% of games, win rate when cast  60.1% (+33.5)
+    Sun Titan                                  cast in   8.7% of games, win rate when cast  59.0% (+32.4)
+    Sphinx of New Prahv                        cast in   9.1% of games, win rate when cast  58.2% (+31.7)
+    Dragonlord Dromoka                         cast in  11.2% of games, win rate when cast  57.8% (+31.3)
+    Walking Ballista                           cast in  12.8% of games, win rate when cast  56.4% (+29.9)
+    Blossoming Defense                         cast in   8.7% of games, win rate when cast  56.1% (+29.5)
+    Nightveil Predator                         cast in   9.8% of games, win rate when cast  55.9% (+29.3)
+    Rings of Brighthearth                      cast in  14.2% of games, win rate when cast  55.6% (+29.1)
+  Lowest win rate when cast:
+    Tymna the Weaver                           cast in  91.8% of games, win rate when cast  28.4% (+1.8)
+    Thrasios, Triton Hero                      cast in  86.2% of games, win rate when cast  30.0% (+3.5)
+    Lightning Greaves                          cast in  18.2% of games, win rate when cast  34.2% (+7.7)
+    Path to Exile                              cast in  18.1% of games, win rate when cast  36.2% (+9.6)
+    Restoration Angel                          cast in  12.2% of games, win rate when cast  36.3% (+9.8)
+    Talisman of Curiosity                      cast in  17.1% of games, win rate when cast  36.4% (+9.8)
+    Darksteel Mutation                         cast in  16.9% of games, win rate when cast  37.2% (+10.6)
+    Arcane Denial                              cast in  14.6% of games, win rate when cast  37.3% (+10.8)
+    Cecil, Dark Knight                         cast in  20.2% of games, win rate when cast  38.0% (+11.5)
+    Helm of Kaldra                             cast in  16.6% of games, win rate when cast  38.9% (+12.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Avenge                                     cast  24.5% of the games it was drawn
+    Dark Endurance                             cast  30.6% of the games it was drawn
+    Sun Titan                                  cast  39.4% of the games it was drawn
+    Blossoming Defense                         cast  40.7% of the games it was drawn
+    Sphinx of New Prahv                        cast  40.7% of the games it was drawn
+    Sunblast Angel                             cast  42.4% of the games it was drawn
+    Walking Ballista                           cast  42.6% of the games it was drawn
+    Elspeth, Sun's Champion                    cast  43.2% of the games it was drawn
+    Grave Titan                                cast  43.3% of the games it was drawn
+    Fact or Fiction                            cast  44.5% of the games it was drawn
+    Nightveil Predator                         cast  44.6% of the games it was drawn
+    Austere Command                            cast  44.8% of the games it was drawn
+  Most often removed by opponents (per game):
+    Tymna the Weaver                           0.27
+    Thrasios, Triton Hero                      0.23
+    Elspeth, Sun's Champion                    0.03
+    Helm of Kaldra                             0.03
+    Cecil, Dark Knight                         0.03
+    Adeline, Resplendent Cathar                0.02
+    Restoration Angel                          0.02
+    The Wasp, Winsome Avenger                  0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, urza-mono-blue-artifacts = Urza, winota-boros-humans-cheat = Winota, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(210s total)

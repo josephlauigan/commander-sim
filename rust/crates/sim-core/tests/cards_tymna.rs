@@ -472,7 +472,7 @@ fn attach(g: &mut Game, e: PermId, m: PermId) {
 }
 
 fn kraum_table() -> Game {
-    table(&["kraum", "veyran", "seph"])
+    table(&["thrasios", "veyran", "seph"])
 }
 
 // ------------------------------------------------------------------ Gilgamesh, Master-at-Arms
@@ -858,7 +858,7 @@ fn the_other_seats_equip_choice_is_unchanged() {
 #[test]
 fn tymnas_spread_uses_the_creature_a_kitesail_makes_fly() {
     use sim_core::impls::tymna_partners::spread;
-    let mut g = table(&["kraum", "veyran", "seph", "galadriel"]);
+    let mut g = table(&["thrasios", "veyran", "seph", "galadriel"]);
     perm(&mut g, P0, "Tymna the Weaver");
     let glider = perm(&mut g, P0, "Nightwind Glider");
     let ground = token(&mut g, P0, 2);
@@ -903,7 +903,7 @@ fn shield_goes_on_the_commander_and_helm_on_the_big_attacker_and_kaldra_is_never
 
 // ======================================================== Phyrexian mana: Dismember, Porcelain Legionnaire, Vault Skirge, Apostle's Blessing
 fn kraum_tbl() -> Game {
-    table(&["kraum", "galadriel", "veyran"])
+    table(&["thrasios", "galadriel", "veyran"])
 }
 
 /// the label of the main-phase option that casts `name`, run; true if there was one
@@ -1584,7 +1584,7 @@ fn lightning_stagger_doubles_all_damage_to_the_player_and_their_permanents_until
 
 #[test]
 fn cecil_and_lightning_are_cast_early_cheap_attackers() {
-    let mut g = table(&["kraum", "veyran", "seph"]);
+    let mut g = table(&["thrasios", "veyran", "seph"]);
     for n in ["Cecil, Dark Knight", "Lightning, Army of One"] {
         let c = card(&g, n);
         assert!(decks::deck_prio(&g, P0, c) >= 70, "{n}");

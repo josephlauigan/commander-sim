@@ -117,6 +117,13 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
         && !a.all_decks
     {
         swaps = parse_swaps(&a.swap)?;
+        for s in swaps.iter_mut() {
+            if sim.raw_card(&s.1).is_none()
+                && let Some(full) = sim.full_face_name(&s.1)
+            {
+                s.1 = full; // the front face alone names a double-faced card
+            }
+        }
         let missing: Vec<&str> =
             swaps.iter().map(|(_, b)| b.as_str()).filter(|b| sim.raw_card(b).is_none()).collect();
         if !missing.is_empty() {
