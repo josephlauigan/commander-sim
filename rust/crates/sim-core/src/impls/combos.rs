@@ -634,8 +634,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
     if g.player(p).t6 && post.is_some() {
         t6_measure(g, p); // Tier 6 speed measurement: stats only
     }
-    if post.is_none() || crate::ai::is_main(g.player(p).key) {
-        return Ok(vec![]); // g.combo_decks: the outside decks
+    let key = g.player(p).key;
+    if post.is_none() || (crate::ai::is_main(key) && key != "karn") {
+        return Ok(vec![]); // g.combo_decks: the outside decks (and the Karn deck: Basalt Monolith + Rings of Brighthearth)
     }
     let mut out = vec![];
     // the names of p's cards in hand and on the battlefield, built once: the same test as `has_piece` for every combo

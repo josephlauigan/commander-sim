@@ -58,6 +58,7 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         "omnath" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
         "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
+        "karn" => crate::impls::karn::karn_prio(g, p, c),
         "thrasios" => crate::impls::tymna_partners::thrasios_prio(g, p, c),
         "kraum" => crate::impls::tymna_partners::kraum_prio(g, p, c),
         "garland" => crate::impls::garland::garland_prio(g, p, c),

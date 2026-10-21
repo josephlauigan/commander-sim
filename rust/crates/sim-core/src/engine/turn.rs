@@ -178,6 +178,7 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
     let mut s = new_cols * 2.0 + if land_enters_tapped(g, p, c) { 0.0 } else { 3.0 };
     s += crate::impls::titania::land_adjust(g, p, c); // the titania deck: fetch lands while Titania is out or about to be
+    s += crate::impls::karn::land_adjust(g, p, c); // the karn deck: the missing Tron piece
     if t.has(Tag::Chasm) {
         s += 10.0;
     }
@@ -867,6 +868,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         q.floating.c = 0;
         q.floating.g = 0;
         q.floating.b = 0;
+        q.floating.art = 0; // Karn's mana lasts the turn, not longer
+        q.pool.art = 0;
     }
     let pl = g.player_mut(p);
     pl.extra_combats = 0;

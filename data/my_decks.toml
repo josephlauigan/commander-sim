@@ -93,3 +93,10 @@ name = "Omnath"
 commander = "Omnath, Locus of Rage"
 ident = "RG"
 tiers = ["t1", "t2", "t3"]
+
+[karn]
+file = "JD/karn-colorless-artifacts.md"
+name = "Karn"
+commander = "Karn, Legacy Reforged"
+ident = ""
+tiers = ["t4", "t5"]

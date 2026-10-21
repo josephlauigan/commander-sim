@@ -1,0 +1,24 @@
+
+=== Karn vs Tier 5 (High B4) [loose, lookahead AI, 995 games] ===
+Win rate  29.0%   95% CI 26.3-31.9%   (even share 25%: +4.0 pts)
+Average turn (your own turn count) of wins 11.6, of losses 7.4
+Plan online (Karn first adds mana at upkeep): 74.0% of games
+Wins by: damage 98%, combo 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Urza (urza-mono-blue-artifacts)              61.2%            31.4%           18.9%
+  Zur the Enchanter (zur-esper-enchantment-c   60.7%            20.5%           12.5%
+  Winota (winota-boros-humans-cheat)           60.0%            39.2%           23.4%
+  Kinnan (kinnan-simic-mana-combo)             59.5%            13.7%            8.2%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   58.6%            13.0%            7.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(2293s total)
+
+WARNING: 5 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500125  panic: attempt to add with overflow
+   seed 500200  panic: attempt to add with overflow
+   seed 500493  panic: attempt to add with overflow
+   seed 500523  panic: attempt to add with overflow
+   seed 500845  panic: attempt to add with overflow
+  Please send me that output so I can fix the cause.

@@ -97,7 +97,7 @@ pub fn gain_bonus(g: &Game, p: PlayerId, n: i32) -> i32 {
 /// Herald of Eternal Dawn: "You can't lose the game and your opponents can't win the game" (engine/life.rs
 /// `check_state`: the player is not eliminated; with a live opponent left, nobody else can win either)
 pub fn cant_lose(g: &Game, p: PlayerId) -> bool {
-    !named(g, p, "Herald of Eternal Dawn").is_empty()
+    !named(g, p, "Herald of Eternal Dawn").is_empty() || crate::impls::karn_cards::angel_holds(g, p)
 }
 
 /// Serra Avenger: "You can't cast Serra Avenger during your first, second, or third turns of the game"

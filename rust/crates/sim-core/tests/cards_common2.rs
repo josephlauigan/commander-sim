@@ -225,16 +225,18 @@ fn trinisphere_and_the_grand_arbiter() {
 #[test]
 fn walking_ballista_gets_half_of_x_and_pings_for_lethal() {
     let mut g = table(&[URZA, "seph"]);
-    // as in the Python, a 0/0 entering dies to the toughness check before its enter hook runs (a Python bug, ported)
+    // put onto the battlefield without being cast, it has X = 0 and dies as a 0/0
     g.last_x = 4;
     let b = perm(&mut g, P0, "Walking Ballista");
     assert!(!g.perm(b).on_bf);
-    assert_eq!(g.last_x, 4);
-    // entering with a counter, it survives and gets X/2 more
+    // cast with 4 mana for {X}{X}, it enters with 2 counters and survives (Python added them after the 0/0 check)
     let c = take(&mut g, P0, "Walking Ballista");
     g.player_mut(P0).gy.clear();
-    let b = zones::enter(&mut g, P0, c, zones::Enter { plus: 1, sick: false, ..zones::Enter::default() }).unwrap();
-    assert_eq!(g.perm(b).plus, 3);
+    g.last_x = 4;
+    let b =
+        zones::enter(&mut g, P0, c, zones::Enter { was_cast: true, sick: false, ..zones::Enter::default() }).unwrap();
+    assert!(g.perm(b).on_bf);
+    assert_eq!(g.perm(b).plus, 2);
     assert_eq!(g.last_x, 0);
     g.perm_mut(b).plus = 2;
     g.player_mut(P1).life = 2;

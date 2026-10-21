@@ -1,0 +1,16 @@
+
+=== Karn vs Tier 6 (cEDH, B5) [loose, lookahead AI, 1000 games] ===
+Win rate  34.0%   95% CI 31.1-37.0%   (even share 25%: +9.0 pts)
+Average turn (your own turn count) of wins 12.4, of losses 7.5
+Plan online (Karn first adds mana at upkeep): 72.5% of games
+Wins by: damage 97%, combo 2%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Rograkh/Thrasios (rograkh-thrasios-creatur   53.5%             9.3%            5.0%
+  Kinnan (kinnan-bonder-mana-combo)            50.6%            25.5%           12.8%
+  Kraum/Tymna (kraum-tymna-blue-breach-midra   49.6%            30.6%           14.8%
+  Sisay (sisay-legends-toolbox)                49.0%            12.2%            6.2%
+  Dack Fayden (dack-fayden-white-stax)         48.9%            25.8%           12.8%
+  Rograkh/Silas (rograkh-silas-turbo-breach)   48.4%            29.5%           14.1%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(156s total)
