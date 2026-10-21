@@ -11,7 +11,6 @@ to artifact wipes and artifact hate (Vandalblast, Collector Ouphe, Null Rod), an
 |---|---|
 | **Commander** | Karn, Legacy Reforged ({5}, legendary artifact creature, colourless) |
 | **Bracket** | 4 (five Game Changers and a two-card infinite combo) |
-| **Proxies** | Ancient Tomb, Darksteel Forge, Grim Monolith, Mana Vault, Mishra's Workshop, Mox Opal, Portal to Phyrexia, The One Ring |
 | **Simulator** | deck key `karn` (colourless); opponent tiers t4-t5 (Bracket 4) |
 
 ## Strategy
@@ -151,7 +150,6 @@ The list is exactly 100 cards: Karn plus 99, singleton except 14 Wastes, all col
 Disclose before the game:
 
 - **Basalt Monolith + Rings of Brighthearth** is an infinite-mana combo (outlets: Walking Ballista, Staff of Domination).
-- **Proxies:** eight cards (listed above).
 - **One-sided wipes:** All Is Dust, Ugin, the Spirit Dragon.
 - **Karn, the Great Creator** can fetch from outside the game; agree on a sideboard or limit it to exile.
 
@@ -228,8 +226,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Rogue's Passage
 1 Sculpting Steel
 1 Skullclamp
-1 Solemn Simulacrum
 1 Sol Ring
+1 Solemn Simulacrum
 1 Soul-Guide Lantern
 1 Spine of Ish Sah
 1 Staff of Domination
