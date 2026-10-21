@@ -70,3 +70,22 @@ shares the Dark Endurance fix): the gap is **-3.4** (noise about ±2.8). JD comm
 **-1.9 (26.9% -> 24.9%, ±2.3): noise, leaning worse; not adopted.** Vessel adds mana (+0.06 on turn 4, +0.13 on
 turn 6, beyond noise) but it doesn't turn into Thrasios activations or damage (-0.5 per game), and Greaves, cast in 81%
 of its draws, did as well when cast (35% vs Vessel's 36%). The deck's limit is spare mana late, not early ramp.
+
+## 2026-10-20: Walking Ballista fix (main vs branch karn-deck, same seed 4242, 3,000 games, T5)
+**-0.4 (25.7% -> 25.3%, ±1.5): no change.** Until now a cast Walking Ballista died at once as a 0/0 (its counters
+came after the 0/0 check, a bug kept from the Python port), so the 41-43% of drawn Ballistas cast since the 10/19
+AI fixes were wasted mana. The combo was never affected: the engine resolves Basalt Monolith + Rings + Ballista as
+one combo action, so Ballista never had to survive (combo wins 15% -> 14% of wins, unchanged). The fix also helps
+the opponents that run Ballista (Urza +1.2, Yawgmoth +0.4 won-when-seated), which offsets the deck's own gain.
+**Reading it:** Ballista as a plain creature (pinging dorks) is worth little here; its value is the combo.
+
+## 2026-10-20: Urza with a mana fix (paired, 2,000 games, T5, seed 1020; `2026-10-20-urza-mana/`)
+Package: Restoration Angel => Urza, Lord High Artificer, Swamp => Island, Forest => Island (blue sources about 14 -> 16
+for his {U}{U}; white carries the deck: 43 W pips against 11 U).
+| Variant | Result | Why |
+|---|---|---|
+| Package, generic AI priority | -1.6 (28.3% -> 26.7%, ±2.4) | Noise. The Islands barely helped: Urza stuck in hand 45% of his draws (53% on 10/19), first cast in round 8.3. The AI ranked him at the generic 44, below the deck's ramp (82-89) and cheap evasive creatures (78+). |
+| Package + Urza rule (priority 84 early or with 2+ artifacts, `tymna_partners::partner_prio`) | -1.7 (28.3% -> 26.6%, ±2.4) | Noise. Cast in 63% of draws (stuck 37%), but still first cast in round 8.2: he is drawn in only 22% of games, mostly mid-game, when his {U} per artifact adds little. Win rate when cast 50% vs Restoration Angel's 47% (correlation). Mana on turns 4 and 6 unchanged. |
+**Reading it:** not adopted. Urza is a like-for-like trade with Restoration Angel here: the deck runs too few
+artifacts for his mana to matter, and the Basalt + Rings combo already has Ballista and Thrasios as payoffs (Urza's
+{5} ability is a third). He stays in Sauron.

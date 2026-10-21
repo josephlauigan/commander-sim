@@ -1,0 +1,15 @@
+
+=== Karn vs Tier 2 (Mid B3) [loose, lookahead AI, 1000 games] ===
+Win rate  33.0%   95% CI 30.2-36.0%   (even share 25%: +8.0 pts)
+Average turn (your own turn count) of wins 14.3, of losses 11.1
+Plan online (Karn first adds mana at upkeep): 82.0% of games
+Wins by: damage 89%, timeout 8%, combo 3%
+  Opponent                                    seated  won when seated  eliminated you
+  Kaalia of the Vast (kaalia-mardu-creature-   61.3%            21.4%           17.8%
+  Sythis (sythis-selesnya-enchantress)         60.9%            20.0%            9.0%
+  Lord Windgrace (lord-windgrace-jund-lands)   59.8%            24.4%           13.9%
+  Brago (brago-azorius-blink-control)          59.4%            24.9%           14.1%
+  Meren of Clan Nel Toth (meren-golgari-recu   58.6%            21.0%           11.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(216s total)

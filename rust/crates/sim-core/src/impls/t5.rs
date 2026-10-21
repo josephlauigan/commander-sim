@@ -51,7 +51,12 @@ fn ability(utility: f64, label: String, src: PermId, f: crate::hooks::AbilityFn,
 /// t5.is_artifact: an artifact card, or a token made as an artifact (a Construct, a Thopter)
 pub fn is_artifact(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
-    x.cd.is_some_and(|c| is_art_card(g, c)) || x.data.truthy(DataKey::Artifact)
+    x.cd.is_some_and(|c| is_art_card(g, c))
+        || match x.data.get(DataKey::Artifact) {
+            // Liquimetal Torque: an artifact until the end of the turn it was marked on
+            Some(Val::Stamp(st)) => *st == g.turn_stamp(),
+            _ => x.data.truthy(DataKey::Artifact),
+        }
 }
 
 /// the top n cards of p's library, top first (Python's `[p.library.pop() for _ in range(min(n, len))]`)

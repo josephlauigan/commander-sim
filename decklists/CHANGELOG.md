@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Karn, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -57,6 +57,17 @@ Deck file `decklists/JD/godo-cedh-equipment.md`; not in the simulator.
 - **2026-10-17.** Added. JD's first cEDH (Bracket 5) deck, an off-meta Godo + Helm of the Host turbo list built from
   the EDHREC average of 35 tournament Godo decks, checked against 2026 top finishes. Mana Crypt, Jeweled Lotus and
   Dockside Extortionist are banned and not in it. Not simulated.
+
+## Karn, Legacy Reforged — Colourless Urza and Mishra Artifacts
+
+Deck file `decklists/JD/karn-colorless-artifacts.md`; not in the simulator.
+
+### Changes
+
+- **2026-10-20.** Added. A colourless artifact-ramp deck built around Karn's upkeep mana, with every Urza and Mishra
+  card that fits the plan (the Tron lands, Urza's Saga, Cave, Workshop and Factory, Mishra's Workshop, Factory and
+  Foundry, both Baubles, Karn, Scion of Urza and others). All 99 checked Commander-legal and colourless on Scryfall.
+  Bracket 4: five Game Changers. Eight expensive cards are proxied. Not simulated: many cards are not modeled yet.
 
 ## Kefka, Court Mage — Grixis Discard
 

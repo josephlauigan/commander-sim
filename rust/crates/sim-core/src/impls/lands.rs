@@ -80,6 +80,9 @@ pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
         if crate::engine::mana::moon_land(g, l) {
             continue; // Blood Moon: no abilities
         }
+        if crate::impls::t6_stax::needle_stops(g, name_of(g, g.land(l).cd)) {
+            continue; // Pithing Needle names this land
+        }
         if let Some(f) = g.registry.get(g.land(l).cd).and_then(|i| i.land_options) {
             o.extend(f(g, l, p, post)?);
         }

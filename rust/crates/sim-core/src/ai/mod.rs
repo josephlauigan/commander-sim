@@ -50,7 +50,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 11] = [
+const MAIN_STYLES: [(&str, Style); 12] = [
     ("seph", st(1.0, 0.55, 0.60)),
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
@@ -62,6 +62,7 @@ const MAIN_STYLES: [(&str, Style); 11] = [
     ("omnath", st(1.0, 0.70, 0.50)),
     ("sheoldred", st(1.0, 0.60, 0.60)),
     ("cloud", st(1.0, 0.75, 0.45)),
+    ("karn", st(1.0, 0.60, 0.55)),
 ];
 
 /// one of your decks (Python: `p.key in STYLE`, `p.key in MAIN`, `p.key in E.IDENT`), not an outside deck
@@ -75,7 +76,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs"
+        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs" | "karn"
     )
 }
 
@@ -653,6 +654,9 @@ pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
 /// deck's named list or an outside deck's wish list. None: the interpreter takes the card it values most.
 pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, cands: &[CardId]) -> Option<CardId> {
     let ty = f.kind.as_deref();
+    if ty == Some("land") && let Some(c) = crate::impls::karn::search_pick(g, p, cands) {
+        return Some(c); // the karn deck: the Tron piece it lacks
+    }
     if ty.is_none() || ty == Some("any") {
         if g.player(p).key == "kefka" && decks::deck_has_storm(g, p) {
             let wish = decks::kefka_wish(g, p);

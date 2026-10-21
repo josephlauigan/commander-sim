@@ -1,0 +1,95 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 2 minutes
+  progress  10.0%  0m16s elapsed, ~2m26s left
+  progress  20.0%  0m30s elapsed, ~2m02s left
+  progress  30.0%  0m47s elapsed, ~1m49s left
+  progress  40.0%  1m02s elapsed, ~1m34s left
+  progress  50.0%  1m20s elapsed, ~1m20s left
+  progress  60.0%  1m36s elapsed, ~1m04s left
+  progress  70.0%  1m51s elapsed, ~0m47s left
+  progress  80.0%  2m05s elapsed, ~0m31s left
+  progress  90.0%  2m21s elapsed, ~0m15s left
+  progress 100.0%  2m46s elapsed, ~0m00s left
+
+######## vs Tier 0 (Bracket 2 precons) ########
+
+=========== karn analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 22.8%   (4-player baseline 25%)   average rounds survived 10.3
+
+-- How it wins --
+  damage      93.9% of wins
+  combo        5.3% of wins
+  timeout      0.9% of wins
+  Opponents it eliminated: 0.58 per game, by
+    combat             74.5%
+    commander damage   12.6%
+    triggers            8.4%
+    combo               4.1%
+    decked              0.2%
+    other               0.2%
+  Damage dealt per game: 28.9, from
+    combat              28.4  (98%)
+    triggers             0.6  (2%)
+
+-- How it loses --
+  Eliminated in 77.1% of games, on average in round 9.8
+    by Giada    via combat             20.1% of games
+    by Captain America via combat             15.3% of games
+    by Anikthea via combat             15.0% of games
+    by Zurgo Stormrender via combat             11.9% of games
+    by Stella Lee via combat              6.1% of games
+    by Zurgo Stormrender via drain               4.4% of games
+    by Stella Lee via triggers            2.3% of games
+    by Stella Lee via burn                0.8% of games
+
+-- Game plan timing --
+  Plan: Karn first adds mana at upkeep
+  Online by turn:  T2 0%  T3 6%  T4 22%  T5 44%  T6 61%  T7 68%  T8 72%  T9 74%  T10 76%  T11 78%  T12 78%
+  Online at all: 79.4% of games
+  Commander resolves on turn: median 4.0, mean 4.1 (over the 96.5% of games it resolves)
+  Commander resolved by turn:  T4 66%  T5 87%  T6 92%  T7 95%  T8 96%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Blightsteel Colossus                       cast in  10.8% of games, win rate when cast  61.1% (+38.3)
+    Darksteel Forge                            cast in  12.5% of games, win rate when cast  57.6% (+34.8)
+    Ugin, the Spirit Dragon                    cast in  11.5% of games, win rate when cast  53.0% (+30.2)
+    All Is Dust                                cast in  17.6% of games, win rate when cast  47.2% (+24.4)
+    Walking Ballista                           cast in  13.8% of games, win rate when cast  47.1% (+24.3)
+    Portal to Phyrexia                         cast in  16.0% of games, win rate when cast  46.9% (+24.1)
+    Spine of Ish Sah                           cast in  12.6% of games, win rate when cast  44.4% (+21.6)
+    Triplicate Titan                           cast in  13.2% of games, win rate when cast  43.2% (+20.4)
+    Karn Liberated                             cast in  13.9% of games, win rate when cast  43.2% (+20.4)
+    Ugin, the Ineffable                        cast in  13.9% of games, win rate when cast  43.2% (+20.4)
+  Lowest win rate when cast:
+    Oblivion Stone                             cast in  11.0% of games, win rate when cast  19.1% (-3.7)
+    Karn, Legacy Reforged                      cast in  96.6% of games, win rate when cast  23.5% (+0.7)
+    Pithing Needle                             cast in  21.1% of games, win rate when cast  24.6% (+1.8)
+    Urza's Tome                                cast in  22.0% of games, win rate when cast  27.3% (+4.5)
+    The One Ring                               cast in  21.0% of games, win rate when cast  27.6% (+4.8)
+    Wayfarer's Bauble                          cast in  20.2% of games, win rate when cast  28.2% (+5.4)
+    Steel Overseer                             cast in  21.2% of games, win rate when cast  28.3% (+5.5)
+    Mox Opal                                   cast in  24.0% of games, win rate when cast  28.8% (+5.9)
+    Soul-Guide Lantern                         cast in  21.7% of games, win rate when cast  29.0% (+6.2)
+    Grim Monolith                              cast in  20.9% of games, win rate when cast  29.7% (+6.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Everflowing Chalice                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Nevinyrral's Disk                          cast  39.7% of the games it was drawn
+    Oblivion Stone                             cast  47.4% of the games it was drawn
+    Blightsteel Colossus                       cast  49.5% of the games it was drawn
+  Most often removed by opponents (per game):
+    Karn, Legacy Reforged                      0.87
+    Karn, the Great Creator                    0.13
+    Ugin, the Ineffable                        0.09
+    Karn Liberated                             0.07
+    Karn, Scion of Urza                        0.07
+    Triplicate Titan                           0.07
+    Ugin, the Spirit Dragon                    0.07
+    Staff of Domination                        0.06
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: anikthea-enduring-enchantments = Anikthea, captain-america-avengers-assemble = Captain America, giada-calling-all-angels = Giada, stella-lee-quick-draw = Stella Lee, zurgo-mardu-surge = Zurgo Stormrender
+
+(167s total)

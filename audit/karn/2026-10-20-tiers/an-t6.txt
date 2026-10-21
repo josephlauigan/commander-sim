@@ -1,0 +1,105 @@
+1,000 games (analysis, 1,000 per list per tier, profile loose), lookahead AI, 20 worker threads: about 2 minutes
+  progress  10.0%  0m13s elapsed, ~2m02s left
+  progress  20.0%  0m28s elapsed, ~1m52s left
+  progress  30.0%  0m42s elapsed, ~1m39s left
+  progress  40.0%  0m56s elapsed, ~1m25s left
+  progress  50.0%  1m10s elapsed, ~1m10s left
+  progress  60.0%  1m26s elapsed, ~0m57s left
+  progress  70.0%  1m41s elapsed, ~0m43s left
+  progress  80.0%  1m55s elapsed, ~0m28s left
+  progress  90.0%  2m11s elapsed, ~0m14s left
+  progress 100.0%  2m33s elapsed, ~0m00s left
+
+######## vs Tier 6 (cEDH, B5) ########
+
+=========== karn analysis [loose profile, lookahead AI, 1000 games] ===========
+Win rate 35.4%   (4-player baseline 25%)   average rounds survived 9.4
+
+-- How it wins --
+  damage      98.3% of wins
+  combo        1.1% of wins
+  timeout      0.6% of wins
+  Opponents it eliminated: 0.99 per game, by
+    combat             84.8%
+    commander damage    8.9%
+    triggers            4.7%
+    combo               0.8%
+    drain               0.5%
+    other               0.2%
+    burn                0.1%
+  Damage dealt per game: 40.6, from
+    combat              40.0  (99%)
+    triggers             0.5  (1%)
+    drain                0.1  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 0.00; Tymna turns per game 0.00; opponents hit per Tymna turn 0.00
+  Thrasios activations per game 0.01
+    ty_th_spare4_eot per game 0.00
+    ty_th_spare4_main2 per game 0.01
+    ty_th_turns_eot per game 0.01
+    ty_th_turns_main2 per game 0.01
+  Thrasios lands on turn 10.50 (in 0% of games)
+
+-- How it loses --
+  Eliminated in 64.5% of games, on average in round 7.9
+    by Dack Fayden via combo              14.1% of games
+    by Kraum/Tymna via combo              12.9% of games
+    by Kinnan   via combo              12.5% of games
+    by Rograkh/Silas via combo              11.1% of games
+    by Rograkh/Thrasios via combo               2.7% of games
+    by Sisay    via combat              2.6% of games
+    by Dack Fayden via combat              1.9% of games
+    by Rograkh/Thrasios via combat              1.7% of games
+
+-- Game plan timing --
+  Plan: Karn first adds mana at upkeep
+  Online by turn:  T2 0%  T3 7%  T4 23%  T5 44%  T6 59%  T7 65%  T8 69%  T9 70%  T10 72%  T11 73%  T12 73%
+  Online at all: 73.9% of games
+  Commander resolves on turn: median 4.0, mean 4.3 (over the 86.9% of games it resolves)
+  Commander resolved by turn:  T4 54%  T5 73%  T6 80%  T7 84%  T8 85%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Blightsteel Colossus                       cast in  11.3% of games, win rate when cast  76.1% (+40.7)
+    Portal to Phyrexia                         cast in  13.6% of games, win rate when cast  72.1% (+36.7)
+    All Is Dust                                cast in  11.0% of games, win rate when cast  70.9% (+35.5)
+    Triplicate Titan                           cast in  12.6% of games, win rate when cast  70.6% (+35.2)
+    Spine of Ish Sah                           cast in  12.5% of games, win rate when cast  70.4% (+35.0)
+    Darksteel Forge                            cast in  10.8% of games, win rate when cast  69.4% (+34.0)
+    Walking Ballista                           cast in  13.4% of games, win rate when cast  68.7% (+33.3)
+    Ugin, the Ineffable                        cast in  13.4% of games, win rate when cast  67.9% (+32.5)
+    Ugin, the Spirit Dragon                    cast in  11.4% of games, win rate when cast  67.5% (+32.1)
+    Platinum Angel                             cast in  13.5% of games, win rate when cast  67.4% (+32.0)
+  Lowest win rate when cast:
+    Karn, Legacy Reforged                      cast in  89.1% of games, win rate when cast  39.7% (+4.3)
+    Endless Atlas                              cast in  16.7% of games, win rate when cast  43.7% (+8.3)
+    Mind Stone                                 cast in  16.4% of games, win rate when cast  47.0% (+11.6)
+    Mishra's Bauble                            cast in  19.8% of games, win rate when cast  47.0% (+11.6)
+    Mazemind Tome                              cast in  16.8% of games, win rate when cast  47.0% (+11.6)
+    Pithing Needle                             cast in  18.6% of games, win rate when cast  47.3% (+11.9)
+    Wayfarer's Bauble                          cast in  19.2% of games, win rate when cast  48.4% (+13.0)
+    Urza's Tome                                cast in  19.8% of games, win rate when cast  48.5% (+13.1)
+    Sculpting Steel                            cast in  18.8% of games, win rate when cast  48.9% (+13.5)
+    Soul-Guide Lantern                         cast in  19.8% of games, win rate when cast  49.0% (+13.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Everflowing Chalice                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Oblivion Stone                             cast  27.4% of the games it was drawn
+    Nevinyrral's Disk                          cast  28.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Karn, Legacy Reforged                      0.53
+    Karn, the Great Creator                    0.06
+    Triplicate Titan                           0.06
+    Platinum Angel                             0.04
+    Cityscape Leveler                          0.04
+    Ugin, the Ineffable                        0.04
+    Karn, Scion of Urza                        0.04
+    Steel Hellkite                             0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: dack-fayden-white-stax = Dack Fayden, kinnan-bonder-mana-combo = Kinnan, kraum-tymna-blue-breach-midrange = Kraum/Tymna, rograkh-silas-turbo-breach = Rograkh/Silas, rograkh-thrasios-creature-combo = Rograkh/Thrasios, sisay-legends-toolbox = Sisay
+
+(153s total)

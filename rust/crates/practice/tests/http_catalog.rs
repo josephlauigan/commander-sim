@@ -26,6 +26,7 @@ fn test_your_decks() {
             "cloud",
             "galadriel",
             "godo",
+            "karn",
             "kefka",
             "omnath",
             "sauron",

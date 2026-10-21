@@ -657,6 +657,9 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
+    if g.player(d).key == "karn" {
+        crate::impls::karn::block_response(g, d, p, atk)?; // Mishra's Factory and Foundry animate to block
+    }
     if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
@@ -740,6 +743,21 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     Ok(true)
 }
 
+/// can_pay with spell c being paid for (Karn's mana is not for nonartifact spells: `Game::pay_for`)
+fn can_pay_for(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str, cv: bool) -> bool {
+    g.pay_for = Some(c);
+    let ok = can_pay(g, p, gn, pips, cv);
+    g.pay_for = None;
+    ok
+}
+
+fn pay_for(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str, cv: bool) -> Res<bool> {
+    g.pay_for = Some(c);
+    let r = pay(g, p, gn, pips, cv);
+    g.pay_for = None;
+    r
+}
+
 /// brain.cast_removal: p casts removal spell c at one of tg (sampled by value), kicked for `kick` more
 pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u32, kind: Option<Sym>) -> Res<bool> {
     let db = g.db.clone();
@@ -751,7 +769,7 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     extra += kick;
     let (rg, rp, rlife) = rem_cost(g, p, c);
     let alt = !free && kick == 0 && altcost::use_alt(g, p, c, None, rg + extra, &rp);
-    if !g.player(p).hand.contains(&c) || (!free && !alt && !can_pay(g, p, rg + extra, &rp, cv)) {
+    if !g.player(p).hand.contains(&c) || (!free && !alt && !can_pay_for(g, p, c, rg + extra, &rp, cv)) {
         return Ok(false);
     }
     if g.cast_checks() && !castable(g, p, c, "hand") {
@@ -789,7 +807,7 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
             lose_life(g, p, 4, Some(p), "life", None)?;
         }
     } else {
-        pay(g, p, rg + extra, &rp, cv)?;
+        pay_for(g, p, c, rg + extra, &rp, cv)?;
         if rlife > 0 {
             lose_life(g, p, rlife, Some(p), "life", None)?; // {B/P} paid with 2 life (Dismember)
         }
@@ -849,7 +867,7 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
 pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>) -> Res<bool> {
     let (cg, cp) = decks::wipe_cost(g, p, c);
     let alt = altcost::use_alt(g, p, c, None, cg, &cp);
-    if !g.player(p).hand.contains(&c) || (!alt && !can_pay(g, p, cg, &cp, false)) {
+    if !g.player(p).hand.contains(&c) || (!alt && !can_pay_for(g, p, c, cg, &cp, false)) {
         return Ok(false);
     }
     if g.cast_checks() && !castable(g, p, c, "hand") {
@@ -862,7 +880,7 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
             return Ok(false);
         }
     } else {
-        pay(g, p, cg, &cp, false)?;
+        pay_for(g, p, c, cg, &cp, false)?;
     }
     if teferi {
         crate::engine::zones::cast_teferis_protection(g, p, 6.0)?; // in response: her permanents phase out of the wipe
@@ -994,7 +1012,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 7] = ["galadriel", "yshtola", "alela", "kefka", "omnath", "sheoldred", "cloud"];
+const GENERIC_PLAYS: [&str; 8] = ["galadriel", "yshtola", "alela", "kefka", "omnath", "sheoldred", "cloud", "karn"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.

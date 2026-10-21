@@ -58,3 +58,9 @@ Basalt's burst mana. Rings of Brighthearth is not owned yet. Raw: `2026-10-18-ne
 **Urza, Lord High Artificer => Spell Pierce: T3 +0.5 (±3.7), T4 +1.2 (±3.5); noise.** Urza cast in 65-69% of his
 draws, Spell Pierce in 68-70%. The move tested -1.5 in Tymna/Thrasios (`audit/thrasios/FINDINGS.md`), so on both sides
 it's a wash: not adopted, Urza stays.
+
+## 2026-10-20: Urza out, Spell Pierce back (paired, 2,000 games per tier, seed 1020; `2026-10-20-urza-out/`)
+| Swap | t3 | t4 | Why |
+|---|---|---|---|
+| Urza, Lord High Artificer => Spell Pierce | +0.3 (31.5% -> 31.8%, ±2.6) | -1.2 (31.9% -> 30.7%, ±2.5) | Noise both tiers (10/19 gave +0.5/+1.2). Urza is cast in 68% of his draws (round 8.2); Spell Pierce in 63%. The plan comes online slightly less without Urza (-2.8 / -1.3 points, inside noise). |
+**Reading it:** Urza is neither needed nor a drag in Sauron; with Tymna/Thrasios not wanting him either, he stays.

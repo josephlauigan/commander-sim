@@ -42,6 +42,8 @@ pub enum DataKey {
     Bound,
     Burden,
     Charge,
+    /// fate counters (Oblivion Stone)
+    Fate,
     Construct,
     Copy,
     /// Spark Double entered as a copy (its own enter hook doesn't copy again)
@@ -306,6 +308,8 @@ pub struct Floating {
     pub c: u32,
     /// any colour (rituals, the ability language)
     pub any: u32,
+    /// colourless that can't be spent to cast a nonartifact spell (Karn, Legacy Reforged; Mightstone), kept all turn
+    pub art: u32,
 }
 
 // ------------------------------------------------------------------ permanents and lands
@@ -586,6 +590,8 @@ pub struct Player {
     pub t0s: crate::impls::t0_stella::StellaState,
     /// cards playable until the end of a later turn (Prosper): (card, the turn count it lasts to)
     pub impulse_long: Vec<(CardId, u32)>,
+    /// cards in exile with a silver counter (Karn, Scion of Urza; impls/karn_engines.rs)
+    pub silver: Vec<CardId>,
     /// Erebos's draw this turn
     pub erebos_t: Option<TurnStamp>,
     /// no maximum hand size this turn (its turn count)
@@ -796,6 +802,7 @@ impl Player {
             cmd_atk: None,
             neriv: vec![],
             impulse_long: vec![],
+            silver: vec![],
             erebos_t: None,
             nomax_turn: None,
             skip_turns: 0,
@@ -1542,7 +1549,9 @@ impl Game {
     /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
     pub fn is_creature(&self, m: PermId) -> bool {
         let m = self.perm(m);
-        m.token || m.cd.is_some_and(|c| self.db.get(c).creature) || m.data.truthy(DataKey::Anim)
+        (m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
+            || m.cd.is_some_and(|c| self.db.get(c).creature)
+            || m.data.truthy(DataKey::Anim)
     }
 }
 

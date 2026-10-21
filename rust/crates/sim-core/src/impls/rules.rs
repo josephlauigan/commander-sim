@@ -88,8 +88,8 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 11] =
-    ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "omnath", "sheoldred", "cloud"];
+const CTHRESH: [&str; 12] =
+    ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "omnath", "sheoldred", "cloud", "karn"];
 
 /// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
 /// Summer (its spells can't be countered this turn, it draws a card)
@@ -377,6 +377,9 @@ fn boros_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// rules.ability_locked: can src's activated abilities not be used right now? (Arrest, Encrust; Collector Ouphe /
 /// Karn: artifacts; Cursed Totem: creatures; Grand Abolisher: nothing of yours during its controller's turn)
 pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
+    if crate::impls::t6_stax::needle_stops(g, &g.perm(src).name) {
+        return true; // Pithing Needle: not a mana ability (those go through the mana code)
+    }
     if g.locks_used && (crate::engine::cast::abilities_locked(g, p) || crate::engine::cast::split_second_up(g)) {
         return true; // Abeyance / split second (mana abilities are used through the mana code, not here)
     }
@@ -1300,6 +1303,10 @@ pub(crate) fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     remove_card(&mut g.player_mut(p).hand, c);
     pay(g, p, 2 * k, "", false)?;
     crate::glog!(g, "  {} casts Everflowing Chalice kicked {} times", pname(g, p), k);
+    let pl = g.player_mut(p);
+    pl.cast_names.insert(c); // the card report counts it as cast (it read "never cast: untagged")
+    pl.spells_this_turn += 1;
+    pl.stat("spells_cast", 1);
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 2.0, vec![])? {
         g.player_mut(p).gy.push(c);

@@ -1,0 +1,15 @@
+
+=== Karn vs Tier 3 (High B3) [loose, lookahead AI, 1000 games] ===
+Win rate  30.2%   95% CI 27.4-33.1%   (even share 25%: +5.2 pts)
+Average turn (your own turn count) of wins 13.2, of losses 10.1
+Plan online (Karn first adds mana at upkeep): 80.5% of games
+Wins by: damage 93%, combo 4%, timeout 4%
+  Opponent                                    seated  won when seated  eliminated you
+  Aurelia (aurelia-boros-extra-combats)        61.3%            30.7%           21.9%
+  Tergrid (tergrid-mono-black-disruption)      60.9%            27.4%           15.8%
+  Korvold (korvold-jund-sacrifice)             59.8%            12.5%            9.1%
+  Atraxa (atraxa-superfriends)                 59.4%            24.1%            7.9%
+  Marwyn (marwyn-mono-green-elves)             58.6%            21.3%           14.1%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(158s total)

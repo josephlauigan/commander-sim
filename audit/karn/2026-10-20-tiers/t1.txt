@@ -1,0 +1,15 @@
+
+=== Karn vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 1000 games] ===
+Win rate  30.5%   95% CI 27.7-33.4%   (even share 25%: +5.5 pts)
+Average turn (your own turn count) of wins 13.0, of losses 9.0
+Plan online (Karn first adds mana at upkeep): 78.0% of games
+Wins by: damage 96%, combo 3%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Lathril (lathril-golgari-elves)              61.3%            19.1%           13.5%
+  Teysa Karlov (teysa-orzhov-aristocrats)      60.9%            17.9%           10.9%
+  Light-Paws (light-paws-aura-voltron)         59.8%            37.6%           21.1%
+  Isshin (isshin-mardu-attack-triggers)        59.4%            22.7%           14.2%
+  Tatyova (tatyova-simic-landfall)             58.6%            18.6%            9.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(213s total)

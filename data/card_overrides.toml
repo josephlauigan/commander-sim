@@ -8824,8 +8824,8 @@ status = "Full"
 note = "the {1}-more tax per other spell the caster cast this turn is exact; a land tapped for two or more mana makes one {C} instead of any other type and amount (land_colorless slot, asked after every bonus to the land; two Spheres act once)"
 
 ["Pithing Needle"]
-status = "Partial"
-note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it; the engine's activation checks do not ask the Needle yet, so no ability is stopped (rust/agents/engine-needs-stax.md)"
+status = "Approximate"
+note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it. rules::ability_locked now asks it (so the AI-driven activated abilities of the compiled text, card code and planeswalkers of that name are stopped) and so does the land-option loop; mana abilities are not stopped. Missing: a person in practice mode can still activate the named card (the human ability menus do not check locks)"
 
 ["Chalice of the Void"]
 status = "Full"
@@ -9030,3 +9030,273 @@ dsl = [
 ]
 status = "Approximate"
 note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"
+
+["The Mightstone and Weakstone"]
+add_tags = ["pstone"]
+dsl = []
+status = "Full"
+note = "enters: the AI kills the best opposing creature -5/-5 can handle when it is worth a card, else draws two (a person chooses); {T}: {C}{C} that can't be spent to cast nonartifact spells (artifact spells and abilities)"
+
+["Gilded Lotus"]
+tags = "rock=3:A"
+status = "Full"
+note = "{T}: three mana of any one colour (colourless in the colourless Karn deck)"
+
+["Urza's Mine"]
+status = "Full"
+note = "{T}: {C}; {C}{C} instead with an Urza's Power-Plant and an Urza's Tower (Tron)"
+
+["Urza's Power Plant"]
+status = "Full"
+note = "{T}: {C}; {C}{C} instead with an Urza's Mine and an Urza's Tower (Tron)"
+
+["Urza's Tower"]
+status = "Full"
+note = "{T}: {C}; {C}{C}{C} instead with an Urza's Mine and an Urza's Power-Plant (Tron)"
+
+["Urza's Workshop"]
+status = "Full"
+note = "{T}: {C}; with three or more artifacts, {C} for each Urza's land you control"
+
+["Mishra's Workshop"]
+status = "Full"
+note = "{T}: {C}{C}{C}, spent only to cast artifact spells (not for abilities)"
+
+["Darksteel Citadel"]
+status = "Approximate"
+note = "artifact land ({T}: {C}) that counts for Karn's artifacts; indestructible is not modeled"
+
+["Urza's Factory"]
+dsl = [
+  { type = "activated", cost = { mana = "7", tap = true }, effects = [{ do = "token", n = 1, pow = 2, tgh = 2, keywords = [], attacking = false, warrior = false, types = ["artifact", "assembly-worker"] }], sorcery = false, once = false },
+]
+status = "Full"
+note = "{T}: {C}; {7},{T}: a 2/2 Assembly-Worker artifact creature token (it counts for Karn's artifacts)"
+
+["Karn, Legacy Reforged"]
+status = "Full"
+note = "power and toughness each equal the greatest mana value among your artifacts (a bonus on the printed 1/1); at your upkeep {C} for each artifact you control that can't pay for nonartifact spells (artifact spells, abilities and taxes only) and lasts until the turn ends (code: impls/karn.rs, engine::mana Floating::art / FloatArt, practice ManaPool::art); the AI casts him as early as possible (karn_prio, search_bonus)"
+
+["Mishra's Factory"]
+status = "Approximate"
+note = "{T}: {C}; {1}: becomes a 2/2 Assembly-Worker artifact creature (the AI animates it to attack when the way is open and to block a dangerous attack, and it counts for Karn); not modeled: {T}: target Assembly-Worker gets +1/+1"
+
+["Mishra's Foundry"]
+status = "Approximate"
+note = "{T}: {C}; {2}: becomes a 2/2 Assembly-Worker artifact creature (animated to attack when open, and to block a dangerous attack; it counts for Karn); not modeled: {1},{T}: target attacking Assembly-Worker gets +2/+2"
+["Karn, Scion of Urza"]
+status = "Full"
+note = "loyalty 5. +1 reveals the top two cards: an opponent chooses which goes to your hand (the AI opponent gives the card you want less), the other is exiled with a silver counter. -1 puts the best silver-counter card from exile into your hand. -2 makes a 0/0 Construct artifact token that gets +1/+1 per artifact you control. Silver counters outlive the planeswalker (a later Karn can fetch them). impls/karn_engines.rs"
+
+["Mazemind Tome"]
+status = "Full"
+note = "{T}, page counter: scry 1; {2}, {T}, page counter: draw a card; at the fourth page counter it is exiled and you gain 4 life. The AI draws when it can pay {2} and scrys only when it cannot (and the Tome is young). impls/karn_engines.rs"
+
+["Mirrorworks"]
+status = "Approximate"
+note = "whenever another nontoken artifact you control enters, pay {2} for a token copy (not for legends, or Walking Ballista / Hangarback Walker / the Self-Replicator, whose copy would be empty; the AI wants rocks and creatures). Missing: artifact lands (Darksteel Citadel) are not copied. impls/karn_engines.rs"
+
+["Mystic Forge"]
+dsl = []
+status = "Approximate"
+note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), and {T}, 1 life exiles the top card (used to dig past a land it does not need). Missing: removal, wipes, X spells and counterspells on top are left alone (their targets are chosen by the hand options); a land on top is never played (the Forge does not allow it). impls/karn_engines.rs"
+
+["Urza's Blueprints"]
+status = "Full"
+note = "{T}: draw a card (compiled). Echo {6}: at the first upkeep the AI pays when the mana is there and spare (nine or more, or two cards or fewer in hand), otherwise it sacrifices the Blueprints (it still drew the turn it was cast). impls/karn_engines.rs"
+
+["Urza's Tome"]
+dsl = []
+status = "Full"
+note = "{3}, {T}: draw a card, then discard a card unless you exile a historic card (artifact, legendary or Saga) from your graveyard. The AI exiles the cheapest non-creature historic card, else discards its worst card. impls/karn_engines.rs"
+
+["Urza's Cave"]
+tags = "c=C"
+dsl = []
+status = "Full"
+note = "taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs"
+
+["Expedition Map"]
+dsl = []
+status = "Full"
+note = "{2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs"
+
+["Endless Atlas"]
+dsl = []
+status = "Full"
+note = "{2}, {T}: draw a card, only with three or more lands with the same name (Wastes). The compiled text ignored the restriction. impls/karn_engines.rs"
+
+["Ancient Tomb"]
+status = "Full"
+note = "{T}: add {C}{C} and 2 damage to you (the engine's tomb tag); the AI does not tap it at 2 life or less"
+
+["Batterskull"]
+status = "Full"
+note = "living weapon: a 0/0 black Phyrexian Germ token enters and Batterskull attaches to it (the Germ is made with 1 toughness and set to 0/0 once attached); equipped creature gets +4/+4, vigilance and lifelink (compiled); equip {5} (compiled); {3}: return it to its owner's hand (the AI does it only when no creature carries it and it has eight mana to cast it again, not in response to removal). impls/karn_engines.rs"
+
+["Burnished Hart"]
+status = "Full"
+note = "{3}, sacrifice: two basic lands onto the battlefield tapped (compiled). Wastes are basic: the search found none before (engine/zones.rs BASIC_LANDS), so in a colourless deck it fetched nothing"
+
+["Hangarback Walker"]
+status = "Full"
+note = "{X}{X}: the AI casts it for X = a third of its mana (one to four; two mana per counter; not castable below two mana). It enters with X +1/+1 counters (green_cards::enters_with, before the 0/0 check; Hardened Scales applies); {1}, {T}: a +1/+1 counter (compiled); when it dies, a 1/1 flying Thopter artifact token per counter. The earlier engine cast it for nothing and it died as a 0/0. impls/karn_engines.rs"
+
+["Hedron Archive"]
+status = "Full"
+note = "{T}: add {C}{C}; {2}, {T}, sacrifice: draw two cards (compiled)"
+
+["Inventors' Fair"]
+status = "Full"
+note = "{T}: add {C}. Upkeep: with three or more artifacts (artifact lands count) gain 1 life. {4}, {T}, sacrifice: search for an artifact card into your hand, only with three or more artifacts (the AI uses it with spare mana, and sooner on a small hand). The earlier engine had the mana only. impls/karn_engines.rs"
+
+["Liquimetal Torque"]
+status = "Approximate"
+note = "{T}: add {C}. {T}: target nonland permanent becomes an artifact until end of turn (t5::is_artifact reads the mark; Karn's Construct and the artifact counts see it). The AI never uses the second ability (it would give up the mana for nothing it can measure); a person can. impls/karn_engines.rs"
+
+["Mana Vault"]
+status = "Full"
+note = "{T}: add {C}{C}{C}; does not untap; at upkeep pay {4} to untap it (the AI does when life is 20 or less and the rest of the mana still casts its best spell); 1 damage at the draw step while tapped"
+
+["Meteor Golem"]
+status = "Full"
+note = "enters: destroy target nonland permanent an opponent controls (compiled)"
+
+["Rogue's Passage"]
+status = "Full"
+note = "{T}: add {C}. {4}, {T}: target creature can't be blocked this turn. The AI uses it in the first main phase on its biggest ready attacker (power 4 or more) when an opponent has an untapped creature (before, only a deck's Army creature got it). impls/karn_engines.rs"
+
+["Sol Ring"]
+status = "Full"
+note = "{T}: add {C}{C}"
+
+["Solemn Simulacrum"]
+status = "Full"
+note = "enters: search for a basic land onto the battlefield tapped; dies: draw a card (compiled). Wastes are found now (engine/zones.rs BASIC_LANDS)"
+
+["Staff of Domination"]
+status = "Full"
+note = "{1}: untap; {2},{T}: gain 1 life; {3},{T}: untap a creature; {4},{T}: tap a creature; {5},{T}: draw a card (compiled). With Basalt Monolith and Rings of Brighthearth (infinite colourless mana) the AI draws with the Staff until a Walking Ballista is in hand or play, or only three cards are left in the library (karn_engines::staff_draw_down, SAFE_LIBRARY), so it never decks itself. impls/karn_engines.rs"
+
+["Thought Vessel"]
+status = "Full"
+note = "{T}: add {C}; no maximum hand size (the nomax tag)"
+
+["Wayfarer's Bauble"]
+status = "Full"
+note = "{2}, {T}, sacrifice: a basic land onto the battlefield tapped (compiled). Wastes are found now (engine/zones.rs BASIC_LANDS)"
+
+["Wurmcoil Engine"]
+status = "Full"
+note = "deathtouch, lifelink (tags); when it dies, a 3/3 deathtouch Wurm and a 3/3 lifelink Wurm, colourless Phyrexian Wurm artifact creature tokens (they were not artifacts before: Karn's count, Mirrorworks and the Constructs miss them)"
+# ---- Karn, Legacy Reforged deck: threats, removal and wipes (impls/karn_cards.rs)
+
+["All Is Dust"]
+tags = "wipe=dust"
+dsl = []
+status = "Full"
+note = "each player sacrifices every coloured permanent (the dust kind of impls/sweepers.rs; colourless permanents, ours, stay; the AI casts it when the opponents' coloured permanents are worth more than ours)"
+
+["Blightsteel Colossus"]
+tags = "pow=11 bomb=9 trample"
+dsl = []
+status = "Approximate"
+note = "infect: combat damage to a player is poison counters (10 kills), indestructible from its keyword, shuffled into the library instead of the graveyard from the battlefield; damage to creatures is plain damage (no -1/-1 counters) and a mill or discard still puts it in the graveyard"
+
+["Cityscape Leveler"]
+tags = "pow=8 bomb=8 trample"
+dsl = []
+status = "Approximate"
+note = "when cast and on each attack it destroys the opposing nonland permanent worth most (3 or more), whose controller gets a tapped Powerstone; unearth {8} at sorcery speed (haste, exiled at the end step; the 'exile instead of leaving' clause is not modeled)"
+
+["Darksteel Forge"]
+status = "Full"
+note = "artifacts you control (tokens that are artifacts too) have indestructible"
+
+["Duplicant"]
+tags = "pow=2 tgh=4"
+dsl = []
+status = "Full"
+note = "when it enters it exiles the best opposing nontoken creature (worth 3 or more) and takes its power, toughness and creature types"
+
+["Kuldotha Forgemaster"]
+tags = "pow=3 tgh=5"
+dsl = []
+status = "Full"
+note = "{T}, sacrifice the three cheapest other artifacts (not the commander): the best artifact card of the library onto the battlefield, then shuffle; the AI does it when the card is worth more than the three artifacts"
+
+["Liberator, Urza's Battlethopter"]
+status = "Approximate"
+note = "flash; colourless and artifact spells can be cast as though they had flash (the AI casts them in the end-of-turn window); +1/+1 counter when the mana spent is greater than its power"
+
+["Mishra's Self-Replicator"]
+tags = "pow=2"
+dsl = []
+status = "Full"
+note = "whenever you cast a historic spell (artifact, legendary, Saga) you may pay {1} for a token copy; every copy triggers, and the AI pays whenever it can"
+
+["Nevinyrral's Disk"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enters tapped; {1}, {T}: destroy all artifacts, creatures and enchantments (indestructible survives); the AI uses it when the opponents lose clearly more than we do"
+
+["Oblivion Stone"]
+tags = ""
+dsl = []
+status = "Full"
+note = "{4},{T}: a fate counter on our best permanent; {5},{T}, sacrifice: destroy each nonland permanent without a fate counter, then remove all fate counters; the AI marks its best permanent when the wipe is better for it, and wipes when the swing is clear"
+
+["Platinum Angel"]
+tags = "pow=4 fly bomb=7"
+dsl = []
+status = "Full"
+note = "its controller can't lose the game (state-based check in engine/life.rs via t0_giada::cant_lose); the engine ends the game by elimination, so opponents can't win while a live opponent remains"
+
+["Portal to Phyrexia"]
+tags = "bomb=8"
+dsl = []
+status = "Full"
+note = "enter: each opponent sacrifices their three least valuable creatures; upkeep: the best creature card from any graveyard returns under your control as a Phyrexian too"
+
+["Ratchet Bomb"]
+tags = ""
+dsl = []
+status = "Full"
+note = "{T}: a charge counter (the AI winds it up when a higher count would hit more); {T}, sacrifice: destroy each nonland permanent with mana value equal to the counters (tokens are 0)"
+
+["Spine of Ish Sah"]
+tags = ""
+dsl = []
+status = "Full"
+note = "enter: destroys the opposing permanent worth most (2 or more); when it goes from the battlefield to the graveyard it returns to its owner's hand"
+
+["Steel Hellkite"]
+tags = "pow=5 bomb=5 fly"
+dsl = []
+status = "Approximate"
+note = "{X}: destroy each nonland permanent with mana value X controlled by a player it dealt combat damage to this turn (once a turn; the AI picks the X that hits most); the {2}: +1/+0 pump is not modeled"
+
+["Steel Overseer"]
+tags = "pow=1"
+dsl = []
+status = "Full"
+note = "{T}: a +1/+1 counter on each artifact creature you control (cast precombat when not summoning sick)"
+
+["Triplicate Titan"]
+tags = "pow=9 bomb=9 fly vig trample"
+dsl = []
+status = "Full"
+note = "when it dies: three 3/3 colourless Golem artifact creature tokens, one with flying, one with vigilance and one with trample"
+
+["Ugin, the Ineffable"]
+tags = "leg"
+dsl = []
+status = "Approximate"
+note = "colourless spells you cast cost {2} less; +1: exile the top card and make a 2/2 Spirit (the card goes to hand when that Spirit dies, or when Ugin leaves); -3: destroy the opposing coloured permanent worth most"
+
+["Unstable Obelisk"]
+tags = "rock=1:C"
+dsl = []
+status = "Full"
+note = "{T}: add {C}; {7}, {T}, sacrifice: destroy the opposing permanent worth most (4 or more)"

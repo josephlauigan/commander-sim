@@ -348,7 +348,7 @@ pub fn enters_with(g: &Game, p: PlayerId, cd: CardId, was_cast: bool) -> i32 {
     }
     let own = if &*g.db.get(cd).name == "Wildgrowth Archaic" { colors_spent(g, p, cd) } else { 0 };
     let more = i32::from(g.player(p).flag_turn.get(&archaic_key(cd)) == Some(&g.turn_stamp()));
-    own + more
+    own + more + crate::impls::karn_engines::enters_with(g, cd, was_cast) // Hangarback Walker's X
 }
 
 // ================================================================== Royal Treatment

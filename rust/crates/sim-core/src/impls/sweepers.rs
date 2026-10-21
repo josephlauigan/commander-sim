@@ -22,7 +22,7 @@ use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
 /// the `wipe=` kinds this module owns
-pub const KINDS: [&str; 3] = ["fear", "brutal", "ignite"];
+pub const KINDS: [&str; 4] = ["fear", "brutal", "ignite", "dust"];
 
 pub fn is_kind(kind: &str) -> bool {
     KINDS.contains(&kind)
@@ -111,6 +111,9 @@ impl Sweep {
 
     /// does it hit permanent m? (the caller skips phased-out permanents)
     pub fn hits(&self, g: &Game, m: PermId) -> bool {
+        if self.kind == "dust" {
+            return crate::impls::karn_cards::dust_hits(g, m); // All Is Dust: every coloured permanent, not only creatures
+        }
         if !g.is_creature(m) {
             return false;
         }
@@ -131,6 +134,9 @@ impl Sweep {
 
 /// ais.wipe_eval for these kinds: (what the opponents lose, what the caster loses, no single victim)
 pub fn eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerId>) {
+    if kind == "dust" {
+        return crate::impls::karn_cards::dust_eval(g, p);
+    }
     let rule = Sweep::new(g, p, kind, false);
     let (mut ol, mut ml) = (0.0, 0.0);
     for (q, m) in live_creatures(g) {
@@ -162,6 +168,9 @@ pub fn eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerId>) {
 
 /// resolve one of the three sweepers for p (called from `apply_wipe_inner`; `respond` lets each victim answer)
 pub fn resolve(g: &mut Game, p: PlayerId, kind: Sym) -> Res {
+    if kind == "dust" {
+        return crate::impls::karn_cards::dust_resolve(g, p);
+    }
     if kind == "brutal" {
         amass(g, p, 2)?; // "Amass Zombies 2": a Zombie Army, here the Orc Army; then the Army deals damage
     }

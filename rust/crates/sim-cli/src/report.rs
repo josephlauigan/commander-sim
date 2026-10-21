@@ -65,6 +65,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "sheoldred" => "first opponent drained by Sheoldred",
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
         "cloud" => "first attack by an equipped Cloud",
+        "karn" => "Karn first adds mana at upkeep",
         "thrasios" | "kraum" => "first Tymna draw, or the infinite-mana combo going off",
         "najeela" => "first WUBRG extra combat",
         _ => "",
@@ -102,6 +103,7 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
         "sheoldred" => ms("sheoldred"),
         "sephfs" => ms("sephfs"),
         "cloud" => ms("cloud"),
+        "karn" => ms("karn"),
         // the Tymna partner decks: Tymna's first draw, or the Basalt + Rings combo going off, whichever is first
         "thrasios" | "kraum" => match (ms("tymna").filter(|&t| t != 0), ms("combo").filter(|&t| t != 0)) {
             (Some(a), Some(b)) => Some(a.min(b)),
