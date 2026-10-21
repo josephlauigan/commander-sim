@@ -755,6 +755,20 @@ fn promise_picks(g: &Game, p: PlayerId, x: u32) -> Vec<CardId> {
     out
 }
 
+/// Sword of Once and Future: cast the best instant or sorcery card with mana value `x` or less from p's graveyard
+/// without paying its mana cost; exiled instead of going to the graveyard. False if none is worth casting
+pub fn free_from_gy(g: &mut Game, p: PlayerId, x: u32) -> Res<bool> {
+    let best = promise_picks(g, p, x)
+        .into_iter()
+        .filter_map(|c| free_worth(g, p, c).map(|w| (w, c)))
+        .max_by(|a, b| a.0.total_cmp(&b.0));
+    let Some((_, c)) = best else { return Ok(false) };
+    if !remove_card(&mut g.player_mut(p).gy, c) {
+        return Ok(false);
+    }
+    free_cast(g, p, c, true)
+}
+
 fn promise_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none() || g.active != Some(p) || !g.player(p).hand.contains(&c) {
         return Ok(vec![]);

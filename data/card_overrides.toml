@@ -4655,9 +4655,29 @@ note = "discard a creature (the worst, or one Meren can return) for the best cre
 status = "Full"
 note = "equip {1}: hexproof and haste (on the commander / best creature)"
 
+["Sword of Body and Mind"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "UG" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "token", n = 1, pow = 2, tgh = 2, keywords = [], attacking = false, warrior = false, types = ["wolf"] }, { do = "mill", n = 10, who = "event_player" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from green and blue; on combat damage to a player: a 2/2 Wolf token and that player mills ten cards; equip {2}"
+
 ["Sword of Fire and Ice"]
 status = "Full"
 note = "equipped creature +2/+2, protection from red and blue; on combat damage to a player: 2 damage to any target (a creature it kills, else a player) and draw a card; equip {2}"
+
+["Sword of Forge and Frontier"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "RG" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "impulse", n = 2 }, { do = "extra_land" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from red and green; on combat damage to a player: the top two cards are exiled, playable this turn (the ones not played are exiled at the end step), and an additional land drop this turn (the AI plays the land at once, during combat); equip {2}"
 
 ["Sword of Kaldra"]
 types = "A"
@@ -4668,6 +4688,26 @@ dsl = [
 ]
 status = "Full"
 note = "equipped creature +5/+5; exiles any creature it deals damage to; equip {4}"
+
+["Sword of Once and Future"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "UB" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "surveil", n = 2 }, { do = "free_gy_spell", n = 2 }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from blue and black; on combat damage to a player: surveil 2, then the best instant or sorcery card with mana value 2 or less in your graveyard is cast free and exiled instead of going to the graveyard (the AI picks it, as for Commitment of Promise); equip {2}"
+
+["Sword of Sinew and Steel"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "BR" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "destroy", what = { sel = "target", filter = { type = "planeswalker" }, upto = true } }, { do = "destroy", what = { sel = "target", filter = { type = "artifact" }, upto = true } }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from black and red; on combat damage to a player: destroy up to one target planeswalker and up to one target artifact (the compiler kept only the planeswalker); equip {2}"
 
 ["Sword of Truth and Justice"]
 types = "A"
@@ -4680,6 +4720,16 @@ dsl = [
 ]
 status = "Full"
 note = "equipped creature +2/+2, protection from white and blue; on combat damage to a player: a +1/+1 counter on your best creature (the Army), then proliferate; equip {2}"
+
+["Sword of War and Peace"]
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
+  { type = "static", static = "equip_protection", colors = "WR" },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "damage", n = "event_player_hand", to = { sel = "player", who = "event_player" } }, { do = "gain_life", n = "cards_in_hand", who = "you" }] },
+  { type = "static", static = "equip_cost", mana = 2 },
+]
+status = "Full"
+note = "equipped creature +2/+2, protection from red and white; on combat damage to a player: damage to that player equal to the cards in their hand, and you gain 1 life per card in your hand; equip {2}"
 
 ["Sylvan Caryatid"]
 status = "Full"

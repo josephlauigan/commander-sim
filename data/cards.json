@@ -102296,6 +102296,30 @@
      "colors": "UG"
     },
     {
+     "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 2,
+       "tgh": 2,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "wolf"
+       ]
+      },
+      {
+       "do": "mill",
+       "n": 10,
+       "who": "event_player"
+      }
+     ]
+    },
+    {
      "type": "static",
      "static": "equip_cost",
      "mana": 2
@@ -102313,10 +102337,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever equipped creature deals combat damage to a player, you create a 2/2 green Wolf creature token and that player mills ten cards."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -102430,6 +102452,76 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Sword of Forge and Frontier",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 2
+    },
+    {
+     "type": "static",
+     "static": "equip_protection",
+     "colors": "RG"
+    },
+    {
+     "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "impulse",
+       "n": 2
+      },
+      {
+       "do": "extra_land"
+      }
+     ]
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -102661,6 +102753,78 @@
    "spell_prio": false
   },
   {
+   "name": "Sword of Once and Future",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 2,
+     "tgh": 2
+    },
+    {
+     "type": "static",
+     "static": "equip_protection",
+     "colors": "UB"
+    },
+    {
+     "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "surveil",
+       "n": 2
+      },
+      {
+       "do": "free_gy_spell",
+       "n": 2
+      }
+     ]
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip",
+    "surveil"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Sword of Sinew and Steel",
    "types": "A",
    "generic": 3,
@@ -102683,6 +102847,8 @@
     },
     {
      "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
      "effects": [
       {
        "do": "destroy",
@@ -102693,10 +102859,18 @@
         },
         "upto": true
        }
+      },
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "artifact"
+        },
+        "upto": true
+       }
       }
-     ],
-     "event": "combat_damage",
-     "source": "equipped"
+     ]
     },
     {
      "type": "static",
@@ -102715,7 +102889,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -102833,6 +103007,26 @@
      "colors": "WR"
     },
     {
+     "type": "triggered",
+     "event": "combat_damage",
+     "source": "equipped",
+     "effects": [
+      {
+       "do": "damage",
+       "n": "event_player_hand",
+       "to": {
+        "sel": "player",
+        "who": "event_player"
+       }
+      },
+      {
+       "do": "gain_life",
+       "n": "cards_in_hand",
+       "who": "you"
+      }
+     ]
+    },
+    {
      "type": "static",
      "static": "equip_cost",
      "mana": 2
@@ -102849,10 +103043,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever equipped creature deals combat damage to a player, ~ deals damage to that player equal to the number of cards in their hand and you gain 1 life for each card in your hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
