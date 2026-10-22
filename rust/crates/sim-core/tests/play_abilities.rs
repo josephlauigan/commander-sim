@@ -278,3 +278,28 @@ fn your_arrested_permanent_offers_no_ability() {
     seat(&mut g, P0, vec![]);
     assert!(abilities_of(&mut g, P0, o).unwrap().is_empty(), "Arrest: its activated abilities can't be activated");
 }
+
+#[test]
+fn liliana_of_the_veil_plus_one_asks_the_person_which_card_to_discard() {
+    // JD (10/21): an opponent's Liliana +1 asked neither person; each player discards a card of their choice
+    let mut g = table(&["sauron", "veyran"]);
+    let kept = hand(&mut g, P0, &["Lightning Bolt", "Counterspell"]);
+    let li = perm(&mut g, P1, "Liliana of the Veil");
+    let h = seat(&mut g, P0, vec![pick(1)]); // discard the second card offered
+    let n = g.player(P0).hand.len();
+    sim_core::impls::t3::lotv_plus(&mut g, P1, li).unwrap();
+    assert_eq!(g.player(P0).hand.len(), n - 1, "one card discarded");
+    assert!(h.asked().iter().any(|r| &*r.kind != "priority"), "the person was asked which card");
+    let _ = kept;
+}
+
+#[test]
+fn the_ai_discards_a_spell_not_a_permanent_into_tergrid() {
+    // JD (10/21): with Tergrid out, discard a non-permanent card so Tergrid gets nothing
+    let mut g = table(&["sauron", "veyran"]);
+    perm(&mut g, P0, "Tergrid, God of Fright // Tergrid's Lantern");
+    g.player_mut(P1).hand.clear();
+    let cs = hand(&mut g, P1, &["Lightning Bolt", "Krenko, Mob Boss"]);
+    sim_core::engine::cast::discard_worst(&mut g, P1, 1).unwrap();
+    assert_eq!(g.player(P1).hand, vec![cs[1]], "the Bolt goes, Krenko stays");
+}

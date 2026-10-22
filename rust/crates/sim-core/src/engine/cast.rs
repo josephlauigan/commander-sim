@@ -578,6 +578,15 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
             return Ok(());
         }
         let hand = g.player(p).hand.clone();
+        // Tergrid, God of Fright takes a discarded permanent card: an instant or sorcery goes first, else the cheapest
+        if g.opps(p).any(|q| crate::engine::values::has(g, q, crate::tag::Tag::Tergrid)) {
+            let spells: Vec<CardId> = hand.iter().copied().filter(|&x| !g.db.get(x).perm && !g.db.get(x).land).collect();
+            let pick = |v: &[CardId]| min_by(v, |x: CardId| g.db.get(x).cmc as f64 + if keep.contains(&x) { 100.0 } else { 0.0 });
+            if let Some(x) = pick(&spells).or_else(|| pick(&hand)) {
+                discard_cards(g, p, &[x])?;
+                continue;
+            }
+        }
         let lands: Vec<CardId> = hand.iter().copied().filter(|&x| g.db.get(x).land).collect();
         let nonl: Vec<CardId> = hand.iter().copied().filter(|&x| !g.db.get(x).land).collect();
         let cmc = |x: CardId| g.db.get(x).cmc as f64;

@@ -1445,17 +1445,12 @@ fn quandary_never(_g: &mut Game, _p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
     Ok("gy")
 }
 
-fn lotv_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+pub fn lotv_plus(g: &mut Game, _p: PlayerId, _src: PermId) -> Res {
     for i in 0..g.players.len() {
         let q = g.players[i].id;
+        // Oracle: each player discards a card of their choice (a person is asked; the AI drops its worst card)
         if g.player(q).alive && !g.player(q).hand.is_empty() {
-            if q == p {
-                discard_worst(g, q, 1)?;
-            } else {
-                let k = g.player(q).hand.len() as u64;
-                let i = g.rng.below(k) as usize;
-                discard_index(g, q, i)?;
-            }
+            discard_worst(g, q, 1)?;
         }
     }
     Ok(())
