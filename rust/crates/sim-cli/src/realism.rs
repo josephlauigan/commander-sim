@@ -155,7 +155,7 @@ pub struct Shape {
 
 fn pct_ci(k: u64, n: u64) -> Measured {
     let (lo, hi) = wilson(k, n);
-    Measured { value: 100.0 * k as f64 / n.max(1) as f64, ci: Some((100.0 * lo, 100.0 * hi)) }
+    Measured { value: 100.0 * k as f64 / n.max(1) as f64, ci: Some(((100.0 * lo).max(0.0), (100.0 * hi).min(100.0))) }
 }
 
 /// the q-th quantile of sorted v (nearest rank)
