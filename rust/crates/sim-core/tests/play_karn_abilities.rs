@@ -440,3 +440,15 @@ fn mishras_foundry_pumps_an_attacking_worker() {
     use_land(&mut g, f2, "becomes", vec![]);
     assert!(g.is_creature(perms_named(&g, P0, "Mishra's Foundry")[0]));
 }
+
+#[test]
+fn mystic_forge_exiles_the_top_card_for_a_life() {
+    let mut g = karn_table();
+    let f = perm(&mut g, P0, "Mystic Forge");
+    let top = *g.player(P0).library.last().unwrap();
+    let life = g.player(P0).life;
+    use_perm(&mut g, f, "exile the top card", vec![]);
+    assert!(g.player(P0).exile.contains(&top), "the top card is exiled");
+    assert_eq!(g.player(P0).life, life - 1);
+    assert!(g.perm(f).tapped);
+}

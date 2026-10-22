@@ -405,7 +405,7 @@ fn forge_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(ok)
 }
 
-fn forge_exile(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn forge_exile(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || g.perm(src).tapped || g.player(p).library.is_empty() || g.player(p).life <= 1 {
         return Ok(false);
     }

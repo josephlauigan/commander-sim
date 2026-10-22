@@ -204,6 +204,8 @@ pub fn perm_abilities(g: &Game, _p: PlayerId, m: PermId) -> Vec<PermAbility> {
                 hellkite_x,
             ),
         ],
+        // {T}, pay 1 life: exile the top card (the AI uses it only on a land; you may on anything)
+        "Mystic Forge" => vec![ability("{T}, pay 1 life: exile the top card of your library", forge)],
         "Steel Overseer" => {
             vec![ability("{T}: put a +1/+1 counter on each artifact creature you control", overseer)]
         }
@@ -414,6 +416,16 @@ fn hellkite_x(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some(why));
     }
     via_ability(g, p, m, crate::impls::karn_cards::hellkite_go, x as i64, "Steel Hellkite")
+}
+
+fn forge(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tap_ok(g, m, false) {
+        return Ok(Some(why));
+    }
+    if g.player(p).life <= 1 {
+        return Ok(Some("You can't pay 1 life.".into()));
+    }
+    via_ability(g, p, m, crate::impls::karn_engines::forge_exile, 0, "Mystic Forge")
 }
 
 fn overseer(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
