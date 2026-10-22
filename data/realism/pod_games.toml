@@ -1,0 +1,19 @@
+# JD's pod games: one [[game]] record per game, newest at the bottom. The realism targets take their levels from here
+# once enough games are logged (data/realism/<tier>.toml).
+#
+# date    the day the game was played, YYYY-MM-DD
+# seats   the four decks in turn order (seat 1 first): JD's deck key (data/my_decks.toml) or the commander's name
+# winner  the winning seat, 1-4; 0 for a draw (nobody won)
+# turn    the round the game ended on (round 1 = everyone's first turn)
+# how     combat | commander damage | other damage | combo | alt win | mill | poison | concession | draw
+# notes   optional: anything unusual (a mulligan to 5, a misplay, a deck that was swapped mid-night)
+#
+# Example:
+#
+# [[game]]
+# date = "2026-10-24"
+# seats = ["sauron", "Atraxa, Praetors' Voice", "kefka", "Krenko, Mob Boss"]
+# winner = 3
+# turn = 9
+# how = "combo"
+# notes = "Kefka's line through Atraxa's counter on turn 8 failed; won the turn after"

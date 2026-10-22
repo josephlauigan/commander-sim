@@ -1,0 +1,14 @@
+# Realism targets, Tier 3: no targets yet (`commander-sim --realism --pool t3` prints the sim's numbers unscored).
+# Format: see t6.toml. Where the data will come from:
+#
+# - Playgroup.gg (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0, read 2026-10-22): per commander,
+#   games, wins, average game length in rounds, and wins by combat, combo, commander damage, other damage, alternate
+#   win, mill and poison. Matched to this tier's five pool commanders (data/decks.json), it gives the win-type mix
+#   and game length. Each commander's page adds seat win rates. Caveat: a commander's numbers cover every deck built
+#   around it, at any power level, so use them for shape rather than level.
+# - Playgroup's turn-order page (https://playgroup.gg/commander/turn-order, computed 2026-10-19): seat win rates over
+#   284,950 single-winner casual 4-player games, 29.2 / 25.7 / 23.6 / 21.5%. Not split by power level.
+# - JD's pod log (data/realism/pod_games.toml): the levels, once enough games are logged.
+# - TopDeck.gg bracket events: standings and decklists only (no seats), and few, small events.
+
+tier = "t3"

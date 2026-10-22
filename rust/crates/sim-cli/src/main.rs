@@ -18,6 +18,7 @@ mod poolmode;
 mod progress;
 mod preflight;
 mod pyrand;
+mod realism;
 mod report;
 mod stats;
 mod t6report;
@@ -111,6 +112,9 @@ fn swap_in_place(list: &[String], swaps: &[(String, String)]) -> Vec<String> {
 
 /// compare.main
 fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
+    if a.realism {
+        return realism::run(sim, &a).map(|()| 0);
+    }
     let mut swaps = vec![];
     let (mut base, mut var) = (vec![], vec![]);
     if let Some(deck) = a.deck.clone()
