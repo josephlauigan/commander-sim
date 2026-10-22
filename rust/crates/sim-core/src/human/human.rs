@@ -520,12 +520,23 @@ pub enum AbilityKind {
 /// abilities, Triskelion, Deathrite ...) (Python's `abilities_of`)
 pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, AbilityKind)>> {
     let mut out = vec![];
+    if crate::cardcode::ability_locked(g, m, p) {
+        return Ok(out); // Arrest, Pithing Needle, Collector Ouphe ...: its activated abilities can't be activated
+    }
     if let Some(n) = legal::equip_cost(g, m) {
         out.push((format!("Equip {{{n}}}"), AbilityKind::Equip));
     }
     let post = if g.active == Some(p) { Some(g.step == Step::Main2) } else { None }; // None: instant-speed only
     for a in abilities::permanent_abilities(g, p, m) {
         out.push((a.label, AbilityKind::Extra(a.act)));
+    }
+    out.extend(super::karn::perm_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    if super::karn::owns_perm(g, m) {
+        return Ok(out); // the Karn deck's cards: all listed above (the AI's hook options would show twice)
+    }
+    // the card's compiled abilities (its text, e.g. Wayfarer's Bauble), paid from your pool
+    for (label, idx) in crate::dsl::human_abilities(g, p, m) {
+        out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));
     }
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules

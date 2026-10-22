@@ -71,6 +71,9 @@ pub fn gy_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>> 
 
 /// The hook options of land l.
 pub fn land_alts(g: &mut Game, p: PlayerId, l: LandId) -> Res<Vec<(String, Opt)>> {
+    if super::karn::owns_land(g, l) {
+        return Ok(vec![]); // the Karn deck's lands list every ability themselves (karn.rs)
+    }
     if crate::engine::mana::moon_land(g, l) || g.land(l).tapped {
         return Ok(vec![]);
     }

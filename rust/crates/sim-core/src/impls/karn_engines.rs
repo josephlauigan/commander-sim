@@ -204,7 +204,7 @@ fn mazemind_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     Ok(out)
 }
 
-fn mazemind_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn mazemind_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped {
         return Ok(false);
     }
@@ -405,7 +405,7 @@ fn forge_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(ok)
 }
 
-fn forge_exile(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn forge_exile(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || g.perm(src).tapped || g.player(p).library.is_empty() || g.player(p).life <= 1 {
         return Ok(false);
     }
@@ -593,7 +593,7 @@ fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 // ================================================================== Inventors' Fair
-fn artifact_total(g: &Game, p: PlayerId) -> i32 {
+pub(crate) fn artifact_total(g: &Game, p: PlayerId) -> i32 {
     artifacts(g, p)
         + g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).types.has(Types::ARTIFACT)).count() as i32
 }
@@ -630,7 +630,7 @@ fn fair_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Option<b
     }])
 }
 
-fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = crate::ids::LandId(arg as u32);
     if !land_ok(g, l, p) || artifact_total(g, p) < 3 || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
         return Ok(false);
@@ -692,7 +692,7 @@ fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ================================================================== Endless Atlas
 /// {2}, {T}: draw a card. Activate only if you control three or more lands with the same name.
-fn atlas_ready(g: &Game, p: PlayerId) -> bool {
+pub(crate) fn atlas_ready(g: &Game, p: PlayerId) -> bool {
     let names: Vec<&str> = g.player(p).lands.iter().map(|&l| lname(g, g.land(l).cd)).collect();
     names.iter().any(|n| names.iter().filter(|&m| m == n).count() >= 3)
 }
@@ -710,7 +710,7 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     Ok(vec![ability(u, "Endless Atlas: draw".into(), src, atlas_go, 0)])
 }
 
-fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src)
         || g.perm(src).tapped
         || !atlas_ready(g, p)
@@ -816,7 +816,7 @@ fn skull_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     Ok(vec![ability(2.4, "Batterskull: return it to hand".into(), src, skull_go, 0)])
 }
 
-fn skull_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn skull_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || !can_pay(g, p, 3, "", false) || !pay(g, p, 3, "", false)? {
         return Ok(false);
     }
@@ -853,7 +853,7 @@ fn torque_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     )])
 }
 
-fn torque_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn torque_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
     if !live(g, src) || g.perm(src).tapped || !live(g, t) {
         return Ok(false);

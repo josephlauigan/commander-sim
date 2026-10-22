@@ -1261,7 +1261,7 @@ pub fn yshtola_x_spell(g: &mut Game, p: PlayerId, _post: bool) -> Res<bool> {
 pub fn yshtola_abilities(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<bool> {
     let mut opts: Vec<Opt> = vec![];
     for (src, imp) in crate::engine::hooks::hooked(g, crate::hooks::Event::Options) {
-        if g.perm(src).owner == p {
+        if g.perm(src).owner == p && !crate::cardcode::ability_locked(g, src, p) {
             opts.extend((imp.options.unwrap())(g, src, p, post)?);
         }
     }

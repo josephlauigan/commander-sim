@@ -246,7 +246,7 @@ pub fn search_pick(g: &Game, p: PlayerId, cands: &[CardId]) -> Option<CardId> {
 /// (name, the cost to animate)
 const MANLANDS: [(&str, u32); 2] = [("Mishra's Factory", 1), ("Mishra's Foundry", 2)];
 
-fn cost_of_land(g: &Game, l: LandId) -> u32 {
+pub(crate) fn cost_of_land(g: &Game, l: LandId) -> u32 {
     MANLANDS.iter().find(|m| m.0 == land_name(g, l)).map_or(1, |m| m.1)
 }
 
@@ -255,7 +255,7 @@ fn opt(utility: f64, label: String, f: crate::hooks::PlanFn, arg: i64) -> Opt {
 }
 
 /// the land becomes a 2/2 Assembly-Worker artifact creature (a token standing in for the land, see `lands::animate`)
-fn animate(g: &mut Game, p: PlayerId, l: LandId) -> PermId {
+pub(crate) fn animate(g: &mut Game, p: PlayerId, l: LandId) -> PermId {
     let m = super::lands::animate(g, p, l, 2, 2, &[], false);
     let x = g.perm_mut(m);
     x.ttypes.push("artifact");

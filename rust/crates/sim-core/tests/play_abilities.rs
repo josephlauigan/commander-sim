@@ -214,3 +214,92 @@ fn only_overloaded_with_nothing_to_target() {
     let v = card(&g, "Vandalblast");
     assert!(g.player(P0).gy.contains(&v));
 }
+
+// ------------------------------------------------------------------ compiled abilities
+#[test]
+fn wayfarers_bauble_from_the_pool() {
+    // JD (10/21): two {C} in the pool, Wayfarer's Bauble on the battlefield: its compiled ability wasn't offered
+    let mut g = table(&["karn", "veyran"]);
+    lands(&mut g, P0, "Wastes", 2, false);
+    let b = perm(&mut g, P0, "Wayfarer's Bauble");
+    tap_all(&mut g, P0);
+    let abil = abilities_of(&mut g, P0, b).unwrap();
+    assert!(abil.iter().any(|a| a.0.starts_with("{2}, {T}, sacrifice it")), "{:?}", abil.iter().map(|a| &a.0).collect::<Vec<_>>());
+    let i = g.player(P0).perms.iter().position(|&x| x == b).unwrap();
+    // use the Bauble, its ability (0), the basic land to fetch (0: the only kind, Wastes), then pass
+    seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pick(0), pass()]);
+    human_main(&mut g, P0, false).unwrap();
+    assert!(!g.perm(b).on_bf, "the Bauble is sacrificed");
+    assert_eq!(g.player(P0).lands.len(), 3, "a basic land is fetched");
+    assert!(g.land(*g.player(P0).lands.last().unwrap()).tapped, "tapped");
+}
+
+#[test]
+fn a_compiled_ability_without_the_mana_says_so() {
+    let mut g = table(&["karn", "veyran"]);
+    let b = perm(&mut g, P0, "Wayfarer's Bauble");
+    let i = g.player(P0).perms.iter().position(|&x| x == b).unwrap();
+    let h = seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pass()]);
+    human_main(&mut g, P0, false).unwrap();
+    assert!(g.perm(b).on_bf, "nothing paid, nothing sacrificed");
+    assert!(!h.told().is_empty(), "the person is told why");
+}
+
+#[test]
+fn arrest_from_the_person_locks_the_creatures_activated_abilities() {
+    // JD (10/21): a friend put Arrest on an opponent's creature and "its ability still kicked in". Arrest stops
+    // attacking, blocking and activated abilities (triggered abilities still work)
+    let mut g = table(&["yshtola", "veyran"]);
+    let ar = hand(&mut g, P0, &["Arrest"])[0];
+    lands(&mut g, P0, "Plains", 3, false);
+    tap_all(&mut g, P0);
+    let b = perm(&mut g, P1, "Steel Overseer"); // {T}: a +1/+1 counter on each artifact creature
+    let pt = pick_target(&g, P0, Target::Perm(b));
+    let k = g.player(P0).hand.iter().position(|&c| c == ar).unwrap();
+    let h = seat(&mut g, P0, vec![act(json!({"do": "cast", "card": k})), pt, pass()]);
+    human_main(&mut g, P0, false).unwrap();
+    assert!(sim_core::cardcode::ability_locked(&g, b, P1), "Arrest locks its activated abilities; asked {:?}, told {:?}", h.asked().iter().map(|r| r.kind.to_string()).collect::<Vec<_>>(), h.told());
+}
+
+#[test]
+fn your_arrested_permanent_offers_no_ability() {
+    // the opponent (a person here) casts Arrest on your Steel Overseer
+    let mut g = table(&["karn", "yshtola"]);
+    let o = perm(&mut g, P0, "Steel Overseer");
+    let ar = hand(&mut g, P1, &["Arrest"])[0];
+    lands(&mut g, P1, "Plains", 3, false);
+    tap_all(&mut g, P1);
+    g.active = Some(P1);
+    let pt = pick_target(&g, P1, Target::Perm(o));
+    let k = g.player(P1).hand.iter().position(|&c| c == ar).unwrap();
+    seat(&mut g, P1, vec![act(json!({"do": "cast", "card": k})), pt, pass()]);
+    human_main(&mut g, P1, false).unwrap();
+    assert!(sim_core::cardcode::ability_locked(&g, o, P0), "Arrest is on it");
+    seat(&mut g, P0, vec![]);
+    assert!(abilities_of(&mut g, P0, o).unwrap().is_empty(), "Arrest: its activated abilities can't be activated");
+}
+
+#[test]
+fn liliana_of_the_veil_plus_one_asks_the_person_which_card_to_discard() {
+    // JD (10/21): an opponent's Liliana +1 asked neither person; each player discards a card of their choice
+    let mut g = table(&["sauron", "veyran"]);
+    let kept = hand(&mut g, P0, &["Lightning Bolt", "Counterspell"]);
+    let li = perm(&mut g, P1, "Liliana of the Veil");
+    let h = seat(&mut g, P0, vec![pick(1)]); // discard the second card offered
+    let n = g.player(P0).hand.len();
+    sim_core::impls::t3::lotv_plus(&mut g, P1, li).unwrap();
+    assert_eq!(g.player(P0).hand.len(), n - 1, "one card discarded");
+    assert!(h.asked().iter().any(|r| &*r.kind != "priority"), "the person was asked which card");
+    let _ = kept;
+}
+
+#[test]
+fn the_ai_discards_a_spell_not_a_permanent_into_tergrid() {
+    // JD (10/21): with Tergrid out, discard a non-permanent card so Tergrid gets nothing
+    let mut g = table(&["sauron", "veyran"]);
+    perm(&mut g, P0, "Tergrid, God of Fright // Tergrid's Lantern");
+    g.player_mut(P1).hand.clear();
+    let cs = hand(&mut g, P1, &["Lightning Bolt", "Krenko, Mob Boss"]);
+    sim_core::engine::cast::discard_worst(&mut g, P1, 1).unwrap();
+    assert_eq!(g.player(P1).hand, vec![cs[1]], "the Bolt goes, Krenko stays");
+}

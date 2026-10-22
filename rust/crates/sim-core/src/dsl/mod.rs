@@ -1931,6 +1931,60 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
     Ok(out)
 }
 
+/// The compiled activated abilities of p's permanent src a person can use now (practice mode): (label, index for
+/// `activate`). Sorcery-speed ones only on p's own turn; whether the cost can be paid is checked when activated (from
+/// the person's pool), so an ability shows even before its mana is in the pool.
+pub fn human_abilities(g: &Game, p: PlayerId, src: PermId) -> Vec<(String, u16)> {
+    let x = g.perm(src);
+    let Some(cd) = x.cd else { return vec![] };
+    if !active(g) || x.phased || !g.db.get(cd).has_dsl() || crate::cardcode::ability_locked(g, src, p) {
+        return vec![];
+    }
+    let mut out = vec![];
+    for (i, a) in abilities(g, cd).iter().enumerate() {
+        let Ability::Activated { cost, effects, sorcery, .. } = a else { continue };
+        if *sorcery == Some(true) && g.active != Some(p) {
+            continue;
+        }
+        out.push((format!("{}: {}", cost_text(cost), effects_text(effects)), i as u16));
+    }
+    out
+}
+
+/// "{2}, {T}, sacrifice it" from a compiled cost
+fn cost_text(cost: &model::Cost) -> String {
+    let mut parts = vec![];
+    if let Some(m) = cost.mana.as_deref() {
+        let (gn, pips) = crate::engine::cast::parse_cost(m);
+        let mut s = if gn > 0 || pips.is_empty() { format!("{{{gn}}}") } else { String::new() };
+        for ch in pips.chars() {
+            s.push_str(&format!("{{{ch}}}"));
+        }
+        parts.push(s);
+    }
+    if cost.tap == Some(true) {
+        parts.push("{T}".into());
+    }
+    match cost.sac.as_deref() {
+        Some("self") => parts.push("sacrifice it".into()),
+        Some(k) => parts.push(format!("sacrifice a {k}")),
+        None => {}
+    }
+    if let Some(l) = cost.life {
+        parts.push(format!("pay {l} life"));
+    }
+    if let Some(k) = cost.discard {
+        parts.push(format!("discard {k}"));
+    }
+    if parts.is_empty() { "{0}".into() } else { parts.join(", ") }
+}
+
+/// a short reading of compiled effects ("search", "draw") for an ability's label
+fn effects_text(effects: &[model::Effect]) -> String {
+    let words: Vec<String> = effects.iter().map(|e| e.kind.replace('_', " ")).collect();
+    if words.is_empty() { "its effect".into() } else { words.join(", then ") }
+}
+
 /// p activates src's compiled ability idx (an option from ability_options); false if it can't now
 pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     let Some(cd) = g.perm(src).cd else { return Ok(false) };

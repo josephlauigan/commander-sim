@@ -1238,7 +1238,7 @@ fn lantern_draw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     Ok(vec![ability(0.7, "Soul-Guide Lantern draw".into(), src, lantern_go, 0)])
 }
 
-fn lantern_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn lantern_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !on(g, p, src) || !can_pay(g, p, 1, "", false) {
         return Ok(false);
     }
