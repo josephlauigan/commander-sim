@@ -244,3 +244,37 @@ fn a_compiled_ability_without_the_mana_says_so() {
     assert!(g.perm(b).on_bf, "nothing paid, nothing sacrificed");
     assert!(!h.told().is_empty(), "the person is told why");
 }
+
+#[test]
+fn arrest_from_the_person_locks_the_creatures_activated_abilities() {
+    // JD (10/21): a friend put Arrest on an opponent's creature and "its ability still kicked in". Arrest stops
+    // attacking, blocking and activated abilities (triggered abilities still work)
+    let mut g = table(&["yshtola", "veyran"]);
+    let ar = hand(&mut g, P0, &["Arrest"])[0];
+    lands(&mut g, P0, "Plains", 3, false);
+    tap_all(&mut g, P0);
+    let b = perm(&mut g, P1, "Steel Overseer"); // {T}: a +1/+1 counter on each artifact creature
+    let pt = pick_target(&g, P0, Target::Perm(b));
+    let k = g.player(P0).hand.iter().position(|&c| c == ar).unwrap();
+    let h = seat(&mut g, P0, vec![act(json!({"do": "cast", "card": k})), pt, pass()]);
+    human_main(&mut g, P0, false).unwrap();
+    assert!(sim_core::cardcode::ability_locked(&g, b, P1), "Arrest locks its activated abilities; asked {:?}, told {:?}", h.asked().iter().map(|r| r.kind.to_string()).collect::<Vec<_>>(), h.told());
+}
+
+#[test]
+fn your_arrested_permanent_offers_no_ability() {
+    // the opponent (a person here) casts Arrest on your Steel Overseer
+    let mut g = table(&["karn", "yshtola"]);
+    let o = perm(&mut g, P0, "Steel Overseer");
+    let ar = hand(&mut g, P1, &["Arrest"])[0];
+    lands(&mut g, P1, "Plains", 3, false);
+    tap_all(&mut g, P1);
+    g.active = Some(P1);
+    let pt = pick_target(&g, P1, Target::Perm(o));
+    let k = g.player(P1).hand.iter().position(|&c| c == ar).unwrap();
+    seat(&mut g, P1, vec![act(json!({"do": "cast", "card": k})), pt, pass()]);
+    human_main(&mut g, P1, false).unwrap();
+    assert!(sim_core::cardcode::ability_locked(&g, o, P0), "Arrest is on it");
+    seat(&mut g, P0, vec![]);
+    assert!(abilities_of(&mut g, P0, o).unwrap().is_empty(), "Arrest: its activated abilities can't be activated");
+}

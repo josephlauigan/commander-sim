@@ -80,6 +80,7 @@ impl Human for Bot {
         for (i, &m) in perms.iter().enumerate() {
             if g.active == Some(p)
                 && legal::equip_cost(g, m).is_some()
+                && !sim_core::cardcode::ability_locked(g, m, p) // Collector Ouphe, Arrest: no Equip either
                 && g.perm(m).attached.is_none()
                 && !st.tried.contains(&(g.round, m.0 as usize))
                 && legal::sorcery_timing(g, p).is_none()

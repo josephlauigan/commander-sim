@@ -520,6 +520,9 @@ pub enum AbilityKind {
 /// abilities, Triskelion, Deathrite ...) (Python's `abilities_of`)
 pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, AbilityKind)>> {
     let mut out = vec![];
+    if crate::cardcode::ability_locked(g, m, p) {
+        return Ok(out); // Arrest, Pithing Needle, Collector Ouphe ...: its activated abilities can't be activated
+    }
     if let Some(n) = legal::equip_cost(g, m) {
         out.push((format!("Equip {{{n}}}"), AbilityKind::Equip));
     }
