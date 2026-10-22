@@ -214,3 +214,33 @@ fn only_overloaded_with_nothing_to_target() {
     let v = card(&g, "Vandalblast");
     assert!(g.player(P0).gy.contains(&v));
 }
+
+// ------------------------------------------------------------------ compiled abilities
+#[test]
+fn wayfarers_bauble_from_the_pool() {
+    // JD (10/21): two {C} in the pool, Wayfarer's Bauble on the battlefield: its compiled ability wasn't offered
+    let mut g = table(&["karn", "veyran"]);
+    lands(&mut g, P0, "Wastes", 2, false);
+    let b = perm(&mut g, P0, "Wayfarer's Bauble");
+    tap_all(&mut g, P0);
+    let abil = abilities_of(&mut g, P0, b).unwrap();
+    assert!(abil.iter().any(|a| a.0.starts_with("{2}, {T}, sacrifice it")), "{:?}", abil.iter().map(|a| &a.0).collect::<Vec<_>>());
+    let i = g.player(P0).perms.iter().position(|&x| x == b).unwrap();
+    // use the Bauble, its ability (0), the basic land to fetch (0: the only kind, Wastes), then pass
+    seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pick(0), pass()]);
+    human_main(&mut g, P0, false).unwrap();
+    assert!(!g.perm(b).on_bf, "the Bauble is sacrificed");
+    assert_eq!(g.player(P0).lands.len(), 3, "a basic land is fetched");
+    assert!(g.land(*g.player(P0).lands.last().unwrap()).tapped, "tapped");
+}
+
+#[test]
+fn a_compiled_ability_without_the_mana_says_so() {
+    let mut g = table(&["karn", "veyran"]);
+    let b = perm(&mut g, P0, "Wayfarer's Bauble");
+    let i = g.player(P0).perms.iter().position(|&x| x == b).unwrap();
+    let h = seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pass()]);
+    human_main(&mut g, P0, false).unwrap();
+    assert!(g.perm(b).on_bf, "nothing paid, nothing sacrificed");
+    assert!(!h.told().is_empty(), "the person is told why");
+}
