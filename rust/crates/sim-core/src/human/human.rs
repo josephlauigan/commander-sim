@@ -527,6 +527,10 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
     for a in abilities::permanent_abilities(g, p, m) {
         out.push((a.label, AbilityKind::Extra(a.act)));
     }
+    out.extend(super::karn::perm_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    if super::karn::owns_perm(g, m) {
+        return Ok(out); // the Karn deck's cards: all listed above (the AI's hook options would show twice)
+    }
     // the card's compiled abilities (its text, e.g. Wayfarer's Bauble), paid from your pool
     for (label, idx) in crate::dsl::human_abilities(g, p, m) {
         out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));

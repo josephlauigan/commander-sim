@@ -1,5 +1,5 @@
 //! Practice-mode audit of the Karn deck (JD, 10/21): every card with an activated ability in its Oracle text (beyond
-//! "{T}: Add ...") must offer it to the person. Run with `--ignored --nocapture` for the table.
+//! "{T}: Add ...") must offer it to the person. `--nocapture` prints the table.
 
 mod play_common;
 use play_common::*;
@@ -19,8 +19,30 @@ fn activated_lines(oracle: &str) -> Vec<String> {
         .collect()
 }
 
+/// the position each card's "activate only if" needs (a power-4 creature, three same-named lands, three artifacts)
+fn condition(g: &mut sim_core::state::Game, n: &str) {
+    match n {
+        "Bonders' Enclave" => {
+            token(g, P0, 4);
+        }
+        "Endless Atlas" => {
+            lands(g, P0, "Wastes", 3, false);
+        }
+        "Inventors' Fair" | "Kuldotha Forgemaster" => {
+            for a in ["Sol Ring", "Mana Vault", "Thought Vessel"] {
+                perm(g, P0, a);
+            }
+        }
+        "Buried Ruin" => {
+            let c = card(g, "Sol Ring");
+            g.player_mut(P0).gy.push(c);
+        }
+        _ => {}
+    }
+}
+
+/// Every Oracle line that is an activated ability must be offered (run with `--nocapture` for the table).
 #[test]
-#[ignore]
 fn karn_deck_abilities_in_practice() {
     let cache: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(data_dir().join("scryfall_cache.json")).unwrap()).unwrap();
@@ -38,6 +60,7 @@ fn karn_deck_abilities_in_practice() {
         seat(&mut g, P0, vec![]);
         g.player_mut(P0).pool.add('C', 20); // enough to pay any of them
         g.active = Some(P0);
+        condition(&mut g, &n);
         let c = card(&g, &n);
         let offered: Vec<String> = if g.db.get(c).land {
             let l = lands(&mut g, P0, &n, 1, false)[0];
@@ -45,7 +68,18 @@ fn karn_deck_abilities_in_practice() {
             v.extend(alt::land_alts(&mut g, P0, l).unwrap().into_iter().map(|a| a.0));
             v
         } else {
-            let m = perm(&mut g, P0, &n);
+            let m = if n == "Walking Ballista" {
+                let c = card(&g, &n);
+                sim_core::engine::zones::enter(
+                    &mut g,
+                    P0,
+                    c,
+                    sim_core::engine::zones::Enter { sick: false, plus: 1, ..Default::default() },
+                )
+                .unwrap() // it enters with no counters otherwise, and a 0/0 dies
+            } else {
+                perm(&mut g, P0, &n)
+            };
             abilities_of(&mut g, P0, m).unwrap().into_iter().map(|a| a.0).collect()
         };
         let flag = if offered.len() < want.len() { "MISSING" } else { "ok" };
@@ -55,4 +89,5 @@ fn karn_deck_abilities_in_practice() {
         println!("{flag}\t{n}\n\toracle: {want:?}\n\toffered: {offered:?}");
     }
     println!("cards with fewer offered abilities than Oracle lists: {missing}");
+    assert_eq!(missing, 0, "a Karn card offers fewer activated abilities than its Oracle text has");
 }

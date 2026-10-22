@@ -564,7 +564,7 @@ fn war_room(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec
     Ok(vec![opt(1.3, "War Room".into(), war_room_go, l.0 as i64)])
 }
 
-fn war_room_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn war_room_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let l = LandId(arg as u32);
     let n = g.player(p).ident.count() as i32;
     if !has_land(g, p, l) || g.land(l).tapped || !pay_without(g, p, l, 3, "")? {

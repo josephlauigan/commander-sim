@@ -572,7 +572,7 @@ pub fn monolith_untap_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
     out
 }
 
-fn untap_monolith(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn untap_monolith(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let m = PermId(arg as u32);
     if !g.perm(m).tapped || !g.perm(m).on_bf || g.perm(m).owner != p || !can_pay(g, p, 4, "", false) {
         return Ok(false);

@@ -277,6 +277,7 @@ fn grounds(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
 /// abilities.land_abilities: the abilities of land l (cards.py's first, then the Passage / Scavenger Grounds ones)
 pub fn land_abilities(g: &Game, p: PlayerId, l: LandId) -> Vec<LandAbility> {
     let mut out = super::cards::land_abilities(g, p, l);
+    out.extend(super::karn::land_abilities(g, p, l));
     let d = g.db.get(g.land(l).cd);
     if d.tag(Tag::Passage) {
         out.push(ability("{4}, {T}: target creature can't be blocked this turn", passage));

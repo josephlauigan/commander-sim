@@ -215,7 +215,7 @@ fn disk_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 }
 
 /// {1}, {T}: destroy all artifacts, creatures and enchantments
-fn disk_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn disk_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !pay(g, p, 1, "", false)? {
         return Ok(false);
     }
@@ -274,7 +274,7 @@ fn stone_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 }
 
 /// {4}, {T}: put a fate counter on target permanent
-fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !live(g, t) || !pay(g, p, 4, "", false)? {
         return Ok(false);
@@ -289,7 +289,7 @@ fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 /// {5}, {T}, sacrifice: destroy each nonland permanent without a fate counter, then remove all fate counters
-fn stone_wipe(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn stone_wipe(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !pay(g, p, 5, "", false)? {
         return Ok(false);
     }
@@ -302,7 +302,7 @@ fn stone_wipe(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ Ratchet Bomb
-fn charges(g: &Game, m: PermId) -> i32 {
+pub(crate) fn charges(g: &Game, m: PermId) -> i32 {
     g.perm(m).data.int(DataKey::Charge) as i32
 }
 
@@ -340,7 +340,7 @@ fn bomb_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 }
 
 /// {T}: put a charge counter on it
-fn bomb_tick(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn bomb_tick(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped {
         return Ok(false);
     }
@@ -354,7 +354,7 @@ fn bomb_tick(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 /// {T}, sacrifice: destroy each nonland permanent with mana value equal to the charge counters
-fn bomb_blow(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn bomb_blow(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).tapped {
         return Ok(false);
     }
@@ -447,7 +447,7 @@ fn overseer_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 }
 
 /// {T}: put a +1/+1 counter on each artifact creature you control
-fn overseer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn overseer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let x = g.perm(src);
     if !live(g, src) || owner(g, src) != p || x.tapped || x.sick {
         return Ok(false);
@@ -783,7 +783,7 @@ fn obelisk_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 const HELLKITE: &str = "Steel Hellkite";
 
 /// the players this Hellkite dealt combat damage to this turn
-fn hit_players(g: &Game, m: PermId) -> Vec<PlayerId> {
+pub(crate) fn hit_players(g: &Game, m: PermId) -> Vec<PlayerId> {
     match g.perm(m).data.get(DataKey::Hit) {
         Some(Val::List(v)) => {
             let st = g.turn_stamp();
@@ -863,7 +863,7 @@ fn hellkite_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 
 /// {X}: destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature
 /// this turn. Activate only once each turn.
-fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
+pub(crate) fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
     if !live(g, src) || owner(g, src) != p || g.perm(src).data.get(DataKey::Used) == Some(&Val::Stamp(g.turn_stamp())) {
         return Ok(false);
     }

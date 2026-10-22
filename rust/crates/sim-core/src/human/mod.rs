@@ -15,6 +15,7 @@ pub mod cards;
 pub mod choices;
 pub mod combat;
 pub mod human;
+pub mod karn;
 pub mod legal;
 pub mod mana;
 pub mod script;
