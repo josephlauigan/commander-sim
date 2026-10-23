@@ -177,6 +177,9 @@ pub fn attack_limits(g: &mut Game, p: PlayerId, d: PlayerId, atk: Vec<PermId>) -
     if let Some(c) = cap {
         atk.truncate(c.max(0) as usize);
     }
+    if tax > 0 && crate::human::is_human(g, p) {
+        return human_attack_tax(g, p, d, tax, atk);
+    }
     if tax > 0 {
         let worth: Vec<PermId> =
             atk.iter().copied().filter(|&m| epow(g, m) >= tax || (g.perm(m).is_cmd && epow(g, m) >= 3)).collect();
@@ -193,6 +196,33 @@ pub fn attack_limits(g: &mut Game, p: PlayerId, d: PlayerId, atk: Vec<PermId>) -
         }
     }
     Ok(atk)
+}
+
+/// A person's attackers into a tax: they decide whether to pay, from floating mana and untapped sources (the pool
+/// has emptied since the main phase), with no "worth its tax" filter. The strongest ones they can pay for attack
+/// (atk is sorted by power); the log says when some or all don't.
+fn human_attack_tax(g: &mut Game, p: PlayerId, d: PlayerId, tax: i32, atk: Vec<PermId>) -> Res<Vec<PermId>> {
+    let n = atk.len();
+    let k = ((crate::human::mana::available(g, p) / tax as u32) as usize).min(n);
+    let taxes: Vec<String> = hooks::hooked(g, Event::AttackTax)
+        .iter()
+        .filter(|(src, imp)| (imp.attack_tax.unwrap())(g, *src, p, d).unwrap_or(0) > 0)
+        .filter_map(|(src, _)| card_name(g, *src).map(String::from))
+        .collect();
+    let (who, by) = (g.player(p).name, g.player(d).name);
+    let what = format!("attacking {by} ({})", taxes.join(", "));
+    if k == 0 {
+        crate::glog!(g, "  {who} can't pay {{{tax}}} a creature for {what}: no attack");
+        return Ok(vec![]);
+    }
+    let what = if k < n { format!("{what} with {k} of {n} creatures") } else { format!("{what} with {n}") };
+    let total = tax * k as i32;
+    if !crate::human::choices::pay_tax(g, p, total as u32, &what)? {
+        crate::glog!(g, "  {who} doesn't pay {{{total}}} for {what}: no attack");
+        return Ok(vec![]);
+    }
+    g.player_mut(p).stat("attack_tax_paid", total as i64);
+    Ok(atk[..k].to_vec())
 }
 
 /// The AI's attackers may go at different players, as in a real game: [(defending player, attackers)]. Everything
