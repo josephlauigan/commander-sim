@@ -85,8 +85,11 @@ mana-limited rather than waiting.
    seat rates (from each commander's HTML page, or the all-games turn-order figures). Note in the file that
    Playgroup's `average_round_amount` is game length, not win round, and that a commander's numbers cover every deck
    built around it. Kinnan is in both t5 and t6; t6 pairs need both partners.
-2. A nightly run: the repo has no CI (`.github/` does not exist). Propose to JD how and where (GitHub Actions on a
-   small heuristic budget, or a scheduled task) before adding one.
+2. Nightly run: done on this branch (JD approved CI, 2026-10-23). `.github/workflows/ci.yml` builds and tests on
+   every push and PR; `.github/workflows/realism.yml` runs the scorecard nightly (07:17 UTC) and on demand: adaptive
+   AI on every tier at 8,200 games, look-ahead on Tier 6 at 2,200 (input `lookahead_games`). Tables go to the run's
+   summary and an artifact; a failing target does not fail the job. Schedules and the on-demand button only work
+   once the workflow is on `main`. Once Phase 1 passes, make a target miss fail the job.
 3. Optionally a reader for `pod_games.toml` (validate records; summarise seat, round and win-type stats).
 
 **Phase 1** (gate: Tier 6 seat edge inside its band):

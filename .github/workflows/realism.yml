@@ -1,0 +1,63 @@
+# The realism scorecard (commander-sim --realism, targets in data/realism/<tier>.toml), nightly and on demand.
+# The tables go to the run's summary page and are kept as an artifact. A target that fails does not fail the job
+# (most Tier 6 targets fail today, see audit/realism/t6-baseline.md); an error does.
+#
+# - adaptive AI, every tier, 8,200 games: about a minute a tier, and enough games to resolve the +/- 1 point bands
+# - look-ahead AI, Tier 6, 2,200 games: about 90 minutes, the AI the targets are judged on (+/- 2 points)
+# A push that changes this file runs a small version of both, to check the workflow itself.
+name: Realism scorecard
+
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+    inputs:
+      lookahead_games:
+        description: "Tier 6 look-ahead games (8200 resolves +/- 1 point, about 5-6 hours)"
+        default: "2200"
+  push:
+    paths:
+      - .github/workflows/realism.yml
+
+jobs:
+  scorecard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    defaults:
+      run:
+        working-directory: rust
+    env:
+      SMALL: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - name: Build
+        run: cargo build --release -p sim-cli
+      - name: Adaptive AI, every tier
+        run: |
+          n=8200; [ "$SMALL" = true ] && n=100
+          mkdir -p ../realism-out
+          for t in t0 t1 t2 t3 t4 t5 t6; do
+            ./target/release/commander-sim --realism --pool $t --ai adaptive --games $n --quiet | tee ../realism-out/$t-adaptive.txt
+          done
+      - name: Look-ahead AI, Tier 6
+        run: |
+          n=${{ github.event.inputs.lookahead_games || '2200' }}; [ "$SMALL" = true ] && n=8
+          ./target/release/commander-sim --realism --pool t6 --games $n --quiet | tee ../realism-out/t6-lookahead.txt
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "# Realism scorecard ($(git rev-parse --short HEAD))"
+            for f in ../realism-out/t6-lookahead.txt ../realism-out/*-adaptive.txt; do
+              [ -f "$f" ] || continue
+              echo; echo '```'; sed '/^Target sources:/,$d' "$f"; echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: realism-${{ github.run_id }}
+          path: realism-out/
