@@ -452,11 +452,16 @@ fn unit_label(g: &Game, src: Source) -> String {
     }
 }
 
+/// The most p could pay right now: floating mana plus every untapped source
+pub fn available(g: &Game, p: PlayerId) -> u32 {
+    gathered(g, p).total() + sources(g, p).iter().map(|s| s.amount).sum::<u32>()
+}
+
 /// `choices::pay_tax`'s body: an opponent's tax (Rhystic Study, Smothering Tithe, Mystic Remora): ask p whether to
 /// pay {n}. Paid from p's floating mana first, then by tapping p's sources (as you would at the table).
 pub fn pay_tax(g: &mut Game, p: PlayerId, n: u32, what: &str) -> Res<bool> {
     let name = g.player(p).name;
-    let can = gathered(g, p).total() + sources(g, p).iter().map(|s| s.amount).sum::<u32>();
+    let can = available(g, p);
     if can < n {
         crate::glog!(g, "    {} can't pay {{{}}} for {}", name, n, what);
         return Ok(false);
