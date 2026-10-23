@@ -4,13 +4,13 @@ Read this file, then `CLAUDE.md`. Everything needed to continue is here; the cha
 
 ## Where things are
 
-- **Branch** `claude/realism-phase0`, pushed, not merged, no PR (JD asks for PRs explicitly). Start with
-  `git fetch origin && git checkout claude/realism-phase0 && git merge origin/main` (merge, don't rebase).
+- **Code:** all of it is on `main` (merged in PR #131, 2026-10-23). Work on a new branch from `main`; JD asks for PRs
+  explicitly.
 - **Plan document** (claude.ai Doc, JD's): https://claude.ai/artifact/Fa1usjF6hHZiSUBXwLzGNJ, "Commander Sim:
   Improvement and Refactoring Plan". A session with the Claude Docs connector can read and edit it; without it, this
   file summarises what matters (below).
-- **Commits on the branch:** `8685877` (targets format + `--realism`), `74a2a48` (README), `f4c1822` (t6 baseline),
-  `46fb1bc` (+/- 1 bands), and this handoff.
+- **Commits (PR #131):** `8685877` (targets format + `--realism`), `74a2a48` (README), `f4c1822` (t6 baseline),
+  `46fb1bc` (+/- 1 bands), `7fb4cd3` (CI), `9567a2f` (flaky practice image test fixed), and this handoff.
 
 ## The plan in brief (from the document)
 
@@ -85,11 +85,11 @@ mana-limited rather than waiting.
    seat rates (from each commander's HTML page, or the all-games turn-order figures). Note in the file that
    Playgroup's `average_round_amount` is game length, not win round, and that a commander's numbers cover every deck
    built around it. Kinnan is in both t5 and t6; t6 pairs need both partners.
-2. Nightly run: done on this branch (JD approved CI, 2026-10-23). `.github/workflows/ci.yml` builds and tests on
+2. Nightly run: done (JD approved CI, 2026-10-23). `.github/workflows/ci.yml` builds and tests on
    every push and PR; `.github/workflows/realism.yml` runs the scorecard nightly (07:17 UTC) and on demand: adaptive
    AI on every tier at 8,200 games, look-ahead on Tier 6 at 2,200 (input `lookahead_games`). Tables go to the run's
-   summary and an artifact; a failing target does not fail the job. Schedules and the on-demand button only work
-   once the workflow is on `main`. Once Phase 1 passes, make a target miss fail the job.
+   summary and an artifact; a failing target does not fail the job. Both are live on `main` (the scorecard runs
+   nightly; "Run workflow" on the Actions tab runs it on demand). Once Phase 1 passes, make a target miss fail it.
 3. Optionally a reader for `pod_games.toml` (validate records; summarise seat, round and win-type stats).
 
 **Phase 1** (gate: Tier 6 seat edge inside its band):
