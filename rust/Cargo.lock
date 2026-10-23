@@ -609,6 +609,7 @@ dependencies = [
  "cardgen",
  "serde_json",
  "sim-core",
+ "toml",
 ]
 
 [[package]]

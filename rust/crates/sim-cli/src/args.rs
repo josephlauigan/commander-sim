@@ -11,6 +11,7 @@ pub struct Args {
     pub pool: Option<String>,
     pub all_decks: bool,
     pub calibrate: Option<String>,
+    pub realism: bool,
     pub games: u64,
     pub seed: u64,
     pub profiles: Vec<String>,
@@ -46,7 +47,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 24] = [
+const OPTS: [Opt; 25] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -59,6 +60,13 @@ const OPTS: [Opt; 24] = [
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
     opt("--calibrate", false, &["within", "ordering", "all"], "", "pool balance checks (no --deck needed)"),
+    opt(
+        "--realism",
+        true,
+        &[],
+        "",
+        "with --pool tN: play the tier's own decks and score the games against data/realism/tN.toml (no --deck needed)",
+    ),
     opt(
         "--any-tier",
         true,
@@ -118,7 +126,7 @@ const OPTS: [Opt; 24] = [
 ];
 
 pub fn usage() -> &'static str {
-    "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH]\n\
+    "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
      \x20                    [--temp T] [--quiet] [--jobs N]\n\
@@ -184,6 +192,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         pool: None,
         all_decks: false,
         calibrate: None,
+        realism: false,
         games: 0,
         seed: 500000,
         profiles: vec![],
@@ -243,6 +252,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--no-preflight" => a.no_preflight = true,
             "--preflight-only" => a.preflight_only = true,
             "--calibrate" => a.calibrate = Some(val),
+            "--realism" => a.realism = true,
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
             "--seed" => a.seed = int(o.name, &val)?,

@@ -31,6 +31,20 @@ fn images_event(c: &mut Client, images: bool) -> (Vec<serde_json::Value>, serde_
     (evs, img)
 }
 
+/// The lookup and download counts once the server is quiet. `server()` opens the setup screen (`/api/options`), and
+/// with a fresh image folder that starts a background download of the commanders' pictures; its lookups must not be
+/// counted against the game a test then starts. Quiet = no change for a second.
+fn settled() -> (usize, usize) {
+    let read = || (fake::LOOKUPS.load(Ordering::Relaxed), fake::DOWNLOADS.load(Ordering::Relaxed));
+    let (mut last, mut still) = (read(), 0);
+    while still < 10 {
+        std::thread::sleep(std::time::Duration::from_millis(100));
+        let now = read();
+        (last, still) = if now == last { (last, still + 1) } else { (now, 0) };
+    }
+    last
+}
+
 #[test]
 fn test_cards_tokens_and_progress() {
     let s = rust_srv!();
@@ -66,7 +80,7 @@ fn test_cached_the_second_time() {
     let mut c = s.client();
     images_event(&mut c, true);
     c.quit();
-    let (lookups, downloads) = (fake::LOOKUPS.load(Ordering::Relaxed), fake::DOWNLOADS.load(Ordering::Relaxed));
+    let (lookups, downloads) = settled();
     let (_, img) = images_event(&mut c, true);
     assert!(!img["images"].as_object().unwrap().is_empty());
     assert_eq!((fake::LOOKUPS.load(Ordering::Relaxed), fake::DOWNLOADS.load(Ordering::Relaxed)), (lookups, downloads));
@@ -81,6 +95,7 @@ fn test_lookups_are_in_batches_of_75() {
         let o = Ordering::Relaxed;
         (fake::LOOKUPS.load(o), fake::NAMES_ASKED.load(o), fake::PRINTS_ASKED.load(o))
     };
+    settled();
     let (l0, n0, p0) = asked();
     images_event(&mut c, true);
     let (l, n, p) = asked();
@@ -98,7 +113,7 @@ fn test_lookups_are_in_batches_of_75() {
 fn test_a_game_without_images_asks_nobody() {
     let s = rust_srv!();
     let mut c = s.client();
-    let before = (fake::LOOKUPS.load(Ordering::Relaxed), fake::DOWNLOADS.load(Ordering::Relaxed));
+    let before = settled();
     let (_, img) = images_event(&mut c, false);
     assert!(img["images"].is_object());
     assert_eq!((fake::LOOKUPS.load(Ordering::Relaxed), fake::DOWNLOADS.load(Ordering::Relaxed)), before);

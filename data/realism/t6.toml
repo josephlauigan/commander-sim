@@ -1,0 +1,117 @@
+# Realism targets, Tier 6 (cEDH): what real games look like, for `commander-sim --realism --pool t6`.
+#
+# One table per scorecard statistic. Each needs: value (the real value), lo and hi (the band the sim must land in),
+# n (the real sample size), source, date (when the source was read); note is optional. Statistics without a table
+# have no target yet. Units: seat and win-type shares are % of decisive games (a winner, not the round-cap
+# tiebreak); rounds are game rounds; deck_win_spread is percentage points.
+#
+# Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point, whatever the source. To tell a sim value
+# that far from its target apart from noise, a run needs about 8,000 decisive games (about 8,200 games at Tier 6).
+
+tier = "t6"
+
+# --- Seat win rates: EDHTop16 "Monthly Seat Win Rates - cEDH" (https://edhtop16.com/reports/monthly_seat_winrates),
+# all rounds, April-September 2026, sample-weighted. Each seat's win rate is divided by the four seats' total (the page's
+# seat rates and draw rate leave about 7% of each month's sample unaccounted for), so the four shares add up to 100% of
+# decisive games, as the sim's do. Unweighted per-event values (decklists/pool/TARGETS-t6.md, 2026-10-17 pull,
+# 32+ player events): 34.1 / 27.3 / 22.5 / 17.4.
+
+[seat1_win]
+value = 32.5
+lo = 31.5
+hi = 33.5
+n = 387427
+source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
+date = "2026-10-22"
+
+[seat2_win]
+value = 26.9
+lo = 25.9
+hi = 27.9
+n = 387427
+source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
+date = "2026-10-22"
+
+[seat3_win]
+value = 22.7
+lo = 21.7
+hi = 23.7
+n = 387427
+source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
+date = "2026-10-22"
+
+[seat4_win]
+value = 17.9
+lo = 16.9
+hi = 18.9
+n = 387427
+source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
+date = "2026-10-22"
+
+# --- Speed. No public dataset gives the round cEDH games are won on. JD set a median of about 7 (2026-10-19,
+# decklists/pool/TARGETS-t6.md); Playgroup's average win turn for the Tier 6 commanders agrees: Kinnan, Rograkh,
+# Tymna and Thrasios 6, Kraum, Silas and Sisay 7, Dack 9 (https://playgroup.gg/api/public/v1/commanders/<id>.json).
+# The spread (win_round_spread) has no source yet: Playgroup publishes averages only.
+
+[win_round_median]
+value = 7
+lo = 6
+hi = 8
+n = 2722
+source = "JD's speed target (TARGETS-t6.md, 2026-10-19); Playgroup average win turn of the Tier 6 commanders, 6-7"
+date = "2026-10-22"
+note = "n = Playgroup wins logged for the five Tier 6 lead commanders"
+
+# --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0),
+# wins of Dack Fayden, Kinnan, Kraum, Rograkh and Sisay: combo 33.6%, alternate win and mill 14.2%, combat and other
+# damage 39.9%, commander damage 11.6%, poison 0.7% of 2,722 wins. These are casual pods logged by players, not
+# tournaments (kept scored, JD 2026-10-23). Combo and alternate wins are scored together: a Thassa's Oracle win is a combo
+# in the sim and often an alternate win in a player's log.
+
+[win_combo_alt]
+value = 47.8
+lo = 46.8
+hi = 48.8
+n = 2722
+source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
+date = "2026-10-22"
+
+[win_damage]
+value = 39.9
+lo = 38.9
+hi = 40.9
+n = 2722
+source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
+date = "2026-10-22"
+
+[win_commander_damage]
+value = 11.6
+lo = 10.6
+hi = 12.6
+n = 2722
+source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
+date = "2026-10-22"
+
+[win_poison]
+value = 0.7
+lo = 0.0
+hi = 1.7
+n = 2722
+source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
+date = "2026-10-22"
+
+# --- Balance: EDHTop16 six-month decisive shares of the five established Tier 6 decks run 23.9-27.9% (gap 4 points;
+# 4,700 entries; TARGETS-t6.md, pulled 2026-10-17). EDHTop16's commander pages no longer show game win rates, so this
+# was not re-read on 2026-10-22. The band is JD's: a gap of 8 points or less. Dack Fayden (32 entries) is left out of
+# the real gap but is in the sim's.
+
+[deck_win_spread]
+value = 4.0
+lo = 0
+hi = 8
+n = 4700
+source = "EDHTop16 commander stats, 2026-04-18 to 2026-10-17 (TARGETS-t6.md); band set by JD"
+date = "2026-10-17"
+
+# --- Long games (games_over_15): no target. cEDH tournaments end long games on the round clock (EDHTop16's draw rate
+# is 20.2% of Apr-Sep 2026 entries, mostly time and intentional draws), and no public source gives game lengths.

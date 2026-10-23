@@ -175,11 +175,11 @@ pub struct Ctx<'a> {
 }
 
 impl Ctx<'_> {
-    fn ai(&self) -> &'static str {
+    pub(crate) fn ai(&self) -> &'static str {
         ai_name(self.sim.opts.ai)
     }
 
-    fn label(&self, s: String) {
+    pub(crate) fn label(&self, s: String) {
         self.sim.prog.lock().unwrap().label = s;
     }
 
@@ -271,14 +271,27 @@ impl Ctx<'_> {
         r
     }
 
-    /// poolmode.calibrate: me (or nobody) + k decks from opp_keys; every seat's wins and seatings
-    pub fn calibrate(&self, me: Option<&str>, opp_keys: &[String], k: usize, prof: &str, n: u64, seed0: u64) -> Calib {
+    /// the games --calibrate and --realism score: me (or nobody) + k decks drawn from opp_keys, seeds seed0..seed0+n
+    pub fn tier_games(
+        &self,
+        me: Option<&str>,
+        opp_keys: &[String],
+        k: usize,
+        prof: &str,
+        n: u64,
+        seed0: u64,
+    ) -> Vec<(u64, GameOut)> {
         let sim = self.sim;
         let st = sim.settings(profile(prof).unwrap());
-        let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
+        sim.run_seeds(&Self::seeds(n, seed0), |s| {
             let seats = sim.seats_for(s, me, None, opp_keys, k);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
-        });
+        })
+    }
+
+    /// poolmode.calibrate: me (or nobody) + k decks from opp_keys; every seat's wins and seatings
+    pub fn calibrate(&self, me: Option<&str>, opp_keys: &[String], k: usize, prof: &str, n: u64, seed0: u64) -> Calib {
+        let games = self.tier_games(me, opp_keys, k, prof, n, seed0);
         let mut c = Calib {
             seated: Counter::new(),
             won: Counter::new(),

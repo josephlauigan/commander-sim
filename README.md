@@ -61,6 +61,7 @@ commander-sim --all-decks --pool all                                   # deck x 
 commander-sim --deck seph --pool t4 --analyze                          # how it wins / loses there
 commander-sim --deck seph --pool t2 --trace 7                          # play-by-play of game 7
 commander-sim --calibrate within|ordering|all --games 240              # pool balance checks
+commander-sim --realism --pool t6 --games 2200                         # sim vs real-game targets (data/realism/t6.toml)
 commander-sim --deck veyran --cards                                    # every card: tags, Game Changers
 ```
 
@@ -69,6 +70,9 @@ Options:
 - `--deck`: `seph`, `veyran`, `sauron`, `yshtola`, `galadriel` or `alela`.
 - `--pool`: `t1` to `t5`, or `all`. Required, unless you use `--all-decks` or `--calibrate`.
 - `--swap`: `"Card Out=>Card In"`. Repeat it for several swaps.
+- `--realism`: with `--pool tN`, play that tier's own decks and print each scorecard statistic (seat win rates, win round,
+  win types, deck spread, long games) with its 95% interval, the real target and band from `data/realism/tN.toml`, and
+  PASS or FAIL. A tier with no targets yet prints the sim's numbers unscored.
 - `--no-explain`: with `--swap`, skip the paired breakdown (it is on by default and costs no extra games).
 - `--no-preflight`, `--preflight-only`: every `--swap` run first does a two-step preflight. (1) The AI-rule check (instant):
   for each swapped-in card, the deck's cast priority on mid-game boards, printed as `AI: <card>: priority N (deck rule|generic)`,
