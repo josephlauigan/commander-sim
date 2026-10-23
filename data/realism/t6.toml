@@ -5,8 +5,8 @@
 # have no target yet. Units: seat and win-type shares are % of decisive games (a winner, not the round-cap
 # tiebreak); rounds are game rounds; deck_win_spread is percentage points.
 #
-# Bands: about the real value +/- 3 points for shares measured on large tournament samples (month-to-month range is
-# +/- 1, the rest covers method differences); +/- 8-10 points for shares from casual logs of these commanders.
+# Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point, whatever the source. To tell a sim value
+# that far from its target apart from noise, a run needs about 8,000 decisive games (about 8,200 games at Tier 6).
 
 tier = "t6"
 
@@ -18,32 +18,32 @@ tier = "t6"
 
 [seat1_win]
 value = 32.5
-lo = 29.5
-hi = 35.5
+lo = 31.5
+hi = 33.5
 n = 387427
 source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
 date = "2026-10-22"
 
 [seat2_win]
 value = 26.9
-lo = 23.9
-hi = 29.9
+lo = 25.9
+hi = 27.9
 n = 387427
 source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
 date = "2026-10-22"
 
 [seat3_win]
 value = 22.7
-lo = 19.7
-hi = 25.7
+lo = 21.7
+hi = 23.7
 n = 387427
 source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
 date = "2026-10-22"
 
 [seat4_win]
 value = 17.9
-lo = 14.9
-hi = 20.9
+lo = 16.9
+hi = 18.9
 n = 387427
 source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
 date = "2026-10-22"
@@ -65,37 +65,37 @@ note = "n = Playgroup wins logged for the five Tier 6 lead commanders"
 # --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0),
 # wins of Dack Fayden, Kinnan, Kraum, Rograkh and Sisay: combo 33.6%, alternate win and mill 14.2%, combat and other
 # damage 39.9%, commander damage 11.6%, poison 0.7% of 2,722 wins. These are casual pods logged by players, not
-# tournaments, so the bands are wide. Combo and alternate wins are scored together: a Thassa's Oracle win is a combo
+# tournaments (kept scored, JD 2026-10-23). Combo and alternate wins are scored together: a Thassa's Oracle win is a combo
 # in the sim and often an alternate win in a player's log.
 
 [win_combo_alt]
 value = 47.8
-lo = 37.8
-hi = 57.8
+lo = 46.8
+hi = 48.8
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
 
 [win_damage]
 value = 39.9
-lo = 29.9
-hi = 49.9
+lo = 38.9
+hi = 40.9
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
 
 [win_commander_damage]
 value = 11.6
-lo = 3.6
-hi = 19.6
+lo = 10.6
+hi = 12.6
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
 
 [win_poison]
 value = 0.7
-lo = 0
-hi = 3
+lo = 0.0
+hi = 1.7
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
