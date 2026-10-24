@@ -13,9 +13,12 @@
 //! source = "EDHTop16 monthly seat win rates, Apr-Sep 2026"
 //! date = "2026-10-22"     # when the source was read
 //! note = "optional"
+//! scored = false         # optional: a reference value, printed with its band but not scored (default true)
 //! ```
 //!
-//! A statistic with no table has no target yet (printed, not scored). Every table needs all six fields: a file
+//! A statistic with no table has no target yet (printed, not scored). A table with `scored = false` is a reference: its
+//! value and band are printed (result `reference`) but it is left out of the pass count and of `--fit`. Tier 6 (cEDH)
+//! keeps its win types as references: their only source is casual logs (JD, 2026-10-24). Every table needs all six fields: a file
 //! missing one, or naming an unknown statistic or field, is refused before any game is played.
 
 use crate::args::Args;
@@ -54,7 +57,7 @@ pub const STATS: [Stat; 12] = [
     stat("games_over_15", "games over 15 rounds (round cap 20)", "%"),
 ];
 
-const FIELDS: [&str; 7] = ["value", "lo", "hi", "n", "source", "date", "note"];
+const FIELDS: [&str; 8] = ["value", "lo", "hi", "n", "source", "date", "note", "scored"];
 
 /// one target: the real value, the band the sim must land in, the real sample size, where it came from and when
 #[derive(Debug, Clone, PartialEq)]
@@ -66,6 +69,8 @@ pub struct Target {
     pub source: String,
     pub date: String,
     pub note: Option<String>,
+    /// false: a reference value (printed with its band, not scored or fitted)
+    pub scored: bool,
 }
 
 /// a tier's targets file, checked: statistic key -> target
@@ -127,7 +132,12 @@ pub fn parse_targets(text: &str, tier: &str, file: &str) -> Result<Targets, Stri
             return Err(format!("{file}: [{key}] value {value} is outside its band {lo}-{hi}"));
         }
         let note = tb.get("note").and_then(|v| v.as_str()).map(str::to_string);
-        out.insert(key.clone(), Target { value, lo, hi, n, source, date, note });
+        let scored = match tb.get("scored") {
+            None => true,
+            Some(toml::Value::Boolean(b)) => *b,
+            Some(_) => return Err(format!("{file}: [{key}] `scored` must be true or false")),
+        };
+        out.insert(key.clone(), Target { value, lo, hi, n, source, date, note, scored });
     }
     Ok(out)
 }
@@ -246,15 +256,17 @@ pub fn render(m: &BTreeMap<&'static str, Measured>, targets: &Targets) -> (Strin
         let label = format!("{} ({})", st.what, st.unit);
         match targets.get(st.key) {
             Some(t) => {
-                scored += 1;
                 let ok = t.lo <= v.value && v.value <= t.hi;
-                pass += ok as usize;
+                if t.scored {
+                    scored += 1;
+                    pass += ok as usize;
+                }
                 s += &format!(
                     "  {label:52} {:>7} {ci:>13} {:>7} {:>13}  {}\n",
                     num(v.value, st.unit),
                     num(t.value, st.unit),
                     format!("{}-{}", t.lo, t.hi),
-                    if ok { "PASS" } else { "FAIL" }
+                    if !t.scored { "reference" } else if ok { "PASS" } else { "FAIL" }
                 );
             }
             None => {
@@ -305,7 +317,12 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         println!("targets: {}", targets_path(Path::new("."), tier).display().to_string().trim_start_matches("./"));
         let (table, pass, scored) = render(&m, &targets);
         print!("{table}");
-        println!("  {pass} of {scored} targets pass ({} statistics have no target yet)", STATS.len() - scored);
+        let refs = targets.values().filter(|t| !t.scored).count();
+        let refs_note = if refs > 0 { format!("; {refs} reference values, not scored") } else { String::new() };
+        println!(
+            "  {pass} of {scored} targets pass ({} statistics have no target yet{refs_note})",
+            STATS.len() - scored - refs
+        );
         println!(
             "Games: {}, decisive {} ({:.1}%), round-cap timeouts {:.1}%",
             shape.games,
@@ -323,7 +340,8 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
             println!("Target sources:");
             for st in &STATS {
                 if let Some(t) = targets.get(st.key) {
-                    println!("  {}: {} (n={}, read {})", st.key, t.source, t.n, t.date);
+                    let r = if t.scored { "" } else { " [reference, not scored]" };
+                    println!("  {}: {} (n={}, read {}){r}", st.key, t.source, t.n, t.date);
                 }
             }
         }
@@ -381,6 +399,32 @@ date = "2026-10-22"
             load_targets(&root, t).unwrap_or_else(|e| panic!("{e}"));
         }
         assert!(load_targets(&root, "t6").unwrap().contains_key("seat1_win"));
+    }
+
+    #[test]
+    fn a_reference_value_is_printed_but_not_scored() {
+        let t = parse_targets(&GOOD.replace("date = \"2026-10-22\"", "date = \"2026-10-22\"\nscored = false"), "t6", "t6.toml")
+            .unwrap();
+        assert!(!t["seat1_win"].scored);
+        assert!(parse_targets(GOOD, "t6", "t6.toml").unwrap()["seat1_win"].scored, "scored by default");
+        let e = parse_targets(&GOOD.replace("date = \"2026-10-22\"", "date = \"2026-10-22\"\nscored = 0"), "t6", "t6.toml")
+            .unwrap_err();
+        assert!(e.contains("`scored` must be true or false"), "{e}");
+        let m: BTreeMap<&'static str, Measured> =
+            STATS.iter().map(|s| (s.key, Measured { value: 30.0, ci: None })).collect();
+        let (table, pass, scored) = render(&m, &t);
+        assert_eq!((pass, scored), (0, 0), "a reference is not counted");
+        assert!(table.contains("reference"), "{table}");
+    }
+
+    /// Tier 6 keeps its win types (casual logs) as references, out of the score (JD, 2026-10-24)
+    #[test]
+    fn tier_6_win_types_are_references() {
+        let t = load_targets(&crate::decks::root().unwrap(), "t6").unwrap();
+        for k in ["win_combo_alt", "win_damage", "win_commander_damage", "win_poison"] {
+            assert!(!t[k].scored, "{k}");
+        }
+        assert!(t["seat1_win"].scored && t["win_round_median"].scored && t["deck_win_spread"].scored);
     }
 
     #[test]
