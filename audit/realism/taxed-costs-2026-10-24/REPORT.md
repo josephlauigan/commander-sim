@@ -63,3 +63,80 @@ Still open:
   belong to steps 3 and 4.
 - Godo's `t6_combos_godo::affordable` sums `cost_of` per part without Damping Sphere's growing tax. That's minor:
   Godo is not in the current Tier 6 pool.
+
+## Later the same day: refused plays, Sisay, Rograkh/Thrasios, Kraum/Tymna
+
+Every run below is Tier 6, adaptive AI, loose profile, on the same seeds. "Scorecard" means 8200 games
+(`*-8200.txt`); "report" means the 4000-game `--calibrate within` report (`*-cal.txt`).
+
+### 1. Refused plays (commit 06265a65)
+
+The main options listed casts that `do_cast` then refused:
+- a lock, or a free spell that Vexing Bauble or Chalice of the Void would counter (Lotus Petal, the Moxen);
+- an additional cost that couldn't be paid (Culling the Weak with no creature).
+
+The options now run the same checks. Over 150 traced games, refused plays went from 1778 to 170. The scorecard
+didn't change beyond noise (`opt-8200.txt`).
+
+### 2. Sisay (commits 693bd4b0, 61ab71f8)
+
+- **Fetched lands entered as the wrong thing.** A legendary land fetched by Sisay (Mount Doom, Gaea's Cradle)
+  entered as a permanent, not a land. The DDR and Flash Unicorn lines then never found their Mount Doom and stopped
+  as "no longer ready". Fetched lands now enter as lands (with enters-tapped, land enter effects and landfall) and
+  don't use the land drop.
+- **Ioreth was spent as mana.** With Relic of Legends or Enduring Vitality, paying for the next fetch could tap the
+  Ioreth just fetched. `Game::keep_untapped` now keeps a combo piece out of the mana payment, and the DDR steps keep
+  Ioreth.
+- **Blind Obedience.** The DDR line waits while a fetched Ioreth would enter tapped.
+- **Counters named in the report.** Azorius Guildmage and Tishana's Tidebinder now name themselves in the combo
+  report, as Louisoix's Sacrifice does.
+
+Effect:
+
+| | before | after |
+| --- | --- | --- |
+| Sisay's lines ready | 10% of games | 41% |
+| Sisay's win rate | 24% | 42% |
+| Sisay's median win round | 13 | 9 |
+| Tier 6 median win round | 9 | 8 (now passes the 6-8 band) |
+| deck spread (pts) | 18 | 29.8 |
+| combo wins | 69% | 82% |
+
+Sisay is now the strongest deck by far. Opponents interact with it as before, but its lines are abilities that
+counterspells can't touch.
+
+I checked the Flash Unicorn line against Oracle, since Gaea's Cradle makes only {G}. Derevi's enter trigger untaps
+any permanent, so the infinite blinks can untap a land that makes {B} or {R}. The line is real.
+
+### 3. Rograkh/Thrasios (diagnosis only)
+
+A temporary diagnostic checked Plan A on its own turns from round 5 (2000 games). Plan A is Oboro + Cradle +
+Talon Gates + 6 creatures + Thrasios and a finisher.
+
+- All five conditions are met on 2% of turns, and four of five on 16%.
+- With one missing, it's Talon Gates in the library (472) or Oboro in the library (381).
+- At those times the hand rarely holds a tutor that finds the missing piece: Crop Rotation, Expedition Map and
+  Mycospawn almost never show up.
+- Finale of Devastation (X=2 finds Oboro) is in hand in 112 of 707 Oboro-missing states. It is held as the
+  finisher.
+
+So the slowness is the list's tutor density and that finisher choice, not a rules bug. It belongs to the Tier 6
+list work.
+
+### 4. Kraum/Tymna (commit d77f42ba) and Dack
+
+- **Kraum/Tymna.** It held the Oracle line whenever Kraum was out and an opponent had one card and one mana up.
+  Kraum draws on an opponent's second spell, so it now needs an opponent who can cast a second spell. Result:
+  - ready games it never went in: 336 → 304;
+  - win rate 24.6% → 25.4%;
+  - median win round 10 → 9.
+
+  The rest of its holding is the spec's waiting for protection: a style choice, not a bug.
+- **Dack.** It goes the turn it's ready (0 holds), now wins 31%, and is no longer the outlier.
+
+Latest scorecard (`kraum-8200.txt`):
+- median win round 8 (PASS);
+- seats 26.8 / 25.6 / 23.6 / 24.0 against targets of 32.5 / 26.9 / 22.7 / 17.9;
+- combo wins 82.8% (target 47.8%);
+- deck spread 29.4 (target 0-8);
+- decks: Dack 31.3, Kinnan 19.3, Kraum/Tymna 25.4, Rograkh/Silas 20.5, Rograkh/Thrasios 12.1, Sisay 41.5.
