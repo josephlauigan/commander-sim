@@ -115,7 +115,8 @@ State on branch `realism-phase1` (2026-10-24 overnight; every decision taken for
    (`audit/realism/t6-lists-2026-10-24/REPORT.md`). The time goes in turning tutors and draws into a finished line:
    lines are "one tutor away" at round 6-7 but ready in only 18-45% of games. Next: trace those games (what the deck
    tutors for, what it holds), then Dack's 35% (the sim's strongest deck, real play's weakest), then Kraum/Tymna's
-   held lines. Fitting's loss is dominated by the win types (combo 68% against 47.8%, +/- 1), the weakest Tier 6
+   held lines. Update 2026-10-24 night: done for the Breach decks (Rograkh fodder fix, median 10 -> 9); the top lead
+   now is that the AI prices printed costs while the engine charges taxed ones (overnight log item 21). Fitting's loss is dominated by the win types (combo 68% against 47.8%, +/- 1), the weakest Tier 6
    targets: report seat-only results beside it until JD decides on weights.
 4. Then: confirm a fit with the look-ahead AI at about 8,200 games; write `audit/realism/t6-fit-<date>.md`; update the
    plan document's Phase status.

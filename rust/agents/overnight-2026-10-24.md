@@ -103,3 +103,24 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
     "passed while one tutor away" cases are mostly not bugs. Remaining speed leads: Kraum/Tymna's held lines (it
     holds a ready line in a quarter of its ready games), Sisay and Rograkh/Thrasios (lines ready in only 10-11% of
     games, median round 10, wins at 13).
+21. **Lead (not fixed): the AI prices printed costs, the engine charges taxed ones.** The most common combo-step
+    failure in 48 traced games is Thassa's Oracle + Consultation stopping at step 2 (11 times): Oracle is cast, then
+    Demonic Consultation can't be. In game 32 (`--calibrate within --pool t6 --ai adaptive --trace 32`) Dack's Damping
+    Sphere, in play since round 1, makes Consultation cost one more after Oracle, so a line that passed the AI's
+    affordability check dies half-cast. Same root as item 16's refused plays. The fix is to have the options,
+    `combos::affordable` and the plans use the engine's taxed cost: cross-cutting (Phase 3's characteristics pass is
+    the natural home), so left for JD. One stop (game 11) has no tax piece; its cause is not found.
+
+## Where things stand (morning summary)
+
+- Branches (pushed, no PRs): `realism-casual-targets` (Tier 3 targets: Phase 0's last step), `realism-phase1` (knobs,
+  `--fit`, list alignment, the Rograkh fix, stats, reports; contains the first branch), `docs-refresh` (fresh docs and
+  archives; contains `realism-phase1`). Merge order: realism-casual-targets, realism-phase1, docs-refresh, or just
+  docs-refresh, which holds all three. Earlier: `yshtola-cedh` (pushed), PR #132 merged.
+- Phase 0: done once `realism-casual-targets` is on main and a nightly run scores Tier 3.
+- Phase 1 gate (Tier 6 seat edge) not passed: seat 1 ~26% against 31.5-33.5%. Knobs and lists can't move it (fitted
+  and checked on fresh seeds); the first change that moved the speed is the Rograkh fix (median 10 -> 9). Next:
+  item 21 (taxed costs), then Sisay's and Rograkh/Thrasios's lines (both win at a median round 13), then Kraum/Tymna's
+  held lines.
+- Decisions to confirm: 1-3 (Tier 3 method, Atraxa), 5 (list route), 7 (the 15 swaps), 12 (EDHREC unused), 19 (the
+  Rograkh fix), and whether the win types keep full weight in `--fit`'s loss (14).
