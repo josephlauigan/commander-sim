@@ -1,0 +1,48 @@
+# Knobs fitted by commander-sim --fit --pool t6 --fit-scope deck (adaptive AI, loose profile)
+# 15 generations of 13, 2000 games a candidate on seeds 500000-501999
+# Scored statistics: deck_win_spread, seat1_win, seat2_win, seat3_win, seat4_win, win_combo_alt, win_commander_damage, win_damage, win_poison, win_round_median
+# Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at 0.25
+
+tier = "t6"
+
+[table]
+cthresh_default = 10
+instant_extra = 4
+t6_moxd_lands = 1
+
+[style.dack-fayden-white-stax]
+temp = 0.2000
+aggression = 0.9149
+caution = 0.0000
+
+[style.kinnan-bonder-mana-combo]
+temp = 0.5921
+aggression = 0.6014
+caution = 0.6666
+
+[style.kraum-tymna-blue-breach-midrange]
+temp = 0.2000
+aggression = 0.8584
+caution = 0.1571
+
+[style.rograkh-silas-turbo-breach]
+temp = 1.8029
+aggression = 0.2696
+caution = 0.0000
+
+[style.rograkh-thrasios-creature-combo]
+temp = 0.3052
+aggression = 1.0000
+caution = 1.0000
+
+[style.sisay-legends-toolbox]
+temp = 0.2000
+aggression = 1.0000
+caution = 1.0000
+
+[fit]
+loss = 322.246
+loss_builtin = 550.581
+games = 2000
+generations = 15
+scope = "deck"

@@ -1,0 +1,89 @@
+1,042,000 games (fit: t6, 21 knobs (deck scope), 40 generations of 13, 2000 games each), adaptive AI, 24 worker threads: about 36 minutes
+
+=== Fit: Tier 6 (cEDH, B5) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (21): dack-fayden-white-stax.temp, dack-fayden-white-stax.aggression, dack-fayden-white-stax.caution, kinnan-bonder-mana-combo.temp, kinnan-bonder-mana-combo.aggression, kinnan-bonder-mana-combo.caution, kraum-tymna-blue-breach-midrange.temp, kraum-tymna-blue-breach-midrange.aggression, kraum-tymna-blue-breach-midrange.caution, rograkh-silas-turbo-breach.temp, rograkh-silas-turbo-breach.aggression, rograkh-silas-turbo-breach.caution, rograkh-thrasios-creature-combo.temp, rograkh-thrasios-creature-combo.aggression, rograkh-thrasios-creature-combo.caution, sisay-legends-toolbox.temp, sisay-legends-toolbox.aggression, sisay-legends-toolbox.caution, cthresh_default, instant_extra, t6_moxd_lands
+built-in values: loss 63.45
+  generation  1: best so far 52.40, this generation 54.26 (mean 65.11), step 0.271
+  generation  2: best so far 31.83, this generation 33.29 (mean 66.55), step 0.249
+  generation  3: best so far 31.83, this generation 36.18 (mean 55.89), step 0.238
+  progress  10.0%  0m37s elapsed, ~5m36s left
+  generation  4: best so far 31.83, this generation 37.30 (mean 50.04), step 0.229
+  generation  5: best so far 31.83, this generation 37.28 (mean 53.68), step 0.224
+  generation  6: best so far 31.83, this generation 32.70 (mean 52.50), step 0.215
+  generation  7: best so far 31.83, this generation 38.31 (mean 55.48), step 0.210
+  progress  20.0%  1m14s elapsed, ~4m58s left
+  generation  8: best so far 31.83, this generation 37.46 (mean 47.96), step 0.215
+  generation  9: best so far 29.22, this generation 34.42 (mean 54.71), step 0.221
+  generation 10: best so far 29.22, this generation 40.55 (mean 54.65), step 0.227
+  generation 11: best so far 29.22, this generation 37.79 (mean 60.41), step 0.236
+  progress  30.0%  1m51s elapsed, ~4m21s left
+  generation 12: best so far 29.22, this generation 33.31 (mean 52.40), step 0.246
+  generation 13: best so far 29.22, this generation 41.50 (mean 51.79), step 0.255
+  generation 14: best so far 27.32, this generation 36.56 (mean 48.36), step 0.256
+  generation 15: best so far 27.32, this generation 38.71 (mean 48.38), step 0.250
+  progress  40.0%  2m28s elapsed, ~3m43s left
+  generation 16: best so far 27.32, this generation 35.84 (mean 48.59), step 0.249
+  generation 17: best so far 25.75, this generation 39.74 (mean 53.60), step 0.248
+  generation 18: best so far 22.24, this generation 30.57 (mean 52.99), step 0.245
+  generation 19: best so far 22.24, this generation 34.30 (mean 54.63), step 0.238
+  progress  50.0%  3m05s elapsed, ~3m05s left
+  generation 20: best so far 22.24, this generation 30.12 (mean 44.80), step 0.233
+  generation 21: best so far 22.24, this generation 31.78 (mean 45.17), step 0.227
+  generation 22: best so far 21.05, this generation 31.50 (mean 41.77), step 0.215
+  generation 23: best so far 21.05, this generation 34.07 (mean 47.45), step 0.215
+  progress  60.0%  3m42s elapsed, ~2m28s left
+  generation 24: best so far 21.05, this generation 36.56 (mean 49.52), step 0.218
+  generation 25: best so far 21.05, this generation 45.69 (mean 52.36), step 0.216
+  generation 26: best so far 21.05, this generation 36.78 (mean 46.66), step 0.208
+  generation 27: best so far 21.05, this generation 29.55 (mean 50.58), step 0.201
+  progress  70.0%  4m19s elapsed, ~1m51s left
+  generation 28: best so far 21.05, this generation 32.19 (mean 45.95), step 0.198
+  generation 29: best so far 21.05, this generation 29.49 (mean 42.11), step 0.193
+  generation 30: best so far 17.88, this generation 23.24 (mean 35.83), step 0.191
+  generation 31: best so far 17.88, this generation 29.33 (mean 38.23), step 0.188
+  progress  80.0%  4m56s elapsed, ~1m14s left
+  generation 32: best so far 17.88, this generation 23.26 (mean 39.17), step 0.182
+  generation 33: best so far 17.88, this generation 30.81 (mean 37.84), step 0.173
+  generation 34: best so far 17.28, this generation 23.96 (mean 34.81), step 0.159
+  generation 35: best so far 17.28, this generation 21.55 (mean 31.13), step 0.150
+  progress  90.0%  5m32s elapsed, ~0m36s left
+  generation 36: best so far 17.28, this generation 22.51 (mean 29.84), step 0.145
+  generation 37: best so far 17.28, this generation 23.95 (mean 33.78), step 0.143
+  generation 38: best so far 17.28, this generation 21.65 (mean 33.01), step 0.137
+  generation 39: best so far 13.59, this generation 19.47 (mean 27.19), step 0.134
+  progress 100.0%  6m09s elapsed, ~0m00s left
+  generation 40: best so far 13.59, this generation 21.73 (mean 34.22), step 0.127
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         28.3        30.2        32.5  31.5-33.5 
+  seat 2 share of decisive games                         25.8        27.6        26.9  25.9-27.9 
+  seat 3 share of decisive games                         22.4        23.0        22.7  21.7-23.7 
+  seat 4 share of decisive games                         23.6        19.2        17.9  16.9-18.9 
+  median round of a decisive win                          8.0         8.0         7.0   6.0-8.0  
+  deck win spread, best minus worst deck                 17.3        13.1         4.0   0.0-8.0  
+  loss: built-in 63.45, best 13.59
+
+  best knobs:
+    dack-fayden-white-stax.temp                    0.200  (built-in 1.000)
+    dack-fayden-white-stax.aggression              0.843  (built-in 0.600)
+    dack-fayden-white-stax.caution                 0.420  (built-in 0.500)
+    kinnan-bonder-mana-combo.temp                  0.200  (built-in 1.000)
+    kinnan-bonder-mana-combo.aggression            0.000  (built-in 0.600)
+    kinnan-bonder-mana-combo.caution               0.000  (built-in 0.500)
+    kraum-tymna-blue-breach-midrange.temp          1.327  (built-in 1.000)
+    kraum-tymna-blue-breach-midrange.aggression    0.663  (built-in 0.600)
+    kraum-tymna-blue-breach-midrange.caution       0.164  (built-in 0.500)
+    rograkh-silas-turbo-breach.temp                0.200  (built-in 1.000)
+    rograkh-silas-turbo-breach.aggression          0.060  (built-in 0.600)
+    rograkh-silas-turbo-breach.caution             0.651  (built-in 0.500)
+    rograkh-thrasios-creature-combo.temp           1.560  (built-in 1.000)
+    rograkh-thrasios-creature-combo.aggression     1.000  (built-in 0.600)
+    rograkh-thrasios-creature-combo.caution        0.027  (built-in 0.500)
+    sisay-legends-toolbox.temp                     2.000  (built-in 1.000)
+    sisay-legends-toolbox.aggression               0.852  (built-in 0.600)
+    sisay-legends-toolbox.caution                  0.379  (built-in 0.500)
+    cthresh_default                                3.000  (built-in 6.000)
+    instant_extra                                  0.000  (built-in 0.000)
+    t6_moxd_lands                                  3.000  (built-in 3.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/taxed-costs/../audit/realism/fit/t6-deck-gate-2026-10-24b.toml (run it with --knobs; confirm with --realism and more games)
