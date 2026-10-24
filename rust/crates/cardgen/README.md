@@ -81,7 +81,7 @@ the new cards are modeled and where the file's prose still mentions cards that l
 cardgen export
 ```
 
-`cardgen validate` runs the same checks over all 25 pool decks.
+`cardgen validate` runs the same checks over every pool deck (36 in seven tiers).
 
 ## Rebuild
 
