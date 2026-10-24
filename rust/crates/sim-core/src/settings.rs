@@ -87,6 +87,9 @@ pub struct Settings {
     pub search: Search,
     /// engine steps one game may take (Python's `E.GAME_WORK`)
     pub game_work: u64,
+    /// fitted or hand-set style per deck key (`--knobs FILE`, `--fit`), read before the built-in tables
+    /// (`ai::style`); empty: every deck plays its built-in style
+    pub styles: HashMap<String, crate::ai::Style>,
 }
 
 impl Settings {
@@ -111,6 +114,7 @@ impl Settings {
             instant_extra,
             search: Search::default(),
             game_work: 20_000,
+            styles: HashMap::new(),
         }
     }
 

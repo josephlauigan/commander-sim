@@ -80,8 +80,16 @@ pub fn jd_deck(key: &str) -> bool {
     )
 }
 
-/// brain.style: your deck's style, or the outside deck's configured one
-pub fn style(_g: &Game, key: &str) -> Style {
+/// brain.style: the run's style for this deck (`Settings::styles`), else its built-in one
+pub fn style(g: &Game, key: &str) -> Style {
+    match g.settings.styles.get(key) {
+        Some(s) => *s,
+        None => base_style(key),
+    }
+}
+
+/// the built-in style: your deck's, or the outside deck's configured one, or the pool default
+pub fn base_style(key: &str) -> Style {
     match MAIN_STYLES.iter().find(|x| x.0 == key) {
         Some(x) => x.1,
         None => plans::config(key).style.unwrap_or(pool::DEFAULT_STYLE),

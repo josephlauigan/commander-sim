@@ -12,6 +12,7 @@ pub struct Args {
     pub all_decks: bool,
     pub calibrate: Option<String>,
     pub realism: bool,
+    pub knobs: Option<String>,
     pub games: u64,
     pub seed: u64,
     pub profiles: Vec<String>,
@@ -47,7 +48,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 25] = [
+const OPTS: [Opt; 26] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -66,6 +67,14 @@ const OPTS: [Opt; 25] = [
         &[],
         "",
         "with --pool tN: play the tier's own decks and score the games against data/realism/tN.toml (no --deck needed)",
+    ),
+    opt(
+        "--knobs",
+        false,
+        &[],
+        "FILE",
+        "AI knobs (deck styles, counter thresholds, look-ahead weights) from a TOML file, over the built-in values: \
+         see rust/crates/sim-cli/src/knobs.rs; --fit writes one",
     ),
     opt(
         "--any-tier",
@@ -193,6 +202,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         all_decks: false,
         calibrate: None,
         realism: false,
+        knobs: None,
         games: 0,
         seed: 500000,
         profiles: vec![],
@@ -253,6 +263,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--preflight-only" => a.preflight_only = true,
             "--calibrate" => a.calibrate = Some(val),
             "--realism" => a.realism = true,
+            "--knobs" => a.knobs = Some(val),
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
             "--seed" => a.seed = int(o.name, &val)?,
