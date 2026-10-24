@@ -267,7 +267,7 @@ pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
 /// line is not held back.
 pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     let pl = g.player(p);
-    let can_answer = g.opps(p).filter(|&q| stop_chance(g, q) >= 0.3).count();
+    let can_answer = g.opps(p).filter(|&q| stop_chance(g, q) >= 0.5).count();
     if combo.starts_with("Thassa's Oracle") {
         // an empty-library draw in response to the Oracle trigger loses. Esper Sentinel draws on an opponent's first
         // noncreature spell: any opponent with a card and a mana can force it. Kraum draws on an opponent's SECOND
@@ -284,19 +284,17 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
         if sentinel || kraum {
             return Some(false);
         }
-        // spec (conditions to go): a creature counter or Silence effect (Oracle is a creature spell), unless every opponent is out of cards and mana
-        let any_open = g
-            .opps(p)
-            .any(|q| !g.player(q).hand.is_empty() && (open_mana(g, q, None) >= 1 || stop_chance(g, q) >= 0.05));
-        // spec: also go with any one piece of protection, or when no opponent is likely to answer (tapped low)
+        // spec (conditions to go): a creature counter or Silence effect (Oracle is a creature spell), any one piece of
+        // protection, or no opponent likely to answer. JD (2026-10-24): wait only when an opponent is LIKELY to stop
+        // it (stop chance 0.5+). The old rule also waited whenever any opponent had a card and a mana up, which at a
+        // cEDH table is nearly always: a ready line went in only 32 of 43 ready games, and waiting buys little when
+        // the table's free counters do not go away
         let worst = g.opps(p).map(|q| stop_chance(g, q)).fold(0.0_f64, f64::max);
         let tapped_low = worst < 0.2 && g.opps(p).all(|q| open_mana(g, q, None) <= 2);
         let one_cover = cover_count(g, p) >= 1 && worst < 0.5;
-        if any_open && !creature_cover(g, p) && !tapped_low && !one_cover {
-            let near = g.opps(p).any(|q| crate::ai::t6_table::archenemy_score(g, q) >= 8.0);
-            return if near && g.round >= 7 { None } else { Some(false) };
-        }
-        if can_answer >= 1 && !creature_cover(g, p) && !tapped_low && !one_cover {
+        // the spec's plain case still waits: an opponent with cards and two blue up can pay for a counter
+        let blue_up = g.opps(p).any(|q| !g.player(q).hand.is_empty() && open_mana(g, q, Some('U')) >= 2);
+        if (can_answer >= 1 || blue_up) && !creature_cover(g, p) && !tapped_low && !one_cover {
             // nothing covers Oracle: wait unless the game is late and the table is about to win
             let near = g.opps(p).any(|q| crate::ai::t6_table::archenemy_score(g, q) >= 6.0);
             return if near && g.round >= 5 { None } else { Some(false) };
