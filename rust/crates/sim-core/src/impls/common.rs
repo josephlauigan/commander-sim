@@ -1846,6 +1846,7 @@ const PVAL: &[(&str, f64)] = &[
     ("Teysa Karlov", 6.0),
     ("Meren of Clan Nel Toth", 6.0),
     ("Kinnan, Bonder Prodigy", 8.0),
+    ("Sisay, Weatherlight Captain", 8.0), // the tutor engine of every Sisay line, as Kinnan is of his
     ("Urza, Lord High Artificer", 8.0),
     ("Yawgmoth, Thran Physician", 8.0),
     ("Zur the Enchanter", 7.0),

@@ -117,3 +117,35 @@ fn ancient_tomb_with_six_fast_mana_and_reactive_cards_does_not_overflow() {
     );
     assert!(t6_plans::keep(&g, P0).is_some());
 }
+
+#[test]
+fn sylvan_scrying_finds_gaeas_cradle_not_a_basic() {
+    // "search for a land card" took a basic only (dsl::search), so a land tutor never found Cradle
+    let mut g = tbl();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Forest", 2, false);
+    hand(&mut g, P0, &["Sylvan Scrying"]);
+    let lib: Vec<_> = ["Forest", "Island", "Gaea's Cradle", "Talon Gates of Madara"].iter().map(|n| card(&g, n)).collect();
+    g.player_mut(P0).library = lib;
+    let c = card(&g, "Sylvan Scrying");
+    assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
+    let cradle = card(&g, "Gaea's Cradle");
+    assert!(g.player(P0).hand.contains(&cradle), "the wish list's first land");
+}
+
+#[test]
+fn growing_rites_transforms_at_four_creatures_and_taps_like_cradle() {
+    const RITES: &str = "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun";
+    let mut g = tbl();
+    perm(&mut g, P0, RITES);
+    for _ in 0..3 {
+        token(&mut g, P0, 1);
+    }
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(g.player(P0).lands.is_empty(), "three creatures: no transform");
+    token(&mut g, P0, 1);
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).lands.len(), 1, "four creatures: Itlimoc");
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "GGGG", false), "{{G}} for each of the four creatures");
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "GGGGG", false));
+}

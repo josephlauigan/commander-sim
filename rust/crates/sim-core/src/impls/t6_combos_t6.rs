@@ -90,8 +90,14 @@ fn lib_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
     g.player(p).library.iter().copied().find(|&c| cname(g, c) == name)
 }
 
+/// p's land of this name; Gaea's Cradle also matches Itlimoc, Cradle of the Sun (a transformed Growing Rites taps the same
+/// way, and the lines' untaps work on it)
 fn land_on_bf(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
-    g.player(p).lands.iter().copied().find(|&l| g.land(l).on_bf && cname(g, g.land(l).cd) == name)
+    let rites = super::t6_green2::RITES;
+    g.player(p).lands.iter().copied().find(|&l| {
+        let n = cname(g, g.land(l).cd);
+        g.land(l).on_bf && (n == name || (name == CRADLE && n == rites))
+    })
 }
 
 fn creatures(g: &Game, p: PlayerId) -> usize {
@@ -985,7 +991,7 @@ const ALL_CLONES: &[&str] = &[MOCKINGBIRD, IMAGE, FLESH, IMPERSONATOR];
 fn blue_land(g: &Game, p: PlayerId) -> bool {
     g.player(p).lands.iter().any(|&l| {
         g.land(l).on_bf
-            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES)
+            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES | super::t6_green2::RITES)
             && crate::engine::mana::land_colors_now(g, p, l).has('U')
     })
 }

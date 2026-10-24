@@ -129,6 +129,7 @@ Deck key `rograkh-thrasios-creature-combo`, `decklists/pool/t6-cedh/rograkh-thra
 
 ### Changes
 
+- **2026-10-24 (later).** Out: Allosaurus Shepherd, Dramatic Reversal, Misdirection, Shang-Chi, Master of Kung Fu. In: Growing Rites of Itlimoc, Phyrexian Metamorph, Seedborn Muse, Sylvan Scrying. Balance (JD: rebalance Tier 6): the four cards these EDHTop16 lists play least (EDHTop16 play rates 0.04-0.10) for four they play most of the ones missing (0.60-0.87). The deck was 12.1% of decisive Tier 6 games after the Sisay fixes, below the 18-32% band; 16.3% after (8200 games; Growing Rites, newly modeled, and a fix that lets "search for a land card" find a nonbasic land).
 - **2026-10-24.** Out: Commandeer, Emerald Charm. In: Delighted Halfling, Kinnan, Bonder Prodigy. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.
 
 ## Sisay — Legends Toolbox and Taxes (cEDH)
@@ -137,4 +138,5 @@ Deck key `sisay-legends-toolbox`, `decklists/pool/t6-cedh/sisay-legends-toolbox.
 
 ### Changes
 
+- **2026-10-24 (later).** Out: Avacyn's Pilgrim, Cryptolith Rite, Elves of Deep Shadow, The Queen of Dale. In: Delighted Halfling, Into the Flood Maw, Orcish Bowmasters, Swords to Plowshares. Balance (JD: rebalance Tier 6): the four cards these EDHTop16 lists play least (0.02-0.09) for high-rate missing ones (0.46-0.79). After the Sisay fetch fix the deck was 41.5% of decisive Tier 6 games; the swaps alone moved it to 40.9%, and Sisay's threat value (8, as Kinnan's) to 33.6% (8200 games).
 - **2026-10-24.** Out: Dismember, Forbidden Orchard, Lightning Greaves, Marsh Flats. In: Ancient Tomb, Arcane Signet, Crop Rotation, Scrubland. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.

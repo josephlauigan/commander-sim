@@ -21,6 +21,7 @@ rean = ["animate", "reanimate", "evil", "zombify"]
 prot = ["hi", "phase", "indes", "blink", "boots"]
 
 [card_notes]
+"Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun" = { status = "Approximate", note = "hand-written (impls/t6_green2.rs): the top-four creature pick, the end-step transform at four creatures, Itlimoc taps for {G} per creature as Gaea's Cradle; the bottom order is not chosen" }
 
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
