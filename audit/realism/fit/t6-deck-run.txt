@@ -1,0 +1,54 @@
+
+=== Fit: Tier 6 (cEDH, B5) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (21): dack-fayden-white-stax.temp, dack-fayden-white-stax.aggression, dack-fayden-white-stax.caution, kinnan-bonder-mana-combo.temp, kinnan-bonder-mana-combo.aggression, kinnan-bonder-mana-combo.caution, kraum-tymna-blue-breach-midrange.temp, kraum-tymna-blue-breach-midrange.aggression, kraum-tymna-blue-breach-midrange.caution, rograkh-silas-turbo-breach.temp, rograkh-silas-turbo-breach.aggression, rograkh-silas-turbo-breach.caution, rograkh-thrasios-creature-combo.temp, rograkh-thrasios-creature-combo.aggression, rograkh-thrasios-creature-combo.caution, sisay-legends-toolbox.temp, sisay-legends-toolbox.aggression, sisay-legends-toolbox.caution, cthresh_default, instant_extra, t6_moxd_lands
+built-in values: loss 752.38
+  generation  1: best so far 576.80, this generation 580.98 (mean 785.55), step 0.286
+  generation  2: best so far 467.17, this generation 472.89 (mean 604.72), step 0.291
+  generation  3: best so far 464.56, this generation 477.07 (mean 582.97), step 0.299
+  generation  4: best so far 380.24, this generation 391.29 (mean 509.51), step 0.303
+  generation  5: best so far 380.24, this generation 440.70 (mean 474.96), step 0.312
+  generation  6: best so far 367.14, this generation 382.24 (mean 489.53), step 0.325
+  generation  7: best so far 367.14, this generation 391.28 (mean 469.62), step 0.326
+  generation  8: best so far 367.14, this generation 405.20 (mean 487.72), step 0.332
+  generation  9: best so far 367.14, this generation 418.14 (mean 482.77), step 0.328
+  generation 10: best so far 367.14, this generation 413.79 (mean 478.90), step 0.337
+  generation 11: best so far 367.14, this generation 418.13 (mean 470.21), step 0.322
+  generation 12: best so far 367.14, this generation 416.11 (mean 490.66), step 0.320
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         24.8        28.0        32.5  31.5-33.5 
+  seat 2 share of decisive games                         26.8        25.7        26.9  25.9-27.9 
+  seat 3 share of decisive games                         23.9        23.2        22.7  21.7-23.7 
+  seat 4 share of decisive games                         24.5        23.0        17.9  16.9-18.9 
+  median round of a decisive win                         10.0        11.0         7.0   6.0-8.0  
+  wins by a combo or an alternate win                    68.4        61.0        47.8  46.8-48.8 
+  wins by damage (combat or other)                       30.7        38.0        39.9  38.9-40.9 
+  wins by commander damage                                0.9         1.0        11.6  10.6-12.6 
+  wins by poison                                          0.0         0.0         0.7   0.0-1.7  
+  deck win spread, best minus worst deck                 19.5        18.0         4.0   0.0-8.0  
+  loss: built-in 752.38, best 367.14
+
+  best knobs:
+    dack-fayden-white-stax.temp                    0.200  (built-in 1.000)
+    dack-fayden-white-stax.aggression              0.532  (built-in 0.600)
+    dack-fayden-white-stax.caution                 0.149  (built-in 0.500)
+    kinnan-bonder-mana-combo.temp                  2.000  (built-in 1.000)
+    kinnan-bonder-mana-combo.aggression            0.297  (built-in 0.600)
+    kinnan-bonder-mana-combo.caution               1.000  (built-in 0.500)
+    kraum-tymna-blue-breach-midrange.temp          0.200  (built-in 1.000)
+    kraum-tymna-blue-breach-midrange.aggression    1.000  (built-in 0.600)
+    kraum-tymna-blue-breach-midrange.caution       0.333  (built-in 0.500)
+    rograkh-silas-turbo-breach.temp                0.834  (built-in 1.000)
+    rograkh-silas-turbo-breach.aggression          0.407  (built-in 0.600)
+    rograkh-silas-turbo-breach.caution             0.705  (built-in 0.500)
+    rograkh-thrasios-creature-combo.temp           0.488  (built-in 1.000)
+    rograkh-thrasios-creature-combo.aggression     0.786  (built-in 0.600)
+    rograkh-thrasios-creature-combo.caution        0.643  (built-in 0.500)
+    sisay-legends-toolbox.temp                     1.143  (built-in 1.000)
+    sisay-legends-toolbox.aggression               1.000  (built-in 0.600)
+    sisay-legends-toolbox.caution                  1.000  (built-in 0.500)
+    cthresh_default                               10.000  (built-in 6.000)
+    instant_extra                                  1.000  (built-in 0.000)
+    t6_moxd_lands                                  1.000  (built-in 3.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/realism-casual-targets/audit/realism/fit/t6-deck.toml (run it with --knobs; confirm with --realism and more games)

@@ -252,7 +252,14 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         return Err(format!("--fit-scope must be shared or deck, not {}", a.fit_scope));
     }
     let root = decks::root()?;
-    let targets = realism::load_targets(&root, tier)?;
+    let mut targets = realism::load_targets(&root, tier)?;
+    if let Some(list) = &a.fit_stats {
+        let want: Vec<&str> = list.split(',').map(str::trim).filter(|s| !s.is_empty()).collect();
+        if let Some(bad) = want.iter().find(|w| !targets.contains_key(**w)) {
+            return Err(format!("--fit-stats: {bad} has no target in data/realism/{tier}.toml"));
+        }
+        targets.retain(|k, _| want.contains(&k.as_str()));
+    }
     if targets.is_empty() {
         return Err(format!("{tier} has no targets (data/realism/{tier}.toml): nothing to fit"));
     }
@@ -323,6 +330,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     let header = vec![
         format!("Knobs fitted by commander-sim --fit --pool {tier} --fit-scope {} ({} AI, {prof} profile)", a.fit_scope, ctx.ai()),
         format!("{} generations of {}, {n} games a candidate on seeds {seed0}-{}", a.fit_gens, cma.lam, seed0 + n.max(1) - 1),
+        format!("Scored statistics: {}", targets.keys().cloned().collect::<Vec<_>>().join(", ")),
         "Loss: sum over the scored targets of ((sim - target) / half the band)^2".into(),
     ];
     let fit = vec![

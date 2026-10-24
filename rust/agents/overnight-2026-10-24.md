@@ -62,3 +62,14 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
 13. **Dack Fayden's removal count is probably not a bug** (correcting the lead in item 9): Fiend Hunter and All-Fates
     Stalker return what they exiled when they leave (`impls/t6_dack.rs`, `oring_return`); the count is likely the
     flicker plan re-exiling the same creature each blink. Why Dack wins 35% in the sim is still open.
+14. **First Tier 6 fits, not adopted** (`audit/realism/fit/`, adaptive, 2,000 games a candidate): shared scope 15
+    generations, loss 752 -> 326; per-deck scope 12 generations, 752 -> 367. Nearly all of the gain is the win types
+    (combo 68% -> 59-61%, damage 31% -> 38-40%), the weakest Tier 6 targets; the median win round got worse (10 ->
+    11-12) and seat 1 moved 1.6-3.2 points. Several knobs ran to their bounds. Nothing changes the built-in values;
+    the knobs files are there to test. Fresh-seed check: item 15.
+15. **Lead: plays the option list offers but `act::perform` can't make.** In 8 traced Tier 6 games, 27 of 763 main-phase
+    decisions rate a play about 100% and end in "stop" because perform failed (Chrome Mox 8, Damping Sphere 4, Mox
+    Opal, Llanowar Elves, Elves of Deep Shadow, Ragavan, Mystic Remora 2 each...), always in pairs (both main phases).
+    In isolation the Kinnan case (Llanowar off Talisman of Curiosity) casts fine, so it needs the game's own mana
+    state: `commander-sim --calibrate within --pool t6 --ai adaptive --trace 3`, round 5, Kinnan. Each lost cheap
+    mana play slows a deck a turn; worth fixing before more fitting.

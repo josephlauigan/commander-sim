@@ -1,0 +1,6 @@
+
+=== Fit: Tier 6 (cEDH, B5) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (6): temp, aggression, caution, cthresh_default, instant_extra, t6_moxd_lands
+built-in values: loss 113.12
+  generation  1: best so far 72.53, this generation 72.83 (mean 89.87), step 0.256
+  generation  2: best so far 72.53, this generation 77.36 (mean 85.37), step 0.229
