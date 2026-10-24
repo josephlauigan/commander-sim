@@ -4,3 +4,31 @@ knobs (6): temp, aggression, caution, cthresh_default, instant_extra, t6_moxd_la
 built-in values: loss 113.12
   generation  1: best so far 72.53, this generation 72.83 (mean 89.87), step 0.256
   generation  2: best so far 72.53, this generation 77.36 (mean 85.37), step 0.229
+  generation  3: best so far 67.52, this generation 69.23 (mean 87.45), step 0.250
+  generation  4: best so far 60.40, this generation 61.62 (mean 88.27), step 0.248
+  generation  5: best so far 45.73, this generation 46.35 (mean 81.68), step 0.225
+  generation  6: best so far 45.73, this generation 48.62 (mean 81.84), step 0.206
+  generation  7: best so far 45.73, this generation 65.70 (mean 86.77), step 0.199
+  generation  8: best so far 45.73, this generation 64.99 (mean 87.94), step 0.195
+  generation  9: best so far 45.73, this generation 56.84 (mean 85.41), step 0.189
+  generation 10: best so far 45.73, this generation 62.43 (mean 84.20), step 0.204
+  generation 11: best so far 45.73, this generation 63.11 (mean 78.38), step 0.226
+  generation 12: best so far 45.73, this generation 69.84 (mean 85.32), step 0.271
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         24.8        28.4        32.5  31.5-33.5 
+  seat 2 share of decisive games                         26.8        25.8        26.9  25.9-27.9 
+  seat 3 share of decisive games                         23.9        23.7        22.7  21.7-23.7 
+  seat 4 share of decisive games                         24.5        22.1        17.9  16.9-18.9 
+  median round of a decisive win                         10.0        10.0         7.0   6.0-8.0  
+  loss: built-in 113.12, best 45.73
+
+  best knobs:
+    temp                                           0.438  (built-in 1.000)
+    aggression                                     0.770  (built-in 0.600)
+    caution                                        0.292  (built-in 0.500)
+    cthresh_default                                9.000  (built-in 6.000)
+    instant_extra                                  1.000  (built-in 0.000)
+    t6_moxd_lands                                  3.000  (built-in 3.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/realism-casual-targets/audit/realism/fit/t6-shared-gate.toml (run it with --knobs; confirm with --realism and more games)

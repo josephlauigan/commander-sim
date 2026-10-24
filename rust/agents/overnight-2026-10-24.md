@@ -73,3 +73,33 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
     In isolation the Kinnan case (Llanowar off Talisman of Curiosity) casts fine, so it needs the game's own mana
     state: `commander-sim --calibrate within --pool t6 --ai adaptive --trace 3`, round 5, Kinnan. Each lost cheap
     mana play slows a deck a turn; worth fixing before more fitting.
+16. **Item 15's lead is mostly Dack's taxes, not a bug.** With a log line added when `act::perform` refuses a chosen
+    play (`ai/brain.rs`, logging only), 8 traced Tier 6 games have 132 refused plays (Erode 22, Mystic Remora 17,
+    Redirect Lightning 16, Ragavan 12, Chrome Mox 12, Elves of Deep Shadow 11, Damping Sphere 11...), all in games
+    with Dack Fayden seated: the two games without Dack have none, the one where Dack resolved two tax pieces has 63.
+    So the refusals are taxes (Damping Sphere, Thorn of Amethyst, Defense Grid on other players' turns) the option
+    list doesn't price in; the engine is right to refuse. The ranking could price taxes in, but the table without
+    Dack is as slow, so this is not the speed gap.
+17. **Gate-only fits: noise.** `--fit-stats seat1_win,seat2_win,seat3_win,seat4_win,win_round_median` (shared 12
+    generations, per-deck 10) reached seat 1 28.4% / 28.1% on their own seeds; on fresh seeds (900000-908199, 8,200
+    games) they give 25.6% / 26.2% against the built-in 26.0%, the median 10 / 9. That was the luckiest candidate
+    fitting the seeds' noise. Conclusion for Phase 1: fitting the existing knobs cannot pass the gate; the speed has to
+    come from the AI's and plans' conversion of tutors and draws into lines (REPORT.md, "Next leads").
+18. **New Tier 6 stats: what a deck does while one tutor away.** The calibrate-within report now prints, per deck,
+    the choices made while a line is one tutor away and none is ready, and the tutors held when it passed then
+    (stats only: the rest of the report is byte-identical). Rograkh/Silas passed 365 times with a tutor (Diabolic
+    Intent 241, Mystical Tutor 113, Demonic Tutor 24); Kraum/Tymna 212 (Mystical 86, Diabolic Intent 69, Enlightened
+    47). Caveat: "one tutor away" counts any tutor, whether or not it finds the missing piece this turn, so holding
+    Mystical (instant, to the top) or Enlightened is often right.
+19. **AI fix, behaviour change: a commander with mana value 0 is sacrifice fodder.** `ai::brain::spare_creature`
+    (Diabolic Intent's sacrifice) skipped every commander, so Rograkh, Son of Rohgahh, which real lists sacrifice
+    freely (it is recast for the tax alone), never was, and Rograkh/Silas sat on Diabolic Intent. Now a 0-cost
+    commander is spare at worth 0; costed commanders stay protected (test in ai_t6_rograkh_silas.rs). Same 8,200
+    seeds: Diabolic Intent held while one tutor away 241 -> 41, passes 365 -> 167, Rograkh/Silas 21.7% -> 22.7%, the
+    table's median win round 10 -> 9 (seat 1 unchanged, 25.9%). Undo: revert `free_commander`.
+20. **The instant tutors are played right.** In 40 traced Tier 6 games, all 10 Mystical Tutor casts and 15 of 16
+    Vampiric Tutor casts came on another player's turn (end of turn), as real players use them; Demonic Tutor and
+    Diabolic Intent (sorceries) on the owner's. So the Mystical holds in item 18 are correct play, and the remaining
+    "passed while one tutor away" cases are mostly not bugs. Remaining speed leads: Kraum/Tymna's held lines (it
+    holds a ready line in a quarter of its ready games), Sisay and Rograkh/Thrasios (lines ready in only 10-11% of
+    games, median round 10, wins at 13).

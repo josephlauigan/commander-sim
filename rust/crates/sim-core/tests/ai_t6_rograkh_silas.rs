@@ -110,3 +110,17 @@ fn tutors_look_for_the_missing_half_of_the_oracle_line() {
 fn a_no_land_hand_is_kept_only_with_three_fast_mana_and_a_tutor() {
     assert!(keeps(&["Lotus Petal", "Sol Ring", "Dark Ritual", "Demonic Tutor", "Ad Nauseam", "Force of Will", "Daze"]));
 }
+
+#[test]
+fn rograkh_is_diabolic_intents_fodder_but_a_costed_commander_is_not() {
+    // Rograkh costs nothing but the commander tax to recast: real lists sacrifice it to Diabolic Intent
+    let mut g = tbl();
+    let r = perm(&mut g, P0, "Rograkh, Son of Rohgahh");
+    g.perm_mut(r).is_cmd = true;
+    assert_eq!(sim_core::ai::brain::spare_creature(&g, P0), Some(r));
+    // Silas Renn (mana value 3) as the only creature, as a commander: kept
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Silas Renn, Seeker Adept");
+    g.perm_mut(s).is_cmd = true;
+    assert_eq!(sim_core::ai::brain::spare_creature(&g, P0), None);
+}

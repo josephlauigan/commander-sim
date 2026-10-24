@@ -42,6 +42,10 @@ pub struct DeckT6 {
     pub ready_no_go: u64,
     /// the option chosen at decisions where a line was ready and the deck had not gone yet
     pub instead: Counter<String>,
+    /// the option chosen at decisions where a line was one tutor away and none was ready
+    pub away: Counter<String>,
+    /// the tutors held at those decisions when the deck passed (`spah|`)
+    pub away_held: Counter<String>,
     /// sums of the `mn|...` mana stats (see `sim_core::t6stats`)
     pub mn: Counter<String>,
 }
@@ -159,6 +163,11 @@ impl T6Tally {
                 }
                 if let Some(l) = k.strip_prefix("spx|") {
                     d.instead.add(l.to_string(), v);
+                }
+                if let Some(l) = k.strip_prefix("spah|") {
+                    d.away_held.add(l.to_string(), v);
+                } else if let Some(l) = k.strip_prefix("spa|") {
+                    d.away.add(l.to_string(), v);
                 }
             }
             for (k, &v) in &p.stats {
@@ -291,6 +300,11 @@ fn render_speed(d: &DeckT6) -> String {
         );
         let lbl = |s: &str| s.to_string();
         o += &format!("      while ready and not gone it chose: {}\n", top(&d.instead, 6, &lbl));
+    }
+    if !d.reach_r.is_empty() {
+        let lbl = |s: &str| s.to_string();
+        o += &format!("      while one tutor away (not ready) it chose: {}\n", top(&d.away, 8, &lbl));
+        o += &format!("      tutors held when it passed then: {}\n", top(&d.away_held, 8, &lbl));
     }
     o
 }
