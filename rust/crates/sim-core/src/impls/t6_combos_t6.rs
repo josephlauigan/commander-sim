@@ -564,6 +564,11 @@ fn ddr_plan(g: &Game, p: PlayerId, in_line: bool) -> Option<Plan> {
     let mut plan = Plan::default();
     let (ioreth, marvin) = (bf(g, p, IORETH), bf(g, p, MARVIN));
     if ioreth.is_none() {
+        // an Ioreth still to come enters tapped under Blind Obedience (and the like): its untap can't start the loop
+        // this turn (the line went, fetched Ioreth tapped and stopped)
+        if crate::engine::hooks::enters_tapped(g, p, None) {
+            return None;
+        }
         plan.add(get_piece(g, p, &[IORETH])?);
     }
     if marvin.is_none() {

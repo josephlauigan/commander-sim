@@ -254,6 +254,23 @@ fn sisay_fetches_mount_doom_as_a_land_and_the_ddr_line_wins() {
 }
 
 #[test]
+fn ddr_waits_when_a_fetched_ioreth_would_enter_tapped() {
+    // seed 500036, game 36: Blind Obedience; the line fetched Ioreth tapped and stopped
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Sisay, Weatherlight Captain");
+    perm(&mut g, P0, "Tyvar, Jubilant Brawler");
+    perm(&mut g, P0, "Derevi, Empyrial Tactician");
+    perm(&mut g, P0, "Marvin, Murderous Mimic");
+    perm(&mut g, P0, "Selvala, Heart of the Wilds");
+    doom(&mut g);
+    lands(&mut g, P0, "City of Brass", 5, false);
+    to_library(&mut g, P0, "Ioreth of the Healing House");
+    assert!(ready(&g, "(DDR)"), "Sisay fetches Ioreth");
+    perm(&mut g, P1, "Blind Obedience");
+    assert!(!ready(&g, "(DDR)"), "Ioreth would enter tapped");
+}
+
+#[test]
 fn ddr_without_a_legend_that_taps_for_mana_is_no_combo() {
     let mut g = tbl(SISAY);
     perm(&mut g, P0, "Ioreth of the Healing House");
