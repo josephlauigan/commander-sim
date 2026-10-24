@@ -78,6 +78,8 @@ mana-limited rather than waiting.
   the loose profile's included. Each deck may get its own fitted settings, to close the deck spread.
 - 2026-10-24: pool decks may be updated to fit or reflect the real data (for example, the Tier 3 Atraxa made the
   deck players actually log, so it can rejoin the targets).
+- 2026-10-24 (morning): EDHREC may be used for the casual decks (its per-commander card inclusion rates, as EDHTop16's
+  play rates are used for Tier 6).
 - Standing rules in CLAUDE.md still apply: loose profile only, each of JD's decks only against its own tiers, no
   Python, the memory cap, subagents on the default model, check subagents' work.
 - Still open in the plan document: start logging pod games now (by hand or from practice mode)? Order of the engine

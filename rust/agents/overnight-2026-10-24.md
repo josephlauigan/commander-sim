@@ -124,3 +124,5 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
   held lines.
 - Decisions to confirm: 1-3 (Tier 3 method, Atraxa), 5 (list route), 7 (the 15 swaps), 12 (EDHREC unused), 19 (the
   Rograkh fix), and whether the win types keep full weight in `--fit`'s loss (14).
+
+22. **JD, morning: EDHREC may be used for the casual decks** (answers item 12).
