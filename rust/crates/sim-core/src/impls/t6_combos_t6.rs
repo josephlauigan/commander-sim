@@ -526,7 +526,18 @@ fn fetch_next(g: &mut Game, p: PlayerId, plan: Option<Plan>) -> Res<bool> {
 }
 
 fn fetch_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
-    fetch_next(g, p, ddr_plan(g, p, true))
+    keeping_ioreth(g, p, |g| fetch_next(g, p, ddr_plan(g, p, true)))
+}
+
+/// run a DDR step with Ioreth kept out of the mana payment: with Enduring Vitality or Relic of Legends (and Tyvar's
+/// haste) a fetched Ioreth is a mana source, and paying Sisay's next {W}{U}{B}{R}{G} with it taps the untapper the loop
+/// needs (the line then stopped as "no longer ready")
+fn keeping_ioreth(g: &mut Game, p: PlayerId, f: impl FnOnce(&mut Game) -> Res<bool>) -> Res<bool> {
+    let ioreth: Vec<PermId> = bf(g, p, IORETH).into_iter().collect();
+    let keep = std::mem::replace(&mut g.keep_untapped, ioreth);
+    let r = f(g);
+    g.keep_untapped = keep;
+    r
 }
 
 fn fetch_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
@@ -615,9 +626,11 @@ fn ready_ddr(g: &Game, p: PlayerId) -> Ready {
 }
 
 fn cast_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(plan) = ddr_plan(g, p, true) else { return Ok(false) };
-    let Some(&c) = plan.casts.first() else { return Ok(true) };
-    cast_named(g, p, c)
+    keeping_ioreth(g, p, |g| {
+        let Some(plan) = ddr_plan(g, p, true) else { return Ok(false) };
+        let Some(&c) = plan.casts.first() else { return Ok(true) };
+        cast_named(g, p, c)
+    })
 }
 
 /// The pieces an answer can stop: Ioreth, Marvin and ONE mana legend (the loop uses a single source; any other legend

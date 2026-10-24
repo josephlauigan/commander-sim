@@ -209,6 +209,50 @@ fn spec_8_ddr_cast_the_same_turn_with_shang_chi_and_vitality() {
     );
 }
 
+
+#[test]
+fn sisay_fetches_ioreth_and_marvin_without_tapping_ioreth_for_the_second_fetch() {
+    // seed 500012, game 12: Relic of Legends taps a legendary creature for mana, and paying for
+    // the Marvin fetch tapped the Ioreth just fetched; the line then stopped as "no longer ready"
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Sisay, Weatherlight Captain");
+    perm(&mut g, P0, "Tyvar, Jubilant Brawler");
+    perm(&mut g, P0, "Derevi, Empyrial Tactician");
+    perm(&mut g, P0, "Relic of Legends");
+    doom(&mut g);
+    lands(&mut g, P0, "City of Brass", 8, false);
+    to_library(&mut g, P0, "Ioreth of the Healing House");
+    to_library(&mut g, P0, "Marvin, Murderous Mimic");
+    go(&mut g, "(DDR)");
+    assert_eq!(g.winner, Some(P0), "both fetched, Ioreth untapped: the loop runs");
+}
+
+#[test]
+fn a_kept_piece_is_no_mana_source() {
+    let mut g = tbl(SISAY);
+    perm(&mut g, P0, "Birds of Paradise");
+    let birds = on_bf(&g, P0, "Birds of Paradise").unwrap();
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "G", false), "Birds taps for {{G}}");
+    g.keep_untapped = vec![birds];
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "G", false), "kept untapped for a combo step");
+}
+
+#[test]
+fn sisay_fetches_mount_doom_as_a_land_and_the_ddr_line_wins() {
+    // seed 500012, game 12: a fetched Mount Doom entered as a permanent, not a land, and the line stopped
+    let mut g = tbl(SISAY);
+    ddr_board(&mut g);
+    let doom = g.player(P0).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).cd).name == "Mount Doom").unwrap();
+    sim_core::engine::turn::remove_land(&mut g, P0, doom);
+    perm(&mut g, P0, "Sisay, Weatherlight Captain");
+    perm(&mut g, P0, "Tyvar, Jubilant Brawler");
+    perm(&mut g, P0, "Derevi, Empyrial Tactician");
+    lands(&mut g, P0, "City of Brass", 5, false);
+    to_library(&mut g, P0, "Mount Doom");
+    go(&mut g, "(DDR)");
+    assert_eq!(g.winner, Some(P0), "Mount Doom fetched onto the battlefield as a land");
+}
+
 #[test]
 fn ddr_without_a_legend_that_taps_for_mana_is_no_combo() {
     let mut g = tbl(SISAY);

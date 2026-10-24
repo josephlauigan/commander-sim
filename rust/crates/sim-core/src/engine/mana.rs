@@ -255,6 +255,11 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             }
         }
     }
+    if !g.keep_untapped.is_empty() {
+        // a combo piece that must stay untapped is no mana source, by its own ability or another's (Relic of Legends,
+        // Enduring Vitality add theirs through `extra_mana`)
+        u.retain(|w| !matches!(w.src, Source::Perm(m) | Source::Scion(m) if g.keep_untapped.contains(&m)));
+    }
     u
 }
 
