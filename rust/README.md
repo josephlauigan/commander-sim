@@ -1,45 +1,43 @@
 # The Rust code
 
-The whole project: the simulator's engine, AI and cards, the three programs, and the browser page for practice mode.
-The overview and the common commands are in the top-level `README.md`; how the code fits together is in
-`documents/architecture.md` and `documents/practice-mode.md`. The history of the move from Python (which is gone) is in
-`documents/rust-rewrite-scope.md`.
+The whole project is this workspace: the engine, the AI, the cards, the three programs, and practice mode's page.
 
 ```
 rust/
-  Cargo.toml          the workspace
-  crates/sim-core/    engine, rules, AI, cards (a library)
-  crates/sim-cli/     commander-sim, the command-line program that runs simulations (see its README.md)
-  crates/practice/    commander-practice, practice mode's server and terminal client; the browser page is in
-                      crates/practice/static/
-  crates/cardgen/     cardgen: builds data/cards.json and data/decks.json, edits decks, audits cards (see its README.md)
+  Cargo.toml            the workspace; Cargo.lock pins every dependency
+  rust-toolchain.toml   the pinned compiler (rustup installs it on the first cargo command)
+  rustfmt.toml          max width 120
+  crates/sim-core/      the library: game state, rules (engine/), AI (ai/), the ability language (dsl/), card code
+                        (impls/), a person's seat (human/); tests in tests/, examples in examples/
+  crates/sim-cli/       commander-sim: runs simulations, swap tests, analysis, calibration and the realism scorecard
+                        (realism.rs) with the AI knobs file (knobs.rs); every option is in src/args.rs
+  crates/practice/      commander-practice: practice mode's server, session, Hint and review, the terminal client,
+                        and the browser page in static/
+  crates/cardgen/       cardgen: builds data/cards.json and data/decks.json, edits decks, validates the pool, audits
+                        cards (see its README.md)
+  agents/               briefs, handoffs and reports for agent tasks (RULES.md first); finished ones in archive/
 ```
 
-Card data comes from `cardgen`: `cargo run --release -p cardgen -- export` (from `rust/`) writes `data/cards.json`
-and `data/decks.json`, which Rust loads, from `data/carddb.txt`, `data/card_overrides.toml`, the Scryfall cache and the
-deck lists in `decklists/`. Re-export after any change to cards or deck lists. `cardgen deck` replaces a deck's list,
-`cardgen audit` reports how faithfully cards are modeled; how to add a card or edit a deck is in
-`crates/cardgen/README.md`.
-
-Running simulations: `cargo build --release -p sim-cli`, then `rust/target/release/commander-sim`
-(`--deck sauron --pool t1 --profile loose --games 960`, `--swap`, `--calibrate`, `--analyze`, `--trace` ...). See
-`crates/sim-cli/README.md`.
-
-Toolchain: Rust via rustup (`~/.cargo/bin`), pinned in `rust-toolchain.toml` (rustup installs it on the first cargo
-command; `make setup` from the repository root does it all). Run the tests with `cargo test --release` from `rust/`.
-
-## Practice mode
+Build and test from `rust/`, under the memory cap in [`../CLAUDE.md`](../CLAUDE.md):
 
 ```
-cd rust && cargo build --release -p practice
-./target/release/commander-practice [--port 8765] [--no-browser] [--lan] [--data DIR] [--static DIR]
-./target/release/commander-practice --text --deck sauron --tier t4 [--step]      # the terminal client
+cargo build --release                 # rust/target/release/commander-sim, commander-practice, cardgen
+cargo build --release -p sim-cli      # one program
+cargo test --release                  # every test (about 3,000; about 10 minutes)
+cargo test --release -p practice      # one crate
 ```
 
-Serves the page in `crates/practice/static/` (default data folder `data/`, saves in `data/saves/`) and opens it in the
-browser unless `--no-browser`. `--lan` listens on the local network too for a two-player game and prints the
-addresses. `--text` plays in the terminal.
+`make setup`, `make build` and `make test` from the repository root do the same. Format only the files you change
+(`rustfmt --edition 2024 <file>`), never the whole workspace.
 
-Tests: `cargo test --release -p practice`. The HTTP suite (`tests/http_*.rs`) starts the server in-process with a fake
-Scryfall (`PRACTICE_SCRYFALL`) and temp saves/images folders; set `PRACTICE_URL=host:port` to run the same suite
-against a server that is already running. Tests that need a long human-seat game are `#[ignore]`d with the reason.
+Where to read next:
+
+- [`../README.md`](../README.md): what the project is, and the commands.
+- [`../documents/how-it-works.md`](../documents/how-it-works.md): the engine, the card model, the AI, the run harness.
+- [`../documents/realism.md`](../documents/realism.md): the realism scorecard and the plan it drives.
+- [`../documents/cards.md`](../documents/cards.md): the card pipeline and model statuses.
+- [`../documents/testing-decks.md`](../documents/testing-decks.md): how a deck change is tested.
+- [`../documents/practice-mode.md`](../documents/practice-mode.md): practice mode, how it is built and tested.
+
+The practice HTTP tests (`crates/practice/tests/http_*.rs`) start the server in-process with a fake Scryfall
+(`PRACTICE_SCRYFALL`); set `PRACTICE_URL=host:port` to run the same suite against a server that is already running.

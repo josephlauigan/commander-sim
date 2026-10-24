@@ -12,7 +12,7 @@ An interactive, graphical way to play one of your decks against the simulator's 
 
 ## Non-goals
 
-- **Not a full rules engine.** You play against the simulator's model of Commander, with its simplifications (see [Rules model](#rules-model) and architecture.md, section 16). Gaps that manual play exposes get fixed in the engine, which also improves the simulations.
+- **Not a full rules engine.** You play against the simulator's model of Commander, with its simplifications (see [Rules model](#rules-model) and [how-it-works.md](how-it-works.md#simplifications)). Gaps that manual play exposes get fixed in the engine, which also improves the simulations.
 - **No online play** and no deck building (two people on one local network is supported: see [Two players on a network](#two-players-on-a-network)). Decks come from your deck folders (`decklists/JD/`, `Avery/`) and are edited with `cardgen deck`.
 - **The simulations are unchanged.** Every code path for a person runs only when a human is seated; a copied game (the look-ahead's) never has one.
 
@@ -30,16 +30,16 @@ Other options: `--data DIR` (the card data folder, default `data/`), `--static D
 
 ## Screens
 
-The mockup has one artboard per screen.
-
 1. **New game (setup).**
-   - **The table:** the tiers, each with its five decks.
+   - **The table:** the tiers t0-t6, each with its decks (five, six at Tier 6).
    - **Your opponents:** three drawn at random from the chosen tier (two in a game with a friend), always at random: a new draw when the tier or the number of players changes, and each time you come back to this screen. Hovering over one (or tapping it) shows a box with how it plays: its plan, how it wins, what to watch out for and its interaction (the deck file's "At the table" section), plus its Game Changers and combos.
    - **Your deck:** chosen after you see the opponents; each shows its commander's art, bracket, Game Changer count and its sim win rate at the chosen tier.
    - **Options:**
      - your seat: random, or 1st–4th
-     - the opponents' interaction profile: conservative or loose
+     - the opponents' interaction profile: loose (the default) or conservative
+     - the opponent AI: look-ahead (stronger, thinks for a few seconds at its decisions) or adaptive (faster)
      - a seed, for replaying or sharing a game
+     - when the game stops for your priority (*when I can respond*, *on every spell, ability and trigger*, or *at every step*), which can also be changed during the game
      - on/off switches for Hint, Undo and recording the AI comparison
    - **Start game.**
 2. **Preparing the table (loading).** The opponents are drawn and seated, the card rules are built and the card images are loaded. The screen shows only a looping 8-bit animation (a knight shielding against a fire-breathing dragon under the five mana colours) and one progress bar.
@@ -67,8 +67,8 @@ This section covers what manual play needs from the engine that the simulations 
 - **Priority order:** the active player receives priority first. Priority then passes in turn order. 
 - **Resolution:** a spell or ability resolves once every player passes in succession without adding anything.
 - **Your turn:** you get priority in each step, and you may act or pass. Sorcery-speed actions (spells, lands, equip, sorcery-speed abilities) are legal only in your main phases with an empty stack.
-- **Opponents' turns:** you get priority whenever an opponent casts a spell, activates an ability, declares attackers, or reaches a step where you could act. There is a setting, off by default, to skip the stops where you have nothing castable.
-- **The stack:** spells, activated abilities and triggers go on the engine's real stack (see [architecture.md](architecture.md), section 6). You can respond to anything on it, and opponents can respond to your response, to any depth. When several of your triggers happen at once you choose their order.
+- **Opponents' turns:** you get priority whenever an opponent casts a spell, activates an ability, declares attackers, or reaches a step where you could act. How often it stops is the *Stop* setting: *when I can respond* (the default: opponents' spells, abilities and triggers when you hold an answer, attacks on you, the end of each other turn, and your declare blockers step when you could act), *on every spell, ability and trigger*, or *at every step (full control)*. A change applies from your next decision, and Undo and saved games replay it exactly.
+- **The stack:** spells, activated abilities and triggers go on the engine's real stack (see [how-it-works.md](how-it-works.md#the-engine)). You can respond to anything on it, and opponents can respond to your response, to any depth. When several of your triggers happen at once you choose their order.
 
 ### Mana
 
@@ -134,6 +134,9 @@ rust/crates/sim-core/src/human/      the person's seat (inert in simulations)
   combat.rs      attackers, blockers, damage order
   choices.rs     the helper functions for every other decision
   cards.rs, abilities.rs   your decks' card-specific choices and activated abilities
+  karn.rs        every activated ability of the Karn deck's cards, for a person
+  alt.rs         alternative costs and graveyard and land abilities (the hooks only the AI read) offered to a person
+  specs.rs       what a person chooses when casting a spell that resolves by its own code (targets, modes, X)
   script.rs      ScriptHuman: answers from a list, for tests and the text client
 sim-core/src/control.rs   Human, Request, Answer, Humans (who sits where)
 rust/crates/practice/src/
@@ -141,7 +144,8 @@ rust/crates/practice/src/
   lib.rs         the library, and practice_start(), the C entry point the iPad shell calls
   session/       one game: mod.rs (the thread, events, Undo, saves), human.rs (SessionHuman), setup.rs (seating, building the game), api_impl.rs
   view.rs        the table as one seat may see it (JSON)
-  advisor.rs     Hint
+  advisor/       Hint: mod.rs (main phase, attacks, counters), mulligan.rs (the keep rule and the bottom card), other.rs (every other decision)
+  bundle.rs      the iPad app's first-launch data copy
   shadow.rs      the AI comparison log and the review
   server/        http.rs, routes.rs, hub.rs (the current game, lobby, autosave), sse.rs, lan.rs, api.rs
   catalog.rs     what the setup screen shows
@@ -168,7 +172,7 @@ A game is its deck, tier, seed, seat, opponents, profile, AI mode and the list o
 
 ### Hint and the AI comparison (shadow log)
 
-- **Hint** (`advisor.rs`) runs the look-ahead for the pending decision on a copy of the game and shows the AI's choice with the scores.
+- **Hint** (`advisor/`) runs the look-ahead for a main-phase, attack or counter decision on a copy of the game and shows the AI's choice with the scores. For the mulligan it applies the AI's keep rule to your hand and gives the reasons; for other decisions (discards, sacrifices, scry and surveil) it gives the AI's own pick where it has one, otherwise a sentence on what to weigh.
 - **Recording:** at each main-phase or attack decision you make, the session keeps a snapshot of the game (a `Game::clone` with the AI in every seat, as the look-ahead uses) before your answer is applied.
 - **The AI's answer:** worker threads (up to 4; 2 on the iPad) ask the AI what it would do in each snapshot and evaluate both options with the look-ahead's playouts, giving a win estimate for "your choice" and "the AI's choice".
 - **Stored with each decision:** turn, step, a plain-English description of the situation, your choice, the AI's choice and both estimates. A forced move is recorded but not scored.

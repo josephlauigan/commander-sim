@@ -1,0 +1,199 @@
+# Realism: fitting the simulator to real games
+
+The simulator is fitted to real games instead of being tuned against itself. Real data sets the targets: seat win
+rates, how fast games are won, how they are won, and how close the decks in a tier are. The realism scorecard
+(`commander-sim --realism`) measures the simulator against those targets, and every change to the engine, the AI or the
+pool decks is judged by whether it moves the scorecard toward them.
+
+The plan is JD's document [Commander Sim: Improvement and Refactoring
+Plan](https://claude.ai/artifact/Fa1usjF6hHZiSUBXwLzGNJ) (a claude.ai Doc). This page summarises it and records where
+the work stands. The working handoff is [`rust/agents/handoff-realism.md`](../rust/agents/handoff-realism.md).
+
+## The phases
+
+Each phase has a gate. The next phase starts only when the gate passes.
+
+| Phase | Work | Gate |
+| --- | --- | --- |
+| 0 Ground truth | The realism scorecard and `--realism`, run in CI; a pod game log; EDHTop16 / TopDeck.gg import; Playgroup data; targets for Tier 6 first, then one casual tier | The scorecard runs nightly with targets for two tiers |
+| 1 Fit and guard | Fit the AI's style knobs against the scorecard; generic rule checks (Pact upkeep, tutor then discard); sequential stopping and an interval on every delta | The Tier 6 seat edge is inside its target band |
+| 2 One card model | `cardgen export` refuses cards modeled by two paths; combos from Commander Spellbook; model coverage per deck printed on every run | No double-modeled cards; coverage printed per deck |
+| 3 Engine structures | A characteristics pass, one replacement step, a mana pool with restrictions, identity for exiled cards, one permanent arena | Paired tests level, scorecard holds, under 10% slower |
+| 4 Generic AI | Plan files as data, card values from abilities, a learned evaluation, tree search on high-stakes choices; delete the per-deck hand code | Each deck level with its hand code in a paired test |
+
+## The scorecard
+
+```
+commander-sim --realism --pool t6 --games 2200                 # look-ahead AI (the default)
+commander-sim --realism --pool t3 --ai adaptive --games 8200   # heuristic AI, about 60 times faster
+```
+
+`--realism --pool tN` plays the tier's own pool decks against each other, four to a pod (the same games as
+`--calibrate within`, `Ctx::tier_games` in `rust/crates/sim-cli/src/poolmode.rs`). It prints, for each statistic, the
+sim's value, its 95% interval, the real target, the band, and PASS or FAIL. Then it prints the number of games, the
+decisive share, the timeouts, each deck's share of the decisive games it sat in, and the sources of the targets.
+`--pool all`, `--deck`, `--swap` and `--calibrate` are refused with it. A tier with no targets prints the sim's
+numbers unscored. Code: `rust/crates/sim-cli/src/realism.rs`; tests in the same file and in
+`rust/crates/sim-cli/tests/realism.rs`.
+
+A **decisive** game has a winner that is not the round-cap tiebreak (the round cap is 20, `play.rs`). Every share is a
+percentage of decisive games.
+
+| Key | Statistic | How it is computed |
+| --- | --- | --- |
+| `seat1_win` .. `seat4_win` | Seat 1-4 share of decisive games | Wins from that seat / decisive games; Wilson 95% interval |
+| `win_round_median` | Median round of a decisive win | Median of the winning rounds; interval from order statistics |
+| `win_round_spread` | Win round, 75th minus 25th percentile | Quantile difference; no interval |
+| `win_combo_alt` | Wins by a combo or an alternate win | Every win route from `t6report::win_route` that is not damage, commander damage or poison: a named combo line, or "other" (alternate win, mill) |
+| `win_damage` | Wins by damage | Route `damage` (combat or other damage) |
+| `win_commander_damage` | Wins by commander damage | Route `commander damage` |
+| `win_poison` | Wins by poison | Route `poison` |
+| `deck_win_spread` | Best deck minus worst deck, points | Each deck's share of the decisive games it sat in; best minus worst; no interval |
+| `games_over_15` | Games over 15 rounds | Games that ended after round 15, as a share of all games |
+
+Combo and alternate wins are scored together because a Thassa's Oracle win is a combo in the sim and often an
+alternate win in a player's log. The plan's later statistics (commander casts and removals, wipes and counters per
+game, per-commander win rates) are not in the scorecard yet.
+
+## Target files
+
+One file per tier: `data/realism/t0.toml` to `t6.toml`. Each holds `tier = "tN"` and one table per statistic that has a
+target:
+
+```toml
+tier = "t6"
+
+[seat1_win]
+value = 32.5        # the real value, in the statistic's unit
+lo = 31.5           # the band the sim must land in
+hi = 33.5
+n = 387427          # the real sample size
+source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
+date = "2026-10-22" # when the source was read
+note = "optional"
+```
+
+`value`, `lo`, `hi`, `n`, `source` and `date` are required; `note` is optional. A missing or unknown field, an unknown
+statistic, a wrong `tier`, or a value outside its own band is refused before any game is played. A statistic with no
+table has no target. Each file's comments say where every number came from and why.
+
+| Tier | Targets |
+| --- | --- |
+| t6 (cEDH) | All but `win_round_spread` and `games_over_15`: 10 targets |
+| t3 (High Bracket 3) | Seats, median win round, win types: 9 targets. Atraxa is left out of every target (see the file) |
+| t0, t1, t2, t4, t5 | None yet; the files hold only `tier` and comments naming the future sources |
+
+Bands (JD, 2026-10-23): every share target is held to its real value +/- 1 point. A sim value that far from its target
+can only be told apart from noise with about 8,000 decisive games (about 8,200 games at Tier 6).
+
+`data/realism/pod_games.toml` is the template for logging JD's own pod games (date, seats in turn order, winning seat,
+the round it ended, how it was won, notes). Nothing reads it yet.
+
+## The nightly run
+
+`.github/workflows/realism.yml` runs the scorecard every night (07:17 UTC) and on demand ("Run workflow" on the Actions
+tab):
+
+- the adaptive AI on every tier, 8,200 games each (about a minute a tier);
+- the look-ahead AI on Tier 6, 2,200 games by default (about 90 minutes; the `lookahead_games` input sets it, and
+  8,200 resolves +/- 1 point in about 5-6 hours).
+
+The tables go to the run's summary page and to an artifact. A failing target does not fail the job; an error does.
+`.github/workflows/ci.yml` builds and tests on every push and pull request.
+
+## Status (2026-10-24)
+
+**Phase 0** is nearly done. The Tier 6 and Tier 3 targets exist and the nightly run is live on `main`. The Tier 3
+targets are on branch `realism-casual-targets` (commit `9d98dc0e`); the gate passes once they are on `main` and a
+nightly run scores them.
+
+**Tier 6 baseline** (`audit/realism/t6-baseline.md`): 2,200 look-ahead games, loose profile, seeds 500000-502199.
+**3 of 10 targets pass** (seat 2, seat 3, poison).
+
+| Statistic | Sim | Target (band) |
+| --- | --- | --- |
+| Seat 1 / 2 / 3 / 4 | 27.5 / 27.5 / 22.4 / 22.7% | 32.5 / 26.9 / 22.7 / 17.9% (each +/- 1) |
+| Median win round | 9 | 7 (6-8) |
+| Combo or alt / damage / commander damage / poison | 76.0 / 23.5 / 0.6 / 0.0% | 47.8 / 39.9 / 11.6 / 0.7% |
+| Deck spread | 16.3 pts (Kraum/Tymna 32.8%, Rograkh/Thrasios 16.5%) | 4 (0-8) |
+| Games over 15 rounds | 11.2% | no target |
+
+The table is too slow, and a slow table flattens the seat edge. This matches `audit/t6/speed-2026-10-19/REPORT.md`:
+the decks are draw- and mana-limited, not waiting.
+
+**Tier 3 baseline** (`audit/realism/t3-baseline.md`): 8,200 adaptive games. **1 of 9 targets pass** (poison). The median
+win is round 13 against 8, 33% of games run past round 15, combo wins are 1.9% against 20%, and seat 1 wins 26.5%
+against 31.3%. Korvold (13.9%) and Marwyn (11.7%) are the weakest decks in the sim, although on Playgroup they win most
+often.
+
+**Phase 1, step 1: the knobs as data** (branch `realism-phase1`, commit `538ca94a`). `--knobs FILE`
+(`rust/crates/sim-cli/src/knobs.rs`) overrides the AI's hand-set values from a TOML file:
+
+```toml
+tier = "t6"            # optional: the tier it was fitted on
+[table]
+temp_scale = 1.0       # every deck's temperature times this (as --temp); 0.05-3.0
+cthresh_default = 6    # outside decks' counter threshold; 0-20
+instant_extra = 0      # extra importance instant removal needs before it is used proactively; 0-10
+[cthresh]
+seph = 6               # one of JD's decks' counter threshold
+[search]               # the look-ahead: combo_w, ramp_w, hold_w, top_k, rollouts, horizon
+combo_w = 12.0
+[style.kinnan-bonder-mana-combo]
+temp = 1.0             # 0.05-3.0
+aggression = 0.6       # 0-1
+caution = 0.5          # 0-1
+```
+
+Every value is optional; a value left out keeps its built-in one. Unknown keys and deck keys that are not in
+`data/decks.json` are refused. A file that restates every built-in value gives byte-identical output to a run without
+one (`audit/realism/knobs/t6-identity-2000.txt` against `t6-none-2000.txt`).
+
+**The knobs screen** (`audit/realism/knobs/README.md`): each knob alone at both ends of its range, for every Tier 6
+deck, 2,000 adaptive games each. No setting moves the seat edge (seat 1 stays 25-28% against 32.5%; a seat share is
+known to about +/- 2 points at 2,000 games), and none moves the median win round off 9-10. Fitting these knobs cannot
+reach the Phase 1 gate. Speed is set by the deck lists and their plans, not by these knobs. There is no `--fit`
+command yet.
+
+## Data sources
+
+| Source | What it gives | Licence and credit |
+| --- | --- | --- |
+| [Playgroup.gg](https://playgroup.gg) | `api/public/v1/commanders.json`: per commander (5,142), games, wins, average game length, wins by combat, combo, commander damage, other damage, alternate win, mill, poison. `/api/public/v1/commanders/<id>.json`: average win turn. Commander pages: seat win rates. Turn-order page: 284,950 four-player single-winner games, seats 29.2 / 25.7 / 23.6 / 21.5%. Casual pods logged by players; no bracket field, no per-game export | Stats are CC BY 4.0 (playgroup.gg/legal): credit Playgroup.gg |
+| [EDHTop16](https://edhtop16.com/reports/monthly_seat_winrates) | cEDH seat 1-4 win rates and draw rate by month since March 2024. The Tier 6 seat targets are April-September 2026, sample-weighted, each seat's rate divided by the four seats' total | Public page |
+| [TopDeck.gg](https://topdeck.gg) | REST API v2 (free key, 100 requests a minute): standings, decklists, round tables; no seat field | Must show a visible credit and link back to TopDeck.gg |
+
+The Tier 6 median win round (7) is JD's speed target (`decklists/pool/TARGETS-t6.md`), consistent with Playgroup's
+average win turn for the Tier 6 commanders (6-7). The Tier 6 deck spread (4, band 0-8) comes from EDHTop16's six-month
+decisive shares of the five established Tier 6 decks (23.9-27.9%). The Tier 6 win types come from Playgroup's casual
+logs of the Tier 6 commanders, not from tournaments, so they are the weakest Tier 6 targets.
+
+## JD's decisions
+
+- **2026-10-23.** The seat targets are EDHTop16's monthly-report shares. Every share target is held to +/- 1 point.
+  Win types stay scored, although their source is casual logs. Fitting may overrule any hand-set value or threshold,
+  the loose profile's included. Each deck may get its own fitted settings, to close the deck spread.
+- **2026-10-24.** Pool decks may be updated to fit or reflect the real data (for example, the Tier 3 Atraxa can become
+  the infect deck players actually log, and rejoin the targets).
+- **2026-10-24, overnight (made for JD, to confirm).** Tier 3 is the casual tier for the Phase 0 gate (most of JD's
+  decks play it). Atraxa is left out of every Tier 3 target (45% of its Playgroup wins are poison; the pool's Atraxa is
+  superfriends). The Tier 3 median win round uses Playgroup's average win turn (8.1, band 7-9). The knobs file is TOML
+  with every value optional.
+- **Phase 1 route** (JD, 2026-10-24): real lists first, then fit. The Tier 6 pool decks are moved toward what real
+  tournament lists of the same commanders run (EDHTop16 decklists and play rates), by card swaps or, where that would
+  change most of the deck, by replacing the list.
+- The standing rules in [`CLAUDE.md`](../CLAUDE.md) still apply: loose profile only, each of JD's decks only against its
+  own tiers, no Python, the memory cap.
+- **Still open** in the plan document: start logging pod games now (by hand or from practice mode)? Which engine work
+  first (the permanent arena or the characteristics pass)? Pause new card work during the card-model move?
+
+## What's next
+
+1. Finish Phase 0: put the Tier 3 targets on `main` and let the nightly run score them. The same method (Playgroup's
+   win types, seat blocks and average win turn for each pool commander) fills the other casual tiers.
+2. Phase 1: bring the Tier 6 pool lists closer to real tournament lists, then re-run the Tier 6 scorecard.
+3. A fit command (for example `commander-sim --fit --pool t6`): a derivative-free search on the adaptive AI, the same
+   seeds for every candidate, loss = distance to each target; per-deck parameters allowed. Confirm the result with the
+   look-ahead AI at about 8,200 games and write `audit/realism/t6-fit-<date>.md`.
+4. Once Phase 1 passes, make a target miss fail the nightly job.
+5. Optionally, a reader for `pod_games.toml` that checks the records and summarises seats, rounds and win types.
