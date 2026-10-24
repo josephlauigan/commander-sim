@@ -80,6 +80,9 @@ mana-limited rather than waiting.
   deck players actually log, so it can rejoin the targets).
 - 2026-10-24 (morning): EDHREC may be used for the casual decks (its per-commander card inclusion rates, as EDHTop16's
   play rates are used for Tier 6).
+- 2026-10-24 (morning): in `--fit`'s loss the win types count for a quarter (`fit.rs` `WIN_TYPE_WEIGHT` = 0.25; JD's
+  option 2 of: equal weight / less weight / seats and speed only). **To be revisited**, for example once the Tier 6
+  win types have a tournament source, or once AI fixes make the seat edge movable.
 - Standing rules in CLAUDE.md still apply: loose profile only, each of JD's decks only against its own tiers, no
   Python, the memory cap, subagents on the default model, check subagents' work.
 - Still open in the plan document: start logging pod games now (by hand or from practice mode)? Order of the engine

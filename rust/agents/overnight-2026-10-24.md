@@ -126,3 +126,5 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
   Rograkh fix), and whether the win types keep full weight in `--fit`'s loss (14).
 
 22. **JD, morning: EDHREC may be used for the casual decks** (answers item 12).
+23. **JD, morning: option 2 for the fit loss: the win types count for a quarter** (`WIN_TYPE_WEIGHT` = 0.25 in
+    `rust/crates/sim-cli/src/fit.rs`, tested). JD: revisit this later (answers item 14).
