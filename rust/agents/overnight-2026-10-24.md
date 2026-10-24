@@ -55,3 +55,10 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
     calibrate-within report: each player tries a combo about 0.25 times a game and 30-47% of tries are stopped; lines
     are "one tutor away" at a median round of 6-7 but become ready in only 18-45% of games. The slowness is in how
     fast the decks turn tutors and draws into a finished line: AI and plan work (Phases 1 and 4), not knobs or lists.
+12. **EDHREC not used.** Its JSON (per-card inclusion rates per commander) would be the casual equivalent of the
+    EDHTop16 play rates for adjusting the Tier 3 lists, but it is not one of the plan's approved sources (Playgroup,
+    EDHTop16, TopDeck.gg) and its terms for automated access weren't checked. One page was fetched to see the format;
+    nothing from it is used. JD to decide.
+13. **Dack Fayden's removal count is probably not a bug** (correcting the lead in item 9): Fiend Hunter and All-Fates
+    Stalker return what they exiled when they leave (`impls/t6_dack.rs`, `oring_return`); the count is likely the
+    flicker plan re-exiling the same creature each blink. Why Dack wins 35% in the sim is still open.
