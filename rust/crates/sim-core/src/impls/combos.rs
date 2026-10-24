@@ -1354,12 +1354,12 @@ pub fn normal_play_window(g: &mut Game, p: PlayerId, acting: PermId) -> Res<bool
 fn t6_measure(g: &mut Game, p: PlayerId) {
     use crate::t6stats::{speed_flag, speed_mark};
     let st = |g: &Game, k: &str| g.player(p).stats.contains_key(&crate::sym::intern(k));
-    let (has_ready, has_reach, gone) = (st(g, "sp|ready"), st(g, "sp|reach"), st(g, "sp|go"));
-    if has_ready && has_reach && gone {
+    let (has_ready, gone) = (st(g, "sp|ready"), st(g, "sp|go"));
+    if has_ready && gone {
         return;
     }
     let mut any_ready = false;
-    let mut reach = false;
+    let mut reach = false; // one tutor away now (checked at every decision, for `sp|away_now`)
     let mine = deck_combos(g, p);
     let held: std::collections::HashSet<&str> = {
         let pl = g.player(p);
@@ -1378,11 +1378,12 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
             any_ready = true;
             break;
         }
-        if in_deck && !has_reach && !reach {
+        if in_deck && !reach {
             reach = one_tutor_away(g, p, cmb);
         }
     }
     speed_flag(g, p, any_ready && !gone);
+    crate::t6stats::away_flag(g, p, reach && !any_ready && !gone);
     if any_ready {
         speed_mark(g, p, "ready");
         speed_mark(g, p, "reach");

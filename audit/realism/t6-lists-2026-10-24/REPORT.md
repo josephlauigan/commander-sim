@@ -62,3 +62,14 @@ games there are 132, all in the six games with Dack Fayden seated (none in the t
 resolved two tax pieces). They are Dack's taxes (Damping Sphere, Thorn of Amethyst, Defense Grid) that the option
 list doesn't price in. The engine is right to refuse them, and the table without Dack is as slow, so they are not
 the speed gap.
+
+## What a deck does while one tutor away (added later the same night)
+
+The calibrate-within report now records, per deck, the choices made while a line is one tutor away and none is ready
+(`calibrate-within-away-2000.txt`). The two Breach decks mostly passed: Rograkh/Silas 365 times (holding Diabolic
+Intent 241, Mystical Tutor 113), Kraum/Tymna 212 (Mystical 86, Diabolic Intent 69, Enlightened 47). Holding Mystical
+or Enlightened is often right ("one tutor away" doesn't check what the tutor can find, or that it reaches the hand this
+turn), but Diabolic Intent was a bug: the AI never sacrificed a commander to it, and Rograkh, a 0-cost commander that
+real lists sacrifice freely, was the deck's natural fodder. With a 0-cost commander allowed as fodder
+(`ai::brain::spare_creature`): Diabolic Intent held 241 -> 41, the table's median win round 10 -> 9 on the same 8,200
+seeds (`rograkh-fodder-8200.txt`, `calibrate-within-fodder-2000.txt`). The first change of the night to move the speed.

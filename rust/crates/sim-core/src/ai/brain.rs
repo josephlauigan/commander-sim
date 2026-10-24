@@ -394,11 +394,19 @@ pub fn spare_creature(g: &Game, p: PlayerId) -> Option<PermId> {
         .copied()
         .filter(|&m| {
             let x = g.perm(m);
-            g.is_creature(m) && !x.phased && !x.is_cmd && !x.army
+            g.is_creature(m) && !x.phased && (!x.is_cmd || free_commander(g, m)) && !x.army
         })
         .collect();
-    let m = min_by(&cands, |m| pval(g, m))?;
-    (pval(g, m) <= SPARE_VALUE).then_some(m)
+    let worth = |m: PermId| if free_commander(g, m) { 0.0 } else { pval(g, m) };
+    let m = min_by(&cands, worth)?;
+    (worth(m) <= SPARE_VALUE).then_some(m)
+}
+
+/// a commander with mana value 0 (Rograkh, Son of Rohgahh): it is recast for the commander tax alone, so real decks
+/// sacrifice it freely (Diabolic Intent's fodder in Rograkh/Silas lists), where a costed commander stays protected
+fn free_commander(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    x.is_cmd && x.cd.is_some_and(|c| g.db.get(c).cmc == 0)
 }
 
 /// brain.do_cast: p casts c (from hand or the command zone; zone 'gy': its flashback; 'yawg': from the graveyard
