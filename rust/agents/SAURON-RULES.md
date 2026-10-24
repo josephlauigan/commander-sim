@@ -38,7 +38,7 @@ brief (`rust/agents/<task>.md`), then your handoff file `rust/agents/handoff-<ta
 | The Underworld Breach line (`impls/mine.rs` `breach_line` and friends) for decks other than Sauron, Kefka's AI | kefka-breach |
 
 ## How cards are modeled
-- Read `rust/PORTING_CARDS.md` (the hook-slot pattern) and follow `rust/crates/sim-core/src/impls/t1.rs` as the
+- Read `documents/archive/PORTING_CARDS.md` (the hook-slot pattern) and follow `rust/crates/sim-core/src/impls/t1.rs` as the
   pattern. Card data: `data/carddb.txt` (hand tags), `data/card_overrides.toml` (overrides and the audit verdict),
   Scryfall text compiled by `cardgen`. Engine entry points: `hooks.rs`, `engine/hooks.rs`, `cardcode.rs`. Deck AI:
   `ai/decks.rs` (`deck_prio`, tutor picks) and `ai/brain.rs`. Sauron's own code is in `impls/mine.rs`.

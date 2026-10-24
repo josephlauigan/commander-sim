@@ -87,6 +87,12 @@ pub struct Settings {
     pub search: Search,
     /// engine steps one game may take (Python's `E.GAME_WORK`)
     pub game_work: u64,
+    /// fitted or hand-set style per deck key (`--knobs FILE`, `--fit`), read before the built-in tables
+    /// (`ai::style`); empty: every deck plays its built-in style
+    pub styles: HashMap<String, crate::ai::Style>,
+    /// Tier 6: the lands (hand plus battlefield) a deck needs before it casts Mox Diamond, counting the one it
+    /// discards (`ai::pool`); 3 keeps two after the discard
+    pub t6_moxd_lands: usize,
 }
 
 impl Settings {
@@ -111,6 +117,8 @@ impl Settings {
             instant_extra,
             search: Search::default(),
             game_work: 20_000,
+            styles: HashMap::new(),
+            t6_moxd_lands: 3,
         }
     }
 

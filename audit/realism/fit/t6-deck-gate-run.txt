@@ -1,0 +1,47 @@
+
+=== Fit: Tier 6 (cEDH, B5) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (21): dack-fayden-white-stax.temp, dack-fayden-white-stax.aggression, dack-fayden-white-stax.caution, kinnan-bonder-mana-combo.temp, kinnan-bonder-mana-combo.aggression, kinnan-bonder-mana-combo.caution, kraum-tymna-blue-breach-midrange.temp, kraum-tymna-blue-breach-midrange.aggression, kraum-tymna-blue-breach-midrange.caution, rograkh-silas-turbo-breach.temp, rograkh-silas-turbo-breach.aggression, rograkh-silas-turbo-breach.caution, rograkh-thrasios-creature-combo.temp, rograkh-thrasios-creature-combo.aggression, rograkh-thrasios-creature-combo.caution, sisay-legends-toolbox.temp, sisay-legends-toolbox.aggression, sisay-legends-toolbox.caution, cthresh_default, instant_extra, t6_moxd_lands
+built-in values: loss 113.12
+  generation  1: best so far 51.91, this generation 52.22 (mean 77.86), step 0.287
+  generation  2: best so far 47.27, this generation 48.04 (mean 79.35), step 0.285
+  generation  3: best so far 46.39, this generation 49.93 (mean 71.04), step 0.284
+  generation  4: best so far 46.39, this generation 58.04 (mean 76.83), step 0.282
+  generation  5: best so far 46.39, this generation 52.56 (mean 75.55), step 0.280
+  generation  6: best so far 45.07, this generation 49.28 (mean 68.08), step 0.280
+  generation  7: best so far 43.65, this generation 49.83 (mean 73.82), step 0.281
+  generation  8: best so far 43.65, this generation 57.94 (mean 75.92), step 0.281
+  generation  9: best so far 43.65, this generation 56.54 (mean 79.02), step 0.271
+  generation 10: best so far 43.65, this generation 55.54 (mean 80.04), step 0.267
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         24.8        28.1        32.5  31.5-33.5 
+  seat 2 share of decisive games                         26.8        26.2        26.9  25.9-27.9 
+  seat 3 share of decisive games                         23.9        23.5        22.7  21.7-23.7 
+  seat 4 share of decisive games                         24.5        22.3        17.9  16.9-18.9 
+  median round of a decisive win                         10.0         9.0         7.0   6.0-8.0  
+  loss: built-in 113.12, best 43.65
+
+  best knobs:
+    dack-fayden-white-stax.temp                    0.200  (built-in 1.000)
+    dack-fayden-white-stax.aggression              0.466  (built-in 0.600)
+    dack-fayden-white-stax.caution                 0.000  (built-in 0.500)
+    kinnan-bonder-mana-combo.temp                  2.000  (built-in 1.000)
+    kinnan-bonder-mana-combo.aggression            0.497  (built-in 0.600)
+    kinnan-bonder-mana-combo.caution               0.357  (built-in 0.500)
+    kraum-tymna-blue-breach-midrange.temp          0.986  (built-in 1.000)
+    kraum-tymna-blue-breach-midrange.aggression    0.000  (built-in 0.600)
+    kraum-tymna-blue-breach-midrange.caution       0.514  (built-in 0.500)
+    rograkh-silas-turbo-breach.temp                0.200  (built-in 1.000)
+    rograkh-silas-turbo-breach.aggression          0.759  (built-in 0.600)
+    rograkh-silas-turbo-breach.caution             0.000  (built-in 0.500)
+    rograkh-thrasios-creature-combo.temp           0.200  (built-in 1.000)
+    rograkh-thrasios-creature-combo.aggression     0.228  (built-in 0.600)
+    rograkh-thrasios-creature-combo.caution        0.272  (built-in 0.500)
+    sisay-legends-toolbox.temp                     1.018  (built-in 1.000)
+    sisay-legends-toolbox.aggression               0.416  (built-in 0.600)
+    sisay-legends-toolbox.caution                  0.891  (built-in 0.500)
+    cthresh_default                                3.000  (built-in 6.000)
+    instant_extra                                  2.000  (built-in 0.000)
+    t6_moxd_lands                                  2.000  (built-in 3.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/realism-casual-targets/audit/realism/fit/t6-deck-gate.toml (run it with --knobs; confirm with --realism and more games)

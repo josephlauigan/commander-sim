@@ -1,0 +1,46 @@
+# Identity knobs for Tier 6: every value as built in (pool default style 1.0 / 0.6 / 0.5, loose thresholds, the
+# look-ahead's defaults). A run with this file must match a run without it.
+tier = "t6"
+
+[table]
+temp_scale = 1.0
+cthresh_default = 6
+instant_extra = 0
+
+[search]
+combo_w = 12.0
+ramp_w = 0.0
+hold_w = 1.0
+top_k = 5
+rollouts = 6
+horizon = 1
+
+[style.dack-fayden-white-stax]
+temp = 1.0
+aggression = 0.6
+caution = 0.5
+
+[style.kinnan-bonder-mana-combo]
+temp = 1.0
+aggression = 0.6
+caution = 0.5
+
+[style.kraum-tymna-blue-breach-midrange]
+temp = 1.0
+aggression = 0.6
+caution = 0.5
+
+[style.rograkh-silas-turbo-breach]
+temp = 1.0
+aggression = 0.6
+caution = 0.5
+
+[style.rograkh-thrasios-creature-combo]
+temp = 1.0
+aggression = 0.6
+caution = 0.5
+
+[style.sisay-legends-toolbox]
+temp = 1.0
+aggression = 0.6
+caution = 0.5

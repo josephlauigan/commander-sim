@@ -16,7 +16,7 @@ You are one of several agents porting a Python Magic: The Gathering Commander si
   (something growing without bound), never a flake. An uncapped runaway once took down the user's editor.
 - Toolchain: `export PATH=$HOME/.cargo/bin:$PATH`; build from `rust/`. In zsh a command stored in a variable isn't
   word-split: write commands out.
-- Conventions: `rust/PORTING_CARDS.md`; the pattern `rust/crates/sim-core/src/impls/t1.rs`; how the engine calls
+- Conventions: `documents/archive/PORTING_CARDS.md`; the pattern `rust/crates/sim-core/src/impls/t1.rs`; how the engine calls
   card code: `hooks.rs`, `engine/hooks.rs`, `cardcode.rs` (placeholders `PORT(M5)` / `PORT(phase 6)`);
   registration order `impls/mod.rs` (Python's import order); shared machinery `impls/common.rs` (reuse, don't copy).
 - Edit only the files your brief gives you. Shared files (cardcode.rs, state.rs, hooks.rs, engine/*, ai/*): smallest

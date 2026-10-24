@@ -1,13 +1,14 @@
 //! The game state: `Game`, `Player`, `Perm` (nonland permanents and tokens), `Land`, and the stack.
 //!
-//! Layout rules (documents/rust-design.md):
+//! Layout rules (documents/archive/rust-design.md):
 //! - Everything is plain data. Objects refer to each other by id (`ids.rs`), never by reference, so
 //!   `Game: Clone` copies a whole game, which is what the look-ahead does at every playout.
 //! - Permanents and lands live in arenas on the `Game` (`perms`, `lands`), never removed or reused; a player's
 //!   battlefield is the ordered list of ids it controls (`Player::perms`, `Player::lands`), in entry order as Python
 //!   keeps it.
 //! - Python's attributes set on the fly (`getattr(g, 'x', default)`) are declared fields here, with the same
-//!   default. They are added as the code using them is ported; the runtime inventory in documents/rust-design.md
+//!   default. They are added as the code using them is ported; the runtime inventory in
+//! documents/archive/rust-design.md
 //!   lists them all.
 //! - Tables Python keys by `id(permanent)` (end-of-turn pumps, granted keywords) become fields of the permanent.
 //! - Card-specific state on a permanent (Python's `m.data` dict) is `PermData`: a short list of typed keys.

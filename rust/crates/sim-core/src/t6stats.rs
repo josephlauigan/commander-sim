@@ -151,19 +151,41 @@ pub fn speed_flag(g: &mut Game, p: PlayerId, ready_now: bool) {
     g.player_mut(p).stats.insert(intern("sp|rdy_now"), ready_now as i64);
 }
 
-/// p chose `label` at a main-phase decision: count it when a line was ready and the deck has not gone yet
+/// `sp|away_now`: 1 while a line is one tutor away (and none is ready) at the current decision (transient)
+pub fn away_flag(g: &mut Game, p: PlayerId, away_now: bool) {
+    g.player_mut(p).stats.insert(intern("sp|away_now"), away_now as i64);
+}
+
+/// p chose `label` at a main-phase decision: count it under `spx|` when a line was ready and the deck has not gone
+/// yet, and under `spa|` when a line was one tutor away and none was ready
 pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
     if !g.player(p).t6 {
         return;
     }
     let pl = g.player(p);
-    if pl.stats.get(&intern("sp|rdy_now")).copied().unwrap_or(0) == 0 || pl.stats.contains_key(&intern("sp|go")) {
+    let now = |k: &str| pl.stats.get(&intern(k)).copied().unwrap_or(0) != 0;
+    let (ready, away) = (now("sp|rdy_now"), now("sp|away_now"));
+    if !(ready || away) || pl.stats.contains_key(&intern("sp|go")) {
         return;
     }
     // the card or play, without target and search tags: "Cast X -> Y [search]" -> "X"
     let l = label.split(" -> ").next().unwrap_or(label).trim_end_matches(" [search]").trim_end_matches(" [must]");
     let l = l.strip_prefix("combo: ").map_or(l.to_string(), |c| format!("combo: {c}"));
-    bump(g, p, format!("spx|{l}"));
+    bump(g, p, format!("{}|{l}", if ready { "spx" } else { "spa" }));
+    if !ready && l.starts_with("stop") {
+        // passed while one tutor away: which tutors it held (`spah|<card>`, one per tutor in hand)
+        use crate::tag::Tag;
+        let held: Vec<String> = g
+            .player(p)
+            .hand
+            .iter()
+            .filter(|&&c| g.db.get(c).tags.has(Tag::Tut) || g.db.get(c).tags.has(Tag::Xtutor))
+            .map(|&c| card(g, c))
+            .collect();
+        for t in held {
+            bump(g, p, format!("spah|{t}"));
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------- mana (speed project)

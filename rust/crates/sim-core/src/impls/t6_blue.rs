@@ -1,5 +1,5 @@
-//! Tier 6 batch `blue` (rust/agents/t6-batches.md): the blue and small utility cards of the Kraum & Tymna, Rograkh &
-//! Silas and Kinnan decks. Cards only: no engine file is touched; what needs the engine is listed in
+//! Tier 6 batch `blue` (rust/agents/archive/t6-batches.md): the blue and small utility cards of the Kraum & Tymna,
+//! Rograkh & Silas and Kinnan decks. Cards only: no engine file is touched; what needs the engine is listed in
 //! rust/agents/engine-needs-blue.md.
 //!
 //! - Borne Upon a Wind: draw, and the one-turn "cast spells as though they had flash" flag (`t6_lands::FLASH_FLAG`).

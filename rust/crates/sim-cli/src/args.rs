@@ -12,6 +12,12 @@ pub struct Args {
     pub all_decks: bool,
     pub calibrate: Option<String>,
     pub realism: bool,
+    pub knobs: Option<String>,
+    pub fit: bool,
+    pub fit_scope: String,
+    pub fit_gens: u32,
+    pub fit_out: Option<String>,
+    pub fit_stats: Option<String>,
     pub games: u64,
     pub seed: u64,
     pub profiles: Vec<String>,
@@ -47,7 +53,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 25] = [
+const OPTS: [Opt; 31] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -56,7 +62,7 @@ const OPTS: [Opt; 25] = [
         &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
         "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
-         (data/my_decks.toml: e.g. sephfs t1-t3, yshtola t4-t5). A tier outside them is refused unless --any-tier",
+         (data/my_decks.toml: e.g. cloud t1-t3, sauron t3-t4). A tier outside them is refused unless --any-tier",
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
     opt("--calibrate", false, &["within", "ordering", "all"], "", "pool balance checks (no --deck needed)"),
@@ -66,6 +72,26 @@ const OPTS: [Opt; 25] = [
         &[],
         "",
         "with --pool tN: play the tier's own decks and score the games against data/realism/tN.toml (no --deck needed)",
+    ),
+    opt(
+        "--fit",
+        true,
+        &[],
+        "",
+        "with --pool tN: search the AI knobs (sep-CMA-ES, same seeds for every candidate) for the values closest to \
+         data/realism/tN.toml, and write them as a knobs file",
+    ),
+    opt("--fit-scope", false, &["shared", "deck"], "", "with --fit: one style for the whole tier (shared, the default) or one per deck"),
+    opt("--fit-gens", false, &[], "N", "with --fit: generations to run (default 15)"),
+    opt("--fit-out", false, &[], "FILE", "with --fit: where to write the knobs (default audit/realism/fit/<tier>-<scope>.toml)"),
+    opt("--fit-stats", false, &[], "LIST", "with --fit: score only these statistics (comma-separated keys, e.g. seat1_win,seat4_win); default every target"),
+    opt(
+        "--knobs",
+        false,
+        &[],
+        "FILE",
+        "AI knobs (deck styles, counter thresholds, look-ahead weights) from a TOML file, over the built-in values: \
+         see rust/crates/sim-cli/src/knobs.rs; --fit writes one",
     ),
     opt(
         "--any-tier",
@@ -127,6 +153,7 @@ const OPTS: [Opt; 25] = [
 
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
+     \x20                    [--knobs FILE] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
      \x20                    [--temp T] [--quiet] [--jobs N]\n\
@@ -193,6 +220,12 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         all_decks: false,
         calibrate: None,
         realism: false,
+        knobs: None,
+        fit: false,
+        fit_scope: "shared".into(),
+        fit_gens: 15,
+        fit_out: None,
+        fit_stats: None,
         games: 0,
         seed: 500000,
         profiles: vec![],
@@ -253,6 +286,12 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--preflight-only" => a.preflight_only = true,
             "--calibrate" => a.calibrate = Some(val),
             "--realism" => a.realism = true,
+            "--knobs" => a.knobs = Some(val),
+            "--fit" => a.fit = true,
+            "--fit-scope" => a.fit_scope = val,
+            "--fit-gens" => a.fit_gens = int(o.name, &val)?,
+            "--fit-out" => a.fit_out = Some(val),
+            "--fit-stats" => a.fit_stats = Some(val),
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
             "--seed" => a.seed = int(o.name, &val)?,

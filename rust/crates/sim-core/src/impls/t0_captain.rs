@@ -1,5 +1,5 @@
 //! Tier 0 pool deck card code: the cards of the Captain America precon (decklists/pool/t0-b2-precons/) that weren't
-//! modeled. Filled in by the t0-captain agent (rust/agents/t0-captain.md); the verdicts are in
+//! modeled. Filled in by the t0-captain agent (rust/agents/archive/t0-captain.md); the verdicts are in
 //! data/card_overrides.toml.
 //!
 //! Cards modeled here:

@@ -1,5 +1,5 @@
 //! The simulator's engine, AI and cards: a port of the Python package `commander_sim`
-//! (documents/rust-rewrite-scope.md; the design is in documents/rust-design.md).
+//! (documents/archive/rust-rewrite-scope.md; the design is in documents/archive/rust-design.md).
 
 pub mod ai;
 pub mod cardcode;

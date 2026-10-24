@@ -1,0 +1,34 @@
+tier = "t6"
+[table]
+cthresh_default = 10
+instant_extra = 4
+
+[style.dack-fayden-white-stax]
+temp = 0.3
+aggression = 1.0
+caution = 0.0
+
+[style.kinnan-bonder-mana-combo]
+temp = 0.3
+aggression = 1.0
+caution = 0.0
+
+[style.kraum-tymna-blue-breach-midrange]
+temp = 0.3
+aggression = 1.0
+caution = 0.0
+
+[style.rograkh-silas-turbo-breach]
+temp = 0.3
+aggression = 1.0
+caution = 0.0
+
+[style.rograkh-thrasios-creature-combo]
+temp = 0.3
+aggression = 1.0
+caution = 0.0
+
+[style.sisay-legends-toolbox]
+temp = 0.3
+aggression = 1.0
+caution = 0.0

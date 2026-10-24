@@ -13,6 +13,8 @@ mod args;
 mod cardinfo;
 mod decks;
 mod explain;
+mod fit;
+mod knobs;
 mod play;
 mod poolmode;
 mod progress;
@@ -59,13 +61,23 @@ fn compare(argv: &[String]) -> i32 {
         }
     };
     let opts = RunOpts { ai: ai_mode(&a.ai), temp: a.temp, jobs: a.jobs };
-    let sim = match Sim::load(opts) {
+    let mut sim = match Sim::load(opts) {
         Ok(s) => s,
         Err(e) => {
             eprintln!("{e}");
             return 1;
         }
     };
+    if let Some(path) = &a.knobs {
+        let read = std::fs::read_to_string(path).map_err(|e| format!("--knobs {path}: {e}"));
+        match read.and_then(|text| knobs::parse(&text, path, &sim.deck_keys())) {
+            Ok(k) => sim.knobs = Some(k),
+            Err(e) => {
+                eprintln!("{e}");
+                return 1;
+            }
+        }
+    }
     let r = run(&sim, a);
     report_errors(&sim);
     match r {
@@ -112,6 +124,9 @@ fn swap_in_place(list: &[String], swaps: &[(String, String)]) -> Vec<String> {
 
 /// compare.main
 fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
+    if a.fit {
+        return fit::run(sim, &a).map(|()| 0);
+    }
     if a.realism {
         return realism::run(sim, &a).map(|()| 0);
     }

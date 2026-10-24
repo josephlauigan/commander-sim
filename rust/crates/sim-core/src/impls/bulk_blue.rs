@@ -1,5 +1,5 @@
 //! Card code for the blue spells (keyed by card name; no deck owns it).
-//! Written by the blue-spells agent (rust/agents/blue-spells.md).
+//! Written by the blue-spells agent (rust/agents/archive/blue-spells.md).
 //!
 //! - Jace, Reality Sculptor (walker framework + the empower Jace token of `alela.rs`).
 //! - Token copies: Relm's Sketching, Echocasting Symposium (paradigm through the engine's rebound step).

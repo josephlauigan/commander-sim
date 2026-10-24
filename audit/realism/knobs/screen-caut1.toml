@@ -1,0 +1,31 @@
+tier = "t6"
+
+[style.dack-fayden-white-stax]
+temp = 1.0
+aggression = 0.6
+caution = 1.0
+
+[style.kinnan-bonder-mana-combo]
+temp = 1.0
+aggression = 0.6
+caution = 1.0
+
+[style.kraum-tymna-blue-breach-midrange]
+temp = 1.0
+aggression = 0.6
+caution = 1.0
+
+[style.rograkh-silas-turbo-breach]
+temp = 1.0
+aggression = 0.6
+caution = 1.0
+
+[style.rograkh-thrasios-creature-combo]
+temp = 1.0
+aggression = 0.6
+caution = 1.0
+
+[style.sisay-legends-toolbox]
+temp = 1.0
+aggression = 0.6
+caution = 1.0

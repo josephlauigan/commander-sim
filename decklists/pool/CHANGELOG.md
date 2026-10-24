@@ -90,3 +90,51 @@ Deck key `yawgmoth-mono-black-aristocrats`, `decklists/pool/t5-high-b4/yawgmoth-
 
 - **2026-09.** Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Fellwar Stone and Night's Whisper made way for Grim Monolith and The One Ring. Yawgmoth stays at the low edge of Tier 5 (about 15%): mono-black has only three pieces for its loop, and it loses races rather than lacking power.
 - **2026-09.** Tuned in September 2026 toward a High Bracket 4 build: two more death payoffs (Falkenrath Noble, Vindictive Vampire), steady fodder and card flow (Bitterblossom, Midnight Reaper), and Sanguine Bond + Exquisite Blood as a second compact kill, for Liliana of the Veil, Deadly Rollick, Bloodchief's Thirst, Stitcher's Supplier, Grave Pact and Feed the Swarm. Mono-black has only three loop pieces for the Yawgmoth combo (Mikaeus, Geralf's Messenger, Butcher Ghoul). (The last sentence stays in Strategy as current text.)
+
+## Dack Fayden — White Stax (cEDH)
+
+Deck key `dack-fayden-white-stax`, `decklists/pool/t6-cedh/dack-fayden-white-stax.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Gideon of the Trials, Kozilek's Command, Staff of Domination. In: Coalition Relic, Prismatic Lens, Thorn of Amethyst. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.
+
+## Kinnan — Mana-Creature Combo (cEDH)
+
+Deck key `kinnan-bonder-mana-combo`, `decklists/pool/t6-cedh/kinnan-bonder-mana-combo.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Emrakul, the Promised End, Twincast. In: Cryptolith Rite, Formidable Speaker. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.
+
+## Kraum & Tymna — Blue Breach Midrange (cEDH)
+
+Deck key `kraum-tymna-blue-breach-midrange`, `decklists/pool/t6-cedh/kraum-tymna-blue-breach-midrange.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Tarnished Citadel. In: Windswept Heath. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.
+
+## Rograkh & Silas — Turbo Oracle and Breach (cEDH)
+
+Deck key `rograkh-silas-turbo-breach`, `decklists/pool/t6-cedh/rograkh-silas-turbo-breach.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Chromatic Star, Flashback, Talisman of Indulgence. In: Commandeer, Snapback, Swan Song. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.
+
+## Rograkh & Thrasios — Green Creature Combo (cEDH)
+
+Deck key `rograkh-thrasios-creature-combo`, `decklists/pool/t6-cedh/rograkh-thrasios-creature-combo.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Commandeer, Emerald Charm. In: Delighted Halfling, Kinnan, Bonder Prodigy. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.
+
+## Sisay — Legends Toolbox and Taxes (cEDH)
+
+Deck key `sisay-legends-toolbox`, `decklists/pool/t6-cedh/sisay-legends-toolbox.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Dismember, Forbidden Orchard, Lightning Greaves, Marsh Flats. In: Ancient Tomb, Arcane Signet, Crop Rotation, Scrubland. Realism: aligned with 8 recent EDHTop16 winning lists of this commander (Apr-Oct 2026): real-core cards in for the cards those lists run least.

@@ -4,13 +4,13 @@ Read this file, then `CLAUDE.md`. Everything needed to continue is here; the cha
 
 ## Where things are
 
-- **Branch** `claude/realism-phase0`, pushed, not merged, no PR (JD asks for PRs explicitly). Start with
-  `git fetch origin && git checkout claude/realism-phase0 && git merge origin/main` (merge, don't rebase).
+- **Code:** all of it is on `main` (merged in PR #131, 2026-10-23). Work on a new branch from `main`; JD asks for PRs
+  explicitly.
 - **Plan document** (claude.ai Doc, JD's): https://claude.ai/artifact/Fa1usjF6hHZiSUBXwLzGNJ, "Commander Sim:
   Improvement and Refactoring Plan". A session with the Claude Docs connector can read and edit it; without it, this
   file summarises what matters (below).
-- **Commits on the branch:** `8685877` (targets format + `--realism`), `74a2a48` (README), `f4c1822` (t6 baseline),
-  `46fb1bc` (+/- 1 bands), and this handoff.
+- **Commits (PR #131):** `8685877` (targets format + `--realism`), `74a2a48` (README), `f4c1822` (t6 baseline),
+  `46fb1bc` (+/- 1 bands), `7fb4cd3` (CI), `9567a2f` (flaky practice image test fixed), and this handoff.
 
 ## The plan in brief (from the document)
 
@@ -36,7 +36,8 @@ per-commander win rates.
    `seat1_win`..`seat4_win`, `win_round_median`, `win_round_spread`, `win_combo_alt`, `win_damage`,
    `win_commander_damage`, `win_poison`, `deck_win_spread`, `games_over_15`. A missing or unknown field, an unknown
    statistic, a wrong `tier`, or a value outside its band is refused before any game is played.
-2. **t6 filled** (sources below); **t0-t5** hold only `tier` and comments naming their future sources.
+2. **t6 filled** (sources below); **t3 filled** (2026-10-24, Playgroup: seats, median win round, win types; Atraxa
+   left out, see its file); **t0-t2, t4, t5** hold only `tier` and comments naming their future sources.
 3. **`commander-sim --realism --pool tN`** (`rust/crates/sim-cli/src/realism.rs`): plays the tier's own decks, 4 a
    pod, using the `--calibrate within` games (`Ctx::tier_games` in `poolmode.rs`, shared with `calibrate`). Prints
    sim value, 95% CI, target, band, PASS/FAIL, then games, decisive share, timeouts, each deck's decisive share and
@@ -66,11 +67,22 @@ per-commander win rates.
 The slow table and flat seat edge match `audit/t6/speed-2026-10-19/REPORT.md`, which found the decks draw- and
 mana-limited rather than waiting.
 
+7. **t3 baseline**, `audit/realism/t3-baseline.md` (+ raw `t3-adaptive-8200.txt`): 8,200 adaptive games. **1 of 9
+   pass** (poison). Median win round 13 against 8, 33% of games past round 15, combo 1.9% against 20%, seat 1 26.5%
+   against 31.3%. Korvold (13.9%) and Marwyn (11.7%) are the weakest decks, though on Playgroup they win most.
+
 ## JD's decisions
 
 - 2026-10-23: seat targets are the EDHTop16 monthly-report shares. Every share target is held to +/- 1 point. Win
   types stay scored (although their source is casual logs). Fitting may overrule any hand-set value or threshold,
   the loose profile's included. Each deck may get its own fitted settings, to close the deck spread.
+- 2026-10-24: pool decks may be updated to fit or reflect the real data (for example, the Tier 3 Atraxa made the
+  deck players actually log, so it can rejoin the targets).
+- 2026-10-24 (morning): EDHREC may be used for the casual decks (its per-commander card inclusion rates, as EDHTop16's
+  play rates are used for Tier 6).
+- 2026-10-24 (morning): in `--fit`'s loss the win types count for a quarter (`fit.rs` `WIN_TYPE_WEIGHT` = 0.25; JD's
+  option 2 of: equal weight / less weight / seats and speed only). **To be revisited**, for example once the Tier 6
+  win types have a tournament source, or once AI fixes make the seat edge movable.
 - Standing rules in CLAUDE.md still apply: loose profile only, each of JD's decks only against its own tiers, no
   Python, the memory cap, subagents on the default model, check subagents' work.
 - Still open in the plan document: start logging pod games now (by hand or from practice mode)? Order of the engine
@@ -80,30 +92,39 @@ mana-limited rather than waiting.
 
 **Finish Phase 0** (gate: nightly scorecard with targets for two tiers):
 
-1. Targets for one casual tier from Playgroup (see Data). Match the tier's five pool commanders (`data/decks.json`
-   `pool[].commander`; all 36 pool commanders are in Playgroup's list with 100+ games). Fill win types (+/- 1) and
-   seat rates (from each commander's HTML page, or the all-games turn-order figures). Note in the file that
-   Playgroup's `average_round_amount` is game length, not win round, and that a commander's numbers cover every deck
-   built around it. Kinnan is in both t5 and t6; t6 pairs need both partners.
-2. Nightly run: done on this branch (JD approved CI, 2026-10-23). `.github/workflows/ci.yml` builds and tests on
+1. Targets for one casual tier: **done**, Tier 3 (`data/realism/t3.toml`, branch `realism-casual-targets`). The gate
+   passes once that branch is on `main` and the nightly run scores it. The same method fits the other casual tiers:
+   commanders.json for win types, each commander page's "Does seating order matter?" block for seats,
+   `/api/public/v1/commanders/<id>.json` `stats.average_wins_by_turn` (one number, not a distribution) for speed.
+   Check each commander's win types against the pool deck's archetype first (Atraxa's were 45% poison).
+2. Nightly run: done (JD approved CI, 2026-10-23). `.github/workflows/ci.yml` builds and tests on
    every push and PR; `.github/workflows/realism.yml` runs the scorecard nightly (07:17 UTC) and on demand: adaptive
    AI on every tier at 8,200 games, look-ahead on Tier 6 at 2,200 (input `lookahead_games`). Tables go to the run's
-   summary and an artifact; a failing target does not fail the job. Schedules and the on-demand button only work
-   once the workflow is on `main`. Once Phase 1 passes, make a target miss fail the job.
+   summary and an artifact; a failing target does not fail the job. Both are live on `main` (the scorecard runs
+   nightly; "Run workflow" on the Actions tab runs it on demand). Once Phase 1 passes, make a target miss fail it.
 3. Optionally a reader for `pod_games.toml` (validate records; summarise seat, round and win-type stats).
 
 **Phase 1** (gate: Tier 6 seat edge inside its band):
 
-1. Make the knobs data, with no behaviour change at current values (a paired run must show 0 difference):
-   `ai/mod.rs` `Style { temp, aggression, caution }` per deck (`ai/plans.rs`, `ai/pool.rs` `DEFAULT_STYLE` 1.0 /
-   0.6 / 0.5); `settings.rs` `Settings::new` counter thresholds (`cthresh`, loose 6) and `instant_extra` (loose 0);
-   `Search` weights `combo_w`, `ramp_w`, `hold_w` (env `SEARCH_RAMP_W` / `SEARCH_HOLD_W`) and `top_k`, `rollouts`,
-   `horizon`.
-2. A fit command (e.g. `commander-sim --fit --pool t6`): derivative-free search (CMA-ES or similar, in Rust), on the
-   adaptive AI (about 1,000 games a minute), same seeds for every candidate, loss = distance to each target. Per-deck
-   parameters are allowed.
-3. Confirm with the look-ahead AI at about 8,200 games (needed to resolve +/- 1; about 5 hours on 4 cloud cores, faster
-   on JD's machine). Write `audit/realism/t6-fit-<date>.md`; update the plan document's Phase status.
+State on branch `realism-phase1` (2026-10-24 overnight; every decision taken for JD is in
+`rust/agents/overnight-2026-10-24.md`):
+
+1. **Knobs as data: done.** `--knobs FILE` (`sim-cli/src/knobs.rs`); styles in `Settings::styles`, read first by
+   `ai::style` (`base_style` = the built-in lookup); `[table] t6_moxd_lands` added. A file restating the built-in
+   values gives byte-identical output (`audit/realism/knobs/`).
+2. **Fit command: done.** `commander-sim --fit --pool tN [--fit-scope shared|deck] [--fit-gens N] [--fit-out F]`
+   (`sim-cli/src/fit.rs`): sep-CMA-ES on the knobs scaled to [0, 1], same seeds for every candidate, loss = sum of
+   ((sim - target) / half band)^2. Results of the first Tier 6 fits: `audit/realism/fit/`.
+3. **The gate is out of reach of knobs and lists.** No knob moves the Tier 6 seat edge or speed; the pool lists
+   already match 48 real winning lists; the table without Dack, and with Mox Diamond's rule relaxed, is as slow
+   (`audit/realism/t6-lists-2026-10-24/REPORT.md`). The time goes in turning tutors and draws into a finished line:
+   lines are "one tutor away" at round 6-7 but ready in only 18-45% of games. Next: trace those games (what the deck
+   tutors for, what it holds), then Dack's 35% (the sim's strongest deck, real play's weakest), then Kraum/Tymna's
+   held lines. Update 2026-10-24 night: done for the Breach decks (Rograkh fodder fix, median 10 -> 9); the top lead
+   now is that the AI prices printed costs while the engine charges taxed ones (overnight log item 21). Fitting's loss is dominated by the win types (combo 68% against 47.8%, +/- 1), the weakest Tier 6
+   targets: report seat-only results beside it until JD decides on weights.
+4. Then: confirm a fit with the look-ahead AI at about 8,200 games; write `audit/realism/t6-fit-<date>.md`; update the
+   plan document's Phase status.
 
 ## Data sources (verified 2026-10-22, with what each offers)
 

@@ -143,6 +143,8 @@ pub struct Sim {
     pub opts: RunOpts,
     pub prog: Mutex<Progress>,
     pub errors: Mutex<Vec<GameError>>,
+    /// --knobs FILE: applied to every run's settings (`settings`)
+    pub knobs: Option<crate::knobs::Knobs>,
     seats: HashMap<String, Seat>,
     /// the exported card records (data/cards.json), by name
     raw: HashMap<String, RawCard>,
@@ -164,6 +166,7 @@ impl Sim {
             opts,
             prog: Mutex::new(Progress::new()),
             errors: Mutex::new(vec![]),
+            knobs: None,
             seats: HashMap::new(),
             raw,
         };
@@ -225,7 +228,16 @@ impl Sim {
     }
 
     pub fn settings(&self, profile: Profile) -> Settings {
-        Settings::new(profile, self.opts.ai, self.opts.temp)
+        let mut st = Settings::new(profile, self.opts.ai, self.opts.temp);
+        if let Some(k) = &self.knobs {
+            k.apply(&mut st);
+        }
+        st
+    }
+
+    /// every deck key a knobs file may name: your decks and the pool's
+    pub fn deck_keys(&self) -> Vec<&str> {
+        self.mine.keys().map(|k| k.as_str()).chain(self.pool.iter().map(|d| d.key.as_str())).collect()
     }
 
     /// the cards of a deck file that differ from data/decks.json: the export is out of date (a warning only; the

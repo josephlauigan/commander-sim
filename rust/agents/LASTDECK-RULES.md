@@ -37,7 +37,7 @@ These rules replace `rust/agents/RULES.md` (written for the Python port): **Pyth
 | Face-down creatures (morph, disguise, turning face up), protection from a color, Auras on your own creatures | white-rest |
 
 ## How cards are modeled
-- Read `rust/PORTING_CARDS.md` (written for the port, but the hook-slot pattern still applies) and follow
+- Read `documents/archive/PORTING_CARDS.md` (written for the port, but the hook-slot pattern still applies) and follow
   `rust/crates/sim-core/src/impls/t1.rs` as the pattern. Card data: `data/carddb.txt` (hand tags),
   `data/card_overrides.toml` (overrides and the audit verdict), Scryfall text compiled by `cardgen`. Engine entry
   points: `hooks.rs`, `engine/hooks.rs`, `cardcode.rs`. Deck AI dispatch: `ai/decks.rs` (`deck_prio`, tutor picks

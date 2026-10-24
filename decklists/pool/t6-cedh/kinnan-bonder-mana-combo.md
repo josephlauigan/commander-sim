@@ -34,17 +34,17 @@ Written in Stage 3.
 
 **Battles (1).** Invasion of Ikoria // Zilortha, Apex of Ikoria
 
-**Creatures (25).** Birds of Paradise, Clever Impersonator, Colossal Skyturtle, Consecrated Sphinx, Delighted Halfling, Drift of Phantasms, Elvish Mystic, Elvish Spirit Guide, Emrakul, the Promised End, Endurance, Enduring Vitality, Faerie Mastermind, Flesh Duplicate, Fyndhorn Elves, Gene Pollinator, High Fae Trickster, Hullbreaker Horror, Llanowar Elves, Mockingbird, The Cabbage Merchant, Thrasios, Triton Hero, Trophy Mage, Valley Floodcaller, Volatile Stormdrake, Wan Shi Tong, Librarian
+**Creatures (25).** Birds of Paradise, Clever Impersonator, Colossal Skyturtle, Consecrated Sphinx, Delighted Halfling, Drift of Phantasms, Elvish Mystic, Elvish Spirit Guide, Endurance, Enduring Vitality, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Fyndhorn Elves, Gene Pollinator, High Fae Trickster, Hullbreaker Horror, Llanowar Elves, Mockingbird, The Cabbage Merchant, Thrasios, Triton Hero, Trophy Mage, Valley Floodcaller, Volatile Stormdrake, Wan Shi Tong, Librarian
 
 **Artifacts (16).** Arcane Signet, Basalt Monolith, Chrome Mox, Fellwar Stone, Grim Monolith, Imposter Mech, Lotus Petal, Mana Vault, Mirage Mirror, Mox Amber, Mox Diamond, Mox Opal, Sol Ring, Springleaf Drum, Talisman of Curiosity, The One Ring
 
-**Enchantments (6).** Copy Artifact, Copy Enchantment, Mirrormade, Mystic Remora, Rhystic Study, Sylvan Library
+**Enchantments (7).** Copy Artifact, Copy Enchantment, Cryptolith Rite, Mirrormade, Mystic Remora, Rhystic Study, Sylvan Library
 
-**Instants (22).** An Offer You Can't Refuse, Borne Upon a Wind, Chain of Vapor, Chord of Calling, Commandeer, Dispel, Disrupting Shoal, Dizzy Spell, Dramatic Reversal, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Misdirection, Pact of Negation, Sink into Stupor // Soporific Springs, Snapback, Sudden Substitution, Swan Song, Twincast
+**Instants (21).** An Offer You Can't Refuse, Borne Upon a Wind, Chain of Vapor, Chord of Calling, Commandeer, Dispel, Disrupting Shoal, Dizzy Spell, Dramatic Reversal, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Misdirection, Pact of Negation, Sink into Stupor // Soporific Springs, Snapback, Sudden Substitution, Swan Song
 
 **Sorceries (5).** Finale of Devastation, Flash Photography, Hidden Strings, Nature's Rhythm, Transmute Artifact
 
-**Lands (24).** Ancient Tomb, Boseiju, Who Endures, Botanical Sanctum, Breeding Pool, City of Brass, Command Tower, Exotic Orchard, Flooded Strand, Forest, Gemstone Caverns, Island, Mana Confluence, Misty Rainforest, Otawara, Soaring City, Polluted Delta, Rejuvenating Springs, Scalding Tarn, Tarnished Citadel, Tropical Island, Verdant Catacombs, Waterlogged Grove, Windswept Heath, Wooded Foothills, Yavimaya Coast
+**Lands (24).** Ancient Tomb, Boseiju, Who Endures, Botanical Sanctum, Breeding Pool, City of Brass, Command Tower, Exotic Orchard, Flooded Strand, Gemstone Caverns, Mana Confluence, Misty Rainforest, Otawara, Soaring City, Polluted Delta, Rejuvenating Springs, Scalding Tarn, Tarnished Citadel, Tropical Island, Verdant Catacombs, Waterlogged Grove, Windswept Heath, Wooded Foothills, Yavimaya Coast, 1 Forest, 1 Island
 
 ## Import list (100)
 
@@ -69,6 +69,7 @@ Written in Stage 3.
 1 Consecrated Sphinx
 1 Copy Artifact
 1 Copy Enchantment
+1 Cryptolith Rite
 1 Delighted Halfling
 1 Dispel
 1 Disrupting Shoal
@@ -77,7 +78,6 @@ Written in Stage 3.
 1 Drift of Phantasms
 1 Elvish Mystic
 1 Elvish Spirit Guide
-1 Emrakul, the Promised End
 1 Endurance
 1 Enduring Vitality
 1 Exotic Orchard
@@ -91,7 +91,7 @@ Written in Stage 3.
 1 Flusterstorm
 1 Force of Negation
 1 Force of Will
-1 Forest
+1 Formidable Speaker
 1 Fyndhorn Elves
 1 Gemstone Caverns
 1 Gene Pollinator
@@ -101,7 +101,6 @@ Written in Stage 3.
 1 Hullbreaker Horror
 1 Imposter Mech
 1 Invasion of Ikoria // Zilortha, Apex of Ikoria
-1 Island
 1 Kinnan, Bonder Prodigy
 1 Llanowar Elves
 1 Lotus Petal
@@ -140,7 +139,6 @@ Written in Stage 3.
 1 Transmute Artifact
 1 Trophy Mage
 1 Tropical Island
-1 Twincast
 1 Valley Floodcaller
 1 Verdant Catacombs
 1 Volatile Stormdrake
@@ -149,4 +147,6 @@ Written in Stage 3.
 1 Windswept Heath
 1 Wooded Foothills
 1 Yavimaya Coast
+1 Forest
+1 Island
 ```
