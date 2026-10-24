@@ -73,3 +73,15 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
     In isolation the Kinnan case (Llanowar off Talisman of Curiosity) casts fine, so it needs the game's own mana
     state: `commander-sim --calibrate within --pool t6 --ai adaptive --trace 3`, round 5, Kinnan. Each lost cheap
     mana play slows a deck a turn; worth fixing before more fitting.
+16. **Item 15's lead is mostly Dack's taxes, not a bug.** With a log line added when `act::perform` refuses a chosen
+    play (`ai/brain.rs`, logging only), 8 traced Tier 6 games have 132 refused plays (Erode 22, Mystic Remora 17,
+    Redirect Lightning 16, Ragavan 12, Chrome Mox 12, Elves of Deep Shadow 11, Damping Sphere 11...), all in games
+    with Dack Fayden seated: the two games without Dack have none, the one where Dack resolved two tax pieces has 63.
+    So the refusals are taxes (Damping Sphere, Thorn of Amethyst, Defense Grid on other players' turns) the option
+    list doesn't price in; the engine is right to refuse. The ranking could price taxes in, but the table without
+    Dack is as slow, so this is not the speed gap.
+17. **Gate-only fits: noise.** `--fit-stats seat1_win,seat2_win,seat3_win,seat4_win,win_round_median` (shared 12
+    generations, per-deck 10) reached seat 1 28.4% / 28.1% on their own seeds; on fresh seeds (900000-908199, 8,200
+    games) they give 25.6% / 26.2% against the built-in 26.0%, the median 10 / 9. That was the luckiest candidate
+    fitting the seeds' noise. Conclusion for Phase 1: fitting the existing knobs cannot pass the gate; the speed has to
+    come from the AI's and plans' conversion of tutors and draws into lines (REPORT.md, "Next leads").

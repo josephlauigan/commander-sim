@@ -1212,6 +1212,8 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
                 acted = true;
                 break;
             }
+            // offered, but the engine couldn't make it (the next option in the order is tried)
+            crate::glog!(g, "      ({} couldn't play {})", g.player(p).name, o.label);
         }
         if !acted {
             return Ok(());

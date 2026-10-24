@@ -49,8 +49,16 @@ The 15 missing core cards went in (decklists/pool/CHANGELOG.md, 2026-10-24) and 
 
 ## Next leads
 
-1. Tutor and draw conversion: trace games where a deck is one tutor away for several rounds and see what it does
-   instead (which tutor it holds, what it fetches).
+1. Tutor and draw conversion (the main lead): trace games where a deck is one tutor away for several rounds and see
+   what it does instead (which tutor it holds, what it fetches).
 2. Why Dack Fayden wins 35% in the sim and rarely in real play (its first-flip win, 76% of its wins, and its flicker
    plan), before any Dack-specific fitting.
 3. Kraum/Tymna's held lines (the "stop (hold mana)" choice with a ready line).
+
+## Refused plays (added later the same night)
+
+A log line now records each play the AI chooses that `act::perform` can't make (`ai/brain.rs`). In 8 traced Tier 6
+games there are 132, all in the six games with Dack Fayden seated (none in the two without; 63 in the game where Dack
+resolved two tax pieces). They are Dack's taxes (Damping Sphere, Thorn of Amethyst, Defense Grid) that the option
+list doesn't price in. The engine is right to refuse them, and the table without Dack is as slow, so they are not
+the speed gap.
