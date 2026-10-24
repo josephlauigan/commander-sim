@@ -65,7 +65,10 @@ note = "n = Playgroup wins logged for the five Tier 6 lead commanders"
 # --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0),
 # wins of Dack Fayden, Kinnan, Kraum, Rograkh and Sisay: combo 33.6%, alternate win and mill 14.2%, combat and other
 # damage 39.9%, commander damage 11.6%, poison 0.7% of 2,722 wins. These are casual pods logged by players, not
-# tournaments (kept scored, JD 2026-10-23). Combo and alternate wins are scored together: a Thassa's Oracle win is a combo
+# tournaments. Reference values, not scored (JD, 2026-10-24): cEDH keeps its own metrics, and these casual numbers are
+# printed for comparison only, out of the pass count and of --fit, until a cEDH source for win types exists (EDHTop16
+# and TopDeck.gg do not record them). Before that they were scored (JD 2026-10-23, at a quarter weight in --fit).
+# Combo and alternate wins are counted together: a Thassa's Oracle win is a combo
 # in the sim and often an alternate win in a player's log.
 
 [win_combo_alt]
@@ -75,6 +78,7 @@ hi = 48.8
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
+scored = false
 
 [win_damage]
 value = 39.9
@@ -83,6 +87,7 @@ hi = 40.9
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
+scored = false
 
 [win_commander_damage]
 value = 11.6
@@ -91,6 +96,7 @@ hi = 12.6
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
+scored = false
 
 [win_poison]
 value = 0.7
@@ -99,6 +105,7 @@ hi = 1.7
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
+scored = false
 
 # --- Balance: EDHTop16 six-month decisive shares of the five established Tier 6 decks run 23.9-27.9% (gap 4 points;
 # 4,700 entries; TARGETS-t6.md, pulled 2026-10-17). EDHTop16's commander pages no longer show game win rates, so this

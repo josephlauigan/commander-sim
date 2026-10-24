@@ -79,7 +79,7 @@ table has no target. Each file's comments say where every number came from and w
 
 | Tier | Targets |
 | --- | --- |
-| t6 (cEDH) | All but `win_round_spread` and `games_over_15`: 10 targets |
+| t6 (cEDH) | Seats, median win round, deck spread: 6 scored targets. The win types are reference values (`scored = false`: casual logs, printed, not scored or fitted) |
 | t3 (High Bracket 3) | Seats, median win round, win types: 9 targets. Atraxa is left out of every target (see the file) |
 | t0, t1, t2, t4, t5 | None yet; the files hold only `tier` and comments naming the future sources |
 
@@ -198,7 +198,9 @@ shows, per deck, what it chooses while one tutor away and which tutors it holds 
 The Tier 6 median win round (7) is JD's speed target (`decklists/pool/TARGETS-t6.md`), consistent with Playgroup's
 average win turn for the Tier 6 commanders (6-7). The Tier 6 deck spread (4, band 0-8) comes from EDHTop16's six-month
 decisive shares of the five established Tier 6 decks (23.9-27.9%). The Tier 6 win types come from Playgroup's casual
-logs of the Tier 6 commanders, not from tournaments, so they are the weakest Tier 6 targets.
+logs of the Tier 6 commanders, not from tournaments. Since 2026-10-24 they are reference values: the scorecard prints
+them with their band and the result `reference`, and they are left out of the pass count and of `--fit`. A targets
+table takes `scored = false` for that.
 
 ## JD's decisions
 
@@ -207,6 +209,10 @@ logs of the Tier 6 commanders, not from tournaments, so they are the weakest Tie
   the loose profile's included. Each deck may get its own fitted settings, to close the deck spread.
 - **2026-10-24.** Pool decks may be updated to fit or reflect the real data (for example, the Tier 3 Atraxa can become
   the infect deck players actually log, and rejoin the targets).
+- **2026-10-24 (later).** cEDH keeps its own metrics: Tier 6 is scored only on tournament-sourced targets (seats,
+  deck spread) and the speed target. The win types, whose only source is casual logs, become reference values until a
+  cEDH source exists (EDHTop16 and TopDeck.gg do not record how games are won). This replaces the 2026-10-23 "win types
+  stay scored" and the quarter weight for Tier 6. Other tiers keep scoring their win types.
 - **2026-10-24, overnight (made for JD, to confirm).** Tier 3 is the casual tier for the Phase 0 gate (most of JD's
   decks play it). Atraxa is left out of every Tier 3 target (45% of its Playgroup wins are poison; the pool's Atraxa is
   superfriends). The Tier 3 median win round uses Playgroup's average win turn (8.1, band 7-9). The knobs file is TOML

@@ -262,8 +262,14 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     }
     let root = decks::root()?;
     let mut targets = realism::load_targets(&root, tier)?;
+    // reference values (`scored = false`: the Tier 6 win types, from casual logs) are never fitted
+    let refs: Vec<String> = targets.iter().filter(|(_, t)| !t.scored).map(|(k, _)| k.clone()).collect();
+    targets.retain(|_, t| t.scored);
     if let Some(list) = &a.fit_stats {
         let want: Vec<&str> = list.split(',').map(str::trim).filter(|s| !s.is_empty()).collect();
+        if let Some(bad) = want.iter().find(|w| refs.iter().any(|r| r == **w)) {
+            return Err(format!("--fit-stats: {bad} is a reference value in data/realism/{tier}.toml (scored = false), not fitted"));
+        }
         if let Some(bad) = want.iter().find(|w| !targets.contains_key(**w)) {
             return Err(format!("--fit-stats: {bad} has no target in data/realism/{tier}.toml"));
         }
