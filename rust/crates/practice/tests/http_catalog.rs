@@ -35,7 +35,8 @@ fn test_your_decks() {
             "sheoldred",
             "thrasios",
             "veyran",
-            "yshtola"
+            "yshtola",
+            "yshtola-cedh"
         ]
     );
     assert_eq!(d["seph"]["name"], "Sephiroth, the Savior"); // the deck file's name for Atraxa
