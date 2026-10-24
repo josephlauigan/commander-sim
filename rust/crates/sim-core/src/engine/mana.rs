@@ -554,3 +554,28 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
     }
     (gn.max(0) as u32, pips)
 }
+
+/// what casting these cards one after another costs in all: each one's `cost_of` now, plus {1} per Damping Sphere for
+/// every spell of the line cast before it (the Sphere counts the spells cast this turn, and `cost_of` sees only those
+/// already cast). The AI checks a combo or a sequence against this, not the printed costs
+pub fn seq_cost(g: &Game, p: PlayerId, cards: &[CardId]) -> (u32, String) {
+    let spheres = if g.hooks.is_empty() {
+        0
+    } else {
+        hooks::hooked(g, Event::Cost)
+            .iter()
+            .filter(|(m, _)| g.perm(*m).cd.is_some_and(|c| &*g.db.get(c).name == "Damping Sphere"))
+            .count() as u32
+    };
+    let (mut gn, mut pips, mut before) = (0, String::new(), 0);
+    for &c in cards {
+        let (cg, cp) = cost_of(g, p, c);
+        if !g.db.get(c).land {
+            gn += spheres * before;
+            before += 1;
+        }
+        gn += cg;
+        pips.push_str(&cp);
+    }
+    (gn, pips)
+}

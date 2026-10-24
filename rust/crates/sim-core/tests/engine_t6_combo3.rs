@@ -94,6 +94,40 @@ fn a_counterspell_on_consultation_leaves_the_library_alone() {
     assert!(countered >= 1, "the AI counters a combo piece sometimes");
 }
 
+// the AI checks a line against what the engine charges (taxes included), not the printed costs: Oracle + Consultation
+// is {U}{U} + {B} printed, and a tax makes it 4, so on three lands it waits instead of stopping half-cast
+fn taxed_oracle(tax: &str) -> Game {
+    let mut g = tbl(&["kraum-tymna-blue-breach-midrange", "seph"]);
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Swamp", 1, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation"]);
+    let lib: Vec<_> = ["Sol Ring", "Brainstorm"].iter().map(|n| card(&g, n)).collect();
+    g.player_mut(P0).library = lib;
+    perm(&mut g, P1, tax);
+    g
+}
+
+fn oracle_waits_then_goes(tax: &str) {
+    let i = combos::combo_index(ORACLE).unwrap() as i64;
+    let mut g = taxed_oracle(tax);
+    assert!(!combos::attempt(&mut g, P0, i).unwrap(), "{tax}: the line isn't started on three lands");
+    assert_eq!(g.player(P0).hand.len(), 2, "{tax}: both pieces still in hand");
+    assert_eq!(g.player(P0).library.len(), 2, "{tax}: the library is untouched");
+    lands(&mut g, P0, "Swamp", 1, false);
+    combos::attempt(&mut g, P0, i).unwrap();
+    assert_eq!(g.winner, Some(P0), "{tax}: a fourth land pays the tax and the line wins");
+}
+
+#[test]
+fn damping_sphere_taxes_the_second_piece_of_the_oracle_line() {
+    oracle_waits_then_goes("Damping Sphere");
+}
+
+#[test]
+fn thorn_of_amethyst_taxes_consultation_in_the_oracle_line() {
+    oracle_waits_then_goes("Thorn of Amethyst");
+}
+
 // ============================================================ Kinnan + Basalt Monolith and its outlets
 const KB: &str = "Kinnan + Basalt Monolith";
 

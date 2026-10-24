@@ -23,7 +23,7 @@
 use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window};
 use crate::engine::values::colors_of;
 use crate::flow::Res;
@@ -98,14 +98,10 @@ fn creatures(g: &Game, p: PlayerId) -> usize {
     g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count()
 }
 
-type Cost = (u32, String);
-
-/// can p pay for all these at once?
+/// can p pay for all these, cast one after another (`seq_cost`: taxes included)?
 fn affordable(g: &Game, p: PlayerId, casts: &[CardId], extra: u32) -> bool {
-    let costs: Vec<Cost> = casts.iter().map(|&c| cost_of(g, p, c)).collect();
-    let gn: u32 = costs.iter().map(|x| x.0).sum::<u32>() + extra;
-    let pips: String = costs.iter().map(|x| x.1.as_str()).collect();
-    can_pay(g, p, gn, &pips, false)
+    let (gn, pips) = seq_cost(g, p, casts);
+    can_pay(g, p, gn + extra, &pips, false)
 }
 
 fn ready_with(ok: bool) -> Ready {
@@ -509,15 +505,13 @@ impl Plan {
         }
     }
 
-    /// can p pay for the casts plus every fetch (5 coloured mana each) at once?
+    /// can p pay for the casts (one after another, `seq_cost`) plus every fetch (5 coloured mana each)?
     fn affordable(&self, g: &Game, p: PlayerId, extra: u32) -> bool {
-        let costs: Vec<Cost> = self.casts.iter().map(|&c| cost_of(g, p, c)).collect();
-        let gn: u32 = costs.iter().map(|x| x.0).sum::<u32>() + extra;
-        let mut pips: String = costs.iter().map(|x| x.1.as_str()).collect();
+        let (gn, mut pips) = seq_cost(g, p, &self.casts);
         for _ in &self.fetches {
             pips.push_str("WUBRG");
         }
-        can_pay(g, p, gn, &pips, false)
+        can_pay(g, p, gn + extra, &pips, false)
     }
 }
 

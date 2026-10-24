@@ -12,7 +12,7 @@ use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
@@ -381,22 +381,18 @@ fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
     can_pay(g, p, gn, &pips, false)
 }
 
-/// combos.cast_generic: generic mana for the pieces still to be cast, X included
-fn cast_generic(g: &Game, cmb: &Combo, casts: &[CardId]) -> u32 {
-    casts.iter().map(|&c| g.db.get(c).generic + cmb.x_for(name_of(g, c))).sum()
-}
-
-fn cast_pips(g: &Game, cmb: &Combo, casts: &[CardId]) -> String {
-    let mut s = cmb.mana.1.to_string();
-    for &c in casts {
-        s.push_str(&g.db.get(c).pips);
-    }
-    s
+/// combos.mana_need: the loop's own mana plus the pieces still to cast, in order, at what the engine will charge for them
+/// (`seq_cost`: taxes such as Thorn of Amethyst, Defense Grid and Damping Sphere included), X included
+pub fn mana_need(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, String) {
+    let (gn, pips) = seq_cost(g, p, casts);
+    let x: u32 = casts.iter().map(|&c| cmb.x_for(name_of(g, c))).sum();
+    (cmb.mana.0 + gn + x, format!("{}{pips}", cmb.mana.1))
 }
 
 /// the combo and its mana (the loop's own and the pieces' still to cast) can be paid for
 fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
-    can_pay(g, p, cmb.mana.0 + cast_generic(g, cmb, casts), &cast_pips(g, cmb, casts), false)
+    let (gn, pips) = mana_need(g, p, cmb, casts);
+    can_pay(g, p, gn, &pips, false)
 }
 
 // ------------------------------------------------------------------ execution
@@ -452,8 +448,8 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
         return run_steps(g, p, cmb);
     }
     for (i, &c) in casts.iter().enumerate() {
-        // the last pieces are cast normally: they can be countered
-        let (gn, pips) = (g.db.get(c).generic, g.db.get(c).pips.to_string());
+        // the last pieces are cast normally: they can be countered. They cost what any cast costs (taxes included)
+        let (gn, pips) = cost_of(g, p, c);
         if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
             if i > 0 {
                 crate::glog!(g, "    ...{} fizzles ({} is gone)", cmb.name, name_of(g, c));
@@ -1293,11 +1289,6 @@ fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
     let v = std::rc::Rc::new(v);
     CACHE.with(|c| c.borrow_mut().insert(key, v.clone()));
     v
-}
-
-/// the mana p needs for combo `cmb` (the loop's mana plus the spells still to cast): (generic, pips)
-pub fn mana_need(g: &Game, _p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, String) {
-    (cmb.mana.0 + cast_generic(g, cmb, casts), cast_pips(g, cmb, casts))
 }
 
 /// how many answerable steps the line has: its declared steps that are not plain permanents, else its spells to cast

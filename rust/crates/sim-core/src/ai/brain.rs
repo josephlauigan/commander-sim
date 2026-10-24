@@ -18,7 +18,7 @@ use crate::engine::altcost;
 use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_affordable, parse_cost};
 use crate::engine::combat::double_strike;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, mana_units, pay, phyrexian_life, total_mana};
+use crate::engine::mana::{can_pay, cost_of, mana_units, pay, phyrexian_life, seq_cost, total_mana};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::free_counter;
 use crate::engine::values::{commander_out, epow, etgh, has, player_hexproof, pval, shielded, threat, untargetable};
@@ -184,6 +184,12 @@ fn held(g: &Game, c: CardId) -> bool {
     (d.tag(Tag::Ctr) && !d.tag(Tag::Free)) || matches!(d.tags.str(Tag::Prot), Some("hi" | "phase" | "indes" | "blink"))
 }
 
+/// p can pay what casting c costs now (`cost_of`: taxes such as Thorn of Amethyst included), not only its printed cost
+fn can_pay_now(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let (cg, cp) = cost_of(g, p, c);
+    can_pay(g, p, cg, &cp, false)
+}
+
 /// brain.hold_value: the card the AI wants to keep mana up for, and how much
 pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64) {
     let pl = g.player(p);
@@ -191,16 +197,12 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
         .hand
         .iter()
         .copied()
-        .filter(|&c| {
-            let d = g.db.get(c);
-            held(g, c) && !free_counter(g, p, c) && can_pay(g, p, d.generic, &d.pips, false)
-        })
+        .filter(|&c| held(g, c) && !free_counter(g, p, c) && can_pay_now(g, p, c))
         .collect();
     let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };
     // Ad Nauseam is cast at the end of the turn before yours: keep its mana up when it's worth casting
     for &c in &pl.hand {
-        let d = g.db.get(c);
-        if d.tag(Tag::Adnaus) && can_pay(g, p, d.generic, &d.pips, false) {
+        if g.db.get(c).tag(Tag::Adnaus) && can_pay_now(g, p, c) {
             let v = super::plans::adnaus_prio(g, p, c) as f64 / 10.0 - 1.0;
             if v > hv {
                 (hc, hv) = (Some(c), v);
@@ -232,9 +234,8 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
 
 fn reserve_penalty(g: &Game, p: PlayerId, c: CardId, hold: Option<CardId>, hold_v: f64, near: bool) -> f64 {
     let Some(h) = hold.filter(|&h| h != c) else { return 0.0 };
-    let (cg, cp) = cost_of(g, p, c);
-    let hd = g.db.get(h);
-    if can_pay(g, p, cg + hd.generic, &format!("{cp}{}", hd.pips), false) {
+    let (cg, cp) = seq_cost(g, p, &[c, h]); // c now, the held card after it
+    if can_pay(g, p, cg, &cp, false) {
         return 0.0;
     }
     if near && !super::t6_table::is_ramp(g, c) {
@@ -533,14 +534,13 @@ fn rem_fodder(g: &Game, p: PlayerId) -> Vec<PermId> {
 }
 
 /// a removal spell castable for free (Fierce Guardianship-style with your commander out; Snuff Out for 4 life)
-/// what a removal spell costs: (generic, pips, life). A card with Phyrexian symbols (Dismember) goes through `cost_of`, which
-/// drops a {X/P} pip the mana can't pay, and the life is 2 per dropped pip; any other card costs its printed cost.
+/// what a removal spell costs: (generic, pips, life), from `cost_of` (taxes included). For a card with Phyrexian symbols
+/// (Dismember) `cost_of` drops a {X/P} pip the mana can't pay, and the life is 2 per dropped pip.
 fn rem_cost(g: &Game, p: PlayerId, c: CardId) -> (u32, String, i32) {
-    let d = g.db.get(c);
-    if d.phyrexian.is_empty() {
-        return (d.generic, d.pips.to_string(), 0);
-    }
     let (gn, pips) = cost_of(g, p, c);
+    if g.db.get(c).phyrexian.is_empty() {
+        return (gn, pips, 0);
+    }
     let life = phyrexian_life(g, p, c, &pips);
     (gn, pips, life)
 }
@@ -644,7 +644,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         });
         if let Some(k) = t.int(Tag::Kick)
             && rk.starts_with("dmg")
-            && can_pay(g, p, d.generic + k as u32, &d.pips, false)
+            && can_pay(g, p, rg + k as u32, &rp, false)
         {
             let kd = format!("dmg{}", rk[3..].parse::<i32>().unwrap_or(0) + 2); // Burst Lightning kicked: 4 damage
             let tg4 = legal_targets(g, p, &kd, tgt, mv4, Some(c));
@@ -702,8 +702,9 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     let mut best: Option<(f64, CardId, PermId)> = None;
     for &c in &rem {
         let x = g.db.get(c);
-        let alt = altcost::use_alt(g, d, c, None, x.generic, &x.pips);
-        if !alt && !can_pay(g, d, x.generic, &x.pips, x.tag(Tag::Convoke)) {
+        let (xg, xp, _) = rem_cost(g, d, c);
+        let alt = altcost::use_alt(g, d, c, None, xg, &xp);
+        if !alt && !can_pay(g, d, xg, &xp, x.tag(Tag::Convoke)) {
             continue;
         }
         if x.tag(Tag::Needsac) || x.tag(Tag::Pactpay) {
@@ -983,12 +984,12 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
     for &c in &g.player(p).hand {
         let d = g.db.get(c);
         let r = d.tags.str(Tag::Rem).unwrap_or("");
-        if !d.tag(Tag::Face) || !r.starts_with("dmg") || !can_pay(g, p, d.generic, &d.pips, false) {
+        if !d.tag(Tag::Face) || !r.starts_with("dmg") || !can_pay_now(g, p, c) {
             continue;
         }
         let dmg = r[3..].parse::<i32>().unwrap_or(0) + thor;
         let kick = match d.tags.int(Tag::Kick) {
-            Some(k) if can_pay(g, p, d.generic + k as u32, &d.pips, false) => k as u32,
+            Some(k) if { let (cg, cp) = cost_of(g, p, c); can_pay(g, p, cg + k as u32, &cp, false) } => k as u32,
             _ => 0,
         };
         for &q in &s.opps {
@@ -1384,7 +1385,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
                 continue; // cast only through their deck-specific logic
             }
             if t.has(Tag::Ctr) {
-                if t.has(Tag::Eotdraw) && can_pay(g, p, d.generic, &d.pips, false) {
+                if t.has(Tag::Eotdraw) && can_pay_now(g, p, c) {
                     // Mystic Confluence: draw three
                     opts.push(Opt {
                         utility: 2.5,
@@ -1395,7 +1396,8 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
                 continue;
             }
             let cv = t.has(Tag::Convoke);
-            if !can_pay(g, p, d.generic, &d.pips, cv) {
+            let (cg, cp) = cost_of(g, p, c);
+            if !can_pay(g, p, cg, &cp, cv) {
                 continue;
             }
             const EOT: [Tag; 8] =
@@ -1421,7 +1423,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
             let d = g.db.get(c);
             if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::engine::cast::grants_flash(g, p, c)))
                 || special(g, c)
-                || !can_pay(g, p, d.generic, &d.pips, false)
+                || !can_pay_now(g, p, c)
             {
                 continue;
             }
@@ -1478,7 +1480,8 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
 fn confluence_draw(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let d = g.db.get(c);
-    let (gn, pips, n) = (d.generic, d.pips.to_string(), d.tags.int_or_0(Tag::Eotdraw));
+    let n = d.tags.int_or_0(Tag::Eotdraw);
+    let (gn, pips) = cost_of(g, p, c);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
         return Ok(false);
     }

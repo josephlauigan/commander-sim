@@ -32,7 +32,8 @@ pub fn perform(g: &mut Game, p: PlayerId, a: &Action) -> Res<bool> {
 /// burn at q's face (kicked: 2 more damage)
 fn face(g: &mut Game, p: PlayerId, c: CardId, q: crate::ids::PlayerId, kick: u32) -> Res<bool> {
     let d = g.db.get(c);
-    let (gn, pips) = (d.generic + kick, d.pips.to_string());
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    let gn = gn + kick;
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
         return Ok(false);
     }
