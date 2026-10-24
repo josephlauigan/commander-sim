@@ -179,6 +179,12 @@ seat edge doesn't move (seat 1 26.0% -> 25.6%), and the median win round gets wo
 unchanged. Fitting only the gate's statistics (`--fit-stats` seats and median) reached seat 1 28.4% on its own seeds, but 25.6% (shared) and
 26.2% (per deck) on fresh ones, the same as the built-in 26.0%: the knobs cannot move the Tier 6 seat edge.
 
+**The first fix that moved the speed** (2026-10-24 night): the AI never sacrificed a commander as a cost, so Rograkh,
+Son of Rohgahh, a 0-cost commander real lists sacrifice freely, was never Diabolic Intent's fodder and Rograkh/Silas
+sat on the tutor one step from its line. With a 0-cost commander allowed as fodder (`ai::brain::spare_creature`), the
+Tier 6 median win round goes from 10 to 9 on the same 8,200 seeds; seat 1 is unchanged. The calibrate-within report now
+shows, per deck, what it chooses while one tutor away and which tutors it holds when it passes.
+
 ## Data sources
 
 | Source | What it gives | Licence and credit |
@@ -216,8 +222,9 @@ logs of the Tier 6 commanders, not from tournaments, so they are the weakest Tie
 
 1. Finish Phase 0: put the Tier 3 targets on `main` and let the nightly run score them. The same method (Playgroup's
    win types, seat blocks and average win turn for each pool commander) fills the other casual tiers.
-2. Phase 1, the speed: trace games where a deck sits one tutor away for rounds (what it tutors for, what it holds);
-   then Dack Fayden's 35% (the sim's strongest Tier 6 deck, real play's weakest) and Kraum/Tymna's held lines.
+2. Phase 1, the speed: make the AI price costs as the engine charges them (taxes such as Damping Sphere): the AI
+   starts lines and plays it then can't pay for (`rust/agents/overnight-2026-10-24.md`, items 16 and 21); then Sisay's
+   and Rograkh/Thrasios's lines (both win at a median round of 13), Dack Fayden's 35%, and Kraum/Tymna's held lines.
 3. Re-fit after each fix (`--fit`, fresh-seed check), and confirm with the look-ahead AI at about 8,200 games; write
    `audit/realism/t6-fit-<date>.md`. JD to decide whether the win types keep full weight in the loss.
 4. Once Phase 1 passes, make a target miss fail the nightly job.
