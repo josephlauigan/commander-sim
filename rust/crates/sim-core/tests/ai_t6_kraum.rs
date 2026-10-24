@@ -117,10 +117,14 @@ fn goes_when_the_table_is_tapped_out_and_never_with_kraum_out_against_a_drawer()
     let mut g = tbl();
     hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation"]);
     assert_eq!(plan::go_now(&g, P0, ORACLE_LINE), None);
-    // scenario 6: Kraum on my board, an opponent with a card and a land up
+    // scenario 6: Kraum on my board draws on an opponent's second spell. One card and one land can't cast two
     perm(&mut g, P0, "Kraum, Ludevic's Opus");
     lands(&mut g, P1, "Island", 1, false);
     hand(&mut g, P1, &["Brainstorm"]);
+    assert_eq!(plan::go_now(&g, P0, ORACLE_LINE), None, "one spell can't make Kraum draw");
+    // two cards and two lands up can
+    lands(&mut g, P1, "Island", 1, false);
+    hand(&mut g, P1, &["Opt"]);
     assert_eq!(plan::go_now(&g, P0, ORACLE_LINE), Some(false));
 }
 

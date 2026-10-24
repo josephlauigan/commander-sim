@@ -269,9 +269,19 @@ pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     let pl = g.player(p);
     let can_answer = g.opps(p).filter(|&q| stop_chance(g, q) >= 0.3).count();
     if combo.starts_with("Thassa's Oracle") {
-        let drawer = out(g, p, "Esper Sentinel") || crate::ai::plans::on_bf(g, p, "Kraum, Ludevic's Opus").is_some();
-        let cards_up = g.opps(p).any(|q| !g.player(q).hand.is_empty() && open_mana(g, q, None) >= 1);
-        if drawer && cards_up {
+        // an empty-library draw in response to the Oracle trigger loses. Esper Sentinel draws on an opponent's first
+        // noncreature spell: any opponent with a card and a mana can force it. Kraum draws on an opponent's SECOND
+        // spell each turn (spec scenario 6, "any opponent second spell"): an opponent who already cast one this turn
+        // and still holds a card, or one with two cards and two mana up. The old rule held on one card and one mana,
+        // which can't cast two spells, so Kraum on the battlefield kept a ready line from going in a third of the games
+        let cards_up = |q: PlayerId| !g.player(q).hand.is_empty() && open_mana(g, q, None) >= 1;
+        let second_spell = |q: PlayerId| {
+            let (cards, mana) = (g.player(q).hand.len(), open_mana(g, q, None));
+            (crate::engine::cast::casts_this_turn(g, q) >= 1 && cards >= 1) || (cards >= 2 && mana >= 2)
+        };
+        let sentinel = out(g, p, "Esper Sentinel") && g.opps(p).any(cards_up);
+        let kraum = crate::ai::plans::on_bf(g, p, "Kraum, Ludevic's Opus").is_some() && g.opps(p).any(second_spell);
+        if sentinel || kraum {
             return Some(false);
         }
         // spec (conditions to go): a creature counter or Silence effect (Oracle is a creature spell), unless every opponent is out of cards and mana
