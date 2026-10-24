@@ -1845,7 +1845,8 @@ const PVAL: &[(&str, f64)] = &[
     ("Korvold, Fae-Cursed King", 7.0),
     ("Teysa Karlov", 6.0),
     ("Meren of Clan Nel Toth", 6.0),
-    ("Kinnan, Bonder Prodigy", 8.0),
+    ("Kinnan, Bonder Prodigy", 5.0), // JD 2026-10-24: was 8; at 8 every opponent's removal went to him first (1.75 a game)
+    ("Sisay, Weatherlight Captain", 8.0), // the tutor engine of every Sisay line: real tables kill her first
     ("Urza, Lord High Artificer", 8.0),
     ("Yawgmoth, Thran Physician", 8.0),
     ("Zur the Enchanter", 7.0),

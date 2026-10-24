@@ -429,6 +429,15 @@ fn sisay_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     shuffle_library(g, p);
     match agent_for(g, p) {
         Some(a) => agent_take(g, a, p, t),
+        None if g.db.get(t).land => {
+            // a legendary land (Mount Doom, Gaea's Cradle) enters as a land, not as a permanent: the lines look for it
+            // among the lands (a fetched Mount Doom was not found, and the DDR and Flash Unicorn lines stopped). It
+            // is not the land drop
+            let tapped = crate::engine::turn::land_enters_tapped(g, p, t);
+            let l = g.add_land(p, t, tapped);
+            crate::cardcode::land_etb(g, p, l)?;
+            crate::engine::zones::landfall(g, p)?;
+        }
         None => {
             enter(g, p, t, Enter::default())?;
         }

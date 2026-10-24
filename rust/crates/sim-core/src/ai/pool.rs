@@ -557,7 +557,7 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
         let d = g.db.get(c);
         let t = &d.tags;
         let fill = t.str(Tag::Fill);
-        let payable = || castable(g, p, c, "hand") && can_pay(g, p, d.generic, &d.pips, false);
+        let payable = || castable(g, p, c, "hand") && { let (cg, cp) = cost_of(g, p, c); can_pay(g, p, cg, &cp, false) };
         if fill == Some("grisly")
             && payable()
             && (pl.lands.len() < 6
@@ -681,11 +681,10 @@ fn card_arg(arg: i64) -> CardId {
     CardId((arg & 0xffff) as u16)
 }
 
-/// cast a card from hand for its printed cost, no choices
+/// cast a card from hand for its cost (`cost_of`: taxes included), no choices
 fn plain_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = card_arg(arg);
-    let d = g.db.get(c);
-    let (gn, pips) = (d.generic, d.pips.to_string());
+    let (gn, pips) = cost_of(g, p, c);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
         return Ok(false);
     }
@@ -698,8 +697,7 @@ fn plain_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 fn dispute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     use crate::engine::cast::Fodder;
     let c = card_arg(arg);
-    let d = g.db.get(c);
-    let (gn, pips) = (d.generic, d.pips.to_string());
+    let (gn, pips) = cost_of(g, p, c);
     let fod = sac_fodder(g, p, "artifact or creature", None);
     if !g.player(p).hand.contains(&c) || fod.is_none() {
         return Ok(false);
@@ -741,8 +739,7 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let cd = CardId(((arg >> 16) & 0xffff) as u16);
     let src = PlayerId(((arg >> 32) & 0xff) as u8);
     let v = (arg >> 40) as f64 / 100.0;
-    let d = g.db.get(c);
-    let (gn, pips) = (d.generic, d.pips.to_string());
+    let (gn, pips) = cost_of(g, p, c);
     if !g.player(p).hand.contains(&c) || !g.player(src).gy.contains(&cd) || !can_pay(g, p, gn, &pips, false) {
         return Ok(false);
     }
@@ -816,8 +813,7 @@ fn primal_might(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 fn wildspeaker_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
-    let d = g.db.get(c);
-    let (gn, pips) = (d.generic, d.pips.to_string());
+    let (gn, pips) = cost_of(g, p, c);
     if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
         return Ok(false);
     }

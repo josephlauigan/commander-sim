@@ -33,12 +33,13 @@ const ENGINE: [&str; 9] = [
     "Wan Shi Tong, Librarian",
 ];
 /// Cradle, Talon Gates and the cards that fetch them
-const FINDERS: [&str; 9] = [
+const FINDERS: [&str; 10] = [
     "Gaea's Cradle",
     "Talon Gates of Madara",
     "Crop Rotation",
     "Gamble",
     "Expedition Map",
+    "Sylvan Scrying",
     "Sowing Mycospawn",
     "Vibrance",
     "Chord of Calling",
@@ -91,9 +92,10 @@ fn in_gy(g: &Game, p: PlayerId, f: impl Fn(&str) -> bool) -> bool {
     g.player(p).gy.iter().any(|&c| f(name(g, c)))
 }
 
-/// Cradle is in play
+/// Cradle is in play, or Itlimoc (a transformed Growing Rites of Itlimoc, which taps the same way)
 fn cradle_out(g: &Game, p: PlayerId) -> bool {
     on_bf(g, p, CRADLE)
+        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && name(g, g.land(l).cd) == super::t6_green2::RITES)
 }
 
 /// cast priority of `c` (0-100 scale like `deck_prio`; 0 or less keeps it in hand); None = no opinion
@@ -127,6 +129,7 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
         MASTERMIND => Some(if in_hand(g, p, GSZ) { 0.0 } else { 60.0 }),
         // bodies for Cradle: the cheap creature and token makers, as early as possible
         "Chatterstorm"
+        | "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun"
         | "Springheart Nantuko"
         | "Gene Pollinator"
         | "The Cabbage Merchant"
@@ -150,6 +153,13 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
             } else {
                 None
             }
+        }
+        // Sylvan Scrying (any land to hand, the `wish` list picks): Cradle while it is in the library, then Talon Gates
+        "Sylvan Scrying" => {
+            let lib = |x: &str| g.player(p).library.iter().any(|&c| name(g, c) == x);
+            let cradle_need = !cradle_out(g, p) && !in_hand(g, p, CRADLE) && lib(CRADLE);
+            let gates_need = cradle_out(g, p) && !on_bf(g, p, GATES) && !in_hand(g, p, GATES) && lib(GATES);
+            Some(if cradle_need { 88.0 } else if gates_need { 86.0 } else { 0.0 })
         }
         "Formidable Speaker" => Some(78.0),
         _ => None,

@@ -4,7 +4,7 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Taxing toolbox.
 
 - **Commander:** Sisay, Weatherlight Captain
 - **Color identity:** White, Blue, Black, Red, Green
-- **Game Changers (15):** Ancient Tomb, Chrome Mox, Crop Rotation, Cyclonic Rift, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gaea's Cradle, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Vampiric Tutor, Worldly Tutor
+- **Game Changers (16):** Ancient Tomb, Chrome Mox, Crop Rotation, Cyclonic Rift, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gaea's Cradle, Mana Vault, Mox Diamond, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Vampiric Tutor, Worldly Tutor
 - **Combos:** written in Stage 2 from the deck's primer.
 - **Lands:** 28 (28 nonbasic + 0 basic)
 - **Source:** The Cookout 2026, #2 of 238, 2026-08-29, record 5-1-3 ([decklist](https://edhtop16.com/tournament/the-cookout-2026/decklist/GHPNb0E7DnWMVIsJIhYSXre58rB3))
@@ -34,13 +34,13 @@ Written in Stage 3.
 
 **Planeswalkers (3).** Teferi, Time Raveler, Teferi, Who Slows the Sunset, Tyvar, Jubilant Brawler
 
-**Creatures (29).** Avacyn's Pilgrim, Birds of Paradise, Bloom Tender, Colossal Skyturtle, Deadpool, Trading Card, Deathrite Shaman, Derevi, Empyrial Tactician, Elves of Deep Shadow, Elvish Spirit Guide, Emiel the Blessed, Enduring Vitality, Ertai Resurrected, Esper Sentinel, Ignoble Hierarch, Ioreth of the Healing House, Kinnan, Bonder Prodigy, Lavinia, Azorius Renegade, Lotho, Corrupt Shirriff, Magda, Brazen Outlaw, Marvin, Murderous Mimic, Mockingbird, Noble Hierarch, Ragavan, Nimble Pilferer, Selvala, Heart of the Wilds, Shang-Chi, Master of Kung Fu, Spider-Woman, Stunning Savior, Tataru Taru, The Cabbage Merchant, The Queen of Dale
+**Creatures (28).** Birds of Paradise, Bloom Tender, Colossal Skyturtle, Deadpool, Trading Card, Deathrite Shaman, Delighted Halfling, Derevi, Empyrial Tactician, Elvish Spirit Guide, Emiel the Blessed, Enduring Vitality, Ertai Resurrected, Esper Sentinel, Ignoble Hierarch, Ioreth of the Healing House, Kinnan, Bonder Prodigy, Lavinia, Azorius Renegade, Lotho, Corrupt Shirriff, Magda, Brazen Outlaw, Marvin, Murderous Mimic, Mockingbird, Noble Hierarch, Orcish Bowmasters, Ragavan, Nimble Pilferer, Selvala, Heart of the Wilds, Shang-Chi, Master of Kung Fu, Spider-Woman, Stunning Savior, Tataru Taru, The Cabbage Merchant
 
 **Artifacts (10).** Agatha's Soul Cauldron, Arcane Signet, Chrome Mox, Loki's Scepter, Lotus Petal, Mana Vault, Mox Amber, Mox Diamond, Relic of Legends, Sol Ring
 
-**Enchantments (7).** Cryptolith Rite, Deafening Silence, Gleaming Splendor, Mystic Remora, Rhystic Study, Smothering Tithe, Touch the Spirit Realm
+**Enchantments (6).** Deafening Silence, Gleaming Splendor, Mystic Remora, Rhystic Study, Smothering Tithe, Touch the Spirit Realm
 
-**Instants (20).** Abrupt Decay, An Offer You Can't Refuse, Chord of Calling, Crop Rotation, Cyclonic Rift, Deflecting Swat, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Will, Legolas's Quick Reflexes, Mental Misstep, Mindbreak Trap, Pact of Negation, Redirect Lightning, Silence, Swan Song, Vampiric Tutor, Worldly Tutor
+**Instants (22).** Abrupt Decay, An Offer You Can't Refuse, Chord of Calling, Crop Rotation, Cyclonic Rift, Deflecting Swat, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Will, Into the Flood Maw, Legolas's Quick Reflexes, Mental Misstep, Mindbreak Trap, Pact of Negation, Redirect Lightning, Silence, Swan Song, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
 
 **Sorceries (2).** Demonic Tutor, Green Sun's Zenith
 
@@ -54,7 +54,6 @@ Written in Stage 3.
 1 An Offer You Can't Refuse
 1 Ancient Tomb
 1 Arcane Signet
-1 Avacyn's Pilgrim
 1 Bayou
 1 Birds of Paradise
 1 Bloom Tender
@@ -65,16 +64,15 @@ Written in Stage 3.
 1 Colossal Skyturtle
 1 Command Tower
 1 Crop Rotation
-1 Cryptolith Rite
 1 Cyclonic Rift
 1 Deadpool, Trading Card
 1 Deafening Silence
 1 Deathrite Shaman
 1 Deflecting Swat
+1 Delighted Halfling
 1 Demonic Tutor
 1 Derevi, Empyrial Tactician
 1 Eladamri's Call
-1 Elves of Deep Shadow
 1 Elvish Spirit Guide
 1 Emiel the Blessed
 1 Enduring Vitality
@@ -91,6 +89,7 @@ Written in Stage 3.
 1 Gleaming Splendor
 1 Green Sun's Zenith
 1 Ignoble Hierarch
+1 Into the Flood Maw
 1 Ioreth of the Healing House
 1 Kinnan, Bonder Prodigy
 1 Lavinia, Azorius Renegade
@@ -111,6 +110,7 @@ Written in Stage 3.
 1 Mox Diamond
 1 Mystic Remora
 1 Noble Hierarch
+1 Orcish Bowmasters
 1 Otawara, Soaring City
 1 Pact of Negation
 1 Plateau
@@ -131,13 +131,13 @@ Written in Stage 3.
 1 Spider-Woman, Stunning Savior
 1 Starting Town
 1 Swan Song
+1 Swords to Plowshares
 1 Taiga
 1 Tarnished Citadel
 1 Tataru Taru
 1 Teferi, Time Raveler
 1 Teferi, Who Slows the Sunset
 1 The Cabbage Merchant
-1 The Queen of Dale
 1 Touch the Spirit Realm
 1 Tropical Island
 1 Tundra

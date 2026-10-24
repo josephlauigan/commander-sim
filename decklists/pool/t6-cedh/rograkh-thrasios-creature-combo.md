@@ -4,7 +4,7 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Creature engine combo
 
 - **Commander:** Rograkh, Son of Rohgahh / Thrasios, Triton Hero
 - **Color identity:** Blue, Red, Green
-- **Game Changers (10):** Ancient Tomb, Chrome Mox, Crop Rotation, Fierce Guardianship, Force of Will, Gaea's Cradle, Gamble, Mana Vault, Mox Diamond, Rhystic Study
+- **Game Changers (11):** Ancient Tomb, Chrome Mox, Crop Rotation, Fierce Guardianship, Force of Will, Gaea's Cradle, Gamble, Mana Vault, Mox Diamond, Rhystic Study, Seedborn Muse
 - **Combos:** written in Stage 2 from the deck's primer.
 - **Lands:** 27 (25 nonbasic + 2 basic)
 - **Source:** Pittsburgh 2026 - t/cEDH $10k-$25,000, #1 of 195, 2026-07-11, record 5-2-2 ([decklist](https://edhtop16.com/tournament/pittsburgh-2026-tcedh-10k-25000/decklist/BP2zsiHEccO3Pe128MLPcCbygql1))
@@ -34,22 +34,21 @@ Written in Stage 3.
 
 **Battles (1).** Invasion of Ikoria // Zilortha, Apex of Ikoria
 
-**Creatures (28).** Allosaurus Shepherd, Badgermole Cub, Biomancer's Familiar, Birds of Paradise, Clever Impersonator, Cloud of Faeries, Delighted Halfling, Elvish Spirit Guide, Enduring Vitality, Eternal Witness, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Gene Pollinator, Hexing Squelcher, Kinnan, Bonder Prodigy, Magus of the Candelabra, Mockingbird, Oboro Breezecaller, Phantasmal Image, Shang-Chi, Master of Kung Fu, Sowing Mycospawn, Spellseeker, Springheart Nantuko, The Cabbage Merchant, Valley Floodcaller, Vibrance, Wan Shi Tong, Librarian
+**Creatures (28).** Badgermole Cub, Biomancer's Familiar, Birds of Paradise, Clever Impersonator, Cloud of Faeries, Delighted Halfling, Elvish Spirit Guide, Enduring Vitality, Eternal Witness, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Gene Pollinator, Hexing Squelcher, Kinnan, Bonder Prodigy, Magus of the Candelabra, Mockingbird, Oboro Breezecaller, Phantasmal Image, Phyrexian Metamorph, Seedborn Muse, Sowing Mycospawn, Spellseeker, Springheart Nantuko, The Cabbage Merchant, Valley Floodcaller, Vibrance, Wan Shi Tong, Librarian
 
 **Artifacts (9).** Candelabra of Tawnos, Chrome Mox, Expedition Map, Lotus Petal, Mana Vault, Mox Amber, Mox Diamond, Sol Ring, Springleaf Drum
 
-**Enchantments (6).** Cryptolith Rite, Earthcraft, Mystic Remora, Rhystic Study, Training Grounds, Wild Growth
+**Enchantments (7).** Cryptolith Rite, Earthcraft, Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun, Mystic Remora, Rhystic Study, Training Grounds, Wild Growth
 
-**Instants (21).** Borne Upon a Wind, Chain of Vapor, Chord of Calling, Crop Rotation, Deflecting Swat, Dramatic Reversal, Fierce Guardianship, Flare of Denial, Flare of Duplication, Flusterstorm, Force of Negation, Force of Will, Louisoix's Sacrifice, Mental Misstep, Mindbreak Trap, Misdirection, Noxious Revival, Pact of Negation, Snap, Swan Song, Veil of Summer
+**Instants (19).** Borne Upon a Wind, Chain of Vapor, Chord of Calling, Crop Rotation, Deflecting Swat, Fierce Guardianship, Flare of Denial, Flare of Duplication, Flusterstorm, Force of Negation, Force of Will, Louisoix's Sacrifice, Mental Misstep, Mindbreak Trap, Noxious Revival, Pact of Negation, Snap, Swan Song, Veil of Summer
 
-**Sorceries (6).** Chatterstorm, Finale of Devastation, Gamble, Green Sun's Zenith, Hidden Strings, Nature's Rhythm
+**Sorceries (7).** Chatterstorm, Finale of Devastation, Gamble, Green Sun's Zenith, Hidden Strings, Nature's Rhythm, Sylvan Scrying
 
 **Lands (27).** Ancient Tomb, Boseiju, Who Endures, Breeding Pool, Command Tower, Deserted Temple, Dryad Arbor, Emergence Zone, Flooded Strand, Gaea's Cradle, Gemstone Caverns, Minamo, School at Water's Edge, Misty Rainforest, Otawara, Soaring City, Polluted Delta, Prismatic Vista, Scalding Tarn, Shifting Woodland, Taiga, Talon Gates of Madara, Tropical Island, Urza's Saga, Verdant Catacombs, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest, 1 Island
 
 ## Import list (100)
 
 ```
-1 Allosaurus Shepherd
 1 Ancient Tomb
 1 Badgermole Cub
 1 Biomancer's Familiar
@@ -70,7 +69,6 @@ Written in Stage 3.
 1 Deflecting Swat
 1 Delighted Halfling
 1 Deserted Temple
-1 Dramatic Reversal
 1 Dryad Arbor
 1 Earthcraft
 1 Elvish Spirit Guide
@@ -94,6 +92,7 @@ Written in Stage 3.
 1 Gemstone Caverns
 1 Gene Pollinator
 1 Green Sun's Zenith
+1 Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun
 1 Hexing Squelcher
 1 Hidden Strings
 1 Invasion of Ikoria // Zilortha, Apex of Ikoria
@@ -105,7 +104,6 @@ Written in Stage 3.
 1 Mental Misstep
 1 Minamo, School at Water's Edge
 1 Mindbreak Trap
-1 Misdirection
 1 Misty Rainforest
 1 Mockingbird
 1 Mox Amber
@@ -117,12 +115,13 @@ Written in Stage 3.
 1 Otawara, Soaring City
 1 Pact of Negation
 1 Phantasmal Image
+1 Phyrexian Metamorph
 1 Polluted Delta
 1 Prismatic Vista
 1 Rhystic Study
 1 Rograkh, Son of Rohgahh
 1 Scalding Tarn
-1 Shang-Chi, Master of Kung Fu
+1 Seedborn Muse
 1 Shifting Woodland
 1 Snap
 1 Sol Ring
@@ -131,6 +130,7 @@ Written in Stage 3.
 1 Springheart Nantuko
 1 Springleaf Drum
 1 Swan Song
+1 Sylvan Scrying
 1 Taiga
 1 Talon Gates of Madara
 1 The Cabbage Merchant

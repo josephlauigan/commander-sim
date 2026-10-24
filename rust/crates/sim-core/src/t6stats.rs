@@ -271,8 +271,11 @@ pub fn mana_held(g: &mut Game, p: PlayerId) {
         g.pay_for = None;
         let d = g.db.get(c);
         let ritual = d.instant || d.sorcery;
+        // Mox Diamond costs nothing but needs a land card to discard: without one it can't be cast (it was counted
+        // as held, 300+ card-turns a deck)
+        let moxd_stuck = d.tag(crate::tag::Tag::Moxd) && !g.player(p).hand.iter().any(|&x| g.db.get(x).land);
         let k = format!("mn|held{}|T{t}|{}", if ritual { "r" } else { "" }, card(g, c));
-        if ok {
+        if ok && !moxd_stuck {
             bump(g, p, k);
         }
     }

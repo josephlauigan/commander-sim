@@ -23,7 +23,7 @@
 use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window};
 use crate::engine::values::colors_of;
 use crate::flow::Res;
@@ -90,22 +90,24 @@ fn lib_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
     g.player(p).library.iter().copied().find(|&c| cname(g, c) == name)
 }
 
+/// p's land of this name; Gaea's Cradle also matches Itlimoc, Cradle of the Sun (a transformed Growing Rites taps the same
+/// way, and the lines' untaps work on it)
 fn land_on_bf(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
-    g.player(p).lands.iter().copied().find(|&l| g.land(l).on_bf && cname(g, g.land(l).cd) == name)
+    let rites = super::t6_green2::RITES;
+    g.player(p).lands.iter().copied().find(|&l| {
+        let n = cname(g, g.land(l).cd);
+        g.land(l).on_bf && (n == name || (name == CRADLE && n == rites))
+    })
 }
 
 fn creatures(g: &Game, p: PlayerId) -> usize {
     g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count()
 }
 
-type Cost = (u32, String);
-
-/// can p pay for all these at once?
+/// can p pay for all these, cast one after another (`seq_cost`: taxes included)?
 fn affordable(g: &Game, p: PlayerId, casts: &[CardId], extra: u32) -> bool {
-    let costs: Vec<Cost> = casts.iter().map(|&c| cost_of(g, p, c)).collect();
-    let gn: u32 = costs.iter().map(|x| x.0).sum::<u32>() + extra;
-    let pips: String = costs.iter().map(|x| x.1.as_str()).collect();
-    can_pay(g, p, gn, &pips, false)
+    let (gn, pips) = seq_cost(g, p, casts);
+    can_pay(g, p, gn + extra, &pips, false)
 }
 
 fn ready_with(ok: bool) -> Ready {
@@ -509,15 +511,13 @@ impl Plan {
         }
     }
 
-    /// can p pay for the casts plus every fetch (5 coloured mana each) at once?
+    /// can p pay for the casts (one after another, `seq_cost`) plus every fetch (5 coloured mana each)?
     fn affordable(&self, g: &Game, p: PlayerId, extra: u32) -> bool {
-        let costs: Vec<Cost> = self.casts.iter().map(|&c| cost_of(g, p, c)).collect();
-        let gn: u32 = costs.iter().map(|x| x.0).sum::<u32>() + extra;
-        let mut pips: String = costs.iter().map(|x| x.1.as_str()).collect();
+        let (gn, mut pips) = seq_cost(g, p, &self.casts);
         for _ in &self.fetches {
             pips.push_str("WUBRG");
         }
-        can_pay(g, p, gn, &pips, false)
+        can_pay(g, p, gn + extra, &pips, false)
     }
 }
 
@@ -532,7 +532,18 @@ fn fetch_next(g: &mut Game, p: PlayerId, plan: Option<Plan>) -> Res<bool> {
 }
 
 fn fetch_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
-    fetch_next(g, p, ddr_plan(g, p, true))
+    keeping_ioreth(g, p, |g| fetch_next(g, p, ddr_plan(g, p, true)))
+}
+
+/// run a DDR step with Ioreth kept out of the mana payment: with Enduring Vitality or Relic of Legends (and Tyvar's
+/// haste) a fetched Ioreth is a mana source, and paying Sisay's next {W}{U}{B}{R}{G} with it taps the untapper the loop
+/// needs (the line then stopped as "no longer ready")
+fn keeping_ioreth(g: &mut Game, p: PlayerId, f: impl FnOnce(&mut Game) -> Res<bool>) -> Res<bool> {
+    let ioreth: Vec<PermId> = bf(g, p, IORETH).into_iter().collect();
+    let keep = std::mem::replace(&mut g.keep_untapped, ioreth);
+    let r = f(g);
+    g.keep_untapped = keep;
+    r
 }
 
 fn fetch_next_uni(g: &mut Game, p: PlayerId) -> Res<bool> {
@@ -559,6 +570,11 @@ fn ddr_plan(g: &Game, p: PlayerId, in_line: bool) -> Option<Plan> {
     let mut plan = Plan::default();
     let (ioreth, marvin) = (bf(g, p, IORETH), bf(g, p, MARVIN));
     if ioreth.is_none() {
+        // an Ioreth still to come enters tapped under Blind Obedience (and the like): its untap can't start the loop
+        // this turn (the line went, fetched Ioreth tapped and stopped)
+        if crate::engine::hooks::enters_tapped(g, p, None) {
+            return None;
+        }
         plan.add(get_piece(g, p, &[IORETH])?);
     }
     if marvin.is_none() {
@@ -621,9 +637,11 @@ fn ready_ddr(g: &Game, p: PlayerId) -> Ready {
 }
 
 fn cast_next_ddr(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(plan) = ddr_plan(g, p, true) else { return Ok(false) };
-    let Some(&c) = plan.casts.first() else { return Ok(true) };
-    cast_named(g, p, c)
+    keeping_ioreth(g, p, |g| {
+        let Some(plan) = ddr_plan(g, p, true) else { return Ok(false) };
+        let Some(&c) = plan.casts.first() else { return Ok(true) };
+        cast_named(g, p, c)
+    })
 }
 
 /// The pieces an answer can stop: Ioreth, Marvin and ONE mana legend (the loop uses a single source; any other legend
@@ -973,7 +991,7 @@ const ALL_CLONES: &[&str] = &[MOCKINGBIRD, IMAGE, FLESH, IMPERSONATOR];
 fn blue_land(g: &Game, p: PlayerId) -> bool {
     g.player(p).lands.iter().any(|&l| {
         g.land(l).on_bf
-            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES)
+            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES | super::t6_green2::RITES)
             && crate::engine::mana::land_colors_now(g, p, l).has('U')
     })
 }

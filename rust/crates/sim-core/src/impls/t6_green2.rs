@@ -560,7 +560,71 @@ fn ikoria_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ================================================================== registration
+// ================================================================== Growing Rites of Itlimoc
+/// **Growing Rites of Itlimoc** // **Itlimoc, Cradle of the Sun** ({2}{G} legendary enchantment, transforms into a
+/// legendary land). When it enters, look at the top four cards: a creature card among them to hand (the most valuable),
+/// the rest to the bottom. At the beginning of your end step, with four or more creatures, it transforms: Itlimoc is a
+/// land that taps for {G}, or {G} for each creature you control (as Gaea's Cradle; the lines take it as their Cradle,
+/// `t6_combos_t6::cradle_land`). Left out: the order of the cards put on the bottom.
+pub const RITES: &str = "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun";
+
+fn creatures_of_count(g: &Game, p: PlayerId) -> u32 {
+    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as u32
+}
+
+fn rites_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    let o = g.perm(src).owner;
+    if m != src || !trigger_window(g, o, Some(src), "look at the top four, a creature card to hand", Some(3.0))? {
+        return Ok(());
+    }
+    let n = g.player(o).library.len().min(4);
+    let top: Vec<CardId> = g.player(o).library[g.player(o).library.len() - n..].to_vec();
+    let pick = top
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).creature)
+        .max_by(|&a, &b| card_worth(g, o, a, false).total_cmp(&card_worth(g, o, b, false)));
+    let lib = &mut g.player_mut(o).library;
+    lib.truncate(lib.len() - n);
+    for &c in top.iter().filter(|&&c| Some(c) != pick) {
+        lib.insert(0, c);
+    }
+    if let Some(c) = pick {
+        g.player_mut(o).hand.push(c);
+        crate::glog!(g, "    {} takes {} (Growing Rites of Itlimoc)", pname(g, o), g.db.get(c).name);
+    }
+    Ok(())
+}
+
+fn rites_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
+    let o = g.perm(src).owner;
+    if !g.perm(src).on_bf || g.perm(src).phased || g.active != Some(o) || creatures_of_count(g, o) < 4 {
+        return Ok(());
+    }
+    let (cd, tapped) = (g.perm(src).cd.expect("Growing Rites is a card"), g.perm(src).tapped);
+    crate::engine::zones::leave(g, src)?;
+    g.add_land(o, cd, tapped);
+    crate::glog!(g, "    Growing Rites of Itlimoc transforms into Itlimoc, Cradle of the Sun");
+    Ok(())
+}
+
+/// Itlimoc: {G}, or {G} for each creature you control (the larger)
+fn itlimoc_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+    creatures_of_count(g, p).max(1)
+}
+
+fn itlimoc_cols(_g: &Game, _p: PlayerId, _l: LandId) -> Colors {
+    Colors::from_letters("G")
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if db.id(RITES).is_some() {
+        let c = r.card(db, RITES)?;
+        c.etb = Some(rites_etb);
+        c.end_step = Some(rites_end);
+        c.dyn_mana_land = Some(itlimoc_mana);
+        c.land_cols = Some(itlimoc_cols);
+    }
     r.card(db, "Chatterstorm")?.self_cast = Some(chatterstorm_cast);
     let c = r.card(db, "Cloud of Faeries")?;
     c.etb = Some(cloud_etb);

@@ -1,7 +1,7 @@
 //! Tier 6 "stax" batch (impls/t6_stax.rs): each card on a hand-built position with its Oracle text as the
 //! expectation.
 
-use sim_core::engine::mana::{cost_of, total_mana};
+use sim_core::engine::mana::{cost_of, seq_cost, total_mana};
 use sim_core::ids::PlayerId;
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -217,6 +217,18 @@ fn sphere_taxes_each_spell_by_the_spells_already_cast_this_turn() {
     assert_eq!(cost_of(&g, P0, sol).0, 1, "counted per player");
     g.player_mut(P0).turn_casts = Some((st, vec![card(&g, "Mana Vault")]));
     assert_eq!(cost_of(&g, P0, sol).0, 2, "its own controller pays too");
+}
+
+#[test]
+fn sphere_seq_cost_adds_one_per_spell_cast_before_in_the_line() {
+    let mut g = tbl();
+    let (sol, bolt, tomb) = (card(&g, "Sol Ring"), card(&g, "Lightning Bolt"), card(&g, "Ancient Tomb"));
+    assert_eq!(seq_cost(&g, P1, &[sol, bolt]), (1, "R".into()), "no Sphere: the printed costs");
+    perm(&mut g, P0, "Damping Sphere");
+    assert_eq!(seq_cost(&g, P1, &[sol, bolt]), (2, "R".into()), "the second spell costs {{1}} more");
+    assert_eq!(seq_cost(&g, P1, &[sol, tomb, bolt]), (2, "R".into()), "a land is no spell");
+    perm(&mut g, P0, "Damping Sphere");
+    assert_eq!(seq_cost(&g, P1, &[sol, bolt]), (3, "R".into()), "two Spheres: {{2}} more");
 }
 
 // ======================================================== Pithing Needle

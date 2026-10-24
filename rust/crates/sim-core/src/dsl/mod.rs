@@ -1066,7 +1066,9 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
             zones::land_ramp(g, p, 1, tapped)?;
             continue;
         }
-        if f.kind.as_deref() == Some("land") && to == "hand" && !karn_pick {
+        // a basic land to hand; "a land card" (Sylvan Scrying) takes any land through the pick below (it took a basic
+        // only, so a land tutor never found Gaea's Cradle)
+        if f.kind.as_deref() == Some("land") && to == "hand" && !karn_pick && f.basic == Some(true) {
             zones::land_to_hand(g, p)?;
             continue;
         }

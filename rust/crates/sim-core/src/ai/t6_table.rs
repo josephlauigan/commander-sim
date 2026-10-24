@@ -206,7 +206,8 @@ pub fn protect_before_go(g: &mut Game, p: PlayerId, need: (u32, String)) -> Res<
         if silence != (stops.len() >= 2) {
             continue;
         }
-        if !can_pay(g, p, need.0 + d.generic, &format!("{}{}", need.1, d.pips), false) {
+        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
+        if !can_pay(g, p, need.0 + cg, &format!("{}{cp}", need.1), false) {
             continue;
         }
         let ctx = if silence { Ctx::default() } else { Ctx { face: Some(stops[0].0), ..Ctx::default() } };

@@ -1048,6 +1048,9 @@ pub struct Game {
     pub spear: Option<TurnStamp>,
     /// the card being paid for now (Mishra's Workshop mana is for artifact spells only): Python's `PAY_FOR`
     pub pay_for: Option<CardId>,
+    /// permanents the AI keeps out of its mana payment for now (a combo piece that must stay untapped: Ioreth in
+    /// the Sisay DDR line); set around a step and restored after it
+    pub keep_untapped: Vec<PermId>,
     /// the coloured pips the source being tapped paid for (read by on-tap card code): Python's `TAP_COLS`
     pub tap_cols: Colors,
     /// triggered abilities of a permanent that entered as it was cast see it was cast (Python's `last_cast_etb`)
@@ -1286,6 +1289,7 @@ impl Game {
             imprint: vec![],
             spear: None,
             pay_for: None,
+            keep_untapped: vec![],
             tap_cols: Colors::NONE,
             last_cast_etb: false,
             skip_etb: false,

@@ -1148,9 +1148,23 @@ pub fn tidebinder_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
         let tb = enter(g, q, c, Enter { was_cast: true, ..Enter::default() })?;
         g.perm_mut(tb).data.set(DataKey::Bound, Val::Perm(m));
         g.perm_mut(m).neutered = true;
+        g.last_counter = Some(c); // the combo report names the card that stopped a line
+        crate::t6stats::counter_hit(g, q, c, p);
         return Ok(true);
     }
     Ok(false)
+}
+
+/// stack item `item` (controlled by `owner`) is countered by q's `card`: marked countered, and named for the combo
+/// report (`Game::last_counter`, `t6stats::counter_hit`), as Louisoix's Sacrifice and the counterspells do
+fn countered_by(g: &mut Game, q: PlayerId, item: u32, owner: PlayerId, card: Option<CardId>) {
+    if let Some(x) = g.stack.iter_mut().find(|x| x.id == item) {
+        x.countered = true;
+    }
+    if let Some(c) = card {
+        g.last_counter = Some(c);
+        crate::t6stats::counter_hit(g, q, c, owner);
+    }
 }
 
 /// partials.answer_ability: the AI q with priority and an opponent's important ability (or trigger) on top of the
@@ -1169,9 +1183,9 @@ pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
         pay(g, q, 2, "U", false)?;
         crate::glog!(g, "  {} activates Azorius Guildmage: counters {}", pname(g, q), it.name);
         if ability_window(g, q, Some(gm), "counter target activated ability", Some(it.imp), None)?
-            && let Some(x) = g.stack.iter_mut().find(|x| x.id == item)
+            && g.stack.iter().any(|x| x.id == item)
         {
-            x.countered = true;
+            countered_by(g, q, item, it.controller, g.perm(gm).cd);
         }
         return Ok(());
     }
@@ -1190,8 +1204,8 @@ pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
         return Ok(());
     }
     let tb = enter(g, q, c, Enter { was_cast: true, ..Enter::default() })?;
-    if let Some(x) = g.stack.iter_mut().find(|x| x.id == item) {
-        x.countered = true;
+    if g.stack.iter().any(|x| x.id == item) {
+        countered_by(g, q, item, it.controller, Some(c));
         if let Some(src) = it.ctx.source
             && g.perm(src).on_bf
             && g.perm(src).cd.is_some_and(|cd| {
