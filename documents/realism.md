@@ -165,7 +165,8 @@ a game with Dack), but the table without Dack is as slow.
 **Phase 1, step 2: `--fit`** (`rust/crates/sim-cli/src/fit.rs`). sep-CMA-ES over the knobs scaled to [0, 1], the same
 seeds for every candidate, starting from the built-in values; loss = the sum over scored targets of ((sim - target) /
 half the band)^2. `--fit-scope shared` fits one style for the tier plus the table knobs, `deck` one style per deck;
-`--fit-stats` limits the loss to chosen statistics; the result is a knobs file.
+`--fit-stats` limits the loss to chosen statistics; the result is a knobs file. The win types count for a quarter in
+the loss (`WIN_TYPE_WEIGHT`, JD 2026-10-24: their Tier 6 targets come from casual logs; to be revisited).
 
 ```
 commander-sim --fit --pool t6 --ai adaptive --games 2000 --fit-gens 15            # every target
