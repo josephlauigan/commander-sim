@@ -42,6 +42,7 @@ commander-sim --all-decks --pool all                                    # every 
 commander-sim --deck sauron --cards                                     # every card: tags, abilities, Game Changers
 commander-sim --realism --pool t6 --games 2200                          # the sim against real-game targets
 commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml   # the same with the AI's values from a file
+commander-sim --fit --pool t6 --ai adaptive --games 2000                # search the knobs for the closest fit
 commander-sim --calibrate within|ordering|all --games 240               # pool balance checks
 commander-sim pools                                                     # list the pool decks
 commander-sim swaptest <pool deck> <tier> 800 "Out>In; Out>In"          # pool-deck list changes, without editing
@@ -73,6 +74,9 @@ cardgen validate                                                        # check 
 - `--realism`: with `--pool tN`, play the tier's own decks and score the games against `data/realism/tN.toml`.
 - `--knobs FILE`: the AI's hand-set values (deck styles, counter thresholds, look-ahead weights) from a TOML file
   (`rust/crates/sim-cli/src/knobs.rs`).
+- `--fit`: with `--pool tN`, search the knobs (sep-CMA-ES, the same seeds for every candidate) for the values that
+  bring the tier closest to its targets, and write them as a knobs file (`--fit-scope`, `--fit-gens`, `--fit-stats`,
+  `--fit-out`; `rust/crates/sim-cli/src/fit.rs`).
 
 How a change to one of JD's decks is tested, and how to read the result: [`documents/testing-decks.md`](documents/testing-decks.md).
 

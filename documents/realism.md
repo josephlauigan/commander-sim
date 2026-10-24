@@ -151,9 +151,33 @@ one (`audit/realism/knobs/t6-identity-2000.txt` against `t6-none-2000.txt`).
 
 **The knobs screen** (`audit/realism/knobs/README.md`): each knob alone at both ends of its range, for every Tier 6
 deck, 2,000 adaptive games each. No setting moves the seat edge (seat 1 stays 25-28% against 32.5%; a seat share is
-known to about +/- 2 points at 2,000 games), and none moves the median win round off 9-10. Fitting these knobs cannot
-reach the Phase 1 gate. Speed is set by the deck lists and their plans, not by these knobs. There is no `--fit`
-command yet.
+known to about +/- 2 points at 2,000 games), and none moves the median win round off 9-10.
+
+**The lists are not the cause either** (`audit/realism/t6-lists-2026-10-24/REPORT.md`). Each Tier 6 pool deck was
+compared with 8 recent EDHTop16 winning lists of its commander: the pool lists already hold 49-86 of the 51-87 cards
+those lists share (6 or more of 8), and the 15 missing ones changed nothing (seat 1 27.0% -> 26.0%, median 10). The
+table without Dack Fayden, and with Mox Diamond's land rule relaxed (`[table] t6_moxd_lands`), is as slow, and the sim
+mulligans no more than real players of these commanders. The time goes in turning tutors and draws into a finished
+line: lines are "one tutor away" at round 6-7 but ready in only 18-45% of games. The AI's option list also offers
+plays that Dack Fayden's taxes make unaffordable (the engine refuses them; every refused play in 8 traced games was in
+a game with Dack), but the table without Dack is as slow.
+
+**Phase 1, step 2: `--fit`** (`rust/crates/sim-cli/src/fit.rs`). sep-CMA-ES over the knobs scaled to [0, 1], the same
+seeds for every candidate, starting from the built-in values; loss = the sum over scored targets of ((sim - target) /
+half the band)^2. `--fit-scope shared` fits one style for the tier plus the table knobs, `deck` one style per deck;
+`--fit-stats` limits the loss to chosen statistics; the result is a knobs file.
+
+```
+commander-sim --fit --pool t6 --ai adaptive --games 2000 --fit-gens 15            # every target
+commander-sim --fit --pool t6 --ai adaptive --games 2000 --fit-scope deck \
+    --fit-stats seat1_win,seat2_win,seat3_win,seat4_win,win_round_median        # the gate's statistics only
+```
+
+The first Tier 6 fits (`audit/realism/fit/`) cut the loss from 752 to 326 (shared) and 367 (per deck), almost all of
+it in the win types. On fresh seeds (900000-908199, 8,200 games) the win-type shift holds (combo 68.7% -> 59.6%), the
+seat edge doesn't move (seat 1 26.0% -> 25.6%), and the median win round gets worse (10 -> 11). The built-in values are
+unchanged. Fitting only the gate's statistics (`--fit-stats` seats and median) reached seat 1 28.4% on its own seeds, but 25.6% (shared) and
+26.2% (per deck) on fresh ones, the same as the built-in 26.0%: the knobs cannot move the Tier 6 seat edge.
 
 ## Data sources
 
@@ -161,6 +185,7 @@ command yet.
 | --- | --- | --- |
 | [Playgroup.gg](https://playgroup.gg) | `api/public/v1/commanders.json`: per commander (5,142), games, wins, average game length, wins by combat, combo, commander damage, other damage, alternate win, mill, poison. `/api/public/v1/commanders/<id>.json`: average win turn. Commander pages: seat win rates. Turn-order page: 284,950 four-player single-winner games, seats 29.2 / 25.7 / 23.6 / 21.5%. Casual pods logged by players; no bracket field, no per-game export | Stats are CC BY 4.0 (playgroup.gg/legal): credit Playgroup.gg |
 | [EDHTop16](https://edhtop16.com/reports/monthly_seat_winrates) | cEDH seat 1-4 win rates and draw rate by month since March 2024. The Tier 6 seat targets are April-September 2026, sample-weighted, each seat's rate divided by the four seats' total | Public page |
+| [EDHTop16](https://edhtop16.com) decklists | Each commander page lists its top entries of the last year (events of 50+); each decklist page carries every card's `commanderPlayRate` (the share of that commander's decks running it). Used for the Tier 6 list comparison | Public pages |
 | [TopDeck.gg](https://topdeck.gg) | REST API v2 (free key, 100 requests a minute): standings, decklists, round tables; no seat field | Must show a visible credit and link back to TopDeck.gg |
 
 The Tier 6 median win round (7) is JD's speed target (`decklists/pool/TARGETS-t6.md`), consistent with Playgroup's
@@ -179,9 +204,9 @@ logs of the Tier 6 commanders, not from tournaments, so they are the weakest Tie
   decks play it). Atraxa is left out of every Tier 3 target (45% of its Playgroup wins are poison; the pool's Atraxa is
   superfriends). The Tier 3 median win round uses Playgroup's average win turn (8.1, band 7-9). The knobs file is TOML
   with every value optional.
-- **Phase 1 route** (JD, 2026-10-24): real lists first, then fit. The Tier 6 pool decks are moved toward what real
-  tournament lists of the same commanders run (EDHTop16 decklists and play rates), by card swaps or, where that would
-  change most of the deck, by replacing the list.
+- **Phase 1 route** (JD, 2026-10-24): real lists first, then fit. The default is to adjust the existing pool lists
+  toward what real lists of the same commanders run; a list may be replaced outright where that makes the most sense.
+  Every decision taken for JD overnight is in `rust/agents/overnight-2026-10-24.md`.
 - The standing rules in [`CLAUDE.md`](../CLAUDE.md) still apply: loose profile only, each of JD's decks only against its
   own tiers, no Python, the memory cap.
 - **Still open** in the plan document: start logging pod games now (by hand or from practice mode)? Which engine work
@@ -191,9 +216,9 @@ logs of the Tier 6 commanders, not from tournaments, so they are the weakest Tie
 
 1. Finish Phase 0: put the Tier 3 targets on `main` and let the nightly run score them. The same method (Playgroup's
    win types, seat blocks and average win turn for each pool commander) fills the other casual tiers.
-2. Phase 1: bring the Tier 6 pool lists closer to real tournament lists, then re-run the Tier 6 scorecard.
-3. A fit command (for example `commander-sim --fit --pool t6`): a derivative-free search on the adaptive AI, the same
-   seeds for every candidate, loss = distance to each target; per-deck parameters allowed. Confirm the result with the
-   look-ahead AI at about 8,200 games and write `audit/realism/t6-fit-<date>.md`.
+2. Phase 1, the speed: trace games where a deck sits one tutor away for rounds (what it tutors for, what it holds);
+   then Dack Fayden's 35% (the sim's strongest Tier 6 deck, real play's weakest) and Kraum/Tymna's held lines.
+3. Re-fit after each fix (`--fit`, fresh-seed check), and confirm with the look-ahead AI at about 8,200 games; write
+   `audit/realism/t6-fit-<date>.md`. JD to decide whether the win types keep full weight in the loss.
 4. Once Phase 1 passes, make a target miss fail the nightly job.
 5. Optionally, a reader for `pod_games.toml` that checks the records and summarises seats, rounds and win types.

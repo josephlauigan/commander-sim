@@ -90,9 +90,11 @@ and the only one in use: a spell needs importance 6 to be countered, and instant
 sorcery-speed removal. Conservative: importance 7, and instant removal needs 2 more. Sephiroth's threshold is 6 in both.
 
 **Knobs.** `--knobs FILE` overrides these hand-set values (styles per deck, `temp_scale`, the counter thresholds,
-`instant_extra`, the look-ahead's `combo_w`, `ramp_w`, `hold_w`, `top_k`, `rollouts`, `horizon`) from a TOML file. The
+`instant_extra`, Tier 6's Mox Diamond land rule `t6_moxd_lands`, the look-ahead's `combo_w`, `ramp_w`, `hold_w`,
+`top_k`, `rollouts`, `horizon`) from a TOML file. The
 format is in `rust/crates/sim-cli/src/knobs.rs` and [`documents/realism.md`](realism.md). Style overrides go into
-`Settings::styles`, which is read before the built-in tables.
+`Settings::styles`, which is read before the built-in tables. `--fit` (`rust/crates/sim-cli/src/fit.rs`)
+searches them against a tier's realism targets and writes the best as a knobs file.
 
 ## The run harness
 
