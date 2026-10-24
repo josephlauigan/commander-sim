@@ -29,6 +29,13 @@ commander = "Y'shtola, Night's Blessed"
 ident = "WUB"
 tiers = ["t5"]
 
+[yshtola-cedh]
+file = "JD/yshtola-cedh.md"
+name = "Y'shtola cEDH"
+commander = "Y'shtola, Night's Blessed"
+ident = "WUB"
+tiers = ["t6"]
+
 [galadriel]
 file = "Avery/galadriel-bant-rebels.md"
 name = "Galadriel"

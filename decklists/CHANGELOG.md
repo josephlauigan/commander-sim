@@ -686,3 +686,11 @@ Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
 - **2026-10-19.** Out: Exotic Orchard, Harrow. In: Game Trail, Lightning Bolt. Exotic Orchard -> Game Trail (JD has no spare Orchard; Game Trail is a real R/G dual from his bulk, untapped by revealing a Mountain or Forest), Harrow -> Lightning Bolt (JD's spare; saves a buy). Not simulated yet.
 - **2026-10-19.** Out: Bite Down, Blossoming Defense, Worldly Tutor. In: Glorybringer, Smaug the Magnificent, Thundermaw Hellkite. Out: Worldly Tutor, Blossoming Defense, Bite Down (to Tymna/Thrasios). In: Glorybringer, Thundermaw Hellkite, Smaug the Magnificent (from Tymna/Kraum). JD approved 10/19 with the Thrasios switch: +3.1 over t1-t3 (T1 +2.7, T2 +5.1, T3 +1.4; 1,000 paired games per tier, look-ahead, loose; audit/omnath/2026-10-19-thrasios-trade/). The hasty dragons add about 4 damage per game while Omnath waits for landfall.
 - **2026-10-19.** New deck: Omnath, Locus of Rage red-green landfall, built from the Titania list.
+
+## Y'shtola, Night's Blessed — Esper cEDH
+
+Deck key `yshtola-cedh`, `decklists/JD/yshtola-cedh.md`.
+
+### Changes
+
+- **2026-10-24.** Out: nothing. In: nothing. New deck: the cEDH version of Y'shtola (Tier 6); the Bracket 4 list stays as yshtola.
