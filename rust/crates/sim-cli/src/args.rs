@@ -13,6 +13,10 @@ pub struct Args {
     pub calibrate: Option<String>,
     pub realism: bool,
     pub knobs: Option<String>,
+    pub fit: bool,
+    pub fit_scope: String,
+    pub fit_gens: u32,
+    pub fit_out: Option<String>,
     pub games: u64,
     pub seed: u64,
     pub profiles: Vec<String>,
@@ -48,7 +52,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 26] = [
+const OPTS: [Opt; 30] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -68,6 +72,17 @@ const OPTS: [Opt; 26] = [
         "",
         "with --pool tN: play the tier's own decks and score the games against data/realism/tN.toml (no --deck needed)",
     ),
+    opt(
+        "--fit",
+        true,
+        &[],
+        "",
+        "with --pool tN: search the AI knobs (sep-CMA-ES, same seeds for every candidate) for the values closest to \
+         data/realism/tN.toml, and write them as a knobs file",
+    ),
+    opt("--fit-scope", false, &["shared", "deck"], "", "with --fit: one style for the whole tier (shared, the default) or one per deck"),
+    opt("--fit-gens", false, &[], "N", "with --fit: generations to run (default 15)"),
+    opt("--fit-out", false, &[], "FILE", "with --fit: where to write the knobs (default audit/realism/fit/<tier>-<scope>.toml)"),
     opt(
         "--knobs",
         false,
@@ -203,6 +218,10 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         calibrate: None,
         realism: false,
         knobs: None,
+        fit: false,
+        fit_scope: "shared".into(),
+        fit_gens: 15,
+        fit_out: None,
         games: 0,
         seed: 500000,
         profiles: vec![],
@@ -264,6 +283,10 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--calibrate" => a.calibrate = Some(val),
             "--realism" => a.realism = true,
             "--knobs" => a.knobs = Some(val),
+            "--fit" => a.fit = true,
+            "--fit-scope" => a.fit_scope = val,
+            "--fit-gens" => a.fit_gens = int(o.name, &val)?,
+            "--fit-out" => a.fit_out = Some(val),
             "--games" => games = Some(int::<u64>(o.name, &val)?),
             "--n" => n = Some(int::<u64>(o.name, &val)?),
             "--seed" => a.seed = int(o.name, &val)?,

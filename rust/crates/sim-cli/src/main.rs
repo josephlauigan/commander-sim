@@ -13,6 +13,7 @@ mod args;
 mod cardinfo;
 mod decks;
 mod explain;
+mod fit;
 mod knobs;
 mod play;
 mod poolmode;
@@ -123,6 +124,9 @@ fn swap_in_place(list: &[String], swaps: &[(String, String)]) -> Vec<String> {
 
 /// compare.main
 fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
+    if a.fit {
+        return fit::run(sim, &a).map(|()| 0);
+    }
     if a.realism {
         return realism::run(sim, &a).map(|()| 0);
     }
