@@ -1,5 +1,5 @@
 //! Card code for the white cards of the cloud deck (decklists/JD/cloud-midgar-equipment.md), and face-down (morph, disguise) machinery.
-//! Filled in by the white-rest agent (rust/agents/white-rest.md).
+//! Filled in by the white-rest agent (rust/agents/archive/white-rest.md).
 //!
 //! - **Face down** (morph, disguise): **Exalted Angel**, **Forum Familiar**, **Unyielding Gatekeeper**, **Exit
 //!   Specialist**. A face-down creature is the galadriel module's 2/2 with no abilities (`neutered`);

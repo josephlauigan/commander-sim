@@ -1,5 +1,5 @@
 //! Tier 0 pool deck card code: the cards of the zurgo precon (decklists/pool/t0-b2-precons/) that weren't modeled.
-//! Filled in by the t0-zurgo agent (rust/agents/t0-zurgo.md).
+//! Filled in by the t0-zurgo agent (rust/agents/archive/t0-zurgo.md).
 //!
 //! The mechanics this module owns, and where the engine calls into it (each call is one line in a shared file):
 //!   - myriad (`attack_keywords`, called by `combat::attack_triggers_once`): printed on Goldlust Triad, granted by

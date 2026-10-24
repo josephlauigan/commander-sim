@@ -1,5 +1,5 @@
 //! The titania deck (decklists/JD/titania-lands.md): mono-green, lands going to the graveyard under Titania, Protector
-//! of Argoth. Its card code and AI plan. The brief is rust/agents/titania-cards.md; the verdicts are in
+//! of Argoth. Its card code and AI plan. The brief is rust/agents/archive/titania-cards.md; the verdicts are in
 //! data/card_overrides.toml.
 //!
 //! Cards modeled here (the rest of the deck is compiled abilities or shared card code):

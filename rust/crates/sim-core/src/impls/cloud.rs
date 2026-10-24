@@ -1,5 +1,5 @@
 //! The cloud deck (decklists/JD/cloud-midgar-equipment.md): mono-white Equipment around Cloud, Midgar Mercenary. Its
-//! card code and AI plan. The brief is rust/agents/cloud-core.md; the verdicts are in data/card_overrides.toml.
+//! card code and AI plan. The brief is rust/agents/archive/cloud-core.md; the verdicts are in data/card_overrides.toml.
 //!
 //! What lives here:
 //! - **Cloud's trigger doubling**: `doubles`, asked by `stack::queue_triggers` for every trigger it queues. While Cloud

@@ -1,5 +1,5 @@
 //! Tier 6 batch `green2`: the green and small utility cards of the Rograkh & Thrasios and Kinnan decks
-//! (rust/agents/t6-batches.md). Cards only: no engine file is touched; what needs the engine is listed in
+//! (rust/agents/archive/t6-batches.md). Cards only: no engine file is touched; what needs the engine is listed in
 //! rust/agents/engine-needs-green2.md.
 //!
 //! - Chatterstorm: the Squirrel token is the compiled spell; storm is `t0_stella::storm_copies` on the cast.

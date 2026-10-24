@@ -1,5 +1,5 @@
 //! Tier 0 pool deck card code: the cards of the Stella Lee, Wild Card precon (decklists/pool/t0-b2-precons/
-//! stella-lee-quick-draw.md) that weren't modeled. Brief: rust/agents/t0-stella.md.
+//! stella-lee-quick-draw.md) that weren't modeled. Brief: rust/agents/archive/t0-stella.md.
 //!
 //! The deck is a spells deck: "the next instant or sorcery spell you cast this turn ..." effects live in
 //! [`StellaState`] (a field of `Player`) and are applied by [`on_cast_next`] (called from `engine::cast::on_cast`) and

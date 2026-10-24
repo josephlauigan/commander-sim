@@ -1,5 +1,5 @@
 //! Tier 0 pool deck card code: the cards of the anikthea precon (decklists/pool/t0-b2-precons/) that weren't modeled.
-//! Filled in by the t0-anikthea agent (rust/agents/t0-anikthea.md). Each card's doc comment says how it is modeled;
+//! Filled in by the t0-anikthea agent (rust/agents/archive/t0-anikthea.md). Each card's doc comment says how it is modeled;
 //! the audit verdicts are in data/card_overrides.toml.
 //!
 //! - Sagas: one shared frame (`saga_enter`, `saga_main1`, `run_chapter`) with a chapter function per Saga.

@@ -1,4 +1,4 @@
-//! Sauron's speed and backup-win cards (brief: rust/agents/sauron-threats.md). The cards are in no decklist; the lead
+//! Sauron's speed and backup-win cards (brief: rust/agents/archive/sauron-threats.md). The cards are in no decklist; the lead
 //! tests them with `--swap`, so every AI decision here is gated on the Sauron seat (`key == "sauron"`) or works for
 //! any deck holding the card.
 //!

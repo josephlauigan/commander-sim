@@ -1,4 +1,4 @@
-//! Tier 6 lands batch (rust/agents/t6-batches.md, `lands`): utility lands of the Tier 6 decks. Cards only: what
+//! Tier 6 lands batch (rust/agents/archive/t6-batches.md, `lands`): utility lands of the Tier 6 decks. Cards only: what
 //! needs a new engine feature is listed in rust/agents/engine-needs-lands.md.
 //!
 //! Lands are not permanents: their abilities are offered through the `land_options` / `hand_options` slots, their

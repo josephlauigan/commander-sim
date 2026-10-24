@@ -1,5 +1,5 @@
 //! Tier 0 pool deck card code: the cards of the giada precon (decklists/pool/t0-b2-precons/) that weren't modeled
-//! (rust/agents/t0-giada.md). The audit verdicts are in data/card_overrides.toml; each function's doc comment says how
+//! (rust/agents/archive/t0-giada.md). The audit verdicts are in data/card_overrides.toml; each function's doc comment says how
 //! the card is modeled and what is left out.
 //!
 //! Mechanics: Clues are `Player::clues` (a counter, cracked for {2}: `ai/act.rs`), made by `investigate`; the monarch is

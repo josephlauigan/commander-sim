@@ -26,7 +26,7 @@ These rules replace `rust/agents/RULES.md`, which was written for the Python por
   Format only your own files: `rustfmt --edition 2024 <files>`, never `cargo fmt` on the workspace.
 
 ## How cards are modeled
-- Read `rust/PORTING_CARDS.md` (written for the port, but the hook-slot pattern still applies) and follow
+- Read `documents/archive/PORTING_CARDS.md` (written for the port, but the hook-slot pattern still applies) and follow
   `rust/crates/sim-core/src/impls/t1.rs` as the pattern. Card data: `data/carddb.txt` (hand tags),
   `data/card_overrides.toml` (overrides and the audit verdict), Scryfall text compiled by `cardgen`. Engine entry
   points: `hooks.rs`, `engine/hooks.rs`, `cardcode.rs`. Deck AI dispatch: `ai/decks.rs` (`deck_prio`, tutor picks

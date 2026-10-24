@@ -1,4 +1,4 @@
-//! Tier 6 batch `blue` (rust/agents/t6-batches.md): the blue and small utility cards of the Kraum & Tymna, Rograkh &
+//! Tier 6 batch `blue` (rust/agents/archive/t6-batches.md): the blue and small utility cards of the Kraum & Tymna, Rograkh &
 //! Silas and Kinnan decks. Cards only: no engine file is touched; what needs the engine is listed in
 //! rust/agents/engine-needs-blue.md.
 //!

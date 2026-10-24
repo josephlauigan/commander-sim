@@ -1,4 +1,4 @@
-//! Tier 6 batch `dack`: Dack Fayden's white stax pile (rust/agents/t6-batches.md, audit/t6/dack-fayden-white-stax).
+//! Tier 6 batch `dack`: Dack Fayden's white stax pile (rust/agents/archive/t6-batches.md, audit/t6/dack-fayden-white-stax).
 //! Cards only: no engine file is touched. What needs the engine is listed in rust/agents/engine-needs-dack.md.
 //!
 //! - Fiend Hunter, All-Fates Stalker: banishers built on `common::oring_exile` / `oring_return`.
