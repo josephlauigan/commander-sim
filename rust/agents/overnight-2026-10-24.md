@@ -48,3 +48,10 @@ morning. Each decision below says what was chosen, why, and how to undo it. Newe
     `tataru_with_ertai_in_hand` (cargo test -p sim-core --test cards_t6_legends2 -- --ignored). Traced as far as:
     nothing is logged (no flash, no counter); ertai_answer already refuses its owner's triggers; the Draw trigger is
     queued (`at_once` false) and goes through flush_triggers / resolve_batch, which is the next place to look.
+11. **Mox Diamond's Tier 6 rule is now a knob, `[table] t6_moxd_lands` (default 3, unchanged).** The AI wanted three
+    lands (hand plus battlefield) before casting it, so a turn-1 two-land hand never played it. At 2 or 1 the Tier 6
+    table is the same (seat 1 26.0 -> 26.2%, median 10; 8,200 adaptive games each; `moxd*-8200.txt`); at 3 the output
+    is byte-identical to no knobs. So fast mana held in hand is not the speed gap either. What is left in the
+    calibrate-within report: each player tries a combo about 0.25 times a game and 30-47% of tries are stopped; lines
+    are "one tutor away" at a median round of 6-7 but become ready in only 18-45% of games. The slowness is in how
+    fast the decks turn tutors and draws into a finished line: AI and plan work (Phases 1 and 4), not knobs or lists.
