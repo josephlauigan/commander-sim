@@ -1,0 +1,75 @@
+# Overnight 2026-10-24: decisions made for JD, and what was done
+
+JD (2026-10-24, before bed): keep working; where you would ask, make the recommended decision and brief me in the
+morning. Each decision below says what was chosen, why, and how to undo it. Newest last.
+
+## Decisions
+
+1. **Casual tier for the Phase 0 gate: Tier 3** (Aurelia, Korvold, Marwyn, Tergrid, Atraxa). Most of JD's decks play
+   it (Sheoldred, Sauron, Seph, Kefka, Cloud, Veyran, Omnath). Branch `realism-casual-targets`, `data/realism/t3.toml`.
+2. **Atraxa left out of every Tier 3 target.** 45% of Playgroup's Atraxa wins are poison (infect builds); the pool's
+   Atraxa is superfriends, so with it the poison target would be 22.6%. Alternative: make the pool's Atraxa an infect
+   list (JD allowed pool-deck changes), then add it back.
+3. **Tier 3 median win round from Playgroup's average win turn** (8.1, an average; Playgroup has no distribution).
+   Band 7-9. No targets for deck spread, games over 15 rounds, win-round spread (no fitting source).
+4. **Knobs file format**: TOML, `--knobs FILE`, every value optional, unknown keys and decks refused
+   (`rust/crates/sim-cli/src/knobs.rs`). Style overrides live in `Settings::styles`, read before the built-in tables.
+5. **Phase 1 route** (JD chose "real lists first, then fit"; then "the default is to adjust the existing lists"): the
+   Tier 6 pool decks are adjusted by card swaps toward what real tournament lists of the same commanders run
+   (EDHTop16 decklists and their per-commander play rates). JD, later the same night: "You can actually just replace
+   lists if it makes the most sense." So a list is replaced outright where adjusting it would mean most of the deck.
+6. **Finding: the Tier 6 pool lists are already close to the real lists.** Against 8 recent EDHTop16 winning lists per
+   commander (48 lists, Apr-Oct 2026), each pool deck has 49-86 of the real core (cards in 6+ of 8 lists; 51-87 such
+   cards per commander), and only 6 pool cards appear in none of the 48 lists. So the lists are not why the sim's
+   Tier 6 is slow (median win round 9-10 against 7); the gap is in how the sim plays or models the decks.
+7. **Small list alignment applied** (15 swaps, `cardgen deck`, logged in decklists/pool/CHANGELOG.md): each missing
+   real-core card in for the pool card that appears least in the real lists, land for land, keeping cards the Tier 6
+   plan code names (Snap, Misdirection). Left out: Great Hall of the Citadel, Necrodominance, Sylvan Scrying (not in
+   cards.json yet) and Everflowing Chalice (Karn's FINDINGS: the sim never casts it). Two new cards are Approximate:
+   Prismatic Lens (filter ability) and Crop Rotation.
+8. **cardgen bug fixed:** `cardgen deck` refused every partner pool deck ("commander 'A / B' is not in the import
+   list"): update_deck read the `- **Commander:** A / B` line as one name. It now splits the pair as
+   decks::load_pool_deck does (`split_pair`, with a test).
+9. **What the Tier 6 speed is NOT** (each tested, adaptive AI; files in `audit/realism/t6-lists-2026-10-24/` and
+   `audit/realism/knobs/`):
+   - the AI knobs: no knob at either end of its range moves seat 1 off 25-28% or the median win round off 9-10;
+   - the deck lists: aligned with real winning lists (decision 7), same seeds, before 27.0% / 10, after 26.0% / 10;
+   - Dack Fayden's stax: the table without Dack (throwaway worktree) is 26.4% / 10;
+   - mulligans: real players of these commanders average 0.69-0.96 mulligans a game (Playgroup), the sim 0.63-0.76.
+   Real games with these commanders last 6-7 rounds on average (Playgroup); the sim's last 10.3.
+   Leads left (calibrate-within report): fast mana held on turns 1-3 (Mox Diamond 201 card-turns in Kinnan, 212 in
+   Rograkh/Silas, i.e. the AI won't discard a land to it), turn-1 mana 1.0-1.1 for every deck; Dack Fayden's removal
+   (3,686 in 1,345 games, mostly repeated Fiend Hunter / All-Fates Stalker / ability: it is the sim's strongest deck at
+   35%, the weakest in real play); Kraum/Tymna still waits with a ready line (153 of 588 ready games never went).
+10. **Open bug found (not fixed): Ertai Resurrected in its owner's hand stops that player's Tataru Taru Treasure.**
+    The list swaps changed Sisay's shuffle, so `scions_secretary_once_a_turn_and_not_on_their_own_turn` drew Ertai
+    into Sisay's hand and the Treasure never came (the test passes with any one swap, fails with all four). The test
+    now fixes every library (its file tests cards "on a hand-built position"), and the bug has its own ignored test,
+    `tataru_with_ertai_in_hand` (cargo test -p sim-core --test cards_t6_legends2 -- --ignored). Traced as far as:
+    nothing is logged (no flash, no counter); ertai_answer already refuses its owner's triggers; the Draw trigger is
+    queued (`at_once` false) and goes through flush_triggers / resolve_batch, which is the next place to look.
+11. **Mox Diamond's Tier 6 rule is now a knob, `[table] t6_moxd_lands` (default 3, unchanged).** The AI wanted three
+    lands (hand plus battlefield) before casting it, so a turn-1 two-land hand never played it. At 2 or 1 the Tier 6
+    table is the same (seat 1 26.0 -> 26.2%, median 10; 8,200 adaptive games each; `moxd*-8200.txt`); at 3 the output
+    is byte-identical to no knobs. So fast mana held in hand is not the speed gap either. What is left in the
+    calibrate-within report: each player tries a combo about 0.25 times a game and 30-47% of tries are stopped; lines
+    are "one tutor away" at a median round of 6-7 but become ready in only 18-45% of games. The slowness is in how
+    fast the decks turn tutors and draws into a finished line: AI and plan work (Phases 1 and 4), not knobs or lists.
+12. **EDHREC not used.** Its JSON (per-card inclusion rates per commander) would be the casual equivalent of the
+    EDHTop16 play rates for adjusting the Tier 3 lists, but it is not one of the plan's approved sources (Playgroup,
+    EDHTop16, TopDeck.gg) and its terms for automated access weren't checked. One page was fetched to see the format;
+    nothing from it is used. JD to decide.
+13. **Dack Fayden's removal count is probably not a bug** (correcting the lead in item 9): Fiend Hunter and All-Fates
+    Stalker return what they exiled when they leave (`impls/t6_dack.rs`, `oring_return`); the count is likely the
+    flicker plan re-exiling the same creature each blink. Why Dack wins 35% in the sim is still open.
+14. **First Tier 6 fits, not adopted** (`audit/realism/fit/`, adaptive, 2,000 games a candidate): shared scope 15
+    generations, loss 752 -> 326; per-deck scope 12 generations, 752 -> 367. Nearly all of the gain is the win types
+    (combo 68% -> 59-61%, damage 31% -> 38-40%), the weakest Tier 6 targets; the median win round got worse (10 ->
+    11-12) and seat 1 moved 1.6-3.2 points. Several knobs ran to their bounds. Nothing changes the built-in values;
+    the knobs files are there to test. Fresh-seed check: item 15.
+15. **Lead: plays the option list offers but `act::perform` can't make.** In 8 traced Tier 6 games, 27 of 763 main-phase
+    decisions rate a play about 100% and end in "stop" because perform failed (Chrome Mox 8, Damping Sphere 4, Mox
+    Opal, Llanowar Elves, Elves of Deep Shadow, Ragavan, Mystic Remora 2 each...), always in pairs (both main phases).
+    In isolation the Kinnan case (Llanowar off Talisman of Curiosity) casts fine, so it needs the game's own mana
+    state: `commander-sim --calibrate within --pool t6 --ai adaptive --trace 3`, round 5, Kinnan. Each lost cheap
+    mana play slows a deck a turn; worth fixing before more fitting.

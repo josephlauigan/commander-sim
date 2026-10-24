@@ -101,16 +101,24 @@ mana-limited rather than waiting.
 
 **Phase 1** (gate: Tier 6 seat edge inside its band):
 
-1. Make the knobs data, with no behaviour change at current values (a paired run must show 0 difference):
-   `ai/mod.rs` `Style { temp, aggression, caution }` per deck (`ai/plans.rs`, `ai/pool.rs` `DEFAULT_STYLE` 1.0 /
-   0.6 / 0.5); `settings.rs` `Settings::new` counter thresholds (`cthresh`, loose 6) and `instant_extra` (loose 0);
-   `Search` weights `combo_w`, `ramp_w`, `hold_w` (env `SEARCH_RAMP_W` / `SEARCH_HOLD_W`) and `top_k`, `rollouts`,
-   `horizon`.
-2. A fit command (e.g. `commander-sim --fit --pool t6`): derivative-free search (CMA-ES or similar, in Rust), on the
-   adaptive AI (about 1,000 games a minute), same seeds for every candidate, loss = distance to each target. Per-deck
-   parameters are allowed.
-3. Confirm with the look-ahead AI at about 8,200 games (needed to resolve +/- 1; about 5 hours on 4 cloud cores, faster
-   on JD's machine). Write `audit/realism/t6-fit-<date>.md`; update the plan document's Phase status.
+State on branch `realism-phase1` (2026-10-24 overnight; every decision taken for JD is in
+`rust/agents/overnight-2026-10-24.md`):
+
+1. **Knobs as data: done.** `--knobs FILE` (`sim-cli/src/knobs.rs`); styles in `Settings::styles`, read first by
+   `ai::style` (`base_style` = the built-in lookup); `[table] t6_moxd_lands` added. A file restating the built-in
+   values gives byte-identical output (`audit/realism/knobs/`).
+2. **Fit command: done.** `commander-sim --fit --pool tN [--fit-scope shared|deck] [--fit-gens N] [--fit-out F]`
+   (`sim-cli/src/fit.rs`): sep-CMA-ES on the knobs scaled to [0, 1], same seeds for every candidate, loss = sum of
+   ((sim - target) / half band)^2. Results of the first Tier 6 fits: `audit/realism/fit/`.
+3. **The gate is out of reach of knobs and lists.** No knob moves the Tier 6 seat edge or speed; the pool lists
+   already match 48 real winning lists; the table without Dack, and with Mox Diamond's rule relaxed, is as slow
+   (`audit/realism/t6-lists-2026-10-24/REPORT.md`). The time goes in turning tutors and draws into a finished line:
+   lines are "one tutor away" at round 6-7 but ready in only 18-45% of games. Next: trace those games (what the deck
+   tutors for, what it holds), then Dack's 35% (the sim's strongest deck, real play's weakest), then Kraum/Tymna's
+   held lines. Fitting's loss is dominated by the win types (combo 68% against 47.8%, +/- 1), the weakest Tier 6
+   targets: report seat-only results beside it until JD decides on weights.
+4. Then: confirm a fit with the look-ahead AI at about 8,200 games; write `audit/realism/t6-fit-<date>.md`; update the
+   plan document's Phase status.
 
 ## Data sources (verified 2026-10-22, with what each offers)
 

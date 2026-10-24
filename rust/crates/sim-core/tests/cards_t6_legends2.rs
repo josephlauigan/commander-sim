@@ -145,6 +145,11 @@ fn tataru_enters_you_draw_and_an_opponent_may_draw() {
 #[test]
 fn scions_secretary_once_a_turn_and_not_on_their_own_turn() {
     let mut g = tbl();
+    // every library fixed: what Tataru's enter trigger draws must not depend on the decks' shuffles (with Ertai
+    // Resurrected drawn into its owner's hand, the Treasure never comes: tataru_with_ertai_in_hand below)
+    for i in 0..4 {
+        set_library(&mut g, PlayerId(i), &["Plains"; 6]);
+    }
     let t = perm(&mut g, P0, "Tataru Taru");
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     let base = g.player(P0).treasures;
@@ -163,6 +168,23 @@ fn scions_secretary_once_a_turn_and_not_on_their_own_turn() {
     assert_eq!(g.player(P0).treasures, base + 1, "once each turn");
     assert_eq!(g.player(P0).tapped_treasures, g.player(P0).treasures, "all tapped");
     let _ = t;
+}
+
+/// Open (2026-10-24, rust/agents/overnight-2026-10-24.md): with Ertai Resurrected in its owner's hand, that player's
+/// Tataru Taru makes no Treasure when an opponent draws off their turn. ertai_answer refuses to counter its owner's own
+/// triggers, so the Treasure should come. Found when the scions test drew Ertai off Sisay's shuffled library.
+#[test]
+#[ignore = "open bug: Ertai in its owner's hand stops that player's Tataru Treasure"]
+fn tataru_with_ertai_in_hand() {
+    let mut g = tbl();
+    for i in 0..4 {
+        set_library(&mut g, PlayerId(i), &["Plains"; 6]);
+    }
+    set_library(&mut g, P0, &["Ertai Resurrected", "Plains", "Plains"]); // Tataru's own draw takes Ertai
+    perm(&mut g, P0, "Tataru Taru");
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Ertai Resurrected"));
+    assert_eq!(g.player(P0).treasures, 1, "the opponent's draw on our turn makes a Treasure");
 }
 
 // ======================================================== Teferi, Who Slows the Sunset

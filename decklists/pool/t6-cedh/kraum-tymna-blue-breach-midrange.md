@@ -30,7 +30,7 @@ Written in Stage 3.
 
 ## Decklist by type (100)
 
-**Commander (2).** Kraum, Ludevic's Opus, Tymna the Weaver
+**Commanders (2).** Kraum, Ludevic's Opus, Tymna the Weaver
 
 **Creatures (14).** Esper Sentinel, Exhibition Tidecaller, Faerie Mastermind, Grand Abolisher, Lotho, Corrupt Shirriff, Mockingbird, Orcish Bowmasters, Ragavan, Nimble Pilferer, Ranger-Captain of Eos, Simian Spirit Guide, Tataru Taru, Thassa's Oracle, Valley Floodcaller, Voice of Victory
 
@@ -42,7 +42,7 @@ Written in Stage 3.
 
 **Sorceries (9).** Beseech the Mirror, Demonic Tutor, Diabolic Intent, Flash Photography, Gamble, Imperial Seal, Mnemonic Betrayal, Rite of Flame, Sevinne's Reclamation
 
-**Lands (25).** Ancient Tomb, Arid Mesa, Badlands, Bloodstained Mire, Cavern of Souls, City of Brass, City of Traitors, Command Tower, Exotic Orchard, Flooded Strand, Gemstone Caverns, Mana Confluence, Marsh Flats, Misty Rainforest, Otawara, Soaring City, Plateau, Polluted Delta, Scalding Tarn, Scrubland, Starting Town, Tarnished Citadel, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island
+**Lands (25).** Ancient Tomb, Arid Mesa, Badlands, Bloodstained Mire, Cavern of Souls, City of Brass, City of Traitors, Command Tower, Exotic Orchard, Flooded Strand, Gemstone Caverns, Mana Confluence, Marsh Flats, Misty Rainforest, Otawara, Soaring City, Plateau, Polluted Delta, Scalding Tarn, Scrubland, Starting Town, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Windswept Heath
 
 ## Import list (100)
 
@@ -134,7 +134,6 @@ Written in Stage 3.
 1 Starting Town
 1 Swan Song
 1 Tainted Pact
-1 Tarnished Citadel
 1 Tataru Taru
 1 Thassa's Oracle
 1 Tundra
@@ -146,5 +145,6 @@ Written in Stage 3.
 1 Verdant Catacombs
 1 Voice of Victory
 1 Volcanic Island
+1 Windswept Heath
 1 Wishclaw Talisman
 ```

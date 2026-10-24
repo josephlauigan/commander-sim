@@ -281,11 +281,24 @@ impl Ctx<'_> {
         n: u64,
         seed0: u64,
     ) -> Vec<(u64, GameOut)> {
+        let st = self.sim.settings(profile(prof).unwrap());
+        self.tier_games_with(&st, me, opp_keys, k, n, seed0)
+    }
+
+    /// `tier_games` with these settings (`--fit` plays every candidate's knobs on the same seeds)
+    pub fn tier_games_with(
+        &self,
+        st: &Settings,
+        me: Option<&str>,
+        opp_keys: &[String],
+        k: usize,
+        n: u64,
+        seed0: u64,
+    ) -> Vec<(u64, GameOut)> {
         let sim = self.sim;
-        let st = sim.settings(profile(prof).unwrap());
         sim.run_seeds(&Self::seeds(n, seed0), |s| {
             let seats = sim.seats_for(s, me, None, opp_keys, k);
-            GameOut::from_game(&sim.play(s, &seats, &st, false), false)
+            GameOut::from_game(&sim.play(s, &seats, st, false), false)
         })
     }
 

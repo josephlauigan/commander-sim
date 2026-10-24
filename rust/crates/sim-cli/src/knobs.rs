@@ -9,6 +9,7 @@
 //! temp_scale = 1.0       # every deck's temperature times this (as --temp)
 //! cthresh_default = 6    # outside decks' counter threshold (importance a spell needs to be countered)
 //! instant_extra = 0      # extra importance instant removal needs before it is used proactively
+//! t6_moxd_lands = 3      # Tier 6: lands (hand + battlefield, the discard included) needed to cast Mox Diamond
 //! [cthresh]
 //! seph = 6               # one of your decks' counter threshold
 //! [search]               # the look-ahead's knobs (no effect with --ai adaptive)
@@ -47,6 +48,7 @@ pub struct Knobs {
     pub temp_scale: Option<f64>,
     pub cthresh_default: Option<i32>,
     pub instant_extra: Option<i32>,
+    pub t6_moxd_lands: Option<usize>,
     pub cthresh: BTreeMap<String, i32>,
     pub search: SearchKnobs,
     pub style: BTreeMap<String, StyleKnob>,
@@ -107,7 +109,7 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
             "note" | "fit" => {}
             "table" => {
                 let tb = table(v, "table").map_err(at)?;
-                only(tb, "table", &["temp_scale", "cthresh_default", "instant_extra"]).map_err(at)?;
+                only(tb, "table", &["temp_scale", "cthresh_default", "instant_extra", "t6_moxd_lands"]).map_err(at)?;
                 if let Some(x) = tb.get("temp_scale") {
                     k.temp_scale = Some(float(x, "temp_scale", TEMP_RANGE).map_err(at)?);
                 }
@@ -116,6 +118,9 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
                 }
                 if let Some(x) = tb.get("instant_extra") {
                     k.instant_extra = Some(int(x, "instant_extra", INSTANT_EXTRA_RANGE).map_err(at)?);
+                }
+                if let Some(x) = tb.get("t6_moxd_lands") {
+                    k.t6_moxd_lands = Some(int(x, "t6_moxd_lands", (1, 6)).map_err(at)? as usize);
                 }
             }
             "cthresh" => {
@@ -179,6 +184,9 @@ impl Knobs {
         if let Some(x) = self.instant_extra {
             st.instant_extra = x;
         }
+        if let Some(x) = self.t6_moxd_lands {
+            st.t6_moxd_lands = x;
+        }
         for (d, x) in &self.cthresh {
             st.cthresh.insert(d.clone(), *x);
         }
@@ -234,6 +242,9 @@ impl Knobs {
         }
         if let Some(x) = self.instant_extra {
             tb.push(format!("instant_extra = {x}"));
+        }
+        if let Some(x) = self.t6_moxd_lands {
+            tb.push(format!("t6_moxd_lands = {x}"));
         }
         if !tb.is_empty() {
             o.push_str(&format!("[table]\n{}\n\n", tb.join("\n")));

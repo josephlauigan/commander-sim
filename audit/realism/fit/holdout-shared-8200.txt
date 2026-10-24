@@ -1,0 +1,30 @@
+
+=== Realism: Tier 6 (cEDH, B5) [loose, adaptive AI, 8200 games, seeds 900000-908199; 6 decks, 4 a pod] ===
+targets: data/realism/t6.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     25.6%     24.6-26.6   32.5%     31.5-33.5  FAIL
+  seat 2 share of decisive games (%)                     26.3%     25.3-27.3   26.9%     25.9-27.9  PASS
+  seat 3 share of decisive games (%)                     24.0%     23.1-25.0   22.7%     21.7-23.7  FAIL
+  seat 4 share of decisive games (%)                     24.1%     23.2-25.1   17.9%     16.9-18.9  FAIL
+  median round of a decisive win (rounds)                 11.0     11.0-12.0     7.0           6-8  FAIL
+  win round, 75th minus 25th percentile (rounds)           8.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                59.6%     58.5-60.7   47.8%     46.8-48.8  FAIL
+  wins by damage (combat or other) (%)                   39.2%     38.1-40.3   39.9%     38.9-40.9  PASS
+  wins by commander damage (%)                            1.2%       1.0-1.5   11.6%     10.6-12.6  FAIL
+  wins by poison (%)                                      0.0%       0.0-0.0    0.7%         0-1.7  PASS
+  deck win spread, best minus worst deck (pts)            13.7             -     4.0           0-8  FAIL
+  games over 15 rounds (round cap 20) (%)                22.0%     21.1-22.9       -             -  no target
+  3 of 10 targets pass (2 statistics have no target yet)
+Games: 8200, decisive 7828 (95.5%), round-cap timeouts 4.5%
+Each deck's share of the decisive games it sat in: Dack Fayden 31.5% of 5125; Kinnan 20.4% of 5248; Kraum/Tymna 31.5% of 5298; Rograkh/Silas 17.8% of 5147; Rograkh/Thrasios 19.2% of 5251; Sisay 29.6% of 5243
+Target sources:
+  seat1_win: EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins (n=387427, read 2026-10-22)
+  seat2_win: EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins (n=387427, read 2026-10-22)
+  seat3_win: EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins (n=387427, read 2026-10-22)
+  seat4_win: EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins (n=387427, read 2026-10-22)
+  win_round_median: JD's speed target (TARGETS-t6.md, 2026-10-19); Playgroup average win turn of the Tier 6 commanders, 6-7 (n=2722, read 2026-10-22)
+  win_combo_alt: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22)
+  win_damage: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22)
+  win_commander_damage: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22)
+  win_poison: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22)
+  deck_win_spread: EDHTop16 commander stats, 2026-04-18 to 2026-10-17 (TARGETS-t6.md); band set by JD (n=4700, read 2026-10-17)

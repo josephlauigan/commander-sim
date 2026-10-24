@@ -32,19 +32,19 @@ Written in Stage 3.
 
 **Commander (1).** Dack Fayden, Helping Hand
 
-**Planeswalkers (3).** Gideon of the Trials, Karn, the Great Creator, Tezzeret, Cruel Captain
+**Planeswalkers (2).** Karn, the Great Creator, Tezzeret, Cruel Captain
 
 **Creatures (7).** Abdel Adrian, Gorion's Ward, All-Fates Stalker, Felidar Guardian, Fiend Hunter, Preston, the Vanisher, Radiant Solar, Werefox Bodyguard
 
-**Artifacts (32).** Apple of Eden, Isu Relic, Arcane Signet, Basalt Monolith, Chalice of the Void, Chrome Mox, Cursed Totem, Damping Sphere, Defense Grid, Disruptor Flute, Expedition Map, Fellwar Stone, Grim Monolith, Jeweled Amulet, Lion's Eye Diamond, Lotus Petal, Mana Vault, Manifold Key, Mox Diamond, Mox Opal, Pearl Medallion, Pithing Needle, Portable Hole, Scroll Rack, Sol Ring, Staff of Compleation, Staff of Domination, The Mind Stone, The One Ring, Trinisphere, Vexing Bauble, Void Mirror, Voltaic Key
+**Artifacts (34).** Apple of Eden, Isu Relic, Arcane Signet, Basalt Monolith, Chalice of the Void, Chrome Mox, Coalition Relic, Cursed Totem, Damping Sphere, Defense Grid, Disruptor Flute, Expedition Map, Fellwar Stone, Grim Monolith, Jeweled Amulet, Lion's Eye Diamond, Lotus Petal, Mana Vault, Manifold Key, Mox Diamond, Mox Opal, Pearl Medallion, Pithing Needle, Portable Hole, Prismatic Lens, Scroll Rack, Sol Ring, Staff of Compleation, The Mind Stone, The One Ring, Thorn of Amethyst, Trinisphere, Vexing Bauble, Void Mirror, Voltaic Key
 
 **Enchantments (7).** Blind Obedience, Deafening Silence, Gleaming Splendor, Paladin Class, Smothering Tithe, Static Prison, Touch the Spirit Realm
 
-**Instants (21).** Abeyance, Angel's Grace, Bilbo's Gambit, Calamity's Wake, Cloudshift, Eldrazi Confluence, Enlightened Tutor, Ephemerate, Erode, Get Lost, Kozilek's Command, Mandate of Peace, March of Otherworldly Light, Orim's Chant, Path to Exile, Razorgrass Ambush // Razorgrass Field, Reprieve, Scout's Warning, Silence, Soul Partition, Swords to Plowshares
+**Instants (20).** Abeyance, Angel's Grace, Bilbo's Gambit, Calamity's Wake, Cloudshift, Eldrazi Confluence, Enlightened Tutor, Ephemerate, Erode, Get Lost, Mandate of Peace, March of Otherworldly Light, Orim's Chant, Path to Exile, Razorgrass Ambush // Razorgrass Field, Reprieve, Scout's Warning, Silence, Soul Partition, Swords to Plowshares
 
 **Sorceries (2).** Sunscour, Vanquish the Horde
 
-**Lands (27).** Ancient Den, Ancient Tomb, Cavern of Souls, City of Traitors, Command Beacon, Command Tower, Crystal Vein, Eiganjo, Seat of the Empire, Emergence Zone, Fomori Vault, Gemstone Caverns, Mishra's Workshop, Monumental Henge, Petrified Hamlet, 5 Plains, Remote Farm, Ruins of Trokair, Snow-Covered Plains, Talon Gates of Madara, The Mycosynth Gardens, The Tabernacle at Pendrell Vale, Urza's Cave, Urza's Saga
+**Lands (27).** Ancient Den, Ancient Tomb, Cavern of Souls, City of Traitors, Command Beacon, Command Tower, Crystal Vein, Eiganjo, Seat of the Empire, Emergence Zone, Fomori Vault, Gemstone Caverns, Mishra's Workshop, Monumental Henge, Petrified Hamlet, Remote Farm, Ruins of Trokair, Talon Gates of Madara, The Mycosynth Gardens, The Tabernacle at Pendrell Vale, Urza's Cave, Urza's Saga, 5 Plains, 1 Snow-Covered Plains
 
 ## Import list (100)
 
@@ -66,6 +66,7 @@ Written in Stage 3.
 1 Chrome Mox
 1 City of Traitors
 1 Cloudshift
+1 Coalition Relic
 1 Command Beacon
 1 Command Tower
 1 Crystal Vein
@@ -88,12 +89,10 @@ Written in Stage 3.
 1 Fomori Vault
 1 Gemstone Caverns
 1 Get Lost
-1 Gideon of the Trials
 1 Gleaming Splendor
 1 Grim Monolith
 1 Jeweled Amulet
 1 Karn, the Great Creator
-1 Kozilek's Command
 1 Lion's Eye Diamond
 1 Lotus Petal
 1 Mana Vault
@@ -110,9 +109,9 @@ Written in Stage 3.
 1 Pearl Medallion
 1 Petrified Hamlet
 1 Pithing Needle
-5 Plains
 1 Portable Hole
 1 Preston, the Vanisher
+1 Prismatic Lens
 1 Radiant Solar
 1 Razorgrass Ambush // Razorgrass Field
 1 Remote Farm
@@ -122,11 +121,9 @@ Written in Stage 3.
 1 Scroll Rack
 1 Silence
 1 Smothering Tithe
-1 Snow-Covered Plains
 1 Sol Ring
 1 Soul Partition
 1 Staff of Compleation
-1 Staff of Domination
 1 Static Prison
 1 Sunscour
 1 Swords to Plowshares
@@ -136,6 +133,7 @@ Written in Stage 3.
 1 The Mycosynth Gardens
 1 The One Ring
 1 The Tabernacle at Pendrell Vale
+1 Thorn of Amethyst
 1 Touch the Spirit Realm
 1 Trinisphere
 1 Urza's Cave
@@ -145,4 +143,6 @@ Written in Stage 3.
 1 Void Mirror
 1 Voltaic Key
 1 Werefox Bodyguard
+5 Plains
+1 Snow-Covered Plains
 ```
