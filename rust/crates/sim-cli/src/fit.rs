@@ -5,7 +5,8 @@
 //! The search is sep-CMA-ES (Ros and Hansen 2008: CMA-ES with a diagonal covariance, which suits a few dozen
 //! parameters and a few hundred evaluations). It works on each knob scaled to [0, 1] between its bounds and starts
 //! from the built-in values, which are scored first as the baseline. The loss is the sum over the tier's scored
-//! targets of ((sim - target) / half the band)^2: a statistic on the edge of its band costs 1.
+//! targets of ((sim - target) / half the band)^2, the win types at `WIN_TYPE_WEIGHT` (0.25): a statistic on the edge
+//! of its band costs 1 (a win type 0.25).
 //!
 //! `--fit-scope shared` (the default) fits one style for every deck of the tier plus the table's knobs; `deck` fits
 //! each deck's own style (JD, 2026-10-23: each deck may get its own fitted settings, to close the deck spread).
@@ -228,14 +229,22 @@ fn knobs_of(tier: &str, ds: &[Dim], u: &[f64]) -> Knobs {
     k
 }
 
-/// ((sim - target) / half the band)^2 summed over the scored statistics
+/// The win-type statistics count at this weight in the loss (JD, 2026-10-24: option 2, "count how games are won for
+/// less"; to be revisited). Their targets come from casual Playgroup logs, the weakest source at Tier 6, and at full
+/// weight they made up most of the loss, so the fit chased them over the seat edge and the speed.
+pub const WIN_TYPE_WEIGHT: f64 = 0.25;
+pub const WIN_TYPES: [&str; 4] = ["win_combo_alt", "win_damage", "win_commander_damage", "win_poison"];
+
+/// weight * ((sim - target) / half the band)^2 summed over the scored statistics (weight 1, or WIN_TYPE_WEIGHT for
+/// the win types)
 pub fn loss(m: &BTreeMap<&'static str, Measured>, targets: &Targets) -> f64 {
     targets
         .iter()
         .filter_map(|(key, t)| {
             let v = m.get(key.as_str())?.value;
             let half = ((t.hi - t.lo) / 2.0).max(0.5);
-            Some(((v - t.value) / half).powi(2))
+            let w = if WIN_TYPES.contains(&key.as_str()) { WIN_TYPE_WEIGHT } else { 1.0 };
+            Some(w * ((v - t.value) / half).powi(2))
         })
         .sum()
 }
@@ -331,7 +340,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         format!("Knobs fitted by commander-sim --fit --pool {tier} --fit-scope {} ({} AI, {prof} profile)", a.fit_scope, ctx.ai()),
         format!("{} generations of {}, {n} games a candidate on seeds {seed0}-{}", a.fit_gens, cma.lam, seed0 + n.max(1) - 1),
         format!("Scored statistics: {}", targets.keys().cloned().collect::<Vec<_>>().join(", ")),
-        "Loss: sum over the scored targets of ((sim - target) / half the band)^2".into(),
+        format!("Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at {WIN_TYPE_WEIGHT}"),
     ];
     let fit = vec![
         ("loss".into(), format!("{best_loss:.3}")),
@@ -391,5 +400,18 @@ mod tests {
         assert!((loss(&m, &t) - 1.0).abs() < 1e-9);
         m.insert("seat1_win", Measured { value: 32.5, ci: None });
         assert_eq!(loss(&m, &t), 0.0);
+    }
+
+    #[test]
+    fn the_win_types_count_for_a_quarter() {
+        let t = realism::parse_targets(
+            "tier = \"t6\"\n[win_combo_alt]\nvalue = 47.8\nlo = 46.8\nhi = 48.8\nn = 1\nsource = \"s\"\ndate = \"d\"\n",
+            "t6",
+            "t.toml",
+        )
+        .unwrap();
+        let mut m = BTreeMap::new();
+        m.insert("win_combo_alt", Measured { value: 48.8, ci: None }); // on the band's edge: 1 at full weight
+        assert!((loss(&m, &t) - WIN_TYPE_WEIGHT).abs() < 1e-9);
     }
 }
