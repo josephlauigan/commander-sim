@@ -1,5 +1,6 @@
 //! Tier 6 batch `redirects`: the redirect spells, the damage / removal instants and the small white and green
-//! instants (rust/agents/archive/t6-batches.md). Cards only: no engine file is touched, so what needs the engine (answering a
+//! instants (rust/agents/archive/t6-batches.md). Cards only: no engine file is touched, so what needs the engine
+//! (answering a
 //! spell or ability on the stack, alternative costs, "can't cast" locks, flash for a creature card) is written as a
 //! plain `pub fn` the engine can call later, and listed in rust/agents/engine-needs-redirects.md.
 //!

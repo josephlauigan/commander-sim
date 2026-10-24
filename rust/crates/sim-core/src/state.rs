@@ -7,7 +7,8 @@
 //!   battlefield is the ordered list of ids it controls (`Player::perms`, `Player::lands`), in entry order as Python
 //!   keeps it.
 //! - Python's attributes set on the fly (`getattr(g, 'x', default)`) are declared fields here, with the same
-//!   default. They are added as the code using them is ported; the runtime inventory in documents/archive/rust-design.md
+//!   default. They are added as the code using them is ported; the runtime inventory in
+//! documents/archive/rust-design.md
 //!   lists them all.
 //! - Tables Python keys by `id(permanent)` (end-of-turn pumps, granted keywords) become fields of the permanent.
 //! - Card-specific state on a permanent (Python's `m.data` dict) is `PermData`: a short list of typed keys.

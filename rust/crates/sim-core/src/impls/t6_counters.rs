@@ -1,5 +1,6 @@
 //! Tier 6 batch `counters`: free and alternative-cost counterspells, redirects and the cards that answer a spell on the
-//! stack (rust/agents/archive/t6-batches.md). Cards only: no engine file is touched, so what needs the engine (answering a spell
+//! stack (rust/agents/archive/t6-batches.md). Cards only: no engine file is touched, so what needs the engine
+//! (answering a spell
 //! with a card that is not tagged `ctr`, alternative costs, split second, "can't cast" locks) is written here as a
 //! plain `pub fn` the engine can call later, and listed in rust/agents/engine-needs-counters.md.
 //!

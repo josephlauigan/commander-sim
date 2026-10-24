@@ -3,8 +3,8 @@
 //! (`play:{seed}`), so changing one deck's list leaves every other seat's library and hand the same.
 //!
 //! The generator itself is not Python's Mersenne Twister: Rust games are checked against Python's statistically, not
-//! seed for seed (documents/archive/rust-rewrite-scope.md, section 7). It is xoshiro256**, seeded through SplitMix64 from
-//! a 64-bit FNV-1a hash of the stream's name: fast, small to copy, and the same on every machine.
+//! seed for seed (documents/archive/rust-rewrite-scope.md, section 7). It is xoshiro256**, seeded through SplitMix64
+//! from a 64-bit FNV-1a hash of the stream's name: fast, small to copy, and the same on every machine.
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Rng {

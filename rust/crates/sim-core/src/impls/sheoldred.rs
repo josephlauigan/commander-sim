@@ -1,6 +1,6 @@
 //! The sheoldred deck (decklists/JD/sheoldred-mono-black.md): mono-black drain around Sheoldred, the Apocalypse. Its
-//! card code and AI plan; the brief is rust/agents/archive/sheoldred-cards.md, the verdicts are in data/card_overrides.toml and
-//! the tests are tests/cards_sheoldred.rs.
+//! card code and AI plan; the brief is rust/agents/archive/sheoldred-cards.md, the verdicts are in
+//! data/card_overrides.toml and the tests are tests/cards_sheoldred.rs.
 //!
 //! Several cards here came with the retired candidate decks (glissa, gix, yawgmoth), whose card code was deleted while
 //! their `Full` verdicts stayed in the overrides; they are modeled here again, keyed by card name.

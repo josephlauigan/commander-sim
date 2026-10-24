@@ -1,5 +1,6 @@
 //! Tier 6 "stax" batch: the stax and Silence-effect cards of JD's Dack, Kraum & Tymna and Sisay decks that the compiled
-//! Oracle text and the engine's tags don't cover (rust/agents/archive/t6-batches.md). Cards only: no engine file is touched, so
+//! Oracle text and the engine's tags don't cover (rust/agents/archive/t6-batches.md). Cards only: no engine file is
+//! touched, so
 //! what needs the shared engine (a player-level "can't cast spells" check, split second, a kicker choice, "can't lose",
 //! enters tapped for opponents, a counter-on-cast hook) is written as a plain `pub fn` the engine can call later and
 //! listed in rust/agents/engine-needs-stax.md. Each card's doc comment says how it is modeled and what is left out.
