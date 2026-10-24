@@ -30,15 +30,15 @@ Written in Stage 3.
 
 ## Decklist by type (100)
 
-**Commander (2).** Rograkh, Son of Rohgahh, Silas Renn, Seeker Adept
+**Commanders (2).** Rograkh, Son of Rohgahh, Silas Renn, Seeker Adept
 
 **Creatures (6).** Birgi, God of Storytelling // Harnfel, Horn of Bounty, Hexing Squelcher, Ragavan, Nimble Pilferer, Simian Spirit Guide, Thassa's Oracle, Valley Floodcaller
 
-**Artifacts (19).** Arcane Signet, Chromatic Star, Chrome Mox, Defense Grid, Grim Monolith, Grinding Station, Lion's Eye Diamond, Lotus Petal, Mana Vault, Mox Amber, Mox Diamond, Mox Opal, Paradise Mantle, Sol Ring, Springleaf Drum, Talisman of Dominance, Talisman of Indulgence, Vexing Bauble, Wishclaw Talisman
+**Artifacts (17).** Arcane Signet, Chrome Mox, Defense Grid, Grim Monolith, Grinding Station, Lion's Eye Diamond, Lotus Petal, Mana Vault, Mox Amber, Mox Diamond, Mox Opal, Paradise Mantle, Sol Ring, Springleaf Drum, Talisman of Dominance, Vexing Bauble, Wishclaw Talisman
 
 **Enchantments (4).** Mystic Remora, Necropotence, Rhystic Study, Underworld Breach
 
-**Instants (29).** Ad Nauseam, An Offer You Can't Refuse, Borne Upon a Wind, Brain Freeze, Cabal Ritual, Chain of Vapor, Culling the Weak, Dark Ritual, Daze, Deflecting Swat, Demonic Consultation, Fierce Guardianship, Final Fortune, Flare of Duplication, Flashback, Flusterstorm, Force of Will, Into the Flood Maw, Mental Misstep, Mindbreak Trap, Misdirection, Mystical Tutor, Pact of Negation, Pyroblast, Rain of Filth, Red Elemental Blast, Snap, Tainted Pact, Vampiric Tutor
+**Instants (31).** Ad Nauseam, An Offer You Can't Refuse, Borne Upon a Wind, Brain Freeze, Cabal Ritual, Chain of Vapor, Commandeer, Culling the Weak, Dark Ritual, Daze, Deflecting Swat, Demonic Consultation, Fierce Guardianship, Final Fortune, Flare of Duplication, Flusterstorm, Force of Will, Into the Flood Maw, Mental Misstep, Mindbreak Trap, Misdirection, Mystical Tutor, Pact of Negation, Pyroblast, Rain of Filth, Red Elemental Blast, Snap, Snapback, Swan Song, Tainted Pact, Vampiric Tutor
 
 **Sorceries (17).** Beseech the Mirror, Demonic Counsel, Demonic Tutor, Diabolic Intent, Gamble, Gitaxian Probe, Imperial Seal, Infernal Plunge, Jeska's Will, Last Chance, Mnemonic Betrayal, Praetor's Grasp, Rite of Flame, Timetwister, Wheel of Fortune, Windfall, Yawgmoth's Will
 
@@ -61,11 +61,11 @@ Written in Stage 3.
 1 Brain Freeze
 1 Cabal Ritual
 1 Chain of Vapor
-1 Chromatic Star
 1 Chrome Mox
 1 City of Brass
 1 City of Traitors
 1 Command Tower
+1 Commandeer
 1 Culling the Weak
 1 Dark Ritual
 1 Daze
@@ -78,7 +78,6 @@ Written in Stage 3.
 1 Fierce Guardianship
 1 Final Fortune
 1 Flare of Duplication
-1 Flashback
 1 Flooded Strand
 1 Flusterstorm
 1 Force of Will
@@ -126,11 +125,12 @@ Written in Stage 3.
 1 Silas Renn, Seeker Adept
 1 Simian Spirit Guide
 1 Snap
+1 Snapback
 1 Sol Ring
 1 Springleaf Drum
+1 Swan Song
 1 Tainted Pact
 1 Talisman of Dominance
-1 Talisman of Indulgence
 1 Thassa's Oracle
 1 Timetwister
 1 Undercity Sewers

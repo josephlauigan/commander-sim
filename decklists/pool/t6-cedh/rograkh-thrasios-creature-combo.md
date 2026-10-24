@@ -30,21 +30,21 @@ Written in Stage 3.
 
 ## Decklist by type (100)
 
-**Commander (2).** Rograkh, Son of Rohgahh, Thrasios, Triton Hero
+**Commanders (2).** Rograkh, Son of Rohgahh, Thrasios, Triton Hero
 
 **Battles (1).** Invasion of Ikoria // Zilortha, Apex of Ikoria
 
-**Creatures (26).** Allosaurus Shepherd, Badgermole Cub, Biomancer's Familiar, Birds of Paradise, Clever Impersonator, Cloud of Faeries, Elvish Spirit Guide, Enduring Vitality, Eternal Witness, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Gene Pollinator, Hexing Squelcher, Magus of the Candelabra, Mockingbird, Oboro Breezecaller, Phantasmal Image, Shang-Chi, Master of Kung Fu, Sowing Mycospawn, Spellseeker, Springheart Nantuko, The Cabbage Merchant, Valley Floodcaller, Vibrance, Wan Shi Tong, Librarian
+**Creatures (28).** Allosaurus Shepherd, Badgermole Cub, Biomancer's Familiar, Birds of Paradise, Clever Impersonator, Cloud of Faeries, Delighted Halfling, Elvish Spirit Guide, Enduring Vitality, Eternal Witness, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Gene Pollinator, Hexing Squelcher, Kinnan, Bonder Prodigy, Magus of the Candelabra, Mockingbird, Oboro Breezecaller, Phantasmal Image, Shang-Chi, Master of Kung Fu, Sowing Mycospawn, Spellseeker, Springheart Nantuko, The Cabbage Merchant, Valley Floodcaller, Vibrance, Wan Shi Tong, Librarian
 
 **Artifacts (9).** Candelabra of Tawnos, Chrome Mox, Expedition Map, Lotus Petal, Mana Vault, Mox Amber, Mox Diamond, Sol Ring, Springleaf Drum
 
 **Enchantments (6).** Cryptolith Rite, Earthcraft, Mystic Remora, Rhystic Study, Training Grounds, Wild Growth
 
-**Instants (23).** Borne Upon a Wind, Chain of Vapor, Chord of Calling, Commandeer, Crop Rotation, Deflecting Swat, Dramatic Reversal, Emerald Charm, Fierce Guardianship, Flare of Denial, Flare of Duplication, Flusterstorm, Force of Negation, Force of Will, Louisoix's Sacrifice, Mental Misstep, Mindbreak Trap, Misdirection, Noxious Revival, Pact of Negation, Snap, Swan Song, Veil of Summer
+**Instants (21).** Borne Upon a Wind, Chain of Vapor, Chord of Calling, Crop Rotation, Deflecting Swat, Dramatic Reversal, Fierce Guardianship, Flare of Denial, Flare of Duplication, Flusterstorm, Force of Negation, Force of Will, Louisoix's Sacrifice, Mental Misstep, Mindbreak Trap, Misdirection, Noxious Revival, Pact of Negation, Snap, Swan Song, Veil of Summer
 
 **Sorceries (6).** Chatterstorm, Finale of Devastation, Gamble, Green Sun's Zenith, Hidden Strings, Nature's Rhythm
 
-**Lands (27).** Ancient Tomb, Boseiju, Who Endures, Breeding Pool, Command Tower, Deserted Temple, Dryad Arbor, Emergence Zone, Flooded Strand, Forest, Gaea's Cradle, Gemstone Caverns, Island, Minamo, School at Water's Edge, Misty Rainforest, Otawara, Soaring City, Polluted Delta, Prismatic Vista, Scalding Tarn, Shifting Woodland, Taiga, Talon Gates of Madara, Tropical Island, Urza's Saga, Verdant Catacombs, Volcanic Island, Windswept Heath, Wooded Foothills
+**Lands (27).** Ancient Tomb, Boseiju, Who Endures, Breeding Pool, Command Tower, Deserted Temple, Dryad Arbor, Emergence Zone, Flooded Strand, Gaea's Cradle, Gemstone Caverns, Minamo, School at Water's Edge, Misty Rainforest, Otawara, Soaring City, Polluted Delta, Prismatic Vista, Scalding Tarn, Shifting Woodland, Taiga, Talon Gates of Madara, Tropical Island, Urza's Saga, Verdant Catacombs, Volcanic Island, Windswept Heath, Wooded Foothills, 1 Forest, 1 Island
 
 ## Import list (100)
 
@@ -65,16 +65,15 @@ Written in Stage 3.
 1 Clever Impersonator
 1 Cloud of Faeries
 1 Command Tower
-1 Commandeer
 1 Crop Rotation
 1 Cryptolith Rite
 1 Deflecting Swat
+1 Delighted Halfling
 1 Deserted Temple
 1 Dramatic Reversal
 1 Dryad Arbor
 1 Earthcraft
 1 Elvish Spirit Guide
-1 Emerald Charm
 1 Emergence Zone
 1 Enduring Vitality
 1 Eternal Witness
@@ -89,7 +88,6 @@ Written in Stage 3.
 1 Flusterstorm
 1 Force of Negation
 1 Force of Will
-1 Forest
 1 Formidable Speaker
 1 Gaea's Cradle
 1 Gamble
@@ -99,7 +97,7 @@ Written in Stage 3.
 1 Hexing Squelcher
 1 Hidden Strings
 1 Invasion of Ikoria // Zilortha, Apex of Ikoria
-1 Island
+1 Kinnan, Bonder Prodigy
 1 Lotus Petal
 1 Louisoix's Sacrifice
 1 Magus of the Candelabra
@@ -149,4 +147,6 @@ Written in Stage 3.
 1 Wild Growth
 1 Windswept Heath
 1 Wooded Foothills
+1 Forest
+1 Island
 ```

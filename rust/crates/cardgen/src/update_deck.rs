@@ -144,13 +144,27 @@ fn is_cmd_line(l: &str) -> bool {
     l.starts_with("**Commander (1).**") || l.starts_with("**Commanders (2).**")
 }
 
-/// the second commander of one of your two-commander decks
-pub fn commander2_of(inp: &Inputs, path: &Path) -> Option<String> {
+/// the second commander: one of your two-commander decks', or a pool partner pair's (`- **Commander:** A / B`, as
+/// `decks::load_pool_deck` reads it; a double-faced card's `A // B` has no spaced single slash)
+pub fn commander2_of(inp: &Inputs, path: &Path, text: &str) -> Option<String> {
     let base = path.file_name().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
-    inp.my
-        .iter()
-        .find(|d| Path::new(&d.file).file_name().is_some_and(|f| f.to_string_lossy() == base))
-        .and_then(|d| d.commander2.clone())
+    if let Some(d) = inp.my.iter().find(|d| Path::new(&d.file).file_name().is_some_and(|f| f.to_string_lossy() == base)) {
+        return d.commander2.clone();
+    }
+    pool_commander_line(text).and_then(|l| split_pair(&l).1)
+}
+
+/// a pool deck's commander line as its first and second commander (`A / B`; `A // B` is one double-faced card)
+pub fn split_pair(line: &str) -> (String, Option<String>) {
+    match line.split_once(" / ") {
+        Some((a, b)) => (a.trim().to_string(), Some(b.trim().to_string())),
+        None => (line.trim().to_string(), None),
+    }
+}
+
+/// a pool deck's `- **Commander:**` line
+fn pool_commander_line(text: &str) -> Option<String> {
+    search(r"(?m)^- \*\*Commander:\*\*\s*(.+?)\s*$", text).map(|m| m.gs(1).to_string())
 }
 
 pub fn commander_of(inp: &Inputs, path: &Path, text: &str) -> Result<String, String> {
@@ -160,8 +174,9 @@ pub fn commander_of(inp: &Inputs, path: &Path, text: &str) -> Result<String, Str
             return Ok(d.commander.clone()); // your decks: the commander the simulator plays
         }
     }
-    if let Some(m) = search(r"(?m)^- \*\*Commander:\*\*\s*(.+?)\s*$", text) {
-        return Ok(m.gs(1).to_string());
+    if let Some(l) = pool_commander_line(text) {
+        // a partner pair's first commander (commander2_of gives the second)
+        return Ok(split_pair(&l).0);
     }
     if let Some(m) = search(r"(?m)^\*\*Commander \(1\)\.\*\*\s*(.+?)\s*$", text) {
         return Ok(m.gs(1).to_string());
@@ -452,7 +467,7 @@ pub fn run(project: &Project, which: &str, list_text: &str, opts: &Options) -> R
     let path = deck_file(&inp, which)?;
     let text = read(&path)?;
     let commander = commander_of(&inp, &path, &text)?;
-    let commander2 = commander2_of(&inp, &path);
+    let commander2 = commander2_of(&inp, &path, &text);
     let entries = parse_list(list_text);
     if entries.is_empty() {
         return Err("the list is empty".into());
@@ -732,8 +747,18 @@ fn record_fixture(inp: &Inputs) -> Result<(), String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{add_changelog, parse_list, parse_printings, printings_text};
+    use super::{add_changelog, parse_list, parse_printings, printings_text, split_pair};
     use std::collections::BTreeMap;
+
+    #[test]
+    fn a_pool_partner_line_is_two_commanders() {
+        let pair = |a: &str, b: Option<&str>| (a.to_string(), b.map(String::from));
+        assert_eq!(split_pair("Kraum, Ludevic's Opus / Tymna the Weaver"), pair("Kraum, Ludevic's Opus", Some("Tymna the Weaver")));
+        assert_eq!(split_pair("Kinnan, Bonder Prodigy"), pair("Kinnan, Bonder Prodigy", None));
+        // a double-faced card's name is one commander
+        let esika = "Esika, God of the Tree // The Prismatic Bridge";
+        assert_eq!(split_pair(esika), pair(esika, None));
+    }
 
     #[test]
     fn printings_are_kept_under_the_deck_files_names() {
