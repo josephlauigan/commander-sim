@@ -1102,8 +1102,17 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     zoned.sort_by_key(|&c| g.db.get(c).cmc); // two commanders: the cheaper first
     cands.extend(zoned);
     for c in cands {
+        // what do_cast would refuse is not offered: an additional cost that can't be paid (Culling the Weak with no
+        // creature), a lock, or a free spell Vexing Bauble or Chalice of the Void would counter
+        if g.db.get(c).has_dsl() && !g.db.get(c).land && !additional_cost(g, p, c, true)? {
+            continue;
+        }
         let d = g.db.get(c);
         if d.land {
+            continue;
+        }
+        let zone = if g.player(p).hand.contains(&c) { "hand" } else { "cmd" };
+        if g.cast_checks() && !castable(g, p, c, zone) {
             continue;
         }
         let Some(mut u) = card_utility(g, p, &s, c) else { continue };
