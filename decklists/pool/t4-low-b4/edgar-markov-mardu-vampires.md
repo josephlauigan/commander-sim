@@ -31,7 +31,7 @@ Edgar Markov's eminence from the command zone and his attack counters; the lords
 
 ## Decklist by type (100)
 
-**Commander (1).** Heliod, Sun-Crowned
+**Commander (1).** Edgar Markov
 
 **Creatures (33).** Blood Artist, Bloodletter of Aclazotz, Bloodline Keeper // Lord of Lineage, Bloodthirsty Conqueror, Captivating Vampire, Champion of Dusk, Charismatic Conqueror, Clavileño, First of the Blessed, Cordial Vampire, Cruel Celebrant, Drana, Liberator of Malakir, Edgar, Charmed Groom // Edgar Markov's Coffin, Elenda, the Dusk Rose, Emeritus of Woe // Demonic Tutor, Forerunner of the Legion, Indulgent Aristocrat, Knight of the Ebon Legion, Legion Lieutenant, Malakir Bloodwitch, Marauding Blight-Priest, Markov Baron, Master of Dark Rites, Mavren Fein, Dusk Apostle, Sanctum Seeker, Stromkirk Captain, Twilight Prophet, Vampire Socialite, Vampire of the Dire Moon, Vengeful Bloodwitch, Viscera Seer, Vito, Thorn of the Dusk Rose, Welcoming Vampire, Yahenni, Undying Partisan
 
