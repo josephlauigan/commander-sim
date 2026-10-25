@@ -9374,3 +9374,7 @@ pool_add_tags = ["xtutor"]
 
 ["Galadhrim Ambush"]
 pool_remove_tags = ["tokx"]
+
+# --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
+["Contaminant Grafter"]
+dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)

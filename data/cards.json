@@ -21147,17 +21147,6 @@
      "type": "static",
      "static": "toxic",
      "amount": 1
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "put_land",
-       "optional": true
-      }
-     ],
-     "event": "end_step",
-     "who": "you"
     }
    ],
    "start_loyalty": null,
@@ -21175,11 +21164,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever one or more creatures you control deal combat damage to one or more players, proliferate.",
-    "Corrupted — At the beginning of your end step, if an opponent has three or more poison counters, draw a card, then you may put a land card from your hand onto the battlefield.   [partly: if an opponent has three or more poison counters, draw a card]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

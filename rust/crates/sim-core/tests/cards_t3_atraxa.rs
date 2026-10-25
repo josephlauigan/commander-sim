@@ -11,7 +11,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl() -> Game {
-    let mut g = table(&["atraxa-superfriends", "seph"]);
+    let mut g = table(&["atraxa-infect", "seph"]);
     g.active = Some(P0);
     g
 }
@@ -123,5 +123,25 @@ fn infectious_bite_kills_with_your_biggest_creature_and_poisons() {
     lands(&mut g, P0, "Forest", 2, false);
     cast(&mut g, "Infectious Bite");
     assert!(!g.perm(t).on_bf, "4 damage kills the 3/3");
+    assert_eq!(g.player(P1).poison, 1);
+}
+
+#[test]
+fn contaminant_grafter_does_nothing_at_its_end_step_without_corrupted() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Contaminant Grafter");
+    g.player_mut(P1).poison = 2;
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Forest"]);
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(g.player(P0).lands.is_empty(), "no land drop below three poison");
+    assert_eq!(g.player(P0).hand.len(), 1, "no draw");
+}
+
+#[test]
+fn contaminant_grafter_keeps_its_toxic_alongside_its_proliferate_hook() {
+    let mut g = tbl();
+    let m = perm(&mut g, P0, "Contaminant Grafter");
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, m, P1);
     assert_eq!(g.player(P1).poison, 1);
 }

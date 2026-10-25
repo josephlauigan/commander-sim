@@ -1632,9 +1632,10 @@ pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
             }
         }
         Some(cd) => {
-            // the card's own toxic N, compiled (Skrelv, Blightbelly Rat, Ixhel); a card with its own combat-damage hook
-            // gives its toxic there (Dune Mover, Venomous Brutalizer)
-            if g.registry.get(cd).is_none_or(|i| i.combat_damage.is_none()) {
+            // the card's own toxic N, compiled (Skrelv, Blightbelly Rat, Ixhel, Contaminant Grafter); these give their
+            // toxic in their own combat-damage hooks
+            const HOOK_TOXIC: [&str; 4] = ["Dune Mover", "Paladin of Predation", "Ribskiff", "Venomous Brutalizer"];
+            if !HOOK_TOXIC.contains(&&*g.db.get(cd).name) {
                 k += crate::dsl::toxic_amount(g, a);
             }
         }
