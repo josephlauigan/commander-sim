@@ -7288,6 +7288,51 @@
    "spell_prio": false
   },
   {
+   "name": "Astral Dragon",
+   "types": "C",
+   "generic": 6,
+   "pips": "UU",
+   "tags": {
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "project image"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Project Image — When ~ enters, create two tokens that are copies of target noncreature permanent, except they're 3/3 Dragon creatures in addition to their other types, and they have flying."
+   ],
+   "derived": {
+    "cmc": 8,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Atarka, World Render",
    "types": "C",
    "generic": 5,
@@ -19002,6 +19047,43 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Carnelian Orb of Dragonkind",
+   "types": "A",
+   "generic": 2,
+   "pips": "R",
+   "tags": {
+    "rock": "1:R"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": false,
     "instant": false,
@@ -34273,6 +34355,54 @@
    "spell_prio": false
   },
   {
+   "name": "Dragonborn Champion",
+   "types": "C",
+   "generic": 2,
+   "pips": "RG",
+   "tags": {
+    "warrior": true,
+    "pow": "5",
+    "tgh": "3",
+    "bomb": "5",
+    "trample": true
+   },
+   "pow": 5,
+   "tgh": 3,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "trample"
+   ],
+   "subtypes": [
+    "dragon",
+    "warrior"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever a source you control deals 5 or more damage to a player, draw a card."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Dragonlord Dromoka",
    "types": "C",
    "generic": 4,
@@ -36055,6 +36185,55 @@
    "spell_prio": false
   },
   {
+   "name": "Earthquake Dragon",
+   "types": "C",
+   "generic": 14,
+   "pips": "G",
+   "tags": {
+    "pow": "10",
+    "bomb": "9",
+    "fly": true,
+    "trample": true
+   },
+   "pow": 10,
+   "tgh": 10,
+   "bomb": 9,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "trample"
+   ],
+   "subtypes": [
+    "dragon",
+    "elemental"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "This spell costs {X} less to cast, where X is the total mana value of Dragons you control.",
+    "{2}{G}, Sacrifice a land: Return this card from your graveyard to your hand."
+   ],
+   "derived": {
+    "cmc": 15,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Echocasting Symposium",
    "types": "S",
    "generic": 4,
@@ -37109,6 +37288,55 @@
     "cmc": 2,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Elemental Bond",
+   "types": "E",
+   "generic": 2,
+   "pips": "G",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "min_pow": 3
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -48736,6 +48964,68 @@
      "mountain"
     ]
    ],
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Ganax, Astral Hunter",
+   "types": "C",
+   "generic": 4,
+   "pips": "R",
+   "tags": {
+    "leg": true,
+    "pow": "3",
+    "tgh": "4",
+    "fly": true
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "treasure",
+       "n": 1
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "other": false,
+     "subtype": "dragon"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "choose a background",
+    "flying",
+    "treasure"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Choose a Background"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
    "land_types": [],
    "basic": false,
    "python_hooks": [],
@@ -69841,6 +70131,51 @@
    "spell_prio": false
   },
   {
+   "name": "Korlessa, Scale Singer",
+   "types": "C",
+   "generic": 0,
+   "pips": "GU",
+   "tags": {
+    "leg": true,
+    "pow": "1",
+    "tgh": "4"
+   },
+   "pow": 1,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "bard",
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "You may look at the top card of your library any time.",
+    "You may cast Dragon spells from the top of your library."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Korvold, Fae-Cursed King",
    "types": "C",
    "generic": 2,
@@ -71026,10 +71361,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{1}{R}: Dragons you control get +1/+0 until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -90441,6 +90774,47 @@
    "spell_prio": false
   },
   {
+   "name": "Parallel Lives",
+   "types": "E",
+   "generic": 3,
+   "pips": "G",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "replacement",
+     "replace": "tokens",
+     "multiplier": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Pariah",
    "types": "E",
    "generic": 2,
@@ -102832,10 +103206,8 @@
    "ward": 2,
    "identity": "GRW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Other Dragons you control have ward {2}."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -102879,11 +103251,8 @@
    "ward": 0,
    "identity": "BR",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Once during each of your turns, you may cast a Dragon creature spell from your graveyard.",
-    "Whenever you cast a Dragon creature spell from your graveyard, it gains \"When ~ dies, exile it.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -103021,6 +103390,53 @@
    "phyrexian": "",
    "land_etb_fx": [],
    "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Rockfall Vale",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "RG",
+    "ck": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters tapped unless you control two or more other lands"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": [
+    "more",
+    2
+   ],
    "land_types": [],
    "basic": false,
    "python_hooks": [],
@@ -106017,6 +106433,60 @@
    "spell_prio": false
   },
   {
+   "name": "Savage Ventmaw",
+   "types": "C",
+   "generic": 4,
+   "pips": "RG",
+   "tags": {
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "add_mana",
+       "n": 6
+      }
+     ],
+     "event": "attack",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Savai Triome",
    "types": "L",
    "generic": 0,
@@ -106303,6 +106773,49 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Scaled Nurturer",
+   "types": "C",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "pow": "0",
+    "tgh": "2",
+    "dork": "G",
+    "noatk": true
+   },
+   "pow": 0,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "dragon",
+    "druid"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -130263,6 +130776,54 @@
    "spell_prio": false
   },
   {
+   "name": "Thrakkus the Butcher",
+   "types": "C",
+   "generic": 3,
+   "pips": "RG",
+   "tags": {
+    "leg": true,
+    "pow": "3",
+    "tgh": "4",
+    "trample": true
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "double",
+    "trample"
+   ],
+   "subtypes": [
+    "dragon",
+    "peasant"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever Thrakkus attacks, double the power of each Dragon you control until end of turn."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Thran Dynamo",
    "types": "A",
    "generic": 4,
@@ -132574,6 +133135,53 @@
    "phyrexian": "",
    "land_etb_fx": [],
    "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Training Center",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "UR",
+    "ck": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters tapped unless you have two or more opponents"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "RU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": [
+    "opponents",
+    2
+   ],
    "land_types": [],
    "basic": false,
    "python_hooks": [],
@@ -145399,6 +146007,51 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Wrathful Red Dragon",
+   "types": "C",
+   "generic": 3,
+   "pips": "RR",
+   "tags": {
+    "pow": "5",
+    "bomb": "5",
+    "fly": true
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever a Dragon you control is dealt damage, it deals that much damage to any target that isn't a Dragon."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],

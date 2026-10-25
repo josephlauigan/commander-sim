@@ -373,6 +373,15 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Twilight Diviner" = { status = "Approximate", note = "surveil 2 compiled; hand-written (impls/t12_brago_meren.rs, zones::enter): other creatures you control enter from a graveyard (Game::t12_gy, the record of creature cards put into graveyards): a token copy of the best of them, once each turn. Left out: a card shuffled back into the library and put onto the battlefield from there later counts as coming from the graveyard" }
 "Wight of the Reliquary" = { status = "Full", note = "vigilance and the land search compiled; +1/+1 for each creature card in your graveyard (dsl_parse Tiers 1/2 pattern, num gy_creatures)" }
 
+# --- Tiers 4/5 (miirym): impls/t45_miirym.rs
+"Astral Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_miirym.rs): enters: two token copies of the best nonland noncreature permanent (yours or an opponent's targetable one), each a 3/3 flying Dragon creature too. Left out: copying a land or a legendary permanent" }
+"Dragonborn Champion" = { status = "Full", note = "trample; hand-written (impls/t45_miirym.rs, life::lose_life): a source you control deals 5 or more damage to a player (combat or not): draw a card" }
+"Earthquake Dragon" = { status = "Full", note = "flying, trample; hand-written (impls/t45_miirym.rs): costs {X} less, X the total mana value of your Dragons; {2}{G}, sacrifice a land: back to hand from the graveyard, at the end-of-turn window when it is cheap enough to cast next turn" }
+"Korlessa, Scale Singer" = { status = "Approximate", note = "hand-written (impls/t45_miirym.rs): Dragon spells cast from the top of the library (as Realmwalker). Left out: looking at the top card any time (the AI gets nothing from it)" }
+"Savage Ventmaw" = { status = "Approximate", note = "flying; attacks: six mana compiled, kept all turn (floating mana lasts the turn). Left out: it is six of any colour, not {R}{R}{R}{G}{G}{G}" }
+"Thrakkus the Butcher" = { status = "Full", note = "trample; hand-written (impls/t45_miirym.rs): attacks: each Dragon you control gets +X/+0 until end of turn, X its power" }
+"Wrathful Red Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_miirym.rs, t0_giada::damaged, removal::apply_wipe): a Dragon of yours dealt damage (combat, damage removal, Blasphemous Act) deals that much to a non-Dragon target: an opponent it kills, else the best creature it kills, else the opponent with the least life. Left out: damage from other damage sweepers and from damage a creature survives outside combat; a person gets the AI's target" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
