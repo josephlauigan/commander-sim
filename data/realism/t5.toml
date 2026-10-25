@@ -1,17 +1,18 @@
 # Realism targets, Tier 5 (High Bracket 4): what real games look like, for `commander-sim --realism --pool t5`.
 # Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
 #
-# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24 (The Ur-Dragon 2026-10-25),
+# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24 (Miirym 2026-10-25),
 # matched to this tier's five
-# pool commanders (data/decks.json): Kinnan, Bonder Prodigy (1296), Urza, Lord High Artificer (2109), The Ur-Dragon
-# (1245), Yawgmoth, Thran Physician (1474) and Zur the Enchanter (1944).
+# pool commanders (data/decks.json): Kinnan, Bonder Prodigy (1296), Urza, Lord High Artificer (2109), Miirym, Sentinel
+# Wyrm (1249), Yawgmoth, Thran Physician (1474) and Zur the Enchanter (1944).
 #
 # Each commander counts the same, as in t3.toml: every target is the plain average of the five commanders' own figures,
 # as the sim seats each pool deck equally often.
 #
-# History: The Ur-Dragon replaced Winota, Joiner of Forces on 2026-10-25 (JD): Winota won 40% of its Tier 5 games
-# (EDHREC's list stacks Myrel, Goldnight Commander, Windcrag Siege and damage doublers). With Winota the targets were
-# seats 31.5 / 27.4 / 22.8 / 18.2, win turn 7.2, damage 51.1%, combo 37.7%.
+# History (2026-10-25, JD): The Ur-Dragon replaced Winota, Joiner of Forces (Winota won 40% of its Tier 5 games with
+# Myrel, Goldnight Commander, Windcrag Siege and damage doublers), then Miirym, Sentinel Wyrm replaced The Ur-Dragon
+# once The Ur-Dragon became one of JD's own decks. With Winota the targets were seats 31.5 / 27.4 / 22.8 / 18.2, win
+# turn 7.2, damage 51.1%, combo 37.7%.
 #
 # Caveats: a commander's numbers cover every deck built around it, at any power level, so they give the shape of a
 # tier's games more than its level. They are casual pods logged by players, of any size (3 to 6 players). The two
@@ -22,80 +23,80 @@ tier = "t5"
 
 # --- Seat win rates: each commander's page (https://playgroup.gg/commanders/<id>, "Does seating order matter?")
 # gives its win rate from seats 1-4 and the games behind each. Seats 1-4 win, on average over the five commanders,
-# 43.8 / 38.1 / 31.0 / 25.2% of their games; each rate divided by the four rates' total gives the share of decisive
+# 44.0 / 38.4 / 31.0 / 24.9% of their games; each rate divided by the four rates' total gives the share of decisive
 # games, as the sim counts them.
 
 [seat1_win]
-value = 31.7
-lo = 30.7
-hi = 32.7
-n = 29464
-source = "Playgroup commander pages, seat win rates of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight), share of seat wins"
+value = 31.8
+lo = 30.8
+hi = 32.8
+n = 22224
+source = "Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins"
 date = "2026-10-25"
 note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
-value = 27.6
-lo = 26.6
-hi = 28.6
-n = 29464
-source = "Playgroup commander pages, seat win rates of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight), share of seat wins"
+value = 27.8
+lo = 26.8
+hi = 28.8
+n = 22224
+source = "Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat3_win]
 value = 22.4
 lo = 21.4
 hi = 23.4
-n = 29464
-source = "Playgroup commander pages, seat win rates of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight), share of seat wins"
+n = 22224
+source = "Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat4_win]
-value = 18.2
-lo = 17.2
-hi = 19.2
-n = 29464
-source = "Playgroup commander pages, seat win rates of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight), share of seat wins"
+value = 18.0
+lo = 17.0
+hi = 19.0
+n = 22224
+source = "Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins"
 date = "2026-10-25"
 
 # --- Speed: Playgroup gives each commander's average win turn (https://playgroup.gg/api/public/v1/commanders/<id>.json,
-# stats.average_wins_by_turn): Kinnan 6, Urza 7, The Ur-Dragon 8, Yawgmoth 7, Zur 9; their average is 7.4. An average,
+# stats.average_wins_by_turn): Kinnan 6, Urza 7, Miirym 8, Yawgmoth 7, Zur 9; their average is 7.4. An average,
 # not a median, and no spread: win_round_spread has no target.
 
 [win_round_median]
 value = 7
 lo = 6
 hi = 8
-n = 11061
-source = "Playgroup commander stats, average win turn of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
+n = 8442
+source = "Playgroup commander stats, average win turn of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
 note = "n = the five commanders' logged wins; Playgroup gives an average win turn (7.4), used as the median"
 
 # --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), each
-# commander's wins by type, averaged over the five: combat and other damage 50.1%, combo, alternate win and mill
-# 38.1%, commander damage 9.6%, poison 2.2%. Per commander (damage / combo / commander damage):
+# commander's wins by type, averaged over the five: combat and other damage 50.4%, combo, alternate win and mill
+# 37.9%, commander damage 9.6%, poison 2.2%. Per commander (damage / combo / commander damage):
 # Kinnan 42 / 56 / 2; Urza 44 / 53 / 1;
-# The Ur-Dragon 85 / 9 / 6; Yawgmoth 52 / 44 / 0;
+# Miirym 86 / 7 / 6; Yawgmoth 52 / 44 / 0;
 # Zur 28 / 29 / 39.
 # Grouped as t6.toml groups them. References, not scored (JD, 2026-10-25), as in t6.toml: the pool lists are
 # EDHREC's bracket-4 decks, built around their combos and engines, while these commanders' Playgroup wins mix every
 # build at every power level (audit/realism/t45-targets-2026-10-24.md).
 
 [win_damage]
-value = 50.1
-lo = 49.1
-hi = 51.1
-n = 5542
-source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
+value = 50.4
+lo = 49.4
+hi = 51.4
+n = 4303
+source = "Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
 scored = false
 
 [win_combo_alt]
-value = 38.1
-lo = 37.1
-hi = 39.1
-n = 5542
-source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
+value = 37.9
+lo = 36.9
+hi = 38.9
+n = 4303
+source = "Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
 scored = false
 
@@ -103,8 +104,8 @@ scored = false
 value = 9.6
 lo = 8.6
 hi = 10.6
-n = 5542
-source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
+n = 4303
+source = "Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
 scored = false
 
@@ -112,12 +113,12 @@ scored = false
 value = 2.2
 lo = 1.2
 hi = 3.2
-n = 5542
-source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
+n = 4303
+source = "Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
 scored = false
 
 # --- No target yet:
-# - deck_win_spread: Playgroup's win rates (Kinnan 38%, Urza 36%, The Ur-Dragon 35%, Yawgmoth 37%, Zur 32% of games) are
+# - deck_win_spread: Playgroup's win rates (Kinnan 38%, Urza 36%, Miirym 35%, Yawgmoth 37%, Zur 32% of games) are
 #   against whatever their pods held, not against each other, so their gap is not the sim's gap.
 # - games_over_15 and win_round_spread: Playgroup publishes no distribution of game or win length.

@@ -23,6 +23,19 @@ fn tbl() -> Game {
     g
 }
 
+/// a table whose first deck is mostly Dragons (the Ur-Dragon list retired 2026-10-25: Miirym's now), for the cards that
+/// name the deck's most common creature type
+fn tbl_dragons() -> Game {
+    let mut g = table(&[
+        "miirym-temur-dragons",
+        "urza-mono-blue-artifacts",
+        "kinnan-simic-mana-combo",
+        "yawgmoth-mono-black-aristocrats",
+    ]);
+    g.player_mut(P0).hand.clear();
+    g
+}
+
 /// the Ur-Dragon out of the command zone (its eminence would change every cost)
 fn no_eminence(g: &mut Game) {
     let c = card(g, u::UR_DRAGON);
@@ -104,7 +117,7 @@ fn dracogenesis_casts_dragons_without_mana() {
 
 #[test]
 fn urzas_incubator_and_morophon_reduce_the_chosen_type() {
-    let mut g = tbl();
+    let mut g = tbl_dragons();
     no_eminence(&mut g);
     let gold = card(&g, "Goldspan Dragon");
     let inc = perm(&mut g, P0, "Urza's Incubator");
@@ -462,7 +475,7 @@ fn rivaz_and_haven_mana_is_for_dragon_creature_spells() {
 // ------------------------------------------------------------------ Roaming Throne
 #[test]
 fn roaming_throne_doubles_triggers_of_the_chosen_type() {
-    let mut g = tbl();
+    let mut g = tbl_dragons();
     let t = perm(&mut g, P0, "Roaming Throne");
     assert_eq!(g.perm(t).data.get(DataKey::Ctype), Some(&Val::Str("dragon")));
     assert!(sim_core::engine::values::has_type(&g, t, "dragon"), "it is the chosen type too");
