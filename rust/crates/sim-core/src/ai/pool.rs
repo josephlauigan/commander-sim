@@ -895,7 +895,7 @@ enum Scope {
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
 /// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
-const PROTECTORS: [Protector; 18] = [
+const PROTECTORS: [Protector; 19] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -914,6 +914,8 @@ const PROTECTORS: [Protector; 18] = [
     ("Siren Stormtamer", Where::BfSac, Some((0, "U")), How::AllTargeted, Scope::One, false), // rules.py
     ("Cartel Aristocrat", Where::BfSacOther, None, How::Color, Scope::Selfish, false),       // rules2.py
     ("Ainok Strike Leader", Where::BfSac, None, How::TokenIndes, Scope::Creatures, false), // t0_zurgo
+    // --- Tier 3 (marwyn): hexproof until end of turn (split second: no response)
+    ("Legolas's Quick Reflexes", Where::Hand, Some((0, "G")), How::AllTargeted, Scope::One, false),
 ];
 
 const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];

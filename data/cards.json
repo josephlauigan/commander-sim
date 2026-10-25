@@ -30967,7 +30967,7 @@
      "effects": [
       {
        "do": "gain_life",
-       "n": "X",
+       "n": "attacking_type:elf",
        "who": "you",
        "mult": 1
       }
@@ -32599,7 +32599,9 @@
    "types": "E",
    "generic": 2,
    "pips": "G",
-   "tags": {},
+   "tags": {
+    "rock": "1:G"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -33149,7 +33151,15 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "green",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -33157,10 +33167,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Green spells you cast cost {1} less to cast."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -42165,9 +42173,7 @@
    "types": "I",
    "generic": 3,
    "pips": "G",
-   "tags": {
-    "tokx": true
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -43087,7 +43093,9 @@
    "types": "S",
    "generic": 0,
    "pips": "GGG",
-   "tags": {},
+   "tags": {
+    "xtutor": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -53906,7 +53914,29 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "counters",
+       "n": "type_you:elf",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -53917,10 +53947,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{T}: Put a +1/+1 counter on target creature for each Elf you control."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -57450,7 +57478,15 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "black",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -57458,7 +57494,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -57881,6 +57917,19 @@
      "type": "static",
      "static": "note",
      "text": "~ enters with a +1/+1 counter on it for each time it was kicked"
+    },
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "elf"
+     },
+     "pow": 1,
+     "tgh": 1,
+     "per": "counters_on_self"
     }
    ],
    "start_loyalty": null,
@@ -57897,8 +57946,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "Multikicker {1}{G}",
-    "Other Elf creatures you control get +1/+1 for each +1/+1 counter on ~."
+    "Multikicker {1}{G}"
    ],
    "derived": {
     "cmc": 1,
@@ -78907,7 +78955,15 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "white",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -78915,7 +78971,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -90033,7 +90089,15 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "red",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -90041,7 +90105,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [],
    "derived": {
     "cmc": 2,

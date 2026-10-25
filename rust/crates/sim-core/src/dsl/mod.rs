@@ -128,6 +128,16 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "event_spell_mv" => ctx.spell.map_or(2, |c| g.db.get(c).cmc as i32),
         "source_power" => src.map_or(2, |m| epow(g, m)),
         "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.max(0)),
+        // --- Tier 3 (marwyn): "each attacking Elf you control" (Dwynen): the creatures p attacked with this turn
+        // (`combat::attack_triggers` records them) still on the battlefield
+        s if s.starts_with("attacking_type:") => {
+            let t = &s[15..];
+            if pl.attacking != Some(g.turn_stamp()) {
+                return 0;
+            }
+            let live = |m: PermId| g.perm(m).on_bf && g.perm(m).owner == p && has_type(g, m, t);
+            pl.attackers.iter().filter(|&&m| live(m)).count() as i32
+        }
         s if s.starts_with("type_you:") || s.starts_with("type_all:") => {
             let t = &s[9..];
             let qs: Vec<PlayerId> = if s.starts_with("type_you") {
@@ -1428,12 +1438,15 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
                 continue;
             }
             for a in g.db.get(cd).abilities.iter() {
-                let Ability::Static { kind, pow, tgh, filter, .. } = a else { continue };
+                let Ability::Static { kind, pow, tgh, filter, per, .. } = a else { continue };
                 match kind.as_str() {
                     "anthem" => {
                         if cre && matches(g, q.id, m, filter.as_ref(), Some(src)) {
-                            dp += pow.unwrap_or(0);
-                            dt += tgh.unwrap_or(0);
+                            // --- Tier 3 (marwyn): "+1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
+                            let k =
+                                if per.is_some() { num(g, q.id, per.as_ref(), &DslCtx::base(), Some(src)) } else { 1 };
+                            dp += pow.unwrap_or(0) * k;
+                            dt += tgh.unwrap_or(0) * k;
                         }
                     }
                     "equip_bonus" => {
@@ -1628,6 +1641,12 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "artifact" => d.types.has(Types::ARTIFACT),
             "enchantment" => d.types.has(Types::ENCHANTMENT),
             "legendary" => d.tag(Tag::Leg),
+            // --- Tier 3 (marwyn): the Medallions ("green spells you cast cost {1} less")
+            "white" => d.colors.has('W'),
+            "blue" => d.colors.has('U'),
+            "black" => d.colors.has('B'),
+            "red" => d.colors.has('R'),
+            "green" => d.colors.has('G'),
             _ => true,
         };
         if ok {
@@ -1842,6 +1861,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     if cost.tap == Some(true) {
         g.perm_mut(src).tapped = true;
         crate::impls::t0_captain::became_tapped(g, src); // Captain America, Living Legend
+        crate::impls::t3_marwyn::on_tapped(g, src)?; // --- Tier 3 (marwyn): Dionus, Legolas
     }
     if let Some(l) = cost.life {
         lose_life(g, p, l, Some(p), "other", None)?;

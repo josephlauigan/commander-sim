@@ -22,6 +22,21 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 
 [card_notes]
 "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun" = { status = "Approximate", note = "hand-written (impls/t6_green2.rs): the top-four creature pick, the end-step transform at four creatures, Itlimoc taps for {G} per creature as Gaea's Cradle; the bottom order is not chosen" }
+# --- Tier 3 (marwyn): hand-written in impls/t3_marwyn.rs
+"Elvish Guidance" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): {G} for each Elf on the battlefield, as its own mana source (as Wild Growth); the enchanted land isn't tracked (destroying the land leaves the mana)" }
+"Genesis Wave" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): X = all spare mana (cast with X >= 5); every permanent card with mana value X or less among the top X enters (lands with landfall), the rest go to the graveyard" }
+"Dionus, Elvish Archdruid" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): an Elf of yours that becomes tapped during your turn (attacking, for mana, for a {T} cost) untaps and gets a +1/+1 counter, once each turn per Elf" }
+"Eladamri, Korvecdal" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): creature spells cast from the top of the library (the AI knows the top card); {G},{T}, tap two creatures on your turn: the best creature card of mana value 3+ from the hand or the top onto the battlefield" }
+"Galadhrim Ambush" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): cast when attacked by a fifth of your life or three creatures: X 1/1 Elf Warriors (X attackers, they can block), non-Elf creatures deal no combat damage; not used as a trick on your own attack" }
+"Galadhrim Brigade" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): squad {1}{G} paid as many times as the spare mana allows (up to 6), a token copy for each; other Elves +1/+1 (compiled)" }
+"Joraga Warcaller" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): multikicker {1}{G} paid as many times as the spare mana allows (up to 6), a +1/+1 counter for each; other Elves +1/+1 per counter (compiled)" }
+"Legolas's Quick Reflexes" = { status = "Approximate", note = "hand-written (impls/t6_legends2.rs, impls/t3_marwyn.rs): untap, reach, hexproof, and 'becomes tapped: damage equal to its power to a creature' (the most valuable one it kills); cast on a tapped mana creature that then taps again (the mana floats), or as hexproof against targeted removal; not as a combat trick" }
+"Realmwalker" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): names the deck's most common creature type as it enters; creature spells of that type cast from the top of the library (the AI knows the top card)" }
+"Three Tree City" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): names a creature type as it enters as a land drop (else the most common one); taps for {C}, or mana of one colour equal to the creatures of that type less the {2} activation (as Nykthos)" }
+"Umbral Mantle" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): the combo with a creature making 4+ mana (or Marwyn, which grows) and Ezuri, Renegade Leader before combat: infinite mana and overruns win (combos framework, each opponent may answer a piece); the plain {3},{Q}: +2/+2 outside the loop is not used" }
+"Wirewood Lodge" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): {T}: {C}; with an Elf mana creature already tapped that makes 3+, {G},{T}: untap it, counted as the Lodge tapping for that Elf's mana less the {G}; not used to untap an attacker" }
+"Yavimaya, Cradle of Growth" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): every land is a Forest where the engine asks (forestwalk, Forests that tap for more); taps for {G}; the {T}: {G} every land gains as a Forest is not added (colourless lands stay colourless)" }
+"Yeva, Nature's Herald" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): green creature spells as though they had flash (cast::grants_flash: the AI casts them at the end of an opponent's turn); flash (data)" }
 
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }

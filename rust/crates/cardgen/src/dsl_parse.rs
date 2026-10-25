@@ -265,6 +265,21 @@ pub fn num_expr(s: &str) -> J {
         return format!("{}{}", if tm.gs(2) == "you control" { "type_you:" } else { "type_all:" }, singular(tm.gs(1)))
             .into();
     }
+    // --- Tier 3 (marwyn): "each Elf you control", "each Elf on the battlefield", "each attacking Elf you control",
+    // "each +1/+1 counter on ~"
+    if let Some(tm) = rmatch(
+        r"^(?:the number of )?(attacking )?(elf|elves|goblin|zombie|human|ninja|soldier|warrior|knight|vampire|spirit|faerie|sliver|merfolk|dragon|angel|demon|dinosaur) (?:creatures )?(you control|on the battlefield)$",
+        &s,
+    ) {
+        let t = singular(tm.gs(2));
+        if tm.g(1).is_some() {
+            return format!("attacking_type:{t}").into();
+        }
+        return format!("{}{t}", if tm.gs(3) == "you control" { "type_you:" } else { "type_all:" }).into();
+    }
+    if rmatch(r"^\+1/\+1 counter on (?:~|it|this creature)$", &s).is_some() {
+        return "counters_on_self".into();
+    }
     if s.contains("card") && s.contains("hand") {
         return "cards_in_hand".into();
     }
@@ -739,6 +754,11 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         Some(eff(obj! {"do" => "put_land"}))
     }),
     (r"^if you don't, ~ deals (\d+) damage to each opponent$", |_| Some(eff(obj! {"do" => "noop"}))),
+    // --- Tier 3 (marwyn): "put a +1/+1 counter on target creature for each Elf you control" (Immaculate Magistrate)
+    (
+        r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
+        |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
+    ),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -1079,6 +1099,24 @@ fn kw_statics(text: Option<&str>, mut mk: impl FnMut(&str) -> Obj) -> Fx {
 type StaticFn = fn(&M) -> Option<Fx>;
 
 static STATICS: &[(&str, StaticFn)] = &[
+    // --- Tier 3 (marwyn): "other Elf creatures you control get +1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
+    (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+) for each (.+)$", |m| {
+        let per = num_expr(m.gs(5));
+        if per == J::from("X") {
+            return None;
+        }
+        let mut filter = obj! {"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()};
+        if !m.gs(2).trim().is_empty() {
+            filter.set("subtype", m.gs(2).trim());
+        }
+        Some(eff(obj! {"type" => "static", "static" => "anthem", "filter" => filter, "pow" => int(m.gs(3)),
+        "tgh" => int(m.gs(4)), "per" => per}))
+    }),
+    // --- Tier 3 (marwyn): "green spells you cast cost {1} less to cast" (the Medallions)
+    (r"^(white|blue|black|red|green) spells you cast cost \{(\d+)\} less to cast$", |m| {
+        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => m.gs(1),
+        "amount" => -int(m.gs(2))}))
+    }),
     (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$", |m| {
         let mut filter = obj! {"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()};
         if !m.gs(2).trim().is_empty() {

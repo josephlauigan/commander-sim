@@ -418,13 +418,14 @@ fn legolas_pick(g: &Game, p: PlayerId) -> Option<PermId> {
     max_by(if tapped.is_empty() { &cs } else { &tapped }, |m| pval(g, m))
 }
 
-/// the effect: untap target creature; until end of turn it gains reach and hexproof. (The third part, "whenever this
-/// creature becomes tapped, it deals damage equal to its power to up to one target creature", needs the becomes-tapped
-/// event: engine-needs-legends2.md. Split second is the engine's too.)
+/// the effect: untap target creature; until end of turn it gains reach and hexproof, and "whenever this creature
+/// becomes tapped, it deals damage equal to its power to up to one target creature" (`t3_marwyn::on_tapped`). (Split
+/// second is the engine's.)
 fn legolas_effect(g: &mut Game, t: PermId) {
     g.perm_mut(t).tapped = false;
     eot_kw(g, t, "reach");
     eot_kw(g, t, "hexproof");
+    crate::impls::t3_marwyn::legolas_mark(g, t); // "whenever this creature becomes tapped": t3_marwyn::on_tapped
     crate::glog!(g, "    {} untaps, gains reach and hexproof (Legolas's Quick Reflexes)", g.perm(t).name);
 }
 

@@ -9350,3 +9350,13 @@ tags = "rock=1:C"
 dsl = []
 status = "Full"
 note = "{T}: add {C}; {7}, {T}, sacrifice: destroy the opposing permanent worth most (4 or more)"
+
+# --- Tier 3 (marwyn): hand-written in rust/crates/sim-core/src/impls/t3_marwyn.rs
+["Elvish Guidance"]
+pool_add_tags = ["rock=1:G"]
+
+["Genesis Wave"]
+pool_add_tags = ["xtutor"]
+
+["Galadhrim Ambush"]
+pool_remove_tags = ["tokx"]

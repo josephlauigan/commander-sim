@@ -468,6 +468,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         Source::Perm(m) => {
             g.perm_mut(m).tapped = true;
             crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
+            crate::impls::t3_marwyn::on_tapped(g, m)?; // --- Tier 3 (marwyn): Dionus, Legolas
             g.tap_cols = Colors::from_letters(col);
             cardcode::on_tap_perm(g, p, m, n)?;
             if !g.hooks.is_empty() {
