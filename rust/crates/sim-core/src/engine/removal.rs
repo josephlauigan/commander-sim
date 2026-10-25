@@ -107,6 +107,9 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
             if cd.is_some_and(|d| d.tag(Tag::Sauron)) && ward_legends(g, p).is_empty() {
                 continue; // ward: sacrifice a legend
             }
+            if crate::impls::t12_kaalia_sythis::ward_blocks(g, p, m) {
+                continue; // --- Tiers 1/2 (kaalia-sythis): Valgavoth's ward (sacrifice three nonland permanents)
+            }
             if let Some(s) = st
                 && (protected_from(g, m, Colors::from_letters(&s.pips))
                     || crate::impls::tymna_cards::hexproof_from(g, m, Colors::from_letters(&s.pips)))
@@ -227,6 +230,14 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     if spell.is_some()
         && let Some(a) = actor.filter(|&a| a != owner)
         && !crate::impls::t45_krenko::life_ward(g, a, m)?
+    {
+        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
+        return Ok(());
+    }
+    // --- Tiers 1/2 (kaalia-sythis): Valgavoth, Terror Eater's "Ward—Sacrifice three nonland permanents"
+    if spell.is_some()
+        && let Some(a) = actor.filter(|&a| a != owner)
+        && !crate::impls::t12_kaalia_sythis::sac_ward(g, a, m)?
     {
         crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
         return Ok(());

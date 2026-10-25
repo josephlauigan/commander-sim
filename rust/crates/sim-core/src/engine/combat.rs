@@ -764,7 +764,10 @@ fn resolve_combat_inner(
             if dmg > 0 && crate::impls::t0_captain::sac_player(g, d, dmg) {
                 dmg = 0; // Heroic Sacrifice
             }
-            if dmg > 0 && prevents_damage(g, d, Some(p)) {
+            // --- Tiers 1/2 (kaalia-sythis): Serra's Emissary (protection from creatures)
+            if dmg > 0
+                && (prevents_damage(g, d, Some(p)) || crate::impls::t12_kaalia_sythis::emissary_shields(g, d))
+            {
                 // protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
                 g.player_mut(d).stat("dmg_prevented", dmg as i64);
                 crate::glog!(

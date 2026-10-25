@@ -741,6 +741,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         leave(g, m)?; // Rest in Peace: exiled, so it never dies
         if !token {
             to_zone_card(g, m, Zone::Exile);
+            crate::impls::t12_kaalia_sythis::exiled_instead(g, m); // --- Tiers 1/2 (kaalia-sythis): Valgavoth
         }
         return Ok(());
     }
@@ -781,6 +782,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     let token = g.perm(m).token;
     if g.marchesa_on && creature && !token {
         cardcode::marchesa_dies(g, p, m)?;
+    }
+    if !g.t12_batch.is_empty() && creature && !token {
+        crate::impls::t12_kaalia_sythis::batch_dies(g, p, m)?; // --- Tiers 1/2 (kaalia-sythis): Avacyn, Liesa
     }
     if g.dsl_on {
         let fired = crate::dsl::Fired { perm: Some(m), owner: Some(p), dying: Some(m), ..Default::default() };

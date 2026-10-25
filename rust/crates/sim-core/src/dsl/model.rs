@@ -92,6 +92,9 @@ pub struct Effect {
     pub if_you_do: Vec<Effect>,
     pub random: Option<bool>,
     pub mult: Option<i32>,
+    /// --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield": every match, not
+    /// the best one (reanimate)
+    pub all: Option<bool>,
 }
 
 /// An activated ability's cost.

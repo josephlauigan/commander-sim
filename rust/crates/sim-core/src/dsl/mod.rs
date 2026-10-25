@@ -753,6 +753,31 @@ fn run(
                 return Ok(()); // --- Tiers 4/5 (winota): Soulless Jailer: permanent cards in graveyards can't enter
             }
             let f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
+            if e.all == Some(true) {
+                // --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield"
+                let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).collect();
+                let tapped = e.tapped == Some(true);
+                let mut lands = 0;
+                for c in cs {
+                    let gy = &mut g.player_mut(p).gy;
+                    let Some(i) = gy.iter().position(|&x| x == c) else { continue };
+                    gy.remove(i);
+                    if g.db.get(c).land {
+                        g.add_land_entering(p, c, tapped);
+                        lands += 1;
+                    } else {
+                        let m = zones::enter(g, p, c, Enter::default())?;
+                        if tapped {
+                            g.perm_mut(m).tapped = true;
+                        }
+                    }
+                    crate::glog!(g, "    {} returns to the battlefield", g.db.get(c).name);
+                }
+                for _ in 0..lands {
+                    zones::landfall(g, p)?;
+                }
+                return Ok(());
+            }
             let mut pool: Vec<(CardId, PlayerId)> =
                 g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).map(|c| (c, p)).collect();
             if e.from.as_deref() == Some("any") {

@@ -101,7 +101,7 @@ fn pname(g: &Game, p: PlayerId) -> Sym {
 }
 
 /// the rest of the cards go to the bottom of the library in a random order
-fn bottom_random(g: &mut Game, p: PlayerId, mut rest: Vec<CardId>) {
+pub(crate) fn bottom_random(g: &mut Game, p: PlayerId, mut rest: Vec<CardId>) {
     for i in (1..rest.len()).rev() {
         let j = g.rng.below(i as u64 + 1) as usize;
         rest.swap(i, j);
@@ -112,7 +112,7 @@ fn bottom_random(g: &mut Game, p: PlayerId, mut rest: Vec<CardId>) {
 }
 
 /// the top n cards of p's library, top first
-fn pop_top(g: &mut Game, p: PlayerId, n: usize) -> Vec<CardId> {
+pub(crate) fn pop_top(g: &mut Game, p: PlayerId, n: usize) -> Vec<CardId> {
     let lib = &mut g.player_mut(p).library;
     let k = n.min(lib.len());
     (0..k).map(|_| lib.pop().unwrap()).collect()

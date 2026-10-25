@@ -403,9 +403,17 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
-            Some(eff(
-                obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }},
-            ))
+            let mut o =
+                obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
+            // --- Tiers 1/2 (kaalia-sythis): "return all enchantment cards from your graveyard to the battlefield"
+            // (Resurgent Belief, Splendid Reclamation, World Shaper): every one of them, tapped if it says so
+            if g1.starts_with("all ") && m.gs(2) == "your" {
+                o.0.push(("all".to_string(), J::from(true)));
+                if m.all().contains("battlefield tapped") {
+                    o.0.push(("tapped".to_string(), J::from(true)));
+                }
+            }
+            Some(eff(o))
         },
     ),
     (

@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Pillowfort / enchantress
 - **Commander:** Sythis, Harvest's Hand
 - **Color identity:** White, Green
 - **Game Changers (1):** Enlightened Tutor
-- **Combos:** None.
-- **Lands:** 35 (15 nonbasic + 20 basic)
+- **Combos:** None (no two-card infinite combo; Solitary Confinement with the enchantress draws is a soft lock, not a combo).
+- **Lands:** 35 (15 nonbasic + 20 basic), plus Strength of the Harvest // Haven of the Harvest as a land face
 
 ## Role in the pool
 
-Can your decks win through an attack tax, and do they bring enchantment removal? This is the deck that rewards enchantment removal.
+Can your decks win through an attack tax, and do they bring enchantment removal? This is the deck that rewards enchantment removal, and punishes a slow board with Voltron Auras.
 
 ## At the table
 
-- **Plan:** Ramps with Utopia Sprawl, Wild Growth and Fertile Ground, then builds a pillowfort while Sythis, Harvest's Hand, Eidolon of Blossoms and Argothian Enchantress draw cards off enchantments.
-- **Wins by:** Wins slowly in the air and with Auras: Rancor, All That Glitters and Archangel of Tithes make a few creatures hit hard, with Spider Umbra and Snake Umbra protecting them. Taxes such as Ghostly Prison, Sphere of Safety, Norn's Annex and Silent Arbiter keep you from attacking back.
-- **Watch out for:** Attack taxes grow with each enchantment, so bring enchantment removal and go around the fort with fliers or spells. Silent Arbiter limits you to one attacker. Privileged Position and Sterling Grove give hexproof, so removal must come before they land.
-- **Interaction:** Swords to Plowshares, Path to Exile, Journey to Nowhere, Oblivion Ring, Banishing Light, Cast Out, Council's Judgment, Grasp of Fate, Song of the Dryads, Darksteel Mutation, Beast Within and Austere Command. Heroic Intervention and Swiftfoot Boots protect.
+- **Plan:** Ramps with Utopia Sprawl, Wild Growth, Fertile Ground, Overgrowth, Abundant Growth, Sanctum Weaver, Sol Ring and Arcane Signet, then draws a card off every enchantment with Sythis, Enchantress's Presence, Eidolon of Blossoms, Argothian, Mesa and Verduran Enchantress, Satyr Enchanter, Setessan Champion and Jukai Naturalist (Weaver of Harmony copies those draws). Idyllic Tutor, Enlightened Tutor and Sterling Grove find the pieces.
+- **Wins by:** One big Aura-carrier: All That Glitters, Ethereal Armor, Ancestral Mask, Strength of the Harvest and Rancor on an evasive or protected creature, with Setessan Champion and Calix, Guided by Fate growing it (Calix copies an enchantment each turn it connects). Sigil of the Empty Throne and Hallowed Haunting make fliers; Archon of Sun's Grace makes Pegasi; Heliod, Sun-Crowned turns life gain into counters.
+- **Watch out for:** Ghostly Prison, Sphere of Safety and Archon of Sun's Grace tax or punish attacks, Solitary Confinement and Greater Auramancy make the player or its enchantments untouchable, Privileged Position and Sterling Grove give hexproof, and Resurgent Belief (suspended) or Mirari's Wake rebuild after a wipe. Kill the enchantress draw engines early and bring enchantment removal.
+- **Interaction:** Swords to Plowshares, Path to Exile, Grasp of Fate, Song of the Dryads, Darksteel Mutation, Kenrith's Transformation, Seal of Cleansing, Seal of Primordium, Aura of Silence, Beast Within, Austere Command and Winds of Rath (Auras survive it). Heroic Intervention, Flickering Ward and Destiny Spinner protect.
 
 ## Strategy
 
-Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Norn's Annex, Windborn Muse, Baird, Archangel of Tithes, Crawlspace, Silent Arbiter), draw a card off every enchantment cast, and win in the air with Archangel of Tithes and Auras such as Rancor and All That Glitters on anything evasive. Removal is almost all enchantment-based, so it grows the engine.
+Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Archon of Sun's Grace, Solitary Confinement, Authority of the Consuls, Blind Obedience), draw a card off every enchantment cast, and win with an Aura-stacked creature or a squadron of enchantment tokens. Removal is almost all enchantment-based, so it grows the engine; Resurgent Belief brings the whole board back.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Enchantress draw triggers; attack taxes and attacker caps; Aura pump (Rancor, All That Glitters); Sythis's lifegain/draw on enchantment cast.
+Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal Armor, Ancestral Mask, Strength of the Harvest, Rancor); Sythis's lifegain/draw on enchantment cast; Calix's counters and enchantment copies; Resurgent Belief's suspend and mass return. Left Approximate: Weaver of Harmony copies only the enchantress draw triggers.
 
 ## Decklist by type (100)
 

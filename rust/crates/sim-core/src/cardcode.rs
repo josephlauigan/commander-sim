@@ -525,6 +525,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     if crate::impls::t45_krenko::mountainwalk(g, b, a) {
         return true; // --- Tiers 4/5 (krenko): Goblin King
     }
+    if crate::impls::t12_kaalia_sythis::evasion_blocked(g, b, a) {
+        return true; // --- Tiers 1/2 (kaalia-sythis): Serra's Emissary (protection from creatures)
+    }
     crate::impls::rules::evasion_blocked(g, b, a)
         || crate::impls::bulk_white::exit_blocked(g, b, a)
         || crate::impls::t45_winota::evasion_blocked(g, b, a) // --- Tiers 4/5 (winota): Sundering Eruption
@@ -918,6 +921,9 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     }
     if !g.t45_due.is_empty() {
         crate::impls::t45_urza_yawgmoth::revival_returns(g)?; // --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar
+    }
+    if !g.t12_due.is_empty() {
+        crate::impls::t12_kaalia_sythis::end_returns(g)?; // --- Tiers 1/2 (kaalia-sythis): Avacyn, Liesa
     }
     Ok(())
 }

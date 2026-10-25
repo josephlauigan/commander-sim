@@ -1719,7 +1719,9 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "all": true,
+       "tapped": true
       }
      ],
      "sorcery": false,
@@ -16134,7 +16136,8 @@
        "filter": {
         "type": "artifact"
        },
-       "from": "yours"
+       "from": "yours",
+       "all": true
       }
      ]
     }
@@ -74978,7 +74981,9 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "all": true,
+       "tapped": true
       }
      ],
      "event": "etb",
@@ -101202,7 +101207,8 @@
        "filter": {
         "type": "enchantment"
        },
-       "from": "yours"
+       "from": "yours",
+       "all": true
       }
      ]
     }
@@ -117694,7 +117700,9 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "all": true,
+       "tapped": true
       }
      ]
     }
@@ -145053,7 +145061,9 @@
        "filter": {
         "type": "land"
        },
-       "from": "yours"
+       "from": "yours",
+       "all": true,
+       "tapped": true
       }
      ],
      "event": "dies",

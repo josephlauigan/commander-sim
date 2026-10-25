@@ -1207,6 +1207,19 @@ pub struct Game {
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar returns at the next end step: (controller, card, revival
     /// counters it returns with)
     pub t45_due: Vec<(PlayerId, CardId, i64)>,
+    /// --- Tiers 1/2 (kaalia-sythis): Avacyn, Angel of Horror and Liesa's returns at the next end step: (controller,
+    /// card, owner, to its owner's hand rather than the battlefield)
+    pub t12_due: Vec<(PlayerId, CardId, PlayerId, bool)>,
+    /// Avacyn / Liesa died in a wipe: (controller, the wipe's batch, Liesa) for the creatures dying with them
+    pub t12_batch: Vec<(PlayerId, u32, bool)>,
+    /// Valgavoth, Terror Eater: the one these lists belong to; the cards exiled with it (card, owner); the cards in
+    /// opponents' graveyards it has seen; the cards cast through it that go back to their owner's graveyard
+    pub t12_valg: Option<PermId>,
+    pub t12_void: Vec<(CardId, PlayerId)>,
+    pub t12_kept: Vec<(CardId, PlayerId)>,
+    pub t12_pass: Vec<(CardId, PlayerId)>,
+    /// a Serra's Emissary has entered this game (combat and blocks look for it from then on)
+    pub t12_emissary: bool,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1391,6 +1404,13 @@ impl Game {
             doomed_turn: None,
             jar_due: vec![],
             t45_due: vec![],
+            t12_due: vec![],
+            t12_batch: vec![],
+            t12_valg: None,
+            t12_void: vec![],
+            t12_kept: vec![],
+            t12_pass: vec![],
+            t12_emissary: false,
             cur_batch: None,
             hooks: vec![],
             stack: vec![],
