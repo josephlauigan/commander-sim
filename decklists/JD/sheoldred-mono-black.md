@@ -88,13 +88,12 @@ the table's blockers.
 - **Recursion** (below) is the backup when protection isn't there.
 
 ### Remove threats
-13 removal spells keep the board manageable: **Terror** (nonblack, nonartifact), **Last Gasp** (-3/-3), **Vanquish the
+12 removal spells keep the board manageable: **Terror** (nonblack, nonartifact), **Last Gasp** (-3/-3), **Vanquish the
 Weak** (power 3 or less), **Disembowel** (X equals the target's mana value), **Overkill** (-0/-9999), **Foolish Fate**,
 **Sephiroth's Intervention** (destroy, gain 2 life), **Wander Off** (exile), **Invoke Despair** (edict for a creature,
 an enchantment and a planeswalker, with a loss of 2 life and a card for you each time they have none; needs {B}{B}{B}{B}),
-**Soul Enervation** (flash, -4/-4), and the sacrifice-cost cheap ones **Silence the Echo**, **Lethal Throwdown** and
-**Stir Up Trouble** (each cheap with a creature to sacrifice; Silence the Echo and Stir Up Trouble can instead pay
-{3} or {4}). **Rooftop Assassin** (flash, flying, lifelink) destroys a creature that was dealt damage this turn, and
+**Soul Enervation** (flash, -4/-4), and the sacrifice-cost cheap ones **Silence the Echo** and **Lethal Throwdown** (each cheap
+with a creature to sacrifice; Silence the Echo can instead pay {3}). **Rooftop Assassin** (flash, flying, lifelink) destroys a creature that was dealt damage this turn, and
 **Accursed Marauder** makes each player sacrifice a nontoken creature (it can sacrifice itself). **Melancholic Poet**
 drains each opponent for 1 every time you cast an instant or sorcery that targets a creature.
 
@@ -106,7 +105,9 @@ loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery.
 
 ### Drain creatures
 **Blood Artist**, **Al Bhed Salvagers**, **Sneering Shadewriter** (drain 2 on entering) and **Screeching Soulbreaker**
-(drain 1 each attack) keep the pressure on when Sheoldred is gone.
+(drain 1 each attack) keep the pressure on when Sheoldred is gone. **Ob Nixilis, the Fallen** ({3}{B}{B}, 3/3) makes a
+player lose 3 life each time a land enters under your control and grows by three +1/+1 counters: one land drop a turn
+is 3 to an opponent and a bigger threat.
 **Fetid Imp** and **Burrog Banemaker** are deathtouch blockers that protect the life total. **Undercity Dire Rat** is a
 cheap body that leaves a Treasure.
 
@@ -155,7 +156,7 @@ five- and four-mana artifacts you cast once the rocks are out.
 36 lands: 32 Swamp, Command Tower (makes black here), and three colorless lands that draw cards: Bonders' Enclave,
 Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 33 black sources. Ramp: six mana artifacts (Arcane
 Signet, Fellwar Stone, Mind Stone, Charcoal Diamond, Commander's Sphere, Potioner's Trove) plus Undercity Dire Rat.
-Interaction: 13 removal spells, 4 protection cards (Swiftfoot Boots, Darksteel Plate, Masterful Flourish, Battle-Rage
+Interaction: 12 removal spells, 4 protection cards (Swiftfoot Boots, Darksteel Plate, Masterful Flourish, Battle-Rage
 Blessing) and Perigee Beckoner.
 
 ## Bracket and Rule 0
@@ -170,13 +171,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
 
-**Creatures (22).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Leech Collector // Bloodletting, Melancholic Poet, Necrosquito, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
+**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Leech Collector // Bloodletting, Melancholic Poet, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
 
 **Enchantments (3).** Phyrexian Arena, Soul Enervation, Underworld Dreams
 
 **Artifacts (13).** Arcane Signet, Carnage Altar, Charcoal Diamond, Commander's Sphere, Crawlspace, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots
 
-**Sorceries (13).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Read the Bones, Silence the Echo, Stir Up Trouble, Syphon Mind
+**Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Read the Bones, Silence the Echo, Syphon Mind
 
 **Instants (12).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Masterful Flourish, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
 
@@ -221,6 +222,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Mikokoro, Center of the Sea
 1 Mind Stone
 1 Necrosquito
+1 Ob Nixilis, the Fallen
 1 Otherworld Atlas
 1 Overkill
 1 Painful Lesson
@@ -241,7 +243,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Skyscanner
 1 Sneering Shadewriter
 1 Soul Enervation
-1 Stir Up Trouble
 1 Swiftfoot Boots
 1 Syphon Mind
 1 Terror

@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Karn, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Veyran, Y'shtola.
+JD's decks: Cloud, Godo, Karn, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -13,6 +13,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-10-25.** Out: Wrecking Ball Arm. In: Buster Sword. JD's choice (10/25): Buster Sword is a cheaper Equipment (cast {3}, equip {2}) that gives +3/+2 and draws a card on each hit, with a free spell up to the damage dealt. Not simulated; the free-cast part isn't modeled yet.
 - **2026-10-18.** Out: Citizen's Arrest, Hero's Blade. In: Andúril, Narsil Reforged, Stroke of Midnight. Citizen's Arrest -> Stroke of Midnight: -1.4 over T1-T3 (instant answer to any nonland permanent). Hero's Blade -> Andúril, Narsil Reforged: -0.3 over T1-T3 (a +1/+1 counter on every creature each swing).
 - **2026-10-16.** Out: Duelist's Heritage, Ghostly Prison, Helm of Kaldra, Shield of Kaldra. In: Archangel of Tithes, Open the Armory, Silverblade Paladin, Sphere of Safety. Four swaps (JD, 10-16). Out: Helm of Kaldra, Shield of Kaldra, Ghostly Prison, Duelist's Heritage. In: Archangel of Tithes, Open the Armory, Sphere of Safety, Silverblade Paladin. JD is taking Helm and Shield of Kaldra for another deck; Ghostly Prison and Duelist's Heritage could not be found. Test: T1 29.1 -> 30.3 (+1.2, ±3.8, neutral). Buys: Sphere of Safety $4.38, Silverblade Paladin $0.87 = $5.25.
 - **2026-10-16.** Out: Bronze Guardian, Kor Duelist. In: Danitha Capashen, Paragon, Sram, Senior Edificer. Bronze Guardian -> Sram, Senior Edificer and Kor Duelist -> Danitha Capashen, Paragon (JD's choice). Tested neutral: T1 29.2 -> 29.7 (+0.5, noise ±3.8, 1,000 games paired). Buys: Sram $1.73, Danitha $0.75.
@@ -276,6 +277,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-10-25.** Out: Stir Up Trouble. In: Ob Nixilis, the Fallen. JD's choice (10/25): Stir Up Trouble had the lowest win rate when cast at T3 and T4. Ob Nixilis drains 3 per land drop. Not simulated; the landfall ability isn't modeled yet (body only).
 - **2026-10-18.** Out: Gray Merchant of Asphodel. In: Necrosquito. Band calibration 10/18 (JD approved): Gray Merchant of Asphodel=>Necrosquito
 - **2026-10-17.** Out: Restless Bloodseeker // Bloodsoaked Reveler. In: Ad Nauseam. Ad Nauseam (JD's pick): +1.6 over t3-t5 (look-ahead, 1,000 paired per tier, noise; positive in every tier) once the shared Ad Nauseam AI and the look-ahead's hold-mana credit were fixed. The deck's first Game Changer.
 - **2026-10-15.** Out: Apex Witchstalker. In: Crawlspace. Synced with JD's physical deck: Crawlspace is in the deck in place of Apex Witchstalker (no more than two creatures can attack you each combat). Apex Witchstalker goes to bulk. Not simulated.
@@ -695,3 +697,11 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 ### Changes
 
 - **2026-10-24.** Out: Avenge. In: Flickering Hound. Avenge -> Flickering Hound (JD's choice, 2026-10-24; the Hound moves over from Seph/Atraxa). Avenge was stuck in hand in 75% of the games it was drawn (10/19 analysis, T5) and a wipe that hits the deck's own 30 creatures; Austere Command stays as the reset. The Hound flickers a creature on every creature cast: Sunblast Angel, Grave Titan, Sun Titan, Coiling Oracle. Not simulated.
+
+## The Ur-Dragon — Five-Colour Dragons and Equipment
+
+`decklists/JD/ur-dragon-equipment.md`. Not in the simulator yet.
+
+### Changes
+
+- **2026-10-25.** New deck (JD, 10/25): five-colour Godo + Helm of the Host combo with Equipment and Dragons; Gilgamesh, Master-at-Arms in the 99.
