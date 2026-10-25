@@ -354,6 +354,15 @@ fn mind_stone_is_cracked_late() {
 }
 
 #[test]
+fn mind_stone_is_not_offered_on_its_own_mana() {
+    // {1}, {T}, sacrifice: with every land tapped, Mind Stone's own {C} can't pay (it was offered, then refused)
+    let mut g = table(&[LP, TEYSA]);
+    let ms = perm(&mut g, P0, "Mind Stone");
+    lands(&mut g, P0, "Plains", 6, true);
+    assert!(!opts(&mut g, ms, P0).iter().any(|o| o.label == "crack Mind Stone"));
+}
+
+#[test]
 fn aura_discounts() {
     let mut g = table(&[LP, TEYSA]);
     let aura = card(&g, "Hyena Umbra");

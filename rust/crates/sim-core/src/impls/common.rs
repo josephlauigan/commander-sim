@@ -1244,7 +1244,14 @@ fn priest_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ======================================================== staples
 /// Full: taps for {C}; cracked for a card late (six or more lands)
 fn mind_stone(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(true) || g.perm(src).tapped || g.player(p).lands.len() < 6 || !can_pay(g, p, 1, "", false) {
+    if post != Some(true) || g.perm(src).tapped || g.player(p).lands.len() < 6 {
+        return Ok(vec![]);
+    }
+    // {1}, {T}, sacrifice: the {1} can't come from Mind Stone itself (offered on its own mana, then refused)
+    let keep = std::mem::replace(&mut g.keep_untapped, vec![src]);
+    let ok = can_pay(g, p, 1, "", false);
+    g.keep_untapped = keep;
+    if !ok {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
