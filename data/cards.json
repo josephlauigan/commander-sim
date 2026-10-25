@@ -3044,6 +3044,101 @@
    "spell_prio": false
   },
   {
+   "name": "Ancient Brass Dragon",
+   "types": "C",
+   "generic": 5,
+   "pips": "BB",
+   "tags": {
+    "pow": "7",
+    "tgh": "6",
+    "bomb": "7",
+    "fly": true
+   },
+   "pow": 7,
+   "tgh": 6,
+   "bomb": 7,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ deals combat damage to a player, roll a d20. When you do, put any number of target creature cards with total mana value X or less from graveyards onto the battlefield under your control, where X is the result."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Ancient Copper Dragon",
+   "types": "C",
+   "generic": 4,
+   "pips": "RR",
+   "tags": {
+    "pow": "6",
+    "tgh": "5",
+    "bomb": "6",
+    "fly": true
+   },
+   "pow": 6,
+   "tgh": 5,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "treasure"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ancient Den",
    "types": "LA",
    "generic": 0,
@@ -3071,6 +3166,53 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Ancient Gold Dragon",
+   "types": "C",
+   "generic": 5,
+   "pips": "WW",
+   "tags": {
+    "pow": "7",
+    "tgh": "10",
+    "bomb": "7",
+    "fly": true
+   },
+   "pow": 7,
+   "tgh": 10,
+   "bomb": 7,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ deals combat damage to a player, roll a d20. You create a number of 1/1 blue Faerie Dragon creature tokens with flying equal to the result."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -3125,6 +3267,52 @@
     "lands_from_gy",
     "trigger_copies"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Ancient Silver Dragon",
+   "types": "C",
+   "generic": 6,
+   "pips": "UU",
+   "tags": {
+    "pow": "8",
+    "bomb": "8",
+    "fly": true
+   },
+   "pow": 8,
+   "tgh": 8,
+   "bomb": 8,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ deals combat damage to a player, roll a d20. Draw cards equal to the result. You have no maximum hand size for the rest of the game."
+   ],
+   "derived": {
+    "cmc": 8,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -4137,6 +4325,47 @@
     "cmc": 7,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Anointed Procession",
+   "types": "E",
+   "generic": 3,
+   "pips": "W",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "replacement",
+     "replace": "tokens",
+     "multiplier": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -6494,6 +6723,73 @@
     "cmc": 0,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Atarka, World Render",
+   "types": "C",
+   "generic": 5,
+   "pips": "RG",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "tgh": "4",
+    "bomb": "6",
+    "fly": true,
+    "trample": true
+   },
+   "pow": 6,
+   "tgh": 4,
+   "bomb": 6,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "grant",
+       "keyword": "double strike",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        }
+       }
+      }
+     ],
+     "event": "attack",
+     "source": "you_each",
+     "subtype": "dragon"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "trample"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -10841,6 +11137,53 @@
    "spell_prio": false
   },
   {
+   "name": "Blade of the Bloodchief",
+   "types": "A",
+   "generic": 1,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 1
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever a creature dies, put a +1/+1 counter on equipped creature. If equipped creature is a Vampire, put two +1/+1 counters on it instead."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Bladed Ambassador",
    "types": "C",
    "generic": 1,
@@ -12169,6 +12512,52 @@
    "spell_prio": false
   },
   {
+   "name": "Bloodletter of Aclazotz",
+   "types": "C",
+   "generic": 1,
+   "pips": "BBB",
+   "tags": {
+    "pow": "2",
+    "tgh": "4",
+    "fly": true
+   },
+   "pow": 2,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "demon",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If an opponent would lose life during your turn, they lose twice that much life instead."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Bloodline Keeper // Lord of Lineage",
    "types": "C",
    "generic": 2,
@@ -12407,6 +12796,54 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Bloodthirsty Conqueror",
+   "types": "C",
+   "generic": 3,
+   "pips": "BB",
+   "tags": {
+    "pow": "5",
+    "bomb": "5",
+    "dt": true,
+    "fly": true
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "deathtouch",
+    "flying"
+   ],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever an opponent loses life, you gain that much life."
+   ],
+   "derived": {
+    "cmc": 5,
     "land": false,
     "creature": true,
     "instant": false,
@@ -16309,6 +16746,44 @@
    "spell_prio": false
   },
   {
+   "name": "Call the Spirit Dragons",
+   "types": "E",
+   "generic": 0,
+   "pips": "WUBRG",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Dragons you control have indestructible.",
+    "At the beginning of your upkeep, for each color, put a +1/+1 counter on a Dragon you control of that color. If you put +1/+1 counters on five Dragons this way, you win the game."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Callous Dismissal",
    "types": "S",
    "generic": 1,
@@ -17017,6 +17492,60 @@
    "unparsed": [],
    "derived": {
     "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Captivating Vampire",
+   "types": "C",
+   "generic": 1,
+   "pips": "BB",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "vampire"
+     },
+     "pow": 1,
+     "tgh": 1
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Tap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types."
+   ],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": true,
     "instant": false,
@@ -18677,6 +19206,64 @@
    "spell_prio": false
   },
   {
+   "name": "Champion of Dusk",
+   "types": "C",
+   "generic": 3,
+   "pips": "BB",
+   "tags": {
+    "pow": "4"
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": "type_you:vampire",
+       "who": "you"
+      },
+      {
+       "do": "lose_life",
+       "n": "type_you:vampire",
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Champion's Helm",
    "types": "A",
    "generic": 3,
@@ -19164,6 +19751,51 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Charismatic Conqueror",
+   "types": "C",
+   "generic": 1,
+   "pips": "W",
+   "tags": {
+    "pow": "2",
+    "vig": true,
+    "tok": "1",
+    "tokp": "1"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "vigilance"
+   ],
+   "subtypes": [
+    "soldier",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -20233,6 +20865,49 @@
    "unparsed": [],
    "derived": {
     "cmc": 8,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Clavileño, First of the Blessed",
+   "types": "C",
+   "generic": 1,
+   "pips": "WB",
+   "tags": {
+    "leg": true,
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cleric",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever you attack, target attacking Vampire that isn't a Demon becomes a Demon in addition to its other types. It gains \"When ~ dies, draw a card and create a tapped 4/3 white and black Vampire Demon creature token with flying.\""
+   ],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": true,
     "instant": false,
@@ -22775,6 +23450,47 @@
    "unparsed": [],
    "derived": {
     "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Cordial Vampire",
+   "types": "C",
+   "generic": 0,
+   "pips": "BB",
+   "tags": {
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ or another creature dies, put a +1/+1 counter on each Vampire you control."
+   ],
+   "derived": {
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
@@ -25351,6 +26067,64 @@
     "creature": false,
     "instant": false,
     "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Damn",
+   "types": "S",
+   "generic": 0,
+   "pips": "BB",
+   "tags": {
+    "rem": "destroy",
+    "tgt": "c"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "overload"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Destroy target creature. A creature destroyed this way can't be regenerated.   [partly: a creature destroyed this way can't be regenerated]"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
     "perm": false
    },
    "phyrexian": "",
@@ -31257,6 +32031,43 @@
    "spell_prio": true
   },
   {
+   "name": "Dracogenesis",
+   "types": "E",
+   "generic": 6,
+   "pips": "RR",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "You may cast Dragon spells without paying their mana costs."
+   ],
+   "derived": {
+    "cmc": 8,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Dragon Fodder",
    "types": "S",
    "generic": 1,
@@ -31347,6 +32158,62 @@
    "spell_prio": false
   },
   {
+   "name": "Dragon's Hoard",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {
+    "rock": "1:A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "tap": true,
+      "other": "remove a gold counter from ~"
+     },
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever a Dragon you control enters, put a gold counter on ~."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Dragonlord Dromoka",
    "types": "C",
    "generic": 4,
@@ -31397,6 +32264,50 @@
    "spell_prio": false
   },
   {
+   "name": "Dragonlord's Servant",
+   "types": "C",
+   "generic": 1,
+   "pips": "R",
+   "tags": {
+    "shaman": true,
+    "pow": "1",
+    "tgh": "3"
+   },
+   "pow": 1,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "goblin",
+    "shaman"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Dragon spells you cast cost {1} less to cast."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Dragonskull Summit",
    "types": "L",
    "generic": 0,
@@ -31441,6 +32352,51 @@
      "swamp"
     ]
    ],
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Dragonspeaker Shaman",
+   "types": "C",
+   "generic": 1,
+   "pips": "RR",
+   "tags": {
+    "human": true,
+    "shaman": true,
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "barbarian",
+    "human",
+    "shaman"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Dragon spells you cast cost {2} less to cast."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
    "land_types": [],
    "basic": false,
    "python_hooks": [],
@@ -31579,6 +32535,54 @@
    "basic": false,
    "python_hooks": [],
    "spell_prio": true
+  },
+  {
+   "name": "Drana, Liberator of Malakir",
+   "types": "C",
+   "generic": 1,
+   "pips": "BB",
+   "tags": {
+    "leg": true,
+    "pow": "2",
+    "tgh": "3",
+    "fly": true
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "first strike",
+    "flying"
+   ],
+   "subtypes": [
+    "ally",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ deals combat damage to a player, put a +1/+1 counter on each attacking creature you control."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
   },
   {
    "name": "Drannith Magistrate",
@@ -32894,6 +33898,114 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Edgar Markov",
+   "types": "C",
+   "generic": 3,
+   "pips": "RWB",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "haste": true,
+    "tok": "1",
+    "tokp": "1"
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "eminence",
+    "first strike",
+    "haste"
+   ],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BRW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever Edgar attacks, put a +1/+1 counter on each Vampire you control."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Edgar, Charmed Groom // Edgar Markov's Coffin",
+   "types": "C",
+   "generic": 2,
+   "pips": "WB",
+   "tags": {
+    "leg": true,
+    "pow": "4"
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "vampire"
+     },
+     "pow": 1,
+     "tgh": 1
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "transform"
+   ],
+   "subtypes": [
+    "noble",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ dies, return it to the battlefield transformed under its owner's control."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -35529,6 +36641,58 @@
    ],
    "derived": {
     "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Emeritus of Woe // Demonic Tutor",
+   "types": "C",
+   "generic": 3,
+   "pips": "B",
+   "tags": {
+    "pow": "5",
+    "tgh": "4",
+    "bomb": "5"
+   },
+   "pow": 5,
+   "tgh": 4,
+   "bomb": 5,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters prepared"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "prepared"
+   ],
+   "subtypes": [
+    "vampire",
+    "warlock"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "At the beginning of your end step, if two or more creatures died this turn, ~ becomes prepared."
+   ],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": true,
     "instant": false,
@@ -43154,6 +44318,64 @@
    "source": "scryfall+dsl",
    "unparsed": [
     "Activated abilities of artifacts you control cost {1} less to activate. This effect can't reduce the mana in that cost to less than one mana."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Forerunner of the Legion",
+   "types": "C",
+   "generic": 2,
+   "pips": "W",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {},
+       "to": "top",
+       "n": 1,
+       "tapped": false,
+       "optional": true
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever another Vampire you control enters, target creature gets +1/+1 until end of turn."
    ],
    "derived": {
     "cmc": 3,
@@ -52957,6 +54179,63 @@
    "spell_prio": false
   },
   {
+   "name": "Haven of the Spirit Dragon",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "2",
+      "tap": true,
+      "sac": "self"
+     },
+     "effects": [
+      {
+       "do": "regrow",
+       "filter": {
+        "type": "creature"
+       },
+       "from": "yours"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Hawkeye, Avenging Archer",
    "types": "C",
    "generic": 2,
@@ -53619,6 +54898,52 @@
    "python_hooks": [
     "attack"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Hellkite Courser",
+   "types": "C",
+   "generic": 4,
+   "pips": "RR",
+   "tags": {
+    "pow": "6",
+    "tgh": "5",
+    "bomb": "6",
+    "fly": true
+   },
+   "pow": 6,
+   "tgh": 5,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ enters, you may put a commander you own from the command zone onto the battlefield. It gains haste. Return it to the command zone at the beginning of the next end step."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -57888,6 +59213,51 @@
     "plains",
     "swamp"
    ],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Indulgent Aristocrat",
+   "types": "C",
+   "generic": 0,
+   "pips": "B",
+   "tags": {
+    "pow": "1",
+    "lifelink": true
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "lifelink"
+   ],
+   "subtypes": [
+    "noble",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{2}, Sacrifice a creature: Put a +1/+1 counter on each Vampire you control."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
    "basic": false,
    "python_hooks": [],
    "spell_prio": false
@@ -63154,6 +64524,60 @@
    "spell_prio": false
   },
   {
+   "name": "Ketria Triome",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "URG",
+    "t": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters tapped"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "cycling"
+   ],
+   "subtypes": [
+    "forest",
+    "island",
+    "mountain"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GRU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [
+    "forest",
+    "island",
+    "mountain"
+   ],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Key to the Side-Door",
    "types": "A",
    "generic": 1,
@@ -63593,6 +65017,53 @@
    "spell_prio": false
   },
   {
+   "name": "Klauth, Unrivaled Ancient",
+   "types": "C",
+   "generic": 5,
+   "pips": "RG",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "fly": true,
+    "haste": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "haste"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever ~ attacks, add X mana in any combination of colors, where X is the total power of attacking creatures. Spend this mana only to cast spells. Until end of turn, you don't lose this mana as steps and phases end."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Knight of Autumn",
    "types": "C",
    "generic": 1,
@@ -63705,6 +65176,75 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Knight of the Ebon Legion",
+   "types": "C",
+   "generic": 0,
+   "pips": "B",
+   "tags": {
+    "pow": "1",
+    "tgh": "2"
+   },
+   "pow": 1,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "2B"
+     },
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 3,
+       "tgh": 3,
+       "what": {
+        "sel": "self"
+       }
+      },
+      {
+       "do": "grant",
+       "keyword": "deathtouch",
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "At the beginning of your end step, if a player lost 4 or more life this turn, put a +1/+1 counter on ~."
+   ],
+   "derived": {
+    "cmc": 1,
     "land": false,
     "creature": true,
     "instant": false,
@@ -65825,6 +67365,55 @@
    "spell_prio": false
   },
   {
+   "name": "Lathliss, Dragon Queen",
+   "types": "C",
+   "generic": 4,
+   "pips": "RR",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "bomb": "6",
+    "fly": true,
+    "tok": "1",
+    "tokp": "5",
+    "tokfly": true
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{1}{R}: Dragons you control get +1/+0 until end of turn."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Lathril, Blade of the Elves",
    "types": "C",
    "generic": 2,
@@ -66427,6 +68016,59 @@
    "spell_prio": false
   },
   {
+   "name": "Legion Lieutenant",
+   "types": "C",
+   "generic": 0,
+   "pips": "WB",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "vampire"
+     },
+     "pow": 1,
+     "tgh": 1
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Legion Loyalist",
    "types": "C",
    "generic": 0,
@@ -66652,10 +68294,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Sacrifice ~: Creatures you control with power less than ~'s power gain indestructible until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -69794,6 +71434,63 @@
    "spell_prio": false
   },
   {
+   "name": "Maelstrom of the Spirit Dragon",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "4",
+      "tap": true,
+      "sac": "self"
+     },
+     "effects": [
+      {
+       "do": "search",
+       "filter": {},
+       "to": "hand",
+       "n": 1,
+       "tapped": false
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Magda, Brazen Outlaw",
    "types": "C",
    "generic": 1,
@@ -70261,6 +71958,66 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Malakir Bloodwitch",
+   "types": "C",
+   "generic": 3,
+   "pips": "BB",
+   "tags": {
+    "shaman": true,
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": "last_lost",
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "protection"
+   ],
+   "subtypes": [
+    "shaman",
+    "vampire"
+   ],
+   "protfrom": "W",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.   [partly: each opponent loses life equal to the number of vampires you control]"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -71460,6 +73217,65 @@
    "spell_prio": false
   },
   {
+   "name": "Markov Baron",
+   "types": "C",
+   "generic": 2,
+   "pips": "B",
+   "tags": {
+    "pow": "2",
+    "lifelink": true,
+    "convoke": true
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "vampire"
+     },
+     "pow": 1,
+     "tgh": 1
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "convoke",
+    "lifelink",
+    "madness"
+   ],
+   "subtypes": [
+    "noble",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Marsh Flats",
    "types": "L",
    "generic": 0,
@@ -71956,6 +73772,48 @@
    "spell_prio": false
   },
   {
+   "name": "Master of Dark Rites",
+   "types": "C",
+   "generic": 0,
+   "pips": "B",
+   "tags": {
+    "pow": "1",
+    "dork": "B",
+    "noatk": true
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cleric",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Masterful Flourish",
    "types": "I",
    "generic": 0,
@@ -72090,6 +73948,49 @@
    "identity": null,
    "game_changer": null,
    "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Mavren Fein, Dusk Apostle",
+   "types": "C",
+   "generic": 2,
+   "pips": "W",
+   "tags": {
+    "leg": true,
+    "pow": "2",
+    "tok": "1",
+    "tokp": "1"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cleric",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -73418,6 +75319,54 @@
    "python_hooks": [
     "dies"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Miirym, Sentinel Wyrm",
+   "types": "C",
+   "generic": 3,
+   "pips": "GUR",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "bomb": "6",
+    "fly": true
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "ward"
+   ],
+   "subtypes": [
+    "dragon",
+    "spirit"
+   ],
+   "protfrom": "",
+   "ward": 2,
+   "identity": "GRU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary."
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -75902,6 +77851,58 @@
    "spell_prio": false
   },
   {
+   "name": "Morophon, the Boundless",
+   "types": "C",
+   "generic": 7,
+   "pips": "",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "bomb": "6"
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "as ~ enters, choose a creature type"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "changeling"
+   ],
+   "subtypes": [
+    "shapeshifter"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Spells of the chosen type you cast cost {W}{U}{B}{R}{G} less to cast. This effect reduces only the amount of colored mana you pay.",
+    "Other creatures you control of the chosen type get +1/+1."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Morphic Pool",
    "types": "L",
    "generic": 0,
@@ -76472,6 +78473,44 @@
    "identity": null,
    "game_changer": null,
    "source": "manual",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Mox Jasper",
+   "types": "A",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "leg": true,
+    "rock": "1:A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -78931,6 +80970,48 @@
    "spell_prio": false
   },
   {
+   "name": "New Blood",
+   "types": "S",
+   "generic": 2,
+   "pips": "BB",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "additional_cost",
+     "text": "as an additional cost to cast ~, tap an untapped vampire you control"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Gain control of target creature. Change the text of that creature by replacing all instances of one creature type with Vampire."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Nezahal, Primal Tide",
    "types": "C",
    "generic": 5,
@@ -81150,6 +83231,43 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Olivia's Wrath",
+   "types": "S",
+   "generic": 4,
+   "pips": "B",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Each non-Vampire creature gets -X/-X until end of turn, where X is the number of Vampires you control."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -92403,6 +94521,43 @@
    "spell_prio": false
   },
   {
+   "name": "Reflecting Pool",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Reflector Mage",
    "types": "C",
    "generic": 1,
@@ -94576,6 +96731,104 @@
    "spell_prio": false
   },
   {
+   "name": "Rith, Liberated Primeval",
+   "types": "C",
+   "generic": 2,
+   "pips": "RGW",
+   "tags": {
+    "leg": true,
+    "pow": "5",
+    "bomb": "5",
+    "fly": true,
+    "tok": "1",
+    "tokp": "4",
+    "tokfly": true
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "ward"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 2,
+   "identity": "GRW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Other Dragons you control have ward {2}."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Rivaz of the Claw",
+   "types": "C",
+   "generic": 1,
+   "pips": "BR",
+   "tags": {
+    "leg": true,
+    "pow": "3",
+    "dork": "C",
+    "noatk": true
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "menace"
+   ],
+   "subtypes": [
+    "lizard",
+    "warlock"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BR",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Once during each of your turns, you may cast a Dragon creature spell from your graveyard.",
+    "Whenever you cast a Dragon creature spell from your graveyard, it gains \"When ~ dies, exile it.\""
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "River's Rebuke",
    "types": "S",
    "generic": 4,
@@ -94642,6 +96895,56 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Roaming Throne",
+   "types": "AC",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "pow": "4"
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "as ~ enters, choose a creature type"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "ward"
+   ],
+   "subtypes": [
+    "golem"
+   ],
+   "protfrom": "",
+   "ward": 2,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "~ is the chosen type in addition to its other types.",
+    "If a triggered ability of another creature you control of the chosen type triggers, it triggers an additional time."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -95279,6 +97582,59 @@
     "creature": false,
     "instant": false,
     "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Ruinous Ultimatum",
+   "types": "S",
+   "generic": 0,
+   "pips": "RRWWWBB",
+   "tags": {
+    "wipe": "destroy"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "nonland",
+         "controller": "opp"
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BRW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
     "perm": false
    },
    "phyrexian": "",
@@ -96296,6 +98652,67 @@
    "spell_prio": false
   },
   {
+   "name": "Sanctum Seeker",
+   "types": "C",
+   "generic": 2,
+   "pips": "BB",
+   "tags": {
+    "pow": "3",
+    "tgh": "4"
+   },
+   "pow": 3,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "lose_life",
+       "n": 1,
+       "who": "each_opponent"
+      },
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you",
+       "per_opponent": false
+      }
+     ],
+     "event": "attack",
+     "source": "you_each",
+     "subtype": "vampire"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "knight",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Sanctum Weaver",
    "types": "CE",
    "generic": 1,
@@ -96690,6 +99107,143 @@
     "cmc": 2,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Sarkhan Unbroken",
+   "types": "P",
+   "generic": 2,
+   "pips": "GUR",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 1,
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      },
+      {
+       "do": "add_mana",
+       "n": 1
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -2,
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 4,
+       "tgh": 4,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "dragon"
+       ]
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -8,
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "creature"
+       },
+       "to": "battlefield",
+       "n": 1,
+       "tapped": false
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "sarkhan"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GRU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Sarkhan, Soul Aflame",
+   "types": "C",
+   "generic": 1,
+   "pips": "UR",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "shaman": true,
+    "pow": "2",
+    "tgh": "4"
+   },
+   "pow": 2,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "shaman"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "RU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Dragon spells you cast cost {1} less to cast.",
+    "Whenever a Dragon you control enters, you may have ~ become a copy of it until end of turn, except its name is ~ and it's legendary in addition to its other types."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -97665,6 +100219,118 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Scion of Draco",
+   "types": "AC",
+   "generic": 12,
+   "pips": "",
+   "tags": {
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "domain",
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Domain — This spell costs {2} less to cast for each basic land type among lands you control.",
+    "Each creature you control has vigilance if it's white, hexproof if it's blue, lifelink if it's black, first strike if it's red, and trample if it's green."
+   ],
+   "derived": {
+    "cmc": 12,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Scion of the Ur-Dragon",
+   "types": "C",
+   "generic": 0,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "2"
+     },
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "permanent"
+       },
+       "to": "graveyard",
+       "n": 1,
+       "tapped": false
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "avatar",
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{2}: Search your library for a Dragon permanent card and put it into your graveyard. If you do, ~ becomes a copy of that card until end of turn. Then shuffle.   [partly: if you do, ~ becomes a copy of that card until end of turn]"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -106090,6 +108756,82 @@
    "spell_prio": false
   },
   {
+   "name": "Sorin, Imperious Bloodlord",
+   "types": "P",
+   "generic": 2,
+   "pips": "B",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 1,
+     "effects": [
+      {
+       "do": "grant",
+       "keyword": "lifelink",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      },
+      {
+       "do": "grant",
+       "keyword": "deathtouch",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "sorin"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "if it's a vampire, put a +1/+1 counter on it",
+    "sacrifice a vampire",
+    "when you do, ~ deals 3 damage to any target and you gain 3 life",
+    "when you do, ~ deals 3 damage to any target and you gain 3 life",
+    "put a vampire creature card from your hand onto the battlefield"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Soul Enervation",
    "types": "E",
    "generic": 3,
@@ -107906,7 +110648,7 @@
    "tags": {
     "pow": "3",
     "tgh": "1",
-    "labyrinth": true
+    "narset": true
    },
    "pow": 3,
    "tgh": 1,
@@ -110774,6 +113516,70 @@
    "spell_prio": false
   },
   {
+   "name": "Stromkirk Captain",
+   "types": "C",
+   "generic": 1,
+   "pips": "BR",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": true,
+      "subtype": "vampire"
+     },
+     "pow": 1,
+     "tgh": 1
+    },
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "first strike",
+     "filter": {
+      "type": "creature",
+      "controller": "you"
+     }
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "first strike"
+   ],
+   "subtypes": [
+    "soldier",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BR",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Studious First-Year",
    "types": "C",
    "generic": 0,
@@ -111315,10 +114121,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy target land. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle. Creatures without flying can't block this turn.   [partly: its controller may search their library for a basic land card; its controller put it onto the battlefield tapped; its controller; creatures without flying can't block this turn]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -116536,6 +119340,66 @@
    "spell_prio": false
   },
   {
+   "name": "Temur Ascendancy",
+   "types": "E",
+   "generic": 0,
+   "pips": "GUR",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "haste",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": false
+     }
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you",
+       "optional": true
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "min_pow": 4
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GRU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Temur Sabertooth",
    "types": "C",
    "generic": 2,
@@ -118748,6 +121612,55 @@
    "spell_prio": false
   },
   {
+   "name": "The Ur-Dragon",
+   "types": "C",
+   "generic": 4,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true,
+    "pow": "10",
+    "bomb": "9",
+    "fly": true
+   },
+   "pow": 10,
+   "tgh": 10,
+   "bomb": 9,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "eminence",
+    "flying"
+   ],
+   "subtypes": [
+    "avatar",
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Eminence — As long as ~ is in the command zone or on the battlefield, other Dragon spells you cast cost {1} less to cast.",
+    "Whenever one or more Dragons you control attack, draw that many cards, then you may put a permanent card from your hand onto the battlefield."
+   ],
+   "derived": {
+    "cmc": 9,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "The Wandering Emperor",
    "types": "P",
    "generic": 2,
@@ -120455,6 +123368,53 @@
    "python_hooks": [
     "etb"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Tiamat",
+   "types": "C",
+   "generic": 2,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true,
+    "pow": "7",
+    "bomb": "7",
+    "fly": true
+   },
+   "pow": 7,
+   "tgh": 7,
+   "bomb": 7,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon",
+    "god"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ enters, if you cast it, search your library for up to five Dragon cards not named ~ that each have different names, reveal them, put them into your hand, then shuffle."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -123132,6 +126092,73 @@
    "spell_prio": false
   },
   {
+   "name": "Twilight Prophet",
+   "types": "C",
+   "generic": 2,
+   "pips": "BB",
+   "tags": {
+    "pow": "2",
+    "tgh": "4",
+    "fly": true
+   },
+   "pow": 2,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "lose_life",
+       "n": "X",
+       "who": "each_opponent"
+      },
+      {
+       "do": "gain_life",
+       "n": "X",
+       "who": "you",
+       "per_opponent": false
+      }
+     ],
+     "event": "upkeep",
+     "who": "you"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "ascend",
+    "flying"
+   ],
+   "subtypes": [
+    "cleric",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Ascend",
+    "At the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.   [partly: if you have the city's blessing, reveal the top card of your library and put it into your hand]"
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Twincast",
    "types": "I",
    "generic": 0,
@@ -123208,6 +126235,52 @@
    "spell_prio": false
   },
   {
+   "name": "Twinflame Tyrant",
+   "types": "C",
+   "generic": 3,
+   "pips": "RR",
+   "tags": {
+    "pow": "3",
+    "tgh": "5",
+    "fly": true
+   },
+   "pow": 3,
+   "tgh": 5,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "double",
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If a source you control would deal damage to an opponent or a permanent an opponent controls, it deals double that damage instead."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Twinned Vision",
    "types": "I",
    "generic": 1,
@@ -123275,6 +126348,65 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Two-Headed Hellkite",
+   "types": "C",
+   "generic": 1,
+   "pips": "WUBRG",
+   "tags": {
+    "pow": "5",
+    "bomb": "5",
+    "fly": true,
+    "haste": true
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 2,
+       "who": "you"
+      }
+     ],
+     "event": "attack",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "haste",
+    "menace"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -125229,6 +128361,55 @@
    "spell_prio": false
   },
   {
+   "name": "Ureni of the Unwritten",
+   "types": "C",
+   "generic": 4,
+   "pips": "GUR",
+   "tags": {
+    "leg": true,
+    "pow": "7",
+    "bomb": "7",
+    "fly": true,
+    "trample": true
+   },
+   "pow": 7,
+   "tgh": 7,
+   "bomb": 7,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "trample"
+   ],
+   "subtypes": [
+    "dragon",
+    "spirit"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GRU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever Ureni enters or attacks, look at the top eight cards of your library. You may put a Dragon creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Uro, Titan of Nature's Wrath",
    "types": "C",
    "generic": 1,
@@ -125461,6 +128642,49 @@
     "instant": false,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Urza's Incubator",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "as ~ enters, choose a creature type"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Creature spells of the chosen type cost {2} less to cast."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -125995,6 +129219,72 @@
    "spell_prio": false
   },
   {
+   "name": "Utvara Hellkite",
+   "types": "C",
+   "generic": 6,
+   "pips": "RR",
+   "tags": {
+    "pow": "6",
+    "bomb": "6",
+    "fly": true
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 6,
+       "tgh": 6,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "dragon"
+       ]
+      }
+     ],
+     "event": "attack",
+     "source": "you_each",
+     "subtype": "dragon"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 8,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Valakut Exploration",
    "types": "E",
    "generic": 2,
@@ -126245,6 +129535,95 @@
    "unparsed": [],
    "derived": {
     "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Vampire Socialite",
+   "types": "C",
+   "generic": 0,
+   "pips": "BR",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "menace"
+   ],
+   "subtypes": [
+    "noble",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BR",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ enters, if an opponent lost life this turn, put a +1/+1 counter on each other Vampire you control.",
+    "As long as an opponent lost life this turn, each other Vampire you control enters with an additional +1/+1 counter on it."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Vampire of the Dire Moon",
+   "types": "C",
+   "generic": 0,
+   "pips": "B",
+   "tags": {
+    "pow": "1",
+    "lifelink": true,
+    "dt": true
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "deathtouch",
+    "lifelink"
+   ],
+   "subtypes": [
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
     "land": false,
     "creature": true,
     "instant": false,
@@ -128246,6 +131625,72 @@
    "spell_prio": false
   },
   {
+   "name": "Vito, Thorn of the Dusk Rose",
+   "types": "C",
+   "generic": 2,
+   "pips": "B",
+   "tags": {
+    "leg": true,
+    "pow": "1",
+    "tgh": "3"
+   },
+   "pow": 1,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "3BB"
+     },
+     "effects": [
+      {
+       "do": "grant",
+       "keyword": "lifelink",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        }
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "cleric",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever you gain life, target opponent loses that much life."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Vivid Creek",
    "types": "L",
    "generic": 0,
@@ -128897,6 +132342,45 @@
     "creature": false,
     "instant": false,
     "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Voldaren Estate",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{5}, {T}: Create a Blood token. This ability costs {1} less to activate for each Vampire you control."
+   ],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
     "perm": false
    },
    "phyrexian": "",

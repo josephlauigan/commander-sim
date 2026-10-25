@@ -89,6 +89,12 @@ fn kinnan_adds_one_to_nonland_mana_and_digs_five() {
 fn winota_finds_an_attacking_indestructible_human() {
     let mut g = table(&[WI, BR]);
     perm(&mut g, P0, "Winota, Joiner of Forces");
+    // Winota's deck has left the pool (2026-10-25): the library is set, two Humans among lands
+    let lib: Vec<_> = ["Plains", "Thalia, Guardian of Thraben", "Mountain", "Mother of Runes", "Plains", "Mountain"]
+        .iter()
+        .map(|n| card(&g, n))
+        .collect();
+    g.player_mut(P0).library = lib;
     let tk = token(&mut g, P0, 1);
     let lib = g.player(P0).library.len();
     g.new_attackers.clear();

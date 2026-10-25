@@ -1,12 +1,17 @@
 # Realism targets, Tier 4 (Low Bracket 4): what real games look like, for `commander-sim --realism --pool t4`.
 # Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
 #
-# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24, matched to this tier's five
-# pool commanders (data/decks.json): Chulane, Teller of Tales (2143), Heliod, Sun-Crowned (901), Krenko,
-# Mob Boss (954), Prosper, Tome-Bound (287) and Yuriko, the Tiger's Shadow (1528).
+# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24 (Edgar Markov 2026-10-25),
+# matched to this tier's five
+# pool commanders (data/decks.json): Chulane, Teller of Tales (2143), Edgar Markov (596), Krenko, Mob Boss (954),
+# Prosper, Tome-Bound (287) and Yuriko, the Tiger's Shadow (1528).
 #
 # Each commander counts the same, as in t3.toml: every target is the plain average of the five commanders' own figures,
 # as the sim seats each pool deck equally often.
+#
+# History: Edgar Markov replaced Heliod, Sun-Crowned on 2026-10-25 (JD): EDHREC's bracket-4 Heliod list is a Walking
+# Ballista combo deck, while Playgroup's Heliod is mostly casual life gain, so its target and list described different
+# decks. With Heliod the targets were seats 32.3 / 27.7 / 21.9 / 18.1, win turn 7.8, damage 77.3%, combo 19.9%.
 #
 # Caveats: a commander's numbers cover every deck built around it, at any power level, so they give the shape of a
 # tier's games more than its level. They are casual pods logged by players, of any size (3 to 6 players). The two
@@ -17,96 +22,96 @@ tier = "t4"
 
 # --- Seat win rates: each commander's page (https://playgroup.gg/commanders/<id>, "Does seating order matter?")
 # gives its win rate from seats 1-4 and the games behind each. Seats 1-4 win, on average over the five commanders,
-# 43.3 / 37.2 / 29.4 / 24.3% of their games; each rate divided by the four rates' total gives the share of decisive
+# 42.8 / 36.3 / 28.2 / 23.3% of their games; each rate divided by the four rates' total gives the share of decisive
 # games, as the sim counts them.
 
 [seat1_win]
-value = 32.3
-lo = 31.3
-hi = 33.3
-n = 31120
-source = "Playgroup commander pages, seat win rates of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
-date = "2026-10-24"
+value = 32.8
+lo = 31.8
+hi = 33.8
+n = 44123
+source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
+date = "2026-10-25"
 note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
-value = 27.7
-lo = 26.7
-hi = 28.7
-n = 31120
-source = "Playgroup commander pages, seat win rates of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
-date = "2026-10-24"
+value = 27.8
+lo = 26.8
+hi = 28.8
+n = 44123
+source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
+date = "2026-10-25"
 
 [seat3_win]
-value = 21.9
-lo = 20.9
-hi = 22.9
-n = 31120
-source = "Playgroup commander pages, seat win rates of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
-date = "2026-10-24"
+value = 21.6
+lo = 20.6
+hi = 22.6
+n = 44123
+source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
+date = "2026-10-25"
 
 [seat4_win]
-value = 18.1
-lo = 17.1
-hi = 19.1
-n = 31120
-source = "Playgroup commander pages, seat win rates of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
-date = "2026-10-24"
+value = 17.9
+lo = 16.9
+hi = 18.9
+n = 44123
+source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
+date = "2026-10-25"
 
 # --- Speed: Playgroup gives each commander's average win turn (https://playgroup.gg/api/public/v1/commanders/<id>.json,
-# stats.average_wins_by_turn): Chulane 8, Heliod 9, Krenko 7, Prosper 8, Yuriko 7; their average is 7.8. An average,
+# stats.average_wins_by_turn): Chulane 8, Edgar 9, Krenko 7, Prosper 8, Yuriko 7; their average is 7.8. An average,
 # not a median, and no spread: win_round_spread has no target.
 
 [win_round_median]
 value = 8
 lo = 7
 hi = 9
-n = 11156
-source = "Playgroup commander stats, average win turn of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight)"
-date = "2026-10-24"
+n = 15302
+source = "Playgroup commander stats, average win turn of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
+date = "2026-10-25"
 note = "n = the five commanders' logged wins; Playgroup gives an average win turn (7.8), used as the median"
 
 # --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), each
-# commander's wins by type, averaged over the five: combat and other damage 77.3%, combo, alternate win and mill
-# 19.9%, commander damage 2.7%, poison 0.1%. Per commander (damage / combo / commander damage):
-# Chulane 66 / 30 / 3; Heliod 73 / 21 / 6;
+# commander's wins by type, averaged over the five: combat and other damage 79.7%, combo, alternate win and mill
+# 17.9%, commander damage 2.2%, poison 0.1%. Per commander (damage / combo / commander damage):
+# Chulane 66 / 30 / 3; Edgar 85 / 11 / 4;
 # Krenko 89 / 9 / 2; Prosper 76 / 23 / 1;
 # Yuriko 82 / 16 / 1.
 # Grouped as t6.toml groups them.
 
 [win_damage]
-value = 77.3
-lo = 76.3
-hi = 78.3
-n = 5935
-source = "Playgroup commanders.json, wins of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight)"
-date = "2026-10-24"
+value = 79.7
+lo = 78.7
+hi = 80.7
+n = 8113
+source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
+date = "2026-10-25"
 
 [win_combo_alt]
-value = 19.9
-lo = 18.9
-hi = 20.9
-n = 5935
-source = "Playgroup commanders.json, wins of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight)"
-date = "2026-10-24"
+value = 17.9
+lo = 16.9
+hi = 18.9
+n = 8113
+source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
+date = "2026-10-25"
 
 [win_commander_damage]
-value = 2.7
-lo = 1.7
-hi = 3.7
-n = 5935
-source = "Playgroup commanders.json, wins of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight)"
-date = "2026-10-24"
+value = 2.2
+lo = 1.2
+hi = 3.2
+n = 8113
+source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
+date = "2026-10-25"
 
 [win_poison]
 value = 0.1
 lo = 0.0
 hi = 1.1
-n = 5935
-source = "Playgroup commanders.json, wins of Chulane, Heliod, Krenko, Prosper, Yuriko (equal weight)"
-date = "2026-10-24"
+n = 8113
+source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
+date = "2026-10-25"
 
 # --- No target yet:
-# - deck_win_spread: Playgroup's win rates (Chulane 36%, Heliod 36%, Krenko 36%, Prosper 35%, Yuriko 30% of games) are
+# - deck_win_spread: Playgroup's win rates (Chulane 36%, Edgar 31%, Krenko 36%, Prosper 35%, Yuriko 30% of games) are
 #   against whatever their pods held, not against each other, so their gap is not the sim's gap.
 # - games_over_15 and win_round_spread: Playgroup publishes no distribution of game or win length.

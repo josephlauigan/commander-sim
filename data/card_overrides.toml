@@ -9421,10 +9421,12 @@ note = "bounce land: enters tapped, returns a land you control to its owner's ha
 
 # --- Tiers 4/5 (winota): hand-written in rust/crates/sim-core/src/impls/t45_winota.rs
 ["Lena, Selfless Champion"]
-pool_remove_tags = ["tok", "tokp"] # one Soldier per nontoken creature, not one: the enter trigger is hand-written
+tags = "leg human pow=3" # no tok/tokp: one Soldier per nontoken creature, the enter trigger is hand-written (the tags, not a
+# pool_remove_tags edit, so it holds whether or not a pool deck plays Lena)
 
 ["Sundering Eruption // Volcanic Fissure"]
-pool_remove_tags = ["rem", "tgt"] # it destroys a land, not a nonland permanent: cast by its own priority
+tags = "" # no rem/tgt: it destroys a land, not a nonland permanent, cast by its own priority (the tags hold whether or
+# not a pool deck plays it)
 
 # --- Tiers 4/5 (heliod-zur): hand-written in rust/crates/sim-core/src/impls/t45_heliod_zur.rs (status notes in data/audit.toml)
 ["Ajani, Strength of the Pride"]

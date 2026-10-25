@@ -58,6 +58,9 @@ fn retired_decks() -> Vec<RawDeck> {
             &["Plains", "Island", "Swamp", "Forest"],
         ),
         mk("garland", "Garland", "Garland, Royal Kidnapper", None, "UB", &["Island", "Swamp"]),
+        // pool decks retired 2026-10-25 (decklists/pool/retired/): their card tests still seat them
+        mk("heliod-mono-white-stax", "Heliod", "Heliod, Sun-Crowned", None, "W", &["Plains"]),
+        mk("winota-boros-humans-cheat", "Winota", "Winota, Joiner of Forces", None, "RW", &["Mountain", "Plains"]),
     ]
 }
 

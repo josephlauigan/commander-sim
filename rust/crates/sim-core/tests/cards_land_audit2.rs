@@ -98,7 +98,7 @@ fn hall_of_the_bandit_lord_costs_three_life_per_mana() {
 
 #[test]
 fn cavern_of_souls_makes_coloured_mana_for_creature_spells_of_one_type_only() {
-    let mut g = table(&["heliod-mono-white-stax", "veyran"]);
+    let mut g = table(&["chulane-bant-value-combo", "veyran"]);
     let cavern = lands(&mut g, P0, "Cavern of Souls", 1, false)[0];
     assert_eq!(cols(&g, cavern), "", "no spell: colourless");
     let t = sim_core::impls::mine::territory_type(&g, P0);
@@ -115,7 +115,7 @@ fn cavern_of_souls_makes_coloured_mana_for_creature_spells_of_one_type_only() {
         .expect("another creature");
     let spell = lib.iter().copied().find(|&c| !g.db.get(c).creature && !g.db.get(c).land).unwrap();
     g.pay_for = Some(same);
-    assert_eq!(cols(&g, cavern), "W", "a creature of the chosen type");
+    assert_eq!(cols(&g, cavern), "WUG", "a creature of the chosen type: any colour of the deck (Chulane)");
     g.pay_for = Some(other);
     assert_eq!(cols(&g, cavern), "", "another creature type");
     g.pay_for = Some(spell);
