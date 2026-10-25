@@ -114,9 +114,9 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 continue;
             }
             if let Some(n) = dmg_amount(kind, "dmg")
-                && (!is_c || etgh(g, m) > n || no_damage(g, m))
+                && (!is_c || etgh(g, m) > crate::impls::t3_aurelia::gisela_scale(g, q, n) || no_damage(g, m))
             {
-                continue;
+                continue; // (Gisela, Blade of Goldnight changes the damage)
             }
             if let Some(n) = dmg_amount(kind, "shrink")
                 && (!is_c || etgh(g, m) > n)
@@ -162,6 +162,11 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         && crate::engine::life::stagger_mult(g, owner) > 1
     {
         kind = intern(&format!("dmg{}", n * 2)); // Lightning, Army of One: damage to its victim's permanents is doubled
+    }
+    if let Some(n) = dmg_amount(kind, "dmg")
+        && crate::impls::t3_aurelia::gisela_scale(g, owner, n) != n
+    {
+        kind = intern(&format!("dmg{}", crate::impls::t3_aurelia::gisela_scale(g, owner, n))); // Gisela
     }
     if !g.perm(m).on_bf || untargetable(g, m) {
         return Ok(());

@@ -207,6 +207,9 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
     if f.nontoken == Some(true) && x.token {
         return false;
     }
+    if f.attacking == Some(true) && !g.in_combat.contains(&m) {
+        return false; // Tier 3 (aurelia): "attacking creatures you control" (Blade Historian)
+    }
     if let Some(kw) = &f.keyword
         && !((kw == "flying" && x.fly) || has_kw(g, m, kw))
     {
@@ -1281,7 +1284,7 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
 
 /// one ctx per time the ability triggers
 fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fired) -> Vec<DslCtx> {
-    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, .. } = a else {
+    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, min_atk, .. } = a else {
         return vec![];
     };
     let (s, w) = (source.as_deref(), who.as_deref());
@@ -1314,9 +1317,13 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
         }
         "attack" => {
             let ctx = DslCtx { event_player: kw.defender, attack: true, ..base };
+            if min_atk.is_some_and(|k| (kw.attackers.len() as u32) < k) {
+                return out; // Tier 3 (aurelia): battalion, "attacks with three or more creatures"
+            }
             match s {
                 Some("self") if kw.attackers.contains(&src) => out.push(ctx),
                 Some("you_any") if kw.player == Some(q) && !kw.attackers.is_empty() => out.push(ctx),
+                Some("any_player") if !kw.attackers.is_empty() => out.push(ctx), // Tier 3 (aurelia): "a player attacks"
                 Some("you_each") if kw.player == Some(q) => {
                     for &m in &kw.attackers {
                         if subtype.as_deref() == Some("warrior") && !g.perm(m).warrior {
@@ -1534,7 +1541,7 @@ pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
     for (q, src, ab, i) in statics(g, "keyword") {
         if let Ability::Static { keyword, filter, .. } = &ab[i]
             && keyword.as_deref() == Some(kw)
-            && cre
+            && (cre || noncreature_ok(filter.as_ref())) // Tier 3 (aurelia): "permanents you control have" (Avacyn)
             && matches(g, q, m, filter.as_ref(), Some(src))
         {
             return true;
@@ -1685,6 +1692,26 @@ pub fn counter_mult(g: &Game, p: PlayerId) -> i32 {
 /// "players can't gain life" statics of other players
 pub fn no_lifegain(g: &Game, p: PlayerId) -> bool {
     active(g) && statics(g, "no_lifegain").any(|(q, ..)| q != p)
+}
+
+// --- Tier 3 (aurelia)
+/// a keyword static whose filter names a type wider than creatures ("permanents you control have indestructible")
+/// reaches noncreature permanents too
+fn noncreature_ok(f: Option<&Filter>) -> bool {
+    f.and_then(|f| f.kind.as_deref()).is_some_and(|k| k != "creature")
+}
+
+/// do p's lands have keyword kw from a "permanents you control have ..." static (Avacyn, Angel of Hope: lands are
+/// not permanents in the engine, so land destruction asks here)
+pub fn lands_have_kw(g: &Game, p: PlayerId, kw: &str) -> bool {
+    active(g)
+        && statics(g, "keyword").any(|(q, _, ab, i)| {
+            q == p
+                && matches!(&ab[i], Ability::Static { keyword, filter, .. }
+                    if keyword.as_deref() == Some(kw)
+                        && filter.as_ref().is_some_and(|f| f.kind.as_deref() == Some("permanent")
+                            && f.controller.as_deref() == Some("you")))
+        })
 }
 
 // ------------------------------------------------------------------ the AI's view: values and ability use

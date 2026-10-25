@@ -231,6 +231,7 @@ pub fn equip_cost(g: &Game, p: PlayerId, e: PermId, m: PermId, base: u32) -> u32
     if name_of(g, m) == "Helitrooper" {
         n = n.saturating_sub(2); // Equip abilities that target Helitrooper cost {2} less
     }
+    n = n.saturating_sub(crate::impls::t3_aurelia::equip_discount(g, p)); // Fighter Class, level 2
     // Auriok Steelshaper: equip costs you pay cost {1} less each (generic only: Veteran's Powerblade's {W} stays)
     let colored = name_of(g, e) == "Veteran's Powerblade" && has_type(g, m, "soldier");
     if !colored {

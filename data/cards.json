@@ -6329,7 +6329,42 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "attack",
+     "source": "any_player",
+     "min_atk": 3
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "damage",
+       "n": 3,
+       "to": {
+        "sel": "player",
+        "who": "each_opponent"
+       }
+      },
+      {
+       "do": "gain_life",
+       "n": 3,
+       "who": "you"
+      }
+     ],
+     "event": "attack",
+     "source": "any_player",
+     "min_atk": 5
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "flying",
@@ -6343,10 +6378,8 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever a player attacks with three or more creatures, you draw a card."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -6608,7 +6641,18 @@
    "pow": 8,
    "tgh": 8,
    "bomb": 8,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "indestructible",
+     "filter": {
+      "type": "permanent",
+      "controller": "you",
+      "other": true
+     }
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "flying",
@@ -6622,10 +6666,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Other permanents you control have indestructible."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 8,
     "land": false,
@@ -10005,7 +10047,18 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "double strike",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "attacking": true
+     }
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -10016,10 +10069,8 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Attacking creatures you control have double strike."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -12459,7 +12510,8 @@
    "tags": {
     "amt": "2",
     "c": "WR",
-    "t": true
+    "t": true,
+    "bounceland": true
    },
    "pow": 0,
    "tgh": 0,
@@ -12478,10 +12530,8 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return a land you control to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -39249,7 +39299,28 @@
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "damage",
+       "n": 3,
+       "to": {
+        "sel": "any_target"
+       }
+      },
+      {
+       "do": "gain_life",
+       "n": 3,
+       "who": "you"
+      }
+     ],
+     "event": "attack",
+     "source": "self",
+     "min_atk": 3
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "battalion",
@@ -39262,7 +39333,7 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -56240,7 +56311,7 @@
   },
   {
    "name": "Iroas, God of Victory",
-   "types": "CE",
+   "types": "E",
    "generic": 2,
    "pips": "RW",
    "tags": {
@@ -56250,7 +56321,7 @@
     "bomb": "7"
    },
    "pow": 7,
-   "tgh": 4,
+   "tgh": 0,
    "bomb": 7,
    "dsl": [
     {
@@ -56275,7 +56346,7 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [
     "As long as your devotion to red and white is less than seven, ~ isn't a creature.",
     "Prevent all damage that would be dealt to attacking creatures you control."
@@ -56283,7 +56354,7 @@
    "derived": {
     "cmc": 4,
     "land": false,
-    "creature": true,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -123082,7 +123153,10 @@
    "types": "I",
    "generic": 1,
    "pips": "R",
-   "tags": {},
+   "tags": {
+    "rem": "destroy",
+    "tgt": "ae"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -123096,7 +123170,7 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

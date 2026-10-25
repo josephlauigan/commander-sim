@@ -37,6 +37,8 @@ pub struct Filter {
     pub tapped: Option<bool>,
     /// (compiled for some cards, not read by the interpreter)
     pub color: Option<String>,
+    /// Tier 3 (aurelia): "attacking creatures you control" (Blade Historian): only creatures in combat as attackers
+    pub attacking: Option<bool>,
 }
 
 /// A selection: 'self', 'all' matching the filter, a 'target', 'any_target', a 'player', the 'event' permanent.
@@ -124,6 +126,9 @@ pub enum Ability {
         if_cast: Option<bool>,
         min_pow: Option<i32>,
         subtype: Option<String>,
+        /// Tier 3 (aurelia): an attack trigger needs this many attackers or more (battalion, "attacks with three or
+        /// more creatures")
+        min_atk: Option<u32>,
         effects: Vec<Effect>,
     },
     Activated {

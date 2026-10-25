@@ -813,6 +813,10 @@ pub fn run_extra_turns(g: &mut Game) -> Res {
         if !g.player(q).alive {
             continue;
         }
+        if crate::impls::t3_aurelia::skips_extra_turn(g, q) {
+            crate::glog!(g, "  {} skips an extra turn (Trouble in Pairs)", g.player(q).name);
+            continue;
+        }
         crate::glog!(g, "  {} takes an extra turn", g.player(q).name);
         g.doomed_turn = doomed.then_some(q);
         take_turn(g, q)?;
