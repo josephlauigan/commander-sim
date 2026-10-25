@@ -254,7 +254,7 @@ struct Manland {
     fly: bool,
 }
 
-const MANLANDS: [Manland; 5] = [
+const MANLANDS: [Manland; 6] = [
     // {1}: 2/2 with all creature types until end of turn (attacks when open)
     Manland { name: "Mutavault", generic: 1, pips: "", pw: 2, tg: 2, kws: &[], fly: false },
     Manland { name: "Hissing Quagmire", generic: 1, pips: "BG", pw: 2, tg: 2, kws: &["deathtouch"], fly: false },
@@ -264,6 +264,8 @@ const MANLANDS: [Manland; 5] = [
     // {3}{B}: 3/3 menace until end of turn; exiles a card from the defender's graveyard when it attacks
     // (CI.keyword_attack)
     Manland { name: "Hive of the Eye Tyrant", generic: 3, pips: "B", pw: 3, tg: 3, kws: &["menace"], fly: false },
+    // --- Tiers 4/5 (winota): {1}: a 1/1 flying artifact creature until end of turn (its {1},{T} pump is left out)
+    Manland { name: "Blinkmoth Nexus", generic: 1, pips: "", pw: 1, tg: 1, kws: &[], fly: true },
 ];
 
 fn manland_of(g: &Game, l: LandId) -> &'static Manland {
@@ -1038,8 +1040,9 @@ pub fn dakmor_dredge(g: &mut Game, p: PlayerId) -> Res<bool> {
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
-    let land_opts: [(&str, LandOptionsFn); 18] = [
+    let land_opts: [(&str, LandOptionsFn); 19] = [
         ("Mutavault", manland_options),
+        ("Blinkmoth Nexus", manland_options), // --- Tiers 4/5 (winota)
         ("Hissing Quagmire", manland_options),
         ("Needle Spires", manland_options),
         ("Raging Ravine", manland_options),

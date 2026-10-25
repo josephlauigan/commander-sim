@@ -32,15 +32,13 @@ pub fn first_strike(g: &Game, m: PermId) -> bool {
     kw(g, m, "first strike") || kw(g, m, "double strike")
 }
 
-/// Fiery Emancipation: damage from pl's sources is tripled (once per copy)
+/// Fiery Emancipation: damage from pl's sources is tripled (once per copy); --- Tiers 4/5 (winota): Angrath's
+/// Marauders doubles it (once per copy)
 pub fn fiery(g: &Game, pl: PlayerId) -> i32 {
-    let n = g
-        .player(pl)
-        .perms
-        .iter()
-        .filter(|&&m| !g.perm(m).phased && card_name(g, m) == Some("Fiery Emancipation"))
-        .count();
-    3i32.pow(n as u32)
+    let count = |name: &str| {
+        g.player(pl).perms.iter().filter(|&&m| !g.perm(m).phased && card_name(g, m) == Some(name)).count() as u32
+    };
+    3i32.pow(count("Fiery Emancipation")) * 2i32.pow(count("Angrath's Marauders"))
 }
 
 fn untapped_creatures(g: &Game, q: PlayerId) -> impl Iterator<Item = PermId> + '_ {
@@ -353,6 +351,9 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
         if g.over {
             break;
         }
+    }
+    if !g.over {
+        new.extend(crate::impls::t45_winota::gy_attack(g, p, atk)?); // --- Tiers 4/5 (winota): Phoenix Chick
     }
     check_state(g)?;
     Ok(new.into_iter().filter(|&x| g.perm(x).tapped && g.perm(x).on_bf && g.perm(x).owner == p).collect())

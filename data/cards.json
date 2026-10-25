@@ -13425,6 +13425,9 @@
          "controller": "you"
         }
        }
+      },
+      {
+       "do": "ring_tempt"
       }
      ],
      "sorcery": false,
@@ -13445,8 +13448,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "Whenever an opponent casts a spell, if no mana was spent to cast it, counter that spell.",
-    "Sacrifice ~: Creatures you control gain indestructible until end of turn. The Ring tempts you.   [partly: the ring tempts you]"
+    "Whenever an opponent casts a spell, if no mana was spent to cast it, counter that spell."
    ],
    "derived": {
     "cmc": 3,
@@ -40958,6 +40960,16 @@
      "type": "triggered",
      "effects": [
       {
+       "do": "ring_tempt"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
        "do": "damage",
        "n": 2,
        "to": {
@@ -40980,9 +40992,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, the Ring tempts you."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -66603,9 +66613,7 @@
    "tags": {
     "leg": true,
     "human": true,
-    "pow": "3",
-    "tok": "1",
-    "tokp": "1"
+    "pow": "3"
    },
    "pow": 3,
    "tgh": 3,
@@ -96930,7 +96938,16 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "ring_tempt"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -96938,8 +96955,10 @@
    "ward": 0,
    "identity": "BU",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [],
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Choose an opponent. They look at the top four cards of your library and separate them into a face-down pile and a face-up pile. Put one pile into your hand and the other into your graveyard. The Ring tempts you.   [partly: choose an opponent; they look at the top four cards of your library and separate them into a face-down pile and a face-up pile; put one pile into your hand and the other into your graveyard]"
+   ],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -111243,10 +111262,7 @@
    "types": "S",
    "generic": 2,
    "pips": "R",
-   "tags": {
-    "rem": "destroy",
-    "tgt": "nl"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,

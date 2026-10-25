@@ -682,7 +682,9 @@ pub fn last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
     if g.humans.get(q).is_some() {
         return Ok(g.player(q).life_locked); // practice mode: the person casts it themselves
     }
-    Ok(g.player(q).life_locked || cast_teferis_protection(g, q, 9.0)?)
+    Ok(g.player(q).life_locked
+        || cast_teferis_protection(g, q, 9.0)?
+        || crate::impls::t45_winota::flare_last_chance(g, q)?) // --- Tiers 4/5 (winota): Flare of Fortitude
 }
 
 // ------------------------------------------------------------------ dying

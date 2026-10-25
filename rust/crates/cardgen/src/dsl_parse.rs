@@ -610,6 +610,8 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         },
     ),
     (r"^amass (?:orcs|zombies) (\d+|x)$", |m| Some(eff(obj! {"do" => "amass", "n" => n_(m.gs(1))}))),
+    // --- Tiers 4/5 (winota): "the Ring tempts you" (Boromir, Fiery Inscription, Gollum, Witch-king)
+    (r"^the ring tempts you$", |_| Some(eff(obj! {"do" => "ring_tempt"}))),
     (
         r"^untap (all creatures you control|target creature|all lands you control|~|all attacking creatures|up to (?:two|three|four|five) target lands|target permanent)$",
         |m| Some(eff(obj! {"do" => "untap", "what" => selector(m.gs(1))})),

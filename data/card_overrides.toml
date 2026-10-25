@@ -9409,3 +9409,10 @@ tags = "c=WU t bounceland amt=2"
 dsl = []
 status = "Full"
 note = "bounce land: enters tapped, returns a land you control to its owner's hand (the one making the fewest colours, itself if none), taps for {W}{U}"
+
+# --- Tiers 4/5 (winota): hand-written in rust/crates/sim-core/src/impls/t45_winota.rs
+["Lena, Selfless Champion"]
+pool_remove_tags = ["tok", "tokp"] # one Soldier per nontoken creature, not one: the enter trigger is hand-written
+
+["Sundering Eruption // Volcanic Fissure"]
+pool_remove_tags = ["rem", "tgt"] # it destroys a land, not a nonland permanent: cast by its own priority

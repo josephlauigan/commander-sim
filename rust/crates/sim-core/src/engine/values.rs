@@ -290,7 +290,8 @@ pub fn ward_legends(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// Garland, Royal Kidnapper: creatures you control but don't own can't be sacrificed
 pub fn no_sac(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
-    x.orig != x.owner && g.is_creature(m) && has(g, x.owner, Tag::Garland)
+    (x.orig != x.owner && g.is_creature(m) && has(g, x.owner, Tag::Garland))
+        || card_name(g, m) == Some("Alexios, Deimos of Kosmos") // --- Tiers 4/5 (winota): can't be sacrificed
 }
 
 pub fn untargetable(g: &Game, m: PermId) -> bool {

@@ -522,6 +522,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
         return true; // --- Tiers 4/5 (krenko): Goblin King
     }
     crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
+    crate::impls::rules::evasion_blocked(g, b, a)
+        || crate::impls::bulk_white::exit_blocked(g, b, a)
+        || crate::impls::t45_winota::evasion_blocked(g, b, a) // --- Tiers 4/5 (winota): Sundering Eruption
 }
 
 /// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)

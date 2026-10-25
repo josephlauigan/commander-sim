@@ -22,14 +22,8 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     let damage = damage.unwrap_or(DAMAGE_KINDS.contains(&kind));
     let mut n = n;
     if damage && let Some(s) = src.filter(|&s| s != p) {
-        // Fiery Emancipation: triple damage, once per copy
-        let k = g
-            .player(s)
-            .perms
-            .iter()
-            .filter(|&&m| !g.perm(m).phased && crate::engine::values::card_name(g, m) == Some("Fiery Emancipation"))
-            .count() as u32;
-        n *= 3i32.pow(k);
+        // Fiery Emancipation: triple damage, once per copy (--- Tiers 4/5 (winota): Angrath's Marauders: double)
+        n *= crate::engine::combat::fiery(g, s);
     }
     if damage {
         n *= stagger_mult(g, p); // Lightning, Army of One
