@@ -104,6 +104,8 @@ pub struct Cost {
     pub sac: Option<String>,
     pub life: Option<i32>,
     pub discard: Option<u32>,
+    /// --- Tiers 1/2 (windgrace): the discarded cards must be of this type ("land", "creature" ...)
+    pub discard_type: Option<String>,
     pub other: Option<String>,
     pub tap_other: Option<serde_json::Value>,
     pub energy: Option<serde_json::Value>,

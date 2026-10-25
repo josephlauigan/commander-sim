@@ -125,6 +125,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             .count() as i32,
         "creatures_you_control" => pl.perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32,
         "cards_in_hand" => pl.hand.len() as i32,
+        "lands_you_control" => pl.lands.len() as i32, // --- Tiers 1/2 (windgrace)
         "event_player_hand" => ctx.event_player.map_or(0, |q| g.player(q).hand.len() as i32), // that player's hand
         "opponents" => g.opps(p).count() as i32,
         "spells_this_turn" => pl.spells_this_turn as i32,
@@ -1967,6 +1968,22 @@ pub fn card_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
     v.clamp(0.5, 9.0)
 }
 
+/// --- Tiers 1/2 (windgrace): the cards in p's hand of type t ("land", "creature", "artifact", "enchantment"), for a
+/// typed discard cost
+fn discard_typed(g: &Game, p: PlayerId, t: &str) -> Vec<CardId> {
+    let ok = |c: CardId| {
+        let d = g.db.get(c);
+        match t {
+            "land" => d.land,
+            "creature" => d.creature,
+            "artifact" => d.types.has(Types::ARTIFACT),
+            "enchantment" => d.types.has(Types::ENCHANTMENT),
+            _ => true,
+        }
+    };
+    g.player(p).hand.iter().copied().filter(|&c| ok(c)).collect()
+}
+
 fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, dry: bool) -> Res<bool> {
     let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
     let x = g.perm(src);
@@ -1979,6 +1996,12 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         return Ok(false);
     }
     if cost.discard.is_some_and(|k| (g.player(p).hand.len() as u32) < k) {
+        return Ok(false);
+    }
+    // --- Tiers 1/2 (windgrace): "discard a land card": enough cards of that type in hand
+    if let (Some(k), Some(t)) = (cost.discard, cost.discard_type.as_deref())
+        && (discard_typed(g, p, t).len() as u32) < k
+    {
         return Ok(false);
     }
     let mut fod = None;
@@ -2021,7 +2044,16 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         lose_life(g, p, l, Some(p), "other", None)?;
     }
     if let Some(k) = cost.discard {
-        crate::engine::cast::discard_worst(g, p, k)?;
+        match cost.discard_type.as_deref() {
+            Some(t) => {
+                for _ in 0..k {
+                    let cs = discard_typed(g, p, t);
+                    let Some(c) = min_by(&cs, |c| crate::engine::tutors::card_worth(g, p, c, false)) else { break };
+                    zones::discard_cards(g, p, &[c])?;
+                }
+            }
+            None => crate::engine::cast::discard_worst(g, p, k)?,
+        }
     }
     LAST_SAC_MV.with(|c| c.set(fod.and_then(|f| g.perm(f).cd).map_or(0, |c| g.db.get(c).cmc as i32)));
     if let Some(f) = fod {
@@ -2178,7 +2210,10 @@ fn cost_text(cost: &model::Cost) -> String {
         parts.push(format!("pay {l} life"));
     }
     if let Some(k) = cost.discard {
-        parts.push(format!("discard {k}"));
+        match cost.discard_type.as_deref() {
+            Some(t) => parts.push(format!("discard {k} {t}")), // --- Tiers 1/2 (windgrace)
+            None => parts.push(format!("discard {k}")),
+        }
     }
     if parts.is_empty() { "{0}".into() } else { parts.join(", ") }
 }

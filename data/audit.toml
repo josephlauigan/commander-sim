@@ -315,6 +315,17 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Twinblade Blessing" = { status = "Full", note = "hand-written flash Aura (impls/t12_lightpaws.rs): double strike" }
 "Umbra Mystic" = { status = "Full", note = "hand-written (common::umbra_save): Auras on your permanents have umbra armor" }
 
+# --- Tiers 1/2 (windgrace): impls/t12_windgrace.rs
+"Constant Mists" = { status = "Approximate", note = "hand-written (impls/t12_windgrace.rs): cast at blocks against an attack that hurts (lethal, or 7+ / 40% of life unblocked): all combat damage to players prevented this turn; buyback (sacrifice a land) with seven or more lands, or four with lands to replay from the graveyard. Left out: combat damage between creatures is still dealt" }
+"Nissa of Shadowed Boughs" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): landfall, a loyalty counter; +1 untap a land (a tapped one making the most), a 3/3 haste menace creature until end of turn with an open attack before combat; -5 the best creature card with mana value up to your land count from hand or graveyard, two +1/+1 counters" }
+"Realms Uncharted" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): up to four lands with different names; the opponent puts the two best into the graveyard, the rest go to hand" }
+"Scapeshift" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): sacrifices as many lands as the library can replace, finds that many (Dark Depths and Thespian's Stage, Field of the Dead, new names and colours), tapped, each with its landfall; cast with the combo halves in the library, Field of the Dead and seven lands, or landfall payoffs out" }
+"Thespian's Stage" = { status = "Approximate", note = "taps for {C}; hand-written (impls/t12_windgrace.rs, the combo Dark Depths + Thespian's Stage): {2},{T}: a copy of Dark Depths, the legend rule puts Dark Depths into the graveyard, the copy is sacrificed for Marit Lage. Left out: copying any other land" }
+"Icetill Explorer" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): an additional land each turn; lands from your graveyard; landfall mill (compiled)" }
+"Mina and Denn, Wildborn" = { status = "Approximate", note = "hand-written (impls/t12_windgrace.rs): an additional land each turn; {R}{G}, return a land to hand: your best creature gains trample, used to replay the land at once for another landfall (a land drop left, none in hand, landfall payoffs out). Left out: bouncing a land only for trample" }
+"Six" = { status = "Full", note = "reach; hand-written (impls/t12_windgrace.rs): attacks: mill three, a land milled into hand; during your turn, nonland permanent cards in your graveyard have retrace (cast from the graveyard discarding a land card)" }
+"Soul of Windgrace" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): enters or attacks: the best land card from any graveyard onto the battlefield tapped under your control; its three discard-a-land abilities compiled (gain 3, draw, indestructible and tap it)" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -552,6 +563,12 @@ mechs = []
 label = "Life from the Loam dredge"
 cards = ["Life from the Loam"]
 mechs = ["land_recursion"]
+
+# --- Tiers 1/2 (windgrace)
+[[engines.lord-windgrace-jund-lands]]
+label = "Dark Depths + Thespian's Stage (Marit Lage)"
+cards = ["Dark Depths", "Thespian's Stage"]
+mechs = []
 
 [[engines.meren-golgari-recursion]]
 label = "Meren's end-step reanimation"

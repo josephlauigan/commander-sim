@@ -10592,7 +10592,7 @@
      "type": "static",
      "static": "self_scaling",
      "pow": 1,
-     "per": "X",
+     "per": "lands_you_control",
      "base0": true
     }
    ],
@@ -13709,6 +13709,12 @@
        "what": {
         "sel": "self"
        }
+      },
+      {
+       "do": "tap",
+       "what": {
+        "sel": "self"
+       }
       }
      ],
      "sorcery": false,
@@ -13729,7 +13735,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "{1}{B}, Discard a card: ~ gains indestructible until end of turn. Tap it. Then if there are four or more creature cards in your graveyard, transform ~.   [partly: tap it; if there are four or more creature cards in your graveyard, transform ~]"
+    "{1}{B}, Discard a card: ~ gains indestructible until end of turn. Tap it. Then if there are four or more creature cards in your graveyard, transform ~.   [partly: if there are four or more creature cards in your graveyard, transform ~]"
    ],
    "derived": {
     "cmc": 4,
@@ -28227,18 +28233,13 @@
    "pips": "",
    "tags": {
     "leg": true,
-    "c": "C"
+    "c": "C",
+    "amt": "0"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters with ten ice counters on it"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -28246,11 +28247,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{3}: Remove an ice counter from ~.",
-    "When ~ has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -38102,30 +38100,7 @@
    "pow": 1,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2",
-      "tap": true,
-      "sac": "land"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": false
-       },
-       "to": "battlefield",
-       "n": 1,
-       "tapped": true
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -38136,10 +38111,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ gets +2/+2 as long as there are three or more land cards in your graveyard."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -43327,7 +43300,8 @@
      "cost": {
       "mana": "G",
       "tap": true,
-      "discard": 1
+      "discard": 1,
+      "discard_type": "creature"
      },
      "effects": [
       {
@@ -55344,20 +55318,15 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "RG",
-    "t": true
+    "t": true,
+    "bounceland": true,
+    "amt": "2"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -55365,10 +55334,8 @@
    "ward": 0,
    "identity": "GR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return a land you control to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -74427,18 +74394,13 @@
    "pips": "",
    "tags": {
     "c": "A",
-    "t": true
+    "t": true,
+    "amt": "3"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "hexproof"
@@ -74448,10 +74410,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, sacrifice two lands."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -74982,34 +74942,21 @@
    "pips": "GG",
    "tags": {
     "leg": true,
-    "pow": "1",
     "reach": true,
-    "vig": true
+    "vig": true,
+    "pow": "0",
+    "tgh": "0"
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
      "type": "static",
      "static": "self_scaling",
      "pow": 1,
-     "per": "X",
+     "per": "lands_you_control",
      "base0": true
-    },
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "reanimate",
-       "filter": {
-        "type": "land"
-       },
-       "from": "yours"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
     }
    ],
    "start_loyalty": null,
@@ -75026,10 +74973,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, mill four cards. Then return all land cards from your graveyard to the battlefield tapped.   [partly: mill four cards]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -97366,20 +97311,15 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "BR",
-    "t": true
+    "t": true,
+    "bounceland": true,
+    "amt": "2"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -97387,10 +97327,8 @@
    "ward": 0,
    "identity": "BR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return a land you control to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -107578,6 +107516,12 @@
      },
      "effects": [
       {
+       "do": "tap",
+       "what": {
+        "sel": "self"
+       }
+      },
+      {
        "do": "grant",
        "keyword": "indestructible",
        "what": {
@@ -107604,9 +107548,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Discard a card: Tap ~. It gains indestructible until end of turn.   [partly: tap ~]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -115775,7 +115717,8 @@
      "type": "activated",
      "cost": {
       "mana": "G",
-      "discard": 1
+      "discard": 1,
+      "discard_type": "land"
      },
      "effects": [
       {
@@ -115791,7 +115734,8 @@
      "type": "activated",
      "cost": {
       "mana": "1R",
-      "discard": 1
+      "discard": 1,
+      "discard_type": "land"
      },
      "effects": [
       {
@@ -115807,12 +115751,19 @@
      "type": "activated",
      "cost": {
       "mana": "2B",
-      "discard": 1
+      "discard": 1,
+      "discard_type": "land"
      },
      "effects": [
       {
        "do": "grant",
        "keyword": "indestructible",
+       "what": {
+        "sel": "self"
+       }
+      },
+      {
+       "do": "tap",
        "what": {
         "sel": "self"
        }
@@ -115834,8 +115785,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "Whenever ~ enters or attacks, you may put a land card from a graveyard onto the battlefield tapped under your control.",
-    "{2}{B}, Discard a land card: ~ gains indestructible until end of turn. Tap it.   [partly: tap it]"
+    "Whenever ~ enters or attacks, you may put a land card from a graveyard onto the battlefield tapped under your control."
    ],
    "derived": {
     "cmc": 4,
@@ -116912,24 +116862,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      },
-      {
-       "do": "put_land",
-       "optional": true
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -116937,11 +116870,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, draw a card, then you may put a land card from your hand onto the battlefield. If you put a Cave onto the battlefield this way, you gain 4 life.   [partly: if you put a cave onto the battlefield this way, you gain 4 life]",
-    "Lands you control enter untapped."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -125002,22 +124932,7 @@
    "pow": 2,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "damage",
-       "n": 1,
-       "to": {
-        "sel": "player",
-        "who": "each_opponent"
-       }
-      }
-     ],
-     "event": "landfall"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "landfall"
@@ -125030,10 +124945,8 @@
    "ward": 0,
    "identity": "GR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Landfall — Whenever a land you control enters, ~ deals 1 damage to each opponent. If this is the second time this ability has resolved this turn, draw a card.   [partly: if this is the second time this ability has resolved this turn, draw a card]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -145168,27 +145081,12 @@
    "generic": 0,
    "pips": "RG",
    "tags": {
-    "rem": "dmg3",
-    "tgt": "c",
-    "face": true
+    "tokx": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "damage",
-       "n": "X",
-       "to": {
-        "sel": "any_target"
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -145196,10 +145094,8 @@
    "ward": 0,
    "identity": "GR",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals X damage to any target. Put up to X land cards from your hand and/or graveyard onto the battlefield tapped.   [partly: put up to x land cards from your hand and/or graveyard onto the battlefield tapped]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

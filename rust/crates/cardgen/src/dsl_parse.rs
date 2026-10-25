@@ -296,6 +296,11 @@ pub fn num_expr(s: &str) -> J {
     ) {
         return format!("type_you_gy:{}", singular(tm.gs(1))).into();
     }
+    // --- Tiers 1/2 (windgrace): "the number of lands you control" (Lumra, Bellow of the Woods), "each land you
+    // control"
+    if rmatch(r"^(?:the number of )?lands? you control$", &s).is_some() {
+        return "lands_you_control".into();
+    }
     if rmatch(r"^\+1/\+1 counter on (?:~|it|this creature)$", &s).is_some() {
         return "counters_on_self".into();
     }
@@ -680,6 +685,9 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^tap (target creature|up to one target creature|target permanent|all creatures your opponents control)$", |m| {
         Some(eff(obj! {"do" => "tap", "what" => selector(m.gs(1))}))
     }),
+    // --- Tiers 1/2 (windgrace): "tap ~" (Seasoned Hallowblade: "Tap ~. It gains indestructible ..."); Soul of
+    // Windgrace's "~ gains ... Tap it." is read in the activated-ability branch of `compile_card`
+    (r"^tap ~$", |_| Some(eff(obj! {"do" => "tap", "what" => obj!{"sel" => "self"}}))),
     (
         r"^(?:its controller|that player) may search their library for a basic land card, put it onto the battlefield tapped$",
         |_| Some(eff(obj! {"do" => "opp_ramp"})),
@@ -1268,6 +1276,11 @@ pub fn parse_cost(s: &str) -> Option<Obj> {
             cost.set("life", n_(m.gs(1)));
         } else if x.starts_with("discard") {
             cost.set("discard", n_(x.split_whitespace().nth(1)?));
+            // --- Tiers 1/2 (windgrace): "discard a land card" / "discard a creature card" (Soul of Windgrace, Fauna
+            // Shaman): only a card of that type pays
+            if let Some(m) = search(r"^discard (?:a|an|one|two|\d+) (land|creature|artifact|enchantment) cards?$", x) {
+                cost.set("discard_type", m.gs(1));
+            }
         } else if x.starts_with("exile ~ from your graveyard") || x.starts_with("remove") {
             cost.set("other", x);
         } else if x.starts_with("tap an untapped") || x.starts_with("tap ") {
@@ -1715,7 +1728,12 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             if g1.contains('{') || g1.contains("sacrifice") || g1.contains("pay") || g1.contains("discard") {
                 let cost = parse_cost(g1);
                 let body = sub(r"\.? ?activate (only|this ability only)[^.]*", "", m.gs(2));
-                let (e, b) = parse_effects(&body);
+                let (mut e, mut b) = parse_effects(&body);
+                // --- Tiers 1/2 (windgrace): "~ gains ... Tap it." (Soul of Windgrace): "it" is ~
+                if body.starts_with("~ ") && b.iter().any(|x| x == "tap it") {
+                    b.retain(|x| x != "tap it");
+                    e.push(eff(obj! {"do" => "tap", "what" => obj!{"sel" => "self"}}).remove(0));
+                }
                 if let Some(c) = &cost {
                     if !e.is_empty()
                         && e.iter().all(|x| x.get("do") == Some(&J::Str("add_mana".into())))

@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Lands / ramp value.
 - **Commander:** Lord Windgrace
 - **Color identity:** Black, Red, Green
 - **Game Changers (2):** Crop Rotation, Field of the Dead
-- **Combos:** None.
+- **Combos:** Dark Depths + Thespian's Stage (a 20/20 flying, indestructible Marit Lage; two cards, not infinite). Crop Rotation, Elvish Reclaimer and Scapeshift find the missing half.
 - **Lands:** 40 (27 nonbasic + 13 basic)
 
 ## Role in the pool
 
-A resilient, graveyard-fed ramp deck. Tests graveyard hate from the other side and whether your decks can pressure a planeswalker.
+A resilient, graveyard-fed lands deck with a two-card threat. Tests graveyard hate from the other side, whether your decks can pressure a planeswalker, and whether they can answer a 20/20 indestructible flier (exile, bounce, edicts, chump blockers).
 
 ## At the table
 
-- **Plan:** Ramps with Cultivate, Kodama's Reach, Lotus Cobra and Sakura-Tribe Elder while filling the graveyard with fetch lands. Lord Windgrace digs with his +2 and replays lands from the graveyard with his -3, and Exploration or Oracle of Mul Daya adds land drops.
-- **Wins by:** Turns land drops into a board with Avenger of Zendikar, Scute Swarm, Rampaging Baloths and Titania, Protector of Argoth, then adds Hornet Queen, Wurmcoil Engine, Glissa Sunslayer and Multani, Yavimaya's Avatar. Moraug, Fury of Akoum adds extra combats.
-- **Watch out for:** Windgrace is a planeswalker, so attack him before his -3 refuels the lands. Crucible of Worlds and Life from the Loam keep the engine going and Avenger of Zendikar is a quick board. Ghost Quarter and Tectonic Edge hit your nonbasic lands.
-- **Interaction:** Assassin's Trophy, Putrefy, Terminate, Chaos Warp, Beast Within, Kolaghan's Command, Decimate, Blasphemous Act and Pernicious Deed. Heroic Intervention protects its team. No counterspells.
+- **Plan:** Ramps with Cultivate, Kodama's Reach, Farseek, Nature's Lore, Three Visits and Sakura-Tribe Elder while filling the graveyard with fetch lands. Exploration, Azusa, Dryad of the Ilysian Grove, Icetill Explorer, Mina and Denn and Burgeoning add land drops; Crucible of Worlds, Ramunap Excavator, Icetill Explorer and Conduit of Worlds replay them from the graveyard. Lord Windgrace digs with his +2 and returns two lands with his -3.
+- **Wins by:** Landfall: Avenger of Zendikar, Scute Swarm, Omnath, Locus of Rage, Field of the Dead and Tannuk turn each land into a body or damage; Titania makes 5/3s from every land that dies; Scapeshift and Worldsoul's Rage drop many lands at once. Marit Lage from Dark Depths and Thespian's Stage (or Depths counted down with spare mana) is the quick kill.
+- **Watch out for:** Windgrace and Nissa are planeswalkers: attack them. Dark Depths on the battlefield is half a 20/20; the Stage, Crop Rotation or Elvish Reclaimer finish it. Lumra returns every land in the graveyard, Soul of Windgrace takes lands from any graveyard, and Constant Mists (with buyback) fogs your attacks again and again. Strip Mine hits your best land.
+- **Interaction:** Assassin's Trophy, Putrefy, Beast Within, Windgrace's Judgment, Worldsoul's Rage, Blasphemous Act and Toxic Deluge; Constant Mists against attacks, Sylvan Safekeeper and Boseiju protect. No counterspells.
 
 ## Strategy
 
-Ramp, fill the graveyard with fetch lands, and replay them for landfall. Windgrace's +2 discards to draw and returns lands; Crucible, Ramunap, Life from the Loam, and Splendid Reclamation keep the engine running. Omnath, Avenger, Scute Swarm, Titania, and Baloths turn land drops into a board, and Moraug adds extra combats. Ghost Quarter and Tectonic Edge are the deck's land destruction.
+Ramp, fill the graveyard with lands and replay them for landfall. Windgrace's +2, Six's attack and Realms Uncharted find lands; Crucible, Ramunap, Life from the Loam, Splendid Reclamation, Lumra and Soul of Windgrace bring them back. Avenger, Scute Swarm, Omnath, Field of the Dead, Tannuk and Tireless Provisioner turn land drops into a board, and Scapeshift is a burst of landfall (or both halves of the Depths combo). Six gives the deck's permanents retrace, discarding spare lands.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Windgrace planeswalker loyalty and land recursion; landfall token makers; Titania elemental on land-to-graveyard; Life from the Loam dredge.
+Windgrace planeswalker loyalty and land recursion; landfall token makers and Field of the Dead; Titania elemental on land-to-graveyard; Life from the Loam dredge; Dark Depths + Thespian's Stage (impls/t12_windgrace.rs, chained in the combo catalogue) with Crop Rotation, Elvish Reclaimer and Scapeshift finding the halves; extra land drops and lands from the graveyard; Lumra, Six, Soul of Windgrace and Worldsoul's Rage putting lands in; Spelunking's untapped lands. Left out: Thespian's Stage copies only Dark Depths; Constant Mists doesn't stop combat damage between creatures; Mina and Denn bounce a land only to replay it.
 
 ## Decklist by type (100)
 
