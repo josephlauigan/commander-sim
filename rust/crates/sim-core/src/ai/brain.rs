@@ -1257,6 +1257,9 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
 }
 
 // ------------------------------------------------------------------ attacks
+/// how much more an opponent with Tergrid, God of Fright out draws attacks (a planeswalker about to ultimate: 3)
+const TERGRID_ATTACK: f64 = 3.0;
+
 /// brain.choose_defender: who p attacks: threat, a likely kill, a grudge, blockers, attack taxes, play style
 pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     let mut opps: Vec<PlayerId> = g.opps(p).filter(|&q| !shielded(g, q)).collect();
@@ -1307,6 +1310,9 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
                 (up >= 0.6).then(|| 3.0 * up.min(1.0))
             })
             .psum();
+        if has(g, q, Tag::Tergrid) {
+            u += TERGRID_ATTACK; // Tergrid, God of Fright keeps every edict and discard: the table races it
+        }
         let blockers = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).count();
         u -= 0.15 * blockers as f64 * (1.0 - aggr);
         if !g.hooks.is_empty() {

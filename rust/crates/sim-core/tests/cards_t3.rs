@@ -467,3 +467,23 @@ fn sac_worst_permanent_gives_up_a_land_before_an_engine_with_five_lands() {
     let tok = token(&mut g, P0, 1);
     assert_eq!(t3::sac_worst_permanent(&mut g, P0, None).unwrap(), Some(Sacrificed::Perm(tok)), "a creature token first");
 }
+
+#[test]
+fn aristocrats_feed_no_card_to_their_altar_with_an_opposing_tergrid() {
+    let setup = || {
+        let mut g = table(&["korvold-jund-sacrifice", "tergrid-mono-black-disruption"]);
+        g.active = Some(P0);
+        perm(&mut g, P0, "Ashnod's Altar");
+        perm(&mut g, P0, "Zulaport Cutthroat");
+        perm(&mut g, P0, "Llanowar Elves");
+        g.player_mut(P1).life = 1;
+        g
+    };
+    let mut g = setup();
+    let o = sim_core::impls::common::aristocrat_options(&mut g, P0, Some(true)).unwrap();
+    assert!(!o.is_empty(), "the lethal drain is offered");
+    let mut g = setup();
+    perm(&mut g, P1, "Tergrid, God of Fright // Tergrid's Lantern");
+    let o = sim_core::impls::common::aristocrat_options(&mut g, P0, Some(true)).unwrap();
+    assert!(o.is_empty(), "no card to an opposing Tergrid");
+}
