@@ -9362,3 +9362,6 @@ types = "E"
 ["Wear // Tear"]
 types = "I"
 tags = "rem=destroy tgt=ae"
+
+["Fighter Class"]
+pool_remove_tags = ["tut"]

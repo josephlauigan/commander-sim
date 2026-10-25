@@ -38966,9 +38966,7 @@
    "types": "E",
    "generic": 0,
    "pips": "RW",
-   "tags": {
-    "tut": "any"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
