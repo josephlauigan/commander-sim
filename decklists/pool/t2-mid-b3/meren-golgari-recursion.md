@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Grind / recursion value.
 
 - **Commander:** Meren of Clan Nel Toth
 - **Color identity:** Black, Green
-- **Game Changers (2):** Survival of the Fittest, Demonic Tutor
+- **Game Changers (1):** Demonic Tutor
 - **Combos:** None.
-- **Lands:** 36 (15 nonbasic + 21 basic)
+- **Lands:** 35 (17 nonbasic + 18 basic)
 
 ## Role in the pool
 
@@ -33,102 +33,103 @@ Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand)
 
 **Commander (1).** Meren of Clan Nel Toth
 
-**Creatures (37).** Acidic Slime, Birds of Paradise, Blood Artist, Bloodgift Demon, Burglar Rat, Canopy Tactician, Carrion Feeder, Caustic Caterpillar, Courser of Kruphix, Deathrite Shaman, Elderfang Ritualist, Eternal Witness, Fauna Shaman, Fleshbag Marauder, Golgari Findbroker, Grave Titan, Gray Merchant of Asphodel, Grim Haruspex, Llanowar Elves, Merciless Executioner, Nekrataal, Plaguecrafter, Ravenous Chupacabra, Reclamation Sage, Sakura-Tribe Elder, Satyr Wayfinder, Shriekmaw, Solemn Simulacrum, Spore Frog, Stitcher's Supplier, Syr Konrad, the Grim, Tireless Tracker, Viscera Seer, Woe Strider, Wood Elves, Yahenni, Undying Partisan, Zulaport Cutthroat
+**Creatures (37).** Accursed Marauder, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Cankerbloom, Carrion Feeder, Deathrite Shaman, Elves of Deep Shadow, Elvish Mystic, Eternal Witness, Fiend Artisan, Fleshbag Marauder, Gray Merchant of Asphodel, Grim Haruspex, Haywire Mite, Llanowar Elves, Massacre Wurm, Mikaeus, the Unhallowed, Plaguecrafter, Protean Hulk, Ravenous Chupacabra, Reclamation Sage, Sakura-Tribe Elder, Satyr Wayfinder, Sheoldred, Whispering One, Shriekmaw, Solemn Simulacrum, Spore Frog, Syr Konrad, the Grim, Twilight Diviner, Umbral Collar Zealot, Viscera Seer, Warren Soultrader, Wight of the Reliquary, Wood Elves, Yawgmoth, Thran Physician, Zulaport Cutthroat
 
-**Planeswalkers (1).** Liliana, Death's Majesty
+**Enchantments (5).** Animate Dead, Dictate of Erebos, Grave Pact, Journey to Eternity // Atzal, Cave of Eternity, Moldervine Reclamation
 
-**Enchantments (4).** Evolutionary Leap, Pernicious Deed, Phyrexian Arena, Survival of the Fittest
+**Artifacts (6).** Arcane Signet, Ashnod's Altar, Birthing Pod, Cauldron of Essence, Skullclamp, Sol Ring
 
-**Artifacts (7).** Arcane Signet, Ashnod's Altar, Golgari Signet, Mind Stone, Skullclamp, Sol Ring, Talisman of Resilience
+**Sorceries (10).** Buried Alive, Culling Ritual, Cultivate, Demonic Tutor, Diabolic Intent, Eldritch Evolution, Living Death, Reanimate, Toxic Deluge, Victimize
 
-**Sorceries (7).** Bone Shards, Casualties of War, Demonic Tutor, Nature's Lore, Three Visits, Toxic Deluge, Victimize
+**Instants (6).** Assassin's Trophy, Beast Within, Dark Ritual, Entomb, Putrefy, Village Rites
 
-**Instants (7).** Assassin's Trophy, Beast Within, Deadly Dispute, Golgari Charm, Grisly Salvage, Infernal Grasp, Putrefy
-
-**Lands (36).** Bojuka Bog, Command Tower, Deathcap Glade, Evolving Wilds, Exotic Orchard, Fabled Passage, High Market, Llanowar Wastes, Myriad Landscape, Overgrown Tomb, Phyrexian Tower, Temple of Malady, Twilight Mire, Verdant Catacombs, Woodland Cemetery, 10 Forest, 11 Swamp
+**Lands (35).** Bojuka Bog, Command Tower, Deathcap Glade, Golgari Rot Farm, High Market, Llanowar Wastes, Necroblossom Snarl, Overgrown Tomb, Phyrexian Tower, Tainted Wood, Temple of Malady, Twilight Mire, Underground Mortuary, Undergrowth Stadium, Urborg, Tomb of Yawgmoth, Verdant Catacombs, Woodland Cemetery, 8 Forest, 10 Swamp
 
 ## Import list (100)
 
 ```
-1 Acidic Slime
+1 Accursed Marauder
+1 Animate Dead
 1 Arcane Signet
 1 Ashnod's Altar
 1 Assassin's Trophy
 1 Beast Within
 1 Birds of Paradise
+1 Birthing Pod
 1 Blood Artist
-1 Bloodgift Demon
 1 Bojuka Bog
-1 Bone Shards
-1 Burglar Rat
-1 Canopy Tactician
+1 Braids, Arisen Nightmare
+1 Buried Alive
+1 Cankerbloom
 1 Carrion Feeder
-1 Casualties of War
-1 Caustic Caterpillar
+1 Cauldron of Essence
 1 Command Tower
-1 Courser of Kruphix
-1 Deadly Dispute
+1 Culling Ritual
+1 Cultivate
+1 Dark Ritual
 1 Deathcap Glade
 1 Deathrite Shaman
 1 Demonic Tutor
-1 Elderfang Ritualist
+1 Diabolic Intent
+1 Dictate of Erebos
+1 Eldritch Evolution
+1 Elves of Deep Shadow
+1 Elvish Mystic
+1 Entomb
 1 Eternal Witness
-1 Evolutionary Leap
-1 Evolving Wilds
-1 Exotic Orchard
-1 Fabled Passage
-1 Fauna Shaman
+1 Fiend Artisan
 1 Fleshbag Marauder
-1 Golgari Charm
-1 Golgari Findbroker
-1 Golgari Signet
-1 Grave Titan
+1 Golgari Rot Farm
+1 Grave Pact
 1 Gray Merchant of Asphodel
 1 Grim Haruspex
-1 Grisly Salvage
+1 Haywire Mite
 1 High Market
-1 Infernal Grasp
-1 Liliana, Death's Majesty
+1 Journey to Eternity // Atzal, Cave of Eternity
+1 Living Death
 1 Llanowar Elves
 1 Llanowar Wastes
-1 Merciless Executioner
+1 Massacre Wurm
 1 Meren of Clan Nel Toth
-1 Mind Stone
-1 Myriad Landscape
-1 Nature's Lore
-1 Nekrataal
+1 Mikaeus, the Unhallowed
+1 Moldervine Reclamation
+1 Necroblossom Snarl
 1 Overgrown Tomb
-1 Pernicious Deed
-1 Phyrexian Arena
 1 Phyrexian Tower
 1 Plaguecrafter
+1 Protean Hulk
 1 Putrefy
 1 Ravenous Chupacabra
+1 Reanimate
 1 Reclamation Sage
 1 Sakura-Tribe Elder
 1 Satyr Wayfinder
+1 Sheoldred, Whispering One
 1 Shriekmaw
 1 Skullclamp
 1 Sol Ring
 1 Solemn Simulacrum
 1 Spore Frog
-1 Stitcher's Supplier
-1 Survival of the Fittest
 1 Syr Konrad, the Grim
-1 Talisman of Resilience
+1 Tainted Wood
 1 Temple of Malady
-1 Three Visits
-1 Tireless Tracker
 1 Toxic Deluge
+1 Twilight Diviner
 1 Twilight Mire
+1 Umbral Collar Zealot
+1 Underground Mortuary
+1 Undergrowth Stadium
+1 Urborg, Tomb of Yawgmoth
 1 Verdant Catacombs
 1 Victimize
+1 Village Rites
 1 Viscera Seer
-1 Woe Strider
+1 Warren Soultrader
+1 Wight of the Reliquary
 1 Wood Elves
 1 Woodland Cemetery
-1 Yahenni, Undying Partisan
+1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat
-10 Forest
-11 Swamp
+8 Forest
+10 Swamp
 ```

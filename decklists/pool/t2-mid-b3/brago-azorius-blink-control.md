@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-he
 
 - **Commander:** Brago, King Eternal
 - **Color identity:** White, Blue
-- **Game Changers (2):** Rhystic Study, Cyclonic Rift
+- **Game Changers (1):** Farewell
 - **Combos:** None.
-- **Lands:** 36 (14 nonbasic + 22 basic)
+- **Lands:** 35 (15 nonbasic + 20 basic)
 
 ## Role in the pool
 
@@ -33,101 +33,103 @@ ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displa
 
 **Commander (1).** Brago, King Eternal
 
-**Creatures (32).** Adeline, Resplendent Cathar, Admonition Angel, Angel of Serenity, Archaeomancer, Archangel of Tithes, Baneslayer Angel, Brazen Borrower, Charming Prince, Cloudblazer, Cloudkin Seer, Deadeye Navigator, Dream Trawler, Eldrazi Displacer, Esper Sentinel, Frost Titan, Glen Elendra Archmage, Hero of Bladehold, Lyra Dawnbringer, Man-o'-War, Mulldrifter, Palace Jailer, Recruiter of the Guard, Reflector Mage, Resplendent Angel, Restoration Angel, Skyclave Apparition, Solemn Simulacrum, Soulherder, Spark Double, Spellseeker, Sun Titan, Wall of Omens
+**Creatures (29).** Aether Channeler, Agent of Treachery, Archaeomancer, Charming Prince, Cloud of Faeries, Cloudblazer, Deadeye Navigator, Displacer Kitten, Dour Port-Mage, Elesh Norn, Mother of Machines, Flickerwisp, Helpful Hunter, Loran of the Third Path, Mulldrifter, Peregrine Drake, Reflector Mage, Restoration Angel, Riptide Gearhulk, Solemn Simulacrum, Soulherder, Spirited Companion, Starfield Vocalist, Sun Titan, Tribute Mage, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Witch Enchanter // Witch-Blessed Meadow, Yorion, Sky Nomad
 
-**Planeswalkers (2).** Elspeth, Sun's Champion, Teferi, Hero of Dominaria
+**Planeswalkers (1).** Venser, the Sojourner
 
-**Enchantments (5).** Banishing Light, Detention Sphere, Ghostly Prison, Oblivion Ring, Rhystic Study
+**Enchantments (6).** Ghostly Prison, Mystic Remora, Omen of the Sea, Reality Acid, Teleportation Circle, Unquestioned Authority
 
-**Artifacts (9).** Arcane Signet, Azorius Signet, Conjurer's Closet, Fellwar Stone, Mind Stone, Sol Ring, Swiftfoot Boots, Talisman of Progress, Thought Vessel
+**Artifacts (13).** Arcane Signet, Azorius Signet, Basalt Monolith, Cryogen Relic, Fellwar Stone, Lightning Greaves, Mind Stone, Panharmonicon, Sol Ring, Strionic Resonator, Swiftfoot Boots, Talisman of Progress, Thought Vessel
 
-**Sorceries (3).** Council's Judgment, Supreme Verdict, Wrath of God
+**Sorceries (3).** Farewell, Supreme Verdict, Time Wipe
 
-**Instants (12).** Absorb, An Offer You Can't Refuse, Brainstorm, Counterspell, Cryptic Command, Cyclonic Rift, Dovin's Veto, Ephemerate, Fact or Fiction, Mystic Confluence, Path to Exile, Swords to Plowshares
+**Instants (12).** An Offer You Can't Refuse, Cloudshift, Counterspell, Dovin's Veto, Eerie Interlude, Ephemerate, Ghostly Flicker, Momentary Blink, Negate, Path to Exile, Swan Song, Swords to Plowshares
 
-**Lands (36).** Adarkar Wastes, Command Tower, Deserted Beach, Exotic Orchard, Flooded Strand, Glacial Fortress, Hallowed Fountain, Irrigated Farmland, Mystic Gate, Mystic Sanctuary, Otawara, Soaring City, Port Town, Prairie Stream, Reliquary Tower, 12 Island, 10 Plains
+**Lands (35).** Adarkar Wastes, Azorius Chancery, Command Tower, Deserted Beach, Flooded Strand, Glacial Fortress, Hallowed Fountain, Nimbus Maze, Port Town, Prairie Stream, Reliquary Tower, Rogue's Passage, Sea of Clouds, Skycloud Expanse, Temple of Enlightenment, 10 Island, 10 Plains
 
 ## Import list (100)
 
 ```
-1 Absorb
 1 Adarkar Wastes
-1 Adeline, Resplendent Cathar
-1 Admonition Angel
+1 Aether Channeler
+1 Agent of Treachery
 1 An Offer You Can't Refuse
-1 Angel of Serenity
 1 Arcane Signet
 1 Archaeomancer
-1 Archangel of Tithes
+1 Azorius Chancery
 1 Azorius Signet
-1 Baneslayer Angel
-1 Banishing Light
+1 Basalt Monolith
 1 Brago, King Eternal
-1 Brainstorm
-1 Brazen Borrower
 1 Charming Prince
+1 Cloud of Faeries
 1 Cloudblazer
-1 Cloudkin Seer
+1 Cloudshift
 1 Command Tower
-1 Conjurer's Closet
-1 Council's Judgment
 1 Counterspell
-1 Cryptic Command
-1 Cyclonic Rift
+1 Cryogen Relic
 1 Deadeye Navigator
 1 Deserted Beach
-1 Detention Sphere
+1 Displacer Kitten
+1 Dour Port-Mage
 1 Dovin's Veto
-1 Dream Trawler
-1 Eldrazi Displacer
-1 Elspeth, Sun's Champion
+1 Eerie Interlude
+1 Elesh Norn, Mother of Machines
 1 Ephemerate
-1 Esper Sentinel
-1 Exotic Orchard
-1 Fact or Fiction
+1 Farewell
 1 Fellwar Stone
+1 Flickerwisp
 1 Flooded Strand
-1 Frost Titan
+1 Ghostly Flicker
 1 Ghostly Prison
 1 Glacial Fortress
-1 Glen Elendra Archmage
 1 Hallowed Fountain
-1 Hero of Bladehold
-1 Irrigated Farmland
-1 Lyra Dawnbringer
-1 Man-o'-War
+1 Helpful Hunter
+1 Lightning Greaves
+1 Loran of the Third Path
 1 Mind Stone
+1 Momentary Blink
 1 Mulldrifter
-1 Mystic Confluence
-1 Mystic Gate
-1 Mystic Sanctuary
-1 Oblivion Ring
-1 Otawara, Soaring City
-1 Palace Jailer
+1 Mystic Remora
+1 Negate
+1 Nimbus Maze
+1 Omen of the Sea
+1 Panharmonicon
 1 Path to Exile
+1 Peregrine Drake
 1 Port Town
 1 Prairie Stream
-1 Recruiter of the Guard
+1 Reality Acid
 1 Reflector Mage
 1 Reliquary Tower
-1 Resplendent Angel
 1 Restoration Angel
-1 Rhystic Study
-1 Skyclave Apparition
+1 Riptide Gearhulk
+1 Rogue's Passage
+1 Sea of Clouds
+1 Skycloud Expanse
 1 Sol Ring
 1 Solemn Simulacrum
 1 Soulherder
-1 Spark Double
-1 Spellseeker
+1 Spirited Companion
+1 Starfield Vocalist
+1 Strionic Resonator
 1 Sun Titan
 1 Supreme Verdict
+1 Swan Song
 1 Swiftfoot Boots
 1 Swords to Plowshares
 1 Talisman of Progress
-1 Teferi, Hero of Dominaria
+1 Teleportation Circle
+1 Temple of Enlightenment
 1 Thought Vessel
+1 Time Wipe
+1 Tribute Mage
+1 Unquestioned Authority
+1 Venser, Shaper Savant
+1 Venser, the Sojourner
 1 Wall of Omens
-1 Wrath of God
-12 Island
+1 Whirler Rogue
+1 Witch Enchanter // Witch-Blessed Meadow
+1 Yorion, Sky Nomad
+10 Island
 10 Plains
 ```

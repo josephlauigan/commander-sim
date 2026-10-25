@@ -1,14 +1,112 @@
-# Realism targets, Tier 0: no targets yet (`commander-sim --realism --pool t0` prints the sim's numbers unscored).
-# Format: see t6.toml. Where the data will come from:
+# Realism targets, Tier 0 (Bracket 2 precons): what real games look like, for `commander-sim --realism --pool t0`.
+# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
 #
-# - Playgroup.gg (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0, read 2026-10-22): per commander,
-#   games, wins, average game length in rounds, and wins by combat, combo, commander damage, other damage, alternate
-#   win, mill and poison. Matched to this tier's five pool commanders (data/decks.json), it gives the win-type mix
-#   and game length. Each commander's page adds seat win rates. Caveat: a commander's numbers cover every deck built
-#   around it, at any power level, so use them for shape rather than level.
-# - Playgroup's turn-order page (https://playgroup.gg/commander/turn-order, computed 2026-10-19): seat win rates over
-#   284,950 single-winner casual 4-player games, 29.2 / 25.7 / 23.6 / 21.5%. Not split by power level.
-# - JD's pod log (data/realism/pod_games.toml): the levels, once enough games are logged.
-# - TopDeck.gg bracket events: standings and decklists only (no seats), and few, small events.
+# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-25, matched to this tier's five
+# pool commanders (data/decks.json): Anikthea, Hand of Erebos (2455), Captain America, Team Leader (3721), Giada, Font of
+# Hope (656), Stella Lee, Wild Card (2936) and Zurgo Stormrender (3224).
+#
+# Each commander counts the same, as in t3.toml: every target is the plain average of the five commanders' own figures,
+# as the sim seats each pool deck equally often.
+#
+# Caveats: a commander's numbers cover every deck built around it, at any power level, so they give the shape of a
+# tier's games more than its level. They are casual pods logged by players, of any size (3 to 6 players). The two
+# Playgroup sources count games differently (commanders.json against each commander's page and stats), so the
+# samples below differ.
 
 tier = "t0"
+
+# --- Seat win rates: each commander's page (https://playgroup.gg/commanders/<id>, "Does seating order matter?")
+# gives its win rate from seats 1-4 and the games behind each. Seats 1-4 win, on average over the five commanders,
+# 39.4 / 33.4 / 27.3 / 22.5% of their games; each rate divided by the four rates' total gives the share of decisive
+# games, as the sim counts them.
+
+[seat1_win]
+value = 32.1
+lo = 31.1
+hi = 33.1
+n = 34140
+source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
+date = "2026-10-25"
+note = "n = seat-games behind the five commanders' seat 1-4 rates"
+
+[seat2_win]
+value = 27.3
+lo = 26.3
+hi = 28.3
+n = 34140
+source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
+date = "2026-10-25"
+
+[seat3_win]
+value = 22.2
+lo = 21.2
+hi = 23.2
+n = 34140
+source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
+date = "2026-10-25"
+
+[seat4_win]
+value = 18.4
+lo = 17.4
+hi = 19.4
+n = 34140
+source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
+date = "2026-10-25"
+
+# --- Speed: Playgroup gives each commander's average win turn (https://playgroup.gg/api/public/v1/commanders/<id>.json,
+# stats.average_wins_by_turn): Anikthea 10, Captain America 9, Giada 9, Stella Lee 8, Zurgo 9; their average is 9.0. An average,
+# not a median, and no spread: win_round_spread has no target.
+
+[win_round_median]
+value = 9
+lo = 8
+hi = 10
+n = 11116
+source = "Playgroup commander stats, average win turn of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
+date = "2026-10-25"
+note = "n = the five commanders' logged wins; Playgroup gives an average win turn (9.0), used as the median"
+
+# --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), each
+# commander's wins by type, averaged over the five: combat and other damage 82.3%, combo, alternate win and mill
+# 13.8%, commander damage 3.7%, poison 0.2%. Per commander (damage / combo / commander damage):
+# Anikthea 85 / 10 / 4; Captain America 89 / 4 / 6;
+# Giada 88 / 8 / 4; Stella Lee 55 / 44 / 2;
+# Zurgo 95 / 3 / 2.
+# Grouped as t6.toml groups them.
+
+[win_damage]
+value = 82.3
+lo = 81.3
+hi = 83.3
+n = 5905
+source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
+date = "2026-10-25"
+
+[win_combo_alt]
+value = 13.8
+lo = 12.8
+hi = 14.8
+n = 5905
+source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
+date = "2026-10-25"
+
+[win_commander_damage]
+value = 3.7
+lo = 2.7
+hi = 4.7
+n = 5905
+source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
+date = "2026-10-25"
+
+[win_poison]
+value = 0.2
+lo = 0.0
+hi = 1.2
+n = 5905
+source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
+date = "2026-10-25"
+
+# --- No target yet:
+# - deck_win_spread: Playgroup's win rates (Anikthea 31%, Captain America 30%, Giada 30%, Stella Lee 36%, Zurgo 31% of games) are
+#   against whatever their pods held, not against each other, so their gap is not the sim's gap.
+# - games_over_15 and win_round_spread: Playgroup publishes no distribution of game or win length.

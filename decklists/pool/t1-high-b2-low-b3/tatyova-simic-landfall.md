@@ -6,7 +6,7 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Ramp / 
 - **Color identity:** Blue, Green
 - **Game Changers (0):** none
 - **Combos:** None.
-- **Lands:** 38 (18 nonbasic + 20 basic)
+- **Lands:** 38 (13 nonbasic + 25 basic)
 
 ## Role in the pool
 
@@ -33,101 +33,98 @@ Tatyova (landfall: draw + gain 1); extra land drops; Avenger/Scute Swarm/Baloths
 
 **Commander (1).** Tatyova, Benthic Druid
 
-**Creatures (27).** Aesi, Tyrant of Gyre Strait, Aftermath Analyst, Ancient Greenwarden, Avenger of Zendikar, Azusa, Lost but Seeking, Coiling Oracle, Dryad of the Ilysian Grove, Elvish Mystic, Hydroid Krasis, Llanowar Elves, Lotus Cobra, Mulldrifter, Mystic Snake, Nissa, Resurgent Animist, Oracle of Mul Daya, Rampaging Baloths, Ramunap Excavator, Roil Elemental, Sakura-Tribe Elder, Scute Swarm, Springbloom Druid, Tireless Provisioner, Tireless Tracker, Titania, Protector of Argoth, Uro, Titan of Nature's Wrath, Wood Elves, World Shaper
+**Creatures (27).** Aesi, Tyrant of Gyre Strait, Ancient Greenwarden, Avenger of Zendikar, Azusa, Lost but Seeking, Beanstalk Giant // Fertile Footsteps, Bonny Pall, Clearcutter, Coiling Oracle, Courser of Kruphix, Dryad of the Ilysian Grove, Eternal Witness, Llanowar Elves, Llanowar Scout, Loot, Exuberant Explorer, Lotus Cobra, Mossborn Hydra, Oracle of Mul Daya, Rampaging Baloths, Ramunap Excavator, Reclamation Sage, Sakura-Tribe Elder, Sakura-Tribe Scout, Scaled Herbalist, Scute Swarm, Sporemound, Springbloom Druid, Tireless Provisioner, Wood Elves
 
-**Enchantments (7).** Burgeoning, Druid Class, Exploration, Guardian Project, Kenrith's Transformation, Retreat to Coralhelm, Zendikar Resurgent
+**Enchantments (6).** Druid Class, Exploration, Khalni Heart Expedition, Retreat to Coralhelm, Retreat to Kazandu, Zendikar's Roil
 
-**Artifacts (5).** Arcane Signet, Crucible of Worlds, Lightning Greaves, Simic Signet, Sol Ring
+**Artifacts (4).** Arcane Signet, Sol Ring, Swiftfoot Boots, Thought Vessel
 
-**Sorceries (10).** Cultivate, Explore, Harmonize, Kodama's Reach, Life from the Loam, Nature's Lore, Rampant Growth, Rishkar's Expertise, Skyshroud Claim, Three Visits
+**Sorceries (11).** Broken Bond, Cultivate, Explore, Farseek, Kodama's Reach, Nature's Lore, Rampant Growth, Skyshroud Claim, Summer Bloom, Three Visits, Urban Evolution
 
-**Instants (12).** Aetherize, Arcane Denial, Beast Within, Counterspell, Evacuation, Growth Spiral, Heroic Intervention, Krosan Grip, Nature's Claim, Pongify, Rapid Hybridization, Swan Song
+**Instants (12).** Aetherize, Arcane Denial, Beast Within, Counterspell, Deprive, Entish Restoration, Eureka Moment, Growth Spiral, Harrow, Negate, Planar Genesis, Roiling Regrowth
 
-**Lands (38).** Blighted Woodland, Botanical Sanctum, Breeding Pool, Castle Garenbrig, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Hinterland Harbor, Mosswort Bridge, Myriad Landscape, Oran-Rief, the Vastwood, Prismatic Vista, Rogue's Passage, Simic Growth Chamber, Temple of Mystery, Terramorphic Expanse, Yavimaya Coast, 12 Forest, 8 Island
+**Lands (38).** Blighted Woodland, Brokers Hideout, Command Tower, Evolving Wilds, Hinterland Harbor, Myriad Landscape, Reliquary Tower, Simic Growth Chamber, Temple of Mystery, Terramorphic Expanse, Thornwood Falls, Vineglimmer Snarl, Yavimaya Coast, 14 Forest, 11 Island
+
+**Planeswalkers (1).** Wrenn and Seven
 
 ## Import list (100)
 
 ```
 1 Aesi, Tyrant of Gyre Strait
 1 Aetherize
-1 Aftermath Analyst
 1 Ancient Greenwarden
 1 Arcane Denial
 1 Arcane Signet
 1 Avenger of Zendikar
 1 Azusa, Lost but Seeking
+1 Beanstalk Giant // Fertile Footsteps
 1 Beast Within
 1 Blighted Woodland
-1 Botanical Sanctum
-1 Breeding Pool
-1 Burgeoning
-1 Castle Garenbrig
+1 Bonny Pall, Clearcutter
+1 Broken Bond
+1 Brokers Hideout
 1 Coiling Oracle
 1 Command Tower
 1 Counterspell
-1 Crucible of Worlds
+1 Courser of Kruphix
 1 Cultivate
+1 Deprive
 1 Druid Class
 1 Dryad of the Ilysian Grove
-1 Elvish Mystic
-1 Evacuation
+1 Entish Restoration
+1 Eternal Witness
+1 Eureka Moment
 1 Evolving Wilds
-1 Exotic Orchard
 1 Exploration
 1 Explore
-1 Fabled Passage
+1 Farseek
 1 Growth Spiral
-1 Guardian Project
-1 Harmonize
-1 Heroic Intervention
+1 Harrow
 1 Hinterland Harbor
-1 Hydroid Krasis
-1 Kenrith's Transformation
+1 Khalni Heart Expedition
 1 Kodama's Reach
-1 Krosan Grip
-1 Life from the Loam
-1 Lightning Greaves
 1 Llanowar Elves
+1 Llanowar Scout
+1 Loot, Exuberant Explorer
 1 Lotus Cobra
-1 Mosswort Bridge
-1 Mulldrifter
+1 Mossborn Hydra
 1 Myriad Landscape
-1 Mystic Snake
-1 Nature's Claim
 1 Nature's Lore
-1 Nissa, Resurgent Animist
+1 Negate
 1 Oracle of Mul Daya
-1 Oran-Rief, the Vastwood
-1 Pongify
-1 Prismatic Vista
+1 Planar Genesis
 1 Rampaging Baloths
 1 Rampant Growth
 1 Ramunap Excavator
-1 Rapid Hybridization
+1 Reclamation Sage
+1 Reliquary Tower
 1 Retreat to Coralhelm
-1 Rishkar's Expertise
-1 Rogue's Passage
-1 Roil Elemental
+1 Retreat to Kazandu
+1 Roiling Regrowth
 1 Sakura-Tribe Elder
+1 Sakura-Tribe Scout
+1 Scaled Herbalist
 1 Scute Swarm
 1 Simic Growth Chamber
-1 Simic Signet
 1 Skyshroud Claim
 1 Sol Ring
+1 Sporemound
 1 Springbloom Druid
-1 Swan Song
+1 Summer Bloom
+1 Swiftfoot Boots
 1 Tatyova, Benthic Druid
 1 Temple of Mystery
 1 Terramorphic Expanse
+1 Thornwood Falls
+1 Thought Vessel
 1 Three Visits
 1 Tireless Provisioner
-1 Tireless Tracker
-1 Titania, Protector of Argoth
-1 Uro, Titan of Nature's Wrath
+1 Urban Evolution
+1 Vineglimmer Snarl
 1 Wood Elves
-1 World Shaper
+1 Wrenn and Seven
 1 Yavimaya Coast
-1 Zendikar Resurgent
-12 Forest
-8 Island
+1 Zendikar's Roil
+14 Forest
+11 Island
 ```

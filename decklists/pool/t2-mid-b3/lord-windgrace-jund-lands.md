@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Lands / ramp value.
 
 - **Commander:** Lord Windgrace
 - **Color identity:** Black, Red, Green
-- **Game Changers (2):** Crop Rotation, Demonic Tutor
+- **Game Changers (2):** Crop Rotation, Field of the Dead
 - **Combos:** None.
-- **Lands:** 41 (27 nonbasic + 14 basic)
+- **Lands:** 40 (27 nonbasic + 13 basic)
 
 ## Role in the pool
 
@@ -33,108 +33,112 @@ Windgrace planeswalker loyalty and land recursion; landfall token makers; Titani
 
 **Commander (1).** Lord Windgrace
 
-**Creatures (24).** Ancient Greenwarden, Avenger of Zendikar, Azusa, Lost but Seeking, Courser of Kruphix, Dryad of the Ilysian Grove, Glissa Sunslayer, Hornet Queen, Lotus Cobra, Moraug, Fury of Akoum, Multani, Yavimaya's Avatar, Omnath, Locus of Rage, Oracle of Mul Daya, Rampaging Baloths, Ramunap Excavator, Sakura-Tribe Elder, Scute Swarm, Springbloom Druid, The Gitrog Monster, Tireless Provisioner, Tireless Tracker, Titania, Protector of Argoth, Wood Elves, World Shaper, Wurmcoil Engine
+**Creatures (27).** Aftermath Analyst, Ancient Greenwarden, Avenger of Zendikar, Azusa, Lost but Seeking, Dryad of the Ilysian Grove, Elvish Reclaimer, Eternal Witness, Icetill Explorer, Lotus Cobra, Lumra, Bellow of the Woods, Mina and Denn, Wildborn, Ob Nixilis, the Fallen, Omnath, Locus of Rage, Oracle of Mul Daya, Rampaging Baloths, Ramunap Excavator, Sakura-Tribe Elder, Scute Swarm, Six, Soul of Windgrace, Sylvan Safekeeper, Tannuk, Memorial Ensign, The Gitrog Monster, Tireless Provisioner, Tireless Tracker, Titania, Protector of Argoth, World Shaper
 
-**Enchantments (6).** Burgeoning, Exploration, Pernicious Deed, Retreat to Kazandu, Sylvan Library, Zendikar Resurgent
+**Enchantments (5).** Burgeoning, Exploration, Retreat to Hagra, Spelunking, Valakut Exploration
 
-**Artifacts (5).** Arcane Signet, Conduit of Worlds, Crucible of Worlds, Lightning Greaves, Sol Ring
+**Artifacts (4).** Conduit of Worlds, Crucible of Worlds, Sol Ring, Zuran Orb
 
-**Sorceries (14).** Blasphemous Act, Cultivate, Decimate, Demonic Tutor, Farseek, Grow from the Ashes, Harmonize, Kodama's Reach, Life from the Loam, Mulch, Nature's Lore, Rampant Growth, Splendid Reclamation, Three Visits
+**Sorceries (13).** Blasphemous Act, Cultivate, Explore, Farseek, Kodama's Reach, Life from the Loam, Nature's Lore, Scapeshift, Splendid Reclamation, Three Visits, Torment of Hailfire, Toxic Deluge, Worldsoul's Rage
 
-**Instants (9).** Assassin's Trophy, Beast Within, Chaos Warp, Crop Rotation, Harrow, Heroic Intervention, Kolaghan's Command, Putrefy, Terminate
+**Instants (8).** Assassin's Trophy, Beast Within, Constant Mists, Crop Rotation, Harrow, Putrefy, Realms Uncharted, Windgrace's Judgment
 
-**Lands (41).** Blighted Woodland, Blood Crypt, Bloodstained Mire, Bojuka Bog, Canyon Slough, Cinder Glade, Command Tower, Dakmor Salvage, Evolving Wilds, Exotic Orchard, Fabled Passage, Ghost Quarter, Hissing Quagmire, Mosswort Bridge, Myriad Landscape, Overgrown Tomb, Polluted Delta, Prismatic Vista, Raging Ravine, Savage Lands, Stomping Ground, Tectonic Edge, Terramorphic Expanse, Verdant Catacombs, Windswept Heath, Wooded Foothills, Ziatora's Proving Ground, 6 Forest, 4 Swamp, 4 Mountain
+**Lands (40).** Blood Crypt, Bloodstained Mire, Bojuka Bog, Boseiju, Who Endures, Cinder Glade, Command Tower, Commercial District, Dark Depths, Evolving Wilds, Fabled Passage, Field of the Dead, Golgari Rot Farm, Gruul Turf, Lotus Field, Overgrown Tomb, Rakdos Carnarium, Smoldering Marsh, Stomping Ground, Strip Mine, Terramorphic Expanse, Thespian's Stage, Underground Mortuary, Urborg, Tomb of Yawgmoth, Verdant Catacombs, Wooded Foothills, Yavimaya, Cradle of Growth, Ziatora's Proving Ground, 6 Forest, 3 Swamp, 3 Mountain, 1 Snow-Covered Forest
+
+**Planeswalkers (2).** Nissa of Shadowed Boughs, Wrenn and Six
 
 ## Import list (100)
 
 ```
+1 Aftermath Analyst
 1 Ancient Greenwarden
-1 Arcane Signet
 1 Assassin's Trophy
 1 Avenger of Zendikar
 1 Azusa, Lost but Seeking
 1 Beast Within
 1 Blasphemous Act
-1 Blighted Woodland
 1 Blood Crypt
 1 Bloodstained Mire
 1 Bojuka Bog
+1 Boseiju, Who Endures
 1 Burgeoning
-1 Canyon Slough
-1 Chaos Warp
 1 Cinder Glade
 1 Command Tower
+1 Commercial District
 1 Conduit of Worlds
-1 Courser of Kruphix
+1 Constant Mists
 1 Crop Rotation
 1 Crucible of Worlds
 1 Cultivate
-1 Dakmor Salvage
-1 Decimate
-1 Demonic Tutor
+1 Dark Depths
 1 Dryad of the Ilysian Grove
+1 Elvish Reclaimer
+1 Eternal Witness
 1 Evolving Wilds
-1 Exotic Orchard
 1 Exploration
+1 Explore
 1 Fabled Passage
 1 Farseek
-1 Ghost Quarter
-1 Glissa Sunslayer
-1 Grow from the Ashes
-1 Harmonize
+1 Field of the Dead
+1 Golgari Rot Farm
+1 Gruul Turf
 1 Harrow
-1 Heroic Intervention
-1 Hissing Quagmire
-1 Hornet Queen
+1 Icetill Explorer
 1 Kodama's Reach
-1 Kolaghan's Command
 1 Life from the Loam
-1 Lightning Greaves
 1 Lord Windgrace
 1 Lotus Cobra
-1 Moraug, Fury of Akoum
-1 Mosswort Bridge
-1 Mulch
-1 Multani, Yavimaya's Avatar
-1 Myriad Landscape
+1 Lotus Field
+1 Lumra, Bellow of the Woods
+1 Mina and Denn, Wildborn
 1 Nature's Lore
+1 Nissa of Shadowed Boughs
+1 Ob Nixilis, the Fallen
 1 Omnath, Locus of Rage
 1 Oracle of Mul Daya
 1 Overgrown Tomb
-1 Pernicious Deed
-1 Polluted Delta
-1 Prismatic Vista
 1 Putrefy
-1 Raging Ravine
+1 Rakdos Carnarium
 1 Rampaging Baloths
-1 Rampant Growth
 1 Ramunap Excavator
-1 Retreat to Kazandu
+1 Realms Uncharted
+1 Retreat to Hagra
 1 Sakura-Tribe Elder
-1 Savage Lands
+1 Scapeshift
 1 Scute Swarm
+1 Six
+1 Smoldering Marsh
 1 Sol Ring
+1 Soul of Windgrace
+1 Spelunking
 1 Splendid Reclamation
-1 Springbloom Druid
 1 Stomping Ground
-1 Sylvan Library
-1 Tectonic Edge
-1 Terminate
+1 Strip Mine
+1 Sylvan Safekeeper
+1 Tannuk, Memorial Ensign
 1 Terramorphic Expanse
 1 The Gitrog Monster
+1 Thespian's Stage
 1 Three Visits
 1 Tireless Provisioner
 1 Tireless Tracker
 1 Titania, Protector of Argoth
+1 Torment of Hailfire
+1 Toxic Deluge
+1 Underground Mortuary
+1 Urborg, Tomb of Yawgmoth
+1 Valakut Exploration
 1 Verdant Catacombs
-1 Windswept Heath
-1 Wood Elves
+1 Windgrace's Judgment
 1 Wooded Foothills
 1 World Shaper
-1 Wurmcoil Engine
-1 Zendikar Resurgent
+1 Worldsoul's Rage
+1 Wrenn and Six
+1 Yavimaya, Cradle of Growth
 1 Ziatora's Proving Ground
+1 Zuran Orb
 6 Forest
-4 Swamp
-4 Mountain
+3 Swamp
+3 Mountain
+1 Snow-Covered Forest
 ```
