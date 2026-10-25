@@ -400,7 +400,10 @@ pub fn prot_vs(g: &Game, m: PermId, other: PermId) -> bool {
         return true; // Apostle's Blessing: protection from artifacts
     }
     if !g.auras.is_empty()
-        && auras_on(g, m).iter().any(|&a| matches!(name_of(g, a), "Spirit Mantle" | "Unquestioned Authority"))
+        // Holy Mantle: --- Tiers 1/2 (lightpaws)
+        && auras_on(g, m)
+            .iter()
+            .any(|&a| matches!(name_of(g, a), "Spirit Mantle" | "Unquestioned Authority" | "Holy Mantle"))
     {
         return true;
     }

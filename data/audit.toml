@@ -261,6 +261,32 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Ureni of the Unwritten" = { status = "Full", note = "flying, trample; hand-written (impls/t45_urdragon.rs): enters or attacks: the best Dragon creature card of the top eight onto the battlefield, the rest to the bottom in a random order" }
 "Urza's Incubator" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): names the deck's most common creature type; creature spells of that type cost {2} less" }
 
+
+# --- Tiers 1/2 (lightpaws): hand-written in impls/t12_lightpaws.rs
+"Armored Ascension" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): +1/+1 per Plains you control, flying" }
+"Angelic Gift" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): draws a card as it enters; flying" }
+"Benevolent Blessing" = { status = "Approximate", note = "hand-written flash Aura (impls/t12_lightpaws.rs): protection from the colour chosen as it enters (the colour of the removal it answers, else the opponents' most common); cast in response to coloured targeted removal. Left out: the exception for your own Auras and Equipment (protection never knocks them off here)" }
+"Blacksmith's Skill" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): held for a response to targeted removal: hexproof and indestructible until end of turn, +2/+2 on an artifact creature" }
+"Chains of Custody" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): exiles the best opposing nonland permanent until it leaves; ward {2} (cardcode::aura_ward)" }
+"Face of Divinity" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): +2/+2; first strike and lifelink while another Aura is on the creature" }
+"Flickerform" = { status = "Approximate", note = "hand-written Aura (impls/t12_lightpaws.rs): {2}{W}{W} in response to removal or a wipe that would take the creature: it and its Auras are exiled; at the next end step the creature returns, then the Auras attached to it. Left out: activating it at other times (a blink for value)" }
+"Holy Mantle" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): +2/+2, protection from creatures (unblockable; no damage from creatures: rules2::prot_vs)" }
+"Idolized" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): whenever the creature attacks alone, +X/+X until end of turn (X: your nonland permanents)" }
+"Karametra's Blessing" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): held for a response to targeted removal on an enchanted (or enchantment) creature: +2/+2, hexproof and indestructible until end of turn" }
+"Light of Promise" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): whenever you gain life, that many +1/+1 counters on the creature" }
+"Mantle of the Ancients" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): enters: the Aura cards that can enchant the creature and the Equipment cards in your graveyard return attached to it; +1/+1 per Aura and Equipment on it" }
+"Mask of Law and Grace" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): protection from black and red" }
+"Pariah" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): damage to you is dealt to the enchanted creature instead (adds up over the turn; lethal damage destroys it); the AI puts it only on an indestructible creature or one with toughness 10 or more" }
+"Pearl-Ear, Imperial Advisor" = { status = "Full", note = "lifelink; hand-written (impls/t12_lightpaws.rs): enchantment spells cost {1} less per Aura you control; casting an Aura that goes on a modified permanent of yours (counters, your Auras or Equipment) draws a card" }
+"Reprobation" = { status = "Full", note = "removal kind `coward` (card_overrides.toml, rules::transform_away): the creature loses all abilities and is a 0/1" }
+"Retether" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): each Aura card in your graveyard that can enchant one of your creatures returns onto one (cast with two or more)" }
+"Shield of Duty and Reason" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): protection from green and blue" }
+"Single Combat" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): each player keeps their best creature or planeswalker and sacrifices the rest; no creature or planeswalker spells until the end of the caster's next turn (a cast lock). Cast when it costs the opponents much more than you" }
+"Stoneskin" = { status = "Full", note = "hand-written flash Aura (impls/t12_lightpaws.rs): +0/+10; also cast in response to damage the creature then survives" }
+"Thran Power Suit" = { status = "Full", note = "equip {2} compiled; hand-written (impls/t12_lightpaws.rs): +1/+1 per Aura and Equipment on the equipped creature, ward {2}" }
+"Twinblade Blessing" = { status = "Full", note = "hand-written flash Aura (impls/t12_lightpaws.rs): double strike" }
+"Umbra Mystic" = { status = "Full", note = "hand-written (common::umbra_save): Auras on your permanents have umbra armor" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -401,7 +427,7 @@ mechs = ["enchantress_draw"]
 
 [[engines.light-paws-aura-voltron]]
 label = "totem armor"
-cards = ["Hyena Umbra", "Mammoth Umbra", "Felidar Umbra"]
+cards = ["Hyena Umbra", "Umbra Mystic"]
 mechs = ["totem_armor", "auras"]
 
 [[engines.light-paws-aura-voltron]]

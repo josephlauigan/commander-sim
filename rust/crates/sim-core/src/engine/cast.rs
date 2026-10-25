@@ -187,6 +187,10 @@ fn lock_in_force(g: &Game, l: &CastLock) -> bool {
     match l.end {
         LockEnd::Turn(st) => st == g.turn_stamp(),
         LockEnd::TurnOf(q, t) => g.player(q).alive && g.player(q).turns == t,
+        // --- Tiers 1/2 (lightpaws): Single Combat
+        LockEnd::ThroughNextTurn(q, t) => {
+            g.player(q).alive && (g.player(q).turns == t || (g.player(q).turns == t + 1 && g.active == Some(q)))
+        }
     }
 }
 
@@ -219,6 +223,8 @@ pub fn spell_locked(g: &Game, p: PlayerId, c: CardId) -> bool {
         LockKind::AllSpells => true,
         LockKind::Noncreature => !d.creature,
         LockKind::InstSorcAbilities => d.instant || d.sorcery,
+        // --- Tiers 1/2 (lightpaws): Single Combat
+        LockKind::CreatureWalker => d.creature || d.types.has(crate::cards::Types::PLANESWALKER),
     })
 }
 

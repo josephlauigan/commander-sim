@@ -37,6 +37,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
         return Ok(());
     }
+    if damage && kind != "combat" && crate::impls::t12_lightpaws::pariah_take(g, p, n) {
+        return crate::impls::t12_lightpaws::pariah_finish(g); // --- Tiers 1/2 (lightpaws): Pariah
+    }
     if damage && crate::impls::alela::serra_floor(g, p, &mut n) {
         return Ok(()); // Serra the Benevolent's emblem left nothing to deal
     }
