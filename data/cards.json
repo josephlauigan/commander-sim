@@ -100256,9 +100256,7 @@
    "identity": "GR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ attacks, add {R}{R}{R}{G}{G}{G}. Until end of turn, you don't lose this mana as steps and phases end.   [partly: until end of turn, you don't lose this mana as steps and phases end]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,

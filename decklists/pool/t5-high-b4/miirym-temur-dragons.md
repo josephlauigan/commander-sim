@@ -5,24 +5,29 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Dragon tribal ramp and 
 - **Commander:** Miirym, Sentinel Wyrm
 - **Color identity:** Blue, Red, Green
 - **Game Changers (5):** Cyclonic Rift, Fierce Guardianship, Jeska's Will, Rhystic Study, Worldly Tutor
-- **Combos:** (to be described)
+- **Combos:** Wrathful Red Dragon + Blasphemous Act (13 damage per Dragon, to players or non-Dragon creatures). No infinite loop: the deck wins with big, copied Dragons and the damage their entering and attacking deals (Terror of the Peaks, Scourge of Valkas, Twinflame Tyrant, Thrakkus the Butcher).
 - **Lands:** 36 (23 nonbasic + 13 basic)
 
 ## Role in the pool
 
-(to be described)
+The pool's Dragon ramp deck: fair creature combat backed by Temur interaction, the Tier 5 deck that wins on the board rather than with a two-card loop. It replaced The Ur-Dragon (five colours) with a three-colour list that copies every Dragon it casts.
 
 ## At the table
 
-(to be described)
+- **Plan:** Ramp early (Birds of Paradise, Scaled Nurturer, Sol Ring, Arcane Signet, Mox Jasper, Carnelian Orb, Farseek, Nature's Lore, Three Visits, Cultivate, Kodama's Reach) with Dragon cost cutters (Dragonlord's Servant, Dragonspeaker Shaman, Sarkhan, Urza's Incubator, Dracogenesis, Earthquake Dragon's discount). Miirym gives a nonlegendary token copy of each nontoken Dragon that enters; Spark Double, Cursed Mirror, Parallel Lives and Panharmonicon multiply them further. Korlessa casts Dragons from the top of the library, Ureni puts them in from the top eight.
+- **Wins by:** Combat with copied fliers: Terror of the Peaks and Scourge of Valkas turn each entering Dragon (and its Miirym copy) into damage, Twinflame Tyrant doubles it, Thrakkus doubles the Dragons' power on attack, Klauth and Savage Ventmaw pay for more Dragons mid-combat, Utvara Hellkite makes 6/6s. Wrathful Red Dragon redirects damage dealt to its Dragons; with Blasphemous Act every Dragon throws 13.
+- **Watch out for:** A big turn from Miirym plus Terror of the Peaks (two triggers per Dragon). Ancient Copper and Silver Dragons snowball on a connect. Old Gnawbone, Temur Ascendancy, Elemental Bond, Kindred Discovery, Dragonborn Champion and Rhystic Study draw a lot. Lightning Greaves, Heroic Intervention and Deflecting Swat protect the board.
+- **Interaction:** Counterspell, Mana Drain, Fierce Guardianship, An Offer You Can't Refuse, Deflecting Swat, Beast Within, Chaos Warp, Cyclonic Rift, Blasphemous Act, Boseiju. Cavern of Souls makes its Dragons uncounterable.
 
 ## Strategy
 
-(to be described)
+Miirym is a six-mana flier that turns every later Dragon into two. The deck ramps to five or six mana by turn four, then casts a Dragon a turn, each copied; Terror of the Peaks or Scourge of Valkas makes each arrival burn, and Twinflame Tyrant doubles every point. Thrakkus, Klauth and Savage Ventmaw make attacks lethal and pay for post-combat Dragons, while Old Gnawbone, Temur Ascendancy and Kindred Discovery refill the hand. When the board is answered, Blasphemous Act with Wrathful Red Dragon turns its own Dragons' deaths into 13 damage each, and Earthquake Dragon comes back from the graveyard for {2}{G} and a land.
 
 ## Sim modeling notes
 
-(to be described)
+Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
+
+Miirym's token copies and the Dragon cost cutters (impls/t45_urdragon.rs, shared with the retired Ur-Dragon list); Terror of the Peaks and Scourge of Valkas's enter damage; Twinflame Tyrant's doubling; Thrakkus's power doubling, Klauth's and Savage Ventmaw's attack mana, Korlessa's casting from the top, Earthquake Dragon's discount and return, Astral Dragon's copies, Dragonborn Champion's draws, and Wrathful Red Dragon's redirect, including the Blasphemous Act combo (impls/t45_miirym.rs). All of these are modeled. Approximate: Astral Dragon (no land or legendary copies), Korlessa (looking at the top card isn't used), Savage Ventmaw (its six mana is any colour), Wrathful Red Dragon (other damage sweepers and survived noncombat damage aren't seen), Sarkhan (no copy mode), Cursed Mirror, Klauth, Roaming Throne (data/audit.toml says what is left out).
 
 ## Decklist by type (100)
 

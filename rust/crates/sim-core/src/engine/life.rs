@@ -69,6 +69,13 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         _ => {}
     }
     crate::ai::note_damage(g, p, src, n);
+    // --- Tiers 4/5 (miirym): Dragonborn Champion: a source of s's dealt 5 or more damage to a player
+    if damage
+        && n >= 5
+        && let Some(s) = src.filter(|&s| s != p)
+    {
+        crate::impls::t45_miirym::champion_hit(g, s, n)?;
+    }
     Ok(())
 }
 

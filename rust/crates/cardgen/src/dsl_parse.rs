@@ -933,6 +933,9 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
     let mut effs: Fx = vec![];
     let mut bad: Vec<String> = vec![];
     let mut text = sub(r" at the beginning of the next turn's upkeep", "", text);
+    // --- Tiers 4/5 (miirym): "until end of turn, you don't lose this mana as steps and phases end" (Savage Ventmaw):
+    // floating mana lasts the whole turn in the engine already
+    text = sub(r"\.? ?until end of turn, you don't lose this mana as steps and phases end\.?", "", &text);
     text = sub(
         r"exile ((?:up to one |another )?target creature you (?:control|own)),? then return (?:it|that card) to the battlefield under (?:its owner's|your) control",
         r"blink \1",
