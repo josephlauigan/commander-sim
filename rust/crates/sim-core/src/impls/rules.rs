@@ -408,6 +408,14 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
                         return true;
                     }
                 }
+                // --- Tiers 4/5 (winota): Myrel: abilities of artifacts, creatures and enchantments on its turn
+                "Myrel, Shield of Argive"
+                    if p != q.id
+                        && g.active == Some(q.id)
+                        && (art || g.is_creature(src) || of_type(g, src, Types::ENCHANTMENT)) =>
+                {
+                    return true;
+                }
                 _ => {}
             }
         }

@@ -230,7 +230,8 @@ pub fn needle_stops(g: &Game, name: &str) -> bool {
             x.on_bf
                 && !x.phased
                 && !x.neutered
-                && x.cd.is_some_and(|c| &*g.db.get(c).name == "Pithing Needle")
+                // --- Tiers 4/5 (winota): Phyrexian Revoker names a card as the Needle does
+                && x.cd.is_some_and(|c| matches!(&*g.db.get(c).name, "Pithing Needle" | "Phyrexian Revoker"))
                 && needle_name(g, m).is_some_and(|c| &*g.db.get(c).name == name)
         })
     })

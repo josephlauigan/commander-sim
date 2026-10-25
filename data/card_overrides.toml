@@ -9378,3 +9378,10 @@ pool_remove_tags = ["tokx"]
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
 ["Contaminant Grafter"]
 dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)
+
+# --- Tiers 4/5 (winota): hand-written in rust/crates/sim-core/src/impls/t45_winota.rs
+["Lena, Selfless Champion"]
+pool_remove_tags = ["tok", "tokp"] # one Soldier per nontoken creature, not one: the enter trigger is hand-written
+
+["Sundering Eruption // Volcanic Fissure"]
+pool_remove_tags = ["rem", "tgt"] # it destroys a land, not a nonland permanent: cast by its own priority

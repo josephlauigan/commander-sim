@@ -146,16 +146,10 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     if let (Some(n), Some(a)) = (dmg_amount(kind, "dmg"), actor)
         && a != owner
     {
-        // Fiery Emancipation: triple damage
-        let k = g
-            .player(a)
-            .perms
-            .iter()
-            .filter(|&&x| !g.perm(x).phased && card_name(g, x) == Some("Fiery Emancipation"))
-            .count() as u32;
-        let n3 = n * 3i32.pow(k);
-        if k > 0 {
-            kind = intern(&format!("dmg{n3}"));
+        // Fiery Emancipation: triple damage (--- Tiers 4/5 (winota): Angrath's Marauders: double)
+        let k = crate::engine::combat::fiery(g, a);
+        if k > 1 {
+            kind = intern(&format!("dmg{}", n * k));
         }
     }
     if let Some(n) = dmg_amount(kind, "dmg")

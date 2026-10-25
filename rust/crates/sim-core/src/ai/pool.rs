@@ -589,6 +589,7 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
         if let Some(r) = t.str(Tag::Rean)
             && matches!(r, "animate" | "reanimate" | "evil" | "zombify")
             && payable()
+            && !crate::impls::t45_winota::jailed(g) // --- Tiers 4/5 (winota): Soulless Jailer
         {
             let mut tg = decks::rean_targets(g, p, r);
             if r == "reanimate" {
@@ -895,7 +896,7 @@ enum Scope {
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
 /// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
-const PROTECTORS: [Protector; 19] = [
+const PROTECTORS: [Protector; 22] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -916,6 +917,12 @@ const PROTECTORS: [Protector; 19] = [
     ("Ainok Strike Leader", Where::BfSac, None, How::TokenIndes, Scope::Creatures, false), // t0_zurgo
     // --- Tier 3 (marwyn): hexproof until end of turn (split second: no response)
     ("Legolas's Quick Reflexes", Where::Hand, Some((0, "G")), How::AllTargeted, Scope::One, false),
+    // --- Tiers 4/5 (winota): Flare of Fortitude (or a nontoken white creature sacrificed: `use_protector`; life
+    // locked until end of turn: t45_winota::after_protector), Boromir (the Ring tempts you), Lena (only creatures with
+    // less power than hers: `protect`, `wipe_response`)
+    ("Flare of Fortitude", Where::Hand, Some((2, "WW")), How::HexproofIndes, Scope::Perms, false),
+    ("Boromir, Warden of the Tower", Where::BfSac, None, How::Indes, Scope::Creatures, false),
+    ("Lena, Selfless Champion", Where::BfSac, None, How::Indes, Scope::Creatures, false),
 ];
 
 const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];
@@ -992,11 +999,19 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>) -> Re
             }
             let free = free_cmd && commander_out(g, p);
             let (cg, cp) = cost.unwrap();
-            if !free && !can_pay(g, p, cg, cp, false) {
-                return Ok(false);
-            }
+            // --- Tiers 4/5 (winota): Flare of Fortitude's alternative cost, a nontoken white creature
+            let fodder = if !free && !can_pay(g, p, cg, cp, false) {
+                match crate::impls::t45_winota::flare_fodder(g, p, name, None) {
+                    Some(f) => Some(f),
+                    None => return Ok(false),
+                }
+            } else {
+                None
+            };
             decks::remove_from_hand(g, p, c); // off the hand before paying: a Treasure payment can trigger responses
-            if !free {
+            if let Some(f) = fodder {
+                die(g, f, "sac")?;
+            } else if !free {
                 pay(g, p, cg, cp, false)?;
             }
             let pl = g.player_mut(p);
@@ -1059,6 +1074,7 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>) -> Re
     }
     g.player_mut(p).stat("protection_used", 1);
     crate::glog!(g, "    {} protects with {name}", g.player(p).name);
+    crate::impls::t45_winota::after_protector(g, p, name)?; // --- Tiers 4/5 (winota)
     Ok(true)
 }
 
@@ -1098,6 +1114,9 @@ pub fn protect(
         }
         if name == "Teferi's Protection" && !worth_whole_board(g, owner, m) {
             continue; // kept for wipes and lethal
+        }
+        if !crate::impls::t45_winota::lena_saves(g, name, src, m) {
+            continue; // --- Tiers 4/5 (winota): Lena saves only creatures with less power than hers
         }
         // cheapest first: permanents that tap, then one-shot cards; save the board-wide ones for wipes
         let rank = match wh {
@@ -1145,6 +1164,12 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     for (i, src) in opts {
         let (name, _, _, how, scope, _) = PROTECTORS[i];
         if matches!(scope, Scope::One | Scope::Selfish) || !saves(g, how, kind, None, None, false) {
+            continue;
+        }
+        if let Some(saved) = crate::impls::t45_winota::lena_wipe(g, q, name, src, kind)? {
+            if saved {
+                return Ok(None); // --- Tiers 4/5 (winota): Lena made the small creatures indestructible
+            }
             continue;
         }
         if how == How::TokenIndes && !crate::impls::t0_zurgo::tokens_carry_board(g, q) {

@@ -632,11 +632,11 @@ fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 const SHATTERSKULL: [&str; 2] = ["Shatterskull Smashing", "Shatterskull Smashing // Shatterskull, the Hammer Pass"];
 const RAZORGRASS: &str = "Razorgrass Ambush // Razorgrass Field";
 
-fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
+pub(crate) fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
     Colors::from_letters(if name_of(g, l) == RAZORGRASS { "W" } else { "R" })
 }
 
-fn mdfc_land_opt(g: &Game, c: CardId, p: PlayerId, post: Option<bool>) -> Option<Opt> {
+pub(crate) fn mdfc_land_opt(g: &Game, c: CardId, p: PlayerId, post: Option<bool>) -> Option<Opt> {
     let pl = g.player(p);
     let allowed = 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now;
     if post.is_none() || g.active != Some(p) || pl.lands_played >= allowed || !pl.hand.contains(&c) {

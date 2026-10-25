@@ -52,6 +52,9 @@ pub enum DataKey {
     Counters,
     Crewed,
     Ctype,
+    /// --- Tiers 4/5 (winota): what a permanent chose as it entered (Windcrag Siege: "mardu" or "jeskai"; Greymond,
+    /// Avacyn's Stalwart: the two abilities it grants), a `Val::Str` or a `Val::List` of them
+    Mode,
     /// (Dovin's controller, their turn count): damage to and from it is prevented until their next turn
     Dovin,
     /// a land made a creature by Druid Class's level 3
@@ -469,6 +472,8 @@ pub struct Player {
     pub last_src: Option<PlayerId>,
     pub ring_prot: bool,
     pub life_locked: bool,
+    /// --- Tiers 4/5 (winota): `life_locked` lasts until end of turn (Flare of Fortitude): cleared as a turn starts
+    pub life_lock_eot: bool,
     /// the kind of the last life loss (for how the player was eliminated)
     pub last_kind: Sym,
     pub death_kind: Sym,
@@ -741,6 +746,7 @@ impl Player {
             last_src: None,
             ring_prot: false,
             life_locked: false,
+            life_lock_eot: false,
             last_kind: "other",
             death_kind: "",
             t6: crate::t6stats::is_t6_key(key),
@@ -1137,6 +1143,8 @@ pub struct Game {
     pub end_combat: bool,
     /// Arachnogenesis: combat damage from non-Spider creatures is prevented this turn
     pub fog_spiders: Option<TurnStamp>,
+    /// --- Tiers 4/5 (winota): creatures without flying can't block this turn (Sundering Eruption)
+    pub ground_noblock: Option<TurnStamp>,
     /// day and night (Infestation Expert): 0 neither, 1 day, 2 night
     pub day_night: u8,
     /// the player whose turn began last (day and night look at the turn before)
@@ -1334,6 +1342,7 @@ impl Game {
             fog: None,
             end_combat: false,
             fog_spiders: None,
+            ground_noblock: None,
             day_night: 0,
             dn_last: None,
             no_prevent: None,

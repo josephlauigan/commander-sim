@@ -82,6 +82,24 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Yavimaya, Cradle of Growth" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): every land is a Forest where the engine asks (forestwalk, Forests that tap for more); taps for {G}; the {T}: {G} every land gains as a Forest is not added (colourless lands stay colourless)" }
 "Yeva, Nature's Herald" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): green creature spells as though they had flash (cast::grants_flash: the AI casts them at the end of an opponent's turn); flash (data)" }
 
+# --- Tiers 4/5 (winota): impls/t45_winota.rs
+"Breath of Fury" = { status = "Full", note = "hand-written (impls/t45_winota.rs): an Aura on your cheapest likely attacker; its combat damage to a player sacrifices it, the Aura moves to another creature of yours, your creatures untap and there is an additional combat (once per combat; none with no creature to move to)" }
+"Flare of Fortitude" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs, ai/pool.rs PROTECTORS, zones::last_chance): in response to removal, a wipe or lethal damage, for {2}{W}{W} or a cheap nontoken white creature: life can't change and your permanents gain hexproof and indestructible until end of turn. Left out: lands gain nothing (not permanents in the engine)" }
+"High Noon" = { status = "Full", note = "hand-written (impls/t45_winota.rs): each player can't cast more than one spell each turn; {4}{R}, sacrifice: 5 damage to any target (a player it kills, else the best creature it kills)" }
+"Windcrag Siege" = { status = "Full", note = "hand-written (impls/t45_winota.rs): Mardu when the commander (or two permanents) has an attack trigger: your permanents' attack triggers trigger an additional time; else Jeskai: a 1/1 red Goblin each upkeep with lifelink and haste until end of turn" }
+"Alexios, Deimos of Kosmos" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs, values::no_sac): each player's upkeep they gain control, untap it, +1/+1 counter, haste; it must attack, its owner goads it so it attacks someone else; it can't be sacrificed. Left out: with two players the goad lets it attack its owner" }
+"Angrath's Marauders" = { status = "Approximate", note = "hand-written (combat::fiery, with Fiery Emancipation): damage from your sources to opponents and their permanents is doubled (combat and noncombat). Left out: damage to yourself and your own permanents" }
+"Blinkmoth Nexus" = { status = "Approximate", note = "creature land (lands.rs MANLANDS): {1}: a 1/1 flier until end of turn, animated to attack when the way is open. Left out: the {1},{T} Blinkmoth pump, animating to block" }
+"Boromir, Warden of the Tower" = { status = "Full", note = "hand-written (impls/t45_winota.rs, ai/pool.rs PROTECTORS): an opponent's spell cast with no mana spent is countered; sacrificed in response to removal or a wipe: your creatures indestructible, the Ring tempts you (also compiled)" }
+"Gingerbrute" = { status = "Full", note = "hand-written (impls/t45_winota.rs): {1} before combat when a defender has a creature without haste to block it: only creatures with haste can block it; haste and the Food ability compiled" }
+"Greymond, Avacyn's Stalwart" = { status = "Full", note = "hand-written (impls/t45_winota.rs): the AI chooses first strike and lifelink for your Humans; four or more Humans: Humans you control get +2/+2" }
+"Lena, Selfless Champion" = { status = "Full", note = "hand-written (impls/t45_winota.rs, ai/pool.rs PROTECTORS): enters: a 1/1 white Soldier per nontoken creature you control; sacrificed in response to removal or a wipe: your creatures with less power than Lena gain indestructible" }
+"Myrel, Shield of Argive" = { status = "Full", note = "hand-written (impls/t45_winota.rs, rules::ability_locked): during your turn opponents can't cast spells or activate abilities of artifacts, creatures and enchantments; attack Soldiers compiled" }
+"Needleverge Pathway // Pillarverge Pathway" = { status = "Full", note = "hand-written (impls/t45_winota.rs): played as the face ({R} or {W}) whose colour the hand needs and the other lands lack" }
+"Phoenix Chick" = { status = "Full", note = "hand-written (impls/t45_winota.rs, combat::attack_triggers): you attack with three or more creatures: pay {R}{R}, it returns from the graveyard tapped and attacking with a +1/+1 counter; flying, haste, can't block compiled" }
+"Phyrexian Revoker" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs, t6_stax::needle_stops): names what Pithing Needle would (an opposing commander or engine); its activated abilities stop. Left out: mana abilities are not stopped" }
+"Soulless Jailer" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs): noncreature spells can't be cast from graveyards or exile; reanimation (the pool AI's, the ability language's, Phoenix Chick) finds nothing. Left out: other hand-written returns from graveyards" }
+"Sundering Eruption // Volcanic Fissure" = { status = "Full", note = "hand-written (impls/t45_winota.rs): before combat with ground blockers in the way: destroys the best opposing land (its controller fetches a basic, tapped), creatures without flying can't block this turn; or played as a land ({R}, 3 life or tapped)" }
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -655,23 +673,23 @@ cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation"]
 mechs = ["free_counters"]
 
 [[engines.winota-boros-humans-cheat]]
-label = "Winota's attack trigger"
-cards = ["Winota, Joiner of Forces"]
-mechs = ["put_attacking", "winota"]
+label = "Winota's attack trigger (doubled by Windcrag Siege)"
+cards = ["Winota, Joiner of Forces", "Windcrag Siege"]
+mechs = ["put_attacking", "winota", "isshin_doubling"]
 
 [[engines.winota-boros-humans-cheat]]
-label = "Kiki-Jiki copy combos"
-cards = ["Kiki-Jiki, Mirror Breaker", "Zealous Conscripts", "Felidar Guardian", "Restoration Angel"]
-mechs = ["kiki_combo"]
+label = "extra combats (Rionya + Combat Celebrant, Breath of Fury)"
+cards = ["Rionya, Fire Dancer", "Combat Celebrant", "Breath of Fury"]
+mechs = ["extra_combat"]
 
 [[engines.winota-boros-humans-cheat]]
-label = "stax Humans"
-cards = ["Thalia, Guardian of Thraben", "Thalia, Heretic Cathar", "Drannith Magistrate", "Magus of the Moon"]
-mechs = ["cost_taxes", "drannith_lock", "blood_moon"]
+label = "stax pieces"
+cards = ["Thalia, Guardian of Thraben", "Thalia, Heretic Cathar", "Drannith Magistrate", "Magus of the Moon", "High Noon"]
+mechs = ["cost_taxes", "drannith_lock", "blood_moon", "spell_limits"]
 
 [[engines.winota-boros-humans-cheat]]
 label = "protection spells"
-cards = ["Flawless Maneuver", "Teferi's Protection", "Deflecting Swat", "Selfless Spirit"]
+cards = ["Flawless Maneuver", "Flare of Fortitude", "Deflecting Swat", "Selfless Spirit"]
 mechs = ["protection_ai"]
 
 [[engines.yawgmoth-mono-black-aristocrats]]

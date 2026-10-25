@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aggro-cheat with stax.
 - **Commander:** Winota, Joiner of Forces
 - **Color identity:** White, Red
 - **Game Changers (2):** Chrome Mox, Drannith Magistrate
-- **Combos:** Kiki-Jiki + Restoration Angel / Felidar Guardian / Zealous Conscripts. Helm of the Host + Combat Celebrant.
-- **Lands:** 32 (16 nonbasic + 16 basic)
+- **Combos:** Rionya, Fire Dancer + Combat Celebrant (a hasty Celebrant copy each combat: infinite combats). Extra combats from Breath of Fury and Combat Celebrant; Windcrag Siege doubles Winota's triggers.
+- **Lands:** 32 (16 nonbasic + 16 basic), plus Sundering Eruption and Witch Enchanter as land faces
 
 ## Role in the pool
 
-Turn-three board explosion that also locks down commanders and nonbasic mana (Magus of the Moon hits every multicolor deck you own).
+Turn-three board explosion that also locks down commanders, free spells and graveyards (Magus of the Moon hits every multicolor deck you own).
 
 ## At the table
 
-- **Plan:** Fast mana (Mana Vault, Chrome Mox, Sol Ring) puts Winota, Joiner of Forces down turn two or three, with cheap non-Humans like Ornithopter, Memnite, Signal Pest and Goblin Guide to attack. Hatebears slow you down.
-- **Wins by:** Winota puts a Human such as Hero of Bladehold, Adeline, Resplendent Cathar or Drannith Magistrate onto the battlefield attacking, indestructible. Kiki-Jiki, Mirror Breaker with Restoration Angel, Felidar Guardian or Zealous Conscripts is the combo finish; Helm of the Host with Combat Celebrant is another.
-- **Watch out for:** A turn-three board explosion. Magus of the Moon turns off your nonbasic lands, Drannith Magistrate stops your commander, and Thalia, Guardian of Thraben taxes you. Kill Winota or the small attacker before combat.
-- **Interaction:** Swords to Plowshares, Path to Exile, Lightning Bolt, Council's Judgment, Chaos Warp, Abrade, Solitude, Pyroblast. Mother of Runes, Giver of Runes, Flawless Maneuver, Teferi's Protection and Deflecting Swat protect its board. No counterspells.
+- **Plan:** Fast mana (Sol Ring, Chrome Mox, Lotus Petal, Simian Spirit Guide) puts Winota, Joiner of Forces down turn two or three, with cheap non-Humans like Ornithopter, Signal Pest, Gingerbrute, Phoenix Chick and Goblin tokens (Goblin Rabblemaster, Legion Warboss, Loyal Apprentice) to attack. Hatebears slow you down.
+- **Wins by:** Winota puts a Human such as Greymond, Avacyn's Stalwart, Lena, Myrel, Drannith Magistrate or Angrath's Marauders onto the battlefield attacking, indestructible, for each non-Human attacker (twice each with Windcrag Siege). Breath of Fury and Combat Celebrant add combats, and Rionya, Fire Dancer + Combat Celebrant is an infinite-combat combo.
+- **Watch out for:** A turn-three board explosion. Magus of the Moon turns off your nonbasic lands, Drannith Magistrate stops your commander, Thalia taxes you, Boromir counters free spells, High Noon and Eidolon of Rhetoric allow one spell a turn, Myrel and Grand Abolisher shut you out on its turn, and Soulless Jailer stops reanimation. Kill Winota or the small attacker before combat.
+- **Interaction:** Swords to Plowshares, Path to Exile, Boros Charm, Red Elemental Blast, Silence, High Noon (5 damage), Sundering Eruption (a land, and ground creatures can't block). Mother of Runes, Giver of Runes, Selfless Spirit, Boromir, Lena, Flawless Maneuver, Flare of Fortitude and Deflecting Swat protect its board. No counterspells.
 
 ## Strategy
 
-Attack with cheap non-Humans (Ornithopter, Memnite, Signal Pest, Ragavan, goblin token makers) and Winota puts a Human from the top six onto the battlefield attacking and indestructible for each one. The Humans are hatebears and payoffs: Drannith Magistrate, both Thalias, Grand Abolisher, Magus of the Moon, Hero of Bladehold, Adeline. Kiki-Jiki with Restoration Angel, Felidar Guardian, or Zealous Conscripts is the infinite-combo finish, and Helm of the Host + Combat Celebrant is a second. Fast mana gets Winota down on turn two or three.
+Attack with cheap non-Humans (Ornithopter, Signal Pest, Gingerbrute, Phoenix Chick, Ragavan, goblin token makers) and Winota puts a Human from the top six onto the battlefield attacking and indestructible for each one; Windcrag Siege (Mardu) makes each of those triggers happen twice. The Humans are hatebears and payoffs: Drannith Magistrate, both Thalias, Grand Abolisher, Myrel, Magus of the Moon, Greymond (first strike, lifelink, +2/+2 with four Humans), Lena, Angrath's Marauders (double damage), Alexios. Breath of Fury on a small attacker trades it for another combat each time it connects, Combat Celebrant exerts for one, and Rionya copying Combat Celebrant every combat is the infinite-combat finish. Fast mana gets Winota down on turn two or three.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Winota's attack trigger (non-Human attacks → Human from top 6, indestructible this turn); Kiki-Jiki copy combos; stax Humans (taxes, Drannith, Magus of the Moon); protection spells.
+Winota's attack trigger (non-Human attacks → Human from top 6, indestructible this turn) and Windcrag Siege's doubling; extra combats (Breath of Fury, Combat Celebrant, the Rionya combo); stax pieces (taxes, Drannith, Magus of the Moon, High Noon, Myrel, Boromir, Soulless Jailer); protection (Flare of Fortitude, Lena, Boromir, Selfless Spirit). The new list's cards are in impls/t45_winota.rs (Archivist of Oghma and Eidolon of Rhetoric are modelled with other pool decks' cards).
 
 ## Decklist by type (100)
 

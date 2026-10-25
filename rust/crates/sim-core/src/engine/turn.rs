@@ -863,6 +863,12 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();
     }
+    for q in &mut g.players {
+        if q.life_lock_eot {
+            q.life_lock_eot = false; // --- Tiers 4/5 (winota): Flare of Fortitude's lock ends with the turn
+            q.life_locked = false;
+        }
+    }
     crate::impls::alela::mirror_revert(g)?; // Mirage Mirror: copies end with the previous turn
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn

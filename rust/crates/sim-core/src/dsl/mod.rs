@@ -743,6 +743,9 @@ fn run(
         }
         "search" => search(g, p, e)?,
         "reanimate" => {
+            if crate::impls::t45_winota::jailed(g) {
+                return Ok(()); // --- Tiers 4/5 (winota): Soulless Jailer: permanent cards in graveyards can't enter
+            }
             let f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
             let mut pool: Vec<(CardId, PlayerId)> =
                 g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).map(|c| (c, p)).collect();
@@ -829,6 +832,7 @@ fn run(
             g.player_mut(p).floating.any += k.max(0) as u32;
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
+        "ring_tempt" => crate::cardcode::ring_tempt(g, p)?, // --- Tiers 4/5 (winota): "the Ring tempts you"
         "proliferate" => {
             // the engine's full proliferate: +1/+1 and loyalty counters, Sagas, lands' counters and opponents' poison
             // (this effect used to add +1/+1 counters to your own permanents only)
@@ -1761,6 +1765,7 @@ fn eff_value(kind: &str) -> f64 {
         "proliferate" => 1.0,
         "poison" => 0.6, // per counter on each player it reaches: ten put a player out
         "extra_combat" => 3.0,
+        "ring_tempt" => 0.8, // --- Tiers 4/5 (winota)
         "add_mana" => 0.5,
         "mill" => 0.1,
         _ => 0.3,
