@@ -25,8 +25,8 @@ fn pname(g: &Game, p: PlayerId) -> Sym {
 
 /// fixes.destroy_land: q's land is destroyed (its card to the graveyard)
 pub fn destroy_land(g: &mut Game, q: PlayerId, l: LandId) -> Res {
-    if !g.player(q).lands.contains(&l) {
-        return Ok(());
+    if !g.player(q).lands.contains(&l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
+        return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
     crate::engine::turn::remove_land(g, q, l);
     let cd = g.land(l).cd;

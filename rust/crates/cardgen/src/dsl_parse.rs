@@ -739,6 +739,11 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         Some(eff(obj! {"do" => "put_land"}))
     }),
     (r"^if you don't, ~ deals (\d+) damage to each opponent$", |_| Some(eff(obj! {"do" => "noop"}))),
+    // --- Tier 3 (aurelia)
+    // "~ deals 3 damage to each of your opponents" (Aurelia, the Law Above): each opponent
+    (r"^(?:~ )?deals? (\d+|x) damage to each of your opponents$", |m| {
+        Some(eff(obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -1015,8 +1020,18 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^a warrior attacks$|^a (\w+) you control attacks$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "you_each", "subtype" => m.g(1).unwrap_or("warrior")}]
     }),
-    (r"^you attack with (?:two|three) or more creatures$", |_, _| {
-        vec![obj! {"event" => "attack", "source" => "you_any"}]
+    // (Tier 3 aurelia: the count is kept, `min_atk`; it was dropped)
+    (r"^you attack with (two|three) or more creatures$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "you_any", "min_atk" => n_(m.gs(1))}]
+    }),
+    // --- Tier 3 (aurelia)
+    // battalion: "~ and at least two other creatures attack" (Firemane Avenger, Boros Elite)
+    (r"^~ and at least (two|three) other creatures attack$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "self", "min_atk" => n_(m.gs(1)).as_i64().unwrap_or(2) + 1}]
+    }),
+    // "a player attacks with N or more creatures" (Aurelia, the Law Above): anyone's attack, counted whole
+    (r"^a player attacks with (two|three|four|five|six) or more creatures$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "any_player", "min_atk" => n_(m.gs(1))}]
     }),
 ];
 
@@ -1184,6 +1199,23 @@ static STATICS: &[(&str, StaticFn)] = &[
             Some(eff(e))
         },
     ),
+    // --- Tier 3 (aurelia)
+    // "attacking creatures you control have double strike" (Blade Historian): only while they attack
+    (r"^attacking creatures you control have ([a-z, ]+)$", |m| {
+        let v = kw_statics(m.g(1), |k| {
+            obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+            "filter" => obj!{"type" => "creature", "controller" => "you", "attacking" => true}}
+        });
+        if v.is_empty() { None } else { Some(v) }
+    }),
+    // "other permanents you control have indestructible" (Avacyn, Angel of Hope): noncreature permanents too
+    (r"^(other )?permanents you control have ([a-z, ]+)$", |m| {
+        let v = kw_statics(m.g(2), |k| {
+            obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+            "filter" => obj!{"type" => "permanent", "controller" => "you", "other" => m.g(1).is_some()}}
+        });
+        if v.is_empty() { None } else { Some(v) }
+    }),
 ];
 
 pub fn prot_colors(text: &str) -> String {

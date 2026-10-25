@@ -9350,3 +9350,18 @@ tags = "rock=1:C"
 dsl = []
 status = "Full"
 note = "{T}: add {C}; {7}, {T}, sacrifice: destroy the opposing permanent worth most (4 or more)"
+
+# --- Tier 3 (aurelia): rust/crates/sim-core/src/impls/t3_aurelia.rs; statuses in data/audit.toml [card_notes]
+["Boros Garrison"]
+types = "L"
+tags = "amt=2 c=WR t bounceland"
+
+["Iroas, God of Victory"]
+types = "E"
+
+["Wear // Tear"]
+types = "I"
+tags = "rem=destroy tgt=ae"
+
+["Fighter Class"]
+pool_remove_tags = ["tut"]

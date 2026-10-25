@@ -644,14 +644,15 @@ fn resolve_combat_inner(
                 Some(b) => {
                     let bt = etgh(g, b);
                     let t0 = crate::impls::t0_giada::combat_proof;
-                    let mut a_dies = (epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p) >= etgh(g, a) || g.perm(b).dt)
+                    let gs = crate::impls::t3_aurelia::gisela_scale; // Gisela, Blade of Goldnight
+                    let mut a_dies = (gs(g, p, epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p)) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
                         && !no_damage(g, a)
                         && !t0(g, a);
                     if cardcode::damage_prevented(g, b) {
                         a_dies = false;
                     }
-                    let mut b_dies = (ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d) >= bt || g.perm(a).dt)
+                    let mut b_dies = (gs(g, d, ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d)) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
                         && !no_damage(g, b)
                         && !t0(g, b);
@@ -714,6 +715,7 @@ fn resolve_combat_inner(
             if dmg > 0 && g.fog == Some(g.turn_stamp()) && !g.unpreventable() {
                 dmg = 0; // Spore Frog and other fogs
             }
+            dmg = crate::impls::t3_aurelia::gisela_scale(g, d, dmg); // Gisela: to a player or their planeswalker
             if dmg > 0
                 && let Some(&(_, w)) = to_walker.iter().find(|x| x.0 == a)
                 && g.perm(w).on_bf
