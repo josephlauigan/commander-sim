@@ -342,3 +342,28 @@ fn teysa_orzhov_scion_spirits_and_exile() {
     assert!(!g.perm(target).on_bf && g.player(P1).exile.contains(&card(&g, "Avenger of Zendikar")));
     assert_eq!(tokens(&g, P0).len(), 3, "three black Spirits died: three white Spirits");
 }
+
+// ------------------------------------------------------------------ whole games
+/// both decks play whole games with the new card code (no panic, no stuck loop); the lines naming the new cards are
+/// printed for a look (`--nocapture`)
+#[test]
+fn whole_games_with_the_new_cards() {
+    let keys = [TATYOVA, TEYSA, "isshin-mardu-attack-triggers", "lathril-golgari-elves"];
+    let marks = [
+        "Fertile Footsteps", "Beau", "Summer Bloom", "Wrenn and Seven", "Loot", "Entish", "Roiling", "Black Market",
+        "Drivnod", "Indebted", "Broodmoth", "Orzhov Scion", "Treefolk", "Mossborn", "afterlife",
+    ];
+    let mut seen = 0;
+    for seed in 1..=8 {
+        let g = play(&keys, seed, true);
+        for l in g.log.as_deref().unwrap_or(&[]) {
+            if marks.iter().any(|m| l.contains(m)) {
+                seen += 1;
+                if seen <= 60 {
+                    println!("{l}");
+                }
+            }
+        }
+    }
+    assert!(seen > 0, "the new cards show up in eight games");
+}

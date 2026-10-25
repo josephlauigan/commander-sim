@@ -10600,10 +10600,11 @@
    "generic": 6,
    "pips": "G",
    "tags": {
-    "pow": "1"
+    "pow": "0",
+    "tgh": "0"
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
@@ -10623,7 +10624,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 7,

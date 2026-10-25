@@ -9499,3 +9499,8 @@ dsl = []
 # the dies trigger's Spirit as one made on entering
 tags = "leg human pow=2 tgh=3"
 dsl = []
+
+["Beanstalk Giant // Fertile Footsteps"]
+# printed */*: autotag reads "*" as 1, and the compiled "power and toughness are each equal to the number of lands you
+# control" adds to the base (the adventure is hand-written, impls/t12_tatyova_teysa.rs)
+tags = "pow=0 tgh=0"

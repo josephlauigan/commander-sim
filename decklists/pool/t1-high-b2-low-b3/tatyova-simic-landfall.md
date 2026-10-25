@@ -14,20 +14,20 @@ Speed-to-beat for a low-interaction goldfish deck. If your deck can't pressure o
 
 ## At the table
 
-- **Plan:** Ramps with Llanowar Elves, Cultivate, Kodama's Reach and Lotus Cobra, then plays lands every turn. Tatyova, Benthic Druid draws a card and gains 1 life for each land, and Exploration, Burgeoning and Oracle of Mul Daya add land drops.
-- **Wins by:** Turns lands into a board with Avenger of Zendikar, Scute Swarm and Rampaging Baloths, then draws deep with Hydroid Krasis and Mulldrifter. Crucible of Worlds and Life from the Loam replay lands.
-- **Watch out for:** It usually does little to you, so pressure it early before the land count snowballs. Avenger of Zendikar plus landfall is a huge board in one turn. Hold removal for Tatyova and Oracle of Mul Daya.
-- **Interaction:** Counterspell, Arcane Denial, Mystic Snake and Swan Song. Beast Within, Pongify, Rapid Hybridization, Kenrith's Transformation, Nature's Claim and Krosan Grip answer threats. Aetherize and Evacuation reset combat and boards.
+- **Plan:** Ramps with Llanowar Elves, Sakura-Tribe Elder, Wood Elves, Cultivate, Kodama's Reach, Three Visits and Lotus Cobra, then plays two or three lands a turn. Tatyova, Benthic Druid draws a card and gains 1 life for each land. Exploration, Azusa, Dryad of the Ilysian Grove, Oracle of Mul Daya, Loot, Druid Class, Summer Bloom and Wrenn and Seven add land drops.
+- **Wins by:** Turns lands into a board: Avenger of Zendikar, Scute Swarm, Rampaging Baloths, Zendikar's Roil and Khalni Heart Expedition make bodies, and Beanstalk Giant, Bonny Pall's Beau, Wrenn and Seven's Treefolk and Mossborn Hydra grow with the land count. Ancient Greenwarden doubles landfall; Ramunap Excavator replays lands from the graveyard.
+- **Watch out for:** It usually does little to you, so pressure it early before the land count snowballs. Avenger of Zendikar or Ancient Greenwarden with a few land drops is a huge board in one turn. Hold removal for Tatyova, Aesi and Avenger.
+- **Interaction:** Counterspell, Arcane Denial, Negate and Deprive. Beast Within, Reclamation Sage and Broken Bond answer threats. Aetherize resets combat.
 
 ## Strategy
 
-Play two or three lands a turn and turn each one into a card and a life with Tatyova. Exploration, Burgeoning, Azusa, and Dryad of the Ilysian Grove supply extra land drops; Crucible, Ramunap, and Life from the Loam replay fetch and sac lands. Avenger of Zendikar, Scute Swarm, and Rampaging Baloths convert the land count into a board, and Zendikar Resurgent or Aesi keep the cards coming. Interaction is light and reactive: a few counters, bounce, and fog-style Aetherize.
+Play two or three lands a turn and turn each one into a card and a life with Tatyova. Exploration, Azusa, Dryad, Oracle of Mul Daya, Loot, Druid Class, Aesi and Summer Bloom supply the extra drops; Wrenn and Seven, Retreat to Coralhelm, Entish Restoration and Roiling Regrowth put several lands in at once. Avenger of Zendikar, Scute Swarm, Rampaging Baloths, Zendikar's Roil and Retreat to Kazandu convert the land count into a board, and the land-sized threats (Beanstalk Giant, Beau, Wrenn's Treefolk, Mossborn Hydra) end it. Interaction is light and reactive: a few counters, Beast Within and Aetherize.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Tatyova (landfall: draw + gain 1); extra land drops; Avenger/Scute Swarm/Baloths landfall token output; land recursion loops.
+Tatyova (landfall: draw + gain 1); extra land drops (Exploration, Azusa, Dryad, Oracle of Mul Daya, Loot, Druid Class, Summer Bloom, Urban Evolution); lands put in several at once (Wrenn and Seven's 0, Entish Restoration, Roiling Regrowth); Avenger/Scute Swarm/Baloths landfall token output; the land-sized threats (Beanstalk Giant, Beau, Wrenn's Treefolk); Ancient Greenwarden's doubled landfall. All are modeled (impls/t12_tatyova_teysa.rs and the compiled patterns); Fertile Footsteps waits in the hand instead of exile.
 
 ## Decklist by type (100)
 

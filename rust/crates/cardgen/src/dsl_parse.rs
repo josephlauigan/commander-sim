@@ -1039,7 +1039,9 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         }
         // --- Tiers 1/2 (tatyova-teysa): "you may sacrifice a land" (Tenured Tethermage) is a choice the AI would not
         // weigh (it ignores the "may"): left to card code, as before the plain "sacrifice a land" compiled
-        let own_sac = |e: &Obj| e.get("do") == Some(&J::Str("sacrifice".into())) && e.get("who") == Some(&J::Str("you".into()));
+        let own_sac = |e: &Obj| {
+            e.get("do") == Some(&J::Str("sacrifice".into())) && e.get("who") == Some(&J::Str("you".into()))
+        };
         if dep == Dep::May && got.as_ref().is_some_and(|v| v.iter().any(own_sac)) {
             bad.push(format!("{pre}{cl}"));
             continue;

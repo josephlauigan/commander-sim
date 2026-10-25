@@ -1573,10 +1573,6 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
                 dt += tgh.unwrap_or(0) * k;
                 if *base0 == Some(true) {
                     dt += k;
-                    // --- Tiers 1/2 (tatyova-teysa): a */* card's printed stats are read as 1/1 (autotag): "power and
-                    // toughness are each equal to" replaces them (Beanstalk Giant, Lumra, Psychosis Crawler)
-                    dp -= x.pow;
-                    dt -= x.tgh;
                 }
             }
         }

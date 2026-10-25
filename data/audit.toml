@@ -428,7 +428,7 @@ mechs = ["tatyova"]
 
 [[engines.tatyova-simic-landfall]]
 label = "extra land drops"
-cards = ["Exploration", "Burgeoning", "Azusa, Lost but Seeking", "Dryad of the Ilysian Grove", "Oracle of Mul Daya"]
+cards = ["Exploration", "Azusa, Lost but Seeking", "Dryad of the Ilysian Grove", "Oracle of Mul Daya", "Loot, Exuberant Explorer", "Summer Bloom", "Wrenn and Seven"]
 mechs = ["extra_land_drops"]
 
 [[engines.tatyova-simic-landfall]]
@@ -438,17 +438,17 @@ mechs = ["landfall"]
 
 [[engines.tatyova-simic-landfall]]
 label = "land recursion"
-cards = ["Crucible of Worlds", "Ramunap Excavator", "Life from the Loam", "Ancient Greenwarden"]
+cards = ["Ramunap Excavator", "Ancient Greenwarden"]
 mechs = ["land_recursion"]
 
 [[engines.teysa-orzhov-aristocrats]]
 label = "Teysa's death-trigger doubling"
-cards = ["Teysa Karlov"]
+cards = ["Teysa Karlov", "Drivnod, Carnage Dominus"]
 mechs = ["teysa_doubling", "teysa"]
 
 [[engines.teysa-orzhov-aristocrats]]
 label = "drain payoffs"
-cards = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Bastion of Remembrance", "Falkenrath Noble"]
+cards = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Bastion of Remembrance", "Syr Konrad, the Grim"]
 mechs = []
 
 [[engines.teysa-orzhov-aristocrats]]

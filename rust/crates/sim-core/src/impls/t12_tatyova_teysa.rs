@@ -112,7 +112,8 @@ fn lands_token(g: &mut Game, p: PlayerId, name: &str, color: &str, types: Vec<Sy
 }
 
 fn has_mark(g: &Game, m: PermId, mark: &str) -> bool {
-    matches!(g.perm(m).data.get(DataKey::Kws), Some(Val::List(v)) if v.iter().any(|k| matches!(k, Val::Str(s) if *s == mark)))
+    let Some(Val::List(v)) = g.perm(m).data.get(DataKey::Kws) else { return false };
+    v.iter().any(|k| matches!(k, Val::Str(s) if *s == mark))
 }
 
 /// token_pt: Beau's and the Treefolk's power and toughness, the lands their controller controls
