@@ -10970,8 +10970,7 @@
    "tags": {
     "bartist": true,
     "pow": "0",
-    "noatk": true,
-    "human": true
+    "noatk": true
    },
    "pow": 0,
    "tgh": 1,
@@ -64719,9 +64718,9 @@
    "tags": {
     "dork": "G",
     "noatk": true,
-    "human": true
+    "pow": "1"
    },
-   "pow": 0,
+   "pow": 1,
    "tgh": 1,
    "bomb": 0,
    "dsl": null,

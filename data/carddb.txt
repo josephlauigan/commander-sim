@@ -18,7 +18,7 @@ Ash Barrens|L|-|c=C
 Ashnod's Altar|A|3|sac
 Atraxa, Grand Unifier|C|3GWUB|bomb=9 pow=7 fly vig dt lifelink leg atraxa
 Birds of Paradise|C|G|dork=A noatk fly
-Blood Artist|C|1B|bartist pow=0 noatk human
+Blood Artist|C|1B|bartist pow=0 noatk
 Blossoming Sands|L|-|c=GW t
 Bojuka Bog|L|-|c=B t
 Brushland|L|-|c=GW
@@ -51,7 +51,7 @@ Hinterland Harbor|L|-|c=GU ck
 Isolated Chapel|L|-|c=WB ck
 Lash of the Balrog|S|B|rem=destroy tgt=c sacor4
 Lethal Scheme|I|2BB|rem=destroy tgt=cp convoke
-Llanowar Elves|C|G|dork=G noatk human
+Llanowar Elves|C|G|dork=G noatk pow=1
 Llanowar Wastes|L|-|c=BG
 Massacre Wurm|C|3BBB|bomb=6 pow=6 tgh=5 wurm wurmdrain
 Mikaeus, the Unhallowed|C|3BBB|bomb=5 pow=5 leg mikaeus anthemnh
