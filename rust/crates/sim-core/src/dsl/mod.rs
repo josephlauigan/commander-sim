@@ -1553,10 +1553,7 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
                 dp += pow.unwrap_or(1) * k;
                 dt += tgh.unwrap_or(0) * k;
                 if *base0 == Some(true) {
-                    // --- Tiers 1/2 (windgrace): a */* card has no printed base (the card data gives Lumra and Psychosis
-                    // Crawler 1/1): power and toughness are the count alone
-                    dp -= x.pow;
-                    dt += k - x.tgh;
+                    dt += k;
                 }
             }
         }

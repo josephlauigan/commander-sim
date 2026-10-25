@@ -74915,12 +74915,13 @@
    "pips": "GG",
    "tags": {
     "leg": true,
-    "pow": "1",
     "reach": true,
-    "vig": true
+    "vig": true,
+    "pow": "0",
+    "tgh": "0"
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {

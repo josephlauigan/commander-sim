@@ -9521,6 +9521,8 @@ status = "Full"
 note = "hand-written: +2/+2 with three or more land cards in your graveyard; {2},{T}, sacrifice a land (a tapped one, never a key land): a land onto the battlefield tapped (the missing half of Depths and Stage, Field of the Dead, a colour)"
 
 ["Lumra, Bellow of the Woods"]
+types = "C"
+tags = "leg reach vig pow=0 tgh=0" # */*: no printed base, the compiled count is all of it
 dsl = [{ type = "static", static = "self_scaling", pow = 1, per = "lands_you_control", base0 = true }] # its enter trigger is hand-written
 status = "Full"
 note = "reach, vigilance; power and toughness = your lands (compiled); hand-written: enters: mill four, then every land card in your graveyard onto the battlefield tapped"
