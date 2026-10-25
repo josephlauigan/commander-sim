@@ -92,14 +92,8 @@ fn undo_replays_to_the_same_game() {
     assert_eq!(s.undo(1, "sauron"), None);
     let (_, evs3) = drive(&s, c2, LIMIT, &|_, i| if i == 1 { Some(json!(1)) } else { None });
     let hand = |e: &Value| e["view"]["players"].as_array().unwrap().iter().find(|p| p["you"] == true).unwrap()["hand"].clone();
-    // (until the person's own turns are in the engine the game itself doesn't depend on the hand). The first view
-    // with a hand is the opening hand: the final ones can meet again (a person who never plays discards down to
-    // the same seven at the round cap: Tiers 1/2 lightpaws, seed 4242)
-    let first = |evs: &[Value]| {
-        let e = evs.iter().find(|e| e["view"]["players"].is_array() && hand(e).as_array().is_some_and(|h| !h.is_empty()));
-        hand(e.expect("a view with the person's hand"))
-    };
-    assert!(first(&evs3) != first(&evs), "a different opening hand");
+    // (until the person's own turns are in the engine the game itself doesn't depend on the hand)
+    assert!(hand(over(&evs3)) != hand(over(&evs)), "a different opening hand");
     s.close(Duration::from_secs(10));
 }
 
