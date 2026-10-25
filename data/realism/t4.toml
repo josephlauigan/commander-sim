@@ -77,7 +77,9 @@ note = "n = the five commanders' logged wins; Playgroup gives an average win tur
 # Chulane 66 / 30 / 3; Edgar 85 / 11 / 4;
 # Krenko 89 / 9 / 2; Prosper 76 / 23 / 1;
 # Yuriko 82 / 16 / 1.
-# Grouped as t6.toml groups them.
+# Grouped as t6.toml groups them. References, not scored (JD, 2026-10-25), as in t6.toml: the pool lists are
+# EDHREC's bracket-4 decks, built around their combos and engines, while these commanders' Playgroup wins mix every
+# build at every power level (audit/realism/t45-targets-2026-10-24.md).
 
 [win_damage]
 value = 79.7
@@ -86,6 +88,7 @@ hi = 80.7
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
+scored = false
 
 [win_combo_alt]
 value = 17.9
@@ -94,6 +97,7 @@ hi = 18.9
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
+scored = false
 
 [win_commander_damage]
 value = 2.2
@@ -102,6 +106,7 @@ hi = 3.2
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
+scored = false
 
 [win_poison]
 value = 0.1
@@ -110,6 +115,7 @@ hi = 1.1
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
+scored = false
 
 # --- No target yet:
 # - deck_win_spread: Playgroup's win rates (Chulane 36%, Edgar 31%, Krenko 36%, Prosper 35%, Yuriko 30% of games) are

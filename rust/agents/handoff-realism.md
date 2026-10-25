@@ -10,10 +10,15 @@ Read this file, then `CLAUDE.md`. Everything needed to continue is here; the cha
   - PR #135: Tier 6 scored on cEDH metrics only;
   - PR #136: the Tier 6 seat target from TopDeck.gg Swiss pods.
 
-  Open: the `trace-fixes` PR (Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from
-  EDHREC, the Tier 3 targets rebuilt, Tergrid). Work on a new branch from `main`; JD asks for PRs explicitly.
+  Open: PR #138 `trace-fixes` (Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from
+  EDHREC, the Tier 3 targets rebuilt, Tergrid), and the `tier45-targets` PR on top of it (Tiers 4 and 5: targets,
+  EDHREC lists, every card modelled, Heliod and Winota swapped for Edgar Markov and The Ur-Dragon). Work on a new
+  branch from `main`; JD asks for PRs explicitly.
 - **Tier 3 report:** `audit/realism/t3-trace-2026-10-24.md` (the trace, the knob fit, the modelling, the new
   targets, Tergrid).
+- **Tiers 4 and 5 report:** `audit/realism/t45-targets-2026-10-24.md` (targets, the EDHREC lists, the modelling, the
+  combo-commander rule, the Heliod and Winota traces and swaps, and the leader-policing and Edgar-swap experiments
+  that changed nothing).
 - **Plan document** (claude.ai Doc, JD's): https://claude.ai/artifact/Fa1usjF6hHZiSUBXwLzGNJ, "Commander Sim:
   Improvement and Refactoring Plan". A session with the Claude Docs connector can read and edit it; without it, this
   file summarises what matters (below).
@@ -132,6 +137,13 @@ per-commander win rates.
     the five commanders are weighted equally, the main session's choice: pooled, Atraxa would be half of every
     target).
   - **Tergrid:** opponents race it and feed it only tokens; its threat value is 10 (JD kept it).
+- **2026-10-25:**
+  - **Tiers 4 and 5:** EDHREC's bracket-4 lists; Tier 4 keeps its no-Lotus-Petal rule. Heliod and Winota retired
+    (`decklists/pool/retired/`) for Edgar Markov and The Ur-Dragon. Opponents keep an answer up against a combo
+    commander. Win types are references in `t4.toml` and `t5.toml` (as in Tier 6): the lists are tuned combo and
+    engine decks while the commanders' Playgroup wins mix every build.
+  - **Deck balance left as it is:** Edgar (about 50% in Tier 4) and Ur-Dragon (37%) stay. Leader policing (four
+    levers) and up to eight real swaps in Edgar's list moved nothing; its edge is eminence itself.
 - **Standing rules in CLAUDE.md still apply:** loose profile only, each of JD's decks only against its own tiers, no
   Python, the memory cap, check subagents' work. Run every sim, test and build in the background. Push-notify JD
   whenever work stops for their direction.
@@ -157,7 +169,8 @@ per-commander win rates.
 
    Atraxa's last Partial cards are listed in its pool file. Speed and combo, as in Tier 6, are AI quality more than
    card rules.
-4. **Targets for Tiers 0-2, 4 and 5** (Playgroup, the same method as Tier 3).
+4. **Targets for Tiers 0-2** (Playgroup, the same method as Tiers 3-5; Tiers 4 and 5 are done). Deck balance in
+   Tiers 3-5 (one list wins 37-50% in each) is AI work for later: the opponents seldom hold an answer to it.
 5. **Make a target miss fail the nightly job**, once the Tier 6 gate passes.
 6. **Older items:**
    - the Ertai/Tataru bug (`#[ignore]`d test `tataru_with_ertai_in_hand`);

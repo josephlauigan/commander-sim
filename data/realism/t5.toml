@@ -77,7 +77,9 @@ note = "n = the five commanders' logged wins; Playgroup gives an average win tur
 # Kinnan 42 / 56 / 2; Urza 44 / 53 / 1;
 # The Ur-Dragon 85 / 9 / 6; Yawgmoth 52 / 44 / 0;
 # Zur 28 / 29 / 39.
-# Grouped as t6.toml groups them.
+# Grouped as t6.toml groups them. References, not scored (JD, 2026-10-25), as in t6.toml: the pool lists are
+# EDHREC's bracket-4 decks, built around their combos and engines, while these commanders' Playgroup wins mix every
+# build at every power level (audit/realism/t45-targets-2026-10-24.md).
 
 [win_damage]
 value = 50.1
@@ -86,6 +88,7 @@ hi = 51.1
 n = 5542
 source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
+scored = false
 
 [win_combo_alt]
 value = 38.1
@@ -94,6 +97,7 @@ hi = 39.1
 n = 5542
 source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
+scored = false
 
 [win_commander_damage]
 value = 9.6
@@ -102,6 +106,7 @@ hi = 10.6
 n = 5542
 source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
+scored = false
 
 [win_poison]
 value = 2.2
@@ -110,6 +115,7 @@ hi = 3.2
 n = 5542
 source = "Playgroup commanders.json, wins of Kinnan, Urza, The Ur-Dragon, Yawgmoth, Zur (equal weight)"
 date = "2026-10-25"
+scored = false
 
 # --- No target yet:
 # - deck_win_spread: Playgroup's win rates (Kinnan 38%, Urza 36%, The Ur-Dragon 35%, Yawgmoth 37%, Zur 32% of games) are
