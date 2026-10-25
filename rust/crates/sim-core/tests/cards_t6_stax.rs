@@ -254,12 +254,12 @@ fn needle_names_the_opposing_engine_and_stops_only_that_name() {
 fn silence_refuses_a_flash_creature_this_turn_and_lifts_next_turn() {
     let mut g = tbl();
     g.active = Some(P0);
-    assert!(can_cast(&g, P1, "Brazen Borrower"));
+    assert!(can_cast(&g, P1, "Aven Mindcensor"));
     resolve(&mut g, P0, "Silence");
-    assert!(!can_cast(&g, P1, "Brazen Borrower"), "a flash creature is a spell too");
-    assert!(can_cast(&g, P0, "Brazen Borrower"));
+    assert!(!can_cast(&g, P1, "Aven Mindcensor"), "a flash creature is a spell too");
+    assert!(can_cast(&g, P0, "Aven Mindcensor"));
     g.round += 1; // the turn ends: the lock goes with it
-    assert!(can_cast(&g, P1, "Brazen Borrower"));
+    assert!(can_cast(&g, P1, "Aven Mindcensor"));
 }
 
 #[test]
