@@ -708,6 +708,10 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
     if matches!(cause, "destroy" | "combat") && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
         return Ok(());
     }
+    // --- Tiers 4/5 (urza-yawgmoth): Welding Jar regenerates an artifact
+    if matches!(cause, "destroy" | "combat") && !g.noregen && crate::impls::t45_urza_yawgmoth::welding_jar(g, m)? {
+        return Ok(());
+    }
     let creature = g.is_creature(m);
     let token = g.perm(m).token;
     if matches!(cause, "destroy" | "combat")
@@ -870,7 +874,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     }
     let x = g.perm(m).clone();
     if x.token {
-        return Ok(());
+        return crate::impls::t45_urza_yawgmoth::pest_dies(g, &x); // --- Tiers 4/5 (urza-yawgmoth): Blight Mound
     }
     let cd = x.cd.unwrap();
     let db = g.db.clone();

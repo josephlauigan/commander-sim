@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Artifact combo + stax.
 - **Commander:** Urza, Lord High Artificer
 - **Color identity:** Blue
 - **Game Changers (10):** Ancient Tomb, Chrome Mox, Cyclonic Rift, Fierce Guardianship, Force of Will, Mana Vault, Mystical Tutor, Narset, Parter of Veils, Rhystic Study, The One Ring
-- **Combos:** Isochron Scepter + Dramatic Reversal; Power Artifact + Grim or Basalt Monolith; Basalt Monolith + Rings of Brighthearth; all into Walking Ballista or Urza's activated ability. Karn, the Great Creator + Mycosynth Lattice (lock). Thassa's Oracle as an alternate finish.
+- **Combos:** Isochron Scepter + Dramatic Reversal; Basalt Monolith + Rings of Brighthearth; Basalt Monolith + Forensic Gadgeteer (its untap costs {2}); Hullbreaker Horror + Urza (or Sol Ring) + free artifacts cast between each other. All are unbounded mana into Walking Ballista or Urza's shuffle-and-play ability. Winter Orb or Static Orb + Unwinding Clock is a soft lock that Urza's artifacts ignore.
 - **Lands:** 32 (11 nonbasic + 21 basic)
 
 ## Role in the pool
 
-The fastest deck in the pool: realistic kills on turns three to five. Tests whether anything your decks run can stop an artifact combo turn.
+The fastest deck in the pool, and the one stax deck: realistic kills on turns four to six, with Winter Orb, Static Orb and Back to Basics holding the table's mana down while its own artifacts untap. Tests whether your decks can play through a mana lock and still stop an artifact combo turn.
 
 ## At the table
 
-- **Plan:** Chains artifact mana (Mana Vault, Grim Monolith, Mox Diamond, Sol Ring) so Urza, Lord High Artificer taps artifacts for blue and builds a Construct. Taxing artifacts slow your plays while it assembles.
-- **Wins by:** Isochron Scepter with Dramatic Reversal, Power Artifact on Grim Monolith or Basalt Monolith, or Basalt Monolith with Rings of Brighthearth, into Walking Ballista or Urza's shuffle-and-play ability. Thassa's Oracle is an alternate win; Karn, the Great Creator with Mycosynth Lattice locks the table.
-- **Watch out for:** The fastest deck in the pool: kills can come on turns three to five. Keep counters and artifact removal up on turn two to four. Mana Drain, Force of Will, Pact of Negation and Fierce Guardianship protect the combo. Trinisphere and Sphere of Resistance slow you down.
-- **Interaction:** Counterspell, Mana Drain, Force of Will, Mental Misstep, Flusterstorm, Swan Song, Pact of Negation, Pongify, Rapid Hybridization, Chain of Vapor and Cyclonic Rift.
+- **Plan:** Chains artifact mana (Sol Ring, Mana Vault, Chrome Mox, Mox Opal, Lotus Petal, Basalt Monolith) so Urza, Lord High Artificer taps artifacts for blue and builds a big Construct. Winter Orb, Static Orb and Back to Basics lock lands; Unwinding Clock untaps its artifacts on every other turn. The One Ring, Rhystic Study, Mystic Remora, Padeem and Howling Mine refill the hand; Trinket Mage, Tribute Mage, Fabricate, Reshape, Whir of Invention and Tezzeret find the pieces.
+- **Wins by:** Isochron Scepter with Dramatic Reversal, Basalt Monolith with Rings of Brighthearth or Forensic Gadgeteer, or Hullbreaker Horror recasting free artifacts, into Walking Ballista or Urza's {5} ability. Otherwise the Construct token and Thought Monitor beat down under the lock.
+- **Watch out for:** Under Winter Orb you untap one land a turn and under Static Orb two permanents: mana rocks and cheap spells matter more than lands. Kills can come on turns four to six. Padeem gives its artifacts hexproof (no targeted artifact removal); Welding Jar regenerates one. Keep a counter or artifact sweeper for the turn it goes off.
+- **Interaction:** Counterspell, Mana Drain, Force of Will, Force of Negation, Fierce Guardianship, Pact of Negation, Swan Song, An Offer You Can't Refuse, Muddle the Mixture, Pongify, Cyclonic Rift and Otawara, Soaring City. Tormod's Crypt is graveyard hate; Narset, Parter of Veils stops extra draws.
 
 ## Strategy
 
-Fast artifact mana, Urza turning every artifact into a blue source, and several compact combos: Isochron Scepter + Dramatic Reversal (unbounded mana with enough rocks), Power Artifact on Grim or Basalt Monolith, Basalt Monolith + Rings of Brighthearth. Unbounded mana wins through Walking Ballista or Urza's shuffle-and-play ability; Karn + Mycosynth Lattice locks the table. Sphere, Thorn, Trinisphere, and Cursed Totem slow opponents while the combo assembles. Heavy free countermagic. Tormod's Crypt and Soul-Guide Lantern are graveyard hate.
+Fast artifact mana, Urza turning every artifact into a blue source, and several compact combos: Isochron Scepter + Dramatic Reversal (unbounded mana with enough rocks), Basalt Monolith + Rings of Brighthearth, Basalt Monolith + Forensic Gadgeteer, and Hullbreaker Horror casting free artifacts back and forth. Unbounded mana wins through Walking Ballista or Urza's shuffle-and-play ability. Around the combos sits a stax shell: Winter Orb, Static Orb and Back to Basics with Unwinding Clock, so the opponents run out of mana while Urza's artifacts untap every turn. Heavy free countermagic protects it.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Artifact fast mana; Urza tapping artifacts for U and the construct token; Isochron + Reversal; Power Artifact / Rings untap loops; Karn + Lattice lock; taxing artifacts; free counterspells.
+Artifact fast mana; Urza tapping artifacts for U and the Construct token (Urza never taps an Orb); Isochron + Reversal; Rings + Basalt; Gadgeteer + Basalt; Hullbreaker loops; the Orbs, Back to Basics and Unwinding Clock in the untap step; Padeem's hexproof; Welding Jar; The Reality Chip (it stays a creature when attached: Approximate); affinity (Thought Monitor, Thoughtcast); Uthros's station; free counterspells. Forensic Gadgeteer only discounts Clues and Basalt Monolith (Approximate).
 
 ## Decklist by type (100)
 

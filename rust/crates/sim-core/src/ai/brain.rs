@@ -1026,7 +1026,8 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
         }
     }
     // Clues
-    if g.player(p).clues > 0 && can_pay(g, p, 2, "", false) {
+    // --- Tiers 4/5 (urza-yawgmoth): Forensic Gadgeteer makes it {1}
+    if g.player(p).clues > 0 && can_pay(g, p, crate::impls::t45_urza_yawgmoth::clue_cost(g, p), "", false) {
         o.push(Opt { utility: if post { 2.5 } else { 1.5 }, label: "crack a Clue".into(), act: Some(Action::Clue) });
     }
     o

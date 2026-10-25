@@ -59,10 +59,11 @@ fn crackle(g: &mut Game, p: PlayerId, c: CardId, x: u32) -> Res<bool> {
 
 /// {2}, sacrifice a Clue: draw a card
 fn clue(g: &mut Game, p: PlayerId) -> Res<bool> {
-    if g.player(p).clues == 0 || !can_pay(g, p, 2, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::clue_cost(g, p); // --- Tiers 4/5 (urza-yawgmoth): Forensic Gadgeteer
+    if g.player(p).clues == 0 || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "", false)?;
+    pay(g, p, cost, "", false)?;
     g.player_mut(p).clues -= 1;
     draw(g, p, 1, false)?;
     if !g.hooks.is_empty() {

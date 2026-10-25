@@ -461,6 +461,10 @@ note = "equipped creature +1/+1 per land you control; equip a legend {3}, anythi
 status = "Full"
 note = "enters prepared: a Seething Song copy ({2}{R}: five red) is cast when the mana reaches a spell or with magecraft payoffs out"
 
+["Blight Mound"]
+# --- Tiers 4/5 (urza-yawgmoth): its Pests are hand-written (impls/t45_urza_yawgmoth.rs), not an enter token
+pool_remove_tags = ["tok", "tokp"]
+
 ["Blood Artist"]
 status = "Full"
 note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
@@ -3445,6 +3449,10 @@ tags = "rock=2:G"
 dsl = []
 status = "Full"
 note = "the enchanted land taps for an extra GG"
+
+["Padeem, Consul of Innovation"]
+# --- Tiers 4/5 (urza-yawgmoth): its upkeep draw is hand-written (impls/t45_urza_yawgmoth.rs), not the tag engine
+pool_remove_tags = ["eng"]
 
 ["Pact of Negation"]
 types = "I"
