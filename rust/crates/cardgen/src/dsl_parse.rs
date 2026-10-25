@@ -764,6 +764,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
         |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
     ),
+    // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands" (Peregrine Drake, Frantic Search): n of your tapped lands
+    (r"^untap up to (two|three|four|five|six|seven) lands$", |m| {
+        Some(eff(obj! {"do" => "untap", "n" => n_(m.gs(1)), "what" => selector("all lands you control")}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text

@@ -885,6 +885,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     }
     g.player_mut(p).tapped_treasures = 0; // tapped Treasures untap
     let crack = cardcode::crackdown_on(g); // Crackdown: big nonwhite creatures stay tapped
+    let alarm = crate::impls::t45_chulane_kinnan::alarm_on(g); // --- Tiers 4/5 (chulane-kinnan): Intruder Alarm
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
         if x.data.int(crate::state::DataKey::Frozen) > 0 {
@@ -898,6 +899,13 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
             let n = x.data.int(crate::state::DataKey::Stun);
             let y = g.perm_mut(m);
             y.data.set(crate::state::DataKey::Stun, crate::state::Val::Int(n - 1));
+            y.sick = false;
+            y.phased = false;
+            y.age += 1;
+            continue;
+        }
+        if alarm && x.tapped && g.is_creature(m) {
+            let y = g.perm_mut(m); // Intruder Alarm: creatures don't untap during their controllers' untap steps
             y.sick = false;
             y.phased = false;
             y.age += 1;
