@@ -675,6 +675,9 @@ fn resolve_combat_inner(
                         b_dies = false; // Heroic Sacrifice: the damage goes to the chosen creature
                     }
                     let (fa, fb) = (first_strike(g, a), first_strike(g, b));
+                    // --- Tiers 4/5 (krenko): Sting, the Glinting Dagger (blocking or blocked by a Goblin or Orc)
+                    let sting = crate::impls::t45_krenko::sting_first_strike;
+                    let (fa, fb) = (fa || sting(g, a, b), fb || sting(g, b, a));
                     if fa && !fb && b_dies {
                         a_dies = false; // first strike kills the blocker first
                     } else if fb && !fa && a_dies {

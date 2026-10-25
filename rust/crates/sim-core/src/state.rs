@@ -486,6 +486,13 @@ pub struct Player {
     pub creature_died: Option<TurnStamp>,
     /// tokens this player created this turn: (the turn, how many) (Thalisse, Reverent Medium)
     pub tok_made: (Option<TurnStamp>, u32),
+    // --- Tiers 4/5 (krenko)
+    /// Goblins that entered under this player's control this turn, counted as they enter (Hobgoblin Bandit Lord):
+    /// (the turn, how many)
+    pub goblins_in: (Option<TurnStamp>, u32),
+    /// speed (Start your engines!: 0 until a permanent with it is out, then 1 to 4) and the turn it last rose
+    pub speed: u8,
+    pub speed_rose: Option<TurnStamp>,
     /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
@@ -750,6 +757,9 @@ impl Player {
             gained_turn: None,
             creature_died: None,
             tok_made: (None, 0),
+            goblins_in: (None, 0),
+            speed: 0,
+            speed_rose: None,
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,

@@ -465,7 +465,7 @@ fn winota(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> 
 }
 
 /// hasty copy of your best nonlegendary creature each turn (sacrificed at end); the infinite loops are combos
-fn kiki(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn kiki(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).tapped || post != Some(false) {
         return Ok(vec![]);
     }

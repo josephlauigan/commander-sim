@@ -387,7 +387,8 @@ pub fn umbra_save(g: &mut Game, m: PermId) -> Res<bool> {
 
 /// lands.try_regenerate: a land that regenerates (Yavimaya Hollow) saves m from destruction
 pub fn try_regenerate(g: &mut Game, m: PermId) -> Res<bool> {
-    crate::impls::lands::try_regenerate(g, m)
+    // --- Tiers 4/5 (krenko): Goblin Chirurgeon
+    Ok(crate::impls::lands::try_regenerate(g, m)? || crate::impls::t45_krenko::chirurgeon_regen(g, m)?)
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
@@ -516,6 +517,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     }
     if crate::impls::cloud::evasion_blocked(g, b, a) {
         return true; // Wrecking Ball Arm, Trailblazer's Boots
+    }
+    if crate::impls::t45_krenko::mountainwalk(g, b, a) {
+        return true; // --- Tiers 4/5 (krenko): Goblin King
     }
     crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
 }

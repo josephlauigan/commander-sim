@@ -229,6 +229,14 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
             die(g, x, "sac")?;
         }
     }
+    // --- Tiers 4/5 (krenko): Hexing Squelcher's "Ward—Pay 2 life" (on itself and its controller's other creatures)
+    if spell.is_some()
+        && let Some(a) = actor.filter(|&a| a != owner)
+        && !crate::impls::t45_krenko::life_ward(g, a, m)?
+    {
+        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
+        return Ok(());
+    }
     if g.perm(m).cd.is_some() && spell.is_some() && actor != Some(owner) && !cardcode::removal_taxes(g, actor, m, kind)?
     {
         return Ok(());

@@ -295,6 +295,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     }
     let k = out.len() as i32;
     note_tokens(g, p, k as u32);
+    crate::impls::t45_krenko::note_entered(g, p, &out); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     if k > 0 && !g.no_fang {
         cardcode::chatterfang_squirrels(g, p, k)?;
     }
@@ -1102,6 +1103,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let st = g.turn_stamp();
     g.entered.retain(|e| e.0 == st);
     g.entered.push((st, m));
+    crate::impls::t45_krenko::note_entered(g, p, &[m]); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     let creature = g.db.get(cd).creature;
     let quiet = g.skip_etb || (creature && (hushed(g) || cardcode::tidebinder_response(g, p, m)?));
     if quiet {

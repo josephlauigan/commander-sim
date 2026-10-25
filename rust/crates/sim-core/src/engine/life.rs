@@ -51,6 +51,7 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && crate::impls::tymna_cards::unlife_infect(g, p, n) {
         return Ok(()); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
     }
+    crate::impls::t45_krenko::speed_up(g, p); // --- Tiers 4/5 (krenko): an opponent of the active player lost life
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
     pl.life -= n;
