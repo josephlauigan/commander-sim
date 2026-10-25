@@ -1867,7 +1867,7 @@ const PVAL: &[(&str, f64)] = &[
     ("Brago, King Eternal", 6.0),
     ("Tatyova, Benthic Druid", 5.0),
     ("Atraxa, Praetors' Voice", 7.0),
-    ("Tergrid, God of Fright // Tergrid's Lantern", 7.0),
+    ("Tergrid, God of Fright // Tergrid's Lantern", 10.0), // 2026-10-24: was 7; removal goes to it first, as real tables do
     ("Prosper, Tome-Bound", 6.0),
     ("Craterhoof Behemoth", 8.0),
     ("Helm of the Host", 6.0),
