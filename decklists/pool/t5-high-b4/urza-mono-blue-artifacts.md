@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Artifact combo + stax.
 
 - **Commander:** Urza, Lord High Artificer
 - **Color identity:** Blue
-- **Game Changers (14):** Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, Thassa's Oracle, Mystical Tutor, Intuition, Rhystic Study, The One Ring, Force of Will, Fierce Guardianship, Cyclonic Rift, Ancient Tomb, Mishra's Workshop
+- **Game Changers (10):** Ancient Tomb, Chrome Mox, Cyclonic Rift, Fierce Guardianship, Force of Will, Mana Vault, Mystical Tutor, Narset, Parter of Veils, Rhystic Study, The One Ring
 - **Combos:** Isochron Scepter + Dramatic Reversal; Power Artifact + Grim or Basalt Monolith; Basalt Monolith + Rings of Brighthearth; all into Walking Ballista or Urza's activated ability. Karn, the Great Creator + Mycosynth Lattice (lock). Thassa's Oracle as an alternate finish.
-- **Lands:** 29 (8 nonbasic + 21 basic)
+- **Lands:** 32 (11 nonbasic + 21 basic)
 
 ## Role in the pool
 
@@ -33,101 +33,101 @@ Artifact fast mana; Urza tapping artifacts for U and the construct token; Isochr
 
 **Commander (1).** Urza, Lord High Artificer
 
-**Creatures (9).** Etherium Sculptor, Foundry Inspector, Kappa Cannoneer, Sai, Master Thopterist, Spellseeker, Thassa's Oracle, Tribute Mage, Trophy Mage, Walking Ballista
+**Creatures (16).** Displacer Kitten, Emry, Lurker of the Loch, Etherium Sculptor, Forensic Gadgeteer, Foundry Inspector, Hullbreaker Horror, Ornithopter, Padeem, Consul of Innovation, Phyrexian Metamorph, Sai, Master Thopterist, Spellskite, The Reality Chip, Thought Monitor, Tribute Mage, Trinket Mage, Walking Ballista
 
-**Planeswalkers (2).** Karn, the Great Creator, Tezzeret the Seeker
+**Planeswalkers (2).** Narset, Parter of Veils, Tezzeret the Seeker
 
-**Enchantments (3).** Mystic Remora, Power Artifact, Rhystic Study
+**Enchantments (4).** Back to Basics, Efficient Construction, Mystic Remora, Rhystic Study
 
-**Artifacts (29).** Arcane Signet, Basalt Monolith, Chrome Mox, Cursed Totem, Everflowing Chalice, Fellwar Stone, Grim Monolith, Isochron Scepter, Lotus Petal, Mana Vault, Mind Stone, Mishra's Bauble, Mox Amber, Mox Diamond, Mox Opal, Mycosynth Lattice, Retrofitter Foundry, Rings of Brighthearth, Sensei's Divining Top, Sol Ring, Soul-Guide Lantern, Sphere of Resistance, Springleaf Drum, The One Ring, Thorn of Amethyst, Tormod's Crypt, Trinisphere, Urza's Bauble, Voltaic Key
+**Artifacts (25).** Aether Spellbomb, Arcane Signet, Basalt Monolith, Chrome Mox, Everflowing Chalice, Howling Mine, Isochron Scepter, Lightning Greaves, Lotus Petal, Mana Vault, Manifold Key, Mishra's Bauble, Mox Opal, Mystic Forge, Rings of Brighthearth, Sapphire Medallion, Sensei's Divining Top, Sol Ring, Static Orb, The One Ring, Thought Vessel, Tormod's Crypt, Unwinding Clock, Welding Jar, Winter Orb
 
-**Sorceries (7).** Fabricate, Gitaxian Probe, Ponder, Preordain, Reshape, Transmute Artifact, Windfall
+**Sorceries (5).** Fabricate, Ponder, Reshape, Thoughtcast, Windfall
 
-**Instants (20).** An Offer You Can't Refuse, Brainstorm, Chain of Vapor, Counterspell, Cyclonic Rift, Dramatic Reversal, Fierce Guardianship, Flusterstorm, Force of Will, Intuition, Mana Drain, Mental Misstep, Mystical Tutor, Pact of Negation, Pongify, Rapid Hybridization, Snap, Stern Scolding, Swan Song, Whir of Invention
+**Instants (15).** An Offer You Can't Refuse, Brainstorm, Counterspell, Cyclonic Rift, Dramatic Reversal, Fierce Guardianship, Force of Negation, Force of Will, Mana Drain, Muddle the Mixture, Mystical Tutor, Pact of Negation, Pongify, Swan Song, Whir of Invention
 
-**Lands (29).** Academy Ruins, Ancient Tomb, Inventors' Fair, Mishra's Workshop, Otawara, Soaring City, Seat of the Synod, Tolaria West, Urza's Saga, 21 Island
+**Lands (32).** Academy Ruins, Ancient Tomb, Buried Ruin, Darksteel Citadel, Inventors' Fair, Mystic Sanctuary, Otawara, Soaring City, Reliquary Tower, Seat of the Synod, Urza's Saga, Uthros, Titanic Godcore, 21 Island
 
 ## Import list (100)
 
 ```
 1 Academy Ruins
+1 Aether Spellbomb
 1 An Offer You Can't Refuse
 1 Ancient Tomb
 1 Arcane Signet
+1 Back to Basics
 1 Basalt Monolith
 1 Brainstorm
-1 Chain of Vapor
+1 Buried Ruin
 1 Chrome Mox
 1 Counterspell
-1 Cursed Totem
 1 Cyclonic Rift
+1 Darksteel Citadel
+1 Displacer Kitten
 1 Dramatic Reversal
+1 Efficient Construction
+1 Emry, Lurker of the Loch
 1 Etherium Sculptor
 1 Everflowing Chalice
 1 Fabricate
-1 Fellwar Stone
 1 Fierce Guardianship
-1 Flusterstorm
+1 Force of Negation
 1 Force of Will
+1 Forensic Gadgeteer
 1 Foundry Inspector
-1 Gitaxian Probe
-1 Grim Monolith
-1 Intuition
+1 Howling Mine
+1 Hullbreaker Horror
 1 Inventors' Fair
 1 Isochron Scepter
-1 Kappa Cannoneer
-1 Karn, the Great Creator
+1 Lightning Greaves
 1 Lotus Petal
 1 Mana Drain
 1 Mana Vault
-1 Mental Misstep
-1 Mind Stone
+1 Manifold Key
 1 Mishra's Bauble
-1 Mishra's Workshop
-1 Mox Amber
-1 Mox Diamond
 1 Mox Opal
-1 Mycosynth Lattice
+1 Muddle the Mixture
+1 Mystic Forge
 1 Mystic Remora
+1 Mystic Sanctuary
 1 Mystical Tutor
+1 Narset, Parter of Veils
+1 Ornithopter
 1 Otawara, Soaring City
 1 Pact of Negation
+1 Padeem, Consul of Innovation
+1 Phyrexian Metamorph
 1 Ponder
 1 Pongify
-1 Power Artifact
-1 Preordain
-1 Rapid Hybridization
+1 Reliquary Tower
 1 Reshape
-1 Retrofitter Foundry
 1 Rhystic Study
 1 Rings of Brighthearth
 1 Sai, Master Thopterist
+1 Sapphire Medallion
 1 Seat of the Synod
 1 Sensei's Divining Top
-1 Snap
 1 Sol Ring
-1 Soul-Guide Lantern
-1 Spellseeker
-1 Sphere of Resistance
-1 Springleaf Drum
-1 Stern Scolding
+1 Spellskite
+1 Static Orb
 1 Swan Song
 1 Tezzeret the Seeker
-1 Thassa's Oracle
 1 The One Ring
-1 Thorn of Amethyst
-1 Tolaria West
+1 The Reality Chip
+1 Thought Monitor
+1 Thought Vessel
+1 Thoughtcast
 1 Tormod's Crypt
-1 Transmute Artifact
 1 Tribute Mage
-1 Trinisphere
-1 Trophy Mage
-1 Urza's Bauble
+1 Trinket Mage
+1 Unwinding Clock
 1 Urza's Saga
 1 Urza, Lord High Artificer
-1 Voltaic Key
+1 Uthros, Titanic Godcore
 1 Walking Ballista
+1 Welding Jar
 1 Whir of Invention
 1 Windfall
+1 Winter Orb
 21 Island
 ```

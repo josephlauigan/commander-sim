@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aristocrats combo.
 
 - **Commander:** Yawgmoth, Thran Physician
 - **Color identity:** Black
-- **Game Changers (14):** Mana Vault, Chrome Mox, Grim Monolith, The One Ring, Necropotence, Bolas's Citadel, Ad Nauseam, Demonic Tutor, Vampiric Tutor, Imperial Seal, Opposition Agent, Orcish Bowmasters, Braids, Cabal Minion, Ancient Tomb
+- **Game Changers (7):** Ancient Tomb, Bolas's Citadel, Demonic Tutor, Imperial Seal, Necropotence, Orcish Bowmasters, Vampiric Tutor
 - **Combos:** Sanguine Bond + Exquisite Blood (two-card drain loop). Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul, or any non-Human under Mikaeus). Gravecrawler + Phyrexian Altar. Mikaeus + Walking Ballista is not infinite on its own, but Ballista is a mana sink for Coffers.
-- **Lands:** 31 (9 nonbasic + 22 basic)
+- **Lands:** 32 (9 nonbasic + 23 basic)
 
 ## Role in the pool
 
@@ -33,98 +33,99 @@ Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undy
 
 **Commander (1).** Yawgmoth, Thran Physician
 
-**Creatures (27).** Blood Artist, Bloodghast, Braids, Cabal Minion, Butcher Ghoul, Carrion Feeder, Dark Confidant, Dauthi Voidwalker, Falkenrath Noble, Geralf's Messenger, Gravecrawler, Grim Haruspex, Midnight Reaper, Mikaeus, the Unhallowed, Nether Traitor, Opposition Agent, Orcish Bowmasters, Pitiless Plunderer, Plaguecrafter, Priest of Forgotten Gods, Reassembling Skeleton, Sheoldred, the Apocalypse, Syr Konrad, the Grim, Vindictive Vampire, Viscera Seer, Walking Ballista, Woe Strider, Zulaport Cutthroat
+**Creatures (30).** Ayara, First of Locthwain, Blood Artist, Bloodghast, Butcher Ghoul, Crypt Ghast, Dauthi Voidwalker, Deathgreeter, Forsaken Miner, Geralf's Messenger, Gravecrawler, Gray Merchant of Asphodel, Hancock, Ghoulish Mayor, Jadar, Ghoulcaller of Nephalia, K'rrik, Son of Yawgmoth, Marionette Apprentice, Mikaeus, the Unhallowed, Necroskitter, Nether Traitor, Nine-Lives Familiar, Ophiomancer, Orcish Bowmasters, Pawn of Ulamog, Pitiless Plunderer, Reassembling Skeleton, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel, Sheoldred, the Apocalypse, Sifter of Skulls, Vengeful Bloodwitch, Warren Soultrader, Zulaport Cutthroat
 
-**Enchantments (7).** Animate Dead, Bastion of Remembrance, Bitterblossom, Exquisite Blood, Necropotence, Phyrexian Arena, Sanguine Bond
+**Enchantments (8).** Animate Dead, Bastion of Remembrance, Bitterblossom, Blight Mound, Grave Pact, Necropotence, Nest of Scarabs, The Meathook Massacre
 
-**Artifacts (15).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Chrome Mox, Grim Monolith, Jet Medallion, Lotus Petal, Mana Vault, Mind Stone, Phyrexian Altar, Sensei's Divining Top, Skullclamp, Sol Ring, The One Ring, Wishclaw Talisman
+**Artifacts (10).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Genesis Chamber, Jet Medallion, Lightning Greaves, Lotus Petal, Phyrexian Altar, Skullclamp, Sol Ring
 
-**Sorceries (9).** Beseech the Mirror, Damnation, Demonic Tutor, Diabolic Intent, Grim Tutor, Imperial Seal, Reanimate, Toxic Deluge, Unearth
+**Sorceries (9).** Damnation, Demonic Tutor, Diabolic Intent, Feed the Swarm, Imperial Seal, Reanimate, Toxic Deluge, Unearth, Victimize
 
-**Instants (10).** Ad Nauseam, Cabal Ritual, Culling the Weak, Dark Ritual, Deadly Dispute, Fatal Push, Infernal Grasp, Snuff Out, Vampiric Tutor, Village Rites
+**Instants (9).** Cabal Ritual, Culling the Weak, Dark Ritual, Deadly Rollick, Entomb, Imp's Mischief, Malakir Rebirth // Malakir Mire, Vampiric Tutor, Withering Torment
 
-**Lands (31).** Ancient Tomb, Bojuka Bog, Cabal Coffers, Castle Locthwain, High Market, Phyrexian Tower, Takenuma, Abandoned Mire, Urborg, Tomb of Yawgmoth, War Room, 22 Swamp
+**Lands (32).** Ancient Tomb, Bojuka Bog, Cabal Coffers, Cabal Stronghold, Nykthos, Shrine to Nyx, Phyrexian Tower, Reliquary Tower, Takenuma, Abandoned Mire, Urborg, Tomb of Yawgmoth, 23 Swamp
+
+**Planeswalkers (1).** Liliana, Dreadhorde General
 
 ## Import list (100)
 
 ```
-1 Ad Nauseam
 1 Ancient Tomb
 1 Animate Dead
 1 Arcane Signet
 1 Ashnod's Altar
+1 Ayara, First of Locthwain
 1 Bastion of Remembrance
-1 Beseech the Mirror
 1 Bitterblossom
+1 Blight Mound
 1 Blood Artist
 1 Bloodghast
 1 Bojuka Bog
 1 Bolas's Citadel
-1 Braids, Cabal Minion
 1 Butcher Ghoul
 1 Cabal Coffers
 1 Cabal Ritual
-1 Carrion Feeder
-1 Castle Locthwain
-1 Chrome Mox
+1 Cabal Stronghold
+1 Crypt Ghast
 1 Culling the Weak
 1 Damnation
-1 Dark Confidant
 1 Dark Ritual
 1 Dauthi Voidwalker
-1 Deadly Dispute
+1 Deadly Rollick
+1 Deathgreeter
 1 Demonic Tutor
 1 Diabolic Intent
-1 Exquisite Blood
-1 Falkenrath Noble
-1 Fatal Push
+1 Entomb
+1 Feed the Swarm
+1 Forsaken Miner
+1 Genesis Chamber
 1 Geralf's Messenger
+1 Grave Pact
 1 Gravecrawler
-1 Grim Haruspex
-1 Grim Monolith
-1 Grim Tutor
-1 High Market
+1 Gray Merchant of Asphodel
+1 Hancock, Ghoulish Mayor
+1 Imp's Mischief
 1 Imperial Seal
-1 Infernal Grasp
+1 Jadar, Ghoulcaller of Nephalia
 1 Jet Medallion
+1 K'rrik, Son of Yawgmoth
+1 Lightning Greaves
+1 Liliana, Dreadhorde General
 1 Lotus Petal
-1 Mana Vault
-1 Midnight Reaper
+1 Malakir Rebirth // Malakir Mire
+1 Marionette Apprentice
 1 Mikaeus, the Unhallowed
-1 Mind Stone
 1 Necropotence
+1 Necroskitter
+1 Nest of Scarabs
 1 Nether Traitor
-1 Opposition Agent
+1 Nine-Lives Familiar
+1 Nykthos, Shrine to Nyx
+1 Ophiomancer
 1 Orcish Bowmasters
+1 Pawn of Ulamog
 1 Phyrexian Altar
-1 Phyrexian Arena
 1 Phyrexian Tower
 1 Pitiless Plunderer
-1 Plaguecrafter
-1 Priest of Forgotten Gods
 1 Reanimate
 1 Reassembling Skeleton
-1 Sanguine Bond
-1 Sensei's Divining Top
+1 Reliquary Tower
+1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Sheoldred, the Apocalypse
+1 Sifter of Skulls
 1 Skullclamp
-1 Snuff Out
 1 Sol Ring
-1 Syr Konrad, the Grim
 1 Takenuma, Abandoned Mire
-1 The One Ring
+1 The Meathook Massacre
 1 Toxic Deluge
 1 Unearth
 1 Urborg, Tomb of Yawgmoth
 1 Vampiric Tutor
-1 Village Rites
-1 Vindictive Vampire
-1 Viscera Seer
-1 Walking Ballista
-1 War Room
-1 Wishclaw Talisman
-1 Woe Strider
+1 Vengeful Bloodwitch
+1 Victimize
+1 Warren Soultrader
+1 Withering Torment
 1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat
-22 Swamp
+23 Swamp
 ```

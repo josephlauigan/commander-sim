@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Value engine / Aluren co
 
 - **Commander:** Chulane, Teller of Tales
 - **Color identity:** White, Blue, Green
-- **Game Changers (7):** Consecrated Sphinx, Survival of the Fittest, Rhystic Study, Smothering Tithe, Worldly Tutor, Cyclonic Rift, Teferi's Protection
+- **Game Changers (9):** Aura Shards, Cyclonic Rift, Drannith Magistrate, Enlightened Tutor, Fierce Guardianship, Rhystic Study, Seedborn Muse, Thassa's Oracle, Worldly Tutor
 - **Combos:** Aluren + Shrieking Drake (or Whitemane Lion) + Chulane: free self-bouncing creature loop → unbounded draws and land drops, into Avenger/Craterhoof.
-- **Lands:** 34 (19 nonbasic + 15 basic)
+- **Lands:** 35 (23 nonbasic + 12 basic)
 
 ## Role in the pool
 
@@ -33,109 +33,112 @@ Chulane cast trigger (draw + land to battlefield, return a creature); Aluren fre
 
 **Commander (1).** Chulane, Teller of Tales
 
-**Creatures (30).** Ancient Greenwarden, Avenger of Zendikar, Birds of Paradise, Cloudblazer, Coiling Oracle, Consecrated Sphinx, Craterhoof Behemoth, Elvish Mystic, Elvish Visionary, Esper Sentinel, Eternal Witness, Hullbreaker Horror, Knight of Autumn, Kor Skyfisher, Llanowar Elves, Man-o'-War, Mulldrifter, Noble Hierarch, Ranger-Captain of Eos, Recruiter of the Guard, Reflector Mage, Restoration Angel, Shrieking Drake, Skyclave Apparition, Spellseeker, Sylvan Caryatid, Temur Sabertooth, Tireless Tracker, Whitemane Lion, Wood Elves
+**Creatures (36).** Arbor Elf, Avacyn's Pilgrim, Aven Mindcensor, Beast Whisperer, Birds of Paradise, Bloom Tender, Coiling Oracle, Craterhoof Behemoth, Delighted Halfling, Destiny Spinner, Drannith Magistrate, Elvish Mystic, Enduring Vitality, Esper Sentinel, Eternal Witness, Faeburrow Elder, Fyndhorn Elves, Grand Abolisher, Kinnan, Bonder Prodigy, Laboratory Maniac, Llanowar Elves, Lotus Cobra, Noble Hierarch, Paradise Druid, Peregrine Drake, Priest of Titania, Ranger-Captain of Eos, Reclamation Sage, Recruiter of the Guard, Scute Swarm, Seedborn Muse, Shrieking Drake, Tatyova, Benthic Druid, Thassa's Oracle, Tireless Provisioner, Whitemane Lion
 
 **Planeswalkers (1).** Oko, Thief of Crowns
 
-**Enchantments (7).** Aluren, Guardian Project, Rhystic Study, Smothering Tithe, Survival of the Fittest, Sylvan Library, Utopia Sprawl
+**Enchantments (7).** Aluren, Aura Shards, Guardian Project, Intruder Alarm, Mana Breach, Mystic Remora, Rhystic Study
 
-**Artifacts (5).** Arcane Signet, Birthing Pod, Lightning Greaves, Sol Ring, Talisman of Curiosity
+**Artifacts (5).** Arcane Signet, Cloudstone Curio, Lightning Greaves, Sol Ring, Thought Vessel
 
-**Sorceries (6).** Farseek, Finale of Devastation, Green Sun's Zenith, Nature's Lore, Supreme Verdict, Three Visits
+**Sorceries (4).** Cultivate, Farseek, Finale of Devastation, Wargate
 
-**Instants (16).** Arcane Denial, Beast Within, Brainstorm, Chord of Calling, Counterspell, Cyclonic Rift, Fact or Fiction, Generous Gift, Growth Spiral, Heroic Intervention, Mana Drain, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection, Worldly Tutor
+**Instants (11).** Counterspell, Cyclonic Rift, Dovin's Veto, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Heroic Intervention, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
-**Lands (34).** Boseiju, Who Endures, Botanical Sanctum, Breeding Pool, Command Tower, Exotic Orchard, Flooded Strand, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Misty Rainforest, Otawara, Soaring City, Savannah, Spara's Headquarters, Sunpetal Grove, Temple Garden, Tropical Island, Tundra, Windswept Heath, Yavimaya Coast, 6 Forest, 5 Island, 4 Plains
+**Lands (35).** Azorius Chancery, Boseiju, Who Endures, Bountiful Promenade, Breeding Pool, Command Tower, Exotic Orchard, Flooded Strand, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Misty Rainforest, Prairie Stream, Rejuvenating Springs, Reliquary Tower, Sea of Clouds, Selesnya Sanctuary, Simic Growth Chamber, Spara's Headquarters, Sunpetal Grove, Temple Garden, Windswept Heath, Yavimaya Coast, Yavimaya, Cradle of Growth, 5 Forest, 4 Island, 3 Plains
 
 ## Import list (100)
 
 ```
 1 Aluren
-1 Ancient Greenwarden
-1 Arcane Denial
+1 Arbor Elf
 1 Arcane Signet
-1 Avenger of Zendikar
-1 Beast Within
+1 Aura Shards
+1 Avacyn's Pilgrim
+1 Aven Mindcensor
+1 Azorius Chancery
+1 Beast Whisperer
 1 Birds of Paradise
-1 Birthing Pod
+1 Bloom Tender
 1 Boseiju, Who Endures
-1 Botanical Sanctum
-1 Brainstorm
+1 Bountiful Promenade
 1 Breeding Pool
-1 Chord of Calling
 1 Chulane, Teller of Tales
-1 Cloudblazer
+1 Cloudstone Curio
 1 Coiling Oracle
 1 Command Tower
-1 Consecrated Sphinx
 1 Counterspell
 1 Craterhoof Behemoth
+1 Cultivate
 1 Cyclonic Rift
+1 Delighted Halfling
+1 Destiny Spinner
+1 Dovin's Veto
+1 Drannith Magistrate
+1 Eladamri's Call
 1 Elvish Mystic
-1 Elvish Visionary
+1 Enduring Vitality
+1 Enlightened Tutor
 1 Esper Sentinel
 1 Eternal Witness
 1 Exotic Orchard
-1 Fact or Fiction
+1 Faeburrow Elder
 1 Farseek
+1 Fierce Guardianship
 1 Finale of Devastation
 1 Flooded Strand
-1 Generous Gift
+1 Fyndhorn Elves
 1 Glacial Fortress
-1 Green Sun's Zenith
-1 Growth Spiral
+1 Grand Abolisher
 1 Guardian Project
 1 Hallowed Fountain
 1 Heroic Intervention
 1 Hinterland Harbor
-1 Hullbreaker Horror
-1 Knight of Autumn
-1 Kor Skyfisher
+1 Intruder Alarm
+1 Kinnan, Bonder Prodigy
+1 Laboratory Maniac
 1 Lightning Greaves
 1 Llanowar Elves
-1 Man-o'-War
-1 Mana Drain
+1 Lotus Cobra
+1 Mana Breach
 1 Misty Rainforest
-1 Mulldrifter
-1 Nature's Lore
+1 Mystic Remora
 1 Noble Hierarch
 1 Oko, Thief of Crowns
-1 Otawara, Soaring City
+1 Paradise Druid
 1 Path to Exile
+1 Peregrine Drake
+1 Prairie Stream
+1 Priest of Titania
 1 Ranger-Captain of Eos
+1 Reclamation Sage
 1 Recruiter of the Guard
-1 Reflector Mage
-1 Restoration Angel
+1 Rejuvenating Springs
+1 Reliquary Tower
 1 Rhystic Study
-1 Savannah
+1 Scute Swarm
+1 Sea of Clouds
+1 Seedborn Muse
+1 Selesnya Sanctuary
 1 Shrieking Drake
-1 Skyclave Apparition
-1 Smothering Tithe
+1 Simic Growth Chamber
 1 Sol Ring
 1 Spara's Headquarters
-1 Spellseeker
 1 Sunpetal Grove
-1 Supreme Verdict
-1 Survival of the Fittest
 1 Swan Song
 1 Swords to Plowshares
-1 Sylvan Caryatid
-1 Sylvan Library
-1 Talisman of Curiosity
-1 Teferi's Protection
+1 Tatyova, Benthic Druid
 1 Temple Garden
-1 Temur Sabertooth
-1 Three Visits
-1 Tireless Tracker
-1 Tropical Island
-1 Tundra
-1 Utopia Sprawl
+1 Thassa's Oracle
+1 Thought Vessel
+1 Tireless Provisioner
+1 Wargate
 1 Whitemane Lion
 1 Windswept Heath
-1 Wood Elves
 1 Worldly Tutor
 1 Yavimaya Coast
-6 Forest
-5 Island
-4 Plains
+1 Yavimaya, Cradle of Growth
+5 Forest
+4 Island
+3 Plains
 ```

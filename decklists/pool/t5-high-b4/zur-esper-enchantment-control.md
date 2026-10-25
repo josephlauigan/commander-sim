@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Control + compact combo
 
 - **Commander:** Zur the Enchanter
 - **Color identity:** White, Blue, Black
-- **Game Changers (20):** Mana Vault, Chrome Mox, Mox Diamond, Necropotence, Rhystic Study, Smothering Tithe, Thassa's Oracle, Demonic Tutor, Vampiric Tutor, Imperial Seal, Mystical Tutor, Enlightened Tutor, Force of Will, Fierce Guardianship, Cyclonic Rift, Opposition Agent, Orcish Bowmasters, Notion Thief, Teferi's Protection, Ancient Tomb
+- **Game Changers (15):** Cyclonic Rift, Demonic Tutor, Drannith Magistrate, Enlightened Tutor, Fierce Guardianship, Force of Will, Grand Arbiter Augustin IV, Mystical Tutor, Narset, Parter of Veils, Necropotence, Opposition Agent, Rhystic Study, Smothering Tithe, Thassa's Oracle, Vampiric Tutor
 - **Combos:** Thassa's Oracle (or Jace, Wielder of Mysteries) + Demonic Consultation / Tainted Pact.
-- **Lands:** 31 (21 nonbasic + 10 basic)
+- **Lands:** 33 (22 nonbasic + 11 basic)
 
 ## Role in the pool
 
@@ -33,114 +33,113 @@ Zur's attack trigger (enchantment MV ≤ 3 onto battlefield); Necropotence card 
 
 **Commander (1).** Zur the Enchanter
 
-**Creatures (9).** Brazen Borrower, Dauthi Voidwalker, Esper Sentinel, Grand Abolisher, Notion Thief, Opposition Agent, Orcish Bowmasters, Spellseeker, Thassa's Oracle
+**Creatures (12).** Delney, Streetwise Lookout, Drannith Magistrate, Eidolon of Rhetoric, Esper Sentinel, Grand Abolisher, Grand Arbiter Augustin IV, Heliod, Sun-Crowned, Mesa Enchantress, Opposition Agent, Sun Titan, Thassa's Oracle, Walking Ballista
 
-**Planeswalkers (1).** Jace, Wielder of Mysteries
+**Planeswalkers (1).** Narset, Parter of Veils
 
-**Enchantments (14).** Aura of Silence, Copy Enchantment, Empyrial Armor, Ethereal Armor, Ghostly Prison, Mystic Remora, Necropotence, Oblivion Ring, Phyrexian Arena, Propaganda, Rest in Peace, Rhystic Study, Smothering Tithe, Solitary Confinement
+**Enchantments (23).** All That Glitters, Aura of Silence, Blind Obedience, Copy Enchantment, Darksteel Mutation, Diplomatic Immunity, Estrid's Invocation, Ethereal Armor, Ghostly Prison, Grasp of Fate, Greater Auramancy, Imprisoned in the Moon, Mirrormade, Mystic Remora, Necropotence, Phyrexian Unlife, Propaganda, Rest in Peace, Rhystic Study, Rule of Law, Smothering Tithe, Solemnity, Steel of the Godhead
 
-**Artifacts (12).** Arcane Signet, Chrome Mox, Fellwar Stone, Lotus Petal, Mana Vault, Mox Diamond, Sensei's Divining Top, Sol Ring, Swiftfoot Boots, Talisman of Dominance, Talisman of Hierarchy, Talisman of Progress
+**Artifacts (11).** Arcane Signet, Azorius Signet, Dimir Signet, Fellwar Stone, Lightning Greaves, Orzhov Signet, Sol Ring, Swiftfoot Boots, Talisman of Dominance, Talisman of Hierarchy, Talisman of Progress
 
-**Sorceries (9).** Council's Judgment, Demonic Tutor, Gitaxian Probe, Imperial Seal, Ponder, Preordain, Toxic Deluge, Vindicate, Windfall
+**Sorceries (5).** Demonic Tutor, Idyllic Tutor, Supreme Verdict, Toxic Deluge, Winds of Rath
 
-**Instants (23).** Anguished Unmaking, Brainstorm, Cabal Ritual, Counterspell, Cyclonic Rift, Dark Ritual, Deadly Rollick, Demonic Consultation, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Mana Drain, Mystical Tutor, Pact of Negation, Path to Exile, Snuff Out, Swan Song, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor
+**Instants (14).** An Offer You Can't Refuse, Counterspell, Cyclonic Rift, Dark Ritual, Dovin's Veto, Enlightened Tutor, Fierce Guardianship, Force of Will, Mana Drain, Mystical Tutor, Path to Exile, Swan Song, Swords to Plowshares, Vampiric Tutor
 
-**Lands (31).** Adarkar Wastes, Ancient Tomb, Arid Mesa, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Misty Rainforest, Morphic Pool, Otawara, Soaring City, Polluted Delta, Prismatic Vista, Raffine's Tower, Scalding Tarn, Scrubland, Tundra, Underground River, Underground Sea, Watery Grave, 4 Island, 3 Swamp, 3 Plains
+**Lands (33).** Adarkar Wastes, Arcane Sanctum, Caves of Koilos, City of Brass, Command Tower, Drowned Catacomb, Exotic Orchard, Flooded Strand, Glacial Fortress, Godless Shrine, Hall of Heliod's Generosity, Hallowed Fountain, Isolated Chapel, Marsh Flats, Morphic Pool, Polluted Delta, Raffine's Tower, Reliquary Tower, Sea of Clouds, Underground River, Vault of Champions, Watery Grave, 4 Island, 3 Swamp, 4 Plains
 
 ## Import list (100)
 
 ```
 1 Adarkar Wastes
-1 Ancient Tomb
-1 Anguished Unmaking
+1 All That Glitters
+1 An Offer You Can't Refuse
+1 Arcane Sanctum
 1 Arcane Signet
-1 Arid Mesa
 1 Aura of Silence
-1 Brainstorm
-1 Brazen Borrower
-1 Cabal Ritual
+1 Azorius Signet
+1 Blind Obedience
 1 Caves of Koilos
-1 Chrome Mox
+1 City of Brass
 1 Command Tower
 1 Copy Enchantment
-1 Council's Judgment
 1 Counterspell
 1 Cyclonic Rift
 1 Dark Ritual
-1 Dauthi Voidwalker
-1 Deadly Rollick
-1 Demonic Consultation
+1 Darksteel Mutation
+1 Delney, Streetwise Lookout
 1 Demonic Tutor
-1 Empyrial Armor
+1 Dimir Signet
+1 Diplomatic Immunity
+1 Dovin's Veto
+1 Drannith Magistrate
+1 Drowned Catacomb
+1 Eidolon of Rhetoric
 1 Enlightened Tutor
 1 Esper Sentinel
+1 Estrid's Invocation
 1 Ethereal Armor
+1 Exotic Orchard
 1 Fellwar Stone
 1 Fierce Guardianship
 1 Flooded Strand
-1 Flusterstorm
-1 Force of Negation
 1 Force of Will
 1 Ghostly Prison
-1 Gitaxian Probe
+1 Glacial Fortress
 1 Godless Shrine
 1 Grand Abolisher
+1 Grand Arbiter Augustin IV
+1 Grasp of Fate
+1 Greater Auramancy
+1 Hall of Heliod's Generosity
 1 Hallowed Fountain
-1 Imperial Seal
-1 Jace, Wielder of Mysteries
-1 Lotus Petal
+1 Heliod, Sun-Crowned
+1 Idyllic Tutor
+1 Imprisoned in the Moon
+1 Isolated Chapel
+1 Lightning Greaves
 1 Mana Drain
-1 Mana Vault
 1 Marsh Flats
-1 Misty Rainforest
+1 Mesa Enchantress
+1 Mirrormade
 1 Morphic Pool
-1 Mox Diamond
 1 Mystic Remora
 1 Mystical Tutor
+1 Narset, Parter of Veils
 1 Necropotence
-1 Notion Thief
-1 Oblivion Ring
 1 Opposition Agent
-1 Orcish Bowmasters
-1 Otawara, Soaring City
-1 Pact of Negation
+1 Orzhov Signet
 1 Path to Exile
-1 Phyrexian Arena
+1 Phyrexian Unlife
 1 Polluted Delta
-1 Ponder
-1 Preordain
-1 Prismatic Vista
 1 Propaganda
 1 Raffine's Tower
+1 Reliquary Tower
 1 Rest in Peace
 1 Rhystic Study
-1 Scalding Tarn
-1 Scrubland
-1 Sensei's Divining Top
+1 Rule of Law
+1 Sea of Clouds
 1 Smothering Tithe
-1 Snuff Out
 1 Sol Ring
-1 Solitary Confinement
-1 Spellseeker
+1 Solemnity
+1 Steel of the Godhead
+1 Sun Titan
+1 Supreme Verdict
 1 Swan Song
 1 Swiftfoot Boots
 1 Swords to Plowshares
-1 Tainted Pact
 1 Talisman of Dominance
 1 Talisman of Hierarchy
 1 Talisman of Progress
-1 Teferi's Protection
 1 Thassa's Oracle
 1 Toxic Deluge
-1 Tundra
 1 Underground River
-1 Underground Sea
 1 Vampiric Tutor
-1 Vindicate
+1 Vault of Champions
+1 Walking Ballista
 1 Watery Grave
-1 Windfall
+1 Winds of Rath
 1 Zur the Enchanter
 4 Island
 3 Swamp
-3 Plains
+4 Plains
 ```

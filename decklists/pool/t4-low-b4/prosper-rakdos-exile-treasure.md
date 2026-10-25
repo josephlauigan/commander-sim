@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Treasure / impulse-draw 
 
 - **Commander:** Prosper, Tome-Bound
 - **Color identity:** Black, Red
-- **Game Changers (6):** Jeska's Will, Bolas's Citadel, Orcish Bowmasters, Demonic Tutor, Vampiric Tutor, Ancient Tomb
+- **Game Changers (7):** Ancient Tomb, Bolas's Citadel, Demonic Tutor, Jeska's Will, Opposition Agent, Underworld Breach, Vampiric Tutor
 - **Combos:** Sanguine Bond + Exquisite Blood (two-card unbounded drain from any life change). Bolas's Citadel + Sensei's Top chains.
-- **Lands:** 35 (17 nonbasic + 18 basic)
+- **Lands:** 32 (18 nonbasic + 14 basic)
 
 ## Role in the pool
 
@@ -33,105 +33,109 @@ Prosper Treasure-on-exile-cast; impulse draw; Treasure payoffs (Mayhem Devil, St
 
 **Commander (1).** Prosper, Tome-Bound
 
-**Creatures (16).** Academy Manufactor, Birgi, God of Storytelling // Harnfel, Horn of Bounty, Dark Confidant, Goldspan Dragon, Grim Hireling, Mahadi, Emporium Master, Mayhem Devil, Orcish Bowmasters, Pitiless Plunderer, Professional Face-Breaker, Ragavan, Nimble Pilferer, Reckless Fireweaver, Sheoldred, the Apocalypse, Storm-Kiln Artist, Tavern Scoundrel, Xorn
+**Creatures (25).** Academy Manufactor, Birgi, God of Storytelling // Harnfel, Horn of Bounty, Bonehoard Dracosaur, Crime Novelist, Dauthi Voidwalker, Disciple of the Vault, Etali, Primal Storm, Goldspan Dragon, Grim Hireling, Laelia, the Blade Reforged, Magda, Brazen Outlaw, Marionette Apprentice, Marionette Master, Mayhem Devil, Mirkwood Bats, Nadier's Nightblade, Ob Nixilis, Captive Kingpin, Opposition Agent, Professional Face-Breaker, Ragavan, Nimble Pilferer, Reckless Fireweaver, Storm-Kiln Artist, Weftstalker Ardent, Wild-Magic Sorcerer, Xorn
 
-**Planeswalkers (2).** Chandra, Torch of Defiance, Ob Nixilis, the Adversary
+**Planeswalkers (1).** Chandra, Torch of Defiance
 
-**Enchantments (7).** Exquisite Blood, Fable of the Mirror-Breaker // Reflection of Kiki-Jiki, Outpost Siege, Revel in Riches, Sanguine Bond, Sticky Fingers, Valakut Exploration
+**Enchantments (5).** Black Market Connections, Passionate Archaeologist, Rain of Riches, Revel in Riches, Underworld Breach
 
-**Artifacts (10).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Sensei's Divining Top, Sol Ring, Talisman of Indulgence
+**Artifacts (11).** Aetherflux Reservoir, Arcane Signet, Bolas's Citadel, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Sensei's Divining Top, Sol Ring, Talisman of Indulgence, Uba Mask
 
-**Sorceries (13).** Blasphemous Act, Demonic Tutor, Diabolic Intent, Faithless Looting, Feed the Swarm, Jeska's Will, Light Up the Stage, Night's Whisper, Reckless Impulse, Reforge the Soul, Toxic Deluge, Vandalblast, Wheel of Fortune
+**Sorceries (13).** Beseech the Mirror, Blasphemous Act, Demonic Tutor, Feed the Swarm, Hex Magic, Ignite the Future, Jeska's Will, Light Up the Stage, Reckless Impulse, Torment of Hailfire, Toxic Deluge, Vandalblast, Wrenn's Resolve
 
-**Instants (16).** Abrade, Bedevil, Big Score, Bitter Triumph, Cabal Ritual, Chaos Warp, Dark Ritual, Deadly Dispute, Deadly Rollick, Deflecting Swat, Infernal Grasp, Kolaghan's Command, Lightning Bolt, Terminate, Unexpected Windfall, Vampiric Tutor
+**Instants (12).** Bedevil, Chaos Warp, Dark Ritual, Deadly Dispute, Deadly Rollick, Deflecting Swat, Delayed Blast Fireball, Rakdos Charm, Terminate, Tibalt's Trickery, Vampiric Tutor, You Find Some Prisoners
 
-**Lands (35).** Ancient Tomb, Arid Mesa, Badlands, Blood Crypt, Bloodstained Mire, Canyon Slough, Command Tower, Dragonskull Summit, Haunted Ridge, Luxury Suite, Marsh Flats, Polluted Delta, Scalding Tarn, Smoldering Marsh, Sulfurous Springs, Urborg, Tomb of Yawgmoth, Wooded Foothills, 10 Swamp, 8 Mountain
+**Lands (32).** Ancient Tomb, Blazemire Verge, Blightstep Pathway // Searstep Pathway, Blood Crypt, Bloodstained Mire, Bojuka Bog, Command Tower, Dragonskull Summit, Exotic Orchard, Foreboding Ruins, Graven Cairns, Haunted Ridge, Luxury Suite, Shadowblood Ridge, Smoldering Marsh, Sulfurous Springs, Tainted Peak, Treasure Vault, 6 Swamp, 8 Mountain
 
 ## Import list (100)
 
 ```
-1 Abrade
 1 Academy Manufactor
+1 Aetherflux Reservoir
 1 Ancient Tomb
 1 Arcane Signet
-1 Arid Mesa
-1 Ashnod's Altar
-1 Badlands
 1 Bedevil
-1 Big Score
+1 Beseech the Mirror
 1 Birgi, God of Storytelling // Harnfel, Horn of Bounty
-1 Bitter Triumph
+1 Black Market Connections
 1 Blasphemous Act
+1 Blazemire Verge
+1 Blightstep Pathway // Searstep Pathway
 1 Blood Crypt
 1 Bloodstained Mire
+1 Bojuka Bog
 1 Bolas's Citadel
-1 Cabal Ritual
-1 Canyon Slough
+1 Bonehoard Dracosaur
 1 Chandra, Torch of Defiance
 1 Chaos Warp
 1 Command Tower
-1 Dark Confidant
+1 Crime Novelist
 1 Dark Ritual
+1 Dauthi Voidwalker
 1 Deadly Dispute
 1 Deadly Rollick
 1 Deflecting Swat
+1 Delayed Blast Fireball
 1 Demonic Tutor
-1 Diabolic Intent
+1 Disciple of the Vault
 1 Dragonskull Summit
-1 Exquisite Blood
-1 Fable of the Mirror-Breaker // Reflection of Kiki-Jiki
-1 Faithless Looting
+1 Etali, Primal Storm
+1 Exotic Orchard
 1 Feed the Swarm
 1 Fellwar Stone
+1 Foreboding Ruins
 1 Goldspan Dragon
+1 Graven Cairns
 1 Grim Hireling
 1 Haunted Ridge
-1 Infernal Grasp
+1 Hex Magic
+1 Ignite the Future
 1 Jeska's Will
-1 Kolaghan's Command
+1 Laelia, the Blade Reforged
 1 Light Up the Stage
-1 Lightning Bolt
 1 Lightning Greaves
 1 Luxury Suite
-1 Mahadi, Emporium Master
-1 Marsh Flats
+1 Magda, Brazen Outlaw
+1 Marionette Apprentice
+1 Marionette Master
 1 Mayhem Devil
 1 Mind Stone
-1 Night's Whisper
-1 Ob Nixilis, the Adversary
-1 Orcish Bowmasters
-1 Outpost Siege
-1 Pitiless Plunderer
-1 Polluted Delta
+1 Mirkwood Bats
+1 Nadier's Nightblade
+1 Ob Nixilis, Captive Kingpin
+1 Opposition Agent
+1 Passionate Archaeologist
 1 Professional Face-Breaker
 1 Prosper, Tome-Bound
 1 Ragavan, Nimble Pilferer
+1 Rain of Riches
+1 Rakdos Charm
 1 Rakdos Signet
 1 Reckless Fireweaver
 1 Reckless Impulse
-1 Reforge the Soul
 1 Revel in Riches
-1 Sanguine Bond
-1 Scalding Tarn
 1 Sensei's Divining Top
-1 Sheoldred, the Apocalypse
+1 Shadowblood Ridge
 1 Smoldering Marsh
 1 Sol Ring
-1 Sticky Fingers
 1 Storm-Kiln Artist
 1 Sulfurous Springs
+1 Tainted Peak
 1 Talisman of Indulgence
-1 Tavern Scoundrel
 1 Terminate
+1 Tibalt's Trickery
+1 Torment of Hailfire
 1 Toxic Deluge
-1 Unexpected Windfall
-1 Urborg, Tomb of Yawgmoth
-1 Valakut Exploration
+1 Treasure Vault
+1 Uba Mask
+1 Underworld Breach
 1 Vampiric Tutor
 1 Vandalblast
-1 Wheel of Fortune
-1 Wooded Foothills
+1 Weftstalker Ardent
+1 Wild-Magic Sorcerer
+1 Wrenn's Resolve
 1 Xorn
-10 Swamp
+1 You Find Some Prisoners
+6 Swamp
 8 Mountain
 ```

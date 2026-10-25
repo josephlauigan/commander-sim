@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Stax / hatebears with a 
 
 - **Commander:** Heliod, Sun-Crowned
 - **Color identity:** White
-- **Game Changers (5):** Drannith Magistrate, Smothering Tithe, Teferi's Protection, Ancient Tomb, The One Ring
+- **Game Changers (7):** Ancient Tomb, Drannith Magistrate, Enlightened Tutor, Farewell, Smothering Tithe, Teferi's Protection, The One Ring
 - **Combos:** Heliod, Sun-Crowned + Walking Ballista (Heliod gives the Ballista lifelink; every ping gains life, which puts another counter on it: unbounded damage). The commander is half the combo; Recruiter of the Guard finds the Ballista. Karn, the Great Creator + Mycosynth Lattice is a second, lock-style finish.
-- **Lands:** 33 (18 nonbasic + 15 basic)
+- **Lands:** 33 (9 nonbasic + 24 basic)
 
 ## Role in the pool
 
@@ -35,107 +35,98 @@ Static cost increases and one-spell-per-turn limits; Drannith commander/graveyar
 
 **Commander (1).** Heliod, Sun-Crowned
 
-**Creatures (31).** Adeline, Resplendent Cathar, Archon of Emeria, Aven Mindcensor, Drannith Magistrate, Esper Sentinel, Ethersworn Canonist, Giver of Runes, Glowrider, Grand Abolisher, Hushbringer, Knight of the White Orchid, Loran of the Third Path, Luminarch Aspirant, Mentor of the Meek, Mother of Runes, Palace Jailer, Recruiter of the Guard, Restoration Angel, Selfless Spirit, Silent Arbiter, Skyclave Apparition, Solitude, Spirit of the Labyrinth, Thalia, Guardian of Thraben, Thalia, Heretic Cathar, Tithe Taker, Vryn Wingmare, Walking Ballista, Wall of Omens, Weathered Wayfarer, Welcoming Vampire
+**Creatures (30).** Ajani's Pridemate, Archangel of Thune, Archivist of Oghma, Auriok Champion, Aven Mindcensor, Daxos, Blessed by the Sun, Drannith Magistrate, Esper Sentinel, Exemplar of Light, Felidar Sovereign, Giver of Runes, Grand Abolisher, Haliya, Guided by Light, Linden, the Steadfast Queen, Mangara, the Diplomat, Mother of Runes, Ranger of Eos, Ranger-Captain of Eos, Recruiter of the Guard, Serra Ascendant, Soul Warden, Soul's Attendant, Speaker of the Heavens, Sun Titan, Sunscorch Regent, Suture Priest, Triskelion, Voice of the Blessed, Walking Ballista, Weathered Wayfarer
 
-**Planeswalkers (3).** Elspeth, Sun's Champion, Karn, the Great Creator, The Wandering Emperor
+**Planeswalkers (1).** Ajani, Strength of the Pride
 
-**Enchantments (7).** Cast Out, Deafening Silence, Ghostly Prison, Land Tax, Oblivion Ring, Rule of Law, Smothering Tithe
+**Enchantments (9).** Ajani's Welcome, Authority of the Consuls, Blind Obedience, Cleric Class, Deafening Silence, Ghostly Prison, Land Tax, Smothering Tithe, Trouble in Pairs
 
-**Artifacts (15).** Arcane Signet, Coldsteel Heart, Everflowing Chalice, Fellwar Stone, Mind Stone, Mycosynth Lattice, Sensei's Divining Top, Skullclamp, Sol Ring, Sphere of Resistance, Swiftfoot Boots, The One Ring, Thorn of Amethyst, Thought Vessel, Worn Powerstone
+**Artifacts (12).** Aetherflux Reservoir, Altar of the Pantheon, Arcane Signet, Cosmos Elixir, Mind Stone, Oketra's Monument, Pearl Medallion, Pristine Talisman, Sol Ring, The One Ring, The Wind Crystal, Well of Lost Dreams
 
-**Sorceries (5).** Austere Command, Council's Judgment, Idyllic Tutor, Winds of Abandon, Wrath of God
+**Sorceries (4).** Austere Command, Farewell, Fumigate, Wrath of God
 
-**Instants (5).** Flawless Maneuver, Generous Gift, Path to Exile, Swords to Plowshares, Teferi's Protection
+**Instants (10).** Enlightened Tutor, Flawless Maneuver, Generous Gift, Heliod's Intervention, Path to Exile, Reprieve, Silence, Stroke of Midnight, Swords to Plowshares, Teferi's Protection
 
-**Lands (33).** Ancient Tomb, Arid Mesa, Castle Ardenvale, Cavern of Souls, Command Tower, Flooded Strand, Ghost Quarter, Karn's Bastion, Kor Haven, Marsh Flats, Mutavault, Myriad Landscape, Nykthos, Shrine to Nyx, Prismatic Vista, Secluded Steppe, Tectonic Edge, War Room, Windswept Heath, 15 Plains
+**Lands (33).** Ancient Tomb, Buried Ruin, Castle Ardenvale, Eiganjo, Seat of the Empire, Emeria, the Sky Ruin, Hall of Heliod's Generosity, Nykthos, Shrine to Nyx, Radiant Fountain, War Room, 24 Plains
 
 ## Import list (100)
 
 ```
-1 Adeline, Resplendent Cathar
+1 Aetherflux Reservoir
+1 Ajani's Pridemate
+1 Ajani's Welcome
+1 Ajani, Strength of the Pride
+1 Altar of the Pantheon
 1 Ancient Tomb
 1 Arcane Signet
-1 Archon of Emeria
-1 Arid Mesa
+1 Archangel of Thune
+1 Archivist of Oghma
+1 Auriok Champion
 1 Austere Command
+1 Authority of the Consuls
 1 Aven Mindcensor
-1 Cast Out
+1 Blind Obedience
+1 Buried Ruin
 1 Castle Ardenvale
-1 Cavern of Souls
-1 Coldsteel Heart
-1 Command Tower
-1 Council's Judgment
+1 Cleric Class
+1 Cosmos Elixir
+1 Daxos, Blessed by the Sun
 1 Deafening Silence
 1 Drannith Magistrate
-1 Elspeth, Sun's Champion
+1 Eiganjo, Seat of the Empire
+1 Emeria, the Sky Ruin
+1 Enlightened Tutor
 1 Esper Sentinel
-1 Ethersworn Canonist
-1 Everflowing Chalice
-1 Fellwar Stone
+1 Exemplar of Light
+1 Farewell
+1 Felidar Sovereign
 1 Flawless Maneuver
-1 Flooded Strand
+1 Fumigate
 1 Generous Gift
-1 Ghost Quarter
 1 Ghostly Prison
 1 Giver of Runes
-1 Glowrider
 1 Grand Abolisher
+1 Haliya, Guided by Light
+1 Hall of Heliod's Generosity
+1 Heliod's Intervention
 1 Heliod, Sun-Crowned
-1 Hushbringer
-1 Idyllic Tutor
-1 Karn's Bastion
-1 Karn, the Great Creator
-1 Knight of the White Orchid
-1 Kor Haven
 1 Land Tax
-1 Loran of the Third Path
-1 Luminarch Aspirant
-1 Marsh Flats
-1 Mentor of the Meek
+1 Linden, the Steadfast Queen
+1 Mangara, the Diplomat
 1 Mind Stone
 1 Mother of Runes
-1 Mutavault
-1 Mycosynth Lattice
-1 Myriad Landscape
 1 Nykthos, Shrine to Nyx
-1 Oblivion Ring
-1 Palace Jailer
+1 Oketra's Monument
 1 Path to Exile
-1 Prismatic Vista
+1 Pearl Medallion
+1 Pristine Talisman
+1 Radiant Fountain
+1 Ranger of Eos
+1 Ranger-Captain of Eos
 1 Recruiter of the Guard
-1 Restoration Angel
-1 Rule of Law
-1 Secluded Steppe
-1 Selfless Spirit
-1 Sensei's Divining Top
-1 Silent Arbiter
-1 Skullclamp
-1 Skyclave Apparition
+1 Reprieve
+1 Serra Ascendant
+1 Silence
 1 Smothering Tithe
 1 Sol Ring
-1 Solitude
-1 Sphere of Resistance
-1 Spirit of the Labyrinth
-1 Swiftfoot Boots
+1 Soul Warden
+1 Soul's Attendant
+1 Speaker of the Heavens
+1 Stroke of Midnight
+1 Sun Titan
+1 Sunscorch Regent
+1 Suture Priest
 1 Swords to Plowshares
-1 Tectonic Edge
 1 Teferi's Protection
-1 Thalia, Guardian of Thraben
-1 Thalia, Heretic Cathar
 1 The One Ring
-1 The Wandering Emperor
-1 Thorn of Amethyst
-1 Thought Vessel
-1 Tithe Taker
-1 Vryn Wingmare
+1 The Wind Crystal
+1 Triskelion
+1 Trouble in Pairs
+1 Voice of the Blessed
 1 Walking Ballista
-1 Wall of Omens
 1 War Room
 1 Weathered Wayfarer
-1 Welcoming Vampire
-1 Winds of Abandon
-1 Windswept Heath
-1 Worn Powerstone
+1 Well of Lost Dreams
 1 Wrath of God
-15 Plains
+24 Plains
 ```
