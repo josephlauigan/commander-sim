@@ -51,7 +51,7 @@ use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, indestructible, no_damage, pval, threat};
 use crate::engine::zones::{Tokens, add_treasure, die, draw, make_tokens};
 use crate::flow::Res;
-use crate::hooks::{Action, Event, Opt, Registry, Sacrificed, Src};
+use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src, TrigAct, Trigger};
 use crate::ids::{CardId, LandId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::partials::at_once;
@@ -648,9 +648,13 @@ fn ob_key(g: &Game) -> (i64, i64) {
 }
 
 /// Whenever one or more opponents each lose exactly 1 life: a +1/+1 counter, and exile the top card of your library;
-/// until your next end step, you may play it. Run at once to see the batch; the trigger goes on the stack inside.
+/// until your next end step, you may play it. The loss is seen at once (to tell one event from the next); a new event
+/// queues the trigger, which comes back here as the sentinel `Life { p: you, n: 0 }` to resolve.
 fn ob_lose(g: &mut Game, src: Src, q: PlayerId, n: i32) -> Res {
     let o = owner(g, src);
+    if q == o && n == 0 {
+        return ob_resolve(g, src);
+    }
     if q == o || n != 1 || !live(g, src) {
         return Ok(());
     }
@@ -666,19 +670,35 @@ fn ob_lose(g: &mut Game, src: Src, q: PlayerId, n: i32) -> Res {
         g.perm_mut(src).data.set(DataKey::ObBatch, Val::List(nv));
         return Ok(());
     }
-    if trigger_window(g, o, Some(src), "a +1/+1 counter, exile the top card (play it until your next end step)", None)?
-        && live(g, src)
-    {
-        crate::cardcode::put_plus(g, src, 1);
-        if let Some(c) = g.player_mut(o).library.pop() {
-            let pl = g.player(o);
-            let until = if g.active == Some(o) && g.step != Step::End { pl.turns } else { pl.turns + 1 };
-            exile_playable(g, o, c, until);
-            crate::glog!(g, "    {} exiles {} (playable until the next end step)", pname(g, o), cname(g, c));
-        }
-    }
+    let t = Trigger {
+        controller: o,
+        src: Some(src),
+        act: TrigAct::Hook { event: Event::LoseLife, call: Call::Life { p: o, n: 0 } },
+        name: None,
+        known: false,
+        imp: None,
+        cast_etb: false,
+    };
+    crate::engine::stack::queue_triggers(g, vec![t])?;
     let (w, s) = ob_key(g);
     g.perm_mut(src).data.set(DataKey::ObBatch, Val::List(vec![Val::Int(w), Val::Int(s), Val::Player(q)]));
+    Ok(())
+}
+
+fn ob_resolve(g: &mut Game, src: Src) -> Res {
+    let o = owner(g, src);
+    if !trigger_window(g, o, Some(src), "a +1/+1 counter, exile the top card (play it until your next end step)", None)?
+        || !live(g, src)
+    {
+        return Ok(());
+    }
+    crate::cardcode::put_plus(g, src, 1);
+    if let Some(c) = g.player_mut(o).library.pop() {
+        let pl = g.player(o);
+        let until = if g.active == Some(o) && g.step != Step::End { pl.turns } else { pl.turns + 1 };
+        exile_playable(g, o, c, until);
+        crate::glog!(g, "    {} exiles {} (playable until the next end step)", pname(g, o), cname(g, c));
+    }
     Ok(())
 }
 
