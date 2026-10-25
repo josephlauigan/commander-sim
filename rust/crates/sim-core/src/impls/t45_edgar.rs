@@ -930,7 +930,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.etb = Some(groom_etb);
         at_once(c, Event::Etb, true);
         c.as_enters = Some(groom_as_enters);
-        c.dies = Some(groom_dies);
+        c.self_dies = Some(groom_dies);
         c.upkeep = Some(coffin_upkeep);
         r.creature_pt.push(groom_pt);
     }
