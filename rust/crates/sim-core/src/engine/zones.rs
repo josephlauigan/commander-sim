@@ -1065,6 +1065,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         let v = |n: i32| crate::cardcode::vorinclex(g, p, n);
         (v(loyalty.map_or(0, |l| if doubling { l * 2 } else { l })), v(1), v(plus + scales))
     };
+    // --- Tiers 4/5 (heliod-zur): Solemnity: no +1/+1 or -1/-1 counters as it enters
+    let solemn = crate::impls::t45_heliod_zur::solemnity(g);
+    let (v_undying, v_plus) = if solemn { (0, 0) } else { (v_undying, v_plus) };
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
     x.sick = how.sick && !haste;

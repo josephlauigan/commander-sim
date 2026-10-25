@@ -1,35 +1,35 @@
 # Heliod, Sun-Crowned — Mono-White Stax
 
-Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Stax / hatebears with a compact combo.
+Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Life gain engine with light stax and a compact combo.
 
 - **Commander:** Heliod, Sun-Crowned
 - **Color identity:** White
 - **Game Changers (7):** Ancient Tomb, Drannith Magistrate, Enlightened Tutor, Farewell, Smothering Tithe, Teferi's Protection, The One Ring
-- **Combos:** Heliod, Sun-Crowned + Walking Ballista (Heliod gives the Ballista lifelink; every ping gains life, which puts another counter on it: unbounded damage). The commander is half the combo; Recruiter of the Guard finds the Ballista. Karn, the Great Creator + Mycosynth Lattice is a second, lock-style finish.
+- **Combos:** Heliod, Sun-Crowned + Walking Ballista, and Heliod + Triskelion (Heliod gives the pinger lifelink; every ping gains life, which puts the counter back: unbounded damage). The commander is half of both; Recruiter of the Guard and Ranger-Captain of Eos find them. Felidar Sovereign (40 life at your upkeep) and Aetherflux Reservoir (pay 50 life) are alternate kills the life gain feeds.
 - **Lands:** 33 (9 nonbasic + 24 basic)
 
 ## Role in the pool
 
-Stax. Taxes, one-spell-per-turn limits, commander and graveyard locks, and hatebears that slow every other seat, with a two-card kill whose first card is always available in the command zone.
+A life-gain engine. Small incidental gains (Soul Warden, Suture Priest, Daxos, Haliya) are turned into counters, cards and a fast Felidar Sovereign or Aetherflux kill, while a few stax pieces (Drannith Magistrate, Deafening Silence, Authority of the Consuls, Blind Obedience, Ghostly Prison) slow the table. The commander is half of a two-card combo.
 
 ## At the table
 
-- **Plan:** Slows every seat with taxes and limits: Thalia, Guardian of Thraben, Sphere of Resistance, Thorn of Amethyst, Rule of Law, Drannith Magistrate and Archon of Emeria. Protects its board with Mother of Runes, Giver of Runes and Selfless Spirit.
-- **Wins by:** Heliod, Sun-Crowned with Walking Ballista: Heliod gives the Ballista lifelink, each ping gains life, adds a counter, for unbounded damage. Otherwise Adeline, Luminarch Aspirant and Elspeth, Sun's Champion win slowly. Karn, the Great Creator with Mycosynth Lattice is a second lock.
-- **Watch out for:** Walking Ballista once Heliod is on the battlefield. Drannith Magistrate shuts off commanders, and Rule of Law and Deafening Silence cap you to one spell a turn. Recruiter of the Guard finds Ballista. Sweepers and enchantment removal beat the stax pieces.
-- **Interaction:** Swords to Plowshares, Path to Exile, Oblivion Ring, Cast Out, Council's Judgment, Solitude, Skyclave Apparition, Palace Jailer, and sweepers Wrath of God, Austere Command and Winds of Abandon. Teferi's Protection and Flawless Maneuver protect.
+- **Plan:** Gains life every time a creature enters (Soul Warden, Soul's Attendant, Suture Priest, Daxos, Haliya, Authority of the Consuls) or attacks (Linden), and multiplies it with Cleric Class and The Wind Crystal. Heliod, Ajani's Pridemate, Archangel of Thune, Voice of the Blessed, Exemplar of Light and Cleric Class turn each gain into +1/+1 counters; Well of Lost Dreams, Cosmos Elixir, Archivist of Oghma and The One Ring turn it into cards.
+- **Wins by:** Heliod with Walking Ballista or Triskelion (unbounded pings). Felidar Sovereign wins at its controller's upkeep with 40 or more life, the starting total; Aetherflux Reservoir fires once the life is above 50. Otherwise Serra Ascendant, Archangel of Thune, Speaker of the Heavens and the grown lifelinkers beat down.
+- **Watch out for:** Felidar Sovereign on the battlefield (it wins on the next upkeep unless the life drops under 40), Heliod with Ballista or Triskelion, and Aetherflux Reservoir at high life. Authority of the Consuls and Blind Obedience make your creatures enter tapped; Drannith Magistrate shuts off commanders, Deafening Silence caps noncreature spells.
+- **Interaction:** Swords to Plowshares, Path to Exile, Generous Gift, Stroke of Midnight and Heliod's Intervention (X artifacts and enchantments); sweepers Wrath of God, Fumigate, Austere Command and Farewell. Teferi's Protection, Flawless Maneuver, Mother of Runes, Giver of Runes, Reprieve and Silence protect.
 
 ## Strategy
 
-Thalia, Guardian of Thraben, Thalia, Heretic Cathar, Glowrider, Vryn Wingmare, Sphere of Resistance and Thorn of Amethyst tax spells; Rule of Law, Deafening Silence, Archon of Emeria and Ethersworn Canonist cap spells per turn; Drannith Magistrate shuts off commanders and graveyard casting; Grand Abolisher, Aven Mindcensor, Hushbringer and Spirit of the Labyrinth blank interaction, searches, ETBs and extra draws. Mother of Runes, Giver of Runes, Selfless Spirit, Flawless Maneuver and Teferi's Protection keep the board and the combo alive. The kill is Heliod plus Walking Ballista, with Adeline, Luminarch Aspirant, Elspeth and The Wandering Emperor as a fair clock.
+The deck lives on small, repeated life gains: every creature entering under Soul Warden, Soul's Attendant, Suture Priest, Daxos or Haliya, every attack under Linden, every Ajani +1. Cleric Class adds one to each gain and The Wind Crystal doubles it, so a single Soul Warden trigger can be four life. The gains feed counters (Heliod, Ajani's Pridemate, Archangel of Thune, Voice of the Blessed, Cleric Class level 2), cards (Well of Lost Dreams, Cosmos Elixir, Archivist of Oghma off every opposing tutor) and the alternate kills: Felidar Sovereign at 40, Aetherflux Reservoir past 50, Ajani's 0 at 55. Heliod with Walking Ballista or Triskelion ends the game on the spot. Smothering Tithe, Land Tax, Esper Sentinel and The One Ring keep the cards coming; the sweepers reset a board the deck rebuilds quickly.
 
-Built as Low Bracket 4: one creature tutor and Idyllic Tutor rather than a full tutor suite.
+Built as Low Bracket 4: Enlightened Tutor and the creature tutors (Recruiter of the Guard, Ranger-Captain of Eos, Ranger of Eos) rather than a full tutor suite.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Static cost increases and one-spell-per-turn limits; Drannith commander/graveyard casting lock; Thalia/Glowrider taxes; Heliod + Walking Ballista; Karn + Mycosynth Lattice lock; creature tutor (Recruiter of the Guard).
+Life gain events and their "whenever you gain life" triggers (compiled ones fire from engine/life.rs); the gain replacements (Cleric Class plus 1, The Wind Crystal doubling); Heliod + Walking Ballista and Heliod + Triskelion; Felidar Sovereign's upkeep win; Aetherflux Reservoir; Well of Lost Dreams draws; Authority of the Consuls / Blind Obedience enter-tapped replacements; Drannith Magistrate and Deafening Silence. Archivist of Oghma and Haliya are Approximate (search detection by shuffle; Haliya's warp left out).
 
 ## Decklist by type (100)
 

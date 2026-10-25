@@ -1967,9 +1967,7 @@
    "generic": 2,
    "pips": "WW",
    "tags": {
-    "leg": true,
-    "tok": "1",
-    "tokp": "2"
+    "leg": true
    },
    "pow": 0,
    "tgh": 0,
@@ -1984,11 +1982,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "+1: You gain life equal to the number of creatures you control plus the number of planeswalkers you control.",
-    "0: If you have at least 15 life more than your starting life total, exile ~ and each artifact and creature your opponents control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -3460,7 +3455,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -7054,6 +7049,15 @@
    "bomb": 0,
    "dsl": [
     {
+     "type": "static",
+     "static": "enters_tapped",
+     "who": "opponents",
+     "filter": {
+      "type": "creature",
+      "controller": "opp"
+     }
+    },
+    {
      "type": "triggered",
      "effects": [
       {
@@ -7074,9 +7078,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Creatures your opponents control enter tapped."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -20406,23 +20408,9 @@
    "bomb": 0,
    "dsl": [
     {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "counters",
-       "n": 1,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "gain_life",
-     "who": "you"
+     "type": "static",
+     "static": "lifegain_plus",
+     "amount": 1
     }
    ],
    "start_loyalty": null,
@@ -20434,13 +20422,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "If you would gain life, you gain that much life plus 1 instead.",
-    "{3}{W}: Level 2",
-    "{4}{W}: Level 3",
-    "When this Class becomes level 3, return target creature card from your graveyard to the battlefield. You gain life equal to that creature's toughness."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -26218,7 +26201,34 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "other": true
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "dies",
+     "source": "you_creature",
+     "other": true
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -26228,7 +26238,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
     "~'s toughness is equal to your devotion to white."
    ],
@@ -29457,7 +29467,9 @@
    "types": "E",
    "generic": 1,
    "pips": "U",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -29474,11 +29486,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature has shroud."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -57553,7 +57562,9 @@
    "generic": 2,
    "pips": "U",
    "tags": {
-    "rock": "1:C"
+    "rem": "moon",
+    "tgt": "cp",
+    "etb": true
    },
    "pow": 0,
    "tgh": 0,
@@ -57570,10 +57581,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature, land, or planeswalker"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -80906,6 +80915,13 @@
    "bomb": 0,
    "dsl": [
     {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "white_creature",
+     "amount": -1
+    },
+    {
      "type": "triggered",
      "effects": [
       {
@@ -80937,9 +80953,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "White creature spells you cast cost {1} less to cast."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -109592,7 +109606,9 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -109608,12 +109624,8 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "As long as enchanted creature is white, it gets +1/+1 and has lifelink.",
-    "As long as enchanted creature is blue, it gets +1/+1 and can't be blocked."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -112324,6 +112336,19 @@
      "event": "etb",
      "source": "you_creature",
      "other": true
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "lose_life",
+       "n": 1,
+       "who": "event_player",
+       "optional": true
+      }
+     ],
+     "event": "etb",
+     "source": "opp_creature"
     }
    ],
    "start_loyalty": null,
@@ -112337,9 +112362,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a creature an opponent controls enters, you may have that player lose 1 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -118821,6 +118844,11 @@
      "amount": -1
     },
     {
+     "type": "replacement",
+     "replace": "lifegain",
+     "multiplier": 2
+    },
+    {
      "type": "activated",
      "cost": {
       "mana": "4WW",
@@ -118862,9 +118890,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "If you would gain life, you gain twice that much life instead."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

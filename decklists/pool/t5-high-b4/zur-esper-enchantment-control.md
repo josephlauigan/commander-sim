@@ -1,33 +1,33 @@
 # Zur the Enchanter — Esper Control & Oracle
 
-Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Control + compact combo.
+Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Enchantment stax and control with a compact combo.
 
 - **Commander:** Zur the Enchanter
 - **Color identity:** White, Blue, Black
 - **Game Changers (15):** Cyclonic Rift, Demonic Tutor, Drannith Magistrate, Enlightened Tutor, Fierce Guardianship, Force of Will, Grand Arbiter Augustin IV, Mystical Tutor, Narset, Parter of Veils, Necropotence, Opposition Agent, Rhystic Study, Smothering Tithe, Thassa's Oracle, Vampiric Tutor
-- **Combos:** Thassa's Oracle (or Jace, Wielder of Mysteries) + Demonic Consultation / Tainted Pact.
+- **Combos:** Heliod, Sun-Crowned + Walking Ballista (Heliod gives the Ballista lifelink; each ping gains life and puts a counter back: unbounded damage). Solemnity + Phyrexian Unlife: no poison counters, so damage below 0 life can't kill. Thassa's Oracle is in the list without Demonic Consultation or Tainted Pact: it wins only with a near-empty library.
 - **Lands:** 33 (22 nonbasic + 11 basic)
 
 ## Role in the pool
 
-Interaction density plus an instant win. Tests whether your decks can win through a wall of counters and graveyard hate aimed straight at Sephiroth.
+Enchantment-based stax and control. Zur fetches the lock pieces and card engines straight onto the battlefield; the counter suite protects them, and Heliod with Walking Ballista ends the game.
 
 ## At the table
 
-- **Plan:** Plays draw-go with counters and cheap removal while Zur the Enchanter attacks to fetch Necropotence, Rhystic Study, Propaganda, Ghostly Prison or an Aura like Ethereal Armor straight onto the battlefield.
-- **Wins by:** Thassa's Oracle with Demonic Consultation or Tainted Pact, found by Demonic Tutor, Vampiric Tutor, Mystical Tutor or Necropotence. Zur with armor Auras is a slower clock.
-- **Watch out for:** A sudden win through Thassa's Oracle: it holds Force of Will, Mana Drain and Fierce Guardianship to protect it. Rest in Peace and Dauthi Voidwalker shut off graveyards. Rhystic Study and Smothering Tithe tax you; Propaganda and Ghostly Prison tax attacks.
-- **Interaction:** Force of Will, Force of Negation, Mana Drain, Counterspell, Fierce Guardianship, Pact of Negation, Flusterstorm, Swan Song, Swords to Plowshares, Path to Exile, Vindicate, Council's Judgment, Snuff Out, Oblivion Ring, Toxic Deluge and Cyclonic Rift.
+- **Plan:** Zur the Enchanter attacks and puts an enchantment with mana value 3 or less onto the battlefield: Necropotence, Rhystic Study, Mystic Remora, Smothering Tithe, Rule of Law, Propaganda, Ghostly Prison, Rest in Peace, Solemnity, Blind Obedience, or an armor Aura (Ethereal Armor, Steel of the Godhead, Diplomatic Immunity) that makes Zur a hard-to-answer clock. Estrid's Invocation and Copy Enchantment copy the best engine.
+- **Wins by:** Heliod, Sun-Crowned with Walking Ballista, found by Demonic Tutor, Vampiric Tutor, Mystical Tutor, Enlightened Tutor or Idyllic Tutor. Otherwise an armored, unblockable lifelinking Zur with Greater Auramancy and Lightning Greaves around it.
+- **Watch out for:** Rule of Law and Eidolon of Rhetoric cap everyone at one spell a turn; Grand Arbiter Augustin IV, Propaganda and Ghostly Prison tax you; Drannith Magistrate, Opposition Agent, Narset and Grand Abolisher shut off commanders, tutors, extra draws and your instant-speed answers. Solemnity stops counters (and +1/+1-counter strategies); Rest in Peace stops graveyards. Heliod with Ballista is a sudden win.
+- **Interaction:** Force of Will, Fierce Guardianship, Mana Drain, Counterspell, Dovin's Veto, Swan Song and An Offer You Can't Refuse; Swords to Plowshares, Path to Exile, Darksteel Mutation, Imprisoned in the Moon, Grasp of Fate and Aura of Silence; Cyclonic Rift, Supreme Verdict, Toxic Deluge and Winds of Rath.
 
 ## Strategy
 
-Zur attacks and fetches an enchantment with MV 3 or less straight onto the battlefield: Necropotence, Rhystic Study, Mystic Remora, Propaganda, Ghostly Prison, Rest in Peace, or an armor Aura to make Zur a real clock. The deck plays draw-go with a deep counterspell suite and cheap removal, and wins on the spot with Thassa's Oracle + Demonic Consultation or Tainted Pact once Necropotence or the tutors assemble it. Rest in Peace and Dauthi Voidwalker shut off graveyard strategies.
+Zur attacks every turn behind Lightning Greaves or Swiftfoot Boots and fetches the enchantment the moment calls for: a card engine (Necropotence, Rhystic Study, Mystic Remora), a lock (Rule of Law, Solemnity, Blind Obedience, Propaganda, Ghostly Prison, Rest in Peace) or an armor Aura that turns Zur into a lifelinking, unblockable threat under Greater Auramancy. Eidolon of Rhetoric, Grand Arbiter Augustin IV, Narset and Opposition Agent tax and blank the other seats while the counter suite holds the line. The tutors assemble Heliod and Walking Ballista for the kill.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Zur's attack trigger (enchantment MV ≤ 3 onto battlefield); Necropotence card draw; Thassa's Oracle + Consultation/Pact; free counterspells; Rest in Peace / Dauthi graveyard exile.
+Zur's attack trigger (enchantment MV ≤ 3 onto the battlefield); Necropotence card draw; Heliod + Walking Ballista; free counterspells; the spell limits (Rule of Law, Eidolon of Rhetoric); Solemnity's counter lock (with Phyrexian Unlife); the armor Auras (Ethereal Armor, Steel of the Godhead, Diplomatic Immunity); Rest in Peace graveyard exile. Delney, Estrid's Invocation and Imprisoned in the Moon are Approximate (see data/audit.toml).
 
 ## Decklist by type (100)
 

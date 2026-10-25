@@ -698,6 +698,9 @@ fn run(
             }
         }
         "counters" => {
+            if crate::impls::t45_heliod_zur::solemnity(g) {
+                return Ok(()); // --- Tiers 4/5 (heliod-zur): Solemnity
+            }
             let k = n(g, ctx) * counter_mult(g, p);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
@@ -1439,6 +1442,13 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
         }
         "landfall" if kw.player == Some(q) => out.push(base),
+        // --- Tiers 4/5 (heliod-zur): "whenever you gain life" (Ajani's Pridemate, Voice of the Blessed, Archangel of
+        // Thune): fired by engine/life.rs `gain`, once per life-gain event
+        "gain_life" => match w {
+            Some("you") | None if kw.player == Some(q) => out.push(base),
+            Some("opponent") if kw.player.is_some_and(|x| x != q) => out.push(DslCtx { event_player: kw.player, ..base }),
+            _ => {}
+        },
         _ => {}
     }
     out
@@ -1702,6 +1712,10 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "black" => d.colors.has('B'),
             "red" => d.colors.has('R'),
             "green" => d.colors.has('G'),
+            // --- Tiers 4/5 (heliod-zur): "white creature spells you cast cost {1} less" (Oketra's Monument)
+            s if s.ends_with("_creature") => {
+                d.creature && s.split('_').next().and_then(color_letter).is_some_and(|ch| d.colors.has(ch))
+            }
             _ => true,
         };
         if ok {
@@ -2328,4 +2342,53 @@ pub fn activate_borrowed(g: &mut Game, p: PlayerId, src: PermId, from: CardId, i
     }
     execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
     Ok(true)
+}
+
+// --- Tiers 4/5 (heliod-zur)
+/// a colour word's letter ("white" -> 'W')
+fn color_letter(w: &str) -> Option<char> {
+    match w {
+        "white" => Some('W'),
+        "blue" => Some('U'),
+        "black" => Some('B'),
+        "red" => Some('R'),
+        "green" => Some('G'),
+        _ => None,
+    }
+}
+
+/// the life p gains instead of n: "you gain that much life plus N instead" (Cleric Class) first, then "twice that much
+/// life instead" (The Wind Crystal, Boon Reflection): the player orders the replacements, and adding before doubling
+/// gains the most
+pub fn lifegain_mod(g: &Game, p: PlayerId, n: i32) -> i32 {
+    if n <= 0 || !active(g) {
+        return n;
+    }
+    let mut n = n;
+    for (q, _, ab, i) in statics(g, "lifegain_plus") {
+        if let Ability::Static { amount, .. } = &ab[i]
+            && q == p
+        {
+            n += amount.unwrap_or(1);
+        }
+    }
+    for (q, _, ab, i) in statics(g, "lifegain") {
+        if let Ability::Replacement { multiplier, .. } = &ab[i]
+            && q == p
+        {
+            n *= multiplier.unwrap_or(2).max(1);
+        }
+    }
+    n
+}
+
+/// "creatures your opponents control enter tapped" (Authority of the Consuls): does m, entering under p's control,
+/// enter tapped? (None: a Treasure / Food / Clue, never a creature)
+pub fn opp_enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
+    let Some(m) = m else { return false };
+    active(g)
+        && g.is_creature(m)
+        && statics(g, "enters_tapped").any(|(q, src, ab, i)| {
+            matches!(&ab[i], Ability::Static { who, .. } if who.as_deref() == Some("opponents")) && q != p && src != m
+        })
 }

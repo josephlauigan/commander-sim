@@ -7500,6 +7500,7 @@ status = "Full"
 note = "you and the opponent with the weakest board each draw three cards"
 
 ["Angel of Vitality"]
+dsl = [] # --- Tiers 4/5 (heliod-zur): the compiled "plus 1" would add to t0_giada::gain_bonus
 status = "Full"
 note = "flying; every life gain is +1 (engine/life.rs gain); +2/+2 at 25 or more life"
 
@@ -9416,3 +9417,26 @@ pool_remove_tags = ["tok", "tokp"] # one Soldier per nontoken creature, not one:
 
 ["Sundering Eruption // Volcanic Fissure"]
 pool_remove_tags = ["rem", "tgt"] # it destroys a land, not a nonland permanent: cast by its own priority
+
+# --- Tiers 4/5 (heliod-zur): hand-written in rust/crates/sim-core/src/impls/t45_heliod_zur.rs (status notes in data/audit.toml)
+["Ajani, Strength of the Pride"]
+tags = "leg"
+dsl = [] # the walker framework runs its three abilities (the autotagger's token tag made a token as it entered)
+
+["Cleric Class"]
+dsl = [{ type = "static", static = "lifegain_plus", amount = 1 }] # level 1 only: levels 2 and 3 are hand-written
+
+["Diplomatic Immunity"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Steel of the Godhead"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Imprisoned in the Moon"]
+types = "E"
+tags = "rem=moon tgt=cp etb"
+dsl = []

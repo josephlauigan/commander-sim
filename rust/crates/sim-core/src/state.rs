@@ -188,6 +188,8 @@ pub enum DataKey {
     Soulbond,
     /// t45-prosper: Ob Nixilis, Captive Kingpin's last batch of life losses (a `Val::List`: work, stack pushes, the players)
     ObBatch,
+    /// --- Tiers 4/5 (heliod-zur): Archivist of Oghma: library searches by its opponents still to answer
+    T45Search,
 }
 
 /// A value in per-card state.

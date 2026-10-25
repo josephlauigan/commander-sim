@@ -150,6 +150,9 @@ pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
 
 /// put `n` +1/+1 counters (negative: -1/-1) on m, as its owner would (Vorinclex)
 pub fn put_plus(g: &mut Game, m: PermId, n: i32) {
+    if crate::impls::t45_heliod_zur::solemnity(g) {
+        return; // --- Tiers 4/5 (heliod-zur): Solemnity
+    }
     let n = vorinclex(g, g.perm(m).owner, n);
     g.perm_mut(m).plus += n;
     crate::impls::t0_captain::counters_put(g, m, n); // Captain Marvel copies counters
@@ -524,6 +527,7 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     crate::impls::rules::evasion_blocked(g, b, a)
         || crate::impls::bulk_white::exit_blocked(g, b, a)
         || crate::impls::t45_winota::evasion_blocked(g, b, a) // --- Tiers 4/5 (winota): Sundering Eruption
+        || crate::impls::t45_heliod_zur::delney_blocked(g, b, a) // --- Tiers 4/5 (heliod-zur): Delney
 }
 
 /// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)
