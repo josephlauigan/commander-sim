@@ -98,6 +98,12 @@ pub enum DataKey {
     /// --- Tiers 4/5 (chulane-kinnan): a creature card on the battlefield that is not a creature (Enduring Vitality
     /// returned as an enchantment)
     NotCreature,
+    /// --- Tiers 4/5 (edgar): Clavileño made it a Demon with "when this creature dies, draw a card and create a tapped
+    /// 4/3 Vampire Demon"
+    DemonGift,
+    /// --- Tiers 4/5 (edgar): bloodline counters (Edgar Markov's Coffin); the city's blessing (Twilight Prophet)
+    Bloodline,
+    Blessing,
     Flip,
     Flipped,
     /// a Wizard token made by Kuja, Genome Sorcerer: it pings when its controller casts a noncreature spell

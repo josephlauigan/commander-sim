@@ -827,6 +827,35 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^have (that player|target player|target opponent|each opponent) lose (\d+|x) life$", |m| {
         Some(eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
     }),
+    // --- Tiers 4/5 (edgar)
+    // "put a +1/+1 counter on each Vampire you control" (Edgar Markov, Cordial Vampire, Indulgent Aristocrat), "each
+    // other Vampire you control", "each attacking creature you control" (Drana, Liberator of Malakir)
+    (
+        r"^put (a|an|one|two|three|\d+) \+1/\+1 counters? on each (other )?(attacking )?([a-z]+) (?:creature )?you control$",
+        |m| {
+            let t = singular(m.gs(4));
+            let mut f = obj! {"type" => "creature", "controller" => "you"};
+            if m.g(2).is_some() {
+                f.set("other", true);
+            }
+            if t != "creature" {
+                f.set("subtype", t.as_str());
+            }
+            if m.g(3).is_some() {
+                f.set("attacking", true);
+            }
+            Some(eff(obj! {"do" => "counters", "n" => n_(m.gs(1)), "what" => obj!{"sel" => "all", "filter" => f}}))
+        },
+    ),
+    // "each opponent loses life equal to the number of Vampires you control" (Malakir Bloodwitch): a count the
+    // interpreter names, else nothing
+    (r"^(each opponent|target opponent|target player) loses life equal to (?:the number of )?(.+)$", |m| {
+        let n = num_expr(m.gs(2));
+        if n == J::from("X") {
+            return None;
+        }
+        Some(eff(obj! {"do" => "lose_life", "n" => n, "who" => who(m.gs(1))}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -1413,6 +1442,12 @@ pub fn strip_name(text: &str, name: &str) -> String {
         if py::len(nm) > 3 {
             t = t.replace(nm, "~");
         }
+    }
+    // --- Tiers 4/5 (edgar): a legend's first name in its own trigger ("Whenever Edgar attacks": Edgar Markov)
+    let first = py::first(front, " ");
+    if py::len(first) > 3 && first != front && !front.contains(',') {
+        let pat = format!(r"\b(When|Whenever) {} (attacks|dies|deals)\b", fancy_regex::escape(first));
+        t = crate::re::sub_fn(&pat, &t, |m| format!("{} ~ {}", m.gs(1), m.gs(2)));
     }
     sub(r"(?i)\bthis (creature|spell|artifact|enchantment|land|permanent|card|planeswalker|equipment|aura)\b", "~", &t)
 }

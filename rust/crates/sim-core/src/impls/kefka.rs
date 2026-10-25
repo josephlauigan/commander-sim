@@ -218,7 +218,7 @@ pub fn discarded(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
             madness_cast(g, q, c, gn, pips)?;
         }
     }
-    Ok(())
+    crate::impls::t45_edgar::madness(g, q, cards) // --- Tiers 4/5 (edgar): Markov Baron
 }
 
 /// Ichor Slick's madness: -3/-3 on the best creature it helps with; no target worth it, no cast

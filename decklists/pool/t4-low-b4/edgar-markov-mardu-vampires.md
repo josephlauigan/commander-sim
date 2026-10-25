@@ -5,24 +5,29 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Vampire tribal aggro.
 - **Commander:** Edgar Markov
 - **Color identity:** White, Black, Red
 - **Game Changers (5):** Bolas's Citadel, Demonic Tutor, Smothering Tithe, Teferi's Protection, Vampiric Tutor
-- **Combos:** (to be described)
+- **Combos:** A life-gain drain and a life-loss gain loop for any life change: Sanguine Bond, Vito, Thorn of the Dusk Rose or Marauding Blight-Priest with Exquisite Blood or Bloodthirsty Conqueror (Demonic, Vampiric and Diabolic Intent find the missing half). Bloodletter of Aclazotz doubles every point of it on its own turn.
 - **Lands:** 35 (22 nonbasic + 13 basic)
 
 ## Role in the pool
 
-(to be described)
+Whether your decks survive a wide Vampire board that grows every turn from turn two, and whether they can answer a two-card drain combo that wins from any life change.
 
 ## At the table
 
-(to be described)
+- **Plan:** Edgar Markov's eminence works from the command zone: every Vampire spell cast makes a 1/1 Vampire, so the board goes wide before Edgar is cast. Cheap Vampires (Knight of the Ebon Legion, Indulgent Aristocrat, Viscera Seer, Vampire Socialite, Cordial Vampire) come down first; the lords (Captivating Vampire, Markov Baron, Legion Lieutenant, Stromkirk Captain, Edgar, Charmed Groom, Vanquisher's Banner) and Shared Animosity make the swarm lethal. Edgar's attack trigger, Drana, Cordial Vampire and Blade of the Bloodchief stack +1/+1 counters; Anointed Procession doubles the tokens and Bloodline Keeper makes a 2/2 flyer a turn.
+- **Wins by:** Combat with a pumped, wide board (first strike from Edgar and Drana); the drain loops (Sanguine Bond, Vito or Blight-Priest with Exquisite Blood or Bloodthirsty Conqueror); Blood Artist, Cruel Celebrant and Elenda draining as creatures die; Bloodletter of Aclazotz doubling all of it on its own turn; Twilight Prophet and Malakir Bloodwitch draining in chunks.
+- **Watch out for:** Edgar in the command zone: removing him on the battlefield does not stop the tokens. Captivating Vampire (tap five Vampires) and New Blood steal your best creature. Olivia's Wrath shrinks every non-Vampire creature by the Vampire count, and Damn overloaded wipes the board. Bolas's Citadel and Phyrexian Arena refill the hand; Sorin, Imperious Bloodlord puts a big Vampire into play from hand.
+- **Interaction:** Swords to Plowshares, Path to Exile, Anguished Unmaking, Damn, Olivia's Wrath, Ruinous Ultimatum, Bojuka Bog; Teferi's Protection and Boros Charm protect the board. No counterspells; Cavern of Souls makes its Vampires uncounterable.
 
 ## Strategy
 
-(to be described)
+Cast cheap Vampires while Edgar sits in the command zone, so each spell is two bodies, then cast Edgar (haste, first strike) and attack: every attack puts a counter on every Vampire. Lords, Shared Animosity and the counter engines turn the token swarm into lethal damage by turns six to eight; sacrifice outlets (Viscera Seer, Phyrexian Altar, Indulgent Aristocrat, Village Rites) and the death drains (Blood Artist, Cruel Celebrant) turn a wipe into damage. The tutors assemble a drain loop when combat stalls.
 
 ## Sim modeling notes
 
-(to be described)
+Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
+
+Edgar Markov's eminence from the command zone and his attack counters; the lords and Shared Animosity; the counter engines (Cordial Vampire, Drana, Blade of the Bloodchief, Indulgent Aristocrat, Vampire Socialite, Knight of the Ebon Legion); the drain loops (Sanguine Bond, Vito or Marauding Blight-Priest with Exquisite Blood or Bloodthirsty Conqueror) in the combo catalogue; Bloodletter of Aclazotz's doubling; the steals (Captivating Vampire, New Blood) and the one-sided Olivia's Wrath; Damn's overload; Sorin's three abilities; Emeritus of Woe's prepared Demonic Tutor. Left Approximate: Edgar, Charmed Groom (the Coffin is not an artifact for removal), New Blood (the stolen creature becomes a Vampire; the rest of its text is unchanged), Twilight Prophet (the city's blessing is kept on the Prophet), Voldaren Estate (its 1 life is paid whenever it taps for a Vampire spell).
 
 ## Decklist by type (100)
 

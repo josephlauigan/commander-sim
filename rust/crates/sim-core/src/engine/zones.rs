@@ -825,6 +825,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     if creature && g.perm(m).data.get(DataKey::Rabid) == Some(&Val::Stamp(g.turn_stamp())) {
         crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
     }
+    if creature && g.perm(m).data.truthy(DataKey::DemonGift) {
+        crate::impls::t45_edgar::demon_dies(g, m)?; // --- Tiers 4/5 (edgar): Clavileño's gift
+    }
     if creature && g.players.iter().any(|pl| pl.emblems.contains(&"seph")) {
         cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
     }

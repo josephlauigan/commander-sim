@@ -776,7 +776,7 @@ fn reveler_drain(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-fn blood_rummage(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn blood_rummage(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
     if g.player(p).bloods == 0 || g.player(p).hand.is_empty() || !can_pay(g, p, 1, "", false) {
         return Ok(false);
     }

@@ -9450,3 +9450,19 @@ dsl = []
 types = "E"
 tags = "rem=moon tgt=cp etb"
 dsl = []
+
+# --- Tiers 4/5 (edgar): hand-written in rust/crates/sim-core/src/impls/t45_edgar.rs (status notes in data/audit.toml)
+["Twilight Prophet"]
+dsl = [] # the upkeep reveal and drain are hand-written with ascend (the compiled drain ran without the blessing)
+
+["Edgar, Charmed Groom // Edgar Markov's Coffin"]
+dsl = [] # the anthem is hand-written (creature_pt) so the Coffin face has none
+
+["Sorin, Imperious Bloodlord"]
+dsl = [] # the walker framework runs its three abilities (the compiled +1 would run twice)
+
+["Forerunner of the Legion"]
+dsl = [] # the compiled enter search found any card; the Vampire search and the +1/+1 trigger are hand-written
+
+["Damn"]
+add_tags = ["noregen"] # "a creature destroyed this way can't be regenerated" (the overload is hand-written)

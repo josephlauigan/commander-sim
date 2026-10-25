@@ -23475,7 +23475,27 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you",
+         "subtype": "vampire"
+        }
+       }
+      }
+     ],
+     "event": "dies",
+     "source": "any_creature"
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -23485,10 +23505,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ or another creature dies, put a +1/+1 counter on each Vampire you control."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -26084,7 +26102,8 @@
    "pips": "BB",
    "tags": {
     "rem": "destroy",
-    "tgt": "c"
+    "tgt": "c",
+    "noregen": true
    },
    "pow": 0,
    "tgh": 0,
@@ -32550,7 +32569,27 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you",
+         "attacking": true
+        }
+       }
+      }
+     ],
+     "event": "combat_damage",
+     "source": "self"
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "first strike",
@@ -32564,10 +32603,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever ~ deals combat damage to a player, put a +1/+1 counter on each attacking creature you control."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -33915,14 +33952,32 @@
    "tags": {
     "leg": true,
     "pow": "4",
-    "haste": true,
-    "tok": "1",
-    "tokp": "1"
+    "haste": true
    },
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you",
+         "subtype": "vampire"
+        }
+       }
+      }
+     ],
+     "event": "attack",
+     "source": "self"
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "eminence",
@@ -33937,9 +33992,9 @@
    "ward": 0,
    "identity": "BRW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
-    "Whenever Edgar attacks, put a +1/+1 counter on each Vampire you control."
+    "Eminence — Whenever you cast another Vampire spell, if Edgar is in the command zone or on the battlefield, create a 1/1 black Vampire creature token."
    ],
    "derived": {
     "cmc": 6,
@@ -33969,20 +34024,7 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "anthem",
-     "filter": {
-      "type": "creature",
-      "controller": "you",
-      "other": true,
-      "subtype": "vampire"
-     },
-     "pow": 1,
-     "tgh": 1
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "transform"
@@ -33995,10 +34037,8 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ dies, return it to the battlefield transformed under its owner's control."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -44346,23 +44386,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {},
-       "to": "top",
-       "n": 1,
-       "tapped": false,
-       "optional": true
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -44373,10 +44397,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever another Vampire you control enters, target creature gets +1/+1 until end of turn."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -59229,7 +59251,31 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "2",
+      "sac": "creature"
+     },
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you",
+         "subtype": "vampire"
+        }
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "lifelink"
@@ -59242,10 +59288,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "{2}, Sacrifice a creature: Put a +1/+1 counter on each Vampire you control."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -71985,6 +72029,11 @@
      "type": "triggered",
      "effects": [
       {
+       "do": "lose_life",
+       "n": "type_you:vampire",
+       "who": "each_opponent"
+      },
+      {
        "do": "gain_life",
        "n": "last_lost",
        "who": "you"
@@ -72008,9 +72057,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.   [partly: each opponent loses life equal to the number of vampires you control]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -108766,38 +108813,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "lifelink",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "deathtouch",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -108807,14 +108823,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "if it's a vampire, put a +1/+1 counter on it",
-    "sacrifice a vampire",
-    "when you do, ~ deals 3 damage to any target and you gain 3 life",
-    "when you do, ~ deals 3 damage to any target and you gain 3 life",
-    "put a vampire creature card from your hand onto the battlefield"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -126104,26 +126114,7 @@
    "pow": 2,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "lose_life",
-       "n": "X",
-       "who": "each_opponent"
-      },
-      {
-       "do": "gain_life",
-       "n": "X",
-       "who": "you",
-       "per_opponent": false
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "ascend",
@@ -126137,11 +126128,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Ascend",
-    "At the beginning of your upkeep, if you have the city's blessing, reveal the top card of your library and put it into your hand. Each opponent loses X life and you gain X life, where X is that card's mana value.   [partly: if you have the city's blessing, reveal the top card of your library and put it into your hand]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
