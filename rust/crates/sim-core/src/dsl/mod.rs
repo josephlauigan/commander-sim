@@ -789,6 +789,16 @@ fn run(
         "sacrifice" => {
             let mut f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
             f.controller = None;
+            if f.kind.as_deref() == Some("land") {
+                // --- Tier 3 (korvold): "each player sacrifices a land of their choice" (Smallpox): lands are not
+                // permanents here, each player gives up its least useful one
+                for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                    for _ in 0..num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src) {
+                        crate::impls::t3_korvold::sac_worst_land(g, q)?;
+                    }
+                }
+                return Ok(());
+            }
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
                 for _ in 0..num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src) {
                     let cs: Vec<PermId> = g
@@ -1180,6 +1190,8 @@ pub struct Fired {
     pub attackers: Vec<PermId>,
     pub defender: Option<PlayerId>,
     pub attacker: Option<PermId>,
+    /// --- Tier 3 (korvold): the combat damage dealt ("create that many Treasure tokens": X in the trigger)
+    pub dmg: Option<i32>,
 }
 
 /// An event happened: every compiled triggered ability that cares puts a trigger on the queue. Python's `dsl.fire`.
@@ -1338,7 +1350,12 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
         }
         "combat_damage" => {
             let m = kw.attacker;
-            let ctx = DslCtx { event_player: kw.defender, event_perm: m, ..base };
+            let mut ctx = DslCtx { event_player: kw.defender, event_perm: m, ..base };
+            if let Some(d) = kw.dmg {
+                // --- Tier 3 (korvold): "that many" is the damage dealt
+                ctx.x = d;
+                ctx.x_default = false;
+            }
             match s {
                 Some("self") if m == Some(src) => out.push(ctx),
                 Some("you_creature") if m.is_some_and(|m| g.perm(m).owner == q) => {

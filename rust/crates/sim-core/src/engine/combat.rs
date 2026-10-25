@@ -780,7 +780,12 @@ fn resolve_combat_inner(
                     *tot += dmg;
                     crate::impls::tymna_cards::toxic_hit(g, a, d); // Skrelv, Mite tokens, toxic granted by Skrelv
                     if g.dsl_on {
-                        let fired = crate::dsl::Fired { attacker: Some(a), defender: Some(d), ..Default::default() };
+                        let fired = crate::dsl::Fired {
+                            attacker: Some(a),
+                            defender: Some(d),
+                            dmg: Some(dmg),
+                            ..Default::default()
+                        };
                         crate::dsl::fire(g, "combat_damage", fired)?;
                     }
                     if !g.hooks.is_empty() {
@@ -969,6 +974,13 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         if !g.hooks.is_empty() {
             // beginning of combat, every player's combat, before attackers (Sting, the Glinting Dagger)
             fire_trigger(g, Event::EachCombat, Call::Player { p })?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+        }
+        if g.player(p).emblems.contains(&"liliana_waker") {
+            // Liliana, Waker of the Dead's emblem: a creature card from a graveyard, with haste (Tier 3 Tergrid)
+            crate::impls::t3_korvold::liliana_emblem(g, p)?;
             if g.over || !g.player(p).alive {
                 return Ok(());
             }

@@ -1224,6 +1224,9 @@ fn protect_main(
         if key == "sephfs" && crate::impls::sephfs_cards::presumed_protect(g, owner, m, kind)? {
             return Ok(false); // Presumed Dead: the removal goes through, the creature comes back (suspected)
         }
+        if crate::impls::t3_korvold::rebirth_protect(g, owner, m, kind)? {
+            return Ok(false); // Malakir Rebirth (Tier 3 Tergrid): the removal goes through, the creature comes back tapped
+        }
         if matches!(key, "thrasios" | "kraum")
             && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)?
         {
