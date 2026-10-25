@@ -35,6 +35,9 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
     if t.has(Tag::F) {
         return true;
     }
+    if crate::impls::t12_windgrace::lands_enter_untapped(g, p) {
+        return false; // --- Tiers 1/2 (windgrace): Spelunking
+    }
     if !matches!(&*d.name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest" | "Wastes")
         && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])
     {

@@ -120,6 +120,8 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// --- Tiers 1/2 (windgrace): ice counters removed from Dark Depths (it enters with ten)
+    IceRemoved,
     /// Palantír of Orthanc's influence counters
     Influence,
     /// (player, their turn count): indestructible until that player's next turn
@@ -1587,6 +1589,8 @@ impl Game {
     }
 
     pub fn add_land(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
+        // --- Tiers 1/2 (windgrace): Spelunking, "lands you control enter untapped"
+        let tapped = tapped && !crate::impls::t12_windgrace::lands_enter_untapped(self, p);
         let id = LandId(self.lands.len() as u32);
         self.lands.push(Land { id, cd, owner: p, tapped, data: PermData::default(), on_bf: true });
         self.player_mut(p).lands.push(id);
