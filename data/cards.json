@@ -24911,7 +24911,8 @@
           "what": {
            "sel": "all",
            "filter": {
-            "type": "creature"
+            "type": "creature",
+            "subtype": "dragon"
            }
           }
          }
@@ -24922,7 +24923,8 @@
           "what": {
            "sel": "all",
            "filter": {
-            "type": "creature"
+            "type": "creature",
+            "subtype": "non-dragon"
            }
           }
          }
@@ -71455,7 +71457,9 @@
      "effects": [
       {
        "do": "search",
-       "filter": {},
+       "filter": {
+        "subtype": "dragon"
+       },
        "to": "hand",
        "n": 1,
        "tapped": false
@@ -88959,7 +88963,8 @@
        "what": {
         "sel": "target",
         "filter": {
-         "type": "creature"
+         "type": "creature",
+         "subtype": "non-dragon"
         },
         "upto": false
        }
@@ -99170,7 +99175,8 @@
       {
        "do": "search",
        "filter": {
-        "type": "creature"
+        "type": "creature",
+        "subtype": "dragon"
        },
        "to": "battlefield",
        "n": 1,

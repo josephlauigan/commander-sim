@@ -113,7 +113,7 @@ fn urzas_incubator_and_morophon_reduce_the_chosen_type() {
     assert_eq!(cost_of(&g, P0, card(&g, "Birds of Paradise")), (0, "G".into()));
     let mor = perm(&mut g, P0, "Morophon, the Boundless");
     assert_eq!(g.perm(mor).data.get(DataKey::Ctype), Some(&Val::Str("dragon")));
-    assert_eq!(cost_of(&g, P0, gold), (1, String::new()), "{{W}}{{U}}{{B}}{{R}}{{G}} less: both red pips go");
+    assert_eq!(cost_of(&g, P0, gold), (1, "R".into()), "{{W}}{{U}}{{B}}{{R}}{{G}} less: one of the two red pips");
     let ur = card(&g, u::UR_DRAGON);
     assert_eq!(cost_of(&g, P0, ur), (2, String::new()), "five colours off, {{2}} off the Incubator, tax 0");
     // other creatures of the chosen type get +1/+1
@@ -475,4 +475,22 @@ fn roaming_throne_doubles_triggers_of_the_chosen_type() {
     perm(&mut g, P0, "Lathliss, Dragon Queen");
     perm(&mut g, P0, "Ancient Gold Dragon");
     assert_eq!(tokens(&g, P0).len(), 2);
+}
+
+#[test]
+fn lathliss_pumps_dragons_before_an_open_attack() {
+    let mut g = tbl();
+    let l = perm(&mut g, P0, "Lathliss, Dragon Queen");
+    let gold = perm(&mut g, P0, "Goldspan Dragon");
+    lands(&mut g, P0, "Mountain", 6, false);
+    let f = imp(&g, "Lathliss, Dragon Queen").options.unwrap();
+    assert!(f(&mut g, l, P0, None).unwrap().is_empty(), "before combat only");
+    hand(&mut g, P0, &["Ancient Copper Dragon"]);
+    assert!(f(&mut g, l, P0, Some(false)).unwrap().is_empty(), "a Dragon to cast first");
+    g.player_mut(P0).hand.clear();
+    let o = f(&mut g, l, P0, Some(false)).unwrap().pop().expect("the spare mana pumps");
+    assert!(run(&mut g, o, P0));
+    assert_eq!(sim_core::engine::values::epow(&g, gold), 4 + 2, "{{1}}{{R}} twice, two lands kept");
+    assert_eq!(sim_core::engine::values::epow(&g, l), 6 + 2);
+    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2);
 }

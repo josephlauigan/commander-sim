@@ -237,6 +237,7 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
         let ok = match st {
             "warrior" => x.warrior || has_type(g, m, "warrior"),
             "commander" => x.is_cmd, // "commander creatures you control" (Bastion Protector)
+            s if s.starts_with("non-") => !has_type(g, m, &s[4..]), // --- Tiers 4/5 (urdragon): Crux of Fate
             _ => has_type(g, m, st),
         };
         if !ok {

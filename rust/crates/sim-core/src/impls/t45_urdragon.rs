@@ -21,8 +21,8 @@
 //!   to the command zone at the next end step (turn::end_step, `courser_return`).
 //! - Klauth, Unrivaled Ancient: attacks: X mana of any colour (X: the attackers' total power), kept all turn. Left
 //!   out: it can pay for abilities too.
-//! - Lathliss, Dragon Queen: another nontoken Dragon of yours enters: a 5/5 red Dragon flier. Left out: the {1}{R}
-//!   Dragon pump.
+//! - Lathliss, Dragon Queen: another nontoken Dragon of yours enters: a 5/5 red Dragon flier; {1}{R}: Dragons +1/+0,
+//!   used before an open attack with the spare mana when nothing in hand can be cast.
 //! - Miirym, Sentinel Wyrm: another nontoken Dragon of yours enters: a token copy of it that isn't legendary.
 //! - Morophon, the Boundless: names a creature type as it enters (the deck's most common); spells of that type cost
 //!   {W}{U}{B}{R}{G} less (only coloured mana, mana::cost_of); your other creatures of that type get +1/+1.
@@ -36,8 +36,9 @@
 //!   code that runs at once rather than as a trigger.
 //! - Scion of Draco: costs {2} less per basic land type among your lands; your creatures have vigilance (white),
 //!   hexproof (blue), lifelink (black), first strike (red) and trample (green).
-//! - Scion of the Ur-Dragon: {2} at the end-of-turn window with Rivaz out and its graveyard cast unused: the best Dragon
-//!   creature card from the library into the graveyard (Rivaz casts it next turn). Left out: Scion becoming a copy.
+//! - Scion of the Ur-Dragon: {2} at an opponent's end of turn with Rivaz out and no Dragon in the graveyard: the best
+//!   Dragon creature card from the library into the graveyard (Rivaz casts it next turn). Left out: Scion becoming a
+//!   copy.
 //! - Twinflame Tyrant: damage from your sources to opponents and their permanents is doubled (combat::fiery).
 //! - Ureni of the Unwritten: enters or attacks: the top eight; the best Dragon creature card among them onto the
 //!   battlefield, the rest to the bottom in a random order.
@@ -45,7 +46,7 @@
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, colors_of, epow, has_type};
@@ -334,8 +335,8 @@ pub fn brass_pick(g: &Game, p: PlayerId, x: u32) -> Vec<(CardId, PlayerId)> {
     best[x].1.iter().map(|&i| cands[i]).collect()
 }
 
-/// Ancient Brass Dragon: roll a d20; creature cards with total mana value X or less from graveyards onto the battlefield
-/// under your control
+/// Ancient Brass Dragon: roll a d20; creature cards with total mana value X or less from graveyards onto the
+/// battlefield under your control
 fn brass_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
     if !connects(g, src, p, a) || gy_creatures(g).is_empty() {
         return Ok(());
@@ -596,6 +597,50 @@ fn lathliss_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     make_tokens(g, p, spec).map(|_| ())
 }
 
+/// Lathliss: {1}{R}: Dragons you control get +1/+0 until end of turn. Before an open attack (as Scourge of Valkas's
+/// firebreathing), with nothing in hand to cast: as many times as the mana allows, keeping two
+fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if p != owner(g, src) || post != Some(false) || !live(g, src) || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let ds: Vec<PermId> = dragons_of(g, p)
+        .into_iter()
+        .filter(|&m| !g.perm(m).tapped && (!g.perm(m).sick || crate::engine::combat::has_haste(g, m)))
+        .collect();
+    let k = (total_mana(g, p, false) as i32 - 2) / 2;
+    if ds.is_empty() || k < 1 {
+        return Ok(vec![]);
+    }
+    let castable = g.player(p).hand.iter().any(|&c| {
+        let (gn, pips) = cost_of(g, p, c);
+        !g.db.get(c).land && can_pay(g, p, gn, &pips, false)
+    });
+    let power: i32 = ds.iter().map(|&m| epow(g, m)).sum();
+    if castable || !crate::impls::lands::open_attack(g, p, power + k * ds.len() as i32, true) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 0.3 * (k as usize * ds.len()) as f64,
+        label: format!("Lathliss: Dragons +{k}/+0"),
+        act: Some(Action::Ability { src, f: lathliss_go, arg: k as i64 }),
+    }])
+}
+
+fn lathliss_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let k = arg as u32;
+    let pips = "R".repeat(k as usize);
+    if !live(g, src) || !can_pay(g, p, k, &pips, false) {
+        return Ok(false);
+    }
+    pay(g, p, k, &pips, false)?;
+    if ability_window(g, p, Some(src), &format!("Dragons get +{k}/+0"), None, None)? {
+        for m in dragons_of(g, p) {
+            crate::impls::common::eot(g, m, k as i32, 0);
+        }
+    }
+    Ok(true)
+}
+
 /// Miirym: whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token
 /// isn't legendary
 fn miirym_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
@@ -850,12 +895,6 @@ fn ureni_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
     Ok(vec![])
 }
 
-// ================================================================== Twinflame Tyrant
-/// Twinflame Tyrants pl controls (combat::fiery doubles damage once per Tyrant)
-pub fn tyrants(g: &Game, pl: PlayerId) -> u32 {
-    named(g, pl, TYRANT).len() as u32
-}
-
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let has = |n: &str| db.id(n).is_some();
@@ -894,7 +933,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         r.card(db, KLAUTH)?.attack = Some(klauth_attack);
     }
     if has(LATHLISS) {
-        r.card(db, LATHLISS)?.etb = Some(lathliss_etb);
+        let c = r.card(db, LATHLISS)?;
+        c.etb = Some(lathliss_etb);
+        c.options = Some(lathliss_options);
     }
     if has(MIIRYM) {
         r.card(db, MIIRYM)?.etb = Some(miirym_etb);

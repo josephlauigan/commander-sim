@@ -193,6 +193,12 @@ pub fn filt(phrase: &str) -> Obj {
     if p.contains("with flying") {
         f.set("kw", "flying");
     }
+    // --- Tiers 4/5 (urdragon): "all Dragon creatures" / "all non-Dragon creatures" (Crux of Fate)
+    if search(r"\bnon-dragon\b", &p).is_some() {
+        f.set("subtype", "non-dragon");
+    } else if search(r"\bdragons?\b", &p).is_some() && !f.contains("subtype") {
+        f.set("subtype", "dragon");
+    }
     if search(r"(instant or sorcery|instant|sorcery)", &p).is_some() && !f.contains("type") {
         f.set("type", "instant_or_sorcery");
     }
