@@ -190,6 +190,8 @@ pub enum DataKey {
     ObBatch,
     /// --- Tiers 4/5 (heliod-zur): Archivist of Oghma: library searches by its opponents still to answer
     T45Search,
+    /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar's revival counters (Int)
+    Revival,
 }
 
 /// A value in per-card state.
@@ -1192,6 +1194,9 @@ pub struct Game {
     pub doomed_turn: Option<PlayerId>,
     /// Memory Jar: the hands set aside, returned at the end step
     pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
+    /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar returns at the next end step: (controller, card, revival
+    /// counters it returns with)
+    pub t45_due: Vec<(PlayerId, CardId, i64)>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1375,6 +1380,7 @@ impl Game {
             extra_turns: vec![],
             doomed_turn: None,
             jar_due: vec![],
+            t45_due: vec![],
             cur_batch: None,
             hooks: vec![],
             stack: vec![],

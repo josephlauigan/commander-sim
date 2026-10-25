@@ -504,7 +504,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         |m| {
             let mut e = eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))});
             if m.all().contains("you gain") {
-                e.push(obj! {"do" => "gain_life", "n" => n_(m.gs(2)), "who" => "you", "per_opponent" => m.gs(1) == "each opponent"});
+                // --- Tiers 4/5 (urza-yawgmoth): "you gain 1 life" is 1 in all (Ayara, Cauldron of Essence, Shimmercreep);
+                // only "that much" is per opponent
+                let per = m.gs(1) == "each opponent" && m.all().contains("that much");
+                e.push(obj! {"do" => "gain_life", "n" => n_(m.gs(2)), "who" => "you", "per_opponent" => per});
             }
             Some(e)
         },
@@ -1133,6 +1136,18 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
             obj! {"event" => "etb", "source" => "you_creature", "other" => other},
             obj! {"event" => "dies", "source" => "you_creature", "other" => other},
         ]
+    }),
+    // --- Tiers 4/5 (urza-yawgmoth): "~ or another black creature you control enters" (Ayara, First of Locthwain): itself
+    // and the creatures of that colour entering under your control
+    (r"^~ or another (white|blue|black|red|green) creature you control enters$", |m, _| {
+        let col = match m.gs(1) {
+            "white" => "W",
+            "blue" => "U",
+            "black" => "B",
+            "red" => "R",
+            _ => "G",
+        };
+        vec![obj! {"event" => "etb", "source" => "you_creature", "color" => col}]
     }),
 ];
 

@@ -7782,6 +7782,25 @@
    "bomb": 0,
    "dsl": [
     {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "lose_life",
+       "n": 1,
+       "who": "each_opponent"
+      },
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you",
+       "per_opponent": false
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "color": "B"
+    },
+    {
      "type": "activated",
      "cost": {
       "tap": true,
@@ -7809,9 +7828,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ or another black creature you control enters, each opponent loses 1 life and you gain 1 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -11259,10 +11276,7 @@
    "types": "E",
    "generic": 2,
    "pips": "B",
-   "tags": {
-    "tok": "1",
-    "tokp": "1"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -18110,7 +18124,7 @@
        "do": "gain_life",
        "n": 1,
        "who": "you",
-       "per_opponent": true
+       "per_opponent": false
       }
      ],
      "event": "dies",
@@ -82630,8 +82644,7 @@
    "tags": {
     "leg": true,
     "pow": "1",
-    "tgh": "4",
-    "eng": "1"
+    "tgh": "4"
    },
    "pow": 1,
    "tgh": 4,
@@ -101553,7 +101566,7 @@
        "do": "gain_life",
        "n": "colors_among_permanents",
        "who": "you",
-       "per_opponent": true
+       "per_opponent": false
       }
      ],
      "event": "etb",

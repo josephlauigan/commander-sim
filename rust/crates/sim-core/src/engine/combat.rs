@@ -703,6 +703,14 @@ fn resolve_combat_inner(
                     if epow(g, b) > 0 && !no_damage(g, a) && !t0(g, a) && !cardcode::damage_prevented(g, a) {
                         crate::impls::t0_giada::damaged(g, a, epow(g, b))?;
                     }
+                    // --- Tiers 4/5 (urza-yawgmoth): wither: the damage is -1/-1 counters, on a creature it kills too
+                    // (Necroskitter sees them); a first striker that kills its foe takes none
+                    let bp = epow(g, b);
+                    for (src, to, k, hits) in [(a, b, ap, !(fb && !fa && a_dies)), (b, a, bp, !(fa && !fb && b_dies))] {
+                        if hits && k > 0 && kw(g, src, "wither") && !kw(g, src, "infect") && !no_damage(g, to) {
+                            crate::cardcode::put_plus(g, to, -k);
+                        }
+                    }
                     crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
                     if b_dies {
                         crate::impls::sephfs_cards::slaver_mark(g, a, b);

@@ -365,6 +365,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Cast, Call::Cast { caster: p, c })?;
     }
+    crate::impls::t45_urza_yawgmoth::spell_crime(g, p, c)?; // --- Tiers 4/5 (urza-yawgmoth): Forsaken Miner
     if has(g, p, Tag::Jin) && (artifact || instant_or_sorcery) && once_per_turn(g, p, "jincopy") {
         let src = find(g, p, Tag::Jin)[0];
         let name = format!("copy {}", g.db.get(c).name);

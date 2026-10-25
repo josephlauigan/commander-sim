@@ -886,6 +886,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.combat_no = 0;
     pl.turns += 1;
     crate::impls::mine::army_power_snapshot(g, p);
+    let orbs = crate::impls::t45_urza_yawgmoth::untap_lock(g, p); // --- Tiers 4/5 (urza-yawgmoth): Winter / Static Orb
     for l in g.player(p).lands.clone() {
         g.land_mut(l).tapped = false;
     }
@@ -933,6 +934,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         y.phased = false;
         y.age += 1;
     }
+    // --- Tiers 4/5 (urza-yawgmoth): Winter Orb, Static Orb, Back to Basics keep some re-tapped; Unwinding Clock
+    crate::impls::t45_urza_yawgmoth::untap_step(g, p, orbs);
     crate::impls::titania::day_night_tick(g, p)?; // day and night: the turn before is judged as this one begins
     let pl = g.player_mut(p);
     pl.spells_this_turn = 0;

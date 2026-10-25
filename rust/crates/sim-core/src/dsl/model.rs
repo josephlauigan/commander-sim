@@ -129,6 +129,9 @@ pub enum Ability {
         /// Tier 3 (aurelia): an attack trigger needs this many attackers or more (battalion, "attacks with three or
         /// more creatures")
         min_atk: Option<u32>,
+        /// --- Tiers 4/5 (urza-yawgmoth): an enters trigger for creatures of this colour only (W U B R G): "~ or another
+        /// black creature you control enters" (Ayara)
+        color: Option<String>,
         effects: Vec<Effect>,
     },
     Activated {

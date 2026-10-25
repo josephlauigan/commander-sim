@@ -585,7 +585,8 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
     use crate::state::DataKey;
     for &m in atk {
         let x = g.perm(m);
-        if x.token && x.ttypes.contains(&"pest") {
+        // --- Tiers 4/5 (urza-yawgmoth): Blight Mound's Pests gain their life as they die instead
+        if x.token && x.ttypes.contains(&"pest") && !crate::impls::t45_urza_yawgmoth::mound_pest(x) {
             crate::engine::life::gain(g, p, 1)?; // a Pest token: whenever it attacks, you gain 1 life
             continue;
         }
@@ -913,6 +914,9 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::t0_captain::end_returns(g)?; // Gift of Immortality
     if !g.jar_due.is_empty() {
         crate::impls::legends::jar_end(g)?; // Memory Jar
+    }
+    if !g.t45_due.is_empty() {
+        crate::impls::t45_urza_yawgmoth::revival_returns(g)?; // --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar
     }
     Ok(())
 }

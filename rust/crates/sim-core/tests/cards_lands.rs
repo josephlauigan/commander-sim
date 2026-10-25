@@ -229,22 +229,24 @@ fn mosswort_bridge_hides_a_spell_and_casts_it_with_ten_power() {
 // ------------------------------------------------------------------ combos
 #[test]
 fn a_combo_piece_is_worth_more_as_its_partner_arrives() {
-    let mut g = table(&["yawgmoth-mono-black-aristocrats", "veyran"]);
+    // the Urza list's Basalt Monolith + Forensic Gadgeteer (a mana sink in hand: Walking Ballista)
+    let mut g = table(&["urza-mono-blue-artifacts", "veyran"]);
     g.player_mut(P0).cmd_in_zone = false;
-    let bond = perm(&mut g, P0, "Sanguine Bond");
-    assert_eq!(cardcode::piece_threat(&g, bond), 2.5); // the other piece one step away
-    assert!((cardcode::combo_progress(&g, P0) - 0.25).abs() < 1e-9); // half of Sanguine Bond + Exquisite Blood
-    let blood = card(&g, "Exquisite Blood");
-    assert_eq!(cardcode::missing_pieces(&g, P0), [blood]);
-    assert_eq!(cardcode::combo_imp(&g, P0, blood), 9.0); // it completes the combo
-    assert!(cardcode::is_combo_piece(&g, blood));
-    assert!(cardcode::combo_pieces(&g).contains(&blood));
-    hand(&mut g, P0, &["Exquisite Blood"]);
+    hand(&mut g, P0, &["Walking Ballista"]);
+    let gad = perm(&mut g, P0, "Forensic Gadgeteer");
+    assert_eq!(cardcode::piece_threat(&g, gad), 2.5); // the other piece one step away
+    assert!((cardcode::combo_progress(&g, P0) - 0.25).abs() < 1e-9); // half of Basalt Monolith + Forensic Gadgeteer
+    let basalt = card(&g, "Basalt Monolith");
+    assert_eq!(cardcode::missing_pieces(&g, P0), [basalt]);
+    assert_eq!(cardcode::combo_imp(&g, P0, basalt), 9.0); // it completes the combo
+    assert!(cardcode::is_combo_piece(&g, basalt));
+    assert!(cardcode::combo_pieces(&g).contains(&basalt));
+    hand(&mut g, P0, &["Basalt Monolith"]);
     assert!((cardcode::combo_progress(&g, P0) - 1.0).abs() < 1e-9);
+    let b2 = perm(&mut g, P0, "Basalt Monolith");
     assert!(cardcode::combo_ready(&g, P0));
-    let b2 = perm(&mut g, P0, "Exquisite Blood");
-    assert_eq!(cardcode::piece_threat(&g, b2), 7.0);
-    assert_eq!(cardcode::piece_threat(&g, bond), 7.0);
+    assert_eq!(cardcode::piece_threat(&g, gad), 7.0); // the other piece is in play
+    assert!(cardcode::piece_threat(&g, b2) >= 2.5); // (its first combo is Rings of Brighthearth + Monolith)
     let t = token(&mut g, P0, 1);
     assert_eq!(cardcode::piece_threat(&g, t), 0.0);
     // a deck without a modeled combo

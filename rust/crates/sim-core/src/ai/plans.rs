@@ -143,7 +143,7 @@ fn board(g: &Game, p: PlayerId) -> usize {
 }
 
 /// combos.DRAIN_PAYOFFS
-pub const DRAIN_PAYOFFS: [&str; 11] = [
+pub const DRAIN_PAYOFFS: [&str; 13] = [
     "Blood Artist",
     "Zulaport Cutthroat",
     "Cruel Celebrant",
@@ -155,6 +155,9 @@ pub const DRAIN_PAYOFFS: [&str; 11] = [
     "Poison-Tip Archer",
     "Goblin Bombardment",
     "Elas il-Kor, Sadistic Pilgrim",
+    // --- Tiers 4/5 (urza-yawgmoth): each opponent loses 1 as your creatures die
+    "The Meathook Massacre",
+    "Marionette Apprentice",
 ];
 
 /// combos.drain_payoff: p has a death-drain payoff out

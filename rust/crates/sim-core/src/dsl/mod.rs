@@ -1335,7 +1335,8 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
 
 /// one ctx per time the ability triggers
 fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fired) -> Vec<DslCtx> {
-    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, min_atk, .. } = a else {
+    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, min_atk, color, .. } = a
+    else {
         return vec![];
     };
     let (s, w) = (source.as_deref(), who.as_deref());
@@ -1356,6 +1357,9 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
             if !g.is_creature(m) || (other == &Some(true) && m == src) || min_pow.is_some_and(|v| epow(g, m) < v) {
                 return out;
+            }
+            if color.as_deref().and_then(|c| c.chars().next()).is_some_and(|c| !colors_of(g, m).has(c)) {
+                return out; // --- Tiers 4/5 (urza-yawgmoth): "another black creature" (Ayara)
             }
             match s {
                 Some("you_creature") if owner == q => out.push(DslCtx { event_perm: Some(m), ..base }),

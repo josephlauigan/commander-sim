@@ -90,6 +90,7 @@ pub fn crime(g: &mut Game, p: PlayerId) -> Res {
             bandit_untap(g, m)?;
         }
     }
+    crate::impls::t45_urza_yawgmoth::miner_crime(g, p)?; // --- Tiers 4/5 (urza-yawgmoth): Forsaken Miner
     Ok(())
 }
 

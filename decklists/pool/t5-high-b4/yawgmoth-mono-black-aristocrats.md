@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Aristocrats combo.
 - **Commander:** Yawgmoth, Thran Physician
 - **Color identity:** Black
 - **Game Changers (7):** Ancient Tomb, Bolas's Citadel, Demonic Tutor, Imperial Seal, Necropotence, Orcish Bowmasters, Vampiric Tutor
-- **Combos:** Sanguine Bond + Exquisite Blood (two-card drain loop). Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul, or any non-Human under Mikaeus). Gravecrawler + Phyrexian Altar. Mikaeus + Walking Ballista is not infinite on its own, but Ballista is a mana sink for Coffers.
+- **Combos:** Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul, Hancock, Ghoulish Mayor, or any non-Human under Mikaeus, the Unhallowed) + a death payoff. Gravecrawler + Phyrexian Altar + another Zombie + a death payoff. Reassembling Skeleton (or Gravecrawler) + Pitiless Plunderer + Ashnod's Altar, Phyrexian Altar or Warren Soultrader + a death payoff. Payoffs: Blood Artist, Zulaport Cutthroat, Bastion of Remembrance, The Meathook Massacre, Marionette Apprentice.
 - **Lands:** 32 (9 nonbasic + 23 basic)
 
 ## Role in the pool
 
-A resilient combo that recurs through removal and doubles as a creature-sweeper for X/1 tokens (Najeela, Sauron's army). Also brings Dauthi and Bojuka Bog.
+A resilient combo that recurs through removal and doubles as a creature-sweeper for X/1 tokens (Najeela, Sauron's army). Also brings Dauthi Voidwalker and Bojuka Bog as graveyard hate, and The Meathook Massacre as a scalable sweeper.
 
 ## At the table
 
-- **Plan:** Cheap sacrifice fodder (Bloodghast, Gravecrawler, Reassembling Skeleton, Bitterblossom) and mana from Dark Ritual, Mana Vault and Sol Ring, with Yawgmoth, Thran Physician sacrificing creatures to draw cards and spread -1/-1 counters.
-- **Wins by:** Yawgmoth with undying creatures Geralf's Messenger, Butcher Ghoul and Mikaeus, the Unhallowed loops sacrifices into cards and drain. Sanguine Bond with Exquisite Blood is a compact second kill; Gravecrawler with Phyrexian Altar is a third.
-- **Watch out for:** Yawgmoth's -1/-1 counters wipe your X/1 creatures for free. Blood Artist and Zulaport Cutthroat make each death drain. Necropotence and Ad Nauseam refuel quickly. Exile its graveyard and kill key pieces before the loop starts.
-- **Interaction:** Fatal Push, Infernal Grasp, Snuff Out, Culling the Weak, Plaguecrafter, and sweepers Damnation and Toxic Deluge. No counterspells; recursion with Reanimate, Animate Dead and Bloodghast recovers from your removal.
+- **Plan:** Cheap sacrifice fodder that comes back (Bloodghast, Gravecrawler, Reassembling Skeleton, Nether Traitor, Forsaken Miner, Nine-Lives Familiar, Bitterblossom, Genesis Chamber's Myr, Blight Mound's Pests) and mana from Dark Ritual, Cabal Ritual, Ancient Tomb, Cabal Coffers and Sol Ring, with Yawgmoth, Thran Physician sacrificing creatures to draw cards and spread -1/-1 counters. Necroskitter steals the creatures those counters kill.
+- **Wins by:** Yawgmoth with two undying creatures (Geralf's Messenger, Butcher Ghoul, Hancock, or anything under Mikaeus) loops sacrifices into cards and drain. Gravecrawler with Phyrexian Altar, or Reassembling Skeleton with Pitiless Plunderer and an altar, is a second loop; any death payoff finishes it. Ayara, Gray Merchant and Sheoldred drain on the side.
+- **Watch out for:** Yawgmoth's -1/-1 counters wipe your X/1 creatures for free, and Necroskitter keeps them. Blood Artist, Zulaport Cutthroat, Bastion of Remembrance and The Meathook Massacre make each death drain. Necropotence and Bolas's Citadel refuel quickly. Exile its graveyard and kill key pieces before the loop starts.
+- **Interaction:** Culling the Weak, Deadly Rollick, Feed the Swarm, Withering Torment, Imp's Mischief, Malakir Rebirth, and sweepers Damnation, Toxic Deluge and The Meathook Massacre. No counterspells; Animate Dead, Reanimate, Victimize, Unearth and Entomb recover from your removal.
 
 ## Strategy
 
-Yawgmoth pays 1 life to sacrifice a creature, put a -1/-1 counter on something, and draw. With two undying creatures (Geralf's Messenger, Butcher Ghoul, or anything under Mikaeus), each sacrifice cancels the other's +1/+1 counter, so the loop repeats for as many cards and drain triggers as you want; Geralf's Messenger's drain pays for it. Yawgmoth's -1/-1 counters also sweep opposing X/1s for free. Gravecrawler + Phyrexian Altar is a second loop. Necropotence, Ad Nauseam, and Bolas's Citadel refuel. Mono-black has only three loop pieces for the Yawgmoth combo (Mikaeus, Geralf's Messenger, Butcher Ghoul).
+Yawgmoth pays 1 life to sacrifice a creature, put a -1/-1 counter on something, and draw. With two undying creatures (Geralf's Messenger, Butcher Ghoul, Hancock, or anything under Mikaeus), each sacrifice cancels the other's +1/+1 counter, so the loop repeats for as many cards and drain triggers as you want; Geralf's Messenger's drain pays for it. Yawgmoth's -1/-1 counters also sweep opposing X/1s for free. Gravecrawler + Phyrexian Altar and Reassembling Skeleton + Pitiless Plunderer + an altar are second and third loops. Necropotence and Bolas's Citadel refuel; Entomb and the reanimation spells set up recursion.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Yawgmoth sac/-1/-1/draw; undying and counter cancellation; Mikaeus granting undying; death-trigger drains; Gravecrawler + Altar; Necropotence / Ad Nauseam / Citadel.
+Yawgmoth sac/-1/-1/draw; undying and counter cancellation (Hancock too); Mikaeus granting undying; death-trigger drains (Meathook and Marionette Apprentice are combo payoffs); Gravecrawler + Altar; Skeleton + Plunderer + altar; Necropotence / Citadel; Entomb for outside decks; Genesis Chamber, Blight Mound, Necroskitter (wither in combat), Nine-Lives Familiar, Forsaken Miner (crimes: spells and Yawgmoth's counters, not every ability: Approximate), The Meathook Massacre (X chosen at the enter trigger: Approximate).
 
 ## Decklist by type (100)
 
