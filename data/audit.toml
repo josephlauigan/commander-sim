@@ -116,6 +116,24 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Treasure Nabber" = { status = "Approximate", note = "hand-written (impls/t45_krenko.rs): an opponent taps an artifact permanent for mana: you control it (tapped) until your end step; left out: one taken on your own turn goes back that turn instead of your next" }
 "Warren Instigator" = { status = "Full", note = "double strike (keyword); deals combat damage to an opponent: puts the most expensive Goblin creature card from your hand onto the battlefield (impls/t45_krenko.rs)" }
 
+# --- Tiers 4/5 (prosper): hand-written in impls/t45_prosper.rs
+"Delayed Blast Fireball" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): 2 damage to each opponent and each creature they control, 5 when cast from exile (foretold, or exiled by Prosper / Uba Mask / Hex Magic ...); foretell {2} on your turn after combat, cast from a later turn for {4}{R}{R}; cast when it kills creatures worth about two cards or an opponent" }
+"Passionate Archaeologist" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): your commander creature on the battlefield deals damage equal to the mana value of each spell you cast from exile (impulse, foretell, warp, cascade, Etali) to an opponent (one it kills, else the most threatening)" }
+"Uba Mask" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs, zones::draw): every draw is replaced by exiling the card; on its owner's turn it is playable that turn (then exiled for good), drawn on another player's turn it goes straight to exile. Left out: an instant drawn on another player's turn could be cast that turn" }
+"Blightstep Pathway // Searstep Pathway" = { status = "Full", note = "hand-written (impls/t45_prosper.rs, all four Pathways): the face is chosen as it is played (the colour the hand needs more against the sources already out) and it taps for that colour only" }
+"Bonehoard Dracosaur" = { status = "Full", note = "hand-written (impls/t45_prosper.rs; the compiled draw is off): each upkeep the top two cards are playable this turn; a land among them makes a 3/1 red Dinosaur, a nonland card a Treasure" }
+"Crime Novelist" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): whenever you sacrifice an artifact (Treasure, Clue, Food tokens too): a +1/+1 counter and {R} (a triggered mana ability, at once)" }
+"Disciple of the Vault" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): any artifact (anyone's, artifact tokens and Treasure/Clue/Food sacrifices too) to a graveyard from the battlefield: an opponent loses 1 life" }
+"Etali, Primal Storm" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): attacks: the top card of each player's library is exiled; the AI casts the nonland ones free (best first; not counterspells or board wipes), the rest stay in exile" }
+"Hex Magic" = { status = "Full", note = "hand-written (impls/t45_prosper.rs; the compiled exile-all is off): the hand is exiled, playable until the end of your next turn (cast from exile: Prosper's Treasures), then draw that many; cast with three cards in hand, two with Prosper out" }
+"Ignite the Future" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): the top three cards are playable until the end of your next turn; flashed back, the AI casts the castable nonland ones free at once (lands stay playable). Left out: a free card kept for the next turn" }
+"Marionette Master" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): fabricate 3 (counters with two or more artifacts to sacrifice, else three Servos); an artifact of yours to the graveyard from the battlefield (Treasure/Clue/Food sacrifices too): an opponent loses life equal to its power" }
+"Nadier's Nightblade" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): a token of yours dies or is sacrificed (Treasure, Clue, Food too): each opponent loses 1, you gain 1. Left out: a token exiled or bounced" }
+"Ob Nixilis, Captive Kingpin" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): opponents each losing exactly 1 life: a +1/+1 counter, the top card playable until your next end step. Losses from one effect are one trigger (read from the engine's work and stack counters: two separate triggers with nothing between can merge)" }
+"Rain of Riches" = { status = "Full", note = "enters Treasures compiled; hand-written (impls/t45_prosper.rs): the first spell you cast each turn with Treasure mana spent has cascade (the cascaded card counts as cast from exile)" }
+"Weftstalker Ardent" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): another creature or artifact of yours enters (Treasure, Clue, Food tokens too, one trigger each): 1 damage to each opponent; warp {R} before combat (full cost out of reach, or a cast-from-exile payoff out), exiled at the end step, castable from exile on a later turn" }
+"Wild-Magic Sorcerer" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): the first spell you cast from exile each turn has cascade. Left out: a spell cast from exile before the Sorcerer arrived still counted as the first" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -585,17 +603,17 @@ mechs = ["creature_tutors"]
 
 [[engines.prosper-rakdos-exile-treasure]]
 label = "Prosper Treasure on exile-cast"
-cards = ["Prosper, Tome-Bound"]
+cards = ["Prosper, Tome-Bound", "Passionate Archaeologist", "Wild-Magic Sorcerer"]
 mechs = ["prosper_treasure"]
 
 [[engines.prosper-rakdos-exile-treasure]]
 label = "impulse draw"
-cards = ["Reckless Impulse", "Light Up the Stage", "Outpost Siege", "Valakut Exploration"]
+cards = ["Reckless Impulse", "Light Up the Stage", "Jeska's Will", "Bonehoard Dracosaur", "Hex Magic", "Ignite the Future", "Uba Mask"]
 mechs = ["impulse_draw"]
 
 [[engines.prosper-rakdos-exile-treasure]]
 label = "Treasure payoffs"
-cards = ["Mayhem Devil", "Storm-Kiln Artist"]
+cards = ["Mayhem Devil", "Storm-Kiln Artist", "Marionette Master", "Disciple of the Vault", "Weftstalker Ardent"]
 mechs = ["treasure"]
 
 [[engines.prosper-rakdos-exile-treasure]]
@@ -604,9 +622,9 @@ cards = ["Bolas's Citadel"]
 mechs = ["citadel"]
 
 [[engines.prosper-rakdos-exile-treasure]]
-label = "Sanguine Bond + Exquisite Blood"
-cards = ["Sanguine Bond", "Exquisite Blood"]
-mechs = ["sanguine_bond"]
+label = "Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir"
+cards = ["Bolas's Citadel", "Sensei's Divining Top", "Aetherflux Reservoir"]
+mechs = ["citadel", "top_manipulation"]
 
 [[engines.yuriko-dimir-ninjas]]
 label = "ninjutsu"

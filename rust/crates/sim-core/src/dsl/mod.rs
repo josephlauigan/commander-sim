@@ -991,6 +991,13 @@ fn run(
                 }
             }
         }
+        "creature_backlash" => {
+            // --- Tiers 4/5 (prosper): each creature deals 1 damage to its controller (Rakdos Charm)
+            for q in g.players.iter().filter(|x| x.alive).map(|x| x.id).collect::<Vec<_>>() {
+                let k = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32;
+                lose_life(g, q, k, Some(q), "triggers", Some(true))?;
+            }
+        }
         "counter_spell" => {} // counterspells are cast through the engine's response window
         "oracle" => {
             // Thassa's Oracle
@@ -1833,6 +1840,14 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                     }
             }
             "search" | "reanimate" | "regrow" => v += 3.0,
+            "creature_backlash" => {
+                // --- Tiers 4/5 (prosper): a point of life per creature, an opponent out worth a lot
+                let n = |q: PlayerId| g.player(q).perms.iter().filter(|&&m| g.is_creature(m)).count() as i32;
+                for q in g.opps(p) {
+                    v += 0.15 * n(q) as f64 + if n(q) >= g.player(q).life { 20.0 } else { 0.0 };
+                }
+                v -= 0.2 * n(p) as f64;
+            }
             "sacrifice" => v += if e.who.as_deref() != Some("you") { 2.0 } else { -1.0 },
             "discard" => v += if e.who.as_deref() != Some("you") { 0.8 } else { -0.5 },
             "modal" => {

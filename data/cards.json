@@ -3293,7 +3293,7 @@
      "effects": [
       {
        "do": "exile_graveyard",
-       "who": "each_player"
+       "who": "target_player"
       }
      ],
      "event": "etb",
@@ -13071,20 +13071,7 @@
    "pow": 5,
    "tgh": 5,
    "bomb": 5,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 2,
-       "who": "you"
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "first strike",
@@ -13099,10 +13086,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "At the beginning of your upkeep, exile the top two cards of your library. You may play them this turn. If you exiled a land card this way, create a 3/1 red Dinosaur creature token. If you exiled a nonland card this way, create a Treasure token.   [partly: if you exiled a land card this way, create a 3/1 red dinosaur creature token; if you exiled a nonland card this way, create a treasure token]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -54532,20 +54517,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "all",
-        "filter": {}
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -54555,10 +54527,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Exile all the cards from your hand, then draw that many cards. Until the end of your next turn, you may play cards exiled this way.   [partly: draw that many cards; until the end of your next turn, you may play cards exiled this way]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -89944,7 +89914,7 @@
         [
          {
           "do": "exile_graveyard",
-          "who": "each_player"
+          "who": "target_player"
          }
         ],
         [
@@ -89957,6 +89927,11 @@
            },
            "upto": false
           }
+         }
+        ],
+        [
+         {
+          "do": "creature_backlash"
          }
         ]
        ]
@@ -89972,9 +89947,7 @@
    "identity": "BR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "• each creature deals 1 damage to its controller"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -120433,9 +120406,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Counter target spell. Choose 1, 2, or 3 at random. Its controller mills that many cards, then exiles cards from the top of their library until they exile a nonland card with a different name than that spell. They may cast that card without paying its mana cost. Then they put the exiled cards on the bottom of their library in a random order.   [partly: choose 1, 2, or 3 at random; its controller mills that many cards; its controller; exiles cards from the top of their library until they exile a nonland card with a different name than that spell; they may cast that card without paying its mana cost; they put the exiled cards on the bottom of their library in a random order]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

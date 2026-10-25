@@ -1083,9 +1083,8 @@ fn prosper(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// a Treasure whenever you play a card from exile (Prosper, Laelia, Valakut, Siege, Reckless Impulse ...)
 fn prosper_treasure(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
-    let pl = g.player(caster);
     if caster == owner(g, src)
-        && (pl.impulse.contains(&c) || pl.impulse_long.iter().any(|x| x.0 == c))
+        && crate::impls::t45_prosper::cast_from_exile(g, caster, c) // a cascade's or Etali's card too
         && trigger_window(g, caster, Some(src), "create a Treasure", None)?
     {
         make_artifact_tokens(g, caster, "Treasure", 1)?;

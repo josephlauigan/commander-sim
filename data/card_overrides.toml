@@ -8379,8 +8379,8 @@ status = "Partial"
 note = "returns a spell to its owner's hand for {1}{W} (the Remand return); t6_counters::bilbo_bounce puts the engine cast lock (AllSpells, every player) on a promised gift, but the engine never offers the gift choice (later feature), so the lock is not reached in play"
 
 ["Tibalt's Trickery"]
-status = "Partial"
-note = "counters a spell for {1}{R}; missing: its side effect (the countered spell's controller mills 1-3, exiles to a nonland card and may cast it free), written as t6_counters::tibalt_after"
+status = "Full"
+note = "counters a spell for {1}{R}; then the countered spell's controller mills 1-3 at random, exiles to a nonland card with another name and casts it free unless it is a counterspell; the rest go to the bottom in a random order (t6_counters::tibalt_after, called from engine::stack::resolve_counter; Tiers 4/5 prosper)"
 ["Twincast"]
 status = "Full"
 note = "cast from hand in response to an instant or sorcery (anyone's) whose copy is worth at least 3 (draw, tutor, burn, removal, magecraft payoffs): the copy resolves first, with the AI's targets; the AI never casts it any other way"
@@ -9393,3 +9393,10 @@ pool_remove_tags = ["noatk"] # a 2/3 attacker until max speed, not a mana creatu
 
 ["Thousand-Year Elixir"]
 dsl = [] # its compiled "{1}, {T}: untap target creature" picked any target; the untap (Krenko, Kiki-Jiki, Marvin) is card code
+
+# --- Tiers 4/5 (prosper): hand-written in rust/crates/sim-core/src/impls/t45_prosper.rs; statuses in data/audit.toml
+["Bonehoard Dracosaur"]
+dsl = [] # the compiled upkeep drew two cards; the hand-written upkeep exiles them (playable this turn), Dinosaur / Treasure
+
+["Hex Magic"]
+dsl = [] # the compiled "exile all" had an empty filter; the hand-written resolve exiles the hand and draws that many

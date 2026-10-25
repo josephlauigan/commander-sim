@@ -90,6 +90,7 @@ pub mod t3_korvold;
 pub mod t3_marwyn;
 pub mod t45_yuriko;
 pub mod t45_krenko; // --- Tiers 4/5 (krenko)
+pub mod t45_prosper;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -167,5 +168,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t3_marwyn::register(&mut r, db)?;
     t45_yuriko::register(&mut r, db)?;
     t45_krenko::register(&mut r, db)?; // --- Tiers 4/5 (krenko)
+    t45_prosper::register(&mut r, db)?; // --- Tiers 4/5 (prosper)
     Ok(r)
 }

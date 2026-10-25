@@ -90,6 +90,9 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             crate::glog!(g, "    {} exiles {} instead of drawing it (Urabrask)", g.player(p).name, g.db.get(c).name);
             continue;
         }
+        if crate::impls::t45_prosper::uba_draw(g, p)? {
+            continue; // Uba Mask: exiled instead of drawn
+        }
         let pl = g.player_mut(p);
         pl.draw_n += 1;
         let c = pl.library.pop().unwrap();

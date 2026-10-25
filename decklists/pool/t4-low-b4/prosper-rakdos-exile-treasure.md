@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Treasure / impulse-draw 
 - **Commander:** Prosper, Tome-Bound
 - **Color identity:** Black, Red
 - **Game Changers (7):** Ancient Tomb, Bolas's Citadel, Demonic Tutor, Jeska's Will, Opposition Agent, Underworld Breach, Vampiric Tutor
-- **Combos:** Sanguine Bond + Exquisite Blood (two-card unbounded drain from any life change). Bolas's Citadel + Sensei's Top chains.
+- **Combos:** Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir (three-card: Top draws and goes back on top, Citadel recasts it for 1 life, every cast gains Reservoir's growing life; the library is drawn and Reservoir shoots 50 at each opponent). Revel in Riches wins at ten Treasures.
 - **Lands:** 32 (18 nonbasic + 14 basic)
 
 ## Role in the pool
 
-High card velocity and a two-card drain combo out of a fair-looking shell. Tests artifact removal and enchantment removal.
+High card velocity that turns every card played from exile into a Treasure, and every Treasure into damage, with a three-card artifact combo on top. Tests artifact and enchantment removal and how fast a table can stop a value engine.
 
 ## At the table
 
-- **Plan:** Exiles cards to play them (Light Up the Stage, Jeska's Will, Ragavan, Outpost Siege) and Prosper, Tome-Bound makes a Treasure each time, so card flow turns into mana and a hand full of options.
-- **Wins by:** Sanguine Bond with Exquisite Blood drains the table from any life change. Bolas's Citadel chains with Sensei's Divining Top, and Mayhem Devil, Storm-Kiln Artist and Goldspan Dragon turn Treasures into damage.
-- **Watch out for:** Sanguine Bond plus Exquisite Blood: remove either enchantment on sight. Bolas's Citadel can empty its library into damage. Orcish Bowmasters and Dark Confidant punish extra draws. Demonic Tutor and Vampiric Tutor find the combo.
-- **Interaction:** Lightning Bolt, Terminate, Infernal Grasp, Bitter Triumph, Chaos Warp, Kolaghan's Command, Abrade, Bedevil, and sweepers Blasphemous Act and Toxic Deluge. No counterspells; Deflecting Swat redirects your removal.
+- **Plan:** Exile cards to play them (Prosper's end step, Light Up the Stage, Reckless Impulse, Jeska's Will, Bonehoard Dracosaur, Hex Magic, Ignite the Future, Uba Mask) and Prosper makes a Treasure each time, so card flow turns into mana and a hand full of options. Wild-Magic Sorcerer and Rain of Riches add cascades on top.
+- **Wins by:** Treasure and artifact drain: Marionette Master (its power per artifact lost), Disciple of the Vault, Mayhem Devil, Weftstalker Ardent and Reckless Fireweaver ping or drain for every Treasure made or spent; Passionate Archaeologist burns for each spell cast from exile. Bolas's Citadel with Sensei's Divining Top and Aetherflux Reservoir is the combo; Revel in Riches the alternate win.
+- **Watch out for:** Prosper on the battlefield: each exiled card it plays is a Treasure. Marionette Master with a pile of Treasures drains for its power each time one is spent. Bolas's Citadel with Top and Reservoir wins on the spot. Ob Nixilis, Captive Kingpin grows and draws from every one-point drain. Demonic Tutor, Vampiric Tutor and Beseech the Mirror find the pieces.
+- **Interaction:** Terminate, Bedevil, Chaos Warp, Deadly Rollick, Rakdos Charm, Feed the Swarm and Vandalblast; Blasphemous Act, Toxic Deluge and Delayed Blast Fireball (5 to each opponent and their creatures when foretold) as sweepers; Tibalt's Trickery is the one counter (it gives the caster a random free spell), Deflecting Swat redirects your removal, Dauthi Voidwalker and Bojuka Bog hate on graveyards.
 
 ## Strategy
 
-Exile cards to play them (Light Up the Stage, Outpost Siege, Valakut Exploration, Jeska's Will, Ragavan, Professional Face-Breaker) and Prosper makes a Treasure every time, so card flow becomes mana. Mayhem Devil, Storm-Kiln Artist, and Pitiless Plunderer turn Treasures into damage and more mana. Bolas's Citadel and Sensei's Top chain through the library. The compact combo is Sanguine Bond + Exquisite Blood, which drains the table from any life gain or life loss.
+Prosper turns exile into mana: its end-step card, the impulse spells, Bonehoard Dracosaur's upkeep, Hex Magic's whole hand and Uba Mask's replaced draws are all cast from exile, each for a Treasure, a Passionate Archaeologist burn and, the first each turn, a Wild-Magic Sorcerer cascade. The Treasures feed the drain creatures (Marionette Master, Disciple of the Vault, Mayhem Devil, Weftstalker Ardent, Nadier's Nightblade) and Storm-Kiln Artist's copies, and Ob Nixilis grows on every one-point drain. The compact kill is Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir, found with the tutors or Magda's five-Treasure search.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Prosper Treasure-on-exile-cast; impulse draw; Treasure payoffs (Mayhem Devil, Storm-Kiln Artist); Bolas's Citadel; Sanguine Bond + Exquisite Blood loop.
+Prosper Treasure-on-exile-cast (impulse marks, foretell, warp, cascades and Etali's casts count); impulse draw (Hex Magic, Ignite the Future, Bonehoard Dracosaur, Uba Mask); Treasure payoffs (Mayhem Devil, Storm-Kiln Artist, Marionette Master, Disciple of the Vault, Weftstalker Ardent); Bolas's Citadel + Sensei's Top + Aetherflux Reservoir combo; Passionate Archaeologist and Wild-Magic Sorcerer exile-cast triggers.
 
 ## Decklist by type (100)
 

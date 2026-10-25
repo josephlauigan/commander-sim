@@ -180,6 +180,8 @@ pub enum DataKey {
     CalixLink,
     /// soulbond (Silverblade Paladin): the paired creature (a `Val::Perm`), set on both; valid only while both are on the battlefield under one controller and point at each other
     Soulbond,
+    /// t45-prosper: Ob Nixilis, Captive Kingpin's last batch of life losses (a `Val::List`: work, stack pushes, the players)
+    ObBatch,
 }
 
 /// A value in per-card state.
