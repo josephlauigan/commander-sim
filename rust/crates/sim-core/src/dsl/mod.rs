@@ -128,6 +128,9 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "event_spell_mv" => ctx.spell.map_or(2, |c| g.db.get(c).cmc as i32),
         "source_power" => src.map_or(2, |m| epow(g, m)),
         "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.max(0)),
+        // --- Tiers 1/2 (tatyova-teysa): "the number of lands you control", "creature cards in your graveyard"
+        "lands_you_control" => pl.lands.len() as i32,
+        "gy_creatures" => pl.gy.iter().filter(|&&c| g.db.get(c).creature).count() as i32,
         // --- Tier 3 (marwyn): "each attacking Elf you control" (Dwynen): the creatures p attacked with this turn
         // (`combat::attack_triggers` records them) still on the battlefield
         s if s.starts_with("attacking_type:") => {
@@ -664,6 +667,7 @@ fn run(
                 attacking,
                 sick: !(kws.iter().any(|k| k == "haste") || attacking),
                 types: e.types.iter().flatten().map(|t| intern(t)).collect(),
+                color: e.color.as_deref().map(Colors::from_letters), // --- Tiers 1/2 (tatyova-teysa)
                 ..Tokens::new(k.max(0) as u32, pw)
             };
             let made = zones::make_tokens(g, p, spec)?;
@@ -1074,7 +1078,9 @@ fn run(
         "extra_land" => {
             // you may play an additional land this turn. The AI plays it at once (it plays no lands after combat);
             // a person plays it in a main phase
-            g.player_mut(p).extra_land_now += 1;
+            // --- Tiers 1/2 (tatyova-teysa): "up to three additional lands" (Summer Bloom): n of them (1 unnamed)
+            let k = n(g, ctx).max(1) as u32;
+            g.player_mut(p).extra_land_now += k;
             if !crate::human::is_human(g, p) && g.active == Some(p) {
                 crate::engine::turn::more_lands(g, p)?;
             }
@@ -1087,14 +1093,28 @@ fn run(
         }
         "put_land" => {
             // put a land card from your hand onto the battlefield
-            let ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+            let mut ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+            // --- Tiers 1/2 (tatyova-teysa): "from your hand or graveyard" (Bonny Pall): a graveyard land first (it
+            // costs no card from hand), the best of each
+            let gy_ok = e.from.as_deref() == Some("hand_or_gy");
+            if gy_ok {
+                ls.extend(g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).land));
+            }
             if let Some(c) = max_by(&ls, |c| {
                 let t = &g.db.get(c).tags;
-                t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 10.0 + t.has(Tag::F) as i32 as f64
+                let from_gy = gy_ok && g.player(p).gy.contains(&c);
+                t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 10.0
+                    + t.has(Tag::F) as i32 as f64
+                    + if from_gy { 100.0 } else { 0.0 }
             }) {
                 let pl = g.player_mut(p);
-                let i = pl.hand.iter().position(|&x| x == c).unwrap();
-                pl.hand.remove(i);
+                match pl.hand.iter().position(|&x| x == c) {
+                    Some(i) => pl.hand.remove(i),
+                    None => {
+                        let i = pl.gy.iter().position(|&x| x == c).unwrap();
+                        pl.gy.remove(i)
+                    }
+                };
                 let tapped = crate::engine::turn::land_enters_tapped(g, p, c);
                 let l = g.add_land(p, c, tapped);
                 zones::landfall(g, p)?;
@@ -1553,6 +1573,10 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
                 dt += tgh.unwrap_or(0) * k;
                 if *base0 == Some(true) {
                     dt += k;
+                    // --- Tiers 1/2 (tatyova-teysa): a */* card's printed stats are read as 1/1 (autotag): "power and
+                    // toughness are each equal to" replaces them (Beanstalk Giant, Lumra, Psychosis Crawler)
+                    dp -= x.pow;
+                    dt -= x.tgh;
                 }
             }
         }
@@ -1888,6 +1912,13 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                 v -= 0.2 * n(p) as f64;
             }
             "sacrifice" => v += if e.who.as_deref() != Some("you") { 2.0 } else { -1.0 },
+            "extra_land" => {
+                // --- Tiers 1/2 (tatyova-teysa): worth the land cards in hand that the drops left this turn can't play
+                let pl = g.player(p);
+                let lands = pl.hand.iter().filter(|&&c| g.db.get(c).land).count() as f64;
+                let left = (1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now) as f64 - pl.lands_played as f64;
+                v += 0.3 + 1.2 * n.min((lands - left.max(0.0)).max(0.0));
+            }
             "discard" => v += if e.who.as_deref() != Some("you") { 0.8 } else { -0.5 },
             "modal" => {
                 let mut ms: Vec<f64> = e.modes.iter().map(|m| value_of(g, p, m, spell)).collect();

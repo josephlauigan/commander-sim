@@ -1569,6 +1569,9 @@ note = "1 additional land drop(s) each turn"
 ["Explore"]
 types = "S"
 tags = "draw=1 explore"
+# --- Tiers 1/2 (tatyova-teysa): the extra land drop is the explore tag's (engine/cast.rs); the compiled "play an
+# additional land" would add a second one
+dsl = [{ type = "spell", effects = [{ do = "draw", n = 1, who = "you" }] }]
 status = "Full"
 note = "draw; one extra land drop this turn"
 
@@ -9485,3 +9488,14 @@ dsl = [] # the compiled search put any permanent card into the graveyard: card c
 
 ["Haven of the Spirit Dragon"]
 dsl = [] # the compiled return took any creature card: card code returns a Dragon
+
+# --- Tiers 1/2 (tatyova-teysa)
+["Wrenn and Seven"]
+# all four loyalty abilities are hand-written (impls/t12_tatyova_teysa.rs): the compiled -8 would be a second one
+dsl = []
+
+["Teysa, Orzhov Scion"]
+# both abilities are hand-written (impls/t12_tatyova_teysa.rs); without compiled abilities the text-derived tags read
+# the dies trigger's Spirit as one made on entering
+tags = "leg human pow=2 tgh=3"
+dsl = []
