@@ -195,6 +195,7 @@ Deck key `seph`, `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, t
 
 ### Changes
 
+- **2026-10-24.** Out: Flickering Hound. In: Open the Armory. Flickering Hound -> Open the Armory (JD's choice, 2026-10-24). The Hound moves to Tymna/Thrasios. Open the Armory ({1}{W}) finds Animate Dead, Skullclamp or Nim Deathmantle. It's a second copy (Cloud keeps its own), so it's a buy. Not simulated.
 - **2026-10-18.** Out: Dread Return. In: Victimize. Dread Return -> Victimize: +0.8 over T3-T4 in the coarse pass (two creatures back for 3 mana, wins 77-82% when cast).
 - **2026-10-18.** Out: Consecrated Sphinx, Farewell, Force of Will, Teferi's Protection, Worldly Tutor. In: Arcane Denial, Austere Command, Harmonize, Hornet Queen, Tireless Tracker. Band calibration 10/18 (JD approved): Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
 - **2026-10-14.** Out: Orzhov Signet. In: Worldly Tutor. Orzhov Signet (to bulk) for Worldly Tutor (binder, from the retired Jodah deck). Measured -0.1 over all tiers (T1 -2.0, T2 +0.8, T3 +2.2, T4 -1.0, T5 -0.4; audit/leftovers/2026-10-14/README.md; look-ahead, loose, 500 paired games per tier); JD's choice to keep it. Eight Game Changers, Bracket 4.
@@ -686,3 +687,11 @@ Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
 - **2026-10-19.** Out: Exotic Orchard, Harrow. In: Game Trail, Lightning Bolt. Exotic Orchard -> Game Trail (JD has no spare Orchard; Game Trail is a real R/G dual from his bulk, untapped by revealing a Mountain or Forest), Harrow -> Lightning Bolt (JD's spare; saves a buy). Not simulated yet.
 - **2026-10-19.** Out: Bite Down, Blossoming Defense, Worldly Tutor. In: Glorybringer, Smaug the Magnificent, Thundermaw Hellkite. Out: Worldly Tutor, Blossoming Defense, Bite Down (to Tymna/Thrasios). In: Glorybringer, Thundermaw Hellkite, Smaug the Magnificent (from Tymna/Kraum). JD approved 10/19 with the Thrasios switch: +3.1 over t1-t3 (T1 +2.7, T2 +5.1, T3 +1.4; 1,000 paired games per tier, look-ahead, loose; audit/omnath/2026-10-19-thrasios-trade/). The hasty dragons add about 4 damage per game while Omnath waits for landfall.
 - **2026-10-19.** New deck: Omnath, Locus of Rage red-green landfall, built from the Titania list.
+
+## Tymna the Weaver & Thrasios, Triton Hero — Four-Colour Partners (W/U/B/G)
+
+Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
+
+### Changes
+
+- **2026-10-24.** Out: Avenge. In: Flickering Hound. Avenge -> Flickering Hound (JD's choice, 2026-10-24; the Hound moves over from Seph/Atraxa). Avenge was stuck in hand in 75% of the games it was drawn (10/19 analysis, T5) and a wipe that hits the deck's own 30 creatures; Austere Command stays as the reset. The Hound flickers a creature on every creature cast: Sunblast Angel, Grave Titan, Sun Titan, Coiling Oracle. Not simulated.

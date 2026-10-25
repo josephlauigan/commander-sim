@@ -19,6 +19,7 @@
 1 Dark Ritual (4ed) 129
 1 Demonic Tutor (ddc) 49
 1 Dread Drone (roe) 108
+1 Dread Return (dmr) 302
 1 Dread Slaver (avr) 98
 1 End of the Hunt (sos) 81
 1 Eternal Student (sos) 82
@@ -59,11 +60,10 @@
 1 The One Ring (ltr) 451
 1 Toxic Deluge (mh3) 412
 1 Undercity Dire Rat (fin) 123
-1 Vampiric Tutor (dmr) 430
+1 Vampiric Tutor (soa) 100
 1 Viscera Seer (cmr) 158
 1 Vivid Marsh (lrw) 278
 1 Wander Off (sos) 104
 1 Woe Strider (clb) 774
 1 Yahenni, Undying Partisan (lcc) 214
-1 Dread Return (dmr) 302
 1 Zulaport Cutthroat (soc) 233
