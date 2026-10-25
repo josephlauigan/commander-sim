@@ -59,8 +59,7 @@ Tymna, so it can't also block. The attack taxes fix that:
 - **Elspeth**'s −3 destroys every creature with power 4 or more (yours too: count your Titans and Angels first);
   **Sunblast Angel** destroys every tapped creature when it enters (yours too, so cast it before you attack, after an
   opponent's big attack); **Austere Command** is the full reset (choose creatures with mana value 3 or less and 4 or
-  more: your attack taxes and rocks survive); **Avenge** destroys every creature and gains you 1 life for each, and costs
-  {2} less when a player attacked you on their last turn (hold it until their board is worth more than yours).
+  more: your attack taxes and rocks survive).
 
 ### The Basalt Monolith + Rings of Brighthearth combo
 
@@ -181,7 +180,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Thrasios, Triton Hero
 
-**Creatures (30).** Adeline, Resplendent Cathar, Archon of Absolution, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Faeburrow Elder, Falcon and Redwing, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Nightwind Glider, Paradox Surveyor, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
+**Creatures (31).** Adeline, Resplendent Cathar, Archon of Absolution, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Nightwind Glider, Paradox Surveyor, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -191,7 +190,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
 
-**Sorceries (3).** Austere Command, Avenge, Diabolic Tutor
+**Sorceries (2).** Austere Command, Diabolic Tutor
 
 **Lands (38).** Breeding Pool, Brushland, Caves of Koilos, Command Tower, Deathcap Glade, Drowned Catacomb, Exotic Orchard, Glacial Fortress, Isolated Chapel, Llanowar Wastes, Port Town, Sunpetal Grove, Unclaimed Territory, Underground River, Undergrowth Stadium, Yavimaya Coast, 6 Island, 7 Plains, 6 Swamp, 3 Forest
 
@@ -205,7 +204,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Austere Command
 1 Avacyn's Pilgrim
 1 Aven Mindcensor
-1 Avenge
 1 Baird, Steward of Argive
 1 Baneslayer Angel
 1 Basalt Monolith
@@ -235,6 +233,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Faeburrow Elder
 1 Falcon and Redwing
 1 Fellwar Stone
+1 Flickering Hound
 1 Ghostly Prison
 1 Glacial Fortress
 1 Grave Titan
