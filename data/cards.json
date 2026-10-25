@@ -24103,7 +24103,7 @@
      "effects": [
       {
        "do": "lose_life",
-       "n": "X",
+       "n": "other_attacking_creatures",
        "who": "each_opponent"
       }
      ],
@@ -44053,7 +44053,23 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 2,
+       "tgh": 2,
+       "what": {
+        "sel": "event"
+       }
+      }
+     ],
+     "event": "attack",
+     "source": "you_each"
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -44061,10 +44077,8 @@
    "ward": 0,
    "identity": "BRW",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Whenever a creature you control attacks, it gets +2/+2 until end of turn."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -48393,7 +48407,7 @@
      "effects": [
       {
        "do": "token",
-       "n": "X",
+       "n": "attacking_creatures",
        "pow": 1,
        "tgh": 1,
        "keywords": [],
@@ -63208,6 +63222,21 @@
    "bomb": 0,
    "dsl": [
     {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "damage",
+       "n": 1,
+       "to": {
+        "sel": "player",
+        "who": "each_opponent"
+       }
+      }
+     ],
+     "event": "attack",
+     "source": "you_each"
+    },
+    {
      "type": "activated",
      "cost": {
       "mana": "4"
@@ -63255,9 +63284,7 @@
    "identity": "BR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a creature you control attacks, that creature deals 1 damage to each opponent."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -81005,12 +81032,12 @@
      "effects": [
       {
        "do": "lose_life",
-       "n": "X",
+       "n": "attacking_creatures",
        "who": "each_opponent"
       },
       {
        "do": "gain_life",
-       "n": "X",
+       "n": "attacking_creatures",
        "who": "you",
        "per_opponent": false
       }
@@ -89321,27 +89348,7 @@
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 2,
-       "tgh": 2,
-       "keywords": [],
-       "attacking": true,
-       "warrior": false,
-       "types": [
-        "rebel"
-       ]
-      }
-     ],
-     "event": "attack",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flying",
@@ -89355,11 +89362,8 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever ~ attacks, you get an experience counter. Then create a 2/2 red Rebel creature token that's tapped and attacking for each experience counter you have.   [partly: you get an experience counter]",
-    "{2}{R}{W}, Tap an untapped Rebel you control: Return ~ from your graveyard to the battlefield tapped."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

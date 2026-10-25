@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Aggro /
 - **Commander:** Isshin, Two Heavens as One
 - **Color identity:** White, Black, Red
 - **Game Changers (0):** none
-- **Combos:** None.
+- **Combos:** None. No two-card infinite; the extra combats (Aurelia, the Warleader, Karlach, Raiyuu) are finite, even doubled by Isshin.
 - **Lands:** 36 (19 nonbasic + 17 basic)
 
 ## Role in the pool
 
-Early combat pressure. Whether your decks can block, sweep, or race a board that grows every attack step.
+Early combat pressure that turns every attack into damage off the board. Whether your decks can block, sweep, or race a table that loses life each time this deck declares attackers.
 
 ## At the table
 
-- **Plan:** Curves out with cheap attackers that make bodies when they swing: Goblin Rabblemaster, Legion Warboss, Adeline, Resplendent Cathar and Hero of Bladehold. Isshin, Two Heavens as One makes every attack trigger happen twice.
-- **Wins by:** Swarms the table with doubled tokens, then finishes with Hellrider, Brutal Hordechief and Caesar, Legion's Emperor. Aurelia, the Warleader and Scourge of the Throne add extra combats for a surprise kill.
-- **Watch out for:** Hero of Bladehold and Adeline with Isshin out double the board in a single combat, so kill Isshin or the token makers before they attack. Keep blockers and a sweeper ready from turn four. Hellrider turns a wide board into direct damage.
-- **Interaction:** Swords to Plowshares, Path to Exile, Lightning Helix, Terminate, Vindicate, Anguished Unmaking, Despark, Chaos Warp, Kolaghan's Command, Crackling Doom and Blasphemous Act. Flawless Maneuver, Selfless Spirit and Swiftfoot Boots protect its team.
+- **Plan:** Cheap creatures whose attack triggers Isshin, Two Heavens as One doubles: Adeline, Resplendent Cathar, Hero of Bladehold, Otharri, Suns' Glory, Voice of Victory and Zurgo Stormrender make attacking tokens; Captain Lannery Storm makes Treasure; Hammers of Moradin taps blockers. Windcrag Siege doubles them again.
+- **Wins by:** Damage on attack, not only in combat: Hellrider, Brutal Hordechief, Mishra, Claimed by Gix, Commissar Severina Raine, Ingris Stingerquill and Tectonic Giant drain or burn each opponent as the team swings. Fervent Charge and Adriana's melee pump the attackers and Iroas, God of Victory shields them; Aurelia, the Warleader, Karlach and Raiyuu add extra combats.
+- **Watch out for:** Isshin with a wide board: each attack triggers twice, so a turn-four swing can take ten or more life from every opponent before blocks. Kill Isshin first, then the drain creatures (Hellrider, Mishra, Hordechief). Sweepers set it back, but Alesha and Otharri come back from the graveyard.
+- **Interaction:** Swords to Plowshares, Path to Exile, Anguished Unmaking, Despark, Generous Gift, Chaos Warp, Boros Charm, and the sweepers Blasphemous Act, Damn and Ruinous Ultimatum. Lightning Greaves, Swiftfoot Boots, Boros Charm and Unbreakable Formation protect its team.
 
 ## Strategy
 
-Go wide early, then let Isshin double every attack trigger. Rabblemaster, Warboss, Hero of Bladehold, Brimaz, Adeline, Anim Pakal, and Rabble Rousing each make bodies on attack, so a turn-four swing with Isshin out can double the board mid-combat. Hellrider, Brutal Hordechief, and Caesar turn the width into direct damage. Aurelia, Karlach, and Scourge of the Throne add extra combats as the top end.
+Curve out with attackers that do something when they swing, land Isshin, and attack every turn. Token makers (Adeline, Hero of Bladehold, Anim Pakal, Otharri, Krenko, Tin Street Kingpin, Voice of Victory, Zurgo) widen the board mid-combat, and each attacker then feeds the per-attacker payoffs: Hellrider and Brutal Hordechief per creature, Mishra and Severina by the number of attackers, Ingris per creature to each opponent. Curse of Opulence and Captain Lannery Storm fund the top end (Aurelia, the Warleader, Etali, Sun Titan); Painful Truths, Read the Bones and Breena, the Demagogue refill the hand.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Isshin's trigger doubling (attack triggers only, not ETB); token-on-attack creatures; Hellrider / Brutal Hordechief per-attacker damage; extra-combat pieces (Aurelia, Karlach, Scourge of the Throne).
+Isshin's trigger doubling (attack triggers only, not ETB; every hand-written and compiled attack trigger goes through it); attacking-token makers; per-attacker damage (Hellrider, Brutal Hordechief, Ingris, Mishra and Severina, whose X counts the attackers); extra combats (Aurelia, the Warleader, Karlach, Raiyuu). Approximate: Curse of Opulence's Gold tokens are Treasures; Reconnaissance is vigilance on your turn; Tectonic Giant always takes the burn mode; Firebender Ascension counts and copies only compiled and hand-written attack triggers (impls/t12_isshin.rs).
 
 ## Decklist by type (100)
 

@@ -9485,3 +9485,7 @@ dsl = [] # the compiled search put any permanent card into the graveyard: card c
 
 ["Haven of the Spirit Dragon"]
 dsl = [] # the compiled return took any creature card: card code returns a Dragon
+
+# --- Tiers 1/2 (isshin): hand-written in rust/crates/sim-core/src/impls/t12_isshin.rs (status notes in data/audit.toml)
+["Otharri, Suns' Glory"]
+dsl = [] # the compiled attack made one Rebel with no experience counter; the trigger and the graveyard return are card code

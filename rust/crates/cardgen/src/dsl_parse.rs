@@ -246,6 +246,11 @@ pub fn num_expr(s: &str) -> J {
         return n_(&s);
     }
     // counting phrases the interpreter can name (anything else falls through to a bare "X", which the audit flags)
+    // --- Tiers 1/2 (isshin): "the number of attacking creatures" (Mishra, Claimed by Gix), "the number of other
+    // attacking creatures" (Commissar Severina Raine): counted in an attack trigger
+    if let Some(am) = rmatch(r"^(?:the number of )?(other )?attacking creatures(?: you control)?$", &s) {
+        return if am.g(1).is_some() { "other_attacking_creatures" } else { "attacking_creatures" }.into();
+    }
     if s.contains("creature") && s.contains("died this turn") {
         return "creatures_died_this_turn".into();
     }
@@ -823,6 +828,15 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
         |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
     ),
+    // --- Tiers 1/2 (isshin): "that creature gets +2/+2 until end of turn" (Fervent Charge; "it" in a "whenever a
+    // creature you control attacks" trigger is rewritten to "that creature"): the creature the trigger is about
+    (r"^that creature gets \+(\d+)/\+(\d+) until end of turn$", |m| {
+        Some(eff(obj! {"do" => "pump", "pow" => n_(m.gs(1)), "tgh" => n_(m.gs(2)), "what" => obj!{"sel" => "event"}}))
+    }),
+    // "that creature deals 1 damage to each opponent" (Ingris Stingerquill): each opponent takes it
+    (r"^that creature deals (\d+) damage to each opponent$", |m| {
+        Some(eff(obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}}))
+    }),
     // --- Tiers 4/5 (prosper): "each creature deals 1 damage to its controller" (Rakdos Charm)
     (r"^each creature deals 1 damage to its controller$", |_| Some(eff(obj! {"do" => "creature_backlash"}))),
     // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands" (Peregrine Drake, Frantic Search): n of your tapped lands
@@ -1621,7 +1635,14 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         if let Some(m) = &tm {
             set_ctx(l);
             let trig = parse_trigger(m.gs(2));
-            let (e, b) = parse_effects(m.gs(3));
+            // --- Tiers 1/2 (isshin): "whenever a creature you control attacks, it gets +2/+2" (Fervent Charge): "it"
+            // is the attacking creature, not this permanent
+            let each = trig.as_ref().is_some_and(|t| t.iter().any(|x| x.get("source") == Some(&J::from("you_each"))));
+            let body = match m.gs(3).strip_prefix("it gets ") {
+                Some(r) if each => format!("that creature gets {r}"),
+                _ => m.gs(3).to_string(),
+            };
+            let (e, b) = parse_effects(&body);
             match trig {
                 Some(trig) if !e.is_empty() => {
                     for t in trig {

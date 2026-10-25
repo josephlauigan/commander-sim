@@ -202,6 +202,9 @@ pub enum DataKey {
     /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
     /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
     T45Dragon,
+    /// --- Tiers 1/2 (isshin): the player Curse of Opulence enchants (`Val::Player`); Firebender Ascension's quest
+    /// counters (`Val::Int`)
+    T12Isshin,
 }
 
 /// A value in per-card state.

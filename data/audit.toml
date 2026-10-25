@@ -261,6 +261,20 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Ureni of the Unwritten" = { status = "Full", note = "flying, trample; hand-written (impls/t45_urdragon.rs): enters or attacks: the best Dragon creature card of the top eight onto the battlefield, the rest to the bottom in a random order" }
 "Urza's Incubator" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): names the deck's most common creature type; creature spells of that type cost {2} less" }
 
+# --- Tiers 1/2 (isshin): impls/t12_isshin.rs
+"Curse of Opulence" = { status = "Approximate", note = "hand-written (impls/t12_isshin.rs): enchants the opponent with the most life; whenever any player attacks that player, you create a Gold token and an attacking opponent of yours creates one too. Gold is a Treasure here (it counts as a Treasure sacrificed). Left out: the Aura falling off when its player leaves only stops it" }
+"Reconnaissance" = { status = "Approximate", note = "hand-written (impls/t12_isshin.rs): your creatures have vigilance on your turn (each attacker removed from combat after its damage and untapped). Left out: removing a blocked attacker from combat to save it" }
+"Adriana, Captain of the Guard" = { status = "Full", note = "hand-written (impls/t12_isshin.rs): melee on Adriana and your other creatures: each of your attackers +1/+1 until end of turn per opponent attacked this combat, once per Adriana" }
+"Alesha, Who Laughs at Fate" = { status = "Full", note = "first strike and the attack counter compiled; hand-written (impls/t12_isshin.rs): raid end step, the best creature card with mana value up to Alesha's power from your graveyard to the battlefield" }
+"Breena, the Demagogue" = { status = "Full", note = "flying; hand-written (impls/t12_isshin.rs): any player attacks one of your opponents who has more life than another of your opponents: that player draws, two +1/+1 counters on your best creature (once per opponent attacked)" }
+"Captain Lannery Storm" = { status = "Full", note = "haste and the attack Treasure compiled; hand-written (impls/t12_isshin.rs): +1/+0 until end of turn whenever you sacrifice a Treasure" }
+"Firebender Ascension" = { status = "Approximate", note = "the 2/2 Soldier from its tags; hand-written (impls/t12_isshin.rs): a quest counter per compiled or hand-written attack trigger of your attacking creatures, copied from four counters on. Left out: tag-driven attack triggers add no counter, conditional hand-written ones count even when they don't fire, the Soldier's firebending" }
+"Hammers of Moradin" = { status = "Full", note = "myriad (impls/t0_zurgo.rs); hand-written (impls/t12_isshin.rs): whenever it attacks, tap each opponent's best untapped creature" }
+"Otharri, Suns' Glory" = { status = "Full", note = "flying, lifelink, haste; hand-written (impls/t12_isshin.rs): attack: an experience counter, then a 2/2 red Rebel tapped and attacking per experience counter; {2}{R}{W}, tap an untapped Rebel: returns from the graveyard tapped (after combat or at a turn's end)" }
+"Raiyuu, Storm's Edge" = { status = "Full", note = "first strike; hand-written (impls/t12_isshin.rs): a Samurai or Warrior of yours attacks alone: untap it, an additional combat after the first" }
+"Tectonic Giant" = { status = "Approximate", note = "hand-written (impls/t12_isshin.rs): whenever it attacks, 3 damage to each opponent. Left out: the impulse-draw mode and the trigger on being targeted by an opponent's spell" }
+"Mishra, Claimed by Gix" = { status = "Approximate", note = "compiled: whenever you attack, each opponent loses X and you gain X (X: the attacking creatures). Left out: the meld with Phyrexian Dragon Engine (not in the deck)" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -356,17 +370,17 @@ mechs = ["isshin_doubling"]
 
 [[engines.isshin-mardu-attack-triggers]]
 label = "token-on-attack creatures"
-cards = ["Adeline, Resplendent Cathar", "Hero of Bladehold", "Brimaz, King of Oreskos", "Legion Warboss", "Goblin Rabblemaster", "Tilonalli's Summoner"]
+cards = ["Adeline, Resplendent Cathar", "Hero of Bladehold", "Otharri, Suns' Glory", "Anim Pakal, Thousandth Moon", "Krenko, Tin Street Kingpin", "Voice of Victory", "Zurgo Stormrender"]
 mechs = ["attack_triggers"]
 
 [[engines.isshin-mardu-attack-triggers]]
-label = "Hellrider / Brutal Hordechief per-attacker damage"
-cards = ["Hellrider", "Brutal Hordechief"]
+label = "per-attacker damage (Hellrider, Hordechief, Mishra, Severina, Ingris)"
+cards = ["Hellrider", "Brutal Hordechief", "Mishra, Claimed by Gix", "Commissar Severina Raine", "Ingris Stingerquill"]
 mechs = ["attack_triggers"]
 
 [[engines.isshin-mardu-attack-triggers]]
 label = "extra combats"
-cards = ["Aurelia, the Warleader", "Karlach, Fury of Avernus", "Scourge of the Throne"]
+cards = ["Aurelia, the Warleader", "Karlach, Fury of Avernus", "Raiyuu, Storm's Edge"]
 mechs = ["extra_combat"]
 
 [[engines.lathril-golgari-elves]]

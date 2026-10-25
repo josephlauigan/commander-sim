@@ -52,6 +52,8 @@ pub struct DslCtx {
     pub x_default: bool,
     /// an attack trigger: attacking tokens it makes join the attack
     pub attack: bool,
+    /// --- Tiers 1/2 (isshin): an attack trigger: the creatures attacking as it triggered (0 outside one)
+    pub atk_count: i32,
 }
 
 impl DslCtx {
@@ -100,6 +102,19 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             (g.died_count.0 == Some(g.turn_stamp())).then_some(g.died_count.1 as i32).unwrap_or(0)
         }
         "destroyed_this_way" => ctx.destroyed,
+        // --- Tiers 1/2 (isshin): "the number of (other) attacking creatures" (Mishra, Claimed by Gix; Commissar
+        // Severina Raine): the attack the trigger saw, else the creatures in combat now
+        "attacking_creatures" | "other_attacking_creatures" => {
+            let n = if ctx.atk_count > 0 {
+                ctx.atk_count
+            } else {
+                g.in_combat.iter().filter(|&&m| g.perm(m).on_bf).count() as i32 // every player's (Galadhrim Ambush)
+            };
+            // "other": the source itself attacks (its own attack trigger)
+            let me = name == "other_attacking_creatures"
+                && src.is_some_and(|m| ctx.atk_count > 0 || g.in_combat.contains(&m));
+            (n - me as i32).max(0)
+        }
         "sacrificed_mv" => ctx.sacrificed_mv,
         "gy_instants_sorceries" => pl.gy.iter().filter(|&&c| g.db.get(c).instant || g.db.get(c).sorcery).count() as i32,
         "colors_among_permanents" => pl
@@ -1372,7 +1387,7 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
         }
         "attack" => {
-            let ctx = DslCtx { event_player: kw.defender, attack: true, ..base };
+            let ctx = DslCtx { event_player: kw.defender, attack: true, atk_count: kw.attackers.len() as i32, ..base };
             if min_atk.is_some_and(|k| (kw.attackers.len() as u32) < k) {
                 return out; // Tier 3 (aurelia): battalion, "attacks with three or more creatures"
             }
