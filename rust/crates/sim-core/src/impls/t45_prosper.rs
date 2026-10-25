@@ -344,10 +344,23 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     Ok(())
 }
 
-fn pathway_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
+/// a Pathway's front face colour: one put onto the battlefield without being played enters front face up
+pub(crate) fn pathway_front(name: &str) -> &'static str {
+    match name {
+        "Barkchannel Pathway // Tidechannel Pathway" => "G",
+        "Blightstep Pathway // Searstep Pathway" => "B",
+        "Clearwater Pathway // Murkwater Pathway" => "U",
+        "Needleverge Pathway // Pillarverge Pathway" => "R",
+        _ => "C",
+    }
+}
+
+/// the face it was played as, else its front face (never worked out again here: a pick reads the other lands'
+/// colours, and an Exotic Orchard reads an opponent's Pathway, which looped without end)
+fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
     match g.land(l).data.get(DataKey::ChosenColor) {
         Some(Val::Str(s)) => Colors::from_letters(s),
-        _ => Colors::from_letters(&pathway_pick(g, p, l).to_string()),
+        _ => Colors::from_letters(pathway_front(&g.db.get(g.land(l).cd).name)),
     }
 }
 

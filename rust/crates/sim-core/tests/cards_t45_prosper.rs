@@ -394,3 +394,18 @@ fn citadel_top_reservoir_combo_needs_all_three_on_your_turn() {
     g.player_mut(P0).life = 2;
     assert!(!ready(&g), "too little life to start");
 }
+
+#[test]
+fn pathways_and_exotic_orchards_on_both_sides_read_their_colours_without_looping() {
+    // Pathways put onto the battlefield without being played (no face chosen) enter front face up; each Orchard
+    // reads the other player's Pathway, which once worked its face out again through this Orchard, without end
+    let mut g = table(&["prosper-rakdos-exile-treasure", "yuriko-dimir-ninjas"]);
+    let mine = lands(&mut g, P0, "Blightstep Pathway // Searstep Pathway", 1, false)[0];
+    let my_orchard = lands(&mut g, P0, "Exotic Orchard", 1, false)[0];
+    let theirs = lands(&mut g, P1, "Clearwater Pathway // Murkwater Pathway", 1, false)[0];
+    lands(&mut g, P1, "Exotic Orchard", 1, false);
+    let cols = |g: &Game, p, l| sim_core::engine::mana::land_colors_now(g, p, l);
+    assert!(cols(&g, P0, mine).has('B') && !cols(&g, P0, mine).has('R'), "Blightstep's front face");
+    assert!(cols(&g, P1, theirs).has('U') && !cols(&g, P1, theirs).has('B'), "Clearwater's front face");
+    let _ = cols(&g, P0, my_orchard); // the call that looped
+}

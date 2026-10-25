@@ -262,11 +262,12 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     Ok(())
 }
 
-fn pathway_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
+fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
     match g.land(l).data.get(DataKey::ChosenColor) {
         Some(Val::Str(s)) => Colors::from_letters(s),
-        // put onto the battlefield some other way: the face it would have been played as
-        _ => Colors::from_letters(&pathway_pick(g, p, l).to_string()),
+        // put onto the battlefield some other way: its front face (not worked out again: a pick looped through an
+        // opponent's Exotic Orchard and Pathway)
+        _ => Colors::from_letters(crate::impls::t45_prosper::pathway_front(&g.db.get(g.land(l).cd).name)),
     }
 }
 
