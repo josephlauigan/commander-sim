@@ -149,7 +149,10 @@ fn enduring_vitality_returns_as_a_noncreature_enchantment() {
     assert!(!g.is_creature(back), "It's an enchantment. (It's not a creature.)");
     let bear = token(&mut g, P0, 2);
     let u = mana_units(&g, P0, false);
-    assert!(u.iter().any(|w| w.src == sim_core::engine::mana::Source::Perm(bear) && w.cols.has('U')), "still gives the ability");
+    assert!(
+        u.iter().any(|w| w.src == sim_core::engine::mana::Source::Perm(bear) && w.cols.has('U')),
+        "still gives the ability"
+    );
     assert!(!u.iter().any(|w| w.src == sim_core::engine::mana::Source::Perm(back)), "it taps for nothing itself");
 }
 

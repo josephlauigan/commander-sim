@@ -55,7 +55,7 @@ use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, cost_of, land_colors_now, mana_units, pay, plan_pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
-use crate::engine::values::{epow, etgh, has_type, pval, ptypes, untargetable};
+use crate::engine::values::{epow, etgh, has_type, ptypes, pval, untargetable};
 use crate::engine::zones::{bounce, exile_perm, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -129,10 +129,8 @@ fn mv(g: &Game, m: PermId) -> u32 {
 /// the permanent types of m that matter to Cloudstone Curio
 fn perm_types(g: &Game, m: PermId) -> Vec<Types> {
     let t = ptypes(g, m);
-    let mut out: Vec<Types> = [Types::ARTIFACT, Types::ENCHANTMENT, Types::PLANESWALKER]
-        .into_iter()
-        .filter(|&k| t.has(k))
-        .collect();
+    let mut out: Vec<Types> =
+        [Types::ARTIFACT, Types::ENCHANTMENT, Types::PLANESWALKER].into_iter().filter(|&k| t.has(k)).collect();
     if g.is_creature(m) {
         out.push(Types::CREATURE);
     }
@@ -216,9 +214,7 @@ fn alarm_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 // ================================================================== Mana Breach
 /// the land q returns to hand: a tapped one first, then the one making the fewest colours
 fn breach_land(g: &Game, q: PlayerId) -> Option<LandId> {
-    min_by(&g.player(q).lands, |l| {
-        (!g.land(l).tapped) as i32 as f64 * 10.0 + land_colors_now(g, q, l).count() as f64
-    })
+    min_by(&g.player(q).lands, |l| (!g.land(l).tapped) as i32 as f64 * 10.0 + land_colors_now(g, q, l).count() as f64)
 }
 
 /// Whenever a player casts a spell, that player returns a land they control to its owner's hand.
@@ -257,7 +253,12 @@ fn pathway_pick(g: &Game, p: PlayerId, l: LandId) -> char {
 fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     let c = pathway_pick(g, p, l);
     g.land_mut(l).data.set(DataKey::ChosenColor, Val::Str(if c == 'U' { "U" } else { "G" }));
-    crate::glog!(g, "    {} plays it as {}", pname(g, p), if c == 'U' { "Tidechannel Pathway" } else { "Barkchannel Pathway" });
+    crate::glog!(
+        g,
+        "    {} plays it as {}",
+        pname(g, p),
+        if c == 'U' { "Tidechannel Pathway" } else { "Barkchannel Pathway" }
+    );
     Ok(())
 }
 
@@ -272,7 +273,8 @@ fn pathway_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
 // ================================================================== Koma, Cosmos Serpent
 /// p's other Serpents, the least valuable first (Koma's Coil tokens)
 fn serpents(g: &Game, p: PlayerId, koma: PermId) -> Vec<PermId> {
-    let mut v: Vec<PermId> = creatures_of(g, p).into_iter().filter(|&m| m != koma && has_type(g, m, "serpent")).collect();
+    let mut v: Vec<PermId> =
+        creatures_of(g, p).into_iter().filter(|&m| m != koma && has_type(g, m, "serpent")).collect();
     v.sort_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)));
     v
 }

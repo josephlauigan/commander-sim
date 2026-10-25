@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 5: High Bracket 4**. Axis: Mana combo.
 - **Commander:** Kinnan, Bonder Prodigy
 - **Color identity:** Blue, Green
 - **Game Changers (10):** Ancient Tomb, Chrome Mox, Consecrated Sphinx, Cyclonic Rift, Fierce Guardianship, Force of Will, Mana Vault, Rhystic Study, Seedborn Muse, Worldly Tutor
-- **Combos:** Kinnan + Basalt Monolith (unbounded colorless). Freed from the Real or Pemmin's Aura + a dork that makes 2+ with Kinnan. Isochron + Reversal. Finishers: Walking Ballista, Kinnan activation, Hullbreaker Horror.
+- **Combos:** Kinnan + Basalt Monolith (unbounded colorless; Thrasios or Mirage Mirror as other outlets). Kinnan + Freed from the Real or Pemmin's Aura on a mana creature. Freed from the Real or Pemmin's Aura + Bloom Tender, + Nyxbloom Ancient and a blue mana creature, or + Badgermole Cub and a blue mana creature. Hullbreaker Horror + Kinnan + two rocks. Finishers: Walking Ballista, Thrasios drawing the deck.
 - **Lands:** 30 (17 nonbasic + 13 basic)
 
 ## Role in the pool
 
-A second fast-combo deck with a different axis (creatures and auras rather than artifacts), so artifact hate alone doesn't answer it.
+A fast-combo deck built on creatures and Auras as well as artifacts, so artifact hate alone doesn't answer it, behind a wall of free counterspells.
 
 ## At the table
 
-- **Plan:** Fast mana (Mana Vault, Chrome Mox, Sol Ring, Lotus Petal) and mana dorks, with Kinnan, Bonder Prodigy adding extra mana from every nonland permanent that taps. It turns on by turn two to four.
-- **Wins by:** Basalt Monolith with Kinnan makes unbounded colorless mana, as does Freed from the Real or Pemmin's Aura on a two-mana dork. It then finds Hullbreaker Horror, Walking Ballista or Craterhoof Behemoth. Natural Order is a backup.
-- **Watch out for:** A turn-three to five kill: hold counters or artifact and enchantment removal for the combo pieces. Tutors (Mystical Tutor, Worldly Tutor, Survival of the Fittest) and free counters protect it. Kinnan himself is a lightning rod.
-- **Interaction:** Force of Will, Fierce Guardianship, Mana Drain, Counterspell, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Stern Scolding, Chain of Vapor, Cyclonic Rift and Beast Within. Veil of Summer protects against your blue and black spells.
+- **Plan:** Fast mana (Mana Vault, Chrome Mox, Sol Ring, Lotus Petal, Ancient Tomb) and mana creatures, with Kinnan, Bonder Prodigy adding one more mana from every nonland permanent tapped for mana. Nyxbloom Ancient triples it and Badgermole Cub adds {G} per creature tapped. Rhystic Study, Mystic Remora, Sylvan Library and Consecrated Sphinx draw while it waits.
+- **Wins by:** Basalt Monolith with Kinnan makes unbounded colorless mana, as does Freed from the Real or Pemmin's Aura on a mana creature with Kinnan, Bloom Tender, Nyxbloom Ancient or Badgermole Cub. The mana goes into Walking Ballista, Thrasios drawing the deck, or Kinnan's ability; Koma, Hullbreaker Horror and Void Winnower are the big creatures behind it.
+- **Watch out for:** A turn-three to five kill: hold counters or removal for Kinnan and the untapping Auras. Worldly Tutor, Chord of Calling, Green Sun's Zenith, Finale of Devastation, Trophy Mage, Fabricate and Moonsilver Key find the pieces. Spellskite takes your targeted removal; Nezahal, Primal Tide and Koma, Cosmos Serpent shrug off removal; Void Winnower stops your even spells and blockers.
+- **Interaction:** Force of Will, Force of Negation, Fierce Guardianship, Pact of Negation, Mana Drain, Counterspell, Flusterstorm, Swan Song, Pongify, An Offer You Can't Refuse, Sink into Stupor and Cyclonic Rift. Wandering Archaic taxes or copies your instants and sorceries.
 
 ## Strategy
 
-Kinnan makes every nonland permanent that taps for mana add one more, which turns Basalt Monolith into unbounded colorless mana on its own, and Freed from the Real or Pemmin's Aura on any two-mana dork into unbounded mana. The mana goes into Kinnan's own activation to find and cast a finisher, or into Walking Ballista. Tutors and free counters protect the turn-three-to-five combo; Natural Order into Craterhoof is the backup.
+Kinnan makes every nonland mana permanent add one more, which turns Basalt Monolith into unbounded colorless mana on its own, and Freed from the Real or Pemmin's Aura on any mana creature into unbounded mana. Without Kinnan the Auras still go infinite on Bloom Tender (with the blue Aura out it taps for {G}{U}), or on a blue mana creature with Nyxbloom Ancient or Badgermole Cub. The mana goes into Walking Ballista, Thrasios or Kinnan's own activation. Tutors and free counters protect the turn-three-to-five combo; Koma, Nezahal and Void Winnower are the fair game.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Kinnan's +1 mana static; Basalt Monolith / Freed from the Real / Pemmin's Aura loops; Kinnan activation (look at top 7, put a non-Human creature onto battlefield); Isochron + Reversal; free counterspells.
+Kinnan's +1 mana static and activation (top five, a non-Human creature onto the battlefield); Basalt Monolith / Freed from the Real / Pemmin's Aura loops, with Kinnan, Bloom Tender, Nyxbloom Ancient or Badgermole Cub; Nyxbloom's tripling; free counterspells; Spellskite's redirect; Koma's and Nezahal's protection; Void Winnower's locks. All of these are modeled; Koma, Nezahal, Nyxbloom, Spellskite, Void Winnower, Wandering Archaic and Badgermole Cub are Approximate (data/audit.toml says what is left out).
 
 ## Decklist by type (100)
 
