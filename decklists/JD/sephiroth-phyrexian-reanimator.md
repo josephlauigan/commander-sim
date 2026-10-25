@@ -54,7 +54,7 @@ She is a 6/6 for six and a fine reanimation target herself.
 
 **Ephemerate is protection and a second Kitten in one card.** For {W} at instant speed, exile your creature and return it. In response to a removal spell, theft, or any other targeted effect, the spell fizzles because the creature is a new object, so a reanimated bomb survives the first answer the table throws at it. With nothing to protect, blink Archon of Cruelty, Grave Titan, or Sephiroth for their enter triggers. Either way, rebound casts it again for free at your next upkeep: a second drain-and-edict from Archon or two more Zombies from Titan. It can only target creatures, so it can't save Aura Shards. **Momentary Blink** is a second one for the Kitten: {1}{W} at instant speed (or flashback for {3}{U}), so a blink is available again after the first has been used.
 
-**The flicker package re-buys enter triggers every turn.** **Teleportation Circle** and **Conjurer's Closet** each exile a creature you control at the beginning of your end step and return it: Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Grave Titan for two more Zombies. Teleportation Circle can take an artifact instead, so with no creature worth it, flicker a tapped Sol Ring or Signet and it comes back untapped for the opponents' turns. **Restoration Angel** is a 3/4 flash flier that does the same once at instant speed: at the end of an opponent's turn for value, or in response to removal or theft aimed at a bomb (the spell fizzles, as with Ephemerate). It can't flicker an Angel, so not Sephiroth herself. **Flickering Hound** does it on your turn instead: whenever you cast a creature spell (Muldrotha's recasts count), it flickers another creature you control, Sephiroth included. Don't flicker a creature carrying +1/+1 counters or Equipment unless its enter trigger is worth more than what it loses.
+**The flicker package re-buys enter triggers every turn.** **Teleportation Circle** and **Conjurer's Closet** each exile a creature you control at the beginning of your end step and return it: Sephiroth for another top-ten dig, Archon of Cruelty for another drain-and-edict, Grave Titan for two more Zombies. Teleportation Circle can take an artifact instead, so with no creature worth it, flicker a tapped Sol Ring or Signet and it comes back untapped for the opponents' turns. **Restoration Angel** is a 3/4 flash flier that does the same once at instant speed: at the end of an opponent's turn for value, or in response to removal or theft aimed at a bomb (the spell fizzles, as with Ephemerate). It can't flicker an Angel, so not Sephiroth herself.
 
 **Arcane Denial** ({1}{U}) counters any spell. Its controller may draw up to two cards at the next upkeep and you draw one, so save it for the spell that matters (a wipe, Rest in Peace, a counter aimed at your combo). **Swan Song** ({U}) counters an enchantment, instant or sorcery (it gives that player a 2/2 flying Bird, so it is best used on a wipe or a tutor). **Galadriel's Dismissal** ({W}) phases out one creature: protection from removal for the turn. Kicked, it phases out every creature a target player controls, which stops an attack or a one-sided fight for a turn. **Grand Abolisher** ({W}{W}) stops opponents casting spells or using creature, artifact and enchantment abilities during your turn.
 
@@ -173,13 +173,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sephiroth, the Savior (Atraxa, Grand Unifier)
 
-**Creatures (24).** Archon of Cruelty, Birds of Paradise, Blood Artist, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Flickering Hound, Grand Abolisher, Grave Titan, Hornet Queen, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Tireless Tracker, Triskelion, Viscera Seer, Zulaport Cutthroat
+**Creatures (23).** Archon of Cruelty, Birds of Paradise, Blood Artist, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Hornet Queen, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Tireless Tracker, Triskelion, Viscera Seer, Zulaport Cutthroat
 
 **Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Teleportation Circle, Tortured Existence
 
 **Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (10).** Austere Command, Buried Alive, Demonic Tutor, Diabolic Tutor, Harmonize, Reanimate, Toxic Deluge, Unburial Rites, Victimize, Yawgmoth's Will
+**Sorceries (11).** Austere Command, Buried Alive, Demonic Tutor, Diabolic Tutor, Harmonize, Open the Armory, Reanimate, Toxic Deluge, Unburial Rites, Victimize, Yawgmoth's Will
 
 **Instants (11).** Anguished Unmaking, Arcane Denial, Assassin's Trophy, Entomb, Ephemerate, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares
 
@@ -220,7 +220,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Evolving Wilds
 1 Exotic Orchard
 1 Fabled Passage
-1 Flickering Hound
 1 Galadriel's Dismissal
 1 Gifts Ungiven
 1 Glacial Fortress
@@ -241,6 +240,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Muldrotha, the Gravetide
 1 Necromancy
 1 Nim Deathmantle
+1 Open the Armory
 1 Overgrown Tomb
 1 Path to Exile
 1 Phyrexian Arena

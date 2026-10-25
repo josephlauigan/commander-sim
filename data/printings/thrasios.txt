@@ -5,7 +5,6 @@
 1 Austere Command (brc) 69
 1 Avacyn's Pilgrim (isd) 170
 1 Aven Mindcensor (clb) 688
-1 Avenge (msc) 11
 1 Baird, Steward of Argive (plst) DOM-4
 1 Baneslayer Angel (m21) 6
 1 Basalt Monolith (3ed) 235
@@ -35,6 +34,7 @@
 1 Faeburrow Elder (plst) ELD-190
 1 Falcon and Redwing (msc) 14
 1 Fellwar Stone (cmm) 657
+1 Flickering Hound (fra) 7
 3 Forest (mdd) 301
 1 Ghostly Prison (soc) 146
 1 Glacial Fortress (msc) 248

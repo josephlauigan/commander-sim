@@ -23,15 +23,13 @@
 1 Demonic Tutor (cmm) 696
 1 Diabolic Tutor (sld) 721
 1 Displacer Kitten (clb) 63
-1 Victimize (tdc) 198
-1 Elesh Norn, Grand Cenobite (mul) 3
+1 Elesh Norn, Grand Cenobite (sld) 811
 1 Elesh Norn, Mother of Machines (one) 416
 1 Entomb (dmr) 426
 1 Ephemerate (sta) 68
 1 Evolving Wilds (dbl) 530
 1 Exotic Orchard (brc) 185
 1 Fabled Passage (pw21) 4
-1 Flickering Hound (fra) 7
 3 Forest (2ed) 302
 1 Galadriel's Dismissal (hoc) 16
 1 Gifts Ungiven (2x2) 347
@@ -54,6 +52,7 @@
 1 Muldrotha, the Gravetide (fca) 57
 1 Necromancy (plst) VIS-64
 1 Nim Deathmantle (som) 188
+1 Open the Armory (sld) 2089
 1 Overgrown Tomb (rtr) 243
 1 Path to Exile (cmm) 626
 1 Phyrexian Arena (pone) 104s
@@ -82,6 +81,7 @@
 1 Triskelion (dmr) 389
 1 Unburial Rites (2x2) 95
 1 Underground River (dkm) 41
+1 Victimize (mh3) 413
 1 Viscera Seer (soc) 229
 1 Watery Grave (grn) 259
 1 Woodland Cemetery (soc) 424
