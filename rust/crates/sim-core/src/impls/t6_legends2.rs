@@ -121,8 +121,12 @@ fn magda_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !on(g, p, src) || g.player(p).treasures < 5 || !g.player(p).library.contains(&t) {
         return Ok(false);
     }
+    // the cost: all five at once, then their sacrifice triggers (a trigger between them could spend a Treasure and
+    // leave fewer than five to pay with)
     for _ in 0..5 {
         g.player_mut(p).sac_treasure();
+    }
+    for _ in 0..5 {
         if !g.hooks.is_empty() {
             crate::engine::hooks::fire_trigger(
                 g,
