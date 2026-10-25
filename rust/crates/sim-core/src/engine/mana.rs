@@ -212,6 +212,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if &*d.name == "Hydro-Channeler" && !g.pay_for.is_some_and(|c| g.db.get(c).instant || g.db.get(c).sorcery) {
                 continue;
             }
+            if crate::impls::t45_urdragon::dragon_only_mana(g, &d.name) {
+                continue; // --- Tiers 4/5 (urdragon): Rivaz of the Claw: only for Dragon creature spells
+            }
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or(1);
             let cols = if &*d.name == "Delighted Halfling" {
                 cardcode::halfling_colors(g, p).unwrap_or(Colors::NONE)
@@ -559,6 +562,8 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
         }
     }
     crate::impls::krrik::drop_black(g, p, c, gn, &mut pips); // K'rrik: 2 life for a {B}
+    crate::impls::t45_urdragon::morophon_pips(g, p, c, &mut pips); // --- Tiers 4/5 (urdragon): Morophon
+    gn += crate::impls::t45_urdragon::eminence(g, p, c); // --- Tiers 4/5 (urdragon): The Ur-Dragon's eminence
     gn = (gn + crate::dsl::cost_delta(g, p, c)).max(0);
     gn = (gn + crate::impls::t0_stella::kaza_delta(g, p, c)).max(0); // Kaza, Roil Chaser
     if !g.hooks.is_empty() {
@@ -572,6 +577,11 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
     gn = (gn + cardcode::self_cost(g, p, c)).max(0); // Draco's domain, delve
     if pl.emblems.contains(&"tamiyo") && pl.hand.contains(&c) {
         return (0, String::new());
+    }
+    if crate::impls::t45_urdragon::free_dragon(g, p, c) {
+        // --- Tiers 4/5 (urdragon): Dracogenesis: no mana cost (the commander tax below is still paid)
+        gn = 0;
+        pips.clear();
     }
     if crate::engine::values::stopped(g, &d.name) {
         gn += 3; // Disruptor Flute tax

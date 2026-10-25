@@ -192,6 +192,10 @@ pub enum DataKey {
     T45Search,
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar's revival counters (Int)
     Revival,
+    /// --- Tiers 4/5 (urdragon): Dragon's Hoard's gold counters (Int); a Dragon cast from the graveyard with Rivaz of
+    /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
+    /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
+    T45Dragon,
 }
 
 /// A value in per-card state.

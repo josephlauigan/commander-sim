@@ -1385,6 +1385,29 @@ static STATICS: &[(&str, StaticFn)] = &[
         Some(eff(obj! {"type" => "static", "static" => "enters_tapped", "who" => "opponents",
         "filter" => obj!{"type" => "creature", "controller" => "opp"}}))
     }),
+    // --- Tiers 4/5 (urdragon)
+    // "Dragon spells you cast cost {1} less to cast" (Dragonlord's Servant, Dragonspeaker Shaman, Sarkhan, Soul
+    // Aflame): a spell with that creature type (changelings too)
+    (
+        r"^(dragon|goblin|elf|zombie|human|wizard|knight|vampire|merfolk|sliver|spirit) spells you cast cost \{(\d+)\} less to cast$",
+        |m| {
+            Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you",
+            "spell" => format!("sub_{}", m.gs(1)), "amount" => -int(m.gs(2))}))
+        },
+    ),
+    // "Dragons you control have indestructible" (Call the Spirit Dragons)
+    (
+        r"^(other )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|angels|demons|dragons|merfolk|vampires|spirits|faeries) you control have ([a-z, ]+)$",
+        |m| {
+            let sub_ = singular(m.gs(2));
+            let v = kw_statics(m.g(3), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+                "filter" => obj!{"type" => "creature", "controller" => "you", "other" => m.g(1).is_some(),
+                "subtype" => sub_.clone()}}
+            });
+            if v.is_empty() { None } else { Some(v) }
+        },
+    ),
 ];
 
 pub fn prot_colors(text: &str) -> String {

@@ -38,7 +38,10 @@ pub fn fiery(g: &Game, pl: PlayerId) -> i32 {
     let count = |name: &str| {
         g.player(pl).perms.iter().filter(|&&m| !g.perm(m).phased && card_name(g, m) == Some(name)).count() as u32
     };
-    3i32.pow(count("Fiery Emancipation")) * 2i32.pow(count("Angrath's Marauders"))
+    // --- Tiers 4/5 (urdragon): Twinflame Tyrant doubles it too (once per copy)
+    3i32.pow(count("Fiery Emancipation"))
+        * 2i32.pow(count("Angrath's Marauders"))
+        * 2i32.pow(count(crate::impls::t45_urdragon::TYRANT))
 }
 
 fn untapped_creatures(g: &Game, q: PlayerId) -> impl Iterator<Item = PermId> + '_ {
