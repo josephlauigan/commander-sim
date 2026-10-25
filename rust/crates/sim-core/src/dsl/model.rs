@@ -92,6 +92,9 @@ pub struct Effect {
     pub if_you_do: Vec<Effect>,
     pub random: Option<bool>,
     pub mult: Option<i32>,
+    /// --- Tiers 1/2 (tatyova-teysa): a token's colours as printed (colour letters; "" colourless). None: the deck's
+    /// default token colour, as before
+    pub color: Option<String>,
 }
 
 /// An activated ability's cost.

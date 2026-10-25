@@ -1569,6 +1569,9 @@ note = "1 additional land drop(s) each turn"
 ["Explore"]
 types = "S"
 tags = "draw=1 explore"
+# --- Tiers 1/2 (tatyova-teysa): the extra land drop is the explore tag's (engine/cast.rs); the compiled "play an
+# additional land" would add a second one
+dsl = [{ type = "spell", effects = [{ do = "draw", n = 1, who = "you" }] }]
 status = "Full"
 note = "draw; one extra land drop this turn"
 
@@ -9646,3 +9649,19 @@ tags = "tokx" # X = all spare mana; the resolution is hand-written
 dsl = []
 status = "Full"
 note = "hand-written: X damage to the best target (a creature worth killing, else the most threatening opponent); then up to X land cards from hand and graveyard onto the battlefield tapped"
+
+# --- Tiers 1/2 (tatyova-teysa)
+["Wrenn and Seven"]
+# all four loyalty abilities are hand-written (impls/t12_tatyova_teysa.rs): the compiled -8 would be a second one
+dsl = []
+
+["Teysa, Orzhov Scion"]
+# both abilities are hand-written (impls/t12_tatyova_teysa.rs); without compiled abilities the text-derived tags read
+# the dies trigger's Spirit as one made on entering
+tags = "leg human pow=2 tgh=3"
+dsl = []
+
+["Beanstalk Giant // Fertile Footsteps"]
+# printed */*: autotag reads "*" as 1, and the compiled "power and toughness are each equal to the number of lands you
+# control" adds to the base (the adventure is hand-written, impls/t12_tatyova_teysa.rs)
+tags = "pow=0 tgh=0"

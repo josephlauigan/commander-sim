@@ -101,6 +101,7 @@ pub mod t45_urdragon; // --- Tiers 4/5 (urdragon)
 pub mod t12_isshin; // --- Tiers 1/2 (isshin)
 pub mod t12_lightpaws; // --- Tiers 1/2 (lightpaws)
 pub mod t12_windgrace; // --- Tiers 1/2 (windgrace)
+pub mod t12_tatyova_teysa; // --- Tiers 1/2 (tatyova-teysa)
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -189,5 +190,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t12_lathril::register(&mut r, db)?; // --- Tiers 1/2 (lathril)
     t12_lightpaws::register(&mut r, db)?; // --- Tiers 1/2 (lightpaws)
     t12_windgrace::register(&mut r, db)?; // --- Tiers 1/2 (windgrace)
+    t12_tatyova_teysa::register(&mut r, db)?; // --- Tiers 1/2 (tatyova-teysa)
     Ok(r)
 }

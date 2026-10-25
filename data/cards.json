@@ -1439,7 +1439,8 @@
           "warrior": false,
           "types": [
            "bird"
-          ]
+          ],
+          "color": "W"
          }
         ],
         [
@@ -4954,7 +4955,8 @@
        "warrior": false,
        "types": [
         "spirit"
-       ]
+       ],
+       "color": "WR"
       }
      ]
     }
@@ -5217,7 +5219,8 @@
        "warrior": false,
        "types": [
         "spider"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "cast",
@@ -6395,7 +6398,8 @@
        "warrior": false,
        "types": [
         "soldier"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "etb",
@@ -10582,10 +10586,11 @@
    "generic": 6,
    "pips": "G",
    "tags": {
-    "pow": "1"
+    "pow": "0",
+    "tgh": "0"
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
@@ -10605,7 +10610,7 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 7,
@@ -11100,7 +11105,8 @@
        "warrior": false,
        "types": [
         "beast"
-       ]
+       ],
+       "color": "G"
       }
      ]
     }
@@ -11370,7 +11376,8 @@
        "warrior": false,
        "types": [
         "robot"
-       ]
+       ],
+       "color": ""
       }
      ],
      "sorcery": false,
@@ -11777,7 +11784,8 @@
        "types": [
         "faerie",
         "rogue"
-       ]
+       ],
+       "color": "B"
       }
      ],
      "event": "upkeep",
@@ -14609,6 +14617,11 @@
        "do": "draw",
        "n": 1,
        "who": "you"
+      },
+      {
+       "do": "put_land",
+       "from": "hand_or_gy",
+       "optional": true
       }
      ],
      "event": "attack",
@@ -14629,8 +14642,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "When ~ enters, create Beau, a legendary blue Ox creature token with \"Beau's power and toughness are each equal to the number of lands you control.\"",
-    "Whenever you attack, draw a card, then you may put a land card from your hand or graveyard onto the battlefield.   [partly: put a land card from your hand or graveyard onto the battlefield]"
+    "When ~ enters, create Beau, a legendary blue Ox creature token with \"Beau's power and toughness are each equal to the number of lands you control.\""
    ],
    "derived": {
     "cmc": 6,
@@ -19560,7 +19572,8 @@
        "warrior": false,
        "types": [
         "human"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "sorcery": false,
@@ -21127,7 +21140,8 @@
        "types": [
         "phyrexian",
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ],
      "event": "etb",
@@ -21526,7 +21540,8 @@
        "warrior": false,
        "types": [
         "squirrel"
-       ]
+       ],
+       "color": "G"
       }
      ]
     }
@@ -23059,7 +23074,8 @@
        "types": [
         "kithkin",
         "soldier"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "etb",
@@ -25105,7 +25121,8 @@
        "warrior": false,
        "types": [
         "squid"
-       ]
+       ],
+       "color": "U"
       }
      ],
      "event": "etb",
@@ -25976,7 +25993,8 @@
           "types": [
            "wizard",
            "soldier"
-          ]
+          ],
+          "color": ""
          }
         ],
         [
@@ -28856,7 +28874,8 @@
        "warrior": false,
        "types": [
         "soldier"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "sorcery": false,
@@ -33346,7 +33365,8 @@
        "types": [
         "human",
         "wizard"
-       ]
+       ],
+       "color": "U"
       }
      ],
      "event": "cast",
@@ -33538,7 +33558,8 @@
        "warrior": false,
        "types": [
         "spirit"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "dies",
@@ -34124,7 +34145,8 @@
        "warrior": false,
        "types": [
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ]
     }
@@ -34816,7 +34838,8 @@
        "types": [
         "eldrazi",
         "spawn"
-       ]
+       ],
+       "color": ""
       }
      ],
      "event": "etb",
@@ -36284,7 +36307,8 @@
        "warrior": false,
        "types": [
         "thopter"
-       ]
+       ],
+       "color": ""
       }
      ],
      "event": "cast",
@@ -37120,7 +37144,8 @@
        "types": [
         "dragon",
         "elemental"
-       ]
+       ],
+       "color": "R"
       }
      ]
     }
@@ -38647,6 +38672,7 @@
        "types": [
         "bird"
        ],
+       "color": "W",
        "optional": true
       }
      ],
@@ -38752,7 +38778,8 @@
        "types": [
         "angel",
         "warrior"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -39147,7 +39174,8 @@
        "warrior": false,
        "types": [
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ]
     }
@@ -39851,6 +39879,14 @@
      "type": "spell",
      "effects": [
       {
+       "do": "sacrifice",
+       "who": "you",
+       "filter": {
+        "type": "land"
+       },
+       "n": 1
+      },
+      {
        "do": "search",
        "filter": {
         "type": "land",
@@ -39872,7 +39908,7 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [
-    "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.   [partly: sacrifice a land; if you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped]"
+    "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle.   [partly: if you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped]"
    ],
    "derived": {
     "cmc": 3,
@@ -40716,7 +40752,8 @@
        "warrior": false,
        "types": [
         "inkling"
-       ]
+       ],
+       "color": "WB"
       }
      ],
      "sorcery": false,
@@ -48378,7 +48415,8 @@
        "types": [
         "elf",
         "warrior"
-       ]
+       ],
+       "color": "G"
       }
      ]
     }
@@ -49177,7 +49215,8 @@
        "warrior": false,
        "types": [
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ],
      "event": "attack",
@@ -53743,7 +53782,8 @@
        "warrior": false,
        "types": [
         "citizen"
-       ]
+       ],
+       "color": "WG"
       },
       {
        "do": "grant",
@@ -55971,7 +56011,7 @@
      "effects": [
       {
        "do": "token",
-       "n": "X",
+       "n": "gy_creatures",
        "pow": 1,
        "tgh": 1,
        "keywords": [
@@ -55981,7 +56021,8 @@
        "warrior": false,
        "types": [
         "spirit"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "dies",
@@ -57289,7 +57330,8 @@
        "types": [
         "wizard",
         "soldier"
-       ]
+       ],
+       "color": ""
       }
      ],
      "event": "etb",
@@ -57593,7 +57635,8 @@
        "warrior": false,
        "types": [
         "cleric"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "sorcery": false,
@@ -58848,7 +58891,8 @@
        "types": [
         "wizard",
         "soldier"
-       ]
+       ],
+       "color": ""
       }
      ]
     }
@@ -59817,7 +59861,8 @@
        "warrior": false,
        "types": [
         "rabbit"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -60548,7 +60593,8 @@
        "warrior": false,
        "types": [
         "soldier"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "dies",
@@ -61941,7 +61987,8 @@
        "types": [
         "elf",
         "warrior"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "sorcery": false,
@@ -62386,7 +62433,30 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "event": "dies",
+     "source": "self",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "spirit"
+       ],
+       "color": "WB"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "afterlife",
@@ -62399,10 +62469,10 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
     "Bestow {2}{W}",
-    "Afterlife 1"
+    "Enchanted creature gets +1/+1 and has afterlife 1."
    ],
    "derived": {
     "cmc": 1,
@@ -62963,7 +63033,8 @@
        "warrior": false,
        "types": [
         "insect"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "etb",
@@ -62982,7 +63053,8 @@
        "warrior": false,
        "types": [
         "insect"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "attack",
@@ -63050,7 +63122,8 @@
        "warrior": false,
        "types": [
         "insect"
-       ]
+       ],
+       "color": "BG"
       }
      ],
      "event": "dies",
@@ -63221,7 +63294,8 @@
        "types": [
         "wizard",
         "soldier"
-       ]
+       ],
+       "color": ""
       },
       {
        "do": "grant",
@@ -69289,7 +69363,8 @@
        "warrior": false,
        "types": [
         "serpent"
-       ]
+       ],
+       "color": "U"
       }
      ],
      "event": "upkeep",
@@ -70064,7 +70139,8 @@
        "warrior": false,
        "types": [
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ]
     }
@@ -73200,7 +73276,8 @@
        "warrior": false,
        "types": [
         "spirit"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -75453,7 +75530,9 @@
    "tags": {
     "leg": true,
     "pow": "2",
-    "tgh": "1"
+    "tgh": "1",
+    "treas": "1",
+    "tut": "art"
    },
    "pow": 2,
    "tgh": 1,
@@ -77053,7 +77132,8 @@
        "warrior": false,
        "types": [
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ],
      "event": "attack",
@@ -77151,7 +77231,8 @@
           "warrior": true,
           "types": [
            "warrior"
-          ]
+          ],
+          "color": "W"
          },
          {
           "do": "grant",
@@ -77440,7 +77521,8 @@
        "warrior": false,
        "types": [
         "vampire"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "dies",
@@ -80263,7 +80345,30 @@
    "pow": 2,
    "tgh": 1,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "event": "dies",
+     "source": "self",
+     "effects": [
+      {
+       "do": "token",
+       "n": 2,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "spirit"
+       ],
+       "color": "WB"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "afterlife"
@@ -80276,10 +80381,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Afterlife 2"
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -82616,6 +82719,19 @@
      "type": "static",
      "static": "note",
      "text": "~ enters with a +1/+1 counter on it"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "counters",
+       "n": "counters_on_self",
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "event": "landfall"
     }
    ],
    "start_loyalty": null,
@@ -82633,9 +82749,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Landfall — Whenever a land you control enters, double the number of +1/+1 counters on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -83502,7 +83616,8 @@
        "warrior": false,
        "types": [
         "elemental"
-       ]
+       ],
+       "color": "UR"
       },
       {
        "do": "surveil",
@@ -83783,7 +83898,8 @@
        "warrior": false,
        "types": [
         "myr"
-       ]
+       ],
+       "color": ""
       }
      ],
      "event": "etb",
@@ -83846,7 +83962,8 @@
        "warrior": false,
        "types": [
         "soldier"
-       ]
+       ],
+       "color": ""
       }
      ],
      "event": "attack",
@@ -84342,7 +84459,8 @@
        "types": [
         "kor",
         "soldier"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -85233,7 +85351,8 @@
        "warrior": false,
        "types": [
         "goblin"
-       ]
+       ],
+       "color": "R"
       }
      ],
      "event": "etb",
@@ -87733,7 +87852,8 @@
        "warrior": true,
        "types": [
         "warrior"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "cast",
@@ -88151,7 +88271,8 @@
        "types": [
         "human",
         "soldier"
-       ]
+       ],
+       "color": "W"
       },
       {
        "do": "gain_life",
@@ -89083,7 +89204,30 @@
    "pow": 1,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "event": "dies",
+     "source": "self",
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [
+        "flying"
+       ],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "spirit"
+       ],
+       "color": "WB"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "afterlife",
@@ -89097,10 +89241,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Afterlife 1"
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -91082,7 +91224,8 @@
        "warrior": false,
        "types": [
         "spider"
-       ]
+       ],
+       "color": "B"
       }
      ],
      "event": "dies",
@@ -97930,7 +98073,8 @@
        "warrior": false,
        "types": [
         "beast"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "landfall"
@@ -99818,7 +99962,8 @@
        "types": [
         "wizard",
         "soldier"
-       ]
+       ],
+       "color": ""
       }
      ]
     }
@@ -100290,7 +100435,8 @@
        "warrior": false,
        "types": [
         "dog"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -103102,6 +103248,14 @@
      "type": "spell",
      "effects": [
       {
+       "do": "sacrifice",
+       "who": "you",
+       "filter": {
+        "type": "land"
+       },
+       "n": 1
+      },
+      {
        "do": "search",
        "filter": {
         "type": "land",
@@ -103122,9 +103276,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.   [partly: sacrifice a land]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -104235,7 +104387,8 @@
        "warrior": false,
        "types": [
         "thopter"
-       ]
+       ],
+       "color": ""
       }
      ],
      "event": "cast",
@@ -104975,7 +105128,8 @@
        "warrior": false,
        "types": [
         "wurm"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "end_step",
@@ -105271,7 +105425,8 @@
        "warrior": false,
        "types": [
         "dragon"
-       ]
+       ],
+       "color": "R"
       }
      ]
     },
@@ -111455,7 +111610,8 @@
        "warrior": false,
        "types": [
         "angel"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "cast",
@@ -112877,7 +113033,8 @@
        "types": [
         "elf",
         "warrior"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "sorcery": true,
@@ -113695,7 +113852,8 @@
        "warrior": false,
        "types": [
         "soldier"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "attack",
@@ -116491,7 +116649,8 @@
        "warrior": false,
        "types": [
         "spirit"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -117732,7 +117891,8 @@
        "warrior": false,
        "types": [
         "saproling"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "landfall"
@@ -117921,7 +118081,8 @@
        "warrior": false,
        "types": [
         "vampire"
-       ]
+       ],
+       "color": "W"
       }
      ],
      "event": "etb",
@@ -118036,7 +118197,8 @@
        "warrior": false,
        "types": [
         "servo"
-       ]
+       ],
+       "color": ""
       }
      ]
     }
@@ -120888,7 +121050,18 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "extra_land",
+       "n": 3,
+       "optional": true
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -120896,10 +121069,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "You may play up to three additional lands this turn."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -123615,7 +123786,8 @@
        "warrior": false,
        "types": [
         "insect"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "dies",
@@ -127345,28 +127517,7 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "sac": "creature"
-     },
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -127377,10 +127528,8 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever another black creature you control dies, create a 1/1 white Spirit creature token with flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -133089,7 +133238,8 @@
        "warrior": false,
        "types": [
         "spirit"
-       ]
+       ],
+       "color": "W"
       }
      ]
     }
@@ -136065,6 +136215,11 @@
        "do": "draw",
        "n": 3,
        "who": "you"
+      },
+      {
+       "do": "extra_land",
+       "n": 1,
+       "optional": true
       }
      ]
     }
@@ -136077,9 +136232,7 @@
    "identity": "GU",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Draw three cards. You may play an additional land this turn.   [partly: play an additional land this turn]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -137065,7 +137218,8 @@
        "warrior": false,
        "types": [
         "dragon"
-       ]
+       ],
+       "color": "R"
       }
      ],
      "event": "attack",
@@ -144446,7 +144600,8 @@
        "warrior": true,
        "types": [
         "warrior"
-       ]
+       ],
+       "color": "R"
       }
      ],
      "event": "etb",
@@ -144666,7 +144821,8 @@
        "types": [
         "elf",
         "warrior"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "upkeep",
@@ -145323,21 +145479,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": -8,
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {
-        "type": "permanent"
-       },
-       "from": "yours"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "5",
    "kws": [],
    "subtypes": [
@@ -145347,14 +145489,8 @@
    "ward": 0,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "reveal the top four cards of your library",
-    "put all land cards revealed this way into your hand and the rest into your graveyard",
-    "put any number of land cards from your hand onto the battlefield tapped",
-    "create a green treefolk creature token with reach and \"this token's power and toughness are each equal to the number of lands you control.\"",
-    "you get an emblem with \"you have no maximum hand size.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -146702,7 +146838,8 @@
        "warrior": false,
        "types": [
         "elemental"
-       ]
+       ],
+       "color": "G"
       }
      ],
      "event": "landfall"

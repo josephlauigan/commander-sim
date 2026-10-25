@@ -5,7 +5,7 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Aristoc
 - **Commander:** Teysa Karlov
 - **Color identity:** White, Black
 - **Game Changers (0):** none
-- **Combos:** None (recursion is incremental).
+- **Combos:** Pitiless Plunderer + Reassembling Skeleton + Ashnod's Altar or Phyrexian Altar: unbounded deaths (the Treasure pays for the Skeleton's return) → Blood Artist / Zulaport Cutthroat / Cruel Celebrant / Bastion of Remembrance / Syr Konrad drain the table. Three pieces and a payoff; no two-card infinite.
 - **Lands:** 35 (14 nonbasic + 21 basic)
 
 ## Role in the pool
@@ -14,20 +14,20 @@ Damage that bypasses blockers and punishes chump-blocking. Grave Pact effects al
 
 ## At the table
 
-- **Plan:** Makes cheap bodies with Bitterblossom, Lingering Souls, Spectral Procession and Doomed Traveler, and uses Phyrexian Altar, Viscera Seer and Skullclamp to sacrifice them. Teysa Karlov makes each death trigger twice.
-- **Wins by:** Drains the table: Blood Artist, Zulaport Cutthroat, Cruel Celebrant, Falkenrath Noble and Bastion of Remembrance, with Grave Pact and Dictate of Erebos forcing sacrifices. Sun Titan and Elenda, the Dusk Rose recur value.
-- **Watch out for:** Killing Teysa halves the drain, and killing the drain creatures when they appear matters more than killing tokens. Grave Pact punishes you for each creature it sacrifices, so do not overcommit. Several drains in play can be lethal.
-- **Interaction:** Swords to Plowshares, Path to Exile, Vindicate, Anguished Unmaking, Despark, Mortify, Infernal Grasp, Feed the Swarm, Toxic Deluge, Kaya's Wrath and Vanquish the Horde. Selfless Spirit and Swiftfoot Boots offer protection.
+- **Plan:** Makes cheap bodies that leave more behind: Doomed Traveler, Hunted Witness, Reassembling Skeleton, Pawn of Ulamog, Infestation Sage, Ophiomancer and the afterlife creatures (Ministrant of Obligation, Orzhov Enforcer, Indebted Spirit). Viscera Seer, Carrion Feeder, Priest of Forgotten Gods, Yahenni and the altars sacrifice them; Skullclamp, Midnight Reaper and Grim Haruspex draw. Teysa Karlov and Drivnod, Carnage Dominus make each death trigger again.
+- **Wins by:** Drains the table: Blood Artist, Zulaport Cutthroat, Cruel Celebrant, Bastion of Remembrance, Syr Konrad, Vindictive Vampire, Elas il-Kor and The Meathook Massacre, with Grave Pact, Dictate of Erebos and Butcher of Malakir forcing sacrifices. Luminous Broodmoth, Elenda and Liliana, Dreadhorde General keep the value coming; Pitiless Plunderer with Reassembling Skeleton and an altar is an unbounded loop.
+- **Watch out for:** Killing Teysa halves the drain, and killing the drain creatures matters more than killing tokens. Grave Pact punishes you for each creature it sacrifices, so do not overcommit. Several drains in play can be lethal; Pitiless Plunderer, Reassembling Skeleton and an altar together end the game.
+- **Interaction:** Swords to Plowshares, Path to Exile, Anguished Unmaking, Despark, Mortify and Corrupted Conviction; Austere Command, Damn and Kaya's Wrath as sweepers. Teysa, Orzhov Scion exiles a creature for three white bodies; Bojuka Bog and Rite of Oblivion handle graveyards and permanents.
 
 ## Strategy
 
-Make disposable bodies, sacrifice them, and let Teysa double every death trigger. Blood Artist, Zulaport, Cruel Celebrant, Falkenrath Noble, and Bastion each drain twice per death with Teysa out, and Grave Pact / Dictate of Erebos turn every sacrifice into two opposing sacrifices. Fodder comes from Bitterblossom, Lingering Souls, Spectral Procession, Pawn of Ulamog, and the dies-into-token creatures. No two-card infinite: the recursion (Sun Titan, Elenda, Requiem Angel) is incremental.
+Make disposable bodies, sacrifice them, and let Teysa Karlov (and Drivnod) double every death trigger. Blood Artist, Zulaport, Cruel Celebrant and Bastion each drain twice per death with Teysa out; Black Market banks a counter per death into mana, and Grave Pact / Dictate of Erebos turn every sacrifice into opposing ones. Afterlife spirits are white and black, so they feed Teysa, Orzhov Scion's Spirits and her exile cost. Luminous Broodmoth brings each non-flyer back once. The one loop is Pitiless Plunderer + Reassembling Skeleton + an altar, three pieces and a drain payoff.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Teysa's death-trigger doubling (also doubles token-creating death triggers); drain payoffs; Grave Pact / Dictate of Erebos / Butcher of Malakir forced sacrifices; Skullclamp.
+Teysa's and Drivnod's death-trigger doubling (also doubles token-creating death triggers); drain payoffs; afterlife and token colours (white and black Spirits for Teysa, Orzhov Scion); Grave Pact / Dictate of Erebos / Butcher of Malakir forced sacrifices; Skullclamp; Luminous Broodmoth returns; the Plunderer + Skeleton + altar loop (combo catalogue). All are modeled (impls/t12_tatyova_teysa.rs and the compiled patterns); Black Market's mana lasts the turn instead of the phase.
 
 ## Decklist by type (100)
 

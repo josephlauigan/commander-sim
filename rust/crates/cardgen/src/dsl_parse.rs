@@ -266,6 +266,14 @@ pub fn num_expr(s: &str) -> J {
     if s.contains("sacrificed") && s.contains("mana value") {
         return "sacrificed_mv".into();
     }
+    // --- Tiers 1/2 (tatyova-teysa): "the number of lands you control" (Beanstalk Giant), "the number of creature cards
+    // in your graveyard" (Hallowed Spiritkeeper)
+    if rmatch(r"^(?:the number of )?lands you control$", &s).is_some() {
+        return "lands_you_control".into();
+    }
+    if rmatch(r"^(?:the number of )?creature cards in your graveyard$", &s).is_some() {
+        return "gy_creatures".into();
+    }
     if s.contains("creature") && s.contains("you control") {
         return "creatures_you_control".into();
     }
@@ -503,13 +511,25 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
                 })
                 .map(J::from)
                 .collect();
-            Some(eff(obj! {
+            let mut e = obj! {
                 "do" => "token", "n" => n_(m.gs(1)),
                 "pow" => if m.gs(2) == "x" { 1 } else { int(m.gs(2)) },
                 "tgh" => if m.gs(3) == "x" { 1 } else { int(m.gs(3)) },
                 "keywords" => kws, "attacking" => m.all().contains("attacking"), "warrior" => m.gs(4).contains("warrior"),
                 "types" => types
-            }))
+            };
+            // --- Tiers 1/2 (tatyova-teysa): the token's colours as printed ("1/1 white Spirit"; "colorless": none),
+            // for the cards that care (Teysa, Orzhov Scion's white and black creatures)
+            let words: Vec<&str> = m.gs(4).split_whitespace().collect();
+            let letters: String = [("white", 'W'), ("blue", 'U'), ("black", 'B'), ("red", 'R'), ("green", 'G')]
+                .iter()
+                .filter(|(w, _)| words.contains(w))
+                .map(|(_, c)| *c)
+                .collect();
+            if !letters.is_empty() || words.contains(&"colorless") {
+                e.set("color", letters);
+            }
+            Some(eff(e))
         },
     ),
     (r"^create (a|an|one|two|three|x|that many|\d+) (treasure|clue|food|blood) tokens?$", |m| {
@@ -905,6 +925,25 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^(each opponent|target opponent|each player|you) blights? (one|two|three|\d+)$", |m| {
         Some(eff(obj! {"do" => "blight", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
     }),
+    // --- Tiers 1/2 (tatyova-teysa)
+    // "you may play up to three additional lands this turn" (Summer Bloom), "you may play an additional land this
+    // turn" (Urban Evolution): that many more land drops this turn
+    (r"^(?:you may )?play (a|an|one|two|three|up to two|up to three) additional lands? this turn$", |m| {
+        let k = m.gs(1).trim_start_matches("up to ");
+        Some(eff(obj! {"do" => "extra_land", "n" => n_(k)}))
+    }),
+    // "sacrifice a land" as a spell's own effect (Roiling Regrowth, Entish Restoration): your least useful land
+    (r"^sacrifice (a|an|one) land$", |_| {
+        Some(eff(obj! {"do" => "sacrifice", "who" => "you", "filter" => obj!{"type" => "land"}, "n" => 1}))
+    }),
+    // "double the number of +1/+1 counters on ~" (Mossborn Hydra): as many more as it has
+    (r"^double the number of \+1/\+1 counters on (?:~|this creature|it)$", |_| {
+        Some(eff(obj! {"do" => "counters", "n" => "counters_on_self", "what" => obj!{"sel" => "self"}}))
+    }),
+    // "put a land card from your hand or graveyard onto the battlefield" (Bonny Pall, Clearcutter)
+    (r"^(?:you may )?put (?:a|up to one) land card from your hand or graveyard onto the battlefield$", |_| {
+        Some(eff(obj! {"do" => "put_land", "from" => "hand_or_gy"}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -1040,6 +1079,15 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
                 v.extend(eb);
                 got = Some(v);
             }
+        }
+        // --- Tiers 1/2 (tatyova-teysa): "you may sacrifice a land" (Tenured Tethermage) is a choice the AI would not
+        // weigh (it ignores the "may"): left to card code, as before the plain "sacrifice a land" compiled
+        let own_sac = |e: &Obj| {
+            e.get("do") == Some(&J::Str("sacrifice".into())) && e.get("who") == Some(&J::Str("you".into()))
+        };
+        if dep == Dep::May && got.as_ref().is_some_and(|v| v.iter().any(own_sac)) {
+            bad.push(format!("{pre}{cl}"));
+            continue;
         }
         if let Some(got) = got {
             for mut e in got {
@@ -1268,6 +1316,10 @@ pub fn parse_cost(s: &str) -> Option<Obj> {
             cost.set("tap", true);
         } else if x.starts_with("sacrifice ~") || x.starts_with("sacrifice this") {
             cost.set("sac", "self");
+        } else if rmatch(r"^sacrifice (two|three|four|five|x|\d+) ", x).is_some() {
+            // --- Tiers 1/2 (tatyova-teysa): a cost of several permanents (Teysa, Orzhov Scion's "sacrifice three
+            // white creatures") is not one sacrifice: leave the line to card code
+            return None;
         } else if x.starts_with("sacrifice") {
             let f = filt(x);
             cost.set("sac", f.get("type").cloned().unwrap_or("permanent".into()));
@@ -1599,6 +1651,14 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         // keyword lines and keyword abilities
         if let Some(m) = rmatch(r"^equip \{(\d+)\}$", l) {
             abil.push(obj! {"type" => "static", "static" => "equip_cost", "mana" => int(m.gs(1))});
+            continue;
+        }
+        // --- Tiers 1/2 (tatyova-teysa): "afterlife N" (Ministrant of Obligation, Orzhov Enforcer): when it dies, N 1/1
+        // white and black Spirit tokens with flying
+        if let Some(m) = rmatch(r"^afterlife (\d+)(?: \(.*\))?$", l) {
+            abil.push(obj! {"type" => "triggered", "event" => "dies", "source" => "self", "effects" => vec![jo!{
+                "do" => "token", "n" => int(m.gs(1)), "pow" => 1, "tgh" => 1, "keywords" => vec![J::from("flying")],
+                "attacking" => false, "warrior" => false, "types" => vec![J::from("spirit")], "color" => "WB"}]});
             continue;
         }
         // --- Tiers 1/2 (lathril): "vigilance; menace" (Abomination of Llanowar) is a keyword line too

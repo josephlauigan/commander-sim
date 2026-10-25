@@ -405,18 +405,30 @@ fn bestow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// partials.bestow_bonus: a bestowed Eidolon's +X/+X on its host
+/// partials.bestow_bonus: a bestowed Eidolon's +X/+X on its host; --- Tiers 1/2 (tatyova-teysa): a bestowed Indebted
+/// Spirit's +1/+1
 pub fn bestow_bonus(g: &Game, m: PermId) -> i32 {
-    let n = bestowed(g, m).len() as i32;
-    if n == 0 { 0 } else { n * eidolon_x(g, g.perm(m).owner) }
+    let cs = bestowed(g, m);
+    if cs.is_empty() {
+        return 0;
+    }
+    let spirit = |c: &CardId| &*g.db.get(*c).name == super::t12_tatyova_teysa::INDEBTED;
+    let spirits = cs.iter().filter(|c| spirit(c)).count() as i32;
+    let eidolons = cs.len() as i32 - spirits;
+    spirits + if eidolons == 0 { 0 } else { eidolons * eidolon_x(g, g.perm(m).owner) }
 }
 
-/// partials.bestow_fall: the host left the battlefield: a bestowed Eidolon becomes a creature
+/// partials.bestow_fall: the host left the battlefield: a bestowed Eidolon becomes a creature; --- Tiers 1/2
+/// (tatyova-teysa): a host that died with Indebted Spirit on it had afterlife 1
 pub fn bestow_fall(g: &mut Game, m: PermId) -> Res {
     let o = g.perm(m).owner;
+    let died = g.dying == Some(m);
     for c in bestowed(g, m) {
         if g.player(o).alive {
             enter(g, o, c, Enter::default())?;
+            if died && &*g.db.get(c).name == super::t12_tatyova_teysa::INDEBTED {
+                super::t12_tatyova_teysa::indebted_afterlife(g, o)?;
+            }
         }
     }
     g.perm_mut(m).data.set(DataKey::Bestow, Val::List(vec![]));
