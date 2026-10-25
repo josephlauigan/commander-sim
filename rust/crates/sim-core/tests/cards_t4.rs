@@ -269,11 +269,13 @@ fn chulane_draws_and_puts_a_land_on_creature_casts() {
     let mut g = table(&[CHULANE, "seph"]);
     perm(&mut g, P0, "Chulane, Teller of Tales");
     hand(&mut g, P0, &["Forest", "Craterhoof Behemoth"]);
+    on_top(&mut g, P0, "Counterspell"); // the draw is a nonland card: the Forest from hand is the land put down
     let c = card(&g, "Craterhoof Behemoth");
     sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).lands.len(), 1, "Chulane put the Forest down");
     assert!(!in_hand(&g, P0, "Forest"));
     assert_eq!(g.player(P0).hand.len(), 1, "and drew a card");
+    assert!(in_hand(&g, P0, "Counterspell"), "the top card");
 }
 
 #[test]
