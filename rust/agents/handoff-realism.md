@@ -86,7 +86,7 @@ per-commander win rates.
 
 | Statistic | Sim | Target (band) |
 | --- | --- | --- |
-| Seat 1 / 2 / 3 / 4 | 27.6 / 25.8 / 23.8 / 22.8 | 32.5 / 26.9 / 22.7 / 17.9 (each +/- 1) |
+| Seat 1 / 2 / 3 / 4 | 27.6 / 25.8 / 23.8 / 22.8 | 31.8 / 27.3 / 22.1 / 18.8 (each +/- 1; TopDeck.gg Swiss pods) |
 | Median win round | 8 (PASS) | 7 (6-8) |
 | Deck spread | 15.5 | 4 (0-8) |
 | Decks | Dack 31.6, Kinnan 20.2, Kraum/Tymna 28.8, Rograkh/Silas 21.1, Rograkh/Thrasios 16.4, Sisay 32.0 | each 18-32 (TARGETS-t6.md) |
@@ -129,16 +129,14 @@ per-commander win rates.
 
 ## Next, in order
 
-1. **Reassess the Tier 6 seat target, or find what the sim is missing** (JD, 2026-10-24: "if it isn't hitting
-   targets we should reassess the targets or figure out what is going on"). Questions to settle first:
-   - **Selection bias.** EDHTop16's seat rates cover all rounds, and top-cut seating usually lets the higher seed
-     choose. Are better players over-represented in seat 1? Is there a Swiss-only or per-round breakdown?
-   - **Casual comparison.** Playgroup's casual 4-player seats are 29.2 / 25.7 / 23.6 / 21.5. The sim sits between
-     those and EDHTop16's.
-   - **Draw handling.** How do intentional draws and the round clock shape which games count as decisive?
-
-   If the target holds, the sim's lever is more decks reaching ready lines earlier (wider line catalogues), and real
-   data on assembly speed (tournament replays, JD's pod log).
+1. **The Tier 6 seat target is settled: it is real** (`audit/realism/t6-seat-topdeck-2026-10-24.md`).
+   - Rebuilt from 29864 TopDeck.gg Swiss pods: 31.8 / 27.3 / 22.1 / 18.8.
+   - Round 1, seated at random, shows the same edge, so it is not stronger players seated first.
+   - The sim's seat 1 (27.6%) is a real gap of about 4 points.
+   - The lever is the AI: more decks reaching ready lines earlier, through wider line catalogues and, longer term,
+     Phase 4's planning AI.
+   - Real data on assembly speed (win turns from tournament replays, JD's pod log) would help set it.
+   - TopDeck.gg key: `~/.config/topdeck/key` (JD's; never commit it). Credit TopDeck.gg wherever its data is used.
 2. **Rograkh/Thrasios** (16.4%, below the floor): model its missing real lines (This Town Ain't Big Enough, the
    improvised Thrasios wins).
 3. **Tier 3 lists against EDHREC** (plan step 6), including whether the pool's Atraxa becomes the infect build players
