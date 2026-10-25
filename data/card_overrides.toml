@@ -2241,6 +2241,7 @@ status = "Full"
 note = "battle cry; two Soldiers tapped and attacking"
 
 ["Hero of Iroas"]
+dsl = [] # --- Tiers 1/2 (lightpaws): the Aura discount is the common.rs cost hook (the compiled one would discount twice)
 status = "Full"
 note = "Aura spells cost {1} less; heroic: +1/+1 counter when an Aura targets it"
 
@@ -9502,3 +9503,88 @@ dsl = []
 # toughness
 ["Abomination of Llanowar"]
 tags = "leg pow=0 tgh=0 vig"
+
+# --- Tiers 1/2 (lightpaws): hand-written in rust/crates/sim-core/src/impls/t12_lightpaws.rs (status notes in data/audit.toml)
+["Armored Ascension"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Chains of Custody"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Face of Divinity"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Flickerform"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Holy Mantle"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Idolized"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Light of Promise"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Mantle of the Ancients"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Mask of Law and Grace"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Shield of Duty and Reason"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Pariah"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Benevolent Blessing"]
+types = "E"
+tags = "aura flash"
+dsl = []
+
+["Stoneskin"]
+types = "E"
+tags = "aura flash"
+dsl = []
+
+["Twinblade Blessing"]
+types = "E"
+tags = "aura flash"
+dsl = []
+
+["Angelic Gift"]
+types = "E"
+tags = "aura"
+dsl = [] # the draw is the Aura spec's enter effect (the compiled one would draw twice)
+
+["Reprobation"]
+types = "E"
+tags = "rem=coward tgt=c etb"
+dsl = []
+
+["Retether"]
+tags = ""
+dsl = [] # the compiled reanimate returned a creature card; the hand-written resolve returns the Auras

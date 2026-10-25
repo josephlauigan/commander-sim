@@ -174,6 +174,8 @@ pub fn transform_away(g: &mut Game, m: PermId, kind: Sym) -> Res {
     if kind == "elk" {
         (x.pow, x.tgh) = (3, 3);
         x.data.set(DataKey::Elk, Val::Bool(true));
+    } else if kind == "coward" {
+        (x.pow, x.tgh) = (0, 1); // --- Tiers 1/2 (lightpaws): Reprobation, a 0/1 Coward (not indestructible)
     } else {
         (x.pow, x.tgh) = (0, 1);
         x.data.set(DataKey::Indestr, Val::Bool(true));
@@ -187,7 +189,11 @@ pub fn transform_away(g: &mut Game, m: PermId, kind: Sym) -> Res {
         g,
         "    {} becomes a {} with no abilities",
         g.perm(m).name,
-        if kind == "elk" { "3/3 Elk" } else { "0/1 Insect" }
+        match &*kind {
+            "elk" => "3/3 Elk",
+            "coward" => "0/1 Coward",
+            _ => "0/1 Insect",
+        }
     );
     Ok(())
 }

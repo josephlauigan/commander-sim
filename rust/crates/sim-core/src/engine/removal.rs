@@ -299,7 +299,7 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         tuck(g, m)?;
     } else if kind == "topbot" {
         crate::impls::bulk_blue::top_or_bottom(g, m)?; // Sudden Setback, Vanish from Sight: its owner chooses
-    } else if matches!(kind, "elk" | "mutate" | "forest" | "moon") {
+    } else if matches!(kind, "elk" | "mutate" | "forest" | "moon" | "coward") {
         cardcode::transform_away(g, m, kind)?;
     } else if LOCK_KINDS.contains(&kind) {
         cardcode::apply_lock(g, actor, m, kind)?; // Arrest, Encrust ...

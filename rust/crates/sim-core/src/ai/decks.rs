@@ -1235,6 +1235,9 @@ fn protect_main(
         {
             return Ok(true); // Shardmage's Rescue, Ultimate Magic: Holy for Tymna and the partners
         }
+        if crate::impls::t12_lightpaws::protect(g, owner, m, kind, actor, spell)? {
+            return Ok(true); // --- Tiers 1/2 (lightpaws): the Light-Paws deck's flash Auras, Blessings, Flickerform
+        }
         return pool::protect(g, owner, m, kind, actor, spell);
     }
     let v = pval(g, m);
@@ -1312,6 +1315,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
         {
             return Ok(Some(r)); // Ultimate Magic: Holy
         }
+        crate::impls::t12_lightpaws::wipe_response(g, q, kind, caster)?; // --- Tiers 1/2 (lightpaws): Flickerform
         return pool::wipe_response(g, q, kind, caster);
     }
     if key == "yshtola" {

@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Voltron
 - **Commander:** Light-Paws, Emperor's Voice
 - **Color identity:** White
 - **Game Changers (0):** none
-- **Combos:** None.
+- **Combos:** None (no two-card infinite; Flickering Ward's {W} return-and-recast is a repeatable Aura tutor with Light-Paws, not a loop).
 - **Lands:** 33 (4 nonbasic + 29 basic)
 
 ## Role in the pool
 
-Whether your decks carry enough spot removal, instant-speed answers, and chump blockers for a single huge threat. Also brings Rest in Peace, which directly hits Sephiroth.
+Whether your decks carry enough spot removal, instant-speed answers, and chump blockers for a single huge threat. Its protection colours (Mask of Law and Grace, Shield of Duty and Reason, Benevolent Blessing) also test decks whose removal is all one or two colours.
 
 ## At the table
 
-- **Plan:** Plays small protective creatures, then casts an Aura on Light-Paws, Emperor's Voice. Each cast Aura tutors a cheaper Aura onto her. Mother of Runes, Giver of Runes and Sigarda's Aid guard her.
-- **Wins by:** Stacks Auras on one creature and kills by commander damage: All That Glitters, Ethereal Armor, Sage's Reverie and On Serra's Wings make her huge in two or three hits, while Unquestioned Authority gives protection from creatures.
-- **Watch out for:** Everything rides on one creature, so exile or Wrath her in response to the Aura chain. Mother of Runes and the Wards counter spot removal and the Umbras give her totem armor. Keep chump blockers for the big swing.
-- **Interaction:** Swords to Plowshares, Path to Exile, Journey to Nowhere, Oblivion Ring, Cast Out, Council's Judgment, Wrath of God and Sunfall. Rest in Peace hits graveyards. Flickering Ward, Spectra Ward, Timely Ward, Valorous Stance and Gods Willing protect her.
+- **Plan:** Plays cheap Aura-lovers (Sram, Mesa Enchantress, Kor Spiritdancer, Hero of Iroas, Danitha, Transcendent Envoy, Starnheim Courser, Pearl-Ear), then casts an Aura on Light-Paws, Emperor's Voice. Each cast Aura tutors a cheaper Aura onto her, and the cost reducers make the chain cheap.
+- **Wins by:** Stacks Auras on Light-Paws and kills by commander damage: All That Glitters, Ethereal Armor, Sage's Reverie, Armored Ascension, Mantle of the Ancients and Thran Power Suit scale with what is on her, Battle Mastery and Twinblade Blessing give double strike, and Idolized makes a lone attacker enormous. Holy Mantle, Spirit Mantle and Unquestioned Authority make her unblockable by creatures.
+- **Watch out for:** Everything rides on one creature, so exile or wipe her in response to the Aura chain. Shardmage's Rescue, Blacksmith's Skill, Karametra's Blessing, Benevolent Blessing and Stoneskin answer spot removal at instant speed, Flickerform dodges removal and wipes (she and her Auras come back at the end step), and Hyena Umbra and Umbra Mystic give umbra armor. Chains of Custody and Thran Power Suit add ward {2}. Retether and Mantle of the Ancients rebuild the Auras after a wipe.
+- **Interaction:** Swords to Plowshares, Path to Exile, Generous Gift, Darksteel Mutation, Reprobation, Ossification, Sheltered by Ghosts, Chains of Custody, Winds of Rath and Single Combat (each player keeps one creature or planeswalker, then nobody casts creatures until her next turn). Rebuff the Wicked counters a spell aimed at her; Pariah moves damage aimed at her controller onto a creature.
 
 ## Strategy
 
-Cast an Aura, and Light-Paws tutors another Aura onto the battlefield; stack four or five on the commander and swing for 21 commander damage in two or three hits. All That Glitters, Ethereal Armor, and Sage's Reverie scale with enchantment count, the Umbras give totem armor, and Spectra Ward / Timely Ward / Flickering Ward protect the stack. Mother and Giver of Runes and Sigarda's Aid (flash Auras) are the protection layer. Rest in Peace is in as real graveyard hate.
+Cast an Aura, and Light-Paws tutors another Aura onto the battlefield; stack four or five on the commander and swing for 21 commander damage in two or three hits. All That Glitters, Ethereal Armor, Sage's Reverie and Mantle of the Ancients scale with enchantments, Face of Divinity adds first strike and lifelink once another Aura is on her, and Light of Promise turns Spirit Link and On Serra's Wings lifegain into counters. The protection layer is a hand of one-mana instants and flash Auras plus Flickerform and the umbras. Winds of Rath and Single Combat clear the board around her.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Light-Paws' Aura-to-Aura tutoring chain; enchantress draw (Sram, Mesa Enchantress, Kor Spiritdancer, Eidolon); totem armor; commander damage tracking.
+Light-Paws' Aura-to-Aura tutoring chain; enchantress draw (Sram, Mesa Enchantress, Kor Spiritdancer, Pearl-Ear); Aura cost reducers (Danitha, Hero of Iroas, Transcendent Envoy, Starnheim Courser, Pearl-Ear's affinity); umbra armor (Hyena Umbra, Umbra Mystic); the instant-speed protection (Blacksmith's Skill, Karametra's Blessing, Benevolent Blessing, Stoneskin, Shardmage's Rescue, Flickerform); commander damage tracking. Approximate: Flickerform is used only to dodge removal and wipes, and Benevolent Blessing's protection never knocks your own Auras off.
 
 ## Decklist by type (100)
 

@@ -1749,6 +1749,9 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "artifact" => d.types.has(Types::ARTIFACT),
             "enchantment" => d.types.has(Types::ENCHANTMENT),
             "legendary" => d.tag(Tag::Leg),
+            // --- Tiers 1/2 (lightpaws): Transcendent Envoy, Starnheim Courser
+            "aura" => d.has_subtype("aura"),
+            "artifact_or_enchantment" => d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT),
             // --- Tier 3 (marwyn): the Medallions ("green spells you cast cost {1} less")
             "white" => d.colors.has('W'),
             "blue" => d.colors.has('U'),

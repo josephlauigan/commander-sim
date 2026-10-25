@@ -205,6 +205,8 @@ pub enum DataKey {
     /// --- Tiers 1/2 (isshin): the player Curse of Opulence enchants (`Val::Player`); Firebender Ascension's quest
     /// counters (`Val::Int`)
     T12Isshin,
+    /// --- Tiers 1/2 (lightpaws): Pariah: the damage it has sent to the enchanted creature this turn ([Stamp, Int])
+    T12Pariah,
 }
 
 /// A value in per-card state.
@@ -291,6 +293,8 @@ pub enum LockKind {
     AllSpells,
     Noncreature,
     InstSorcAbilities,
+    /// --- Tiers 1/2 (lightpaws): creature and planeswalker spells (Single Combat)
+    CreatureWalker,
 }
 
 /// When a cast lock ends: with the turn it was set in, or when the given player's turn count passes the number.
@@ -298,6 +302,9 @@ pub enum LockKind {
 pub enum LockEnd {
     Turn(TurnStamp),
     TurnOf(PlayerId, u32),
+    /// --- Tiers 1/2 (lightpaws): until the end of the player's next turn, set when their turn count was the number
+    /// (Single Combat: the rest of this turn, the others' turns, then that player's next one)
+    ThroughNextTurn(PlayerId, u32),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1302,6 +1309,8 @@ pub struct Game {
     pub eot_returns: Vec<(PlayerId, CardId)>,
     /// the Captain America precon's bookkeeping (impls/t0_captain.rs)
     pub t0c: crate::impls::t0_captain::T0c,
+    /// --- Tiers 1/2 (lightpaws): Flickerform's exiles waiting for the next end step (impls/t12_lightpaws.rs)
+    pub t12lp: crate::impls::t12_lightpaws::T12,
 }
 
 impl Game {
@@ -1443,6 +1452,7 @@ impl Game {
             resto_target: None,
             eot_returns: vec![],
             t0c: Default::default(),
+            t12lp: Default::default(),
         }
     }
 

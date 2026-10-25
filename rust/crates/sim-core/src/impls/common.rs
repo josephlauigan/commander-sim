@@ -358,7 +358,8 @@ pub fn attached_prot(g: &Game, m: PermId) -> Colors {
 /// common.umbra_save: umbra armor: m would be destroyed: an umbra on it is destroyed instead
 pub fn umbra_save(g: &mut Game, m: PermId) -> Res<bool> {
     for a in auras_on(g, m) {
-        if spec_of(g, a).is_some_and(|s| s.umbra) {
+        // --- Tiers 1/2 (lightpaws): Umbra Mystic gives every Aura on its controller's permanents umbra armor
+        if spec_of(g, a).is_some_and(|s| s.umbra) || crate::impls::t12_lightpaws::mystic_umbra(g, m) {
             crate::glog!(g, "    {} is destroyed instead of {} (umbra armor)", card_name(g, a), name_of(g, m));
             die(g, a, "destroy")?;
             return Ok(true);

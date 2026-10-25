@@ -764,6 +764,9 @@ fn resolve_combat_inner(
             if dmg > 0 && crate::impls::t0_captain::sac_player(g, d, dmg) {
                 dmg = 0; // Heroic Sacrifice
             }
+            if dmg > 0 && crate::impls::t12_lightpaws::pariah_take(g, d, dmg) {
+                dmg = 0; // --- Tiers 1/2 (lightpaws): Pariah: dealt to the enchanted creature instead
+            }
             if dmg > 0 && prevents_damage(g, d, Some(p)) {
                 // protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
                 g.player_mut(d).stat("dmg_prevented", dmg as i64);
@@ -874,6 +877,7 @@ fn resolve_combat_inner(
             }
         }
         crate::impls::t0_captain::sac_finish(g)?; // Heroic Sacrifice
+        crate::impls::t12_lightpaws::pariah_finish(g)?; // --- Tiers 1/2 (lightpaws): Pariah
         cardcode::vanguard_blocks(g, &assign)?; // Defiant Vanguard: at end of combat
         crate::impls::alela::wall_return(g, &assign)?; // Wall of Junk: back to its owner's hand at end of combat
         g.blocking.clear();

@@ -1499,6 +1499,14 @@ static STATICS: &[(&str, StaticFn)] = &[
             if v.is_empty() { None } else { Some(v) }
         },
     ),
+    // --- Tiers 1/2 (lightpaws)
+    // "Aura spells you cast cost {1} less to cast" (Transcendent Envoy); "artifact and enchantment spells you cast
+    // cost {1} less to cast" (Starnheim Courser): one discount on a spell of either type
+    (r"^(aura|artifact and enchantment) spells you cast cost \{(\d+)\} less to cast$", |m| {
+        let spell = if m.gs(1) == "aura" { "aura" } else { "artifact_or_enchantment" };
+        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => spell,
+        "amount" => -int(m.gs(2))}))
+    }),
 ];
 
 pub fn prot_colors(text: &str) -> String {

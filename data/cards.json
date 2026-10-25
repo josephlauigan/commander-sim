@@ -4348,24 +4348,13 @@
    "types": "E",
    "generic": 1,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "enchant"
@@ -4377,10 +4366,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Enchanted creature has flying."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -6669,7 +6656,9 @@
    "types": "E",
    "generic": 3,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -6685,10 +6674,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -10924,18 +10911,13 @@
    "generic": 1,
    "pips": "W",
    "tags": {
+    "aura": true,
     "flash": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "as ~ enters, choose a color"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "enchant",
@@ -10948,10 +10930,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Enchanted creature has protection from the chosen color. This effect doesn't remove Auras and Equipment you control that are already attached to it."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -20572,30 +20552,13 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "nonland",
-         "controller": "opp"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "enchant"
@@ -20607,10 +20570,8 @@
    "ward": 2,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Enchanted creature has ward {2}."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -42373,7 +42334,9 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -42389,11 +42352,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "As long as another Aura is attached to enchanted creature, it has first strike and lifelink."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -46121,7 +46081,9 @@
    "types": "E",
    "generic": 1,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -46137,11 +46099,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "{2}{W}{W}: Exile enchanted creature and all Auras attached to it. At the beginning of the next end step, return that card to the battlefield under its owner's control. If you do, return the other cards exiled this way to the battlefield under their owners' control attached to that creature."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -58562,7 +58521,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -59699,7 +59658,9 @@
    "types": "E",
    "generic": 2,
    "pips": "WW",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -59715,10 +59676,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -61377,7 +61336,9 @@
    "types": "E",
    "generic": 1,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -61393,11 +61354,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature has \"Whenever ~ attacks alone, it gets +X/+X until end of turn, where X is the number of nonland permanents you control.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -72448,7 +72406,9 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -72464,11 +72424,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature has \"Whenever you gain life, put that many +1/+1 counters on ~.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -76807,7 +76764,9 @@
    "types": "E",
    "generic": 3,
    "pips": "WW",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -76823,11 +76782,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature you control",
-    "When this Aura enters, return any number of target Aura and/or Equipment cards from your graveyard to the battlefield attached to enchanted creature."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -77664,7 +77620,9 @@
    "types": "E",
    "generic": 0,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -77680,11 +77638,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature has protection from black and from red."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -90421,7 +90376,9 @@
    "types": "E",
    "generic": 2,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -90437,11 +90394,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "All damage that would be dealt to you is dealt to enchanted creature instead."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -100843,7 +100797,11 @@
    "types": "E",
    "generic": 1,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "rem": "coward",
+    "tgt": "c",
+    "etb": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -100859,11 +100817,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature loses all abilities and is a Coward creature with base power and toughness 0/1."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -101288,24 +101243,11 @@
    "types": "S",
    "generic": 3,
    "pips": "W",
-   "tags": {
-    "rean": "evil"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "reanimate",
-       "filter": {},
-       "from": "yours"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -101313,10 +101255,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Return each Aura card from your graveyard to the battlefield. Only creatures can be enchanted this way.   [partly: only creatures can be enchanted this way]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -110549,7 +110489,9 @@
    "types": "E",
    "generic": 0,
    "pips": "W",
-   "tags": {},
+   "tags": {
+    "aura": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
@@ -110565,11 +110507,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature has protection from green and from blue."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -118924,7 +118863,15 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "artifact_or_enchantment",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "flying"
@@ -118936,10 +118883,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Artifact and enchantment spells you cast cost {1} less to cast."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -120246,6 +120191,7 @@
    "generic": 2,
    "pips": "W",
    "tags": {
+    "aura": true,
     "flash": true
    },
    "pow": 0,
@@ -120264,10 +120210,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -132638,7 +132582,15 @@
    "pow": 1,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "aura",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "flying"
@@ -132650,10 +132602,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Aura spells you cast cost {1} less to cast."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -133821,6 +133771,7 @@
    "generic": 1,
    "pips": "WW",
    "tags": {
+    "aura": true,
     "flash": true
    },
    "pow": 0,
@@ -133839,11 +133790,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Enchant creature",
-    "Enchanted creature has double strike."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
