@@ -95,6 +95,9 @@ pub struct Effect {
     /// --- Tiers 1/2 (tatyova-teysa): a token's colours as printed (colour letters; "" colourless). None: the deck's
     /// default token colour, as before
     pub color: Option<String>,
+    /// --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield": every match, not
+    /// the best one (reanimate)
+    pub all: Option<bool>,
 }
 
 /// An activated ability's cost.
