@@ -81,6 +81,25 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Wirewood Lodge" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): {T}: {C}; with an Elf mana creature already tapped that makes 3+, {G},{T}: untap it, counted as the Lodge tapping for that Elf's mana less the {G}; not used to untap an attacker" }
 "Yavimaya, Cradle of Growth" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): every land is a Forest where the engine asks (forestwalk, Forests that tap for more); taps for {G}; the {T}: {G} every land gains as a Forest is not added (colourless lands stay colourless)" }
 "Yeva, Nature's Herald" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): green creature spells as though they had flash (cast::grants_flash: the AI casts them at the end of an opponent's turn); flash (data)" }
+# --- Tiers 4/5 (yuriko): hand-written in impls/t45_yuriko.rs
+"Kaito, Bane of Nightmares" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): ninjutsu {1}{U}{B}; on your turn with loyalty a 3/4 Ninja creature with hexproof; +1 emblem (Ninjas +1/+1, stacking), 0 surveil 2 and draw per opponent who lost life this turn, -2 tap and two stun counters. Left out: damage to him as a creature does not remove loyalty" }
+"Nashi, Moon Sage's Scion" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): ninjutsu {3}{B}; combat damage to a player exiles the top card of each library and casts the best nonland one for life equal to its mana value. Left out: the card is cast at once (not later in the turn); an exiled land is never played" }
+"Ninja of the Deep Hours" = { status = "Full", note = "ninjutsu {1}{U} (t45_yuriko NINJUTSU); its combat-damage draw is compiled" }
+"Sakashima's Student" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs, t6_copies clone code): ninjutsu {1}{U}; enters as a copy of the best creature, a Ninja in addition; the ninjutsu choice weighs the copy" }
+"Skullsnatcher" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): ninjutsu {B}; combat damage to a player exiles up to two cards from that player's graveyard (the two worth most to them)" }
+"Satoru, the Infiltrator" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): menace; a nontoken creature of yours entering without being cast (ninjutsu, reanimation) draws a card. Left out: a creature cast for no mana counts as cast; creatures entering together draw one each" }
+"Cover of Darkness" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): names the deck's most common creature type as it enters; creatures of that type have fear" }
+"Shizo, Death's Storehouse" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): {T}: {B}; {B},{T}: a legendary creature gains fear until end of turn, used in the first main phase on the best ready legendary attacker an opponent could block" }
+"Mothdust Changeling" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): changeling; at the beginning of combat taps a summoning-sick creature of yours to gain flying until end of turn when an opponent could block it" }
+"Wingcrafter" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): soulbond with the best creature without flying (as it or the other enters); both have flying while paired" }
+"Temporal Mastery" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): take an extra turn, exiled; miracle {1}{U} when it was the turn's first card drawn" }
+"Temporal Trespass" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): delve (the least useful graveyard cards); take an extra turn, exiled" }
+"Scheming Symmetry" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): you and the least threatening opponent each put a card from the library on top" }
+"Shadow of Mortality" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): costs {1} less per life below 40" }
+"Agadeem's Awakening // Agadeem, the Undercrypt" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): X returns the best creature card of each mana value up to X from your graveyard; or played as a land ({B}, pay 3 life or it enters tapped)" }
+"Sea Gate Restoration // Sea Gate, Reborn" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): draw cards equal to your hand plus one, no maximum hand size for the game; or played as a land ({U}, pay 3 life or it enters tapped)" }
+"Hydroelectric Specimen // Hydroelectric Laboratory" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): flash 1/4, cast at an opponent's instant or sorcery aimed at your key permanent: the spell's target becomes the Specimen; or played as a land ({U}, pay 3 life or it enters tapped). Left out: the Specimen spell is not on the stack to be countered" }
+"Clearwater Pathway // Murkwater Pathway" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): played as the face ({U} or {B}) whose colour the other lands make less of; the hand's pips break a tie" }
 
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }

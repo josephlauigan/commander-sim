@@ -1170,6 +1170,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
 // ------------------------------------------------------------------ attacking (outside decks)
 fn evasive(g: &Game, m: PermId) -> bool {
     crate::dsl::has_kw(g, m, "unblockable") || g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")
+        || crate::impls::t45_yuriko::evasive(g, m) // Tiers 4/5 (yuriko): fear, Mothdust Changeling
 }
 
 fn untapped_blockers(g: &Game, q: PlayerId) -> Vec<PermId> {

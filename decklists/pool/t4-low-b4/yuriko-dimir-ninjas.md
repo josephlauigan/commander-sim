@@ -5,8 +5,8 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Tempo / evasive chip dam
 - **Commander:** Yuriko, the Tiger's Shadow
 - **Color identity:** Blue, Black
 - **Game Changers (8):** Cyclonic Rift, Demonic Tutor, Fierce Guardianship, Force of Will, Imperial Seal, Mystical Tutor, Rhystic Study, Vampiric Tutor
-- **Combos:** None infinite. Yuriko reveal of Draco (16) or Enter the Infinite (12) is a near-kill per hit.
-- **Lands:** 30 (17 nonbasic + 13 basic)
+- **Combos:** None infinite. A Yuriko reveal of Shadow of Mortality (15), Temporal Trespass (11), Dig Through Time or Treasure Cruise (8) is a big hit to every opponent; Temporal Mastery and Temporal Trespass give extra turns of Ninja hits.
+- **Lands:** 30 (17 nonbasic + 13 basic), plus five spell // land cards (Agadeem's Awakening, Sea Gate Restoration, Hydroelectric Specimen, Fell the Profane, Sink into Stupor)
 
 ## Role in the pool
 
@@ -14,20 +14,20 @@ Damage that ignores your board and arrives from turn two. Tests cheap removal, b
 
 ## At the table
 
-- **Plan:** Attacks from turn two with cheap evasive creatures (Ornithopter, Invisible Stalker, Slither Blade), then ninjutsus Yuriko, the Tiger's Shadow or another Ninja in. Counterspells hold up the turn.
-- **Wins by:** Combat damage from Ninjas, with Yuriko revealing the top card and each opponent losing life equal to its mana value. Brainstorm, Scroll Rack and Sensei's Divining Top set up Draco or Enter the Infinite on top for huge hits.
-- **Watch out for:** Cheap evasive attackers early: keep blockers and removal ready. Yuriko can cast from the command zone for U and B. A Draco or Enter the Infinite reveal hurts a lot. Mana Drain, Force of Negation and Fierce Guardianship counter your key plays.
-- **Interaction:** Counterspell, Mana Drain, Arcane Denial, Force of Negation, Fierce Guardianship, Swan Song, Cyclonic Rift, Fatal Push, Infernal Grasp, Snuff Out, Pongify and Toxic Deluge. Tishana's Tidebinder counters abilities.
+- **Plan:** Attacks from turn two with cheap evasive creatures (Ornithopter, Faerie Seer, Slither Blade, Triton Shorestalker, Spectral Sailor), then ninjutsus Yuriko, the Tiger's Shadow or another Ninja in (Ninja of the Deep Hours, Skullsnatcher, Nashi, Kaito, Bane of Nightmares, Sakashima's Student). Counterspells hold up the turn.
+- **Wins by:** Combat damage from Ninjas, with Yuriko revealing the top card and each opponent losing life equal to its mana value. Brainstorm, Scroll Rack, Sensei's Divining Top and the tutors that put a card on top (Vampiric Tutor, Imperial Seal, Scheming Symmetry, Lim-Dûl's Vault) stack Shadow of Mortality or Temporal Trespass for huge hits; the extra turns repeat them.
+- **Watch out for:** Cheap evasive attackers early: keep blockers and removal ready. Cover of Darkness gives the Ninjas fear (only black or artifact creatures block them). Yuriko can come in from the command zone for {U}{B}. Kaito pumps the Ninjas and stuns your best blocker. Force of Will, Fierce Guardianship and Flare of Denial counter your key plays; Misdirection and Hydroelectric Specimen turn your removal aside.
+- **Interaction:** Counterspell, Force of Will, Fierce Guardianship, Flare of Denial, Misdirection, Commandeer, Cyclonic Rift, Snuff Out, Dismember, Deadly Rollick, Fell the Profane, Sink into Stupor, An Offer You Can't Refuse, Baleful Strix; Dauthi Voidwalker and Skullsnatcher eat graveyards.
 
 ## Strategy
 
-Attack with one-mana evasive creatures, ninjutsu Yuriko or another Ninja in, and reveal the top card for its mana value in damage to every opponent. Top-of-library control (Brainstorm, Scroll Rack, Sensei's Top, Vampiric Tutor) stacks Draco, Enter the Infinite, or a big delve spell on top for 10+ damage to each player per hit. Backed by free and cheap counterspells.
+Attack with one-mana evasive creatures, ninjutsu Yuriko or another Ninja in, and reveal the top card for its mana value in damage to every opponent. Top-of-library control stacks the biggest card on top (Shadow of Mortality is 15 per opponent per hit). Satoru draws for every Ninja that comes in by ninjutsu, Ninja of the Deep Hours and Moon-Circuit Hacker draw on hits, and Temporal Mastery (miracle {1}{U}) or Temporal Trespass take another turn of hits. Backed by free and cheap counterspells.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Ninjutsu (return unblocked attacker, put Ninja onto battlefield attacking); Yuriko reveal-for-MV damage to each opponent; top-of-library manipulation; free counterspells.
+Ninjutsu (return an unblocked attacker, put a Ninja onto the battlefield attacking; t4.rs, the new Ninjas' costs in t45_yuriko.rs); Yuriko reveal-for-MV damage to each opponent; top-of-library manipulation; free counterspells. Hand-written for this list (impls/t45_yuriko.rs): Kaito, Bane of Nightmares (Ninja creature on your turn, emblem, stun), Nashi, Skullsnatcher, Sakashima's Student, Satoru, the Infiltrator, Cover of Darkness and Shizo (fear), Mothdust Changeling and Wingcrafter (flying), the extra turns, Scheming Symmetry, Shadow of Mortality's cost, the spell // land cards and Clearwater Pathway's face. Approximate: Kaito (damage to him as a creature leaves loyalty), Nashi (casts at once, never plays a land), Satoru (a free cast counts as cast), Hydroelectric Specimen (its spell can't be countered). Gingerbrute is modelled elsewhere.
 
 ## Decklist by type (100)
 

@@ -9378,3 +9378,10 @@ pool_remove_tags = ["tokx"]
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
 ["Contaminant Grafter"]
 dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)
+
+# --- Tiers 4/5 (yuriko): hand-written in rust/crates/sim-core/src/impls/t45_yuriko.rs
+["Kaito, Bane of Nightmares"]
+dsl = [] # the walker framework runs all three loyalty abilities (the compiled 0 and -2 would run twice)
+
+["Skullsnatcher"]
+dsl = [] # the compiled trigger exiled every graveyard; the hand-written one exiles two cards of the damaged player's

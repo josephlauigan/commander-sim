@@ -82,6 +82,12 @@ fn bomb_or_pow(g: &Game, c: CardId) -> i32 {
     if d.bomb != 0 { d.bomb } else { d.pow }
 }
 
+/// a Ninja's worth for the ninjutsu choice: `bomb_or_pow`, or the Tiers 4/5 (yuriko) card's own (Kaito, Sakashima's
+/// Student: what it would copy)
+fn ninja_worth(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    crate::impls::t45_yuriko::ninja_worth(g, p, c).unwrap_or_else(|| bomb_or_pow(g, c))
+}
+
 /// the first item with the highest key, for keys that are tuples (Python's `max(xs, key=...)`)
 fn first_max<T: Copy, K: PartialOrd>(xs: &[T], key: impl Fn(T) -> K) -> Option<T> {
     let mut best: Option<(T, K)> = None;
@@ -154,7 +160,8 @@ const NINJUTSU: [(&str, u32, &str); 12] = [
 ];
 
 fn ninjutsu_entry(n: &str) -> Option<(u32, &'static str)> {
-    NINJUTSU.iter().find(|x| x.0 == n).map(|x| (x.1, x.2))
+    // + the Tiers 4/5 (yuriko) Ninjas
+    NINJUTSU.iter().chain(crate::impls::t45_yuriko::NINJUTSU.iter()).find(|x| x.0 == n).map(|x| (x.1, x.2))
 }
 
 /// `name in NINJUTSU`
@@ -225,14 +232,14 @@ pub fn ninjutsu(g: &mut Game, p: PlayerId, atk: &mut Vec<PermId>, _d: PlayerId, 
             if !can_pay(g, p, gen_, pips, false) {
                 continue;
             }
-            let v = bomb_or_pow(g, c) + if yuri { 6 } else { 0 } + if has_ninjutsu(n) { 3 } else { 0 };
+            let v = ninja_worth(g, p, c) + if yuri { 6 } else { 0 } + if has_ninjutsu(n) { 3 } else { 0 };
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, yuri, gen_, pips));
             }
         }
         let Some((_, c, yuri, gen_, pips)) = best else { return Ok(()) };
         let a = first_min(&unbl, |m| (pval(g, m), -epow(g, m))).unwrap();
-        if pval(g, a) > (bomb_or_pow(g, c) + 3) as f64 && !yuri {
+        if pval(g, a) > (ninja_worth(g, p, c) + 3) as f64 && !yuri {
             return Ok(());
         }
         pay(g, p, gen_, pips, false)?;
