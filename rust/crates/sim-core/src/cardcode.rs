@@ -521,7 +521,6 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     if crate::impls::t45_krenko::mountainwalk(g, b, a) {
         return true; // --- Tiers 4/5 (krenko): Goblin King
     }
-    crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
     crate::impls::rules::evasion_blocked(g, b, a)
         || crate::impls::bulk_white::exit_blocked(g, b, a)
         || crate::impls::t45_winota::evasion_blocked(g, b, a) // --- Tiers 4/5 (winota): Sundering Eruption
