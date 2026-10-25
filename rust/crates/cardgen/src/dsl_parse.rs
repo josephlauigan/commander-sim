@@ -246,6 +246,10 @@ pub fn num_expr(s: &str) -> J {
         return n_(&s);
     }
     // counting phrases the interpreter can name (anything else falls through to a bare "X", which the audit flags)
+    // --- Tiers 1/2 (brago-meren): "each creature card in your graveyard" (Wight of the Reliquary)
+    if rmatch(r"^(?:the number of )?creature cards? in your graveyard$", &s).is_some() {
+        return "gy_creatures".into();
+    }
     if s.contains("creature") && s.contains("died this turn") {
         return "creatures_died_this_turn".into();
     }

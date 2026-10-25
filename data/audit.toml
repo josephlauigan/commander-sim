@@ -261,6 +261,23 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Ureni of the Unwritten" = { status = "Full", note = "flying, trample; hand-written (impls/t45_urdragon.rs): enters or attacks: the best Dragon creature card of the top eight onto the battlefield, the rest to the bottom in a random order" }
 "Urza's Incubator" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): names the deck's most common creature type; creature spells of that type cost {2} less" }
 
+# --- Tiers 1/2 (brago-meren): hand-written in impls/t12_brago_meren.rs
+"Agent of Treachery" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs): enters: gain control of the best opposing permanent it can target, for good; your end step: draw three with three or more permanents you don't own. Left out: stealing a land (lands are kept apart from permanents)" }
+"Cryogen Relic" = { status = "Full", note = "draws as it enters (draw tag); hand-written (impls/t12_brago_meren.rs): draws as it leaves; {1}{U}, sacrifice: a stun counter on an opponent's tapped creature at the end of their turn, or sacrificed for the card with two or fewer in hand" }
+"Dour Port-Mage" = { status = "Full", note = "{1}{U},{T} bounce compiled; hand-written (impls/t12_brago_meren.rs, zones::leave): one or more other creatures you control leave without dying: draw a card (one card per batch: one effect's blinks, Brago's included)" }
+"Flickerwisp" = { status = "Full", note = "flying; hand-written (impls/t12_brago_meren.rs): enters: exile another target permanent, it returns under its owner's control at the beginning of the next end step (galadriel::eot_returns; a token is gone). The AI takes an opposing token, its own best enters permanent or Reality Acid, else an opposing permanent for the turn" }
+"Ghostly Flicker" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs, ai/pool.rs PROTECTORS): exile your two best enters artifacts and/or creatures and return them, cast for value or in response to removal on a creature. Left out: lands as targets, and the second target when it is cast as protection" }
+"Reality Acid" = { status = "Full", note = "hand-written Aura (impls/t12_brago_meren.rs): enchants the best opposing permanent; vanishing 3 (a time counter off each of your upkeeps, then sacrificed); when it leaves the battlefield (Brago's blink too) that permanent's controller sacrifices it" }
+"Riptide Gearhulk" = { status = "Full", note = "double strike, prowess (engine keywords); hand-written (impls/t12_brago_meren.rs): enters: each opponent's best nonland permanent into its owner's library third from the top (a commander goes to the command zone)" }
+"Starfield Vocalist" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs, trigger_copies): a permanent entering makes your enters and landfall triggers trigger an additional time. Left out: warp (no casting from exile on a later turn in the engine)" }
+"Strionic Resonator" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs, stack::ai_respond, stack::copy_trigger): {2},{T}: copy your triggered ability on the stack worth 4 or more (Brago's, Agent of Treachery's, a good enters trigger). Left out: new targets for the copy (its effect chooses again as it resolves)" }
+"Time Wipe" = { status = "Full", note = "hand-written (impls/t12_brago_meren.rs): return your best creature to its owner's hand (the commander first), then destroy all creatures (the engine's board wipe)" }
+"Yorion, Sky Nomad" = { status = "Approximate", note = "flying; hand-written (impls/t12_brago_meren.rs): enters: exile your other nonland permanents worth entering again (and Reality Acid), they return at the beginning of the next end step. Left out: companion (it is in the 99)" }
+"Buried Alive" = { status = "Full", note = "hand-written (impls/t12_brago_meren.rs): the outside decks' AI casts it with a way to bring creatures back (Meren, a reanimation spell, Atzal): up to three creature cards from the library into the graveyard, the best to return. JD's decks keep their own plan (ais.seph_fill_resolve)" }
+"Journey to Eternity // Atzal, Cave of Eternity" = { status = "Full", note = "hand-written Aura (impls/t12_brago_meren.rs): on your best creature; it dies: it returns under your control and Journey returns transformed as Atzal, a land that taps for any colour, with {3}{B}{G},{T}: return the best creature card from your graveyard to the battlefield" }
+"Twilight Diviner" = { status = "Approximate", note = "surveil 2 compiled; hand-written (impls/t12_brago_meren.rs, zones::enter): other creatures you control enter from a graveyard (Game::t12_gy, the record of creature cards put into graveyards): a token copy of the best of them, once each turn. Left out: a card shuffled back into the library and put onto the battlefield from there later counts as coming from the graveyard" }
+"Wight of the Reliquary" = { status = "Full", note = "vigilance and the land search compiled; +1/+1 for each creature card in your graveyard (dsl_parse Tiers 1/2 pattern, num gy_creatures)" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -451,18 +468,18 @@ mechs = ["skullclamp"]
 
 [[engines.brago-azorius-blink-control]]
 label = "flicker ETB re-use"
-cards = ["Brago, King Eternal", "Conjurer's Closet", "Soulherder", "Deadeye Navigator", "Eldrazi Displacer"]
+cards = ["Brago, King Eternal", "Soulherder", "Teleportation Circle", "Deadeye Navigator", "Restoration Angel", "Flickerwisp", "Yorion, Sky Nomad", "Ghostly Flicker"]
 mechs = ["flicker", "brago"]
 
 [[engines.brago-azorius-blink-control]]
 label = "counterspell decisions"
-cards = ["Counterspell", "Absorb", "Cryptic Command", "Memory Lapse"]
+cards = ["Counterspell", "Negate", "Swan Song", "Dovin's Veto", "An Offer You Can't Refuse"]
 mechs = ["counter_ai"]
 
 [[engines.brago-azorius-blink-control]]
-label = "monarch"
-cards = ["Palace Jailer"]
-mechs = ["monarch"]
+label = "enters triggers doubled, copied and stolen"
+cards = ["Panharmonicon", "Elesh Norn, Mother of Machines", "Starfield Vocalist", "Strionic Resonator", "Agent of Treachery"]
+mechs = []
 
 [[engines.kaalia-mardu-creature-cheat]]
 label = "Kaalia's put-onto-battlefield-attacking"
@@ -506,22 +523,22 @@ mechs = ["meren"]
 
 [[engines.meren-golgari-recursion]]
 label = "ETB removal re-use"
-cards = ["Ravenous Chupacabra", "Shriekmaw", "Nekrataal", "Acidic Slime"]
+cards = ["Ravenous Chupacabra", "Shriekmaw", "Plaguecrafter", "Fleshbag Marauder"]
 mechs = []
 
 [[engines.meren-golgari-recursion]]
 label = "sac outlets"
-cards = ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar"]
+cards = ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar", "Yawgmoth, Thran Physician"]
 mechs = []
 
 [[engines.meren-golgari-recursion]]
 label = "Grave Pact"
-cards = ["Grave Pact"]
+cards = ["Grave Pact", "Dictate of Erebos"]
 mechs = ["edicts"]
 
 [[engines.meren-golgari-recursion]]
-label = "Survival / Birthing Pod"
-cards = ["Survival of the Fittest", "Birthing Pod"]
+label = "Birthing Pod / reanimation"
+cards = ["Birthing Pod", "Buried Alive", "Living Death", "Twilight Diviner"]
 mechs = ["survival_pod"]
 
 [[engines.sythis-selesnya-enchantress]]

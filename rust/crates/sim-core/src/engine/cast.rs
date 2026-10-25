@@ -761,6 +761,7 @@ fn gy_of(ctx: &Ctx, p: PlayerId) -> PlayerId {
 /// true if it resolved. Python's `cast_card`.
 pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> Res<bool> {
     g.tick()?;
+    crate::impls::t12_brago_meren::note_cast(g, c, zone); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
     if g.locks_used && (spell_locked(g, p, c) || split_second_up(g)) {
         return Ok(false); // a player cast lock or a split-second spell on the stack (callers check `castable` first)
     }

@@ -112,6 +112,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t45_heliod_zur::COMBOS.iter()) // --- Tiers 4/5 (heliod-zur)
             .chain(super::t45_urza_yawgmoth::COMBOS.iter()) // --- Tiers 4/5 (urza-yawgmoth)
             .chain(super::t45_edgar::COMBOS.iter()) // --- Tiers 4/5 (edgar)
+            .chain(super::t12_brago_meren::COMBOS.iter()) // --- Tiers 1/2 (brago-meren)
             .collect()
     });
     &ALL

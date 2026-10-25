@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-he
 - **Commander:** Brago, King Eternal
 - **Color identity:** White, Blue
 - **Game Changers (1):** Farewell
-- **Combos:** None.
+- **Combos:** Peregrine Drake + Deadeye Navigator (a two-card infinite: mana and blinks; against the Tier 2 rule, left as EDHREC lists it). Peregrine Drake + Archaeomancer + Ghostly Flicker (unbounded mana). Both win through Agent of Treachery, blinked until it has taken every permanent.
 - **Lands:** 35 (15 nonbasic + 20 basic)
 
 ## Role in the pool
 
-The most counterspells and spot removal in the mid-B3 pool. Tests whether combo decks can resolve their pieces and whether bombs survive.
+The pool's enters-the-battlefield engine: every creature and Aura does something as it enters, and a dozen cards make it enter again. Tests whether decks can answer a value engine before it buries them, and whether their own permanents survive Agent of Treachery, Riptide Gearhulk and Reality Acid.
 
 ## At the table
 
-- **Plan:** Holds up counterspells and removal while building value with flicker creatures. Brago, King Eternal blinks your nonland permanents when he connects, and Conjurer's Closet, Soulherder and Eldrazi Displacer do it without combat. Rhystic Study taxes your spells.
-- **Wins by:** Reuses Mulldrifter, Palace Jailer, Reflector Mage and Skyclave Apparition, then closes with fliers: Baneslayer Angel, Lyra Dawnbringer, Resplendent Angel, Hero of Bladehold, Elspeth, Sun's Champion and Teferi, Hero of Dominaria.
-- **Watch out for:** Rhystic Study draws a lot unless you pay or kill it, and Cyclonic Rift (overloaded) can bounce your whole board. Cast your key spell into open blue mana only when you must, and bait with lesser spells. Supreme Verdict and Wrath of God clear the board before its fliers take over.
-- **Interaction:** Counterspell, Absorb, Cryptic Command, Mystic Confluence, Dovin's Veto, An Offer You Can't Refuse and Glen Elendra Archmage. Swords to Plowshares, Path to Exile, Council's Judgment, Oblivion Ring, Banishing Light, Detention Sphere, Cyclonic Rift and two wraths.
+- **Plan:** Builds a board of enters creatures (Mulldrifter, Wall of Omens, Reflector Mage, Agent of Treachery, Riptide Gearhulk, Sun Titan) and blinks them: Brago, King Eternal when he connects, Soulherder and Teleportation Circle each end step, Deadeye Navigator, Restoration Angel, Flickerwisp, Yorion, and the flicker spells Ephemerate, Cloudshift, Momentary Blink, Ghostly Flicker and Eerie Interlude. Panharmonicon, Elesh Norn, Mother of Machines, Starfield Vocalist and Strionic Resonator make each enters trigger count twice.
+- **Wins by:** Grinds the table out of permanents and cards, then attacks with fliers (Brago, Cloudblazer, Restoration Angel, Sun Titan). Peregrine Drake with Deadeye Navigator, or with Archaeomancer and Ghostly Flicker, makes unbounded mana and blinks Agent of Treachery until it has everything.
+- **Watch out for:** Agent of Treachery takes your best permanent, again each time it is blinked; Reality Acid on your best permanent kills it when the Acid leaves, and Brago blinks it. Elesh Norn stops your own enters triggers. Kill Brago or Deadeye Navigator, and answer Peregrine Drake before Deadeye or Archaeomancer arrives.
+- **Interaction:** Counterspell, Negate, Swan Song, Dovin's Veto and An Offer You Can't Refuse. Swords to Plowshares, Path to Exile, Reflector Mage, Venser, Shaper Savant, Riptide Gearhulk, Flickerwisp, Reality Acid, Witch Enchanter, Loran of the Third Path, Agent of Treachery; Farewell, Supreme Verdict and Time Wipe. Ghostly Prison taxes attacks.
 
 ## Strategy
 
-Hold up counters, answer the biggest threat, and grind value from flicker. Brago blinks Mulldrifter, Palace Jailer, Reflector Mage, Skyclave Apparition every time he connects; Conjurer's Closet, Soulherder, Deadeye Navigator, and Eldrazi Displacer do it without combat. Supreme Verdict and Wrath reset the board when needed. The deck wins slowly with fliers, Elspeth, and Teferi.
+Ramp with rocks (Sol Ring, Signets, Talisman, Basalt Monolith, Mind Stone, Thought Vessel), land a value creature a turn, and blink it as often as possible. Brago's combat damage blinks every enters permanent (and Reality Acid, whose host dies); Soulherder and Teleportation Circle do it each end step. Time Wipe saves Brago (back to hand) and wipes the rest. The combos are a bonus: the deck plays the value game first.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-ETB re-use through flicker (Brago, Closet, Soulherder, Deadeye Navigator, Displacer); counterspell decision-making; monarch (Palace Jailer).
+ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Deadeye Navigator, Restoration Angel, Flickerwisp, Yorion, the flicker spells); trigger doubling (Panharmonicon, Elesh Norn, Mother of Machines, Starfield Vocalist) and copying (Strionic Resonator); steals (Agent of Treachery); Reality Acid's delayed removal; counterspell decisions. All of the list's cards are modeled (impls/t12_brago_meren.rs for the Tier 2 additions); left out: Starfield Vocalist's warp, Yorion's companion, lands for Ghostly Flicker and Agent of Treachery.
 
 ## Decklist by type (100)
 

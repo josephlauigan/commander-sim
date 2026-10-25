@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Grind / recursion value.
 - **Commander:** Meren of Clan Nel Toth
 - **Color identity:** Black, Green
 - **Game Changers (1):** Demonic Tutor
-- **Combos:** None.
+- **Combos:** Yawgmoth, Thran Physician + Mikaeus, the Unhallowed + Blood Artist or Zulaport Cutthroat (three cards and two non-Human creatures: each sacrifice returns by undying and drains the table). No two-card infinite.
 - **Lands:** 35 (17 nonbasic + 18 basic)
 
 ## Role in the pool
 
-Long games. Punishes decks that trade one-for-one and have no graveyard hate. Bojuka Bog and Deathrite also interact with Sephiroth's yard.
+Long games. Punishes decks that trade one-for-one and have no graveyard hate: every removal creature comes back. Bojuka Bog and Deathrite Shaman also interact with Sephiroth's yard.
 
 ## At the table
 
-- **Plan:** Develops mana (Birds of Paradise, Llanowar Elves, Sakura-Tribe Elder) and plays value creatures. Meren of Clan Nel Toth returns a creature from the graveyard each end step, and sacrifice outlets such as Ashnod's Altar and Viscera Seer feed her.
-- **Wins by:** Grinds with Ravenous Chupacabra, Shriekmaw, Nekrataal and Plaguecrafter over and over, then finishes with Gray Merchant of Asphodel, Grave Titan, Bloodgift Demon and Blood Artist drains.
-- **Watch out for:** Trading one-for-one loses to Meren, so exile the graveyard (Bojuka Bog and Deathrite Shaman use yours too) or kill Meren. Chupacabra and Shriekmaw return again and again to remove your best creature. Survival of the Fittest and Fauna Shaman find the right piece.
-- **Interaction:** Ravenous Chupacabra, Shriekmaw, Nekrataal, Plaguecrafter, Infernal Grasp, Putrefy, Assassin's Trophy, Bone Shards, Casualties of War, Beast Within, Pernicious Deed and Toxic Deluge. No counterspells.
+- **Plan:** Develops mana (Birds of Paradise, Llanowar Elves, Elvish Mystic, Elves of Deep Shadow, Sakura-Tribe Elder, Wood Elves, Cultivate) and plays value creatures. Meren returns a creature from the graveyard each end step; sacrifice outlets (Viscera Seer, Carrion Feeder, Ashnod's Altar, Phyrexian Tower, Yawgmoth, Warren Soultrader) feed her experience. Buried Alive, Entomb and Satyr Wayfinder fill the graveyard for Reanimate, Animate Dead, Victimize and Living Death; Twilight Diviner copies whatever comes back.
+- **Wins by:** Drains: Gray Merchant of Asphodel, Blood Artist, Zulaport Cutthroat, Syr Konrad and Cauldron of Essence; Massacre Wurm and Grave Pact grind the opponents' boards away; Yawgmoth with Mikaeus and a drain payoff ends it at once.
+- **Watch out for:** Trading one-for-one loses to Meren, so exile the graveyard or kill Meren (her tax grows). Ravenous Chupacabra, Shriekmaw, Plaguecrafter and Fleshbag Marauder return again and again. Grave Pact and Dictate of Erebos turn each of its sacrifices into one of yours. Journey to Eternity brings its creature back and becomes Atzal, a land that reanimates.
+- **Interaction:** Ravenous Chupacabra, Shriekmaw, Plaguecrafter, Fleshbag Marauder, Accursed Marauder, Massacre Wurm, Haywire Mite, Reclamation Sage, Cankerbloom, Assassin's Trophy, Beast Within, Putrefy, Toxic Deluge, Grave Pact, Dictate of Erebos and Bojuka Bog. No counterspells.
 
 ## Strategy
 
-Every creature is a value ETB, every sacrifice is an experience counter, and Meren returns one to the battlefield each end step. Chupacabra, Shriekmaw, Fleshbag, Plaguecrafter, and Merciless Executioner re-buy removal every turn cycle; Eternal Witness re-buys spells; Gray Merchant drains; Grave Titan is the top end. Survival of the Fittest turns a surplus creature into the right creature. No two-card infinite.
+Every creature is a value ETB or a death payoff, every sacrifice is an experience counter, and Meren returns one to the battlefield each end step. Birthing Pod, Eldritch Evolution, Fiend Artisan, Demonic Tutor and Diabolic Intent find the piece; Skullclamp and Grim Haruspex draw off the deaths; Protean Hulk and Sheoldred, Whispering One are the top end. Wight of the Reliquary and Fiend Artisan grow with the graveyard.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand); ETB removal re-use; sac outlets; Survival of the Fittest tutoring.
+Meren's end-step reanimation (to battlefield if MV ≤ experience, else to hand); ETB removal re-use; sac outlets and Grave Pact / Dictate of Erebos edicts; graveyard filling (Buried Alive, Entomb, Satyr Wayfinder) and reanimation; Twilight Diviner's copies of creatures that come back (the game's record of creature cards put into graveyards); Journey to Eternity // Atzal; the Yawgmoth combo. All of the list's cards are modeled (impls/t12_brago_meren.rs for the Tier 2 additions).
 
 ## Decklist by type (100)
 

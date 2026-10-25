@@ -9485,3 +9485,7 @@ dsl = [] # the compiled search put any permanent card into the graveyard: card c
 
 ["Haven of the Spirit Dragon"]
 dsl = [] # the compiled return took any creature card: card code returns a Dragon
+
+# --- Tiers 1/2 (brago-meren): card code in impls/t12_brago_meren.rs
+["Flickerwisp"]
+dsl = [] # the compiled exile never returned the card: the enter trigger is hand-written (exile until the end step)

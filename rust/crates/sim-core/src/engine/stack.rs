@@ -110,7 +110,9 @@ fn src_name(g: &Game, src: Option<PermId>) -> String {
 
 fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
     let batch = apnap(g, batch);
-    if !abilities_answered(g, None) && !batch.iter().any(|t| camera_ready(g, t.controller)) {
+    // --- Tiers 1/2 (brago-meren): a Strionic Resonator copies triggers too
+    let copier = |g: &Game, q: PlayerId| camera_ready(g, q) || crate::impls::t12_brago_meren::resonator_ready(g, q);
+    if !abilities_answered(g, None) && !batch.iter().any(|t| copier(g, t.controller)) {
         // nobody could respond: as before the stack, in order
         for t in &batch {
             if g.over {
@@ -351,7 +353,7 @@ pub fn abilities_answered(g: &Game, p: Option<PlayerId>) -> bool {
         return true;
     }
     // p's own copier: Peter Parker's Camera can copy its trigger
-    if p.is_some_and(|p| camera_ready(g, p)) {
+    if p.is_some_and(|p| camera_ready(g, p) || crate::impls::t12_brago_meren::resonator_ready(g, p)) {
         return true;
     }
     g.players.iter().filter(|q| Some(q.id) != p && q.alive).any(|q| {
@@ -598,11 +600,11 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     let Some(top) = g.stack.last() else { return Ok(()) };
     if top.controller == q
         && top.kind == StackKind::Trigger
-        && top.imp >= 6.0
+        && (top.imp >= 6.0 || crate::impls::t12_brago_meren::resonator_wants(g, q, top))
         && top.ctx.trigger.is_some()
         && !top.passed.contains(&q)
     {
-        // q's own important trigger: copy it (Peter Parker's Camera)
+        // q's own important trigger: copy it (Peter Parker's Camera; --- Tiers 1/2 (brago-meren): Strionic Resonator)
         let top_id = top.id;
         g.stack.last_mut().unwrap().passed.push(q);
         crate::cardcode::copy_ability(g, q, top_id)?;

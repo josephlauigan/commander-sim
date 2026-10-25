@@ -302,6 +302,7 @@ fn brago(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, _dmg: i3
         let x = g.perm(m);
         m != src
             && !x.token
+            && x.orig == o // --- Tiers 1/2 (brago-meren): a stolen permanent (Agent of Treachery) would go home
             && x.cd.is_some_and(|c| !g.db.get(c).land)
             && (blink_value(g, o, m) > 0 || x.tapped && g.db.get(x.cd.unwrap()).tag(Tag::Rock))
     };
@@ -312,8 +313,14 @@ fn brago(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, _dmg: i3
         return Ok(());
     }
     let ms: Vec<PermId> = g.player(o).perms.iter().copied().filter(|&m| ok(g, m)).collect();
-    for m in ms {
-        blink(g, o, m)?;
+    // --- Tiers 1/2 (brago-meren): they return together, so the triggers they cause wait for all of them (one batch
+    // for Dour Port-Mage; a blinked Reality Acid picks its new host while the old one waits to be sacrificed)
+    g.resolving += 1;
+    let r = ms.into_iter().try_for_each(|m| blink(g, o, m).map(|_| ()));
+    g.resolving -= 1;
+    r?;
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
     Ok(())
 }

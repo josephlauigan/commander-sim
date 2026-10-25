@@ -202,6 +202,10 @@ pub enum DataKey {
     /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
     /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
     T45Dragon,
+    /// --- Tiers 1/2 (brago-meren): Reality Acid's time counters (Int); Twilight Diviner's once-each-turn trigger (Stamp)
+    T12,
+    /// --- Tiers 1/2 (brago-meren): the creature entered from a graveyard on this turn (Stamp; Twilight Diviner)
+    T12FromGy,
 }
 
 /// A value in per-card state.
@@ -1207,6 +1211,9 @@ pub struct Game {
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar returns at the next end step: (controller, card, revival
     /// counters it returns with)
     pub t45_due: Vec<(PlayerId, CardId, i64)>,
+    /// --- Tiers 1/2 (brago-meren): creature cards put into a graveyard (died, milled, discarded, surveilled, searched
+    /// for) and not seen to leave it since; `zones::enter` reads it (Twilight Diviner: "entered from a graveyard")
+    pub t12_gy: Vec<CardId>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1391,6 +1398,7 @@ impl Game {
             doomed_turn: None,
             jar_due: vec![],
             t45_due: vec![],
+            t12_gy: vec![],
             cur_batch: None,
             hooks: vec![],
             stack: vec![],

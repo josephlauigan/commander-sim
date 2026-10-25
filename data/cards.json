@@ -44364,7 +44364,7 @@
      "static": "self_scaling",
      "pow": 1,
      "tgh": 1,
-     "per": "X"
+     "per": "gy_creatures"
     },
     {
      "type": "activated",
@@ -46213,26 +46213,7 @@
    "pow": 3,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "permanent",
-         "other": true
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flying"
@@ -46244,10 +46225,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, exile another target permanent. Return that card to the battlefield under its owner's control at the beginning of the next end step.   [partly: return that card to the battlefield under its owner's control at the beginning of the next end step]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -56002,7 +55981,7 @@
      "effects": [
       {
        "do": "token",
-       "n": "X",
+       "n": "gy_creatures",
        "pow": 1,
        "tgh": 1,
        "keywords": [
@@ -143024,7 +143003,7 @@
      "static": "self_scaling",
      "pow": 1,
      "tgh": 1,
-     "per": "X"
+     "per": "gy_creatures"
     },
     {
      "type": "activated",

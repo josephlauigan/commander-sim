@@ -102,6 +102,8 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "destroyed_this_way" => ctx.destroyed,
         "sacrificed_mv" => ctx.sacrificed_mv,
         "gy_instants_sorceries" => pl.gy.iter().filter(|&&c| g.db.get(c).instant || g.db.get(c).sorcery).count() as i32,
+        // --- Tiers 1/2 (brago-meren): "each creature card in your graveyard" (Wight of the Reliquary)
+        "gy_creatures" => pl.gy.iter().filter(|&&c| g.db.get(c).creature).count() as i32,
         "colors_among_permanents" => pl
             .perms
             .iter()
