@@ -35,7 +35,7 @@ Within each tier, the five decks cover different axes: a combat/aggro deck, a gr
 | 2 | [Lord Windgrace — Jund Lands](t2-mid-b3/lord-windgrace-jund-lands.md) | Lord Windgrace | Lands / ramp value | 2 | 41 | No |
 | 3 | [Korvold — Jund Sacrifice & Treasure](t3-high-b3/korvold-jund-sacrifice.md) | Korvold, Fae-Cursed King | Sacrifice value engine | 3 | 35 | Yes |
 | 3 | [Marwyn — Mono-Green Elves](t3-high-b3/marwyn-mono-green-elves.md) | Marwyn, the Nurturer | Go-wide / Craterhoof finish | 3 | 33 | No |
-| 3 | [Atraxa — Four-Color Superfriends](t3-high-b3/atraxa-superfriends.md) | Atraxa, Praetors' Voice | Planeswalker value / proliferate | 3 | 37 | No |
+| 3 | [Atraxa — Four-Color Infect & Proliferate](t3-high-b3/atraxa-infect.md) | Atraxa, Praetors' Voice | Infect / poison and proliferate | 3 | 36 | No |
 | 3 | [Aurelia — Boros Extra Combats](t3-high-b3/aurelia-boros-extra-combats.md) | Aurelia, the Warleader | Aggro / extra combats | 3 | 35 | Yes |
 | 3 | [Tergrid — Mono-Black Discard & Edicts](t3-high-b3/tergrid-mono-black-disruption.md) | Tergrid, God of Fright | Disruption / discard & edicts | 3 | 36 | No |
 | 4 | [Yuriko — Dimir Ninja Tempo](t4-low-b4/yuriko-dimir-ninjas.md) | Yuriko, the Tiger's Shadow | Tempo / evasive chip damage | 6 | 34 | No |

@@ -1,6 +1,6 @@
-# Atraxa — Four-Color Superfriends
+# Atraxa — Four-Color Infect & Proliferate
 
-Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Planeswalker value / proliferate.
+Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Infect / poison and proliferate.
 
 - **Commander:** Atraxa, Praetors' Voice
 - **Color identity:** White, Blue, Black, Green
@@ -10,24 +10,24 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Planeswalker value / pr
 
 ## Role in the pool
 
-Pressure on non-creature permanents. Your decks need to attack planeswalkers through a tax, or they lose to ultimates by turn eight or nine.
+A poison clock. Life total doesn't protect you: one hit from an infect creature, then a proliferate every turn, counts you down to ten poison counters. Your decks need to answer small evasive creatures early and kill the proliferate engines.
 
 ## At the table
 
-- **Plan:** Ramps with Sol Ring, Birds of Paradise, Cultivate and the talismans, then lands planeswalkers behind Ghostly Prison and Propaganda. Atraxa proliferates every end step, so loyalty climbs fast.
-- **Wins by:** Ultimating walkers: Elspeth, Sun's Champion makes an army, Teferi, Hero of Dominaria exiles your permanents, and Ugin, the Spirit Dragon clears the board while the deck keeps its own walkers.
-- **Watch out for:** Walkers that go unattacked: you must get through Propaganda and Ghostly Prison to reach them. Rhystic Study taxes your spells. Oko, Thief of Crowns turns your best permanent into an Elk, and Teferi's Protection saves its board from your sweeper.
-- **Interaction:** Counterspell, Arcane Denial, Swan Song, Swords to Plowshares, Path to Exile, Anguished Unmaking, Assassin's Trophy, Utter End, Beast Within, and sweepers Supreme Verdict, Austere Command, Hour of Revelation and Toxic Deluge. Teferi's Protection and Heroic Intervention protect its board.
+- **Plan:** Ramps with Sol Ring, Birds of Paradise, Bloom Tender, Cultivate, Farseek and Nature's Lore. Then it lands cheap infect and toxic creatures and proliferates the poison: Atraxa every end step, Evolution Sage and Flux Channeler, Tainted Observer, Ezuri and Contagion Engine.
+- **Wins by:** Poison counters. Blighted Agent (unblockable), Plague Stinger and Skithiryx (flying) and Ichor Rats put the first counters on, and proliferate does the rest. Tekuthal doubles each proliferate and Vorinclex doubles the counters.
+- **Watch out for:** Any poison at all: each proliferate adds to every poisoned opponent. Rhystic Study taxes your spells, Narset stops your extra draws, and Oko, Thief of Crowns turns your best permanent into an Elk.
+- **Interaction:** Counterspell, Swords to Plowshares, Path to Exile, Assassin's Trophy, Vraska's Fall, Infectious Bite, Drown in Ichor and Phyresis Outbreak, with Contagion Engine and Farewell. Heroic Intervention and Lightning Greaves protect its board.
 
 ## Strategy
 
-Protect a growing stable of planeswalkers behind Ghostly Prison, Propaganda, and board wipes, and proliferate every turn with Atraxa so loyalty climbs to ultimates. Wins come from Elspeth's army, Teferi's emblem lock, Jace, or Ugin clearing the board. No combo.
+Hit each opponent once with an infect or toxic creature, then proliferate every turn until the poison reaches ten. Atraxa proliferates at each end step; Tekuthal and Vorinclex double the gains. Planeswalkers (Ajani, Tamiyo, Vraska, Oko, Narset) add value and gain loyalty from the same proliferates. No combo.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Planeswalker loyalty and ultimates; proliferate (Atraxa, Evolution Sage, Flux Channeler, Grow from the Ashes); attack taxes.
+Infect, toxic and poison counters; proliferate (the ability language's proliferate event; Atraxa, Evolution Sage, Flux Channeler, Tekuthal, Vorinclex, Ezuri, Tainted Observer, Contagion Engine). Still Partial or Unmodeled (2026-10-24): Astral Cornucopia, Norn's Decree, Ajani, Sleeper Agent, Dreamtide Whale, Innkeeper's Talent, Ixhel's corrupted end step, Skithiryx's regenerate, Venerated Rotpriest and Voidwing Hybrid.
 
 ## Decklist by type (100)
 

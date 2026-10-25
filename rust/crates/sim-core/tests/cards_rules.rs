@@ -310,7 +310,7 @@ fn ugin_skips_a_permanent_discarded_on_the_way() {
 
 #[test]
 fn mystic_remora_is_kept_three_turns() {
-    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let mut g = table(&["atraxa-infect", "sauron"]);
     let r = perm(&mut g, P0, "Mystic Remora");
     lands(&mut g, P0, "Island", 6, false);
     let up = g.registry.get(card(&g, "Mystic Remora")).unwrap().upkeep.unwrap();
@@ -329,7 +329,7 @@ fn mystic_remora_is_kept_three_turns() {
 
 #[test]
 fn mystic_remora_draws_unless_the_caster_can_spare_four() {
-    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let mut g = table(&["atraxa-infect", "sauron"]);
     let r = perm(&mut g, P0, "Mystic Remora");
     let f = g.registry.get(card(&g, "Mystic Remora")).unwrap().cast.unwrap();
     let h = g.player(P0).hand.len();
@@ -463,7 +463,7 @@ fn embercleave_flashes_in_cheaper_per_attacker() {
 
 #[test]
 fn the_wandering_emperor_exiles_an_attacker_out_of_the_attack() {
-    let mut g = table(&["sauron", "atraxa-superfriends"]);
+    let mut g = table(&["sauron", "atraxa-infect"]);
     let (p, d) = (P0, P1);
     let big = perm(&mut g, p, "Grave Titan");
     g.perm_mut(big).tapped = true;

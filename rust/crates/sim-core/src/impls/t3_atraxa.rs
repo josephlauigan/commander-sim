@@ -1,4 +1,4 @@
-//! Cards of the Tier 3 Atraxa deck (`atraxa-superfriends`, EDHREC's bracket-3 average deck: infect and proliferate)
+//! Cards of the Tier 3 Atraxa deck (`atraxa-infect`, EDHREC's bracket-3 average deck: infect and proliferate)
 //! that the ability language doesn't compile in full. Poison counters, toxic, infect and proliferate are the engine's
 //! (`dsl` "poison", `tymna_cards::toxic_hit`, `engine::combat`, `common::proliferate`); these hooks only add each
 //! card's own clauses.

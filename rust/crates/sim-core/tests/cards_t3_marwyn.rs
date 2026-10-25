@@ -13,7 +13,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl() -> Game {
-    table(&["marwyn-mono-green-elves", "aurelia-boros-extra-combats", "korvold-jund-sacrifice", "atraxa-superfriends"])
+    table(&["marwyn-mono-green-elves", "aurelia-boros-extra-combats", "korvold-jund-sacrifice", "atraxa-infect"])
 }
 
 fn hand_opts(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {

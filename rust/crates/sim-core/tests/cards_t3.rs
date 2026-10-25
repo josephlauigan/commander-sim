@@ -272,7 +272,7 @@ fn world_at_war_rebounds_for_another_combat() {
 // ------------------------------------------------------------------ Atraxa
 #[test]
 fn proliferate_adds_counters_and_loyalty_twice_with_tekuthal() {
-    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let mut g = table(&["atraxa-infect", "sauron"]);
     let m = token(&mut g, P0, 2);
     g.perm_mut(m).plus = 1;
     let w = perm(&mut g, P0, "Karn Liberated");
@@ -288,7 +288,7 @@ fn proliferate_adds_counters_and_loyalty_twice_with_tekuthal() {
 
 #[test]
 fn karn_liberated_ultimate_ends_the_game() {
-    let mut g = table(&["atraxa-superfriends", "sauron", "veyran"]);
+    let mut g = table(&["atraxa-infect", "sauron", "veyran"]);
     let k = perm(&mut g, P0, "Karn Liberated");
     (rules::KARN_ULT.eff)(&mut g, P0, k).unwrap();
     assert!(g.over && g.winner == Some(P0));
@@ -296,7 +296,7 @@ fn karn_liberated_ultimate_ends_the_game() {
 
 #[test]
 fn walkers_list_their_ultimates() {
-    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let mut g = table(&["atraxa-infect", "sauron"]);
     let w = perm(&mut g, P0, "Jace, the Mind Sculptor");
     g.perm_mut(w).loyalty = Some(13);
     let labels: Vec<String> = options(&mut g, w, P0, Some(false)).into_iter().map(|o| o.label).collect();
@@ -306,7 +306,7 @@ fn walkers_list_their_ultimates() {
 
 #[test]
 fn teferi_time_raveler_keeps_opponents_at_sorcery_speed() {
-    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let mut g = table(&["atraxa-infect", "sauron"]);
     perm(&mut g, P0, "Teferi, Time Raveler");
     let bolt = card(&g, "Lightning Bolt");
     assert!(sim_core::engine::hooks::allowed(&g, P0, bolt, "hand"));
@@ -317,7 +317,7 @@ fn teferi_time_raveler_keeps_opponents_at_sorcery_speed() {
 
 #[test]
 fn ichormoon_gauntlet_proliferates_on_noncreature_spells() {
-    let mut g = table(&["atraxa-superfriends", "sauron"]);
+    let mut g = table(&["atraxa-infect", "sauron"]);
     perm(&mut g, P0, "Ichormoon Gauntlet");
     let m = token(&mut g, P0, 2);
     g.perm_mut(m).plus = 1;

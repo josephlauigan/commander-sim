@@ -47,12 +47,13 @@ Deck key `sythis-selesnya-enchantress`, `decklists/pool/t2-mid-b3/sythis-selesny
 
 Moved word for word out of the deck files. The main session merges this into `decklists/pool/CHANGELOG.md`.
 
-## Atraxa — Four-Color Superfriends
+## Atraxa — Four-Color Infect & Proliferate
 
-Deck key `atraxa-superfriends`, `decklists/pool/t3-high-b3/atraxa-superfriends.md`.
+Deck key `atraxa-infect`, `decklists/pool/t3-high-b3/atraxa-infect.md` (until 2026-10-24 `atraxa-superfriends`, `atraxa-superfriends.md`).
 
 ### Changes
 
+- **2026-10-24 (renamed).** Deck key `atraxa-superfriends` became `atraxa-infect`, and "Four-Color Superfriends" became "Four-Color Infect & Proliferate"; the role, table, strategy and modelling notes were rewritten for the infect list (JD, 2026-10-24).
 - **2026-10-24.** Replaced (JD, 2026-10-24: Tier 3 lists against EDHREC, option 2) by EDHREC's bracket-3 ("upgraded") average deck for the commander (json.edhrec.com average-decks, read 2026-10-24), the real decks players register at this bracket; the old list shared 44 of its 88 nonbasic cards with it. Game Changers fixed to the tier's three: Teferi, Master of Time out, Farewell in (EDHREC's most-played missing one). The deck is now infect and proliferate (Tekuthal, Blighted Agent, Ichor Rats, Vorinclex), as Atraxa's Playgroup wins are (45% poison); infect, toxic and poison effects were modelled for it the same day.
 - **2026-09.** Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Doubling Season, Ichormoon Gauntlet, Vraska, Golgari Queen, Tekuthal, Inquiry Dominus and Garruk Wildspeaker made way for Explore, Mind Stone, Kaito Shizuki, Courser of Kruphix and Grow from the Ashes (a lighter proliferate engine). Within Tier 3: 38-40% before, 25% after.
 - **2026-09 (Strategy and modeling notes, removed sentences).** "Doubling Season makes walkers enter at double loyalty, often ultimating on the spot." (Strategy) and "Tekuthal doubling); Doubling Season;" (Sim modeling notes). Both cards are no longer in the list.

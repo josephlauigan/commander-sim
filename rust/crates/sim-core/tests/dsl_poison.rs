@@ -8,7 +8,7 @@ use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
-const ATRAXA: &str = "atraxa-superfriends";
+const ATRAXA: &str = "atraxa-infect";
 
 fn tbl() -> sim_core::state::Game {
     let mut g = table(&[ATRAXA, "seph"]);
