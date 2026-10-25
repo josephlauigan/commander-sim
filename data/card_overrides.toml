@@ -8696,6 +8696,7 @@ status = "Full"
 note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast before it this turn (t6_green2 via t0_stella::storm_copies)"
 
 ["Cloud of Faeries"]
+dsl = [] # --- Tiers 4/5 (chulane-kinnan): the enters untap is hand-written (t6_green2 cloud_etb); the compiled "untap up to two lands" would run it twice
 status = "Full"
 note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cycling {2} is a hand option the AI uses in an opponent's end step or after combat with the mana to spare (t6_green2)"
 
@@ -9400,3 +9401,11 @@ dsl = [] # the compiled upkeep drew two cards; the hand-written upkeep exiles th
 
 ["Hex Magic"]
 dsl = [] # the compiled "exile all" had an empty filter; the hand-written resolve exiles the hand and draws that many
+
+# --- Tiers 4/5 (chulane-kinnan): rust/crates/sim-core/src/impls/t45_chulane_kinnan.rs
+["Azorius Chancery"]
+types = "L"
+tags = "c=WU t bounceland amt=2"
+dsl = []
+status = "Full"
+note = "bounce land: enters tapped, returns a land you control to its owner's hand (the one making the fewest colours, itself if none), taps for {W}{U}"

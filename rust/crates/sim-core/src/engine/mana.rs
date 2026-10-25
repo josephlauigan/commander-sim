@@ -278,6 +278,14 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
     if hooks::total_count(g, Event::NoCreatureMana, p) != 0 {
         u.retain(|w| !matches!(w.src, Source::Perm(m) if g.is_creature(m)));
     }
+    // --- Tiers 4/5 (chulane-kinnan): Nyxbloom Ancient triples what a tapped permanent makes (before Kinnan's extra)
+    let nyx = crate::impls::t45_chulane_kinnan::nyxbloom_factor(g, p);
+    let triple = |w: &mut Unit| {
+        if nyx > 1 && crate::impls::t45_chulane_kinnan::tapped_source(w.src) {
+            w.amt *= nyx;
+        }
+    };
+    u.iter_mut().for_each(triple);
     let bonus = hooks::total_count(g, Event::NonlandManaBonus, p);
     if bonus != 0 {
         for w in &mut u {
@@ -288,7 +296,8 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
     }
     for (src, imp) in hooks::hooked(g, Event::ExtraMana) {
         if g.perm(src).owner == p {
-            let extra = (imp.extra_mana.unwrap())(g, src, p, &u);
+            let mut extra = (imp.extra_mana.unwrap())(g, src, p, &u);
+            extra.iter_mut().for_each(triple); // --- Tiers 4/5 (chulane-kinnan): Nyxbloom Ancient
             u.extend(extra);
         }
     }

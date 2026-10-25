@@ -92,6 +92,9 @@ pub enum DataKey {
     TitanTapped,
     FableGoblin,
     Final,
+    /// --- Tiers 4/5 (chulane-kinnan): a creature card on the battlefield that is not a creature (Enduring Vitality
+    /// returned as an enchantment)
+    NotCreature,
     Flip,
     Flipped,
     /// a Wizard token made by Kuja, Genome Sorcerer: it pings when its controller casts a noncreature spell
@@ -1566,9 +1569,10 @@ impl Game {
     /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
     pub fn is_creature(&self, m: PermId) -> bool {
         let m = self.perm(m);
-        (m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
+        ((m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
             || m.cd.is_some_and(|c| self.db.get(c).creature)
-            || m.data.truthy(DataKey::Anim)
+            || m.data.truthy(DataKey::Anim))
+            && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
     }
 }
 

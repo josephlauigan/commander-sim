@@ -814,6 +814,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     ),
     // --- Tiers 4/5 (prosper): "each creature deals 1 damage to its controller" (Rakdos Charm)
     (r"^each creature deals 1 damage to its controller$", |_| Some(eff(obj! {"do" => "creature_backlash"}))),
+    // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands" (Peregrine Drake, Frantic Search): n of your tapped lands
+    (r"^untap up to (two|three|four|five|six|seven) lands$", |m| {
+        Some(eff(obj! {"do" => "untap", "n" => n_(m.gs(1)), "what" => selector("all lands you control")}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text

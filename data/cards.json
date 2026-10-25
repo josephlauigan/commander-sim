@@ -7832,20 +7832,15 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "amt": "2",
     "c": "WU",
-    "t": true
+    "t": true,
+    "bounceland": true,
+    "amt": "2"
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -7853,10 +7848,8 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "When ~ enters, return a land you control to its owner's hand."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -20657,7 +20650,7 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -43775,6 +43768,17 @@
        "do": "discard",
        "n": 2,
        "who": "you"
+      },
+      {
+       "do": "untap",
+       "n": 3,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "land",
+         "controller": "you"
+        }
+       }
       }
      ]
     }
@@ -43787,9 +43791,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Draw two cards, then discard two cards. Untap up to three lands.   [partly: untap up to three lands]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -83886,7 +83888,26 @@
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "untap",
+       "n": 5,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "land",
+         "controller": "you"
+        }
+       }
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "flying"
@@ -83898,10 +83919,8 @@
    "ward": 0,
    "identity": "U",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, untap up to five lands."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -105348,6 +105367,17 @@
          "type": "creature"
         },
         "upto": false
+       }
+      },
+      {
+       "do": "untap",
+       "n": 2,
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "land",
+         "controller": "you"
+        }
        }
       }
      ]

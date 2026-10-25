@@ -107,6 +107,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t3_marwyn::COMBOS.iter()) // --- Tier 3 (marwyn)
             .chain(super::t45_krenko::COMBOS.iter()) // --- Tiers 4/5 (krenko)
             .chain(super::t45_prosper::COMBOS.iter()) // --- Tiers 4/5 (prosper)
+            .chain(super::t45_chulane_kinnan::COMBOS.iter()) // --- Tiers 4/5 (chulane-kinnan)
             .collect()
     });
     &ALL

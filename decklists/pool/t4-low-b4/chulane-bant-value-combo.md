@@ -1,33 +1,33 @@
 # Chulane — Bant Value & Aluren
 
-Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Value engine / Aluren combo.
+Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Value engine / creature-loop combo.
 
 - **Commander:** Chulane, Teller of Tales
 - **Color identity:** White, Blue, Green
 - **Game Changers (9):** Aura Shards, Cyclonic Rift, Drannith Magistrate, Enlightened Tutor, Fierce Guardianship, Rhystic Study, Seedborn Muse, Thassa's Oracle, Worldly Tutor
-- **Combos:** Aluren + Shrieking Drake (or Whitemane Lion) + Chulane: free self-bouncing creature loop → unbounded draws and land drops, into Avenger/Craterhoof.
+- **Combos:** Aluren + Shrieking Drake (or Whitemane Lion) + Chulane: free self-bouncing creature loop. Intruder Alarm + Shrieking Drake (or Whitemane Lion) + a mana creature + Chulane: the bouncer returns itself and every creature untaps. Aluren + Cloudstone Curio + Chulane + two cheap creatures. Each draws the deck and plays every land, into Thassa's Oracle, Laboratory Maniac or Craterhoof Behemoth.
 - **Lands:** 35 (23 nonbasic + 12 basic)
 
 ## Role in the pool
 
-A value deck that goes infinite once Aluren resolves. Tests enchantment removal and counterspells on key pieces.
+A value deck that turns every creature spell into a card and a land, with three creature-loop combos behind it. Tests enchantment and artifact removal (Aluren, Intruder Alarm, Cloudstone Curio) and counterspells on the pieces.
 
 ## At the table
 
-- **Plan:** Casts cheap creatures and Chulane, Teller of Tales draws a card and puts a land onto the battlefield with each one, so it ramps and refills. Mana creatures and Sylvan Library, Rhystic Study and Oko, Thief of Crowns grind value.
-- **Wins by:** The Aluren combo: Aluren with Shrieking Drake or Whitemane Lion and Chulane draws and plays lands without end, into Craterhoof Behemoth or Avenger of Zendikar.
-- **Watch out for:** Aluren on the table: destroy or counter it immediately. Survival of the Fittest, Chord of Calling and Worldly Tutor find the pieces. Consecrated Sphinx and Rhystic Study bury you in cards. Cyclonic Rift can clear your board late.
-- **Interaction:** Counterspell, Mana Drain, Arcane Denial, Swan Song, Swords to Plowshares, Path to Exile, Generous Gift, Beast Within, Reflector Mage, Skyclave Apparition, Cyclonic Rift, Supreme Verdict. Teferi's Protection and Heroic Intervention protect its board.
+- **Plan:** Mana creatures (Birds of Paradise, Noble Hierarch, Elvish Mystic, Priest of Titania) and cheap creatures into Chulane, Teller of Tales, which draws a card and puts a land onto the battlefield with each creature spell. Rhystic Study, Mystic Remora, Esper Sentinel and Tatyova grind value; Peregrine Drake untaps five lands.
+- **Wins by:** Aluren or Intruder Alarm with Shrieking Drake or Whitemane Lion and Chulane (or Aluren with Cloudstone Curio) casts creatures without end, drawing the deck and playing every land, then Thassa's Oracle or Laboratory Maniac wins, or Craterhoof Behemoth swings.
+- **Watch out for:** Aluren, Intruder Alarm and Cloudstone Curio on the table: answer them before Chulane gets another turn. Worldly Tutor, Enlightened Tutor, Eladamri's Call, Finale of Devastation and Recruiter of the Guard find the pieces. Mana Breach bounces a land for every spell you cast (Chulane replays its own); Drannith Magistrate and Grand Abolisher stop answers and commanders on its turn.
+- **Interaction:** Counterspell, Dovin's Veto, Swan Song, Fierce Guardianship, Swords to Plowshares, Path to Exile, Cyclonic Rift, Aura Shards, Reclamation Sage and Boseiju. Heroic Intervention, Lightning Greaves and Grand Abolisher protect the combo turn.
 
 ## Strategy
 
-Every creature spell draws a card and ramps a land with Chulane, so cheap bounce creatures (Shrieking Drake, Whitemane Lion, Kor Skyfisher) turn into repeatable draw-and-ramp. The combo is Aluren + Shrieking Drake (or Whitemane Lion) with Chulane: cast the Drake for free, return itself, repeat for unbounded card draw and landfall into Avenger or Craterhoof. Survival, Birthing Pod, and the creature tutors assemble it.
+Every creature spell draws a card and ramps a land with Chulane, so cheap creatures and self-bouncers (Shrieking Drake, Whitemane Lion) become repeatable draw-and-ramp. Aluren makes them free; Intruder Alarm lets a mana creature pay for Shrieking Drake again each time a creature enters, because it untaps every creature; Cloudstone Curio returns one cheap creature whenever another enters. Any of those with Chulane draws the whole deck and plays every land, and Thassa's Oracle, Laboratory Maniac or Craterhoof finishes. Tutors for creatures, enchantments and artifacts assemble it; counterspells and Grand Abolisher protect it.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Chulane cast trigger (draw + land to battlefield, return a creature); Aluren free casting; self-bounce creatures; creature tutors.
+Chulane cast trigger (draw + land to battlefield); Aluren free casting; self-bounce creatures; Intruder Alarm (no untap step for creatures, untap all on a creature entering) and Cloudstone Curio; the three loops as combos (Aluren + Chulane + bouncer, Intruder Alarm + bouncer + mana creature + Chulane, Aluren + Curio + Chulane); Peregrine Drake's untap; Mana Breach's land bounce; creature, enchantment and artifact tutors. All of these are modeled (Cloudstone Curio is Approximate: lands entering don't trigger it).
 
 ## Decklist by type (100)
 

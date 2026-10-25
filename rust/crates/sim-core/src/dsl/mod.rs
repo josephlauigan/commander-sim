@@ -865,7 +865,20 @@ fn run(
         }
         "untap" => {
             let sel = sel_or_empty(&e.what);
-            if sel.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") {
+            if sel.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") && e.n.is_some() {
+                // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands": the tapped lands making the most first
+                let k = n(g, ctx).max(0) as usize;
+                let mut tapped: Vec<_> = g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
+                let worth = |l| {
+                    let t = &g.db.get(g.land(l).cd).tags;
+                    10 * t.int(crate::tag::Tag::Amt).unwrap_or(1) as i32
+                        + crate::engine::mana::land_colors_now(g, p, l).count() as i32
+                };
+                tapped.sort_by_key(|&l| -worth(l));
+                for l in tapped.into_iter().take(k) {
+                    g.land_mut(l).tapped = false;
+                }
+            } else if sel.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") {
                 for l in g.player(p).lands.clone() {
                     g.land_mut(l).tapped = false;
                 }
