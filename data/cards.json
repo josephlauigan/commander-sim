@@ -184,18 +184,19 @@
    "pips": "BG",
    "tags": {
     "leg": true,
-    "pow": "1",
+    "pow": "0",
+    "tgh": "0",
     "vig": true
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
      "type": "static",
      "static": "self_scaling",
      "pow": 1,
-     "per": "X",
+     "per": "type_you_gy:elf",
      "base0": true
     }
    ],
@@ -212,10 +213,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Vigilance; menace"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -36831,7 +36830,39 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "deathtouch",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "attacking": true,
+      "subtype": "elf"
+     }
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "lose_life",
+       "n": 1,
+       "who": "each_opponent"
+      },
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you",
+       "per_opponent": false
+      }
+     ],
+     "event": "dies",
+     "source": "you_creature",
+     "other": false,
+     "subtype": "elf"
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -36839,10 +36870,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Attacking Elves you control have deathtouch."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -59252,7 +59281,22 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "blight",
+       "n": 1,
+       "who": "each_opponent"
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "other": false,
+     "subtype": "elf"
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "blight",
@@ -59266,9 +59310,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
-    "Whenever ~ or another Elf you control enters, each opponent blights 1.",
     "Tap three untapped Elves you control: Proliferate. Activate only as a sorcery."
    ],
    "derived": {
@@ -103917,6 +103960,20 @@
      },
      "pow": 1,
      "tgh": 1
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "dies",
+     "source": "you_creature",
+     "other": false,
+     "subtype": "goblin"
     }
    ],
    "start_loyalty": null,
@@ -108791,6 +108848,20 @@
      ],
      "event": "etb",
      "source": "self"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "other": false,
+     "subtype": "angel"
     }
    ],
    "start_loyalty": null,
@@ -108801,9 +108872,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever an Angel you control enters, you gain 1 life."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -134184,50 +134253,12 @@
    "generic": 2,
    "pips": "GG",
    "tags": {
-    "leg": true,
-    "rock": "1:B"
+    "leg": true
    },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "deathtouch",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ]
-    },
-    {
-     "type": "loyalty",
-     "loyalty": 0,
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [],
-       "attacking": false,
-       "warrior": true,
-       "types": [
-        "elf",
-        "warrior"
-       ]
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "3",
    "kws": [],
    "subtypes": [
@@ -134237,12 +134268,8 @@
    "ward": 0,
    "identity": "BG",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "put a +1/+1 counter on up to one target elf",
-    "untap it",
-    "you get an emblem with \"whenever you cast an elf spell, it gains haste until end of turn and you draw two cards.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -144779,6 +144806,20 @@
      ],
      "event": "upkeep",
      "who": "any"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": "event_toughness",
+       "who": "you"
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "other": true,
+     "subtype": "elf"
     }
    ],
    "start_loyalty": null,
@@ -144792,9 +144833,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever another Elf you control enters, you gain life equal to its toughness."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 6,
     "land": false,
@@ -146395,7 +146434,7 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

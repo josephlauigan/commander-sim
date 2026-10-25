@@ -427,7 +427,7 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
 
 // ================================================================== emblems
 /// rules.emblem_cast: Chandra's emblem (5 damage per spell), Venser's (exile a permanent per spell)
-pub fn emblem_cast(g: &mut Game, p: PlayerId, _c: CardId) -> Res {
+pub fn emblem_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if g.player(p).emblems.contains(&"chandra") {
         let t = best_opp_creature(g, p, |g, m| etgh(g, m) <= 5);
         let lethal = g.opps(p).find(|&q| g.player(q).life <= 5);
@@ -447,6 +447,7 @@ pub fn emblem_cast(g: &mut Game, p: PlayerId, _c: CardId) -> Res {
             apply_removal(g, Some(p), t, "exile", None)?;
         }
     }
+    crate::impls::t12_lathril::tyvar_emblem_cast(g, p, c)?; // --- Tiers 1/2 (lathril): Tyvar Kell's emblem
     Ok(())
 }
 

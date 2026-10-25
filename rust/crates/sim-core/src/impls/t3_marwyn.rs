@@ -302,12 +302,17 @@ fn top_source(g: &Game, p: PlayerId) -> Option<PermId> {
         .perms
         .iter()
         .copied()
-        .find(|&m| live(g, m) && (named(g, m, ELADAMRI) || named(g, m, REALMWALKER)) && top_ok(g, m, top))
+        .find(|&m| {
+            // --- Tiers 1/2 (lathril): Elven Chorus casts creature spells from the top too
+            live(g, m)
+                && (named(g, m, ELADAMRI) || named(g, m, REALMWALKER) || named(g, m, "Elven Chorus"))
+                && top_ok(g, m, top)
+        })
 }
 
 /// You may cast creature spells from the top of your library: the AI casts the top card when it would cast it from the
 /// hand (`card_utility`, a little more for the free card)
-fn top_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn top_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut out = vec![];
     if g.perm(src).owner != p || !live(g, src) {
         return Ok(out);

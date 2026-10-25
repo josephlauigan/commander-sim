@@ -74,6 +74,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         Sac(Fodder),
         Discard,
         Tap(PermId),
+        Behold(crate::impls::t12_lathril::Behold),
     }
     for t in texts {
         let mut choice = None;
@@ -112,6 +113,12 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 choice = Some(Choice::Tap(m));
             }
         }
+        // --- Tiers 1/2 (lathril): "behold an Elf and exile it" (Champions of the Perfect)
+        if choice.is_none()
+            && let Some(ty) = crate::impls::t12_lathril::behold_type(&t)
+        {
+            choice = crate::impls::t12_lathril::behold_pick(g, p, c, ty).map(Choice::Behold);
+        }
         let Some(choice) = choice else { return Ok(false) };
         if dry {
             continue;
@@ -141,6 +148,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 die(g, m, "sac")?;
             }
             Choice::Tap(m) => g.perm_mut(m).tapped = true,
+            Choice::Behold(b) => crate::impls::t12_lathril::behold_pay(g, p, c, b)?,
             Choice::Discard => {
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
                 let lands: Vec<CardId> = others.iter().copied().filter(|&x| g.db.get(x).land).collect();

@@ -7616,11 +7616,13 @@ status = "Full"
 note = "flying, vigilance; upkeep: investigate once per opponent with more cards in hand than you"
 
 ["Youthful Valkyrie"]
+dsl = [] # --- Tiers 1/2 (lathril): hand-written (impls/t0_giada.rs); the compiled Angel trigger would run twice
 status = "Full"
 note = "flying; another Angel of yours entering (token too) puts a +1/+1 counter on it"
 
 ["Bishop of Wings"]
 tags = "human pow=1 tgh=4"
+dsl = [] # --- Tiers 1/2 (lathril): hand-written (impls/t0_giada.rs); the compiled Angel triggers would run twice
 status = "Full"
 note = "an Angel of yours entering (token too) gains you 4 life; an Angel of yours dying makes a 1/1 flying Spirit"
 
@@ -9485,3 +9487,14 @@ dsl = [] # the compiled search put any permanent card into the graveyard: card c
 
 ["Haven of the Spirit Dragon"]
 dsl = [] # the compiled return took any creature card: card code returns a Dragon
+
+# --- Tiers 1/2 (lathril): Tyvar Kell is hand-written (impls/t12_lathril.rs): its Elves' {B} replaces the rock tag, and
+# the compiled +1 gave every creature deathtouch
+["Tyvar Kell"]
+tags = "leg"
+dsl = []
+
+# --- Tiers 1/2 (lathril): its printed */* reads as 1/1 from Scryfall; the compiled count is its whole power and
+# toughness
+["Abomination of Llanowar"]
+tags = "leg pow=0 tgh=0 vig"

@@ -5,7 +5,7 @@ Opponent pool deck — **Tier 1: High Bracket 2 / Low Bracket 3**. Axis: Go-wide
 - **Commander:** Lathril, Blade of the Elves
 - **Color identity:** Black, Green
 - **Game Changers (0):** none
-- **Combos:** None.
+- **Combos:** None (no two- or three-card infinite loops in the list).
 - **Lands:** 34 (13 nonbasic + 21 basic)
 
 ## Role in the pool
@@ -14,20 +14,20 @@ A creature-heavy board that your sweepers need to answer at the right time, and 
 
 ## At the table
 
-- **Plan:** Drops mana elves on turns one to three (Llanowar Elves, Elvish Mystic, Fyndhorn Elves, Priest of Titania, Elvish Archdruid) and floods the board with elves. Lathril, Blade of the Elves makes Elf Warrior tokens when she connects.
-- **Wins by:** Taps ten Elves with Lathril to drain 10, or overruns the team with Elvish Promenade, Overwhelming Stampede and Elvish Champion. Ezuri, Renegade Leader and Shaman of the Pack add reach.
-- **Watch out for:** The board grows quickly, so a sweeper before turn five is its worst nightmare. Priest of Titania and Elvish Archdruid make large amounts of mana. Watch Lathril's menace attacks and a lethal overrun.
-- **Interaction:** Assassin's Trophy, Heartless Act, Infernal Grasp, Putrefy, Feed the Swarm, Beast Within, Krosan Grip, Casualties of War, Pernicious Deed and Toxic Deluge. Heroic Intervention protects its team from your wipes.
+- **Plan:** Drops mana Elves on turns one to three (Llanowar Elves, Elvish Mystic, Fyndhorn Elves, Elves of Deep Shadow, then Priest of Titania, Elvish Archdruid, Llanowar Tribe and Canopy Tactician) and floods the board with Elves. Lathril, Blade of the Elves makes Elf Warrior tokens when she connects; Imperious Perfect, Lys Alana Huntmaster, Wolverine Riders, Elvish Warmaster and Tyvar Kell make more.
+- **Wins by:** Taps ten Elves with Lathril to drain 10, or swings wide with lords and pumps: Elvish Champion, Dwynen, Imperious Perfect, Canopy Tactician, Banner of Kinship, Crown of Skemfar, Ezuri, Renegade Leader and Shaman of the Pack. Elderfang Venom gives attacking Elves deathtouch and drains on every Elf death; High Perfect Morcant shrinks your creatures with a -1/-1 counter for every Elf it plays.
+- **Watch out for:** The board grows quickly, so a sweeper before turn five is its worst nightmare. Priest of Titania, Elvish Archdruid and Tyvar Kell (every Elf taps for {B}) make large amounts of mana. Beast Whisperer, Champions of the Perfect, Harald, Skullclamp, Miara and Pact of the Serpent refill the hand. Ruthless Winnower makes you sacrifice a non-Elf creature every upkeep.
+- **Interaction:** Assassin's Trophy, Putrefy, Beast Within, Golgari Charm, Casualties of War, Binding the Old Gods, Reclamation Sage, Nullmage Shepherd and Poison-Tip Archer. Heroic Intervention, Lightning Greaves and Swiftfoot Boots protect its team; Elven Ambush and Galadhrim Ambush ambush your attackers.
 
 ## Strategy
 
-Dump a turn-one-to-three stream of mana elves, flood the board with Elf Warrior tokens from Lathril's combat damage and Elvish Promenade, then either tap ten Elves for Lathril's drain or overrun with Ezuri, Overwhelming Stampede, or Shaman of the Pack. Priest of Titania and Elvish Archdruid make the board a mana engine. There are no infinite loops at this tier.
+Dump a turn-one-to-three stream of mana Elves, flood the board with Elf Warrior tokens (Lathril's combat damage, Imperious Perfect, Lys Alana Huntmaster, Wolverine Riders, Tyvar Kell), then either tap ten Elves for Lathril's drain or swing with the lords. Priest of Titania, Elvish Archdruid and Tyvar Kell make the board a mana engine that Elven Chorus and Beast Whisperer turn into cards. Elderfang Venom and Moldervine Reclamation reward the Elves dying; Return Upon the Tide and Abomination of Llanowar use the graveyard. There are no infinite loops at this tier.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Mana elves scaling with Elf count (Priest of Titania, Archdruid); Lathril's token-on-damage and tap-ten drain; lords and overruns; Skullclamp.
+Mana Elves scaling with Elf count (Priest of Titania, Archdruid) and Tyvar Kell's {B} from every Elf; Lathril's token-on-damage and tap-ten drain; lords and pumps (Banner of Kinship, Crown of Skemfar, Abomination of Llanowar); Elderfang Venom's drain and deathtouch; High Perfect Morcant's blight; Skullclamp. Foretell (Return Upon the Tide) is not modeled: it is always hard-cast.
 
 ## Decklist by type (100)
 

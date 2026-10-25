@@ -1207,6 +1207,9 @@ pub struct Game {
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar returns at the next end step: (controller, card, revival
     /// counters it returns with)
     pub t45_due: Vec<(PlayerId, CardId, i64)>,
+    /// --- Tiers 1/2 (lathril): behold costs paid: (the spell, the card it exiled), so the card returns when the
+    /// permanent leaves (Champions of the Perfect)
+    pub beheld: Vec<(CardId, CardId)>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1391,6 +1394,7 @@ impl Game {
             doomed_turn: None,
             jar_due: vec![],
             t45_due: vec![],
+            beheld: vec![],
             cur_batch: None,
             hooks: vec![],
             stack: vec![],

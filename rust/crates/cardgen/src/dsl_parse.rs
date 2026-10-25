@@ -283,6 +283,14 @@ pub fn num_expr(s: &str) -> J {
         }
         return format!("{}{t}", if tm.gs(3) == "you control" { "type_you:" } else { "type_all:" }).into();
     }
+    // --- Tiers 1/2 (lathril): "Elves you control plus the number of Elf cards in your graveyard" (Abomination of
+    // Llanowar)
+    if let Some(tm) = rmatch(
+        r"^(?:the number of )?(elves|goblins|zombies|humans|vampires|merfolk|dragons|slivers) you control plus the number of (?:elf|goblin|zombie|human|vampire|merfolk|dragon|sliver) cards in your graveyard$",
+        &s,
+    ) {
+        return format!("type_you_gy:{}", singular(tm.gs(1))).into();
+    }
     if rmatch(r"^\+1/\+1 counter on (?:~|it|this creature)$", &s).is_some() {
         return "counters_on_self".into();
     }
@@ -520,7 +528,15 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     ),
     (
         r"^(?:its controller|that player|target player|you) gains? life equal to (?:its|that creature's) (power|toughness)$",
-        |m| Some(eff(obj! {"do" => "gain_life", "n" => format!("target_{}", m.gs(1)), "who" => "target_controller"})),
+        |m| {
+            // --- Tiers 1/2 (lathril): "whenever another Elf you control enters, you gain life equal to its toughness"
+            // (Wolverine Riders): the creature that entered, and you gain it
+            let l = ctx_line();
+            if m.all().starts_with("you ") && l.starts_with("whenever ") && l.contains(" enters, ") {
+                return Some(eff(obj! {"do" => "gain_life", "n" => format!("event_{}", m.gs(1)), "who" => "you"}));
+            }
+            Some(eff(obj! {"do" => "gain_life", "n" => format!("target_{}", m.gs(1)), "who" => "target_controller"}))
+        },
     ),
     // counters, pump, grant
     (
@@ -862,6 +878,11 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         }
         Some(eff(obj! {"do" => "lose_life", "n" => n, "who" => who(m.gs(1))}))
     }),
+    // --- Tiers 1/2 (lathril): "each opponent blights 1" (High Perfect Morcant): each puts N -1/-1 counters on a creature
+    // it controls
+    (r"^(each opponent|target opponent|each player|you) blights? (one|two|three|\d+)$", |m| {
+        Some(eff(obj! {"do" => "blight", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -1184,6 +1205,15 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
         };
         vec![obj! {"event" => "etb", "source" => "you_creature", "color" => col}]
     }),
+    // --- Tiers 1/2 (lathril): "an Elf you control dies" (Elderfang Venom), "another Elf you control enters" (Wolverine
+    // Riders), "~ or another Elf you control enters" (High Perfect Morcant): your creatures of that type
+    (
+        r"^(~ or another|a|an|another) (elf|goblin|zombie|human|vampire|merfolk|dragon|angel|sliver|knight|soldier|wizard|cleric|rogue|ninja|faerie|spirit|dinosaur|squirrel|rat|cat|dog|dwarf) you control (dies|enters)$",
+        |m, _| {
+            let ev = if m.gs(3) == "dies" { "dies" } else { "etb" };
+            vec![obj! {"event" => ev, "source" => "you_creature", "other" => m.gs(1) == "another", "subtype" => m.gs(2)}]
+        },
+    ),
 ];
 
 pub fn parse_trigger(clause: &str) -> Option<Fx> {
@@ -1443,6 +1473,18 @@ static STATICS: &[(&str, StaticFn)] = &[
             if v.is_empty() { None } else { Some(v) }
         },
     ),
+    // --- Tiers 1/2 (lathril): "attacking Elves you control have deathtouch" (Elderfang Venom): only while they attack
+    (
+        r"^attacking (elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|dragons|merfolk|vampires|spirits|faeries) you control have ([a-z, ]+)$",
+        |m| {
+            let sub_ = singular(m.gs(1));
+            let v = kw_statics(m.g(2), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+                "filter" => obj!{"type" => "creature", "controller" => "you", "attacking" => true, "subtype" => sub_.clone()}}
+            });
+            if v.is_empty() { None } else { Some(v) }
+        },
+    ),
 ];
 
 pub fn prot_colors(text: &str) -> String {
@@ -1524,7 +1566,8 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             abil.push(obj! {"type" => "static", "static" => "equip_cost", "mana" => int(m.gs(1))});
             continue;
         }
-        let words: Vec<&str> = l.split(',').map(|w| w.trim()).collect();
+        // --- Tiers 1/2 (lathril): "vigilance; menace" (Abomination of Llanowar) is a keyword line too
+        let words: Vec<&str> = l.split([',', ';']).map(|w| w.trim()).collect();
         if words.iter().all(|w| KW.contains(w) || rmatch(KW_LINE, w).is_some()) {
             // toxic N: the amount is kept (combat gives that many poison counters); the keyword alone says no number
             for w in &words {
