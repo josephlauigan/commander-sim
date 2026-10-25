@@ -331,7 +331,7 @@ fn ajani_zero_v(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
     }
     let worth: f64 = ajani_victims(g, p).iter().map(|&m| pval(g, m)).sum();
     let mine = pval(g, src);
-    (worth > mine + 3.0).then_some(1.0 + 0.5 * worth)
+    (worth >= 4.0 && worth >= 0.75 * mine).then_some(1.0 + 0.5 * worth)
 }
 
 /// 0: with 15 or more life above your starting total, exile Ajani and each artifact and creature your opponents
@@ -444,10 +444,10 @@ fn cleric_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     } else {
         let Some(c) = cleric_reanimation(g, p) else { return Ok(vec![]) };
         let w = card_worth(g, p, c, true);
-        if w < 30.0 {
+        if w <= 0.0 && g.db.get(c).cmc < 3 {
             return Ok(vec![]);
         }
-        1.0 + w / 25.0
+        1.2 + (w / 25.0).clamp(0.0, 3.0)
     };
     Ok(vec![Opt {
         utility,
