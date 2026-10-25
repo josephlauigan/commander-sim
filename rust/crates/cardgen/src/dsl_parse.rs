@@ -832,7 +832,16 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
             if sm.gs(2).contains(", ") {
                 let verbs: Vec<String> = split(r",? and |, ", sm.gs(2))
                     .into_iter()
-                    .map(|v| v.trim().to_string())
+                    // --- Tier 3 (korvold): "each opponent discards a card, then mills a card" (Vicious Rumors),
+                    // "..., then sacrifices a land of their choice" (Smallpox): the last verb keeps the subject (only
+                    // these verbs: "then draws" / "then you ..." keep their old reading)
+                    .map(|v| {
+                        let v = v.trim();
+                        match v.strip_prefix("then ") {
+                            Some(r) if is(r"^(discards?|mills?|sacrifices?|loses?) ", r) => r.to_string(),
+                            _ => v.to_string(),
+                        }
+                    })
                     .filter(|v| !v.is_empty())
                     .collect();
                 *sen = verbs.iter().map(|v| format!("{} {}", sm.gs(1), v)).collect::<Vec<_>>().join(". ");
@@ -1397,6 +1406,34 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
                     }
                     _ => bad.push(raw),
                 }
+                continue;
+            }
+        }
+        // --- Tier 3 (korvold): an Equipment's bonus and keywords with a granted combat-damage trigger in quotes:
+        // 'equipped creature gets +1/+1 and has trample and "whenever this creature deals combat damage to a player
+        // or planeswalker, create that many treasure tokens."' (The Reaver Cleaver). The bonus compiles as the plain
+        // line; the quoted ability is the equipped creature's combat-damage trigger ("that many": the damage dealt).
+        if let Some(m) = rmatch(
+            r#"^(equipped creature (?:gets|has) [^"]+?) and "whenever (?:~|this creature) deals combat damage to a player(?: or planeswalker)?, ([^"]+?)\.?"$"#,
+            l,
+        ) {
+            let mut stat: Option<Fx> = None;
+            for (rx, f) in ST.iter() {
+                if let Some(mm) = matches_rule(rx, m.gs(1)) {
+                    stat = f(&mm).filter(|v| !v.is_empty());
+                    if stat.is_some() {
+                        break;
+                    }
+                }
+            }
+            let (e, b) = parse_effects(m.gs(2));
+            if let Some(st) = stat
+                && !e.is_empty()
+                && b.is_empty()
+            {
+                abil.extend(st);
+                abil.push(obj! {"type" => "triggered", "effects" => arr(e), "event" => "combat_damage",
+                "source" => "equipped"});
                 continue;
             }
         }

@@ -81944,7 +81944,29 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "sacrifice",
+       "who": "each_player",
+       "filter": {
+        "type": "creature"
+       },
+       "n": 1
+      },
+      {
+       "do": "sacrifice",
+       "who": "each_player",
+       "filter": {
+        "type": "land"
+       },
+       "n": 1
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -81952,9 +81974,9 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
-    "Each player loses a third of their life, then discards a third of the cards in their hand, then sacrifices a third of the creatures they control of their choice, then sacrifices a third of the lands they control of their choice. Round up each time."
+    "Each player loses a third of their life, then discards a third of the cards in their hand, then sacrifices a third of the creatures they control of their choice, then sacrifices a third of the lands they control of their choice. Round up each time.   [partly: each player loses a third of their life; each player discards a third of the cards in their hand; round up each time]"
    ],
    "derived": {
     "cmc": 3,
@@ -99094,6 +99116,14 @@
         "type": "creature"
        },
        "n": 1
+      },
+      {
+       "do": "sacrifice",
+       "who": "each_player",
+       "filter": {
+        "type": "land"
+       },
+       "n": 1
       }
      ]
     }
@@ -99106,9 +99136,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Each player loses 1 life, discards a card, sacrifices a creature of their choice, then sacrifices a land of their choice.   [partly: each player; sacrifices a land of their choice]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -112151,6 +112179,28 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_bonus",
+     "pow": 1,
+     "tgh": 1
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "trample"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "treasure",
+       "n": "X"
+      }
+     ],
+     "event": "combat_damage",
+     "source": "equipped"
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 3
     }
@@ -112168,9 +112218,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Equipped creature gets +1/+1 and has trample and \"Whenever ~ deals combat damage to a player or planeswalker, create that many Treasure tokens.\""
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -120533,6 +120581,11 @@
        "who": "each_opponent"
       },
       {
+       "do": "mill",
+       "n": 1,
+       "who": "each_opponent"
+      },
+      {
        "do": "gain_life",
        "n": 1,
        "who": "you"
@@ -120550,9 +120603,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "~ deals 1 damage to each opponent. Each opponent discards a card, then mills a card. You gain 1 life.   [partly: each opponent; mills a card]"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

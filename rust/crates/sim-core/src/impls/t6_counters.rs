@@ -475,12 +475,12 @@ fn abeyance_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym
 
 // ================================================================== the AI answers a spell with a non-counter
 /// the cards `stack_response` casts at a spell on the stack (`engine::stack::ai_respond` checks the hand for them)
-pub const STACK_RESPONSES: [&str; 3] = ["Misdirection", "Commandeer", "Sudden Substitution"];
+pub const STACK_RESPONSES: [&str; 4] = ["Misdirection", "Commandeer", "Sudden Substitution", "Imp's Mischief"];
 
 /// q pays for `card`, a response to the spell on the stack: its mana cost, or its alternative cost when the mana is
 /// short and `alt_ok` (the AI gives up cards only for something that matters). The cast counts (cast triggers) and the
 /// card goes to the graveyard. False, nothing paid, if q can't.
-fn pay_response(g: &mut Game, q: PlayerId, card: CardId, spell: CardId, alt_ok: bool) -> Res<bool> {
+pub(crate) fn pay_response(g: &mut Game, q: PlayerId, card: CardId, spell: CardId, alt_ok: bool) -> Res<bool> {
     if !g.player(q).hand.contains(&card) || !castable(g, q, card, "hand") {
         return Ok(false);
     }
@@ -521,7 +521,10 @@ pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
     let (creature, land, is_perm, cmc) = (d.creature, d.land, d.perm, d.cmc);
     let removal = d.tags.str(crate::tag::Tag::Rem).is_some() || d.tag(crate::tag::Tag::Wipe);
     let held = |g: &Game, name: &str| g.player(q).hand.iter().copied().find(|&c| cname(g, c) == name);
-    let (mis, com, sub) = (held(g, "Misdirection"), held(g, "Commandeer"), held(g, "Sudden Substitution"));
+    if held(g, crate::impls::t3_korvold::IMPS).is_some() && crate::impls::t3_korvold::imps_mischief(g, q, id)? {
+        return Ok(true); // Imp's Mischief (Tier 3 Tergrid): Misdirection that costs life
+    }
+    let (mis, com, sub) =(held(g, "Misdirection"), held(g, "Commandeer"), held(g, "Sudden Substitution"));
     // Misdirection: a spell aimed at the permanent we would protect
     if let (Some(mis), Some(t)) = (mis, it.ctx.target.filter(|_| it.ctx.face.is_none()))
         && g.perm(t).owner == q
@@ -571,7 +574,7 @@ pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
 }
 
 /// would Misdirection change anything: the spell's single target is q's, and the caster has another permanent for it
-fn would_redirect(g: &Game, q: PlayerId, id: u32) -> bool {
+pub(crate) fn would_redirect(g: &Game, q: PlayerId, id: u32) -> bool {
     let Some(i) = stack_index(g, id) else { return false };
     let it = &g.stack[i];
     let (Some(c), Some(t)) = (it.card, it.ctx.target) else { return false };
