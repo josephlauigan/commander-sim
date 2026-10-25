@@ -16754,7 +16754,19 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "keyword",
+     "keyword": "indestructible",
+     "filter": {
+      "type": "creature",
+      "controller": "you",
+      "other": false,
+      "subtype": "dragon"
+     }
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -16762,9 +16774,8 @@
    "ward": 0,
    "identity": "BGRUW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
-    "Dragons you control have indestructible.",
     "At the beginning of your upkeep, for each color, put a +1/+1 counter on a Dragon you control of that color. If you put +1/+1 counters on five Dragons this way, you win the game."
    ],
    "derived": {
@@ -24918,7 +24929,8 @@
           "what": {
            "sel": "all",
            "filter": {
-            "type": "creature"
+            "type": "creature",
+            "subtype": "dragon"
            }
           }
          }
@@ -24929,7 +24941,8 @@
           "what": {
            "sel": "all",
            "filter": {
-            "type": "creature"
+            "type": "creature",
+            "subtype": "non-dragon"
            }
           }
          }
@@ -32295,7 +32308,15 @@
    "pow": 1,
    "tgh": 3,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "sub_dragon",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -32306,10 +32327,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Dragon spells you cast cost {1} less to cast."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -32389,7 +32408,15 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "sub_dragon",
+     "amount": -2
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -32401,10 +32428,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Dragon spells you cast cost {2} less to cast."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -54211,27 +54236,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {
-        "type": "creature"
-       },
-       "from": "yours"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -54239,7 +54244,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -67417,10 +67422,7 @@
     "leg": true,
     "pow": "6",
     "bomb": "6",
-    "fly": true,
-    "tok": "1",
-    "tokp": "5",
-    "tokfly": true
+    "fly": true
    },
    "pow": 6,
    "tgh": 6,
@@ -71499,7 +71501,9 @@
      "effects": [
       {
        "do": "search",
-       "filter": {},
+       "filter": {
+        "subtype": "dragon"
+       },
        "to": "hand",
        "n": 1,
        "tapped": false
@@ -89006,7 +89010,8 @@
        "what": {
         "sel": "target",
         "filter": {
-         "type": "creature"
+         "type": "creature",
+         "subtype": "non-dragon"
         },
         "upto": false
        }
@@ -96786,10 +96791,7 @@
     "leg": true,
     "pow": "5",
     "bomb": "5",
-    "fly": true,
-    "tok": "1",
-    "tokp": "4",
-    "tokfly": true
+    "fly": true
    },
    "pow": 5,
    "tgh": 5,
@@ -96835,7 +96837,7 @@
    "tags": {
     "leg": true,
     "pow": "3",
-    "dork": "C",
+    "dork": "A",
     "noatk": true
    },
    "pow": 3,
@@ -99220,7 +99222,8 @@
       {
        "do": "search",
        "filter": {
-        "type": "creature"
+        "type": "creature",
+        "subtype": "dragon"
        },
        "to": "battlefield",
        "n": 1,
@@ -99271,7 +99274,15 @@
    "pow": 2,
    "tgh": 4,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "cost",
+     "who": "you",
+     "spell": "sub_dragon",
+     "amount": -1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -99282,9 +99293,8 @@
    "ward": 0,
    "identity": "RU",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "scryfall+dsl",
    "unparsed": [
-    "Dragon spells you cast cost {1} less to cast.",
     "Whenever a Dragon you control enters, you may have ~ become a copy of it until end of turn, except its name is ~ and it's legendary in addition to its other types."
    ],
    "derived": {
@@ -100334,27 +100344,7 @@
    "pow": 4,
    "tgh": 4,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2"
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "permanent"
-       },
-       "to": "graveyard",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "flying"
@@ -100367,10 +100357,8 @@
    "ward": 0,
    "identity": "BGRUW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}: Search your library for a Dragon permanent card and put it into your graveyard. If you do, ~ becomes a copy of that card until end of turn. Then shuffle.   [partly: if you do, ~ becomes a copy of that card until end of turn]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,

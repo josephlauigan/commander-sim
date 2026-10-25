@@ -1196,9 +1196,18 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
     if have >= TOKEN_CAP {
         return Ok(None);
     }
-    let m = enter(g, p, cd, Enter { exc, ..Enter::default() })?;
-    g.perm_mut(m).token = true;
+    // --- Tiers 4/5 (urdragon): its enter triggers wait until it is a token ("another nontoken Dragon": Miirym)
+    g.resolving += 1;
+    let r = enter(g, p, cd, Enter { exc, ..Enter::default() });
+    if let Ok(m) = r {
+        g.perm_mut(m).token = true;
+    }
+    g.resolving -= 1;
+    let m = r?;
     note_tokens(g, p, 1);
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
+    }
     Ok(Some(m))
 }
 

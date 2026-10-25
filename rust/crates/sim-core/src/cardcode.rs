@@ -490,6 +490,7 @@ pub fn aura_ward(g: &Game, m: PermId) -> u32 {
     crate::impls::rules2::aura_ward(g, m)
         + crate::impls::green_cards::extra_ward(g, m)
         + crate::impls::t0_stella::boots_ward(g, m)
+        + crate::impls::t45_urdragon::rith_ward(g, m) // --- Tiers 4/5 (urdragon): Rith, Liberated Primeval
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal

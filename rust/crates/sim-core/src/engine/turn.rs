@@ -704,6 +704,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
         }
     }
+    crate::impls::t45_urdragon::courser_return(g)?; // --- Tiers 4/5 (urdragon): Hellkite Courser's commander goes back
     for m in find(g, p, Tag::Breach) {
         // Underworld Breach: sacrifice it at the beginning of the end step
         if trigger_window(g, p, Some(m), "sacrifice it", None)? && g.perm(m).on_bf {

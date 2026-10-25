@@ -9466,3 +9466,22 @@ dsl = [] # the compiled enter search found any card; the Vampire search and the 
 
 ["Damn"]
 add_tags = ["noregen"] # "a creature destroyed this way can't be regenerated" (the overload is hand-written)
+
+# --- Tiers 4/5 (urdragon): hand-written in impls/t45_urdragon.rs
+["Lathliss, Dragon Queen"]
+# its 5/5 Dragons come from other nontoken Dragons entering (card code), not from its own enter
+pool_remove_tags = ["tok", "tokp", "tokfly"]
+
+["Rith, Liberated Primeval"]
+# its 4/4 Dragon is an end-step trigger (card code), not an enter token
+pool_remove_tags = ["tok", "tokp", "tokfly"]
+
+["Rivaz of the Claw"]
+# {T}: two mana of any colour, only for Dragon creature spells (card code and mana.rs)
+pool_add_tags = ["dork=A"]
+
+["Scion of the Ur-Dragon"]
+dsl = [] # the compiled search put any permanent card into the graveyard: card code finds a Dragon
+
+["Haven of the Spirit Dragon"]
+dsl = [] # the compiled return took any creature card: card code returns a Dragon

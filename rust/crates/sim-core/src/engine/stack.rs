@@ -43,6 +43,15 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
         })
         .collect();
     entries.extend(delney);
+    // --- Tiers 4/5 (urdragon): Roaming Throne: a trigger of another creature of the chosen type triggers again
+    let throne: Vec<Trigger> = entries
+        .iter()
+        .flat_map(|t| {
+            let k = t.src.map_or(0, |s| crate::impls::t45_urdragon::throne_extra(g, s));
+            std::iter::repeat_n(t.clone(), k)
+        })
+        .collect();
+    entries.extend(throne);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }

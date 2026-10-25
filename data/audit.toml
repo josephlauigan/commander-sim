@@ -235,6 +235,32 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Vampire Socialite" = { status = "Full", note = "menace; hand-written (impls/t45_edgar.rs): enters: +1/+1 counters on your other Vampires if an opponent lost life this turn; while one has, your other Vampires (tokens too) enter with an additional +1/+1 counter" }
 "Voldaren Estate" = { status = "Approximate", note = "hand-written (impls/t45_edgar.rs): {C}, or any colour for a Vampire spell (1 life); {5},{T}, {1} less per Vampire: a Blood token; a Blood's rummage. Left out: the life is paid whenever it taps while a Vampire spell is being paid for" }
 
+# --- Tiers 4/5 (urdragon): impls/t45_urdragon.rs
+"The Ur-Dragon" = { status = "Approximate", note = "hand-written (impls/t45_urdragon.rs, mana::cost_of): eminence, in the command zone or on the battlefield your other Dragon spells cost {1} less; one or more Dragons you control attack: draw that many, then the best nonland permanent card from hand onto the battlefield. Left out: a land card is never the one put in" }
+"Ancient Brass Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20; the creature cards from all graveyards worth most with total mana value up to the roll enter under your control (graveyard hate may answer)" }
+"Ancient Copper Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, that many Treasures" }
+"Ancient Gold Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, that many 1/1 blue Faerie Dragon fliers" }
+"Ancient Silver Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, draw that many; no maximum hand size for the rest of the game" }
+"Call the Spirit Dragons" = { status = "Full", note = "Dragons' indestructible compiled; hand-written (impls/t45_urdragon.rs): your upkeep, a +1/+1 counter for each colour on a Dragon of that colour (as many different Dragons as can be); five different Dragons: you win" }
+"Dracogenesis" = { status = "Full", note = "hand-written (mana::cost_of, impls/t45_urdragon.rs): your Dragon spells cost no mana (the commander tax is still paid)" }
+"Dragon's Hoard" = { status = "Full", note = "taps for any colour; hand-written (impls/t45_urdragon.rs): a Dragon of yours entering puts a gold counter on it; {T}, remove one: draw (at the end-of-turn window)" }
+"Haven of the Spirit Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): {C}, or any colour for a Dragon creature spell; {2},{T}, sacrifice at the end-of-turn window: a big Dragon creature card from the graveyard to hand (no Ugin card in the pool deck)" }
+"Hellkite Courser" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs, turn.rs end step): enters: your commander from the command zone onto the battlefield with haste; back to the command zone at the next end step" }
+"Klauth, Unrivaled Ancient" = { status = "Approximate", note = "flying, haste; hand-written (impls/t45_urdragon.rs): attacks: X mana of any colour (the attackers' total power) kept all turn. Left out: it can also pay for abilities" }
+"Lathliss, Dragon Queen" = { status = "Full", note = "flying; hand-written (impls/t45_urdragon.rs): another nontoken Dragon of yours enters: a 5/5 red Dragon flier; {1}{R}: Dragons +1/+0, spent before an open attack when nothing in hand can be cast (keeping two mana)" }
+"Miirym, Sentinel Wyrm" = { status = "Full", note = "flying, ward {2}; hand-written (impls/t45_urdragon.rs): another nontoken Dragon of yours enters: a token copy of it that isn't legendary" }
+"Morophon, the Boundless" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs, mana::cost_of): names the deck's most common creature type; spells of that type cost {W}{U}{B}{R}{G} less (coloured mana only); your other creatures of that type get +1/+1" }
+"Rith, Liberated Primeval" = { status = "Approximate", note = "hand-written (impls/t45_urdragon.rs, removal::aura_ward): your other Dragons have ward {2}; your end step, a 4/4 red Dragon flier if an opponent's creature died this turn. Left out: excess damage (not tracked) stands in as a death" }
+"Rivaz of the Claw" = { status = "Approximate", note = "hand-written (impls/t45_urdragon.rs, mana.rs): {T}: two mana of any colour, only for Dragon creature spells; once during each of your turns the best Dragon creature card you can pay for is cast from your graveyard, and exiled when it dies. Left out: the exile is seen only while Rivaz is on the battlefield" }
+"Roaming Throne" = { status = "Approximate", note = "ward {2}; hand-written (impls/t45_urdragon.rs, stack::queue_triggers): names the deck's most common creature type and is that type too; triggered abilities of your other creatures of that type trigger an additional time. Left out: card code that runs at once rather than as a trigger" }
+"Sarkhan, Soul Aflame" = { status = "Approximate", note = "Dragon spells cost {1} less compiled. Left out: becoming a copy of an entering Dragon until end of turn" }
+"Scion of Draco" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): costs {2} less per basic land type among your lands; your creatures have vigilance (white), hexproof (blue), lifelink (black), first strike (red), trample (green); flying" }
+"Scion of the Ur-Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_urdragon.rs): {2} at an opponent's end of turn with Rivaz out: the best Dragon creature card from the library into the graveyard for Rivaz to cast. Left out: Scion becoming a copy of that card" }
+"Tiamat" = { status = "Full", note = "flying; hand-written (impls/t45_urdragon.rs): enters, if cast: up to five Dragon cards with different names (not Tiamat) from the library to hand" }
+"Twinflame Tyrant" = { status = "Full", note = "flying; hand-written (combat::fiery, with Fiery Emancipation): damage from your sources to opponents and their permanents is doubled (combat and noncombat)" }
+"Ureni of the Unwritten" = { status = "Full", note = "flying, trample; hand-written (impls/t45_urdragon.rs): enters or attacks: the best Dragon creature card of the top eight onto the battlefield, the rest to the bottom in a random order" }
+"Urza's Incubator" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): names the deck's most common creature type; creature spells of that type cost {2} less" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }
@@ -321,6 +347,7 @@ sythis = { status = "Full-auto", note = "enchantment cast: gain 1, draw" }
 brago = { status = "Full", note = "combat damage blinks every permanent with a useful ETB" }
 lathril_tap10 = { status = "Full", note = "tap ten Elves: drain 10" }
 kinnan = { status = "Full", note = "" }
+ur_dragon = { status = "Full", note = "--- Tiers 4/5 (urdragon): eminence from the command zone, the attack draw and free permanent, Dragon cost cutters (impls/t45_urdragon.rs)" }
 
 [[engines.isshin-mardu-attack-triggers]]
 label = "Isshin's attack-trigger doubling"
@@ -876,3 +903,29 @@ mechs = ["free_counters"]
 label = "graveyard exile"
 cards = ["Rest in Peace", "Dauthi Voidwalker"]
 mechs = ["graveyard_hate"]
+
+# --- Tiers 4/5 (urdragon)
+[[engines.ur-dragon-five-color-dragons]]
+label = "The Ur-Dragon: eminence, draw per attacking Dragon, a permanent in free"
+cards = ["The Ur-Dragon", "Hellkite Courser"]
+mechs = ["ur_dragon"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Dragon cost cutters"
+cards = ["Dragonlord's Servant", "Dragonspeaker Shaman", "Sarkhan, Soul Aflame", "Urza's Incubator", "Morophon, the Boundless", "Dracogenesis", "Herald's Horn"]
+mechs = ["ur_dragon"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Dragon payoffs and copies"
+cards = ["Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen", "Utvara Hellkite", "Terror of the Peaks", "Scourge of Valkas", "Twinflame Tyrant", "Ancient Copper Dragon", "Ancient Silver Dragon"]
+mechs = ["etb_damage", "treasure"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Dragon tutors and recursion"
+cards = ["Tiamat", "Ureni of the Unwritten", "Rivaz of the Claw", "Ancient Brass Dragon", "Haven of the Spirit Dragon"]
+mechs = ["creature_tutors"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Call the Spirit Dragons (alternate win)"
+cards = ["Call the Spirit Dragons"]
+mechs = []

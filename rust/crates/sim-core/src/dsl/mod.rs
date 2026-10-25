@@ -237,6 +237,7 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
         let ok = match st {
             "warrior" => x.warrior || has_type(g, m, "warrior"),
             "commander" => x.is_cmd, // "commander creatures you control" (Bastion Protector)
+            s if s.starts_with("non-") => !has_type(g, m, &s[4..]), // --- Tiers 4/5 (urdragon): Crux of Fate
             _ => has_type(g, m, st),
         };
         if !ok {
@@ -1716,6 +1717,8 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "black" => d.colors.has('B'),
             "red" => d.colors.has('R'),
             "green" => d.colors.has('G'),
+            // --- Tiers 4/5 (urdragon): "Dragon spells you cast cost {1} less" (a creature type; changelings too)
+            s if s.starts_with("sub_") => d.has_subtype(&s[4..]) || d.has_kw("changeling"),
             // --- Tiers 4/5 (heliod-zur): "white creature spells you cast cost {1} less" (Oketra's Monument)
             s if s.ends_with("_creature") => {
                 d.creature && s.split('_').next().and_then(color_letter).is_some_and(|ch| d.colors.has(ch))
