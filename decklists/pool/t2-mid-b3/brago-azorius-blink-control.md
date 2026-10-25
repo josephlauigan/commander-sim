@@ -5,7 +5,7 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-he
 - **Commander:** Brago, King Eternal
 - **Color identity:** White, Blue
 - **Game Changers (1):** Farewell
-- **Combos:** Peregrine Drake + Deadeye Navigator (a two-card infinite: mana and blinks; against the Tier 2 rule, left as EDHREC lists it). Peregrine Drake + Archaeomancer + Ghostly Flicker (unbounded mana). Both win through Agent of Treachery, blinked until it has taken every permanent.
+- **Combos:** Peregrine Drake + Archaeomancer + Ghostly Flicker (unbounded mana; EDHREC's Deadeye Navigator, which made a two-card infinite with the Drake, is cut for Skyclave Apparition under the Tier 2 rule). It wins through Agent of Treachery, blinked until it has taken every permanent.
 - **Lands:** 35 (15 nonbasic + 20 basic)
 
 ## Role in the pool
@@ -14,9 +14,9 @@ The pool's enters-the-battlefield engine: every creature and Aura does something
 
 ## At the table
 
-- **Plan:** Builds a board of enters creatures (Mulldrifter, Wall of Omens, Reflector Mage, Agent of Treachery, Riptide Gearhulk, Sun Titan) and blinks them: Brago, King Eternal when he connects, Soulherder and Teleportation Circle each end step, Deadeye Navigator, Restoration Angel, Flickerwisp, Yorion, and the flicker spells Ephemerate, Cloudshift, Momentary Blink, Ghostly Flicker and Eerie Interlude. Panharmonicon, Elesh Norn, Mother of Machines, Starfield Vocalist and Strionic Resonator make each enters trigger count twice.
-- **Wins by:** Grinds the table out of permanents and cards, then attacks with fliers (Brago, Cloudblazer, Restoration Angel, Sun Titan). Peregrine Drake with Deadeye Navigator, or with Archaeomancer and Ghostly Flicker, makes unbounded mana and blinks Agent of Treachery until it has everything.
-- **Watch out for:** Agent of Treachery takes your best permanent, again each time it is blinked; Reality Acid on your best permanent kills it when the Acid leaves, and Brago blinks it. Elesh Norn stops your own enters triggers. Kill Brago or Deadeye Navigator, and answer Peregrine Drake before Deadeye or Archaeomancer arrives.
+- **Plan:** Builds a board of enters creatures (Mulldrifter, Wall of Omens, Reflector Mage, Agent of Treachery, Riptide Gearhulk, Sun Titan) and blinks them: Brago, King Eternal when he connects, Soulherder and Teleportation Circle each end step, Restoration Angel, Flickerwisp, Yorion, and the flicker spells Ephemerate, Cloudshift, Momentary Blink, Ghostly Flicker and Eerie Interlude. Panharmonicon, Elesh Norn, Mother of Machines, Starfield Vocalist and Strionic Resonator make each enters trigger count twice.
+- **Wins by:** Grinds the table out of permanents and cards, then attacks with fliers (Brago, Cloudblazer, Restoration Angel, Sun Titan). Peregrine Drake with Archaeomancer and Ghostly Flicker makes unbounded mana and blinks Agent of Treachery until it has everything.
+- **Watch out for:** Agent of Treachery takes your best permanent, again each time it is blinked; Reality Acid on your best permanent kills it when the Acid leaves, and Brago blinks it. Elesh Norn stops your own enters triggers. Kill Brago, and answer Peregrine Drake before Archaeomancer arrives.
 - **Interaction:** Counterspell, Negate, Swan Song, Dovin's Veto and An Offer You Can't Refuse. Swords to Plowshares, Path to Exile, Reflector Mage, Venser, Shaper Savant, Riptide Gearhulk, Flickerwisp, Reality Acid, Witch Enchanter, Loran of the Third Path, Agent of Treachery; Farewell, Supreme Verdict and Time Wipe. Ghostly Prison taxes attacks.
 
 ## Strategy
@@ -27,13 +27,13 @@ Ramp with rocks (Sol Ring, Signets, Talisman, Basalt Monolith, Mind Stone, Thoug
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Deadeye Navigator, Restoration Angel, Flickerwisp, Yorion, the flicker spells); trigger doubling (Panharmonicon, Elesh Norn, Mother of Machines, Starfield Vocalist) and copying (Strionic Resonator); steals (Agent of Treachery); Reality Acid's delayed removal; counterspell decisions. All of the list's cards are modeled (impls/t12_brago_meren.rs for the Tier 2 additions); left out: Starfield Vocalist's warp, Yorion's companion, lands for Ghostly Flicker and Agent of Treachery.
+ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration Angel, Flickerwisp, Yorion, the flicker spells); trigger doubling (Panharmonicon, Elesh Norn, Mother of Machines, Starfield Vocalist) and copying (Strionic Resonator); steals (Agent of Treachery); Reality Acid's delayed removal; counterspell decisions. All of the list's cards are modeled (impls/t12_brago_meren.rs for the Tier 2 additions); left out: Starfield Vocalist's warp, Yorion's companion, lands for Ghostly Flicker and Agent of Treachery.
 
 ## Decklist by type (100)
 
 **Commander (1).** Brago, King Eternal
 
-**Creatures (29).** Aether Channeler, Agent of Treachery, Archaeomancer, Charming Prince, Cloud of Faeries, Cloudblazer, Deadeye Navigator, Displacer Kitten, Dour Port-Mage, Elesh Norn, Mother of Machines, Flickerwisp, Helpful Hunter, Loran of the Third Path, Mulldrifter, Peregrine Drake, Reflector Mage, Restoration Angel, Riptide Gearhulk, Solemn Simulacrum, Soulherder, Spirited Companion, Starfield Vocalist, Sun Titan, Tribute Mage, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Witch Enchanter // Witch-Blessed Meadow, Yorion, Sky Nomad
+**Creatures (29).** Aether Channeler, Agent of Treachery, Archaeomancer, Charming Prince, Cloud of Faeries, Cloudblazer, Displacer Kitten, Dour Port-Mage, Elesh Norn, Mother of Machines, Flickerwisp, Helpful Hunter, Loran of the Third Path, Mulldrifter, Peregrine Drake, Reflector Mage, Restoration Angel, Riptide Gearhulk, Skyclave Apparition, Solemn Simulacrum, Soulherder, Spirited Companion, Starfield Vocalist, Sun Titan, Tribute Mage, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Witch Enchanter // Witch-Blessed Meadow, Yorion, Sky Nomad
 
 **Planeswalkers (1).** Venser, the Sojourner
 
@@ -67,7 +67,6 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Deadeye Nav
 1 Command Tower
 1 Counterspell
 1 Cryogen Relic
-1 Deadeye Navigator
 1 Deserted Beach
 1 Displacer Kitten
 1 Dour Port-Mage
@@ -105,6 +104,7 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Deadeye Nav
 1 Riptide Gearhulk
 1 Rogue's Passage
 1 Sea of Clouds
+1 Skyclave Apparition
 1 Skycloud Expanse
 1 Sol Ring
 1 Solemn Simulacrum
