@@ -376,6 +376,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
                     obj! {"do" => "exile_graveyard", "who" => if m.gs(3).contains("target") { "target_player" } else { "each_player" }},
                 ));
             }
+            if m.gs(2) == "target" && m.gs(3) == "player's graveyard" {
+                // --- Tiers 4/5 (prosper): "exile target player's graveyard" (Rakdos Charm) is one graveyard
+                return Some(eff(obj! {"do" => "exile_graveyard", "who" => "target_player"}));
+            }
             if m.gs(3).contains("graveyard") {
                 return Some(eff(obj! {"do" => "exile_graveyard", "who" => "each_player"}));
             }
@@ -764,6 +768,8 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
         |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
     ),
+    // --- Tiers 4/5 (prosper): "each creature deals 1 damage to its controller" (Rakdos Charm)
+    (r"^each creature deals 1 damage to its controller$", |_| Some(eff(obj! {"do" => "creature_backlash"}))),
 ];
 
 /// how a clause depends on a "you may" earlier in the text

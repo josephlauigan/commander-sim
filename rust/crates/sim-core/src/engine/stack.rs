@@ -1022,6 +1022,9 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
     if &*g.db.get(ctr).name == "Mindbreak Trap" {
         crate::impls::t6_counters::mindbreak_exile(g, q)?; // "exile any number of target spells": all the others
     }
+    if &*g.db.get(ctr).name == "Tibalt's Trickery" {
+        crate::impls::t6_counters::tibalt_after(g, q, p, c)?; // its controller mills, then casts a card free
+    }
     Ok(())
 }
 
