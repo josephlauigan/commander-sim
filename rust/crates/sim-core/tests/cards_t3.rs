@@ -454,3 +454,16 @@ fn tier_three_games_play_out() {
         }
     }
 }
+
+#[test]
+fn sac_worst_permanent_gives_up_a_land_before_an_engine_with_five_lands() {
+    let mut g = table(&["korvold-jund-sacrifice", "sauron"]);
+    let altar = perm(&mut g, P0, "Ashnod's Altar");
+    lands(&mut g, P0, "Swamp", 5, false);
+    let s = t3::sac_worst_permanent(&mut g, P0, None).unwrap();
+    assert!(matches!(s, Some(Sacrificed::Card(_))), "a land goes: {s:?}");
+    assert_eq!(g.player(P0).lands.len(), 4);
+    assert!(g.perm(altar).on_bf, "the Altar stays");
+    let tok = token(&mut g, P0, 1);
+    assert_eq!(t3::sac_worst_permanent(&mut g, P0, None).unwrap(), Some(Sacrificed::Perm(tok)), "a creature token first");
+}
