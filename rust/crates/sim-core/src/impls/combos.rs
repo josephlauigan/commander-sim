@@ -1196,6 +1196,9 @@ fn karn(g: &Game, p: PlayerId) -> Ready {
 
 /// Heliod gives the Ballista lifelink ({1}{W}); each ping gains life, which adds a counter: unlimited pings
 fn heliod(g: &Game, p: PlayerId) -> Ready {
+    if crate::impls::t45_heliod_zur::solemnity(g) {
+        return NOT_READY(); // --- Tiers 4/5 (heliod-zur): Solemnity: the Ballista gets no counters
+    }
     let Some(h) = on_bf(g, p, "Heliod, Sun-Crowned") else { return NOT_READY() };
     let b = g.player(p).perms.iter().copied().find(|&m| {
         let x = g.perm(m);

@@ -739,6 +739,9 @@ pub fn delney_extra(g: &Game, src: PermId) -> usize {
 /// Heliod gives Triskelion lifelink ({1}{W}); each counter it removes pings for 1, the life gained puts a counter
 /// back (Heliod): unlimited damage
 fn heliod_triskelion(g: &Game, p: PlayerId) -> crate::impls::combos::Ready {
+    if solemnity(g) {
+        return (false, vec![], vec![]); // no counters: no loop
+    }
     let on = |n: &str| named(g, p, n).into_iter().next();
     let Some(h) = on("Heliod, Sun-Crowned") else { return (false, vec![], vec![]) };
     if let Some(t) = named(g, p, "Triskelion").into_iter().find(|&m| g.perm(m).plus > 0) {
@@ -806,7 +809,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         r.card(db, "Voice of the Blessed")?.grant_kw = Some(voice_kw);
     }
     if has("Felidar Sovereign") {
-        r.card(db, "Felidar Sovereign")?.upkeep = Some(felidar_upkeep);
+        let c = r.card(db, "Felidar Sovereign")?;
+        c.upkeep = Some(felidar_upkeep);
+        c.pval = Some(6.0); // a win at the next upkeep: removal looks at it first
     }
     if has("Haliya, Guided by Light") {
         let c = r.card(db, "Haliya, Guided by Light")?;
