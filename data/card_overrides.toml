@@ -7500,6 +7500,7 @@ status = "Full"
 note = "you and the opponent with the weakest board each draw three cards"
 
 ["Angel of Vitality"]
+dsl = [] # --- Tiers 4/5 (heliod-zur): the compiled "plus 1" would add to t0_giada::gain_bonus
 status = "Full"
 note = "flying; every life gain is +1 (engine/life.rs gain); +2/+2 at 25 or more life"
 
@@ -9378,3 +9379,26 @@ pool_remove_tags = ["tokx"]
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
 ["Contaminant Grafter"]
 dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)
+
+# --- Tiers 4/5 (heliod-zur): hand-written in rust/crates/sim-core/src/impls/t45_heliod_zur.rs (status notes in data/audit.toml)
+["Ajani, Strength of the Pride"]
+tags = "leg"
+dsl = [] # the walker framework runs its three abilities (the autotagger's token tag made a token as it entered)
+
+["Cleric Class"]
+dsl = [{ type = "static", static = "lifegain_plus", amount = 1 }] # level 1 only: levels 2 and 3 are hand-written
+
+["Diplomatic Immunity"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Steel of the Godhead"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Imprisoned in the Moon"]
+types = "E"
+tags = "rem=moon tgt=cp etb"
+dsl = []

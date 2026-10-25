@@ -116,6 +116,7 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
         return Ok(());
     }
     let n = n + crate::impls::t0_giada::gain_bonus(g, p, n); // Angel of Vitality: plus 1
+    let n = crate::dsl::lifegain_mod(g, p, n); // --- Tiers 4/5 (heliod-zur): Cleric Class, The Wind Crystal
     g.player_mut(p).life += n;
     // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
     if n > 0 {
@@ -126,6 +127,10 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
     }
     if !g.hooks.is_empty() {
         hooks::fire_trigger(g, Event::GainLife, Call::Life { p, n })?;
+    }
+    if n > 0 {
+        // --- Tiers 4/5 (heliod-zur): the compiled "whenever you gain life" triggers
+        crate::dsl::fire(g, "gain_life", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
     }
     Ok(())
 }

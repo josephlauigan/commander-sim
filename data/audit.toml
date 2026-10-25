@@ -82,6 +82,31 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Yavimaya, Cradle of Growth" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): every land is a Forest where the engine asks (forestwalk, Forests that tap for more); taps for {G}; the {T}: {G} every land gains as a Forest is not added (colourless lands stay colourless)" }
 "Yeva, Nature's Herald" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): green creature spells as though they had flash (cast::grants_flash: the AI casts them at the end of an opponent's turn); flash (data)" }
 
+# --- Tiers 4/5 (heliod-zur): hand-written in impls/t45_heliod_zur.rs
+"Cosmos Elixir" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): your end step, draw a card above 40 life, else gain 2 life" }
+"Heliod's Intervention" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): destroy X opposing artifacts/enchantments (cast with two or more worth it, or one big one), or gain twice X life (the AI uses it at an opponent's end step to reach Felidar Sovereign's 40)" }
+"Well of Lost Dreams" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): whenever you gain life, pay X up to the life gained and draw X (keeps 3 mana before its own second main phase)" }
+"Ajani, Strength of the Pride" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): +1 gain life per creature and planeswalker; -2 an Ajani's Pridemate token (a token copy, its counter trigger compiled); 0 at 55+ life exiles Ajani and each opposing artifact and creature" }
+"Altar of the Pantheon" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): +1 devotion to every colour (rules2::devotion: Heliod, Nykthos); taps for any colour, gaining 1 life with a God, Demigod or legendary enchantment out" }
+"Archivist of Oghma" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): an opponent's library search (the shuffle after it, tutors::shuffle_library: tutors, fetch lands): gain 1 life and draw. Left out: it resolves with the state checks, not on the stack; a search with no shuffle is missed, a shuffle with no search counts" }
+"Blind Obedience" = { status = "Full", note = "hand-written (impls/t6_stax.rs): extort (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures (tokens too) enter tapped as a real replacement" }
+"Buried Ruin" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): {2},{T}, sacrifice: the best artifact card from the graveyard to hand, at the end-of-turn window" }
+"Cleric Class" = { status = "Full", note = "level 1's plus 1 compiled; hand-written (impls/t45_heliod_zur.rs): level 2 ({3}{W}) whenever you gain life a +1/+1 counter on your best creature (a Ballista first), level 3 ({4}{W}) returns the best creature card from the graveyard and gains its toughness" }
+"Daxos, Blessed by the Sun" = { status = "Full", note = "life gain on another creature entering or dying compiled; hand-written (impls/t45_heliod_zur.rs): toughness equal to your devotion to white" }
+"Felidar Sovereign" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): your upkeep with 40 or more life (checked again as it resolves): you win" }
+"Haliya, Guided by Light" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): it or another creature or artifact of yours enters: gain 1; your end step, draw with 3+ life gained this turn. Left out: warp, and Treasure/Food/Clue tokens (counters here) entering" }
+"Hall of Heliod's Generosity" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): {1}{W},{T}: the best enchantment card from the graveyard on top of the library, at the end-of-turn window" }
+"Linden, the Steadfast Queen" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): gain 1 life for each white creature of yours that attacks; vigilance" }
+"Serra Ascendant" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): +5/+5 and flying with 30 or more life; lifelink" }
+"Voice of the Blessed" = { status = "Full", note = "counter on life gain compiled; hand-written (impls/t45_heliod_zur.rs): flying and vigilance with 4+ +1/+1 counters, indestructible with 10+" }
+"Diplomatic Immunity" = { status = "Approximate", note = "hand-written Aura (impls/t45_heliod_zur.rs): the enchanted creature has shroud. Left out: the Aura's own shroud" }
+"Steel of the Godhead" = { status = "Full", note = "hand-written Aura (impls/t45_heliod_zur.rs): white host +1/+1 and lifelink, blue host +1/+1 and can't be blocked (both for a white-blue host)" }
+"Estrid's Invocation" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): enters as a copy of your best nonlegendary, non-Aura enchantment. Left out: the upkeep exile-and-return the copy gains" }
+"Solemnity" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs solemnity): no +1/+1 or -1/-1 counters on permanents (put, enters with, proliferate) and no poison counters on players (so Phyrexian Unlife can't lose to damage). Left out: lore, charge, oil and land counters" }
+"Delney, Streetwise Lookout" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): your power-2-or-less creatures can't be blocked by power 3+; their triggered abilities that go on the stack trigger an additional time. Left out: card code that runs at once rather than as a trigger" }
+"Eidolon of Rhetoric" = { status = "Full", note = "each player can't cast more than one spell each turn (common's spell limits, as Rule of Law)" }
+"Imprisoned in the Moon" = { status = "Approximate", note = "removal kind moon (card_overrides.toml): the best opposing creature or planeswalker becomes a Wastes (a colourless land). Left out: it is for good (the Aura leaving doesn't undo it), and lands are never targeted" }
+
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
 extra_combat = { status = "Full", note = "Aurelia, Karlach, Scourge, Combat Celebrant, Hellkite Charger, Port Razer, Relentless Assault, Seize the Day, World at War, Savage Beating; no cap on extra combats (safety cap 200 phases a turn)" }

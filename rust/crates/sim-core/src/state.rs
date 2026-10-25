@@ -180,6 +180,8 @@ pub enum DataKey {
     CalixLink,
     /// soulbond (Silverblade Paladin): the paired creature (a `Val::Perm`), set on both; valid only while both are on the battlefield under one controller and point at each other
     Soulbond,
+    /// --- Tiers 4/5 (heliod-zur): Archivist of Oghma: library searches by its opponents still to answer
+    T45Search,
 }
 
 /// A value in per-card state.

@@ -764,6 +764,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
         |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
     ),
+    // --- Tiers 4/5 (heliod-zur): "you may have that player lose 1 life" (Suture Priest; "you may" is split off first)
+    (r"^have (that player|target player|target opponent|each opponent) lose (\d+|x) life$", |m| {
+        Some(eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -1062,6 +1066,14 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^a player attacks with (two|three|four|five|six) or more creatures$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "any_player", "min_atk" => n_(m.gs(1))}]
     }),
+    // --- Tiers 4/5 (heliod-zur): "another creature you control enters or dies" (Daxos, Blessed by the Sun)
+    (r"^(a|another) creature you control enters or dies$", |m, _| {
+        let other = m.gs(1) == "another";
+        vec![
+            obj! {"event" => "etb", "source" => "you_creature", "other" => other},
+            obj! {"event" => "dies", "source" => "you_creature", "other" => other},
+        ]
+    }),
 ];
 
 pub fn parse_trigger(clause: &str) -> Option<Fx> {
@@ -1262,6 +1274,25 @@ static STATICS: &[(&str, StaticFn)] = &[
             "filter" => obj!{"type" => "permanent", "controller" => "you", "other" => m.g(1).is_some()}}
         });
         if v.is_empty() { None } else { Some(v) }
+    }),
+    // --- Tiers 4/5 (heliod-zur)
+    // "white creature spells you cast cost {1} less to cast" (Oketra's Monument)
+    (r"^(white|blue|black|red|green) creature spells you cast cost \{(\d+)\} less to cast$", |m| {
+        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => format!("{}_creature", m.gs(1)),
+        "amount" => -int(m.gs(2))}))
+    }),
+    // "if you would gain life, you gain that much life plus 1 instead" (Cleric Class, Angel of Vitality's wording)
+    (r"^if you would gain life, you gain that much life plus (\d+) instead$", |m| {
+        Some(eff(obj! {"type" => "static", "static" => "lifegain_plus", "amount" => int(m.gs(1))}))
+    }),
+    // "if you would gain life, you gain twice that much life instead" (The Wind Crystal, Boon Reflection)
+    (r"^if you would gain life, you gain twice that much life instead$", |_| {
+        Some(eff(obj! {"type" => "replacement", "replace" => "lifegain", "multiplier" => 2}))
+    }),
+    // "creatures your opponents control enter tapped" (Authority of the Consuls)
+    (r"^creatures your opponents control enter tapped$", |_| {
+        Some(eff(obj! {"type" => "static", "static" => "enters_tapped", "who" => "opponents",
+        "filter" => obj!{"type" => "creature", "controller" => "opp"}}))
     }),
 ];
 

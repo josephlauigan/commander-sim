@@ -34,6 +34,15 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     let extra: Vec<Trigger> =
         entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
     entries.extend(extra);
+    // --- Tiers 4/5 (heliod-zur): Delney: a trigger of a creature with power 2 or less triggers an additional time
+    let delney: Vec<Trigger> = entries
+        .iter()
+        .flat_map(|t| {
+            let k = t.src.map_or(0, |s| crate::impls::t45_heliod_zur::delney_extra(g, s));
+            std::iter::repeat_n(t.clone(), k)
+        })
+        .collect();
+    entries.extend(delney);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }

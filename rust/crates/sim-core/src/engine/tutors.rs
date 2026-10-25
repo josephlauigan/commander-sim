@@ -65,6 +65,7 @@ pub fn shuffle_library(g: &mut Game, p: PlayerId) {
     let mut lib = std::mem::take(&mut g.player_mut(p).library);
     g.rng.shuffle(&mut lib);
     g.player_mut(p).library = lib;
+    crate::impls::t45_heliod_zur::searched(g, p); // --- Tiers 4/5 (heliod-zur): Archivist of Oghma
 }
 
 /// Atraxa, Grand Unifier: reveal the top ten; for each card type put one card of that type into your hand (a
