@@ -779,8 +779,7 @@ static FREYALISE: [WalkerAb; 3] = [
 
 /// Forests tap for an extra G
 fn nissa_wstw(g: &Game, src: Src, p: PlayerId, l: LandId) -> i32 {
-    let d = g.db.get(g.land(l).cd);
-    (p == g.perm(src).owner && (d.has_subtype("forest") || &*d.name == "Forest")) as i32
+    (p == g.perm(src).owner && crate::impls::t3_marwyn::is_forest(g, l)) as i32 // Yavimaya: every land
 }
 
 fn nissa_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {

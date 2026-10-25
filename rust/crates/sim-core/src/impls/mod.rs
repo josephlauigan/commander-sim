@@ -87,6 +87,7 @@ pub mod smaug;
 pub mod karn;
 pub mod t3_aurelia;
 pub mod t3_korvold;
+pub mod t3_marwyn;
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -161,5 +162,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t3_atraxa::register(&mut r, db)?;
     t3_aurelia::register(&mut r, db)?;
     t3_korvold::register(&mut r, db)?;
+    t3_marwyn::register(&mut r, db)?;
     Ok(r)
 }

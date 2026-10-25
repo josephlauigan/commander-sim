@@ -674,6 +674,9 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
+    if crate::impls::t3_marwyn::ambush_response(g, d, p, atk)? {
+        return Ok(true); // --- Tier 3 (marwyn): Galadhrim Ambush
+    }
     let gand = has(g, d, Tag::Gandalf); // Gandalf: sorceries at instant speed
     if gand && gandalf_wipe_response(g, d, p, atk)? {
         return Ok(true);

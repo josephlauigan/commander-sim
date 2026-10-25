@@ -9365,3 +9365,12 @@ tags = "rem=destroy tgt=ae"
 
 ["Fighter Class"]
 pool_remove_tags = ["tut"]
+# --- Tier 3 (marwyn): hand-written in rust/crates/sim-core/src/impls/t3_marwyn.rs
+["Elvish Guidance"]
+pool_add_tags = ["rock=1:G"]
+
+["Genesis Wave"]
+pool_add_tags = ["xtutor"]
+
+["Galadhrim Ambush"]
+pool_remove_tags = ["tokx"]

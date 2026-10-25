@@ -100,10 +100,7 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
         return false; // Speed, Young Avenger: only creatures with haste can block it
     }
     if cardcode::granted_kw(g, a, "forestwalk")
-        && g.player(xb.owner).lands.iter().any(|&l| {
-            let d = g.db.get(g.land(l).cd);
-            &*d.name == "Forest" || d.has_subtype("forest")
-        })
+        && g.player(xb.owner).lands.iter().any(|&l| crate::impls::t3_marwyn::is_forest(g, l)) // Yavimaya: every land
     {
         return false;
     }
@@ -337,6 +334,18 @@ fn attack_imp(t: &crate::cards::Tags) -> f64 {
 /// p attacked d with atk: attack triggers (once per copy: Isshin). Returns the new attacking creatures.
 pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
     crate::impls::t0_captain::note_attack(g, p, d); // Avenge, Heroic Return
+    // --- Tier 3 (marwyn): who attacked this turn ("for each attacking Elf you control", Embercleave's cost)
+    let st = g.turn_stamp();
+    let pl = g.player_mut(p);
+    if pl.attacking != Some(st) {
+        pl.attackers.clear();
+    }
+    pl.attacking = Some(st);
+    for &m in atk {
+        if !pl.attackers.contains(&m) {
+            pl.attackers.push(m);
+        }
+    }
     let copies = 1 + hooks::total_trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
     for _ in 0..copies {
@@ -1170,6 +1179,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             if !(g.perm(m).vig || kw(g, m, "vigilance")) {
                 g.perm_mut(m).tapped = true;
                 crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
+                crate::impls::t3_marwyn::on_tapped(g, m)?; // --- Tier 3 (marwyn): Dionus, Legolas
             }
         }
         let new = attack_triggers(g, p, &atk, d)?; // once for the whole attack, naming the main defender
