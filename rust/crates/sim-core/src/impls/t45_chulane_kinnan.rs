@@ -722,7 +722,7 @@ pub static COMBOS: [Combo; 5] = [
     },
     Combo {
         name: "Freed from the Real / Pemmin's Aura + Bloom Tender",
-        groups: &[&[FREED, PEMMIN], &[TENDER], &[BALLISTA, THRASIOS]],
+        groups: &[&[FREED, PEMMIN], &[TENDER], &[BALLISTA]],
         ready: tender_ready,
         mana: (0, ""),
         finish: None,
@@ -731,7 +731,7 @@ pub static COMBOS: [Combo; 5] = [
     },
     Combo {
         name: "Freed from the Real / Pemmin's Aura + Nyxbloom Ancient + a blue mana creature",
-        groups: &[&[FREED, PEMMIN], &[NYX], &[BALLISTA, THRASIOS]],
+        groups: &[&[FREED, PEMMIN], &[NYX], &[BALLISTA]],
         ready: nyx_ready,
         mana: (0, ""),
         finish: None,
@@ -740,7 +740,7 @@ pub static COMBOS: [Combo; 5] = [
     },
     Combo {
         name: "Freed from the Real / Pemmin's Aura + Badgermole Cub + a blue mana creature",
-        groups: &[&[FREED, PEMMIN], &[CUB], &[BALLISTA, THRASIOS]],
+        groups: &[&[FREED, PEMMIN], &[CUB], &[BALLISTA]],
         ready: cub_ready,
         mana: (0, ""),
         finish: None,
