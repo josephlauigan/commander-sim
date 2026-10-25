@@ -142,6 +142,9 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "last_lost" => ctx.lost,
         "event_spell_mv" => ctx.spell.map_or(2, |c| g.db.get(c).cmc as i32),
         "source_power" => src.map_or(2, |m| epow(g, m)),
+        // --- Tiers 1/2 (lathril): "you gain life equal to its toughness" in an enters trigger (Wolverine Riders)
+        "event_toughness" => ctx.event_perm.map_or(0, |m| etgh(g, m).max(0)),
+        "event_power" => ctx.event_perm.map_or(0, |m| epow(g, m).max(0)),
         "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.max(0)),
         // --- Tier 3 (marwyn): "each attacking Elf you control" (Dwynen): the creatures p attacked with this turn
         // (`combat::attack_triggers` records them) still on the battlefield
@@ -152,6 +155,13 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             }
             let live = |m: PermId| g.perm(m).on_bf && g.perm(m).owner == p && has_type(g, m, t);
             pl.attackers.iter().filter(|&&m| live(m)).count() as i32
+        }
+        // --- Tiers 1/2 (lathril): "Elves you control plus the number of Elf cards in your graveyard" (Abomination)
+        s if s.starts_with("type_you_gy:") => {
+            let t = &s[12..];
+            let bf = pl.perms.iter().filter(|&&m| !g.perm(m).phased && has_type(g, m, t)).count();
+            let gy = pl.gy.iter().filter(|&&c| g.db.get(c).has_subtype(t) || g.db.get(c).has_kw("changeling")).count();
+            (bf + gy) as i32
         }
         s if s.starts_with("type_you:") || s.starts_with("type_all:") => {
             let t = &s[9..];
@@ -1027,6 +1037,13 @@ fn run(
                 }
             }
         }
+        "blight" => {
+            // --- Tiers 1/2 (lathril): "each opponent blights 1" (High Perfect Morcant)
+            let k = n(g, ctx);
+            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                crate::impls::t12_lathril::blight(g, q, k)?;
+            }
+        }
         "creature_backlash" => {
             // --- Tiers 4/5 (prosper): each creature deals 1 damage to its controller (Rakdos Charm)
             for q in g.players.iter().filter(|x| x.alive).map(|x| x.id).collect::<Vec<_>>() {
@@ -1376,6 +1393,12 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
             if color.as_deref().and_then(|c| c.chars().next()).is_some_and(|c| !colors_of(g, m).has(c)) {
                 return out; // --- Tiers 4/5 (urza-yawgmoth): "another black creature" (Ayara)
+            }
+            // --- Tiers 1/2 (lathril): "an Elf you control dies", "another Elf you control enters"
+            if let Some(t) = subtype.as_deref().filter(|t| !t.is_empty())
+                && !(has_type(g, m, t) || (t == "warrior" && g.perm(m).warrior))
+            {
+                return out;
             }
             match s {
                 Some("you_creature") if owner == q => out.push(DslCtx { event_perm: Some(m), ..base }),
@@ -1883,6 +1906,7 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                 v += 0.7 * n * (pw + 0.5 * e.keywords.len() as f64);
             }
             "counters" => v += 0.4 * n,
+            "blight" => v += 0.5 * n * g.opps(p).count() as f64, // --- Tiers 1/2 (lathril)
             "pump" => v += 0.3,
             "lose_life" => {
                 v += 0.5

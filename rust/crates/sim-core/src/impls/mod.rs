@@ -86,6 +86,7 @@ pub mod t6_plan_sisay;
 pub mod smaug;
 pub mod karn;
 pub mod t3_aurelia;
+pub mod t12_lathril;
 pub mod t3_korvold;
 pub mod t3_marwyn;
 pub mod t45_yuriko;
@@ -183,5 +184,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t45_edgar::register(&mut r, db)?; // --- Tiers 4/5 (edgar)
     t45_urdragon::register(&mut r, db)?; // --- Tiers 4/5 (urdragon)
     t12_isshin::register(&mut r, db)?; // --- Tiers 1/2 (isshin)
+    t12_lathril::register(&mut r, db)?; // --- Tiers 1/2 (lathril)
     Ok(r)
 }

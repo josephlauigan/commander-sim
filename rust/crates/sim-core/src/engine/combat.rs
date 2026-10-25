@@ -135,8 +135,8 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
 
 /// "granted or printed haste, and Lightning Greaves / Swiftfoot Boots"
 pub fn has_haste(g: &Game, m: PermId) -> bool {
-    if kw(g, m, "haste") {
-        return true;
+    if kw(g, m, "haste") || crate::impls::t12_lathril::emblem_haste(g, m) {
+        return true; // --- Tiers 1/2 (lathril): Tyvar Kell's emblem
     }
     g.player(g.perm(m).owner).perms.iter().any(|&e| {
         g.perm(e).attached == Some(m) && g.perm(e).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Prot) == Some("boots"))
