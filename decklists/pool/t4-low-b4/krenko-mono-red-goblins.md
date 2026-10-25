@@ -5,29 +5,29 @@ Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Explosive go-wide / comb
 - **Commander:** Krenko, Mob Boss
 - **Color identity:** Red
 - **Game Changers (2):** Gamble, Jeska's Will
-- **Combos:** Kiki-Jiki + Zealous Conscripts (infinite hasty copies). Krenko + Thornbite Staff + sac outlet (Skirk Prospector, Goblin Bombardment) for unbounded Goblins. The early two-card Kiki line is why this is Bracket 4 despite only three Game Changers.
+- **Combos:** Krenko + Thornbite Staff + a free sacrifice outlet (Skirk Prospector, Goblin Bombardment, Ashnod's Altar): every Goblin sacrificed untaps Krenko, for unbounded Goblins. Krenko + Umbral Mantle or Staff of Domination + Ashnod's Altar or Mana Echoes: the Goblins pay for each untap, for unbounded Goblins and mana. Both win through Goblin Bombardment, Impact Tremors, Purphoros or General Kreat, or a haste giver before combat.
 - **Lands:** 33 (6 nonbasic + 27 basic)
 
 ## Role in the pool
 
-Whether your decks can answer a single creature on turns two to four, or lose on the spot.
+Whether your decks can answer a single creature on turns two to four, or a board of fifty Goblins by turn six.
 
 ## At the table
 
-- **Plan:** Dumps cheap Goblins (Goblin Lackey, Legion Loyalist, Goblin Warchief) so Krenko, Mob Boss can land and tap, doubling the Goblin count each turn. Haste makers let it start the turn he lands.
-- **Wins by:** Impact Tremors, Purphoros, God of the Forge and Goblin Bombardment turn the swarm into damage. Combo lines: Kiki-Jiki, Mirror Breaker with Zealous Conscripts, or Krenko with Thornbite Staff and a sacrifice outlet like Skirk Prospector.
-- **Watch out for:** Krenko in the first turns: kill him before he untaps. The early Kiki-Jiki plus Zealous Conscripts line can win on the spot. Goblin Chainwhirler pings your small creatures and Vandalblast destroys your artifacts. Sweepers are strong against the swarm.
-- **Interaction:** Lightning Bolt, Abrade, Chaos Warp, Pyroblast, Red Elemental Blast, Blasphemous Act, Vandalblast and Goblin Chainwhirler. No counterspells; Deflecting Swat and Cavern of Souls protect its combo.
+- **Plan:** Dumps cheap Goblins (Goblin Lackey, Goblin Instigator, Skirk Prospector, Legion Warboss) and lands Krenko, Mob Boss to double the Goblin count with each activation. Goblin Warchief, Goblin Chieftain, Howlsquad Heavy, Fervor, Lightning Greaves and Swiftfoot Boots give haste; Patriar's Seal, Thousand-Year Elixir, Sting and Staff of Domination untap Krenko for extra activations, and Marvin, Murderous Mimic copies his ability. Goblin Matron, Goblin Recruiter, Muxus, Conspicuous Snoop and Gamble find the pieces.
+- **Wins by:** Impact Tremors, Purphoros, General Kreat and Goblin Bombardment turn the swarm into damage; Goblin War Strike, Massive Raid and Hobgoblin Bandit Lord burn for the board's size; Coat of Arms, Goblin King, Shared Animosity and Battle Hymn make the attack lethal. The two untap combos win on the spot.
+- **Watch out for:** Krenko in the first turns: kill him before he untaps (Goblin Chirurgeon regenerates him, Hexing Squelcher makes removal cost 2 life and its spells uncounterable). Mana Echoes and Brightstone Ritual turn a big board into a burst of mana. Treasure Nabber steals the mana rocks you tap. Blood Moon locks nonbasic mana bases (and gives Goblin King's Goblins mountainwalk). Sweepers are strong against the swarm.
+- **Interaction:** Lightning Bolt, Abrade, Chaos Warp, Vandalblast, Blasphemous Act and Goblin Trashmaster. No counterspells; Deflecting Swat, Cavern of Souls and Hexing Squelcher protect its threats.
 
 ## Strategy
 
-Protect Krenko for one untap and the goblin count doubles every activation; Goblin Warchief and Legion Loyalist give haste, so it happens the turn he lands. Impact Tremors, Purphoros, Goblin Bombardment, and Coat of Arms turn the swarm into lethal damage. Two combo lines: Kiki-Jiki + Zealous Conscripts (infinite hasty copies), and Krenko + Thornbite Staff + a sac outlet (Skirk Prospector, Goblin Bombardment) for unbounded goblins.
+Protect Krenko for one untap and the Goblin count doubles every activation; haste givers make it happen the turn he lands, and the untappers (Patriar's Seal, Thousand-Year Elixir, Sting, Staff of Domination) double it again. Impact Tremors, Purphoros, General Kreat and Goblin Bombardment turn each batch into damage, Mana Echoes turns it into mana, and Goblin War Strike or Massive Raid finishes a player. Two combo lines: Krenko + Thornbite Staff + a free sacrifice outlet, and Krenko + Umbral Mantle or Staff of Domination + Ashnod's Altar or Mana Echoes.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Krenko's exponential token activation (needs untap/haste); ETB damage (Impact Tremors, Purphoros); Goblin Bombardment; Kiki-Jiki + Conscripts; Thornbite Staff untap loop; Goblin tutors (Lackey, Recruiter, Matron, Muxus).
+Krenko's token activation (needs untap/haste) and its untappers (Patriar's Seal, Thousand-Year Elixir, Sting, Staff of Domination; Marvin copying Krenko); Impact Tremors and Purphoros on Krenko's tokens; Goblin Bombardment; Mana Echoes; the two Krenko untap combos; Goblin tutors (Matron, Recruiter, Muxus, Gamble). Left Approximate: Goblin Chirurgeon (regenerates nontoken creatures only), Hexing Squelcher's life ward (removal spells only), Treasure Nabber (an artifact taken on your own turn goes back that turn), the untappers (Krenko, Kiki-Jiki and Marvin only).
 
 ## Decklist by type (100)
 

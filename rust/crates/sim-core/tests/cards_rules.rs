@@ -500,9 +500,10 @@ fn purphoros_burns_for_each_creature_entering() {
     stack::settle_stack(&mut g).unwrap();
     assert!(!g.is_creature(p)); // devotion to red below five
     let gob = token(&mut g, P0, 1);
+    assert_eq!(g.player(P1).life, 38, "a token made by card code (Tiers 4/5 krenko: `tokens_enter`)");
     let f = g.registry.get(card(&g, "Purphoros, God of the Forge")).unwrap().etb.unwrap();
     f(&mut g, p, P0, gob).unwrap();
-    assert_eq!(g.player(P1).life, 38);
+    assert_eq!(g.player(P1).life, 36);
 }
 
 #[test]

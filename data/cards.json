@@ -14506,7 +14506,17 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "add_mana",
+       "n": "type_all:goblin"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -14514,10 +14524,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Add {R} for each Goblin on the battlefield."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -45277,6 +45285,26 @@
      "type": "triggered",
      "effects": [
       {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": true,
+       "warrior": false,
+       "types": [
+        "goblin"
+       ]
+      }
+     ],
+     "event": "attack",
+     "source": "you_any",
+     "subtype": "goblin"
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
        "do": "damage",
        "n": 1,
        "to": {
@@ -45301,9 +45329,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever one or more Goblins you control attack, create a 1/1 red Goblin creature token that's tapped and attacking."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -48147,7 +48173,19 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "anthem",
+     "filter": {
+      "type": "creature",
+      "other": true,
+      "subtype": "goblin"
+     },
+     "pow": 1,
+     "tgh": 1
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -48157,10 +48195,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Other Goblins get +1/+1 and have mountainwalk."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -48663,7 +48699,21 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "damage",
+       "n": "type_you:goblin",
+       "to": {
+        "sel": "player",
+        "who": "target_player"
+       }
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -48671,10 +48721,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "~ deals damage to target player or planeswalker equal to the number of Goblins you control."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -55187,7 +55235,7 @@
      "effects": [
       {
        "do": "damage",
-       "n": "X",
+       "n": "type_entered_you:goblin",
        "to": {
         "sel": "any_target"
        }
@@ -55897,33 +55945,12 @@
    "tags": {
     "pow": "2",
     "tgh": "3",
-    "dork": "R",
-    "noatk": true
+    "dork": "R"
    },
    "pow": 2,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "goblin"
-       ]
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "max speed",
@@ -55937,12 +55964,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Start your engines!",
-    "Other Goblins you control have haste.",
-    "At the beginning of combat on your turn, create a 1/1 red Goblin creature token. That token attacks this combat if able.   [partly: that token attacks this combat if able]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -71873,11 +71896,28 @@
    "types": "I",
    "generic": 1,
    "pips": "RR",
-   "tags": {},
+   "tags": {
+    "rem": "dmg3",
+    "tgt": "c",
+    "face": true
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "damage",
+       "n": "creatures_you_control",
+       "to": {
+        "sel": "any_target"
+       }
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -71885,10 +71925,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "~ deals damage to any target equal to the number of creatures you control."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -119648,29 +119686,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "untap",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -119678,10 +119694,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "You may activate abilities of creatures you control as though those creatures had haste."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

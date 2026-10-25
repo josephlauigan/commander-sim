@@ -150,6 +150,8 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
                 .filter(|&&m| !g.perm(m).phased && has_type(g, m, t))
                 .count() as i32
         }
+        // --- Tiers 4/5 (krenko): "the number of Goblins that entered the battlefield under your control this turn"
+        s if s.starts_with("type_entered_you:") => crate::impls::t45_krenko::entered_this_turn(g, p, &s[17..]),
         s if s.starts_with("target_") => 2,
         _ => 2,
     }
@@ -1344,6 +1346,11 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
             match s {
                 Some("self") if kw.attackers.contains(&src) => out.push(ctx),
+                // --- Tiers 4/5 (krenko): "one or more Goblins you control attack" (General Kreat): one of that type
+                Some("you_any")
+                    if kw.player == Some(q)
+                        && subtype.as_deref().is_some_and(|t| t != "warrior")
+                        && !kw.attackers.iter().any(|&m| has_type(g, m, subtype.as_deref().unwrap_or(""))) => {}
                 Some("you_any") if kw.player == Some(q) && !kw.attackers.is_empty() => out.push(ctx),
                 Some("any_player") if !kw.attackers.is_empty() => out.push(ctx), // Tier 3 (aurelia): "a player attacks"
                 Some("you_each") if kw.player == Some(q) => {
@@ -1774,6 +1781,11 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
         let n = match &e.n {
             Some(Num::Int(k)) => *k as f64,
             None => 1.0,
+            // --- Tiers 4/5 (krenko): a count of your creatures or of a creature type is read now (Goblin War
+            // Strike, Massive Raid, Brightstone Ritual)
+            Some(Num::Name(s)) if s.starts_with("type_") || s == "creatures_you_control" => {
+                num(g, p, e.n.as_ref(), &DslCtx::default(), None) as f64
+            }
             _ => 2.0,
         };
         let d = e.kind.as_str();
@@ -1862,7 +1874,9 @@ pub fn card_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
 fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, dry: bool) -> Res<bool> {
     let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
     let x = g.perm(src);
-    if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && x.sick)) {
+    // --- Tiers 4/5 (krenko): Thousand-Year Elixir, "as though those creatures had haste"
+    let sick = x.sick && !crate::impls::t45_krenko::elixir(g, p);
+    if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && sick)) {
         return Ok(false);
     }
     if cost.life.is_some_and(|l| g.player(p).life <= l + 5) {

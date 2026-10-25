@@ -591,9 +591,11 @@ fn goblin_haste(g: &Game, p: PlayerId) -> bool {
 /// {T}: a Goblin per Goblin (instant speed). Without a haste enabler the tokens can't attack the turn they're made,
 /// so Krenko waits for the end of the turn before yours (the tokens are ready to attack, and sorcery-speed removal
 /// and wipes had their chance); with haste, activating in your main phase attacks right away.
-fn krenko(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn krenko(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if x.tapped || (x.sick && !crate::dsl::has_kw(g, src, "haste") && !goblin_haste(g, p)) {
+    // (Tiers 4/5 krenko: Thousand-Year Elixir, "as though those creatures had haste")
+    let elixir = super::t45_krenko::elixir(g, p);
+    if x.tapped || (x.sick && !crate::dsl::has_kw(g, src, "haste") && !goblin_haste(g, p) && !elixir) {
         return Ok(vec![]);
     }
     let n = crate::impls::t1::count_type(g, p, "goblin", false) as f64;

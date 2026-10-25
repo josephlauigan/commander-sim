@@ -9378,3 +9378,11 @@ pool_remove_tags = ["tokx"]
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
 ["Contaminant Grafter"]
 dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)
+
+# --- Tiers 4/5 (krenko): hand-written in rust/crates/sim-core/src/impls/t45_krenko.rs
+["Howlsquad Heavy"]
+dsl = [] # the compiler read its combat token as an upkeep one that needn't attack; the token, the haste and the max-speed mana are card code
+pool_remove_tags = ["noatk"] # a 2/3 attacker until max speed, not a mana creature held home
+
+["Thousand-Year Elixir"]
+dsl = [] # its compiled "{1}, {T}: untap target creature" picked any target; the untap (Krenko, Kiki-Jiki, Marvin) is card code

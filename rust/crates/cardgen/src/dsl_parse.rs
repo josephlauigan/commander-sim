@@ -688,6 +688,50 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
             ))
         },
     ),
+    // --- Tiers 4/5 (krenko)
+    // "~ deals damage equal to the number of Goblins that entered the battlefield under your control this turn to any
+    // target" (Hobgoblin Bandit Lord): counted by the interpreter (`type_entered_you:goblin`)
+    (
+        r"^~ deals damage equal to the number of (goblins|elves|zombies|humans|soldiers|warriors|knights) that entered (?:the battlefield )?under your control this turn to (any target|each opponent)$",
+        |m| {
+            let n = format!("type_entered_you:{}", singular(m.gs(1)));
+            let to = if m.gs(2) == "any target" {
+                obj! {"sel" => "any_target"}
+            } else {
+                obj! {"sel" => "player", "who" => "each_opponent"}
+            };
+            Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
+    // "~ deals damage to target player or planeswalker equal to the number of Goblins you control" (Goblin War
+    // Strike), "~ deals damage to any target equal to the number of creatures you control" (Massive Raid)
+    (
+        r"^~ deals damage to (any target|target player or planeswalker|target player|target opponent|each opponent|target creature) equal to (?:the number of )?(.+)$",
+        |m| {
+            let n = num_expr(m.gs(2));
+            if n == J::from("X") {
+                return None;
+            }
+            let t = m.gs(1);
+            let to = if t == "any target" {
+                obj! {"sel" => "any_target"}
+            } else if t == "target creature" {
+                selector(t)
+            } else {
+                obj! {"sel" => "player", "who" => who(t)}
+            };
+            Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
+    // "add {R} for each Goblin on the battlefield" (Brightstone Ritual): a count of creatures only (not Rousing
+    // Refrain's "each card in target opponent's hand")
+    (r"^add \{([wubrgc])\} for each (.+)$", |m| {
+        let n = num_expr(m.gs(2));
+        if !n.as_str().is_some_and(|s| s.starts_with("type_") || s == "creatures_you_control") {
+            return None;
+        }
+        Some(eff(obj! {"do" => "add_mana", "n" => n}))
+    }),
     (
         r"^~ deals damage equal to (?:that spell's mana value|its power|the number of [^.]+) to (any target|each opponent|target creature|target opponent)$",
         |m| {
@@ -1058,6 +1102,10 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^~ and at least (two|three) other creatures attack$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "self", "min_atk" => n_(m.gs(1)).as_i64().unwrap_or(2) + 1}]
     }),
+    // --- Tiers 4/5 (krenko): "one or more Goblins you control attack" (General Kreat): once per attack that has one
+    (r"^one or more (goblins|elves|zombies|humans|soldiers|warriors|knights|dragons|vampires) you control attack$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "you_any", "subtype" => singular(m.gs(1))}]
+    }),
     // "a player attacks with N or more creatures" (Aurelia, the Law Above): anyone's attack, counted whole
     (r"^a player attacks with (two|three|four|five|six) or more creatures$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "any_player", "min_atk" => n_(m.gs(1))}]
@@ -1123,6 +1171,22 @@ fn kw_statics(text: Option<&str>, mut mk: impl FnMut(&str) -> Obj) -> Fx {
 type StaticFn = fn(&M) -> Option<Fx>;
 
 static STATICS: &[(&str, StaticFn)] = &[
+    // --- Tiers 4/5 (krenko): "other Goblins get +1/+1 and have mountainwalk" (Goblin King): every player's Goblins
+    // (no "you control"); a landwalk the keyword list lacks is card code (impls/t45_krenko.rs)
+    (
+        r"^other (elves|goblins|zombies|humans|soldiers|warriors|knights|merfolk|vampires|spirits|faeries) get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$",
+        |m| {
+            let sub_ = singular(m.gs(1));
+            let mut v = vec![obj! {"type" => "static", "static" => "anthem",
+            "filter" => obj!{"type" => "creature", "other" => true, "subtype" => sub_.clone()},
+            "pow" => int(m.gs(2)), "tgh" => int(m.gs(3))}];
+            v.extend(kw_statics(m.g(4), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+                "filter" => obj!{"type" => "creature", "other" => true, "subtype" => sub_.clone()}}
+            }));
+            Some(v)
+        },
+    ),
     // --- Tier 3 (marwyn): "other Elf creatures you control get +1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
     (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+) for each (.+)$", |m| {
         let per = num_expr(m.gs(5));
