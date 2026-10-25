@@ -117,6 +117,8 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         }
         "sacrificed_mv" => ctx.sacrificed_mv,
         "gy_instants_sorceries" => pl.gy.iter().filter(|&&c| g.db.get(c).instant || g.db.get(c).sorcery).count() as i32,
+        // --- Tiers 1/2 (brago-meren): "each creature card in your graveyard" (Wight of the Reliquary)
+        "gy_creatures" => pl.gy.iter().filter(|&&c| g.db.get(c).creature).count() as i32,
         "colors_among_permanents" => pl
             .perms
             .iter()
@@ -148,9 +150,6 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "event_power" => ctx.event_perm.map_or(0, |m| epow(g, m).max(0)),
         // --- Tiers 1/2 (tatyova-teysa): capped, so a doubling each landfall (Mossborn Hydra) never overflows
         "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.clamp(0, 1_000_000)),
-        // --- Tiers 1/2 (tatyova-teysa): "creature cards in your graveyard" ("the number of lands you control" is
-        // windgrace's `lands_you_control` above)
-        "gy_creatures" => pl.gy.iter().filter(|&&c| g.db.get(c).creature).count() as i32,
         // --- Tier 3 (marwyn): "each attacking Elf you control" (Dwynen): the creatures p attacked with this turn
         // (`combat::attack_triggers` records them) still on the battlefield
         s if s.starts_with("attacking_type:") => {

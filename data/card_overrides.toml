@@ -9665,3 +9665,7 @@ dsl = []
 # printed */*: autotag reads "*" as 1, and the compiled "power and toughness are each equal to the number of lands you
 # control" adds to the base (the adventure is hand-written, impls/t12_tatyova_teysa.rs)
 tags = "pow=0 tgh=0"
+
+# --- Tiers 1/2 (brago-meren): card code in impls/t12_brago_meren.rs
+["Flickerwisp"]
+dsl = [] # the compiled exile never returned the card: the enter trigger is hand-written (exile until the end step)

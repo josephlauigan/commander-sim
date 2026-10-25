@@ -251,6 +251,10 @@ pub fn num_expr(s: &str) -> J {
     if let Some(am) = rmatch(r"^(?:the number of )?(other )?attacking creatures(?: you control)?$", &s) {
         return if am.g(1).is_some() { "other_attacking_creatures" } else { "attacking_creatures" }.into();
     }
+    // --- Tiers 1/2 (brago-meren): "each creature card in your graveyard" (Wight of the Reliquary)
+    if rmatch(r"^(?:the number of )?creature cards? in your graveyard$", &s).is_some() {
+        return "gy_creatures".into();
+    }
     if s.contains("creature") && s.contains("died this turn") {
         return "creatures_died_this_turn".into();
     }

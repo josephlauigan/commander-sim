@@ -209,6 +209,10 @@ pub enum DataKey {
     T12Isshin,
     /// --- Tiers 1/2 (lightpaws): Pariah: the damage it has sent to the enchanted creature this turn ([Stamp, Int])
     T12Pariah,
+    /// --- Tiers 1/2 (brago-meren): Reality Acid's time counters (Int); Twilight Diviner's once-each-turn trigger (Stamp)
+    T12,
+    /// --- Tiers 1/2 (brago-meren): the creature entered from a graveyard on this turn (Stamp; Twilight Diviner)
+    T12FromGy,
 }
 
 /// A value in per-card state.
@@ -1235,6 +1239,9 @@ pub struct Game {
     pub t12_pass: Vec<(CardId, PlayerId)>,
     /// a Serra's Emissary has entered this game (combat and blocks look for it from then on)
     pub t12_emissary: bool,
+    /// --- Tiers 1/2 (brago-meren): creature cards put into a graveyard (died, milled, discarded, surveilled, searched
+    /// for) and not seen to leave it since; `zones::enter` reads it (Twilight Diviner: "entered from a graveyard")
+    pub t12_gy: Vec<CardId>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1429,6 +1436,7 @@ impl Game {
             t12_kept: vec![],
             t12_pass: vec![],
             t12_emissary: false,
+            t12_gy: vec![],
             cur_batch: None,
             hooks: vec![],
             stack: vec![],

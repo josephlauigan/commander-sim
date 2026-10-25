@@ -1342,6 +1342,7 @@ pub fn surveil(g: &mut Game, p: PlayerId, n: usize) -> Res {
         let bin = wants_gy(g, c) && !g.player(p).hand.iter().any(|&x| x == c) || card_worth(g, p, c, false) <= 6.0;
         if bin {
             g.player_mut(p).gy.push(c);
+            crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
         } else {
             keep.push(c);
         }

@@ -288,7 +288,10 @@ pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
 
 /// the AI q copies its own triggered ability on the stack (Peter Parker's Camera)
 pub fn copy_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
-    crate::impls::t6_copies::camera_copy(g, q, item).map(|_| ())
+    if !crate::impls::t6_copies::camera_copy(g, q, item)? {
+        crate::impls::t12_brago_meren::resonator_copy(g, q, item)?; // --- Tiers 1/2 (brago-meren): Strionic Resonator
+    }
+    Ok(())
 }
 
 /// rules.emblem_cast: Chandra's and Venser's emblems on each spell p casts

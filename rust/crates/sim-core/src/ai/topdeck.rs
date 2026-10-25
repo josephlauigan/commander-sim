@@ -90,7 +90,10 @@ pub fn scry(g: &mut Game, p: PlayerId, n: i32, surveil: bool) -> Res {
     let (keep, rest): (Vec<CardId>, Vec<CardId>) = top.into_iter().partition(|&c| desire(g, p, c) >= KEEP);
     let pl = g.player_mut(p);
     if surveil {
-        pl.gy.extend(rest);
+        pl.gy.extend(rest.iter().copied());
+        for c in rest {
+            crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
+        }
     } else {
         pl.library.splice(0..0, rest);
     }
