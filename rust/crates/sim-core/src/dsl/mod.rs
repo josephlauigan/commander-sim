@@ -127,7 +127,8 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "last_lost" => ctx.lost,
         "event_spell_mv" => ctx.spell.map_or(2, |c| g.db.get(c).cmc as i32),
         "source_power" => src.map_or(2, |m| epow(g, m)),
-        "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.max(0)),
+        // --- Tiers 1/2 (tatyova-teysa): capped, so a doubling each landfall (Mossborn Hydra) never overflows
+        "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.clamp(0, 1_000_000)),
         // --- Tiers 1/2 (tatyova-teysa): "the number of lands you control", "creature cards in your graveyard"
         "lands_you_control" => pl.lands.len() as i32,
         "gy_creatures" => pl.gy.iter().filter(|&&c| g.db.get(c).creature).count() as i32,
