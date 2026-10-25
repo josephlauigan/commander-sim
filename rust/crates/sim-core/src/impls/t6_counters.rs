@@ -524,7 +524,7 @@ pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
     if held(g, crate::impls::t3_korvold::IMPS).is_some() && crate::impls::t3_korvold::imps_mischief(g, q, id)? {
         return Ok(true); // Imp's Mischief (Tier 3 Tergrid): Misdirection that costs life
     }
-    let (mis, com, sub) =(held(g, "Misdirection"), held(g, "Commandeer"), held(g, "Sudden Substitution"));
+    let (mis, com, sub) = (held(g, "Misdirection"), held(g, "Commandeer"), held(g, "Sudden Substitution"));
     // Misdirection: a spell aimed at the permanent we would protect
     if let (Some(mis), Some(t)) = (mis, it.ctx.target.filter(|_| it.ctx.face.is_none()))
         && g.perm(t).owner == q
