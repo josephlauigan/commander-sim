@@ -10,43 +10,47 @@
 
 tier = "t6"
 
-# --- Seat win rates: EDHTop16 "Monthly Seat Win Rates - cEDH" (https://edhtop16.com/reports/monthly_seat_winrates),
-# all rounds, April-September 2026, sample-weighted. Each seat's win rate is divided by the four seats' total (the page's
-# seat rates and draw rate leave about 7% of each month's sample unaccounted for), so the four shares add up to 100% of
-# decisive games, as the sim's do. Unweighted per-event values (decklists/pool/TARGETS-t6.md, 2026-10-17 pull,
-# 32+ player events): 34.1 / 27.3 / 22.5 / 17.4.
+# --- Seat win rates: TopDeck.gg tournament data (https://topdeck.gg, API v2, read 2026-10-24; data courtesy of
+# TopDeck.gg). Format "EDH", April-September 2026, events whose name says cEDH or competitive (3,071 events), Swiss
+# rounds only (numbered rounds; top cuts left out), completed 4-player pods, decisive games only (24.1% were draws).
+# A table's `players` list is in seat order: the shares fall from seat 1 to seat 4, and round 1, seated at random
+# before any standings exist, shows the same edge (31.8 / 27.5 / 22.5 / 18.1, n = 8,502), so the edge is not
+# stronger players seated first. 95% intervals are about +/- 0.5. Method and checks:
+# audit/realism/t6-seat-topdeck-2026-10-24.md.
+# Before 2026-10-24 the target was EDHTop16's "Monthly Seat Win Rates - cEDH" (all rounds, Apr-Sep 2026, no method
+# given): 32.5 / 26.9 / 22.7 / 17.9, which this confirms within a point.
 
 [seat1_win]
-value = 32.5
-lo = 31.5
-hi = 33.5
-n = 387427
-source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
-date = "2026-10-22"
+value = 31.8
+lo = 30.8
+hi = 32.8
+n = 29864
+source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
+date = "2026-10-24"
 
 [seat2_win]
-value = 26.9
-lo = 25.9
-hi = 27.9
-n = 387427
-source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
-date = "2026-10-22"
+value = 27.3
+lo = 26.3
+hi = 28.3
+n = 29864
+source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
+date = "2026-10-24"
 
 [seat3_win]
-value = 22.7
-lo = 21.7
-hi = 23.7
-n = 387427
-source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
-date = "2026-10-22"
+value = 22.1
+lo = 21.1
+hi = 23.1
+n = 29864
+source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
+date = "2026-10-24"
 
 [seat4_win]
-value = 17.9
-lo = 16.9
-hi = 18.9
-n = 387427
-source = "EDHTop16 monthly seat win rates, Apr-Sep 2026, share of seat wins"
-date = "2026-10-22"
+value = 18.8
+lo = 17.8
+hi = 19.8
+n = 29864
+source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
+date = "2026-10-24"
 
 # --- Speed. No public dataset gives the round cEDH games are won on. JD set a median of about 7 (2026-10-19,
 # decklists/pool/TARGETS-t6.md); Playgroup's average win turn for the Tier 6 commanders agrees: Kinnan, Rograkh,
