@@ -75,3 +75,12 @@ fn compiled_proliferate_adds_poison_and_ezuri_draws() {
     assert_eq!(g.player(P1).poison, 5, "proliferate twice: two more poison counters");
     assert!(g.player(P0).hand.len() >= n + 2, "Ezuri draws on each proliferate");
 }
+
+#[test]
+fn a_player_out_on_poison_is_recorded_as_a_poison_death() {
+    let mut g = tbl();
+    g.player_mut(P1).poison = 10;
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(!g.player(P1).alive);
+    assert_eq!(g.player(P1).death_kind, "poison", "the scorecard's poison wins count this");
+}

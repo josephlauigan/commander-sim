@@ -293,6 +293,8 @@ pub fn eliminate(g: &mut Game, p: PlayerId) {
         "commander damage"
     } else if pl.decked {
         "decked"
+    } else if pl.poison >= 10 && pl.life > 0 {
+        "poison" // ten poison counters, life left: the scorecard's poison wins read this (they were the last life loss)
     } else {
         pl.last_kind
     };
