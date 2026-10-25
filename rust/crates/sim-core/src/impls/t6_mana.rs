@@ -228,6 +228,12 @@ fn shaku_tap(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {
     Ok(())
 }
 
+/// mana a source makes only as it is used (Honor-Worn Shaku: each extra {C} costs tapping another legend), so a
+/// payment that uses less leaves nothing to float (`mana::pay`)
+pub fn mana_on_demand(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Honor-Worn Shaku")
+}
+
 // ================================================================== Metalworker
 /// **Metalworker** ({3} artifact creature, 1/2): {T}: reveal any number of artifact cards in your hand; add {C}{C}
 /// for each. The mana count is twice the artifact cards in hand (a dork tag in the data override makes it a mana
