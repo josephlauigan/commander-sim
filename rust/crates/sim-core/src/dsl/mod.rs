@@ -807,12 +807,24 @@ fn run(
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
         "proliferate" => {
-            for m in g.player(p).perms.clone() {
-                if g.perm(m).plus > 0 {
-                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                    crate::cardcode::put_plus(g, m, 1 + extra); // Hardened Scales, Vorinclex
+            // the engine's full proliferate: +1/+1 and loyalty counters, Sagas, lands' counters and opponents' poison
+            // (this effect used to add +1/+1 counters to your own permanents only)
+            let times = if e.n.is_some() { n(g, ctx).max(0) as u32 } else { 1 };
+            crate::impls::common::proliferate(g, p, times)?;
+        }
+        "poison" => {
+            // each opponent / each player / target opponent gets N poison counters (Melira stops them; Vorinclex
+            // doubles the ones you give)
+            let k = if e.n.is_some() { n(g, ctx).max(0) } else { 1 };
+            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                if k == 0 || crate::engine::values::melira(g, q) {
+                    continue;
                 }
+                let k = crate::cardcode::vorinclex(g, p, k);
+                g.player_mut(q).poison += k as u32;
+                crate::glog!(g, "    {} gets {} poison counter(s)", g.player(q).name, k);
             }
+            crate::engine::life::check_state(g)?;
         }
         "double_counters" => {
             for m in g.player(p).perms.clone() {
@@ -1352,7 +1364,7 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
             out.push(DslCtx { spell: Some(c), event_player: Some(caster), ..base });
         }
-        "draw" | "upkeep" | "end_step" => {
+        "draw" | "upkeep" | "end_step" | "proliferate" => {
             let pl = kw.player;
             match w {
                 Some("you") if pl == Some(q) => out.push(base),
@@ -1642,6 +1654,21 @@ pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
     k
 }
 
+/// m's own toxic N (compiled from "toxic N" on its keyword line): poison counters to a player it deals combat
+/// damage to, on top of the damage
+pub fn toxic_amount(g: &Game, m: PermId) -> i32 {
+    let x = g.perm(m);
+    let Some(cd) = x.cd.filter(|_| !x.neutered) else { return 0 };
+    g.db.get(cd)
+        .abilities
+        .iter()
+        .filter_map(|a| match a {
+            Ability::Static { kind, amount, .. } if kind == "toxic" => *amount,
+            _ => None,
+        })
+        .sum()
+}
+
 /// counter doublers
 pub fn counter_mult(g: &Game, p: PlayerId) -> i32 {
     let mut k = 1;
@@ -1669,6 +1696,7 @@ fn eff_value(kind: &str) -> f64 {
         "gain_life" => 0.15,
         "amass" => 0.7,
         "proliferate" => 1.0,
+        "poison" => 0.6, // per counter on each player it reaches: ten put a player out
         "extra_combat" => 3.0,
         "add_mana" => 0.5,
         "mill" => 0.1,

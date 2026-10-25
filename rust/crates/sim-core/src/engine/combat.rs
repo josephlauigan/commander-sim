@@ -698,6 +698,15 @@ fn resolve_combat_inner(
                         crate::impls::sephfs_cards::slaver_mark(g, b, a);
                         die(g, a, "destroy")?;
                     }
+                    // infect: damage to a creature is -1/-1 counters, which stay on a creature that survives it
+                    for (src, to, k) in [(a, b, ap), (b, a, epow(g, b))] {
+                        if k > 0 && kw(g, src, "infect") && g.perm(to).on_bf && !no_damage(g, to) {
+                            crate::cardcode::put_plus(g, to, -k);
+                            if etgh(g, to) <= 0 {
+                                die(g, to, "sba")?;
+                            }
+                        }
+                    }
                     crate::impls::t0_captain::pair_after(g, a, b); // Hercules
                     dmg
                 }

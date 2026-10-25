@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Planeswalker value / pr
 
 - **Commander:** Atraxa, Praetors' Voice
 - **Color identity:** White, Blue, Black, Green
-- **Game Changers (3):** Teferi's Protection, Rhystic Study, Smothering Tithe
+- **Game Changers (3):** Farewell, Narset, Parter of Veils, Rhystic Study
 - **Combos:** None.
-- **Lands:** 37 (21 nonbasic + 16 basic)
+- **Lands:** 36 (24 nonbasic + 12 basic)
 
 ## Role in the pool
 
@@ -33,109 +33,113 @@ Planeswalker loyalty and ultimates; proliferate (Atraxa, Evolution Sage, Flux Ch
 
 **Commander (1).** Atraxa, Praetors' Voice
 
-**Creatures (9).** Birds of Paradise, Courser of Kruphix, Deepglow Skate, Evolution Sage, Flux Channeler, Solemn Simulacrum, Sylvan Caryatid, Thrummingbird, Wall of Omens
+**Creatures (24).** Birds of Paradise, Blightbelly Rat, Blighted Agent, Bloated Contaminator, Bloom Tender, Cankerbloom, Contaminant Grafter, Deepglow Skate, Dreamtide Whale, Evolution Sage, Ezuri, Stalker of Spheres, Flux Channeler, Ichor Rats, Ixhel, Scion of Atraxa, Metastatic Evangel, Plague Stinger, Skithiryx, the Blight Dragon, Skrelv, Defector Mite, Tainted Observer, Tekuthal, Inquiry Dominus, Thrummingbird, Venerated Rotpriest, Voidwing Hybrid, Vorinclex, Monstrous Raider
 
-**Planeswalkers (12).** Elspeth, Sun's Champion, Jace, the Mind Sculptor, Kaito Shizuki, Karn Liberated, Liliana, Death's Majesty, Nissa, Who Shakes the World, Oko, Thief of Crowns, Tamiyo, Field Researcher, Teferi, Hero of Dominaria, Teferi, Time Raveler, The Wandering Emperor, Ugin, the Spirit Dragon
+**Planeswalkers (5).** Ajani, Sleeper Agent, Narset, Parter of Veils, Oko, Thief of Crowns, Tamiyo, Field Researcher, Vraska, Betrayal's Sting
 
-**Enchantments (8).** Ghostly Prison, Inexorable Tide, Mystic Remora, Oath of Teferi, Propaganda, Rhystic Study, Smothering Tithe, Sylvan Library
+**Enchantments (7).** Brokers Ascendancy, Doubling Season, Inexorable Tide, Innkeeper's Talent, Norn's Decree, Oath of Teferi, Rhystic Study
 
-**Artifacts (7).** Arcane Signet, Chromatic Lantern, Fellwar Stone, Mind Stone, Sol Ring, Talisman of Curiosity, Talisman of Dominance
+**Artifacts (9).** Arcane Signet, Astral Cornucopia, Chromatic Lantern, Contagion Engine, Everflowing Chalice, Fellwar Stone, Glistening Sphere, Lightning Greaves, Sol Ring
 
-**Sorceries (13).** Austere Command, Contentious Plan, Cultivate, Explore, Farseek, Grow from the Ashes, Hour of Revelation, Kodama's Reach, Nature's Lore, Supreme Verdict, Tezzeret's Gambit, Three Visits, Toxic Deluge
+**Sorceries (9).** Cultivate, Drown in Ichor, Farewell, Farseek, Infectious Inquiry, Nature's Lore, Phyresis Outbreak, Tezzeret's Gambit, Unnatural Restoration
 
-**Instants (13).** Anguished Unmaking, Arcane Denial, Assassin's Trophy, Beast Within, Counterspell, Fact or Fiction, Growth Spiral, Heroic Intervention, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection, Utter End
+**Instants (9).** Assassin's Trophy, Counterspell, Experimental Augury, Heroic Intervention, Infectious Bite, Path to Exile, Prologue to Phyresis, Swords to Plowshares, Vraska's Fall
 
-**Lands (37).** Breeding Pool, Command Tower, Exotic Orchard, Flooded Strand, Godless Shrine, Hallowed Fountain, Indatha Triome, Karn's Bastion, Marsh Flats, Misty Rainforest, Overgrown Tomb, Path of Ancestry, Polluted Delta, Raffine's Tower, Spara's Headquarters, Spire of Industry, Temple Garden, Verdant Catacombs, Watery Grave, Windswept Heath, Zagoth Triome, 5 Forest, 4 Island, 4 Plains, 3 Swamp
+**Lands (36).** Breeding Pool, Command Tower, Exotic Orchard, Flooded Strand, Godless Shrine, Hallowed Fountain, Indatha Triome, Karn's Bastion, Marsh Flats, Misty Rainforest, Opulent Palace, Overgrown Tomb, Path of Ancestry, Polluted Delta, Raffine's Tower, Rejuvenating Springs, Sandsteppe Citadel, Seaside Citadel, Spara's Headquarters, Temple Garden, Verdant Catacombs, Watery Grave, Windswept Heath, Zagoth Triome, 3 Forest, 3 Island, 3 Plains, 3 Swamp
 
 ## Import list (100)
 
 ```
-1 Anguished Unmaking
-1 Arcane Denial
+1 Ajani, Sleeper Agent
 1 Arcane Signet
 1 Assassin's Trophy
+1 Astral Cornucopia
 1 Atraxa, Praetors' Voice
-1 Austere Command
-1 Beast Within
 1 Birds of Paradise
+1 Blightbelly Rat
+1 Blighted Agent
+1 Bloated Contaminator
+1 Bloom Tender
 1 Breeding Pool
+1 Brokers Ascendancy
+1 Cankerbloom
 1 Chromatic Lantern
 1 Command Tower
-1 Contentious Plan
+1 Contagion Engine
+1 Contaminant Grafter
 1 Counterspell
-1 Courser of Kruphix
 1 Cultivate
 1 Deepglow Skate
-1 Elspeth, Sun's Champion
+1 Doubling Season
+1 Dreamtide Whale
+1 Drown in Ichor
+1 Everflowing Chalice
 1 Evolution Sage
 1 Exotic Orchard
-1 Explore
-1 Fact or Fiction
+1 Experimental Augury
+1 Ezuri, Stalker of Spheres
+1 Farewell
 1 Farseek
 1 Fellwar Stone
 1 Flooded Strand
 1 Flux Channeler
-1 Ghostly Prison
+1 Glistening Sphere
 1 Godless Shrine
-1 Grow from the Ashes
-1 Growth Spiral
 1 Hallowed Fountain
 1 Heroic Intervention
-1 Hour of Revelation
+1 Ichor Rats
 1 Indatha Triome
 1 Inexorable Tide
-1 Jace, the Mind Sculptor
-1 Kaito Shizuki
-1 Karn Liberated
+1 Infectious Bite
+1 Infectious Inquiry
+1 Innkeeper's Talent
+1 Ixhel, Scion of Atraxa
 1 Karn's Bastion
-1 Kodama's Reach
-1 Liliana, Death's Majesty
+1 Lightning Greaves
 1 Marsh Flats
-1 Mind Stone
+1 Metastatic Evangel
 1 Misty Rainforest
-1 Mystic Remora
+1 Narset, Parter of Veils
 1 Nature's Lore
-1 Nissa, Who Shakes the World
+1 Norn's Decree
 1 Oath of Teferi
 1 Oko, Thief of Crowns
+1 Opulent Palace
 1 Overgrown Tomb
 1 Path of Ancestry
 1 Path to Exile
+1 Phyresis Outbreak
+1 Plague Stinger
 1 Polluted Delta
-1 Propaganda
+1 Prologue to Phyresis
 1 Raffine's Tower
+1 Rejuvenating Springs
 1 Rhystic Study
-1 Smothering Tithe
+1 Sandsteppe Citadel
+1 Seaside Citadel
+1 Skithiryx, the Blight Dragon
+1 Skrelv, Defector Mite
 1 Sol Ring
-1 Solemn Simulacrum
 1 Spara's Headquarters
-1 Spire of Industry
-1 Supreme Verdict
-1 Swan Song
 1 Swords to Plowshares
-1 Sylvan Caryatid
-1 Sylvan Library
-1 Talisman of Curiosity
-1 Talisman of Dominance
+1 Tainted Observer
 1 Tamiyo, Field Researcher
-1 Teferi's Protection
-1 Teferi, Hero of Dominaria
-1 Teferi, Time Raveler
+1 Tekuthal, Inquiry Dominus
 1 Temple Garden
 1 Tezzeret's Gambit
-1 The Wandering Emperor
-1 Three Visits
 1 Thrummingbird
-1 Toxic Deluge
-1 Ugin, the Spirit Dragon
-1 Utter End
+1 Unnatural Restoration
+1 Venerated Rotpriest
 1 Verdant Catacombs
-1 Wall of Omens
+1 Voidwing Hybrid
+1 Vorinclex, Monstrous Raider
+1 Vraska's Fall
+1 Vraska, Betrayal's Sting
 1 Watery Grave
 1 Windswept Heath
 1 Zagoth Triome
-5 Forest
-4 Island
-4 Plains
+3 Forest
+3 Island
+3 Plains
 3 Swamp
 ```

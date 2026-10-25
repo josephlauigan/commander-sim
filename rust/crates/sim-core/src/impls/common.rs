@@ -2917,7 +2917,10 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         if poisoned {
             check_state(g)?;
         }
-        // CI.fire(g, 'proliferated', p): no card hooks it
+        // compiled "whenever you proliferate" triggers (Ezuri draws, Voidwing Hybrid returns)
+        if g.dsl_on {
+            crate::dsl::fire(g, "proliferate", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+        }
     }
     Ok(())
 }

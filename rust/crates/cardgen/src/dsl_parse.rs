@@ -566,6 +566,14 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(each other player|each opponent|target opponent|target player|each player|defending player) sacrifices? (a|an|two) ([a-z ,]+?)(?: of their choice| with the (?:least|greatest) power[^.]*)?$",
         |m| Some(eff(obj! {"do" => "sacrifice", "who" => who(m.gs(1)), "filter" => filt(m.gs(3)), "n" => n_(m.gs(2))})),
     ),
+    // poison counters (Prologue to Phyresis, Infectious Inquiry, Ichor Rats, Ajani's emblem)
+    (
+        r"^(each opponent|each other player|each player|target opponent|target player) gets? (a|an|one|two|three|\d+) poison counters?$",
+        |m| Some(eff(obj! {"do" => "poison", "who" => who(m.gs(1)), "n" => n_(m.gs(2))})),
+    ),
+    (r"^proliferate (twice|three times)$", |m| {
+        Some(eff(obj! {"do" => "proliferate", "n" => if m.gs(1) == "twice" { 2 } else { 3 }}))
+    }),
     (
         r"^(?:scry|surveil) (\d+|x)$|^investigate$|^proliferate$|^you may pay \{\d+\}$|^shuffle$|^then shuffle$|^shuffle and put that card on top$|^reveal (?:it|them)$",
         |m| {
@@ -993,6 +1001,7 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^equipped creature attacks$", |_, _| vec![obj! {"event" => "attack", "source" => "equipped"}]),
     (r"^equipped creature dies$", |_, _| vec![obj! {"event" => "dies", "source" => "equipped"}]),
     (r"^you gain life$", |_, _| vec![obj! {"event" => "gain_life", "who" => "you"}]),
+    (r"^you proliferate$", |_, _| vec![obj! {"event" => "proliferate", "who" => "you"}]), // Ezuri, Voidwing Hybrid
     (r"^~ becomes tapped$", |_, _| vec![obj! {"event" => "attack", "source" => "self"}]),
     (r"^you cast your (third|second) spell each turn$", |m, _| {
         vec![
@@ -1207,7 +1216,7 @@ pub fn strip_name(text: &str, name: &str) -> String {
     sub(r"(?i)\bthis (creature|spell|artifact|enchantment|land|permanent|card|planeswalker|equipment|aura)\b", "~", &t)
 }
 
-const KW_LINE: &str = r"^(ward|equip|cycling|kicker|flashback|convoke|overload|foretell|spectacle|prowess|protection|landcycling|basic landcycling|devour|undying|persist|flash|rebound|dredge|partner|crew|cumulative upkeep|affinity|delve|improvise|storm|cascade|buyback|madness|evoke|escape|disturb|channel|companion|hideaway|toxic|mentor|exalted|intimidate|defender|changeling|split second|enchant)\b";
+const KW_LINE: &str = r"^(ward|equip|cycling|infect|kicker|flashback|convoke|overload|foretell|spectacle|prowess|protection|landcycling|basic landcycling|devour|undying|persist|flash|rebound|dredge|partner|crew|cumulative upkeep|affinity|delve|improvise|storm|cascade|buyback|madness|evoke|escape|disturb|channel|companion|hideaway|toxic|mentor|exalted|intimidate|defender|changeling|split second|enchant)\b";
 
 fn arr(v: Fx) -> J {
     J::Arr(v.into_iter().map(J::Obj).collect())
@@ -1252,6 +1261,12 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         }
         let words: Vec<&str> = l.split(',').map(|w| w.trim()).collect();
         if words.iter().all(|w| KW.contains(w) || rmatch(KW_LINE, w).is_some()) {
+            // toxic N: the amount is kept (combat gives that many poison counters); the keyword alone says no number
+            for w in &words {
+                if let Some(m) = rmatch(r"^toxic (\d+)", w) {
+                    abil.push(obj! {"type" => "static", "static" => "toxic", "amount" => int(m.gs(1))});
+                }
+            }
             continue;
         }
         if rmatch(r"^\{t\}(?:, [^:]*)?: add ", l).is_some() || rmatch(r"^~ deals 1 damage to you$", l).is_some() {

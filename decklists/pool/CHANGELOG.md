@@ -53,6 +53,7 @@ Deck key `atraxa-superfriends`, `decklists/pool/t3-high-b3/atraxa-superfriends.m
 
 ### Changes
 
+- **2026-10-24.** Replaced (JD, 2026-10-24: Tier 3 lists against EDHREC, option 2) by EDHREC's bracket-3 ("upgraded") average deck for the commander (json.edhrec.com average-decks, read 2026-10-24), the real decks players register at this bracket; the old list shared 44 of its 88 nonbasic cards with it. Game Changers fixed to the tier's three: Teferi, Master of Time out, Farewell in (EDHREC's most-played missing one). The deck is now infect and proliferate (Tekuthal, Blighted Agent, Ichor Rats, Vorinclex), as Atraxa's Playgroup wins are (45% poison); infect, toxic and poison effects were modelled for it the same day.
 - **2026-09.** Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Doubling Season, Ichormoon Gauntlet, Vraska, Golgari Queen, Tekuthal, Inquiry Dominus and Garruk Wildspeaker made way for Explore, Mind Stone, Kaito Shizuki, Courser of Kruphix and Grow from the Ashes (a lighter proliferate engine). Within Tier 3: 38-40% before, 25% after.
 - **2026-09 (Strategy and modeling notes, removed sentences).** "Doubling Season makes walkers enter at double loyalty, often ultimating on the spot." (Strategy) and "Tekuthal doubling); Doubling Season;" (Sim modeling notes). Both cards are no longer in the list.
 
@@ -62,6 +63,7 @@ Deck key `marwyn-mono-green-elves`, `decklists/pool/t3-high-b3/marwyn-mono-green
 
 ### Changes
 
+- **2026-10-24.** Replaced (JD, 2026-10-24: Tier 3 lists against EDHREC, option 2) by EDHREC's bracket-3 ("upgraded") average deck for the commander (json.edhrec.com average-decks, read 2026-10-24), the real decks players register at this bracket; the old list shared 43 of 76. Game Changers to three: Nature's Claim out, Natural Order in; one Forest out, Gaea's Cradle in.
 - **2026-09.** Tuned in September 2026 (with the user's approval) to bring within-tier balance into 15-35% under the look-ahead AI: Glimpse of Nature, Overwhelming Stampede, Hunter's Insight, Nature's Claim, Krosan Grip, Jagged-Scar Archers, Seeker of Skybreak and Leaf-Crowned Visionary made way for Tireless Tracker, Avenger of Zendikar, Wirewood Channeler, Paradise Druid, Sylvan Caryatid, Wurmcoil Engine, Tendershoot Dryad and Rampaging Baloths (sturdier threats and rebuilding against sweepers). Within Tier 3: 11-12% before, 20% after.
 - **2026-09 (Strategy, removed sentences).** "Ezuri and Overwhelming Stampede are the backups. Glimpse of Nature and Beast Whisperer keep the hand full. Umbral Mantle is deliberately out, so there is no two-card infinite mana." Rewritten around cards in the list.
 
@@ -71,7 +73,24 @@ Deck key `tergrid-mono-black-disruption`, `decklists/pool/t3-high-b3/tergrid-mon
 
 ### Changes
 
+- **2026-10-24.** Replaced (JD, 2026-10-24: Tier 3 lists against EDHREC, option 2) by EDHREC's bracket-3 ("upgraded") average deck for the commander (json.edhrec.com average-decks, read 2026-10-24), the real decks players register at this bracket; the old list shared 35 of 73. Game Changers to three (Tergrid is one): Cabal Ritual out, Demonic Tutor in.
 - **undated.** Removed from Strategy (names a card that is not in the list): "No mass land denial: land-sacrifice effects like Pox are left out."
+
+## Korvold — Jund Sacrifice
+
+Deck key `korvold-jund-sacrifice`, `decklists/pool/t3-high-b3/korvold-jund-sacrifice.md`.
+
+### Changes
+
+- **2026-10-24.** Replaced (JD, 2026-10-24: Tier 3 lists against EDHREC, option 2) by EDHREC's bracket-3 ("upgraded") average deck for the commander (json.edhrec.com average-decks, read 2026-10-24), the real decks players register at this bracket; the old list shared 46 of 87. Game Changers to three: Doubling Season and Chaos Warp out, Demonic Tutor and Vampiric Tutor in.
+
+## Aurelia — Boros Extra Combats
+
+Deck key `aurelia-boros-extra-combats`, `decklists/pool/t3-high-b3/aurelia-boros-extra-combats.md`.
+
+### Changes
+
+- **2026-10-24.** Replaced (JD, 2026-10-24: Tier 3 lists against EDHREC, option 2) by EDHREC's bracket-3 ("upgraded") average deck for the commander (json.edhrec.com average-decks, read 2026-10-24), the real decks players register at this bracket; the old list shared 32 of 82. Game Changers to three: Farewell (the least played of its four) out, Chance for Glory in.
 
 ## Heliod — Mono-White Stax
 

@@ -130,7 +130,7 @@ pub fn cut(s: &str, n: usize) -> String {
     s.chars().take(n).collect()
 }
 
-const SIMPLE_KW: [&str; 8] = ["flying", "deathtouch", "vigilance", "lifelink", "haste", "trample", "reach", "flash"];
+const SIMPLE_KW: [&str; 9] = ["flying", "deathtouch", "vigilance", "lifelink", "haste", "trample", "reach", "flash", "infect"];
 
 /// Oracle text minus reminder text and lines made only of keywords the engine models
 pub fn rules_text(oracle: &str) -> String {
