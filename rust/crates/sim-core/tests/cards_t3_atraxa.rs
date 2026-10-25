@@ -114,3 +114,14 @@ fn cankerbloom_sacrifices_to_proliferate() {
     assert!(!g.perm(cb).on_bf);
     assert_eq!(g.player(P1).poison, 3);
 }
+
+#[test]
+fn infectious_bite_kills_with_your_biggest_creature_and_poisons() {
+    let mut g = tbl();
+    token(&mut g, P0, 4);
+    let t = token(&mut g, P1, 3);
+    lands(&mut g, P0, "Forest", 2, false);
+    cast(&mut g, "Infectious Bite");
+    assert!(!g.perm(t).on_bf, "4 damage kills the 3/3");
+    assert_eq!(g.player(P1).poison, 1);
+}

@@ -17,6 +17,8 @@
 //!   artifact or enchantment.
 //! - **Phyresis Outbreak**: each opponent gets a poison counter, then their creatures get -X/-X (X = their
 //!   controller's poison). Left out: the shrink on creatures that survive it (it ends with the turn).
+//! - **Infectious Bite**: your biggest creature kills the best opposing creature its power can, then a poison counter
+//!   for each opponent.
 //! - **Drown in Ichor**: -4/-4 on the best opposing creature it kills, then proliferate. Left out: the shrink on a
 //!   creature it doesn't kill.
 
@@ -244,6 +246,50 @@ fn ichor_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     }
 }
 
+// ================================================================== Infectious Bite
+/// your biggest creature, and the best opposing creature its power kills
+fn bite_pair(g: &Game, p: PlayerId) -> Option<(PermId, PermId)> {
+    let mine = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| live(g, m) && g.is_creature(m))
+        .max_by_key(|&m| crate::engine::values::epow(g, m))?;
+    let pw = crate::engine::values::epow(g, mine);
+    let t = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| live(g, m) && g.is_creature(m) && etgh(g, m) <= pw && !untargetable(g, m))
+        .max_by(|&a, &b| pval(g, a).total_cmp(&pval(g, b)))?;
+    Some((mine, t))
+}
+
+/// **Infectious Bite**: your creature deals damage equal to its power to an opposing creature (the best one it
+/// kills), then each opponent gets a poison counter. Left out: damage to a creature it doesn't kill.
+fn bite_resolve(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    if let Some((mine, t)) = bite_pair(g, p) {
+        crate::glog!(g, "    {} bites {} (Infectious Bite)", name(g, mine), name(g, t));
+        crate::engine::removal::apply_removal(g, Some(p), t, "destroy", Some(c))?;
+    }
+    for q in g.opps(p).collect::<Vec<_>>() {
+        if !crate::engine::values::melira(g, q) {
+            let k = crate::cardcode::vorinclex(g, p, 1);
+            g.player_mut(q).poison += k as u32;
+        }
+    }
+    crate::engine::life::check_state(g)?;
+    Ok(intern("gy"))
+}
+
+fn bite_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    match bite_pair(g, p) {
+        Some((_, t)) if pval(g, t) >= 3.0 => 60,
+        Some(_) => 35,
+        None => 15, // the poison counters alone
+    }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 
     if let Some(c) = card_if(r, db, "Ezuri, Stalker of Spheres")? {
@@ -267,6 +313,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     }
     if let Some(c) = card_if(r, db, "Phyresis Outbreak")? {
         c.resolve = Some(outbreak_resolve);
+    }
+    if let Some(c) = card_if(r, db, "Infectious Bite")? {
+        c.resolve = Some(bite_resolve);
+        c.prio = Some(bite_prio);
     }
     if let Some(c) = card_if(r, db, "Drown in Ichor")? {
         c.resolve = Some(ichor_resolve);

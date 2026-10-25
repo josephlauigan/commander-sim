@@ -21,6 +21,7 @@ rean = ["animate", "reanimate", "evil", "zombify"]
 prot = ["hi", "phase", "indes", "blink", "boots"]
 
 [card_notes]
+"Infectious Bite" = { status = "Approximate", note = "hand-written (impls/t3_atraxa.rs): your biggest creature kills the best opposing creature its power can, then a poison counter to each opponent; damage to a creature it does not kill is left out" }
 "Ezuri, Stalker of Spheres" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): pays {3} on entering to proliferate twice when that adds counters; its draw on proliferate is compiled" }
 "Tainted Observer" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): pays {2} to proliferate when another creature of yours enters; toxic 1 compiled" }
 "Contaminant Grafter" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): proliferate once a combat on combat damage to a player; corrupted end step draws then puts a land from hand onto the battlefield; toxic 1 and trample compiled" }
