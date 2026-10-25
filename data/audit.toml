@@ -21,6 +21,14 @@ rean = ["animate", "reanimate", "evil", "zombify"]
 prot = ["hi", "phase", "indes", "blink", "boots"]
 
 [card_notes]
+"Ezuri, Stalker of Spheres" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): pays {3} on entering to proliferate twice when that adds counters; its draw on proliferate is compiled" }
+"Tainted Observer" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): pays {2} to proliferate when another creature of yours enters; toxic 1 compiled" }
+"Contaminant Grafter" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): proliferate once a combat on combat damage to a player; corrupted end step draws then puts a land from hand onto the battlefield; toxic 1 and trample compiled" }
+"Brokers Ascendancy" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): your end step, +1/+1 counter on each creature and a loyalty counter on each planeswalker" }
+"Contagion Engine" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): -1/-1 counters on the creatures of the opponent it hurts most; {4},{T} proliferate twice compiled" }
+"Cankerbloom" = { status = "Full", note = "hand-written (impls/t3_atraxa.rs): {1}, sacrifice: destroy the best opposing artifact or enchantment, or proliferate" }
+"Phyresis Outbreak" = { status = "Approximate", note = "hand-written (impls/t3_atraxa.rs): a poison counter to each opponent, then their creatures with toughness up to their poison die; the until-end-of-turn shrink on the survivors is left out" }
+"Drown in Ichor" = { status = "Approximate", note = "hand-written (impls/t3_atraxa.rs): kills the best opposing creature -4/-4 kills, then proliferates; the shrink on a creature it doesn't kill is left out" }
 "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun" = { status = "Approximate", note = "hand-written (impls/t6_green2.rs): the top-four creature pick, the end-step transform at four creatures, Itlimoc taps for {G} per creature as Gaea's Cradle; the bottom order is not chosen" }
 
 [mechanics]

@@ -64,6 +64,7 @@ pub mod t6_mana;
 pub mod t6_redirects;
 pub mod t6_godo;
 pub mod t6_green2;
+pub mod t3_atraxa;
 pub mod t6_legends1b;
 pub mod t6_legends2;
 pub mod t6_dack;
@@ -155,5 +156,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     smaug::register(&mut r, db)?;
     karn::register(&mut r, db)?;
     karn_engines::register(&mut r, db)?;
+    t3_atraxa::register(&mut r, db)?;
     Ok(r)
 }
