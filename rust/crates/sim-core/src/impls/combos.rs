@@ -649,6 +649,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         {
             continue;
         }
+        if g.player(p).combo_turn == Some((g.player(p).turns, cmb.name)) {
+            continue; // already gone for this turn: `attempt_run` refuses a second try
+        }
         let (ok, _, casts) = (cmb.ready)(g, p);
         if !ok || !affordable(g, p, cmb, &casts) {
             continue;

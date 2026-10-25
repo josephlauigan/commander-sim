@@ -47,8 +47,8 @@ fn deathrite_cannot_pay_with_itself() {
     let d = perm(&mut g, k, "Deathrite Shaman");
     let (titan, swamp) = (card(&g, "Grave Titan"), card(&g, "Swamp"));
     g.player_mut(s).gy.extend([titan, swamp]); // a land card for its own mana
-    let a = option_with(&mut g, d, k, Some(false), "exile");
-    assert!(!perform(&mut g, k, &a).unwrap());
+    // the option is not offered: its only {G} would be Deathrite's own (it was offered, then refused when cast)
+    assert!(!options(&mut g, d, k, Some(false)).iter().any(|o| o.label.contains("exile")));
     assert!(!g.perm(d).tapped);
 }
 

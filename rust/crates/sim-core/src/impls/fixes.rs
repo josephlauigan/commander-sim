@@ -177,7 +177,12 @@ fn drs_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     };
     let spell = in_gys(&|c| g.db.get(c).instant || g.db.get(c).sorcery);
     let cre = in_gys(&|c| g.db.get(c).creature);
-    if !spell.is_empty() && can_pay(g, p, 0, "B", false) {
+    // {T} is part of the cost: the {B} or {G} must come from elsewhere, not from Deathrite's own mana ability (the
+    // option was offered on Deathrite's mana, then drs_pay tapped it and could not pay)
+    let keep = std::mem::replace(&mut g.keep_untapped, vec![src]);
+    let (pay_b, pay_g) = (can_pay(g, p, 0, "B", false), can_pay(g, p, 0, "G", false));
+    g.keep_untapped = keep;
+    if !spell.is_empty() && pay_b {
         let (q, c) = first_max(&spell, |(q, c)| (q != p, card_worth(g, q, c, true))).unwrap();
         o.push(Opt {
             utility: 2.2,
@@ -185,7 +190,7 @@ fn drs_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
             act: Some(Action::Ability { src, f: drs_drain, arg: pack(q.0 as u32, c.0 as u32) }),
         });
     }
-    if !cre.is_empty() && can_pay(g, p, 0, "G", false) {
+    if !cre.is_empty() && pay_g {
         let (q, c) = first_max(&cre, |(q, c)| (q != p, g.db.get(c).bomb, g.db.get(c).cmc)).unwrap();
         if q != p {
             o.push(Opt {
