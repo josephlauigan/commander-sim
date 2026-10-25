@@ -494,3 +494,16 @@ fn lathliss_pumps_dragons_before_an_open_attack() {
     assert_eq!(sim_core::engine::values::epow(&g, l), 6 + 2);
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2);
 }
+
+// ------------------------------------------------------------------ Crux of Fate (the compiled Dragon modes)
+#[test]
+fn crux_of_fate_spares_your_dragons() {
+    let mut g = tbl();
+    let gold = perm(&mut g, P0, "Goldspan Dragon");
+    let bird = perm(&mut g, P0, "Birds of Paradise");
+    let theirs = perm(&mut g, P1, "Birds of Paradise");
+    let crux = card(&g, "Crux of Fate");
+    sim_core::engine::cast::resolve(&mut g, P0, crux, &sim_core::state::Ctx::default(), "hand").unwrap();
+    assert!(g.perm(gold).on_bf, "the non-Dragon mode: the Dragon lives");
+    assert!(!g.perm(bird).on_bf && !g.perm(theirs).on_bf, "every non-Dragon creature is destroyed");
+}
