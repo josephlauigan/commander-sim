@@ -317,7 +317,15 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
     // a decision is waiting, unanswered (the bot may have answered one in flight, so wait for a queued request)
     assert!(wait_until(120, || host.get("/api/state")["pending"].is_object()
         || friend.get("/api/state")["pending"].is_object()));
-    let r = host.post("/api/save", json!({}));
+    // an answer in flight can still land between that check and the save (409: "not while the AI players play"):
+    // retry until the game is waiting
+    let mut r = host.post("/api/save", json!({}));
+    assert!(wait_until(60, || {
+        if r.status == 409 {
+            r = host.post("/api/save", json!({}));
+        }
+        r.status != 409
+    }));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let name = r.json()["name"].as_str().unwrap().to_string();
     assert!(name.contains("+seph"), "{name}");

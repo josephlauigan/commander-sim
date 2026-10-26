@@ -1062,7 +1062,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                         && !x.tapped
                         && !x.phased
                         && (!x.sick || haste_all || has_haste(g, m))
-                        && (!x.noatk || epow(g, m) >= 3) // pumped mana dorks attack
+                        && (!x.noatk || epow(g, m) >= 3 || vig_utility(g, p, m)) // pumped dorks attack (casual speed)
                         && epow(g, m) > 0
                         && !crate::impls::mine::ring_loot_decks(g, p, m)
                 })
@@ -1285,6 +1285,13 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
     pl.haste_all = false;
     pl.trample = false;
     Ok(())
+}
+
+/// --- casual speed: an outside deck's utility creature (a mana ability or an engine kept home) with vigilance
+/// attacks: attacking doesn't tap it, so it still taps for mana and blocks (Giada, Font of Hope: 2/2 flying,
+/// vigilance, lifelink, never attacked)
+fn vig_utility(g: &Game, p: PlayerId, m: PermId) -> bool {
+    !ai::is_main(g.player(p).key) && (g.perm(m).vig || kw(g, m, "vigilance"))
 }
 
 fn untap_creatures(g: &mut Game, p: PlayerId) {

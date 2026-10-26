@@ -448,6 +448,25 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     res
 }
 
+/// --- casual speed: how much better (in `evaluate` points, a rollout average) "none" must score than the best attack
+/// before an outside deck holds every attacker back. Six rollouts can't tell apart plans closer than about this: 57% of
+/// the "none" plans in 100 traced Tier 0 games won by less than half a point, often with nothing at stake (one 1/1)
+/// or unblockable damage on offer. A near tie goes to the attack, as at a casual table. JD's decks are unchanged.
+pub const HOLD_MARGIN: f64 = 1.0;
+
+/// --- casual speed: the chosen plan `best` (scores summed over `rollouts`), or the best attack when `best` is
+/// "none" and wins by less than `HOLD_MARGIN`
+pub fn attack_on_near_tie(cands: &[(PlayerId, Sym)], scores: &[f64], rollouts: f64, best: usize) -> usize {
+    if cands[best].1 != "none" {
+        return best;
+    }
+    let atk = (0..cands.len()).filter(|&k| cands[k].1 != "none").max_by(|&a, &b| scores[a].total_cmp(&scores[b]));
+    match atk {
+        Some(k) if (scores[best] - scores[k]) / rollouts < HOLD_MARGIN => k,
+        _ => best,
+    }
+}
+
 fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     let mut opps: Vec<PlayerId> = g.opps(p).collect();
     if g.player(p).key == crate::impls::garland::KEY {
@@ -483,6 +502,9 @@ fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
         if scores[k] > scores[best] {
             best = k;
         }
+    }
+    if !super::is_main(g.player(p).key) {
+        best = attack_on_near_tie(&cands, &scores, g.settings.search.rollouts as f64, best); // --- casual speed
     }
     let (d, how) = cands[best];
     crate::glog!(g, "      [{} attack plan by search: {how} at {}]", g.player(p).name, g.player(d).name);
