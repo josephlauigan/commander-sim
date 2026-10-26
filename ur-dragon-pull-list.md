@@ -88,42 +88,28 @@ Omnath isn't a legal 100 once these leave.
 - [ ] Command Tower
 - [ ] 1 Forest
 
-## From the old Godo list (16)
+## In your collection (8)
 
-The Godo list may have been a paper list, so check which of these you actually own.
+In your binder or bulk, or cards you said you have.
 
 ### Red
 
-- [ ] Chaos Warp
 - [ ] Dualcaster Mage
-- [ ] Godo, Bandit Warlord (also in bulk)
-- [ ] Imperial Recruiter
-- [ ] Jaxis, the Troublemaker
+- [ ] Gilgamesh, Master-at-Arms
+- [ ] Godo, Bandit Warlord
 - [ ] Twinflame
+
+### Multicolour
+
+- [ ] Dragonlord Ojutai
+- [ ] Nicol Bolas, the Ravager
 
 ### Colourless
 
-- [ ] Brass Squire
 - [ ] Conqueror's Flail
-- [ ] Hammer of Nazahn
-- [ ] Helm of the Host
 - [ ] Peter Parker's Camera
-- [ ] Sting, the Glinting Dagger
-- [ ] The One Ring
 
-### Lands
-
-- [ ] Ancient Tomb
-- [ ] Cavern of Souls
-- [ ] Inventors' Fair
-
-## In your binder or bulk (1)
-
-### Red
-
-- [ ] Gilgamesh, Master-at-Arms
-
-## In another of your decks (16)
+## In another of your decks (21)
 
 Pulling one of these leaves that deck short, unless you have a second copy. Galadriel and Alela are Avery's decks.
 
@@ -136,6 +122,11 @@ Pulling one of these leaves that deck short, unless you have a second copy. Gala
 
 - [ ] Cyclonic Rift (Galadriel, Sauron)
 - [ ] Force of Will (Sauron, Y'shtola)
+
+### Red
+
+- [ ] Chaos Warp (Kefka, Sauron, Veyran)
+- [ ] Imperial Recruiter (Veyran)
 
 ### Green
 
@@ -152,19 +143,21 @@ Pulling one of these leaves that deck short, unless you have a second copy. Gala
 - [ ] Swiftfoot Boots (Cloud, Karn, Sheoldred)
 - [ ] Sword of Feast and Famine (Cloud)
 - [ ] Sword of Fire and Ice (Cloud)
+- [ ] The One Ring (Karn, Sephiroth FS)
 
 ### Lands
 
+- [ ] Ancient Tomb (Karn)
 - [ ] Blood Crypt (Kefka, Sauron)
 - [ ] Breeding Pool (Tymna/Thrasios)
+- [ ] Inventors' Fair (Karn)
 - [ ] Overgrown Tomb (Sephiroth)
 - [ ] Steam Vents (Kefka, Sauron)
 - [ ] Temple Garden (Galadriel, Sephiroth)
 
-## Not found in any of your lists (17)
+## To print (21)
 
-Nicol Bolas, the Ravager and Dragonlord Ojutai are cards you said you have. Everything else here has to be found or
-bought.
+Not printed and not in any of your lists.
 
 ### White
 
@@ -176,6 +169,7 @@ bought.
 
 - [ ] Embercleave
 - [ ] Goldspan Dragon
+- [ ] Jaxis, the Troublemaker
 
 ### Green
 
@@ -183,18 +177,21 @@ bought.
 
 ### Multicolour
 
-- [ ] Dragonlord Ojutai
-- [ ] Nicol Bolas, the Ravager
 - [ ] The Ur-Dragon
 
 ### Colourless
 
+- [ ] Brass Squire
+- [ ] Hammer of Nazahn
+- [ ] Helm of the Host
 - [ ] Kaldra Compleat
 - [ ] Shadowspear
+- [ ] Sting, the Glinting Dagger
 
 ### Lands
 
 - [ ] Bloodstained Mire
+- [ ] Cavern of Souls
 - [ ] City of Brass
 - [ ] Mana Confluence
 - [ ] Sacred Foundry
