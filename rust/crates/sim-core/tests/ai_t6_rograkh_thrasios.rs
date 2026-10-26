@@ -182,3 +182,14 @@ fn a_quiet_line_mostly_held_scores_combo_progress() {
     lands(&mut g, P0, "Gaea's Cradle", 1, false);
     assert!((combo_progress(&g, P0) - 1.0).abs() < 1e-9, "{}", combo_progress(&g, P0));
 }
+
+/// Dack Fayden's quiet line is the commander alone: always "held" from the command zone, so it is no progress (it
+/// would add `combo_w` to Dack's strength in every evaluation and make Dack every seat's target)
+#[test]
+fn a_quiet_line_of_the_commander_alone_is_no_progress() {
+    use sim_core::cardcode::combo_progress;
+    let mut g = table(&["dack-fayden-white-stax", KRAUM]);
+    g.player_mut(P0).hand.clear();
+    let x = combo_progress(&g, P0);
+    assert!(x.is_finite() && x < 0.99, "{x}");
+}

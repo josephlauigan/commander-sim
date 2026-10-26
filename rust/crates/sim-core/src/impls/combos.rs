@@ -821,9 +821,12 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
     if t6 {
         have.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).cd)));
     }
-    let mut best = f64::NEG_INFINITY;
+    let mut best = 0.0f64; // --- t6 quiet progress: (was -inf) every line skipped is 0, not inf
     for i in cmbs {
         let grps = real_groups(all()[i]); // the whole list for a line that is not quiet
+        if quiet(all()[i]) && grps.len() < 2 {
+            continue; // a quiet line of the commander alone (Dack Fayden) is always "held": no progress to read
+        }
         let n = grps.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
         best = best.max(n as f64 / grps.len() as f64);
     }
