@@ -961,6 +961,16 @@ fn coralhelm(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "untap a creature or scry 1", Some(2.0))? {
         return Ok(());
     }
+    // --- casual combos (tatyova): "untap target creature" untaps a tapped Scaled Herbalist first while a land
+    // waits in hand: its {T} puts that land onto the battlefield, so each land untaps it again (the landfall chain)
+    let herbalist = |m: PermId| g.perm(m).on_bf && g.perm(m).tapped && g.perm(m).name == "Scaled Herbalist";
+    if g.player(p).hand.iter().any(|&c| g.db.get(c).land)
+        && let Some(h) = g.player(p).perms.iter().copied().find(|&m| herbalist(m) && g.is_creature(m))
+    {
+        crate::glog!(g, "    Retreat to Coralhelm untaps Scaled Herbalist");
+        g.perm_mut(h).tapped = false;
+        return Ok(());
+    }
     let tapped: Vec<PermId> = g
         .player(p)
         .perms

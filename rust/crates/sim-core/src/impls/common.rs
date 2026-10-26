@@ -938,6 +938,9 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
     }
     // an opposing Tergrid, God of Fright takes each nontoken permanent sacrificed: only tokens go
     let tergrid = g.opps(p).any(|q| crate::engine::values::has(g, q, Tag::Tergrid));
+    // --- casual combos (teysa): Teysa keeps her payoffs and loop pieces (Blood Artist, Pitiless Plunderer, her
+    // commander) out of the fodder, as JD's decks do: a fresh Blood Artist sacrificed for its own drain loses the loop
+    let keep = main || g.player(p).key == super::cc_teysa::DECK;
     let fod_for = |g: &Game, src: PermId| -> Vec<PermId> {
         g.player(p)
             .perms
@@ -949,7 +952,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
                 ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
                     || (cr && x.token && !x.phased))
                     && (!tergrid || x.token || x.cd.is_none())
-                    && (!main || (!x.is_cmd && !crate::engine::values::no_sac(g, m) && !is_payoff(g, m)))
+                    && (!keep || (!x.is_cmd && !crate::engine::values::no_sac(g, m) && !is_payoff(g, m)))
             })
             .collect()
     };
