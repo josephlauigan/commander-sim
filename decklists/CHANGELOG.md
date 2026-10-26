@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Godo, Karn, Kefka, Omnath, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
+JD's decks: Cloud, Karn, Kefka, Sauron, Sephiroth FS, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -51,7 +51,9 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ## Godo, Bandit Warlord — Mono-Red cEDH Equipment Turbo
 
-Deck file `decklists/JD/godo-cedh-equipment.md`; not in the simulator.
+Deck key `godo` (removed), `decklists/JD/godo-cedh-equipment.md` (removed).
+
+**Retired 2026-10-25: never built.** Godo, Bandit Warlord and the Helm of the Host combo went into The Ur-Dragon (`decklists/JD/ur-dragon-equipment.md`). The entries below are the deck's history.
 
 ### Changes
 
@@ -682,7 +684,9 @@ Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
 ## Omnath, Locus of Rage — Red-Green Landfall Elementals
 
-Deck key `omnath`, `decklists/JD/omnath-landfall.md`.
+Deck key `omnath` (removed), `decklists/JD/omnath-landfall.md` (removed).
+
+**Retired 2026-10-25: JD took 15 cards and a Forest for The Ur-Dragon** (`decklists/JD/ur-dragon-equipment.md`); the other 84 cards went to bulk. The entries below are the deck's history.
 
 ### Changes
 

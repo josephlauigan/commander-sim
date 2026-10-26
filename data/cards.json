@@ -64302,8 +64302,7 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "RG",
-    "pain": true
+    "c": "RG"
    },
    "pow": 0,
    "tgh": 0,
@@ -104445,41 +104444,6 @@
    "spell_prio": false
   },
   {
-   "name": "Shatterskull Smashing",
-   "types": "S",
-   "generic": 0,
-   "pips": "RR",
-   "tags": {},
-   "pow": 0,
-   "tgh": 0,
-   "bomb": 0,
-   "dsl": null,
-   "start_loyalty": null,
-   "kws": [],
-   "subtypes": [],
-   "protfrom": "",
-   "ward": 0,
-   "identity": "R",
-   "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [],
-   "derived": {
-    "cmc": 2,
-    "land": false,
-    "creature": false,
-    "instant": false,
-    "sorcery": true,
-    "perm": false
-   },
-   "phyrexian": "",
-   "land_etb_fx": [],
-   "enters_rule": null,
-   "land_types": [],
-   "basic": false,
-   "python_hooks": [],
-   "spell_prio": false
-  },
-  {
    "name": "Shatterskull Smashing // Shatterskull, the Hammer Pass",
    "types": "S",
    "generic": 0,
@@ -106323,7 +106287,7 @@
     "pow": "1",
     "tgh": "3",
     "reach": true,
-    "dork": "G",
+    "dork": "C",
     "noatk": true
    },
    "pow": 1,

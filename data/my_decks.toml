@@ -80,20 +80,6 @@ commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
 ident = "B"
 tiers = ["t5"]
 
-[godo]
-file = "JD/godo-cedh-equipment.md"
-name = "Godo"
-commander = "Godo, Bandit Warlord"
-ident = "R"
-tiers = ["t6"]
-
-[omnath]
-file = "JD/omnath-landfall.md"
-name = "Omnath"
-commander = "Omnath, Locus of Rage"
-ident = "RG"
-tiers = ["t1", "t2", "t3"]
-
 [karn]
 file = "JD/karn-colorless-artifacts.md"
 name = "Karn"
