@@ -914,6 +914,87 @@ fn refrain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Mizzix's Mastery (casual combos)
+const MASTERY: &str = "Mizzix's Mastery";
+
+/// your permanents that pay off each instant or sorcery cast (Guttersnipe, Electrostatic Field, Niv-Mizzet, token
+/// makers, Archmage Emeritus, Storm-Kiln Artist); Veyran doubles them
+fn spell_payoffs(g: &Game, p: PlayerId) -> f64 {
+    const PAY: [Tag; 5] = [Tag::Ping, Tag::Spelltok, Tag::Spelldraw, Tag::Kiln, Tag::Mystic];
+    const NAMES: [&str; 2] = ["Electrostatic Field", "Niv-Mizzet, Parun"];
+    let mut n = 0.0;
+    let mut veyran = false;
+    for &m in &g.player(p).perms {
+        let x = g.perm(m);
+        let Some(c) = x.cd.filter(|_| x.on_bf && !x.phased) else { continue };
+        let d = g.db.get(c);
+        veyran |= &*d.name == "Veyran, Voice of Duality";
+        if PAY.iter().any(|&k| d.tag(k)) || NAMES.contains(&&*d.name) {
+            n += 1.0;
+        }
+    }
+    if veyran { 2.0 * n } else { n }
+}
+
+/// instant and sorcery cards in p's graveyard the Mastery copies are worth casting
+fn mastery_pool(g: &Game, p: PlayerId) -> Vec<CardId> {
+    g.player(p).gy.iter().copied().filter(|&x| free_worth(g, p, x).is_some()).collect()
+}
+
+/// The pool AI never cast Mizzix's Mastery (its tag holds it out of the normal priorities, and only Veyran's brain
+/// offered it): overloaded ({5}{R}{R}{R}) with four or more spells to copy, or for {3}{R} on the best one. Your own
+/// decks' brains (Veyran) make this choice themselves.
+fn mastery_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) || crate::ai::is_main(g.player(p).key) || !g.player(p).hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    let pool = mastery_pool(g, p);
+    if pool.is_empty() {
+        return Ok(vec![]);
+    }
+    let pay = spell_payoffs(g, p);
+    let mut o = vec![];
+    let k = pool.len() as f64;
+    let best = pool.iter().filter_map(|&x| free_worth(g, p, x)).fold(0.0, f64::max);
+    let one = 1.0 + 0.4 * best + 0.5 * pay;
+    if pool.len() >= 4 && can_pay(g, p, 5, "RRR", false) {
+        // every copy is worth at least the one copy of the best of them
+        let u = (3.0 + 0.5 * k + 1.5 * pay).max(one + 0.5 * (k - 1.0));
+        o.push(plan(u, format!("{MASTERY} overload ({k} spells)"), mastery_go, c.0 as i64 | 1 << 32));
+    }
+    if best >= 4.0 && can_pay(g, p, 3, "R", false) {
+        o.push(plan(one, format!("{MASTERY} (one spell)"), mastery_go, c.0 as i64));
+    }
+    Ok(o)
+}
+
+fn mastery_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId((arg & 0xffff) as u16);
+    let overload = arg >> 32 != 0;
+    let (gn, pips) = if overload { (5, "RRR") } else { (3, "R") };
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, pips, false) {
+        return Ok(false);
+    }
+    pay(g, p, gn, pips, false)?;
+    cast_card(g, p, c, "hand", Ctx { overload, ..Ctx::default() })?;
+    Ok(true)
+}
+
+// ================================================================== Galvanic Iteration (casual combos)
+/// The pool decks' priority (it was 0: held forever; your decks' own priorities decide for them): with another
+/// instant or sorcery worth copying castable this turn after its {U}{R}, as Veyran's priority does.
+fn galvanic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let rest = total_mana(g, p, false) as i64 - 2;
+    let any = g.player(p).hand.iter().any(|&x| {
+        let d = g.db.get(x);
+        x != c
+            && (d.instant || d.sorcery)
+            && (d.cmc as i64) <= rest
+            && (d.tag(Tag::Draw) || d.tag(Tag::Burn) || d.tag(Tag::Rem) || [ERUPTION, TORRENT].contains(&&*d.name))
+    });
+    if any { 47 } else { 0 }
+}
+
 // ================================================================== Bloodthirsty Adversary
 const ADVERSARY: &str = "Bloodthirsty Adversary";
 
@@ -1631,5 +1712,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.as_enters = Some(as_selfpt);
     c.crew = Some(stagecoach_crew);
     c.attack = Some(stagecoach_attack);
+    // Mizzix's Mastery: the pool decks' option (casual combos)
+    r.card(db, MASTERY)?.hand_options = Some(mastery_options);
+    r.card(db, "Galvanic Iteration")?.prio = Some(galvanic_prio);
     Ok(())
 }
