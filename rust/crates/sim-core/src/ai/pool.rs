@@ -896,7 +896,7 @@ enum Scope {
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
 /// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
-const PROTECTORS: [Protector; 24] = [
+const PROTECTORS: [Protector; 23] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -925,8 +925,6 @@ const PROTECTORS: [Protector; 24] = [
     ("Lena, Selfless Champion", Where::BfSac, None, How::Indes, Scope::Creatures, false),
     // --- Tiers 1/2 (brago-meren): Ghostly Flicker blinks the creature (its second target is left out here)
     ("Ghostly Flicker", Where::Hand, Some((2, "U")), How::Blink, Scope::One, false),
-    // --- casual combos (brago): Cloudshift blinks the creature
-    ("Cloudshift", Where::Hand, Some((0, "W")), How::Blink, Scope::One, false),
 ];
 
 const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];

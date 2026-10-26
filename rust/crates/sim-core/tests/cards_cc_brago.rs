@@ -166,18 +166,17 @@ fn kitten_line_casts_agent_from_hand_with_the_loops_mana() {
 }
 
 // ------------------------------------------------------------------ Cloudshift
-fn cloudshift_prio(g: &Game) -> i32 {
-    let c = card(g, "Cloudshift");
-    (g.registry.get(c).unwrap().prio.unwrap())(g, P0, c)
+fn held_back(g: &Game) -> bool {
+    sim_core::impls::cc_brago::hold(g, P0, card(g, "Cloudshift"))
 }
 
 #[test]
 fn cloudshift_needs_a_creature_worth_blinking() {
     let mut g = brago();
     hand(&mut g, P0, &["Cloudshift"]);
-    assert_eq!(cloudshift_prio(&g), 0, "no target: not cast");
+    assert!(held_back(&g), "no target: not cast");
     perm(&mut g, P0, "Mulldrifter");
-    assert!(cloudshift_prio(&g) > 0, "Mulldrifter draws two again");
+    assert!(!held_back(&g), "Mulldrifter draws two again");
 }
 
 #[test]
@@ -186,5 +185,12 @@ fn cloudshift_is_kept_for_the_kitten_loop() {
     hand(&mut g, P0, &["Cloudshift", "Archaeomancer"]);
     perm(&mut g, P0, "Mulldrifter");
     perm(&mut g, P0, "Displacer Kitten");
-    assert_eq!(cloudshift_prio(&g), 0);
+    assert!(held_back(&g));
+}
+
+#[test]
+fn other_decks_cloudshift_is_left_alone() {
+    let mut g = table(&["seph", BRAGO]);
+    hand(&mut g, P0, &["Cloudshift"]);
+    assert!(!held_back(&g));
 }

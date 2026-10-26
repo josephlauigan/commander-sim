@@ -197,7 +197,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t12_tatyova_teysa::register(&mut r, db)?; // --- Tiers 1/2 (tatyova-teysa)
     t12_kaalia_sythis::register(&mut r, db)?; // --- Tiers 1/2 (kaalia-sythis)
     t12_brago_meren::register(&mut r, db)?; // --- Tiers 1/2 (brago-meren)
-    cc_brago::register(&mut r, db)?; // --- casual combos (brago)
     t45_miirym::register(&mut r, db)?; // --- Tiers 4/5 (miirym)
     Ok(r)
 }

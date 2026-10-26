@@ -16,15 +16,14 @@
 //! Agent. The line has three answer windows: the flicker spell that starts it (counters), the Agent's cast (counters,
 //! when it is cast), and each opponent's one try at instant-speed removal on a piece.
 
-use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::flow::Res;
-use crate::hooks::Registry;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready, Step, StepKind, no_src};
 use crate::state::{Ctx, Game};
 
+const DECK: &str = "brago-azorius-blink-control";
 const AGENT: &str = "Agent of Treachery";
 const ARCH: &str = "Archaeomancer";
 const DRAKE: &str = "Peregrine Drake";
@@ -269,11 +268,11 @@ fn around(g: &Game, p: PlayerId, name: &str) -> bool {
 
 /// Cloudshift ({W}, exile target creature you control, then return it): a plain spell only on a creature whose enter
 /// effect is worth repeating (it needs a target: it used to be cast on an empty board), and kept for the loop while
-/// Displacer Kitten and Archaeomancer are both in hand or on the battlefield. It is also protection
-/// (ai/pool.rs PROTECTORS).
-fn cloudshift_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+/// Displacer Kitten and Archaeomancer are both in hand or on the battlefield. (the brago deck only:
+/// `hold`, read by ai/brain.rs)
+fn cloudshift_hold(g: &Game, p: PlayerId) -> bool {
     if around(g, p, KITTEN) && around(g, p, ARCH) {
-        return 0;
+        return true;
     }
     let best = g
         .player(p)
@@ -283,10 +282,10 @@ fn cloudshift_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
         .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).orig == p && g.is_creature(m))
         .map(|m| crate::impls::mine::blink_worth(g, p, m))
         .fold(0.0, f64::max);
-    if best >= 3.0 { 40 } else { 0 }
+    best < 3.0
 }
 
-pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
-    r.card(db, CLOUDSHIFT)?.prio = Some(cloudshift_prio);
-    Ok(())
+/// ai/brain.rs card_utility: the brago deck keeps c in hand for now
+pub fn hold(g: &Game, p: PlayerId, c: CardId) -> bool {
+    g.player(p).key == DECK && named(g, c, CLOUDSHIFT) && cloudshift_hold(g, p)
 }
