@@ -622,3 +622,20 @@ fn plan_a_with_training_grounds_needs_five_creatures() {
     go(&mut g, PLAN_A);
     assert_eq!(g.winner, Some(P0));
 }
+
+/// the speed measurement sees a quiet line one tutor away: Snap in hand, Eternal Witness in the library, Green
+/// Sun's Zenith in hand
+#[test]
+fn a_quiet_line_one_tutor_away_is_measured() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    to_library(&mut g, P0, "Eternal Witness");
+    hand(&mut g, P0, &["Green Sun's Zenith"]);
+    assert!(!ready(&g, PLAN_B));
+    g.player_mut(P0).t6 = true;
+    combos::combo_options(&mut g, P0, 0.0, Some(true)).unwrap();
+    let st = &g.player(P0).stats;
+    let keys: Vec<String> = st.keys().map(|k| k.to_string()).collect();
+    assert!(st.contains_key(&intern("sp|reach")), "one tutor away was marked: {keys:?}");
+    assert!(!st.contains_key(&intern("sp|ready")));
+}
