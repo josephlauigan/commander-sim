@@ -2,13 +2,12 @@
 //! cards' Oracle text.
 
 use sim_core::hooks::{Action, Opt};
-use sim_core::ids::PlayerId;
+use sim_core::ids::{PermId, PlayerId};
 use sim_core::impls::{combos, t3_lines};
-use sim_core::state::{Game, Step};
+use sim_core::state::Game;
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
-const P1: PlayerId = PlayerId(1);
 const AURELIA: &str = "aurelia-boros-extra-combats";
 const KORVOLD: &str = "korvold-jund-sacrifice";
 const MARWYN: &str = "marwyn-mono-green-elves";
@@ -31,51 +30,59 @@ fn idx(part: &str) -> usize {
     combos::combo_index(part).unwrap_or_else(|| panic!("no combo named like {part:?}"))
 }
 
-// ======================================================== Helm of the Host + Aurelia / Combat Celebrant
+// ======================================================== Helm of the Host on Aurelia / Combat Celebrant
+fn helm_opts(g: &mut Game, helm: PermId, post: Option<bool>) -> Vec<Opt> {
+    let c = g.perm(helm).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, helm, P0, post).unwrap()
+}
+
 #[test]
-fn helm_and_aurelia_are_ready_with_the_equip_paid_for() {
+fn aurelia_puts_helm_of_the_host_on_aurelia_before_combat() {
     let mut g = tbl(AURELIA);
-    let i = idx("Helm of the Host + Aurelia");
     let helm = perm(&mut g, P0, "Helm of the Host");
+    let valk = perm(&mut g, P0, "Youthful Valkyrie");
     let aurelia = perm(&mut g, P0, "Aurelia, the Warleader");
+    g.perm_mut(helm).attached = Some(valk);
     lands(&mut g, P0, "Plains", 4, false);
-    assert!(!combos::ready(&g, P0, i), "four mana: no equip {{5}}");
+    assert!(helm_opts(&mut g, helm, Some(false)).is_empty(), "four mana: no equip {{5}}");
     lands(&mut g, P0, "Plains", 1, false);
-    assert!(combos::ready(&g, P0, i), "Helm + Aurelia with five mana for the equip");
-    g.step = Step::Main2;
-    assert!(!combos::ready(&g, P0, i), "after combat: the copy comes at the beginning of combat");
-    g.step = Step::Main1;
-    g.active = Some(P1);
-    assert!(!combos::ready(&g, P0, i), "only on its own turn");
-    g.active = Some(P0);
-    // already on Aurelia: no mana needed
-    for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = true;
+    let o = helm_opts(&mut g, helm, Some(false));
+    assert_eq!(o.len(), 1);
+    match o[0].act {
+        Some(Action::Equip { target, n, .. }) => assert_eq!((target, n), (aurelia, 5)),
+        _ => panic!("expected an equip"),
     }
+    assert!(helm_opts(&mut g, helm, Some(true)).is_empty(), "after combat the copy is a turn away");
     g.perm_mut(helm).attached = Some(aurelia);
-    assert!(combos::ready(&g, P0, i), "Helm already on Aurelia");
+    assert!(helm_opts(&mut g, helm, Some(false)).is_empty(), "already on Aurelia");
 }
 
 #[test]
-fn helm_line_equips_aurelia_and_wins() {
+fn helm_goes_on_combat_celebrant_without_aurelia_and_only_for_the_aurelia_deck() {
     let mut g = tbl(AURELIA);
-    let i = idx("Helm of the Host + Aurelia");
+    let helm = perm(&mut g, P0, "Helm of the Host");
+    let cel = perm(&mut g, P0, "Combat Celebrant");
+    lands(&mut g, P0, "Plains", 5, false);
+    let o = helm_opts(&mut g, helm, Some(false));
+    assert!(matches!(o[0].act, Some(Action::Equip { target, .. }) if target == cel));
+    g.player_mut(P0).key = "korvold-jund-sacrifice";
+    assert!(helm_opts(&mut g, helm, Some(false)).is_empty());
+}
+
+#[test]
+fn helm_on_aurelia_makes_a_combat_per_copy() {
+    // the engine's own line: each hasty copy of Aurelia attacks for the first time and adds a combat
+    let mut g = tbl(AURELIA);
     let helm = perm(&mut g, P0, "Helm of the Host");
     let aurelia = perm(&mut g, P0, "Aurelia, the Warleader");
-    lands(&mut g, P0, "Plains", 5, false);
-    assert!(combos::attempt(&mut g, P0, i as i64).unwrap());
-    assert_eq!(g.perm(helm).attached, Some(aurelia), "the line's first step is the equip");
-    assert!(g.over && g.winner == Some(P0), "unbounded combats: p wins");
-}
-
-#[test]
-fn helm_also_goes_on_combat_celebrant() {
-    let mut g = tbl(AURELIA);
-    let i = idx("Helm of the Host + Aurelia");
-    perm(&mut g, P0, "Helm of the Host");
-    perm(&mut g, P0, "Combat Celebrant");
-    lands(&mut g, P0, "Plains", 5, false);
-    assert!(combos::ready(&g, P0, i));
+    g.perm_mut(helm).attached = Some(aurelia);
+    for q in 1..4 {
+        g.players[q].life = 200;
+    }
+    sim_core::engine::combat::combat(&mut g, P0).unwrap();
+    let copies = g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).token).count();
+    assert!(copies >= 5, "{copies} copies: one per combat, the combats keep coming");
 }
 
 // ======================================================== Chatterfang + Pitiless Plunderer

@@ -2,11 +2,6 @@
 //! cards already in the pool lists (decklists/pool/t3-high-b3/), checked against their Oracle text.
 //!
 //! Combos (chained into `combos::all()`):
-//! - **Helm of the Host + Aurelia, the Warleader / Combat Celebrant** (Aurelia): at the beginning of combat Helm makes
-//!   a hasty, nonlegendary token copy of the equipped creature. An Aurelia copy's first attack untaps the team and adds
-//!   a combat; a Celebrant copy exerts for the same. Each new combat makes a new copy: unbounded combats. The base
-//!   catalogue had only Celebrant with the Helm already on it; Aurelia is the commander, and the line now pays the
-//!   equip ({5}) as its first step.
 //! - **Chatterfang + Pitiless Plunderer + a sacrifice outlet + a death payoff** (Korvold): a creature dies, Plunderer
 //!   makes a Treasure, Chatterfang adds a Squirrel; sacrifice the Squirrel and it repeats. Goblin Bombardment is both
 //!   the outlet and the payoff. With Korvold out each sacrifice also draws a card (not optional), so the loop must kill
@@ -14,6 +9,13 @@
 //! - **Staff of Domination + an Elf that taps for five or more + a finisher** (Marwyn): tap the Elf, {3}: untap it,
 //!   {1}: untap the Staff, net mana each time; with unbounded mana the Staff's {5}: draw finds Ezuri, Finale of
 //!   Devastation or Craterhoof Behemoth.
+//!
+//! Helm of the Host + Aurelia, the Warleader (or Combat Celebrant) is a line the engine plays itself: at the
+//! beginning of combat Helm makes a hasty, nonlegendary copy of the equipped creature, whose first attack (or exert)
+//! adds a combat, which makes another copy. The generic equip choice put Helm on any flier; the Aurelia deck now puts
+//! it on Aurelia before combat (`helm_options`). It is not a catalogued combo: the combats are played out, and the
+//! win is a combat win, as players log it (a catalogued line in a first version made Aurelia's wins 60% "combo"
+//! against Playgroup's 4%).
 //!
 //! Cards the Aurelia deck never played (no priority, no equip, its activation was Sauron's alone):
 //! - **Sword of Feast and Famine**: cast and equipped (its combat damage untapping the lands is the engine's).
@@ -24,12 +26,12 @@
 
 use crate::cards::CardDb;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::{ability_window, equip_to};
+use crate::engine::stack::ability_window;
 use crate::engine::values::{epow, has_type, stopped};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::impls::combos::{Combo, Ready, Step, StepKind, done, no_keys, no_src};
+use crate::impls::combos::{Combo, Ready};
 use crate::state::{Game, Step as TurnStep};
 use crate::tag::Tag;
 
@@ -107,11 +109,7 @@ fn dork_mana(g: &Game, p: PlayerId, m: PermId) -> u32 {
     crate::cardcode::dyn_mana_perm(g, p, m).unwrap_or(1)
 }
 
-const fn step(label: &'static str, kind: StepKind, run: fn(&mut Game, PlayerId) -> Res<bool>) -> Step {
-    Step { label, kind, src: no_src, pay: (0, ""), run, keys: no_keys }
-}
-
-// ================================================================== Helm of the Host + Aurelia / Combat Celebrant
+// ================================================================== Helm of the Host on Aurelia / Combat Celebrant
 /// the creature Helm goes on: the one it is on already, else Aurelia, else Combat Celebrant; and the equip cost left
 fn helm_host(g: &Game, p: PlayerId) -> Option<(PermId, PermId, u32)> {
     let helm = on_bf(g, p, HELM)?;
@@ -130,60 +128,25 @@ fn helm_host(g: &Game, p: PlayerId) -> Option<(PermId, PermId, u32)> {
     Some((helm, h, crate::impls::cloud::equip_cost(g, p, helm, h, 5)))
 }
 
-/// before combat on p's turn: Helm of the Host and Aurelia or Combat Celebrant, with the equip paid for if Helm is
-/// elsewhere
-fn helm_ready(g: &Game, p: PlayerId) -> Ready {
-    if !precombat(g, p) {
-        return NOT_READY();
+/// The Aurelia deck puts Helm of the Host on Aurelia (else Combat Celebrant) before combat: each combat's hasty copy
+/// attacks for the first time (or exerts) and adds another combat, which makes another copy. The engine plays the
+/// combats out (its cap is 200 phases), so the win is a combat win, as players log it (Playgroup: Aurelia's wins are
+/// 69% combat, 21% commander damage, 4% combo). Helm already on Celebrant is `combos::BASE`'s line. The generic equip
+/// choice (flying, power) put it on any creature.
+fn helm_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false) || !aurelia(g, p) || g.perm(src).owner != p || !live(g, src) || g.player(p).combat_no > 0 {
+        return Ok(vec![]);
     }
-    let Some((helm, host, cost)) = helm_host(g, p) else { return NOT_READY() };
-    if cost > 0 && !can_pay(g, p, cost, "", false) {
-        return NOT_READY();
+    let Some((helm, host, cost)) = helm_host(g, p) else { return Ok(vec![]) };
+    if helm != src || cost == 0 && g.perm(helm).attached == Some(host) || !can_pay(g, p, cost, "", false) {
+        return Ok(vec![]);
     }
-    (true, vec![helm, host], vec![])
+    Ok(vec![Opt {
+        utility: 9.0,
+        label: format!("equip {HELM} to {}", g.perm(host).name),
+        act: Some(Action::Equip { src, target: host, n: cost }),
+    }])
 }
-
-fn helm_src(g: &Game, p: PlayerId) -> Option<PermId> {
-    on_bf(g, p, HELM)
-}
-
-fn helm_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
-    helm_host(g, p).map_or(vec![], |(h, m, _)| vec![h, m])
-}
-
-/// equip Helm to its host (an activated ability: it can be answered); already on: nothing to do
-fn equip_helm(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some((helm, host, cost)) = helm_host(g, p) else { return Ok(false) };
-    if g.perm(helm).attached == Some(host) {
-        return Ok(true);
-    }
-    if !can_pay(g, p, cost, "", false) {
-        return Ok(false);
-    }
-    crate::glog!(g, "    {} equips {HELM} to {}", g.player(p).name, g.perm(host).name);
-    equip_to(g, p, helm, host, cost)?;
-    Ok(g.perm(helm).on_bf && g.perm(host).on_bf && g.perm(helm).attached == Some(host))
-}
-
-const HELM_STEPS: [Step; 3] = [
-    step("equip Helm of the Host", StepKind::Engine, equip_helm),
-    Step {
-        label: "Helm of the Host makes a hasty token copy at the beginning of combat",
-        kind: StepKind::Trigger,
-        src: helm_src,
-        pay: (0, ""),
-        run: done,
-        keys: no_keys,
-    },
-    Step {
-        label: "Helm and its host stay: each new copy's attack adds a combat",
-        kind: StepKind::Permanent,
-        src: no_src,
-        pay: (0, ""),
-        run: done,
-        keys: helm_keys,
-    },
-];
 
 // ================================================================== Chatterfang + Pitiless Plunderer
 /// the loop's damage per Squirrel sacrificed: (each-opponent payoffs, one-target payoffs)
@@ -287,16 +250,7 @@ fn staff_ready(g: &Game, p: PlayerId) -> Ready {
     (true, vec![staff, dork], vec![])
 }
 
-pub static COMBOS: [Combo; 3] = [
-    Combo {
-        name: "Helm of the Host + Aurelia, the Warleader / Combat Celebrant (equipped now)",
-        groups: &[&[HELM], &[AURELIA, CELEBRANT]],
-        ready: helm_ready,
-        mana: (0, ""),
-        finish: None,
-        xcost: &[],
-        steps: &HELM_STEPS,
-    },
+pub static COMBOS: [Combo; 2] = [
     Combo {
         name: "Chatterfang + Pitiless Plunderer + a sacrifice outlet + a death payoff",
         groups: &[
@@ -424,6 +378,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     }
     if db.id(ASSAULT).is_some() {
         r.card(db, ASSAULT)?.prio = Some(assault_prio);
+    }
+    if db.id(HELM).is_some() {
+        r.card(db, HELM)?.options = Some(helm_options); // its combat_start is t3.rs's
     }
     Ok(())
 }
