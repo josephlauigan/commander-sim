@@ -13,7 +13,7 @@ to trigger counters on Godo, and to fast combo that wins before turn 5.
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10, five colours) |
 | **Bracket** | 4 (14 Game Changers; a two-card infinite combo) |
-| **Simulator** | Not wired in yet (Eminence and The Ur-Dragon's attack trigger aren't modeled) |
+| **Simulator** | Not wired in yet. Eminence and The Ur-Dragon's attack trigger are modeled in PR #139 (`impls/t45_urdragon.rs`); build on that when adding the deck key. |
 
 ## Strategy
 
