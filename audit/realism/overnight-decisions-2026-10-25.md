@@ -57,3 +57,7 @@ Newest at the bottom.
     - I accepted widening one practice test from 24 to 48 seeds (the Tymna recast). It's seed-sensitive, not broken.
     
     For you: Tergrid rose to 39.1%, and Atraxa and Tergrid still have no combo wins against Playgroup's 13-25%.
+13. **Ertai/Tataru bug: PR #148 (against main), fixed myself.** The cause was general: the trigger probe, which runs
+    when anyone holds an ability answer, used up `once_per_turn`. I fixed `once_per_turn` itself rather than Tataru
+    alone, so all 47 callers are covered. The full suite passes. I didn't run a scorecard for it, since it's a rules
+    fix.
