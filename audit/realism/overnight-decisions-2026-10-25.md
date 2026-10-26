@@ -64,3 +64,7 @@ Newest at the bottom.
 14. **Korvold Skeleton loop: added to #147.** The old catalogued loop ignored Korvold's forced draws; it now
     checks them like the Chatterfang line (two draws a pass). The full suite passes. The Tier 3 scorecard is unchanged
     (combo/alt 16.4%, passes).
+15. **Sword of the Animist: added to #147.** Aurelia now casts and equips it. On the rescore, combo/alt still passes.
+    The pass count shows 1 of 9, down from 3, because seat 1 and seat 3 moved under a point (inside noise) across
+    their ±1-point band edges. **For you:** the seat bands (±1 point) are tighter than 4,000 games can resolve; the
+    95% CI is about ±1.4. You may want to widen them or run more games for seat rows. I didn't change the targets.
