@@ -384,14 +384,19 @@ pub fn silenced(g: &Game, q: PlayerId) -> bool {
     })
 }
 
-/// true the first time p asks for `key` this turn (Python's `once_per_turn`)
+/// true the first time p asks for `key` this turn (Python's `once_per_turn`). A trigger probe (`resolve_batch` asking
+/// which hooks really trigger, `g.trig_probe`) only reads the flag: setting it there used up the turn's one trigger
+/// before the real call (Tataru Taru made no Treasure whenever anyone, its owner too, held Ertai Resurrected)
 pub fn once_per_turn(g: &mut Game, p: PlayerId, key: Sym) -> bool {
     let stamp = g.turn_stamp();
+    let probe = g.trig_probe;
     let pl = g.player_mut(p);
     if pl.flag_turn.get(key) == Some(&stamp) {
         return false;
     }
-    pl.flag_turn.insert(key, stamp);
+    if !probe {
+        pl.flag_turn.insert(key, stamp);
+    }
     true
 }
 

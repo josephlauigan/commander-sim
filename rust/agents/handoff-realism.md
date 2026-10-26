@@ -181,7 +181,8 @@ per-commander win rates.
    (Playgroup's commander pages pool upgraded builds), not missing lines.
 5. **Make a target miss fail the nightly job**, once the Tier 6 gate passes.
 6. **Older items:**
-   - the Ertai/Tataru bug (`#[ignore]`d test `tataru_with_ertai_in_hand`);
+   - the Ertai/Tataru bug: fixed on branch `ertai-tataru` (a trigger probe used up `once_per_turn`; the test also had
+     Ertai at the bottom of the library);
    - the stale tier summary in `CLAUDE.md`, left for JD;
    - the `yshtola-cedh` branch, kept separate.
 

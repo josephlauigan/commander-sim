@@ -170,17 +170,15 @@ fn scions_secretary_once_a_turn_and_not_on_their_own_turn() {
     let _ = t;
 }
 
-/// Open (2026-10-24, rust/agents/overnight-2026-10-24.md): with Ertai Resurrected in its owner's hand, that player's
-/// Tataru Taru makes no Treasure when an opponent draws off their turn. ertai_answer refuses to counter its owner's own
-/// triggers, so the Treasure should come. Found when the scions test drew Ertai off Sisay's shuffled library.
+/// With Ertai Resurrected in its owner's hand, Tataru Taru still makes its Treasure when an opponent draws off their
+/// turn. (Fixed 2026-10-26: the trigger probe that runs when anyone holds an ability answer used up `once_per_turn`.)
 #[test]
-#[ignore = "open bug: Ertai in its owner's hand stops that player's Tataru Treasure"]
 fn tataru_with_ertai_in_hand() {
     let mut g = tbl();
     for i in 0..4 {
         set_library(&mut g, PlayerId(i), &["Plains"; 6]);
     }
-    set_library(&mut g, P0, &["Ertai Resurrected", "Plains", "Plains"]); // Tataru's own draw takes Ertai
+    set_library(&mut g, P0, &["Plains", "Plains", "Ertai Resurrected"]); // the top is last: Tataru's draw takes Ertai
     perm(&mut g, P0, "Tataru Taru");
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Ertai Resurrected"));
