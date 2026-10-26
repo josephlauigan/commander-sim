@@ -281,10 +281,9 @@ fn cloudshift_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
         .iter()
         .copied()
         .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).orig == p && g.is_creature(m))
-        .map(|m| crate::impls::t2::blink_value(g, p, m))
-        .max()
-        .unwrap_or(0);
-    if best >= 3 { 40 } else { 0 }
+        .map(|m| crate::impls::mine::blink_worth(g, p, m))
+        .fold(0.0, f64::max);
+    if best >= 3.0 { 40 } else { 0 }
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
