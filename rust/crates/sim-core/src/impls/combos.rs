@@ -115,6 +115,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t12_windgrace::COMBOS.iter()) // --- Tiers 1/2 (windgrace)
             .chain(super::t12_brago_meren::COMBOS.iter()) // --- Tiers 1/2 (brago-meren)
             .chain(super::t45_miirym::COMBOS.iter()) // --- Tiers 4/5 (miirym)
+            .chain(super::cc_brago::COMBOS.iter()) // --- casual combos (brago)
             .collect()
     });
     &ALL

@@ -367,7 +367,7 @@ fn peregrine_drake_archaeomancer_and_ghostly_flicker_is_a_combo() {
     perm(&mut g, P0, "Peregrine Drake");
     perm(&mut g, P0, "Archaeomancer");
     perm(&mut g, P0, "Agent of Treachery");
-    lands(&mut g, P0, "Island", 3, false);
+    lands(&mut g, P0, "Island", 4, false); // --- casual combos (brago): three lands only pay for Flicker
     assert!(!combo_ready(&g, P0, part), "Ghostly Flicker is needed in hand");
     hand(&mut g, P0, &["Ghostly Flicker"]);
     assert!(combo_ready(&g, P0, part));
