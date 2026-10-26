@@ -623,14 +623,14 @@ fn plan_a_with_training_grounds_needs_five_creatures() {
     assert_eq!(g.winner, Some(P0));
 }
 
-/// the speed measurement sees a quiet line one tutor away: Snap in hand, Eternal Witness in the library, Green
-/// Sun's Zenith in hand
+/// the speed measurement sees a quiet line one tutor away: Snap in hand, Eternal Witness in the library,
+/// Finale of Devastation in hand (a tutor the line itself does not use)
 #[test]
 fn a_quiet_line_one_tutor_away_is_measured() {
     let mut g = tbl(ROG);
     plan_b_board(&mut g);
     to_library(&mut g, P0, "Eternal Witness");
-    hand(&mut g, P0, &["Green Sun's Zenith"]);
+    hand(&mut g, P0, &["Finale of Devastation"]);
     assert!(!ready(&g, PLAN_B));
     g.player_mut(P0).t6 = true;
     combos::combo_options(&mut g, P0, 0.0, Some(true)).unwrap();
@@ -638,4 +638,39 @@ fn a_quiet_line_one_tutor_away_is_measured() {
     let keys: Vec<String> = st.keys().map(|k| k.to_string()).collect();
     assert!(st.contains_key(&intern("sp|reach")), "one tutor away was marked: {keys:?}");
     assert!(!st.contains_key(&intern("sp|ready")));
+}
+
+/// Green Sun's Zenith for X = 3 puts Eternal Witness in (SPEC scenario 19's chain): line B with Witness in the library
+#[test]
+fn green_suns_zenith_puts_witness_in_for_line_b() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    to_library(&mut g, P0, "Eternal Witness");
+    assert!(!ready(&g, PLAN_B), "no Witness and no tutor");
+    let gsz = hand(&mut g, P0, &["Green Sun's Zenith"])[0];
+    lands(&mut g, P0, "Forest", 2, false);
+    assert!(ready(&g, PLAN_B), "GSZ (4) and Snap (2) are paid first");
+    go(&mut g, PLAN_B);
+    assert_eq!(g.winner, Some(P0));
+    assert!(!g.player(P0).gy.contains(&gsz), "Green Sun's Zenith shuffles itself back");
+}
+
+/// Chord of Calling for X = 2 puts Oboro in; Green Sun's Zenith can't (Oboro is blue)
+#[test]
+fn chord_of_calling_puts_oboro_in_for_plan_a_and_gsz_does_not() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let oboro = on_bf(&g, P0, "Oboro Breezecaller").unwrap();
+    sim_core::engine::zones::die(&mut g, oboro, "destroy").unwrap();
+    let ob = card(&g, "Oboro Breezecaller");
+    g.player_mut(P0).gy.retain(|&c| c != ob);
+    to_library(&mut g, P0, "Oboro Breezecaller");
+    lands(&mut g, P0, "Forest", 5, false);
+    hand(&mut g, P0, &["Green Sun's Zenith"]);
+    assert!(!ready(&g, PLAN_A), "Green Sun's Zenith finds green creatures only");
+    hand(&mut g, P0, &["Chord of Calling"]);
+    assert!(ready(&g, PLAN_A), "Chord of Calling X = 2 finds Oboro");
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+    assert!(on_bf(&g, P0, "Oboro Breezecaller").is_some());
 }

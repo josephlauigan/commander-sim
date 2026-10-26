@@ -889,22 +889,94 @@ fn gates_in_reach(g: &Game, p: PlayerId) -> bool {
     land_on_bf(g, p, GATES).is_some() || hand_card(g, p, &[GATES]).is_some()
 }
 
-fn plan_a(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+// --- t6 rograkh-thrasios: the creature tutors as a step of the line. Oracle: Green Sun's Zenith {X}{G} (a green
+// creature, MV X or less, onto the battlefield; GSZ shuffles itself back), Nature's Rhythm {X}{G}{G} and Chord of
+// Calling {X}{G}{G}{G} (any creature), Invasion of Ikoria {X}{G}{G} (a non-Human creature). Finale is left out: it is
+// the finisher.
+const NATURES_RHYTHM: &str = "Nature's Rhythm";
+const CHORD: &str = "Chord of Calling";
+const INVASION: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
+/// (tutor, finds a non-green creature, finds a Human)
+const X_TUTORS: [(&str, bool, bool); 4] =
+    [(GSZ, false, true), (NATURES_RHYTHM, true, true), (CHORD, true, true), (INVASION, true, false)];
+
+/// a tutor in hand that puts `piece` (in the library) onto the battlefield, and its whole cost with X = the piece's
+/// mana value: (tutor, generic, pips)
+fn x_tutor(g: &Game, p: PlayerId, piece: &str) -> Option<(CardId, u32, String)> {
+    let c = lib_card(g, p, piece)?;
+    let d = g.db.get(c);
+    let (green, human) = (d.pips.contains('G'), d.has_subtype("human"));
+    X_TUTORS.iter().find_map(|&(t, any, humans)| {
+        if (!any && !green) || (!humans && human) {
+            return None;
+        }
+        let tc = hand_card(g, p, &[t])?;
+        if !castable(g, p, tc, "hand") {
+            return None;
+        }
+        let (gn, pips) = cost_of(g, p, tc);
+        Some((tc, gn + d.cmc, pips))
+    })
+}
+
+/// cast the tutor for `piece` (X paid, a normal counter window) and put the piece onto the battlefield
+fn tutor_onto_bf(g: &mut Game, p: PlayerId, piece: &str) -> Res<bool> {
+    let Some((t, gn, pips)) = x_tutor(g, p, piece) else { return Ok(false) };
+    if !can_pay(g, p, gn, &pips, false) {
+        return Ok(false);
+    }
+    let x = gn - cost_of(g, p, t).0;
+    pay(g, p, x, "", false)?;
+    if !cast_abstract(g, p, t, false)? {
+        return Ok(false);
+    }
+    if cname(g, t) == GSZ {
+        let pl = g.player_mut(p);
+        pl.gy.retain(|&c| c != t);
+        pl.library.push(t);
+        crate::engine::tutors::shuffle_library(g, p);
+    }
+    let Some(c) = lib_card(g, p, piece) else { return Ok(false) };
+    g.player_mut(p).library.retain(|&x| x != c);
+    crate::glog!(g, "    {} puts {} onto the battlefield", cname(g, t), piece);
+    crate::engine::zones::enter(g, p, c, crate::engine::zones::Enter::default())?;
+    Ok(bf(g, p, piece).is_some())
+}
+
+/// how line A gets Oboro: out, cast from hand, or put in by a tutor
+enum Piece {
+    Out,
+    Cast(CardId),
+    Tutor(u32, String),
+}
+
+/// Oboro and the mana for the loop's first turn: (how Oboro comes, the extra mana besides a cast from hand)
+fn plan_a(g: &Game, p: PlayerId) -> Option<(Piece, Vec<CardId>)> {
     land_on_bf(g, p, CRADLE)?;
     if !gates_in_reach(g, p) || finisher(g, p).is_none() {
         return None;
     }
-    let mut casts = vec![];
-    if bf(g, p, OBORO).is_none() {
-        casts.push(hand_card(g, p, &[OBORO])?);
-    }
+    let oboro = if bf(g, p, OBORO).is_some() {
+        Piece::Out
+    } else if let Some(c) = hand_card(g, p, &[OBORO]) {
+        Piece::Cast(c)
+    } else {
+        let (_, gn, pips) = x_tutor(g, p, OBORO)?;
+        Piece::Tutor(gn, pips)
+    };
     // Cradle at 6: 6 + Gates 1 in, {2} (Oboro) + {4} (Gates back from hand) out; Training Grounds or Biomancer's
     // Familiar make Oboro's ability {1}, so Cradle at 5 is enough
     let need = super::t6_green1::creature_ability_cost(g, p, 2) as usize + 4;
-    if creatures(g, p) + casts.len() < need || !affordable(g, p, &casts, need as u32) {
+    let casts: Vec<CardId> = if let Piece::Cast(c) = oboro { vec![c] } else { vec![] };
+    let coming = usize::from(!matches!(oboro, Piece::Out));
+    let ok = match &oboro {
+        Piece::Tutor(gn, pips) => can_pay(g, p, gn + need as u32, pips, false),
+        _ => affordable(g, p, &casts, need as u32),
+    };
+    if creatures(g, p) + coming < need || !ok {
         return None;
     }
-    Some(casts)
+    Some((oboro, casts))
 }
 
 fn ready_plan_a(g: &Game, p: PlayerId) -> Ready {
@@ -912,9 +984,12 @@ fn ready_plan_a(g: &Game, p: PlayerId) -> Ready {
 }
 
 fn cast_oboro(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(plan) = plan_a(g, p) else { return Ok(false) };
-    let Some(&c) = plan.first() else { return Ok(true) };
-    cast_named(g, p, c)
+    match plan_a(g, p) {
+        None => Ok(false),
+        Some((Piece::Out, _)) => Ok(true),
+        Some((Piece::Cast(c), _)) => cast_named(g, p, c),
+        Some((Piece::Tutor(..), _)) => tutor_onto_bf(g, p, OBORO),
+    }
 }
 
 fn a_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
@@ -961,49 +1036,54 @@ fn gy_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
     g.player(p).gy.iter().copied().find(|&c| cname(g, c) == name)
 }
 
-/// the loop starts from any of three states: Witness and Snap in hand; Witness in hand and Snap in the graveyard
-/// (Witness's enter trigger returns Snap); Witness on the battlefield and Snap in hand (Snap it first, recast it).
-/// The cards still to cast from hand are returned.
+/// the loop starts with Witness in hand, on the battlefield (Snap it first, recast it) or in the library with a
+/// creature tutor in hand (Green Sun's Zenith, Nature's Rhythm, Chord of Calling put it in), and Snap in hand or in
+/// the graveyard (Witness's enter trigger returns it; not with Witness already out). The cards still to cast from
+/// hand are returned.
 fn plan_b(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     land_on_bf(g, p, CRADLE)?;
     let (w, s) = (hand_card(g, p, &[WITNESS]), hand_card(g, p, &[SNAP]));
     let w_out = bf(g, p, WITNESS).and_then(|m| g.perm(m).cd);
-    let casts = match (w, s) {
-        (Some(w), Some(s)) => vec![w, s],
-        (Some(w), None) => {
-            gy_card(g, p, SNAP)?;
-            vec![w]
-        }
-        (None, Some(s)) => {
-            w_out?;
-            vec![s]
-        }
-        (None, None) => return None,
-    };
-    // Cradle at 5 + a {U} land in, Witness {1}{G}{G} + Snap {1}{U} out, Snap untaps two lands: +1 a cycle. A Witness
-    // already out is bounced by the loop, so it does not count for Cradle
-    let wc = w.or(w_out)?;
-    let sc = s.or_else(|| gy_card(g, p, SNAP))?;
-    let feeders = creatures(g, p) - usize::from(w_out.is_some() && w.is_none());
-    if feeders < 5 || finisher(g, p).is_none() || !affordable(g, p, &[wc, sc], 0) {
+    let tutor = if w.is_none() && w_out.is_none() { Some(x_tutor(g, p, WITNESS)?) } else { None };
+    if s.is_none() && (w_out.is_some() || gy_card(g, p, SNAP).is_none()) {
         return None;
     }
-    Some(casts)
+    let sc = s.or_else(|| gy_card(g, p, SNAP))?;
+    // Cradle at 5 + a {U} land in, Witness {1}{G}{G} + Snap {1}{U} out, Snap untaps two lands: +1 a cycle. A Witness
+    // already out is bounced by the loop, so it does not count for Cradle. A tutored Witness: the tutor and Snap are
+    // paid first, Snap's untap recasts Witness
+    let feeders = creatures(g, p) - usize::from(w_out.is_some());
+    if feeders < 5 || finisher(g, p).is_none() {
+        return None;
+    }
+    let ok = match &tutor {
+        Some((_, gn, pips)) => {
+            let (sg, sp) = cost_of(g, p, sc);
+            can_pay(g, p, gn + sg, &format!("{pips}{sp}"), false)
+        }
+        None => affordable(g, p, &[w.or(w_out)?, sc], 0),
+    };
+    ok.then(|| w.into_iter().chain(s).collect())
 }
 
 fn ready_plan_b(g: &Game, p: PlayerId) -> Ready {
     ready_with(plan_b(g, p).is_some())
 }
 
-/// Witness is cast (unless it is already out and Snap is in hand: Snap bounces it first); with Snap in the
-/// graveyard, the enter trigger's one target is Snap (whatever card the engine's own pick returned goes back)
+/// Witness is cast, or put in by a tutor (unless it is already out and Snap is in hand: Snap bounces it first);
+/// with Snap in the graveyard, the enter trigger's one target is Snap (whatever card the engine's own pick returned
+/// goes back)
 fn cast_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(w) = hand_card(g, p, &[WITNESS]) else {
-        return Ok(bf(g, p, WITNESS).is_some() && hand_card(g, p, &[SNAP]).is_some());
-    };
+    if bf(g, p, WITNESS).is_some() {
+        return Ok(hand_card(g, p, &[SNAP]).is_some());
+    }
     let snap_gy = if hand_card(g, p, &[SNAP]).is_none() { gy_card(g, p, SNAP) } else { None };
     let (hand0, gy0) = (g.player(p).hand.clone(), g.player(p).gy.clone());
-    if !cast_named(g, p, w)? {
+    let entered = match hand_card(g, p, &[WITNESS]) {
+        Some(w) => cast_named(g, p, w)?,
+        None => tutor_onto_bf(g, p, WITNESS)?,
+    };
+    if !entered {
         return Ok(false);
     }
     if let Some(s) = snap_gy
