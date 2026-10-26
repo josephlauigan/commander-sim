@@ -41,3 +41,8 @@ Newest at the bottom.
    **For you:** the agent ran `cd … && python3 --version` once. The no-Python hook missed it because the command
    didn't *start* with python. Nothing else ran, but the hook has a gap. I did not edit the hook, since that's your
    config.
+10. **Next two phases, run in parallel (10 threads each):**
+    - `t6-quiet-progress`, stacked on #145: let the lookahead AI see Tier 6's stepped combo lines (the
+      `deck_combos` lead). It changes every Tier 6 deck's AI, so it's measured paired and kept on its own branch for
+      you to judge.
+    - `t3-misses`, based on main: the same line audit for Tier 3 (combo 8.9% vs 16.5%, poison 19% vs 9%).
