@@ -10,10 +10,12 @@ Read this file, then `CLAUDE.md`. Everything needed to continue is here; the cha
   - PR #135: Tier 6 scored on cEDH metrics only;
   - PR #136: the Tier 6 seat target from TopDeck.gg Swiss pods.
 
-  Open: PR #138 `trace-fixes` (Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from
-  EDHREC, the Tier 3 targets rebuilt, Tergrid), and the `tier45-targets` PR on top of it (Tiers 4 and 5: targets,
-  EDHREC lists, every card modelled, Heliod and Winota swapped for Edgar Markov and The Ur-Dragon). Work on a new
-  branch from `main`; JD asks for PRs explicitly.
+  - PR #138: Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from EDHREC, the Tier 3
+    targets rebuilt, Tergrid;
+  - PR #139: Tiers 4 and 5 (targets, EDHREC lists, every card modelled; Edgar Markov and Miirym replaced Heliod and
+    Winota, The Ur-Dragon being JD's own commander now).
+
+  Open: PR #142 (Tiers 0-2). Work on a new branch from `main`; JD asks for PRs explicitly.
 - **Tier 3 report:** `audit/realism/t3-trace-2026-10-24.md` (the trace, the knob fit, the modelling, the new
   targets, Tergrid).
 - **Tiers 4 and 5 report:** `audit/realism/t45-targets-2026-10-24.md` (targets, the EDHREC lists, the modelling, the
