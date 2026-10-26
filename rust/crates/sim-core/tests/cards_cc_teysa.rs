@@ -4,7 +4,7 @@
 //! of Skulls's) token make the same two mana.
 
 use sim_core::ids::PlayerId;
-use sim_core::impls::{cc_teysa, combos};
+use sim_core::impls::{cc_teysa, combos, common};
 use sim_core::state::Game;
 use sim_core::testkit::*;
 
@@ -104,4 +104,28 @@ fn an_unanswered_loop_wins() {
     combos::attempt(&mut g, P0, i as i64).unwrap();
     assert_eq!(g.winner, Some(P0));
     assert_eq!(g.wintype, Some("combo"));
+}
+
+#[test]
+fn teysa_keeps_her_payoffs_and_the_plunderer_out_of_the_fodder() {
+    // a fresh Blood Artist was sacrificed for its own drain: the loop then has no payoff
+    let mut g = teysa();
+    perm(&mut g, P0, "Viscera Seer");
+    perm(&mut g, P0, "Blood Artist");
+    perm(&mut g, P0, "Pitiless Plunderer");
+    perm(&mut g, P0, "Zulaport Cutthroat");
+    assert!(common::aristocrat_options(&mut g, P0, Some(true)).unwrap().is_empty(), "no spare fodder");
+    let t = token(&mut g, P0, 1);
+    let o = common::aristocrat_options(&mut g, P0, Some(true)).unwrap();
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.starts_with(&format!("sacrifice {}", g.perm(t).name)), "{}", o[0].label);
+}
+
+#[test]
+fn other_pool_decks_still_sacrifice_payoffs() {
+    let mut g = table(&["yawgmoth-mono-black-aristocrats", "cloud"]);
+    perm(&mut g, P0, "Viscera Seer");
+    perm(&mut g, P0, "Blood Artist");
+    perm(&mut g, P0, "Zulaport Cutthroat");
+    assert!(!common::aristocrat_options(&mut g, P0, Some(true)).unwrap().is_empty());
 }
