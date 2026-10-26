@@ -113,6 +113,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t45_urza_yawgmoth::COMBOS.iter()) // --- Tiers 4/5 (urza-yawgmoth)
             .chain(super::t45_edgar::COMBOS.iter()) // --- Tiers 4/5 (edgar)
             .chain(super::t45_miirym::COMBOS.iter()) // --- Tiers 4/5 (miirym)
+            .chain(super::t3_lines::COMBOS.iter()) // --- t3 lines
             .collect()
     });
     &ALL

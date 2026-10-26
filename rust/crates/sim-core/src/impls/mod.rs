@@ -98,6 +98,7 @@ pub mod t45_urza_yawgmoth; // --- Tiers 4/5 (urza-yawgmoth)
 pub mod t45_edgar; // --- Tiers 4/5 (edgar)
 pub mod t45_urdragon; // --- Tiers 4/5 (urdragon)
 pub mod t45_miirym; // --- Tiers 4/5 (miirym)
+pub mod t3_lines; // --- t3 lines
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -183,5 +184,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t45_edgar::register(&mut r, db)?; // --- Tiers 4/5 (edgar)
     t45_urdragon::register(&mut r, db)?; // --- Tiers 4/5 (urdragon)
     t45_miirym::register(&mut r, db)?; // --- Tiers 4/5 (miirym)
+    t3_lines::register(&mut r, db)?; // --- t3 lines
     Ok(r)
 }

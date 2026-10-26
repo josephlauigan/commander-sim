@@ -264,7 +264,9 @@ fn torment_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
 /// Torment of Hailfire as a Sauron main-phase play: a finisher (it kills an opponent) or a late-game strip of
 /// every opponent's cards and permanents
 fn torment_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || g.player(p).key != "sauron" || !g.player(p).hand.contains(&c) {
+    // --- t3 lines: the Tier 3 Tergrid deck casts it too (Crypt Ghast, Cabal Coffers and Nykthos make a big X)
+    let seat = matches!(g.player(p).key, "sauron" | crate::impls::t3_lines::TERGRID_KEY);
+    if post.is_none() || g.active != Some(p) || !seat || !g.player(p).hand.contains(&c) {
         return Ok(vec![]);
     }
     let Some(x) = torment_x(g, p, c) else { return Ok(vec![]) };
