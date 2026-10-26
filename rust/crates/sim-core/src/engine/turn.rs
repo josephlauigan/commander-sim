@@ -185,7 +185,7 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     // --- casual speed: a bounceland with no other land to return returns itself (a lost land drop, every turn
     // it's chosen again), and Lotus Field with fewer than two others sacrifices itself: any other land goes first
     if t.has(Tag::Bounceland)
-        && !g.player(p).lands.iter().any(|&x| !g.db.get(g.land(x).cd).tag(Tag::Bounceland))
+        && !g.player(p).lands.iter().any(|&x| g.land(x).on_bf && !g.db.get(g.land(x).cd).tag(Tag::Bounceland))
     {
         s -= 20.0;
     }
