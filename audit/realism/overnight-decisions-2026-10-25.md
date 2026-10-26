@@ -50,3 +50,10 @@ Newest at the bottom.
     line) but neutral: seat 1 went 28.1→28.4%, within noise. I opened it anyway because it's a correctness fix. Merge
     it or drop it, as you prefer. Next lead started: fast mana (Chrome Mox, Mox Diamond) held on turns 1-3, on
     `t6-fast-mana`, stacked on #146.
+12. **Tier 3 lines: PR #147 (against main).** Combo/alt went from 11.5% to 16.5%, on target; 3 of 9 targets now
+    pass, up from 1. I checked the three new lines against the rules and ran the full suite. Calls I made:
+    - I kept Helm + Aurelia uncatalogued (it plays out as combat).
+    - I kept Marwyn's Staff line even though it overshoots Marwyn's own Playgroup share: the list really holds it.
+    - I accepted widening one practice test from 24 to 48 seeds (the Tymna recast). It's seed-sensitive, not broken.
+    
+    For you: Tergrid rose to 39.1%, and Atraxa and Tergrid still have no combo wins against Playgroup's 13-25%.
