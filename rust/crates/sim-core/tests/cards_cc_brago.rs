@@ -146,8 +146,8 @@ fn cloud_of_faeries_loops_with_cloudshift_but_not_momentary_blink() {
     perm(&mut g, P0, "Cloud of Faeries");
     perm(&mut g, P0, "Agent of Treachery");
     lands(&mut g, P0, "Plains", 3, false);
-    hand(&mut g, P0, &["Momentary Blink"]);
-    assert!(!ready(&g, KITTEN));
+    hand(&mut g, P0, &["Momentary Blink", "Ghostly Flicker"]);
+    assert!(!ready(&g, KITTEN), "Blink nets nothing, Flicker loses one (Kitten already blinked the Cloud)");
     hand(&mut g, P0, &["Cloudshift"]);
     assert!(ready(&g, KITTEN));
 }

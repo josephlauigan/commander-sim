@@ -190,8 +190,9 @@ pub const FLICKER_STEPS: &[Step] = &[
 
 // ------------------------------------------------------------------ Displacer Kitten + Archaeomancer
 /// the mana creature Kitten blinks and the flicker spell to loop, best first: Peregrine Drake with any of the three
-/// spells (a land up at two lands with Cloudshift), Cloud of Faeries with Cloudshift (one up) or Ghostly Flicker
-/// (Kitten and Flicker both blink it: four for three)
+/// spells (a land up at two lands with Cloudshift), Cloud of Faeries with Cloudshift (one up). Kitten's trigger
+/// resolves first and blinks the mana creature, so a Ghostly Flicker aimed at it too finds a new object: it untaps once
+/// per loop like the others (Cloud of Faeries with Flicker loses one)
 fn kitten_pick(g: &Game, p: PlayerId) -> Option<(PermId, CardId)> {
     let n = lands(g, p).min(5);
     let mut best: Option<(i32, PermId, CardId)> = None;
@@ -201,9 +202,7 @@ fn kitten_pick(g: &Game, p: PlayerId) -> Option<(PermId, CardId)> {
             let Some(c) = castable_held(g, p, spell) else { continue };
             let (gn, pips) = cost_of(g, p, c);
             let cost = (gn as usize + pips.len()) as i32;
-            // Ghostly Flicker blinks the mana creature too
-            let gain = if spell == FLICKER { 2 * untap as i32 } else { untap as i32 };
-            let net = gain - cost;
+            let net = untap as i32 - cost;
             if net > 0 && best.is_none_or(|b| net > b.0) {
                 best = Some((net, m, c));
             }
