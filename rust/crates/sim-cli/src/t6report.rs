@@ -323,6 +323,7 @@ fn render_mana(d: &DeckT6) -> String {
     let cast: Vec<String> = (1..=3)
         .map(|t| format!("{:.2}", d.mn.get(&format!("cast|T{t}")) as f64 / d.mn.get(&format!("n|T{t}")).max(1) as f64))
         .collect();
+    // "Chrome Mox 62 (T1 20/T2 30/T3 12; rule 40, lost 22)": by turn, and why it was held (`mn|why|`)
     let held = |pre: &str| -> String {
         let mut c: Counter<String> = Counter::new();
         for (k, v) in d.mn.most_common() {
@@ -330,7 +331,22 @@ fn render_mana(d: &DeckT6) -> String {
                 c.add(r.split('|').nth(1).unwrap_or("?").to_string(), v);
             }
         }
-        top(&c, 6, &|s| s.to_string())
+        let detail = |name: &str, n: i64| -> String {
+            let by_t: Vec<String> =
+                (1..=3).map(|t| format!("T{t} {}", d.mn.get(&format!("{pre}T{t}|{name}")))).collect();
+            let why: Vec<String> = ["rule", "lost"]
+                .iter()
+                .map(|w| (w, d.mn.get(&format!("why|{name}|{w}"))))
+                .filter(|x| x.1 > 0)
+                .map(|(w, n)| format!("{w} {n}"))
+                .collect();
+            if why.is_empty() {
+                format!("{name} {n} ({})", by_t.join("/"))
+            } else {
+                format!("{name} {n} ({}; {})", by_t.join("/"), why.join(", "))
+            }
+        };
+        c.most_common().into_iter().take(6).map(|(k, v)| detail(&k, v)).collect::<Vec<_>>().join(", ")
     };
     let dig = {
         let n = d.seated.max(1) as f64;
@@ -642,14 +658,15 @@ mod tests {
             p.stats.insert("mn|cast|T1", 1);
             p.stats.insert("mn|held|T2|Mox Diamond", 1);
             p.stats.insert("mn|heldr|T1|Dark Ritual", 1);
+            p.stats.insert("mn|why|Mox Diamond|rule", 1);
             t.add(&g);
         }
         let text = render(&t, &["b".to_string()], &|k| k.to_string());
         assert!(text.contains("mana T1-T5: 1.00 3.00 0.00"), "{text}");
         assert!(text.contains("mana permanents: 0.00 1.00"), "{text}");
         assert!(text.contains("cast on T1-3: 1.00"), "{text}");
-        assert!(text.contains("Mox Diamond 2"), "{text}");
-        assert!(text.contains("rituals and one-shots: Dark Ritual 2"), "{text}");
+        assert!(text.contains("Mox Diamond 2 (T1 0/T2 2/T3 0; rule 2)"), "{text}");
+        assert!(text.contains("rituals and one-shots: Dark Ritual 2 (T1 2/T2 0/T3 0)"), "{text}");
     }
 
     #[test]
