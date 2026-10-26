@@ -168,3 +168,28 @@ fn tutors_want_snap_first_when_witness_is_out_and_line_a_is_two_cards_away() {
     let w = t6_plans::wish(&g, P0).unwrap();
     assert_eq!(g.db.get(w[0]).name.to_string(), "Talon Gates of Madara");
 }
+
+// --- t6 quiet progress: the lookahead's `combo_progress` reads the quiet (stepped) lines
+/// Oboro and Talon Gates in hand with Thrasios in the command zone are three of line A's four groups (a quiet line): the
+/// look-ahead scores (3/4)^2; Gaea's Cradle on the battlefield (a land) completes it
+#[test]
+fn a_quiet_line_mostly_held_scores_combo_progress() {
+    use sim_core::cardcode::combo_progress;
+    let mut g = tbl();
+    assert!(combo_progress(&g, P0) < 0.07, "only the commanders: {}", combo_progress(&g, P0));
+    hand(&mut g, P0, &["Oboro Breezecaller", "Talon Gates of Madara"]);
+    assert!((combo_progress(&g, P0) - 0.5625).abs() < 1e-9, "{}", combo_progress(&g, P0));
+    lands(&mut g, P0, "Gaea's Cradle", 1, false);
+    assert!((combo_progress(&g, P0) - 1.0).abs() < 1e-9, "{}", combo_progress(&g, P0));
+}
+
+/// Dack Fayden's quiet line is the commander alone: always "held" from the command zone, so it is no progress (it
+/// would add `combo_w` to Dack's strength in every evaluation and make Dack every seat's target)
+#[test]
+fn a_quiet_line_of_the_commander_alone_is_no_progress() {
+    use sim_core::cardcode::combo_progress;
+    let mut g = table(&["dack-fayden-white-stax", KRAUM]);
+    g.player_mut(P0).hand.clear();
+    let x = combo_progress(&g, P0);
+    assert!(x.is_finite() && x < 0.99, "{x}");
+}

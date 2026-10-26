@@ -804,7 +804,11 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
 /// search.combo_progress: the share of q's closest combo that q holds (in hand, on the battlefield, or the
 /// commander in the command zone), squared: the last pieces count most. 0 for a deck without a modeled combo.
 pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
-    let cmbs = deck_combos(g, q);
+    // --- t6 quiet progress: a Tier 6 deck reads its quiet (stepped) lines too, by their real groups (`lines_of`), and
+    // its land pieces on the battlefield (Gaea's Cradle). Other decks are unchanged (`deck_combos`). The generic
+    // executor (`combo_options`) never reads this.
+    let t6 = crate::impls::t6_plans::is_t6(g, q);
+    let cmbs: Vec<usize> = if t6 { lines_of(g, q).to_vec() } else { deck_combos(g, q) };
     if cmbs.is_empty() {
         return 0.0;
     }
@@ -820,11 +824,17 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
     for c in pl.cmds_in_zone() {
         have.push(name_of(g, c));
     }
-    let mut best = f64::NEG_INFINITY;
+    if t6 {
+        have.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).cd)));
+    }
+    let mut best = 0.0f64; // --- t6 quiet progress: (was -inf) every line skipped is 0, not inf
     for i in cmbs {
-        let c = all()[i];
-        let n = c.groups.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
-        best = best.max(n as f64 / c.groups.len() as f64);
+        let grps = real_groups(all()[i]); // the whole list for a line that is not quiet
+        if quiet(all()[i]) && grps.len() < 2 {
+            continue; // a quiet line of the commander alone (Dack Fayden) is always "held": no progress to read
+        }
+        let n = grps.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
+        best = best.max(n as f64 / grps.len() as f64);
     }
     best * best
 }
