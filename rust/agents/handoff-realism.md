@@ -10,10 +10,12 @@ Read this file, then `CLAUDE.md`. Everything needed to continue is here; the cha
   - PR #135: Tier 6 scored on cEDH metrics only;
   - PR #136: the Tier 6 seat target from TopDeck.gg Swiss pods.
 
-  Open: PR #138 `trace-fixes` (Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from
-  EDHREC, the Tier 3 targets rebuilt, Tergrid), and the `tier45-targets` PR on top of it (Tiers 4 and 5: targets,
-  EDHREC lists, every card modelled, Heliod and Winota swapped for Edgar Markov and The Ur-Dragon). Work on a new
-  branch from `main`; JD asks for PRs explicitly.
+  - PR #138: Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from EDHREC, the Tier 3
+    targets rebuilt, Tergrid;
+  - PR #139: Tiers 4 and 5 (targets, EDHREC lists, every card modelled; Edgar Markov and Miirym replaced Heliod and
+    Winota, The Ur-Dragon being JD's own commander now).
+
+  Open: PR #142 (Tiers 0-2). Work on a new branch from `main`; JD asks for PRs explicitly.
 - **Tier 3 report:** `audit/realism/t3-trace-2026-10-24.md` (the trace, the knob fit, the modelling, the new
   targets, Tergrid).
 - **Tiers 4 and 5 report:** `audit/realism/t45-targets-2026-10-24.md` (targets, the EDHREC lists, the modelling, the
@@ -158,8 +160,9 @@ per-commander win rates.
      Phase 4's planning AI.
    - Real data on assembly speed (win turns from tournament replays, JD's pod log) would help set it.
    - TopDeck.gg key: `~/.config/topdeck/key` (JD's; never commit it). Credit TopDeck.gg wherever its data is used.
-2. **Rograkh/Thrasios** (16.4%, below the floor): model its missing real lines (This Town Ain't Big Enough, the
-   improvised Thrasios wins).
+2. **Rograkh/Thrasios** is done on branch `t6-rograkh-thrasios` (17.9% to 21.3%, inside the band;
+   `audit/realism/t6-rograkh-thrasios-2026-10-26.md`). Its leads: `deck_combos` drops quiet lines from `combo_progress`;
+   untagged tutors; Moxen held early.
 3. **Tier 3's remaining misses** (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
    - median win round 10 against 8;
    - combo wins 8.9% against 16.5%;
@@ -169,8 +172,12 @@ per-commander win rates.
 
    Atraxa's last Partial cards are listed in its pool file. Speed and combo, as in Tier 6, are AI quality more than
    card rules.
-4. **Targets for Tiers 0-2** (Playgroup, the same method as Tiers 3-5; Tiers 4 and 5 are done). Deck balance in
-   Tiers 3-5 (one list wins 37-50% in each) is AI work for later: the opponents seldom hold an answer to it.
+4. **Every tier now has targets** (Tiers 0-2: PR #142, `audit/realism/t012-targets-2026-10-25.md`; Tier 0 keeps its
+   precons, Tiers 1-2 play EDHREC's bracket 2-3 lists, every card modelled; win types scored there). Deck balance in
+   Tiers 1-5 (one list wins 37-50% in each: Light-Paws, Sythis, Tergrid, Edgar, Miirym) is AI work for later: the
+   opponents seldom hold an answer to it. Casual tiers win by combo far less than real games: the lines the lists
+   really hold were added on `casual-combos` (`audit/realism/casual-combos-2026-10-26.md`); the gap left is the lists
+   (Playgroup's commander pages pool upgraded builds), not missing lines.
 5. **Make a target miss fail the nightly job**, once the Tier 6 gate passes.
 6. **Older items:**
    - the Ertai/Tataru bug: fixed on branch `ertai-tataru` (a trigger probe used up `once_per_turn`; the test also had

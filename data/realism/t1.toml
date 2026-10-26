@@ -1,14 +1,113 @@
-# Realism targets, Tier 1: no targets yet (`commander-sim --realism --pool t1` prints the sim's numbers unscored).
-# Format: see t6.toml. Where the data will come from:
+# Realism targets, Tier 1 (High Bracket 2 / Low Bracket 3): what real games look like, for
+# `commander-sim --realism --pool t1`.
+# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
 #
-# - Playgroup.gg (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0, read 2026-10-22): per commander,
-#   games, wins, average game length in rounds, and wins by combat, combo, commander damage, other damage, alternate
-#   win, mill and poison. Matched to this tier's five pool commanders (data/decks.json), it gives the win-type mix
-#   and game length. Each commander's page adds seat win rates. Caveat: a commander's numbers cover every deck built
-#   around it, at any power level, so use them for shape rather than level.
-# - Playgroup's turn-order page (https://playgroup.gg/commander/turn-order, computed 2026-10-19): seat win rates over
-#   284,950 single-winner casual 4-player games, 29.2 / 25.7 / 23.6 / 21.5%. Not split by power level.
-# - JD's pod log (data/realism/pod_games.toml): the levels, once enough games are logged.
-# - TopDeck.gg bracket events: standings and decklists only (no seats), and few, small events.
+# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-25, matched to this tier's five
+# pool commanders (data/decks.json): Isshin, Two Heavens as One (927), Lathril, Blade of the Elves (1417), Light-Paws,
+# Emperor's Voice (210), Tatyova, Benthic Druid (63) and Teysa Karlov (911).
+#
+# Each commander counts the same, as in t3.toml: every target is the plain average of the five commanders' own figures,
+# as the sim seats each pool deck equally often.
+#
+# Caveats: a commander's numbers cover every deck built around it, at any power level, so they give the shape of a
+# tier's games more than its level. They are casual pods logged by players, of any size (3 to 6 players). The two
+# Playgroup sources count games differently (commanders.json against each commander's page and stats), so the
+# samples below differ.
 
 tier = "t1"
+
+# --- Seat win rates: each commander's page (https://playgroup.gg/commanders/<id>, "Does seating order matter?")
+# gives its win rate from seats 1-4 and the games behind each. Seats 1-4 win, on average over the five commanders,
+# 42.6 / 36.7 / 31.1 / 25.7% of their games; each rate divided by the four rates' total gives the share of decisive
+# games, as the sim counts them.
+
+[seat1_win]
+value = 31.3
+lo = 30.3
+hi = 32.3
+n = 31006
+source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
+date = "2026-10-25"
+note = "n = seat-games behind the five commanders' seat 1-4 rates"
+
+[seat2_win]
+value = 26.9
+lo = 25.9
+hi = 27.9
+n = 31006
+source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
+date = "2026-10-25"
+
+[seat3_win]
+value = 22.9
+lo = 21.9
+hi = 23.9
+n = 31006
+source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
+date = "2026-10-25"
+
+[seat4_win]
+value = 18.9
+lo = 17.9
+hi = 19.9
+n = 31006
+source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
+date = "2026-10-25"
+
+# --- Speed: Playgroup gives each commander's average win turn (https://playgroup.gg/api/public/v1/commanders/<id>.json,
+# stats.average_wins_by_turn): Isshin 8, Lathril 8, Light-Paws 7, Tatyova 9, Teysa 9; their average is 8.2. An average,
+# not a median, and no spread: win_round_spread has no target.
+
+[win_round_median]
+value = 8
+lo = 7
+hi = 9
+n = 10576
+source = "Playgroup commander stats, average win turn of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
+date = "2026-10-25"
+note = "n = the five commanders' logged wins; Playgroup gives an average win turn (8.2), used as the median"
+
+# --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), each
+# commander's wins by type, averaged over the five: combat and other damage 70.4%, combo, alternate win and mill
+# 11.3%, commander damage 18.1%, poison 0.2%. Per commander (damage / combo / commander damage):
+# Isshin 90 / 5 / 5; Lathril 85 / 8 / 6;
+# Light-Paws 21 / 3 / 76; Tatyova 79 / 19 / 2;
+# Teysa 77 / 22 / 1.
+# Grouped as t6.toml groups them.
+
+[win_damage]
+value = 70.4
+lo = 69.4
+hi = 71.4
+n = 5419
+source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
+date = "2026-10-25"
+
+[win_combo_alt]
+value = 11.3
+lo = 10.3
+hi = 12.3
+n = 5419
+source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
+date = "2026-10-25"
+
+[win_commander_damage]
+value = 18.1
+lo = 17.1
+hi = 19.1
+n = 5419
+source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
+date = "2026-10-25"
+
+[win_poison]
+value = 0.2
+lo = 0.0
+hi = 1.2
+n = 5419
+source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
+date = "2026-10-25"
+
+# --- No target yet:
+# - deck_win_spread: Playgroup's win rates (Isshin 29%, Lathril 30%, Light-Paws 41%, Tatyova 36%, Teysa 38% of games) are
+#   against whatever their pods held, not against each other, so their gap is not the sim's gap.
+# - games_over_15 and win_round_spread: Playgroup publishes no distribution of game or win length.

@@ -92,6 +92,12 @@ pub struct Effect {
     pub if_you_do: Vec<Effect>,
     pub random: Option<bool>,
     pub mult: Option<i32>,
+    /// --- Tiers 1/2 (tatyova-teysa): a token's colours as printed (colour letters; "" colourless). None: the deck's
+    /// default token colour, as before
+    pub color: Option<String>,
+    /// --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield": every match, not
+    /// the best one (reanimate)
+    pub all: Option<bool>,
 }
 
 /// An activated ability's cost.
@@ -104,6 +110,8 @@ pub struct Cost {
     pub sac: Option<String>,
     pub life: Option<i32>,
     pub discard: Option<u32>,
+    /// --- Tiers 1/2 (windgrace): the discarded cards must be of this type ("land", "creature" ...)
+    pub discard_type: Option<String>,
     pub other: Option<String>,
     pub tap_other: Option<serde_json::Value>,
     pub energy: Option<serde_json::Value>,

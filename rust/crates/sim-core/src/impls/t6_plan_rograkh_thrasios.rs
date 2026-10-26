@@ -70,7 +70,10 @@ fn removal_open(g: &Game, p: PlayerId) -> bool {
     use crate::ai::brain::{open_mana, prob_holding};
     g.opps(p).any(|q| {
         open_mana(g, q, None) >= 1
-            && prob_holding(g, q, |c| { let d = g.db.get(c); d.instant && d.tag(crate::tag::Tag::Rem) }) >= 0.4
+            && prob_holding(g, q, |c| {
+                let d = g.db.get(c);
+                d.instant && d.tag(crate::tag::Tag::Rem)
+            }) >= 0.4
     })
 }
 
@@ -159,7 +162,13 @@ pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
             let lib = |x: &str| g.player(p).library.iter().any(|&c| name(g, c) == x);
             let cradle_need = !cradle_out(g, p) && !in_hand(g, p, CRADLE) && lib(CRADLE);
             let gates_need = cradle_out(g, p) && !on_bf(g, p, GATES) && !in_hand(g, p, GATES) && lib(GATES);
-            Some(if cradle_need { 88.0 } else if gates_need { 86.0 } else { 0.0 })
+            Some(if cradle_need {
+                88.0
+            } else if gates_need {
+                86.0
+            } else {
+                0.0
+            })
         }
         "Formidable Speaker" => Some(78.0),
         _ => None,
@@ -178,6 +187,21 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     if mana <= 2 {
         w.extend(["Sol Ring", "Mana Vault", "Mox Diamond", "Chrome Mox"]);
     }
+    // line B (Witness + Snap) is closer than line A (Oboro + Gates): its missing piece first. Witness out or in hand
+    // counts, and so does Snap in the graveyard (Witness's enter trigger returns it)
+    let witness = on_bf(g, p, WITNESS) || in_hand(g, p, WITNESS);
+    let snap = in_hand(g, p, SNAP) || in_gy(g, p, |x| x == SNAP);
+    let a_miss = usize::from(!on_bf(g, p, GATES) && !in_hand(g, p, GATES))
+        + usize::from(!on_bf(g, p, OBORO) && !in_hand(g, p, OBORO));
+    let b_miss = usize::from(!witness) + usize::from(!snap);
+    if b_miss < a_miss {
+        if !witness {
+            w.push(WITNESS);
+        }
+        if !snap {
+            w.push(SNAP);
+        }
+    }
     if !on_bf(g, p, GATES) && !in_hand(g, p, GATES) {
         w.push(GATES);
     }
@@ -186,7 +210,19 @@ pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     }
     // lines C (Cub + Mockingbird / Image + Oboro + Cradle) and D (Cub + clone + Witness + Snap)
     w.extend(["Badgermole Cub", "Mockingbird", "Phantasmal Image"]);
-    w.extend([WITNESS, SNAP, FINALE, "Spellseeker", MASTERMIND, GSZ, "Flesh Duplicate", "Clever Impersonator", "Veil of Summer", "Sol Ring", "Mana Vault"]);
+    w.extend([
+        WITNESS,
+        SNAP,
+        FINALE,
+        "Spellseeker",
+        MASTERMIND,
+        GSZ,
+        "Flesh Duplicate",
+        "Clever Impersonator",
+        "Veil of Summer",
+        "Sol Ring",
+        "Mana Vault",
+    ]);
     Some(w.iter().filter_map(|n| g.db.id(n)).collect())
 }
 
@@ -202,8 +238,7 @@ pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
         return Some(true);
     }
     // rthras3: a hand that holds Cradle, Gates or a way to fetch them is kept with 2+ lands whatever else it holds
-    if (2..6).contains(&lands) && names.iter().any(|n| FINDERS.contains(n))
-    {
+    if (2..6).contains(&lands) && names.iter().any(|n| FINDERS.contains(n)) {
         return Some(true);
     }
     let accel = m.n_mana + usize::from(names.contains(&"Ancient Tomb"));

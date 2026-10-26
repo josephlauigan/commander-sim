@@ -246,6 +246,15 @@ pub fn num_expr(s: &str) -> J {
         return n_(&s);
     }
     // counting phrases the interpreter can name (anything else falls through to a bare "X", which the audit flags)
+    // --- Tiers 1/2 (isshin): "the number of attacking creatures" (Mishra, Claimed by Gix), "the number of other
+    // attacking creatures" (Commissar Severina Raine): counted in an attack trigger
+    if let Some(am) = rmatch(r"^(?:the number of )?(other )?attacking creatures(?: you control)?$", &s) {
+        return if am.g(1).is_some() { "other_attacking_creatures" } else { "attacking_creatures" }.into();
+    }
+    // --- Tiers 1/2 (brago-meren): "each creature card in your graveyard" (Wight of the Reliquary)
+    if rmatch(r"^(?:the number of )?creature cards? in your graveyard$", &s).is_some() {
+        return "gy_creatures".into();
+    }
     if s.contains("creature") && s.contains("died this turn") {
         return "creatures_died_this_turn".into();
     }
@@ -260,6 +269,14 @@ pub fn num_expr(s: &str) -> J {
     }
     if s.contains("sacrificed") && s.contains("mana value") {
         return "sacrificed_mv".into();
+    }
+    // --- Tiers 1/2 (tatyova-teysa): "the number of lands you control" (Beanstalk Giant), "the number of creature cards
+    // in your graveyard" (Hallowed Spiritkeeper)
+    if rmatch(r"^(?:the number of )?lands you control$", &s).is_some() {
+        return "lands_you_control".into();
+    }
+    if rmatch(r"^(?:the number of )?creature cards in your graveyard$", &s).is_some() {
+        return "gy_creatures".into();
     }
     if s.contains("creature") && s.contains("you control") {
         return "creatures_you_control".into();
@@ -282,6 +299,19 @@ pub fn num_expr(s: &str) -> J {
             return format!("attacking_type:{t}").into();
         }
         return format!("{}{t}", if tm.gs(3) == "you control" { "type_you:" } else { "type_all:" }).into();
+    }
+    // --- Tiers 1/2 (lathril): "Elves you control plus the number of Elf cards in your graveyard" (Abomination of
+    // Llanowar)
+    if let Some(tm) = rmatch(
+        r"^(?:the number of )?(elves|goblins|zombies|humans|vampires|merfolk|dragons|slivers) you control plus the number of (?:elf|goblin|zombie|human|vampire|merfolk|dragon|sliver) cards in your graveyard$",
+        &s,
+    ) {
+        return format!("type_you_gy:{}", singular(tm.gs(1))).into();
+    }
+    // --- Tiers 1/2 (windgrace): "the number of lands you control" (Lumra, Bellow of the Woods), "each land you
+    // control"
+    if rmatch(r"^(?:the number of )?lands? you control$", &s).is_some() {
+        return "lands_you_control".into();
     }
     if rmatch(r"^\+1/\+1 counter on (?:~|it|this creature)$", &s).is_some() {
         return "counters_on_self".into();
@@ -403,9 +433,17 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
-            Some(eff(
-                obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }},
-            ))
+            let mut o =
+                obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
+            // --- Tiers 1/2 (kaalia-sythis): "return all enchantment cards from your graveyard to the battlefield"
+            // (Resurgent Belief, Splendid Reclamation, World Shaper): every one of them, tapped if it says so
+            if g1.starts_with("all ") && m.gs(2) == "your" {
+                o.0.push(("all".to_string(), J::from(true)));
+                if m.all().contains("battlefield tapped") {
+                    o.0.push(("tapped".to_string(), J::from(true)));
+                }
+            }
+            Some(eff(o))
         },
     ),
     (
@@ -485,13 +523,25 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
                 })
                 .map(J::from)
                 .collect();
-            Some(eff(obj! {
+            let mut e = obj! {
                 "do" => "token", "n" => n_(m.gs(1)),
                 "pow" => if m.gs(2) == "x" { 1 } else { int(m.gs(2)) },
                 "tgh" => if m.gs(3) == "x" { 1 } else { int(m.gs(3)) },
                 "keywords" => kws, "attacking" => m.all().contains("attacking"), "warrior" => m.gs(4).contains("warrior"),
                 "types" => types
-            }))
+            };
+            // --- Tiers 1/2 (tatyova-teysa): the token's colours as printed ("1/1 white Spirit"; "colorless": none),
+            // for the cards that care (Teysa, Orzhov Scion's white and black creatures)
+            let words: Vec<&str> = m.gs(4).split_whitespace().collect();
+            let letters: String = [("white", 'W'), ("blue", 'U'), ("black", 'B'), ("red", 'R'), ("green", 'G')]
+                .iter()
+                .filter(|(w, _)| words.contains(w))
+                .map(|(_, c)| *c)
+                .collect();
+            if !letters.is_empty() || words.contains(&"colorless") {
+                e.set("color", letters);
+            }
+            Some(eff(e))
         },
     ),
     (r"^create (a|an|one|two|three|x|that many|\d+) (treasure|clue|food|blood) tokens?$", |m| {
@@ -520,7 +570,15 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     ),
     (
         r"^(?:its controller|that player|target player|you) gains? life equal to (?:its|that creature's) (power|toughness)$",
-        |m| Some(eff(obj! {"do" => "gain_life", "n" => format!("target_{}", m.gs(1)), "who" => "target_controller"})),
+        |m| {
+            // --- Tiers 1/2 (lathril): "whenever another Elf you control enters, you gain life equal to its toughness"
+            // (Wolverine Riders): the creature that entered, and you gain it
+            let l = ctx_line();
+            if m.all().starts_with("you ") && l.starts_with("whenever ") && l.contains(" enters, ") {
+                return Some(eff(obj! {"do" => "gain_life", "n" => format!("event_{}", m.gs(1)), "who" => "you"}));
+            }
+            Some(eff(obj! {"do" => "gain_life", "n" => format!("target_{}", m.gs(1)), "who" => "target_controller"}))
+        },
     ),
     // counters, pump, grant
     (
@@ -659,6 +717,9 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     (r"^tap (target creature|up to one target creature|target permanent|all creatures your opponents control)$", |m| {
         Some(eff(obj! {"do" => "tap", "what" => selector(m.gs(1))}))
     }),
+    // --- Tiers 1/2 (windgrace): "tap ~" (Seasoned Hallowblade: "Tap ~. It gains indestructible ..."); Soul of
+    // Windgrace's "~ gains ... Tap it." is read in the activated-ability branch of `compile_card`
+    (r"^tap ~$", |_| Some(eff(obj! {"do" => "tap", "what" => obj!{"sel" => "self"}}))),
     (
         r"^(?:its controller|that player) may search their library for a basic land card, put it onto the battlefield tapped$",
         |_| Some(eff(obj! {"do" => "opp_ramp"})),
@@ -823,6 +884,15 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
         |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
     ),
+    // --- Tiers 1/2 (isshin): "that creature gets +2/+2 until end of turn" (Fervent Charge; "it" in a "whenever a
+    // creature you control attacks" trigger is rewritten to "that creature"): the creature the trigger is about
+    (r"^that creature gets \+(\d+)/\+(\d+) until end of turn$", |m| {
+        Some(eff(obj! {"do" => "pump", "pow" => n_(m.gs(1)), "tgh" => n_(m.gs(2)), "what" => obj!{"sel" => "event"}}))
+    }),
+    // "that creature deals 1 damage to each opponent" (Ingris Stingerquill): each opponent takes it
+    (r"^that creature deals (\d+) damage to each opponent$", |m| {
+        Some(eff(obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}}))
+    }),
     // --- Tiers 4/5 (prosper): "each creature deals 1 damage to its controller" (Rakdos Charm)
     (r"^each creature deals 1 damage to its controller$", |_| Some(eff(obj! {"do" => "creature_backlash"}))),
     // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands" (Peregrine Drake, Frantic Search): n of your tapped lands
@@ -861,6 +931,30 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
             return None;
         }
         Some(eff(obj! {"do" => "lose_life", "n" => n, "who" => who(m.gs(1))}))
+    }),
+    // --- Tiers 1/2 (lathril): "each opponent blights 1" (High Perfect Morcant): each puts N -1/-1 counters on a creature
+    // it controls
+    (r"^(each opponent|target opponent|each player|you) blights? (one|two|three|\d+)$", |m| {
+        Some(eff(obj! {"do" => "blight", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
+    }),
+    // --- Tiers 1/2 (tatyova-teysa)
+    // "you may play up to three additional lands this turn" (Summer Bloom), "you may play an additional land this
+    // turn" (Urban Evolution): that many more land drops this turn
+    (r"^(?:you may )?play (a|an|one|two|three|up to two|up to three) additional lands? this turn$", |m| {
+        let k = m.gs(1).trim_start_matches("up to ");
+        Some(eff(obj! {"do" => "extra_land", "n" => n_(k)}))
+    }),
+    // "sacrifice a land" as a spell's own effect (Roiling Regrowth, Entish Restoration): your least useful land
+    (r"^sacrifice (a|an|one) land$", |_| {
+        Some(eff(obj! {"do" => "sacrifice", "who" => "you", "filter" => obj!{"type" => "land"}, "n" => 1}))
+    }),
+    // "double the number of +1/+1 counters on ~" (Mossborn Hydra): as many more as it has
+    (r"^double the number of \+1/\+1 counters on (?:~|this creature|it)$", |_| {
+        Some(eff(obj! {"do" => "counters", "n" => "counters_on_self", "what" => obj!{"sel" => "self"}}))
+    }),
+    // "put a land card from your hand or graveyard onto the battlefield" (Bonny Pall, Clearcutter)
+    (r"^(?:you may )?put (?:a|up to one) land card from your hand or graveyard onto the battlefield$", |_| {
+        Some(eff(obj! {"do" => "put_land", "from" => "hand_or_gy"}))
     }),
 ];
 
@@ -1000,6 +1094,15 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
                 v.extend(eb);
                 got = Some(v);
             }
+        }
+        // --- Tiers 1/2 (tatyova-teysa): "you may sacrifice a land" (Tenured Tethermage) is a choice the AI would not
+        // weigh (it ignores the "may"): left to card code, as before the plain "sacrifice a land" compiled
+        let own_sac = |e: &Obj| {
+            e.get("do") == Some(&J::Str("sacrifice".into())) && e.get("who") == Some(&J::Str("you".into()))
+        };
+        if dep == Dep::May && got.as_ref().is_some_and(|v| v.iter().any(own_sac)) {
+            bad.push(format!("{pre}{cl}"));
+            continue;
         }
         if let Some(got) = got {
             for mut e in got {
@@ -1187,6 +1290,15 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
         };
         vec![obj! {"event" => "etb", "source" => "you_creature", "color" => col}]
     }),
+    // --- Tiers 1/2 (lathril): "an Elf you control dies" (Elderfang Venom), "another Elf you control enters" (Wolverine
+    // Riders), "~ or another Elf you control enters" (High Perfect Morcant): your creatures of that type
+    (
+        r"^(~ or another|a|an|another) (elf|goblin|zombie|human|vampire|merfolk|dragon|angel|sliver|knight|soldier|wizard|cleric|rogue|ninja|faerie|spirit|dinosaur|squirrel|rat|cat|dog|dwarf) you control (dies|enters)$",
+        |m, _| {
+            let ev = if m.gs(3) == "dies" { "dies" } else { "etb" };
+            vec![obj! {"event" => ev, "source" => "you_creature", "other" => m.gs(1) == "another", "subtype" => m.gs(2)}]
+        },
+    ),
 ];
 
 pub fn parse_trigger(clause: &str) -> Option<Fx> {
@@ -1219,6 +1331,10 @@ pub fn parse_cost(s: &str) -> Option<Obj> {
             cost.set("tap", true);
         } else if x.starts_with("sacrifice ~") || x.starts_with("sacrifice this") {
             cost.set("sac", "self");
+        } else if rmatch(r"^sacrifice (two|three|four|five|x|\d+) ", x).is_some() {
+            // --- Tiers 1/2 (tatyova-teysa): a cost of several permanents (Teysa, Orzhov Scion's "sacrifice three
+            // white creatures") is not one sacrifice: leave the line to card code
+            return None;
         } else if x.starts_with("sacrifice") {
             let f = filt(x);
             cost.set("sac", f.get("type").cloned().unwrap_or("permanent".into()));
@@ -1227,6 +1343,11 @@ pub fn parse_cost(s: &str) -> Option<Obj> {
             cost.set("life", n_(m.gs(1)));
         } else if x.starts_with("discard") {
             cost.set("discard", n_(x.split_whitespace().nth(1)?));
+            // --- Tiers 1/2 (windgrace): "discard a land card" / "discard a creature card" (Soul of Windgrace, Fauna
+            // Shaman): only a card of that type pays
+            if let Some(m) = search(r"^discard (?:a|an|one|two|\d+) (land|creature|artifact|enchantment) cards?$", x) {
+                cost.set("discard_type", m.gs(1));
+            }
         } else if x.starts_with("exile ~ from your graveyard") || x.starts_with("remove") {
             cost.set("other", x);
         } else if x.starts_with("tap an untapped") || x.starts_with("tap ") {
@@ -1446,6 +1567,26 @@ static STATICS: &[(&str, StaticFn)] = &[
             if v.is_empty() { None } else { Some(v) }
         },
     ),
+    // --- Tiers 1/2 (lathril): "attacking Elves you control have deathtouch" (Elderfang Venom): only while they attack
+    (
+        r"^attacking (elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|dragons|merfolk|vampires|spirits|faeries) you control have ([a-z, ]+)$",
+        |m| {
+            let sub_ = singular(m.gs(1));
+            let v = kw_statics(m.g(2), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+                "filter" => obj!{"type" => "creature", "controller" => "you", "attacking" => true, "subtype" => sub_.clone()}}
+            });
+            if v.is_empty() { None } else { Some(v) }
+        },
+    ),
+    // --- Tiers 1/2 (lightpaws)
+    // "Aura spells you cast cost {1} less to cast" (Transcendent Envoy); "artifact and enchantment spells you cast
+    // cost {1} less to cast" (Starnheim Courser): one discount on a spell of either type
+    (r"^(aura|artifact and enchantment) spells you cast cost \{(\d+)\} less to cast$", |m| {
+        let spell = if m.gs(1) == "aura" { "aura" } else { "artifact_or_enchantment" };
+        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => spell,
+        "amount" => -int(m.gs(2))}))
+    }),
 ];
 
 pub fn prot_colors(text: &str) -> String {
@@ -1527,7 +1668,16 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             abil.push(obj! {"type" => "static", "static" => "equip_cost", "mana" => int(m.gs(1))});
             continue;
         }
-        let words: Vec<&str> = l.split(',').map(|w| w.trim()).collect();
+        // --- Tiers 1/2 (tatyova-teysa): "afterlife N" (Ministrant of Obligation, Orzhov Enforcer): when it dies, N 1/1
+        // white and black Spirit tokens with flying
+        if let Some(m) = rmatch(r"^afterlife (\d+)(?: \(.*\))?$", l) {
+            abil.push(obj! {"type" => "triggered", "event" => "dies", "source" => "self", "effects" => vec![jo!{
+                "do" => "token", "n" => int(m.gs(1)), "pow" => 1, "tgh" => 1, "keywords" => vec![J::from("flying")],
+                "attacking" => false, "warrior" => false, "types" => vec![J::from("spirit")], "color" => "WB"}]});
+            continue;
+        }
+        // --- Tiers 1/2 (lathril): "vigilance; menace" (Abomination of Llanowar) is a keyword line too
+        let words: Vec<&str> = l.split([',', ';']).map(|w| w.trim()).collect();
         if words.iter().all(|w| KW.contains(w) || rmatch(KW_LINE, w).is_some()) {
             // toxic N: the amount is kept (combat gives that many poison counters); the keyword alone says no number
             for w in &words {
@@ -1624,7 +1774,14 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         if let Some(m) = &tm {
             set_ctx(l);
             let trig = parse_trigger(m.gs(2));
-            let (e, b) = parse_effects(m.gs(3));
+            // --- Tiers 1/2 (isshin): "whenever a creature you control attacks, it gets +2/+2" (Fervent Charge): "it"
+            // is the attacking creature, not this permanent
+            let each = trig.as_ref().is_some_and(|t| t.iter().any(|x| x.get("source") == Some(&J::from("you_each"))));
+            let body = match m.gs(3).strip_prefix("it gets ") {
+                Some(r) if each => format!("that creature gets {r}"),
+                _ => m.gs(3).to_string(),
+            };
+            let (e, b) = parse_effects(&body);
             match trig {
                 Some(trig) if !e.is_empty() => {
                     for t in trig {
@@ -1646,7 +1803,12 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
             if g1.contains('{') || g1.contains("sacrifice") || g1.contains("pay") || g1.contains("discard") {
                 let cost = parse_cost(g1);
                 let body = sub(r"\.? ?activate (only|this ability only)[^.]*", "", m.gs(2));
-                let (e, b) = parse_effects(&body);
+                let (mut e, mut b) = parse_effects(&body);
+                // --- Tiers 1/2 (windgrace): "~ gains ... Tap it." (Soul of Windgrace): "it" is ~
+                if body.starts_with("~ ") && b.iter().any(|x| x == "tap it") {
+                    b.retain(|x| x != "tap it");
+                    e.push(eff(obj! {"do" => "tap", "what" => obj!{"sel" => "self"}}).remove(0));
+                }
                 if let Some(c) = &cost {
                     if !e.is_empty()
                         && e.iter().all(|x| x.get("do") == Some(&J::Str("add_mana".into())))

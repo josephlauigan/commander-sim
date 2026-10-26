@@ -288,7 +288,10 @@ pub fn answer_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
 
 /// the AI q copies its own triggered ability on the stack (Peter Parker's Camera)
 pub fn copy_ability(g: &mut Game, q: PlayerId, item: u32) -> Res {
-    crate::impls::t6_copies::camera_copy(g, q, item).map(|_| ())
+    if !crate::impls::t6_copies::camera_copy(g, q, item)? {
+        crate::impls::t12_brago_meren::resonator_copy(g, q, item)?; // --- Tiers 1/2 (brago-meren): Strionic Resonator
+    }
+    Ok(())
 }
 
 /// rules.emblem_cast: Chandra's and Venser's emblems on each spell p casts
@@ -491,6 +494,7 @@ pub fn aura_ward(g: &Game, m: PermId) -> u32 {
         + crate::impls::green_cards::extra_ward(g, m)
         + crate::impls::t0_stella::boots_ward(g, m)
         + crate::impls::t45_urdragon::rith_ward(g, m) // --- Tiers 4/5 (urdragon): Rith, Liberated Primeval
+        + crate::impls::t12_lightpaws::ward(g, m) // --- Tiers 1/2 (lightpaws): Chains of Custody, Thran Power Suit
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal
@@ -524,6 +528,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     }
     if crate::impls::t45_krenko::mountainwalk(g, b, a) {
         return true; // --- Tiers 4/5 (krenko): Goblin King
+    }
+    if crate::impls::t12_kaalia_sythis::evasion_blocked(g, b, a) {
+        return true; // --- Tiers 1/2 (kaalia-sythis): Serra's Emissary (protection from creatures)
     }
     crate::impls::rules::evasion_blocked(g, b, a)
         || crate::impls::bulk_white::exit_blocked(g, b, a)
@@ -913,11 +920,15 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     }
     crate::impls::galadriel::eot_returns(g)?; // Eerie Interlude
     crate::impls::t0_captain::end_returns(g)?; // Gift of Immortality
+    crate::impls::t12_lightpaws::flicker_returns(g)?; // --- Tiers 1/2 (lightpaws): Flickerform
     if !g.jar_due.is_empty() {
         crate::impls::legends::jar_end(g)?; // Memory Jar
     }
     if !g.t45_due.is_empty() {
         crate::impls::t45_urza_yawgmoth::revival_returns(g)?; // --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar
+    }
+    if !g.t12_due.is_empty() {
+        crate::impls::t12_kaalia_sythis::end_returns(g)?; // --- Tiers 1/2 (kaalia-sythis): Avacyn, Liesa
     }
     Ok(())
 }

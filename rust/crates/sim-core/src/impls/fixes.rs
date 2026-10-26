@@ -632,6 +632,10 @@ fn rishkar_mana(g: &Game, _src: Src, p: PlayerId, u: &[Unit]) -> Vec<Unit> {
 fn crop_target(g: &Game, p: PlayerId) -> (Option<CardId>, i32) {
     let lib: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| g.db.get(c).land).collect();
     let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32;
+    // --- Tiers 1/2 (windgrace): the missing half of Dark Depths + Thespian's Stage (Marit Lage)
+    if let Some(c) = crate::impls::t12_windgrace::depths_half(g, p, &lib, &[]) {
+        return (Some(c), 9);
+    }
     let cradle = lib.iter().copied().find(|&c| &*g.db.get(c).name == "Gaea's Cradle");
     if let Some(c) = cradle
         && n >= 3
@@ -670,7 +674,8 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let mut keys = vec![];
     for &l in &lands {
         let d = g.db.get(g.land(l).cd);
-        let keep = matches!(&*d.name, "Gaea's Cradle" | "Ancient Tomb");
+        // --- Tiers 1/2 (windgrace): Dark Depths and Thespian's Stage stay too
+        let keep = matches!(&*d.name, "Gaea's Cradle" | "Ancient Tomb" | "Dark Depths" | "Thespian's Stage");
         let k = (keep, !g.land(l).tapped, d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), g.rng.random());
         keys.push(k);
     }

@@ -209,7 +209,6 @@ fn spec_8_ddr_cast_the_same_turn_with_shang_chi_and_vitality() {
     );
 }
 
-
 #[test]
 fn sisay_fetches_ioreth_and_marvin_without_tapping_ioreth_for_the_second_fetch() {
     // seed 500012, game 12: Relic of Legends taps a legendary creature for mana, and paying for
@@ -520,4 +519,158 @@ fn witness_and_snap_need_cradle_at_five_and_the_pieces() {
 fn a_counterspell_on_witness_or_snap_stops_the_loop() {
     let n = countered_runs(ROG, PLAN_B, plan_b_board);
     assert!(n >= 1, "the AI counters a spell of the loop sometimes");
+}
+
+// --- t6 rograkh-thrasios: the line B starts and the Thrasios finish from the command zone
+/// Witness already on the battlefield (cast earlier for value) and Snap in hand: Snap it first, recast it, the loop runs.
+/// The Witness out does not count for Cradle (the loop bounces it), so five other creatures are needed.
+#[test]
+fn line_b_starts_with_witness_on_the_battlefield_and_snap_in_hand() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    let w = card(&g, "Eternal Witness");
+    g.player_mut(P0).hand.retain(|&c| c != w);
+    perm(&mut g, P0, "Eternal Witness");
+    assert!(ready(&g, PLAN_B), "Witness out, Snap in hand, five other creatures");
+    go(&mut g, PLAN_B);
+    assert_eq!(g.winner, Some(P0));
+
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    let w = card(&g, "Eternal Witness");
+    g.player_mut(P0).hand.retain(|&c| c != w);
+    perm(&mut g, P0, "Eternal Witness");
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).unwrap();
+    sim_core::engine::zones::die(&mut g, t, "destroy").unwrap();
+    assert!(!ready(&g, PLAN_B), "four creatures besides Witness: Cradle is too small once Witness is bounced");
+}
+
+/// Witness in hand and Snap in the graveyard: Witness's enter trigger returns Snap, then the loop runs
+#[test]
+fn line_b_starts_with_snap_in_the_graveyard() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    let s = card(&g, "Snap");
+    g.player_mut(P0).hand.retain(|&c| c != s);
+    g.player_mut(P0).gy.push(s);
+    hand(&mut g, P1, &[]);
+    assert!(ready(&g, PLAN_B), "Witness in hand returns Snap");
+    go(&mut g, PLAN_B);
+    assert_eq!(g.winner, Some(P0));
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    let s = card(&g, "Snap");
+    g.player_mut(P0).hand.retain(|&c| c != s);
+    assert!(!ready(&g, PLAN_B), "Snap neither in hand nor in the graveyard");
+}
+
+/// Thrasios in the command zone: on p's main phase the unbounded mana casts it (whatever the tax) and it draws the
+/// library for the finisher; off p's turn it can't be cast, so the line is not ready
+#[test]
+fn thrasios_in_the_command_zone_is_cast_by_the_loop_on_the_main_phase() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let th = on_bf(&g, P0, "Thrasios, Triton Hero").unwrap();
+    sim_core::engine::zones::die(&mut g, th, "destroy").unwrap();
+    let thc = card(&g, "Thrasios, Triton Hero");
+    g.player_mut(P0).gy.retain(|&c| c != thc);
+    g.player_mut(P0).set_cmd_zone(thc, true);
+    g.player_mut(P0).add_tax(thc);
+    g.player_mut(P0).add_tax(thc);
+    token(&mut g, P0, 1); // Thrasios was one of the six creatures
+    assert!(g.player(P0).cmds_in_zone().any(|c| c == thc));
+    assert!(ready(&g, PLAN_A), "Thrasios in the command zone, own main phase");
+    g.active = Some(P1);
+    assert!(!ready(&g, PLAN_A), "not p's turn: Thrasios can't be cast");
+    g.active = Some(P0);
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+    assert!(on_bf(&g, P0, "Thrasios, Triton Hero").is_some(), "Thrasios was cast from the command zone");
+}
+
+/// Finale of Devastation in hand finishes without Thrasios (the unbounded mana pays X of 10 or more)
+#[test]
+fn finale_in_hand_needs_no_thrasios() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let th = on_bf(&g, P0, "Thrasios, Triton Hero").unwrap();
+    sim_core::engine::zones::die(&mut g, th, "destroy").unwrap();
+    let thc = card(&g, "Thrasios, Triton Hero");
+    g.player_mut(P0).gy.retain(|&c| c != thc);
+    g.player_mut(P0).set_cmd_zone(thc, false);
+    g.player_mut(P0).exile.push(thc);
+    token(&mut g, P0, 1);
+    assert!(!ready(&g, PLAN_A), "no Thrasios and Finale in the library: no finisher");
+    let f = card(&g, "Finale of Devastation");
+    g.player_mut(P0).library.retain(|&c| c != f);
+    g.player_mut(P0).hand.push(f);
+    assert!(ready(&g, PLAN_A), "Finale in hand");
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+}
+
+/// Training Grounds makes Oboro's ability {1}: Cradle at 5 already nets mana with Talon Gates
+#[test]
+fn plan_a_with_training_grounds_needs_five_creatures() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let t = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).unwrap();
+    sim_core::engine::zones::die(&mut g, t, "destroy").unwrap();
+    assert!(!ready(&g, PLAN_A), "five creatures, Oboro at {{2}}");
+    perm(&mut g, P0, "Training Grounds");
+    assert!(ready(&g, PLAN_A), "five creatures, Oboro at {{1}}");
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+}
+
+/// the speed measurement sees a quiet line one tutor away: Snap in hand, Eternal Witness in the library,
+/// Finale of Devastation in hand (a tutor the line itself does not use)
+#[test]
+fn a_quiet_line_one_tutor_away_is_measured() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    to_library(&mut g, P0, "Eternal Witness");
+    hand(&mut g, P0, &["Finale of Devastation"]);
+    assert!(!ready(&g, PLAN_B));
+    g.player_mut(P0).t6 = true;
+    combos::combo_options(&mut g, P0, 0.0, Some(true)).unwrap();
+    let st = &g.player(P0).stats;
+    let keys: Vec<String> = st.keys().map(|k| k.to_string()).collect();
+    assert!(st.contains_key(&intern("sp|reach")), "one tutor away was marked: {keys:?}");
+    assert!(!st.contains_key(&intern("sp|ready")));
+}
+
+/// Green Sun's Zenith for X = 3 puts Eternal Witness in (SPEC scenario 19's chain): line B with Witness in the library
+#[test]
+fn green_suns_zenith_puts_witness_in_for_line_b() {
+    let mut g = tbl(ROG);
+    plan_b_board(&mut g);
+    to_library(&mut g, P0, "Eternal Witness");
+    assert!(!ready(&g, PLAN_B), "no Witness and no tutor");
+    let gsz = hand(&mut g, P0, &["Green Sun's Zenith"])[0];
+    lands(&mut g, P0, "Forest", 2, false);
+    assert!(ready(&g, PLAN_B), "GSZ (4) and Snap (2) are paid first");
+    go(&mut g, PLAN_B);
+    assert_eq!(g.winner, Some(P0));
+    assert!(!g.player(P0).gy.contains(&gsz), "Green Sun's Zenith shuffles itself back");
+}
+
+/// Chord of Calling for X = 2 puts Oboro in; Green Sun's Zenith can't (Oboro is blue)
+#[test]
+fn chord_of_calling_puts_oboro_in_for_plan_a_and_gsz_does_not() {
+    let mut g = tbl(ROG);
+    plan_a_board(&mut g);
+    let oboro = on_bf(&g, P0, "Oboro Breezecaller").unwrap();
+    sim_core::engine::zones::die(&mut g, oboro, "destroy").unwrap();
+    let ob = card(&g, "Oboro Breezecaller");
+    g.player_mut(P0).gy.retain(|&c| c != ob);
+    to_library(&mut g, P0, "Oboro Breezecaller");
+    lands(&mut g, P0, "Forest", 5, false);
+    hand(&mut g, P0, &["Green Sun's Zenith"]);
+    assert!(!ready(&g, PLAN_A), "Green Sun's Zenith finds green creatures only");
+    hand(&mut g, P0, &["Chord of Calling"]);
+    assert!(ready(&g, PLAN_A), "Chord of Calling X = 2 finds Oboro");
+    go(&mut g, PLAN_A);
+    assert_eq!(g.winner, Some(P0));
+    assert!(on_bf(&g, P0, "Oboro Breezecaller").is_some());
 }

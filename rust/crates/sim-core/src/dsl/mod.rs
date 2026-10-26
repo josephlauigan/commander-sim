@@ -52,6 +52,8 @@ pub struct DslCtx {
     pub x_default: bool,
     /// an attack trigger: attacking tokens it makes join the attack
     pub attack: bool,
+    /// --- Tiers 1/2 (isshin): an attack trigger: the creatures attacking as it triggered (0 outside one)
+    pub atk_count: i32,
 }
 
 impl DslCtx {
@@ -100,8 +102,23 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             (g.died_count.0 == Some(g.turn_stamp())).then_some(g.died_count.1 as i32).unwrap_or(0)
         }
         "destroyed_this_way" => ctx.destroyed,
+        // --- Tiers 1/2 (isshin): "the number of (other) attacking creatures" (Mishra, Claimed by Gix; Commissar
+        // Severina Raine): the attack the trigger saw, else the creatures in combat now
+        "attacking_creatures" | "other_attacking_creatures" => {
+            let n = if ctx.atk_count > 0 {
+                ctx.atk_count
+            } else {
+                g.in_combat.iter().filter(|&&m| g.perm(m).on_bf).count() as i32 // every player's (Galadhrim Ambush)
+            };
+            // "other": the source itself attacks (its own attack trigger)
+            let me = name == "other_attacking_creatures"
+                && src.is_some_and(|m| ctx.atk_count > 0 || g.in_combat.contains(&m));
+            (n - me as i32).max(0)
+        }
         "sacrificed_mv" => ctx.sacrificed_mv,
         "gy_instants_sorceries" => pl.gy.iter().filter(|&&c| g.db.get(c).instant || g.db.get(c).sorcery).count() as i32,
+        // --- Tiers 1/2 (brago-meren): "each creature card in your graveyard" (Wight of the Reliquary)
+        "gy_creatures" => pl.gy.iter().filter(|&&c| g.db.get(c).creature).count() as i32,
         "colors_among_permanents" => pl
             .perms
             .iter()
@@ -110,6 +127,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             .count() as i32,
         "creatures_you_control" => pl.perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32,
         "cards_in_hand" => pl.hand.len() as i32,
+        "lands_you_control" => pl.lands.len() as i32, // --- Tiers 1/2 (windgrace)
         "event_player_hand" => ctx.event_player.map_or(0, |q| g.player(q).hand.len() as i32), // that player's hand
         "opponents" => g.opps(p).count() as i32,
         "spells_this_turn" => pl.spells_this_turn as i32,
@@ -127,7 +145,11 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "last_lost" => ctx.lost,
         "event_spell_mv" => ctx.spell.map_or(2, |c| g.db.get(c).cmc as i32),
         "source_power" => src.map_or(2, |m| epow(g, m)),
-        "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.max(0)),
+        // --- Tiers 1/2 (lathril): "you gain life equal to its toughness" in an enters trigger (Wolverine Riders)
+        "event_toughness" => ctx.event_perm.map_or(0, |m| etgh(g, m).max(0)),
+        "event_power" => ctx.event_perm.map_or(0, |m| epow(g, m).max(0)),
+        // --- Tiers 1/2 (tatyova-teysa): capped, so a doubling each landfall (Mossborn Hydra) never overflows
+        "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.clamp(0, 1_000_000)),
         // --- Tier 3 (marwyn): "each attacking Elf you control" (Dwynen): the creatures p attacked with this turn
         // (`combat::attack_triggers` records them) still on the battlefield
         s if s.starts_with("attacking_type:") => {
@@ -137,6 +159,13 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             }
             let live = |m: PermId| g.perm(m).on_bf && g.perm(m).owner == p && has_type(g, m, t);
             pl.attackers.iter().filter(|&&m| live(m)).count() as i32
+        }
+        // --- Tiers 1/2 (lathril): "Elves you control plus the number of Elf cards in your graveyard" (Abomination)
+        s if s.starts_with("type_you_gy:") => {
+            let t = &s[12..];
+            let bf = pl.perms.iter().filter(|&&m| !g.perm(m).phased && has_type(g, m, t)).count();
+            let gy = pl.gy.iter().filter(|&&c| g.db.get(c).has_subtype(t) || g.db.get(c).has_kw("changeling")).count();
+            (bf + gy) as i32
         }
         s if s.starts_with("type_you:") || s.starts_with("type_all:") => {
             let t = &s[9..];
@@ -664,6 +693,7 @@ fn run(
                 attacking,
                 sick: !(kws.iter().any(|k| k == "haste") || attacking),
                 types: e.types.iter().flatten().map(|t| intern(t)).collect(),
+                color: e.color.as_deref().map(Colors::from_letters), // --- Tiers 1/2 (tatyova-teysa)
                 ..Tokens::new(k.max(0) as u32, pw)
             };
             let made = zones::make_tokens(g, p, spec)?;
@@ -753,6 +783,31 @@ fn run(
                 return Ok(()); // --- Tiers 4/5 (winota): Soulless Jailer: permanent cards in graveyards can't enter
             }
             let f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
+            if e.all == Some(true) {
+                // --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield"
+                let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).collect();
+                let tapped = e.tapped == Some(true);
+                let mut lands = 0;
+                for c in cs {
+                    let gy = &mut g.player_mut(p).gy;
+                    let Some(i) = gy.iter().position(|&x| x == c) else { continue };
+                    gy.remove(i);
+                    if g.db.get(c).land {
+                        g.add_land_entering(p, c, tapped);
+                        lands += 1;
+                    } else {
+                        let m = zones::enter(g, p, c, Enter::default())?;
+                        if tapped {
+                            g.perm_mut(m).tapped = true;
+                        }
+                    }
+                    crate::glog!(g, "    {} returns to the battlefield", g.db.get(c).name);
+                }
+                for _ in 0..lands {
+                    zones::landfall(g, p)?;
+                }
+                return Ok(());
+            }
             let mut pool: Vec<(CardId, PlayerId)> =
                 g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).map(|c| (c, p)).collect();
             if e.from.as_deref() == Some("any") {
@@ -1012,6 +1067,13 @@ fn run(
                 }
             }
         }
+        "blight" => {
+            // --- Tiers 1/2 (lathril): "each opponent blights 1" (High Perfect Morcant)
+            let k = n(g, ctx);
+            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                crate::impls::t12_lathril::blight(g, q, k)?;
+            }
+        }
         "creature_backlash" => {
             // --- Tiers 4/5 (prosper): each creature deals 1 damage to its controller (Rakdos Charm)
             for q in g.players.iter().filter(|x| x.alive).map(|x| x.id).collect::<Vec<_>>() {
@@ -1074,7 +1136,9 @@ fn run(
         "extra_land" => {
             // you may play an additional land this turn. The AI plays it at once (it plays no lands after combat);
             // a person plays it in a main phase
-            g.player_mut(p).extra_land_now += 1;
+            // --- Tiers 1/2 (tatyova-teysa): "up to three additional lands" (Summer Bloom): n of them (1 unnamed)
+            let k = n(g, ctx).max(1) as u32;
+            g.player_mut(p).extra_land_now += k;
             if !crate::human::is_human(g, p) && g.active == Some(p) {
                 crate::engine::turn::more_lands(g, p)?;
             }
@@ -1087,14 +1151,28 @@ fn run(
         }
         "put_land" => {
             // put a land card from your hand onto the battlefield
-            let ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+            let mut ls: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+            // --- Tiers 1/2 (tatyova-teysa): "from your hand or graveyard" (Bonny Pall): a graveyard land first (it
+            // costs no card from hand), the best of each
+            let gy_ok = e.from.as_deref() == Some("hand_or_gy");
+            if gy_ok {
+                ls.extend(g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).land));
+            }
             if let Some(c) = max_by(&ls, |c| {
                 let t = &g.db.get(c).tags;
-                t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 10.0 + t.has(Tag::F) as i32 as f64
+                let from_gy = gy_ok && g.player(p).gy.contains(&c);
+                t.str(Tag::C).map_or(0, |s| s.chars().count()) as f64 * 10.0
+                    + t.has(Tag::F) as i32 as f64
+                    + if from_gy { 100.0 } else { 0.0 }
             }) {
                 let pl = g.player_mut(p);
-                let i = pl.hand.iter().position(|&x| x == c).unwrap();
-                pl.hand.remove(i);
+                match pl.hand.iter().position(|&x| x == c) {
+                    Some(i) => pl.hand.remove(i),
+                    None => {
+                        let i = pl.gy.iter().position(|&x| x == c).unwrap();
+                        pl.gy.remove(i)
+                    }
+                };
                 let tapped = crate::engine::turn::land_enters_tapped(g, p, c);
                 let l = g.add_land(p, c, tapped);
                 zones::landfall(g, p)?;
@@ -1362,6 +1440,12 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             if color.as_deref().and_then(|c| c.chars().next()).is_some_and(|c| !colors_of(g, m).has(c)) {
                 return out; // --- Tiers 4/5 (urza-yawgmoth): "another black creature" (Ayara)
             }
+            // --- Tiers 1/2 (lathril): "an Elf you control dies", "another Elf you control enters"
+            if let Some(t) = subtype.as_deref().filter(|t| !t.is_empty())
+                && !(has_type(g, m, t) || (t == "warrior" && g.perm(m).warrior))
+            {
+                return out;
+            }
             match s {
                 Some("you_creature") if owner == q => out.push(DslCtx { event_perm: Some(m), ..base }),
                 Some("opp_creature") if owner != q => {
@@ -1372,7 +1456,7 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
         }
         "attack" => {
-            let ctx = DslCtx { event_player: kw.defender, attack: true, ..base };
+            let ctx = DslCtx { event_player: kw.defender, attack: true, atk_count: kw.attackers.len() as i32, ..base };
             if min_atk.is_some_and(|k| (kw.attackers.len() as u32) < k) {
                 return out; // Tier 3 (aurelia): battalion, "attacks with three or more creatures"
             }
@@ -1711,6 +1795,9 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "artifact" => d.types.has(Types::ARTIFACT),
             "enchantment" => d.types.has(Types::ENCHANTMENT),
             "legendary" => d.tag(Tag::Leg),
+            // --- Tiers 1/2 (lightpaws): Transcendent Envoy, Starnheim Courser
+            "aura" => d.has_subtype("aura"),
+            "artifact_or_enchantment" => d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT),
             // --- Tier 3 (marwyn): the Medallions ("green spells you cast cost {1} less")
             "white" => d.colors.has('W'),
             "blue" => d.colors.has('U'),
@@ -1868,6 +1955,7 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                 v += 0.7 * n * (pw + 0.5 * e.keywords.len() as f64);
             }
             "counters" => v += 0.4 * n,
+            "blight" => v += 0.5 * n * g.opps(p).count() as f64, // --- Tiers 1/2 (lathril)
             "pump" => v += 0.3,
             "lose_life" => {
                 v += 0.5
@@ -1888,6 +1976,13 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                 v -= 0.2 * n(p) as f64;
             }
             "sacrifice" => v += if e.who.as_deref() != Some("you") { 2.0 } else { -1.0 },
+            "extra_land" => {
+                // --- Tiers 1/2 (tatyova-teysa): worth the land cards in hand that the drops left this turn can't play
+                let pl = g.player(p);
+                let lands = pl.hand.iter().filter(|&&c| g.db.get(c).land).count() as f64;
+                let left = (1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now) as f64 - pl.lands_played as f64;
+                v += 0.3 + 1.2 * n.min((lands - left.max(0.0)).max(0.0));
+            }
             "discard" => v += if e.who.as_deref() != Some("you") { 0.8 } else { -0.5 },
             "modal" => {
                 let mut ms: Vec<f64> = e.modes.iter().map(|m| value_of(g, p, m, spell)).collect();
@@ -1925,6 +2020,22 @@ pub fn card_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
     v.clamp(0.5, 9.0)
 }
 
+/// --- Tiers 1/2 (windgrace): the cards in p's hand of type t ("land", "creature", "artifact", "enchantment"), for a
+/// typed discard cost
+fn discard_typed(g: &Game, p: PlayerId, t: &str) -> Vec<CardId> {
+    let ok = |c: CardId| {
+        let d = g.db.get(c);
+        match t {
+            "land" => d.land,
+            "creature" => d.creature,
+            "artifact" => d.types.has(Types::ARTIFACT),
+            "enchantment" => d.types.has(Types::ENCHANTMENT),
+            _ => true,
+        }
+    };
+    g.player(p).hand.iter().copied().filter(|&c| ok(c)).collect()
+}
+
 fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, dry: bool) -> Res<bool> {
     let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
     let x = g.perm(src);
@@ -1937,6 +2048,12 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         return Ok(false);
     }
     if cost.discard.is_some_and(|k| (g.player(p).hand.len() as u32) < k) {
+        return Ok(false);
+    }
+    // --- Tiers 1/2 (windgrace): "discard a land card": enough cards of that type in hand
+    if let (Some(k), Some(t)) = (cost.discard, cost.discard_type.as_deref())
+        && (discard_typed(g, p, t).len() as u32) < k
+    {
         return Ok(false);
     }
     let mut fod = None;
@@ -1979,7 +2096,16 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         lose_life(g, p, l, Some(p), "other", None)?;
     }
     if let Some(k) = cost.discard {
-        crate::engine::cast::discard_worst(g, p, k)?;
+        match cost.discard_type.as_deref() {
+            Some(t) => {
+                for _ in 0..k {
+                    let cs = discard_typed(g, p, t);
+                    let Some(c) = min_by(&cs, |c| crate::engine::tutors::card_worth(g, p, c, false)) else { break };
+                    zones::discard_cards(g, p, &[c])?;
+                }
+            }
+            None => crate::engine::cast::discard_worst(g, p, k)?,
+        }
     }
     LAST_SAC_MV.with(|c| c.set(fod.and_then(|f| g.perm(f).cd).map_or(0, |c| g.db.get(c).cmc as i32)));
     if let Some(f) = fod {
@@ -2136,7 +2262,10 @@ fn cost_text(cost: &model::Cost) -> String {
         parts.push(format!("pay {l} life"));
     }
     if let Some(k) = cost.discard {
-        parts.push(format!("discard {k}"));
+        match cost.discard_type.as_deref() {
+            Some(t) => parts.push(format!("discard {k} {t}")), // --- Tiers 1/2 (windgrace)
+            None => parts.push(format!("discard {k}")),
+        }
     }
     if parts.is_empty() { "{0}".into() } else { parts.join(", ") }
 }

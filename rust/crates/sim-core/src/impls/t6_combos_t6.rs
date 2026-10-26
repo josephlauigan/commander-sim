@@ -28,7 +28,7 @@ use crate::engine::stack::{ability_window, ability_window_card, counter_window};
 use crate::engine::values::colors_of;
 use crate::flow::Res;
 use crate::ids::{CardId, LandId, PermId, PlayerId};
-use crate::state::Game;
+use crate::state::{Game, Step as TurnStep};
 use crate::sym::intern;
 use crate::tag::Tag;
 
@@ -425,7 +425,6 @@ const S_FLIP_DACK2: Step = trigger("Dack's second enters trigger (the rest of th
 const S_FLIP_PRESTON: Step = trigger("Preston copies a creature that entered uncast", flip_preston_src);
 const S_FLIP_SOLAR: Step = trigger("Radiant Solar ventures (a nontoken creature entered)", flip_solar_src);
 
-
 // ================================================================== Sisay
 fn is_legend_creature(g: &Game, c: CardId) -> bool {
     let d = g.db.get(c);
@@ -496,11 +495,7 @@ fn get_piece(g: &Game, p: PlayerId, names: &[&str]) -> Option<Src> {
     }
     let sis = bf(g, p, SISAY)?;
     let power = crate::engine::values::epow(g, sis);
-    names
-        .iter()
-        .filter_map(|n| lib_card(g, p, n))
-        .find(|&c| (g.db.get(c).cmc as i32) < power)
-        .map(Src::Fetch)
+    names.iter().filter_map(|n| lib_card(g, p, n)).find(|&c| (g.db.get(c).cmc as i32) < power).map(Src::Fetch)
 }
 
 impl Plan {
@@ -767,8 +762,27 @@ fn has_card(g: &Game, p: PlayerId, name: &str) -> bool {
     hand_card(g, p, &[name]).is_some() || lib_card(g, p, name).is_some()
 }
 
+/// Thrasios can draw the library: on the battlefield, or in the command zone (or the hand) on p's own main phase,
+/// where the unbounded mana casts it whatever the tax
+fn thrasios_reach(g: &Game, p: PlayerId) -> bool {
+    if bf(g, p, THRASIOS).is_some() {
+        return true;
+    }
+    let main = g.active == Some(p) && matches!(g.step, TurnStep::Start | TurnStep::Main1 | TurnStep::Main2);
+    main && (thrasios_card(g, p).is_some())
+}
+
+/// Thrasios in the command zone or in hand
+fn thrasios_card(g: &Game, p: PlayerId) -> Option<CardId> {
+    g.player(p).cmds_in_zone().find(|&c| cname(g, c) == THRASIOS).or_else(|| hand_card(g, p, &[THRASIOS]))
+}
+
 fn finisher(g: &Game, p: PlayerId) -> Option<Fin> {
-    if bf(g, p, THRASIOS).is_none() {
+    // Finale in hand needs no draw: the unbounded mana casts it for X of 10 or more
+    if hand_card(g, p, &[FINALE]).is_some() {
+        return Some(Fin::Finale);
+    }
+    if !thrasios_reach(g, p) {
         return None;
     }
     if has_card(g, p, FINALE) {
@@ -840,6 +854,25 @@ fn finish_ability(g: &mut Game, p: PlayerId) -> Res<bool> {
     ability_window(g, p, Some(m), "each player draws a card (again and again)", Some(6.0), None)
 }
 
+/// Thrasios is cast from the command zone (or hand) when the finish needs its draws and it is not out: the unbounded
+/// mana pays the cost and the tax (floating mana added for exactly that cast), and the cast is a normal spell the
+/// table may counter (a countered commander goes back to the command zone)
+fn cast_thrasios(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if bf(g, p, THRASIOS).is_some() || hand_card(g, p, &[FINALE]).is_some() {
+        return Ok(true);
+    }
+    let Some(c) = thrasios_card(g, p) else { return Ok(false) };
+    let (gn, pips) = cost_of(g, p, c);
+    let before = g.player(p).floating.any;
+    g.player_mut(p).floating.any += gn + pips.chars().count() as u32;
+    crate::ai::brain::do_cast(g, p, c, None)?;
+    let f = &mut g.player_mut(p).floating;
+    f.any = f.any.min(before);
+    Ok(bf(g, p, THRASIOS).is_some())
+}
+
+const S_FIN_THRASIOS: Step = step("cast Thrasios (the unbounded mana pays the tax)", StepKind::Spell, cast_thrasios);
+
 const S_FIN_DRAW: Step = Step {
     label: "Thrasios draws the library for the finisher",
     kind: StepKind::Ability,
@@ -856,20 +889,94 @@ fn gates_in_reach(g: &Game, p: PlayerId) -> bool {
     land_on_bf(g, p, GATES).is_some() || hand_card(g, p, &[GATES]).is_some()
 }
 
-fn plan_a(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+// --- t6 rograkh-thrasios: the creature tutors as a step of the line. Oracle: Green Sun's Zenith {X}{G} (a green
+// creature, MV X or less, onto the battlefield; GSZ shuffles itself back), Nature's Rhythm {X}{G}{G} and Chord of
+// Calling {X}{G}{G}{G} (any creature), Invasion of Ikoria {X}{G}{G} (a non-Human creature). Finale is left out: it is
+// the finisher.
+const NATURES_RHYTHM: &str = "Nature's Rhythm";
+const CHORD: &str = "Chord of Calling";
+const INVASION: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
+/// (tutor, finds a non-green creature, finds a Human)
+const X_TUTORS: [(&str, bool, bool); 4] =
+    [(GSZ, false, true), (NATURES_RHYTHM, true, true), (CHORD, true, true), (INVASION, true, false)];
+
+/// a tutor in hand that puts `piece` (in the library) onto the battlefield, and its whole cost with X = the piece's
+/// mana value: (tutor, generic, pips)
+fn x_tutor(g: &Game, p: PlayerId, piece: &str) -> Option<(CardId, u32, String)> {
+    let c = lib_card(g, p, piece)?;
+    let d = g.db.get(c);
+    let (green, human) = (d.pips.contains('G'), d.has_subtype("human"));
+    X_TUTORS.iter().find_map(|&(t, any, humans)| {
+        if (!any && !green) || (!humans && human) {
+            return None;
+        }
+        let tc = hand_card(g, p, &[t])?;
+        if !castable(g, p, tc, "hand") {
+            return None;
+        }
+        let (gn, pips) = cost_of(g, p, tc);
+        Some((tc, gn + d.cmc, pips))
+    })
+}
+
+/// cast the tutor for `piece` (X paid, a normal counter window) and put the piece onto the battlefield
+fn tutor_onto_bf(g: &mut Game, p: PlayerId, piece: &str) -> Res<bool> {
+    let Some((t, gn, pips)) = x_tutor(g, p, piece) else { return Ok(false) };
+    if !can_pay(g, p, gn, &pips, false) {
+        return Ok(false);
+    }
+    let x = gn - cost_of(g, p, t).0;
+    pay(g, p, x, "", false)?;
+    if !cast_abstract(g, p, t, false)? {
+        return Ok(false);
+    }
+    if cname(g, t) == GSZ {
+        let pl = g.player_mut(p);
+        pl.gy.retain(|&c| c != t);
+        pl.library.push(t);
+        crate::engine::tutors::shuffle_library(g, p);
+    }
+    let Some(c) = lib_card(g, p, piece) else { return Ok(false) };
+    g.player_mut(p).library.retain(|&x| x != c);
+    crate::glog!(g, "    {} puts {} onto the battlefield", cname(g, t), piece);
+    crate::engine::zones::enter(g, p, c, crate::engine::zones::Enter::default())?;
+    Ok(bf(g, p, piece).is_some())
+}
+
+/// how line A gets Oboro: out, cast from hand, or put in by a tutor
+enum Piece {
+    Out,
+    Cast(CardId),
+    Tutor(u32, String),
+}
+
+/// Oboro and the mana for the loop's first turn: (how Oboro comes, the extra mana besides a cast from hand)
+fn plan_a(g: &Game, p: PlayerId) -> Option<(Piece, Vec<CardId>)> {
     land_on_bf(g, p, CRADLE)?;
     if !gates_in_reach(g, p) || finisher(g, p).is_none() {
         return None;
     }
-    let mut casts = vec![];
-    if bf(g, p, OBORO).is_none() {
-        casts.push(hand_card(g, p, &[OBORO])?);
-    }
-    // Cradle at 6: 6 + Gates 1 in, {2} (Oboro) + {4} (Gates back from hand) out
-    if creatures(g, p) + casts.len() < 6 || !affordable(g, p, &casts, 6) {
+    let oboro = if bf(g, p, OBORO).is_some() {
+        Piece::Out
+    } else if let Some(c) = hand_card(g, p, &[OBORO]) {
+        Piece::Cast(c)
+    } else {
+        let (_, gn, pips) = x_tutor(g, p, OBORO)?;
+        Piece::Tutor(gn, pips)
+    };
+    // Cradle at 6: 6 + Gates 1 in, {2} (Oboro) + {4} (Gates back from hand) out; Training Grounds or Biomancer's
+    // Familiar make Oboro's ability {1}, so Cradle at 5 is enough
+    let need = super::t6_green1::creature_ability_cost(g, p, 2) as usize + 4;
+    let casts: Vec<CardId> = if let Piece::Cast(c) = oboro { vec![c] } else { vec![] };
+    let coming = usize::from(!matches!(oboro, Piece::Out));
+    let ok = match &oboro {
+        Piece::Tutor(gn, pips) => can_pay(g, p, gn + need as u32, pips, false),
+        _ => affordable(g, p, &casts, need as u32),
+    };
+    if creatures(g, p) + coming < need || !ok {
         return None;
     }
-    Some(casts)
+    Some((oboro, casts))
 }
 
 fn ready_plan_a(g: &Game, p: PlayerId) -> Ready {
@@ -877,9 +984,12 @@ fn ready_plan_a(g: &Game, p: PlayerId) -> Ready {
 }
 
 fn cast_oboro(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(plan) = plan_a(g, p) else { return Ok(false) };
-    let Some(&c) = plan.first() else { return Ok(true) };
-    cast_named(g, p, c)
+    match plan_a(g, p) {
+        None => Ok(false),
+        Some((Piece::Out, _)) => Ok(true),
+        Some((Piece::Cast(c), _)) => cast_named(g, p, c),
+        Some((Piece::Tutor(..), _)) => tutor_onto_bf(g, p, OBORO),
+    }
 }
 
 fn a_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
@@ -922,23 +1032,75 @@ fn gates_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
 }
 
 // --- Eternal Witness + Snap + Gaea's Cradle
+fn gy_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
+    g.player(p).gy.iter().copied().find(|&c| cname(g, c) == name)
+}
+
+/// the loop starts with Witness in hand, on the battlefield (Snap it first, recast it) or in the library with a
+/// creature tutor in hand (Green Sun's Zenith, Nature's Rhythm, Chord of Calling put it in), and Snap in hand or in
+/// the graveyard (Witness's enter trigger returns it; not with Witness already out). The cards still to cast from
+/// hand are returned.
 fn plan_b(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     land_on_bf(g, p, CRADLE)?;
-    let (w, s) = (hand_card(g, p, &[WITNESS])?, hand_card(g, p, &[SNAP])?);
-    // Cradle at 5 + a {U} land in, Witness {1}{G}{G} + Snap {1}{U} out, Snap untaps two lands: +1 a cycle
-    if creatures(g, p) < 5 || finisher(g, p).is_none() || !affordable(g, p, &[w, s], 0) {
+    let (w, s) = (hand_card(g, p, &[WITNESS]), hand_card(g, p, &[SNAP]));
+    let w_out = bf(g, p, WITNESS).and_then(|m| g.perm(m).cd);
+    let tutor = if w.is_none() && w_out.is_none() { Some(x_tutor(g, p, WITNESS)?) } else { None };
+    if s.is_none() && (w_out.is_some() || gy_card(g, p, SNAP).is_none()) {
         return None;
     }
-    Some(vec![w, s])
+    let sc = s.or_else(|| gy_card(g, p, SNAP))?;
+    // Cradle at 5 + a {U} land in, Witness {1}{G}{G} + Snap {1}{U} out, Snap untaps two lands: +1 a cycle. A Witness
+    // already out is bounced by the loop, so it does not count for Cradle. A tutored Witness: the tutor and Snap are
+    // paid first, Snap's untap recasts Witness
+    let feeders = creatures(g, p) - usize::from(w_out.is_some());
+    if feeders < 5 || finisher(g, p).is_none() {
+        return None;
+    }
+    let ok = match &tutor {
+        Some((_, gn, pips)) => {
+            let (sg, sp) = cost_of(g, p, sc);
+            can_pay(g, p, gn + sg, &format!("{pips}{sp}"), false)
+        }
+        None => affordable(g, p, &[w.or(w_out)?, sc], 0),
+    };
+    ok.then(|| w.into_iter().chain(s).collect())
 }
 
 fn ready_plan_b(g: &Game, p: PlayerId) -> Ready {
     ready_with(plan_b(g, p).is_some())
 }
 
+/// Witness is cast, or put in by a tutor (unless it is already out and Snap is in hand: Snap bounces it first);
+/// with Snap in the graveyard, the enter trigger's one target is Snap (whatever card the engine's own pick returned
+/// goes back)
 fn cast_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
-    let Some(w) = hand_card(g, p, &[WITNESS]) else { return Ok(false) };
-    cast_named(g, p, w)
+    if bf(g, p, WITNESS).is_some() {
+        return Ok(hand_card(g, p, &[SNAP]).is_some());
+    }
+    let snap_gy = if hand_card(g, p, &[SNAP]).is_none() { gy_card(g, p, SNAP) } else { None };
+    let (hand0, gy0) = (g.player(p).hand.clone(), g.player(p).gy.clone());
+    let entered = match hand_card(g, p, &[WITNESS]) {
+        Some(w) => cast_named(g, p, w)?,
+        None => tutor_onto_bf(g, p, WITNESS)?,
+    };
+    if !entered {
+        return Ok(false);
+    }
+    if let Some(s) = snap_gy
+        && g.player(p).gy.contains(&s)
+    {
+        let back: Vec<CardId> =
+            g.player(p).hand.iter().copied().filter(|c| !hand0.contains(c) && gy0.contains(c)).collect();
+        let pl = g.player_mut(p);
+        for c in back {
+            pl.hand.retain(|&x| x != c);
+            pl.gy.push(c);
+        }
+        pl.gy.retain(|&x| x != s);
+        pl.hand.push(s);
+        crate::glog!(g, "    Eternal Witness returns Snap");
+    }
+    Ok(hand_card(g, p, &[SNAP]).is_some())
 }
 
 fn snap_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
@@ -974,10 +1136,11 @@ fn b_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 // creature-land tap makes 1 + 2 = 3 mana: 6 for both. Witness {1}{G}{G} + Snap {1}{U} = 5; Snap untaps both lands and
 // returns Witness, Witness returns Snap: +1 a cycle (L1 gives the {U}). Any clone that can copy Cub works.
 //
-// Line G (Springheart Nantuko on Witness + Vibrance with the Oboro/Gates loop) is NOT unbounded in our list: each
-// Vibrance damage needs {R}{R} spent and the loop makes one renewable {R} (the Gates filter, {1},{T}); Taiga,
-// Volcanic Island, Chrome Mox and Mox Amber don't untap. A loop also costs Oboro 2 + Gates 4 + landfall 2 + evoke 2 =
-// 10 against Cradle N + 1. Finite damage, not a win line: skipped.
+// Line G (Springheart Nantuko on Witness + Vibrance with the Oboro/Gates loop) is unbounded once line A is: each Gates
+// entry renews one {R} (the Gates filter, {1},{T}), so plain loops bank {R}{R} and the mana for the next Witness copy
+// (Oboro 2 + Gates 4 + landfall 2 + evoke 2), and 3 damage a copy follows. But it needs line A running, and line A
+// already wins through Thrasios and Finale (or Mastermind + GSZ); G only matters when neither finisher can be reached
+// (Thrasios exiled and Finale gone), which the traces do not show. Not modelled.  // --- t6 rograkh-thrasios
 const CUB: &str = "Badgermole Cub";
 const MOCKINGBIRD: &str = "Mockingbird";
 const IMAGE: &str = "Phantasmal Image";
@@ -1191,6 +1354,7 @@ pub static COMBOS: [Combo; 9] = [
                 keys: no_keys,
             },
             step("Talon Gates comes back for {4}: the table's creatures phase out", StepKind::Engine, gates_loop),
+            S_FIN_THRASIOS,
             S_FIN_DRAW,
             S_FIN_SPELL,
             S_FIN_ABILITY,
@@ -1205,6 +1369,7 @@ pub static COMBOS: [Combo; 9] = [
             step("Snap on Eternal Witness (untap two lands)", StepKind::Spell, snap_witness),
             trigger("Eternal Witness returns Snap (again and again)", witness_src),
             pieces("the creatures that feed Cradle survive", b_keys),
+            S_FIN_THRASIOS,
             S_FIN_DRAW,
             S_FIN_SPELL,
             S_FIN_ABILITY,
@@ -1227,6 +1392,7 @@ pub static COMBOS: [Combo; 9] = [
                 run: done,
                 keys: no_keys,
             },
+            S_FIN_THRASIOS,
             S_FIN_DRAW,
             S_FIN_SPELL,
             S_FIN_ABILITY,
@@ -1243,6 +1409,7 @@ pub static COMBOS: [Combo; 9] = [
             step("cast Eternal Witness", StepKind::Spell, cast_witness_d),
             step("Snap on Eternal Witness (untap two creature-lands)", StepKind::Spell, snap_witness_d),
             trigger("Eternal Witness returns Snap (again and again)", witness_src),
+            S_FIN_THRASIOS,
             S_FIN_DRAW,
             S_FIN_SPELL,
             S_FIN_ABILITY,

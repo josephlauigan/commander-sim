@@ -12,7 +12,7 @@ to trigger counters on Godo, and to fast combo that wins before turn 5.
 | | |
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10, five colours) |
-| **Bracket** | 4 (14 Game Changers; a two-card infinite combo) |
+| **Bracket** | 4 (15 Game Changers; a two-card infinite combo) |
 | **Simulator** | Not wired in yet. Eminence and The Ur-Dragon's attack trigger are modeled in PR #139 (`impls/t45_urdragon.rs`); build on that when adding the deck key. |
 
 ## Strategy
@@ -39,8 +39,8 @@ himself, Imperial Recruiter, Worldly Tutor or Demonic Tutor. Ship hands with no 
 
 **Turns 3-5: the win turn.** Cast Godo with six mana (five with Maskwood Nexus out), plus Hammer of Nazahn already out,
 an untapped Brass Squire, Puresteel Paladin with metalcraft, Sigarda's Aid, or {5} to attach Helm. Hold Force of Will,
-Pact of Negation or Teferi's Protection for the response, and equip Conqueror's Flail first if you can: opponents can't
-cast spells during your turn.
+Pact of Negation or Teferi's Protection for the response. Grand Abolisher on the battlefield, or Conqueror's Flail
+equipped first, means opponents can't cast spells during your turn at all.
 
 **Late game.** If the combo is answered, the Dragons and Equipment win the long game: Terror of the Peaks, the hasty
 Dragons, Kaldra Compleat, and The Ur-Dragon's card draw.
@@ -119,9 +119,11 @@ hasty 2/2s as you need. **Imperial Recruiter** finds Dualcaster or Godo (power 2
 
 ### Interaction and protection
 
-- **Stack:** Force of Will, Pact of Negation, Counterspell.
-- **Removal:** Swords to Plowshares, Lightning Bolt, Decimate, Chaos Warp, Assassin's Trophy, Cyclonic Rift.
-- **Protection:** Teferi's Protection, Heroic Intervention, Conqueror's Flail, Lightning Greaves, Swiftfoot Boots.
+- **Stack:** Force of Will, Force of Negation (noncreature spells; free on an opponent's turn), Pact of Negation, Mana Drain (the mana comes
+  back on your next main phase: put it toward Godo).
+- **Removal:** Swords to Plowshares, Decimate, Chaos Warp, Assassin's Trophy, Cyclonic Rift.
+- **Protection:** Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or
+  enchantments during your turn), Teferi's Protection, Conqueror's Flail, Lightning Greaves, Swiftfoot Boots.
 
 ### Card flow
 
@@ -131,49 +133,53 @@ trample), Wrenn and Six (returns fetch lands), Puresteel Paladin, and The Ur-Dra
 ## Key lines
 
 - **Turn 1-2:** fast mana and a mana creature; Puresteel Paladin or Stoneforge Mystic.
-- **Godo turn:** six mana plus a way to attach Helm; Conqueror's Flail first if it's out.
+- **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down or Conqueror's Flail equipped first if you
+  have them.
 - **Godo answered:** Camera or Jaxis copies Godo for a fresh trigger; otherwise switch to Dualcaster and Twinflame.
 - **Maskwood turn:** every creature is a Dragon and a Samurai: cast creatures for {1} less and attack with everything.
 
 ## Mana and consistency
 
-34 lands: Command Tower, Exotic Orchard, City of Brass, Mana Confluence, four fetch lands, seven shock lands, four
-Triomes, Cinder Glade, Rootbound Crag, Karplusan Forest, Game Trail, Arcane Sanctum, Battlefield Forge, Dragonskull
-Summit, Fabled Passage, Ancient Tomb, Cavern of Souls (name Dragon), Inventors' Fair, and 2 Forest, 1 Mountain, 1
-Plains. Fast mana (Sol Ring, Mana Vault, Chrome Mox, Mox Diamond, Lotus Petal, Arcane Signet), three mana creatures
-and two land-ramp spells.
+34 lands, every one untapped: the nine original dual lands (Badlands, Bayou, Plateau, Scrubland, Taiga, Tropical
+Island, Tundra, Underground Sea, Volcanic Island), all ten shock lands, eight fetch lands (Bloodstained Mire, Flooded
+Strand, Marsh Flats, Misty Rainforest, Polluted Delta, Verdant Catacombs, Windswept Heath, Wooded Foothills), City of
+Brass, Mana Confluence, Command Tower, Ancient Tomb, Cavern of Souls (name Dragon), Inventors' Fair and one Forest.
+Every fetch finds a dual or shock land of two colours, and Nature's Lore and Rampant Growth find any land with the
+Forest type (Bayou, Taiga, Tropical Island and the green shock lands). The Forest is there for Blood Moon. Fast mana:
+Sol Ring, Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two
+land-ramp spells.
 
 ## Bracket and Rule 0
 
-Bracket 4: 14 Game Changers (Mana Vault, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study, Enlightened Tutor,
-Demonic Tutor, Vampiric Tutor, Gamble, Worldly Tutor, Force of Will, Cyclonic Rift, Teferi's Protection, Ancient Tomb)
+Bracket 4: 15 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
+Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will, Cyclonic Rift, Teferi's
+Protection, Ancient Tomb)
 and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about the combo before the game.
 
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (20).** Birds of Paradise, Brass Squire, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Hellkite Tyrant, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Smaug the Magnificent, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (21).** Birds of Paradise, Brass Squire, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Hellkite Tyrant, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Smaug the Magnificent, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
 **Enchantments (4).** Garruk's Uprising, Rhystic Study, Sigarda's Aid, Sylvan Library
 
-**Artifacts (20).** Arcane Signet, Chrome Mox, Conqueror's Flail, Embercleave, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
+**Artifacts (20).** Chrome Mox, Conqueror's Flail, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
-**Sorceries (7).** Decimate, Demonic Tutor, Gamble, Nature's Lore, Rampant Growth, Steelshaper's Gift, Twinflame
+**Sorceries (7).** Decimate, Demonic Tutor, Imperial Seal, Nature's Lore, Rampant Growth, Steelshaper's Gift, Twinflame
 
-**Instants (13).** Assassin's Trophy, Chaos Warp, Counterspell, Cyclonic Rift, Enlightened Tutor, Force of Will, Heroic Intervention, Lightning Bolt, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (12).** Assassin's Trophy, Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Lands (34).** Ancient Tomb, Arcane Sanctum, Battlefield Forge, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, Cinder Glade, City of Brass, Command Tower, Dragonskull Summit, Exotic Orchard, Fabled Passage, Game Trail, Inventors' Fair, Jetmir's Garden, Karplusan Forest, Ketria Triome, Mana Confluence, Misty Rainforest, Overgrown Tomb, Rootbound Crag, Sacred Foundry, Spara's Headquarters, Steam Vents, Stomping Ground, Temple Garden, Windswept Heath, Wooded Foothills, Ziatora's Proving Ground, 2 Forest, 1 Mountain, 1 Plains
+**Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
 ## Import list (100)
 
 ```
 1 Ancient Tomb
-1 Arcane Sanctum
-1 Arcane Signet
 1 Assassin's Trophy
-1 Battlefield Forge
+1 Badlands
+1 Bayou
 1 Birds of Paradise
 1 Blood Crypt
 1 Bloodstained Mire
@@ -182,47 +188,44 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Cavern of Souls
 1 Chaos Warp
 1 Chrome Mox
-1 Cinder Glade
 1 City of Brass
 1 Command Tower
 1 Conqueror's Flail
-1 Counterspell
 1 Cyclonic Rift
 1 Decimate
 1 Demonic Tutor
 1 Dragonlord Ojutai
-1 Dragonskull Summit
 1 Dualcaster Mage
 1 Embercleave
 1 Enlightened Tutor
-1 Exotic Orchard
-1 Fabled Passage
+1 Flooded Strand
+1 Force of Negation
 1 Force of Will
-1 Gamble
-1 Game Trail
 1 Garruk's Uprising
 1 Gilgamesh, Master-at-Arms
 1 Glorybringer
+1 Godless Shrine
 1 Godo, Bandit Warlord
 1 Goldspan Dragon
+1 Grand Abolisher
+1 Grim Monolith
+1 Hallowed Fountain
 1 Hammer of Nazahn
 1 Hellkite Tyrant
 1 Helm of the Host
-1 Heroic Intervention
 1 Imperial Recruiter
+1 Imperial Seal
 1 Inventors' Fair
 1 Jaxis, the Troublemaker
-1 Jetmir's Garden
 1 Kaldra Compleat
-1 Karplusan Forest
-1 Ketria Triome
 1 Kura, the Boundless Sky
-1 Lightning Bolt
 1 Lightning Greaves
 1 Llanowar Elves
 1 Lotus Petal
 1 Mana Confluence
+1 Mana Drain
 1 Mana Vault
+1 Marsh Flats
 1 Maskwood Nexus
 1 Misty Rainforest
 1 Mox Diamond
@@ -232,16 +235,17 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Pact of Negation
 1 Paradise Druid
 1 Peter Parker's Camera
+1 Plateau
+1 Polluted Delta
 1 Puresteel Paladin
 1 Rampant Growth
 1 Rhystic Study
-1 Rootbound Crag
 1 Sacred Foundry
+1 Scrubland
 1 Shadowspear
 1 Sigarda's Aid
 1 Smaug the Magnificent
 1 Sol Ring
-1 Spara's Headquarters
 1 Steam Vents
 1 Steelshaper's Gift
 1 Sting, the Glinting Dagger
@@ -252,20 +256,24 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Sword of Fire and Ice
 1 Swords to Plowshares
 1 Sylvan Library
+1 Taiga
 1 Teferi's Protection
 1 Temple Garden
 1 Terror of the Peaks
 1 The One Ring
 1 The Ur-Dragon
 1 Thundermaw Hellkite
+1 Tropical Island
+1 Tundra
 1 Twinflame
+1 Underground Sea
 1 Vampiric Tutor
+1 Verdant Catacombs
+1 Volcanic Island
+1 Watery Grave
 1 Windswept Heath
 1 Wooded Foothills
 1 Worldly Tutor
 1 Wrenn and Six
-1 Ziatora's Proving Ground
-2 Forest
-1 Mountain
-1 Plains
+1 Forest
 ```
