@@ -11,7 +11,7 @@
 # [[engines.<deck key>]] the key engines of an outside deck (from its "## Sim modeling notes"): label, key cards,
 #                       mechanics (keys of [mechanics])
 
-unsupported_keywords = ["adapt", "affinity", "afterlife", "amplify", "annihilator", "backup", "basic landcycling", "bestow", "blitz", "bloodthirst", "bushido", "buyback", "cascade", "casualty", "channel", "cleave", "commander ninjutsu", "craft", "crew", "cycling", "dash", "daybound", "delve", "devour", "disturb", "dredge", "embalm", "emerge", "encore", "entwine", "escape", "eternalize", "evoke", "exploit", "extort", "fabricate", "fear", "flanking", "forage", "forestwalk", "foretell", "gift", "graft", "haunt", "horsemanship", "improvise", "intimidate", "islandwalk", "kicker", "landcycling", "landwalk", "living weapon", "madness", "modular", "monstrosity", "mountainwalk", "multikicker", "myriad", "nightbound", "ninjutsu", "offspring", "overload", "plainswalk", "plot", "prototype", "provoke", "prowess", "rampage", "rebound", "reconfigure", "riot", "shadow", "soulbond", "spectacle", "splice", "split second", "squad", "storm", "sunburst", "surge", "suspend", "swampwalk", "training", "transmute", "unearth"]
+unsupported_keywords = ["adapt", "affinity", "amplify", "annihilator", "backup", "basic landcycling", "bestow", "blitz", "bloodthirst", "bushido", "buyback", "cascade", "casualty", "channel", "cleave", "commander ninjutsu", "craft", "crew", "cycling", "dash", "daybound", "delve", "devour", "disturb", "dredge", "embalm", "emerge", "encore", "entwine", "escape", "eternalize", "evoke", "exploit", "extort", "fabricate", "fear", "flanking", "forage", "forestwalk", "foretell", "gift", "graft", "haunt", "horsemanship", "improvise", "intimidate", "islandwalk", "kicker", "landcycling", "landwalk", "living weapon", "madness", "modular", "monstrosity", "mountainwalk", "multikicker", "myriad", "nightbound", "ninjutsu", "offspring", "overload", "plainswalk", "plot", "prototype", "provoke", "prowess", "rampage", "rebound", "reconfigure", "riot", "shadow", "soulbond", "spectacle", "splice", "split second", "squad", "storm", "sunburst", "surge", "suspend", "swampwalk", "training", "transmute", "unearth"]
 stat_tags = ["amt", "bomb", "c", "ck", "convoke", "dt", "f", "flash", "fly", "haste", "human", "leg", "lifelink", "noatk", "pow", "reach", "shaman", "t", "tgh", "trample", "vig", "warrior", "wizard"]
 deck_only_tags = ["avarice", "crackle", "mastery", "tide", "x", "yawg"]
 
@@ -260,6 +260,118 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Twinflame Tyrant" = { status = "Full", note = "flying; hand-written (combat::fiery, with Fiery Emancipation): damage from your sources to opponents and their permanents is doubled (combat and noncombat)" }
 "Ureni of the Unwritten" = { status = "Full", note = "flying, trample; hand-written (impls/t45_urdragon.rs): enters or attacks: the best Dragon creature card of the top eight onto the battlefield, the rest to the bottom in a random order" }
 "Urza's Incubator" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): names the deck's most common creature type; creature spells of that type cost {2} less" }
+# --- Tiers 1/2 (lathril): impls/t12_lathril.rs
+"Banner of Kinship" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): names the deck's main creature type as it enters, a fellowship counter per creature of yours of that type (proliferate adds to them); those creatures get +1/+1 per counter" }
+"Bounty of Skemfar" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): the top six; a land onto the battlefield tapped, the best Elf card to hand, the rest to the bottom in a random order" }
+"Crown of Skemfar" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): the enchanted creature gets +1/+1 per Elf you control and reach; {2}{G}: back from the graveyard to the hand (end-of-turn window, or after combat with mana to recast it)" }
+"Pact of the Serpent" = { status = "Approximate", note = "hand-written (impls/t12_lathril.rs): the AI names its main creature type and targets itself (X >= 3, life to spare), or an opponent the life loss kills; X cards and X life. Left out: a person always targets themselves" }
+"Champions of the Perfect" = { status = "Full", note = "hand-written (engine/cast.rs, impls/t12_lathril.rs): behold an Elf (the cheapest: an Elf card from hand or an Elf you control) and exile it; it returns to its owner's hand when Champions leaves; its creature-spell draw is compiled" }
+"Elven Chorus" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs top_options): creature spells from the top of the library; creatures tap for any colour (rite tag); looking at the top card is information the AI has" }
+"High Perfect Morcant" = { status = "Full", note = "its blight trigger is compiled (each opponent puts a -1/-1 counter on its least costly creature); hand-written (impls/t12_lathril.rs): tap three untapped Elves: proliferate at sorcery speed, after combat when it adds counters worth having" }
+"Miara, Thorn of the Glade" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): Miara or another Elf of yours dies: pay {1} and 1 life to draw (not at 6 life or less); partner is a deck-building rule" }
+"Nullmage Shepherd" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): tap four untapped creatures: destroy the best opposing artifact or enchantment (at the end-of-turn window, at once for a valuable one)" }
+"Return Upon the Tide" = { status = "Approximate", note = "hand-written (impls/t12_lathril.rs): the best creature card from your graveyard returns; an Elf brings two 1/1 Elf Warriors. Left out: foretell (always hard-cast)" }
+"Rhys the Exiled" = { status = "Full", note = "attack life gain compiled; hand-written (impls/t12_lathril.rs): {B}, sacrifice another Elf worth less: regenerate" }
+"Ruthless Winnower" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): each player's upkeep, that player sacrifices a non-Elf creature (their least valuable)" }
+"Tyvar Kell" = { status = "Full", note = "hand-written (impls/t12_lathril.rs): Elves you control tap for {B} (not attackers before combat); +1 a +1/+1 counter on an Elf (a tapped mana Elf first), untap it, deathtouch; 0 a 1/1 Elf Warrior; -6 the emblem (Elf spells: draw two, haste that turn)" }
+
+# --- Tiers 1/2 (isshin): impls/t12_isshin.rs
+"Curse of Opulence" = { status = "Approximate", note = "hand-written (impls/t12_isshin.rs): enchants the opponent with the most life; whenever any player attacks that player, you create a Gold token and an attacking opponent of yours creates one too. Gold is a Treasure here (it counts as a Treasure sacrificed). Left out: the Aura falling off when its player leaves only stops it" }
+"Reconnaissance" = { status = "Approximate", note = "hand-written (impls/t12_isshin.rs): your creatures have vigilance on your turn (each attacker removed from combat after its damage and untapped). Left out: removing a blocked attacker from combat to save it" }
+"Adriana, Captain of the Guard" = { status = "Full", note = "hand-written (impls/t12_isshin.rs): melee on Adriana and your other creatures: each of your attackers +1/+1 until end of turn per opponent attacked this combat, once per Adriana" }
+"Alesha, Who Laughs at Fate" = { status = "Full", note = "first strike and the attack counter compiled; hand-written (impls/t12_isshin.rs): raid end step, the best creature card with mana value up to Alesha's power from your graveyard to the battlefield" }
+"Breena, the Demagogue" = { status = "Full", note = "flying; hand-written (impls/t12_isshin.rs): any player attacks one of your opponents who has more life than another of your opponents: that player draws, two +1/+1 counters on your best creature (once per opponent attacked)" }
+"Captain Lannery Storm" = { status = "Full", note = "haste and the attack Treasure compiled; hand-written (impls/t12_isshin.rs): +1/+0 until end of turn whenever you sacrifice a Treasure" }
+"Firebender Ascension" = { status = "Approximate", note = "the 2/2 Soldier from its tags; hand-written (impls/t12_isshin.rs): a quest counter per compiled or hand-written attack trigger of your attacking creatures, copied from four counters on. Left out: tag-driven attack triggers add no counter, conditional hand-written ones count even when they don't fire, the Soldier's firebending" }
+"Hammers of Moradin" = { status = "Full", note = "myriad (impls/t0_zurgo.rs); hand-written (impls/t12_isshin.rs): whenever it attacks, tap each opponent's best untapped creature" }
+"Otharri, Suns' Glory" = { status = "Full", note = "flying, lifelink, haste; hand-written (impls/t12_isshin.rs): attack: an experience counter, then a 2/2 red Rebel tapped and attacking per experience counter; {2}{R}{W}, tap an untapped Rebel: returns from the graveyard tapped (after combat or at a turn's end)" }
+"Raiyuu, Storm's Edge" = { status = "Full", note = "first strike; hand-written (impls/t12_isshin.rs): a Samurai or Warrior of yours attacks alone: untap it, an additional combat after the first" }
+"Tectonic Giant" = { status = "Approximate", note = "hand-written (impls/t12_isshin.rs): whenever it attacks, 3 damage to each opponent. Left out: the impulse-draw mode and the trigger on being targeted by an opponent's spell" }
+"Mishra, Claimed by Gix" = { status = "Approximate", note = "compiled: whenever you attack, each opponent loses X and you gain X (X: the attacking creatures). Left out: the meld with Phyrexian Dragon Engine (not in the deck)" }
+
+
+# --- Tiers 1/2 (lightpaws): hand-written in impls/t12_lightpaws.rs
+"Armored Ascension" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): +1/+1 per Plains you control, flying" }
+"Angelic Gift" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): draws a card as it enters; flying" }
+"Benevolent Blessing" = { status = "Approximate", note = "hand-written flash Aura (impls/t12_lightpaws.rs): protection from the colour chosen as it enters (the colour of the removal it answers, else the opponents' most common); cast in response to coloured targeted removal. Left out: the exception for your own Auras and Equipment (protection never knocks them off here)" }
+"Blacksmith's Skill" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): held for a response to targeted removal: hexproof and indestructible until end of turn, +2/+2 on an artifact creature" }
+"Chains of Custody" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): exiles the best opposing nonland permanent until it leaves; ward {2} (cardcode::aura_ward)" }
+"Face of Divinity" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): +2/+2; first strike and lifelink while another Aura is on the creature" }
+"Flickerform" = { status = "Approximate", note = "hand-written Aura (impls/t12_lightpaws.rs): {2}{W}{W} in response to removal or a wipe that would take the creature: it and its Auras are exiled; at the next end step the creature returns, then the Auras attached to it. Left out: activating it at other times (a blink for value)" }
+"Holy Mantle" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): +2/+2, protection from creatures (unblockable; no damage from creatures: rules2::prot_vs)" }
+"Idolized" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): whenever the creature attacks alone, +X/+X until end of turn (X: your nonland permanents)" }
+"Karametra's Blessing" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): held for a response to targeted removal on an enchanted (or enchantment) creature: +2/+2, hexproof and indestructible until end of turn" }
+"Light of Promise" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): whenever you gain life, that many +1/+1 counters on the creature" }
+"Mantle of the Ancients" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): enters: the Aura cards that can enchant the creature and the Equipment cards in your graveyard return attached to it; +1/+1 per Aura and Equipment on it" }
+"Mask of Law and Grace" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): protection from black and red" }
+"Pariah" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): damage to you is dealt to the enchanted creature instead (adds up over the turn; lethal damage destroys it); the AI puts it only on an indestructible creature or one with toughness 10 or more" }
+"Pearl-Ear, Imperial Advisor" = { status = "Full", note = "lifelink; hand-written (impls/t12_lightpaws.rs): enchantment spells cost {1} less per Aura you control; casting an Aura that goes on a modified permanent of yours (counters, your Auras or Equipment) draws a card" }
+"Reprobation" = { status = "Full", note = "removal kind `coward` (card_overrides.toml, rules::transform_away): the creature loses all abilities and is a 0/1" }
+"Retether" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): each Aura card in your graveyard that can enchant one of your creatures returns onto one (cast with two or more)" }
+"Shield of Duty and Reason" = { status = "Full", note = "hand-written Aura (impls/t12_lightpaws.rs): protection from green and blue" }
+"Single Combat" = { status = "Full", note = "hand-written (impls/t12_lightpaws.rs): each player keeps their best creature or planeswalker and sacrifices the rest; no creature or planeswalker spells until the end of the caster's next turn (a cast lock). Cast when it costs the opponents much more than you" }
+"Stoneskin" = { status = "Full", note = "hand-written flash Aura (impls/t12_lightpaws.rs): +0/+10; also cast in response to damage the creature then survives" }
+"Thran Power Suit" = { status = "Full", note = "equip {2} compiled; hand-written (impls/t12_lightpaws.rs): +1/+1 per Aura and Equipment on the equipped creature, ward {2}" }
+"Twinblade Blessing" = { status = "Full", note = "hand-written flash Aura (impls/t12_lightpaws.rs): double strike" }
+"Umbra Mystic" = { status = "Full", note = "hand-written (common::umbra_save): Auras on your permanents have umbra armor" }
+
+# --- Tiers 1/2 (windgrace): impls/t12_windgrace.rs
+"Constant Mists" = { status = "Approximate", note = "hand-written (impls/t12_windgrace.rs): cast at blocks against an attack that hurts (lethal, or 7+ / 40% of life unblocked): all combat damage to players prevented this turn; buyback (sacrifice a land) with seven or more lands, or four with lands to replay from the graveyard. Left out: combat damage between creatures is still dealt" }
+"Nissa of Shadowed Boughs" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): landfall, a loyalty counter; +1 untap a land (a tapped one making the most), a 3/3 haste menace creature until end of turn with an open attack before combat; -5 the best creature card with mana value up to your land count from hand or graveyard, two +1/+1 counters" }
+"Realms Uncharted" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): up to four lands with different names; the opponent puts the two best into the graveyard, the rest go to hand" }
+"Scapeshift" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): sacrifices as many lands as the library can replace, finds that many (Dark Depths and Thespian's Stage, Field of the Dead, new names and colours), tapped, each with its landfall; cast with the combo halves in the library, Field of the Dead and seven lands, or landfall payoffs out" }
+"Thespian's Stage" = { status = "Approximate", note = "taps for {C}; hand-written (impls/t12_windgrace.rs, the combo Dark Depths + Thespian's Stage): {2},{T}: a copy of Dark Depths, the legend rule puts Dark Depths into the graveyard, the copy is sacrificed for Marit Lage. Left out: copying any other land" }
+"Icetill Explorer" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): an additional land each turn; lands from your graveyard; landfall mill (compiled)" }
+"Mina and Denn, Wildborn" = { status = "Approximate", note = "hand-written (impls/t12_windgrace.rs): an additional land each turn; {R}{G}, return a land to hand: your best creature gains trample, used to replay the land at once for another landfall (a land drop left, none in hand, landfall payoffs out). Left out: bouncing a land only for trample" }
+"Six" = { status = "Full", note = "reach; hand-written (impls/t12_windgrace.rs): attacks: mill three, a land milled into hand; during your turn, nonland permanent cards in your graveyard have retrace (cast from the graveyard discarding a land card)" }
+"Soul of Windgrace" = { status = "Full", note = "hand-written (impls/t12_windgrace.rs): enters or attacks: the best land card from any graveyard onto the battlefield tapped under your control; its three discard-a-land abilities compiled (gain 3, draw, indestructible and tap it)" }
+
+# --- Tiers 1/2 (tatyova-teysa): impls/t12_tatyova_teysa.rs and dsl_parse.rs
+"Beanstalk Giant // Fertile Footsteps" = { status = "Approximate", note = "power and toughness = your lands compiled; hand-written (impls/t12_tatyova_teysa.rs): the adventure {2}{G} before combat while the Giant is out of reach: a basic land onto the battlefield untapped, then the Giant can be cast. Left out: the card waits in the hand, not in exile" }
+"Bonny Pall, Clearcutter" = { status = "Full", note = "reach and the attack trigger (draw, then a land from hand or graveyard onto the battlefield) compiled; hand-written (impls/t12_tatyova_teysa.rs): enters: Beau, a legendary blue Ox token whose power and toughness are your lands (one Beau kept)" }
+"Entish Restoration" = { status = "Full", note = "hand-written (impls/t12_tatyova_teysa.rs): sacrifice your least useful land, then two basic lands tapped, three with a creature of power 4 or more" }
+"Loot, Exuberant Explorer" = { status = "Full", note = "hand-written (impls/t12_tatyova_teysa.rs): an additional land on each of your turns; {4}{G}{G}, {T}: the top six, the best creature card with mana value up to your lands onto the battlefield, the rest to the bottom in a random order" }
+"Mossborn Hydra" = { status = "Full", note = "trample and the landfall doubling compiled; hand-written (impls/t12_tatyova_teysa.rs): enters with a +1/+1 counter" }
+"Wrenn and Seven" = { status = "Full", note = "hand-written (impls/t12_tatyova_teysa.rs): +1 top four, lands to hand, the rest to the graveyard; 0 the lands in hand onto the battlefield tapped (a landfall each); -3 a reach Treefolk whose power and toughness are your lands; -8 permanent cards from the graveyard to hand and no maximum hand size" }
+"Black Market" = { status = "Approximate", note = "hand-written (impls/t12_tatyova_teysa.rs): a charge counter whenever a creature dies; {B} per counter at the beginning of your first main phase. Left out: the mana lasts the turn, not only the phase" }
+"Drivnod, Carnage Dominus" = { status = "Full", note = "hand-written (impls/t12_tatyova_teysa.rs): your death-caused triggered abilities trigger an additional time (as Teysa Karlov); {B/P}{B/P} ({B} or 2 life each), exile three creature cards from your graveyard: an indestructible counter" }
+"Indebted Spirit" = { status = "Full", note = "afterlife 1 compiled; hand-written (impls/t12_tatyova_teysa.rs, partials.rs bestow): bestow {2}{W} on your best creature: +1/+1 and afterlife 1; a creature again when the host leaves" }
+"Luminous Broodmoth" = { status = "Full", note = "flying; hand-written (impls/t12_tatyova_teysa.rs): a nontoken creature of yours without flying dies: it returns under its owner's control with a flying counter" }
+"Teysa, Orzhov Scion" = { status = "Full", note = "hand-written (impls/t12_tatyova_teysa.rs): sacrifice three white creatures (the least valuable): exile target creature, when the target is worth more; another black creature of yours dies: a 1/1 white Spirit with flying" }
+
+# --- Tiers 1/2 (kaalia-sythis): impls/t12_kaalia_sythis.rs
+"Angelic Arbiter" = { status = "Full", note = "flying; hand-written (impls/t12_kaalia_sythis.rs): an opponent who cast a spell this turn can't attack (attack cap 0); an opponent who attacked this turn can't cast spells. The AI does not plan around it (it may cast first and then not attack)" }
+"Avacyn, Angel of Horror" = { status = "Full", note = "flying, deathtouch; hand-written (impls/t12_kaalia_sythis.rs): she or another nontoken creature you control dies (those dying in the same wipe after her too): the card returns under your control at the beginning of the next end step" }
+"Drana and Linvala" = { status = "Approximate", note = "flying, vigilance; hand-written (impls/t12_kaalia_sythis.rs, rules.ability_locked): activated abilities of creatures your opponents control can't be activated, their mana abilities included. Left out: Drana and Linvala gaining those abilities" }
+"Kaalia, Zenith Seeker" = { status = "Full", note = "flying, vigilance; hand-written (impls/t12_kaalia_sythis.rs): enters: the top six, the best Angel, Demon and Dragon card among them to hand, the rest to the bottom in a random order" }
+"Liesa, Forgotten Archangel" = { status = "Full", note = "flying, lifelink; hand-written (impls/t12_kaalia_sythis.rs): another nontoken creature you control dies: back to its owner's hand at the next end step (a wipe that kills Liesa too); a creature an opponent controls that would die is exiled instead (zones::die)" }
+"Lord of the Void" = { status = "Full", note = "flying; hand-written (impls/t12_kaalia_sythis.rs): combat damage to a player: their top seven exiled, the best creature card among them onto the battlefield under your control" }
+"Rakdos, Patron of Chaos" = { status = "Full", note = "flying, trample; hand-written (impls/t12_kaalia_sythis.rs): your end step: the most threatening opponent sacrifices its two least valuable nonland, nontoken permanents when they are worth less to it than two cards to you; otherwise you draw two" }
+"Serra's Emissary" = { status = "Approximate", note = "flying; hand-written (impls/t12_kaalia_sythis.rs): chooses creature: combat damage to you is prevented and creatures can't block your creatures. Left out: the other card types, and creature damage to your blocking creatures" }
+"Valgavoth, Terror Eater" = { status = "Approximate", note = "flying, lifelink; hand-written (impls/t12_kaalia_sythis.rs): ward (sacrifice three nonland permanents: the AI pays when they are worth less than Valgavoth); opponents' cards going to their graveyards are exiled instead (dying creatures in zones::die, other cards by a state-based sweep); on your turn, cast them for life equal to their mana value. Left out: playing lands from among them" }
+"Vilis, Broker of Blood" = { status = "Full", note = "flying; hand-written (impls/t12_kaalia_sythis.rs): {B}, pay 2 life: target creature gets -1/-1 until end of turn (kills an X/1, or used to draw with 14+ life); whenever you lose life, draw that many cards" }
+"Strength of the Harvest // Haven of the Harvest" = { status = "Full", note = "hand-written (impls/t12_kaalia_sythis.rs): Aura, +1/+1 for each creature and/or enchantment you control; or the land face, which enters tapped and taps for {G} or {W}" }
+"Branchloft Pathway // Boulderloft Pathway" = { status = "Full", note = "hand-written (impls/t45_prosper.rs Pathways): played as the face ({G} or {W}) the hand needs and the other lands lack" }
+"Calix, Guided by Fate" = { status = "Full", note = "hand-written (impls/t12_kaalia_sythis.rs): constellation: a +1/+1 counter on your best creature; Calix or an enchanted creature of yours deals combat damage to a player: once each turn, a token copy of your best nonlegendary enchantment" }
+"Resurgent Belief" = { status = "Full", note = "return all enchantment cards compiled (dsl reanimate all); hand-written (impls/t12_kaalia_sythis.rs): suspend 2 for {1}{W} with enchantments in the graveyard worth it; never hard-cast" }
+"Weaver of Harmony" = { status = "Approximate", note = "anthem compiled; hand-written (impls/t12_kaalia_sythis.rs): {G},{T} copies an enchantment source's draw trigger (Enchantress's Presence, Sythis, Eidolon of Blossoms) when you cast an enchantment. Left out: copying other triggered and activated abilities" }
+
+# --- Tiers 1/2 (brago-meren): hand-written in impls/t12_brago_meren.rs
+"Agent of Treachery" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs): enters: gain control of the best opposing permanent it can target, for good; your end step: draw three with three or more permanents you don't own. Left out: stealing a land (lands are kept apart from permanents)" }
+"Cryogen Relic" = { status = "Full", note = "draws as it enters (draw tag); hand-written (impls/t12_brago_meren.rs): draws as it leaves; {1}{U}, sacrifice: a stun counter on an opponent's tapped creature at the end of their turn, or sacrificed for the card with two or fewer in hand" }
+"Dour Port-Mage" = { status = "Full", note = "{1}{U},{T} bounce compiled; hand-written (impls/t12_brago_meren.rs, zones::leave): one or more other creatures you control leave without dying: draw a card (one card per batch: one effect's blinks, Brago's included)" }
+"Flickerwisp" = { status = "Full", note = "flying; hand-written (impls/t12_brago_meren.rs): enters: exile another target permanent, it returns under its owner's control at the beginning of the next end step (galadriel::eot_returns; a token is gone). The AI takes an opposing token, its own best enters permanent or Reality Acid, else an opposing permanent for the turn" }
+"Ghostly Flicker" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs, ai/pool.rs PROTECTORS): exile your two best enters artifacts and/or creatures and return them, cast for value or in response to removal on a creature. Left out: lands as targets, and the second target when it is cast as protection" }
+"Reality Acid" = { status = "Full", note = "hand-written Aura (impls/t12_brago_meren.rs): enchants the best opposing permanent; vanishing 3 (a time counter off each of your upkeeps, then sacrificed); when it leaves the battlefield (Brago's blink too) that permanent's controller sacrifices it" }
+"Riptide Gearhulk" = { status = "Full", note = "double strike, prowess (engine keywords); hand-written (impls/t12_brago_meren.rs): enters: each opponent's best nonland permanent into its owner's library third from the top (a commander goes to the command zone)" }
+"Starfield Vocalist" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs, trigger_copies): a permanent entering makes your enters and landfall triggers trigger an additional time. Left out: warp (no casting from exile on a later turn in the engine)" }
+"Strionic Resonator" = { status = "Approximate", note = "hand-written (impls/t12_brago_meren.rs, stack::ai_respond, stack::copy_trigger): {2},{T}: copy your triggered ability on the stack worth 4 or more (Brago's, Agent of Treachery's, a good enters trigger). Left out: new targets for the copy (its effect chooses again as it resolves)" }
+"Time Wipe" = { status = "Full", note = "hand-written (impls/t12_brago_meren.rs): return your best creature to its owner's hand (the commander first), then destroy all creatures (the engine's board wipe)" }
+"Yorion, Sky Nomad" = { status = "Approximate", note = "flying; hand-written (impls/t12_brago_meren.rs): enters: exile your other nonland permanents worth entering again (and Reality Acid), they return at the beginning of the next end step. Left out: companion (it is in the 99)" }
+"Buried Alive" = { status = "Full", note = "hand-written (impls/t12_brago_meren.rs): the outside decks' AI casts it with a way to bring creatures back (Meren, a reanimation spell, Atzal): up to three creature cards from the library into the graveyard, the best to return. JD's decks keep their own plan (ais.seph_fill_resolve)" }
+"Journey to Eternity // Atzal, Cave of Eternity" = { status = "Full", note = "hand-written Aura (impls/t12_brago_meren.rs): on your best creature; it dies: it returns under your control and Journey returns transformed as Atzal, a land that taps for any colour, with {3}{B}{G},{T}: return the best creature card from your graveyard to the battlefield" }
+"Twilight Diviner" = { status = "Approximate", note = "surveil 2 compiled; hand-written (impls/t12_brago_meren.rs, zones::enter): other creatures you control enter from a graveyard (Game::t12_gy, the record of creature cards put into graveyards): a token copy of the best of them, once each turn. Left out: a card shuffled back into the library and put onto the battlefield from there later counts as coming from the graveyard" }
+"Wight of the Reliquary" = { status = "Full", note = "vigilance and the land search compiled; +1/+1 for each creature card in your graveyard (dsl_parse Tiers 1/2 pattern, num gy_creatures)" }
 
 # --- Tiers 4/5 (miirym): impls/t45_miirym.rs
 "Astral Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_miirym.rs): enters: two token copies of the best nonland noncreature permanent (yours or an opponent's targetable one), each a 3/3 flying Dragon creature too. Left out: copying a land or a legendary permanent" }
@@ -365,17 +477,17 @@ mechs = ["isshin_doubling"]
 
 [[engines.isshin-mardu-attack-triggers]]
 label = "token-on-attack creatures"
-cards = ["Adeline, Resplendent Cathar", "Hero of Bladehold", "Brimaz, King of Oreskos", "Legion Warboss", "Goblin Rabblemaster", "Tilonalli's Summoner"]
+cards = ["Adeline, Resplendent Cathar", "Hero of Bladehold", "Otharri, Suns' Glory", "Anim Pakal, Thousandth Moon", "Krenko, Tin Street Kingpin", "Voice of Victory", "Zurgo Stormrender"]
 mechs = ["attack_triggers"]
 
 [[engines.isshin-mardu-attack-triggers]]
-label = "Hellrider / Brutal Hordechief per-attacker damage"
-cards = ["Hellrider", "Brutal Hordechief"]
+label = "per-attacker damage (Hellrider, Hordechief, Mishra, Severina, Ingris)"
+cards = ["Hellrider", "Brutal Hordechief", "Mishra, Claimed by Gix", "Commissar Severina Raine", "Ingris Stingerquill"]
 mechs = ["attack_triggers"]
 
 [[engines.isshin-mardu-attack-triggers]]
 label = "extra combats"
-cards = ["Aurelia, the Warleader", "Karlach, Fury of Avernus", "Scourge of the Throne"]
+cards = ["Aurelia, the Warleader", "Karlach, Fury of Avernus", "Raiyuu, Storm's Edge"]
 mechs = ["extra_combat"]
 
 [[engines.lathril-golgari-elves]]
@@ -410,7 +522,7 @@ mechs = ["enchantress_draw"]
 
 [[engines.light-paws-aura-voltron]]
 label = "totem armor"
-cards = ["Hyena Umbra", "Mammoth Umbra", "Felidar Umbra"]
+cards = ["Hyena Umbra", "Umbra Mystic"]
 mechs = ["totem_armor", "auras"]
 
 [[engines.light-paws-aura-voltron]]
@@ -425,7 +537,7 @@ mechs = ["tatyova"]
 
 [[engines.tatyova-simic-landfall]]
 label = "extra land drops"
-cards = ["Exploration", "Burgeoning", "Azusa, Lost but Seeking", "Dryad of the Ilysian Grove", "Oracle of Mul Daya"]
+cards = ["Exploration", "Azusa, Lost but Seeking", "Dryad of the Ilysian Grove", "Oracle of Mul Daya", "Loot, Exuberant Explorer", "Summer Bloom", "Wrenn and Seven"]
 mechs = ["extra_land_drops"]
 
 [[engines.tatyova-simic-landfall]]
@@ -435,17 +547,17 @@ mechs = ["landfall"]
 
 [[engines.tatyova-simic-landfall]]
 label = "land recursion"
-cards = ["Crucible of Worlds", "Ramunap Excavator", "Life from the Loam", "Ancient Greenwarden"]
+cards = ["Ramunap Excavator", "Ancient Greenwarden"]
 mechs = ["land_recursion"]
 
 [[engines.teysa-orzhov-aristocrats]]
 label = "Teysa's death-trigger doubling"
-cards = ["Teysa Karlov"]
+cards = ["Teysa Karlov", "Drivnod, Carnage Dominus"]
 mechs = ["teysa_doubling", "teysa"]
 
 [[engines.teysa-orzhov-aristocrats]]
 label = "drain payoffs"
-cards = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Bastion of Remembrance", "Falkenrath Noble"]
+cards = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Bastion of Remembrance", "Syr Konrad, the Grim"]
 mechs = []
 
 [[engines.teysa-orzhov-aristocrats]]
@@ -460,18 +572,18 @@ mechs = ["skullclamp"]
 
 [[engines.brago-azorius-blink-control]]
 label = "flicker ETB re-use"
-cards = ["Brago, King Eternal", "Conjurer's Closet", "Soulherder", "Deadeye Navigator", "Eldrazi Displacer"]
+cards = ["Brago, King Eternal", "Soulherder", "Teleportation Circle", "Deadeye Navigator", "Restoration Angel", "Flickerwisp", "Yorion, Sky Nomad", "Ghostly Flicker"]
 mechs = ["flicker", "brago"]
 
 [[engines.brago-azorius-blink-control]]
 label = "counterspell decisions"
-cards = ["Counterspell", "Absorb", "Cryptic Command", "Memory Lapse"]
+cards = ["Counterspell", "Negate", "Swan Song", "Dovin's Veto", "An Offer You Can't Refuse"]
 mechs = ["counter_ai"]
 
 [[engines.brago-azorius-blink-control]]
-label = "monarch"
-cards = ["Palace Jailer"]
-mechs = ["monarch"]
+label = "enters triggers doubled, copied and stolen"
+cards = ["Panharmonicon", "Elesh Norn, Mother of Machines", "Starfield Vocalist", "Strionic Resonator", "Agent of Treachery"]
+mechs = []
 
 [[engines.kaalia-mardu-creature-cheat]]
 label = "Kaalia's put-onto-battlefield-attacking"
@@ -508,6 +620,12 @@ label = "Life from the Loam dredge"
 cards = ["Life from the Loam"]
 mechs = ["land_recursion"]
 
+# --- Tiers 1/2 (windgrace)
+[[engines.lord-windgrace-jund-lands]]
+label = "Dark Depths + Thespian's Stage (Marit Lage)"
+cards = ["Dark Depths", "Thespian's Stage"]
+mechs = []
+
 [[engines.meren-golgari-recursion]]
 label = "Meren's end-step reanimation"
 cards = ["Meren of Clan Nel Toth"]
@@ -515,22 +633,22 @@ mechs = ["meren"]
 
 [[engines.meren-golgari-recursion]]
 label = "ETB removal re-use"
-cards = ["Ravenous Chupacabra", "Shriekmaw", "Nekrataal", "Acidic Slime"]
+cards = ["Ravenous Chupacabra", "Shriekmaw", "Plaguecrafter", "Fleshbag Marauder"]
 mechs = []
 
 [[engines.meren-golgari-recursion]]
 label = "sac outlets"
-cards = ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar"]
+cards = ["Viscera Seer", "Carrion Feeder", "Ashnod's Altar", "Yawgmoth, Thran Physician"]
 mechs = []
 
 [[engines.meren-golgari-recursion]]
 label = "Grave Pact"
-cards = ["Grave Pact"]
+cards = ["Grave Pact", "Dictate of Erebos"]
 mechs = ["edicts"]
 
 [[engines.meren-golgari-recursion]]
-label = "Survival / Birthing Pod"
-cards = ["Survival of the Fittest", "Birthing Pod"]
+label = "Birthing Pod / reanimation"
+cards = ["Birthing Pod", "Buried Alive", "Living Death", "Twilight Diviner"]
 mechs = ["survival_pod"]
 
 [[engines.sythis-selesnya-enchantress]]

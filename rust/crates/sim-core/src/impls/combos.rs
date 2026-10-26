@@ -112,6 +112,8 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t45_heliod_zur::COMBOS.iter()) // --- Tiers 4/5 (heliod-zur)
             .chain(super::t45_urza_yawgmoth::COMBOS.iter()) // --- Tiers 4/5 (urza-yawgmoth)
             .chain(super::t45_edgar::COMBOS.iter()) // --- Tiers 4/5 (edgar)
+            .chain(super::t12_windgrace::COMBOS.iter()) // --- Tiers 1/2 (windgrace)
+            .chain(super::t12_brago_meren::COMBOS.iter()) // --- Tiers 1/2 (brago-meren)
             .chain(super::t45_miirym::COMBOS.iter()) // --- Tiers 4/5 (miirym)
             .collect()
     });
@@ -341,7 +343,9 @@ fn any_hand(g: &Game, p: PlayerId, names: &[&str]) -> Option<CardId> {
 }
 
 fn has_piece(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
-    grp.iter().any(|n| on_bf(g, p, n).is_some() || in_hand(g, p, n).is_some())
+    // --- Tiers 1/2 (windgrace): a land piece on the battlefield (Dark Depths, Thespian's Stage)
+    let land = |n: &str| g.player(p).lands.iter().any(|&l| name_of(g, g.land(l).cd) == n);
+    grp.iter().any(|n| on_bf(g, p, n).is_some() || in_hand(g, p, n).is_some() || land(n))
 }
 
 /// combos.free_outlet: a sacrifice outlet of p's (common.outlets); `only`: one of these

@@ -120,6 +120,8 @@ pub enum DataKey {
     /// a land that entered this turn ("in")
     In,
     Indestr,
+    /// --- Tiers 1/2 (windgrace): ice counters removed from Dark Depths (it enters with ten)
+    IceRemoved,
     /// Palantír of Orthanc's influence counters
     Influence,
     /// (player, their turn count): indestructible until that player's next turn
@@ -202,6 +204,15 @@ pub enum DataKey {
     /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
     /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
     T45Dragon,
+    /// --- Tiers 1/2 (isshin): the player Curse of Opulence enchants (`Val::Player`); Firebender Ascension's quest
+    /// counters (`Val::Int`)
+    T12Isshin,
+    /// --- Tiers 1/2 (lightpaws): Pariah: the damage it has sent to the enchanted creature this turn ([Stamp, Int])
+    T12Pariah,
+    /// --- Tiers 1/2 (brago-meren): Reality Acid's time counters (Int); Twilight Diviner's once-each-turn trigger (Stamp)
+    T12,
+    /// --- Tiers 1/2 (brago-meren): the creature entered from a graveyard on this turn (Stamp; Twilight Diviner)
+    T12FromGy,
 }
 
 /// A value in per-card state.
@@ -288,6 +299,8 @@ pub enum LockKind {
     AllSpells,
     Noncreature,
     InstSorcAbilities,
+    /// --- Tiers 1/2 (lightpaws): creature and planeswalker spells (Single Combat)
+    CreatureWalker,
 }
 
 /// When a cast lock ends: with the turn it was set in, or when the given player's turn count passes the number.
@@ -295,6 +308,9 @@ pub enum LockKind {
 pub enum LockEnd {
     Turn(TurnStamp),
     TurnOf(PlayerId, u32),
+    /// --- Tiers 1/2 (lightpaws): until the end of the player's next turn, set when their turn count was the number
+    /// (Single Combat: the rest of this turn, the others' turns, then that player's next one)
+    ThroughNextTurn(PlayerId, u32),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1207,6 +1223,25 @@ pub struct Game {
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar returns at the next end step: (controller, card, revival
     /// counters it returns with)
     pub t45_due: Vec<(PlayerId, CardId, i64)>,
+    /// --- Tiers 1/2 (lathril): behold costs paid: (the spell, the card it exiled), so the card returns when the
+    /// permanent leaves (Champions of the Perfect)
+    pub beheld: Vec<(CardId, CardId)>,
+    /// --- Tiers 1/2 (kaalia-sythis): Avacyn, Angel of Horror and Liesa's returns at the next end step: (controller,
+    /// card, owner, to its owner's hand rather than the battlefield)
+    pub t12_due: Vec<(PlayerId, CardId, PlayerId, bool)>,
+    /// Avacyn / Liesa died in a wipe: (controller, the wipe's batch, Liesa) for the creatures dying with them
+    pub t12_batch: Vec<(PlayerId, u32, bool)>,
+    /// Valgavoth, Terror Eater: the one these lists belong to; the cards exiled with it (card, owner); the cards in
+    /// opponents' graveyards it has seen; the cards cast through it that go back to their owner's graveyard
+    pub t12_valg: Option<PermId>,
+    pub t12_void: Vec<(CardId, PlayerId)>,
+    pub t12_kept: Vec<(CardId, PlayerId)>,
+    pub t12_pass: Vec<(CardId, PlayerId)>,
+    /// a Serra's Emissary has entered this game (combat and blocks look for it from then on)
+    pub t12_emissary: bool,
+    /// --- Tiers 1/2 (brago-meren): creature cards put into a graveyard (died, milled, discarded, surveilled, searched
+    /// for) and not seen to leave it since; `zones::enter` reads it (Twilight Diviner: "entered from a graveyard")
+    pub t12_gy: Vec<CardId>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1296,6 +1331,8 @@ pub struct Game {
     pub eot_returns: Vec<(PlayerId, CardId)>,
     /// the Captain America precon's bookkeeping (impls/t0_captain.rs)
     pub t0c: crate::impls::t0_captain::T0c,
+    /// --- Tiers 1/2 (lightpaws): Flickerform's exiles waiting for the next end step (impls/t12_lightpaws.rs)
+    pub t12lp: crate::impls::t12_lightpaws::T12,
 }
 
 impl Game {
@@ -1391,6 +1428,15 @@ impl Game {
             doomed_turn: None,
             jar_due: vec![],
             t45_due: vec![],
+            beheld: vec![],
+            t12_due: vec![],
+            t12_batch: vec![],
+            t12_valg: None,
+            t12_void: vec![],
+            t12_kept: vec![],
+            t12_pass: vec![],
+            t12_emissary: false,
+            t12_gy: vec![],
             cur_batch: None,
             hooks: vec![],
             stack: vec![],
@@ -1436,6 +1482,7 @@ impl Game {
             resto_target: None,
             eot_returns: vec![],
             t0c: Default::default(),
+            t12lp: Default::default(),
         }
     }
 
@@ -1587,6 +1634,8 @@ impl Game {
     }
 
     pub fn add_land(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
+        // --- Tiers 1/2 (windgrace): Spelunking, "lands you control enter untapped"
+        let tapped = tapped && !crate::impls::t12_windgrace::lands_enter_untapped(self, p);
         let id = LandId(self.lands.len() as u32);
         self.lands.push(Land { id, cd, owner: p, tapped, data: PermData::default(), on_bf: true });
         self.player_mut(p).lands.push(id);

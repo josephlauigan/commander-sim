@@ -670,7 +670,7 @@ fn default_color(g: &Game, p: PlayerId) -> char {
 
 /// As it enters, choose a colour: the one waiting on its host (a response to a spell of that colour), else the
 /// opponents' most common
-fn chomanno_etb(g: &mut Game, p: PlayerId, a: PermId, host: PermId) -> Res {
+pub(crate) fn chomanno_etb(g: &mut Game, p: PlayerId, a: PermId, host: PermId) -> Res {
     let pending = g.perm_mut(host).data.remove(DataKey::ChosenColor);
     let ch = match pending {
         Some(Val::Str(s)) => s,
@@ -698,7 +698,7 @@ fn rescue_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 }
 
 /// cast the Aura c (flash) onto m, in response; true if it resolved and is on m
-fn cast_aura_on(
+pub(crate) fn cast_aura_on(
     g: &mut Game,
     p: PlayerId,
     c: CardId,

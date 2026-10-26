@@ -86,6 +86,7 @@ pub mod t6_plan_sisay;
 pub mod smaug;
 pub mod karn;
 pub mod t3_aurelia;
+pub mod t12_lathril;
 pub mod t3_korvold;
 pub mod t3_marwyn;
 pub mod t45_yuriko;
@@ -97,6 +98,12 @@ pub mod t45_heliod_zur; // --- Tiers 4/5 (heliod-zur)
 pub mod t45_urza_yawgmoth; // --- Tiers 4/5 (urza-yawgmoth)
 pub mod t45_edgar; // --- Tiers 4/5 (edgar)
 pub mod t45_urdragon; // --- Tiers 4/5 (urdragon)
+pub mod t12_isshin; // --- Tiers 1/2 (isshin)
+pub mod t12_lightpaws; // --- Tiers 1/2 (lightpaws)
+pub mod t12_windgrace; // --- Tiers 1/2 (windgrace)
+pub mod t12_tatyova_teysa; // --- Tiers 1/2 (tatyova-teysa)
+pub mod t12_kaalia_sythis; // --- Tiers 1/2 (kaalia-sythis)
+pub mod t12_brago_meren; // --- Tiers 1/2 (brago-meren)
 pub mod t45_miirym; // --- Tiers 4/5 (miirym)
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -182,6 +189,13 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t45_urza_yawgmoth::register(&mut r, db)?; // --- Tiers 4/5 (urza-yawgmoth)
     t45_edgar::register(&mut r, db)?; // --- Tiers 4/5 (edgar)
     t45_urdragon::register(&mut r, db)?; // --- Tiers 4/5 (urdragon)
+    t12_isshin::register(&mut r, db)?; // --- Tiers 1/2 (isshin)
+    t12_lathril::register(&mut r, db)?; // --- Tiers 1/2 (lathril)
+    t12_lightpaws::register(&mut r, db)?; // --- Tiers 1/2 (lightpaws)
+    t12_windgrace::register(&mut r, db)?; // --- Tiers 1/2 (windgrace)
+    t12_tatyova_teysa::register(&mut r, db)?; // --- Tiers 1/2 (tatyova-teysa)
+    t12_kaalia_sythis::register(&mut r, db)?; // --- Tiers 1/2 (kaalia-sythis)
+    t12_brago_meren::register(&mut r, db)?; // --- Tiers 1/2 (brago-meren)
     t45_miirym::register(&mut r, db)?; // --- Tiers 4/5 (miirym)
     Ok(r)
 }

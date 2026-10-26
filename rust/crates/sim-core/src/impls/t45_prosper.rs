@@ -351,6 +351,7 @@ pub(crate) fn pathway_front(name: &str) -> &'static str {
         "Blightstep Pathway // Searstep Pathway" => "B",
         "Clearwater Pathway // Murkwater Pathway" => "U",
         "Needleverge Pathway // Pillarverge Pathway" => "R",
+        "Branchloft Pathway // Boulderloft Pathway" => "G", // --- Tiers 1/2 (kaalia-sythis)
         _ => "C",
     }
 }
@@ -884,6 +885,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         "Barkchannel Pathway // Tidechannel Pathway",
         "Clearwater Pathway // Murkwater Pathway",
         "Needleverge Pathway // Pillarverge Pathway",
+        "Branchloft Pathway // Boulderloft Pathway", // --- Tiers 1/2 (kaalia-sythis)
     ] {
         if db.id(name).is_some() {
             let c = r.card(db, name)?;

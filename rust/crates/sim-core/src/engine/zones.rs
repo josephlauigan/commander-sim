@@ -155,6 +155,7 @@ pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
     for _ in 0..n {
         let Some(c) = g.player_mut(p).library.pop() else { return Ok(()) };
         g.player_mut(p).gy.push(c);
+        crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
         if is_keyspell(g, c) {
             let pl = g.player_mut(p);
             pl.stat("key_milled", 1);
@@ -545,6 +546,7 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
     }
     if on {
         crate::impls::t0_anikthea::calix_link_left(g, m)?; // Calix's -3 link
+        crate::impls::t12_brago_meren::creature_left(g, m)?; // --- Tiers 1/2 (brago-meren): Dour Port-Mage
     }
     Ok(())
 }
@@ -741,11 +743,13 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         leave(g, m)?; // Rest in Peace: exiled, so it never dies
         if !token {
             to_zone_card(g, m, Zone::Exile);
+            crate::impls::t12_kaalia_sythis::exiled_instead(g, m); // --- Tiers 1/2 (kaalia-sythis): Valgavoth
         }
         return Ok(());
     }
     if creature {
         g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
+        crate::impls::t12_brago_meren::note_died(g, m); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
         let st = g.turn_stamp();
         g.died_count = if g.died_count.0 == Some(st) { (Some(st), g.died_count.1 + 1) } else { (Some(st), 1) }; // Lagomos
     }
@@ -781,6 +785,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     let token = g.perm(m).token;
     if g.marchesa_on && creature && !token {
         cardcode::marchesa_dies(g, p, m)?;
+    }
+    if !g.t12_batch.is_empty() && creature && !token {
+        crate::impls::t12_kaalia_sythis::batch_dies(g, p, m)?; // --- Tiers 1/2 (kaalia-sythis): Avacyn, Liesa
     }
     if g.dsl_on {
         let fired = crate::dsl::Fired { perm: Some(m), owner: Some(p), dying: Some(m), ..Default::default() };
@@ -1013,6 +1020,7 @@ impl Default for Enter {
 /// stack once the spell resolving has finished). Python's `enter`.
 pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.tick()?;
+    let from_gy = crate::impls::t12_brago_meren::from_gy(g, cd); // --- Tiers 1/2 (brago-meren): Twilight Diviner
     let mut cd = cd;
     if g.db.get(cd).tag(Tag::Moxd) && !how.was_cast {
         // Mox Diamond put onto the battlefield (Urza's Saga): the same replacement as when cast
@@ -1107,6 +1115,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     }
     g.player_mut(p).perms.push(m);
     g.bf_ver += 1;
+    if from_gy {
+        crate::impls::t12_brago_meren::mark_from_gy(g, m); // --- Tiers 1/2 (brago-meren)
+    }
     if g.registry.get(cd).is_some_and(|i| i.live()) {
         g.hooks.push(m);
     }
@@ -1817,6 +1828,9 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
         } else {
             pl.gy.push(c)
         }
+        if !necro {
+            crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
+        }
         if !g.hooks.is_empty() {
             fire_trigger(g, Event::Discard, Call::Discard { p: q, c })?;
             g.player_mut(q).discarded_turn = Some(g.turn_stamp());
@@ -1850,6 +1864,7 @@ pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
         return Ok(());
     }
     g.player_mut(q).gy.push(c);
+    crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
     crate::impls::kefka::discarded(g, q, &[c])?; // mayhem / madness
     tergrid_steal(g, q, c, q)
 }
