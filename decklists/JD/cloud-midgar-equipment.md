@@ -32,7 +32,7 @@ of Cloud or an Equipment attached to it triggers, that ability triggers an addit
   Runes, Forum Familiar) are fine early plays.
 - **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
   Outfitter, Balan) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
-- **Turns 5+.** Add the big Equipment (Sword of Kaldra, Wrecking Ball Arm, Colossus Hammer), Open the Armory (search for a Sword or any Aura or Equipment), and
+- **Turns 5+.** Add the big Equipment (Sword of Kaldra, Colossus Hammer), Open the Armory (search for a Sword or any Aura or Equipment), and
   the removal. If Cloud dies, a backup carrier takes the Swords.
 
 ### Ramp and mana
@@ -51,9 +51,11 @@ With Cloud equipped, these Equipment gain from the extra trigger:
   himself for another search (his Equipment falls off when he leaves, so only when you can re-equip); do not aim both
   at Cloud, as the second would fizzle and lose its land.
 - **Mask of Memory**: two triggers of draw two then discard one.
+- **Buster Sword**: two triggers of draw a card, then cast a spell from your hand free with mana value up to that
+  damage.
 
 The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left). **Champion's Helm**, **Swiftfoot Boots**,
-**Colossus Hammer**, **Fireshrieker** and **Wrecking Ball Arm** have
+**Colossus Hammer** and **Fireshrieker** have
 no triggers: they are plain bonuses (hexproof, double strike, +X/+X).
 
 ### Making Cloud enter again
@@ -87,8 +89,9 @@ Swords. **Zack Fair** gives his counters and Equipment to another creature when 
 that creature indestructible.
 
 ### Making a 2/1 lethal
-- **Wrecking Ball Arm** equips a legendary creature for {3}: base 7/7, and it can't be blocked by creatures with power
-  2 or less. Cloud with it and a Sword of Fire and Ice is a 9/9.
+- **Buster Sword** ({3}, equip {2}) gives +3/+2: Cloud is a 5/3. Each time he hits a player you draw a card, then may
+  cast a spell from your hand free with mana value up to the damage dealt, so a 5-damage hit casts most of the deck,
+  and getting the hand onto the battlefield is the deck's bottleneck.
 - **Sword of Kaldra** gives +5/+5 and exiles any creature it damages. **Colossus Hammer** gives +10/+10.
 - **Andúril, Narsil Reforged** ({2}, equip {3}): whenever the equipped creature attacks, put a +1/+1 counter on each creature you control, or two with the city's blessing (ten or more permanents).
 - **Double strike** makes every combat hit count twice: Fireshrieker (equip {2}) gives it to the equipped creature, so
@@ -125,8 +128,8 @@ that creature indestructible.
 
 ### How it wins
 - **Equipped Cloud connects.** A Sword of Fire and Ice on Cloud draws two cards and deals 4 damage; with Sword of Feast
-  and Famine the opponent discards two cards and your lands untap. Add Wrecking Ball Arm or Sword of Kaldra for a
-  9/9 or larger evasive attacker.
+  and Famine the opponent discards two cards and your lands untap. Add Sword of Kaldra or Colossus Hammer for a
+  9/9 or larger attacker, or Buster Sword to cast a spell free with every hit.
 - **Wide Equipment.** Balan with two Equipment has double strike; Danitha makes every Equipment {1} cheaper, and
   **Sram, Senior Edificer** draws a card whenever you cast an Aura, Equipment or Vehicle spell.
 
@@ -156,7 +159,7 @@ that creature indestructible.
 
 - **Cloud's search, early:** a cheap Sword (Fire and Ice, Feast and Famine, Hearth and Home) or Champion's Helm.
 - **Cloud's search, Puresteel Paladin out:** Colossus Hammer or Sword of Kaldra.
-- **Cloud's search, many blockers:** Wrecking Ball Arm.
+- **Cloud's search, a full hand to deploy:** Buster Sword (each hit casts a spell from hand free).
 - **Cloud's search, facing removal:** Swiftfoot Boots or Champion's Helm.
 - **Enlightened Tutor** (puts the card on top, so cast it at the end of an opponent's turn; it finds an artifact or
   enchantment): a Sword if you are missing one, Smothering Tithe when opponents draw a lot, Court of Ardenvale
@@ -187,7 +190,7 @@ on its own. Tell the table before the game that:
 
 **Enchantments (3).** Court of Ardenvale, Smothering Tithe, Sphere of Safety
 
-**Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel, Wrecking Ball Arm
+**Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
@@ -215,6 +218,7 @@ on its own. Tell the table before the game that:
 1 Baird, Steward of Argive
 1 Balan, Wandering Knight
 1 Bastion Protector
+1 Buster Sword
 1 Champion's Helm
 1 Cid, Freeflier Pilot
 1 Cloud, Midgar Mercenary
@@ -270,7 +274,6 @@ on its own. Tell the table before the game that:
 1 Windborn Muse
 1 Winds of Abandon
 1 Wrath of God
-1 Wrecking Ball Arm
 1 Zack Fair
 28 Plains
 ```

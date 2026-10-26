@@ -17386,6 +17386,71 @@
    "spell_prio": false
   },
   {
+   "name": "Buster Sword",
+   "types": "A",
+   "generic": 3,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "equip_bonus",
+     "pow": 3,
+     "tgh": 2
+    },
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "event": "combat_damage",
+     "source": "equipped"
+    },
+    {
+     "type": "static",
+     "static": "equip_cost",
+     "mana": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "equip"
+   ],
+   "subtypes": [
+    "equipment"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever equipped creature deals combat damage to a player, draw a card, then you may cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost.   [partly: cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost]"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Butcher Ghoul",
    "types": "C",
    "generic": 1,
@@ -34450,6 +34515,55 @@
    "python_hooks": [
     "can_cast"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Dragonlord Ojutai",
+   "types": "C",
+   "generic": 3,
+   "pips": "WU",
+   "tags": {
+    "leg": true,
+    "pow": "5",
+    "tgh": "4",
+    "bomb": "5",
+    "fly": true
+   },
+   "pow": 5,
+   "tgh": 4,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "UW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "~ has hexproof as long as it's untapped.",
+    "Whenever ~ deals combat damage to a player, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -65980,6 +66094,60 @@
    "spell_prio": false
   },
   {
+   "name": "Jetmir's Garden",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "WRG",
+    "t": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters tapped"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "cycling"
+   ],
+   "subtypes": [
+    "forest",
+    "mountain",
+    "plains"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GRW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [
+    "forest",
+    "mountain",
+    "plains"
+   ],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Jeweled Amulet",
    "types": "A",
    "generic": 0,
@@ -86143,6 +86311,66 @@
     "cmc": 5,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen",
+   "types": "C",
+   "generic": 1,
+   "pips": "UBR",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "discard",
+       "n": 1,
+       "who": "each_opponent"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "transform"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BRU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{4}{U}{B}{R}: Exile ~, then return him to the battlefield transformed under his owner's control. Activate only as a sorcery."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
