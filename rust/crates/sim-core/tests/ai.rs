@@ -88,6 +88,26 @@ fn more_is_better() {
     assert!(search::evaluate(&g, P0) > a);
 }
 
+#[test]
+fn opp_life_w_counts_every_opponents_life_for_outside_decks_only() {
+    // a weaker opponent's life point was worth about 0.03 to an outside deck; with the knob each one is worth w more
+    let mut g = table(&["giada-calling-all-angels", "anikthea-enduring-enchantments", "zurgo-mardu-surge", "sauron"]);
+    let gap = |g: &mut Game, p| {
+        let a = search::evaluate(g, p);
+        g.players[2].life -= 10; // the third seat: not the strongest opponent of either player
+        let b = search::evaluate(g, p);
+        g.players[2].life += 10;
+        b - a
+    };
+    let before = gap(&mut g, P0);
+    let mine = gap(&mut g, PlayerId(3));
+    let mut s = (*g.settings).clone();
+    s.search.opp_life_w = 0.2;
+    g.settings = std::sync::Arc::new(s);
+    assert!(gap(&mut g, P0) > before + 1.0, "the outside deck now values the damage");
+    assert_eq!(gap(&mut g, PlayerId(3)), mine, "JD's decks never use the knob");
+}
+
 // ------------------------------------------------------------------ test_search.Decision
 fn decision_table() -> Game {
     let mut g = table_with(&["veyran", "sauron"], 7, 40);

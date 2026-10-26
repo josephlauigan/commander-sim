@@ -29,6 +29,9 @@ pub const RAMP_W: f64 = 0.0;
 /// the default hold weight (see `Search::hold_w`)
 pub const HOLD_W: f64 = 1.0;
 
+/// the default opponent-life weight (see `Search::opp_life_w`): off
+pub const OPP_LIFE_W: f64 = 0.0;
+
 #[derive(Debug, Clone)]
 pub struct Search {
     pub rollouts: u32,
@@ -41,6 +44,11 @@ pub struct Search {
     /// the look-ahead's bonus for holding mana up (the "stop (hold mana)" line), times the heuristic's hold value
     /// (`search::hold_bonus`); 0: no bonus (the old search). Env SEARCH_HOLD_W overrides the default for A/B runs
     pub hold_w: f64,
+    /// outside decks' extra weight on each opponent's life in `search::evaluate`, per point (life already counts 0.25
+    /// in `strength`, but only through 0.6 x the strongest opponent and 0.4 x their average: a point off a weaker
+    /// opponent was worth about 0.03, a point of your own 0.25). 0: the old evaluation. JD's decks never use it. Env
+    /// SEARCH_OPP_LIFE_W overrides the default for A/B runs
+    pub opp_life_w: f64,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -65,6 +73,11 @@ impl Default for Search {
                 .filter(|v| !v.is_empty())
                 .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_HOLD_W {v:?}")))
                 .unwrap_or(HOLD_W),
+            opp_life_w: std::env::var("SEARCH_OPP_LIFE_W")
+                .ok()
+                .filter(|v| !v.is_empty())
+                .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_OPP_LIFE_W {v:?}")))
+                .unwrap_or(OPP_LIFE_W),
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,

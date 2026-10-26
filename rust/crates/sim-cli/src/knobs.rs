@@ -37,6 +37,7 @@ pub struct SearchKnobs {
     pub combo_w: Option<f64>,
     pub ramp_w: Option<f64>,
     pub hold_w: Option<f64>,
+    pub opp_life_w: Option<f64>,
     pub top_k: Option<usize>,
     pub rollouts: Option<u32>,
     pub horizon: Option<u32>,
@@ -131,9 +132,15 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
             }
             "search" => {
                 let tb = table(v, "search").map_err(at)?;
-                only(tb, "search", &["combo_w", "ramp_w", "hold_w", "top_k", "rollouts", "horizon"]).map_err(at)?;
+                only(tb, "search", &["combo_w", "ramp_w", "hold_w", "opp_life_w", "top_k", "rollouts", "horizon"])
+                    .map_err(at)?;
                 let s = &mut k.search;
-                for (name, slot) in [("combo_w", &mut s.combo_w), ("ramp_w", &mut s.ramp_w), ("hold_w", &mut s.hold_w)] {
+                for (name, slot) in [
+                    ("combo_w", &mut s.combo_w),
+                    ("ramp_w", &mut s.ramp_w),
+                    ("hold_w", &mut s.hold_w),
+                    ("opp_life_w", &mut s.opp_life_w),
+                ] {
                     if let Some(x) = tb.get(name) {
                         *slot = Some(float(x, name, (0.0, 1000.0)).map_err(at)?);
                     }
@@ -201,6 +208,9 @@ impl Knobs {
         if let Some(x) = s.hold_w {
             ss.hold_w = x;
         }
+        if let Some(x) = s.opp_life_w {
+            ss.opp_life_w = x;
+        }
         if let Some(x) = s.top_k {
             ss.top_k = x;
         }
@@ -258,7 +268,8 @@ impl Knobs {
         }
         let s = &self.search;
         let mut sl = vec![];
-        for (n, x) in [("combo_w", s.combo_w), ("ramp_w", s.ramp_w), ("hold_w", s.hold_w)] {
+        let ws = [("combo_w", s.combo_w), ("ramp_w", s.ramp_w), ("hold_w", s.hold_w), ("opp_life_w", s.opp_life_w)];
+        for (n, x) in ws {
             if let Some(x) = x {
                 sl.push(format!("{n} = {x:.4}"));
             }

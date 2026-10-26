@@ -217,7 +217,12 @@ pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     let s = strength(g, p);
     let mut so: Vec<f64> = opps.iter().map(|&q| strength(g, q)).collect();
     so.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
-    let raw = s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead;
+    let mut raw = s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead;
+    let w = g.settings.search.opp_life_w;
+    if w > 0.0 && !super::is_main(g.player(p).key) {
+        // outside decks: every opponent's life counts, not only the strongest's (`Search::opp_life_w`)
+        raw -= w * opps.iter().map(|&q| g.player(q).life.clamp(0, 60) as f64).sum::<f64>();
+    }
     95.0 * (raw / 100.0).tanh()
 }
 
