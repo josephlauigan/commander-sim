@@ -77,9 +77,9 @@ Every seat is played by the AI, in two modes (`--ai`):
 
 **Deck plans.** JD's and Avery's decks have hand-written priority functions and plans (`ai/decks.rs`, `ai/seph.rs`,
 `ai/veyran.rs` and the deck files in `impls/`). Pool decks use the generic rules in `ai/pool.rs` plus per-deck entries
-in `ai/plans.rs` (key cards, tutor wish lists, custom priorities). The seven Tier 6 decks (the six pool decks and
-`godo`) also have plan files `impls/t6_plan_<deck>.rs` and shared cEDH table rules in `ai/t6_table.rs` (who is about
-to win, when to spend answers, when to go for the win).
+in `ai/plans.rs` (key cards, tutor wish lists, custom priorities). The six Tier 6 pool decks (and the retired
+`godo`, kept as a test seat) also have plan files `impls/t6_plan_<deck>.rs` and shared cEDH table rules in
+`ai/t6_table.rs` (who is about to win, when to spend answers, when to go for the win).
 
 **Styles.** Each deck has a style (`ai/mod.rs`): `temp` (randomness), `aggression` (pressure) and `caution` (holding up
 interaction, keeping blockers home). JD's decks have their own; pool decks default to 1.0 / 0.6 / 0.5

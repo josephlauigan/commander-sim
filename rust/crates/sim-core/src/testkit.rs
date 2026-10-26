@@ -28,9 +28,9 @@ pub fn db() -> Arc<CardDb> {
     DB.get_or_init(|| Arc::new(CardDb::load(&data_dir().join("cards.json")).unwrap())).clone()
 }
 
-/// Decks that used to be registered (thrasios, garland) and now exist only for tests of their engine and card
-/// code: the real commanders and colour identity, a library of basic lands. The deck AI keys on the seat key alone,
-/// so these seats still run the key-gated code.
+/// Decks that used to be registered (thrasios, garland, omnath, godo, retired pool decks) and now exist only for
+/// tests of their engine and card code: the real commanders and colour identity, a library of basic lands (omnath
+/// and godo: their real lists). The deck AI keys on the seat key alone, so these seats still run the key-gated code.
 fn retired_decks() -> Vec<RawDeck> {
     let lib = |cmds: &[&str], basics: &[&str]| -> Vec<String> {
         cmds.iter()
@@ -69,7 +69,47 @@ fn retired_decks() -> Vec<RawDeck> {
             "WUBRG",
             &["Plains", "Island", "Swamp", "Mountain", "Forest"],
         ),
+        // JD's decks retired 2026-10-25 (became The Ur-Dragon): their card and Tier 6 tests still seat them with
+        // their real lists (decklists/pool/retired/, read here), and the deck AI and the Tier 6 plan still key on
+        // these keys
+        listed(
+            "omnath",
+            "Omnath",
+            "Omnath, Locus of Rage",
+            "RG",
+            include_str!("../../../../decklists/pool/retired/omnath-landfall.md"),
+        ),
+        listed(
+            "godo",
+            "Godo",
+            "Godo, Bandit Warlord",
+            "R",
+            include_str!("../../../../decklists/pool/retired/godo-cedh-equipment.md"),
+        ),
     ]
+}
+
+/// a retired deck with its real list: the `## Import list` block of its deck file (`N Name` lines)
+fn listed(key: &str, name: &str, commander: &str, ident: &str, file: &str) -> RawDeck {
+    let block = file.split("## Import list").nth(1).and_then(|s| s.split("```").nth(1)).expect("an import list");
+    let cards = block
+        .trim()
+        .lines()
+        .flat_map(|l| {
+            let (n, c) = l.split_once(' ').expect("an `N Name` line");
+            std::iter::repeat_n(c.trim().to_string(), n.parse().expect("a count"))
+        })
+        .collect();
+    RawDeck {
+        tier: Some("retired".into()),
+        key: key.into(),
+        name: name.into(),
+        commander: commander.into(),
+        commander2: None,
+        ident: Some(ident.into()),
+        tiers: vec![],
+        cards,
+    }
 }
 
 /// Every deck in decks.json (yours, then the pools), then the retired test decks, loaded once.

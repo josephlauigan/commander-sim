@@ -26,7 +26,7 @@ use super::{
     t6_plan_rograkh_silas as rsilas, t6_plan_rograkh_thrasios as rthras, t6_plan_sisay as sisay,
 };
 
-/// the seven Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/` and JD's Godo
+/// the seven Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/` and Godo (retired 2026-10-25, a test seat)
 pub const T6_KEYS: [&str; 7] = [
     "dack-fayden-white-stax",
     "kinnan-bonder-mana-combo",

@@ -160,9 +160,11 @@ per-commander win rates.
      Phase 4's planning AI.
    - Real data on assembly speed (win turns from tournament replays, JD's pod log) would help set it.
    - TopDeck.gg key: `~/.config/topdeck/key` (JD's; never commit it). Credit TopDeck.gg wherever its data is used.
-2. **Rograkh/Thrasios** (16.4%, below the floor): model its missing real lines (This Town Ain't Big Enough, the
-   improvised Thrasios wins).
-3. **Tier 3's remaining misses** (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
+2. **Rograkh/Thrasios** is done on branch `t6-rograkh-thrasios` (17.9% to 21.3%, inside the band;
+   `audit/realism/t6-rograkh-thrasios-2026-10-26.md`). Its leads: `deck_combos` drops quiet lines from `combo_progress`;
+   untagged tutors; Moxen held early.
+3. **Tier 3's remaining misses** (combo lines done on branch `t3-misses`: combo/alt 11.5% to 16.5%, on target;
+   `audit/realism/t3-lines-2026-10-26.md`) (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
    - median win round 10 against 8;
    - combo wins 8.9% against 16.5%;
    - commander damage 10.5% against 14.4%;
@@ -179,7 +181,8 @@ per-commander win rates.
    (Playgroup's commander pages pool upgraded builds), not missing lines.
 5. **Make a target miss fail the nightly job**, once the Tier 6 gate passes.
 6. **Older items:**
-   - the Ertai/Tataru bug (`#[ignore]`d test `tataru_with_ertai_in_hand`);
+   - the Ertai/Tataru bug: fixed on branch `ertai-tataru` (a trigger probe used up `once_per_turn`; the test also had
+     Ertai at the bottom of the library);
    - the stale tier summary in `CLAUDE.md`, left for JD;
    - the `yshtola-cedh` branch, kept separate.
 

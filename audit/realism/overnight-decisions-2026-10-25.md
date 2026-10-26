@@ -68,3 +68,10 @@ Newest at the bottom.
     The pass count shows 1 of 9, down from 3, because seat 1 and seat 3 moved under a point (inside noise) across
     their ±1-point band edges. **For you:** the seat bands (±1 point) are tighter than 4,000 games can resolve; the
     95% CI is about ±1.4. You may want to widen them or run more games for seat rows. I didn't change the targets.
+16. **Tier 6 fast mana: PR #149 (stacked on #146).** Chrome Mox is now cast (held 185→28 card-turns), and the
+    held-mana counter is corrected. Neutral on the gate: seat 1 went 28.4→28.2%. So two levers for the Tier 6 seat
+    gap (combo reading, fast mana) are ruled out. The gap is probably elsewhere, in interaction or in how real games
+    snowball, and I stopped chasing it overnight.
+17. **Next: casual-tier speed (`casual-speed`, stacked on #144).** The median win round is 12 vs 9 in t0/t2, and
+    11-17% of games pass round 15. One agent traces why and fixes bugs or clearly wrong AI choices, without touching
+    JD's decks' play.

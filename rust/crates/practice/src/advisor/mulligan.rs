@@ -76,13 +76,9 @@ pub fn hint(g: &mut Game, p: PlayerId, prompt: &str, tries: i64) -> Value {
     let key = g.player(p).key.to_string();
     let t6 = g.player(p).t6;
     let n = lands.len();
-    // Godo (and the other Tier 6 decks) have their own keep rule, which does look at fast mana, tutors and win lines
-    let godo = (key == "godo").then(|| sim_core::impls::t6_plan_godo::keep_reasons(g, p));
 
     let mut d: Vec<String> = vec![];
-    if let Some((_, why)) = &godo {
-        d.extend(why.iter().cloned());
-    } else if t6 {
+    if t6 {
         d.push(
             "This Tier 6 deck has its own keep rule: it counts lands and the mana the hand makes by turn 2 (Moxen, Sol \
              Ring, cheap rocks), wants spells beside them, and keeps more easily after each mulligan (after one, any \
@@ -179,8 +175,6 @@ pub fn hint(g: &mut Game, p: PlayerId, prompt: &str, tries: i64) -> Value {
         text = format!("Keep ({n} lands, {} spells).", spells.len());
     } else if forced {
         text = "Keep: this is a small hand, and the AI keeps its fourth hand whatever it holds.".to_string();
-    } else if let Some((_, why)) = &godo {
-        text = format!("Mulligan: {}", why.last().map(String::as_str).unwrap_or("Godo's rule ships this hand."));
     } else if t6 {
         text = "Mulligan: this Tier 6 deck's keep rule ships this hand.".to_string();
     } else {
@@ -229,15 +223,6 @@ pub fn verdict(g: &Game, p: PlayerId, prompt: &str) -> (bool, String) {
     let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
     let bottom = 7usize.saturating_sub(cards_to_keep(prompt));
     let keeps = keeps_hand(g, p);
-    if g.player(p).key == "godo" {
-        let (k, why) = sim_core::impls::t6_plan_godo::keep_reasons(g, p);
-        let last = why.last().cloned().unwrap_or_default();
-        return if k || bottom >= 2 {
-            (true, if k { format!("Keep (Godo's rule: {last})") } else { "Keep (the AI keeps its fourth hand)".into() })
-        } else {
-            (false, format!("Mulligan (Godo's rule: {last})"))
-        };
-    }
     if keeps {
         (true, format!("Keep ({n} lands is inside the AI's range)"))
     } else if bottom >= 2 {

@@ -1,5 +1,6 @@
 # Realism targets, Tier 0 (Bracket 2 precons): what real games look like, for `commander-sim --realism --pool t0`.
-# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
+# Format: see t6.toml. Bands (JD, 2026-10-23; widened to 1.5 on 2026-10-26): every share is held to its real
+# value +/- 1.5 points.
 #
 # Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-25, matched to this tier's five
 # pool commanders (data/decks.json): Anikthea, Hand of Erebos (2455), Captain America, Team Leader (3721), Giada, Font of
@@ -22,8 +23,8 @@ tier = "t0"
 
 [seat1_win]
 value = 32.1
-lo = 31.1
-hi = 33.1
+lo = 30.6
+hi = 33.6
 n = 34140
 source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -31,24 +32,24 @@ note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
 value = 27.3
-lo = 26.3
-hi = 28.3
+lo = 25.8
+hi = 28.8
 n = 34140
 source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat3_win]
 value = 22.2
-lo = 21.2
-hi = 23.2
+lo = 20.7
+hi = 23.7
 n = 34140
 source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat4_win]
 value = 18.4
-lo = 17.4
-hi = 19.4
+lo = 16.9
+hi = 19.9
 n = 34140
 source = "Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -76,24 +77,24 @@ note = "n = the five commanders' logged wins; Playgroup gives an average win tur
 
 [win_damage]
 value = 82.3
-lo = 81.3
-hi = 83.3
+lo = 80.8
+hi = 83.8
 n = 5905
 source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
 date = "2026-10-25"
 
 [win_combo_alt]
 value = 13.8
-lo = 12.8
-hi = 14.8
+lo = 12.3
+hi = 15.3
 n = 5905
 source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
 date = "2026-10-25"
 
 [win_commander_damage]
 value = 3.7
-lo = 2.7
-hi = 4.7
+lo = 2.2
+hi = 5.2
 n = 5905
 source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
 date = "2026-10-25"
@@ -101,7 +102,7 @@ date = "2026-10-25"
 [win_poison]
 value = 0.2
 lo = 0.0
-hi = 1.2
+hi = 1.7
 n = 5905
 source = "Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight)"
 date = "2026-10-25"

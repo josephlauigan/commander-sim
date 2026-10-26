@@ -5,8 +5,9 @@
 # have no target yet. Units: seat and win-type shares are % of decisive games (a winner, not the round-cap
 # tiebreak); rounds are game rounds; deck_win_spread is percentage points.
 #
-# Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point, whatever the source. To tell a sim value
-# that far from its target apart from noise, a run needs about 8,000 decisive games (about 8,200 games at Tier 6).
+# Bands (JD, 2026-10-23; widened from 1 to 1.5 points on 2026-10-26, since a 4,000-game run's 95% interval is about
+# +/- 1.4 points and seat rows flipped on noise): every share is held to its real value +/- 1.5 points, whatever the
+# source. To tell a sim value that far from its target apart from noise, a run needs about 3,600 decisive games.
 
 tier = "t6"
 
@@ -22,32 +23,32 @@ tier = "t6"
 
 [seat1_win]
 value = 31.8
-lo = 30.8
-hi = 32.8
+lo = 30.3
+hi = 33.3
 n = 29864
 source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
 date = "2026-10-24"
 
 [seat2_win]
 value = 27.3
-lo = 26.3
-hi = 28.3
+lo = 25.8
+hi = 28.8
 n = 29864
 source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
 date = "2026-10-24"
 
 [seat3_win]
 value = 22.1
-lo = 21.1
-hi = 23.1
+lo = 20.6
+hi = 23.6
 n = 29864
 source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
 date = "2026-10-24"
 
 [seat4_win]
 value = 18.8
-lo = 17.8
-hi = 19.8
+lo = 17.3
+hi = 20.3
 n = 29864
 source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg)"
 date = "2026-10-24"
@@ -77,8 +78,8 @@ note = "n = Playgroup wins logged for the five Tier 6 lead commanders"
 
 [win_combo_alt]
 value = 47.8
-lo = 46.8
-hi = 48.8
+lo = 46.3
+hi = 49.3
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
@@ -86,8 +87,8 @@ scored = false
 
 [win_damage]
 value = 39.9
-lo = 38.9
-hi = 40.9
+lo = 38.4
+hi = 41.4
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
@@ -95,8 +96,8 @@ scored = false
 
 [win_commander_damage]
 value = 11.6
-lo = 10.6
-hi = 12.6
+lo = 10.1
+hi = 13.1
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"
@@ -105,7 +106,7 @@ scored = false
 [win_poison]
 value = 0.7
 lo = 0.0
-hi = 1.7
+hi = 2.2
 n = 2722
 source = "Playgroup commanders.json, wins of the Tier 6 commanders (casual logs)"
 date = "2026-10-22"

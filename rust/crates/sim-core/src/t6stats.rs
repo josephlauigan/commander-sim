@@ -16,7 +16,7 @@ use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 use crate::sym::intern;
 
-/// the deck keys of the Tier 6 pool and JD's Godo deck
+/// the deck keys of the Tier 6 pool and Godo (retired 2026-10-25, a test seat)
 pub const T6_KEYS: [&str; 7] = [
     "dack-fayden-white-stax",
     "kinnan-bonder-mana-combo",
@@ -254,30 +254,57 @@ fn mana_cast(g: &mut Game, p: PlayerId, c: CardId) {
 }
 
 /// stats-only: at the end of p's second main phase on turns 1-3, the mana cards still in hand that p could pay for
-/// (`mn|held|T<n>|<card>`), so the report can say which fast mana is held
+/// and that would make mana if cast now (`mn|held|T<n>|<card>`; rituals and one-shot sources under `mn|heldr|`), so
+/// the report can say which fast mana is held. For each held permanent, `mn|why|<card>|<reason>`: `rule` when the
+/// AI's own utility refused it (a priority of 0, a plan rule), `lost` when it was offered and another play (or the
+/// stop) was chosen.
 pub fn mana_held(g: &mut Game, p: PlayerId) {
     if !is_t6(g, p) || g.player(p).turns > 3 {
         return;
     }
     let t = g.player(p).turns;
     let hand: Vec<CardId> = g.player(p).hand.clone();
+    let s = crate::ai::brain::Situation::new(g, p);
     for c in hand {
-        if !is_mana_card(g, c) {
+        if !is_mana_card(g, c) || !makes_mana_now(g, p, c) {
             continue;
         }
         let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
         g.pay_for = Some(c);
         let ok = crate::engine::mana::can_pay(g, p, cg, &cp, false);
         g.pay_for = None;
-        let d = g.db.get(c);
-        let ritual = d.instant || d.sorcery;
-        // Mox Diamond costs nothing but needs a land card to discard: without one it can't be cast (it was counted
-        // as held, 300+ card-turns a deck)
-        let moxd_stuck = d.tag(crate::tag::Tag::Moxd) && !g.player(p).hand.iter().any(|&x| g.db.get(x).land);
-        let k = format!("mn|held{}|T{t}|{}", if ritual { "r" } else { "" }, card(g, c));
-        if ok && !moxd_stuck {
-            bump(g, p, k);
+        if !ok {
+            continue;
         }
+        let d = g.db.get(c);
+        // one-shot sources: rituals, Lotus Petal, Lion's Eye Diamond (held for the turn they pay for)
+        let one_shot = d.instant || d.sorcery || matches!(d.name.as_ref(), "Lotus Petal" | "Lion's Eye Diamond");
+        bump(g, p, format!("mn|held{}|T{t}|{}", if one_shot { "r" } else { "" }, card(g, c)));
+        if !one_shot {
+            let why = if crate::ai::brain::card_utility(g, p, &s, c).is_some() { "lost" } else { "rule" };
+            bump(g, p, format!("mn|why|{}|{why}", card(g, c)));
+        }
+    }
+}
+
+/// would this mana card make mana if p cast it now (stats only, by Oracle text)? Mox Diamond needs a land card to
+/// discard, Chrome Mox a nonartifact, nonland card of p's colours to imprint, Mox Amber a legendary creature or
+/// planeswalker, Mox Opal two other artifacts; a Spirit Guide's mana is exiling it, not casting it
+fn makes_mana_now(g: &Game, p: PlayerId, c: CardId) -> bool {
+    use crate::cards::Types;
+    let pl = g.player(p);
+    let d = g.db.get(c);
+    let bf = || pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|x| g.db.get(x));
+    match d.name.as_ref() {
+        "Mox Diamond" => pl.hand.iter().any(|&x| g.db.get(x).land),
+        "Chrome Mox" => pl.hand.iter().any(|&x| {
+            let xd = g.db.get(x);
+            x != c && !xd.land && !xd.types.has(Types::ARTIFACT) && xd.colors.intersects(pl.ident)
+        }),
+        "Mox Amber" => bf().any(|x| (x.creature && x.tag(crate::tag::Tag::Leg)) || x.types.has(Types::PLANESWALKER)),
+        "Mox Opal" => bf().filter(|x| x.types.has(Types::ARTIFACT)).count() >= 2,
+        "Elvish Spirit Guide" | "Simian Spirit Guide" => false,
+        _ => true,
     }
 }
 

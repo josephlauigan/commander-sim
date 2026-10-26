@@ -1270,6 +1270,10 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             untap_creatures(g, p);
             continue;
         }
+        if !human && crate::impls::t3_lines::assault_again(g, p, ncomb, &conn)? {
+            untap_creatures(g, p); // --- t3 lines: Aggravated Assault for the Tier 3 Aurelia deck
+            continue;
+        }
         break;
     }
     if ncomb >= MAX_COMBATS {
