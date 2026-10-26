@@ -1242,7 +1242,14 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
     if risky.is_empty() {
         return atk;
     }
-    let n_good_blockers = blockers.iter().filter(|&&b| risky.iter().any(|&a| can_block(g, b, a))).count();
+    // --- casual speed: the good blockers only (one that kills a risky attacker and survives it), not every creature
+    // that can block one: each blocks a single attacker, so the rest of the risky ones get through
+    let good_vs = |b: PermId, a: PermId| {
+        can_block(g, b, a)
+            && (epow(g, b) >= etgh(g, a) || g.perm(b).dt)
+            && !(epow(g, a) >= etgh(g, b) || g.perm(a).dt)
+    };
+    let n_good_blockers = blockers.iter().filter(|&&b| risky.iter().any(|&a| good_vs(b, a))).count();
     if risky.len() > n_good_blockers + 1 {
         return atk; // they can't block everything
     }
