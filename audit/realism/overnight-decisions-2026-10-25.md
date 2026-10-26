@@ -35,3 +35,9 @@ Newest at the bottom.
 8. **Next phase: Rograkh/Thrasios (handoff item 2).** I started one agent on branch `t6-rograkh-thrasios`, based on
    main, not stacked on #142/#144, since Tier 6 is independent. It models the deck's missing real win lines. It
    runs alone on the machine, so its cap is 16 threads (`--jobs 16`, `-j 16`), one command at a time.
+9. **Rograkh/Thrasios: PR #145 (against main).** It went from 17.9% to 21.3% of its decisive games, inside the
+   band. I checked line B's start states against the rules, matched the scorecards to the commits by time, and ran
+   the full suite. The lines the handoff guessed at (This Town Ain't Big Enough, Breach) are not in this list.
+   **For you:** the agent ran `cd … && python3 --version` once. The no-Python hook missed it because the command
+   didn't *start* with python. Nothing else ran, but the hook has a gap. I did not edit the hook, since that's your
+   config.
