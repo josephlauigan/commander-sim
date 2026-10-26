@@ -280,7 +280,7 @@ pub static COMBOS: [Combo; 2] = [
     },
 ];
 
-// ================================================================== Aurelia: Sword of Feast and Famine, Aggravated Assault
+// ============================================================ Aurelia: Sword of Feast and Famine, Aggravated Assault
 fn aurelia(g: &Game, p: PlayerId) -> bool {
     g.player(p).key == AURELIA_KEY && !crate::human::is_human(g, p)
 }
