@@ -136,6 +136,12 @@ pub fn lands_enter_untapped(g: &Game, p: PlayerId) -> bool {
     })
 }
 
+/// --- casual speed: the land-drop choice (turn::land_score): Lotus Field with fewer than two other lands sacrifices
+/// itself (and the one other land), a lost land drop, so any other land goes first
+pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if cname(g, c) == LOTUS && g.player(p).lands.len() < 2 { -20.0 } else { 0.0 }
+}
+
 /// a land p keeps: the Dark Depths line, Field of the Dead, lands that make two or more mana
 fn key_land(g: &Game, l: LandId) -> bool {
     let d = g.db.get(g.land(l).cd);
