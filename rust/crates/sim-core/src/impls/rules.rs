@@ -159,12 +159,14 @@ pub fn transform_away(g: &mut Game, m: PermId, kind: Sym) -> Res {
     if !g.perm(m).on_bf {
         return Ok(());
     }
-    if kind == "forest" {
+    if kind == "forest" || kind == "moon" {
+        // --- Tiers 4/5 (heliod-zur): "moon": a colourless land with "{T}: Add {C}" (Imprisoned in the Moon), a Wastes
+        let land = if kind == "moon" { "Wastes" } else { "Forest" };
         let (o, tapped) = (g.perm(m).owner, g.perm(m).tapped);
         leave(g, m)?;
-        let forest = g.db.id("Forest").expect("Forest is in the card database");
+        let forest = g.db.id(land).expect("Forest and Wastes are in the card database");
         g.add_land(o, forest, tapped);
-        crate::glog!(g, "    {} becomes a Forest", g.perm(m).name);
+        crate::glog!(g, "    {} becomes a {}", g.perm(m).name, land);
         return Ok(());
     }
     let x = g.perm_mut(m);
@@ -407,6 +409,14 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
                     if q.key != "seph" || art || g.is_creature(src) || of_type(g, src, Types::ENCHANTMENT) {
                         return true;
                     }
+                }
+                // --- Tiers 4/5 (winota): Myrel: abilities of artifacts, creatures and enchantments on its turn
+                "Myrel, Shield of Argive"
+                    if p != q.id
+                        && g.active == Some(q.id)
+                        && (art || g.is_creature(src) || of_type(g, src, Types::ENCHANTMENT)) =>
+                {
+                    return true;
                 }
                 _ => {}
             }

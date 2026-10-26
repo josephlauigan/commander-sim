@@ -1431,7 +1431,7 @@ fn soulbond_score(g: &Game, m: PermId) -> f64 {
     cloud + eq * 10.0 + epow(g, m) as f64
 }
 
-fn soulbond_pair(g: &mut Game, a: PermId, b: PermId) {
+pub(crate) fn soulbond_pair(g: &mut Game, a: PermId, b: PermId) {
     g.perm_mut(a).data.set(DataKey::Soulbond, Val::Perm(b));
     g.perm_mut(b).data.set(DataKey::Soulbond, Val::Perm(a));
     crate::glog!(g, "    {} pairs with {} (soulbond)", g.perm(a).name, g.perm(b).name);

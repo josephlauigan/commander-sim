@@ -104,6 +104,7 @@ fn urza_mana(g: &Game, _src: Src, p: PlayerId, u: &[Unit]) -> Vec<Unit> {
         .iter()
         .copied()
         .filter(|&m| is_artifact(g, m) && !g.perm(m).tapped && !g.perm(m).phased && !used.contains(&m))
+        .filter(|&m| !crate::impls::t45_urza_yawgmoth::orb(g, m)) // --- Tiers 4/5 (urza-yawgmoth): Orbs stay untapped
         .map(|m| Unit { src: Source::Perm(m), cols: Colors::from_letters("U"), amt: 1 })
         .collect()
 }
@@ -465,7 +466,7 @@ fn winota(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> 
 }
 
 /// hasty copy of your best nonlegendary creature each turn (sacrificed at end); the infinite loops are combos
-fn kiki(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn kiki(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).tapped || post != Some(false) {
         return Ok(vec![]);
     }
@@ -775,6 +776,7 @@ fn yawg_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t: Vec<PermId> = opp_creatures(g, p).into_iter().filter(|&x| etgh(g, x) <= 1 && !untargetable(g, x)).collect();
     if let Some(x) = first_max(&t, |x| (pval(g, x), epow(g, x))) {
         minus_counter(g, x, 1);
+        crate::impls::bites::crime(g, p)?; // --- Tiers 4/5 (urza-yawgmoth): an opposing target (Forsaken Miner)
         if etgh(g, x) <= 0 {
             die(g, x, "sba")?;
         }

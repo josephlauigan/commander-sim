@@ -125,13 +125,15 @@ fn clone_exc(name: &str) -> CopyExc {
         "Copy Artifact" => CopyExc { add_types: Types::ENCHANTMENT, ..CopyExc::default() },
         // Illusion in addition; the sacrifice when it becomes the target of a spell or ability needs that event
         "Phantasmal Image" => CopyExc { add_subtype: Some("illusion"), ..CopyExc::default() },
+        // --- Tiers 4/5 (yuriko): "except it's a Ninja in addition to its other creature types"
+        "Sakashima's Student" => CopyExc { add_subtype: Some("ninja"), ..CopyExc::default() },
         _ => CopyExc::default(),
     }
 }
 
 /// You may have this enter as a copy of a permanent: the best legal one (the Oracle text's kind of target). Mockingbird's
 /// is the creature chosen as it was cast. With nothing to copy it enters as itself (a printed 0/0 dies).
-fn clone_copy(g: &mut Game, p: PlayerId, c: CardId) -> Option<CopyOf> {
+pub(crate) fn clone_copy(g: &mut Game, p: PlayerId, c: CardId) -> Option<CopyOf> {
     let name = name_of(g, c);
     let t = if name == MOCKINGBIRD {
         g.cast_target.filter(|&t| copyable(g, p, t, Kind::Creature))?
@@ -144,12 +146,17 @@ fn clone_copy(g: &mut Game, p: PlayerId, c: CardId) -> Option<CopyOf> {
 }
 
 /// the AI casts a clone only when something worth copying is out
-fn clone_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+pub(crate) fn clone_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let kind = kind_of(name_of(g, c));
     match best_copy(g, p, kind, None, None) {
         Some((_, v)) if v >= 3.0 => 50 + (3.0 * v).min(25.0) as i32,
         _ => 0,
     }
+}
+
+/// --- Tiers 4/5 (yuriko): what the best creature copy is worth to p (Sakashima's Student's ninjutsu choice)
+pub(crate) fn best_creature_copy(g: &Game, p: PlayerId) -> Option<f64> {
+    best_copy(g, p, Kind::Creature, None, None).map(|b| b.1)
 }
 
 fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {

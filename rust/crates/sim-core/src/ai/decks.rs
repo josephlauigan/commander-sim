@@ -1227,6 +1227,9 @@ fn protect_main(
         if crate::impls::t3_korvold::rebirth_protect(g, owner, m, kind)? {
             return Ok(false); // Malakir Rebirth (Tier 3 Tergrid): the removal goes through, the creature comes back tapped
         }
+        if crate::impls::t45_chulane_kinnan::protect(g, owner, m, kind, actor, spell)? {
+            return Ok(true); // --- Tiers 4/5 (chulane-kinnan): Spellskite redirects, Nezahal exiles itself
+        }
         if matches!(key, "thrasios" | "kraum")
             && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)?
         {

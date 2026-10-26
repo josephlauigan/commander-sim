@@ -1672,7 +1672,7 @@ pub fn delve_count(g: &Game, p: PlayerId, c: CardId) -> i32 {
     (g.db.get(c).generic as usize).min(fodder) as i32
 }
 
-fn delve_cost(g: &Game, p: PlayerId, c: CardId) -> i32 {
+pub(crate) fn delve_cost(g: &Game, p: PlayerId, c: CardId) -> i32 {
     -delve_count(g, p, c)
 }
 

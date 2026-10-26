@@ -122,6 +122,10 @@ pub fn damaged(g: &mut Game, m: PermId, dmg: i32) -> Res {
         crate::glog!(g, "    Metropolis Reformer: {} gains {}", g.player(p).name, dmg);
         gain(g, p, dmg)?;
     }
+    // --- Tiers 4/5 (miirym): Wrathful Red Dragon: a Dragon of its controller's was dealt damage
+    if dmg > 0 && live(g, m) {
+        crate::impls::t45_miirym::wrathful_damaged(g, m, dmg)?;
+    }
     Ok(())
 }
 

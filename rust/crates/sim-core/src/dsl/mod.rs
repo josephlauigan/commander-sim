@@ -150,6 +150,8 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
                 .filter(|&&m| !g.perm(m).phased && has_type(g, m, t))
                 .count() as i32
         }
+        // --- Tiers 4/5 (krenko): "the number of Goblins that entered the battlefield under your control this turn"
+        s if s.starts_with("type_entered_you:") => crate::impls::t45_krenko::entered_this_turn(g, p, &s[17..]),
         s if s.starts_with("target_") => 2,
         _ => 2,
     }
@@ -235,6 +237,7 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
         let ok = match st {
             "warrior" => x.warrior || has_type(g, m, "warrior"),
             "commander" => x.is_cmd, // "commander creatures you control" (Bastion Protector)
+            s if s.starts_with("non-") => !has_type(g, m, &s[4..]), // --- Tiers 4/5 (urdragon): Crux of Fate
             _ => has_type(g, m, st),
         };
         if !ok {
@@ -696,6 +699,9 @@ fn run(
             }
         }
         "counters" => {
+            if crate::impls::t45_heliod_zur::solemnity(g) {
+                return Ok(()); // --- Tiers 4/5 (heliod-zur): Solemnity
+            }
             let k = n(g, ctx) * counter_mult(g, p);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
@@ -743,6 +749,9 @@ fn run(
         }
         "search" => search(g, p, e)?,
         "reanimate" => {
+            if crate::impls::t45_winota::jailed(g) {
+                return Ok(()); // --- Tiers 4/5 (winota): Soulless Jailer: permanent cards in graveyards can't enter
+            }
             let f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
             let mut pool: Vec<(CardId, PlayerId)> =
                 g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).map(|c| (c, p)).collect();
@@ -829,6 +838,7 @@ fn run(
             g.player_mut(p).floating.any += k.max(0) as u32;
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
+        "ring_tempt" => crate::cardcode::ring_tempt(g, p)?, // --- Tiers 4/5 (winota): "the Ring tempts you"
         "proliferate" => {
             // the engine's full proliferate: +1/+1 and loyalty counters, Sagas, lands' counters and opponents' poison
             // (this effect used to add +1/+1 counters to your own permanents only)
@@ -863,7 +873,20 @@ fn run(
         }
         "untap" => {
             let sel = sel_or_empty(&e.what);
-            if sel.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") {
+            if sel.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") && e.n.is_some() {
+                // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands": the tapped lands making the most first
+                let k = n(g, ctx).max(0) as usize;
+                let mut tapped: Vec<_> = g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
+                let worth = |l| {
+                    let t = &g.db.get(g.land(l).cd).tags;
+                    10 * t.int(crate::tag::Tag::Amt).unwrap_or(1) as i32
+                        + crate::engine::mana::land_colors_now(g, p, l).count() as i32
+                };
+                tapped.sort_by_key(|&l| -worth(l));
+                for l in tapped.into_iter().take(k) {
+                    g.land_mut(l).tapped = false;
+                }
+            } else if sel.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") {
                 for l in g.player(p).lands.clone() {
                     g.land_mut(l).tapped = false;
                 }
@@ -987,6 +1010,13 @@ fn run(
                 for &(i, _) in order.iter().take(k) {
                     execute(g, p, &e.modes[i], src, ctx, spell, depth + 1)?;
                 }
+            }
+        }
+        "creature_backlash" => {
+            // --- Tiers 4/5 (prosper): each creature deals 1 damage to its controller (Rakdos Charm)
+            for q in g.players.iter().filter(|x| x.alive).map(|x| x.id).collect::<Vec<_>>() {
+                let k = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32;
+                lose_life(g, q, k, Some(q), "triggers", Some(true))?;
             }
         }
         "counter_spell" => {} // counterspells are cast through the engine's response window
@@ -1306,7 +1336,8 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
 
 /// one ctx per time the ability triggers
 fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fired) -> Vec<DslCtx> {
-    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, min_atk, .. } = a else {
+    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, min_atk, color, .. } = a
+    else {
         return vec![];
     };
     let (s, w) = (source.as_deref(), who.as_deref());
@@ -1328,6 +1359,9 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             if !g.is_creature(m) || (other == &Some(true) && m == src) || min_pow.is_some_and(|v| epow(g, m) < v) {
                 return out;
             }
+            if color.as_deref().and_then(|c| c.chars().next()).is_some_and(|c| !colors_of(g, m).has(c)) {
+                return out; // --- Tiers 4/5 (urza-yawgmoth): "another black creature" (Ayara)
+            }
             match s {
                 Some("you_creature") if owner == q => out.push(DslCtx { event_perm: Some(m), ..base }),
                 Some("opp_creature") if owner != q => {
@@ -1344,6 +1378,11 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
             match s {
                 Some("self") if kw.attackers.contains(&src) => out.push(ctx),
+                // --- Tiers 4/5 (krenko): "one or more Goblins you control attack" (General Kreat): one of that type
+                Some("you_any")
+                    if kw.player == Some(q)
+                        && subtype.as_deref().is_some_and(|t| t != "warrior")
+                        && !kw.attackers.iter().any(|&m| has_type(g, m, subtype.as_deref().unwrap_or(""))) => {}
                 Some("you_any") if kw.player == Some(q) && !kw.attackers.is_empty() => out.push(ctx),
                 Some("any_player") if !kw.attackers.is_empty() => out.push(ctx), // Tier 3 (aurelia): "a player attacks"
                 Some("you_each") if kw.player == Some(q) => {
@@ -1408,6 +1447,13 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
         }
         "landfall" if kw.player == Some(q) => out.push(base),
+        // --- Tiers 4/5 (heliod-zur): "whenever you gain life" (Ajani's Pridemate, Voice of the Blessed, Archangel of
+        // Thune): fired by engine/life.rs `gain`, once per life-gain event
+        "gain_life" => match w {
+            Some("you") | None if kw.player == Some(q) => out.push(base),
+            Some("opponent") if kw.player.is_some_and(|x| x != q) => out.push(DslCtx { event_player: kw.player, ..base }),
+            _ => {}
+        },
         _ => {}
     }
     out
@@ -1671,6 +1717,12 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "black" => d.colors.has('B'),
             "red" => d.colors.has('R'),
             "green" => d.colors.has('G'),
+            // --- Tiers 4/5 (urdragon): "Dragon spells you cast cost {1} less" (a creature type; changelings too)
+            s if s.starts_with("sub_") => d.has_subtype(&s[4..]) || d.has_kw("changeling"),
+            // --- Tiers 4/5 (heliod-zur): "white creature spells you cast cost {1} less" (Oketra's Monument)
+            s if s.ends_with("_creature") => {
+                d.creature && s.split('_').next().and_then(color_letter).is_some_and(|ch| d.colors.has(ch))
+            }
             _ => true,
         };
         if ok {
@@ -1761,6 +1813,7 @@ fn eff_value(kind: &str) -> f64 {
         "proliferate" => 1.0,
         "poison" => 0.6, // per counter on each player it reaches: ten put a player out
         "extra_combat" => 3.0,
+        "ring_tempt" => 0.8, // --- Tiers 4/5 (winota)
         "add_mana" => 0.5,
         "mill" => 0.1,
         _ => 0.3,
@@ -1774,6 +1827,11 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
         let n = match &e.n {
             Some(Num::Int(k)) => *k as f64,
             None => 1.0,
+            // --- Tiers 4/5 (krenko): a count of your creatures or of a creature type is read now (Goblin War
+            // Strike, Massive Raid, Brightstone Ritual)
+            Some(Num::Name(s)) if s.starts_with("type_") || s == "creatures_you_control" => {
+                num(g, p, e.n.as_ref(), &DslCtx::default(), None) as f64
+            }
             _ => 2.0,
         };
         let d = e.kind.as_str();
@@ -1821,6 +1879,14 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                     }
             }
             "search" | "reanimate" | "regrow" => v += 3.0,
+            "creature_backlash" => {
+                // --- Tiers 4/5 (prosper): a point of life per creature, an opponent out worth a lot
+                let n = |q: PlayerId| g.player(q).perms.iter().filter(|&&m| g.is_creature(m)).count() as i32;
+                for q in g.opps(p) {
+                    v += 0.15 * n(q) as f64 + if n(q) >= g.player(q).life { 20.0 } else { 0.0 };
+                }
+                v -= 0.2 * n(p) as f64;
+            }
             "sacrifice" => v += if e.who.as_deref() != Some("you") { 2.0 } else { -1.0 },
             "discard" => v += if e.who.as_deref() != Some("you") { 0.8 } else { -0.5 },
             "modal" => {
@@ -1862,7 +1928,9 @@ pub fn card_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
 fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, dry: bool) -> Res<bool> {
     let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
     let x = g.perm(src);
-    if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && x.sick)) {
+    // --- Tiers 4/5 (krenko): Thousand-Year Elixir, "as though those creatures had haste"
+    let sick = x.sick && !crate::impls::t45_krenko::elixir(g, p);
+    if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && sick)) {
         return Ok(false);
     }
     if cost.life.is_some_and(|l| g.player(p).life <= l + 5) {
@@ -2281,4 +2349,53 @@ pub fn activate_borrowed(g: &mut Game, p: PlayerId, src: PermId, from: CardId, i
     }
     execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
     Ok(true)
+}
+
+// --- Tiers 4/5 (heliod-zur)
+/// a colour word's letter ("white" -> 'W')
+fn color_letter(w: &str) -> Option<char> {
+    match w {
+        "white" => Some('W'),
+        "blue" => Some('U'),
+        "black" => Some('B'),
+        "red" => Some('R'),
+        "green" => Some('G'),
+        _ => None,
+    }
+}
+
+/// the life p gains instead of n: "you gain that much life plus N instead" (Cleric Class) first, then "twice that much
+/// life instead" (The Wind Crystal, Boon Reflection): the player orders the replacements, and adding before doubling
+/// gains the most
+pub fn lifegain_mod(g: &Game, p: PlayerId, n: i32) -> i32 {
+    if n <= 0 || !active(g) {
+        return n;
+    }
+    let mut n = n;
+    for (q, _, ab, i) in statics(g, "lifegain_plus") {
+        if let Ability::Static { amount, .. } = &ab[i]
+            && q == p
+        {
+            n += amount.unwrap_or(1);
+        }
+    }
+    for (q, _, ab, i) in statics(g, "lifegain") {
+        if let Ability::Replacement { multiplier, .. } = &ab[i]
+            && q == p
+        {
+            n *= multiplier.unwrap_or(2).max(1);
+        }
+    }
+    n
+}
+
+/// "creatures your opponents control enter tapped" (Authority of the Consuls): does m, entering under p's control,
+/// enter tapped? (None: a Treasure / Food / Clue, never a creature)
+pub fn opp_enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
+    let Some(m) = m else { return false };
+    active(g)
+        && g.is_creature(m)
+        && statics(g, "enters_tapped").any(|(q, src, ab, i)| {
+            matches!(&ab[i], Ability::Static { who, .. } if who.as_deref() == Some("opponents")) && q != p && src != m
+        })
 }

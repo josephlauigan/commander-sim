@@ -52,6 +52,9 @@ pub enum DataKey {
     Counters,
     Crewed,
     Ctype,
+    /// --- Tiers 4/5 (winota): what a permanent chose as it entered (Windcrag Siege: "mardu" or "jeskai"; Greymond,
+    /// Avacyn's Stalwart: the two abilities it grants), a `Val::Str` or a `Val::List` of them
+    Mode,
     /// (Dovin's controller, their turn count): damage to and from it is prevented until their next turn
     Dovin,
     /// a land made a creature by Druid Class's level 3
@@ -92,6 +95,15 @@ pub enum DataKey {
     TitanTapped,
     FableGoblin,
     Final,
+    /// --- Tiers 4/5 (chulane-kinnan): a creature card on the battlefield that is not a creature (Enduring Vitality
+    /// returned as an enchantment)
+    NotCreature,
+    /// --- Tiers 4/5 (edgar): Clavileño made it a Demon with "when this creature dies, draw a card and create a tapped
+    /// 4/3 Vampire Demon"
+    DemonGift,
+    /// --- Tiers 4/5 (edgar): bloodline counters (Edgar Markov's Coffin); the city's blessing (Twilight Prophet)
+    Bloodline,
+    Blessing,
     Flip,
     Flipped,
     /// a Wizard token made by Kuja, Genome Sorcerer: it pings when its controller casts a noncreature spell
@@ -180,6 +192,16 @@ pub enum DataKey {
     CalixLink,
     /// soulbond (Silverblade Paladin): the paired creature (a `Val::Perm`), set on both; valid only while both are on the battlefield under one controller and point at each other
     Soulbond,
+    /// t45-prosper: Ob Nixilis, Captive Kingpin's last batch of life losses (a `Val::List`: work, stack pushes, the players)
+    ObBatch,
+    /// --- Tiers 4/5 (heliod-zur): Archivist of Oghma: library searches by its opponents still to answer
+    T45Search,
+    /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar's revival counters (Int)
+    Revival,
+    /// --- Tiers 4/5 (urdragon): Dragon's Hoard's gold counters (Int); a Dragon cast from the graveyard with Rivaz of
+    /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
+    /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
+    T45Dragon,
 }
 
 /// A value in per-card state.
@@ -469,6 +491,8 @@ pub struct Player {
     pub last_src: Option<PlayerId>,
     pub ring_prot: bool,
     pub life_locked: bool,
+    /// --- Tiers 4/5 (winota): `life_locked` lasts until end of turn (Flare of Fortitude): cleared as a turn starts
+    pub life_lock_eot: bool,
     /// the kind of the last life loss (for how the player was eliminated)
     pub last_kind: Sym,
     pub death_kind: Sym,
@@ -486,6 +510,13 @@ pub struct Player {
     pub creature_died: Option<TurnStamp>,
     /// tokens this player created this turn: (the turn, how many) (Thalisse, Reverent Medium)
     pub tok_made: (Option<TurnStamp>, u32),
+    // --- Tiers 4/5 (krenko)
+    /// Goblins that entered under this player's control this turn, counted as they enter (Hobgoblin Bandit Lord):
+    /// (the turn, how many)
+    pub goblins_in: (Option<TurnStamp>, u32),
+    /// speed (Start your engines!: 0 until a permanent with it is out, then 1 to 4) and the turn it last rose
+    pub speed: u8,
+    pub speed_rose: Option<TurnStamp>,
     /// emblems from planeswalker ultimates ('tamiyo', 'nissa' ...)
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
@@ -741,6 +772,7 @@ impl Player {
             last_src: None,
             ring_prot: false,
             life_locked: false,
+            life_lock_eot: false,
             last_kind: "other",
             death_kind: "",
             t6: crate::t6stats::is_t6_key(key),
@@ -750,6 +782,9 @@ impl Player {
             gained_turn: None,
             creature_died: None,
             tok_made: (None, 0),
+            goblins_in: (None, 0),
+            speed: 0,
+            speed_rose: None,
             emblems: vec![],
             agent_ids: vec![],
             left_turn: None,
@@ -1137,6 +1172,8 @@ pub struct Game {
     pub end_combat: bool,
     /// Arachnogenesis: combat damage from non-Spider creatures is prevented this turn
     pub fog_spiders: Option<TurnStamp>,
+    /// --- Tiers 4/5 (winota): creatures without flying can't block this turn (Sundering Eruption)
+    pub ground_noblock: Option<TurnStamp>,
     /// day and night (Infestation Expert): 0 neither, 1 day, 2 night
     pub day_night: u8,
     /// the player whose turn began last (day and night look at the turn before)
@@ -1167,6 +1204,9 @@ pub struct Game {
     pub doomed_turn: Option<PlayerId>,
     /// Memory Jar: the hands set aside, returned at the end step
     pub jar_due: Vec<(PlayerId, Vec<CardId>)>,
+    /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar returns at the next end step: (controller, card, revival
+    /// counters it returns with)
+    pub t45_due: Vec<(PlayerId, CardId, i64)>,
     /// the wipe resolving now (its `batch` number), if any: creatures dying in it die together (Python's `g.batch`
     /// while not None)
     pub cur_batch: Option<u32>,
@@ -1334,6 +1374,7 @@ impl Game {
             fog: None,
             end_combat: false,
             fog_spiders: None,
+            ground_noblock: None,
             day_night: 0,
             dn_last: None,
             no_prevent: None,
@@ -1349,6 +1390,7 @@ impl Game {
             extra_turns: vec![],
             doomed_turn: None,
             jar_due: vec![],
+            t45_due: vec![],
             cur_batch: None,
             hooks: vec![],
             stack: vec![],
@@ -1554,9 +1596,10 @@ impl Game {
     /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
     pub fn is_creature(&self, m: PermId) -> bool {
         let m = self.perm(m);
-        (m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
+        ((m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
             || m.cd.is_some_and(|c| self.db.get(c).creature)
-            || m.data.truthy(DataKey::Anim)
+            || m.data.truthy(DataKey::Anim))
+            && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
     }
 }
 

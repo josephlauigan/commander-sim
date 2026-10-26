@@ -37,7 +37,7 @@ fn brass_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
 // ================================================================== City of Traitors
 /// **City of Traitors**: {T}: {C}{C} (tag amt=2). When you play another land, sacrifice it. The engine calls
 /// `land_etb` for the land just played, so every land without code of its own gets this check (`traitors_check`).
-fn traitors_check(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+pub(crate) fn traitors_check(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     let mine: Vec<LandId> =
         g.player(p).lands.iter().copied().filter(|&x| x != l && name_of(g, x) == "City of Traitors").collect();
     for c in mine {
@@ -632,11 +632,11 @@ fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 const SHATTERSKULL: [&str; 2] = ["Shatterskull Smashing", "Shatterskull Smashing // Shatterskull, the Hammer Pass"];
 const RAZORGRASS: &str = "Razorgrass Ambush // Razorgrass Field";
 
-fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
+pub(crate) fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
     Colors::from_letters(if name_of(g, l) == RAZORGRASS { "W" } else { "R" })
 }
 
-fn mdfc_land_opt(g: &Game, c: CardId, p: PlayerId, post: Option<bool>) -> Option<Opt> {
+pub(crate) fn mdfc_land_opt(g: &Game, c: CardId, p: PlayerId, post: Option<bool>) -> Option<Opt> {
     let pl = g.player(p);
     let allowed = 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now;
     if post.is_none() || g.active != Some(p) || pl.lands_played >= allowed || !pl.hand.contains(&c) {
@@ -652,7 +652,7 @@ fn mdfc_land_opt(g: &Game, c: CardId, p: PlayerId, post: Option<bool>) -> Option
     })
 }
 
-fn mdfc_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn mdfc_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let allowed = 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now;
     let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(false) };

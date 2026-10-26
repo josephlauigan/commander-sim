@@ -22,14 +22,8 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     let damage = damage.unwrap_or(DAMAGE_KINDS.contains(&kind));
     let mut n = n;
     if damage && let Some(s) = src.filter(|&s| s != p) {
-        // Fiery Emancipation: triple damage, once per copy
-        let k = g
-            .player(s)
-            .perms
-            .iter()
-            .filter(|&&m| !g.perm(m).phased && crate::engine::values::card_name(g, m) == Some("Fiery Emancipation"))
-            .count() as u32;
-        n *= 3i32.pow(k);
+        // Fiery Emancipation: triple damage, once per copy (--- Tiers 4/5 (winota): Angrath's Marauders: double)
+        n *= crate::engine::combat::fiery(g, s);
     }
     if damage {
         n *= stagger_mult(g, p); // Lightning, Army of One
@@ -37,6 +31,7 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && kind != "combat" {
         n = crate::impls::t3_aurelia::gisela_scale(g, p, n); // Gisela, Blade of Goldnight (combat.rs scales combat damage)
     }
+    n = crate::impls::t45_edgar::bloodletter(g, p, n); // --- Tiers 4/5 (edgar): Bloodletter of Aclazotz
     if damage && prevents_damage(g, p, src) {
         g.player_mut(p).stat("dmg_prevented", n as i64);
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
@@ -51,6 +46,7 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && crate::impls::tymna_cards::unlife_infect(g, p, n) {
         return Ok(()); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
     }
+    crate::impls::t45_krenko::speed_up(g, p); // --- Tiers 4/5 (krenko): an opponent of the active player lost life
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
     pl.life -= n;
@@ -73,6 +69,13 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         _ => {}
     }
     crate::ai::note_damage(g, p, src, n);
+    // --- Tiers 4/5 (miirym): Dragonborn Champion: a source of s's dealt 5 or more damage to a player
+    if damage
+        && n >= 5
+        && let Some(s) = src.filter(|&s| s != p)
+    {
+        crate::impls::t45_miirym::champion_hit(g, s, n)?;
+    }
     Ok(())
 }
 
@@ -116,6 +119,7 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
         return Ok(());
     }
     let n = n + crate::impls::t0_giada::gain_bonus(g, p, n); // Angel of Vitality: plus 1
+    let n = crate::dsl::lifegain_mod(g, p, n); // --- Tiers 4/5 (heliod-zur): Cleric Class, The Wind Crystal
     g.player_mut(p).life += n;
     // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
     if n > 0 {
@@ -126,6 +130,10 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
     }
     if !g.hooks.is_empty() {
         hooks::fire_trigger(g, Event::GainLife, Call::Life { p, n })?;
+    }
+    if n > 0 {
+        // --- Tiers 4/5 (heliod-zur): the compiled "whenever you gain life" triggers
+        crate::dsl::fire(g, "gain_life", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
     }
     Ok(())
 }

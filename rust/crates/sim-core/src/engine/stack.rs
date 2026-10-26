@@ -34,6 +34,24 @@ pub fn queue_triggers(g: &mut Game, mut entries: Vec<Trigger>) -> Res {
     let extra: Vec<Trigger> =
         entries.iter().filter(|t| t.src.is_some_and(|s| crate::impls::cloud::doubles(g, s))).cloned().collect();
     entries.extend(extra);
+    // --- Tiers 4/5 (heliod-zur): Delney: a trigger of a creature with power 2 or less triggers an additional time
+    let delney: Vec<Trigger> = entries
+        .iter()
+        .flat_map(|t| {
+            let k = t.src.map_or(0, |s| crate::impls::t45_heliod_zur::delney_extra(g, s));
+            std::iter::repeat_n(t.clone(), k)
+        })
+        .collect();
+    entries.extend(delney);
+    // --- Tiers 4/5 (urdragon): Roaming Throne: a trigger of another creature of the chosen type triggers again
+    let throne: Vec<Trigger> = entries
+        .iter()
+        .flat_map(|t| {
+            let k = t.src.map_or(0, |s| crate::impls::t45_urdragon::throne_extra(g, s));
+            std::iter::repeat_n(t.clone(), k)
+        })
+        .collect();
+    entries.extend(throne);
     g.trig_queue.extend(entries);
     if g.resolving == 0 { flush_triggers(g) } else { Ok(()) }
 }
@@ -1021,6 +1039,9 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
     }
     if &*g.db.get(ctr).name == "Mindbreak Trap" {
         crate::impls::t6_counters::mindbreak_exile(g, q)?; // "exile any number of target spells": all the others
+    }
+    if &*g.db.get(ctr).name == "Tibalt's Trickery" {
+        crate::impls::t6_counters::tibalt_after(g, q, p, c)?; // its controller mills, then casts a card free
     }
     Ok(())
 }

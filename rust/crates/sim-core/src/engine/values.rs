@@ -290,7 +290,8 @@ pub fn ward_legends(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// Garland, Royal Kidnapper: creatures you control but don't own can't be sacrificed
 pub fn no_sac(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
-    x.orig != x.owner && g.is_creature(m) && has(g, x.owner, Tag::Garland)
+    (x.orig != x.owner && g.is_creature(m) && has(g, x.owner, Tag::Garland))
+        || card_name(g, m) == Some("Alexios, Deimos of Kosmos") // --- Tiers 4/5 (winota): can't be sacrificed
 }
 
 pub fn untargetable(g: &Game, m: PermId) -> bool {
@@ -418,6 +419,7 @@ pub fn add_cmd_dmg(g: &mut Game, d: PlayerId, p: PlayerId, a: PermId, dmg: i32) 
 /// Melira, Sylvok Outcast: p can't get poison counters, and p's creatures can't have -1/-1 counters put on them
 pub fn melira(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| card_tag(g, m, Tag::Melira) && !g.perm(m).phased)
+        || crate::impls::t45_heliod_zur::solemnity(g) // --- Tiers 4/5 (heliod-zur): Solemnity, for every player
 }
 
 /// Glacial Chasm

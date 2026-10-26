@@ -93,7 +93,7 @@ fn apnap(g: &Game, p: PlayerId) -> Vec<PlayerId> {
 }
 
 /// the land q would give up first: a tapped one, then the fewest colours, a basic before a nonbasic
-fn worst_land(g: &Game, q: PlayerId) -> Option<LandId> {
+pub(crate) fn worst_land(g: &Game, q: PlayerId) -> Option<LandId> {
     let lands = &g.player(q).lands;
     let key = |l: LandId| {
         let d = g.db.get(g.land(l).cd);

@@ -89,6 +89,12 @@ fn kinnan_adds_one_to_nonland_mana_and_digs_five() {
 fn winota_finds_an_attacking_indestructible_human() {
     let mut g = table(&[WI, BR]);
     perm(&mut g, P0, "Winota, Joiner of Forces");
+    // Winota's deck has left the pool (2026-10-25): the library is set, two Humans among lands
+    let lib: Vec<_> = ["Plains", "Thalia, Guardian of Thraben", "Mountain", "Mother of Runes", "Plains", "Mountain"]
+        .iter()
+        .map(|n| card(&g, n))
+        .collect();
+    g.player_mut(P0).library = lib;
     let tk = token(&mut g, P0, 1);
     let lib = g.player(P0).library.len();
     g.new_attackers.clear();
@@ -266,6 +272,9 @@ fn karn_and_cursed_totem_shut_off_mana() {
 fn tezzeret_puts_an_artifact_onto_the_battlefield() {
     let mut g = table(&[UR, BR]);
     let tz = perm(&mut g, P0, "Tezzeret the Seeker");
+    // the library it searches: a combo artifact with mana value 2, a better-valued rock, one too big, a land
+    let lib = ["Island", "Thought Vessel", "Grim Monolith", "Sol Ring", "The One Ring"];
+    g.player_mut(P0).library = lib.iter().map(|n| card(&g, n)).collect();
     let o = options(&mut g, tz, P0, Some(false));
     assert_eq!(g.perm(tz).loyalty, Some(4));
     assert_eq!(labels(&o), [("Tezzeret the Seeker +1".to_string(), 2.15), ("Tezzeret the Seeker -2".to_string(), 2.7)]);

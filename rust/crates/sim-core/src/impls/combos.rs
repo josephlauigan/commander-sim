@@ -105,6 +105,14 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t6_combos_t6::COMBOS.iter())
             .chain(super::t6_combos_extra::COMBOS.iter())
             .chain(super::t3_marwyn::COMBOS.iter()) // --- Tier 3 (marwyn)
+            .chain(super::t45_krenko::COMBOS.iter()) // --- Tiers 4/5 (krenko)
+            .chain(super::t45_prosper::COMBOS.iter()) // --- Tiers 4/5 (prosper)
+            .chain(super::t45_chulane_kinnan::COMBOS.iter()) // --- Tiers 4/5 (chulane-kinnan)
+            .chain(super::t45_winota::COMBOS.iter()) // --- Tiers 4/5 (winota)
+            .chain(super::t45_heliod_zur::COMBOS.iter()) // --- Tiers 4/5 (heliod-zur)
+            .chain(super::t45_urza_yawgmoth::COMBOS.iter()) // --- Tiers 4/5 (urza-yawgmoth)
+            .chain(super::t45_edgar::COMBOS.iter()) // --- Tiers 4/5 (edgar)
+            .chain(super::t45_miirym::COMBOS.iter()) // --- Tiers 4/5 (miirym)
             .collect()
     });
     &ALL
@@ -118,8 +126,15 @@ const KIKI_TARGETS: &[&str] =
 const MANA_SINKS: &[&str] =
     &["Walking Ballista", "Urza, Lord High Artificer", "Kinnan, Bonder Prodigy", "Thassa's Oracle"];
 const BOUNCERS: &[&str] = &["Shrieking Drake", "Whitemane Lion", "Kor Skyfisher", "Man-o'-War"];
-const UNDYING_LOOP: &[&str] =
-    &["Mikaeus, the Unhallowed", "Geralf's Messenger", "Butcher Ghoul", "Young Wolf", "Nether Traitor"];
+// --- Tiers 4/5 (urza-yawgmoth): Hancock, Ghoulish Mayor has undying
+const UNDYING_LOOP: &[&str] = &[
+    "Mikaeus, the Unhallowed",
+    "Geralf's Messenger",
+    "Butcher Ghoul",
+    "Young Wolf",
+    "Nether Traitor",
+    "Hancock, Ghoulish Mayor",
+];
 const STAFF_OUTLETS: &[&str] = &["Skirk Prospector", "Goblin Bombardment", "Ashnod's Altar", "Phyrexian Altar"];
 
 /// combos.COMBOS, in Python's order
@@ -349,7 +364,7 @@ fn precombat(g: &Game, p: PlayerId) -> bool {
 
 /// a payoff that drains on each death of a loop. Goblin Bombardment isn't one: it is an outlet (its damage comes
 /// from sacrificing to it, which no loop here does), and sacrificing to it makes no mana to keep a loop going.
-fn loop_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
+pub(crate) fn loop_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
     let bomb = |m: PermId| g.perm(m).cd.is_some_and(|c| name_of(g, c) == "Goblin Bombardment");
     DRAIN_PAYOFFS.iter().filter_map(|n| on_bf(g, p, n)).find(|&m| !bomb(m)).or_else(|| {
         g.player(p).perms.iter().copied().find(|&m| {
@@ -362,7 +377,7 @@ fn loop_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
 /// {5} plays the whole library), or a tutor in hand that puts the Ballista in hand. Not Kinnan: his {5}{G}{U} needs
 /// green and blue each time, and digging the library puts creatures onto the battlefield (a Ballista found that way
 /// enters with no counters). Not Thassa's Oracle: mana doesn't empty the library.
-fn mana_sink(g: &Game, p: PlayerId) -> bool {
+pub(crate) fn mana_sink(g: &Game, p: PlayerId) -> bool {
     if any_bf(g, p, &["Walking Ballista", "Urza, Lord High Artificer"]).is_some()
         || in_hand(g, p, "Walking Ballista").is_some()
     {
@@ -1195,6 +1210,9 @@ fn karn(g: &Game, p: PlayerId) -> Ready {
 
 /// Heliod gives the Ballista lifelink ({1}{W}); each ping gains life, which adds a counter: unlimited pings
 fn heliod(g: &Game, p: PlayerId) -> Ready {
+    if crate::impls::t45_heliod_zur::solemnity(g) {
+        return NOT_READY(); // --- Tiers 4/5 (heliod-zur): Solemnity: the Ballista gets no counters
+    }
     let Some(h) = on_bf(g, p, "Heliod, Sun-Crowned") else { return NOT_READY() };
     let b = g.player(p).perms.iter().copied().find(|&m| {
         let x = g.perm(m);

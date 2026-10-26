@@ -1,141 +1,144 @@
 # Chulane — Bant Value & Aluren
 
-Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Value engine / Aluren combo.
+Opponent pool deck — **Tier 4: Low Bracket 4**. Axis: Value engine / creature-loop combo.
 
 - **Commander:** Chulane, Teller of Tales
 - **Color identity:** White, Blue, Green
-- **Game Changers (7):** Consecrated Sphinx, Survival of the Fittest, Rhystic Study, Smothering Tithe, Worldly Tutor, Cyclonic Rift, Teferi's Protection
-- **Combos:** Aluren + Shrieking Drake (or Whitemane Lion) + Chulane: free self-bouncing creature loop → unbounded draws and land drops, into Avenger/Craterhoof.
-- **Lands:** 34 (19 nonbasic + 15 basic)
+- **Game Changers (9):** Aura Shards, Cyclonic Rift, Drannith Magistrate, Enlightened Tutor, Fierce Guardianship, Rhystic Study, Seedborn Muse, Thassa's Oracle, Worldly Tutor
+- **Combos:** Aluren + Shrieking Drake (or Whitemane Lion) + Chulane: free self-bouncing creature loop. Intruder Alarm + Shrieking Drake (or Whitemane Lion) + a mana creature + Chulane: the bouncer returns itself and every creature untaps. Aluren + Cloudstone Curio + Chulane + two cheap creatures. Each draws the deck and plays every land, into Thassa's Oracle, Laboratory Maniac or Craterhoof Behemoth.
+- **Lands:** 35 (23 nonbasic + 12 basic)
 
 ## Role in the pool
 
-A value deck that goes infinite once Aluren resolves. Tests enchantment removal and counterspells on key pieces.
+A value deck that turns every creature spell into a card and a land, with three creature-loop combos behind it. Tests enchantment and artifact removal (Aluren, Intruder Alarm, Cloudstone Curio) and counterspells on the pieces.
 
 ## At the table
 
-- **Plan:** Casts cheap creatures and Chulane, Teller of Tales draws a card and puts a land onto the battlefield with each one, so it ramps and refills. Mana creatures and Sylvan Library, Rhystic Study and Oko, Thief of Crowns grind value.
-- **Wins by:** The Aluren combo: Aluren with Shrieking Drake or Whitemane Lion and Chulane draws and plays lands without end, into Craterhoof Behemoth or Avenger of Zendikar.
-- **Watch out for:** Aluren on the table: destroy or counter it immediately. Survival of the Fittest, Chord of Calling and Worldly Tutor find the pieces. Consecrated Sphinx and Rhystic Study bury you in cards. Cyclonic Rift can clear your board late.
-- **Interaction:** Counterspell, Mana Drain, Arcane Denial, Swan Song, Swords to Plowshares, Path to Exile, Generous Gift, Beast Within, Reflector Mage, Skyclave Apparition, Cyclonic Rift, Supreme Verdict. Teferi's Protection and Heroic Intervention protect its board.
+- **Plan:** Mana creatures (Birds of Paradise, Noble Hierarch, Elvish Mystic, Priest of Titania) and cheap creatures into Chulane, Teller of Tales, which draws a card and puts a land onto the battlefield with each creature spell. Rhystic Study, Mystic Remora, Esper Sentinel and Tatyova grind value; Peregrine Drake untaps five lands.
+- **Wins by:** Aluren or Intruder Alarm with Shrieking Drake or Whitemane Lion and Chulane (or Aluren with Cloudstone Curio) casts creatures without end, drawing the deck and playing every land, then Thassa's Oracle or Laboratory Maniac wins, or Craterhoof Behemoth swings.
+- **Watch out for:** Aluren, Intruder Alarm and Cloudstone Curio on the table: answer them before Chulane gets another turn. Worldly Tutor, Enlightened Tutor, Eladamri's Call, Finale of Devastation and Recruiter of the Guard find the pieces. Mana Breach bounces a land for every spell you cast (Chulane replays its own); Drannith Magistrate and Grand Abolisher stop answers and commanders on its turn.
+- **Interaction:** Counterspell, Dovin's Veto, Swan Song, Fierce Guardianship, Swords to Plowshares, Path to Exile, Cyclonic Rift, Aura Shards, Reclamation Sage and Boseiju. Heroic Intervention, Lightning Greaves and Grand Abolisher protect the combo turn.
 
 ## Strategy
 
-Every creature spell draws a card and ramps a land with Chulane, so cheap bounce creatures (Shrieking Drake, Whitemane Lion, Kor Skyfisher) turn into repeatable draw-and-ramp. The combo is Aluren + Shrieking Drake (or Whitemane Lion) with Chulane: cast the Drake for free, return itself, repeat for unbounded card draw and landfall into Avenger or Craterhoof. Survival, Birthing Pod, and the creature tutors assemble it.
+Every creature spell draws a card and ramps a land with Chulane, so cheap creatures and self-bouncers (Shrieking Drake, Whitemane Lion) become repeatable draw-and-ramp. Aluren makes them free; Intruder Alarm lets a mana creature pay for Shrieking Drake again each time a creature enters, because it untaps every creature; Cloudstone Curio returns one cheap creature whenever another enters. Any of those with Chulane draws the whole deck and plays every land, and Thassa's Oracle, Laboratory Maniac or Craterhoof finishes. Tutors for creatures, enchantments and artifacts assemble it; counterspells and Grand Abolisher protect it.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Chulane cast trigger (draw + land to battlefield, return a creature); Aluren free casting; self-bounce creatures; creature tutors.
+Chulane cast trigger (draw + land to battlefield); Aluren free casting; self-bounce creatures; Intruder Alarm (no untap step for creatures, untap all on a creature entering) and Cloudstone Curio; the three loops as combos (Aluren + Chulane + bouncer, Intruder Alarm + bouncer + mana creature + Chulane, Aluren + Curio + Chulane); Peregrine Drake's untap; Mana Breach's land bounce; creature, enchantment and artifact tutors. All of these are modeled (Cloudstone Curio is Approximate: lands entering don't trigger it).
 
 ## Decklist by type (100)
 
 **Commander (1).** Chulane, Teller of Tales
 
-**Creatures (30).** Ancient Greenwarden, Avenger of Zendikar, Birds of Paradise, Cloudblazer, Coiling Oracle, Consecrated Sphinx, Craterhoof Behemoth, Elvish Mystic, Elvish Visionary, Esper Sentinel, Eternal Witness, Hullbreaker Horror, Knight of Autumn, Kor Skyfisher, Llanowar Elves, Man-o'-War, Mulldrifter, Noble Hierarch, Ranger-Captain of Eos, Recruiter of the Guard, Reflector Mage, Restoration Angel, Shrieking Drake, Skyclave Apparition, Spellseeker, Sylvan Caryatid, Temur Sabertooth, Tireless Tracker, Whitemane Lion, Wood Elves
+**Creatures (36).** Arbor Elf, Avacyn's Pilgrim, Aven Mindcensor, Beast Whisperer, Birds of Paradise, Bloom Tender, Coiling Oracle, Craterhoof Behemoth, Delighted Halfling, Destiny Spinner, Drannith Magistrate, Elvish Mystic, Enduring Vitality, Esper Sentinel, Eternal Witness, Faeburrow Elder, Fyndhorn Elves, Grand Abolisher, Kinnan, Bonder Prodigy, Laboratory Maniac, Llanowar Elves, Lotus Cobra, Noble Hierarch, Paradise Druid, Peregrine Drake, Priest of Titania, Ranger-Captain of Eos, Reclamation Sage, Recruiter of the Guard, Scute Swarm, Seedborn Muse, Shrieking Drake, Tatyova, Benthic Druid, Thassa's Oracle, Tireless Provisioner, Whitemane Lion
 
 **Planeswalkers (1).** Oko, Thief of Crowns
 
-**Enchantments (7).** Aluren, Guardian Project, Rhystic Study, Smothering Tithe, Survival of the Fittest, Sylvan Library, Utopia Sprawl
+**Enchantments (7).** Aluren, Aura Shards, Guardian Project, Intruder Alarm, Mana Breach, Mystic Remora, Rhystic Study
 
-**Artifacts (5).** Arcane Signet, Birthing Pod, Lightning Greaves, Sol Ring, Talisman of Curiosity
+**Artifacts (5).** Arcane Signet, Cloudstone Curio, Lightning Greaves, Sol Ring, Thought Vessel
 
-**Sorceries (6).** Farseek, Finale of Devastation, Green Sun's Zenith, Nature's Lore, Supreme Verdict, Three Visits
+**Sorceries (4).** Cultivate, Farseek, Finale of Devastation, Wargate
 
-**Instants (16).** Arcane Denial, Beast Within, Brainstorm, Chord of Calling, Counterspell, Cyclonic Rift, Fact or Fiction, Generous Gift, Growth Spiral, Heroic Intervention, Mana Drain, Path to Exile, Swan Song, Swords to Plowshares, Teferi's Protection, Worldly Tutor
+**Instants (11).** Counterspell, Cyclonic Rift, Dovin's Veto, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Heroic Intervention, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
-**Lands (34).** Boseiju, Who Endures, Botanical Sanctum, Breeding Pool, Command Tower, Exotic Orchard, Flooded Strand, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Misty Rainforest, Otawara, Soaring City, Savannah, Spara's Headquarters, Sunpetal Grove, Temple Garden, Tropical Island, Tundra, Windswept Heath, Yavimaya Coast, 6 Forest, 5 Island, 4 Plains
+**Lands (35).** Azorius Chancery, Boseiju, Who Endures, Bountiful Promenade, Breeding Pool, Command Tower, Exotic Orchard, Flooded Strand, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Misty Rainforest, Prairie Stream, Rejuvenating Springs, Reliquary Tower, Sea of Clouds, Selesnya Sanctuary, Simic Growth Chamber, Spara's Headquarters, Sunpetal Grove, Temple Garden, Windswept Heath, Yavimaya Coast, Yavimaya, Cradle of Growth, 5 Forest, 4 Island, 3 Plains
 
 ## Import list (100)
 
 ```
 1 Aluren
-1 Ancient Greenwarden
-1 Arcane Denial
+1 Arbor Elf
 1 Arcane Signet
-1 Avenger of Zendikar
-1 Beast Within
+1 Aura Shards
+1 Avacyn's Pilgrim
+1 Aven Mindcensor
+1 Azorius Chancery
+1 Beast Whisperer
 1 Birds of Paradise
-1 Birthing Pod
+1 Bloom Tender
 1 Boseiju, Who Endures
-1 Botanical Sanctum
-1 Brainstorm
+1 Bountiful Promenade
 1 Breeding Pool
-1 Chord of Calling
 1 Chulane, Teller of Tales
-1 Cloudblazer
+1 Cloudstone Curio
 1 Coiling Oracle
 1 Command Tower
-1 Consecrated Sphinx
 1 Counterspell
 1 Craterhoof Behemoth
+1 Cultivate
 1 Cyclonic Rift
+1 Delighted Halfling
+1 Destiny Spinner
+1 Dovin's Veto
+1 Drannith Magistrate
+1 Eladamri's Call
 1 Elvish Mystic
-1 Elvish Visionary
+1 Enduring Vitality
+1 Enlightened Tutor
 1 Esper Sentinel
 1 Eternal Witness
 1 Exotic Orchard
-1 Fact or Fiction
+1 Faeburrow Elder
 1 Farseek
+1 Fierce Guardianship
 1 Finale of Devastation
 1 Flooded Strand
-1 Generous Gift
+1 Fyndhorn Elves
 1 Glacial Fortress
-1 Green Sun's Zenith
-1 Growth Spiral
+1 Grand Abolisher
 1 Guardian Project
 1 Hallowed Fountain
 1 Heroic Intervention
 1 Hinterland Harbor
-1 Hullbreaker Horror
-1 Knight of Autumn
-1 Kor Skyfisher
+1 Intruder Alarm
+1 Kinnan, Bonder Prodigy
+1 Laboratory Maniac
 1 Lightning Greaves
 1 Llanowar Elves
-1 Man-o'-War
-1 Mana Drain
+1 Lotus Cobra
+1 Mana Breach
 1 Misty Rainforest
-1 Mulldrifter
-1 Nature's Lore
+1 Mystic Remora
 1 Noble Hierarch
 1 Oko, Thief of Crowns
-1 Otawara, Soaring City
+1 Paradise Druid
 1 Path to Exile
+1 Peregrine Drake
+1 Prairie Stream
+1 Priest of Titania
 1 Ranger-Captain of Eos
+1 Reclamation Sage
 1 Recruiter of the Guard
-1 Reflector Mage
-1 Restoration Angel
+1 Rejuvenating Springs
+1 Reliquary Tower
 1 Rhystic Study
-1 Savannah
+1 Scute Swarm
+1 Sea of Clouds
+1 Seedborn Muse
+1 Selesnya Sanctuary
 1 Shrieking Drake
-1 Skyclave Apparition
-1 Smothering Tithe
+1 Simic Growth Chamber
 1 Sol Ring
 1 Spara's Headquarters
-1 Spellseeker
 1 Sunpetal Grove
-1 Supreme Verdict
-1 Survival of the Fittest
 1 Swan Song
 1 Swords to Plowshares
-1 Sylvan Caryatid
-1 Sylvan Library
-1 Talisman of Curiosity
-1 Teferi's Protection
+1 Tatyova, Benthic Druid
 1 Temple Garden
-1 Temur Sabertooth
-1 Three Visits
-1 Tireless Tracker
-1 Tropical Island
-1 Tundra
-1 Utopia Sprawl
+1 Thassa's Oracle
+1 Thought Vessel
+1 Tireless Provisioner
+1 Wargate
 1 Whitemane Lion
 1 Windswept Heath
-1 Wood Elves
 1 Worldly Tutor
 1 Yavimaya Coast
-6 Forest
-5 Island
-4 Plains
+1 Yavimaya, Cradle of Growth
+5 Forest
+4 Island
+3 Plains
 ```

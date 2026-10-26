@@ -469,7 +469,8 @@ pub fn devotion(g: &Game, p: PlayerId, col: char) -> usize {
         .filter(|&&m| !g.perm(m).phased)
         .filter_map(|&m| g.perm(m).cd)
         .map(|c| g.db.get(c).pips.chars().filter(|&x| x == col).count())
-        .sum()
+        .sum::<usize>()
+        + crate::impls::t45_heliod_zur::devotion_bonus(g, p) // --- Tiers 4/5 (heliod-zur): Altar of the Pantheon
 }
 
 // ================================================================== crew: Esika's Chariot

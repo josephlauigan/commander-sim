@@ -252,6 +252,7 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
 /// "enters tapped" replacement effects (Blind Obedience, Spider-Woman, Thalia, Heretic Cathar): does a permanent
 /// entering under p's control (m; None for a Treasure / Food / Clue, which are counters) enter tapped?
 pub fn enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
-    !g.hooks.is_empty()
-        && hooked(g, Event::EntersTapped).iter().any(|(src, imp)| (imp.enters_tapped.unwrap())(g, *src, p, m))
+    crate::dsl::opp_enters_tapped(g, p, m) // --- Tiers 4/5 (heliod-zur): Authority of the Consuls (compiled)
+        || (!g.hooks.is_empty()
+            && hooked(g, Event::EntersTapped).iter().any(|(src, imp)| (imp.enters_tapped.unwrap())(g, *src, p, m)))
 }

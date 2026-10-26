@@ -2899,7 +2899,7 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         let mut poisoned = false;
         for q in opps(g, p) {
             for m in g.player(q).perms.clone() {
-                if g.is_creature(m) && g.perm(m).plus < 0 {
+                if g.is_creature(m) && g.perm(m).plus < 0 && !crate::impls::t45_heliod_zur::solemnity(g) {
                     let k = crate::cardcode::vorinclex(g, p, -1); // Vorinclex: doubled for its controller, halved for opponents
                     if k == 0 {
                         continue;
@@ -3042,7 +3042,8 @@ fn gaa(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
 }
 
 /// common._limit's table: each player can't cast more than n spells matching pred each turn
-const LIMITS: [(&str, i32, fn(&CardDef) -> bool); 4] = [
+const LIMITS: [(&str, i32, fn(&CardDef) -> bool); 5] = [
+    ("Eidolon of Rhetoric", 1, |_| true), // --- Tiers 4/5 (heliod-zur)
     ("Rule of Law", 1, |_| true),
     ("Deafening Silence", 1, noncre),
     ("Ethersworn Canonist", 1, |c| !c.types.has(Types::ARTIFACT)),

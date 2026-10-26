@@ -81,6 +81,194 @@ prot = ["hi", "phase", "indes", "blink", "boots"]
 "Wirewood Lodge" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): {T}: {C}; with an Elf mana creature already tapped that makes 3+, {G},{T}: untap it, counted as the Lodge tapping for that Elf's mana less the {G}; not used to untap an attacker" }
 "Yavimaya, Cradle of Growth" = { status = "Approximate", note = "hand-written (impls/t3_marwyn.rs): every land is a Forest where the engine asks (forestwalk, Forests that tap for more); taps for {G}; the {T}: {G} every land gains as a Forest is not added (colourless lands stay colourless)" }
 "Yeva, Nature's Herald" = { status = "Full", note = "hand-written (impls/t3_marwyn.rs): green creature spells as though they had flash (cast::grants_flash: the AI casts them at the end of an opponent's turn); flash (data)" }
+# --- Tiers 4/5 (yuriko): hand-written in impls/t45_yuriko.rs
+"Kaito, Bane of Nightmares" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): ninjutsu {1}{U}{B}; on your turn with loyalty a 3/4 Ninja creature with hexproof; +1 emblem (Ninjas +1/+1, stacking), 0 surveil 2 and draw per opponent who lost life this turn, -2 tap and two stun counters. Left out: damage to him as a creature does not remove loyalty" }
+"Nashi, Moon Sage's Scion" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): ninjutsu {3}{B}; combat damage to a player exiles the top card of each library and casts the best nonland one for life equal to its mana value. Left out: the card is cast at once (not later in the turn); an exiled land is never played" }
+"Ninja of the Deep Hours" = { status = "Full", note = "ninjutsu {1}{U} (t45_yuriko NINJUTSU); its combat-damage draw is compiled" }
+"Sakashima's Student" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs, t6_copies clone code): ninjutsu {1}{U}; enters as a copy of the best creature, a Ninja in addition; the ninjutsu choice weighs the copy" }
+"Skullsnatcher" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): ninjutsu {B}; combat damage to a player exiles up to two cards from that player's graveyard (the two worth most to them)" }
+"Satoru, the Infiltrator" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): menace; a nontoken creature of yours entering without being cast (ninjutsu, reanimation) draws a card. Left out: a creature cast for no mana counts as cast; creatures entering together draw one each" }
+"Cover of Darkness" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): names the deck's most common creature type as it enters; creatures of that type have fear" }
+"Shizo, Death's Storehouse" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): {T}: {B}; {B},{T}: a legendary creature gains fear until end of turn, used in the first main phase on the best ready legendary attacker an opponent could block" }
+"Mothdust Changeling" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): changeling; at the beginning of combat taps a summoning-sick creature of yours to gain flying until end of turn when an opponent could block it" }
+"Wingcrafter" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): soulbond with the best creature without flying (as it or the other enters); both have flying while paired" }
+"Temporal Mastery" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): take an extra turn, exiled; miracle {1}{U} when it was the turn's first card drawn" }
+"Temporal Trespass" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): delve (the least useful graveyard cards); take an extra turn, exiled" }
+"Scheming Symmetry" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): you and the least threatening opponent each put a card from the library on top" }
+"Shadow of Mortality" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): costs {1} less per life below 40" }
+"Agadeem's Awakening // Agadeem, the Undercrypt" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): X returns the best creature card of each mana value up to X from your graveyard; or played as a land ({B}, pay 3 life or it enters tapped)" }
+"Sea Gate Restoration // Sea Gate, Reborn" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): draw cards equal to your hand plus one, no maximum hand size for the game; or played as a land ({U}, pay 3 life or it enters tapped)" }
+"Hydroelectric Specimen // Hydroelectric Laboratory" = { status = "Approximate", note = "hand-written (impls/t45_yuriko.rs): flash 1/4, cast at an opponent's instant or sorcery aimed at your key permanent: the spell's target becomes the Specimen; or played as a land ({U}, pay 3 life or it enters tapped). Left out: the Specimen spell is not on the stack to be countered" }
+"Clearwater Pathway // Murkwater Pathway" = { status = "Full", note = "hand-written (impls/t45_yuriko.rs): played as the face ({U} or {B}) whose colour the other lands make less of; the hand's pips break a tie" }
+
+# --- Tiers 4/5 (krenko): hand-written in impls/t45_krenko.rs
+"Boggart Shenanigans" = { status = "Full", note = "hand-written (impls/t45_krenko.rs): another Goblin of yours dies (tokens too): 1 damage to an opponent, a lethal one first, else the biggest threat (it never aims at a planeswalker)" }
+"Mana Echoes" = { status = "Full", note = "hand-written (impls/t45_krenko.rs): any creature entering (a batch of tokens as one trigger): {C} equal to your creatures that share a creature type with it, floating for the rest of the turn" }
+"Goblin Chirurgeon" = { status = "Approximate", note = "hand-written (impls/t45_krenko.rs): a nontoken creature of yours worth keeping (value 3+) would be destroyed: sacrifice a Goblin (a token first) to regenerate it, tapped; left out: regenerating tokens, and shields made in advance" }
+"Goblin King" = { status = "Full", note = "other Goblins (every player's) +1/+1 compiled; mountainwalk hand-written (impls/t45_krenko.rs): unblockable while the defender controls a Mountain (a nonbasic land under Blood Moon counts)" }
+"Hexing Squelcher" = { status = "Approximate", note = "can't be countered and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs): an opponent's removal spell costs its caster 2 life, or is countered when they are at 4 life or less; left out: ward against abilities and non-removal spells" }
+"Hobgoblin Bandit Lord" = { status = "Full", note = "compiled: other Goblins you control +1/+1; {R},{T}: damage to any target equal to the Goblins that entered under your control this turn (counted as they enter, tokens sacrificed since included)" }
+"Howlsquad Heavy" = { status = "Full", note = "hand-written (impls/t45_krenko.rs): speed (1 as it enters, +1 once on each of your turns an opponent loses life, to 4); other Goblins you control have haste; beginning of combat on your turn: a 1/1 red Goblin that must attack; max speed {T}: {R} per Goblin you control (a mana ability)" }
+"Marvin, Murderous Mimic" = { status = "Approximate", note = "2/2 for {2}; copies the {T} abilities of Krenko, Mob Boss and Kiki-Jiki, Mirror Breaker (impls/t45_krenko.rs), Niv-Mizzet the Firemind, Viashino Fangtail, Blightspeaker and Rummaging Goblin, and Ioreth's untaps, while you control them; other creatures' activated abilities are not copied" }
+"Patriar's Seal" = { status = "Approximate", note = "{T}: any colour (mana); {1},{T}: untap a tapped legendary creature of yours whose {T} ability is worth using again now (Krenko, Kiki-Jiki, Marvin) (impls/t45_krenko.rs); it isn't used on other legends" }
+"Sting, the Glinting Dagger" = { status = "Full", note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of each combat (t6_godo.rs); first strike while blocking or blocked by a Goblin or Orc (impls/t45_krenko.rs, read by the combat damage step)" }
+"Thousand-Year Elixir" = { status = "Approximate", note = "hand-written (impls/t45_krenko.rs): your creatures' compiled {T} abilities and Krenko's / Marvin's can be used summoning sick; {1},{T}: untap a creature of yours whose {T} ability is worth using again (Krenko, Kiki-Jiki, Marvin). Left out: haste for other hand-written {T} abilities, untapping anything else" }
+"Treasure Nabber" = { status = "Approximate", note = "hand-written (impls/t45_krenko.rs): an opponent taps an artifact permanent for mana: you control it (tapped) until your end step; left out: one taken on your own turn goes back that turn instead of your next" }
+"Warren Instigator" = { status = "Full", note = "double strike (keyword); deals combat damage to an opponent: puts the most expensive Goblin creature card from your hand onto the battlefield (impls/t45_krenko.rs)" }
+
+# --- Tiers 4/5 (prosper): hand-written in impls/t45_prosper.rs
+"Delayed Blast Fireball" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): 2 damage to each opponent and each creature they control, 5 when cast from exile (foretold, or exiled by Prosper / Uba Mask / Hex Magic ...); foretell {2} on your turn after combat, cast from a later turn for {4}{R}{R}; cast when it kills creatures worth about two cards or an opponent" }
+"Passionate Archaeologist" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): your commander creature on the battlefield deals damage equal to the mana value of each spell you cast from exile (impulse, foretell, warp, cascade, Etali) to an opponent (one it kills, else the most threatening)" }
+"Uba Mask" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs, zones::draw): every draw is replaced by exiling the card; on its owner's turn it is playable that turn (then exiled for good), drawn on another player's turn it goes straight to exile. Left out: an instant drawn on another player's turn could be cast that turn" }
+"Blightstep Pathway // Searstep Pathway" = { status = "Full", note = "hand-written (impls/t45_prosper.rs, all four Pathways): the face is chosen as it is played (the colour the hand needs more against the sources already out) and it taps for that colour only" }
+"Bonehoard Dracosaur" = { status = "Full", note = "hand-written (impls/t45_prosper.rs; the compiled draw is off): each upkeep the top two cards are playable this turn; a land among them makes a 3/1 red Dinosaur, a nonland card a Treasure" }
+"Crime Novelist" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): whenever you sacrifice an artifact (Treasure, Clue, Food tokens too): a +1/+1 counter and {R} (a triggered mana ability, at once)" }
+"Disciple of the Vault" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): any artifact (anyone's, artifact tokens and Treasure/Clue/Food sacrifices too) to a graveyard from the battlefield: an opponent loses 1 life" }
+"Etali, Primal Storm" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): attacks: the top card of each player's library is exiled; the AI casts the nonland ones free (best first; not counterspells or board wipes), the rest stay in exile" }
+"Hex Magic" = { status = "Full", note = "hand-written (impls/t45_prosper.rs; the compiled exile-all is off): the hand is exiled, playable until the end of your next turn (cast from exile: Prosper's Treasures), then draw that many; cast with three cards in hand, two with Prosper out" }
+"Ignite the Future" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): the top three cards are playable until the end of your next turn; flashed back, the AI casts the castable nonland ones free at once (lands stay playable). Left out: a free card kept for the next turn" }
+"Marionette Master" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): fabricate 3 (counters with two or more artifacts to sacrifice, else three Servos); an artifact of yours to the graveyard from the battlefield (Treasure/Clue/Food sacrifices too): an opponent loses life equal to its power" }
+"Nadier's Nightblade" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): a token of yours dies or is sacrificed (Treasure, Clue, Food too): each opponent loses 1, you gain 1. Left out: a token exiled or bounced" }
+"Ob Nixilis, Captive Kingpin" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): opponents each losing exactly 1 life: a +1/+1 counter, the top card playable until your next end step. Losses from one effect are one trigger (read from the engine's work and stack counters: two separate triggers with nothing between can merge)" }
+"Rain of Riches" = { status = "Full", note = "enters Treasures compiled; hand-written (impls/t45_prosper.rs): the first spell you cast each turn with Treasure mana spent has cascade (the cascaded card counts as cast from exile)" }
+"Weftstalker Ardent" = { status = "Full", note = "hand-written (impls/t45_prosper.rs): another creature or artifact of yours enters (Treasure, Clue, Food tokens too, one trigger each): 1 damage to each opponent; warp {R} before combat (full cost out of reach, or a cast-from-exile payoff out), exiled at the end step, castable from exile on a later turn" }
+"Wild-Magic Sorcerer" = { status = "Approximate", note = "hand-written (impls/t45_prosper.rs): the first spell you cast from exile each turn has cascade. Left out: a spell cast from exile before the Sorcerer arrived still counted as the first" }
+
+# --- Tiers 4/5 (chulane-kinnan): hand-written in impls/t45_chulane_kinnan.rs
+"Cloudstone Curio" = { status = "Approximate", note = "hand-written (impls/t45_chulane_kinnan.rs): a nonartifact permanent of yours enters: the AI returns another of yours sharing a permanent type when it can recast it at once for value (free under Aluren, or paid for, with Chulane's draw or an enters effect); the Aluren + Curio + Chulane loop is a combo. Left out: lands entering (the engine keeps lands apart, so a land drop doesn't trigger it)" }
+"Intruder Alarm" = { status = "Full", note = "hand-written (impls/t45_chulane_kinnan.rs): creatures don't untap during their controllers' untap steps (turn::step_start); a creature enters: untap all creatures. The AI casts it only as a combo piece (Intruder Alarm + Shrieking Drake / Whitemane Lion + a mana creature + Chulane)" }
+"Mana Breach" = { status = "Full", note = "hand-written (impls/t45_chulane_kinnan.rs): whenever a player casts a spell, that player returns a land they control to its owner's hand (their tapped land with the fewest colours first)" }
+"Enduring Vitality" = { status = "Full", note = "hand-written (impls/t6_green2.rs): 3/3 vigilance; every untapped, non-summoning-sick creature you control taps for one mana of any colour; dies as a creature: returns as an enchantment that is no creature (DataKey::NotCreature, read by Game::is_creature: no attacks, blocks, creature removal or Cradle count)" }
+"Laboratory Maniac" = { status = "Full", note = "engine (zones::draw, LABMEN): a draw from an empty library with it on the battlefield wins the game instead" }
+"Badgermole Cub" = { status = "Approximate", note = "hand-written (impls/t6_green1.rs): 2/2; whenever a creature of yours is tapped for mana, an additional {G} floats (per Cub); Freed from the Real / Pemmin's Aura + Cub + a blue mana creature is a combo. Left out: 'when it enters, earthbend 1' (a land becoming a 0/0 haste creature with a +1/+1 counter that returns tapped when it dies): the engine's creature lands revert each turn" }
+"Barkchannel Pathway // Tidechannel Pathway" = { status = "Full", note = "hand-written (impls/t45_chulane_kinnan.rs): the face is chosen as it is played (the colour your other lands make less, then the one your hand needs more) and it taps for that colour only" }
+"Koma, Cosmos Serpent" = { status = "Approximate", note = "uncounterable and the upkeep Coil compiled; hand-written (impls/t45_chulane_kinnan.rs): sacrifice another Serpent: indestructible as it would be destroyed (removal, wipe, combat), or tap a creature at the beginning of each combat (the active opponent's biggest attackers, or the biggest blockers on your turn), one Serpent kept back. Left out: 'its activated abilities can't be activated this turn' (it taps creatures only)" }
+"Nezahal, Primal Tide" = { status = "Approximate", note = "uncounterable, no maximum hand size and the draw on opponents' noncreature spells compiled; hand-written (impls/t45_chulane_kinnan.rs): discard three cards: exile it in response to targeted removal or a steal (six cards in hand against a bounce), it returns at the next end step. Left out: it returns untapped, and the dodge isn't used against board wipes" }
+"Nyxbloom Ancient" = { status = "Approximate", note = "hand-written (impls/t45_chulane_kinnan.rs, engine/mana.rs adjust_mana): 5/5 trample; lands, mana creatures and rocks, Treasures and Enduring Vitality's creatures make three times the mana, before Kinnan's additional mana; Freed from the Real / Pemmin's Aura + Nyxbloom + a blue mana creature is a combo. Left out: the tripled mana is one unit of the source's colours, so a multicolour source may pay pips of two colours with one tap" }
+"Spellskite" = { status = "Approximate", note = "hand-written (impls/t45_chulane_kinnan.rs): {U/P}: an opponent's targeted removal (spell or ability) aimed at a better permanent of yours goes to Spellskite when it is a legal target ({U}, or 2 life above 10). Left out: redirecting steals and counterspells" }
+"Void Winnower" = { status = "Approximate", note = "hand-written (impls/t45_chulane_kinnan.rs): 11/9; opponents can't cast spells with even mana values, and can't block with creatures with even mana values (tokens are 0). Left out: an X spell counts its printed mana value (X as 0)" }
+"Wandering Archaic // Explore the Vastlands" = { status = "Approximate", note = "hand-written (impls/t45_chulane_kinnan.rs): an opponent's instant or sorcery: they pay {2} when the copy is worth 2 or more to you and they can, else you copy it with new targets; the back face is cast for {3} when {5} is out of reach (each player takes a land and an instant or sorcery from their top five, the rest to the bottom, and gains 3). Left out: the back face is seen as a creature spell by cast triggers" }
+
+# --- Tiers 4/5 (winota): impls/t45_winota.rs
+"Breath of Fury" = { status = "Full", note = "hand-written (impls/t45_winota.rs): an Aura on your cheapest likely attacker; its combat damage to a player sacrifices it, the Aura moves to another creature of yours, your creatures untap and there is an additional combat (once per combat; none with no creature to move to)" }
+"Flare of Fortitude" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs, ai/pool.rs PROTECTORS, zones::last_chance): in response to removal, a wipe or lethal damage, for {2}{W}{W} or a cheap nontoken white creature: life can't change and your permanents gain hexproof and indestructible until end of turn. Left out: lands gain nothing (not permanents in the engine)" }
+"High Noon" = { status = "Full", note = "hand-written (impls/t45_winota.rs): each player can't cast more than one spell each turn; {4}{R}, sacrifice: 5 damage to any target (a player it kills, else the best creature it kills)" }
+"Windcrag Siege" = { status = "Full", note = "hand-written (impls/t45_winota.rs): Mardu when the commander (or two permanents) has an attack trigger: your permanents' attack triggers trigger an additional time; else Jeskai: a 1/1 red Goblin each upkeep with lifelink and haste until end of turn" }
+"Alexios, Deimos of Kosmos" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs, values::no_sac): each player's upkeep they gain control, untap it, +1/+1 counter, haste; it must attack, its owner goads it so it attacks someone else; it can't be sacrificed. Left out: with two players the goad lets it attack its owner" }
+"Angrath's Marauders" = { status = "Approximate", note = "hand-written (combat::fiery, with Fiery Emancipation): damage from your sources to opponents and their permanents is doubled (combat and noncombat). Left out: damage to yourself and your own permanents" }
+"Blinkmoth Nexus" = { status = "Approximate", note = "creature land (lands.rs MANLANDS): {1}: a 1/1 flier until end of turn, animated to attack when the way is open. Left out: the {1},{T} Blinkmoth pump, animating to block" }
+"Boromir, Warden of the Tower" = { status = "Full", note = "hand-written (impls/t45_winota.rs, ai/pool.rs PROTECTORS): an opponent's spell cast with no mana spent is countered; sacrificed in response to removal or a wipe: your creatures indestructible, the Ring tempts you (also compiled)" }
+"Gingerbrute" = { status = "Full", note = "hand-written (impls/t45_winota.rs): {1} before combat when a defender has a creature without haste to block it: only creatures with haste can block it; haste and the Food ability compiled" }
+"Greymond, Avacyn's Stalwart" = { status = "Full", note = "hand-written (impls/t45_winota.rs): the AI chooses first strike and lifelink for your Humans; four or more Humans: Humans you control get +2/+2" }
+"Lena, Selfless Champion" = { status = "Full", note = "hand-written (impls/t45_winota.rs, ai/pool.rs PROTECTORS): enters: a 1/1 white Soldier per nontoken creature you control; sacrificed in response to removal or a wipe: your creatures with less power than Lena gain indestructible" }
+"Myrel, Shield of Argive" = { status = "Full", note = "hand-written (impls/t45_winota.rs, rules::ability_locked): during your turn opponents can't cast spells or activate abilities of artifacts, creatures and enchantments; attack Soldiers compiled" }
+"Needleverge Pathway // Pillarverge Pathway" = { status = "Full", note = "hand-written (impls/t45_winota.rs): played as the face ({R} or {W}) whose colour the hand needs and the other lands lack" }
+"Phoenix Chick" = { status = "Full", note = "hand-written (impls/t45_winota.rs, combat::attack_triggers): you attack with three or more creatures: pay {R}{R}, it returns from the graveyard tapped and attacking with a +1/+1 counter; flying, haste, can't block compiled" }
+"Phyrexian Revoker" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs, t6_stax::needle_stops): names what Pithing Needle would (an opposing commander or engine); its activated abilities stop. Left out: mana abilities are not stopped" }
+"Soulless Jailer" = { status = "Approximate", note = "hand-written (impls/t45_winota.rs): noncreature spells can't be cast from graveyards or exile; reanimation (the pool AI's, the ability language's, Phoenix Chick) finds nothing. Left out: other hand-written returns from graveyards" }
+"Sundering Eruption // Volcanic Fissure" = { status = "Full", note = "hand-written (impls/t45_winota.rs): before combat with ground blockers in the way: destroys the best opposing land (its controller fetches a basic, tapped), creatures without flying can't block this turn; or played as a land ({R}, 3 life or tapped)" }
+
+# --- Tiers 4/5 (heliod-zur): hand-written in impls/t45_heliod_zur.rs
+"Cosmos Elixir" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): your end step, draw a card above 40 life, else gain 2 life" }
+"Heliod's Intervention" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): destroy X opposing artifacts/enchantments (cast with two or more worth it, or one big one), or gain twice X life (the AI uses it at an opponent's end step to reach Felidar Sovereign's 40)" }
+"Well of Lost Dreams" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): whenever you gain life, pay X up to the life gained and draw X (keeps 3 mana before its own second main phase)" }
+"Ajani, Strength of the Pride" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): +1 gain life per creature and planeswalker; -2 an Ajani's Pridemate token (a token copy, its counter trigger compiled); 0 at 55+ life exiles Ajani and each opposing artifact and creature" }
+"Altar of the Pantheon" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): +1 devotion to every colour (rules2::devotion: Heliod, Nykthos); taps for any colour, gaining 1 life with a God, Demigod or legendary enchantment out" }
+"Archivist of Oghma" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): an opponent's library search (the shuffle after it, tutors::shuffle_library: tutors, fetch lands): gain 1 life and draw. Left out: it resolves with the state checks, not on the stack; a search with no shuffle is missed, a shuffle with no search counts" }
+"Blind Obedience" = { status = "Full", note = "hand-written (impls/t6_stax.rs): extort (pay {W} or {B} with spare mana, drain each opponent); opponents' artifacts and creatures (tokens too) enter tapped as a real replacement" }
+"Buried Ruin" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): {2},{T}, sacrifice: the best artifact card from the graveyard to hand, at the end-of-turn window" }
+"Cleric Class" = { status = "Full", note = "level 1's plus 1 compiled; hand-written (impls/t45_heliod_zur.rs): level 2 ({3}{W}) whenever you gain life a +1/+1 counter on your best creature (a Ballista first), level 3 ({4}{W}) returns the best creature card from the graveyard and gains its toughness" }
+"Daxos, Blessed by the Sun" = { status = "Full", note = "life gain on another creature entering or dying compiled; hand-written (impls/t45_heliod_zur.rs): toughness equal to your devotion to white" }
+"Felidar Sovereign" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): your upkeep with 40 or more life (checked again as it resolves): you win" }
+"Haliya, Guided by Light" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): it or another creature or artifact of yours enters: gain 1; your end step, draw with 3+ life gained this turn. Left out: warp, and Treasure/Food/Clue tokens (counters here) entering" }
+"Hall of Heliod's Generosity" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): {1}{W},{T}: the best enchantment card from the graveyard on top of the library, at the end-of-turn window" }
+"Linden, the Steadfast Queen" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): gain 1 life for each white creature of yours that attacks; vigilance" }
+"Serra Ascendant" = { status = "Full", note = "hand-written (impls/t45_heliod_zur.rs): +5/+5 and flying with 30 or more life; lifelink" }
+"Voice of the Blessed" = { status = "Full", note = "counter on life gain compiled; hand-written (impls/t45_heliod_zur.rs): flying and vigilance with 4+ +1/+1 counters, indestructible with 10+" }
+"Diplomatic Immunity" = { status = "Approximate", note = "hand-written Aura (impls/t45_heliod_zur.rs): the enchanted creature has shroud. Left out: the Aura's own shroud" }
+"Steel of the Godhead" = { status = "Full", note = "hand-written Aura (impls/t45_heliod_zur.rs): white host +1/+1 and lifelink, blue host +1/+1 and can't be blocked (both for a white-blue host)" }
+"Estrid's Invocation" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): enters as a copy of your best nonlegendary, non-Aura enchantment. Left out: the upkeep exile-and-return the copy gains" }
+"Solemnity" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs solemnity): no +1/+1 or -1/-1 counters on permanents (put, enters with, proliferate) and no poison counters on players (so Phyrexian Unlife can't lose to damage). Left out: lore, charge, oil and land counters" }
+"Delney, Streetwise Lookout" = { status = "Approximate", note = "hand-written (impls/t45_heliod_zur.rs): your power-2-or-less creatures can't be blocked by power 3+; their triggered abilities that go on the stack trigger an additional time. Left out: card code that runs at once rather than as a trigger" }
+"Eidolon of Rhetoric" = { status = "Full", note = "each player can't cast more than one spell each turn (common's spell limits, as Rule of Law)" }
+"Imprisoned in the Moon" = { status = "Approximate", note = "removal kind moon (card_overrides.toml): the best opposing creature or planeswalker becomes a Wastes (a colourless land). Left out: it is for good (the Aura leaving doesn't undo it), and lands are never targeted" }
+
+# --- Tiers 4/5 (urza-yawgmoth): impls/t45_urza_yawgmoth.rs
+"Back to Basics" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs, turn::step_start): nonbasic lands don't untap during their controllers' untap steps" }
+"Static Orb" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs, turn::step_start): while untapped as an untap step begins, the active player untaps only two permanents (lands and tapped Treasures included): its two best (mana rocks, then lands, then creatures)" }
+"Winter Orb" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs, turn::step_start): while untapped as an untap step begins, the active player untaps one land (the one making the most colours); Urza never taps an Orb for mana" }
+"Unwinding Clock" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs): during each other player's untap step its controller's artifacts untap (artifact lands and tapped Treasures too), past the Orbs" }
+"Welding Jar" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs, zones::die): sacrificed to regenerate (tap) an artifact of its controller's worth 1.5 or more as it would be destroyed" }
+"Forensic Gadgeteer" = { status = "Approximate", note = "investigate compiled; hand-written (impls/t45_urza_yawgmoth.rs): Clues crack for {1}; Basalt Monolith's untap costs {2}, the infinite-mana combo with a mana sink (combos). Left out: the other artifacts' activations (Isochron Scepter, Walking Ballista) keep their printed cost" }
+"Padeem, Consul of Innovation" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs): artifacts you control have hexproof; your upkeep, draw if you control the artifact with the greatest mana value (or tied)" }
+"The Reality Chip" = { status = "Approximate", note = "hand-written (impls/t45_urza_yawgmoth.rs): reconfigure {2}{U} as a sorcery onto your toughest other creature; attached, lands played and spells cast from the top of the library (the AI knows the top card). Left out: it stays a 0/4 creature while attached" }
+"Thought Monitor" = { status = "Full", note = "affinity for artifacts (impls/t45_urza_yawgmoth.rs, as Emry: artifacts and Treasures); flying and the enter draw compiled" }
+"Thoughtcast" = { status = "Full", note = "affinity for artifacts (impls/t45_urza_yawgmoth.rs, as Emry: artifacts and Treasures); draw two compiled" }
+"Uthros, Titanic Godcore" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs): enters tapped, {T}: {U}; station as a sorcery (the strongest creature that won't attack this turn); at 12+ charge counters it taps for {U} per artifact less the {U} it costs" }
+"Entomb" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs) for outside decks: cast at an opponent's end of turn or in a main phase: the best creature for a reanimation spell in hand (Unearth: mana value 3 or less), else a creature that returns by itself; JD's decks keep their own plan" }
+"Genesis Chamber" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs): a nontoken creature entering while it is untapped gives that creature's controller a 1/1 colourless Myr artifact creature token" }
+"Blight Mound" = { status = "Approximate", note = "hand-written (impls/t45_urza_yawgmoth.rs): your nontoken creatures dying make 1/1 black-green Pests that gain you 1 life as they die; attacking Pests you control get +1/+0 and menace. Left out: the bonus lasts until end of turn, not only while attacking" }
+"Forsaken Miner" = { status = "Approximate", note = "can't block compiled; hand-written (impls/t45_urza_yawgmoth.rs): on a crime pay {B} to return it from the graveyard. Crimes seen: spells targeting an opponent or their things, Yawgmoth's counter on an opposing creature, the abilities bites::crime is told of. Left out: other triggered and activated abilities aimed at opponents (Orcish Bowmasters' ping)" }
+"Hancock, Ghoulish Mayor" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs): your other Zombies and Mutants get +X/+X (X: the counters on Hancock); undying is the engine's" }
+"Necroskitter" = { status = "Full", note = "wither: combat damage to creatures is -1/-1 counters (combat.rs); hand-written (impls/t45_urza_yawgmoth.rs): an opposing creature with a -1/-1 counter dying returns under your control" }
+"Nine-Lives Familiar" = { status = "Full", note = "hand-written (impls/t45_urza_yawgmoth.rs): eight revival counters when cast; dying with one, it returns at the beginning of the next end step with one fewer" }
+"The Meathook Massacre" = { status = "Approximate", note = "drain halves compiled; hand-written (impls/t45_urza_yawgmoth.rs): X paid as it enters (the X that kills the most opposing value for the least of yours), each creature gets -X/-X until end of turn. Left out: X is chosen at the enter trigger, after counterspells saw an X of 0" }
+
+# --- Tiers 4/5 (edgar): impls/t45_edgar.rs
+"Edgar Markov" = { status = "Full", note = "attack trigger compiled (a +1/+1 counter on each Vampire you control); hand-written (impls/t45_edgar.rs, engine/cast.rs on_cast): eminence, another Vampire spell cast while Edgar is in the command zone or on the battlefield makes a 1/1 black Vampire" }
+"Edgar, Charmed Groom // Edgar Markov's Coffin" = { status = "Approximate", note = "hand-written (impls/t45_edgar.rs): other Vampires you control +1/+1; dies: returns transformed as the Coffin (not a creature), which makes a 1/1 white-black lifelink Vampire and a bloodline counter each upkeep and transforms back at three. Left out: the Coffin is not an artifact for removal" }
+"Bloodletter of Aclazotz" = { status = "Full", note = "flying; hand-written (engine/life.rs, impls/t45_edgar.rs): an opponent losing life during your turn loses twice that (damage too), once per Bloodletter" }
+"Bloodthirsty Conqueror" = { status = "Full", note = "flying, deathtouch; hand-written (impls/t45_edgar.rs): an opponent loses life, you gain that much (as Exquisite Blood; a drain combo with Sanguine Bond, Vito or Marauding Blight-Priest)" }
+"Vito, Thorn of the Dusk Rose" = { status = "Full", note = "lifelink activation compiled; hand-written (impls/t45_edgar.rs): you gain life, the opponent it kills or the most threatening loses that much (a combo with Exquisite Blood or Bloodthirsty Conqueror)" }
+"Blade of the Bloodchief" = { status = "Full", note = "equip {1} compiled; hand-written (impls/t45_edgar.rs): a creature dies, a +1/+1 counter on the equipped creature (two on a Vampire)" }
+"Captivating Vampire" = { status = "Full", note = "anthem compiled; hand-written (impls/t45_edgar.rs): tap five untapped Vampires (summoning-sick ones too): gain control of the best opposing creature, which becomes a Vampire (at the end of the turn before yours or after your combat)" }
+"Clavileño, First of the Blessed" = { status = "Full", note = "hand-written (impls/t45_edgar.rs, engine/zones.rs die_triggers): whenever you attack, the attacking non-Demon Vampire likeliest to die becomes a Demon; when it dies its controller draws a card and makes a tapped 4/3 white-black flying Vampire Demon" }
+"Damn" = { status = "Full", note = "destroy target creature compiled, no regeneration (noregen tag); hand-written (impls/t45_edgar.rs): overload {2}{W}{W} as a hand option when wiping every creature leaves you ahead: each creature destroyed, no regeneration" }
+"Emeritus of Woe // Demonic Tutor" = { status = "Full", note = "hand-written (impls/t45_edgar.rs): enters prepared; your end step, prepared again if two or more creatures died this turn; prepared, {1}{B}: cast a copy of Demonic Tutor (unprepares it)" }
+"Forerunner of the Legion" = { status = "Full", note = "hand-written (impls/t45_edgar.rs): enters: a Vampire card from the library on top after the shuffle; another Vampire of yours enters (tokens too): your best creature +1/+1 until end of turn" }
+"Knight of the Ebon Legion" = { status = "Full", note = "{2}{B} pump and deathtouch compiled; hand-written (impls/t45_edgar.rs): your end step, a +1/+1 counter if a player lost 4 or more life this turn" }
+"Markov Baron" = { status = "Full", note = "anthem compiled, lifelink and convoke tags; hand-written (impls/t45_edgar.rs, kefka::discarded): madness {2}{B} when discarded (a Blood token's rummage)" }
+"New Blood" = { status = "Approximate", note = "tap an untapped Vampire as an additional cost (engine/cast.rs additional_cost); hand-written (impls/t45_edgar.rs): gain control of the best opposing creature, which becomes a Vampire. Left out: the rest of the text change (its other words naming the replaced creature type)" }
+"Olivia's Wrath" = { status = "Full", note = "hand-written (impls/t45_edgar.rs): each non-Vampire creature gets -X/-X until end of turn, X the Vampires you control; cast when it kills clearly more of the opponents' worth than of yours" }
+"Sorin, Imperious Bloodlord" = { status = "Full", note = "hand-written walker (impls/t45_edgar.rs): +1 deathtouch and lifelink until end of turn (a +1/+1 counter on a Vampire); +1 sacrifice a Vampire: 3 damage to any target and gain 3; -3 a Vampire creature card from hand onto the battlefield" }
+"Twilight Prophet" = { status = "Approximate", note = "flying; hand-written (impls/t45_edgar.rs): ascend (ten permanents, Treasure/Clue/Food/Blood tokens included); your upkeep with the blessing, the top card to hand, each opponent loses its mana value and you gain that much. Left out: the blessing is kept on the Prophet, not the player" }
+"Vampire Socialite" = { status = "Full", note = "menace; hand-written (impls/t45_edgar.rs): enters: +1/+1 counters on your other Vampires if an opponent lost life this turn; while one has, your other Vampires (tokens too) enter with an additional +1/+1 counter" }
+"Voldaren Estate" = { status = "Approximate", note = "hand-written (impls/t45_edgar.rs): {C}, or any colour for a Vampire spell (1 life); {5},{T}, {1} less per Vampire: a Blood token; a Blood's rummage. Left out: the life is paid whenever it taps while a Vampire spell is being paid for" }
+
+# --- Tiers 4/5 (urdragon): impls/t45_urdragon.rs
+"The Ur-Dragon" = { status = "Approximate", note = "hand-written (impls/t45_urdragon.rs, mana::cost_of): eminence, in the command zone or on the battlefield your other Dragon spells cost {1} less; one or more Dragons you control attack: draw that many, then the best nonland permanent card from hand onto the battlefield. Left out: a land card is never the one put in" }
+"Ancient Brass Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20; the creature cards from all graveyards worth most with total mana value up to the roll enter under your control (graveyard hate may answer)" }
+"Ancient Copper Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, that many Treasures" }
+"Ancient Gold Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, that many 1/1 blue Faerie Dragon fliers" }
+"Ancient Silver Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): combat damage to a player: a d20, draw that many; no maximum hand size for the rest of the game" }
+"Call the Spirit Dragons" = { status = "Full", note = "Dragons' indestructible compiled; hand-written (impls/t45_urdragon.rs): your upkeep, a +1/+1 counter for each colour on a Dragon of that colour (as many different Dragons as can be); five different Dragons: you win" }
+"Dracogenesis" = { status = "Full", note = "hand-written (mana::cost_of, impls/t45_urdragon.rs): your Dragon spells cost no mana (the commander tax is still paid)" }
+"Dragon's Hoard" = { status = "Full", note = "taps for any colour; hand-written (impls/t45_urdragon.rs): a Dragon of yours entering puts a gold counter on it; {T}, remove one: draw (at the end-of-turn window)" }
+"Haven of the Spirit Dragon" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): {C}, or any colour for a Dragon creature spell; {2},{T}, sacrifice at the end-of-turn window: a big Dragon creature card from the graveyard to hand (no Ugin card in the pool deck)" }
+"Hellkite Courser" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs, turn.rs end step): enters: your commander from the command zone onto the battlefield with haste; back to the command zone at the next end step" }
+"Klauth, Unrivaled Ancient" = { status = "Approximate", note = "flying, haste; hand-written (impls/t45_urdragon.rs): attacks: X mana of any colour (the attackers' total power) kept all turn. Left out: it can also pay for abilities" }
+"Lathliss, Dragon Queen" = { status = "Full", note = "flying; hand-written (impls/t45_urdragon.rs): another nontoken Dragon of yours enters: a 5/5 red Dragon flier; {1}{R}: Dragons +1/+0, spent before an open attack when nothing in hand can be cast (keeping two mana)" }
+"Miirym, Sentinel Wyrm" = { status = "Full", note = "flying, ward {2}; hand-written (impls/t45_urdragon.rs): another nontoken Dragon of yours enters: a token copy of it that isn't legendary" }
+"Morophon, the Boundless" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs, mana::cost_of): names the deck's most common creature type; spells of that type cost {W}{U}{B}{R}{G} less (coloured mana only); your other creatures of that type get +1/+1" }
+"Rith, Liberated Primeval" = { status = "Approximate", note = "hand-written (impls/t45_urdragon.rs, removal::aura_ward): your other Dragons have ward {2}; your end step, a 4/4 red Dragon flier if an opponent's creature died this turn. Left out: excess damage (not tracked) stands in as a death" }
+"Rivaz of the Claw" = { status = "Approximate", note = "hand-written (impls/t45_urdragon.rs, mana.rs): {T}: two mana of any colour, only for Dragon creature spells; once during each of your turns the best Dragon creature card you can pay for is cast from your graveyard, and exiled when it dies. Left out: the exile is seen only while Rivaz is on the battlefield" }
+"Roaming Throne" = { status = "Approximate", note = "ward {2}; hand-written (impls/t45_urdragon.rs, stack::queue_triggers): names the deck's most common creature type and is that type too; triggered abilities of your other creatures of that type trigger an additional time. Left out: card code that runs at once rather than as a trigger" }
+"Sarkhan, Soul Aflame" = { status = "Approximate", note = "Dragon spells cost {1} less compiled. Left out: becoming a copy of an entering Dragon until end of turn" }
+"Scion of Draco" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): costs {2} less per basic land type among your lands; your creatures have vigilance (white), hexproof (blue), lifelink (black), first strike (red), trample (green); flying" }
+"Scion of the Ur-Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_urdragon.rs): {2} at an opponent's end of turn with Rivaz out: the best Dragon creature card from the library into the graveyard for Rivaz to cast. Left out: Scion becoming a copy of that card" }
+"Tiamat" = { status = "Full", note = "flying; hand-written (impls/t45_urdragon.rs): enters, if cast: up to five Dragon cards with different names (not Tiamat) from the library to hand" }
+"Twinflame Tyrant" = { status = "Full", note = "flying; hand-written (combat::fiery, with Fiery Emancipation): damage from your sources to opponents and their permanents is doubled (combat and noncombat)" }
+"Ureni of the Unwritten" = { status = "Full", note = "flying, trample; hand-written (impls/t45_urdragon.rs): enters or attacks: the best Dragon creature card of the top eight onto the battlefield, the rest to the bottom in a random order" }
+"Urza's Incubator" = { status = "Full", note = "hand-written (impls/t45_urdragon.rs): names the deck's most common creature type; creature spells of that type cost {2} less" }
+
+# --- Tiers 4/5 (miirym): impls/t45_miirym.rs
+"Astral Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_miirym.rs): enters: two token copies of the best nonland noncreature permanent (yours or an opponent's targetable one), each a 3/3 flying Dragon creature too. Left out: copying a land or a legendary permanent" }
+"Dragonborn Champion" = { status = "Full", note = "trample; hand-written (impls/t45_miirym.rs, life::lose_life): a source you control deals 5 or more damage to a player (combat or not): draw a card" }
+"Earthquake Dragon" = { status = "Full", note = "flying, trample; hand-written (impls/t45_miirym.rs): costs {X} less, X the total mana value of your Dragons; {2}{G}, sacrifice a land: back to hand from the graveyard, at the end-of-turn window when it is cheap enough to cast next turn" }
+"Korlessa, Scale Singer" = { status = "Approximate", note = "hand-written (impls/t45_miirym.rs): Dragon spells cast from the top of the library (as Realmwalker). Left out: looking at the top card any time (the AI gets nothing from it)" }
+"Savage Ventmaw" = { status = "Approximate", note = "flying; attacks: six mana compiled, kept all turn (floating mana lasts the turn). Left out: it is six of any colour, not {R}{R}{R}{G}{G}{G}" }
+"Thrakkus the Butcher" = { status = "Full", note = "trample; hand-written (impls/t45_miirym.rs): attacks: each Dragon you control gets +X/+0 until end of turn, X its power" }
+"Wrathful Red Dragon" = { status = "Approximate", note = "flying; hand-written (impls/t45_miirym.rs, t0_giada::damaged, removal::apply_wipe): a Dragon of yours dealt damage (combat, damage removal, Blasphemous Act) deals that much to a non-Dragon target: an opponent it kills, else the best creature it kills, else the opponent with the least life. Left out: damage from other damage sweepers and from damage a creature survives outside combat; a person gets the AI's target" }
 
 [mechanics]
 commander_damage = { status = "Full", note = "21 combat damage from one commander eliminates" }
@@ -168,6 +356,7 @@ sythis = { status = "Full-auto", note = "enchantment cast: gain 1, draw" }
 brago = { status = "Full", note = "combat damage blinks every permanent with a useful ETB" }
 lathril_tap10 = { status = "Full", note = "tap ten Elves: drain 10" }
 kinnan = { status = "Full", note = "" }
+ur_dragon = { status = "Full", note = "--- Tiers 4/5 (urdragon): eminence from the command zone, the attack draw and free permanent, Dragon cost cutters (impls/t45_urdragon.rs)" }
 
 [[engines.isshin-mardu-attack-triggers]]
 label = "Isshin's attack-trigger doubling"
@@ -551,17 +740,17 @@ mechs = ["creature_tutors"]
 
 [[engines.prosper-rakdos-exile-treasure]]
 label = "Prosper Treasure on exile-cast"
-cards = ["Prosper, Tome-Bound"]
+cards = ["Prosper, Tome-Bound", "Passionate Archaeologist", "Wild-Magic Sorcerer"]
 mechs = ["prosper_treasure"]
 
 [[engines.prosper-rakdos-exile-treasure]]
 label = "impulse draw"
-cards = ["Reckless Impulse", "Light Up the Stage", "Outpost Siege", "Valakut Exploration"]
+cards = ["Reckless Impulse", "Light Up the Stage", "Jeska's Will", "Bonehoard Dracosaur", "Hex Magic", "Ignite the Future", "Uba Mask"]
 mechs = ["impulse_draw"]
 
 [[engines.prosper-rakdos-exile-treasure]]
 label = "Treasure payoffs"
-cards = ["Mayhem Devil", "Storm-Kiln Artist"]
+cards = ["Mayhem Devil", "Storm-Kiln Artist", "Marionette Master", "Disciple of the Vault", "Weftstalker Ardent"]
 mechs = ["treasure"]
 
 [[engines.prosper-rakdos-exile-treasure]]
@@ -570,9 +759,9 @@ cards = ["Bolas's Citadel"]
 mechs = ["citadel"]
 
 [[engines.prosper-rakdos-exile-treasure]]
-label = "Sanguine Bond + Exquisite Blood"
-cards = ["Sanguine Bond", "Exquisite Blood"]
-mechs = ["sanguine_bond"]
+label = "Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir"
+cards = ["Bolas's Citadel", "Sensei's Divining Top", "Aetherflux Reservoir"]
+mechs = ["citadel", "top_manipulation"]
 
 [[engines.yuriko-dimir-ninjas]]
 label = "ninjutsu"
@@ -655,23 +844,23 @@ cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation"]
 mechs = ["free_counters"]
 
 [[engines.winota-boros-humans-cheat]]
-label = "Winota's attack trigger"
-cards = ["Winota, Joiner of Forces"]
-mechs = ["put_attacking", "winota"]
+label = "Winota's attack trigger (doubled by Windcrag Siege)"
+cards = ["Winota, Joiner of Forces", "Windcrag Siege"]
+mechs = ["put_attacking", "winota", "isshin_doubling"]
 
 [[engines.winota-boros-humans-cheat]]
-label = "Kiki-Jiki copy combos"
-cards = ["Kiki-Jiki, Mirror Breaker", "Zealous Conscripts", "Felidar Guardian", "Restoration Angel"]
-mechs = ["kiki_combo"]
+label = "extra combats (Rionya + Combat Celebrant, Breath of Fury)"
+cards = ["Rionya, Fire Dancer", "Combat Celebrant", "Breath of Fury"]
+mechs = ["extra_combat"]
 
 [[engines.winota-boros-humans-cheat]]
-label = "stax Humans"
-cards = ["Thalia, Guardian of Thraben", "Thalia, Heretic Cathar", "Drannith Magistrate", "Magus of the Moon"]
-mechs = ["cost_taxes", "drannith_lock", "blood_moon"]
+label = "stax pieces"
+cards = ["Thalia, Guardian of Thraben", "Thalia, Heretic Cathar", "Drannith Magistrate", "Magus of the Moon", "High Noon"]
+mechs = ["cost_taxes", "drannith_lock", "blood_moon", "spell_limits"]
 
 [[engines.winota-boros-humans-cheat]]
 label = "protection spells"
-cards = ["Flawless Maneuver", "Teferi's Protection", "Deflecting Swat", "Selfless Spirit"]
+cards = ["Flawless Maneuver", "Flare of Fortitude", "Deflecting Swat", "Selfless Spirit"]
 mechs = ["protection_ai"]
 
 [[engines.yawgmoth-mono-black-aristocrats]]
@@ -723,3 +912,29 @@ mechs = ["free_counters"]
 label = "graveyard exile"
 cards = ["Rest in Peace", "Dauthi Voidwalker"]
 mechs = ["graveyard_hate"]
+
+# --- Tiers 4/5 (urdragon)
+[[engines.ur-dragon-five-color-dragons]]
+label = "The Ur-Dragon: eminence, draw per attacking Dragon, a permanent in free"
+cards = ["The Ur-Dragon", "Hellkite Courser"]
+mechs = ["ur_dragon"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Dragon cost cutters"
+cards = ["Dragonlord's Servant", "Dragonspeaker Shaman", "Sarkhan, Soul Aflame", "Urza's Incubator", "Morophon, the Boundless", "Dracogenesis", "Herald's Horn"]
+mechs = ["ur_dragon"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Dragon payoffs and copies"
+cards = ["Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen", "Utvara Hellkite", "Terror of the Peaks", "Scourge of Valkas", "Twinflame Tyrant", "Ancient Copper Dragon", "Ancient Silver Dragon"]
+mechs = ["etb_damage", "treasure"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Dragon tutors and recursion"
+cards = ["Tiamat", "Ureni of the Unwritten", "Rivaz of the Claw", "Ancient Brass Dragon", "Haven of the Spirit Dragon"]
+mechs = ["creature_tutors"]
+
+[[engines.ur-dragon-five-color-dragons]]
+label = "Call the Spirit Dragons (alternate win)"
+cards = ["Call the Spirit Dragons"]
+mechs = []

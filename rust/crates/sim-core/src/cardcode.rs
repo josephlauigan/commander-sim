@@ -150,6 +150,9 @@ pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
 
 /// put `n` +1/+1 counters (negative: -1/-1) on m, as its owner would (Vorinclex)
 pub fn put_plus(g: &mut Game, m: PermId, n: i32) {
+    if crate::impls::t45_heliod_zur::solemnity(g) {
+        return; // --- Tiers 4/5 (heliod-zur): Solemnity
+    }
     let n = vorinclex(g, g.perm(m).owner, n);
     g.perm_mut(m).plus += n;
     crate::impls::t0_captain::counters_put(g, m, n); // Captain Marvel copies counters
@@ -387,7 +390,8 @@ pub fn umbra_save(g: &mut Game, m: PermId) -> Res<bool> {
 
 /// lands.try_regenerate: a land that regenerates (Yavimaya Hollow) saves m from destruction
 pub fn try_regenerate(g: &mut Game, m: PermId) -> Res<bool> {
-    crate::impls::lands::try_regenerate(g, m)
+    // --- Tiers 4/5 (krenko): Goblin Chirurgeon
+    Ok(crate::impls::lands::try_regenerate(g, m)? || crate::impls::t45_krenko::chirurgeon_regen(g, m)?)
 }
 
 /// CI.gy_cards(owner, 'gy_dies'): cards in owner's graveyard see owner's creature m die (Nether Traitor)
@@ -486,6 +490,7 @@ pub fn aura_ward(g: &Game, m: PermId) -> u32 {
     crate::impls::rules2::aura_ward(g, m)
         + crate::impls::green_cards::extra_ward(g, m)
         + crate::impls::t0_stella::boots_ward(g, m)
+        + crate::impls::t45_urdragon::rith_ward(g, m) // --- Tiers 4/5 (urdragon): Rith, Liberated Primeval
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal
@@ -517,7 +522,13 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     if crate::impls::cloud::evasion_blocked(g, b, a) {
         return true; // Wrecking Ball Arm, Trailblazer's Boots
     }
-    crate::impls::rules::evasion_blocked(g, b, a) || crate::impls::bulk_white::exit_blocked(g, b, a)
+    if crate::impls::t45_krenko::mountainwalk(g, b, a) {
+        return true; // --- Tiers 4/5 (krenko): Goblin King
+    }
+    crate::impls::rules::evasion_blocked(g, b, a)
+        || crate::impls::bulk_white::exit_blocked(g, b, a)
+        || crate::impls::t45_winota::evasion_blocked(g, b, a) // --- Tiers 4/5 (winota): Sundering Eruption
+        || crate::impls::t45_heliod_zur::delney_blocked(g, b, a) // --- Tiers 4/5 (heliod-zur): Delney
 }
 
 /// CI.granted_kw: a static keyword grant from a hooked permanent (Teysa: tokens have vigilance and lifelink)
@@ -575,7 +586,8 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
     use crate::state::DataKey;
     for &m in atk {
         let x = g.perm(m);
-        if x.token && x.ttypes.contains(&"pest") {
+        // --- Tiers 4/5 (urza-yawgmoth): Blight Mound's Pests gain their life as they die instead
+        if x.token && x.ttypes.contains(&"pest") && !crate::impls::t45_urza_yawgmoth::mound_pest(x) {
             crate::engine::life::gain(g, p, 1)?; // a Pest token: whenever it attacks, you gain 1 life
             continue;
         }
@@ -903,6 +915,9 @@ pub fn delayed_end_step(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::t0_captain::end_returns(g)?; // Gift of Immortality
     if !g.jar_due.is_empty() {
         crate::impls::legends::jar_end(g)?; // Memory Jar
+    }
+    if !g.t45_due.is_empty() {
+        crate::impls::t45_urza_yawgmoth::revival_returns(g)?; // --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar
     }
     Ok(())
 }

@@ -475,7 +475,13 @@ fn abeyance_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym
 
 // ================================================================== the AI answers a spell with a non-counter
 /// the cards `stack_response` casts at a spell on the stack (`engine::stack::ai_respond` checks the hand for them)
-pub const STACK_RESPONSES: [&str; 4] = ["Misdirection", "Commandeer", "Sudden Substitution", "Imp's Mischief"];
+pub const STACK_RESPONSES: [&str; 5] = [
+    "Misdirection",
+    "Commandeer",
+    "Sudden Substitution",
+    "Imp's Mischief",
+    crate::impls::t45_yuriko::SPECIMEN, // Tiers 4/5 (yuriko)
+];
 
 /// q pays for `card`, a response to the spell on the stack: its mana cost, or its alternative cost when the mana is
 /// short and `alt_ok` (the AI gives up cards only for something that matters). The cast counts (cast triggers) and the
@@ -523,6 +529,9 @@ pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
     let held = |g: &Game, name: &str| g.player(q).hand.iter().copied().find(|&c| cname(g, c) == name);
     if held(g, crate::impls::t3_korvold::IMPS).is_some() && crate::impls::t3_korvold::imps_mischief(g, q, id)? {
         return Ok(true); // Imp's Mischief (Tier 3 Tergrid): Misdirection that costs life
+    }
+    if held(g, crate::impls::t45_yuriko::SPECIMEN).is_some() && crate::impls::t45_yuriko::specimen_response(g, q, id)? {
+        return Ok(true); // Hydroelectric Specimen (Tiers 4/5 yuriko): flashed in, the spell's target becomes it
     }
     let (mis, com, sub) = (held(g, "Misdirection"), held(g, "Commandeer"), held(g, "Sudden Substitution"));
     // Misdirection: a spell aimed at the permanent we would protect

@@ -129,6 +129,9 @@ pub struct Situation {
     /// incoming against my life
     pub danger: f64,
     pub combo_near: bool,
+    /// an opponent's commander on the battlefield is a piece of a catalogued combo (Heliod with Walking Ballista, Kinnan,
+    /// Urza): the table keeps an answer up, as real tables do, without seeing the hand
+    pub cmdr_combo: bool,
     pub ctr_risk: f64,
 }
 
@@ -161,6 +164,12 @@ impl Situation {
             (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
                 || (k == "veyran" && has_q(q, Tag::Aether) && g.player(q).life >= 40)
         });
+        let cmdr_combo = opps.iter().any(|&q| {
+            g.player(q).perms.iter().any(|&m| {
+                let x = g.perm(m);
+                x.is_cmd && !x.phased && x.cd.is_some_and(|c| crate::cardcode::is_combo_piece(g, c))
+            })
+        });
         Situation {
             turn: pl.turns,
             mana: total_mana(g, p, false),
@@ -171,6 +180,7 @@ impl Situation {
             incoming: inc,
             danger: inc / pl.life.max(1) as f64,
             combo_near,
+            cmdr_combo,
             ctr_risk: counter_risk(g, p),
             threat,
             opps,
@@ -182,6 +192,12 @@ impl Situation {
 fn held(g: &Game, c: CardId) -> bool {
     let d = g.db.get(c);
     (d.tag(Tag::Ctr) && !d.tag(Tag::Free)) || matches!(d.tags.str(Tag::Prot), Some("hi" | "phase" | "indes" | "blink"))
+}
+
+/// removal that can answer a combo piece in response (`combos::interrupted` casts it): an instant, or one with flash
+fn instant_removal(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    d.tags.str(Tag::Rem).is_some() && (d.instant || d.tag(Tag::Flash))
 }
 
 /// p can pay what casting c costs now (`cost_of`: taxes such as Thorn of Amethyst included), not only its printed cost
@@ -197,7 +213,9 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
         .hand
         .iter()
         .copied()
-        .filter(|&c| held(g, c) && !free_counter(g, p, c) && can_pay_now(g, p, c))
+        .filter(|&c| {
+            (held(g, c) || (s.cmdr_combo && instant_removal(g, c))) && !free_counter(g, p, c) && can_pay_now(g, p, c)
+        })
         .collect();
     let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };
     // Ad Nauseam is cast at the end of the turn before yours: keep its mana up when it's worth casting
@@ -217,7 +235,8 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     let pl = g.player(p);
     let c = min_by(held, |c| g.db.get(c).cmc as f64).unwrap();
     let caution = style(g, pl.key).caution;
-    let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * s.combo_near as i32 as f64;
+    let near = s.combo_near || s.cmdr_combo;
+    let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * near as i32 as f64;
     if !is_main(pl.key) || pl.key == "sauron" {
         // outside decks (and Sauron, a counter shell around one Army): three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
@@ -239,7 +258,7 @@ fn reserve_penalty(g: &Game, p: PlayerId, c: CardId, hold: Option<CardId>, hold_
         return 0.0;
     }
     if near && !super::t6_table::is_ramp(g, c) {
-        return 8.0f64.max(0.7 * hold_v); // Tier 6, an opponent is close: the answer stays up, no tapping out for value
+        return 8.0f64.max(0.7 * hold_v); // an opponent is close (Tier 6, or a combo commander): no tapping out for value
     }
     0.7 * hold_v
 }
@@ -1026,7 +1045,8 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
         }
     }
     // Clues
-    if g.player(p).clues > 0 && can_pay(g, p, 2, "", false) {
+    // --- Tiers 4/5 (urza-yawgmoth): Forensic Gadgeteer makes it {1}
+    if g.player(p).clues > 0 && can_pay(g, p, crate::impls::t45_urza_yawgmoth::clue_cost(g, p), "", false) {
         o.push(Opt { utility: if post { 2.5 } else { 1.5 }, label: "crack a Clue".into(), act: Some(Action::Clue) });
     }
     o
@@ -1139,7 +1159,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         if !ok {
             continue;
         }
-        u -= reserve_penalty(g, p, c, hold_card, hold_v, s.combo_near && crate::impls::t6_plans::is_t6(g, p));
+        // Tier 6 near a win, or an opposing commander one card from its combo: the answer stays up
+        let near = (s.combo_near && crate::impls::t6_plans::is_t6(g, p)) || s.cmdr_combo;
+        u -= reserve_penalty(g, p, c, hold_card, hold_v, near);
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
         {

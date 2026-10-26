@@ -82,6 +82,12 @@ fn bomb_or_pow(g: &Game, c: CardId) -> i32 {
     if d.bomb != 0 { d.bomb } else { d.pow }
 }
 
+/// a Ninja's worth for the ninjutsu choice: `bomb_or_pow`, or the Tiers 4/5 (yuriko) card's own (Kaito, Sakashima's
+/// Student: what it would copy)
+fn ninja_worth(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    crate::impls::t45_yuriko::ninja_worth(g, p, c).unwrap_or_else(|| bomb_or_pow(g, c))
+}
+
 /// the first item with the highest key, for keys that are tuples (Python's `max(xs, key=...)`)
 fn first_max<T: Copy, K: PartialOrd>(xs: &[T], key: impl Fn(T) -> K) -> Option<T> {
     let mut best: Option<(T, K)> = None;
@@ -154,7 +160,8 @@ const NINJUTSU: [(&str, u32, &str); 12] = [
 ];
 
 fn ninjutsu_entry(n: &str) -> Option<(u32, &'static str)> {
-    NINJUTSU.iter().find(|x| x.0 == n).map(|x| (x.1, x.2))
+    // + the Tiers 4/5 (yuriko) Ninjas
+    NINJUTSU.iter().chain(crate::impls::t45_yuriko::NINJUTSU.iter()).find(|x| x.0 == n).map(|x| (x.1, x.2))
 }
 
 /// `name in NINJUTSU`
@@ -225,14 +232,14 @@ pub fn ninjutsu(g: &mut Game, p: PlayerId, atk: &mut Vec<PermId>, _d: PlayerId, 
             if !can_pay(g, p, gen_, pips, false) {
                 continue;
             }
-            let v = bomb_or_pow(g, c) + if yuri { 6 } else { 0 } + if has_ninjutsu(n) { 3 } else { 0 };
+            let v = ninja_worth(g, p, c) + if yuri { 6 } else { 0 } + if has_ninjutsu(n) { 3 } else { 0 };
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, yuri, gen_, pips));
             }
         }
         let Some((_, c, yuri, gen_, pips)) = best else { return Ok(()) };
         let a = first_min(&unbl, |m| (pval(g, m), -epow(g, m))).unwrap();
-        if pval(g, a) > (bomb_or_pow(g, c) + 3) as f64 && !yuri {
+        if pval(g, a) > (ninja_worth(g, p, c) + 3) as f64 && !yuri {
             return Ok(());
         }
         pay(g, p, gen_, pips, false)?;
@@ -591,9 +598,11 @@ fn goblin_haste(g: &Game, p: PlayerId) -> bool {
 /// {T}: a Goblin per Goblin (instant speed). Without a haste enabler the tokens can't attack the turn they're made,
 /// so Krenko waits for the end of the turn before yours (the tokens are ready to attack, and sorcery-speed removal
 /// and wipes had their chance); with haste, activating in your main phase attacks right away.
-fn krenko(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn krenko(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if x.tapped || (x.sick && !crate::dsl::has_kw(g, src, "haste") && !goblin_haste(g, p)) {
+    // (Tiers 4/5 krenko: Thousand-Year Elixir, "as though those creatures had haste")
+    let elixir = super::t45_krenko::elixir(g, p);
+    if x.tapped || (x.sick && !crate::dsl::has_kw(g, src, "haste") && !goblin_haste(g, p) && !elixir) {
         return Ok(vec![]);
     }
     let n = crate::impls::t1::count_type(g, p, "goblin", false) as f64;
@@ -1074,9 +1083,8 @@ fn prosper(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// a Treasure whenever you play a card from exile (Prosper, Laelia, Valakut, Siege, Reckless Impulse ...)
 fn prosper_treasure(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
-    let pl = g.player(caster);
     if caster == owner(g, src)
-        && (pl.impulse.contains(&c) || pl.impulse_long.iter().any(|x| x.0 == c))
+        && crate::impls::t45_prosper::cast_from_exile(g, caster, c) // a cascade's or Etali's card too
         && trigger_window(g, caster, Some(src), "create a Treasure", None)?
     {
         make_artifact_tokens(g, caster, "Treasure", 1)?;

@@ -146,16 +146,10 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     if let (Some(n), Some(a)) = (dmg_amount(kind, "dmg"), actor)
         && a != owner
     {
-        // Fiery Emancipation: triple damage
-        let k = g
-            .player(a)
-            .perms
-            .iter()
-            .filter(|&&x| !g.perm(x).phased && card_name(g, x) == Some("Fiery Emancipation"))
-            .count() as u32;
-        let n3 = n * 3i32.pow(k);
-        if k > 0 {
-            kind = intern(&format!("dmg{n3}"));
+        // Fiery Emancipation: triple damage (--- Tiers 4/5 (winota): Angrath's Marauders: double)
+        let k = crate::engine::combat::fiery(g, a);
+        if k > 1 {
+            kind = intern(&format!("dmg{}", n * k));
         }
     }
     if let Some(n) = dmg_amount(kind, "dmg")
@@ -229,6 +223,14 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
             die(g, x, "sac")?;
         }
     }
+    // --- Tiers 4/5 (krenko): Hexing Squelcher's "Ward—Pay 2 life" (on itself and its controller's other creatures)
+    if spell.is_some()
+        && let Some(a) = actor.filter(|&a| a != owner)
+        && !crate::impls::t45_krenko::life_ward(g, a, m)?
+    {
+        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
+        return Ok(());
+    }
     if g.perm(m).cd.is_some() && spell.is_some() && actor != Some(owner) && !cardcode::removal_taxes(g, actor, m, kind)?
     {
         return Ok(());
@@ -297,7 +299,7 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         tuck(g, m)?;
     } else if kind == "topbot" {
         crate::impls::bulk_blue::top_or_bottom(g, m)?; // Sudden Setback, Vanish from Sight: its owner chooses
-    } else if matches!(kind, "elk" | "mutate" | "forest") {
+    } else if matches!(kind, "elk" | "mutate" | "forest" | "moon") {
         cardcode::transform_away(g, m, kind)?;
     } else if LOCK_KINDS.contains(&kind) {
         cardcode::apply_lock(g, actor, m, kind)?; // Arrest, Encrust ...
@@ -386,9 +388,12 @@ pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ct
     let prev_batch = g.cur_batch.replace(g.batch);
     let prev = g.destroyer.replace(p); // Karmic Justice: who destroyed them
     g.resolving += 1;
+    // --- Tiers 4/5 (miirym): Wrathful Red Dragon sees each Dragon dealt the wipe's damage, dying with them or not
+    let wrath = if kind == "dmg13" { crate::impls::t45_miirym::wrathful_wipe(g, 13) } else { vec![] };
     let r = apply_wipe_inner(g, p, kind, card, ctx);
     g.cur_batch = prev_batch;
     g.destroyer = prev;
+    let r = r.and_then(|_| crate::impls::t45_miirym::wrathful_after_wipe(g, wrath));
     g.resolving -= 1;
     r?;
     if g.resolving == 0 && !g.trig_queue.is_empty() {

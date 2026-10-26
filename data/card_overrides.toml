@@ -461,6 +461,10 @@ note = "equipped creature +1/+1 per land you control; equip a legend {3}, anythi
 status = "Full"
 note = "enters prepared: a Seething Song copy ({2}{R}: five red) is cast when the mana reaches a spell or with magecraft payoffs out"
 
+["Blight Mound"]
+# --- Tiers 4/5 (urza-yawgmoth): its Pests are hand-written (impls/t45_urza_yawgmoth.rs), not an enter token
+pool_remove_tags = ["tok", "tokp"]
+
 ["Blood Artist"]
 status = "Full"
 note = "combo piece: assembly, casting and responses are simulated; the loop itself resolves as its result"
@@ -3445,6 +3449,10 @@ tags = "rock=2:G"
 dsl = []
 status = "Full"
 note = "the enchanted land taps for an extra GG"
+
+["Padeem, Consul of Innovation"]
+# --- Tiers 4/5 (urza-yawgmoth): its upkeep draw is hand-written (impls/t45_urza_yawgmoth.rs), not the tag engine
+pool_remove_tags = ["eng"]
 
 ["Pact of Negation"]
 types = "I"
@@ -7500,6 +7508,7 @@ status = "Full"
 note = "you and the opponent with the weakest board each draw three cards"
 
 ["Angel of Vitality"]
+dsl = [] # --- Tiers 4/5 (heliod-zur): the compiled "plus 1" would add to t0_giada::gain_bonus
 status = "Full"
 note = "flying; every life gain is +1 (engine/life.rs gain); +2/+2 at 25 or more life"
 
@@ -8379,8 +8388,8 @@ status = "Partial"
 note = "returns a spell to its owner's hand for {1}{W} (the Remand return); t6_counters::bilbo_bounce puts the engine cast lock (AllSpells, every player) on a promised gift, but the engine never offers the gift choice (later feature), so the lock is not reached in play"
 
 ["Tibalt's Trickery"]
-status = "Partial"
-note = "counters a spell for {1}{R}; missing: its side effect (the countered spell's controller mills 1-3, exiles to a nonland card and may cast it free), written as t6_counters::tibalt_after"
+status = "Full"
+note = "counters a spell for {1}{R}; then the countered spell's controller mills 1-3 at random, exiles to a nonland card with another name and casts it free unless it is a counterspell; the rest go to the bottom in a random order (t6_counters::tibalt_after, called from engine::stack::resolve_counter; Tiers 4/5 prosper)"
 ["Twincast"]
 status = "Full"
 note = "cast from hand in response to an instant or sorcery (anyone's) whose copy is worth at least 3 (draw, tutor, burn, removal, magecraft payoffs): the copy resolves first, with the AI's targets; the AI never casts it any other way"
@@ -8696,6 +8705,7 @@ status = "Full"
 note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast before it this turn (t6_green2 via t0_stella::storm_copies)"
 
 ["Cloud of Faeries"]
+dsl = [] # --- Tiers 4/5 (chulane-kinnan): the enters untap is hand-written (t6_green2 cloud_etb); the compiled "untap up to two lands" would run it twice
 status = "Full"
 note = "1/1 flyer; when it enters, untaps up to two of your tapped lands; cycling {2} is a hand option the AI uses in an opponent's end step or after combat with the mana to spare (t6_green2)"
 
@@ -9378,3 +9388,100 @@ pool_remove_tags = ["tokx"]
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
 ["Contaminant Grafter"]
 dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)
+
+# --- Tiers 4/5 (yuriko): hand-written in rust/crates/sim-core/src/impls/t45_yuriko.rs
+["Kaito, Bane of Nightmares"]
+dsl = [] # the walker framework runs all three loyalty abilities (the compiled 0 and -2 would run twice)
+
+["Skullsnatcher"]
+dsl = [] # the compiled trigger exiled every graveyard; the hand-written one exiles two cards of the damaged player's
+
+# --- Tiers 4/5 (krenko): hand-written in rust/crates/sim-core/src/impls/t45_krenko.rs
+["Howlsquad Heavy"]
+dsl = [] # the compiler read its combat token as an upkeep one that needn't attack; the token, the haste and the max-speed mana are card code
+pool_remove_tags = ["noatk"] # a 2/3 attacker until max speed, not a mana creature held home
+
+["Thousand-Year Elixir"]
+dsl = [] # its compiled "{1}, {T}: untap target creature" picked any target; the untap (Krenko, Kiki-Jiki, Marvin) is card code
+
+# --- Tiers 4/5 (prosper): hand-written in rust/crates/sim-core/src/impls/t45_prosper.rs; statuses in data/audit.toml
+["Bonehoard Dracosaur"]
+dsl = [] # the compiled upkeep drew two cards; the hand-written upkeep exiles them (playable this turn), Dinosaur / Treasure
+
+["Hex Magic"]
+dsl = [] # the compiled "exile all" had an empty filter; the hand-written resolve exiles the hand and draws that many
+
+# --- Tiers 4/5 (chulane-kinnan): rust/crates/sim-core/src/impls/t45_chulane_kinnan.rs
+["Azorius Chancery"]
+types = "L"
+tags = "c=WU t bounceland amt=2"
+dsl = []
+status = "Full"
+note = "bounce land: enters tapped, returns a land you control to its owner's hand (the one making the fewest colours, itself if none), taps for {W}{U}"
+
+# --- Tiers 4/5 (winota): hand-written in rust/crates/sim-core/src/impls/t45_winota.rs
+["Lena, Selfless Champion"]
+tags = "leg human pow=3" # no tok/tokp: one Soldier per nontoken creature, the enter trigger is hand-written (the tags, not a
+# pool_remove_tags edit, so it holds whether or not a pool deck plays Lena)
+
+["Sundering Eruption // Volcanic Fissure"]
+tags = "" # no rem/tgt: it destroys a land, not a nonland permanent, cast by its own priority (the tags hold whether or
+# not a pool deck plays it)
+
+# --- Tiers 4/5 (heliod-zur): hand-written in rust/crates/sim-core/src/impls/t45_heliod_zur.rs (status notes in data/audit.toml)
+["Ajani, Strength of the Pride"]
+tags = "leg"
+dsl = [] # the walker framework runs its three abilities (the autotagger's token tag made a token as it entered)
+
+["Cleric Class"]
+dsl = [{ type = "static", static = "lifegain_plus", amount = 1 }] # level 1 only: levels 2 and 3 are hand-written
+
+["Diplomatic Immunity"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Steel of the Godhead"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Imprisoned in the Moon"]
+types = "E"
+tags = "rem=moon tgt=cp etb"
+dsl = []
+
+# --- Tiers 4/5 (edgar): hand-written in rust/crates/sim-core/src/impls/t45_edgar.rs (status notes in data/audit.toml)
+["Twilight Prophet"]
+dsl = [] # the upkeep reveal and drain are hand-written with ascend (the compiled drain ran without the blessing)
+
+["Edgar, Charmed Groom // Edgar Markov's Coffin"]
+dsl = [] # the anthem is hand-written (creature_pt) so the Coffin face has none
+
+["Sorin, Imperious Bloodlord"]
+dsl = [] # the walker framework runs its three abilities (the compiled +1 would run twice)
+
+["Forerunner of the Legion"]
+dsl = [] # the compiled enter search found any card; the Vampire search and the +1/+1 trigger are hand-written
+
+["Damn"]
+add_tags = ["noregen"] # "a creature destroyed this way can't be regenerated" (the overload is hand-written)
+
+# --- Tiers 4/5 (urdragon): hand-written in impls/t45_urdragon.rs
+["Lathliss, Dragon Queen"]
+# its 5/5 Dragons come from other nontoken Dragons entering (card code), not from its own enter
+tags = "leg pow=6 bomb=6 fly" # plain tags (a pool_ tag edit lapses once no pool deck plays the card)
+
+["Rith, Liberated Primeval"]
+# its 4/4 Dragon is an end-step trigger (card code), not an enter token
+tags = "leg pow=5 bomb=5 fly" # plain tags (a pool_ tag edit lapses once no pool deck plays the card)
+
+["Rivaz of the Claw"]
+# {T}: two mana of any colour, only for Dragon creature spells (card code and mana.rs)
+tags = "leg pow=3 dork=A noatk" # plain tags (a pool_ tag edit lapses once no pool deck plays the card)
+
+["Scion of the Ur-Dragon"]
+dsl = [] # the compiled search put any permanent card into the graveyard: card code finds a Dragon
+
+["Haven of the Spirit Dragon"]
+dsl = [] # the compiled return took any creature card: card code returns a Dragon

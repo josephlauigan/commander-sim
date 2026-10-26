@@ -704,6 +704,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
         }
     }
+    crate::impls::t45_urdragon::courser_return(g)?; // --- Tiers 4/5 (urdragon): Hellkite Courser's commander goes back
     for m in find(g, p, Tag::Breach) {
         // Underworld Breach: sacrifice it at the beginning of the end step
         if trigger_window(g, p, Some(m), "sacrifice it", None)? && g.perm(m).on_bf {
@@ -863,6 +864,12 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();
     }
+    for q in &mut g.players {
+        if q.life_lock_eot {
+            q.life_lock_eot = false; // --- Tiers 4/5 (winota): Flare of Fortitude's lock ends with the turn
+            q.life_locked = false;
+        }
+    }
     crate::impls::alela::mirror_revert(g)?; // Mirage Mirror: copies end with the previous turn
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
@@ -880,11 +887,13 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.combat_no = 0;
     pl.turns += 1;
     crate::impls::mine::army_power_snapshot(g, p);
+    let orbs = crate::impls::t45_urza_yawgmoth::untap_lock(g, p); // --- Tiers 4/5 (urza-yawgmoth): Winter / Static Orb
     for l in g.player(p).lands.clone() {
         g.land_mut(l).tapped = false;
     }
     g.player_mut(p).tapped_treasures = 0; // tapped Treasures untap
     let crack = cardcode::crackdown_on(g); // Crackdown: big nonwhite creatures stay tapped
+    let alarm = crate::impls::t45_chulane_kinnan::alarm_on(g); // --- Tiers 4/5 (chulane-kinnan): Intruder Alarm
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
         if x.data.int(crate::state::DataKey::Frozen) > 0 {
@@ -898,6 +907,13 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
             let n = x.data.int(crate::state::DataKey::Stun);
             let y = g.perm_mut(m);
             y.data.set(crate::state::DataKey::Stun, crate::state::Val::Int(n - 1));
+            y.sick = false;
+            y.phased = false;
+            y.age += 1;
+            continue;
+        }
+        if alarm && x.tapped && g.is_creature(m) {
+            let y = g.perm_mut(m); // Intruder Alarm: creatures don't untap during their controllers' untap steps
             y.sick = false;
             y.phased = false;
             y.age += 1;
@@ -919,6 +935,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         y.phased = false;
         y.age += 1;
     }
+    // --- Tiers 4/5 (urza-yawgmoth): Winter Orb, Static Orb, Back to Basics keep some re-tapped; Unwinding Clock
+    crate::impls::t45_urza_yawgmoth::untap_step(g, p, orbs);
     crate::impls::titania::day_night_tick(g, p)?; // day and night: the turn before is judged as this one begins
     let pl = g.player_mut(p);
     pl.spells_this_turn = 0;

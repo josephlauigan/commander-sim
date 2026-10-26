@@ -90,6 +90,9 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             crate::glog!(g, "    {} exiles {} instead of drawing it (Urabrask)", g.player(p).name, g.db.get(c).name);
             continue;
         }
+        if crate::impls::t45_prosper::uba_draw(g, p)? {
+            continue; // Uba Mask: exiled instead of drawn
+        }
         let pl = g.player_mut(p);
         pl.draw_n += 1;
         let c = pl.library.pop().unwrap();
@@ -295,6 +298,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     }
     let k = out.len() as i32;
     note_tokens(g, p, k as u32);
+    crate::impls::t45_krenko::note_entered(g, p, &out); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     if k > 0 && !g.no_fang {
         cardcode::chatterfang_squirrels(g, p, k)?;
     }
@@ -678,7 +682,9 @@ pub fn last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
     if g.humans.get(q).is_some() {
         return Ok(g.player(q).life_locked); // practice mode: the person casts it themselves
     }
-    Ok(g.player(q).life_locked || cast_teferis_protection(g, q, 9.0)?)
+    Ok(g.player(q).life_locked
+        || cast_teferis_protection(g, q, 9.0)?
+        || crate::impls::t45_winota::flare_last_chance(g, q)?) // --- Tiers 4/5 (winota): Flare of Fortitude
 }
 
 // ------------------------------------------------------------------ dying
@@ -706,6 +712,10 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         g.player_mut(p).stat("creatures_sacrificed", 1);
     }
     if matches!(cause, "destroy" | "combat") && !g.auras.is_empty() && cardcode::umbra_save(g, m)? {
+        return Ok(());
+    }
+    // --- Tiers 4/5 (urza-yawgmoth): Welding Jar regenerates an artifact
+    if matches!(cause, "destroy" | "combat") && !g.noregen && crate::impls::t45_urza_yawgmoth::welding_jar(g, m)? {
         return Ok(());
     }
     let creature = g.is_creature(m);
@@ -815,6 +825,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     if creature && g.perm(m).data.get(DataKey::Rabid) == Some(&Val::Stamp(g.turn_stamp())) {
         crate::impls::sephfs_cards::rabid_dies(g, g.perm(m).owner)?; // Rabid Attack: draw a card
     }
+    if creature && g.perm(m).data.truthy(DataKey::DemonGift) {
+        crate::impls::t45_edgar::demon_dies(g, m)?; // --- Tiers 4/5 (edgar): Clavileño's gift
+    }
     if creature && g.players.iter().any(|pl| pl.emblems.contains(&"seph")) {
         cardcode::emblem_dies(g)?; // Sephiroth, One-Winged Angel's emblem
     }
@@ -870,7 +883,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     }
     let x = g.perm(m).clone();
     if x.token {
-        return Ok(());
+        return crate::impls::t45_urza_yawgmoth::pest_dies(g, &x); // --- Tiers 4/5 (urza-yawgmoth): Blight Mound
     }
     let cd = x.cd.unwrap();
     let db = g.db.clone();
@@ -1059,6 +1072,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         let v = |n: i32| crate::cardcode::vorinclex(g, p, n);
         (v(loyalty.map_or(0, |l| if doubling { l * 2 } else { l })), v(1), v(plus + scales))
     };
+    // --- Tiers 4/5 (heliod-zur): Solemnity: no +1/+1 or -1/-1 counters as it enters
+    let solemn = crate::impls::t45_heliod_zur::solemnity(g);
+    let (v_undying, v_plus) = if solemn { (0, 0) } else { (v_undying, v_plus) };
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
     x.sick = how.sick && !haste;
@@ -1102,6 +1118,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let st = g.turn_stamp();
     g.entered.retain(|e| e.0 == st);
     g.entered.push((st, m));
+    crate::impls::t45_krenko::note_entered(g, p, &[m]); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     let creature = g.db.get(cd).creature;
     let quiet = g.skip_etb || (creature && (hushed(g) || cardcode::tidebinder_response(g, p, m)?));
     if quiet {
@@ -1179,9 +1196,18 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
     if have >= TOKEN_CAP {
         return Ok(None);
     }
-    let m = enter(g, p, cd, Enter { exc, ..Enter::default() })?;
-    g.perm_mut(m).token = true;
+    // --- Tiers 4/5 (urdragon): its enter triggers wait until it is a token ("another nontoken Dragon": Miirym)
+    g.resolving += 1;
+    let r = enter(g, p, cd, Enter { exc, ..Enter::default() });
+    if let Ok(m) = r {
+        g.perm_mut(m).token = true;
+    }
+    g.resolving -= 1;
+    let m = r?;
     note_tokens(g, p, 1);
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
+    }
     Ok(Some(m))
 }
 

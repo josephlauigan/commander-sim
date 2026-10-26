@@ -126,7 +126,7 @@ fn has_ability(g: &Game, p: PlayerId, src: PermId) -> bool {
 }
 
 /// Marvin has two jobs: Ioreth's untap (Sisay) and copying Kefka's creatures' {T} abilities (newcards_b); both option lists apply
-fn marvin_both(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub(crate) fn marvin_both(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut v = untap_options(g, src, p, post)?;
     v.extend(super::newcards_b::marvin_options(g, src, p, post)?);
     Ok(v)

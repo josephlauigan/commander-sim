@@ -32,15 +32,16 @@ pub fn first_strike(g: &Game, m: PermId) -> bool {
     kw(g, m, "first strike") || kw(g, m, "double strike")
 }
 
-/// Fiery Emancipation: damage from pl's sources is tripled (once per copy)
+/// Fiery Emancipation: damage from pl's sources is tripled (once per copy); --- Tiers 4/5 (winota): Angrath's
+/// Marauders doubles it (once per copy)
 pub fn fiery(g: &Game, pl: PlayerId) -> i32 {
-    let n = g
-        .player(pl)
-        .perms
-        .iter()
-        .filter(|&&m| !g.perm(m).phased && card_name(g, m) == Some("Fiery Emancipation"))
-        .count();
-    3i32.pow(n as u32)
+    let count = |name: &str| {
+        g.player(pl).perms.iter().filter(|&&m| !g.perm(m).phased && card_name(g, m) == Some(name)).count() as u32
+    };
+    // --- Tiers 4/5 (urdragon): Twinflame Tyrant doubles it too (once per copy)
+    3i32.pow(count("Fiery Emancipation"))
+        * 2i32.pow(count("Angrath's Marauders"))
+        * 2i32.pow(count(crate::impls::t45_urdragon::TYRANT))
 }
 
 fn untapped_creatures(g: &Game, q: PlayerId) -> impl Iterator<Item = PermId> + '_ {
@@ -353,6 +354,9 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
         if g.over {
             break;
         }
+    }
+    if !g.over {
+        new.extend(crate::impls::t45_winota::gy_attack(g, p, atk)?); // --- Tiers 4/5 (winota): Phoenix Chick
     }
     check_state(g)?;
     Ok(new.into_iter().filter(|&x| g.perm(x).tapped && g.perm(x).on_bf && g.perm(x).owner == p).collect())
@@ -675,6 +679,9 @@ fn resolve_combat_inner(
                         b_dies = false; // Heroic Sacrifice: the damage goes to the chosen creature
                     }
                     let (fa, fb) = (first_strike(g, a), first_strike(g, b));
+                    // --- Tiers 4/5 (krenko): Sting, the Glinting Dagger (blocking or blocked by a Goblin or Orc)
+                    let sting = crate::impls::t45_krenko::sting_first_strike;
+                    let (fa, fb) = (fa || sting(g, a, b), fb || sting(g, b, a));
                     if fa && !fb && b_dies {
                         a_dies = false; // first strike kills the blocker first
                     } else if fb && !fa && a_dies {
@@ -698,6 +705,14 @@ fn resolve_combat_inner(
                     }
                     if epow(g, b) > 0 && !no_damage(g, a) && !t0(g, a) && !cardcode::damage_prevented(g, a) {
                         crate::impls::t0_giada::damaged(g, a, epow(g, b))?;
+                    }
+                    // --- Tiers 4/5 (urza-yawgmoth): wither: the damage is -1/-1 counters, on a creature it kills too
+                    // (Necroskitter sees them); a first striker that kills its foe takes none
+                    let bp = epow(g, b);
+                    for (src, to, k, hits) in [(a, b, ap, !(fb && !fa && a_dies)), (b, a, bp, !(fa && !fb && b_dies))] {
+                        if hits && k > 0 && kw(g, src, "wither") && !kw(g, src, "infect") && !no_damage(g, to) {
+                            crate::cardcode::put_plus(g, to, -k);
+                        }
                     }
                     crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
                     if b_dies {

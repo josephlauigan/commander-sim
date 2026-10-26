@@ -73,6 +73,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         Land(crate::ids::LandId),
         Sac(Fodder),
         Discard,
+        Tap(PermId),
     }
     for t in texts {
         let mut choice = None;
@@ -94,6 +95,22 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         }
         if choice.is_none() && t.contains("discard a card") && g.player(p).hand.iter().any(|&x| x != c) {
             choice = Some(Choice::Discard);
+        }
+        // --- Tiers 4/5 (edgar): "tap an untapped Vampire you control" (New Blood): a summoning-sick one first, then
+        // the least valuable
+        if choice.is_none()
+            && let Some(ty) = t.strip_prefix("as an additional cost to cast ~, tap an untapped ")
+            && let Some(ty) = ty.strip_suffix(" you control")
+        {
+            let ty = ty.trim_end_matches(" creature");
+            let ok = |m: PermId| {
+                let x = g.perm(m);
+                x.on_bf && !x.phased && !x.tapped && g.is_creature(m) && (ty == "creature" || has_type(g, m, ty))
+            };
+            let cands: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| ok(m)).collect();
+            if let Some(m) = min_by(&cands, |m| pval(g, m) - if g.perm(m).sick { 2.0 } else { 0.0 }) {
+                choice = Some(Choice::Tap(m));
+            }
         }
         let Some(choice) = choice else { return Ok(false) };
         if dry {
@@ -123,6 +140,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 g.sac_snapshot = Some((g.perm(m).cd.map_or(0, |c| g.db.get(c).cmc), etgh(g, m)));
                 die(g, m, "sac")?;
             }
+            Choice::Tap(m) => g.perm_mut(m).tapped = true,
             Choice::Discard => {
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
                 let lands: Vec<CardId> = others.iter().copied().filter(|&x| g.db.get(x).land).collect();
@@ -365,6 +383,8 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Cast, Call::Cast { caster: p, c })?;
     }
+    crate::impls::t45_urza_yawgmoth::spell_crime(g, p, c)?; // --- Tiers 4/5 (urza-yawgmoth): Forsaken Miner
+    crate::impls::t45_edgar::eminence(g, p, c)?; // --- Tiers 4/5 (edgar): Edgar Markov, from the command zone too
     if has(g, p, Tag::Jin) && (artifact || instant_or_sorcery) && once_per_turn(g, p, "jincopy") {
         let src = find(g, p, Tag::Jin)[0];
         let name = format!("copy {}", g.db.get(c).name);

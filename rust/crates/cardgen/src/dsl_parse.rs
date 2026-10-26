@@ -193,6 +193,12 @@ pub fn filt(phrase: &str) -> Obj {
     if p.contains("with flying") {
         f.set("kw", "flying");
     }
+    // --- Tiers 4/5 (urdragon): "all Dragon creatures" / "all non-Dragon creatures" (Crux of Fate)
+    if search(r"\bnon-dragon\b", &p).is_some() {
+        f.set("subtype", "non-dragon");
+    } else if search(r"\bdragons?\b", &p).is_some() && !f.contains("subtype") {
+        f.set("subtype", "dragon");
+    }
     if search(r"(instant or sorcery|instant|sorcery)", &p).is_some() && !f.contains("type") {
         f.set("type", "instant_or_sorcery");
     }
@@ -376,6 +382,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
                     obj! {"do" => "exile_graveyard", "who" => if m.gs(3).contains("target") { "target_player" } else { "each_player" }},
                 ));
             }
+            if m.gs(2) == "target" && m.gs(3) == "player's graveyard" {
+                // --- Tiers 4/5 (prosper): "exile target player's graveyard" (Rakdos Charm) is one graveyard
+                return Some(eff(obj! {"do" => "exile_graveyard", "who" => "target_player"}));
+            }
             if m.gs(3).contains("graveyard") {
                 return Some(eff(obj! {"do" => "exile_graveyard", "who" => "each_player"}));
             }
@@ -500,7 +510,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         |m| {
             let mut e = eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))});
             if m.all().contains("you gain") {
-                e.push(obj! {"do" => "gain_life", "n" => n_(m.gs(2)), "who" => "you", "per_opponent" => m.gs(1) == "each opponent"});
+                // --- Tiers 4/5 (urza-yawgmoth): "you gain 1 life" is 1 in all (Ayara, Cauldron of Essence, Shimmercreep);
+                // only "that much" is per opponent
+                let per = m.gs(1) == "each opponent" && m.all().contains("that much");
+                e.push(obj! {"do" => "gain_life", "n" => n_(m.gs(2)), "who" => "you", "per_opponent" => per});
             }
             Some(e)
         },
@@ -606,6 +619,8 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         },
     ),
     (r"^amass (?:orcs|zombies) (\d+|x)$", |m| Some(eff(obj! {"do" => "amass", "n" => n_(m.gs(1))}))),
+    // --- Tiers 4/5 (winota): "the Ring tempts you" (Boromir, Fiery Inscription, Gollum, Witch-king)
+    (r"^the ring tempts you$", |_| Some(eff(obj! {"do" => "ring_tempt"}))),
     (
         r"^untap (all creatures you control|target creature|all lands you control|~|all attacking creatures|up to (?:two|three|four|five) target lands|target permanent)$",
         |m| Some(eff(obj! {"do" => "untap", "what" => selector(m.gs(1))})),
@@ -688,6 +703,50 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
             ))
         },
     ),
+    // --- Tiers 4/5 (krenko)
+    // "~ deals damage equal to the number of Goblins that entered the battlefield under your control this turn to any
+    // target" (Hobgoblin Bandit Lord): counted by the interpreter (`type_entered_you:goblin`)
+    (
+        r"^~ deals damage equal to the number of (goblins|elves|zombies|humans|soldiers|warriors|knights) that entered (?:the battlefield )?under your control this turn to (any target|each opponent)$",
+        |m| {
+            let n = format!("type_entered_you:{}", singular(m.gs(1)));
+            let to = if m.gs(2) == "any target" {
+                obj! {"sel" => "any_target"}
+            } else {
+                obj! {"sel" => "player", "who" => "each_opponent"}
+            };
+            Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
+    // "~ deals damage to target player or planeswalker equal to the number of Goblins you control" (Goblin War
+    // Strike), "~ deals damage to any target equal to the number of creatures you control" (Massive Raid)
+    (
+        r"^~ deals damage to (any target|target player or planeswalker|target player|target opponent|each opponent|target creature) equal to (?:the number of )?(.+)$",
+        |m| {
+            let n = num_expr(m.gs(2));
+            if n == J::from("X") {
+                return None;
+            }
+            let t = m.gs(1);
+            let to = if t == "any target" {
+                obj! {"sel" => "any_target"}
+            } else if t == "target creature" {
+                selector(t)
+            } else {
+                obj! {"sel" => "player", "who" => who(t)}
+            };
+            Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
+    // "add {R} for each Goblin on the battlefield" (Brightstone Ritual): a count of creatures only (not Rousing
+    // Refrain's "each card in target opponent's hand")
+    (r"^add \{([wubrgc])\} for each (.+)$", |m| {
+        let n = num_expr(m.gs(2));
+        if !n.as_str().is_some_and(|s| s.starts_with("type_") || s == "creatures_you_control") {
+            return None;
+        }
+        Some(eff(obj! {"do" => "add_mana", "n" => n}))
+    }),
     (
         r"^~ deals damage equal to (?:that spell's mana value|its power|the number of [^.]+) to (any target|each opponent|target creature|target opponent)$",
         |m| {
@@ -764,6 +823,45 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
         |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
     ),
+    // --- Tiers 4/5 (prosper): "each creature deals 1 damage to its controller" (Rakdos Charm)
+    (r"^each creature deals 1 damage to its controller$", |_| Some(eff(obj! {"do" => "creature_backlash"}))),
+    // --- Tiers 4/5 (chulane-kinnan): "untap up to five lands" (Peregrine Drake, Frantic Search): n of your tapped lands
+    (r"^untap up to (two|three|four|five|six|seven) lands$", |m| {
+        Some(eff(obj! {"do" => "untap", "n" => n_(m.gs(1)), "what" => selector("all lands you control")}))
+    }),
+    // --- Tiers 4/5 (heliod-zur): "you may have that player lose 1 life" (Suture Priest; "you may" is split off first)
+    (r"^have (that player|target player|target opponent|each opponent) lose (\d+|x) life$", |m| {
+        Some(eff(obj! {"do" => "lose_life", "n" => n_(m.gs(2)), "who" => who(m.gs(1))}))
+    }),
+    // --- Tiers 4/5 (edgar)
+    // "put a +1/+1 counter on each Vampire you control" (Edgar Markov, Cordial Vampire, Indulgent Aristocrat), "each
+    // other Vampire you control", "each attacking creature you control" (Drana, Liberator of Malakir)
+    (
+        r"^put (a|an|one|two|three|\d+) \+1/\+1 counters? on each (other )?(attacking )?([a-z]+) (?:creature )?you control$",
+        |m| {
+            let t = singular(m.gs(4));
+            let mut f = obj! {"type" => "creature", "controller" => "you"};
+            if m.g(2).is_some() {
+                f.set("other", true);
+            }
+            if t != "creature" {
+                f.set("subtype", t.as_str());
+            }
+            if m.g(3).is_some() {
+                f.set("attacking", true);
+            }
+            Some(eff(obj! {"do" => "counters", "n" => n_(m.gs(1)), "what" => obj!{"sel" => "all", "filter" => f}}))
+        },
+    ),
+    // "each opponent loses life equal to the number of Vampires you control" (Malakir Bloodwitch): a count the
+    // interpreter names, else nothing
+    (r"^(each opponent|target opponent|target player) loses life equal to (?:the number of )?(.+)$", |m| {
+        let n = num_expr(m.gs(2));
+        if n == J::from("X") {
+            return None;
+        }
+        Some(eff(obj! {"do" => "lose_life", "n" => n, "who" => who(m.gs(1))}))
+    }),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -835,6 +933,9 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
     let mut effs: Fx = vec![];
     let mut bad: Vec<String> = vec![];
     let mut text = sub(r" at the beginning of the next turn's upkeep", "", text);
+    // --- Tiers 4/5 (miirym): "until end of turn, you don't lose this mana as steps and phases end" (Savage Ventmaw):
+    // floating mana lasts the whole turn in the engine already
+    text = sub(r"\.? ?until end of turn, you don't lose this mana as steps and phases end\.?", "", &text);
     text = sub(
         r"exile ((?:up to one |another )?target creature you (?:control|own)),? then return (?:it|that card) to the battlefield under (?:its owner's|your) control",
         r"blink \1",
@@ -1058,9 +1159,33 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^~ and at least (two|three) other creatures attack$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "self", "min_atk" => n_(m.gs(1)).as_i64().unwrap_or(2) + 1}]
     }),
+    // --- Tiers 4/5 (krenko): "one or more Goblins you control attack" (General Kreat): once per attack that has one
+    (r"^one or more (goblins|elves|zombies|humans|soldiers|warriors|knights|dragons|vampires) you control attack$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "you_any", "subtype" => singular(m.gs(1))}]
+    }),
     // "a player attacks with N or more creatures" (Aurelia, the Law Above): anyone's attack, counted whole
     (r"^a player attacks with (two|three|four|five|six) or more creatures$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "any_player", "min_atk" => n_(m.gs(1))}]
+    }),
+    // --- Tiers 4/5 (heliod-zur): "another creature you control enters or dies" (Daxos, Blessed by the Sun)
+    (r"^(a|another) creature you control enters or dies$", |m, _| {
+        let other = m.gs(1) == "another";
+        vec![
+            obj! {"event" => "etb", "source" => "you_creature", "other" => other},
+            obj! {"event" => "dies", "source" => "you_creature", "other" => other},
+        ]
+    }),
+    // --- Tiers 4/5 (urza-yawgmoth): "~ or another black creature you control enters" (Ayara, First of Locthwain): itself
+    // and the creatures of that colour entering under your control
+    (r"^~ or another (white|blue|black|red|green) creature you control enters$", |m, _| {
+        let col = match m.gs(1) {
+            "white" => "W",
+            "blue" => "U",
+            "black" => "B",
+            "red" => "R",
+            _ => "G",
+        };
+        vec![obj! {"event" => "etb", "source" => "you_creature", "color" => col}]
     }),
 ];
 
@@ -1123,6 +1248,22 @@ fn kw_statics(text: Option<&str>, mut mk: impl FnMut(&str) -> Obj) -> Fx {
 type StaticFn = fn(&M) -> Option<Fx>;
 
 static STATICS: &[(&str, StaticFn)] = &[
+    // --- Tiers 4/5 (krenko): "other Goblins get +1/+1 and have mountainwalk" (Goblin King): every player's Goblins
+    // (no "you control"); a landwalk the keyword list lacks is card code (impls/t45_krenko.rs)
+    (
+        r"^other (elves|goblins|zombies|humans|soldiers|warriors|knights|merfolk|vampires|spirits|faeries) get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$",
+        |m| {
+            let sub_ = singular(m.gs(1));
+            let mut v = vec![obj! {"type" => "static", "static" => "anthem",
+            "filter" => obj!{"type" => "creature", "other" => true, "subtype" => sub_.clone()},
+            "pow" => int(m.gs(2)), "tgh" => int(m.gs(3))}];
+            v.extend(kw_statics(m.g(4), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+                "filter" => obj!{"type" => "creature", "other" => true, "subtype" => sub_.clone()}}
+            }));
+            Some(v)
+        },
+    ),
     // --- Tier 3 (marwyn): "other Elf creatures you control get +1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
     (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+) for each (.+)$", |m| {
         let per = num_expr(m.gs(5));
@@ -1263,6 +1404,48 @@ static STATICS: &[(&str, StaticFn)] = &[
         });
         if v.is_empty() { None } else { Some(v) }
     }),
+    // --- Tiers 4/5 (heliod-zur)
+    // "white creature spells you cast cost {1} less to cast" (Oketra's Monument)
+    (r"^(white|blue|black|red|green) creature spells you cast cost \{(\d+)\} less to cast$", |m| {
+        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => format!("{}_creature", m.gs(1)),
+        "amount" => -int(m.gs(2))}))
+    }),
+    // "if you would gain life, you gain that much life plus 1 instead" (Cleric Class, Angel of Vitality's wording)
+    (r"^if you would gain life, you gain that much life plus (\d+) instead$", |m| {
+        Some(eff(obj! {"type" => "static", "static" => "lifegain_plus", "amount" => int(m.gs(1))}))
+    }),
+    // "if you would gain life, you gain twice that much life instead" (The Wind Crystal, Boon Reflection)
+    (r"^if you would gain life, you gain twice that much life instead$", |_| {
+        Some(eff(obj! {"type" => "replacement", "replace" => "lifegain", "multiplier" => 2}))
+    }),
+    // "creatures your opponents control enter tapped" (Authority of the Consuls)
+    (r"^creatures your opponents control enter tapped$", |_| {
+        Some(eff(obj! {"type" => "static", "static" => "enters_tapped", "who" => "opponents",
+        "filter" => obj!{"type" => "creature", "controller" => "opp"}}))
+    }),
+    // --- Tiers 4/5 (urdragon)
+    // "Dragon spells you cast cost {1} less to cast" (Dragonlord's Servant, Dragonspeaker Shaman, Sarkhan, Soul
+    // Aflame): a spell with that creature type (changelings too)
+    (
+        r"^(dragon|goblin|elf|zombie|human|wizard|knight|vampire|merfolk|sliver|spirit) spells you cast cost \{(\d+)\} less to cast$",
+        |m| {
+            Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you",
+            "spell" => format!("sub_{}", m.gs(1)), "amount" => -int(m.gs(2))}))
+        },
+    ),
+    // "Dragons you control have indestructible" (Call the Spirit Dragons)
+    (
+        r"^(other )?(elves|goblins|zombies|humans|ninjas|soldiers|warriors|knights|angels|demons|dragons|merfolk|vampires|spirits|faeries) you control have ([a-z, ]+)$",
+        |m| {
+            let sub_ = singular(m.gs(2));
+            let v = kw_statics(m.g(3), |k| {
+                obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+                "filter" => obj!{"type" => "creature", "controller" => "you", "other" => m.g(1).is_some(),
+                "subtype" => sub_.clone()}}
+            });
+            if v.is_empty() { None } else { Some(v) }
+        },
+    ),
 ];
 
 pub fn prot_colors(text: &str) -> String {
@@ -1291,6 +1474,12 @@ pub fn strip_name(text: &str, name: &str) -> String {
         if py::len(nm) > 3 {
             t = t.replace(nm, "~");
         }
+    }
+    // --- Tiers 4/5 (edgar): a legend's first name in its own trigger ("Whenever Edgar attacks": Edgar Markov)
+    let first = py::first(front, " ");
+    if py::len(first) > 3 && first != front && !front.contains(',') {
+        let pat = format!(r"\b(When|Whenever) {} (attacks|dies|deals)\b", fancy_regex::escape(first));
+        t = crate::re::sub_fn(&pat, &t, |m| format!("{} ~ {}", m.gs(1), m.gs(2)));
     }
     sub(r"(?i)\bthis (creature|spell|artifact|enchantment|land|permanent|card|planeswalker|equipment|aura)\b", "~", &t)
 }
