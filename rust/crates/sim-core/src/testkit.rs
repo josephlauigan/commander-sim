@@ -28,9 +28,9 @@ pub fn db() -> Arc<CardDb> {
     DB.get_or_init(|| Arc::new(CardDb::load(&data_dir().join("cards.json")).unwrap())).clone()
 }
 
-/// Decks that used to be registered (thrasios, garland) and now exist only for tests of their engine and card
-/// code: the real commanders and colour identity, a library of basic lands. The deck AI keys on the seat key alone,
-/// so these seats still run the key-gated code.
+/// Decks that used to be registered (thrasios, garland, omnath, godo, retired pool decks) and now exist only for
+/// tests of their engine and card code: the real commanders and colour identity, a library of basic lands. The deck
+/// AI keys on the seat key alone, so these seats still run the key-gated code.
 fn retired_decks() -> Vec<RawDeck> {
     let lib = |cmds: &[&str], basics: &[&str]| -> Vec<String> {
         cmds.iter()
@@ -69,6 +69,10 @@ fn retired_decks() -> Vec<RawDeck> {
             "WUBRG",
             &["Plains", "Island", "Swamp", "Mountain", "Forest"],
         ),
+        // JD's decks retired 2026-10-25 (became The Ur-Dragon; lists in decklists/pool/retired/): their card and
+        // Tier 6 tests still seat them, and the deck AI and the Tier 6 plan still key on these keys
+        mk("omnath", "Omnath", "Omnath, Locus of Rage", None, "RG", &["Mountain", "Forest"]),
+        mk("godo", "Godo", "Godo, Bandit Warlord", None, "R", &["Mountain"]),
     ]
 }
 
