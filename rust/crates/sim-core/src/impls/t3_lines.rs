@@ -157,9 +157,16 @@ fn chatter_rate(g: &Game, p: PlayerId, outlet: PermId) -> (u32, u32) {
     (each, one)
 }
 
-/// Korvold draws a card for each sacrifice (not a "may"): the Squirrels the loop needs, at its damage per Squirrel,
-/// must fit in the library
-fn korvold_fits(g: &Game, p: PlayerId, each: u32, one: u32) -> bool {
+/// the death payoffs p has out: (each-opponent payoffs, one-target payoffs), the damage of each creature death
+pub fn payoff_rate(g: &Game, p: PlayerId) -> (u32, u32) {
+    let count = |names: &[&str]| names.iter().filter(|n| on_bf(g, p, n).is_some()).count() as u32;
+    (count(EACH_OPP), count(ONE_TARGET))
+}
+
+/// Korvold draws a card for each sacrifice (not a "may"): the deaths the loop needs, at its damage per death, times
+/// `per` sacrifices each pass (the Squirrel alone 1; Reassembling Skeleton and the Treasure that returns it 2), must fit
+/// in the library
+pub fn korvold_fits(g: &Game, p: PlayerId, each: u32, one: u32, per: u32) -> bool {
     if on_bf(g, p, KORVOLD).is_none() {
         return true;
     }
@@ -172,7 +179,7 @@ fn korvold_fits(g: &Game, p: PlayerId, each: u32, one: u32) -> bool {
     let max = *lives.iter().max().unwrap();
     let sum: i64 = lives.iter().sum();
     let need = ((max + each + one - 1) / (each + one)).max((sum + each * n + one - 1) / (each * n + one));
-    need <= g.player(p).library.len() as i64
+    need * per as i64 <= g.player(p).library.len() as i64
 }
 
 /// Chatterfang, Pitiless Plunderer, a free sacrifice outlet, a death payoff (Goblin Bombardment is its own) and a
@@ -195,7 +202,7 @@ fn chatter_ready(g: &Game, p: PlayerId) -> Ready {
         return NOT_READY();
     }
     let (each, one) = chatter_rate(g, p, outlet);
-    if !korvold_fits(g, p, each, one) {
+    if !korvold_fits(g, p, each, one, 1) {
         return NOT_READY();
     }
     let mut keys = vec![chat, pl, outlet];

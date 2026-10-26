@@ -130,6 +130,32 @@ fn with_korvold_out_the_loop_must_kill_before_the_library_runs_out() {
     assert!(combos::ready(&g, P0, i), "Zulaport + Blood Artist kill in 40 draws");
 }
 
+#[test]
+fn with_korvold_out_the_skeleton_loop_draws_two_a_pass() {
+    let mut g = tbl(KORVOLD);
+    let i = idx("Reassembling Skeleton / Gravecrawler + Pitiless Plunderer");
+    for n in ["Pitiless Plunderer", "Reassembling Skeleton", "Phyrexian Altar", "Zulaport Cutthroat", "Blood Artist"] {
+        perm(&mut g, P0, n);
+    }
+    assert!(combos::ready(&g, P0, i), "no Korvold: the loop is free");
+    perm(&mut g, P0, "Korvold, Fae-Cursed King");
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap(); // its enter trigger sacrifices a permanent
+    for n in ["Reassembling Skeleton", "Phyrexian Altar", "Zulaport Cutthroat", "Blood Artist", "Pitiless Plunderer"] {
+        if !g.player(P0).perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == n) {
+            perm(&mut g, P0, n);
+        }
+    }
+    for q in 1..4 {
+        g.players[q].life = 40;
+    }
+    // three opponents at 40: Zulaport + Blood Artist kill in 30 deaths; the Skeleton and its Treasure are 2 draws each
+    let top = g.player(P0).library[0];
+    g.player_mut(P0).library = vec![top; 50];
+    assert!(!combos::ready(&g, P0, i), "60 draws from a 50-card library deck p first");
+    g.player_mut(P0).library = vec![top; 70];
+    assert!(combos::ready(&g, P0, i), "70 cards: the loop kills first");
+}
+
 // ======================================================== Staff of Domination + a big Elf
 #[test]
 fn staff_and_a_five_mana_elf_with_ezuri_in_the_library() {
