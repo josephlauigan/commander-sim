@@ -160,7 +160,8 @@ per-commander win rates.
    - TopDeck.gg key: `~/.config/topdeck/key` (JD's; never commit it). Credit TopDeck.gg wherever its data is used.
 2. **Rograkh/Thrasios** (16.4%, below the floor): model its missing real lines (This Town Ain't Big Enough, the
    improvised Thrasios wins).
-3. **Tier 3's remaining misses** (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
+3. **Tier 3's remaining misses** (combo lines done on branch `t3-misses`: combo/alt 11.5% to 16.5%, on target;
+   `audit/realism/t3-lines-2026-10-26.md`) (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
    - median win round 10 against 8;
    - combo wins 8.9% against 16.5%;
    - commander damage 10.5% against 14.4%;
