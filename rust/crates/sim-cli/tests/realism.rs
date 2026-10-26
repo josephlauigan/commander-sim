@@ -28,11 +28,11 @@ fn realism_scores_a_small_t6_run() {
 }
 
 #[test]
-fn realism_scores_nothing_for_a_tier_without_targets() {
+fn realism_scores_tier_0_against_its_targets() {
     let (code, out, err) =
         commander_sim(&["--realism", "--pool", "t0", "--games", "4", "--ai", "adaptive", "--quiet", "--jobs", "2"]);
     assert_eq!(code, 0, "stdout:\n{out}\nstderr:\n{err}");
-    assert!(out.contains("0 of 0 targets pass"), "{out}");
+    assert!(out.contains(" of 9 targets pass"), "every tier has targets now (t0.toml, 2026-10-25): {out}");
 }
 
 #[test]

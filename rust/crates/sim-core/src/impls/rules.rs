@@ -174,6 +174,8 @@ pub fn transform_away(g: &mut Game, m: PermId, kind: Sym) -> Res {
     if kind == "elk" {
         (x.pow, x.tgh) = (3, 3);
         x.data.set(DataKey::Elk, Val::Bool(true));
+    } else if kind == "coward" {
+        (x.pow, x.tgh) = (0, 1); // --- Tiers 1/2 (lightpaws): Reprobation, a 0/1 Coward (not indestructible)
     } else {
         (x.pow, x.tgh) = (0, 1);
         x.data.set(DataKey::Indestr, Val::Bool(true));
@@ -187,7 +189,11 @@ pub fn transform_away(g: &mut Game, m: PermId, kind: Sym) -> Res {
         g,
         "    {} becomes a {} with no abilities",
         g.perm(m).name,
-        if kind == "elk" { "3/3 Elk" } else { "0/1 Insect" }
+        match &*kind {
+            "elk" => "3/3 Elk",
+            "coward" => "0/1 Coward",
+            _ => "0/1 Insect",
+        }
     );
     Ok(())
 }
@@ -403,6 +409,10 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
                 "Collector Ouphe" if art => return true,
                 "Karn, the Great Creator" if art && p != q.id => return true,
                 "Cursed Totem" if g.is_creature(src) => return true,
+                // --- Tiers 1/2 (kaalia-sythis): activated abilities of creatures your opponents control
+                "Drana and Linvala" if p != q.id && g.is_creature(src) => {
+                    return true;
+                }
                 // Oracle: abilities of artifacts, creatures and enchantments. (Only Sephiroth's own Abolisher is held to the
                 // type list; the pool decks keep the old blanket lock)
                 "Grand Abolisher" if p != q.id && g.active == Some(q.id) => {
@@ -427,7 +437,7 @@ pub fn ability_locked(g: &Game, src: PermId, p: PlayerId) -> bool {
 
 // ================================================================== emblems
 /// rules.emblem_cast: Chandra's emblem (5 damage per spell), Venser's (exile a permanent per spell)
-pub fn emblem_cast(g: &mut Game, p: PlayerId, _c: CardId) -> Res {
+pub fn emblem_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if g.player(p).emblems.contains(&"chandra") {
         let t = best_opp_creature(g, p, |g, m| etgh(g, m) <= 5);
         let lethal = g.opps(p).find(|&q| g.player(q).life <= 5);
@@ -447,6 +457,7 @@ pub fn emblem_cast(g: &mut Game, p: PlayerId, _c: CardId) -> Res {
             apply_removal(g, Some(p), t, "exile", None)?;
         }
     }
+    crate::impls::t12_lathril::tyvar_emblem_cast(g, p, c)?; // --- Tiers 1/2 (lathril): Tyvar Kell's emblem
     Ok(())
 }
 

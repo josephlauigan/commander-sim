@@ -163,6 +163,28 @@ fn retreat_to_coralhelm_untaps_a_mana_creature() {
     assert!(!g.perm(elf).tapped);
 }
 
+// --- casual combos (tatyova): Scaled Herbalist + Retreat to Coralhelm chains lands from hand
+#[test]
+fn retreat_to_coralhelm_untaps_scaled_herbalist_while_lands_wait() {
+    let mut g = table(&["tatyova-simic-landfall", "sauron"]);
+    perm(&mut g, P0, "Retreat to Coralhelm");
+    let herb = perm(&mut g, P0, "Scaled Herbalist");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(herb).tapped = true;
+    g.perm_mut(elf).tapped = true;
+    hand(&mut g, P0, &["Forest"]);
+    zones::landfall(&mut g, P0).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert!(!g.perm(herb).tapped, "the Herbalist comes first while a land waits in hand");
+    assert!(g.perm(elf).tapped);
+    // no land in hand: the mana creature again
+    g.player_mut(P0).hand.clear();
+    g.perm_mut(herb).tapped = true;
+    zones::landfall(&mut g, P0).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert!(g.perm(herb).tapped && !g.perm(elf).tapped);
+}
+
 #[test]
 fn sunfall_exiles_everything_and_incubates() {
     let mut g = table(&["light-paws-aura-voltron", "sauron"]);

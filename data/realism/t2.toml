@@ -1,14 +1,112 @@
-# Realism targets, Tier 2: no targets yet (`commander-sim --realism --pool t2` prints the sim's numbers unscored).
-# Format: see t6.toml. Where the data will come from:
+# Realism targets, Tier 2 (Mid Bracket 3): what real games look like, for `commander-sim --realism --pool t2`.
+# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
 #
-# - Playgroup.gg (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0, read 2026-10-22): per commander,
-#   games, wins, average game length in rounds, and wins by combat, combo, commander damage, other damage, alternate
-#   win, mill and poison. Matched to this tier's five pool commanders (data/decks.json), it gives the win-type mix
-#   and game length. Each commander's page adds seat win rates. Caveat: a commander's numbers cover every deck built
-#   around it, at any power level, so use them for shape rather than level.
-# - Playgroup's turn-order page (https://playgroup.gg/commander/turn-order, computed 2026-10-19): seat win rates over
-#   284,950 single-winner casual 4-player games, 29.2 / 25.7 / 23.6 / 21.5%. Not split by power level.
-# - JD's pod log (data/realism/pod_games.toml): the levels, once enough games are logged.
-# - TopDeck.gg bracket events: standings and decklists only (no seats), and few, small events.
+# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-25, matched to this tier's five
+# pool commanders (data/decks.json): Brago, King Eternal (2306), Kaalia of the Vast (1826), Lord Windgrace (516), Meren of
+# Clan Nel Toth (28) and Sythis, Harvest's Hand (142).
+#
+# Each commander counts the same, as in t3.toml: every target is the plain average of the five commanders' own figures,
+# as the sim seats each pool deck equally often.
+#
+# Caveats: a commander's numbers cover every deck built around it, at any power level, so they give the shape of a
+# tier's games more than its level. They are casual pods logged by players, of any size (3 to 6 players). The two
+# Playgroup sources count games differently (commanders.json against each commander's page and stats), so the
+# samples below differ.
 
 tier = "t2"
+
+# --- Seat win rates: each commander's page (https://playgroup.gg/commanders/<id>, "Does seating order matter?")
+# gives its win rate from seats 1-4 and the games behind each. Seats 1-4 win, on average over the five commanders,
+# 40.8 / 37.1 / 29.4 / 24.6% of their games; each rate divided by the four rates' total gives the share of decisive
+# games, as the sim counts them.
+
+[seat1_win]
+value = 30.9
+lo = 29.9
+hi = 31.9
+n = 26535
+source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
+date = "2026-10-25"
+note = "n = seat-games behind the five commanders' seat 1-4 rates"
+
+[seat2_win]
+value = 28.1
+lo = 27.1
+hi = 29.1
+n = 26535
+source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
+date = "2026-10-25"
+
+[seat3_win]
+value = 22.3
+lo = 21.3
+hi = 23.3
+n = 26535
+source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
+date = "2026-10-25"
+
+[seat4_win]
+value = 18.6
+lo = 17.6
+hi = 19.6
+n = 26535
+source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
+date = "2026-10-25"
+
+# --- Speed: Playgroup gives each commander's average win turn (https://playgroup.gg/api/public/v1/commanders/<id>.json,
+# stats.average_wins_by_turn): Brago 9, Kaalia 8, Lord Windgrace 9, Meren 9, Sythis 9; their average is 8.8. An average,
+# not a median, and no spread: win_round_spread has no target.
+
+[win_round_median]
+value = 9
+lo = 8
+hi = 10
+n = 9246
+source = "Playgroup commander stats, average win turn of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
+date = "2026-10-25"
+note = "n = the five commanders' logged wins; Playgroup gives an average win turn (8.8), used as the median"
+
+# --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), each
+# commander's wins by type, averaged over the five: combat and other damage 72.6%, combo, alternate win and mill
+# 21.2%, commander damage 5.7%, poison 0.5%. Per commander (damage / combo / commander damage):
+# Brago 55 / 39 / 6; Kaalia 89 / 8 / 2;
+# Lord Windgrace 86 / 11 / 1; Meren 72 / 26 / 1;
+# Sythis 61 / 21 / 18.
+# Grouped as t6.toml groups them.
+
+[win_damage]
+value = 72.6
+lo = 71.6
+hi = 73.6
+n = 4757
+source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
+date = "2026-10-25"
+
+[win_combo_alt]
+value = 21.2
+lo = 20.2
+hi = 22.2
+n = 4757
+source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
+date = "2026-10-25"
+
+[win_commander_damage]
+value = 5.7
+lo = 4.7
+hi = 6.7
+n = 4757
+source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
+date = "2026-10-25"
+
+[win_poison]
+value = 0.5
+lo = 0.0
+hi = 1.5
+n = 4757
+source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
+date = "2026-10-25"
+
+# --- No target yet:
+# - deck_win_spread: Playgroup's win rates (Brago 32%, Kaalia 32%, Lord Windgrace 34%, Meren 32%, Sythis 37% of games) are
+#   against whatever their pods held, not against each other, so their gap is not the sim's gap.
+# - games_over_15 and win_round_spread: Playgroup publishes no distribution of game or win length.

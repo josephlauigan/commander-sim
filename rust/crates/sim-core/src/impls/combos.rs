@@ -112,8 +112,12 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t45_heliod_zur::COMBOS.iter()) // --- Tiers 4/5 (heliod-zur)
             .chain(super::t45_urza_yawgmoth::COMBOS.iter()) // --- Tiers 4/5 (urza-yawgmoth)
             .chain(super::t45_edgar::COMBOS.iter()) // --- Tiers 4/5 (edgar)
+            .chain(super::t12_windgrace::COMBOS.iter()) // --- Tiers 1/2 (windgrace)
+            .chain(super::t12_brago_meren::COMBOS.iter()) // --- Tiers 1/2 (brago-meren)
             .chain(super::t45_miirym::COMBOS.iter()) // --- Tiers 4/5 (miirym)
             .chain(super::t3_lines::COMBOS.iter()) // --- t3 lines
+            .chain(super::cc_brago::COMBOS.iter()) // --- casual combos (brago)
+            .chain(super::cc_teysa::COMBOS.iter()) // --- casual combos (teysa)
             .collect()
     });
     &ALL
@@ -342,7 +346,9 @@ fn any_hand(g: &Game, p: PlayerId, names: &[&str]) -> Option<CardId> {
 }
 
 fn has_piece(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
-    grp.iter().any(|n| on_bf(g, p, n).is_some() || in_hand(g, p, n).is_some())
+    // --- Tiers 1/2 (windgrace): a land piece on the battlefield (Dark Depths, Thespian's Stage)
+    let land = |n: &str| g.player(p).lands.iter().any(|&l| name_of(g, g.land(l).cd) == n);
+    grp.iter().any(|n| on_bf(g, p, n).is_some() || in_hand(g, p, n).is_some() || land(n))
 }
 
 /// combos.free_outlet: a sacrifice outlet of p's (common.outlets); `only`: one of these
@@ -799,7 +805,11 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
 /// search.combo_progress: the share of q's closest combo that q holds (in hand, on the battlefield, or the
 /// commander in the command zone), squared: the last pieces count most. 0 for a deck without a modeled combo.
 pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
-    let cmbs = deck_combos(g, q);
+    // --- t6 quiet progress: a Tier 6 deck reads its quiet (stepped) lines too, by their real groups (`lines_of`), and
+    // its land pieces on the battlefield (Gaea's Cradle). Other decks are unchanged (`deck_combos`). The generic
+    // executor (`combo_options`) never reads this.
+    let t6 = crate::impls::t6_plans::is_t6(g, q);
+    let cmbs: Vec<usize> = if t6 { lines_of(g, q).to_vec() } else { deck_combos(g, q) };
     if cmbs.is_empty() {
         return 0.0;
     }
@@ -815,11 +825,17 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
     for c in pl.cmds_in_zone() {
         have.push(name_of(g, c));
     }
-    let mut best = f64::NEG_INFINITY;
+    if t6 {
+        have.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).cd)));
+    }
+    let mut best = 0.0f64; // --- t6 quiet progress: (was -inf) every line skipped is 0, not inf
     for i in cmbs {
-        let c = all()[i];
-        let n = c.groups.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
-        best = best.max(n as f64 / c.groups.len() as f64);
+        let grps = real_groups(all()[i]); // the whole list for a line that is not quiet
+        if quiet(all()[i]) && grps.len() < 2 {
+            continue; // a quiet line of the commander alone (Dack Fayden) is always "held": no progress to read
+        }
+        let n = grps.iter().filter(|grp| grp.iter().any(|x| have.contains(x))).count();
+        best = best.max(n as f64 / grps.len() as f64);
     }
     best * best
 }
@@ -1374,7 +1390,8 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
     }
     let mut any_ready = false;
     let mut reach = false; // one tutor away now (checked at every decision, for `sp|away_now`)
-    let mine = deck_combos(g, p);
+    // --- t6 rograkh-thrasios: `lines_of` (real groups), not `deck_combos`, whose `QUIET` group is in no deck
+    let mine = lines_of(g, p);
     let held: std::collections::HashSet<&str> = {
         let pl = g.player(p);
         let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
@@ -1410,11 +1427,15 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
 fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pl = g.player(p);
     let cmd_in_zone: Vec<&str> = pl.cmds_in_zone().map(|c| name_of(g, c)).collect();
-    let miss: Vec<&[&str]> = cmb
-        .groups
+    // --- t6 rograkh-thrasios: the real groups (a quiet line's `QUIET` marker is never held, so no quiet line was
+    // ever one tutor away), and a land piece on the battlefield is held (lands are not on `perms`: Gaea's Cradle)
+    let land_out = |grp: &[&str]| {
+        pl.lands.iter().any(|&l| g.land(l).on_bf && grp.contains(&name_of(g, g.land(l).cd)))
+    };
+    let miss: Vec<&[&str]> = real_groups(cmb)
         .iter()
         .copied()
-        .filter(|grp| !has_piece(g, p, grp) && !grp.iter().any(|n| cmd_in_zone.contains(n)))
+        .filter(|grp| !has_piece(g, p, grp) && !land_out(grp) && !grp.iter().any(|n| cmd_in_zone.contains(n)))
         .collect();
     if miss.len() != 1 {
         return false;

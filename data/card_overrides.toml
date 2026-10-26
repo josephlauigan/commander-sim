@@ -1569,6 +1569,9 @@ note = "1 additional land drop(s) each turn"
 ["Explore"]
 types = "S"
 tags = "draw=1 explore"
+# --- Tiers 1/2 (tatyova-teysa): the extra land drop is the explore tag's (engine/cast.rs); the compiled "play an
+# additional land" would add a second one
+dsl = [{ type = "spell", effects = [{ do = "draw", n = 1, who = "you" }] }]
 status = "Full"
 note = "draw; one extra land drop this turn"
 
@@ -2241,6 +2244,7 @@ status = "Full"
 note = "battle cry; two Soldiers tapped and attacking"
 
 ["Hero of Iroas"]
+dsl = [] # --- Tiers 1/2 (lightpaws): the Aura discount is the common.rs cost hook (the compiled one would discount twice)
 status = "Full"
 note = "Aura spells cost {1} less; heroic: +1/+1 counter when an Aura targets it"
 
@@ -7616,11 +7620,13 @@ status = "Full"
 note = "flying, vigilance; upkeep: investigate once per opponent with more cards in hand than you"
 
 ["Youthful Valkyrie"]
+dsl = [] # --- Tiers 1/2 (lathril): hand-written (impls/t0_giada.rs); the compiled Angel trigger would run twice
 status = "Full"
 note = "flying; another Angel of yours entering (token too) puts a +1/+1 counter on it"
 
 ["Bishop of Wings"]
 tags = "human pow=1 tgh=4"
+dsl = [] # --- Tiers 1/2 (lathril): hand-written (impls/t0_giada.rs); the compiled Angel triggers would run twice
 status = "Full"
 note = "an Angel of yours entering (token too) gains you 4 life; an Angel of yours dying makes a 1/1 flying Spirit"
 
@@ -9485,3 +9491,186 @@ dsl = [] # the compiled search put any permanent card into the graveyard: card c
 
 ["Haven of the Spirit Dragon"]
 dsl = [] # the compiled return took any creature card: card code returns a Dragon
+
+# --- Tiers 1/2 (isshin): hand-written in rust/crates/sim-core/src/impls/t12_isshin.rs (status notes in data/audit.toml)
+["Otharri, Suns' Glory"]
+dsl = [] # the compiled attack made one Rebel with no experience counter; the trigger and the graveyard return are card code
+
+# --- Tiers 1/2 (lathril): Tyvar Kell is hand-written (impls/t12_lathril.rs): its Elves' {B} replaces the rock tag, and
+# the compiled +1 gave every creature deathtouch
+["Tyvar Kell"]
+tags = "leg"
+dsl = []
+
+# --- Tiers 1/2 (lathril): its printed */* reads as 1/1 from Scryfall; the compiled count is its whole power and
+# toughness
+["Abomination of Llanowar"]
+tags = "leg pow=0 tgh=0 vig"
+
+# --- Tiers 1/2 (lightpaws): hand-written in rust/crates/sim-core/src/impls/t12_lightpaws.rs (status notes in data/audit.toml)
+["Armored Ascension"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Chains of Custody"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Face of Divinity"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Flickerform"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Holy Mantle"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Idolized"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Light of Promise"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Mantle of the Ancients"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Mask of Law and Grace"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Shield of Duty and Reason"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Pariah"]
+types = "E"
+tags = "aura"
+dsl = []
+
+["Benevolent Blessing"]
+types = "E"
+tags = "aura flash"
+dsl = []
+
+["Stoneskin"]
+types = "E"
+tags = "aura flash"
+dsl = []
+
+["Twinblade Blessing"]
+types = "E"
+tags = "aura flash"
+dsl = []
+
+["Angelic Gift"]
+types = "E"
+tags = "aura"
+dsl = [] # the draw is the Aura spec's enter effect (the compiled one would draw twice)
+
+["Reprobation"]
+types = "E"
+tags = "rem=coward tgt=c etb"
+dsl = []
+
+["Retether"]
+tags = ""
+dsl = [] # the compiled reanimate returned a creature card; the hand-written resolve returns the Auras
+
+# --- Tiers 1/2 (windgrace): rust/crates/sim-core/src/impls/t12_windgrace.rs
+["Gruul Turf"]
+types = "L"
+tags = "c=RG t bounceland amt=2"
+dsl = []
+status = "Full"
+note = "bounce land: enters tapped, returns a land you control to its owner's hand (the one making the fewest colours, itself if none), taps for {R}{G}"
+
+["Rakdos Carnarium"]
+types = "L"
+tags = "c=BR t bounceland amt=2"
+dsl = []
+status = "Full"
+note = "bounce land: enters tapped, returns a land you control to its owner's hand (the one making the fewest colours, itself if none), taps for {B}{R}"
+
+["Lotus Field"]
+types = "L"
+tags = "c=A t amt=3"
+dsl = []
+status = "Full"
+note = "hexproof; enters tapped; when it enters, sacrifice two lands (hand-written: the least useful others, itself if there aren't two); taps for three mana of any one colour"
+
+["Dark Depths"]
+types = "L"
+tags = "leg c=C amt=0" # no mana ability
+dsl = []
+status = "Full"
+note = "hand-written: ten ice counters; {3}: remove one (spare mana at an opponent's end step or in the second main phase); none left: sacrificed for Marit Lage (20/20 black flier, indestructible). With Thespian's Stage: the combo"
+
+["Elvish Reclaimer"]
+dsl = [] # the compiled search could never pay its land sacrifice (lands are not permanents to the ability language) and took a basic
+status = "Full"
+note = "hand-written: +2/+2 with three or more land cards in your graveyard; {2},{T}, sacrifice a land (a tapped one, never a key land): a land onto the battlefield tapped (the missing half of Depths and Stage, Field of the Dead, a colour)"
+
+["Lumra, Bellow of the Woods"]
+types = "C"
+tags = "leg reach vig pow=0 tgh=0" # */*: no printed base, the compiled count is all of it
+dsl = [{ type = "static", static = "self_scaling", pow = 1, per = "lands_you_control", base0 = true }] # its enter trigger is hand-written
+status = "Full"
+note = "reach, vigilance; power and toughness = your lands (compiled); hand-written: enters: mill four, then every land card in your graveyard onto the battlefield tapped"
+
+["Spelunking"]
+dsl = [] # the enter trigger is hand-written (the Cave life), and the static is card code
+status = "Full"
+note = "hand-written: enters: draw, then the best land card from hand onto the battlefield (a Cave: gain 4 life); lands you control enter untapped (Game::add_land, also lands put onto the battlefield tapped)"
+
+["Tannuk, Memorial Ensign"]
+dsl = [] # the landfall trigger is hand-written (it counts its resolutions)
+status = "Full"
+note = "hand-written: landfall: 1 damage to each opponent; the second time it resolves in a turn, draw a card"
+
+["Worldsoul's Rage"]
+types = "S"
+tags = "tokx" # X = all spare mana; the resolution is hand-written
+dsl = []
+status = "Full"
+note = "hand-written: X damage to the best target (a creature worth killing, else the most threatening opponent); then up to X land cards from hand and graveyard onto the battlefield tapped"
+
+# --- Tiers 1/2 (tatyova-teysa)
+["Wrenn and Seven"]
+# all four loyalty abilities are hand-written (impls/t12_tatyova_teysa.rs): the compiled -8 would be a second one
+dsl = []
+
+["Teysa, Orzhov Scion"]
+# both abilities are hand-written (impls/t12_tatyova_teysa.rs); without compiled abilities the text-derived tags read
+# the dies trigger's Spirit as one made on entering
+tags = "leg human pow=2 tgh=3"
+dsl = []
+
+["Beanstalk Giant // Fertile Footsteps"]
+# printed */*: autotag reads "*" as 1, and the compiled "power and toughness are each equal to the number of lands you
+# control" adds to the base (the adventure is hand-written, impls/t12_tatyova_teysa.rs)
+tags = "pow=0 tgh=0"
+
+# --- Tiers 1/2 (brago-meren): card code in impls/t12_brago_meren.rs
+["Flickerwisp"]
+dsl = [] # the compiled exile never returned the card: the enter trigger is hand-written (exile until the end step)
+
+# --- */* fix (JD, 2026-10-25): power and toughness each equal the cards in your hand, not one more (the printed */*
+# read as 1/1 under the compiled count)
+["Psychosis Crawler"]
+tags = "pow=0 tgh=0"

@@ -74,6 +74,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         Sac(Fodder),
         Discard,
         Tap(PermId),
+        Behold(crate::impls::t12_lathril::Behold),
     }
     for t in texts {
         let mut choice = None;
@@ -112,6 +113,12 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 choice = Some(Choice::Tap(m));
             }
         }
+        // --- Tiers 1/2 (lathril): "behold an Elf and exile it" (Champions of the Perfect)
+        if choice.is_none()
+            && let Some(ty) = crate::impls::t12_lathril::behold_type(&t)
+        {
+            choice = crate::impls::t12_lathril::behold_pick(g, p, c, ty).map(Choice::Behold);
+        }
         let Some(choice) = choice else { return Ok(false) };
         if dry {
             continue;
@@ -141,6 +148,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                 die(g, m, "sac")?;
             }
             Choice::Tap(m) => g.perm_mut(m).tapped = true,
+            Choice::Behold(b) => crate::impls::t12_lathril::behold_pay(g, p, c, b)?,
             Choice::Discard => {
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
                 let lands: Vec<CardId> = others.iter().copied().filter(|&x| g.db.get(x).land).collect();
@@ -187,6 +195,10 @@ fn lock_in_force(g: &Game, l: &CastLock) -> bool {
     match l.end {
         LockEnd::Turn(st) => st == g.turn_stamp(),
         LockEnd::TurnOf(q, t) => g.player(q).alive && g.player(q).turns == t,
+        // --- Tiers 1/2 (lightpaws): Single Combat
+        LockEnd::ThroughNextTurn(q, t) => {
+            g.player(q).alive && (g.player(q).turns == t || (g.player(q).turns == t + 1 && g.active == Some(q)))
+        }
     }
 }
 
@@ -219,6 +231,8 @@ pub fn spell_locked(g: &Game, p: PlayerId, c: CardId) -> bool {
         LockKind::AllSpells => true,
         LockKind::Noncreature => !d.creature,
         LockKind::InstSorcAbilities => d.instant || d.sorcery,
+        // --- Tiers 1/2 (lightpaws): Single Combat
+        LockKind::CreatureWalker => d.creature || d.types.has(crate::cards::Types::PLANESWALKER),
     })
 }
 
@@ -761,6 +775,7 @@ fn gy_of(ctx: &Ctx, p: PlayerId) -> PlayerId {
 /// true if it resolved. Python's `cast_card`.
 pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> Res<bool> {
     g.tick()?;
+    crate::impls::t12_brago_meren::note_cast(g, c, zone); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
     if g.locks_used && (spell_locked(g, p, c) || split_second_up(g)) {
         return Ok(false); // a player cast lock or a split-second spell on the stack (callers check `castable` first)
     }

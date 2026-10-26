@@ -337,22 +337,30 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// Chrome Mox: you may exile a nonartifact, nonland card from your hand; it taps for that card's colours
-pub fn chrome_imprint(g: &mut Game, p: PlayerId, m: PermId) -> Res {
-    // Tier 6 (AI choice): never imprint a piece of the deck's own lines (Demonic Consultation, Underworld Breach)
+// --- t6 fast mana
+/// the cards in p's hand Chrome Mox would imprint (nonartifact, nonland, of p's colours); a Tier 6 AI never imprints
+/// a piece of the deck's own lines (Demonic Consultation, Underworld Breach)
+pub fn chrome_imprint_cands(g: &Game, p: PlayerId) -> Vec<CardId> {
     let t6_ai = crate::impls::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p);
     let ident = g.player(p).ident;
-    let cs: Vec<CardId> = g
-        .player(p)
+    g.player(p)
         .hand
         .iter()
         .copied()
         .filter(|&c| {
             let d = g.db.get(c);
-            !d.land && !d.types.has(crate::cards::Types::ARTIFACT) && d.colors.intersects(ident)
+            !d.land
+                && !d.types.has(crate::cards::Types::ARTIFACT)
+                && d.colors.intersects(ident)
                 && !(t6_ai && crate::impls::t6_pieces::is_line_piece(g, p, &d.name))
         })
-        .collect();
+        .collect()
+}
+
+/// Chrome Mox: you may exile a nonartifact, nonland card from your hand; it taps for that card's colours
+pub fn chrome_imprint(g: &mut Game, p: PlayerId, m: PermId) -> Res {
+    let ident = g.player(p).ident;
+    let cs = chrome_imprint_cands(g, p); // --- t6 fast mana: the filter is shared with the Tier 6 must-cast rule
     let Some(c) = min_by(&cs, |c| card_worth(g, p, c, false)) else { return Ok(()) };
     let pl = g.player_mut(p);
     let i = pl.hand.iter().position(|&x| x == c).unwrap();

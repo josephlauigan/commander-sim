@@ -81,15 +81,17 @@ fn undo_replays_to_the_same_game() {
     let n_answers = s.answers_len();
     assert!(n_answers >= 1);
     assert_eq!(s.undo(0, "sauron"), Some("Nothing to undo yet.".into()));
-    // Undo the only answer: back at the mulligan, then keep again
-    assert_eq!(s.undo(1, "sauron"), None);
+    // Undo every answer (the mulligan is the first; the person also answers priority since their turns are played):
+    // back at the mulligan, then keep again
+    let all = n_answers as i64;
+    assert_eq!(s.undo(all, "sauron"), None);
     let (c2, evs2) = drive(&s, c, LIMIT, &|_, _| None);
     assert_eq!(evs2[0]["kind"], "reset");
-    assert_eq!(evs2[0]["undone"], 1);
+    assert_eq!(evs2[0]["undone"], all);
     assert_eq!(evs2[0]["by"], "sauron");
     assert_eq!(final_state(&evs2), want);
     // a different answer: mulligan once (then keep): a different game
-    assert_eq!(s.undo(1, "sauron"), None);
+    assert_eq!(s.undo(all, "sauron"), None);
     let (_, evs3) = drive(&s, c2, LIMIT, &|_, i| if i == 1 { Some(json!(1)) } else { None });
     let hand = |e: &Value| e["view"]["players"].as_array().unwrap().iter().find(|p| p["you"] == true).unwrap()["hand"].clone();
     // (until the person's own turns are in the engine the game itself doesn't depend on the hand)

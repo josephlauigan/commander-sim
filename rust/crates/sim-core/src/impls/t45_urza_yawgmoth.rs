@@ -581,6 +581,7 @@ fn entomb_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
         agent_take(g, a, p, pick); // Opposition Agent takes what they search for
     } else {
         g.player_mut(p).gy.push(pick);
+        crate::impls::t12_brago_meren::note_gy(g, pick); // --- Tiers 1/2 (brago-meren)
         crate::glog!(g, "    {} puts {} into the graveyard (Entomb)", pname(g, p), cname(g, pick));
     }
     shuffle_library(g, p);
