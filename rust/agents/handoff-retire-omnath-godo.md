@@ -11,6 +11,9 @@
 - Count tests -> 12 (app_entry, http_catalog, http_server, server_fake, game.rs 84).
 
 ## Next
+Nothing: done (see report-retire-omnath-godo.md).
+
+## Was next
 1. Build + full test run; fix seat tests that relied on the real libraries.
 2. Docs in rust/ and documents/how-it-works.md.
 3. CLI checks, cardgen export, report.
