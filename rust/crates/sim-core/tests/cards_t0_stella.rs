@@ -610,3 +610,63 @@ fn the_commander_trace_pieces_are_registered() {
         assert!(g.registry.get(card(&g, n)).is_some(), "{n} has card code");
     }
 }
+
+// ======================================================== Mizzix's Mastery (casual combos)
+#[test]
+fn mizzix_s_mastery_is_overloaded_with_guttersnipe_out() {
+    let mut g = game();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Mountain", 8, false);
+    perm(&mut g, P0, "Guttersnipe");
+    fill_gy(&mut g, P0, &["Opt", "Ponder", "Preordain", "Think Twice", "Serum Visions"]);
+    let c = hand(&mut g, P0, &["Mizzix's Mastery"])[0];
+    let opts = hand_opts(&mut g, c, P0, Some(false));
+    let o = opts.iter().find(|o| o.label.contains("overload")).expect("the overload is offered");
+    assert!(opts.iter().all(|x| x.utility <= o.utility), "and preferred to the single copy");
+    let life = g.player(P1).life;
+    assert!(perform(&mut g, P0, &o.clone()));
+    assert!(g.player(P1).life <= life - 2 * 6, "Guttersnipe: the Mastery and five copies");
+    assert!(in_exile(&g, P0, "Opt") && in_exile(&g, P0, "Serum Visions"), "the copied cards are exiled");
+}
+
+#[test]
+fn mizzix_s_mastery_copies_one_spell_without_the_overload_mana() {
+    let mut g = game();
+    g.active = Some(P0);
+    lands(&mut g, P0, "Mountain", 4, false);
+    fill_gy(&mut g, P0, &["Treasure Cruise"]);
+    let c = hand(&mut g, P0, &["Mizzix's Mastery"])[0];
+    let opts = hand_opts(&mut g, c, P0, Some(false));
+    assert!(opts.iter().all(|o| !o.label.contains("overload")));
+    assert!(
+        opts.iter().any(|o| o.label.contains("one spell")),
+        "{:?}",
+        opts.iter().map(|o| &o.label).collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn mizzix_s_mastery_is_not_offered_to_veyran_s_own_brain() {
+    let mut g = table(&["veyran", "seph"]);
+    g.active = Some(P0);
+    lands(&mut g, P0, "Mountain", 8, false);
+    for n in ["Opt", "Ponder", "Preordain", "Consider"] {
+        if let Some(c) = g.player(P0).library.iter().copied().find(|&c| &*g.db.get(c).name == n) {
+            g.player_mut(P0).library.retain(|&x| x != c);
+            g.player_mut(P0).gy.push(c);
+        }
+    }
+    let c = card(&g, "Mizzix's Mastery");
+    g.player_mut(P0).hand.push(c);
+    assert!(hand_opts(&mut g, c, P0, Some(false)).is_empty());
+}
+
+#[test]
+fn galvanic_iteration_is_cast_with_a_spell_to_copy() {
+    let mut g = game();
+    lands(&mut g, P0, "Island", 7, false);
+    let c = hand(&mut g, P0, &["Galvanic Iteration"])[0];
+    assert_eq!(sim_core::ai::decks::deck_prio(&g, P0, c), 0, "nothing to copy: held");
+    hand(&mut g, P0, &["Deep Analysis"]);
+    assert!(sim_core::ai::decks::deck_prio(&g, P0, c) > 46, "before the draw spell it copies");
+}
