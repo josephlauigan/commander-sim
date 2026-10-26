@@ -178,6 +178,21 @@ fn staff_and_a_five_mana_elf_with_ezuri_in_the_library() {
 
 // ======================================================== Aurelia: the Sword and Aggravated Assault
 #[test]
+fn aurelia_casts_and_equips_sword_of_the_animist() {
+    let mut g = tbl(AURELIA);
+    let sword = perm(&mut g, P0, "Sword of the Animist");
+    let aurelia = perm(&mut g, P0, "Aurelia, the Warleader");
+    lands(&mut g, P0, "Plains", 2, false);
+    let c = g.perm(sword).cd.unwrap();
+    assert!(sim_core::ai::decks::deck_prio(&g, P0, c) > 0, "the Aurelia deck casts it");
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    let opts: Vec<Opt> = f(&mut g, sword, P0, Some(false)).unwrap();
+    assert!(matches!(opts[0].act, Some(Action::Equip { target, n: 2, .. }) if target == aurelia));
+    g.player_mut(P0).key = "korvold-jund-sacrifice";
+    assert!(f(&mut g, sword, P0, Some(false)).unwrap().is_empty(), "the Aurelia deck's alone");
+}
+
+#[test]
 fn aurelia_equips_sword_of_feast_and_famine() {
     let mut g = tbl(AURELIA);
     let sword = perm(&mut g, P0, "Sword of Feast and Famine");

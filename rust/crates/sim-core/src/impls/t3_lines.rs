@@ -42,6 +42,7 @@ const HELM: &str = "Helm of the Host";
 const AURELIA: &str = "Aurelia, the Warleader";
 const CELEBRANT: &str = "Combat Celebrant";
 const SOFF: &str = "Sword of Feast and Famine";
+const ANIMIST: &str = "Sword of the Animist";
 const ASSAULT: &str = "Aggravated Assault";
 
 const CHATTER: &str = "Chatterfang, Squirrel General";
@@ -327,7 +328,17 @@ fn soff_wearer(g: &Game, p: PlayerId, e: PermId) -> Option<PermId> {
 
 /// equip {2}: the Sword onto its wearer when it is on nothing of p's
 fn soff_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !aurelia(g, p) || g.perm(src).owner != p || !live(g, src) || stopped(g, SOFF) {
+    sword_options(g, src, p, post, SOFF)
+}
+
+/// Sword of the Animist ({2}, equip {2}: a basic land each time the wearer attacks) is cast and equipped like the
+/// Sword of Feast and Famine (its attack trigger is the engine's, `Tag::Animist`; only Sauron's deck ever cast it)
+fn animist_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    sword_options(g, src, p, post, ANIMIST)
+}
+
+fn sword_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>, name: &str) -> Res<Vec<Opt>> {
+    if post.is_none() || !aurelia(g, p) || g.perm(src).owner != p || !live(g, src) || stopped(g, name) {
         return Ok(vec![]);
     }
     if g.perm(src).attached.is_some_and(|t| live(g, t) && g.perm(t).owner == p) {
@@ -340,7 +351,7 @@ fn soff_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     }
     Ok(vec![Opt {
         utility: if post == Some(false) { 5.5 } else { 3.0 },
-        label: format!("equip {SOFF}"),
+        label: format!("equip {name}"),
         act: Some(Action::Equip { src, target: m, n }),
     }])
 }
@@ -382,6 +393,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, SOFF)?;
         c.prio = Some(soff_prio);
         c.options = Some(soff_options);
+    }
+    if db.id(ANIMIST).is_some() {
+        let c = r.card(db, ANIMIST)?;
+        c.prio = Some(soff_prio);
+        c.options = Some(animist_options);
     }
     if db.id(ASSAULT).is_some() {
         r.card(db, ASSAULT)?.prio = Some(assault_prio);
