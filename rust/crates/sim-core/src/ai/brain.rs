@@ -285,6 +285,9 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     let d = g.db.get(c);
     let main = is_main(pl.key);
     let mut base = decks::deck_prio_f(g, p, c);
+    if crate::impls::cc_brago::hold(g, p, c) {
+        return None; // --- casual combos (brago): Cloudshift needs a target and waits for the Kitten loop
+    }
     if pl.key == "cloud" && crate::impls::cloud::strands_equipment(g, p, c) {
         return None; // hold the Equipment until a creature can carry it
     }

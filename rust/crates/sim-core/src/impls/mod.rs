@@ -104,6 +104,7 @@ pub mod t12_windgrace; // --- Tiers 1/2 (windgrace)
 pub mod t12_tatyova_teysa; // --- Tiers 1/2 (tatyova-teysa)
 pub mod t12_kaalia_sythis; // --- Tiers 1/2 (kaalia-sythis)
 pub mod t12_brago_meren; // --- Tiers 1/2 (brago-meren)
+pub mod cc_brago; // --- casual combos (brago)
 pub mod t45_miirym; // --- Tiers 4/5 (miirym)
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,

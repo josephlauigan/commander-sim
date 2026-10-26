@@ -947,17 +947,6 @@ fn deadeye_ready(g: &Game, p: PlayerId) -> Ready {
     (true, keys, casts)
 }
 
-/// Peregrine Drake + Archaeomancer + Ghostly Flicker: Flicker blinks both (five lands untap, Flicker comes back to
-/// hand): two mana up each time; swapping the Drake for Agent of Treachery now and then takes every permanent
-fn flicker_ready(g: &Game, p: PlayerId) -> Ready {
-    let (Some(d), Some(a)) = (mine(g, p, DRAKE), mine(g, p, ARCH)) else { return not_ready() };
-    let Some(f) = held(g, p, FLICKER).filter(|&f| castable(g, p, f, "hand")) else { return not_ready() };
-    let Some((mut keys, mut casts)) = agent_piece(g, p) else { return not_ready() };
-    keys.extend([d, a]);
-    casts.push(f);
-    (true, keys, casts)
-}
-
 pub static COMBOS: [Combo; 2] = [
     Combo {
         name: "Peregrine Drake + Deadeye Navigator (+ Agent of Treachery)",
@@ -971,11 +960,12 @@ pub static COMBOS: [Combo; 2] = [
     Combo {
         name: "Peregrine Drake + Archaeomancer + Ghostly Flicker (+ Agent of Treachery)",
         groups: &[&[DRAKE], &[ARCH], &[FLICKER], &[AGENT]],
-        ready: flicker_ready,
+        // --- casual combos (brago): Agent of Treachery cast with the loop's mana (or dug for), four lands, three windows
+        ready: crate::impls::cc_brago::flicker_ready,
         mana: (0, ""),
         finish: None,
         xcost: &[],
-        steps: &[],
+        steps: crate::impls::cc_brago::FLICKER_STEPS,
     },
 ];
 
