@@ -1,14 +1,20 @@
 # Realism targets, Tier 3 (High Bracket 3): what real games look like, for `commander-sim --realism --pool t3`.
 # Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
 #
-# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24, matched to this tier's pool
-# commanders (data/decks.json): Aurelia, the Warleader (139), Korvold, Fae-Cursed King (1415), Marwyn, the Nurturer
-# (2162) and Tergrid, God of Fright (1215).
+# Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24, matched to this tier's five
+# pool commanders (data/decks.json): Atraxa, Praetors' Voice (1171), Aurelia, the Warleader (139), Korvold,
+# Fae-Cursed King (1415), Marwyn, the Nurturer (2162) and Tergrid, God of Fright (1215).
 #
-# Atraxa, Praetors' Voice (1171), the fifth pool commander, is left out of every target: 833 of its 1,837 logged wins
-# (45%) are poison, from infect and proliferate builds, while this tier's Atraxa is superfriends. With it the poison
-# target would be 22.6%. Its seat shares are close to the other four (34.7 / 27.0 / 21.7 / 16.6), so leaving it out
-# moves the seat targets by under 2 points.
+# Each commander counts the same (2026-10-24, when Atraxa rejoined at JD's request; the weighting is the main session's
+# choice): every target is the plain average of the five commanders' own figures, as the sim seats each pool deck
+# equally often. Pooled by logged games instead, Atraxa (1,837 of the five's 3,709 wins) would be half of every target.
+# Pooled figures, for comparison: seats 33.0 / 27.4 / 21.8 / 17.9, win turn 8.5, damage 46.7%, combo and alternate
+# 16.3%, commander damage 14.3%, poison 22.6%.
+#
+# History: until 2026-10-24 Atraxa was left out (the pool's Atraxa was superfriends, while 45% of Playgroup's Atraxa
+# wins are poison) and the other four were pooled: seats 31.3 / 27.8 / 21.8 / 19.1, win turn 8.1, damage 62.2%, combo
+# and alternate 20.0%, commander damage 17.4%, poison 0.4%. The pool's Atraxa is now EDHREC's bracket-3 infect list
+# (atraxa-infect), so it rejoined.
 #
 # Caveats: a commander's numbers cover every deck built around it, at any power level, so they give the shape of a
 # tier's games more than its level. They are casual pods logged by players, of any size (3 to 6 players). The two
@@ -18,95 +24,97 @@
 tier = "t3"
 
 # --- Seat win rates: each commander's page (https://playgroup.gg/commanders/<id>-<slug>, "Does seating order
-# matter?") gives its win rate from seats 1-4 and the games behind each. Wins pooled over the four commanders: seats
-# 1-4 win 40.1 / 35.6 / 28.0 / 24.4% of their games; each rate divided by the four rates' total gives the share of
-# decisive games, as the sim counts them. (Playgroup's all-games turn-order page, 284,950 4-player single-winner games
-# at every power level, gives 29.2 / 25.7 / 23.6 / 21.5: a smaller seat-1 edge than these commanders show.)
+# matter?") gives its win rate from seats 1-4 and the games behind each. Seats 1-4 win, on average over the five
+# commanders, 40.1 / 34.4 / 27.4 / 22.3% of their games (Atraxa 41.5 / 32.2 / 25.9 / 19.9); each rate divided by the
+# four rates' total gives the share of decisive games, as the sim counts them. (Playgroup's all-games turn-order page,
+# 284,950 4-player single-winner games at every power level, gives 29.2 / 25.7 / 23.6 / 21.5: a smaller seat-1 edge
+# than these commanders show.)
 
 [seat1_win]
-value = 31.3
-lo = 30.3
-hi = 32.3
-n = 10691
-source = "Playgroup commander pages, seat win rates of Aurelia, Korvold, Marwyn, Tergrid, share of seat wins"
+value = 32.3
+lo = 31.3
+hi = 33.3
+n = 21059
+source = "Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins"
 date = "2026-10-24"
-note = "n = seat-games behind the four commanders' seat 1-4 rates"
+note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
-value = 27.8
-lo = 26.8
-hi = 28.8
-n = 10691
-source = "Playgroup commander pages, seat win rates of Aurelia, Korvold, Marwyn, Tergrid, share of seat wins"
+value = 27.7
+lo = 26.7
+hi = 28.7
+n = 21059
+source = "Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins"
 date = "2026-10-24"
 
 [seat3_win]
-value = 21.8
-lo = 20.8
-hi = 22.8
-n = 10691
-source = "Playgroup commander pages, seat win rates of Aurelia, Korvold, Marwyn, Tergrid, share of seat wins"
+value = 22.0
+lo = 21.0
+hi = 23.0
+n = 21059
+source = "Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins"
 date = "2026-10-24"
 
 [seat4_win]
-value = 19.1
-lo = 18.1
-hi = 20.1
-n = 10691
-source = "Playgroup commander pages, seat win rates of Aurelia, Korvold, Marwyn, Tergrid, share of seat wins"
+value = 18.0
+lo = 17.0
+hi = 19.0
+n = 21059
+source = "Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins"
 date = "2026-10-24"
 
 # --- Speed: Playgroup gives each commander's average win turn (https://playgroup.gg/api/public/v1/commanders/<id>.json,
-# stats.average_wins_by_turn): Aurelia 9, Korvold 8, Marwyn 7, Tergrid 9; weighted by wins, 8.1. An average, not a
-# median, and no spread: win_round_spread has no target. commanders.json's average_round_amount (8.4 for the four) is
-# the length of every game played, won or not, so it is not used.
+# stats.average_wins_by_turn): Atraxa 9, Aurelia 9, Korvold 8, Marwyn 7, Tergrid 9; their average is 8.4. An average,
+# not a median, and no spread: win_round_spread has no target. commanders.json's average_round_amount is the length of
+# every game played, won or not, so it is not used.
 
 [win_round_median]
 value = 8
 lo = 7
 hi = 9
-n = 3697
-source = "Playgroup commander stats, average win turn of Aurelia, Korvold, Marwyn, Tergrid, weighted by wins"
+n = 7223
+source = "Playgroup commander stats, average win turn of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight)"
 date = "2026-10-24"
-note = "n = the four commanders' logged wins; Playgroup gives an average win turn, used as the median"
+note = "n = the five commanders' logged wins; Playgroup gives an average win turn (8.4), used as the median"
 
-# --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), wins of the
-# four commanders: combat and other damage 62.2%, combo, alternate win and mill 20.0%, commander damage 17.4%, poison
-# 0.4% of 1,872 wins. Grouped as t6.toml groups them.
+# --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json), each
+# commander's wins by type, averaged over the five: combat and other damage 59.8%, combo, alternate win and mill 16.5%,
+# commander damage 14.4%, poison 9.3% (Atraxa: 30.9 / 12.5 / 11.2 / 45.3% of its 1,837 wins; the other four 0-1%
+# poison). Grouped as t6.toml groups them.
 
 [win_damage]
-value = 62.2
-lo = 61.2
-hi = 63.2
-n = 1872
-source = "Playgroup commanders.json, wins of Aurelia, Korvold, Marwyn, Tergrid"
+value = 59.8
+lo = 58.8
+hi = 60.8
+n = 3709
+source = "Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight)"
 date = "2026-10-24"
 
 [win_combo_alt]
-value = 20.0
-lo = 19.0
-hi = 21.0
-n = 1872
-source = "Playgroup commanders.json, wins of Aurelia, Korvold, Marwyn, Tergrid"
+value = 16.5
+lo = 15.5
+hi = 17.5
+n = 3709
+source = "Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight)"
 date = "2026-10-24"
 
 [win_commander_damage]
-value = 17.4
-lo = 16.4
-hi = 18.4
-n = 1872
-source = "Playgroup commanders.json, wins of Aurelia, Korvold, Marwyn, Tergrid"
+value = 14.4
+lo = 13.4
+hi = 15.4
+n = 3709
+source = "Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight)"
 date = "2026-10-24"
 
 [win_poison]
-value = 0.4
-lo = 0.0
-hi = 1.4
-n = 1872
-source = "Playgroup commanders.json, wins of Aurelia, Korvold, Marwyn, Tergrid"
+value = 9.3
+lo = 8.3
+hi = 10.3
+n = 3709
+source = "Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight)"
 date = "2026-10-24"
 
 # --- No target yet:
-# - deck_win_spread: Playgroup's win rates (Aurelia 32.4%, Korvold 34.8%, Marwyn 37.8%, Tergrid 26.2% of games) are
-#   against whatever their pods held, not against each other, so their gap is not the sim's gap.
+# - deck_win_spread: Playgroup's win rates (Atraxa 32.1%, Aurelia 32.4%, Korvold 34.8%, Marwyn 37.8%, Tergrid 26.2%
+#   of games) are against whatever their pods held, not against each other, so their gap is not the sim's gap.
 # - games_over_15 and win_round_spread: Playgroup publishes no distribution of game or win length.

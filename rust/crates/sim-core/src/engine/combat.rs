@@ -100,10 +100,7 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
         return false; // Speed, Young Avenger: only creatures with haste can block it
     }
     if cardcode::granted_kw(g, a, "forestwalk")
-        && g.player(xb.owner).lands.iter().any(|&l| {
-            let d = g.db.get(g.land(l).cd);
-            &*d.name == "Forest" || d.has_subtype("forest")
-        })
+        && g.player(xb.owner).lands.iter().any(|&l| crate::impls::t3_marwyn::is_forest(g, l)) // Yavimaya: every land
     {
         return false;
     }
@@ -337,6 +334,18 @@ fn attack_imp(t: &crate::cards::Tags) -> f64 {
 /// p attacked d with atk: attack triggers (once per copy: Isshin). Returns the new attacking creatures.
 pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
     crate::impls::t0_captain::note_attack(g, p, d); // Avenge, Heroic Return
+    // --- Tier 3 (marwyn): who attacked this turn ("for each attacking Elf you control", Embercleave's cost)
+    let st = g.turn_stamp();
+    let pl = g.player_mut(p);
+    if pl.attacking != Some(st) {
+        pl.attackers.clear();
+    }
+    pl.attacking = Some(st);
+    for &m in atk {
+        if !pl.attackers.contains(&m) {
+            pl.attackers.push(m);
+        }
+    }
     let copies = 1 + hooks::total_trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
     for _ in 0..copies {
@@ -644,14 +653,15 @@ fn resolve_combat_inner(
                 Some(b) => {
                     let bt = etgh(g, b);
                     let t0 = crate::impls::t0_giada::combat_proof;
-                    let mut a_dies = (epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p) >= etgh(g, a) || g.perm(b).dt)
+                    let gs = crate::impls::t3_aurelia::gisela_scale; // Gisela, Blade of Goldnight
+                    let mut a_dies = (gs(g, p, epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p)) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
                         && !no_damage(g, a)
                         && !t0(g, a);
                     if cardcode::damage_prevented(g, b) {
                         a_dies = false;
                     }
-                    let mut b_dies = (ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d) >= bt || g.perm(a).dt)
+                    let mut b_dies = (gs(g, d, ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d)) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
                         && !no_damage(g, b)
                         && !t0(g, b);
@@ -698,6 +708,15 @@ fn resolve_combat_inner(
                         crate::impls::sephfs_cards::slaver_mark(g, b, a);
                         die(g, a, "destroy")?;
                     }
+                    // infect: damage to a creature is -1/-1 counters, which stay on a creature that survives it
+                    for (src, to, k) in [(a, b, ap), (b, a, epow(g, b))] {
+                        if k > 0 && kw(g, src, "infect") && g.perm(to).on_bf && !no_damage(g, to) {
+                            crate::cardcode::put_plus(g, to, -k);
+                            if etgh(g, to) <= 0 {
+                                die(g, to, "sba")?;
+                            }
+                        }
+                    }
                     crate::impls::t0_captain::pair_after(g, a, b); // Hercules
                     dmg
                 }
@@ -705,6 +724,7 @@ fn resolve_combat_inner(
             if dmg > 0 && g.fog == Some(g.turn_stamp()) && !g.unpreventable() {
                 dmg = 0; // Spore Frog and other fogs
             }
+            dmg = crate::impls::t3_aurelia::gisela_scale(g, d, dmg); // Gisela: to a player or their planeswalker
             if dmg > 0
                 && let Some(&(_, w)) = to_walker.iter().find(|x| x.0 == a)
                 && g.perm(w).on_bf
@@ -769,7 +789,12 @@ fn resolve_combat_inner(
                     *tot += dmg;
                     crate::impls::tymna_cards::toxic_hit(g, a, d); // Skrelv, Mite tokens, toxic granted by Skrelv
                     if g.dsl_on {
-                        let fired = crate::dsl::Fired { attacker: Some(a), defender: Some(d), ..Default::default() };
+                        let fired = crate::dsl::Fired {
+                            attacker: Some(a),
+                            defender: Some(d),
+                            dmg: Some(dmg),
+                            ..Default::default()
+                        };
                         crate::dsl::fire(g, "combat_damage", fired)?;
                     }
                     if !g.hooks.is_empty() {
@@ -962,6 +987,13 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 return Ok(());
             }
         }
+        if g.player(p).emblems.contains(&"liliana_waker") {
+            // Liliana, Waker of the Dead's emblem: a creature card from a graveyard, with haste (Tier 3 Tergrid)
+            crate::impls::t3_korvold::liliana_emblem(g, p)?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+        }
         if !g.hooks.is_empty() && ncomb == 1 {
             fire_trigger(g, Event::Crew, Call::Player { p })?;
         }
@@ -1147,6 +1179,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             if !(g.perm(m).vig || kw(g, m, "vigilance")) {
                 g.perm_mut(m).tapped = true;
                 crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
+                crate::impls::t3_marwyn::on_tapped(g, m)?; // --- Tier 3 (marwyn): Dionus, Legolas
             }
         }
         let new = attack_triggers(g, p, &atk, d)?; // once for the whole attack, naming the main defender

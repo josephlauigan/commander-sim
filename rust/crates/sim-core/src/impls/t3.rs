@@ -145,6 +145,9 @@ pub(crate) fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
 }
 
 // ======================================================== Korvold, Fae-Cursed King (sacrifice value)
+/// a player with this many lands sacrifices a land before a nonland card (`sac_worst_permanent`)
+const SPARE_LANDS: usize = 5;
+
 /// t3.sac_worst_permanent: sacrifice the least valuable permanent (Food / Clue / Treasure first); returns what was
 /// sacrificed
 pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -> Res<Option<Sacrificed>> {
@@ -173,11 +176,17 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
         .copied()
         .filter(|&m| Some(m) != exclude && !g.perm(m).is_cmd && !g.perm(m).phased)
         .collect();
-    if let Some(m) = min_by(&cands, |m| pval(g, m)) {
+    let lands = g.player(p).lands.clone();
+    let tokens: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).cd.is_none()).collect();
+    // creature tokens, then (with five lands or more) a land, then the cheapest card (Python: the cheapest permanent
+    // first, so Korvold gave up its Altars and Bombardment with lands to spare)
+    let pick = min_by(&tokens, |m| pval(g, m)).or_else(|| {
+        (lands.len() < SPARE_LANDS).then(|| min_by(&cands, |m| pval(g, m))).flatten()
+    });
+    if let Some(m) = pick {
         die(g, m, "sac")?;
         return Ok(Some(Sacrificed::Perm(m)));
     }
-    let lands = g.player(p).lands.clone();
     let colours = |l: LandId| g.db.get(g.land(l).cd).tags.str(crate::tag::Tag::C).map_or(0, |s| s.len());
     if let Some(l) = first_max(&lands, |l| (g.land(l).tapped, std::cmp::Reverse(colours(l)))) {
         // Python: min(p.lands, key=lambda L: (not L.tapped, len(L.cd.tags.get('c', ''))))
@@ -779,8 +788,7 @@ static FREYALISE: [WalkerAb; 3] = [
 
 /// Forests tap for an extra G
 fn nissa_wstw(g: &Game, src: Src, p: PlayerId, l: LandId) -> i32 {
-    let d = g.db.get(g.land(l).cd);
-    (p == g.perm(src).owner && (d.has_subtype("forest") || &*d.name == "Forest")) as i32
+    (p == g.perm(src).owner && crate::impls::t3_marwyn::is_forest(g, l)) as i32 // Yavimaya: every land
 }
 
 fn nissa_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {

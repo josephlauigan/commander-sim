@@ -935,6 +935,8 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
     if outs.is_empty() {
         return Ok(vec![]);
     }
+    // an opposing Tergrid, God of Fright takes each nontoken permanent sacrificed: only tokens go
+    let tergrid = g.opps(p).any(|q| crate::engine::values::has(g, q, Tag::Tergrid));
     let fod_for = |g: &Game, src: PermId| -> Vec<PermId> {
         g.player(p)
             .perms
@@ -945,6 +947,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
                 let cr = g.is_creature(m);
                 ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
                     || (cr && x.token && !x.phased))
+                    && (!tergrid || x.token || x.cd.is_none())
                     && (!main || (!x.is_cmd && !crate::engine::values::no_sac(g, m) && !is_payoff(g, m)))
             })
             .collect()
@@ -1244,7 +1247,14 @@ fn priest_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ======================================================== staples
 /// Full: taps for {C}; cracked for a card late (six or more lands)
 fn mind_stone(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(true) || g.perm(src).tapped || g.player(p).lands.len() < 6 || !can_pay(g, p, 1, "", false) {
+    if post != Some(true) || g.perm(src).tapped || g.player(p).lands.len() < 6 {
+        return Ok(vec![]);
+    }
+    // {1}, {T}, sacrifice: the {1} can't come from Mind Stone itself (offered on its own mana, then refused)
+    let keep = std::mem::replace(&mut g.keep_untapped, vec![src]);
+    let ok = can_pay(g, p, 1, "", false);
+    g.keep_untapped = keep;
+    if !ok {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -1857,7 +1867,7 @@ const PVAL: &[(&str, f64)] = &[
     ("Brago, King Eternal", 6.0),
     ("Tatyova, Benthic Druid", 5.0),
     ("Atraxa, Praetors' Voice", 7.0),
-    ("Tergrid, God of Fright // Tergrid's Lantern", 7.0),
+    ("Tergrid, God of Fright // Tergrid's Lantern", 10.0), // JD 2026-10-24: was 7; removal goes to it first, as real tables do
     ("Prosper, Tome-Bound", 6.0),
     ("Craterhoof Behemoth", 8.0),
     ("Helm of the Host", 6.0),
@@ -2910,7 +2920,10 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         if poisoned {
             check_state(g)?;
         }
-        // CI.fire(g, 'proliferated', p): no card hooks it
+        // compiled "whenever you proliferate" triggers (Ezuri draws, Voidwing Hybrid returns)
+        if g.dsl_on {
+            crate::dsl::fire(g, "proliferate", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+        }
     }
     Ok(())
 }

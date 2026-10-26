@@ -137,8 +137,8 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: LandId) -> Res {
 
 /// fixes.destroy_land (a copy: fixes.rs is ported separately; the same few lines)
 fn destroy_land(g: &mut Game, q: PlayerId, l: LandId) -> Res {
-    if !has_land(g, q, l) {
-        return Ok(());
+    if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
+        return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
     let cd = g.land(l).cd;
     crate::engine::turn::remove_land(g, q, l);

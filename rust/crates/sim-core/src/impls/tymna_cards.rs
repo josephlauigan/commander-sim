@@ -1631,7 +1631,14 @@ pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
                 k += 1;
             }
         }
-        Some(_) => k += i32::from(name_of(g, a) == SKRELV && !x.neutered),
+        Some(cd) => {
+            // the card's own toxic N, compiled (Skrelv, Blightbelly Rat, Ixhel, Contaminant Grafter); these give their
+            // toxic in their own combat-damage hooks
+            const HOOK_TOXIC: [&str; 4] = ["Dune Mover", "Paladin of Predation", "Ribskiff", "Venomous Brutalizer"];
+            if !HOOK_TOXIC.contains(&&*g.db.get(cd).name) {
+                k += crate::dsl::toxic_amount(g, a);
+            }
+        }
     }
     if k == 0 || crate::engine::values::melira(g, d) {
         return;

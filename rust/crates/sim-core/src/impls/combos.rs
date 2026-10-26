@@ -104,6 +104,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t6_combos_godo::COMBOS.iter())
             .chain(super::t6_combos_t6::COMBOS.iter())
             .chain(super::t6_combos_extra::COMBOS.iter())
+            .chain(super::t3_marwyn::COMBOS.iter()) // --- Tier 3 (marwyn)
             .collect()
     });
     &ALL
@@ -648,6 +649,9 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
             && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0)
         {
             continue;
+        }
+        if g.player(p).combo_turn == Some((g.player(p).turns, cmb.name)) {
+            continue; // already gone for this turn: `attempt_run` refuses a second try
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
         if !ok || !affordable(g, p, cmb, &casts) {

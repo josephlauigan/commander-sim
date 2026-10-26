@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Disruption / discard & 
 
 - **Commander:** Tergrid, God of Fright // Tergrid's Lantern
 - **Color identity:** Black
-- **Game Changers (3):** Tergrid, God of Fright // Tergrid's Lantern, Demonic Tutor, Orcish Bowmasters
+- **Game Changers (3):** Braids, Cabal Minion, Demonic Tutor, Tergrid, God of Fright // Tergrid's Lantern
 - **Combos:** None.
-- **Lands:** 36 (10 nonbasic + 26 basic)
+- **Lands:** 34 (7 nonbasic + 27 basic)
 
 ## Role in the pool
 
@@ -33,96 +33,95 @@ Tergrid's steal-on-discard/sacrifice (nontoken permanents only); edicts; symmetr
 
 **Commander (1).** Tergrid, God of Fright // Tergrid's Lantern
 
-**Creatures (22).** Accursed Marauder, Archfiend of Depravity, Bloodline Keeper // Lord of Lineage, Braids, Arisen Nightmare, Burglar Rat, Butcher of Malakir, Chittering Rats, Crypt Ghast, Dauthi Voidwalker, Doom Whisperer, Fleshbag Marauder, Gix, Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Massacre Girl, Merciless Executioner, Orcish Bowmasters, Phyrexian Obliterator, Plaguecrafter, Rotting Regisaur, Sheoldred, the Apocalypse, Tinybones, Trinket Thief
+**Creatures (21).** Accursed Marauder, Aclazotz, Deepest Betrayal // Temple of the Dead, Archfiend of Depravity, Braids, Arisen Nightmare, Braids, Cabal Minion, Burglar Rat, Crypt Ghast, Demon's Disciple, Elderfang Disciple, Fleshbag Marauder, Gray Merchant of Asphodel, Mindslicer, Nezumi Informant, Phyrexian Obliterator, Plaguecrafter, Rankle, Master of Pranks, Sangromancer, Sheoldred, Whispering One, The Raven Man, Tinybones, Trinket Thief, Virus Beetle
 
-**Planeswalkers (2).** Liliana of the Veil, Liliana, Dreadhorde General
+**Planeswalkers (2).** Liliana of the Veil, Liliana, Waker of the Dead
 
-**Enchantments (8).** Black Market Connections, Dictate of Erebos, Grave Pact, Liliana's Caress, Megrim, Painful Quandary, Phyrexian Arena, Waste Not
+**Enchantments (8).** Bottomless Pit, Grave Pact, Liliana's Caress, Oppression, Painful Quandary, Phyrexian Arena, The Eldest Reborn, Waste Not
 
-**Artifacts (11).** Arcane Signet, Charcoal Diamond, Fellwar Stone, Geth's Grimoire, Jet Medallion, Lightning Greaves, Mind Stone, Sol Ring, Swiftfoot Boots, Thought Vessel, Worn Powerstone
+**Artifacts (10).** Arcane Signet, Charcoal Diamond, Fellwar Stone, Geth's Grimoire, Jet Medallion, Lightning Greaves, Mind Stone, Sol Ring, Swiftfoot Boots, Thought Vessel
 
-**Sorceries (12).** Bloodchief's Thirst, Chainer's Edict, Damnation, Demonic Tutor, Feed the Swarm, Hymn to Tourach, Innocent Blood, Mind Twist, Night's Whisper, Read the Bones, Sign in Blood, Toxic Deluge
+**Sorceries (16).** Blasphemous Edict, Dark Deal, Delirium Skeins, Demonic Tutor, Duress, Feed the Swarm, Innocent Blood, Mire in Misery, Pox, Rankle's Prank, Reanimate, Sign in Blood, Smallpox, Syphon Mind, Torment of Hailfire, Vicious Rumors
 
-**Instants (8).** Dark Ritual, Deadly Rollick, Go for the Throat, Hero's Downfall, Infernal Grasp, Liliana's Triumph, Sheoldred's Edict, Snuff Out
+**Instants (8).** Dark Ritual, Flare of Malice, Imp's Mischief, Liliana's Triumph, Malakir Rebirth // Malakir Mire, Sheoldred's Edict, Soul Shatter, Vona's Hunger
 
-**Lands (36).** Bojuka Bog, Cabal Coffers, Castle Locthwain, Hive of the Eye Tyrant, Mutavault, Phyrexian Tower, Rogue's Passage, Takenuma, Abandoned Mire, Urborg, Tomb of Yawgmoth, War Room, 26 Swamp
+**Lands (34).** Bojuka Bog, Cabal Coffers, Cabal Stronghold, Geier Reach Sanitarium, Myriad Landscape, Nykthos, Shrine to Nyx, Urborg, Tomb of Yawgmoth, 27 Swamp
 
 ## Import list (100)
 
 ```
 1 Accursed Marauder
+1 Aclazotz, Deepest Betrayal // Temple of the Dead
 1 Arcane Signet
 1 Archfiend of Depravity
-1 Black Market Connections
-1 Bloodchief's Thirst
-1 Bloodline Keeper // Lord of Lineage
+1 Blasphemous Edict
 1 Bojuka Bog
+1 Bottomless Pit
 1 Braids, Arisen Nightmare
+1 Braids, Cabal Minion
 1 Burglar Rat
-1 Butcher of Malakir
 1 Cabal Coffers
-1 Castle Locthwain
-1 Chainer's Edict
+1 Cabal Stronghold
 1 Charcoal Diamond
-1 Chittering Rats
 1 Crypt Ghast
-1 Damnation
+1 Dark Deal
 1 Dark Ritual
-1 Dauthi Voidwalker
-1 Deadly Rollick
+1 Delirium Skeins
+1 Demon's Disciple
 1 Demonic Tutor
-1 Dictate of Erebos
-1 Doom Whisperer
+1 Duress
+1 Elderfang Disciple
 1 Feed the Swarm
 1 Fellwar Stone
+1 Flare of Malice
 1 Fleshbag Marauder
+1 Geier Reach Sanitarium
 1 Geth's Grimoire
-1 Gix, Yawgmoth Praetor
-1 Go for the Throat
 1 Grave Pact
-1 Grave Titan
 1 Gray Merchant of Asphodel
-1 Hero's Downfall
-1 Hive of the Eye Tyrant
-1 Hymn to Tourach
-1 Infernal Grasp
+1 Imp's Mischief
 1 Innocent Blood
 1 Jet Medallion
 1 Lightning Greaves
 1 Liliana of the Veil
 1 Liliana's Caress
 1 Liliana's Triumph
-1 Liliana, Dreadhorde General
-1 Massacre Girl
-1 Megrim
-1 Merciless Executioner
+1 Liliana, Waker of the Dead
+1 Malakir Rebirth // Malakir Mire
 1 Mind Stone
-1 Mind Twist
-1 Mutavault
-1 Night's Whisper
-1 Orcish Bowmasters
+1 Mindslicer
+1 Mire in Misery
+1 Myriad Landscape
+1 Nezumi Informant
+1 Nykthos, Shrine to Nyx
+1 Oppression
 1 Painful Quandary
 1 Phyrexian Arena
 1 Phyrexian Obliterator
-1 Phyrexian Tower
 1 Plaguecrafter
-1 Read the Bones
-1 Rogue's Passage
-1 Rotting Regisaur
+1 Pox
+1 Rankle's Prank
+1 Rankle, Master of Pranks
+1 Reanimate
+1 Sangromancer
 1 Sheoldred's Edict
-1 Sheoldred, the Apocalypse
+1 Sheoldred, Whispering One
 1 Sign in Blood
-1 Snuff Out
+1 Smallpox
 1 Sol Ring
+1 Soul Shatter
 1 Swiftfoot Boots
-1 Takenuma, Abandoned Mire
+1 Syphon Mind
 1 Tergrid, God of Fright // Tergrid's Lantern
+1 The Eldest Reborn
+1 The Raven Man
 1 Thought Vessel
 1 Tinybones, Trinket Thief
-1 Toxic Deluge
+1 Torment of Hailfire
 1 Urborg, Tomb of Yawgmoth
-1 War Room
+1 Vicious Rumors
+1 Virus Beetle
+1 Vona's Hunger
 1 Waste Not
-1 Worn Powerstone
-26 Swamp
+27 Swamp
 ```

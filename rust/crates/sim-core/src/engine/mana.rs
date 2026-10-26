@@ -392,9 +392,29 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
     for (i, w) in u.iter().enumerate() {
         if used[i] > 0 {
             spend_unit(g, p, *w, used[i], &col[i])?;
+            let on_demand = matches!(w.src, Source::Perm(m) if crate::impls::t6_mana::mana_on_demand(g, m));
+            if used[i] < w.amt && matches!(w.src, Source::Land(_) | Source::Perm(_)) && !on_demand {
+                float_leftover(g, p, w.cols, w.amt - used[i]);
+            }
         }
     }
     Ok(true)
+}
+
+/// The mana a land or permanent made beyond what the payment used stays in the pool, as in the rules: Gaea's Cradle
+/// tapped for four paid one {G} of Sisay's {W}{U}{B}{R}{G} and the other three were lost, so a line that was
+/// affordable stopped after its first step. It empties with the turn's other floating mana. One colour floats as
+/// that colour (white as any: no white floating unit is spent), none as {C}, several as any.
+fn float_leftover(g: &mut Game, p: PlayerId, cols: Colors, n: u32) {
+    let f = &mut g.player_mut(p).floating;
+    match cols.count() {
+        0 => f.c += n,
+        1 if cols.has('U') => f.u += n,
+        1 if cols.has('B') => f.b += n,
+        1 if cols.has('R') => f.r += n,
+        1 if cols.has('G') => f.g += n,
+        _ => f.any += n,
+    }
 }
 
 /// Use unit w for n mana; col: the coloured pips it paid for (painlands hurt only then). Taps or sacrifices the
@@ -448,6 +468,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
         Source::Perm(m) => {
             g.perm_mut(m).tapped = true;
             crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
+            crate::impls::t3_marwyn::on_tapped(g, m)?; // --- Tier 3 (marwyn): Dionus, Legolas
             g.tap_cols = Colors::from_letters(col);
             cardcode::on_tap_perm(g, p, m, n)?;
             if !g.hooks.is_empty() {

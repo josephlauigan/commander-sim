@@ -542,7 +542,9 @@ pub fn ring_blocked(g: &Game, p: PlayerId, a: PermId, b: PermId) -> bool {
 /// mine.damage_prevented (Old Fat Spider's chapter II)
 pub fn damage_prevented(g: &Game, m: PermId) -> bool {
     !g.unpreventable()
-        && (crate::impls::mine::damage_prevented(g, m) || crate::impls::titania::spider_fog(g, m))
+        && (crate::impls::mine::damage_prevented(g, m)
+            || crate::impls::titania::spider_fog(g, m)
+            || crate::impls::t3_marwyn::elf_fog(g, m)) // --- Tier 3 (marwyn): Galadhrim Ambush
 }
 
 /// rules.dovin_blocked: Dovin's -1: damage to and from m is prevented

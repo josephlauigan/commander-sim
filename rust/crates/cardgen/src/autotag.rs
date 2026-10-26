@@ -60,6 +60,8 @@ const IGNORABLE_KEYWORDS: &[&str] = &[
     "kicker",
     "equip",
     "protection",
+    "infect", // combat: poison to players, -1/-1 counters to creatures (sim-core engine::combat)
+    "toxic",  // the amount is compiled (dsl_parse: static "toxic")
 ];
 const IGNORABLE: &[&str] = &[
     r"\bscry\b",

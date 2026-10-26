@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Go-wide / Craterhoof fi
 
 - **Commander:** Marwyn, the Nurturer
 - **Color identity:** Green
-- **Game Changers (3):** Natural Order, Survival of the Fittest, Gaea's Cradle
+- **Game Changers (3):** Gaea's Cradle, Natural Order, Worldly Tutor
 - **Combos:** None infinite. Craterhoof Behemoth is the one-turn kill (Natural Order, Finale, Chord, GSZ find it).
-- **Lands:** 33 (8 nonbasic + 25 basic)
+- **Lands:** 31 (8 nonbasic + 23 basic)
 
 ## Role in the pool
 
@@ -33,97 +33,99 @@ Mana elves scaling with Elf count; Gaea's Cradle; Craterhoof overrun math (+X/+X
 
 **Commander (1).** Marwyn, the Nurturer
 
-**Creatures (45).** Allosaurus Shepherd, Arbor Elf, Avenger of Zendikar, Beast Whisperer, Boreal Druid, Canopy Tactician, Circle of Dreams Druid, Collector Ouphe, Craterhoof Behemoth, Dwynen's Elite, Elvish Archdruid, Elvish Champion, Elvish Clancaller, Elvish Harbinger, Elvish Mystic, Elvish Rejuvenator, Elvish Visionary, Elvish Warmaster, Eternal Witness, Ezuri, Renegade Leader, Fyndhorn Elves, Heritage Druid, Imperious Perfect, Jaspera Sentinel, Joraga Treespeaker, Kogla, the Titan Ape, Llanowar Elves, Llanowar Tribe, Lys Alana Huntmaster, Paradise Druid, Priest of Titania, Quirion Ranger, Rampaging Baloths, Reclamation Sage, Rishkar, Peema Renegade, Sylvan Caryatid, Sylvan Messenger, Tendershoot Dryad, Timberwatch Elf, Tireless Provisioner, Tireless Tracker, Wirewood Channeler, Wirewood Symbiote, Wood Elves, Wurmcoil Engine
+**Creatures (37).** Allosaurus Shepherd, Arbor Elf, Beast Whisperer, Boreal Druid, Canopy Tactician, Circle of Dreams Druid, Craterhoof Behemoth, Dionus, Elvish Archdruid, Dwynen, Gilt-Leaf Daen, Eladamri, Korvecdal, Elvish Archdruid, Elvish Champion, Elvish Harbinger, Elvish Mystic, Elvish Visionary, Elvish Warmaster, Eternal Witness, Ezuri, Renegade Leader, Fauna Shaman, Fierce Empath, Fyndhorn Elves, Galadhrim Brigade, Immaculate Magistrate, Imperious Perfect, Joraga Warcaller, Leaf-Crowned Visionary, Llanowar Elves, Lys Alana Huntmaster, Priest of Titania, Quirion Ranger, Realmwalker, Reclamation Sage, Seeker of Skybreak, Timberwatch Elf, Wirewood Channeler, Wirewood Symbiote, Yeva, Nature's Herald
 
-**Planeswalkers (2).** Freyalise, Llanowar's Fury, Nissa, Who Shakes the World
+**Planeswalkers (1).** Freyalise, Llanowar's Fury
 
-**Enchantments (3).** Guardian Project, Survival of the Fittest, Sylvan Library
+**Enchantments (6).** Elvish Guidance, Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun, Guardian Project, Kenrith's Transformation, Sylvan Library, Wild Growth
 
-**Artifacts (4).** Esika's Chariot, Lightning Greaves, Skullclamp, Sol Ring
+**Artifacts (6).** Emerald Medallion, Lightning Greaves, Sol Ring, Staff of Domination, Swiftfoot Boots, Umbral Mantle
 
-**Sorceries (8).** Eldritch Evolution, Elvish Promenade, Finale of Devastation, Green Sun's Zenith, Harmonize, Natural Order, Primal Might, Shamanic Revelation
+**Sorceries (9).** Elvish Promenade, Finale of Devastation, Genesis Wave, Green Sun's Zenith, Harmonize, Natural Order, Overwhelming Stampede, Rishkar's Expertise, Shamanic Revelation
 
-**Instants (4).** Beast Within, Chord of Calling, Heroic Intervention, Return of the Wildspeaker
+**Instants (9).** Beast Within, Chord of Calling, Elven Ambush, Galadhrim Ambush, Heroic Intervention, Legolas's Quick Reflexes, Return of the Wildspeaker, Vitalize, Worldly Tutor
 
-**Lands (33).** Boseiju, Who Endures, Castle Garenbrig, Dryad Arbor, Gaea's Cradle, Nykthos, Shrine to Nyx, Pendelhaven, Rogue's Passage, Yavimaya Hollow, 25 Forest
+**Lands (31).** Boseiju, Who Endures, Castle Garenbrig, Cavern of Souls, Gaea's Cradle, Nykthos, Shrine to Nyx, Three Tree City, Wirewood Lodge, Yavimaya, Cradle of Growth, 23 Forest
 
 ## Import list (100)
 
 ```
 1 Allosaurus Shepherd
 1 Arbor Elf
-1 Avenger of Zendikar
 1 Beast Whisperer
 1 Beast Within
 1 Boreal Druid
 1 Boseiju, Who Endures
 1 Canopy Tactician
 1 Castle Garenbrig
+1 Cavern of Souls
 1 Chord of Calling
 1 Circle of Dreams Druid
-1 Collector Ouphe
 1 Craterhoof Behemoth
-1 Dryad Arbor
-1 Dwynen's Elite
-1 Eldritch Evolution
+1 Dionus, Elvish Archdruid
+1 Dwynen, Gilt-Leaf Daen
+1 Eladamri, Korvecdal
+1 Elven Ambush
 1 Elvish Archdruid
 1 Elvish Champion
-1 Elvish Clancaller
+1 Elvish Guidance
 1 Elvish Harbinger
 1 Elvish Mystic
 1 Elvish Promenade
-1 Elvish Rejuvenator
 1 Elvish Visionary
 1 Elvish Warmaster
-1 Esika's Chariot
+1 Emerald Medallion
 1 Eternal Witness
 1 Ezuri, Renegade Leader
+1 Fauna Shaman
+1 Fierce Empath
 1 Finale of Devastation
 1 Freyalise, Llanowar's Fury
 1 Fyndhorn Elves
 1 Gaea's Cradle
+1 Galadhrim Ambush
+1 Galadhrim Brigade
+1 Genesis Wave
 1 Green Sun's Zenith
+1 Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun
 1 Guardian Project
 1 Harmonize
-1 Heritage Druid
 1 Heroic Intervention
+1 Immaculate Magistrate
 1 Imperious Perfect
-1 Jaspera Sentinel
-1 Joraga Treespeaker
-1 Kogla, the Titan Ape
+1 Joraga Warcaller
+1 Kenrith's Transformation
+1 Leaf-Crowned Visionary
+1 Legolas's Quick Reflexes
 1 Lightning Greaves
 1 Llanowar Elves
-1 Llanowar Tribe
 1 Lys Alana Huntmaster
 1 Marwyn, the Nurturer
 1 Natural Order
-1 Nissa, Who Shakes the World
 1 Nykthos, Shrine to Nyx
-1 Paradise Druid
-1 Pendelhaven
+1 Overwhelming Stampede
 1 Priest of Titania
-1 Primal Might
 1 Quirion Ranger
-1 Rampaging Baloths
+1 Realmwalker
 1 Reclamation Sage
 1 Return of the Wildspeaker
-1 Rishkar, Peema Renegade
-1 Rogue's Passage
+1 Rishkar's Expertise
+1 Seeker of Skybreak
 1 Shamanic Revelation
-1 Skullclamp
 1 Sol Ring
-1 Survival of the Fittest
-1 Sylvan Caryatid
+1 Staff of Domination
+1 Swiftfoot Boots
 1 Sylvan Library
-1 Sylvan Messenger
-1 Tendershoot Dryad
+1 Three Tree City
 1 Timberwatch Elf
-1 Tireless Provisioner
-1 Tireless Tracker
+1 Umbral Mantle
+1 Vitalize
+1 Wild Growth
 1 Wirewood Channeler
+1 Wirewood Lodge
 1 Wirewood Symbiote
-1 Wood Elves
-1 Wurmcoil Engine
-1 Yavimaya Hollow
-25 Forest
+1 Worldly Tutor
+1 Yavimaya, Cradle of Growth
+1 Yeva, Nature's Herald
+23 Forest
 ```

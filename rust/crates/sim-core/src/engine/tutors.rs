@@ -423,7 +423,9 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
 /// (`adnaus_hand_cap`: the cleanup would discard the rest), and stop once a combo is ready
 pub fn ad_nauseam(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
     let floor = floor.unwrap_or_else(|| ai::plans::adnaus_floor(g, p));
-    let cap = ai::plans::adnaus_hand_cap(g, p);
+    // a Tier 6 win attempt ("Ad Nauseam into a win") digs for the line this turn: the cleanup's discard doesn't matter
+    // if it wins, so the hand cap is off (with eight cards in hand it drew none and the line stopped)
+    let cap = if g.t6_going == Some(p) { usize::MAX } else { ai::plans::adnaus_hand_cap(g, p) };
     let mut n = 0;
     while !g.player(p).library.is_empty()
         && g.player(p).alive

@@ -143,7 +143,7 @@ fn angelic_destiny_returns_when_its_creature_dies_under_hushbringer() {
 fn fix_proliferate_adds_the_counters_the_engine_keeps() {
     // Python's proliferate added to m.data['counters'], which nothing writes: poison, charge counters, the Incubator's
     // and The Ozolith's counters were never proliferated
-    let mut g = table(&["atraxa-superfriends", "seph"]);
+    let mut g = table(&["atraxa-infect", "seph"]);
     let m = token(&mut g, P0, 2);
     g.perm_mut(m).plus = 1;
     let w = perm(&mut g, P0, "Narset, Parter of Veils");
@@ -166,7 +166,7 @@ fn fix_proliferate_adds_the_counters_the_engine_keeps() {
 
 #[test]
 fn proliferate_poison_can_finish_a_player() {
-    let mut g = table(&["atraxa-superfriends", "seph"]);
+    let mut g = table(&["atraxa-infect", "seph"]);
     g.player_mut(P1).poison = 9;
     common::proliferate(&mut g, P0, 1).unwrap();
     assert!(!g.player(P1).alive);
@@ -272,7 +272,7 @@ fn elspeth_makes_soldiers() {
 
 #[test]
 fn narset_digs_a_noncreature_card() {
-    let mut g = table(&["atraxa-superfriends", "seph"]);
+    let mut g = table(&["atraxa-infect", "seph"]);
     let n = perm(&mut g, P0, "Narset, Parter of Veils");
     let lib = &mut g.player_mut(P0).library;
     lib.clear();
@@ -391,7 +391,7 @@ fn urza_s_saga_makes_a_construct_and_fetches_an_artifact() {
 
 #[test]
 fn karns_bastion_proliferates() {
-    let mut g = table(&["atraxa-superfriends", "seph"]);
+    let mut g = table(&["atraxa-infect", "seph"]);
     lands(&mut g, P0, "Plains", 4, false);
     lands(&mut g, P0, "Karn's Bastion", 1, false);
     let a = token(&mut g, P0, 2);

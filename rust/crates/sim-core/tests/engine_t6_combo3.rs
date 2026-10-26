@@ -301,6 +301,17 @@ fn ad_nauseam_draws_into_the_oracle_line_and_wins() {
 }
 
 #[test]
+fn ad_nauseam_digs_past_a_full_hand_in_the_win_attempt() {
+    // a traced game: eight cards in hand, the hand cap stopped Ad Nauseam at 0 cards and the line stopped
+    // under three lands: five cards to dig, past the cap of 10 with eight cards in hand
+    let mut g = ad_table(&["Thassa's Oracle", "Demonic Consultation", "Plains", "Plains", "Plains"]);
+    let full = ["Brainstorm", "Opt", "Ponder", "Preordain", "Gitaxian Probe", "Mental Misstep", "Swan Song", "Dispel"];
+    hand(&mut g, P0, &full);
+    go(&mut g, AD);
+    assert_eq!(g.winner, Some(P0), "the win attempt digs for the line whatever the hand size");
+}
+
+#[test]
 fn ad_nauseam_that_finds_nothing_ends_without_a_win() {
     let mut g = ad_table_with(&[], &["Thassa's Oracle", "Demonic Consultation"]); // at the very bottom: out of reach
     go(&mut g, AD);

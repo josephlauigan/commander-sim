@@ -567,6 +567,9 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         if !t.has(Tag::Rem) || d.creature {
             continue;
         }
+        if g.cast_checks() && !castable(g, p, c, "hand") {
+            continue; // a lock, or Vexing Bauble / Chalice of the Void: cast_removal would refuse it
+        }
         let fods = rem_fodder(g, p);
         let extra = if t.has(Tag::Sacor4) && fods.is_empty() { 4 } else { 0 };
         let (rg, rp, _) = rem_cost(g, p, c);
@@ -671,6 +674,9 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
     if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
+    if crate::impls::t3_marwyn::ambush_response(g, d, p, atk)? {
+        return Ok(true); // --- Tier 3 (marwyn): Galadhrim Ambush
+    }
     let gand = has(g, d, Tag::Gandalf); // Gandalf: sorceries at instant speed
     if gand && gandalf_wipe_response(g, d, p, atk)? {
         return Ok(true);
@@ -682,7 +688,10 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         .copied()
         .filter(|&c| {
             let x = g.db.get(c);
-            (x.instant || (gand && x.sorcery)) && x.tag(Tag::Rem) && !x.creature
+            (x.instant || (gand && x.sorcery))
+                && x.tag(Tag::Rem)
+                && !x.creature
+                && !(g.cast_checks() && !castable(g, d, c, "hand"))
         })
         .collect();
     // Galadriel's permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
@@ -841,7 +850,7 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
         let alt = altcost::use_alt(g, p, c, None, cg, &cp); // Sunscour: two white cards instead of {5}{W}{W}
-        if !alt && !can_pay(g, p, cg, &cp, false) {
+        if (!alt && !can_pay(g, p, cg, &cp, false)) || (g.cast_checks() && !castable(g, p, c, "hand")) {
             continue;
         }
         let (ol, ml, victim) = decks::wipe_eval(g, p, kind);
@@ -984,7 +993,11 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
     for &c in &g.player(p).hand {
         let d = g.db.get(c);
         let r = d.tags.str(Tag::Rem).unwrap_or("");
-        if !d.tag(Tag::Face) || !r.starts_with("dmg") || !can_pay_now(g, p, c) {
+        if !d.tag(Tag::Face)
+            || !r.starts_with("dmg")
+            || !can_pay_now(g, p, c)
+            || (g.cast_checks() && !castable(g, p, c, "hand"))
+        {
             continue;
         }
         let dmg = r[3..].parse::<i32>().unwrap_or(0) + thor;
@@ -1115,6 +1128,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         if g.cast_checks() && !castable(g, p, c, zone) {
             continue;
         }
+        if d.tag(Tag::Needsac) && spare_creature(g, p).is_none() {
+            continue; // Diabolic Intent with nothing to sacrifice: do_cast would refuse it
+        }
         let Some(mut u) = card_utility(g, p, &s, c) else { continue };
         let (cg, cp) = cost_of(g, p, c);
         g.pay_for = Some(c);
@@ -1241,6 +1257,9 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
 }
 
 // ------------------------------------------------------------------ attacks
+/// how much more an opponent with Tergrid, God of Fright out draws attacks (a planeswalker about to ultimate: 3)
+const TERGRID_ATTACK: f64 = 3.0;
+
 /// brain.choose_defender: who p attacks: threat, a likely kill, a grudge, blockers, attack taxes, play style
 pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     let mut opps: Vec<PlayerId> = g.opps(p).filter(|&q| !shielded(g, q)).collect();
@@ -1291,6 +1310,9 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
                 (up >= 0.6).then(|| 3.0 * up.min(1.0))
             })
             .psum();
+        if has(g, q, Tag::Tergrid) {
+            u += TERGRID_ATTACK; // Tergrid, God of Fright keeps every edict and discard: the table races it
+        }
         let blockers = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).count();
         u -= 0.15 * blockers as f64 * (1.0 - aggr);
         if !g.hooks.is_empty() {
@@ -1406,7 +1428,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
             }
             let cv = t.has(Tag::Convoke);
             let (cg, cp) = cost_of(g, p, c);
-            if !can_pay(g, p, cg, &cp, cv) {
+            if !can_pay(g, p, cg, &cp, cv) || (g.cast_checks() && !castable(g, p, c, "hand")) {
                 continue;
             }
             const EOT: [Tag; 8] =
@@ -1433,6 +1455,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
             if !((d.creature && d.tag(Tag::Flash)) || (d.perm && !d.land && crate::engine::cast::grants_flash(g, p, c)))
                 || special(g, c)
                 || !can_pay_now(g, p, c)
+                || (g.cast_checks() && !castable(g, p, c, "hand"))
             {
                 continue;
             }

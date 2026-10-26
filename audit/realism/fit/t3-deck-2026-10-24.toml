@@ -1,0 +1,42 @@
+# Knobs fitted by commander-sim --fit --pool t3 --fit-scope deck (adaptive AI, loose profile)
+# 20 generations of 12, 4000 games a candidate on seeds 500000-503999
+# Scored statistics: seat1_win, seat2_win, seat3_win, seat4_win, win_combo_alt, win_commander_damage, win_damage, win_poison, win_round_median
+# Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at 0.25
+
+tier = "t3"
+
+[table]
+cthresh_default = 7
+instant_extra = 1
+
+[style.atraxa-superfriends]
+temp = 1.3219
+aggression = 0.3836
+caution = 0.6933
+
+[style.aurelia-boros-extra-combats]
+temp = 2.0000
+aggression = 0.5221
+caution = 1.0000
+
+[style.korvold-jund-sacrifice]
+temp = 0.7257
+aggression = 1.0000
+caution = 1.0000
+
+[style.marwyn-mono-green-elves]
+temp = 1.0437
+aggression = 0.0000
+caution = 1.0000
+
+[style.tergrid-mono-black-disruption]
+temp = 2.0000
+aggression = 0.1632
+caution = 1.0000
+
+[fit]
+loss = 223.949
+loss_builtin = 290.425
+games = 4000
+generations = 20
+scope = "deck"

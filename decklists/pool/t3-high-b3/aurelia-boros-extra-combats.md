@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Aggro / extra combats.
 
 - **Commander:** Aurelia, the Warleader
 - **Color identity:** White, Red
-- **Game Changers (3):** Smothering Tithe, Jeska's Will, Enlightened Tutor
+- **Game Changers (3):** Enlightened Tutor, Smothering Tithe, Teferi's Protection
 - **Combos:** Helm of the Host + Combat Celebrant: a hasty Celebrant copy each combat exerts for another combat, unbounded. Two cards, 6+ mana to assemble — late-game only.
-- **Lands:** 35 (15 nonbasic + 20 basic)
+- **Lands:** 34 (16 nonbasic + 18 basic)
 
 ## Role in the pool
 
@@ -33,101 +33,105 @@ Additional combat phases (Aurelia, Relentless Assault, Seize the Day, World at W
 
 **Commander (1).** Aurelia, the Warleader
 
-**Creatures (26).** Adeline, Resplendent Cathar, Anim Pakal, Thousandth Moon, Brimaz, King of Oreskos, Combat Celebrant, Esper Sentinel, Giver of Runes, Goblin Rabblemaster, Goldspan Dragon, Hellkite Charger, Hellrider, Hero of Bladehold, Karlach, Fury of Avernus, Knight of the White Orchid, Laelia, the Blade Reforged, Legion Loyalist, Legion Warboss, Mentor of the Meek, Moonshaker Cavalry, Mother of Runes, Ogre Battledriver, Port Razer, Ranger-Captain of Eos, Scourge of the Throne, Selfless Spirit, Stoneforge Mystic, Weathered Wayfarer
+**Creatures (27).** Angelic Skirmisher, Archangel of Tithes, Aurelia, Exemplar of Justice, Aurelia, the Law Above, Avacyn, Angel of Hope, Battle Angels of Tyr, Blade Historian, Bruna, the Fading Light, Combat Celebrant, Esper Sentinel, Firemane Avenger, Firemane Commando, Giada, Font of Hope, Gisela, Blade of Goldnight, Grand Abolisher, Herald of War, Iroas, God of Victory, Lyra Dawnbringer, Mother of Runes, Odric, Lunarch Marshal, Professional Face-Breaker, Puresteel Paladin, Righteous Valkyrie, Sephara, Sky's Blade, Starnheim Aspirant, Stoneforge Mystic, Youthful Valkyrie
 
-**Enchantments (5).** Land Tax, Legion's Landing // Adanto, the First Fort, Outpost Siege, Rabble Rousing, Smothering Tithe
+**Enchantments (7).** Aggravated Assault, Fighter Class, Land Tax, Sigarda's Aid, Smothering Tithe, Trouble in Pairs, Warleader's Call
 
-**Artifacts (14).** Arcane Signet, Boros Signet, Embercleave, Fellwar Stone, Helm of the Host, Lightning Greaves, Mind Stone, Shadowspear, Skullclamp, Sol Ring, Swiftfoot Boots, Sword of Fire and Ice, Sword of Hearth and Home, Talisman of Conviction
+**Artifacts (14).** Arcane Signet, Boros Signet, Fellwar Stone, Helm of the Host, Lightning Greaves, Mask of Memory, Pearl Medallion, Sol Ring, Sunforger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Hearth and Home, Sword of the Animist, Talisman of Conviction
 
-**Sorceries (8).** Blasphemous Act, Council's Judgment, Jeska's Will, Relentless Assault, Seize the Day, Wheel of Fortune, Winds of Abandon, World at War
+**Sorceries (5).** Austere Command, Blasphemous Act, Open the Armory, Steelshaper's Gift, Vandalblast
 
-**Instants (11).** Boros Charm, Chaos Warp, Deflecting Swat, Enlightened Tutor, Flawless Maneuver, Generous Gift, Lightning Helix, Path to Exile, Savage Beating, Swords to Plowshares, Unexpected Windfall
+**Instants (11).** Akroma's Will, Boros Charm, Chance for Glory, Chaos Warp, Enlightened Tutor, Flawless Maneuver, Generous Gift, Path to Exile, Swords to Plowshares, Teferi's Protection, Wear // Tear
 
-**Lands (35).** Arid Mesa, Battlefield Forge, Bloodstained Mire, Castle Ardenvale, Clifftop Retreat, Command Tower, Den of the Bugbear, Exotic Orchard, Inspiring Vantage, Needle Spires, Rogue's Passage, Rugged Prairie, Sacred Foundry, Sundown Pass, Windswept Heath, 10 Plains, 10 Mountain
+**Lands (34).** Arid Mesa, Battlefield Forge, Boros Garrison, Clifftop Retreat, Command Tower, Evolving Wilds, Furycalm Snarl, Needleverge Pathway // Pillarverge Pathway, Rogue's Passage, Rugged Prairie, Sacred Foundry, Slayers' Stronghold, Spectator Seating, Sundown Pass, Sunhome, Fortress of the Legion, Temple of Triumph, 10 Plains, 8 Mountain
+
+**Planeswalkers (1).** Serra the Benevolent
 
 ## Import list (100)
 
 ```
-1 Adeline, Resplendent Cathar
-1 Anim Pakal, Thousandth Moon
+1 Aggravated Assault
+1 Akroma's Will
+1 Angelic Skirmisher
 1 Arcane Signet
+1 Archangel of Tithes
 1 Arid Mesa
+1 Aurelia, Exemplar of Justice
+1 Aurelia, the Law Above
 1 Aurelia, the Warleader
+1 Austere Command
+1 Avacyn, Angel of Hope
+1 Battle Angels of Tyr
 1 Battlefield Forge
+1 Blade Historian
 1 Blasphemous Act
-1 Bloodstained Mire
 1 Boros Charm
+1 Boros Garrison
 1 Boros Signet
-1 Brimaz, King of Oreskos
-1 Castle Ardenvale
+1 Bruna, the Fading Light
+1 Chance for Glory
 1 Chaos Warp
 1 Clifftop Retreat
 1 Combat Celebrant
 1 Command Tower
-1 Council's Judgment
-1 Deflecting Swat
-1 Den of the Bugbear
-1 Embercleave
 1 Enlightened Tutor
 1 Esper Sentinel
-1 Exotic Orchard
+1 Evolving Wilds
 1 Fellwar Stone
+1 Fighter Class
+1 Firemane Avenger
+1 Firemane Commando
 1 Flawless Maneuver
+1 Furycalm Snarl
 1 Generous Gift
-1 Giver of Runes
-1 Goblin Rabblemaster
-1 Goldspan Dragon
-1 Hellkite Charger
-1 Hellrider
+1 Giada, Font of Hope
+1 Gisela, Blade of Goldnight
+1 Grand Abolisher
 1 Helm of the Host
-1 Hero of Bladehold
-1 Inspiring Vantage
-1 Jeska's Will
-1 Karlach, Fury of Avernus
-1 Knight of the White Orchid
-1 Laelia, the Blade Reforged
+1 Herald of War
+1 Iroas, God of Victory
 1 Land Tax
-1 Legion Loyalist
-1 Legion Warboss
-1 Legion's Landing // Adanto, the First Fort
 1 Lightning Greaves
-1 Lightning Helix
-1 Mentor of the Meek
-1 Mind Stone
-1 Moonshaker Cavalry
+1 Lyra Dawnbringer
+1 Mask of Memory
 1 Mother of Runes
-1 Needle Spires
-1 Ogre Battledriver
-1 Outpost Siege
+1 Needleverge Pathway // Pillarverge Pathway
+1 Odric, Lunarch Marshal
+1 Open the Armory
 1 Path to Exile
-1 Port Razer
-1 Rabble Rousing
-1 Ranger-Captain of Eos
-1 Relentless Assault
+1 Pearl Medallion
+1 Professional Face-Breaker
+1 Puresteel Paladin
+1 Righteous Valkyrie
 1 Rogue's Passage
 1 Rugged Prairie
 1 Sacred Foundry
-1 Savage Beating
-1 Scourge of the Throne
-1 Seize the Day
-1 Selfless Spirit
-1 Shadowspear
-1 Skullclamp
+1 Sephara, Sky's Blade
+1 Serra the Benevolent
+1 Sigarda's Aid
+1 Slayers' Stronghold
 1 Smothering Tithe
 1 Sol Ring
+1 Spectator Seating
+1 Starnheim Aspirant
+1 Steelshaper's Gift
 1 Stoneforge Mystic
 1 Sundown Pass
+1 Sunforger
+1 Sunhome, Fortress of the Legion
 1 Swiftfoot Boots
-1 Sword of Fire and Ice
+1 Sword of Feast and Famine
 1 Sword of Hearth and Home
+1 Sword of the Animist
 1 Swords to Plowshares
 1 Talisman of Conviction
-1 Unexpected Windfall
-1 Weathered Wayfarer
-1 Wheel of Fortune
-1 Winds of Abandon
-1 Windswept Heath
-1 World at War
+1 Teferi's Protection
+1 Temple of Triumph
+1 Trouble in Pairs
+1 Vandalblast
+1 Warleader's Call
+1 Wear // Tear
+1 Youthful Valkyrie
 10 Plains
-10 Mountain
+8 Mountain
 ```

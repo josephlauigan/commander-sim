@@ -265,6 +265,21 @@ pub fn num_expr(s: &str) -> J {
         return format!("{}{}", if tm.gs(2) == "you control" { "type_you:" } else { "type_all:" }, singular(tm.gs(1)))
             .into();
     }
+    // --- Tier 3 (marwyn): "each Elf you control", "each Elf on the battlefield", "each attacking Elf you control",
+    // "each +1/+1 counter on ~"
+    if let Some(tm) = rmatch(
+        r"^(?:the number of )?(attacking )?(elf|elves|goblin|zombie|human|ninja|soldier|warrior|knight|vampire|spirit|faerie|sliver|merfolk|dragon|angel|demon|dinosaur) (?:creatures )?(you control|on the battlefield)$",
+        &s,
+    ) {
+        let t = singular(tm.gs(2));
+        if tm.g(1).is_some() {
+            return format!("attacking_type:{t}").into();
+        }
+        return format!("{}{t}", if tm.gs(3) == "you control" { "type_you:" } else { "type_all:" }).into();
+    }
+    if rmatch(r"^\+1/\+1 counter on (?:~|it|this creature)$", &s).is_some() {
+        return "counters_on_self".into();
+    }
     if s.contains("card") && s.contains("hand") {
         return "cards_in_hand".into();
     }
@@ -566,6 +581,14 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(each other player|each opponent|target opponent|target player|each player|defending player) sacrifices? (a|an|two) ([a-z ,]+?)(?: of their choice| with the (?:least|greatest) power[^.]*)?$",
         |m| Some(eff(obj! {"do" => "sacrifice", "who" => who(m.gs(1)), "filter" => filt(m.gs(3)), "n" => n_(m.gs(2))})),
     ),
+    // poison counters (Prologue to Phyresis, Infectious Inquiry, Ichor Rats, Ajani's emblem)
+    (
+        r"^(each opponent|each other player|each player|target opponent|target player) gets? (a|an|one|two|three|\d+) poison counters?$",
+        |m| Some(eff(obj! {"do" => "poison", "who" => who(m.gs(1)), "n" => n_(m.gs(2))})),
+    ),
+    (r"^proliferate (twice|three times)$", |m| {
+        Some(eff(obj! {"do" => "proliferate", "n" => if m.gs(1) == "twice" { 2 } else { 3 }}))
+    }),
     (
         r"^(?:scry|surveil) (\d+|x)$|^investigate$|^proliferate$|^you may pay \{\d+\}$|^shuffle$|^then shuffle$|^shuffle and put that card on top$|^reveal (?:it|them)$",
         |m| {
@@ -731,6 +754,16 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         Some(eff(obj! {"do" => "put_land"}))
     }),
     (r"^if you don't, ~ deals (\d+) damage to each opponent$", |_| Some(eff(obj! {"do" => "noop"}))),
+    // --- Tier 3 (aurelia)
+    // "~ deals 3 damage to each of your opponents" (Aurelia, the Law Above): each opponent
+    (r"^(?:~ )?deals? (\d+|x) damage to each of your opponents$", |m| {
+        Some(eff(obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}}))
+    }),
+    // --- Tier 3 (marwyn): "put a +1/+1 counter on target creature for each Elf you control" (Immaculate Magistrate)
+    (
+        r"^put (?:a|an|one) \+1/\+1 counter on (target creature|~|target creature you control|each creature you control) for each (.+)$",
+        |m| Some(eff(obj! {"do" => "counters", "n" => num_expr(m.gs(2)), "what" => selector(m.gs(1))})),
+    ),
 ];
 
 /// how a clause depends on a "you may" earlier in the text
@@ -824,7 +857,16 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
             if sm.gs(2).contains(", ") {
                 let verbs: Vec<String> = split(r",? and |, ", sm.gs(2))
                     .into_iter()
-                    .map(|v| v.trim().to_string())
+                    // --- Tier 3 (korvold): "each opponent discards a card, then mills a card" (Vicious Rumors),
+                    // "..., then sacrifices a land of their choice" (Smallpox): the last verb keeps the subject (only
+                    // these verbs: "then draws" / "then you ..." keep their old reading)
+                    .map(|v| {
+                        let v = v.trim();
+                        match v.strip_prefix("then ") {
+                            Some(r) if is(r"^(discards?|mills?|sacrifices?|loses?) ", r) => r.to_string(),
+                            _ => v.to_string(),
+                        }
+                    })
                     .filter(|v| !v.is_empty())
                     .collect();
                 *sen = verbs.iter().map(|v| format!("{} {}", sm.gs(1), v)).collect::<Vec<_>>().join(". ");
@@ -993,6 +1035,7 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^equipped creature attacks$", |_, _| vec![obj! {"event" => "attack", "source" => "equipped"}]),
     (r"^equipped creature dies$", |_, _| vec![obj! {"event" => "dies", "source" => "equipped"}]),
     (r"^you gain life$", |_, _| vec![obj! {"event" => "gain_life", "who" => "you"}]),
+    (r"^you proliferate$", |_, _| vec![obj! {"event" => "proliferate", "who" => "you"}]), // Ezuri, Voidwing Hybrid
     (r"^~ becomes tapped$", |_, _| vec![obj! {"event" => "attack", "source" => "self"}]),
     (r"^you cast your (third|second) spell each turn$", |m, _| {
         vec![
@@ -1006,8 +1049,18 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
     (r"^a warrior attacks$|^a (\w+) you control attacks$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "you_each", "subtype" => m.g(1).unwrap_or("warrior")}]
     }),
-    (r"^you attack with (?:two|three) or more creatures$", |_, _| {
-        vec![obj! {"event" => "attack", "source" => "you_any"}]
+    // (Tier 3 aurelia: the count is kept, `min_atk`; it was dropped)
+    (r"^you attack with (two|three) or more creatures$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "you_any", "min_atk" => n_(m.gs(1))}]
+    }),
+    // --- Tier 3 (aurelia)
+    // battalion: "~ and at least two other creatures attack" (Firemane Avenger, Boros Elite)
+    (r"^~ and at least (two|three) other creatures attack$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "self", "min_atk" => n_(m.gs(1)).as_i64().unwrap_or(2) + 1}]
+    }),
+    // "a player attacks with N or more creatures" (Aurelia, the Law Above): anyone's attack, counted whole
+    (r"^a player attacks with (two|three|four|five|six) or more creatures$", |m, _| {
+        vec![obj! {"event" => "attack", "source" => "any_player", "min_atk" => n_(m.gs(1))}]
     }),
 ];
 
@@ -1070,6 +1123,24 @@ fn kw_statics(text: Option<&str>, mut mk: impl FnMut(&str) -> Obj) -> Fx {
 type StaticFn = fn(&M) -> Option<Fx>;
 
 static STATICS: &[(&str, StaticFn)] = &[
+    // --- Tier 3 (marwyn): "other Elf creatures you control get +1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
+    (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+) for each (.+)$", |m| {
+        let per = num_expr(m.gs(5));
+        if per == J::from("X") {
+            return None;
+        }
+        let mut filter = obj! {"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()};
+        if !m.gs(2).trim().is_empty() {
+            filter.set("subtype", m.gs(2).trim());
+        }
+        Some(eff(obj! {"type" => "static", "static" => "anthem", "filter" => filter, "pow" => int(m.gs(3)),
+        "tgh" => int(m.gs(4)), "per" => per}))
+    }),
+    // --- Tier 3 (marwyn): "green spells you cast cost {1} less to cast" (the Medallions)
+    (r"^(white|blue|black|red|green) spells you cast cost \{(\d+)\} less to cast$", |m| {
+        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => m.gs(1),
+        "amount" => -int(m.gs(2))}))
+    }),
     (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$", |m| {
         let mut filter = obj! {"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()};
         if !m.gs(2).trim().is_empty() {
@@ -1175,6 +1246,23 @@ static STATICS: &[(&str, StaticFn)] = &[
             Some(eff(e))
         },
     ),
+    // --- Tier 3 (aurelia)
+    // "attacking creatures you control have double strike" (Blade Historian): only while they attack
+    (r"^attacking creatures you control have ([a-z, ]+)$", |m| {
+        let v = kw_statics(m.g(1), |k| {
+            obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+            "filter" => obj!{"type" => "creature", "controller" => "you", "attacking" => true}}
+        });
+        if v.is_empty() { None } else { Some(v) }
+    }),
+    // "other permanents you control have indestructible" (Avacyn, Angel of Hope): noncreature permanents too
+    (r"^(other )?permanents you control have ([a-z, ]+)$", |m| {
+        let v = kw_statics(m.g(2), |k| {
+            obj! {"type" => "static", "static" => "keyword", "keyword" => k,
+            "filter" => obj!{"type" => "permanent", "controller" => "you", "other" => m.g(1).is_some()}}
+        });
+        if v.is_empty() { None } else { Some(v) }
+    }),
 ];
 
 pub fn prot_colors(text: &str) -> String {
@@ -1207,7 +1295,7 @@ pub fn strip_name(text: &str, name: &str) -> String {
     sub(r"(?i)\bthis (creature|spell|artifact|enchantment|land|permanent|card|planeswalker|equipment|aura)\b", "~", &t)
 }
 
-const KW_LINE: &str = r"^(ward|equip|cycling|kicker|flashback|convoke|overload|foretell|spectacle|prowess|protection|landcycling|basic landcycling|devour|undying|persist|flash|rebound|dredge|partner|crew|cumulative upkeep|affinity|delve|improvise|storm|cascade|buyback|madness|evoke|escape|disturb|channel|companion|hideaway|toxic|mentor|exalted|intimidate|defender|changeling|split second|enchant)\b";
+const KW_LINE: &str = r"^(ward|equip|cycling|infect|kicker|flashback|convoke|overload|foretell|spectacle|prowess|protection|landcycling|basic landcycling|devour|undying|persist|flash|rebound|dredge|partner|crew|cumulative upkeep|affinity|delve|improvise|storm|cascade|buyback|madness|evoke|escape|disturb|channel|companion|hideaway|toxic|mentor|exalted|intimidate|defender|changeling|split second|enchant)\b";
 
 fn arr(v: Fx) -> J {
     J::Arr(v.into_iter().map(J::Obj).collect())
@@ -1252,6 +1340,12 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         }
         let words: Vec<&str> = l.split(',').map(|w| w.trim()).collect();
         if words.iter().all(|w| KW.contains(w) || rmatch(KW_LINE, w).is_some()) {
+            // toxic N: the amount is kept (combat gives that many poison counters); the keyword alone says no number
+            for w in &words {
+                if let Some(m) = rmatch(r"^toxic (\d+)", w) {
+                    abil.push(obj! {"type" => "static", "static" => "toxic", "amount" => int(m.gs(1))});
+                }
+            }
             continue;
         }
         if rmatch(r"^\{t\}(?:, [^:]*)?: add ", l).is_some() || rmatch(r"^~ deals 1 damage to you$", l).is_some() {
@@ -1382,6 +1476,34 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
                     }
                     _ => bad.push(raw),
                 }
+                continue;
+            }
+        }
+        // --- Tier 3 (korvold): an Equipment's bonus and keywords with a granted combat-damage trigger in quotes:
+        // 'equipped creature gets +1/+1 and has trample and "whenever this creature deals combat damage to a player
+        // or planeswalker, create that many treasure tokens."' (The Reaver Cleaver). The bonus compiles as the plain
+        // line; the quoted ability is the equipped creature's combat-damage trigger ("that many": the damage dealt).
+        if let Some(m) = rmatch(
+            r#"^(equipped creature (?:gets|has) [^"]+?) and "whenever (?:~|this creature) deals combat damage to a player(?: or planeswalker)?, ([^"]+?)\.?"$"#,
+            l,
+        ) {
+            let mut stat: Option<Fx> = None;
+            for (rx, f) in ST.iter() {
+                if let Some(mm) = matches_rule(rx, m.gs(1)) {
+                    stat = f(&mm).filter(|v| !v.is_empty());
+                    if stat.is_some() {
+                        break;
+                    }
+                }
+            }
+            let (e, b) = parse_effects(m.gs(2));
+            if let Some(st) = stat
+                && !e.is_empty()
+                && b.is_empty()
+            {
+                abil.extend(st);
+                abil.push(obj! {"type" => "triggered", "effects" => arr(e), "event" => "combat_damage",
+                "source" => "equipped"});
                 continue;
             }
         }

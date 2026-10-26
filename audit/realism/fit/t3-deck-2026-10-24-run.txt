@@ -1,0 +1,68 @@
+964,000 games (fit: t3, 17 knobs (deck scope), 20 generations of 12, 4000 games each), adaptive AI, 24 worker threads: about 33 minutes
+
+=== Fit: Tier 3 (High B3) [loose, adaptive AI, 4000 games a candidate, seeds 500000-503999] ===
+knobs (17): atraxa-superfriends.temp, atraxa-superfriends.aggression, atraxa-superfriends.caution, aurelia-boros-extra-combats.temp, aurelia-boros-extra-combats.aggression, aurelia-boros-extra-combats.caution, korvold-jund-sacrifice.temp, korvold-jund-sacrifice.aggression, korvold-jund-sacrifice.caution, marwyn-mono-green-elves.temp, marwyn-mono-green-elves.aggression, marwyn-mono-green-elves.caution, tergrid-mono-black-disruption.temp, tergrid-mono-black-disruption.aggression, tergrid-mono-black-disruption.caution, cthresh_default, instant_extra
+built-in values: loss 290.43
+  generation  1: best so far 280.17, this generation 280.56 (mean 309.23), step 0.273
+  progress  10.0%  0m33s elapsed, ~5m02s left
+  generation  2: best so far 280.17, this generation 280.93 (mean 307.60), step 0.266
+  generation  3: best so far 280.17, this generation 282.52 (mean 304.54), step 0.281
+  progress  20.0%  1m12s elapsed, ~4m51s left
+  generation  4: best so far 280.17, this generation 286.33 (mean 306.93), step 0.277
+  generation  5: best so far 272.36, this generation 273.29 (mean 304.98), step 0.269
+  progress  30.0%  1m46s elapsed, ~4m08s left
+  generation  6: best so far 272.36, this generation 276.76 (mean 293.11), step 0.268
+  generation  7: best so far 262.73, this generation 268.53 (mean 287.39), step 0.265
+  progress  40.0%  2m21s elapsed, ~3m32s left
+  generation  8: best so far 256.50, this generation 264.65 (mean 287.65), step 0.263
+  generation  9: best so far 250.13, this generation 267.43 (mean 280.63), step 0.267
+  progress  50.0%  2m55s elapsed, ~2m55s left
+  generation 10: best so far 247.07, this generation 259.68 (mean 289.55), step 0.269
+  generation 11: best so far 247.07, this generation 256.83 (mean 285.26), step 0.277
+  progress  60.0%  3m28s elapsed, ~2m18s left
+  generation 12: best so far 244.10, this generation 259.24 (mean 291.89), step 0.286
+  generation 13: best so far 244.10, this generation 267.48 (mean 292.62), step 0.296
+  progress  70.0%  4m05s elapsed, ~1m45s left
+  generation 14: best so far 241.50, this generation 253.05 (mean 281.81), step 0.294
+  generation 15: best so far 241.50, this generation 262.14 (mean 272.78), step 0.296
+  progress  80.0%  4m39s elapsed, ~1m09s left
+  generation 16: best so far 241.42, this generation 248.78 (mean 281.09), step 0.289
+  generation 17: best so far 223.95, this generation 240.64 (mean 270.02), step 0.293
+  progress  90.0%  5m16s elapsed, ~0m35s left
+  generation 18: best so far 223.95, this generation 257.86 (mean 278.14), step 0.294
+  generation 19: best so far 223.95, this generation 262.14 (mean 284.05), step 0.301
+  progress 100.0%  6m02s elapsed, ~0m00s left
+  generation 20: best so far 223.95, this generation 249.99 (mean 278.88), step 0.292
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         26.4        28.0        31.3  30.3-32.3 
+  seat 2 share of decisive games                         26.2        26.4        27.8  26.8-28.8 
+  seat 3 share of decisive games                         24.2        22.7        21.8  20.8-22.8 
+  seat 4 share of decisive games                         23.3        22.9        19.1  18.1-20.1 
+  median round of a decisive win                         13.0        13.0         8.0   7.0-9.0  
+  wins by a combo or an alternate win                     2.2         3.1        20.0  19.0-21.0 
+  wins by damage (combat or other)                       85.1        81.9        62.2  61.2-63.2 
+  wins by commander damage                               12.7        15.0        17.4  16.4-18.4 
+  wins by poison                                          0.0         0.0         0.4   0.0-1.4  
+  loss: built-in 290.43, best 223.95
+
+  best knobs:
+    atraxa-superfriends.temp                       1.322  (built-in 1.000)
+    atraxa-superfriends.aggression                 0.384  (built-in 0.600)
+    atraxa-superfriends.caution                    0.693  (built-in 0.500)
+    aurelia-boros-extra-combats.temp               2.000  (built-in 1.000)
+    aurelia-boros-extra-combats.aggression         0.522  (built-in 0.600)
+    aurelia-boros-extra-combats.caution            1.000  (built-in 0.500)
+    korvold-jund-sacrifice.temp                    0.726  (built-in 1.000)
+    korvold-jund-sacrifice.aggression              1.000  (built-in 0.600)
+    korvold-jund-sacrifice.caution                 1.000  (built-in 0.500)
+    marwyn-mono-green-elves.temp                   1.044  (built-in 1.000)
+    marwyn-mono-green-elves.aggression             0.000  (built-in 0.600)
+    marwyn-mono-green-elves.caution                1.000  (built-in 0.500)
+    tergrid-mono-black-disruption.temp             2.000  (built-in 1.000)
+    tergrid-mono-black-disruption.aggression       0.163  (built-in 0.600)
+    tergrid-mono-black-disruption.caution          1.000  (built-in 0.500)
+    cthresh_default                                7.000  (built-in 6.000)
+    instant_extra                                  1.000  (built-in 0.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/trace-fixes/audit/realism/fit/t3-deck-2026-10-24.toml (run it with --knobs; confirm with --realism and more games)

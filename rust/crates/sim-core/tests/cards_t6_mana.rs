@@ -437,3 +437,19 @@ fn apple_of_eden_needs_life_and_a_hand_worth_taking() {
     g.player_mut(P0).life = 15;
     assert!(options(&mut g, apple, P0, Some(false)).is_empty(), "not at 15 life");
 }
+
+#[test]
+fn a_land_tapped_for_more_than_the_payment_uses_floats_the_rest() {
+    // Gaea's Cradle with four creatures paid one {G} of a {W}{U}{B}{R}{G} activation and the other three were lost
+    let mut g = sim_core::testkit::table(&["sisay-legends-toolbox", "seph"]);
+    let p = sim_core::ids::PlayerId(0);
+    for _ in 0..4 {
+        sim_core::testkit::token(&mut g, p, 1);
+    }
+    sim_core::testkit::lands(&mut g, p, "Gaea's Cradle", 1, false);
+    sim_core::testkit::lands(&mut g, p, "Plains", 1, false);
+    assert_eq!(sim_core::engine::mana::total_mana(&g, p, false), 5);
+    assert!(sim_core::engine::mana::pay(&mut g, p, 0, "WG", false).unwrap());
+    assert_eq!(g.player(p).floating.g, 3, "Cradle made four green, one was spent");
+    assert!(sim_core::engine::mana::can_pay(&g, p, 0, "GGG", false), "the three float for the next payment");
+}

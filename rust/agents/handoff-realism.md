@@ -7,9 +7,13 @@ Read this file, then `CLAUDE.md`. Everything needed to continue is here; the cha
 - **Code:** all of it is on `main`. The latest merges, 2026-10-24:
   - PR #133: docs refresh and the Phase 1 tooling;
   - PR #134: taxed costs, Sisay fixes, the Tier 6 rebalance, the re-fit and reports;
-  - PR #135: Tier 6 scored on cEDH metrics only.
+  - PR #135: Tier 6 scored on cEDH metrics only;
+  - PR #136: the Tier 6 seat target from TopDeck.gg Swiss pods.
 
-  Work on a new branch from `main`; JD asks for PRs explicitly.
+  Open: the `trace-fixes` PR (Tier 6 and Tier 3 traced for bugs, every Tier 3 card modelled, the Tier 3 lists from
+  EDHREC, the Tier 3 targets rebuilt, Tergrid). Work on a new branch from `main`; JD asks for PRs explicitly.
+- **Tier 3 report:** `audit/realism/t3-trace-2026-10-24.md` (the trace, the knob fit, the modelling, the new
+  targets, Tergrid).
 - **Plan document** (claude.ai Doc, JD's): https://claude.ai/artifact/Fa1usjF6hHZiSUBXwLzGNJ, "Commander Sim:
   Improvement and Refactoring Plan". A session with the Claude Docs connector can read and edit it; without it, this
   file summarises what matters (below).
@@ -123,6 +127,11 @@ per-commander win rates.
   - **Built-in knobs stay**; the fits are not adopted.
   - **The three judgement calls:** Kraum/Tymna waits less (done); Kinnan's threat value 5 (done); free counters
     unchanged (the tried rule had no effect).
+  - **Tier 3 (option 2):** model every Partial and Unmodeled card first, then play EDHREC's bracket-3 average lists
+    (done; three Game Changers each). Atraxa's list is infect (`atraxa-infect`), so Atraxa rejoins the targets (done;
+    the five commanders are weighted equally, the main session's choice: pooled, Atraxa would be half of every
+    target).
+  - **Tergrid:** opponents race it and feed it only tokens; its threat value is 10 (JD kept it).
 - **Standing rules in CLAUDE.md still apply:** loose profile only, each of JD's decks only against its own tiers, no
   Python, the memory cap, check subagents' work. Run every sim, test and build in the background. Push-notify JD
   whenever work stops for their direction.
@@ -139,8 +148,15 @@ per-commander win rates.
    - TopDeck.gg key: `~/.config/topdeck/key` (JD's; never commit it). Credit TopDeck.gg wherever its data is used.
 2. **Rograkh/Thrasios** (16.4%, below the floor): model its missing real lines (This Town Ain't Big Enough, the
    improvised Thrasios wins).
-3. **Tier 3 lists against EDHREC** (plan step 6), including whether the pool's Atraxa becomes the infect build players
-   log, so it can rejoin the targets.
+3. **Tier 3's remaining misses** (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
+   - median win round 10 against 8;
+   - combo wins 8.9% against 16.5%;
+   - commander damage 10.5% against 14.4%;
+   - poison 19.2% against 9.3% (Atraxa, and Tergrid winning with stolen infect creatures);
+   - Tergrid still 36.9% of its decisive games, the others 18-26%.
+
+   Atraxa's last Partial cards are listed in its pool file. Speed and combo, as in Tier 6, are AI quality more than
+   card rules.
 4. **Targets for Tiers 0-2, 4 and 5** (Playgroup, the same method as Tier 3).
 5. **Make a target miss fail the nightly job**, once the Tier 6 gate passes.
 6. **Older items:**

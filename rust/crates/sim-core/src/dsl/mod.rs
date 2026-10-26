@@ -128,6 +128,16 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
         "event_spell_mv" => ctx.spell.map_or(2, |c| g.db.get(c).cmc as i32),
         "source_power" => src.map_or(2, |m| epow(g, m)),
         "counters_on_self" => src.map_or(0, |m| g.perm(m).plus.max(0)),
+        // --- Tier 3 (marwyn): "each attacking Elf you control" (Dwynen): the creatures p attacked with this turn
+        // (`combat::attack_triggers` records them) still on the battlefield
+        s if s.starts_with("attacking_type:") => {
+            let t = &s[15..];
+            if pl.attacking != Some(g.turn_stamp()) {
+                return 0;
+            }
+            let live = |m: PermId| g.perm(m).on_bf && g.perm(m).owner == p && has_type(g, m, t);
+            pl.attackers.iter().filter(|&&m| live(m)).count() as i32
+        }
         s if s.starts_with("type_you:") || s.starts_with("type_all:") => {
             let t = &s[9..];
             let qs: Vec<PlayerId> = if s.starts_with("type_you") {
@@ -206,6 +216,9 @@ pub fn matches(g: &Game, p: PlayerId, m: PermId, f: Option<&Filter>, src: Option
     }
     if f.nontoken == Some(true) && x.token {
         return false;
+    }
+    if f.attacking == Some(true) && !g.in_combat.contains(&m) {
+        return false; // Tier 3 (aurelia): "attacking creatures you control" (Blade Historian)
     }
     if let Some(kw) = &f.keyword
         && !((kw == "flying" && x.fly) || has_kw(g, m, kw))
@@ -786,6 +799,16 @@ fn run(
         "sacrifice" => {
             let mut f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
             f.controller = None;
+            if f.kind.as_deref() == Some("land") {
+                // --- Tier 3 (korvold): "each player sacrifices a land of their choice" (Smallpox): lands are not
+                // permanents here, each player gives up its least useful one
+                for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                    for _ in 0..num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src) {
+                        crate::impls::t3_korvold::sac_worst_land(g, q)?;
+                    }
+                }
+                return Ok(());
+            }
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
                 for _ in 0..num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src) {
                     let cs: Vec<PermId> = g
@@ -807,12 +830,24 @@ fn run(
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
         "proliferate" => {
-            for m in g.player(p).perms.clone() {
-                if g.perm(m).plus > 0 {
-                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                    crate::cardcode::put_plus(g, m, 1 + extra); // Hardened Scales, Vorinclex
+            // the engine's full proliferate: +1/+1 and loyalty counters, Sagas, lands' counters and opponents' poison
+            // (this effect used to add +1/+1 counters to your own permanents only)
+            let times = if e.n.is_some() { n(g, ctx).max(0) as u32 } else { 1 };
+            crate::impls::common::proliferate(g, p, times)?;
+        }
+        "poison" => {
+            // each opponent / each player / target opponent gets N poison counters (Melira stops them; Vorinclex
+            // doubles the ones you give)
+            let k = if e.n.is_some() { n(g, ctx).max(0) } else { 1 };
+            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                if k == 0 || crate::engine::values::melira(g, q) {
+                    continue;
                 }
+                let k = crate::cardcode::vorinclex(g, p, k);
+                g.player_mut(q).poison += k as u32;
+                crate::glog!(g, "    {} gets {} poison counter(s)", g.player(q).name, k);
             }
+            crate::engine::life::check_state(g)?;
         }
         "double_counters" => {
             for m in g.player(p).perms.clone() {
@@ -1165,6 +1200,8 @@ pub struct Fired {
     pub attackers: Vec<PermId>,
     pub defender: Option<PlayerId>,
     pub attacker: Option<PermId>,
+    /// --- Tier 3 (korvold): the combat damage dealt ("create that many Treasure tokens": X in the trigger)
+    pub dmg: Option<i32>,
 }
 
 /// An event happened: every compiled triggered ability that cares puts a trigger on the queue. Python's `dsl.fire`.
@@ -1269,7 +1306,7 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
 
 /// one ctx per time the ability triggers
 fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fired) -> Vec<DslCtx> {
-    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, .. } = a else {
+    let Ability::Triggered { event, source, who, spell, nth, other, if_cast, min_pow, subtype, min_atk, .. } = a else {
         return vec![];
     };
     let (s, w) = (source.as_deref(), who.as_deref());
@@ -1302,9 +1339,13 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
         }
         "attack" => {
             let ctx = DslCtx { event_player: kw.defender, attack: true, ..base };
+            if min_atk.is_some_and(|k| (kw.attackers.len() as u32) < k) {
+                return out; // Tier 3 (aurelia): battalion, "attacks with three or more creatures"
+            }
             match s {
                 Some("self") if kw.attackers.contains(&src) => out.push(ctx),
                 Some("you_any") if kw.player == Some(q) && !kw.attackers.is_empty() => out.push(ctx),
+                Some("any_player") if !kw.attackers.is_empty() => out.push(ctx), // Tier 3 (aurelia): "a player attacks"
                 Some("you_each") if kw.player == Some(q) => {
                     for &m in &kw.attackers {
                         if subtype.as_deref() == Some("warrior") && !g.perm(m).warrior {
@@ -1319,7 +1360,12 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
         }
         "combat_damage" => {
             let m = kw.attacker;
-            let ctx = DslCtx { event_player: kw.defender, event_perm: m, ..base };
+            let mut ctx = DslCtx { event_player: kw.defender, event_perm: m, ..base };
+            if let Some(d) = kw.dmg {
+                // --- Tier 3 (korvold): "that many" is the damage dealt
+                ctx.x = d;
+                ctx.x_default = false;
+            }
             match s {
                 Some("self") if m == Some(src) => out.push(ctx),
                 Some("you_creature") if m.is_some_and(|m| g.perm(m).owner == q) => {
@@ -1352,7 +1398,7 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
             }
             out.push(DslCtx { spell: Some(c), event_player: Some(caster), ..base });
         }
-        "draw" | "upkeep" | "end_step" => {
+        "draw" | "upkeep" | "end_step" | "proliferate" => {
             let pl = kw.player;
             match w {
                 Some("you") if pl == Some(q) => out.push(base),
@@ -1416,12 +1462,15 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
                 continue;
             }
             for a in g.db.get(cd).abilities.iter() {
-                let Ability::Static { kind, pow, tgh, filter, .. } = a else { continue };
+                let Ability::Static { kind, pow, tgh, filter, per, .. } = a else { continue };
                 match kind.as_str() {
                     "anthem" => {
                         if cre && matches(g, q.id, m, filter.as_ref(), Some(src)) {
-                            dp += pow.unwrap_or(0);
-                            dt += tgh.unwrap_or(0);
+                            // --- Tier 3 (marwyn): "+1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
+                            let k =
+                                if per.is_some() { num(g, q.id, per.as_ref(), &DslCtx::base(), Some(src)) } else { 1 };
+                            dp += pow.unwrap_or(0) * k;
+                            dt += tgh.unwrap_or(0) * k;
                         }
                     }
                     "equip_bonus" => {
@@ -1522,7 +1571,7 @@ pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
     for (q, src, ab, i) in statics(g, "keyword") {
         if let Ability::Static { keyword, filter, .. } = &ab[i]
             && keyword.as_deref() == Some(kw)
-            && cre
+            && (cre || noncreature_ok(filter.as_ref())) // Tier 3 (aurelia): "permanents you control have" (Avacyn)
             && matches(g, q, m, filter.as_ref(), Some(src))
         {
             return true;
@@ -1616,6 +1665,12 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
             "artifact" => d.types.has(Types::ARTIFACT),
             "enchantment" => d.types.has(Types::ENCHANTMENT),
             "legendary" => d.tag(Tag::Leg),
+            // --- Tier 3 (marwyn): the Medallions ("green spells you cast cost {1} less")
+            "white" => d.colors.has('W'),
+            "blue" => d.colors.has('U'),
+            "black" => d.colors.has('B'),
+            "red" => d.colors.has('R'),
+            "green" => d.colors.has('G'),
             _ => true,
         };
         if ok {
@@ -1642,6 +1697,21 @@ pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
     k
 }
 
+/// m's own toxic N (compiled from "toxic N" on its keyword line): poison counters to a player it deals combat
+/// damage to, on top of the damage
+pub fn toxic_amount(g: &Game, m: PermId) -> i32 {
+    let x = g.perm(m);
+    let Some(cd) = x.cd.filter(|_| !x.neutered) else { return 0 };
+    g.db.get(cd)
+        .abilities
+        .iter()
+        .filter_map(|a| match a {
+            Ability::Static { kind, amount, .. } if kind == "toxic" => *amount,
+            _ => None,
+        })
+        .sum()
+}
+
 /// counter doublers
 pub fn counter_mult(g: &Game, p: PlayerId) -> i32 {
     let mut k = 1;
@@ -1660,6 +1730,26 @@ pub fn no_lifegain(g: &Game, p: PlayerId) -> bool {
     active(g) && statics(g, "no_lifegain").any(|(q, ..)| q != p)
 }
 
+// --- Tier 3 (aurelia)
+/// a keyword static whose filter names a type wider than creatures ("permanents you control have indestructible")
+/// reaches noncreature permanents too
+fn noncreature_ok(f: Option<&Filter>) -> bool {
+    f.and_then(|f| f.kind.as_deref()).is_some_and(|k| k != "creature")
+}
+
+/// do p's lands have keyword kw from a "permanents you control have ..." static (Avacyn, Angel of Hope: lands are
+/// not permanents in the engine, so land destruction asks here)
+pub fn lands_have_kw(g: &Game, p: PlayerId, kw: &str) -> bool {
+    active(g)
+        && statics(g, "keyword").any(|(q, _, ab, i)| {
+            q == p
+                && matches!(&ab[i], Ability::Static { keyword, filter, .. }
+                    if keyword.as_deref() == Some(kw)
+                        && filter.as_ref().is_some_and(|f| f.kind.as_deref() == Some("permanent")
+                            && f.controller.as_deref() == Some("you")))
+        })
+}
+
 // ------------------------------------------------------------------ the AI's view: values and ability use
 fn eff_value(kind: &str) -> f64 {
     match kind {
@@ -1669,6 +1759,7 @@ fn eff_value(kind: &str) -> f64 {
         "gain_life" => 0.15,
         "amass" => 0.7,
         "proliferate" => 1.0,
+        "poison" => 0.6, // per counter on each player it reaches: ten put a player out
         "extra_combat" => 3.0,
         "add_mana" => 0.5,
         "mill" => 0.1,
@@ -1814,6 +1905,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     if cost.tap == Some(true) {
         g.perm_mut(src).tapped = true;
         crate::impls::t0_captain::became_tapped(g, src); // Captain America, Living Legend
+        crate::impls::t3_marwyn::on_tapped(g, src)?; // --- Tier 3 (marwyn): Dionus, Legolas
     }
     if let Some(l) = cost.life {
         lose_life(g, p, l, Some(p), "other", None)?;
