@@ -1379,7 +1379,8 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
     }
     let mut any_ready = false;
     let mut reach = false; // one tutor away now (checked at every decision, for `sp|away_now`)
-    let mine = deck_combos(g, p);
+    // --- t6 rograkh-thrasios: `lines_of` (real groups), not `deck_combos`, whose `QUIET` group is in no deck
+    let mine = lines_of(g, p);
     let held: std::collections::HashSet<&str> = {
         let pl = g.player(p);
         let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
@@ -1415,11 +1416,15 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
 fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pl = g.player(p);
     let cmd_in_zone: Vec<&str> = pl.cmds_in_zone().map(|c| name_of(g, c)).collect();
-    let miss: Vec<&[&str]> = cmb
-        .groups
+    // --- t6 rograkh-thrasios: the real groups (a quiet line's `QUIET` marker is never held, so no quiet line was
+    // ever one tutor away), and a land piece on the battlefield is held (lands are not on `perms`: Gaea's Cradle)
+    let land_out = |grp: &[&str]| {
+        pl.lands.iter().any(|&l| g.land(l).on_bf && grp.contains(&name_of(g, g.land(l).cd)))
+    };
+    let miss: Vec<&[&str]> = real_groups(cmb)
         .iter()
         .copied()
-        .filter(|grp| !has_piece(g, p, grp) && !grp.iter().any(|n| cmd_in_zone.contains(n)))
+        .filter(|grp| !has_piece(g, p, grp) && !land_out(grp) && !grp.iter().any(|n| cmd_in_zone.contains(n)))
         .collect();
     if miss.len() != 1 {
         return false;

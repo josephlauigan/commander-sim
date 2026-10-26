@@ -125,7 +125,8 @@ fn sylvan_scrying_finds_gaeas_cradle_not_a_basic() {
     g.active = Some(P0);
     lands(&mut g, P0, "Forest", 2, false);
     hand(&mut g, P0, &["Sylvan Scrying"]);
-    let lib: Vec<_> = ["Forest", "Island", "Gaea's Cradle", "Talon Gates of Madara"].iter().map(|n| card(&g, n)).collect();
+    let lib: Vec<_> =
+        ["Forest", "Island", "Gaea's Cradle", "Talon Gates of Madara"].iter().map(|n| card(&g, n)).collect();
     g.player_mut(P0).library = lib;
     let c = card(&g, "Sylvan Scrying");
     assert!(sim_core::ai::brain::do_cast(&mut g, P0, c, None).unwrap());
@@ -148,4 +149,22 @@ fn growing_rites_transforms_at_four_creatures_and_taps_like_cradle() {
     assert_eq!(g.player(P0).lands.len(), 1, "four creatures: Itlimoc");
     assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "GGGG", false), "{{G}} for each of the four creatures");
     assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "GGGGG", false));
+}
+
+// --- t6 rograkh-thrasios: tutors finish the closer line
+/// Cradle out, Eternal Witness on the battlefield, no Oboro or Talon Gates held: line B is one card away (Snap), line A
+/// two, so the tutors want Snap before Gates and Oboro
+#[test]
+fn tutors_want_snap_first_when_witness_is_out_and_line_a_is_two_cards_away() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Gaea's Cradle", 1, false);
+    lands(&mut g, P0, "Forest", 3, false);
+    perm(&mut g, P0, "Eternal Witness");
+    let w = t6_plans::wish(&g, P0).unwrap();
+    let name = |i: usize| g.db.get(w[i]).name.to_string();
+    assert_eq!(name(0), "Snap", "{:?}", (0..4).map(name).collect::<Vec<_>>());
+    // with Oboro in hand line A is one card away too: Gates keeps its place first
+    hand(&mut g, P0, &["Oboro Breezecaller"]);
+    let w = t6_plans::wish(&g, P0).unwrap();
+    assert_eq!(g.db.get(w[0]).name.to_string(), "Talon Gates of Madara");
 }

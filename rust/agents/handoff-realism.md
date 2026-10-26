@@ -160,8 +160,9 @@ per-commander win rates.
      Phase 4's planning AI.
    - Real data on assembly speed (win turns from tournament replays, JD's pod log) would help set it.
    - TopDeck.gg key: `~/.config/topdeck/key` (JD's; never commit it). Credit TopDeck.gg wherever its data is used.
-2. **Rograkh/Thrasios** (16.4%, below the floor): model its missing real lines (This Town Ain't Big Enough, the
-   improvised Thrasios wins).
+2. **Rograkh/Thrasios** is done on branch `t6-rograkh-thrasios` (17.9% to 21.3%, inside the band;
+   `audit/realism/t6-rograkh-thrasios-2026-10-26.md`). Its leads: `deck_combos` drops quiet lines from `combo_progress`;
+   untagged tutors; Moxen held early.
 3. **Tier 3's remaining misses** (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
    - median win round 10 against 8;
    - combo wins 8.9% against 16.5%;
