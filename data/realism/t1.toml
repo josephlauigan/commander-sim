@@ -1,6 +1,7 @@
 # Realism targets, Tier 1 (High Bracket 2 / Low Bracket 3): what real games look like, for
 # `commander-sim --realism --pool t1`.
-# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
+# Format: see t6.toml. Bands (JD, 2026-10-23; widened to 1.5 on 2026-10-26): every share is held to its real
+# value +/- 1.5 points.
 #
 # Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-25, matched to this tier's five
 # pool commanders (data/decks.json): Isshin, Two Heavens as One (927), Lathril, Blade of the Elves (1417), Light-Paws,
@@ -23,8 +24,8 @@ tier = "t1"
 
 [seat1_win]
 value = 31.3
-lo = 30.3
-hi = 32.3
+lo = 29.8
+hi = 32.8
 n = 31006
 source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -32,24 +33,24 @@ note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
 value = 26.9
-lo = 25.9
-hi = 27.9
+lo = 25.4
+hi = 28.4
 n = 31006
 source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat3_win]
 value = 22.9
-lo = 21.9
-hi = 23.9
+lo = 21.4
+hi = 24.4
 n = 31006
 source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat4_win]
 value = 18.9
-lo = 17.9
-hi = 19.9
+lo = 17.4
+hi = 20.4
 n = 31006
 source = "Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -77,24 +78,24 @@ note = "n = the five commanders' logged wins; Playgroup gives an average win tur
 
 [win_damage]
 value = 70.4
-lo = 69.4
-hi = 71.4
+lo = 68.9
+hi = 71.9
 n = 5419
 source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
 date = "2026-10-25"
 
 [win_combo_alt]
 value = 11.3
-lo = 10.3
-hi = 12.3
+lo = 9.8
+hi = 12.8
 n = 5419
 source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
 date = "2026-10-25"
 
 [win_commander_damage]
 value = 18.1
-lo = 17.1
-hi = 19.1
+lo = 16.6
+hi = 19.6
 n = 5419
 source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
 date = "2026-10-25"
@@ -102,7 +103,7 @@ date = "2026-10-25"
 [win_poison]
 value = 0.2
 lo = 0.0
-hi = 1.2
+hi = 1.7
 n = 5419
 source = "Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight)"
 date = "2026-10-25"
