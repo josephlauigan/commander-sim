@@ -46,3 +46,7 @@ Newest at the bottom.
       `deck_combos` lead). It changes every Tier 6 deck's AI, so it's measured paired and kept on its own branch for
       you to judge.
     - `t3-misses`, based on main: the same line audit for Tier 3 (combo 8.9% vs 16.5%, poison 19% vs 9%).
+11. **Tier 6 quiet lines: PR #146 (stacked on #145).** The fix is correct (the lookahead ignored every stepped Tier 6
+    line) but neutral: seat 1 went 28.1→28.4%, within noise. I opened it anyway because it's a correctness fix. Merge
+    it or drop it, as you prefer. Next lead started: fast mana (Chrome Mox, Mox Diamond) held on turns 1-3, on
+    `t6-fast-mana`, stacked on #146.
