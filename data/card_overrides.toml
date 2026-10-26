@@ -9669,3 +9669,8 @@ tags = "pow=0 tgh=0"
 # --- Tiers 1/2 (brago-meren): card code in impls/t12_brago_meren.rs
 ["Flickerwisp"]
 dsl = [] # the compiled exile never returned the card: the enter trigger is hand-written (exile until the end step)
+
+# --- */* fix (JD, 2026-10-25): power and toughness each equal the cards in your hand, not one more (the printed */*
+# read as 1/1 under the compiled count)
+["Psychosis Crawler"]
+tags = "pow=0 tgh=0"

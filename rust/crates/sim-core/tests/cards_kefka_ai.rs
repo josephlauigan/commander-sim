@@ -217,6 +217,7 @@ fn niv_with_a_short_library_still_finishes_a_player_on_one_life() {
 fn the_crawler_guard_holds_a_bolt_from_a_face_when_the_loop_would_deck_us() {
     let mut g = table2();
     kefka_out(&mut g, P0, true);
+    hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, CRAWLER);
     fill_library(&mut g, P0, 20);
     assert!(kefka::loop_guard(&g, P0));

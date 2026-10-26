@@ -96398,10 +96398,11 @@
    "generic": 5,
    "pips": "",
    "tags": {
-    "pow": "1"
+    "pow": "0",
+    "tgh": "0"
    },
-   "pow": 1,
-   "tgh": 1,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
@@ -96434,7 +96435,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,

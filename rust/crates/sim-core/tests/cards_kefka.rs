@@ -698,6 +698,7 @@ fn the_flip_with_the_crawler_out_waits_for_a_library_that_outlasts_the_table() {
     let mut g = table2();
     lands(&mut g, P0, "Swamp", 8, false);
     perm(&mut g, P0, KEFKA);
+    hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
     fill_library(&mut g, P0, 20); // the opponent has 40 life
     assert!(!kefka::loop_safe(&g, P0));
@@ -722,6 +723,7 @@ fn the_crawler_is_held_after_the_flip_when_the_loop_would_deck_us() {
 fn the_crawler_loop_kills_the_table_when_the_library_is_long_enough() {
     let mut g = table(&["kefka", "veyran", "seph"]);
     flipped_kefka(&mut g, P0);
+    hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
     fill_library(&mut g, P0, 80);
     g.player_mut(P1).life = 6;
@@ -736,6 +738,7 @@ fn the_crawler_loop_kills_the_table_when_the_library_is_long_enough() {
 fn the_crawler_loop_stops_cleanly_when_the_library_runs_out() {
     let mut g = table(&["kefka", "veyran"]);
     flipped_kefka(&mut g, P0);
+    hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
     fill_library(&mut g, P0, 5);
     sim_core::engine::zones::draw(&mut g, P0, 1, false).unwrap();
@@ -747,6 +750,7 @@ fn the_crawler_loop_stops_cleanly_when_the_library_runs_out() {
 fn the_crawler_loop_ends_with_the_last_opponent_dead_in_a_four_player_game() {
     let mut g = table(&["kefka", "veyran", "seph", "sauron"]);
     flipped_kefka(&mut g, P0);
+    hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
     fill_library(&mut g, P0, 90);
     for q in [P1, P2, PlayerId(3)] {
