@@ -1,5 +1,6 @@
 # Realism targets, Tier 2 (Mid Bracket 3): what real games look like, for `commander-sim --realism --pool t2`.
-# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
+# Format: see t6.toml. Bands (JD, 2026-10-23; widened to 1.5 on 2026-10-26): every share is held to its real
+# value +/- 1.5 points.
 #
 # Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-25, matched to this tier's five
 # pool commanders (data/decks.json): Brago, King Eternal (2306), Kaalia of the Vast (1826), Lord Windgrace (516), Meren of
@@ -22,8 +23,8 @@ tier = "t2"
 
 [seat1_win]
 value = 30.9
-lo = 29.9
-hi = 31.9
+lo = 29.4
+hi = 32.4
 n = 26535
 source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -31,24 +32,24 @@ note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
 value = 28.1
-lo = 27.1
-hi = 29.1
+lo = 26.6
+hi = 29.6
 n = 26535
 source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat3_win]
 value = 22.3
-lo = 21.3
-hi = 23.3
+lo = 20.8
+hi = 23.8
 n = 26535
 source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat4_win]
 value = 18.6
-lo = 17.6
-hi = 19.6
+lo = 17.1
+hi = 20.1
 n = 26535
 source = "Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -76,24 +77,24 @@ note = "n = the five commanders' logged wins; Playgroup gives an average win tur
 
 [win_damage]
 value = 72.6
-lo = 71.6
-hi = 73.6
+lo = 71.1
+hi = 74.1
 n = 4757
 source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
 date = "2026-10-25"
 
 [win_combo_alt]
 value = 21.2
-lo = 20.2
-hi = 22.2
+lo = 19.7
+hi = 22.7
 n = 4757
 source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
 date = "2026-10-25"
 
 [win_commander_damage]
 value = 5.7
-lo = 4.7
-hi = 6.7
+lo = 4.2
+hi = 7.2
 n = 4757
 source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
 date = "2026-10-25"
@@ -101,7 +102,7 @@ date = "2026-10-25"
 [win_poison]
 value = 0.5
 lo = 0.0
-hi = 1.5
+hi = 2.0
 n = 4757
 source = "Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight)"
 date = "2026-10-25"

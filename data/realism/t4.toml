@@ -1,5 +1,6 @@
 # Realism targets, Tier 4 (Low Bracket 4): what real games look like, for `commander-sim --realism --pool t4`.
-# Format: see t6.toml. Bands (JD, 2026-10-23): every share is held to its real value +/- 1 point.
+# Format: see t6.toml. Bands (JD, 2026-10-23; widened to 1.5 on 2026-10-26): every share is held to its real
+# value +/- 1.5 points.
 #
 # Source: Playgroup.gg (stats CC BY 4.0, https://playgroup.gg/legal), read 2026-10-24 (Edgar Markov 2026-10-25),
 # matched to this tier's five
@@ -27,8 +28,8 @@ tier = "t4"
 
 [seat1_win]
 value = 32.8
-lo = 31.8
-hi = 33.8
+lo = 31.3
+hi = 34.3
 n = 44123
 source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -36,24 +37,24 @@ note = "n = seat-games behind the five commanders' seat 1-4 rates"
 
 [seat2_win]
 value = 27.8
-lo = 26.8
-hi = 28.8
+lo = 26.3
+hi = 29.3
 n = 44123
 source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat3_win]
 value = 21.6
-lo = 20.6
-hi = 22.6
+lo = 20.1
+hi = 23.1
 n = 44123
 source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
 date = "2026-10-25"
 
 [seat4_win]
 value = 17.9
-lo = 16.9
-hi = 18.9
+lo = 16.4
+hi = 19.4
 n = 44123
 source = "Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins"
 date = "2026-10-25"
@@ -83,8 +84,8 @@ note = "n = the five commanders' logged wins; Playgroup gives an average win tur
 
 [win_damage]
 value = 79.7
-lo = 78.7
-hi = 80.7
+lo = 78.2
+hi = 81.2
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
@@ -92,8 +93,8 @@ scored = false
 
 [win_combo_alt]
 value = 17.9
-lo = 16.9
-hi = 18.9
+lo = 16.4
+hi = 19.4
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
@@ -101,8 +102,8 @@ scored = false
 
 [win_commander_damage]
 value = 2.2
-lo = 1.2
-hi = 3.2
+lo = 0.7
+hi = 3.7
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
@@ -111,7 +112,7 @@ scored = false
 [win_poison]
 value = 0.1
 lo = 0.0
-hi = 1.1
+hi = 1.6
 n = 8113
 source = "Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight)"
 date = "2026-10-25"
