@@ -61,3 +61,6 @@ Newest at the bottom.
     when anyone holds an ability answer, used up `once_per_turn`. I fixed `once_per_turn` itself rather than Tataru
     alone, so all 47 callers are covered. The full suite passes. I didn't run a scorecard for it, since it's a rules
     fix.
+14. **Korvold Skeleton loop: added to #147.** The old catalogued loop ignored Korvold's forced draws; it now
+    checks them like the Chatterfang line (two draws a pass). The full suite passes. The Tier 3 scorecard is unchanged
+    (combo/alt 16.4%, passes).
