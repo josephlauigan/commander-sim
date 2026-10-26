@@ -32,3 +32,6 @@ Newest at the bottom.
    `casual-combos-2026-10-26.md`: combo/alt went t0 0.6→0.4%, t1 1.2→2.2%, t2 8.2→9.8%, with no target newly
    passing. I kept the win-type rows scored, as you decided. I pushed `casual-combos` and opened a PR stacked on
    #142 (base `tier012`), as with earlier phases; it's yours to merge.
+8. **Next phase: Rograkh/Thrasios (handoff item 2).** I started one agent on branch `t6-rograkh-thrasios`, based on
+   main, not stacked on #142/#144, since Tier 6 is independent. It models the deck's missing real win lines. It
+   runs alone on the machine, so its cap is 16 threads (`--jobs 16`, `-j 16`), one command at a time.
