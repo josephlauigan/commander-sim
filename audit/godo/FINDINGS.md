@@ -35,3 +35,5 @@ Mulligans: 39.5-41.5% of opening hands (spec keep: a hand needs a named way to w
 Known modeling notes: Staff of Compleation fixed 2026-10-19 (it now destroys only your permanents an opponent controls).
 Not yet modeled per the spec: Squelcher before Godo, Pyroblast held for the cast, Magistrate/Agent and Blind Obedience
 removal order, Chalice at 1, same-turn Ogre, Basalt + Kinnan copy.
+
+**Retired 2026-10-25: never built.** Godo and the Helm of the Host combo went into The Ur-Dragon (`decklists/JD/ur-dragon-equipment.md`). This file is kept as history.

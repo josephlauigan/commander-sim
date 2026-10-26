@@ -43,7 +43,7 @@ fn realism_needs_one_tier_and_no_deck() {
     let (code, _, err) = commander_sim(&["--realism", "--quiet"]);
     assert_eq!(code, 1);
     assert!(err.contains("--realism needs --pool with one tier"), "{err}");
-    let (code, _, err) = commander_sim(&["--realism", "--pool", "t6", "--deck", "godo", "--quiet"]);
+    let (code, _, err) = commander_sim(&["--realism", "--pool", "t5", "--deck", "karn", "--quiet"]);
     assert_eq!(code, 1);
     assert!(err.contains("drop --deck"), "{err}");
 }

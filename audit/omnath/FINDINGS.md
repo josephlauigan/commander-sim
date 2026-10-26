@@ -45,3 +45,5 @@ Why (T2 breakdown): the dragons are cast in 87-90% of the games they're drawn an
 cost: without Worldly Tutor, Omnath resolves 0.37 turns later (tutors 0.22 -> 0 per game). Hasty fliers give the deck
 pressure while it waits for landfall, which it lacked (Weakness: loses to fast decks before Elementals pile up).
 Also settles "Cards to confirm": Tymna's Terror of the Peaks copy frees up for Omnath if the trade goes ahead.
+
+**Retired 2026-10-25.** JD took 15 cards and a Forest for The Ur-Dragon (`decklists/JD/ur-dragon-equipment.md`); the other 84 cards went to bulk. This file is kept as history.

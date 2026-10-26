@@ -50,6 +50,9 @@ impl Inputs {
         for d in &self.pool {
             played.extend(d.cards.iter().cloned());
         }
+        // cards of the retired omnath deck (2026-10-25) that no other list plays: their card code and tests stay, so
+        // they keep their card data and tag edits (Karplusan's pain, Silhana's dork=G; Shatterskull is double-faced)
+        played.extend(["Karplusan Forest", "Silhana Starfletcher", "Shatterskull Smashing"].map(String::from));
         let mut extra: BTreeSet<String> = self.my.iter().map(|d| d.commander.clone()).collect();
         extra.extend(self.my.iter().filter_map(|d| d.commander2.clone()));
         extra.extend(self.pool.iter().map(|d| d.commander.clone()));

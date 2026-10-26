@@ -16,7 +16,7 @@ use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 use crate::sym::intern;
 
-/// the deck keys of the Tier 6 pool and JD's Godo deck
+/// the deck keys of the Tier 6 pool and Godo (retired 2026-10-25, a test seat)
 pub const T6_KEYS: [&str; 7] = [
     "dack-fayden-white-stax",
     "kinnan-bonder-mana-combo",
