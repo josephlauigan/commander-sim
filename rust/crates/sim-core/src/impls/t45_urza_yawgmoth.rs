@@ -911,6 +911,23 @@ fn plunderer_loop(g: &Game, p: PlayerId) -> Ready {
         return NOT_READY();
     }
     let Some(payoff) = crate::impls::combos::loop_payoff(g, p) else { return NOT_READY() };
+    // --- t3 lines: with Korvold out each sacrifice draws a card (not a "may"): the Skeleton and the Treasure that
+    // returns it are two a pass (Warren Soultrader's two Treasures three; Gravecrawler on Phyrexian Altar one), and
+    // the deaths the payoffs need must fit in the library. A payoff the lists don't rate counts as one target.
+    let (each, one) = match crate::impls::t3_lines::payoff_rate(g, p) {
+        (0, 0) => (0, 1),
+        r => r,
+    };
+    let per = if named(g, altar, "Warren Soultrader") {
+        3
+    } else if !skel && named(g, altar, "Phyrexian Altar") {
+        1
+    } else {
+        2
+    };
+    if !crate::impls::t3_lines::korvold_fits(g, p, each, one, per) {
+        return NOT_READY();
+    }
     (true, vec![pl, altar, payoff], vec![])
 }
 

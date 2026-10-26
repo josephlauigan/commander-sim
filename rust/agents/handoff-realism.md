@@ -163,7 +163,8 @@ per-commander win rates.
 2. **Rograkh/Thrasios** is done on branch `t6-rograkh-thrasios` (17.9% to 21.3%, inside the band;
    `audit/realism/t6-rograkh-thrasios-2026-10-26.md`). Its leads: `deck_combos` drops quiet lines from `combo_progress`;
    untagged tutors; Moxen held early.
-3. **Tier 3's remaining misses** (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
+3. **Tier 3's remaining misses** (combo lines done on branch `t3-misses`: combo/alt 11.5% to 16.5%, on target;
+   `audit/realism/t3-lines-2026-10-26.md`) (lists, cards and targets are done; `audit/realism/t3-trace-2026-10-24.md`):
    - median win round 10 against 8;
    - combo wins 8.9% against 16.5%;
    - commander damage 10.5% against 14.4%;

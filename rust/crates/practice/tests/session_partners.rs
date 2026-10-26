@@ -122,7 +122,7 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
 #[test]
 fn a_person_on_thrasios_casts_either_commander_from_the_command_zone_and_pays_its_own_tax() {
     let (mut tymna_recast, mut thrasios_seen) = (false, false);
-    for seed in 1..=24 {
+    for seed in 1..=48 { // --- t3 lines: 24 seeds had no Tymna recast once the Tier 3 lines changed those games
         let (cast, tax, tax2) = play(seed);
         let of = |n: &str| cast.iter().filter(|t| t.contains(&format!("Tymna/Thrasios casts {n}"))).count() as u64;
         // every cast raised that commander's own tax, and only its own

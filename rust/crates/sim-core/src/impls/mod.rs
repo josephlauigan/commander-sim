@@ -107,6 +107,7 @@ pub mod t12_kaalia_sythis; // --- Tiers 1/2 (kaalia-sythis)
 pub mod t12_brago_meren; // --- Tiers 1/2 (brago-meren)
 pub mod cc_brago; // --- casual combos (brago)
 pub mod t45_miirym; // --- Tiers 4/5 (miirym)
+pub mod t3_lines; // --- t3 lines
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
@@ -199,5 +200,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t12_kaalia_sythis::register(&mut r, db)?; // --- Tiers 1/2 (kaalia-sythis)
     t12_brago_meren::register(&mut r, db)?; // --- Tiers 1/2 (brago-meren)
     t45_miirym::register(&mut r, db)?; // --- Tiers 4/5 (miirym)
+    t3_lines::register(&mut r, db)?; // --- t3 lines
     Ok(r)
 }
