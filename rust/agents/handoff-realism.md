@@ -169,8 +169,10 @@ per-commander win rates.
 
    Atraxa's last Partial cards are listed in its pool file. Speed and combo, as in Tier 6, are AI quality more than
    card rules.
-4. **Targets for Tiers 0-2** (Playgroup, the same method as Tiers 3-5; Tiers 4 and 5 are done). Deck balance in
-   Tiers 3-5 (one list wins 37-50% in each) is AI work for later: the opponents seldom hold an answer to it.
+4. **Every tier now has targets** (Tiers 0-2: PR #142, `audit/realism/t012-targets-2026-10-25.md`; Tier 0 keeps its
+   precons, Tiers 1-2 play EDHREC's bracket 2-3 lists, every card modelled; win types scored there). Deck balance in
+   Tiers 1-5 (one list wins 37-50% in each: Light-Paws, Sythis, Tergrid, Edgar, Miirym) is AI work for later: the
+   opponents seldom hold an answer to it. Casual tiers win by combo far less than real games (AI line coverage).
 5. **Make a target miss fail the nightly job**, once the Tier 6 gate passes.
 6. **Older items:**
    - the Ertai/Tataru bug (`#[ignore]`d test `tataru_with_ertai_in_hand`);
