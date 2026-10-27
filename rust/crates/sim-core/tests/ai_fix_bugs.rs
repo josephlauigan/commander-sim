@@ -344,3 +344,35 @@ fn b_enlightened_tutor_is_scored_by_what_it_can_find() {
     assert_eq!(pd, 72.0, "Demonic Tutor finds the Oracle");
     assert!(pe < 72.0 && pe > 0.0, "Enlightened Tutor finds only Sol Ring: {pe}");
 }
+
+// ------------------------------------------------------------------ I: determinize keeps the known top card
+/// Vampiric Tutor put Thassa's Oracle on top; every playout's shuffle of p's own library lost it, so no playout saw
+/// the line it completes next turn. The known top card stays in place; the rest is shuffled as before.
+#[test]
+fn i_determinize_keeps_the_card_put_on_top() {
+    let mut g = scion_goldfish();
+    let names_lib: Vec<_> = ["Brainstorm", "Ponder", "Sol Ring", "Swan Song"].iter().map(|n| card(&g, n)).collect();
+    g.player_mut(P0).library.extend(names_lib);
+    let oracle = card(&g, "Thassa's Oracle");
+    sim_core::engine::tutors::put_known_top(&mut g, P0, oracle);
+    let before = g.player(P0).library.clone();
+    for seed in 0..8 {
+        let mut g2 = g.clone();
+        let mut rng = sim_core::rng::Rng::from_u64(seed);
+        sim_core::ai::search::determinize(&mut g2, P0, &mut rng);
+        assert_eq!(g2.player(P0).library.last(), Some(&oracle), "seed {seed}");
+        let mut a = g2.player(P0).library.clone();
+        let mut b = before.clone();
+        a.sort_unstable();
+        b.sort_unstable();
+        assert_eq!(a, b, "the same cards");
+    }
+    // with no record, the top card is shuffled with the rest
+    g.player_mut(P0).known_top.clear();
+    let moved = (0..8).any(|seed| {
+        let mut g2 = g.clone();
+        sim_core::ai::search::determinize(&mut g2, P0, &mut sim_core::rng::Rng::from_u64(seed));
+        g2.player(P0).library.last() != Some(&oracle)
+    });
+    assert!(moved);
+}

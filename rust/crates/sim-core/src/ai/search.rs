@@ -101,10 +101,14 @@ pub fn clone(g: &mut Game) -> Game {
 
 /// search.determinize: hide what `me` can't know: re-deal opponents' hands from hand and library, shuffle my library
 pub fn determinize(g2: &mut Game, me: PlayerId, rng: &mut Rng) {
+    // --- ai-fix: I: the cards `me` put on top of its own library itself stay there (Vampiric Tutor's card was shuffled
+    // away, so no playout saw the line it completes next turn)
+    let known = crate::engine::tutors::known_top(g2, me).len();
     for i in 0..g2.players.len() {
         let q = &mut g2.players[i];
         if q.id == me {
-            rng.shuffle(&mut q.library);
+            let n = q.library.len() - known; // `known_top` holds only while they are the library's top cards
+            rng.shuffle(&mut q.library[..n]);
         } else if q.alive {
             let (cmd, cmd2) = (q.cmd, q.cmd2);
             // a commander put into hand (Command Beacon) is known
