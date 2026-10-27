@@ -72,3 +72,37 @@ fn without_the_bonus_the_lookahead_taps_out() {
     let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
     assert_eq!(pick.as_deref(), Some("Sheoldred, the Apocalypse"), "the old search spends the mana");
 }
+
+/// the scion seat with a ready Thassa's Oracle line and a counterspell to hold mana for, against three inert goldfish
+/// seats: every playout of both the combo and the held line wins
+fn oracle_ready_in_a_goldfish() -> Game {
+    let mut g =
+        table(&["scion", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"]);
+    set_ai(&mut g, AiMode::Lookahead);
+    for i in 1..4 {
+        let q = PlayerId(i);
+        let wastes: Vec<_> = (0..60).map(|_| card(&g, "Wastes")).collect();
+        let pl = g.player_mut(q);
+        pl.key = sim_core::sym::intern(&format!("goldfish-{}", i + 1));
+        pl.hand.clear();
+        pl.library = wastes;
+    }
+    let lib: Vec<_> = (0..40).map(|_| card(&g, "Island")).collect();
+    g.player_mut(P0).library = lib;
+    lands(&mut g, P0, "Underground Sea", 5, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Flusterstorm"]);
+    g.player_mut(P0).turns = 4;
+    g
+}
+
+#[test]
+fn a_hold_bonus_never_beats_a_sure_win() {
+    let mut g = oracle_ready_in_a_goldfish();
+    assert!(sim_core::goldfish::is_goldfish(&g));
+    let opts = brain::main_options(&mut g, P0, false).unwrap();
+    assert!(opts.iter().any(|o| o.label == "stop (hold mana)"), "mana held for Flusterstorm");
+    let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
+    let scores = search::LAST_SCORES.with(|l| l.borrow().clone());
+    assert!(pick.as_deref().is_some_and(|l| l.starts_with("combo: Thassa's Oracle")), "{pick:?} {scores:?}");
+    assert!(scores.iter().all(|(_, s)| *s <= 100.0), "{scores:?}");
+}
