@@ -230,7 +230,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     }
     let tre = if no_art_mana { 0 } else { pl.live_treasures() };
     let bonus = if hooked { hooks::total_count(g, Event::TreasureBonus, p) } else { 0 };
-    for _ in 0..tre {
+    // one unit per Treasure, at most 1000: a doubling loop (Miirym t5: Thrakkus copies doubling the power of Old
+    // Gnawbone copies) can make billions, and a unit each ran the game out of memory; 1000 mana pays for anything
+    for _ in 0..tre.min(1000) {
         u.push(Unit { src: Source::Treasure, cols: ident, amt: (1 + bonus).max(0) as u32 });
     }
     if hooked {
