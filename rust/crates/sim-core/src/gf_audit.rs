@@ -519,6 +519,8 @@ pub struct AuditOut {
     pub best: Option<(u32, String)>,
     /// the same with each seen tutor standing in for one missing piece
     pub best_tutors: Option<(u32, String)>,
+    /// --- ai-planner: the same with only the tutors that can find the missing piece (`best_case_by`)
+    pub best_legal: Option<(u32, String)>,
     pub cap_changed: u32,
 }
 
@@ -599,6 +601,15 @@ pub fn classify(g: &Game, a: &Audit, won: bool) -> Vec<TurnOut> {
 /// mana value and the fetched piece's added to the need (the cheapest tutors first; all on turn T, though a tutor to
 /// the top of the library would give the piece only the turn after).
 pub fn best_case(g: &Game, a: &Audit, tutors: bool) -> Option<(u32, String)> {
+    best_case_by(g, a, tutors, false)
+}
+
+// --- ai-planner
+/// `best_case` with `legal`: a seen tutor stands in for a missing group only if it can find a card of that group (the
+/// planner's tutor rules, `ai::planner::tutor_rule`: Enlightened Tutor no Thassa's Oracle, Mystical Tutor an instant or
+/// sorcery; Intuition, Gamble and the creature, X and land tutors not at all), each tutor for one group, and a tutor to
+/// the top of the library only if seen a turn before (its card comes with the next draw)
+pub fn best_case_by(g: &Game, a: &Audit, tutors: bool, legal: bool) -> Option<(u32, String)> {
     use crate::impls::combos::{audit_groups, audit_lines, audit_mana, audit_name};
     let p = a.me;
     let lines = audit_lines(g, p);
@@ -616,6 +627,22 @@ pub fn best_case(g: &Game, a: &Audit, tutors: bool) -> Option<(u32, String)> {
             vec![]
         };
         tut.sort_unstable();
+        // --- ai-planner: the legal tutors seen by turn t: (cost, finds a card of the group), cheapest first
+        let mut legal_tut: Vec<(u32, crate::ai::planner::TutorRule)> = vec![];
+        if legal {
+            for &(c, at) in &a.seen {
+                if pieces.contains(&&*g.db.get(c).name) || legal_tut.len() > 8 {
+                    continue;
+                }
+                if let Some(rule) = crate::ai::planner::tutor_rule(g, c) {
+                    let ready = at + u32::from(rule.0 == crate::ai::planner::Dest::Top);
+                    if ready <= t {
+                        legal_tut.push((g.db.get(c).cmc, rule));
+                    }
+                }
+            }
+            legal_tut.sort_by_key(|x| x.0);
+        }
         for &i in &lines {
             let mut need = audit_mana(i);
             let mut missing = 0;
@@ -639,6 +666,25 @@ pub fn best_case(g: &Game, a: &Audit, tutors: bool) -> Option<(u32, String)> {
                     }
                 }
             }
+            if legal {
+                // --- ai-planner: each missing group gets its own tutor that can find a card of it
+                let groups: Vec<&[&str]> = audit_groups(i)
+                    .iter()
+                    .copied()
+                    .filter(|grp| !seen.iter().any(|&c| grp.contains(&&*g.db.get(c).name)))
+                    .collect();
+                let finds =
+                    |k: usize, grp: &[&str]| grp.iter().filter_map(|n| g.db.id(n)).any(|c| (legal_tut[k].1.1)(c));
+                let mut used = vec![false; legal_tut.len()];
+                let Some(cost) = assign(&groups, 0, &mut used, &|k, grp| finds(k, grp), &|k| legal_tut[k].0) else {
+                    continue;
+                };
+                need += cost;
+                if sources >= need {
+                    return Some((t, audit_name(i).to_string()));
+                }
+                continue;
+            }
             if missing > tut.len() {
                 continue;
             }
@@ -646,6 +692,33 @@ pub fn best_case(g: &Game, a: &Audit, tutors: bool) -> Option<(u32, String)> {
             if sources >= need {
                 return Some((t, audit_name(i).to_string()));
             }
+        }
+    }
+    None
+}
+
+// --- ai-planner
+/// a distinct tutor for each of `groups[i..]` (`used`: taken already), the cheapest first: the cost of the tutors, or
+/// None when some group has none
+fn assign(
+    groups: &[&[&str]],
+    i: usize,
+    used: &mut Vec<bool>,
+    finds: &dyn Fn(usize, &[&str]) -> bool,
+    cost: &dyn Fn(usize) -> u32,
+) -> Option<u32> {
+    if i == groups.len() {
+        return Some(0);
+    }
+    for k in 0..used.len() {
+        if used[k] || !finds(k, groups[i]) {
+            continue;
+        }
+        used[k] = true;
+        let rest = assign(groups, i + 1, used, finds, cost);
+        used[k] = false;
+        if let Some(r) = rest {
+            return Some(r + cost(k));
         }
     }
     None
@@ -666,6 +739,7 @@ pub fn report(g: &Game, won: bool) -> Option<AuditOut> {
         ready_choices: a.ready_choices.clone(),
         best: best_case(g, a, false),
         best_tutors: best_case(g, a, true),
+        best_legal: best_case_by(g, a, true, true), // --- ai-planner
         cap_changed: a.cap_changed,
     })
 }

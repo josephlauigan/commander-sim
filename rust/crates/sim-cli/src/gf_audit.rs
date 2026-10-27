@@ -241,6 +241,8 @@ pub fn render(games: &[GfGame]) -> String {
     );
     o += &best_section(games, n, "tutors aside", |a| a.best.as_ref());
     o += &best_section(games, n, "each seen tutor standing in for one missing piece", |a| a.best_tutors.as_ref());
+    // --- ai-planner
+    o += &best_section(games, n, "only tutors that can find the missing piece, one each", |a| a.best_legal.as_ref());
     o
 }
 
@@ -338,6 +340,10 @@ pub fn render_trace(a: &AuditOut) -> String {
     o += &format!(
         "  crude best case with tutors: {}\n",
         a.best_tutors.as_ref().map_or("none".into(), |(t, l)| format!("own turn {t} ({l})"))
+    );
+    o += &format!(
+        "  crude best case with legal tutors: {}\n", // --- ai-planner
+        a.best_legal.as_ref().map_or("none".into(), |(t, l)| format!("own turn {t} ({l})"))
     );
     o
 }
