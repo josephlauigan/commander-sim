@@ -241,7 +241,8 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         u.extend(cardcode::hand_mana(g, p)); // Spirit Guides need no hooked permanent
     }
     let f = pl.floating;
-    let float = |n: u32, src: Source, cols: Colors| (0..n).map(move |_| Unit { src, cols, amt: 1 });
+    // floating mana, at most 1000 of each kind (the same doubling boards float billions)
+    let float = |n: u32, src: Source, cols: Colors| (0..n.min(1000)).map(move |_| Unit { src, cols, amt: 1 });
     u.extend(float(f.r, Source::FloatR, Colors::from_letters("R")));
     u.extend(float(f.any, Source::FloatAny, ident));
     u.extend(float(f.u, Source::FloatU, Colors::from_letters("U")));
