@@ -726,3 +726,43 @@ pub fn can_pay_with_rituals(g: &Game, p: PlayerId, generic: u32, pips: &str, ski
     }
     false
 }
+
+// --- ai-fix: D
+/// p's mana units once card `c` is cast from `u`: its cost paid, and the mana it makes this turn added (a ritual's, or
+/// a noncreature rock's: it can tap as it enters; a dork is summoning sick, Chrome Mox's colour is unknown, so neither
+/// adds any). None if `u` can't pay for it.
+pub fn units_after_cast(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
+    if ritual_out(g, p, c).is_some() {
+        return units_after_ritual(g, p, c, u);
+    }
+    let (gn, pips) = cost_of(g, p, c);
+    let (used, _) = plan_pay(g, u, gn, &pips)?;
+    let mut v: Vec<Unit> =
+        u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
+    let d = g.db.get(c);
+    if !d.creature
+        && let Some(rock) = d.tags.str(Tag::Rock)
+    {
+        let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
+        let amt: u32 = a.parse().unwrap_or(1);
+        v.push(Unit { src: Source::FloatAny, cols: tag_colors(col, g.player(p).ident), amt });
+    }
+    Some(v)
+}
+
+/// can units `u` pay `generic` + `pips`, with p's rituals in hand cast first if they must (as `can_pay_with_rituals`)?
+pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, pips: &str, skip: &[CardId]) -> bool {
+    if plan_pay(g, u, generic, pips).is_some() {
+        return true;
+    }
+    let mut u = u.to_vec();
+    for c in rituals_in_hand(g, p, skip) {
+        if let Some(v) = units_after_ritual(g, p, c, &u) {
+            u = v;
+            if plan_pay(g, &u, generic, pips).is_some() {
+                return true;
+            }
+        }
+    }
+    false
+}

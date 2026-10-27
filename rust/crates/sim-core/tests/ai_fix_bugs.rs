@@ -194,3 +194,41 @@ fn c_each_ritual_counts_once_and_a_skipped_one_not_at_all() {
     hand(&mut g, P0, &["Dark Ritual"]);
     assert!(can_pay_with_rituals(&g, P0, 2, "BBB", &[]), "two rituals: one B in, five out");
 }
+
+// ------------------------------------------------------------------ D: the Tier 6 must-do plays
+/// Turn 2, three Underground Seas, Thassa's Oracle + Demonic Consultation ready (UU + B) and Arcane Signet in hand.
+fn oracle_ready_with_a_signet() -> Game {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 3, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Arcane Signet", "Lotus Petal"]);
+    g.player_mut(P0).turns = 2;
+    g
+}
+
+/// The old must-do rule forced a cheap rock on turns 1-4 before the look-ahead, and ignored the `combo:` option: the
+/// ready line comes first now
+#[test]
+fn d_a_ready_line_comes_before_a_forced_rock() {
+    let mut g = oracle_ready_with_a_signet();
+    let opts = ai::brain::main_options(&mut g, P0, false).unwrap();
+    let i = ai::t6_table::must_option(&g, P0, &opts).expect("a must-do play");
+    assert!(opts[i].label.starts_with("combo: Thassa's Oracle"), "{}", opts[i].label);
+}
+
+/// With the line not on offer (say the table could still stop it), Arcane Signet (two in, one out) would leave it a
+/// mana short: it is not forced. Lotus Petal (free, one out) leaves it payable and is.
+#[test]
+fn d_a_forced_cast_that_breaks_a_ready_line_is_skipped() {
+    let mut g = oracle_ready_with_a_signet();
+    let opts: Vec<_> = ai::brain::main_options(&mut g, P0, false)
+        .unwrap()
+        .into_iter()
+        .filter(|o| !o.label.starts_with("combo:"))
+        .collect();
+    assert!(opts.iter().any(|o| o.label == "Arcane Signet"), "{:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    let pick = ai::t6_table::must_option(&g, P0, &opts).map(|i| opts[i].label.clone());
+    assert_eq!(pick.as_deref(), Some("Lotus Petal"));
+    let opts: Vec<_> = opts.into_iter().filter(|o| o.label != "Lotus Petal").collect();
+    let pick = ai::t6_table::must_option(&g, P0, &opts).map(|i| opts[i].label.clone());
+    assert_ne!(pick.as_deref(), Some("Arcane Signet"));
+}

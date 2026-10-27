@@ -1538,6 +1538,31 @@ pub fn audit_ready(g: &Game, p: PlayerId) -> Option<&'static str> {
     None
 }
 
+// --- ai-fix: D
+/// every line ready and affordable for p now (the test `audit_ready` makes), each with its mana need and the cards in
+/// hand it uses (its pieces and casts): what a forced play must leave payable
+pub fn ready_lines(g: &Game, p: PlayerId) -> Vec<((u32, String), Vec<CardId>)> {
+    let mine = lines_of(g, p);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    let mut out = vec![];
+    for (i, &cmb) in all().iter().enumerate() {
+        let piece_held = cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)));
+        if !mine.contains(&i) && !piece_held && cmb.steps.is_empty() {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if ok && affordable(g, p, cmb, &casts) {
+            out.push((mana_need(g, p, cmb, &casts), line_cards(g, p, cmb, &casts)));
+        }
+    }
+    out
+}
+
 /// the catalogued lines of p's deck (indices into `all()`)
 pub fn audit_lines(g: &Game, p: PlayerId) -> Vec<usize> {
     lines_of(g, p).to_vec()
