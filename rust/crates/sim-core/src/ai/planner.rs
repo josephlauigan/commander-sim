@@ -16,7 +16,8 @@
 //! - a permanent piece of one of the deck's lines (Kinnan, Basalt Monolith, Underworld Breach, Lion's Eye Diamond),
 //!   from hand or the command zone.
 //!
-//! Draw spells are not expanded: their cards are unknown. Opponents never act in a copy (`Game::plan_for`): what the
+//! A card the deck's plan slot keeps in hand now (`t6_plans::prio` of 0 or less: Dack Fayden while the table can
+//! answer it) is never played. Draw spells are not expanded: their cards are unknown. Opponents never act in a copy (`Game::plan_for`): what the
 //! table may do is `go_ok`'s job, as at the real table, and their hidden hands are never consulted.
 //!
 //! **This turn** (`plan_this_turn`): the shortest sequence after which a line is reached. Among those of one length:
@@ -235,6 +236,10 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
     let castable_now = |c: CardId, zone: &str| -> bool {
         let d = g.db.get(c);
         if eot && !(d.instant || d.tag(Tag::Flash)) {
+            return false;
+        }
+        // the deck's plan slot keeps this card in hand now (Dack waits for the table's risk to drop, or for Silence)
+        if crate::impls::t6_plans::prio(g, p, c).is_some_and(|x| x <= 0.0) {
             return false;
         }
         if g.cast_checks() && !crate::engine::cast::castable(g, p, c, zone) {
