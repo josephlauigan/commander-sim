@@ -112,3 +112,85 @@ fn g_the_cleanup_discards_a_spare_land_first() {
     assert_eq!(&*g.db.get(c).name, "Island");
     let _ = AiMode::Lookahead;
 }
+
+// ------------------------------------------------------------------ C: rituals
+fn labels(g: &mut Game) -> Vec<(String, f64)> {
+    ai::brain::main_options(g, P0, false).unwrap().into_iter().map(|o| (o.label, o.utility)).collect()
+}
+
+/// Two lands and Dark Ritual pay for Thassa's Oracle + Demonic Consultation (UU + B): the line counts the ritual's net
+/// mana, so it is offered and won this turn. The old check saw two mana and never offered it.
+#[test]
+fn c_a_ritual_in_hand_makes_the_line_affordable() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 2, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
+    let opts = labels(&mut g);
+    assert!(opts.iter().any(|o| o.0.starts_with("combo: Thassa's Oracle")), "{opts:?}");
+    ai::brain::main(&mut g, P0, false).unwrap();
+    assert!(g.over && g.winner == Some(P0), "the line wins with the ritual's mana");
+}
+
+/// One land pays Dark Ritual, whose three mana (any colour) pay UU + B exactly; with no land the ritual itself can't be
+/// cast, so the line is not offered
+#[test]
+fn c_the_ritual_must_itself_be_castable() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 1, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
+    let opts = labels(&mut g);
+    assert!(opts.iter().any(|o| o.0.starts_with("combo: Thassa's Oracle")), "one land and Dark Ritual: {opts:?}");
+    let mut g = scion_goldfish();
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
+    let opts = labels(&mut g);
+    assert!(!opts.iter().any(|o| o.0.starts_with("combo:")), "no land: the ritual can't be cast: {opts:?}");
+}
+
+/// Cabal Ritual had priority 0 and was never cast outside a line. With four lands it makes the commander castable
+/// this turn (WUBRG from two Underground Seas and the ritual's three), so it is worth the commander less a little.
+#[test]
+fn c_cabal_ritual_is_cast_for_the_commander() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 4, false);
+    hand(&mut g, P0, &["Cabal Ritual"]);
+    g.player_mut(P0).turns = 3; // the commander waits for turn 2 (`cmd_turn`)
+    let s = ai::brain::Situation::new(&g, P0);
+    let c = g.player(P0).cmd;
+    let u = ai::brain::card_utility(&g, P0, &s, c).expect("the commander has a utility");
+    let opts = labels(&mut g);
+    let cmd = g.db.get(g.player(P0).cmd).name.to_string();
+    assert!(!opts.iter().any(|o| o.0 == cmd), "four Seas can't pay WUBRG: {opts:?}");
+    let r = opts.iter().find(|o| o.0 == "Cabal Ritual").unwrap_or_else(|| panic!("{opts:?}"));
+    assert!((r.1 - (u - ai::brain::RITUAL_DISCOUNT)).abs() < 1e-9, "{} against {u}", r.1);
+}
+
+/// Dark Ritual scored 1.5 from its ability value and was cast for nothing. With nothing it enables it is not offered;
+/// with Demonic Tutor one mana short it is worth the tutor less a little.
+#[test]
+fn c_dark_ritual_is_worth_the_tutor_it_enables_and_nothing_alone() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 1, false);
+    hand(&mut g, P0, &["Dark Ritual", "Brainstorm"]);
+    let opts = labels(&mut g);
+    assert!(!opts.iter().any(|o| o.0 == "Dark Ritual"), "Brainstorm is payable without it: {opts:?}");
+    hand(&mut g, P0, &["Demonic Tutor", "Demonic Consultation"]);
+    let oracle = card(&g, "Thassa's Oracle");
+    g.player_mut(P0).library.insert(0, oracle); // the tutor has the line's missing piece to find
+    let opts = labels(&mut g);
+    let r = opts.iter().find(|o| o.0 == "Dark Ritual").unwrap_or_else(|| panic!("{opts:?}"));
+    assert!(r.1 > 3.0, "worth the tutor: {opts:?}");
+}
+
+/// each ritual counts once, and one the line itself uses (`skip`) not at all
+#[test]
+fn c_each_ritual_counts_once_and_a_skipped_one_not_at_all() {
+    use sim_core::engine::mana::can_pay_with_rituals;
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 1, false);
+    let r = hand(&mut g, P0, &["Dark Ritual"])[0];
+    assert!(can_pay_with_rituals(&g, P0, 0, "BBB", &[]), "Sea -> Dark Ritual: BBB");
+    assert!(!can_pay_with_rituals(&g, P0, 1, "BBB", &[]), "one ritual is three mana, not five");
+    assert!(!can_pay_with_rituals(&g, P0, 0, "BBB", &[r]), "a ritual the line uses is no mana for it");
+    hand(&mut g, P0, &["Dark Ritual"]);
+    assert!(can_pay_with_rituals(&g, P0, 2, "BBB", &[]), "two rituals: one B in, five out");
+}

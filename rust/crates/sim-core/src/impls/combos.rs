@@ -12,7 +12,7 @@ use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
+use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, pay, seq_cost}; // --- ai-fix: C
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
@@ -416,7 +416,42 @@ pub fn mana_need(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, 
 /// the combo and its mana (the loop's own and the pieces' still to cast) can be paid for
 fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
     let (gn, pips) = mana_need(g, p, cmb, casts);
-    can_pay(g, p, gn, &pips, false)
+    // --- ai-fix: C: with the rituals in hand cast first (each once; never a piece of the line, nor a card it casts)
+    can_pay_with_rituals(g, p, gn, &pips, &line_cards(g, p, cmb, casts))
+}
+
+// --- ai-fix: C
+/// the cards in p's hand a line uses: the pieces of its groups and the cards it casts (no ritual among them is spent
+/// as mana for the line)
+fn line_cards(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> Vec<CardId> {
+    let mut v: Vec<CardId> = casts.to_vec();
+    v.extend(
+        g.player(p).hand.iter().copied().filter(|&c| cmb.groups.iter().any(|grp| grp.contains(&name_of(g, c)))),
+    );
+    v
+}
+
+// --- ai-fix: C
+/// before a line runs: cast the rituals it needs (`affordable` counted them), one at a time, until its mana can be paid
+/// from what is open. (the mana is there, a ritual was cast)
+fn cast_rituals_for(g: &mut Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> Res<(bool, bool)> {
+    let mut cast = false;
+    loop {
+        let (gn, pips) = mana_need(g, p, cmb, casts);
+        if can_pay(g, p, gn, &pips, false) {
+            return Ok((true, cast));
+        }
+        let skip = line_cards(g, p, cmb, casts);
+        let Some(&r) = crate::engine::mana::rituals_in_hand(g, p, &skip).first() else { return Ok((false, cast)) };
+        crate::glog!(g, "    {} casts {} for {}", g.player(p).name, name_of(g, r), cmb.name);
+        if !crate::ai::brain::do_cast(g, p, r, None)? {
+            return Ok((false, cast));
+        }
+        cast = true;
+        if g.over {
+            return Ok((false, cast));
+        }
+    }
 }
 
 // ------------------------------------------------------------------ execution
@@ -461,6 +496,21 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     if g.player(p).combo_turn == Some((turns, cmb.name)) {
         return Ok(false);
     }
+    // --- ai-fix: C: the rituals the line counted on are cast first; then the line is read again
+    let (gn, pips) = mana_need(g, p, cmb, &casts);
+    let (keys, casts) = if can_pay(g, p, gn, &pips, false) {
+        (keys, casts)
+    } else {
+        let (paid, cast) = cast_rituals_for(g, p, cmb, &casts)?;
+        if !paid {
+            return Ok(cast); // a ritual cast (or countered) changed the turn state
+        }
+        let (ok, keys, casts) = (cmb.ready)(g, p);
+        if !ok || !affordable(g, p, cmb, &casts) {
+            return Ok(true);
+        }
+        (keys, casts)
+    };
     let pl = g.player_mut(p);
     pl.combo_turn = Some((turns, cmb.name));
     pl.stat("combo_attempt", 1);
@@ -691,6 +741,47 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         });
     }
     Ok(out)
+}
+
+// --- ai-fix: C
+/// What ritual `r` is worth to p's catalogued lines: the utility of going for a line that is ready now, can't be paid
+/// for from the open mana, and can once `r` is cast (`after`: p's mana units then), gated as `combo_options` gates its
+/// offer (a piece held, not gone for this turn, the Tier 6 table's `go_ok`). None if no line needs it. A ritual that is
+/// itself a piece of the line, or one of its casts, doesn't count.
+pub fn line_enabled_by(g: &Game, p: PlayerId, r: CardId, after: &[crate::engine::mana::Unit]) -> Option<f64> {
+    let key = g.player(p).key;
+    if crate::ai::is_main(key) && key != "karn" {
+        return None; // JD's decks run their lines from their own code (`combo_options` offers them none)
+    }
+    let rn = name_of(g, r);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for cmb in all() {
+        let piece_held = cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)));
+        if !piece_held || cmb.groups.iter().any(|grp| grp.contains(&rn)) {
+            continue;
+        }
+        if g.player(p).combo_turn == Some((g.player(p).turns, cmb.name)) {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if !ok || casts.contains(&r) {
+            continue;
+        }
+        let (gn, pips) = mana_need(g, p, cmb, &casts);
+        if can_pay(g, p, gn, &pips, false) || crate::engine::mana::plan_pay(g, after, gn, &pips).is_none() {
+            continue;
+        }
+        if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            continue;
+        }
+        return Some(14.0);
+    }
+    None
 }
 
 /// any modeled combo is ready (Ad Nauseam stops there)

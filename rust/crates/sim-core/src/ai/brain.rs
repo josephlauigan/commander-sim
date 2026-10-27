@@ -310,6 +310,11 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if base <= 0.0 && crate::impls::t6_plans::prio(g, p, c).is_some() {
         return None; // a Tier 6 deck plan set this card to 0: it waits (no DSL-value fallback)
     }
+    // --- ai-fix: C: a ritual the deck has no priority for is worth the play its mana makes possible this turn. Not on
+    // a Yawgmoth's Will turn: every spell is storm for the line then, and the old value stands
+    if base <= 0.0 && !pl.yawg && crate::engine::mana::ritual_out(g, p, c).is_some() {
+        return ritual_utility(g, p, s, c);
+    }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
     // JD's decks: a 0 from the deck's own priority is deliberate for an instant (held for responses) and for removal,
@@ -366,6 +371,47 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
         u += veyran_sequence(g, p, c);
     }
     Some(u)
+}
+
+// --- ai-fix: C
+/// a spell a ritual makes castable is worth casting the ritual for when it has at least this utility (tutors, the
+/// commander and a line count whatever their utility)
+pub const RITUAL_GOOD_SPELL: f64 = 5.0;
+/// how much less a ritual is worth than the play it makes possible
+pub const RITUAL_DISCOUNT: f64 = 0.25;
+
+// --- ai-fix: C
+/// A ritual's utility: worth casting when the mana it nets lets p cast something this turn that it can't pay for now:
+/// a catalogued line (`combos::line_enabled_by`), a tutor, its commander, or a good spell (`RITUAL_GOOD_SPELL`). It is
+/// worth that play's utility less `RITUAL_DISCOUNT`, and nothing (None) otherwise: mana with nothing to spend it on is
+/// lost at the end of the step, the reason Cabal Ritual, Rite of Flame and Desperate Ritual had priority 0.
+pub fn ritual_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f64> {
+    use crate::engine::mana::{mana_units, plan_pay, ritual_net, units_after_ritual};
+    let u = mana_units(g, p, false);
+    let after = units_after_ritual(g, p, c, &u)?;
+    let mut best = crate::impls::combos::line_enabled_by(g, p, c, &after);
+    let pl = g.player(p);
+    let mut cands: Vec<(CardId, &str)> = pl
+        .hand
+        .iter()
+        .copied()
+        .filter(|&x| x != c && !g.db.get(x).land && ritual_net(g, p, x) <= 0)
+        .map(|x| (x, "hand"))
+        .collect();
+    cands.extend(pl.cmds_in_zone().map(|x| (x, "cmd")));
+    for (x, zone) in cands {
+        let (xg, xp) = cost_of(g, p, x);
+        if plan_pay(g, &u, xg, &xp).is_some() || plan_pay(g, &after, xg, &xp).is_none() || !castable(g, p, x, zone) {
+            continue; // payable without the ritual, or not even with it
+        }
+        let d = g.db.get(x);
+        let tutor = [Tag::Tut, Tag::Xtutor, Tag::Seal, Tag::Top].iter().any(|&t| d.tag(t));
+        let Some(v) = card_utility(g, p, s, x) else { continue };
+        if tutor || pl.is_commander(x) || v >= RITUAL_GOOD_SPELL {
+            best = Some(best.map_or(v, |b: f64| b.max(v)));
+        }
+    }
+    best.map(|v| v - RITUAL_DISCOUNT)
 }
 
 /// brain.veyran_sequence: Veyran doubles every cast trigger, so a spell cast while Veyran waits in the command zone
@@ -1164,7 +1210,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         }
         // Tier 6 near a win, or an opposing commander one card from its combo: the answer stays up
         let near = (s.combo_near && crate::impls::t6_plans::is_t6(g, p)) || s.cmdr_combo;
-        u -= reserve_penalty(g, p, c, hold_card, hold_v, near);
+        if crate::engine::mana::ritual_net(g, p, c) <= 0 {
+            u -= reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
+        }
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
         {

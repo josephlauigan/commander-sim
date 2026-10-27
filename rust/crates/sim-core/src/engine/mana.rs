@@ -627,3 +627,102 @@ pub fn seq_cost(g: &Game, p: PlayerId, cards: &[CardId]) -> (u32, String) {
     }
     (gn, pips)
 }
+
+// --- ai-fix: C: rituals in hand counted as mana
+/// The mana ritual `c` adds as it resolves: (amount, colours). A ritual is an instant or sorcery whose only effect adds
+/// mana and that needs no additional cost (Culling the Weak's sacrifice is left out), or one of the hand-written ones:
+/// Cabal Ritual (five with threshold), Rite of Flame (two, plus one for each in a graveyard), Desperate Ritual. The
+/// ability language's rituals add mana of any of p's colours, as `add_mana` does.
+pub fn ritual_out(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, Colors)> {
+    use crate::dsl::model::{Ability, Num};
+    let d = g.db.get(c);
+    if d.land || !(d.instant || d.sorcery) {
+        return None;
+    }
+    let red = Colors::from_letters("R");
+    match &*d.name {
+        "Cabal Ritual" => return Some((if g.player(p).gy.len() >= 7 { 5 } else { 3 }, g.player(p).ident)),
+        "Rite of Flame" => {
+            let copies = g.players.iter().flat_map(|q| q.gy.iter()).filter(|&&x| &*g.db.get(x).name == "Rite of Flame");
+            return Some((2 + copies.count() as u32, red));
+        }
+        "Desperate Ritual" => return Some((3, red)),
+        _ => {}
+    }
+    if g.registry.get(c).is_some_and(|i| i.resolve.is_some()) {
+        return None; // another hand-written spell
+    }
+    let mut out = None;
+    for a in d.abilities.iter() {
+        match a {
+            Ability::AdditionalCost { .. } => return None,
+            Ability::Spell { effects } => {
+                if effects.is_empty() || !effects.iter().all(|e| e.kind == "add_mana") {
+                    return None;
+                }
+                let n: i32 = effects.iter().map(|e| if let Some(Num::Int(k)) = &e.n { *k } else { 0 }).sum();
+                if n <= 0 {
+                    return None;
+                }
+                out = Some((n as u32, g.player(p).ident));
+            }
+            _ => {}
+        }
+    }
+    out
+}
+
+/// what a ritual nets: the mana it adds less its cost now (0 for a card that is no ritual)
+pub fn ritual_net(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let Some((out, _)) = ritual_out(g, p, c) else { return 0 };
+    let (gn, pips) = cost_of(g, p, c);
+    out as i32 - gn as i32 - pips.chars().count() as i32
+}
+
+/// p's mana units once ritual `c` is cast from `u`: its cost paid, its mana added. None: no ritual, or `u` can't pay
+/// for it. A source that made more than the cost used keeps the rest (it floats, as `pay` leaves it).
+pub fn units_after_ritual(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
+    let (out, cols) = ritual_out(g, p, c)?;
+    let (gn, pips) = cost_of(g, p, c);
+    let (used, _) = plan_pay(g, u, gn, &pips)?;
+    let mut v: Vec<Unit> =
+        u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
+    let src = if cols == Colors::from_letters("R") { Source::FloatR } else { Source::FloatAny };
+    v.extend((0..out).map(|_| Unit { src, cols, amt: 1 }));
+    Some(v)
+}
+
+/// the rituals in p's hand that net mana and can be cast now, the biggest net first; never one in `skip` (a piece of
+/// the line being paid for, or a card it casts)
+pub fn rituals_in_hand(g: &Game, p: PlayerId, skip: &[CardId]) -> Vec<CardId> {
+    let mut v: Vec<CardId> = g
+        .player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| !skip.contains(&c) && ritual_net(g, p, c) > 0 && crate::engine::cast::castable(g, p, c, "hand"))
+        .collect();
+    v.sort_by_key(|&c| -ritual_net(g, p, c)); // stable: hand order breaks ties
+    v
+}
+
+/// can p pay `generic` + `pips` now, casting rituals from its hand first if it must? Each ritual counts once, and only
+/// in the order `rituals_in_hand` gives (the one that nets most first). A person's pool is never stretched this way.
+pub fn can_pay_with_rituals(g: &Game, p: PlayerId, generic: u32, pips: &str, skip: &[CardId]) -> bool {
+    if crate::human::is_human(g, p) {
+        return can_pay(g, p, generic, pips, false);
+    }
+    let mut u = mana_units(g, p, false);
+    if plan_pay(g, &u, generic, pips).is_some() {
+        return true;
+    }
+    for c in rituals_in_hand(g, p, skip) {
+        if let Some(v) = units_after_ritual(g, p, c, &u) {
+            u = v;
+            if plan_pay(g, &u, generic, pips).is_some() {
+                return true;
+            }
+        }
+    }
+    false
+}
