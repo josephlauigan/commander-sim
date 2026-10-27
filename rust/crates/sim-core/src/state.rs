@@ -1279,6 +1279,9 @@ pub struct Game {
     pub board_cap: Option<usize>,
     /// a copy being played forward by the look-ahead
     pub in_search: bool,
+    /// --- ai-fix: E: in a look-ahead copy, the deciding player's own-turn count when the playout began (a win scores
+    /// by how many of its own turns later it came)
+    pub search_from: u32,
     /// play-by-play lines when tracing a game (`--trace`)
     pub log: Option<Vec<String>>,
     /// practice mode's people; a copy of the game never has any (see `control::Humans`)
@@ -1460,6 +1463,7 @@ impl Game {
             work_cap,
             board_cap: None,
             in_search: false,
+            search_from: 0, // --- ai-fix: E
             log: None,
             humans: Humans::none(),
             link: Link::default(),

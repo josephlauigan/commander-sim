@@ -146,6 +146,7 @@ fn playout_copy(g: &mut Game, me: PlayerId, base_seed: u64, r: u64) -> (Game, u6
     let mut rng = Rng::from_u64(base_seed.wrapping_mul(31).wrapping_add(r));
     let mut g2 = clone(g);
     start(&mut g2, g);
+    g2.search_from = g.player(me).turns; // --- ai-fix: E: a win is scored by when it comes
     determinize(&mut g2, me, &mut rng);
     g2.rng = Rng::from_u64(rng.next_u64());
     let w = g2.work;
@@ -206,14 +207,14 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
 /// opponents (always below a win, however big the board)
 pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     if g.over {
-        return if g.winner == Some(p) { 100.0 } else { -100.0 };
+        return if g.winner == Some(p) { win_score(g, p) } else { -100.0 };
     }
     if !g.player(p).alive {
         return -100.0;
     }
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if opps.is_empty() {
-        return 100.0;
+        return win_score(g, p);
     }
     let dead = g.players.iter().filter(|q| q.id != p && !q.alive).count() as f64;
     let s = strength(g, p);
@@ -221,6 +222,26 @@ pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     so.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
     let raw = s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead;
     95.0 * (raw / 100.0).tanh()
+}
+
+// --- ai-fix: E
+/// what a win loses for each of the winner's own turns it comes after the decision: winning this turn beats a play
+/// whose line still wins next turn (both scored 100, and since the sure-win cap the tie went to the higher utility)
+pub const WIN_TURN_COST: f64 = 4.0;
+/// a win never scores below this: above every position short of a win (`evaluate` keeps those under 95)
+pub const WIN_FLOOR: f64 = 96.0;
+
+// --- ai-fix: E
+/// a win for p, scored by when it came: 100 on the turn of the decision (or before p's next turn), less
+/// `WIN_TURN_COST` for each own turn of p's after it, never below `WIN_FLOOR`. The playout's game ended on p's
+/// own-turn count `g.player(p).turns` (frozen once the game is over); `g.search_from` is the count at the decision.
+/// Outside the look-ahead a win is 100.
+pub fn win_score(g: &Game, p: PlayerId) -> f64 {
+    if !g.in_search {
+        return 100.0;
+    }
+    let later = g.player(p).turns.saturating_sub(g.search_from);
+    (100.0 - WIN_TURN_COST * later as f64).max(WIN_FLOOR)
 }
 
 /// search.strength
@@ -339,14 +360,22 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     let parts = format!("{}:{}:{}", g.player(p).key, g.player(p).hand.len(), g.player(p).perms.len());
     let base_seed = decision_seed(g, &parts);
     let mut scores = vec![0.0; keyed.len()];
+    // --- ai-fix: E: the playouts that did not end in p's win: the ramp and hold bonuses value what pays off after the
+    // horizon, and a playout already won has nothing left to pay off (a held line that wins next turn at 96 plus a big
+    // hold value would otherwise tie a win this turn at the cap)
+    let mut open = vec![0.0; keyed.len()];
     for r in 0..g.settings.search.rollouts as u64 {
         for (k, &(_, label, n)) in keyed.iter().enumerate() {
-            scores[k] += playout_main(g, p, post, label, n, base_seed, r);
+            let v = playout_main(g, p, post, label, n, base_seed, r);
+            scores[k] += v;
+            if v < WIN_FLOOR {
+                open[k] += 1.0;
+            }
         }
     }
     for (k, kk) in keyed.iter().enumerate() {
-        scores[k] += ramp_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
-        scores[k] += hold_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
+        scores[k] += ramp_bonus(g, p, &opts[kk.0]) * open[k];
+        scores[k] += hold_bonus(g, p, &opts[kk.0]) * open[k];
     }
     let mut best = 0;
     for k in 1..keyed.len() {

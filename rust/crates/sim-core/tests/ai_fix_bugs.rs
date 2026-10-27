@@ -232,3 +232,51 @@ fn d_a_forced_cast_that_breaks_a_ready_line_is_skipped() {
     let pick = ai::t6_table::must_option(&g, P0, &opts).map(|i| opts[i].label.clone());
     assert_ne!(pick.as_deref(), Some("Arcane Signet"));
 }
+
+// ------------------------------------------------------------------ E: win now against win next turn
+/// Turn 5, five Command Towers, Thassa's Oracle and Demonic Tutor in hand, Demonic Consultation in the library.
+/// Demonic Tutor now wins this turn (two for the tutor, three for the line). Casting the commander (five) instead
+/// leaves the same win for next turn. Both scored 100, and the tie went to the higher utility.
+fn win_now_or_next_turn() -> Game {
+    let mut g = scion_goldfish();
+    set_ai(&mut g, AiMode::Lookahead);
+    let consult = card(&g, "Demonic Consultation");
+    g.player_mut(P0).library.insert(0, consult);
+    lands(&mut g, P0, "Command Tower", 5, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Tutor"]);
+    g.player_mut(P0).turns = 5;
+    g.round = 5;
+    g
+}
+
+#[test]
+fn e_a_win_scores_by_when_it_comes() {
+    let mut g = scion_goldfish();
+    assert_eq!(sim_core::ai::search::win_score(&g, P0), 100.0, "outside the look-ahead");
+    g.in_search = true;
+    g.search_from = 4;
+    g.player_mut(P0).turns = 4;
+    assert_eq!(sim_core::ai::search::win_score(&g, P0), 100.0, "this turn");
+    g.player_mut(P0).turns = 5;
+    assert_eq!(sim_core::ai::search::win_score(&g, P0), 100.0 - sim_core::ai::search::WIN_TURN_COST, "next turn");
+    g.player_mut(P0).turns = 9;
+    assert_eq!(sim_core::ai::search::win_score(&g, P0), sim_core::ai::search::WIN_FLOOR, "never below the floor");
+}
+
+#[test]
+fn e_winning_this_turn_beats_a_play_that_wins_next_turn() {
+    let mut g = win_now_or_next_turn();
+    let opts = ai::brain::main_options(&mut g, P0, false).unwrap();
+    let cmd = g.db.get(g.player(P0).cmd).name.to_string();
+    let u = |l: &str| opts.iter().find(|o| o.label == l).map(|o| o.utility);
+    assert!(
+        u(&cmd).is_some() && u("Demonic Tutor").is_some(),
+        "{:?}",
+        opts.iter().map(|o| &o.label).collect::<Vec<_>>()
+    );
+    let pick = ai::search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
+    let scores = ai::search::LAST_SCORES.with(|l| l.borrow().clone());
+    assert_eq!(pick.as_deref(), Some("Demonic Tutor"), "{scores:?}");
+    let s = |l: &str| scores.iter().find(|x| x.0 == l).map(|x| x.1).unwrap();
+    assert!(s("Demonic Tutor") > s(&cmd), "{scores:?}");
+}
