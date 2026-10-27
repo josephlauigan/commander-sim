@@ -12,6 +12,7 @@ pub mod dsl;
 pub mod dsl_parse;
 pub mod export;
 pub mod json;
+pub mod paths;
 pub mod py;
 pub mod re;
 pub mod scryfall;

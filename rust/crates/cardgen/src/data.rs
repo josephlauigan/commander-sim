@@ -85,6 +85,10 @@ pub struct Entry {
     pub pool_remove_tags: Vec<String>,
     pub status: Option<String>,
     pub note: Option<String>,
+    /// `paths_ok = "why"`: the card runs through two paths (compiled abilities and card code, say) on purpose, for
+    /// different parts of the card; `cardgen audit --paths` reports it as a declared split, not a double. Read only by
+    /// the audit.
+    pub paths_ok: Option<String>,
 }
 
 impl Entry {
@@ -131,6 +135,7 @@ pub fn load_overrides(p: &Project) -> Result<Vec<(String, Entry)>, String> {
                 "loyalty" => e.loyalty = Some(s()?),
                 "status" => e.status = Some(s()?),
                 "note" => e.note = Some(s()?),
+                "paths_ok" => e.paths_ok = Some(s()?),
                 "ward" => e.ward = Some(v.as_integer().ok_or(format!("{ctx}: expected a number"))?),
                 "kws" => e.kws = Some(str_list(v, &ctx)?),
                 "add_tags" => e.add_tags = str_list(v, &ctx)?,

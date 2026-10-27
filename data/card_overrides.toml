@@ -15,6 +15,8 @@
 #   pool_remove_tags         tags removed, but not from cards in your decks
 #                            (the three tag edits apply to the cards the decks play, not to cache-only cards)
 #   status, note             the audit's verdict (Full / Approximate / Partial / Unmodeled) and what is modeled
+#   paths_ok                 why the card runs through two paths on purpose (compiled abilities for one part, card
+#                            code for another): `cardgen audit --paths` reports it as a declared split, not a double
 
 ["Abduction"]
 types = "E"

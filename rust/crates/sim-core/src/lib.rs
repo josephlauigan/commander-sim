@@ -7,6 +7,7 @@ pub mod cards;
 pub mod control;
 pub mod dsl;
 pub mod engine;
+pub mod exec_tags;
 pub mod export;
 pub mod flow;
 pub mod hooks;
