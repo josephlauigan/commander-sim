@@ -766,3 +766,43 @@ pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, p
     }
     false
 }
+
+// --- ai-fix: B
+/// the mana a land card would add once played, as a unit: its tagged colours (`A`: p's identity) and amount. A guess
+/// for a card not yet on the battlefield: no Blood Moon, no enters-tapped rule.
+pub fn land_card_unit(g: &Game, p: PlayerId, c: CardId) -> Unit {
+    let t = &g.db.get(c).tags;
+    let amt = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
+    Unit { src: Source::FloatAny, cols: tag_colors(t.str(Tag::C).unwrap_or("C"), g.player(p).ident), amt }
+}
+
+// --- ai-fix: B
+/// About how much mana p will have on its next turn: every land and mana permanent untapped (Mana Vault and its kind
+/// too), a dork no longer summoning sick, and one more land if it holds one. Colours are not counted.
+pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
+    let pl = g.player(p);
+    let lands: u32 = pl
+        .lands
+        .iter()
+        .filter(|&&l| g.land(l).on_bf)
+        .map(|&l| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32)
+        .sum();
+    let perms: u32 = pl
+        .perms
+        .iter()
+        .filter(|&&m| !g.perm(m).phased)
+        .filter_map(|&m| g.perm(m).cd)
+        .map(|c| {
+            let t = &g.db.get(c).tags;
+            if let Some(r) = t.str(Tag::Rock) {
+                r.split_once(':').map_or(r, |x| x.0).parse().unwrap_or(1)
+            } else if t.has(Tag::Dork) || t.has(Tag::Chromemox) {
+                1
+            } else {
+                0
+            }
+        })
+        .sum();
+    let drop = u32::from(pl.hand.iter().any(|&c| g.db.get(c).land));
+    lands + perms + drop
+}

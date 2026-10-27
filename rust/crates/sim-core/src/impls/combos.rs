@@ -801,13 +801,25 @@ fn full_deck_names(g: &Game, p: PlayerId) -> Vec<&str> {
 /// combos.missing_pieces: for tutors, the pieces of this player's closest combo that it doesn't have (any combo
 /// whose pieces are in its deck; a combo with some pieces already in hand or play first)
 pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
+    // --- ai-fix: B: a line complete but for its mana wants the mana first
+    let mana = mana_for_lines(g, p);
+    if !mana.is_empty() {
+        return mana;
+    }
     let deck = full_deck_names(g, p);
+    // --- ai-fix: B: a card p put on top of its library itself is on its way: not missing
+    let top: Vec<&str> = crate::engine::tutors::known_top(g, p).into_iter().map(|c| name_of(g, c)).collect();
     let mut best: Option<(usize, Vec<&str>)> = None;
     for cmb in all() {
         if !cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n))) {
             continue;
         }
-        let miss: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !has_piece(g, p, grp)).collect();
+        let miss: Vec<&[&str]> = cmb
+            .groups
+            .iter()
+            .copied()
+            .filter(|grp| !has_piece(g, p, grp) && !grp.iter().any(|n| top.contains(n)))
+            .collect();
         if miss.is_empty() {
             continue;
         }
@@ -821,6 +833,69 @@ pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
         }
     }
     best.map_or(vec![], |b| b.1.iter().filter_map(|n| g.db.id(n)).collect())
+}
+
+// --- ai-fix: B
+/// For tutors: the mana to fetch for a line of p's deck whose every piece p holds but which it can't pay for (rituals
+/// in hand counted). First the library cards that make it payable this turn once in hand: a ritual or a noncreature
+/// rock cast from the open mana, or a land while p's land drop is still to come. Then, when p's mana next turn
+/// (`next_turn_mana`) falls short of the line, the cards that close the gap by then: a land if it holds none, a rock
+/// that makes more than it costs. Empty when no line waits for mana, or no card helps.
+fn mana_for_lines(g: &Game, p: PlayerId) -> Vec<CardId> {
+    use crate::engine::mana::{
+        land_card_unit, mana_units, next_turn_mana, ritual_out, units_after_cast, units_pay_with_rituals,
+    };
+    let pl = g.player(p);
+    let u = mana_units(g, p, false);
+    let drop_now = g.active == Some(p) && pl.land_turn != pl.turns as i32;
+    let land_in_hand = pl.hand.iter().any(|&c| g.db.get(c).land);
+    let next = next_turn_mana(g, p);
+    let (mut now, mut later): (Vec<CardId>, Vec<CardId>) = (vec![], vec![]);
+    for i in lines_of(g, p).iter().copied() {
+        let cmb = all()[i];
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if !ok || affordable(g, p, cmb, &casts) {
+            continue;
+        }
+        let (gn, pips) = mana_need(g, p, cmb, &casts);
+        let total = gn + pips.chars().count() as u32;
+        let skip = line_cards(g, p, cmb, &casts);
+        let mut seen: Vec<&str> = vec![];
+        for &c in &pl.library {
+            let d = g.db.get(c);
+            if seen.contains(&&*d.name) {
+                continue;
+            }
+            seen.push(&*d.name);
+            let rock = !d.creature && d.tags.str(Tag::Rock).is_some();
+            if d.land {
+                let mut v = u.clone();
+                v.push(land_card_unit(g, p, c));
+                if drop_now && units_pay_with_rituals(g, p, &v, gn, &pips, &skip) {
+                    now.push(c);
+                } else if !land_in_hand && next < total && next + land_card_unit(g, p, c).amt >= total {
+                    later.push(c);
+                }
+            } else if rock || ritual_out(g, p, c).is_some() {
+                let after = units_after_cast(g, p, c, &u);
+                if after.is_some_and(|v| units_pay_with_rituals(g, p, &v, gn, &pips, &skip)) {
+                    now.push(c);
+                } else if rock && next < total {
+                    let (cg, cp) = cost_of(g, p, c);
+                    let out: u32 = d.tags.str(Tag::Rock).and_then(|r| r.split(':').next()?.parse().ok()).unwrap_or(1);
+                    if next + out >= total + cg + cp.chars().count() as u32 {
+                        later.push(c);
+                    }
+                }
+            }
+        }
+    }
+    for c in later {
+        if !now.contains(&c) {
+            now.push(c);
+        }
+    }
+    now
 }
 
 /// combos.piece_threat: extra value of m if it's a piece of a combo whose other pieces its controller has on the

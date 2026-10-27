@@ -280,3 +280,67 @@ fn e_winning_this_turn_beats_a_play_that_wins_next_turn() {
     let s = |l: &str| scores.iter().find(|x| x.0 == l).map(|x| x.1).unwrap();
     assert!(s("Demonic Tutor") > s(&cmd), "{scores:?}");
 }
+
+// ------------------------------------------------------------------ B: tutor targets
+/// Vampiric Tutor put Thassa's Oracle on top: a second tutor fetched it again (it was still "missing"). The known top
+/// card is on its way now; the record ends when the card is drawn, or the library shuffled.
+#[test]
+fn b_a_card_put_on_top_is_not_fetched_again() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 3, false);
+    hand(&mut g, P0, &["Demonic Consultation"]);
+    let oracle = card(&g, "Thassa's Oracle");
+    g.player_mut(P0).library.insert(0, oracle);
+    assert_eq!(ai::tutor_pick(&g, P0, "any"), Some(oracle), "the Oracle is the missing piece");
+    sim_core::engine::tutors::tutor_to_top(&mut g, P0, "any", 2).unwrap();
+    assert_eq!(g.player(P0).library.last(), Some(&oracle));
+    assert_eq!(sim_core::engine::tutors::known_top(&g, P0), vec![oracle]);
+    assert_ne!(ai::tutor_pick(&g, P0, "any"), Some(oracle), "it is already on top");
+    assert!(!sim_core::cardcode::missing_pieces(&g, P0).contains(&oracle));
+    sim_core::engine::zones::draw(&mut g, P0, 1, false).unwrap();
+    assert!(g.player(P0).hand.contains(&oracle));
+    assert!(sim_core::engine::tutors::known_top(&g, P0).is_empty(), "drawn: the record ends");
+    // a shuffle ends it too
+    let o2 = g.player_mut(P0).hand.pop().unwrap();
+    sim_core::engine::tutors::put_known_top(&mut g, P0, o2);
+    sim_core::engine::tutors::shuffle_library(&mut g, P0);
+    assert!(sim_core::engine::tutors::known_top(&g, P0).is_empty(), "shuffled: the record ends");
+}
+
+/// Oracle + Consultation in hand, two lands for a line that needs three: the line was skipped as complete, so a tutor
+/// fetched a piece of another line. Now it fetches the mana: Lotus Petal or a land (with the land drop to come) pays
+/// for the line this turn and comes first.
+#[test]
+fn b_a_line_short_only_of_mana_fetches_mana() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 2, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation"]);
+    for n in ["Sol Ring", "Lotus Petal", "Underworld Breach", "Brain Freeze"] {
+        let c = card(&g, n);
+        g.player_mut(P0).library.insert(0, c);
+    }
+    g.player_mut(P0).land_turn = -1;
+    let miss: Vec<String> = names(&g, &sim_core::cardcode::missing_pieces(&g, P0));
+    assert!(!miss.is_empty(), "the line wants mana");
+    assert!(miss.iter().all(|n| ["Sol Ring", "Lotus Petal", "Island"].contains(&n.as_str())), "{miss:?}");
+    let petal = miss.iter().position(|n| n == "Lotus Petal").expect("Lotus Petal pays for it now");
+    assert!(miss.iter().position(|n| n == "Sol Ring").is_none_or(|s| petal < s), "{miss:?}");
+}
+
+/// Enlightened Tutor (tagged `tut=any`) was scored 72 for finding Thassa's Oracle; it finds an artifact or enchantment
+#[test]
+fn b_enlightened_tutor_is_scored_by_what_it_can_find() {
+    let mut g = scion_goldfish();
+    lands(&mut g, P0, "Underground Sea", 2, false);
+    hand(&mut g, P0, &["Demonic Consultation", "Enlightened Tutor", "Demonic Tutor"]);
+    for n in ["Thassa's Oracle", "Sol Ring"] {
+        let c = card(&g, n);
+        g.player_mut(P0).library.insert(0, c);
+    }
+    let et = card(&g, "Enlightened Tutor");
+    let dt = card(&g, "Demonic Tutor");
+    assert_eq!(sim_core::ai::pool::search_kind(&g, et), Some("ae"));
+    let (pe, pd) = (ai::deck_prio(&g, P0, et), ai::deck_prio(&g, P0, dt));
+    assert_eq!(pd, 72.0, "Demonic Tutor finds the Oracle");
+    assert!(pe < 72.0 && pe > 0.0, "Enlightened Tutor finds only Sol Ring: {pe}");
+}

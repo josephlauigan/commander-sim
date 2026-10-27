@@ -622,6 +622,9 @@ pub struct Player {
     pub delayed_draws: u32,
     /// the tutor being chosen puts the card on top (tutor_pick reads it)
     pub to_top: bool,
+    /// --- ai-fix: B: the cards p put on top of its library itself (Vampiric Tutor, Imperial Seal, Mystical Tutor,
+    /// Enlightened Tutor), top last: p knows them until the library is shuffled or they are drawn (`tutors::known_top`)
+    pub known_top: Vec<CardId>,
     /// the permanent number (born) when this player's last turn ended
     pub last_turn_end: u32,
     /// the graveyard at the start of this turn
@@ -847,6 +850,7 @@ impl Player {
             drain_mana: 0,
             delayed_draws: 0,
             to_top: false,
+            known_top: vec![], // --- ai-fix: B
             last_turn_end: 0,
             gy_start: vec![],
             chasm_age: 0,

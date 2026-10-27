@@ -696,6 +696,7 @@ pub fn tutor_ok(g: &Game, kind: &str, c: CardId) -> bool {
         "cre2" => d.creature && d.pow <= 2,
         "cre" => d.creature,
         "ench" => d.types.has(Types::ENCHANTMENT),
+        "ae" => d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT), // --- ai-fix: B: Enlightened Tutor
         _ => true,
     }
 }
@@ -703,7 +704,7 @@ pub fn tutor_ok(g: &Game, kind: &str, c: CardId) -> bool {
 /// the kinds TUTOR_OK knows (any other kind finds anything)
 fn tutor_ok_known(kind: &str) -> &str {
     match kind {
-        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" => kind,
+        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" | "ae" => kind, // --- ai-fix: B: "ae"
         _ => "any",
     }
 }
@@ -780,8 +781,11 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             0.0
         }
     };
-    let cands: Vec<CardId> =
-        searchable(g, p).into_iter().filter(|&c| tutor_ok(g, okk, c) && !g.db.get(c).land).collect();
+    let top = crate::engine::tutors::known_top(g, p); // --- ai-fix: B: not the card it already put on top
+    let cands: Vec<CardId> = searchable(g, p)
+        .into_iter()
+        .filter(|&c| tutor_ok(g, okk, c) && !g.db.get(c).land && !top.contains(&c))
+        .collect();
     if cands.is_empty() {
         return None;
     }
