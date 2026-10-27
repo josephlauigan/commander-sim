@@ -3,7 +3,46 @@
 The deck's living list of strengths, weaknesses and what was tested. Scion plays Tier 6 (cEDH) only. List v1 (the
 EDHTop16 consensus list, `rust/agents/scion-v1-list.txt`) is the baseline every later version is measured against.
 
+## 2026-10-27: the look-ahead passed up sure wins in the goldfish (fixed); the corrected baseline
+
+Raw output: `2026-10-27-win-cap/` (goldfish look-ahead, adaptive, and look-ahead with `SEARCH_HOLD_W=0`; scion vs
+Tier 6; `--realism` t0-t4 and t6, 4,000 games each, `before/` and `after/` the fix).
+
+**The bug.** In the v1 baseline below, a traced goldfish game (seed 500003) had Thassa's Oracle + Demonic Consultation
+ready on turns 16 and 17 (heuristic 100%) and the look-ahead chose "stop (hold mana)" both times. Both lines won
+every playout (100: the heuristic combos next turn and the inert seats can't stop it), and the hold bonus
+(`search::hold_bonus`) was added on top (103.25), so waiting beat winning. Fix (`ai/search.rs`, `choose_inner`): the
+rollout scores, bonuses included, are capped at a sure win, and a tie goes to the play the heuristic rates higher. Test:
+`search_hold::a_hold_bonus_never_beats_a_sure_win` (fails without the cap: 100.0 vs 102.375).
+
+**Goldfish after the fix** (look-ahead, 2,000 games, seed 500000; own turn of the kill):
+
+| deck | median | mean (kills) | by T2 | by T3 | no kill by R20 | protection held on the kill |
+| --- | --- | --- | --- | --- | --- | --- |
+| **scion** | 10.0 (was 13.0) | 10.2 | 0.3% | 2.9% | 3.9% | 80.5% |
+| dack-fayden-white-stax | 10.5 (11.0) | 9.9 | 0.8% | 6.9% | 10.4% | 47.3% |
+| kinnan-bonder-mana-combo | 8.0 (9.0) | 8.7 | 0.1% | 2.1% | 1.0% | 86.1% |
+| kraum-tymna-blue-breach-midrange | 9.0 (11.0) | 9.5 | 0.3% | 2.0% | 7.2% | 90.5% |
+| rograkh-silas-turbo-breach | 10.0 (14.0) | 9.2 | 0.6% | 4.8% | 21.1% | 77.3% |
+| rograkh-thrasios-creature-combo | 9.0 (10.0) | 9.3 | 0.0% | 0.1% | 0.5% | 85.0% |
+| sisay-legends-toolbox | 7.0 (7.0) | 7.6 | 0.0% | 0.1% | 0.2% | 73.0% |
+
+Scion's kills: the Oracle line 73.0% (was 63.2%), damage 18.8%, commander damage 6.4%, the Prismari line 0.9%. The
+adaptive AI doesn't use the look-ahead and is unchanged (median 11.0).
+
+**At the table the fix is neutral.** `--realism` t0-t4 and t6: no row changes pass/fail, and only one moves by 0.8
+points or more (t3 combo wins 15.8% -> 16.7%, inside the noise); Tier 6 deck shares move by 0.3 points at most. Scion
+vs Tier 6: 26.5% (was 26.6%). t5 was not run: it hits the memory cap on the Miirym Treasure blow-up that is fixed on
+the `phase2-doubles` branch, not on main.
+
+**What is left is the Tier 6 heuristic, not the hold bonus.** With the hold bonus off (`SEARCH_HOLD_W=0`) the goldfish
+is the same (scion median 10.0, Kinnan 8, Sisay 7), and the adaptive AI, with no look-ahead at all, is at 11. A median
+kill by turn 8-10 against seats that never act is still the shared Tier 6 AI's pace (tutors held, rocks held, few land
+drops in the traced games), not the deck's; D1 (a median kill by turn 3) can't be judged until that AI plays faster.
+
 ## 2026-10-26: v1 baseline (goldfish and Tier 6; 2,000 games each, seed 500000, loose)
+
+*Superseded by the 2026-10-27 section above: these goldfish numbers carry the look-ahead bug fixed there.*
 
 Raw output: `2026-10-26-baseline/goldfish-lookahead.txt` (scion and the six Tier 6 pool decks),
 `goldfish-adaptive.txt` (scion), `pool-t6-lookahead.txt` (scion vs Tier 6).
