@@ -1723,3 +1723,54 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     }
     false
 }
+
+// --- ai-planner: read-only accessors for the line planner (`ai::planner`)
+/// The lines p could go for now, as `combo_options` offers them: a piece held (or a stepped line that is ready), not
+/// gone for this turn, ready and affordable (rituals in hand counted), and at Tier 6 cleared by the table and the plan
+/// slot (`go_ok`) when `table` is true. Each comes with the cards in p's hand it uses (its pieces and casts).
+pub fn plan_lines(g: &Game, p: PlayerId, table: bool) -> Vec<(usize, Vec<CardId>)> {
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    let t6 = crate::impls::t6_plans::is_t6(g, p);
+    let mut out = vec![];
+    for (i, cmb) in all().iter().enumerate() {
+        if !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)))
+            && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0)
+        {
+            continue;
+        }
+        if g.player(p).combo_turn == Some((g.player(p).turns, cmb.name)) {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if !ok || !affordable(g, p, cmb, &casts) {
+            continue;
+        }
+        if table && t6 && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            continue;
+        }
+        out.push((i, line_cards(g, p, cmb, &casts)));
+    }
+    out
+}
+
+/// is a card of this piece group held by p: on the battlefield, in hand, among its lands, or a commander in the
+/// command zone (the line's own `ready` decides whether it can be used)
+pub fn group_held(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
+    has_piece(g, p, grp) || g.player(p).cmds_in_zone().any(|c| grp.contains(&name_of(g, c)))
+}
+
+/// is a card of this piece group on p's battlefield (a permanent, or a land)
+pub fn group_out(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
+    grp.iter().any(|n| on_bf(g, p, n).is_some())
+        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && grp.contains(&name_of(g, g.land(l).cd)))
+}
+
+/// the mana cards a tutor should fetch for a line complete but for its mana (`mana_for_lines`)
+pub fn plan_mana_targets(g: &Game, p: PlayerId) -> Vec<CardId> {
+    mana_for_lines(g, p)
+}

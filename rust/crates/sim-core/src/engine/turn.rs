@@ -122,6 +122,13 @@ pub fn play_land(g: &mut Game, p: PlayerId) -> Res {
             return Ok(());
         }
     }
+    // --- ai-planner: a Tier 6 deck's land drop (and a fetch land's land) is the planner's when it changes what the
+    // deck's plan reaches; otherwise the usual choice below
+    if ai::planner::applies(g, p)
+        && let Some((c, t)) = ai::planner::choose_land(g, p)?
+    {
+        return ai::planner::play_land_for(g, p, c, t);
+    }
     let pl = g.player(p);
     let mut lands: Vec<CardId> = pl.hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
     if pl.yawg {
@@ -296,7 +303,7 @@ pub fn remove_land(g: &mut Game, p: PlayerId, l: LandId) {
 }
 
 /// fetch lands' basic land types (Prismatic Vista fetches a basic)
-fn true_fetch(name: &str) -> Option<&'static str> {
+pub fn true_fetch(name: &str) -> Option<&'static str> { // --- ai-planner: pub (the planner's land choice)
     Some(match name {
         "Polluted Delta" => "UB",
         "Flooded Strand" => "WU",
@@ -345,7 +352,9 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     }
     let have = colors_have(g, p, Some(l));
     let mut scored = vec![];
-    for &c in &cands {
+    // --- ai-planner: the line planner chose the land to fetch (`Player::plan_tutor`, legal: one of `cands`)
+    let forced = g.player(p).plan_tutor.filter(|t| cands.contains(t));
+    for &c in cands.iter().filter(|&&c| forced.is_none_or(|t| t == c)) {
         let cols = tag_cols(g, p, c);
         let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
         let ncols = g.db.get(c).tags.str(Tag::C).map_or(0, |s| s.chars().count()) as f64;

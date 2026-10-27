@@ -625,6 +625,9 @@ pub struct Player {
     /// --- ai-fix: B: the cards p put on top of its library itself (Vampiric Tutor, Imperial Seal, Mystical Tutor,
     /// Enlightened Tutor), top last: p knows them until the library is shuffled or they are drawn (`tutors::known_top`)
     pub known_top: Vec<CardId>,
+    /// --- ai-planner: the card the line planner chose for the tutor being cast (`ai::planner`); a tutor takes it
+    /// when it meets the tutor's own restriction, else picks as usual. Set only around the planner's cast
+    pub plan_tutor: Option<CardId>,
     /// the permanent number (born) when this player's last turn ended
     pub last_turn_end: u32,
     /// the graveyard at the start of this turn
@@ -851,6 +854,7 @@ impl Player {
             delayed_draws: 0,
             to_top: false,
             known_top: vec![], // --- ai-fix: B
+            plan_tutor: None, // --- ai-planner
             last_turn_end: 0,
             gy_start: vec![],
             chasm_age: 0,
@@ -1312,6 +1316,9 @@ pub struct Game {
     pub combo_spell: bool,
     /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
     pub t6_going: Option<PlayerId>,
+    /// --- ai-planner: a line planner's copy of the game, played for this player: nobody else takes priority (the
+    /// planner reads the table through `go_ok`, as the real game does, and never through the opponents' hidden hands)
+    pub plan_for: Option<PlayerId>,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
     /// Coat of Arms has entered (partials.coat_bonus applies)
@@ -1481,6 +1488,7 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             t6_going: None,
+            plan_for: None, // --- ai-planner
             lattice_lock: None,
             coat: false,
             lineage: false,

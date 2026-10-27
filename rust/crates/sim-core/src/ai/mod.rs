@@ -19,6 +19,7 @@ pub mod act;
 pub mod brain;
 pub mod decks;
 pub mod plans;
+pub mod planner; // --- ai-planner
 pub mod pool;
 pub mod search;
 pub mod seph;
@@ -742,6 +743,10 @@ pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
 /// the ability language's search choice (dsl.py's search): for any card, ais.tutor_pick; for a card type, your
 /// deck's named list or an outside deck's wish list. None: the interpreter takes the card it values most.
 pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, cands: &[CardId]) -> Option<CardId> {
+    // --- ai-planner: the line planner's choice, when the search's own filter allows it (`cands`)
+    if let Some(c) = g.player(p).plan_tutor.filter(|c| cands.contains(c)) {
+        return Some(c);
+    }
     let ty = f.kind.as_deref();
     if ty == Some("land") && let Some(c) = crate::impls::karn::search_pick(g, p, cands) {
         return Some(c); // the karn deck: the Tron piece it lacks

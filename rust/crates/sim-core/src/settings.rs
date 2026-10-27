@@ -93,6 +93,13 @@ pub struct Settings {
     /// Tier 6: the lands (hand plus battlefield) a deck needs before it casts Mox Diamond, counting the one it
     /// discards (`ai::pool`); 3 keeps two after the discard
     pub t6_moxd_lands: usize,
+    /// --- ai-planner: the line planner for the Tier 6 decks (`ai::planner`); env PLANNER=0 or a knobs file's
+    /// `[ai] planner = false` turns it off (the step 1 AI)
+    pub planner: bool,
+    /// --- ai-planner: when no play leaves a line ready next turn, the planner still casts a tutor for the piece that
+    /// brings the closest line nearest. Off unless env PLANNER_PROGRESS=1 (an A/B switch: it measured slower, see
+    /// audit/ai-foundations/step2-planner.md)
+    pub planner_progress: bool,
 }
 
 impl Settings {
@@ -119,10 +126,23 @@ impl Settings {
             game_work: 20_000,
             styles: HashMap::new(),
             t6_moxd_lands: 3,
+            planner: planner_default(), // --- ai-planner
+            planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
         }
     }
 
     pub fn counter_threshold(&self, deck: &str) -> Option<i32> {
         self.cthresh.get(deck).copied()
     }
+}
+
+// --- ai-planner
+/// the line planner is on unless env PLANNER is `0` (or `false`, `off`)
+pub fn planner_default() -> bool {
+    planner_from(std::env::var("PLANNER").ok().as_deref())
+}
+
+/// the planner setting an env value gives (unset or anything else: on)
+pub fn planner_from(v: Option<&str>) -> bool {
+    !matches!(v.map(str::trim), Some("0" | "false" | "off"))
 }

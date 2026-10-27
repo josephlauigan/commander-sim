@@ -1280,8 +1280,32 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             return Ok(());
         }
         g.tick()?;
-        let opts = main_options(g, p, post)?;
+        let mut opts = main_options(g, p, post)?;
         crate::gf_audit::decision(g, p, &opts); // --- ai-audit
+        // --- ai-planner: the line planner comes first for a Tier 6 deck: the first play of a plan that wins this turn,
+        // else of one that leaves a line ready next turn, is made now, and the plan is made again at the next decision.
+        // A next-turn plan that starts with an instant tutor keeps the tutor's mana up for the end-of-turn window.
+        if super::planner::applies(g, p) {
+            use super::planner::{Decision, describe, label};
+            match super::planner::decide(g, p)? {
+                Decision::Play { step, plan, why: when } => {
+                    let lbl = label(g, step);
+                    let (n, seq) = (g.player(p).name, describe(g, &plan));
+                    crate::glog!(g, "      [{n} decides: {lbl} [plan: {seq}; {when}]]");
+                    if super::planner::perform(g, p, step)? {
+                        crate::t6stats::speed_decided(g, p, &lbl);
+                        crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
+                        continue;
+                    }
+                }
+                Decision::Reserve { tutor, plan } => {
+                    let (n, t, seq) = (g.player(p).name, g.db.get(tutor).name.to_string(), describe(g, &plan));
+                    crate::glog!(g, "      [{n} keeps mana for {t} [plan: {seq}; at the end of the turn before ours]]");
+                    opts = super::planner::reserve(g, p, tutor, opts);
+                }
+                Decision::None => {}
+            }
+        }
         if crate::impls::t6_plans::is_t6(g, p)
             && let Some(i) = super::t6_table::must_option(g, p, &opts)
             && let Some(a) = &opts[i].act
@@ -1479,6 +1503,22 @@ fn overload_rift(g: &Game, p: PlayerId, opts: Vec<Opt>) -> Vec<Opt> {
 pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
     crate::t6stats::eot_window(g, p);
     crate::engine::turn::erebos_draw(g, p)?;
+    // --- ai-planner: the planner's instant tutor (or the instant ritual that pays for it) for a line ready next turn
+    if super::planner::applies(g, p) {
+        for _ in 0..3 {
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+            let Some((step, plan, why)) = super::planner::eot_play(g, p)? else { break };
+            let lbl = super::planner::label(g, step);
+            let seq = super::planner::describe(g, &plan);
+            crate::glog!(g, "      [{} end of turn: {lbl} [plan: {seq}; {why}]]", g.player(p).name);
+            if !super::planner::perform(g, p, step)? {
+                break;
+            }
+            g.player_mut(p).stat("eot_casts", 1);
+        }
+    }
     for _ in 0..6 {
         if g.over || !g.player(p).alive {
             return Ok(());

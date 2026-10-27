@@ -530,6 +530,7 @@ fn take_priority(g: &mut Game, q: PlayerId, _id: u32) -> Res<bool> {
         || g.over
         || crate::engine::values::silenced(g, q)
         || (g.locks_used && crate::engine::cast::split_second_up(g))
+        || g.plan_for.is_some_and(|x| x != q) // --- ai-planner: a planner's copy: only its player acts
     {
         return Ok(false);
     }

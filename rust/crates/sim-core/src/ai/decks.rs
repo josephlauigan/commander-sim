@@ -763,6 +763,14 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
 
 /// ais.tutor_pick: deck-specific wish lists first; otherwise the highest-priority legal card
 pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
+    // --- ai-planner: the line planner's choice (`Player::plan_tutor`), when it is in the library and meets the
+    // tutor's restriction; otherwise the usual pick
+    if let Some(c) = g.player(p).plan_tutor
+        && searchable(g, p).contains(&c)
+        && tutor_ok(g, tutor_ok_known(kind), c)
+    {
+        return Some(c);
+    }
     if let Some(c) = tutor_pick_named(g, p, kind) {
         return Some(c);
     }
