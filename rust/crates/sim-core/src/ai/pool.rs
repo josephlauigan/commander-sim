@@ -299,6 +299,10 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         return cfg.hooked_prio.unwrap_or(55);
     }
+    if d.perm && d.abilities.iter().any(|a| a.static_kind() == Some("cost")) {
+        // a compiled cost change (the Medallions; their cost hooks went in Phase 2): ranked as the hook was
+        return if pl.turns <= 5 { 68 } else { 52 };
+    }
     if d.perm && crate::cardcode::is_sac_outlet(&d.name) {
         return 50; // sacrifice outlets (Goblin Bombardment ...)
     }

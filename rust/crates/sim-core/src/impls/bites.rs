@@ -10,7 +10,8 @@
 //!
 //! The bites hide themselves from the generic priorities (`zero_prio`) and are played by their `hand_options`: bite and
 //! fight with the best deathtouch creature when one is out (any bite kills), otherwise the biggest creature, at the
-//! biggest threat. The other cards: Track Down, Lashwhip Predator, Bugenhagen, Tenured Concocter, Paladin of Predation.
+//! biggest threat. The other cards: Track Down, Lashwhip Predator, Bugenhagen, Tenured Concocter. Paladin of Predation
+//! has no code here: its toxic 6 is compiled, its evasion is `rules::evasion_blocked`.
 //! Tests: tests/cards_bites.rs.
 
 use super::partials::eot_kw;
@@ -396,18 +397,6 @@ pub fn becomes_target(g: &mut Game, m: PermId, _by: PlayerId) -> Res {
     Ok(())
 }
 
-// ------------------------------------------------------------------ Paladin of Predation
-/// Paladin of Predation: toxic 6 (six poison counters with the combat damage). It can't be blocked by creatures with
-/// power 2 or less: `rules::evasion_blocked`.
-fn paladin_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
-    if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 6); // Vorinclex
-        g.player_mut(d).poison += k as u32;
-        crate::glog!(g, "    {} gets 6 poison counters (toxic)", g.player(d).name);
-    }
-    Ok(())
-}
-
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // the bites and the fight: cast by their own options
     for name in [
@@ -432,6 +421,5 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Tenured Concocter")?;
     c.self_pt = Some(concocter_pt);
     c.etb = Some(selfpt_etb);
-    r.card(db, "Paladin of Predation")?.combat_damage = Some(paladin_damage);
     Ok(())
 }

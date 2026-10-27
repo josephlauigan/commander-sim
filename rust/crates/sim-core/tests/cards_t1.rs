@@ -227,7 +227,7 @@ fn heliod_s_pilgrim_finds_an_aura() {
     let mut g = table(&[LIGHT_PAWS, "seph"]);
     let n = g.player(P0).library.len();
     perm(&mut g, P0, "Heliod's Pilgrim");
-    // one Aura only (Python's compiled search for any card ran as well, finding a second card: fixed in Rust)
+    // one Aura only (the compiled search for any card found a second one: removed by its `dsl = []` override)
     assert_eq!(auras_in_hand(&g, P0).len(), 1);
     assert_eq!(g.player(P0).hand.len(), 1);
     assert_eq!(g.player(P0).library.len(), n - 2); // the Pilgrim and the Aura found

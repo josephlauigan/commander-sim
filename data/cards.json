@@ -57933,23 +57933,7 @@
    "pow": 1,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "search",
-       "filter": {},
-       "to": "hand",
-       "n": 1,
-       "tapped": false,
-       "optional": true
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -71172,20 +71156,7 @@
    "pow": 2,
    "tgh": 2,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "attack",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "haste"
@@ -73559,19 +73530,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "discard",
-       "n": 1,
-       "who": "each_player"
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -73581,13 +73540,8 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "each opponent who can't loses 3 life",
-    "target creature gets -x/-x until end of turn",
-    "you get an emblem with \"at the beginning of combat on your turn, put target creature card from a graveyard onto the battlefield under your control",
-    "it gains haste.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -87846,27 +87800,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "exile",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "permanent",
-         "controller": "you",
-         "other": true
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "etb",
-     "source": "self"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -87874,7 +87808,7 @@
    "ward": 0,
    "identity": "UW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 5,

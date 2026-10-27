@@ -12,7 +12,7 @@
 //!   **Matterbending Mage**, **Mindseeker Oculus**, **Mouth of the Storm** (-3/-0 until your next turn:
 //!   `DataKey::Weaken`, read by `values::epow`), **Orysa** (cost), **Professor Hulk**, **Rescue, Pepper Potts**,
 //!   **Starbreach Whale** and **Starwinder** (warp), **Textbook Tabulator** (increment), **The Wasp**, **Dune Mover**
-//!   (toxic), **Fear of Isolation** (the returned permanent is an additional cost).
+//!   (compiled: toxic and the land search), **Fear of Isolation** (the returned permanent is an additional cost).
 //!
 //! Stun counters (`DataKey::Stun`) are removed by the untap step in `turn::step_start` instead of untapping.
 //!
@@ -572,16 +572,6 @@ fn wasp_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId)
     Ok(vec![])
 }
 
-/// Dune Mover: toxic 1 (a poison counter with the combat damage)
-fn mover_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
-    if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 1); // Vorinclex
-        g.player_mut(d).poison += k as u32;
-        crate::glog!(g, "    {} gets a poison counter (toxic)", g.player(d).name);
-    }
-    Ok(())
-}
-
 // ================================================================== warp
 /// the warp cost of the warp cards: (generic, pips)
 fn warp_cost(name: &str) -> (u32, &'static str) {
@@ -690,7 +680,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, WASP)?;
     c.etb = Some(wasp_etb);
     c.attack = Some(wasp_attack);
-    r.card(db, MOVER)?.combat_damage = Some(mover_damage);
     let c = r.card(db, FEAR)?;
     c.self_cast = Some(fear_cost);
     Ok(())

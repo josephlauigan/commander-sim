@@ -1618,8 +1618,8 @@ fn skrelv_kws(ch: char) -> Option<(Sym, Sym)> {
     })
 }
 
-/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or Skrelv himself: the poison counters the
-/// combat damage to a player gives (called from `engine/combat.rs`; the older toxic cards have their own hooks)
+/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own compiled toxic N: the poison
+/// counters the combat damage to a player gives (called from `engine/combat.rs`)
 pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
     let x = g.perm(a);
     let mut k = i32::from(x.eot_kw.contains(&"toxic"));
@@ -1631,14 +1631,9 @@ pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
                 k += 1;
             }
         }
-        Some(cd) => {
-            // the card's own toxic N, compiled (Skrelv, Blightbelly Rat, Ixhel, Contaminant Grafter); these give their
-            // toxic in their own combat-damage hooks
-            const HOOK_TOXIC: [&str; 4] = ["Dune Mover", "Paladin of Predation", "Ribskiff", "Venomous Brutalizer"];
-            if !HOOK_TOXIC.contains(&&*g.db.get(cd).name) {
-                k += crate::dsl::toxic_amount(g, a);
-            }
-        }
+        // the card's own toxic N, compiled (Skrelv, Blightbelly Rat, Ixhel, Contaminant Grafter, Dune Mover, Paladin of
+        // Predation, Ribskiff, Venomous Brutalizer): every card's toxic is given here
+        Some(_) => k += crate::dsl::toxic_amount(g, a),
     }
     if k == 0 || crate::engine::values::melira(g, d) {
         return;

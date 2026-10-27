@@ -2698,22 +2698,6 @@ fn skyclave_leave(g: &mut Game, _src: Src, m: PermId) -> Res {
     Ok(())
 }
 
-// ======================================================== Snap: untap two lands
-/// Full: bounces a creature and untaps two lands
-fn snap(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
-    if let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) {
-        apply_removal(g, Some(p), t, "bounce", Some(c))?;
-    }
-    let mut n = 0;
-    for l in g.player(p).lands.clone() {
-        if g.land(l).tapped && n < 2 {
-            g.land_mut(l).tapped = false;
-            n += 1;
-        }
-    }
-    Ok("gy")
-}
-
 // ======================================================== Starfield of Nyx: enchantments become creatures
 /// partials.starfield_update: with five enchantments the other non-Aura enchantments are creatures with power and
 /// toughness equal to their mana value
@@ -3277,7 +3261,6 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Skyclave Apparition")?;
     c.leaves = Some(skyclave_leave);
     at_once(c, Event::Leaves, false);
-    r.card(db, "Snap")?.resolve = Some(snap);
     let c = r.card(db, "Starfield of Nyx")?;
     c.etb = Some(starfield_etb);
     at_once(c, Event::Etb, true);
