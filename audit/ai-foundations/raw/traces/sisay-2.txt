@@ -1,0 +1,118 @@
+Play-by-play of goldfish game 2 (seed 500002): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Flooded Strand, Colossal Skyturtle, Taiga, Enlightened Tutor, Mana Vault, Lavinia, Azorius Renegade, Volcanic Island
+R1    Sisay plays Flooded Strand
+R1      cracks Flooded Strand for Savannah
+R1    Sisay casts Mana Vault
+R1        [Sisay decides: Mana Vault 77%, Enlightened Tutor 23%, stop 0% -> Mana Vault [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 39, 6 cards in hand, 1 lands
+R2      hand: Colossal Skyturtle, Taiga, Enlightened Tutor, Lavinia, Azorius Renegade, Volcanic Island, Otawara, Soaring City
+R2    Sisay plays City of Brass
+R2    Sisay casts Sisay, Weatherlight Captain
+R2        [Sisay decides: Sisay, Weatherlight Captain 83%, Enlightened Tutor 17%, Lavinia, Azorius Renegade 1%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 38, 6 cards in hand, 2 lands
+R3      hand: Colossal Skyturtle, Taiga, Enlightened Tutor, Lavinia, Azorius Renegade, Volcanic Island, Otawara, Soaring City
+R3    Sisay plays Volcanic Island
+R3        [Sisay decides: Enlightened Tutor 49%, Chord of Calling 49%, Lavinia, Azorius Renegade 2%, stop 0% -> stop [search]]
+R3        [Sisay attack plan by search: filtered at Goldfish 2]
+R3    Sisay attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3        [Sisay decides: Enlightened Tutor 95%, Lavinia, Azorius Renegade 5%, stop 0% -> Enlightened Tutor [search]]
+R3    Sisay casts Enlightened Tutor
+R3      Sisay searches for Marvin, Murderous Mimic
+R3        [Sisay decides: Lavinia, Azorius Renegade 100%, stop 0% -> Lavinia, Azorius Renegade [search]]
+R3    Sisay casts Lavinia, Azorius Renegade
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 36, 4 cards in hand, 3 lands
+R4      hand: Colossal Skyturtle, Taiga, Otawara, Soaring City, Chord of Calling
+R4    Sisay plays Otawara, Soaring City
+R4        [Sisay decides: Chord of Calling 79%, channel Colossal Skyturtle: Enlightened Tutor 18%, Marvin, Murderous Mimic 4%, stop 0% -> Chord of Calling [search]]
+R4    Sisay casts Chord of Calling
+R4      Derevi untaps Mana Vault
+R4        [Sisay decides: Marvin, Murderous Mimic 100%, stop 0% -> Marvin, Murderous Mimic [search]]
+R4    Sisay casts Marvin, Murderous Mimic
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 34, 2 cards in hand, 4 lands
+R5      hand: Colossal Skyturtle, Taiga
+R5    Sisay plays Taiga
+R5    Sisay activates Sisay: Emiel the Blessed
+R5        [Sisay decides: Sisay: Emiel the Blessed 99%, channel Colossal Skyturtle: Enlightened Tutor 1%, The Cabbage Merchant 0%, stop 0% -> Sisay: Emiel the Blessed [must]]
+R5        [Sisay attack plan by search: filtered at Goldfish 4]
+R5      Derevi untaps Mana Vault
+R5      Derevi untaps Sisay, Weatherlight Captain
+R5      Derevi untaps Lavinia, Azorius Renegade
+R5      Derevi untaps a land
+R5    Sisay attacks Goldfish 4 with 4 creature(s): 11 damage (life now 29)
+R5        [Sisay decides: channel Colossal Skyturtle: Enlightened Tutor 82%, The Cabbage Merchant 18%, Emiel the Blessed ability 0%, stop 0% -> The Cabbage Merchant [search]]
+R5    Sisay casts The Cabbage Merchant
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 29, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 32, 1 cards in hand, 5 lands
+R6      hand: Colossal Skyturtle
+R6    Sisay activates Sisay: Mount Doom
+R6        [Sisay decides: Sisay: Mount Doom 99%, channel Colossal Skyturtle: Enlightened Tutor 1%, stop (hold mana) 0%, Emiel the Blessed ability 0% -> Sisay: Mount Doom [must]]
+R6        [Sisay attack plan by search: filtered at Goldfish 2]
+R6      Derevi untaps Mana Vault
+R6      Derevi untaps Sisay, Weatherlight Captain
+R6      Derevi untaps Lavinia, Azorius Renegade
+R6      Derevi untaps a land
+R6      Derevi untaps a land
+R6      Derevi untaps a land
+R6    Sisay attacks Goldfish 2 with 6 creature(s): 17 damage (life now 21)
+R6        [Sisay decides: Colossal Skyturtle 75%, stop (hold mana) 24%, Emiel the Blessed ability 1% -> Colossal Skyturtle [search]]
+R6    Sisay casts Colossal Skyturtle
+R6  --- Goldfish 2 turn 6: life 21, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 29, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Sisay turn 7: life 28, 1 cards in hand, 6 lands
+R7      hand: An Offer You Can't Refuse
+R7    Sisay activates Sisay: Gaea's Cradle
+R7        [Sisay decides: Sisay: Gaea's Cradle 100%, Esper Sentinel 0%, stop (hold mana) 0%, Emiel the Blessed ability 0% -> Sisay: Gaea's Cradle [must]]
+R7    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R7  *** Goldfish 2 is eliminated (life 21) by Sisay
+R7  *** Goldfish 3 is eliminated (life 40) by Sisay
+R7  *** Goldfish 4 is eliminated (life 29) by Sisay
+R7  *** Sisay wins by combo
+R7        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 100%, stop (hold mana) 0%, Esper Sentinel 0%, Emiel the Blessed ability 0% -> combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [must]]
+Kill: own turn 7 (Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock)
+  T2  progressed (combo piece)
+  T3  passed_castable: Chord of Calling [tutor]
+  T4  progressed (combo piece)
+  T5  progressed (other)
+  T6  progressed (other) | held (payable, not offered): An Offer You Can't Refuse
+  T7  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop" over Enlightened Tutor (7.6)
+  crude best case: none
+  crude best case with tutors: none

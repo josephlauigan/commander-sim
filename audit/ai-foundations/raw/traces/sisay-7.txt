@@ -1,0 +1,89 @@
+Play-by-play of goldfish game 7 (seed 500007): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 6 cards in hand, 0 lands
+R1      hand: Spider-Woman, Stunning Savior, Boseiju, Who Endures, Lavinia, Azorius Renegade, Bayou, Bloom Tender, Gaea's Cradle
+R1    Sisay plays Bayou
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Spider-Woman, Stunning Savior, Boseiju, Who Endures, Lavinia, Azorius Renegade, Bloom Tender, Gaea's Cradle, Redirect Lightning
+R2    Sisay plays Exotic Orchard
+R2    Sisay casts Bloom Tender
+R2        [Sisay decides: Bloom Tender 100%, stop 0% -> Bloom Tender [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 40, 5 cards in hand, 2 lands
+R3      hand: Spider-Woman, Stunning Savior, Boseiju, Who Endures, Lavinia, Azorius Renegade, Gaea's Cradle, Redirect Lightning
+R3    Sisay plays Boseiju, Who Endures
+R3    Sisay casts Sisay, Weatherlight Captain
+R3        [Sisay decides: Sisay, Weatherlight Captain 59%, Mana Vault 40%, Spider-Woman, Stunning Savior 1%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R3    Sisay casts Mana Vault
+R3        [Sisay decides: Mana Vault 100%, stop 0% -> Mana Vault [must]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 40, 4 cards in hand, 3 lands
+R4      hand: Spider-Woman, Stunning Savior, Lavinia, Azorius Renegade, Gaea's Cradle, Redirect Lightning
+R4    Sisay plays Gaea's Cradle
+R4    Sisay casts Arcane Signet
+R4        [Sisay decides: Arcane Signet 99%, Spider-Woman, Stunning Savior 1%, Lavinia, Azorius Renegade 0%, stop 0% -> Arcane Signet [must]]
+R4    Sisay activates Sisay: Mount Doom
+R4        [Sisay decides: Sisay: Mount Doom 100%, Spider-Woman, Stunning Savior 0%, Lavinia, Azorius Renegade 0%, stop 0% -> Sisay: Mount Doom [must]]
+R4        [Sisay attack plan by search: filtered at Goldfish 2]
+R4    Sisay attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 40, 3 cards in hand, 5 lands
+R5      hand: Spider-Woman, Stunning Savior, Lavinia, Azorius Renegade, Redirect Lightning
+R5    Sisay activates Sisay: Ragavan, Nimble Pilferer
+R5        [Sisay decides: Sisay: Ragavan, Nimble Pilferer 100%, Spider-Woman, Stunning Savior 0%, Lavinia, Azorius Renegade 0%, stop 0% -> Sisay: Ragavan, Nimble Pilferer [must]]
+R5        [Sisay decides: Spider-Woman, Stunning Savior 100%, stop 0% -> Spider-Woman, Stunning Savior [search]]
+R5    Sisay casts Spider-Woman, Stunning Savior
+R5        [Sisay attack plan by search: filtered at Goldfish 2]
+R5    Sisay attacks Goldfish 2 with 1 creature(s): 4 damage (life now 34)
+R5  --- Goldfish 2 turn 5: life 34, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 39, 3 cards in hand, 5 lands
+R6      hand: Lavinia, Azorius Renegade, Redirect Lightning, Force of Will
+R6    Sisay plays Starting Town
+R6    Sisay activates Sisay: Derevi, Empyrial Tactician
+R6      Derevi untaps Bloom Tender
+R6        [Sisay decides: Sisay: Derevi, Empyrial Tactician 100%, Lavinia, Azorius Renegade 0%, stop 0% -> Sisay: Derevi, Empyrial Tactician [must]]
+R6    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R6    Sisay activates Sisay: Emiel the Blessed
+R6  *** Goldfish 2 is eliminated (life 34) by Sisay
+R6  *** Goldfish 3 is eliminated (life 40) by Sisay
+R6  *** Goldfish 4 is eliminated (life 40) by Sisay
+R6  *** Sisay wins by combo
+R6        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 95%, Sisay: Emiel the Blessed 5%, Lavinia, Azorius Renegade 0%, stop 0% -> combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [must]]
+Kill: own turn 6 (Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  progressed (combo piece)
+  T3  progressed (combo piece) | held (payable, not offered): Redirect Lightning
+  T4  progressed (fast mana / rock) | held (payable, not offered): Redirect Lightning
+  T5  progressed (other) | held (payable, not offered): Redirect Lightning, Force of Will
+  T6  won
+  cleanup discards: none
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: none

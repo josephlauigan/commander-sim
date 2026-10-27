@@ -1,0 +1,297 @@
+Play-by-play of goldfish game 1 (seed 500001): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mox Diamond, Swan Song, Starting Town, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose
+R1    Scion plays Starting Town
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Mox Diamond, Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose, Noble Hierarch
+R2    Scion casts Noble Hierarch
+R2        [Scion decides: Noble Hierarch 100%, stop (hold mana) 0% -> Noble Hierarch [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 40, 7 cards in hand, 1 lands
+R3      hand: Mox Diamond, Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose, Chain of Vapor
+R3        [Scion decides: Mystical Tutor 93%, stop (hold mana) 5%, Manamorphose 2% -> stop (hold mana) [search]]
+R3        [Scion decides: Mystical Tutor 93%, stop (hold mana) 5%, Manamorphose 2% -> stop (hold mana) [search]]
+R3      [audit] Scion discards Thassa's Oracle to hand size (8 cards in hand; discard_keep would keep it)
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4    Scion casts Manamorphose
+R4        [Scion end of turn: Mystical Tutor 83%, Manamorphose 17%, pass 0% -> Manamorphose]
+R4    Scion casts Mystical Tutor
+R4      Scion puts Demonic Consultation on top of their library
+R4        [Scion end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R4  --- Scion turn 4: life 40, 6 cards in hand, 1 lands
+R4      hand: Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Mana Vault
+R4    Scion casts Mana Vault
+R4        [Scion decides: Mana Vault 100%, stop (hold mana) 0% -> Mana Vault [must]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 40, 6 cards in hand, 1 lands
+R5      hand: Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+R5    Scion plays Gemstone Caverns
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 40, 6 cards in hand, 2 lands
+R6      hand: Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+R6        [Scion decides: stop (hold mana) 56%, Chrome Mox 44% -> stop (hold mana) [search]]
+R6        [Scion decides: stop (hold mana) 56%, Chrome Mox 44% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 40, 7 cards in hand, 2 lands
+R7      hand: Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation, Chrome Mox
+R7        [Scion decides: stop (hold mana) 38%, Deathrite Shaman 33%, Chrome Mox 30% -> stop (hold mana) [search]]
+R7        [Scion decides: stop (hold mana) 38%, Deathrite Shaman 33%, Chrome Mox 30% -> Deathrite Shaman [search]]
+R7    Scion casts Deathrite Shaman
+R7        [Scion decides: stop (hold mana) 56%, Chrome Mox 44% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 40, 7 cards in hand, 2 lands
+R8      hand: Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation, Chrome Mox
+R8        [Scion decides: Mystic Remora 92%, stop (hold mana) 4%, Chrome Mox 3%, Deathrite Shaman drain 1% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 2]
+R8    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R8        [Scion decides: Mystic Remora 93%, stop (hold mana) 4%, Chrome Mox 3% -> stop (hold mana) [search]]
+R8      [audit] Scion discards Cabal Ritual to hand size (8 cards in hand)
+R8  --- Goldfish 2 turn 8: life 38, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 40, 7 cards in hand, 2 lands
+R9      hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation, Chrome Mox, Mystic Remora
+R9        [Scion decides: Mystic Remora 61%, Flash Photography 33%, stop (hold mana) 3%, Chrome Mox 2% -> stop (hold mana) [search]]
+R9        [Scion attack plan by search: none at Goldfish 2]
+R9        [Scion decides: Mystic Remora 61%, Flash Photography 33%, stop (hold mana) 3%, Chrome Mox 2% -> Flash Photography [search]]
+R9    Scion casts Flash Photography
+R9      Flash Photography: a token copy of Mana Vault
+R9        [Scion decides: Chrome Mox 100%, stop 0% -> Chrome Mox [search]]
+R9    Scion casts Chrome Mox
+R9      Chrome Mox imprints Chain of Vapor
+R9        [Scion decides: Mystic Remora 71%, stop (hold mana) 29% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 38, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 40, 5 cards in hand, 2 lands
+R10     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mystic Remora
+R10       [Scion decides: Mystic Remora 72%, Flash Photography (flashback) 24%, stop (hold mana) 3%, Deathrite Shaman drain 1% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 4]
+R10   Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R10       [Scion decides: Mystic Remora 73%, Flash Photography (flashback) 24%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 38, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 38, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 40, 6 cards in hand, 2 lands
+R11     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mystic Remora, Necropotence
+R11       [Scion decides: Sol Ring 49%, Mystic Remora 36%, Flash Photography (flashback) 12%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: filtered at Goldfish 3]
+R11   Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R11       [Scion decides: Sol Ring 50%, Mystic Remora 37%, Flash Photography (flashback) 12%, stop (hold mana) 2% -> Sol Ring [search]]
+R11   Scion casts Sol Ring
+R11       [Scion decides: Mystic Remora 73%, Flash Photography (flashback) 24%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R11 --- Goldfish 2 turn 11: life 38, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 38, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 38, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 40, 6 cards in hand, 2 lands
+R12     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mystic Remora, Necropotence
+R12       [Scion decides: Mystic Remora 72%, Flash Photography (flashback) 24%, stop (hold mana) 3%, Deathrite Shaman drain 1% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: all at Goldfish 4]
+R12   Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 36)
+R12       [Scion decides: Mystic Remora 73%, Flash Photography (flashback) 24%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R12 --- Goldfish 2 turn 12: life 38, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 38, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 36, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 40, 7 cards in hand, 2 lands
+R13     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mystic Remora, Necropotence, Beseech the Mirror
+R13   Scion plays Ancient Tomb
+R13       [Scion decides: Mystic Remora 72%, Flash Photography (flashback) 24%, stop (hold mana) 3%, Deathrite Shaman drain 1% -> stop (hold mana) [search]]
+R13       [Scion attack plan by search: filtered at Goldfish 3]
+R13   Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 36)
+R13       [Scion decides: Mystic Remora 73%, Flash Photography (flashback) 24%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R13 --- Goldfish 2 turn 13: life 38, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 36, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 36, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 40, 7 cards in hand, 3 lands
+R14     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mystic Remora, Necropotence, Beseech the Mirror
+R14       [Scion decides: Mystic Remora 72%, Flash Photography (flashback) 24%, stop (hold mana) 3%, Deathrite Shaman drain 1% -> stop (hold mana) [search]]
+R14       [Scion attack plan by search: all at Goldfish 2]
+R14   Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R14       [Scion decides: Mystic Remora 73%, Flash Photography (flashback) 24%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R14     [audit] Scion discards Beseech the Mirror to hand size (8 cards in hand)
+R14 --- Goldfish 2 turn 14: life 36, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 3 turn 14: life 36, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 36, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 40, 7 cards in hand, 3 lands
+R15     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mystic Remora, Necropotence, Mental Misstep
+R15       [Scion decides: Mystic Remora 66%, Flash Photography (flashback) 22%, Demonic Tutor 8%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R15       [Scion attack plan by search: all at Goldfish 4]
+R15   Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 34)
+R15       [Scion decides: Mystic Remora 67%, Flash Photography (flashback) 22%, Demonic Tutor 8%, stop (hold mana) 3% -> Mystic Remora [search]]
+R15   Scion casts Mystic Remora
+R15       [Scion decides: Flash Photography (flashback) 67%, Demonic Tutor 25%, stop (hold mana) 9% -> stop (hold mana) [search]]
+R15 --- Goldfish 2 turn 15: life 36, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 3 turn 15: life 36, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 34, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 40, 7 cards in hand, 3 lands
+R16     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Necropotence, Mental Misstep, Demonic Tutor
+R16   Scion plays Volcanic Island
+R16       [Scion decides: Scion of the Ur-Dragon 62%, Flash Photography (flashback) 25%, Demonic Tutor 9%, stop (hold mana) 3% -> Scion of the Ur-Dragon [search]]
+R16   Scion casts Scion of the Ur-Dragon
+R16 --- Goldfish 2 turn 16: life 36, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 3 turn 16: life 36, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 34, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Scion turn 17: life 40, 7 cards in hand, 4 lands
+R17     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Necropotence, Mental Misstep, Demonic Tutor
+R17       [Scion decides: Ancient Copper Dragon 52%, Flash Photography (flashback) 31%, Demonic Tutor 12%, stop (hold mana) 4% -> stop (hold mana) [search]]
+R17       [Scion attack plan by search: filtered at Goldfish 3]
+R17   Scion attacks Goldfish 3 with 2 creature(s): 5 damage (life now 31)
+R17       [Scion decides: Ancient Copper Dragon 52%, Flash Photography (flashback) 32%, Demonic Tutor 12%, stop (hold mana) 4% -> Ancient Copper Dragon [search]]
+R17   Scion casts Ancient Copper Dragon
+R17 --- Goldfish 2 turn 17: life 36, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Goldfish 3 turn 17: life 31, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Goldfish 4 turn 17: life 34, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Scion turn 18: life 40, 7 cards in hand, 4 lands
+R18     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Necropotence, Mental Misstep, Demonic Tutor
+R18       [Scion decides: Flash Photography (flashback) 77%, Demonic Tutor 16%, stop (hold mana) 5%, Deathrite Shaman drain 2% -> Demonic Tutor [search]]
+R18   Scion casts Demonic Tutor
+R18     Scion tutors Prismari, the Inspiration
+R18       [Scion decides: Prismari, the Inspiration 51%, Flash Photography (flashback) 46%, stop (hold mana) 3% -> Prismari, the Inspiration [search]]
+R18   Scion casts Prismari, the Inspiration
+R18       [Scion attack plan by search: filtered at Goldfish 2]
+R18     Ancient Copper Dragon rolls 17: 17 Treasures
+R18   Scion attacks Goldfish 2 with 2 creature(s): 10 damage (life now 26)
+R18       [Scion decides: Flash Photography (flashback) 57%, Necropotence 39%, stop (hold mana) 4% -> Necropotence [search]]
+R18   Scion casts Necropotence
+R18       [Scion decides: Flash Photography (flashback) 93%, stop (hold mana) 7% -> Flash Photography (flashback) [search]]
+R18   Scion casts Flash Photography
+R18     Prismari's storm copies Flash Photography 3 time(s)
+R18     Flash Photography: a token copy of Ancient Copper Dragon
+R18     Flash Photography: a token copy of Ancient Copper Dragon
+R18     Flash Photography: a token copy of Ancient Copper Dragon
+R18     Flash Photography: a token copy of Ancient Copper Dragon
+R18   Scion pays 2 life to Necropotence
+R18     [audit] Scion discards Brain Freeze to hand size (8 cards in hand)
+R18 --- Goldfish 2 turn 18: life 26, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Goldfish 3 turn 18: life 31, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Goldfish 4 turn 18: life 34, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Scion turn 19: life 35, 7 cards in hand, 4 lands
+R19     hand: Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep, Orim's Chant, Redirect Lightning
+R19     Scion sacrifices Mystic Remora (cumulative upkeep 4)
+R19       [Scion decides: stop (hold mana) 61%, Deathrite Shaman drain 21%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 18% -> stop (hold mana) [search]]
+R19       [Scion attack plan by search: filtered at Goldfish 4]
+R19 *** Goldfish 4 is eliminated (life -8) by Scion
+R19     Ancient Copper Dragon rolls 3: 3 Treasures
+R19     Ancient Copper Dragon rolls 20: 20 Treasures
+R19     Ancient Copper Dragon rolls 14: 14 Treasures
+R19     Ancient Copper Dragon rolls 7: 7 Treasures
+R19     Ancient Copper Dragon rolls 6: 6 Treasures
+R19   Scion attacks Goldfish 4 with 8 creature(s): 42 damage (life now -8)
+R19   Scion pays 1 life to Necropotence
+R19     [audit] Scion discards Swan Song to hand size (8 cards in hand)
+R19 --- Goldfish 2 turn 19: life 26, 7 cards in hand, 0 lands
+R19     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Goldfish 3 turn 19: life 31, 7 cards in hand, 0 lands
+R19     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R20 --- Scion turn 20: life 32, 7 cards in hand, 4 lands
+R20     hand: Mox Diamond, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep, Orim's Chant, Redirect Lightning, Savannah
+R20   Scion plays Savannah
+R20       [Scion decides: stop (hold mana) 61%, Deathrite Shaman drain 21%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 18% -> stop (hold mana) [search]]
+R20       [Scion attack plan by search: filtered at Goldfish 3]
+R20 *** Goldfish 3 is eliminated (life -11) by Scion
+R20     Ancient Copper Dragon rolls 6: 6 Treasures
+R20     Ancient Copper Dragon rolls 19: 19 Treasures
+R20     Ancient Copper Dragon rolls 16: 16 Treasures
+R20     Ancient Copper Dragon rolls 16: 16 Treasures
+R20     Ancient Copper Dragon rolls 5: 5 Treasures
+R20   Scion attacks Goldfish 3 with 8 creature(s): 42 damage (life now -11)
+R20   Scion pays 2 life to Necropotence
+R20     [audit] Scion discards An Offer You Can't Refuse to hand size (8 cards in hand)
+R20 --- Goldfish 2 turn 20: life 26, 7 cards in hand, 0 lands
+R20     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+Kill: none
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (land only) | held (payable, not offered): Mox Diamond
+  T2  progressed (fast mana / rock) | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Chain of Vapor
+  T3  idle | held (payable, not offered): Mox Diamond, Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor
+  T4  progressed (fast mana / rock) | held (payable, not offered): Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+  T5  progressed (land only) | held (payable, not offered): Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+  T6  passed_castable: Chrome Mox [fast mana / rock] | held (payable, not offered): Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+  T7  passed_castable: Chrome Mox [fast mana / rock] | held (payable, not offered): Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+  T8  passed_castable: Chrome Mox [fast mana / rock], Mystic Remora [draw] | held (payable, not offered): Mox Diamond, Swan Song, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+  T9  passed_castable: Mystic Remora [draw], Flash Photography [other] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Chain of Vapor, Demonic Consultation
+  T10 passed_castable: Mystic Remora [draw] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation
+  T11 passed_castable: Mystic Remora [draw] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation
+  T12 passed_castable: Mystic Remora [draw] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation
+  T13 passed_castable: Mystic Remora [draw] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation
+  T14 passed_castable: Mystic Remora [draw] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep
+  T15 passed_castable: Demonic Tutor [tutor] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep
+  T16 progressed (combo piece) | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep
+  T17 passed_castable: Demonic Tutor [tutor] | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep
+  T18 progressed (combo piece) | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep, Orim's Chant
+  T19 idle | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep, Orim's Chant, Redirect Lightning
+  T20 progressed (land only) | held (payable, not offered): Mox Diamond, An Offer You Can't Refuse, Demonic Consultation, Mental Misstep, Orim's Chant, Redirect Lightning
+  cleanup discards: Thassa's Oracle [combo piece] (kept by discard_keep), Cabal Ritual [ritual], Beseech the Mirror [tutor], Brain Freeze [combo piece], Swan Song [protection], An Offer You Can't Refuse [protection]
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Mystical Tutor (6.2); T3 main 2 look-ahead "stop (hold mana)" over Mystical Tutor (6.2); T6 main 1 look-ahead "stop (hold mana)" over Chrome Mox (3.0); T6 main 2 look-ahead "stop (hold mana)" over Chrome Mox (3.0); T7 main 1 look-ahead "stop (hold mana)" over Deathrite Shaman (3.1); T7 main 2 look-ahead "stop (hold mana)" over Chrome Mox (3.0); T8 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T8 main 2 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T9 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T9 main 2 look-ahead "stop (hold mana)" over Mystic Remora (4.1); T10 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T10 main 2 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T11 main 1 look-ahead "stop (hold mana)" over Sol Ring (6.7); T11 main 2 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T12 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T12 main 2 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T13 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T13 main 2 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T14 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T14 main 2 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T15 main 1 look-ahead "stop (hold mana)" over Mystic Remora (6.4); T15 main 2 look-ahead "stop (hold mana)" over Flash Photography (flashback) (5.3); T17 main 1 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8); T19 main 1 look-ahead "stop (hold mana)" over Deathrite Shaman drain (2.2); T20 main 1 look-ahead "stop (hold mana)" over Deathrite Shaman drain (2.2)
+  crude best case: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with tutors: own turn 3 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

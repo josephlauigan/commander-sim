@@ -1,0 +1,135 @@
+Play-by-play of goldfish game 4 (seed 500004): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Deafening Silence, Derevi, Empyrial Tactician, Gemstone Caverns, Enlightened Tutor, Agatha's Soul Cauldron, Underground Sea, Boseiju, Who Endures
+R1    Sisay plays Gemstone Caverns
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Agatha's Soul Cauldron, Underground Sea, Boseiju, Who Endures, Force of Will
+R2    Sisay plays Underground Sea
+R2        [Sisay decides: Agatha's Soul Cauldron 100%, stop 0% -> Agatha's Soul Cauldron [search]]
+R2    Sisay casts Agatha's Soul Cauldron
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Boseiju, Who Endures, Force of Will, Tataru Taru
+R3    Sisay plays Boseiju, Who Endures
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 40, 6 cards in hand, 3 lands
+R4      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Force of Will, Tataru Taru, Ancient Tomb
+R4    Sisay plays Ancient Tomb
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 40, 6 cards in hand, 4 lands
+R5      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Force of Will, Tataru Taru, Fierce Guardianship
+R5    Sisay plays Exotic Orchard
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 40, 6 cards in hand, 5 lands
+R6      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Force of Will, Tataru Taru, Fierce Guardianship
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Sisay turn 7: life 40, 7 cards in hand, 5 lands
+R7      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Force of Will, Tataru Taru, Fierce Guardianship, Selvala, Heart of the Wilds
+R7      [audit] Sisay discards Force of Will to hand size (8 cards in hand)
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Sisay turn 8: life 40, 7 cards in hand, 5 lands
+R8      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Tataru Taru, Fierce Guardianship, Selvala, Heart of the Wilds, Loki's Scepter
+R8    Sisay plays Savannah
+R8    Sisay casts Sisay, Weatherlight Captain
+R8        [Sisay decides: Sisay, Weatherlight Captain 82%, Enlightened Tutor 16%, Tataru Taru 1%, Derevi, Empyrial Tactician 0% -> Sisay, Weatherlight Captain [must]]
+R8  --- Goldfish 2 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Sisay turn 9: life 40, 7 cards in hand, 6 lands
+R9      hand: Deafening Silence, Derevi, Empyrial Tactician, Enlightened Tutor, Tataru Taru, Fierce Guardianship, Selvala, Heart of the Wilds, Loki's Scepter
+R9        [Sisay decides: Enlightened Tutor 81%, Tataru Taru 7%, Derevi, Empyrial Tactician 6%, Enduring Vitality 5% -> Enduring Vitality [search]]
+R9    Sisay casts Enduring Vitality
+R9        [Sisay decides: Enlightened Tutor 91%, Tataru Taru 8%, Loki's Scepter 1%, stop 0% -> Loki's Scepter [search]]
+R9    Sisay casts Loki's Scepter
+R9        [Sisay decides: Enlightened Tutor 92%, Tataru Taru 8%, stop 0% -> stop [search]]
+R9        [Sisay decides: Enlightened Tutor 92%, Tataru Taru 8%, stop 0% -> Enlightened Tutor [search]]
+R9    Sisay casts Enlightened Tutor
+R9      Sisay searches for Marvin, Murderous Mimic
+R9  --- Goldfish 2 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Sisay turn 10: life 40, 5 cards in hand, 6 lands
+R10     hand: Deafening Silence, Derevi, Empyrial Tactician, Tataru Taru, Fierce Guardianship, Selvala, Heart of the Wilds
+R10   Sisay activates Sisay: Mount Doom
+R10       [Sisay decides: Sisay: Mount Doom 99%, Tataru Taru 0%, Derevi, Empyrial Tactician 0%, Marvin, Murderous Mimic 0% -> Sisay: Mount Doom [must]]
+R10       [Sisay decides: Tataru Taru 65%, Marvin, Murderous Mimic 35%, stop 0% -> Tataru Taru [search]]
+R10   Sisay casts Tataru Taru
+R10       [Sisay decides: Marvin, Murderous Mimic 100%, stop 0% -> Marvin, Murderous Mimic [search]]
+R10   Sisay casts Marvin, Murderous Mimic
+R10   Sisay plays Tropical Island
+R10 --- Goldfish 2 turn 10: life 40, 8 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Sisay turn 11: life 39, 4 cards in hand, 8 lands
+R11     hand: Deafening Silence, Derevi, Empyrial Tactician, Fierce Guardianship, Selvala, Heart of the Wilds
+R11   Sisay goes for Ioreth + Marvin + a legend that taps for mana (DDR)
+R11   Sisay activates Sisay: Ioreth of the Healing House
+R11   Sisay activates Sisay: Shang-Chi, Master of Kung Fu
+R11 *** Goldfish 2 is eliminated (life 40) by Sisay
+R11 *** Goldfish 3 is eliminated (life 40) by Sisay
+R11 *** Goldfish 4 is eliminated (life 40) by Sisay
+R11 *** Sisay wins by combo
+R11       [Sisay decides: combo: Ioreth + Marvin + a legend that taps for mana (DDR) 95%, Sisay: Ioreth of the Healing House 5%, Colossal Skyturtle 0%, Derevi, Empyrial Tactician 0% -> combo: Ioreth + Marvin + a legend that taps for mana (DDR) [must]]
+Kill: own turn 11 (Ioreth + Marvin + a legend that taps for mana (DDR))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  progressed (other)
+  T3  mana_short
+  T4  mana_short | held (payable, not offered): Fierce Guardianship
+  T5  mana_short | held (payable, not offered): Fierce Guardianship
+  T6  mana_short | held (payable, not offered): Fierce Guardianship
+  T7  mana_short | held (payable, not offered): Fierce Guardianship
+  T8  progressed (combo piece) | held (payable, not offered): Deafening Silence, Fierce Guardianship
+  T9  passed_castable: Tataru Taru [draw] | held (payable, not offered): Deafening Silence, Fierce Guardianship
+  T10 progressed (combo piece) | held (payable, not offered): Deafening Silence, Fierce Guardianship
+  T11 won
+  cleanup discards: Force of Will [protection]
+  stops with another option offered: T9 main 1 look-ahead "stop" over Enlightened Tutor (7.6)
+  crude best case: none
+  crude best case with tutors: none

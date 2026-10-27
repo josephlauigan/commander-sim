@@ -1,0 +1,66 @@
+Play-by-play of goldfish game 9 (seed 500009): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Windswept Heath, Misty Rainforest, Mindbreak Trap, Flooded Strand, Flusterstorm, Force of Will, Hidden Strings
+R1    Kinnan plays Flooded Strand
+R1      cracks Flooded Strand for Breeding Pool
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 39, 7 cards in hand, 1 lands
+R2      hand: Windswept Heath, Misty Rainforest, Mindbreak Trap, Flusterstorm, Force of Will, Hidden Strings, Chord of Calling
+R2    Kinnan plays Windswept Heath
+R2      cracks Windswept Heath for Tropical Island
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 67%, Arcane Signet 33%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 38, 7 cards in hand, 2 lands
+R3      hand: Misty Rainforest, Mindbreak Trap, Flusterstorm, Force of Will, Hidden Strings, Chord of Calling, Arcane Signet
+R3    Kinnan plays Tarnished Citadel
+R3        [Kinnan decides: Arcane Signet 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3        [Kinnan attack plan by search: filtered at Goldfish 2]
+R3    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3        [Kinnan decides: Arcane Signet 99%, stop (hold mana) 1% -> Arcane Signet [search]]
+R3    Kinnan casts Arcane Signet
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kinnan turn 4: life 38, 6 cards in hand, 3 lands
+R4      hand: Misty Rainforest, Mindbreak Trap, Flusterstorm, Force of Will, Hidden Strings, Chord of Calling
+R4    Kinnan plays Misty Rainforest
+R4      cracks Misty Rainforest for Island
+R4        [Kinnan decides: Basalt Monolith 98%, Chord of Calling 2%, stop (hold mana) 1% -> Basalt Monolith [search]]
+R4    Kinnan casts Basalt Monolith
+R4        [Kinnan decides: stop (hold mana) 60%, Hidden Strings 22%, Chord of Calling 10%, Kinnan: dig five 8% -> Hidden Strings [search]]
+R4    Kinnan casts Hidden Strings
+R4      Hidden Strings untaps Arcane Signet
+R4      Hidden Strings untaps Breeding Pool
+R4        [Kinnan decides: Chord of Calling 70%, stop (hold mana) 26%, Kinnan: dig five 4%, Basalt Monolith ability 0% -> Chord of Calling [search]]
+R4    Kinnan casts Chord of Calling
+R4        [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, stop 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R4    Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R4  *** Goldfish 2 is eliminated (life 38) by Kinnan
+R4  *** Goldfish 3 is eliminated (life 40) by Kinnan
+R4  *** Goldfish 4 is eliminated (life 40) by Kinnan
+R4  *** Kinnan wins by combo
+Kill: own turn 4 (Kinnan + Basalt Monolith + Thrasios (draw the deck))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  progressed (combo piece) | held (payable, not offered): Flusterstorm, Hidden Strings
+  T3  progressed (fast mana / rock) | held (payable, not offered): Flusterstorm, Hidden Strings, Chord of Calling
+  T4  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Arcane Signet (8.5)
+  crude best case: own turn 4 (Kinnan + Basalt Monolith)
+  crude best case with tutors: own turn 4 (Kinnan + Basalt Monolith)

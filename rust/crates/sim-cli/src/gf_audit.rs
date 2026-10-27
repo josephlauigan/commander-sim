@@ -87,6 +87,28 @@ pub fn render(games: &[GfGame]) -> String {
             *k as f64 / n as f64
         );
     }
+    // progressed: what the turn's progress was
+    let mut pr: Counter<String> = Counter::new();
+    let mut pr4: Counter<String> = Counter::new();
+    for t in audits.iter().flat_map(|a| &a.turns) {
+        if let Some(x) = &t.progress {
+            pr.add(x.clone(), 1);
+            if t.turn <= 4 {
+                pr4.add(x.clone(), 1);
+            }
+        }
+    }
+    let share = |c: &Counter<String>| {
+        let tot = c.total().max(1) as usize;
+        let v: Vec<String> =
+            c.most_common().iter().map(|(k, v)| format!("{k} {:.0}%", pct(*v as usize, tot))).collect();
+        if v.is_empty() { "-".to_string() } else { v.join(", ") }
+    };
+    o += &format!(
+        "  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): {}\n",
+        share(&pr)
+    );
+    o += &format!("    on turns 1-4: {}\n", share(&pr4));
     // passed_castable: the cards behind it
     let passed: Vec<(String, Role)> = audits.iter().flat_map(|a| &a.turns).flat_map(|t| t.passed.clone()).collect();
     let roles: Vec<Role> = passed.iter().map(|x| x.1).collect();
@@ -144,6 +166,23 @@ pub fn render(games: &[GfGame]) -> String {
         dc.add(d.0.clone(), 1);
     }
     o += &format!("  most discarded: {}\n", top(&dc, 12));
+    // the kill turn with and without a combo piece discarded (confounded: long games discard more)
+    let kills = |f: &dyn Fn(&AuditOut) -> bool| {
+        let mut v: Vec<i64> =
+            games.iter().filter(|g| g.audit.as_ref().is_some_and(f)).map(|g| g.kill.map_or(99, |k| k as i64)).collect();
+        let n = v.len();
+        (median(&mut v), n)
+    };
+    let piece = |a: &AuditOut| a.discards.iter().any(|d| d.1 == Role::ComboPiece);
+    let (m1, n1) = kills(&|a| piece(a));
+    let (m0, n0) = kills(&|a| !piece(a));
+    let fm =
+        |m: Option<f64>| m.map_or("-".to_string(), |m| if m >= 99.0 { "no kill".into() } else { format!("{m:.1}") });
+    o += &format!(
+        "  median kill turn: games with a combo piece discarded {} ({n1} games), without {} ({n0} games) (confounded: longer games discard more)\n",
+        fm(m1),
+        fm(m0)
+    );
     // stops
     o += "Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)\n";
     for post in [false, true] {
@@ -255,6 +294,9 @@ pub fn render_trace(a: &AuditOut) -> String {
         let mut s = format!("  T{:<2} {}", t.turn, t.bucket.name());
         if let Some(l) = &t.line {
             s += &format!(" ({l})");
+        }
+        if let Some(x) = &t.progress {
+            s += &format!(" ({x})");
         }
         if !t.passed.is_empty() {
             let v: Vec<String> = t.passed.iter().map(|(c, r)| format!("{c} [{}]", r.name())).collect();

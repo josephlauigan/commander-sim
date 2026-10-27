@@ -1,0 +1,166 @@
+Play-by-play of goldfish game 3 (seed 500003): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Springleaf Drum, Command Tower, Disrupting Shoal, High Fae Trickster, Mindbreak Trap, Sol Ring, Elvish Mystic
+R1    Kinnan plays Command Tower
+R1    Kinnan casts Sol Ring
+R1        [Kinnan decides: Sol Ring 40%, Springleaf Drum 30%, Elvish Mystic 30%, stop (hold mana) 0% -> Sol Ring [must]]
+R1    Kinnan casts Springleaf Drum
+R1        [Kinnan decides: Springleaf Drum 100%, stop 0% -> Springleaf Drum [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 5 cards in hand, 1 lands
+R2      hand: Disrupting Shoal, High Fae Trickster, Mindbreak Trap, Elvish Mystic, Flusterstorm
+R2    Kinnan casts Elvish Mystic
+R2        [Kinnan decides: Elvish Mystic 100%, stop (hold mana) 0% -> Elvish Mystic [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 40, 5 cards in hand, 1 lands
+R3      hand: Disrupting Shoal, High Fae Trickster, Mindbreak Trap, Flusterstorm, Flesh Duplicate
+R3    Kinnan plays City of Brass
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 99%, stop (hold mana) 1%, High Fae Trickster 0% -> Kinnan, Bonder Prodigy [must]]
+R3        [Kinnan decides: stop (hold mana) 75%, High Fae Trickster 25% -> stop (hold mana) [search]]
+R3        [Kinnan decides: stop (hold mana) 75%, High Fae Trickster 25% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4    Kinnan casts High Fae Trickster
+R4        [Kinnan end of turn: High Fae Trickster 100%, pass 0% -> High Fae Trickster]
+R4    Kinnan casts Flesh Duplicate
+R4      Flesh Duplicate enters as a copy of High Fae Trickster
+R4        [Kinnan end of turn: Flesh Duplicate 100%, pass 0% -> Flesh Duplicate]
+R4  --- Kinnan turn 4: life 39, 3 cards in hand, 2 lands
+R4      hand: Disrupting Shoal, Mindbreak Trap, Flusterstorm
+R4        [Kinnan decides: Llanowar Elves 97%, stop (hold mana) 3%, Kinnan: dig five 0% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: filtered at Goldfish 2]
+R4    Kinnan attacks Goldfish 2 with 3 creature(s): 10 damage (life now 30)
+R4        [Kinnan decides: Llanowar Elves 94%, Kinnan: dig five 3%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 30, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5    Kinnan casts Llanowar Elves
+R5        [Kinnan end of turn: Llanowar Elves 100%, pass 0% -> Llanowar Elves]
+R5  --- Kinnan turn 5: life 39, 3 cards in hand, 2 lands
+R5      hand: Disrupting Shoal, Mindbreak Trap, Flusterstorm
+R5        [Kinnan decides: Talisman of Curiosity 99%, stop (hold mana) 1%, Kinnan: dig five 0% -> Kinnan: dig five [search]]
+R5        [Kinnan decides: Talisman of Curiosity 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5        [Kinnan attack plan by search: filtered at Goldfish 3]
+R5    Kinnan attacks Goldfish 3 with 3 creature(s): 10 damage (life now 30)
+R5        [Kinnan decides: Talisman of Curiosity 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 30, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 30, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Kinnan casts Talisman of Curiosity
+R6        [Kinnan end of turn: Talisman of Curiosity 100%, pass 0% -> Talisman of Curiosity]
+R6  --- Kinnan turn 6: life 38, 3 cards in hand, 2 lands
+R6      hand: Disrupting Shoal, Mindbreak Trap, Flusterstorm
+R6        [Kinnan decides: Sylvan Library 71%, stop (hold mana) 26%, Kinnan: dig five 4% -> Kinnan: dig five [search]]
+R6        [Kinnan decides: Sylvan Library 71%, stop (hold mana) 26%, Kinnan: dig five 4% -> stop (hold mana) [search]]
+R6        [Kinnan attack plan by search: filtered at Goldfish 4]
+R6    Kinnan attacks Goldfish 4 with 3 creature(s): 10 damage (life now 30)
+R6        [Kinnan decides: Sylvan Library 58%, Kinnan: dig five 21%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 30, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 30, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 30, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Kinnan casts Sylvan Library
+R7        [Kinnan end of turn: Sylvan Library 100%, pass 0% -> Sylvan Library]
+R7  --- Kinnan turn 7: life 37, 3 cards in hand, 2 lands
+R7      hand: Disrupting Shoal, Mindbreak Trap, Flusterstorm
+R7      Kinnan pays 4 life for a Sylvan Library card
+R7        [Kinnan decides: Consecrated Sphinx 59%, stop (hold mana) 36%, Kinnan: dig five 5% -> stop (hold mana) [search]]
+R7        [Kinnan attack plan by search: filtered at Goldfish 2]
+R7    Kinnan attacks Goldfish 2 with 4 creature(s): 16 damage (life now 14)
+R7        [Kinnan decides: Consecrated Sphinx 45%, Kinnan: dig five 27%, stop (hold mana) 27% -> Consecrated Sphinx [search]]
+R7    Kinnan casts Consecrated Sphinx
+R7        [Kinnan decides: Kinnan: dig five 50%, stop (hold mana) 50% -> Kinnan: dig five [search]]
+R7  --- Goldfish 2 turn 7: life 14, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 30, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 30, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8    Kinnan casts Fellwar Stone
+R8        [Kinnan end of turn: Fellwar Stone 100%, pass 0% -> Fellwar Stone]
+R8  --- Kinnan turn 8: life 32, 9 cards in hand, 2 lands
+R8      hand: Disrupting Shoal, Mindbreak Trap, Flusterstorm, Pact of Negation, Copy Enchantment, Formidable Speaker, Polluted Delta, Botanical Sanctum, Tarnished Citadel
+R8    Kinnan plays Tarnished Citadel
+R8        [Kinnan decides: stop (hold mana) 73%, Formidable Speaker 11%, Kinnan: dig five 10%, Dizzy Spell: transmute 6% -> Formidable Speaker [search]]
+R8    Kinnan casts Formidable Speaker
+R8        [Kinnan decides: stop (hold mana) 75%, Kinnan: dig five 10%, Thrasios, Triton Hero 9%, Dizzy Spell: transmute 6% -> Thrasios, Triton Hero [search]]
+R8    Kinnan casts Thrasios, Triton Hero
+R8        [Kinnan decides: stop (hold mana) 82%, Kinnan: dig five 11%, Dizzy Spell: transmute 7% -> stop (hold mana) [search]]
+R8        [Kinnan attack plan by search: filtered at Goldfish 4]
+R8    Kinnan attacks Goldfish 4 with 2 creature(s): 6 damage (life now 24)
+R8  *** Goldfish 2 is eliminated (life 0) by Kinnan
+R8    Kinnan attacks Goldfish 2 with 3 creature(s): 14 damage (life now 0)
+R8        [Kinnan decides: Kinnan: dig five 48%, stop (hold mana) 48%, Dizzy Spell: transmute 4%, Thrasios: scry 1, a land or a card 0% -> stop (hold mana) [search]]
+R8  --- Goldfish 3 turn 8: life 30, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 24, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9    Kinnan casts Mirage Mirror
+R9        [Kinnan end of turn: Transmute Artifact 55%, Hidden Strings 20%, Mirage Mirror 17%, Thrasios: scry 1, a land or a card 7% -> Mirage Mirror]
+R9      Thrasios reveals Sudden Substitution: drawn
+R9        [Kinnan end of turn: Transmute Artifact 66%, Hidden Strings 24%, Thrasios: scry 1, a land or a card 9%, pass 0% -> Thrasios: scry 1, a land or a card]
+R9    Kinnan casts Transmute Artifact
+R9        [Kinnan end of turn: Transmute Artifact 66%, Hidden Strings 24%, Thrasios: scry 1, a land or a card 9%, pass 0% -> Transmute Artifact]
+R9    Kinnan casts Hidden Strings
+R9      Hidden Strings untaps Springleaf Drum
+R9      Hidden Strings untaps Elvish Mystic
+R9        [Kinnan end of turn: Hidden Strings 72%, Thrasios: scry 1, a land or a card 27%, Basalt Monolith ability 1%, pass 0% -> Hidden Strings]
+R9      Thrasios reveals Drift of Phantasms: drawn
+R9        [Kinnan end of turn: Thrasios: scry 1, a land or a card 96%, Basalt Monolith ability 3%, pass 1% -> Thrasios: scry 1, a land or a card]
+R9    Kinnan casts Drift of Phantasms
+R9        [Kinnan end of turn: Drift of Phantasms 93%, Thrasios: scry 1, a land or a card 7%, Basalt Monolith ability 0%, pass 0% -> Drift of Phantasms]
+R9  --- Kinnan turn 9: life 30, 9 cards in hand, 3 lands
+R9      hand: Disrupting Shoal, Flusterstorm, Pact of Negation, Copy Enchantment, Polluted Delta, Botanical Sanctum, Dizzy Spell, Scalding Tarn, Sudden Substitution
+R9    Kinnan plays Scalding Tarn
+R9      cracks Scalding Tarn for Tropical Island
+R9        [Kinnan decides: stop (hold mana) 52%, Mockingbird (X = 5, copy Consecrated Sphinx) 31%, Kinnan: dig five 7%, Mirage Mirror: copy Colossal Skyturtle 5% -> Mirage Mirror: copy Colossal Skyturtle [search]]
+R9    Kinnan Mirage Mirror becomes a copy of Colossal Skyturtle
+R9        [Kinnan decides: stop (hold mana) 55%, Mockingbird (X = 5, copy Consecrated Sphinx) 33%, Kinnan: dig five 7%, Dizzy Spell: transmute 4% -> Kinnan: dig five [search]]
+R9        [Kinnan decides: stop (hold mana) 53%, Mockingbird (X = 5, copy Consecrated Sphinx) 32%, Kinnan: dig five 7%, Dizzy Spell: transmute 4% -> Mockingbird (X = 5, copy Consecrated Sphinx) [search]]
+R9    Kinnan casts Mockingbird -> Consecrated Sphinx (Kinnan)
+R9      Mockingbird enters as a copy of Consecrated Sphinx
+R9        [Kinnan decides: stop (hold mana) 78%, Kinnan: dig five 11%, Dizzy Spell: transmute 6%, untap a permanent (Formidable Speaker) 5% -> Kinnan: dig five [search]]
+R9        [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, stop (hold mana) 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R9    Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R9  *** Goldfish 3 is eliminated (life 30) by Kinnan
+R9  *** Goldfish 4 is eliminated (life 24) by Kinnan
+R9  *** Kinnan wins by combo
+Kill: own turn 9 (Kinnan + Basalt Monolith + Thrasios (draw the deck))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (combo piece) | held (payable, not offered): Flusterstorm
+  T2  progressed (fast mana / rock) | held (payable, not offered): Flusterstorm
+  T3  progressed (combo piece) | held (payable, not offered): Disrupting Shoal, Mindbreak Trap, Flusterstorm, Flesh Duplicate
+  T4  idle | held (payable, not offered): Disrupting Shoal, Mindbreak Trap, Flusterstorm
+  T5  progressed (abilities only) | held (payable, not offered): Disrupting Shoal, Mindbreak Trap, Flusterstorm
+  T6  progressed (abilities only) | held (payable, not offered): Disrupting Shoal, Mindbreak Trap, Flusterstorm
+  T7  progressed (other) | held (payable, not offered): Disrupting Shoal, Mindbreak Trap, Flusterstorm, Pact of Negation
+  T8  progressed (combo piece) | held (payable, not offered): Disrupting Shoal, Mindbreak Trap, Flusterstorm, Pact of Negation, Copy Enchantment, Dizzy Spell
+  T9  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over High Fae Trickster (3.9); T3 main 2 look-ahead "stop (hold mana)" over High Fae Trickster (3.9); T4 main 1 look-ahead "stop (hold mana)" over Llanowar Elves (8.5); T4 main 2 look-ahead "stop (hold mana)" over Llanowar Elves (8.5); T5 main 1 look-ahead "stop (hold mana)" over Talisman of Curiosity (10.0); T5 main 2 look-ahead "stop (hold mana)" over Talisman of Curiosity (10.0); T6 main 1 look-ahead "stop (hold mana)" over Sylvan Library (6.0); T6 main 2 look-ahead "stop (hold mana)" over Sylvan Library (6.0); T7 main 1 look-ahead "stop (hold mana)" over Consecrated Sphinx (5.5); T8 main 1 look-ahead "stop (hold mana)" over Kinnan: dig five (3.0); T8 main 2 look-ahead "stop (hold mana)" over Kinnan: dig five (5.0)
+  crude best case: none
+  crude best case with tutors: none

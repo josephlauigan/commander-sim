@@ -36,6 +36,8 @@ pub struct TurnRec {
     pub payable: bool,
     /// payable nonland cards in hand that were not offered as a play (held by a rule, instants, a 0 priority)
     pub held: Vec<CardId>,
+    /// the cards it cast on this turn (its own turn)
+    pub cast: Vec<CardId>,
     /// it cast, played or activated something this turn
     pub acted: bool,
 }
@@ -149,6 +151,7 @@ pub fn cast(g: &mut Game, p: PlayerId, c: CardId) {
         a.casts.push((c, t));
         if own && let Some(r) = a.turns.last_mut() {
             r.acted = true;
+            r.cast.push(c);
         }
     }
 }
@@ -202,7 +205,8 @@ pub fn decision(g: &mut Game, p: PlayerId, opts: &[Opt]) {
         if g.db.get(c).land || !pay(c) {
             continue;
         }
-        payable = true;
+        // an instant the AI did not offer (a counterspell, a protection spell) is no play for the main phase
+        payable |= !g.db.get(c).instant || offered.contains(&c);
         if pl.hand.contains(&c) && !offered.contains(&c) {
             held.push(c);
         }
@@ -418,19 +422,54 @@ fn piece_names(g: &Game, p: PlayerId) -> Vec<&'static str> {
     v
 }
 
+/// tutors the `tut` / `xtutor` tags miss (the Tier 6 plans' tutor lists, and the creature and land tutors of these
+/// decks)
+const TUTORS: [&str; 19] = [
+    "Beseech the Mirror",
+    "Intuition",
+    "Gamble",
+    "Diabolic Intent",
+    "Crop Rotation",
+    "Imperial Seal",
+    "Vampiric Tutor",
+    "Mystical Tutor",
+    "Enlightened Tutor",
+    "Demonic Tutor",
+    "Ranger-Captain of Eos",
+    "Eladamri's Call",
+    "Chord of Calling",
+    "Green Sun's Zenith",
+    "Finale of Devastation",
+    "Worldly Tutor",
+    "Merchant Scroll",
+    "Trophy Mage",
+    "Wishclaw Talisman",
+];
+
+/// card-draw engines the `draw` tag misses (they draw off opponents' spells, so the inert seats make them blanks)
+const DRAWS: [&str; 7] = [
+    "Rhystic Study",
+    "Mystic Remora",
+    "Esper Sentinel",
+    "Necropotence",
+    "The One Ring",
+    "Sylvan Library",
+    "Ad Nauseam",
+];
+
 pub fn role(db: &CardDb, pieces: &[&str], c: CardId) -> Role {
     let d = db.get(c);
     if pieces.contains(&&*d.name) {
         Role::ComboPiece
     } else if d.land {
         Role::Land
-    } else if d.tags.has(Tag::Tut) || d.tag(Tag::Xtutor) {
+    } else if d.tags.has(Tag::Tut) || d.tag(Tag::Xtutor) || TUTORS.contains(&&*d.name) {
         Role::Tutor
     } else if mana_card(db, c) && (d.instant || d.sorcery) {
         Role::Ritual
     } else if mana_card(db, c) {
         Role::FastMana
-    } else if d.tags.has(Tag::Draw) {
+    } else if d.tags.has(Tag::Draw) || DRAWS.contains(&&*d.name) {
         Role::Draw
     } else if d.tag(Tag::Ctr) || d.tags.has(Tag::Prot) || crate::goldfish::LOCKS.contains(&&*d.name) {
         Role::Protection
@@ -463,6 +502,9 @@ pub struct TurnOut {
     pub line: Option<String>,
     /// payable nonland cards in hand that were never offered as a play this turn (any bucket but won)
     pub held: Vec<(String, Role)>,
+    /// progressed: the most useful role among the cards it cast this turn (combo piece, tutor, ritual, fast mana, draw,
+    /// protection, other, in that order), or "land only" / "abilities only" when it cast nothing
+    pub progress: Option<String>,
 }
 
 /// what the report reads from one game
@@ -486,8 +528,9 @@ pub struct AuditOut {
 /// - passed_castable: a main phase ended with a castable nonland card in hand that the deck cast on a later own turn,
 ///   or discarded (any later discard, this turn's cleanup included);
 /// - no_land_drop: no land played this turn, with a land card in hand as a main phase ended;
-/// - mana_short: no nonland card in hand (nor the commander) had a cost the deck could pay at any main-phase decision,
-///   while there was one (a card it could pay for but did not offer, an instant or a card held by a rule, is not this);
+/// - mana_short: no nonland card in hand (nor the commander) had a cost the deck could pay at any main-phase decision
+///   (instants count only when offered as a play: held counterspells are no main-phase play),
+///   while there was a nonland card (a sorcery-speed card it could pay for but did not offer, held by a rule, is not this);
 ///   `held` lists the payable cards in hand that were not offered, on any turn;
 /// - progressed: it cast, played or activated something;
 /// - idle: anything else.
@@ -534,6 +577,14 @@ pub fn classify(g: &Game, a: &Audit, won: bool) -> Vec<TurnOut> {
                 } else {
                     r.held.iter().map(|&c| (g.db.get(c).name.to_string(), role(&g.db, &pieces, c))).collect()
                 },
+                progress: (bucket == Bucket::Progressed).then(|| {
+                    let best = r.cast.iter().map(|&c| role(&g.db, &pieces, c)).min();
+                    match best {
+                        Some(x) => x.name().to_string(),
+                        None if r.land_played => "land only".to_string(),
+                        None => "abilities only".to_string(),
+                    }
+                }),
             }
         })
         .collect()
@@ -543,8 +594,10 @@ pub fn classify(g: &Game, a: &Audit, won: bool) -> Vec<TurnOut> {
 /// its commanders always) a card of every group of one of its lines, and mana sources >= the line's mana: its loop
 /// mana plus the mana value of the cheapest seen card of each group (lands 0), all paid on turn T. Sources: the land
 /// cards seen (at most T: one land drop a turn) plus the mana cards seen (rocks, dorks, moxen, rituals: 1 each).
-/// `tutors`: a seen tutor (tagged `tut` or `xtutor`, not itself a piece) may stand in for one missing group, its own
-/// mana value added to the need (the cheapest tutors first).
+/// `tutors`: a seen tutor (role tutor: tagged `tut` / `xtutor` or in `TUTORS`; not itself a piece) may stand in for one
+/// missing group, its own
+/// mana value and the fetched piece's added to the need (the cheapest tutors first; all on turn T, though a tutor to
+/// the top of the library would give the piece only the turn after).
 pub fn best_case(g: &Game, a: &Audit, tutors: bool) -> Option<(u32, String)> {
     use crate::impls::combos::{audit_groups, audit_lines, audit_mana, audit_name};
     let p = a.me;
@@ -574,7 +627,16 @@ pub fn best_case(g: &Game, a: &Audit, tutors: bool) -> Option<(u32, String)> {
                     .min();
                 match cost {
                     Some(m) => need += m,
-                    None => missing += 1,
+                    None => {
+                        // the tutored piece is paid for too: the group's cheapest card (lands 0)
+                        missing += 1;
+                        need += grp
+                            .iter()
+                            .filter_map(|n| g.db.id(n))
+                            .map(|c| if g.db.get(c).land { 0 } else { g.db.get(c).cmc })
+                            .min()
+                            .unwrap_or(0);
+                    }
                 }
             }
             if missing > tut.len() {
