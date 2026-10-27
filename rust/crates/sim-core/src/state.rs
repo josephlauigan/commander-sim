@@ -173,6 +173,8 @@ pub enum DataKey {
     Suspect,
     /// Mirage Mirror is a copy of another permanent until end of turn (its own card is in `phys`)
     MirageMirror,
+    /// --- scion: Scion of the Ur-Dragon is a copy of a Dragon until end of turn (its own card is in `phys`)
+    ScionCopy,
     /// Wall of Junk blocked this combat: it returns to its owner's hand at end of combat
     WallBlocked,
     TapOnReturn,

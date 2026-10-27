@@ -14,11 +14,19 @@
   Not added on purpose: settings.rs cthresh (a fixed 6 replaces the pool formula, ~3.5 for this counter-heavy deck)
   and rules.rs CTHRESH (it switches off the Veil of Summer response); MAIN_STYLES / jd_deck (switch off combos).
 
+- Part 3: impls/t6_scion.rs (Scion becomes a copy via alela::set_face, copy_revert at turn start, stacked
+  activations, Prismari's storm cast hook and ward, the Scion AI), impls/t6_combos_scion.rs (Prismari + Breach +
+  Manamorphose + Brain Freeze), tests/cards_scion.rs (13). Shared edits marked `// --- scion`: state.rs DataKey,
+  alela.rs set_face pub(crate), zones.rs phys commander, turn.rs copy_revert, removal.rs ward, t45_urdragon.rs key
+  gate, combos.rs chain, impls/mod.rs. data/audit.toml notes for Scion and Prismari.
+
 ## Next
-- Part 3: Scion's copy, Prismari's storm and ward, the Scion AI, the lines, tests.
 - Measure, FINDINGS, report.
 
 ## Gotchas
 - Log lines start with the round (`R12    Goldfish 2 ...`): strip it before matching an actor.
 - Wishclaw Talisman hands itself to an opponent: an inert seat can "gain control" of it (passive; it never activates).
 - An inert seat's hand stays at seven: it draws in its draw step and discards at cleanup.
+- The Prismari loop escapes Manamorphose only when mana runs low: each Manamorphose copy draws, and the library is
+  both the draw pile and the escape fuel (an earlier version decked itself of fuel at storm ~10).
+- A new combo is chained at the END of `combos::all()` (indices of the existing ones stay the same).

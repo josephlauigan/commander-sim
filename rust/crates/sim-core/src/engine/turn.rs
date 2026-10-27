@@ -885,6 +885,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     crate::impls::alela::mirror_revert(g)?; // Mirage Mirror: copies end with the previous turn
+    crate::impls::t6_scion::copy_revert(g); // --- scion: Scion of the Ur-Dragon's copy ends with the turn (cleanup)
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
         q.floating.any = 0;

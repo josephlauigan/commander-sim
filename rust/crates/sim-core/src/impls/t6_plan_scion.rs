@@ -7,6 +7,14 @@
 //! a Dragon from the library (Prismari, the Inspiration for storm, Ancient Copper Dragon for Treasures, Korvold for
 //! cards); the activation and its choice of Dragon are card code (`t6_scion.rs`), not this plan.
 //!
+//! THE SCION RULE (card code, `t6_scion::scion_options`; kept simple on purpose): precombat on its own turn, with {2}
+//! spare and Scion untapped and able to attack, become Ancient Copper Dragon and attack (a d20 of Treasures when it
+//! connects). With Copper gone from the library and a Treasure for Korvold's attack trigger to sacrifice, become
+//! Korvold (a card and a counter per sacrifice). Prismari is fetched only as the first step of the storm line
+//! "Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze" (`t6_combos_scion.rs`), when that line is
+//! ready: outside it, storm on a turn's few spells is worth less than Copper's Treasures. Never two activations at
+//! once (stacking only buries another Dragon).
+//!
 //! Only `keep` has an opinion (a starting point); `prio`, `wish`, `hold_up` and `go_now` leave every decision to the
 //! shared Tier 6 table rules and the generic AI, so later versions of the deck are measured against a plain baseline.
 
