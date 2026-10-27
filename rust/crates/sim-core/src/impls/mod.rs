@@ -83,6 +83,7 @@ pub mod t6_plan_kraum;
 pub mod t6_plan_rograkh_silas;
 pub mod t6_plan_rograkh_thrasios;
 pub mod t6_plan_sisay;
+pub mod t6_plan_scion; // --- scion
 pub mod smaug;
 pub mod karn;
 pub mod t3_aurelia;

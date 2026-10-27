@@ -103,7 +103,7 @@ fn test_the_started_app_serves_the_page_and_the_catalog() {
     let o = c.get("/api/options").json();
     assert_eq!((o["app"].clone(), o["lan"].clone()), (json!(true), json!(false)));
     let cat = o.clone(); // the options carry the catalog
-    assert_eq!(cat["decks"].as_array().unwrap().len(), 12); // JD's ten and Avery's two
+    assert_eq!(cat["decks"].as_array().unwrap().len(), 13); // JD's eleven (Scion: Tier 6) and Avery's two
     assert!(cat["decks"][0]["name"].as_str().is_some_and(|n| !n.is_empty()));
     assert!(stop_app());
     assert!(!stop_app());

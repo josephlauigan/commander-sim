@@ -7,8 +7,14 @@
   end-of-turn window, and never block. Gates marked `// --- scion` in engine/turn.rs, engine/combat.rs, t6stats.rs.
   Tests: sim-cli goldfish::tests (inert seats never act, same seed same report, keys, summary maths), args test.
 
+- Part 2, the `scion` key: decklists/JD/scion-ur-dragon-turbo.md (v1, 20 Game Changers), my_decks.toml (t6),
+  cardgen deck + export (Prismari and Tinder Wall fetched), key lists 12 -> 13 (sim-cli decks.rs / args.rs / poolmode
+  test / report plan text, practice catalog + setup + 4 tests, game.rs 91), T6_KEYS 7 -> 8 (t6_plans dispatch,
+  t6stats, ai_t6_table test), ai/mod.rs `T6_JD_STYLES` (scion 1.0 / 0.6 / 0.35), impls/t6_plan_scion.rs (keep only).
+  Not added on purpose: settings.rs cthresh (a fixed 6 replaces the pool formula, ~3.5 for this counter-heavy deck)
+  and rules.rs CTHRESH (it switches off the Veil of Summer response); MAIN_STYLES / jd_deck (switch off combos).
+
 ## Next
-- Part 2: the `scion` deck key (deck file, my_decks.toml, cardgen deck/export/audit, key wiring, t6_plan_scion.rs).
 - Part 3: Scion's copy, Prismari's storm and ward, the Scion AI, the lines, tests.
 - Measure, FINDINGS, report.
 

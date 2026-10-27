@@ -28,6 +28,7 @@ fn test_your_decks() {
             "karn",
             "kefka",
             "sauron",
+            "scion",
             "seph",
             "sephfs",
             "sheoldred",

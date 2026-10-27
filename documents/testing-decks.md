@@ -29,6 +29,7 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 | kefka | t3 |
 | cloud, veyran | t1-t3 |
 | karn | t4-t5 |
+| scion | t6 |
 | alela (Avery's) | t1 |
 | galadriel (Avery's) | t1-t2 |
 
