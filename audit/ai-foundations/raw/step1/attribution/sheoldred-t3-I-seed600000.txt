@@ -1,0 +1,15 @@
+
+=== Sheoldred vs Tier 3 (High B3) [loose, lookahead AI, 2000 games] ===
+Win rate  19.0%   95% CI 17.3-20.8%   (even share 25%: -6.0 pts)
+Average turn (your own turn count) of wins 11.2, of losses 8.9
+Plan online (first opponent drained by Sheoldred): 90.0% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Atraxa (atraxa-infect)                       61.6%            28.5%           10.7%
+  Marwyn (marwyn-mono-green-elves)             60.3%            21.0%           14.2%
+  Aurelia (aurelia-boros-extra-combats)        59.9%            35.1%           22.0%
+  Korvold (korvold-jund-sacrifice)             59.2%             9.0%            7.6%
+  Tergrid (tergrid-mono-black-disruption)      59.0%            41.4%           26.1%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(171s total)
