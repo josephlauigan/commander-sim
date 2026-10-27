@@ -20,8 +20,14 @@
   alela.rs set_face pub(crate), zones.rs phys commander, turn.rs copy_revert, removal.rs ward, t45_urdragon.rs key
   gate, combos.rs chain, impls/mod.rs. data/audit.toml notes for Scion and Prismari.
 
+- Measured: audit/scion/FINDINGS.md, raw in audit/scion/2026-10-26-baseline/ (goldfish look-ahead scion + t6,
+  goldfish adaptive scion, scion vs t6 loose look-ahead).
+
 ## Next
-- Measure, FINDINGS, report.
+- report-scion-goldfish.md: the details are in the agent's final reply (the tool refused the report file from a
+  subagent); the coordinator writes it.
+- JD: the Tier 6 AI speed (every T6 deck kills at median own turn 7-14 in the goldfish), Smothering Tithe in the
+  goldfish, the keep rule (D11).
 
 ## Gotchas
 - Log lines start with the round (`R12    Goldfish 2 ...`): strip it before matching an actor.
