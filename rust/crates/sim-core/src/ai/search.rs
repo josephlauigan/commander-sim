@@ -88,8 +88,10 @@ fn decision_seed(g: &mut Game, parts: &str) -> u64 {
 /// search.clone: a copy of g to play on (the trace log isn't copied; a copy never has people in it)
 pub fn clone(g: &mut Game) -> Game {
     let log = g.log.take();
+    let audit = g.audit.take(); // --- ai-audit: a copy keeps no loss accounting
     let mut g2 = g.clone();
     g.log = log;
+    g.audit = audit; // --- ai-audit
     g2.cur_cast = None;
     g2.resolving = 0;
     g2.trig_probe = false;
@@ -378,6 +380,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     // a bonus never lifts a line above a sure win: when every playout of the best play wins, a held line that also wins
     // (the heuristic combos next turn) scored 100 plus its hold bonus and beat it, so a ready Thassa's Oracle waited
     // turn after turn in goldfish games. Capped lines tie, and a tie goes to the play the heuristic rates higher.
+    let uncapped = best; // --- ai-audit
     for s in &mut scores {
         *s = s.min(100.0 * n);
     }
@@ -386,6 +389,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         if scores[k] > scores[best] {
             best = k;
         }
+    }
+    if keyed[uncapped].0 != keyed[best].0 {
+        crate::gf_audit::cap_changed(g); // --- ai-audit: the sure-win cap changed the pick
     }
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();

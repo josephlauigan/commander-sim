@@ -101,6 +101,7 @@ pub fn mark_go(g: &mut Game, p: PlayerId) {
     if !is_goldfish(g) || is_inert(g, p) {
         return;
     }
+    crate::gf_audit::went(g, p); // --- ai-audit
     let prot = protected(g, p) as i64;
     let t = g.player(p).turns as i64;
     let pl = g.player_mut(p);

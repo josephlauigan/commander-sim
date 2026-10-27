@@ -1233,6 +1233,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
         }
         g.tick()?;
         let opts = main_options(g, p, post)?;
+        crate::gf_audit::decision(g, p, &opts); // --- ai-audit
         if crate::impls::t6_plans::is_t6(g, p)
             && let Some(i) = super::t6_table::must_option(g, p, &opts)
             && let Some(a) = &opts[i].act
@@ -1241,6 +1242,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let lbl = format!("{} [must]", opts[i].label);
             if act::perform(g, p, a)? {
                 explain(g, p, &labels(&opts), &lbl, "decides");
+                crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
                 continue;
             }
         }
@@ -1251,8 +1253,12 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let o = &opts[i];
             let lbl = format!("{} [search]", o.label);
             explain(g, p, &labels(&opts), &lbl, "decides");
-            let Some(a) = &o.act else { return Ok(()) };
+            let Some(a) = &o.act else {
+                crate::gf_audit::stop(g, p, &opts, i, true); // --- ai-audit
+                return Ok(());
+            };
             if act::perform(g, p, a)? {
+                crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
                 continue;
             }
         }
@@ -1264,10 +1270,12 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let o = &opts[i];
             let Some(a) = &o.act else {
                 explain(g, p, &labels(&opts), &o.label, "decides");
+                crate::gf_audit::stop(g, p, &opts, i, false); // --- ai-audit
                 return Ok(());
             };
             if act::perform(g, p, a)? {
                 explain(g, p, &labels(&opts), &o.label, "decides");
+                crate::gf_audit::acted(g, p, &o.label); // --- ai-audit
                 acted = true;
                 break;
             }

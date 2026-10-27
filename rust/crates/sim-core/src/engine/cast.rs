@@ -331,6 +331,7 @@ pub fn pact_affordable(g: &Game, p: PlayerId, cost: &str) -> bool {
 /// what happens when p casts c (cast triggers of tagged cards, magecraft, copies). Python's `on_cast`.
 pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     crate::t6stats::cast(g, p, c);
+    crate::gf_audit::cast(g, p, c); // --- ai-audit
     if g.db.get(c).creature && crate::impls::t6_redirects::scout_flash_active(g, p) {
         crate::impls::t6_redirects::scout_flash_used(g, p); // Scout's Warning covers the next creature card only
     }

@@ -102,6 +102,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         }
         pl.seen.insert(c);
         pl.stat("cards_drawn", 1);
+        crate::gf_audit::draw(g, p, c); // --- ai-audit
         if has(g, p, Tag::Ironman)
             && let Some(a) = army_of(g, p)
         {

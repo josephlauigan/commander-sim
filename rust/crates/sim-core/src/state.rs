@@ -1335,6 +1335,9 @@ pub struct Game {
     pub t0c: crate::impls::t0_captain::T0c,
     /// --- Tiers 1/2 (lightpaws): Flickerform's exiles waiting for the next end step (impls/t12_lightpaws.rs)
     pub t12lp: crate::impls::t12_lightpaws::T12,
+    /// --- ai-audit: the goldfish loss accounting of the deck under test (gf_audit.rs); None outside goldfish games
+    /// and in look-ahead copies
+    pub audit: Option<Box<crate::gf_audit::Audit>>,
 }
 
 impl Game {
@@ -1485,6 +1488,7 @@ impl Game {
             eot_returns: vec![],
             t0c: Default::default(),
             t12lp: Default::default(),
+            audit: None, // --- ai-audit
         }
     }
 

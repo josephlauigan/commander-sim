@@ -250,6 +250,7 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     pl.land_turn = pl.turns as i32;
     cardcode::land_etb(g, p, l)?; // CI.LAND_ETB (Bojuka Bog ...)
     g.player_mut(p).lands_played += 1;
+    crate::gf_audit::land_played(g, p); // --- ai-audit
     crate::glog!(g, "  {} {} {}", g.player(p).name, how, g.db.get(c).name);
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
@@ -793,6 +794,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         let h = held(g);
         let lands: Vec<CardId> = h.iter().copied().filter(|&c| g.db.get(c).land).collect();
         let c = if lands.len() >= 2 { lands[0] } else { max_by(&h, |c| g.db.get(c).cmc as f64).unwrap() };
+        crate::gf_audit::discard(g, p, c); // --- ai-audit: the cleanup discard (not logged otherwise)
         discard_cards(g, p, &[c])?;
     }
     g.player_mut(p).last_turn_end = g.enter_no; // Premature Burial: what entered since this turn ended
@@ -961,6 +963,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.trample = false;
     pl.combo_tried = false;
     pl.haste_all = false;
+    crate::gf_audit::turn_start(g, p); // --- ai-audit
     crate::glog!(
         g,
         "--- {} turn {}: life {}, {} cards in hand, {} lands",
@@ -1062,6 +1065,7 @@ fn step_main1(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         more_lands(g, p)?;
     }
+    crate::gf_audit::main_end(g, p); // --- ai-audit (after the extra land drops: a land drawn in main 1 is played)
     Ok(())
 }
 
@@ -1076,6 +1080,7 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
         return crate::human::human::human_main(g, p, true);
     }
     ai::main(g, p, true)?;
+    crate::gf_audit::main_end(g, p); // --- ai-audit
     crate::t6stats::mana_held(g, p);
     if g.player(p).key == "veyran" && has(g, p, Tag::Veyran) && ai::engine_payoff(g, p) {
         let t = g.player(p).turns;
@@ -1237,6 +1242,7 @@ pub fn setup_game_for(
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
     }
+    crate::gf_audit::start(&mut g); // --- ai-audit: goldfish games only
     (g, mull_rngs)
 }
 

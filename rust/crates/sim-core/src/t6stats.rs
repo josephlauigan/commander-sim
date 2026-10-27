@@ -198,7 +198,8 @@ pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
 // - `mn|cast|T<n>`: mana cards cast on turn n (n = 1-3)
 // - `mn|n|T<n>`: 1 when the player reached turn n (the divisor)
 
-const RITUALS: [&str; 14] = [
+// --- ai-audit: pub (gf_audit reads it)
+pub const RITUALS: [&str; 14] = [
     "Dark Ritual",
     "Cabal Ritual",
     "Rite of Flame",

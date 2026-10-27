@@ -1424,6 +1424,48 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
     }
 }
 
+// --- ai-audit: read-only accessors for the goldfish loss accounting (gf_audit.rs), stats only
+/// the first line that is ready and affordable for p now, by the same test as `t6_measure`
+pub fn audit_ready(g: &Game, p: PlayerId) -> Option<&'static str> {
+    let mine = lines_of(g, p);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for (i, &cmb) in all().iter().enumerate() {
+        if !mine.contains(&i) && !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && cmb.steps.is_empty()
+        {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if ok && affordable(g, p, cmb, &casts) {
+            return Some(cmb.name);
+        }
+    }
+    None
+}
+
+/// the catalogued lines of p's deck (indices into `all()`)
+pub fn audit_lines(g: &Game, p: PlayerId) -> Vec<usize> {
+    lines_of(g, p).to_vec()
+}
+
+/// a line's piece groups (a quiet line's marker left out)
+pub fn audit_groups(i: usize) -> &'static [&'static [&'static str]] {
+    real_groups(all()[i])
+}
+
+/// a line's own loop mana
+pub fn audit_mana(i: usize) -> u32 {
+    all()[i].mana.0
+}
+
+pub fn audit_name(i: usize) -> &'static str {
+    all()[i].name
+}
+
 /// is `cmb` one tutor away for p (see `t6_measure`)?
 fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pl = g.player(p);

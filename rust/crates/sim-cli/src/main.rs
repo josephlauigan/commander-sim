@@ -15,6 +15,7 @@ mod decks;
 mod explain;
 mod fit;
 mod goldfish;
+mod gf_audit; // --- ai-audit
 mod knobs;
 mod play;
 mod poolmode;
