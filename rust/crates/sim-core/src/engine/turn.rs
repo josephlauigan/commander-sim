@@ -792,8 +792,9 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
         g.tick()?; // each discard can set off triggers (Tergrid): count it
         let h = held(g);
-        let lands: Vec<CardId> = h.iter().copied().filter(|&c| g.db.get(c).land).collect();
-        let c = if lands.len() >= 2 { lands[0] } else { max_by(&h, |c| g.db.get(c).cmc as f64).unwrap() };
+        // --- ai-fix: G: keep the line's pieces, the lands and protection it needs and what it can cast soonest (it
+        // threw away the dearest card, Thassa's Oracle included)
+        let c = ai::cleanup_discard(g, p, &h);
         crate::gf_audit::discard(g, p, c); // --- ai-audit: the cleanup discard (not logged otherwise)
         discard_cards(g, p, &[c])?;
     }

@@ -334,6 +334,76 @@ pub fn discard_keep(g: &Game, p: PlayerId) -> Vec<CardId> {
     keep
 }
 
+// --- ai-fix: G
+/// protection cards a hand keeps through the cleanup: enough to cover one turn's win attempt or one threat
+pub const CLEANUP_PROTECTION: usize = 2;
+
+/// The card an AI player discards to hand size in its cleanup, as a player would pick it. It keeps, best first:
+/// 1. the pieces of its own catalogued lines (`combos::line_keepers`), then an outside deck's tutor wish list;
+/// 2. the lands it still needs to cast what it holds, and up to `CLEANUP_PROTECTION` protection cards (counters and
+///    protection spells, free ones first);
+/// 3. of the rest, the cards it can cast soonest (its mana sources and next turn's land drop against each card's
+///    cost), then the more valuable (`card_worth`).
+///
+/// A spare land (more than it needs for the dearest card in hand, from 3 to 7 mana) goes first, then the card that
+/// ranks lowest. With an opponent's Tergrid out, an instant or sorcery outside the keepers goes before a permanent
+/// card Tergrid would take.
+pub fn cleanup_discard(g: &Game, p: PlayerId, hand: &[CardId]) -> CardId {
+    use crate::engine::mana::cost_of;
+    use crate::tag::Tag;
+    let pl = g.player(p);
+    let pieces = crate::impls::combos::line_keepers(g, p);
+    let wish = plans::wish_list(g, p);
+    let is_piece = |c: CardId| pieces.iter().any(|x| x.0 == c);
+    let mana_perm = |m: PermId| {
+        let x = g.perm(m);
+        !x.phased && x.cd.is_some_and(|c| [Tag::Rock, Tag::Dork, Tag::Fastmana].iter().any(|&t| g.db.get(c).tag(t)))
+    };
+    let sources =
+        pl.lands.iter().filter(|&&l| g.land(l).on_bf).count() + pl.perms.iter().filter(|&&m| mana_perm(m)).count();
+    let cost = |c: CardId| {
+        let (gn, pips) = cost_of(g, p, c);
+        gn as usize + pips.chars().count()
+    };
+    let lands: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).land && !is_piece(c)).collect();
+    let nonl: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+    let want = nonl.iter().map(|&c| cost(c)).max().unwrap_or(0).clamp(3, 7);
+    let keep_lands = want.saturating_sub(sources).max(1).min(lands.len());
+    let free = |c: CardId| [Tag::Free, Tag::Pact, Tag::Fon, Tag::Misstep].iter().any(|&t| g.db.get(c).tag(t));
+    let mut prot: Vec<CardId> =
+        nonl.iter().copied().filter(|&c| g.db.get(c).tag(Tag::Ctr) || g.db.get(c).tag(Tag::Prot)).collect();
+    prot.sort_by_key(|&c| if free(c) { 0 } else { cost(c) });
+    prot.truncate(CLEANUP_PROTECTION);
+    let next = sources + usize::from(!lands.is_empty());
+    let score = |c: CardId| -> f64 {
+        if let Some(x) = pieces.iter().find(|x| x.0 == c) {
+            return 1000.0 + 100.0 * x.1;
+        }
+        if wish.contains(&c) {
+            return 900.0;
+        }
+        if g.db.get(c).land {
+            return if lands.iter().position(|&l| l == c).is_some_and(|i| i < keep_lands) { 800.0 } else { 0.0 };
+        }
+        if prot.contains(&c) {
+            return 700.0 - cost(c).min(9) as f64;
+        }
+        let wait = cost(c).saturating_sub(next) as f64; // own turns until it can be cast, a land a turn
+        500.0 - 40.0 * wait.min(10.0) + crate::engine::tutors::card_worth(g, p, c, false).clamp(0.0, 100.0) / 10.0
+    };
+    if g.opps(p).any(|q| crate::engine::values::has(g, q, Tag::Tergrid)) {
+        let spells: Vec<CardId> =
+            hand.iter().copied().filter(|&c| !g.db.get(c).perm && !g.db.get(c).land && score(c) < 700.0).collect();
+        if let Some(c) = crate::engine::zones::min_by(&spells, score) {
+            return c;
+        }
+    }
+    if lands.len() > keep_lands {
+        return lands[keep_lands]; // the first land beyond the ones it needs
+    }
+    crate::engine::zones::min_by(hand, score).expect("a hand above seven cards")
+}
+
 /// ais.protect_response: owner protects m from removal (Heroic Intervention, Ephemerate ...): true if it did
 pub fn protect_response(
     g: &mut Game,

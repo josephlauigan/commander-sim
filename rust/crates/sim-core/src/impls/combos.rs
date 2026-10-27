@@ -1466,6 +1466,37 @@ pub fn audit_name(i: usize) -> &'static str {
     all()[i].name
 }
 
+// --- ai-fix: G
+/// The cards in p's hand to keep as pieces of p's own catalogued lines (`lines_of`), each with the share of its
+/// line's piece groups p holds (the closest line's pieces rank first). A group already held on the battlefield, among
+/// p's lands or as a commander in the command zone needs nothing from the hand; otherwise its cheapest card in hand is
+/// kept, and a second card of the same group is spare.
+pub fn line_keepers(g: &Game, p: PlayerId) -> Vec<(CardId, f64)> {
+    let pl = g.player(p);
+    let mut out_names: std::collections::HashSet<&str> =
+        pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)).collect();
+    out_names.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).cd)));
+    out_names.extend(pl.cmds_in_zone().map(|c| name_of(g, c)));
+    let in_hand = |grp: &[&str]| -> Option<CardId> {
+        pl.hand.iter().copied().filter(|&c| grp.contains(&name_of(g, c))).min_by_key(|&c| g.db.get(c).cmc)
+    };
+    let mut keep: Vec<(CardId, f64)> = vec![];
+    for i in lines_of(g, p).iter().copied() {
+        let grps = real_groups(all()[i]);
+        let out = |grp: &[&str]| grp.iter().any(|n| out_names.contains(n));
+        let held = grps.iter().filter(|grp| out(grp) || in_hand(grp).is_some()).count();
+        let share = held as f64 / grps.len() as f64;
+        for grp in grps.iter().filter(|grp| !out(grp)) {
+            let Some(c) = in_hand(grp) else { continue };
+            match keep.iter_mut().find(|x| x.0 == c) {
+                Some(x) => x.1 = x.1.max(share),
+                None => keep.push((c, share)),
+            }
+        }
+    }
+    keep
+}
+
 /// is `cmb` one tutor away for p (see `t6_measure`)?
 fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pl = g.player(p);
