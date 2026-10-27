@@ -850,6 +850,9 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
         if g.humans.any() {
             crate::human::mana::empty_pools(g); // practice mode empties the mana pools between steps
         }
+        if !matches!(st, Step::Start | Step::End) && crate::goldfish::is_inert(g, p) {
+            continue; // --- scion: an inert goldfish seat skips its main phases and combat
+        }
         match st {
             Step::Start => step_start(g, p)?,
             Step::Main1 => step_main1(g, p)?,
@@ -1018,8 +1021,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     let pl = g.player_mut(p);
     pl.lands_played = 0;
     pl.extra_land_now = 0;
-    if crate::human::is_human(g, p) {
-        return Ok(()); // practice mode: the person plays lands in the main phase
+    if crate::human::is_human(g, p) || crate::goldfish::is_inert(g, p) {
+        return Ok(()); // practice mode: the person plays lands in the main phase (--- scion: an inert seat plays none)
     }
     play_land(g, p)?;
     if !g.hooks.is_empty() {
@@ -1219,6 +1222,16 @@ pub fn setup_game_for(
             mull_rngs.push((p, r));
             continue;
         }
+        if crate::goldfish::is_inert(&g, p) {
+            // --- scion: an inert goldfish seat keeps its first seven
+            let pl = g.player_mut(p);
+            for _ in 0..7 {
+                if let Some(c) = pl.library.pop() {
+                    pl.hand.push(c);
+                }
+            }
+            continue;
+        }
         mulligan(&mut g, p, &mut r);
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
@@ -1262,7 +1275,8 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
                     continue;
                 }
                 if g.player(p).alive && !g.over {
-                    if r > 1 && !crate::human::is_human(g, p) {
+                    // --- scion: nor for an inert goldfish seat
+                    if r > 1 && !crate::human::is_human(g, p) && !crate::goldfish::is_inert(g, p) {
                         ai::end_of_turn_window(g, p)?; // not for a person's seat
                     }
                     if g.player(p).alive && !g.over {

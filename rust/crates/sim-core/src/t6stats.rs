@@ -109,6 +109,7 @@ pub fn combo_go(g: &mut Game, p: PlayerId, combo: &str) {
     speed_mark(g, p, "ready"); // a line that is gone for was ready (also when the measure missed it)
     speed_mark(g, p, "reach");
     speed_mark(g, p, "go");
+    crate::goldfish::mark_go(g, p); // --- scion: protection held as the deck goes for the win (goldfish games)
     if is_t6(g, p) {
         bump(g, p, format!("go|{combo}"));
     }

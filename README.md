@@ -39,6 +39,7 @@ commander-sim --deck sauron --pool t3 --swap "A=>B" --ai adaptive       # the sa
 commander-sim --deck sauron --pool t4 --analyze                         # how it wins and loses there
 commander-sim --deck sauron --pool t3 --trace 7                         # play-by-play of game 7
 commander-sim --all-decks --pool all                                    # every deck against its own tiers
+commander-sim --goldfish scion,t6 --games 2000                          # each deck alone against three inert seats
 commander-sim --deck sauron --cards                                     # every card: tags, abilities, Game Changers
 commander-sim --realism --pool t6 --games 2200                          # the sim against real-game targets
 commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml   # the same with the AI's values from a file
@@ -71,6 +72,9 @@ cardgen validate                                                        # check 
   AI alone, about 60 times faster). `--temp T` scales the heuristic AI's randomness.
 - `--profiles`: `loose` by default and the only profile in use (JD, 2026-10-19). Loose opponents counter and remove more
   freely, the worst case for JD's decks.
+- `--goldfish KEYS`: each deck (your keys, Tier 6 pool keys, or `t6`) plays alone against three inert seats (40 life,
+  they never cast, attack, block or respond): the kill turn (median, mean, share by turn 1-8), how it won, mulligans,
+  the ready turn and the protection held on the kill turn. No tier limit applies. `--trace GAME` prints one game.
 - `--realism`: with `--pool tN`, play the tier's own decks and score the games against `data/realism/tN.toml`.
 - `--knobs FILE`: the AI's hand-set values (deck styles, counter thresholds, look-ahead weights) from a TOML file
   (`rust/crates/sim-cli/src/knobs.rs`).
