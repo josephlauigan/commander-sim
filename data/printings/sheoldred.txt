@@ -26,6 +26,7 @@
 1 Foolish Fate (sos) 83
 1 Geier Reach Sanitarium (emn) 203
 1 Gix, Yawgmoth Praetor (fca) 35
+1 Grave Titan (ecc) 74
 1 Gray Merchant of Asphodel (ths) 89
 1 Howling Mine (brr) 83
 1 Invoke Despair (neo) 506
@@ -39,7 +40,6 @@
 1 Necrosquito (one) 100
 1 Otherworld Atlas (avr) 219
 1 Overkill (fin) 109
-1 Painful Lesson (akh) 102
 1 Peer into the Abyss (plst) M21-117
 1 Perigee Beckoner (eoe) 112
 1 Phyrexian Arena (fdn) 322
