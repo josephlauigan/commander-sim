@@ -138,6 +138,11 @@ pub fn turn_start(g: &mut Game, p: PlayerId) {
 }
 
 pub fn draw(g: &mut Game, p: PlayerId, c: CardId) {
+    // --- ai-planner: a card a tutor put on top is the tutor's, not a draw: the best case counted it twice (the tutor
+    // stood in for one piece, and its card was seen when drawn)
+    if g.player(p).known_top.contains(&c) {
+        return;
+    }
     let t = use_turn(g, p);
     if let Some(a) = audit_of(g, p) {
         a.seen.push((c, t));
