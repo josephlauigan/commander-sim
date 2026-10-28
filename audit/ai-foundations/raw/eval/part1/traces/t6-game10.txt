@@ -1,0 +1,183 @@
+Play-by-play of within-tier game 10 (seed 500010): Tier 6 (cEDH, B5), loose profile, lookahead AI
+Seat order: Dack Fayden, Sisay, Rograkh/Silas, Kinnan
+R1  --- Dack Fayden turn 1: life 40, 7 cards in hand, 0 lands
+R1        [Dack Fayden plays Plains [plan: the land drop the plan wants]]
+R1    Dack Fayden plays Plains
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1    Sisay plays Flooded Strand
+R1      cracks Flooded Strand for Tropical Island
+R1    Sisay casts Chrome Mox
+R1      Chrome Mox imprints Kinnan, Bonder Prodigy
+R1        [Sisay decides: Chrome Mox 100%, stop 0% -> Chrome Mox [must]]
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1    Rograkh/Silas plays Volcanic Island
+R1    Rograkh/Silas casts Lotus Petal
+R1        [Rograkh/Silas decides: Lotus Petal 57%, Sol Ring 43%, stop (hold mana) 0% -> Lotus Petal [must]]
+R1    Rograkh/Silas casts Sol Ring
+R1        [Rograkh/Silas decides: Sol Ring 93%, Wishclaw Talisman 7%, stop (hold mana) 0% -> Sol Ring [must]]
+R1        [Rograkh/Silas decides: Wishclaw Talisman 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R1        [Rograkh/Silas decides: Wishclaw Talisman 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Exotic Orchard
+R1    Kinnan casts Lotus Petal
+R1        [Kinnan decides: Lotus Petal 65%, Mystic Remora 35%, stop (hold mana) 0% -> Lotus Petal [must]]
+R1    Kinnan casts Kinnan, Bonder Prodigy
+R1        [Kinnan decides: Kinnan, Bonder Prodigy 53%, Mystic Remora 47%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2    Dack Fayden casts March of Otherworldly Light -> Kinnan, Bonder Prodigy (Kinnan)
+R2      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R2        [Dack Fayden end of turn: March of Otherworldly Light -> Kinnan, Bonder Prodigy 100%, pass 0% -> March of Otherworldly Light -> Kinnan, Bonder Prodigy]
+R2  --- Dack Fayden turn 2: life 40, 6 cards in hand, 1 lands
+R2    Dack Fayden plays Talon Gates of Madara
+R2        [Dack Fayden decides: Defense Grid 52%, Scroll Rack 48%, stop 0% -> stop [search]]
+R2        [Dack Fayden decides: Defense Grid 52%, Scroll Rack 48%, stop 0% -> Defense Grid [search]]
+R2    Dack Fayden casts Defense Grid
+R2      Rograkh/Silas casts An Offer You Can't Refuse at Defense Grid
+R2      Rograkh/Silas counters Defense Grid with An Offer You Can't Refuse
+R2        [Dack Fayden decides: Scroll Rack 100%, stop 0% -> stop [search]]
+R2  --- Sisay turn 2: life 39, 5 cards in hand, 1 lands
+R2        [Sisay plays Savannah [plan: the land drop the plan wants]]
+R2    Sisay plays Savannah
+R2    Sisay casts Sisay, Weatherlight Captain
+R2        [Sisay decides: Sisay, Weatherlight Captain 100%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R2  --- Rograkh/Silas turn 2: life 40, 4 cards in hand, 1 lands
+R2    Rograkh/Silas pays 2 life for an untapped Blood Crypt
+R2    Rograkh/Silas plays Blood Crypt
+R2          [eval Silas Renn, Seeker Adept: u 7.67, score -0.67, won 0/6 lost 0, open eval -0.67 (life 9.08, board 7.83, power 0.58, hand 3.00, lands 1.80, treasures 0.00, combo 0.75, opp -23.76, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R2          [eval Rograkh, Son of Rohgahh (chosen): u 7.02, score -0.06, won 0/6 lost 0, open eval -0.06 (life 9.17, board 8.75, power 0.76, hand 2.55, lands 1.80, treasures 0.00, combo 0.75, opp -23.83, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R2          [eval Wishclaw Talisman: u 5.50, score -0.79, won 0/6 lost 0, open eval -0.79 (life 9.25, board 9.00, power 0.70, hand 2.40, lands 1.80, treasures 0.00, combo 0.75, opp -24.73, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2          [eval stop: u -3.00, score -0.91, won 0/6 lost 0, open eval -0.91 (life 9.08, board 7.00, power 0.70, hand 3.45, lands 1.80, treasures 0.00, combo 0.75, opp -23.74, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2        [Rograkh/Silas decides: Silas Renn, Seeker Adept 61%, Rograkh, Son of Rohgahh 32%, Wishclaw Talisman 7%, stop 0% -> Rograkh, Son of Rohgahh [search]]
+R2    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R2          [eval Silas Renn, Seeker Adept: u 7.67, score -1.91, won 0/6 lost 0, open eval -1.91 (life 9.17, board 9.17, power 0.70, hand 2.55, lands 1.80, treasures 0.00, combo 0.62, opp -26.02, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R2          [eval Wishclaw Talisman (chosen): u 5.50, score -0.66, won 0/6 lost 0, open eval -0.66 (life 9.42, board 10.00, power 0.70, hand 2.55, lands 1.80, treasures 0.00, combo 0.75, opp -25.91, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2          [eval stop: u -3.00, score -1.82, won 0/6 lost 0, open eval -1.82 (life 9.25, board 8.67, power 0.47, hand 2.25, lands 1.80, treasures 0.00, combo 0.62, opp -24.98, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R2        [Rograkh/Silas decides: Silas Renn, Seeker Adept 90%, Wishclaw Talisman 10%, stop 0% -> Wishclaw Talisman [search]]
+R2    Rograkh/Silas casts Wishclaw Talisman
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2    Kinnan plays Rejuvenating Springs
+R2          [eval Mystic Remora: u 7.99, score -2.08, won 0/6 lost 0, open eval -2.08 (life 9.42, board 3.83, power 0.00, hand 5.40, lands 1.80, treasures 0.00, combo 4.17, opp -26.81, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2          [eval stop (hold mana) (chosen): u -1.25, score 0.72, won 0/6 lost 0, open eval -0.03 (life 9.83, board 4.33, power 0.12, hand 5.70, lands 1.80, treasures 0.00, combo 4.17, opp -25.98, dead 0.00), ramp 0.00, hold 0.75, top card cast in 5/6 open, held mana up at turn end in 6]
+R2        [Kinnan decides: Mystic Remora 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2          [eval Mystic Remora (chosen): u 7.99, score 4.96, won 0/6 lost 0, open eval 4.96 (life 9.83, board 5.83, power 0.00, hand 6.00, lands 1.80, treasures 0.00, combo 6.06, opp -24.28, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2          [eval stop (hold mana): u -1.25, score -1.37, won 0/6 lost 0, open eval -2.12 (life 9.83, board 3.33, power 0.00, hand 4.05, lands 1.80, treasures 0.00, combo 3.00, opp -24.25, dead 0.00), ramp 0.00, hold 0.75, top card cast in 5/6 open, held mana up at turn end in 6]
+R2        [Kinnan decides: Mystic Remora 100%, stop (hold mana) 0% -> Mystic Remora [search]]
+R2    Kinnan casts Mystic Remora
+R3  --- Dack Fayden turn 3: life 40, 5 cards in hand, 2 lands
+R3    Dack Fayden plays Plains
+R3        [Dack Fayden decides: Get Lost -> Sisay, Weatherlight Captain 54%, Static Prison 20%, Get Lost 20%, Scroll Rack 6% -> Get Lost -> Sisay, Weatherlight Captain [search]]
+R3    Dack Fayden casts Get Lost -> Sisay, Weatherlight Captain (Sisay)
+R3      Sisay, Weatherlight Captain (Sisay) is removed: destroy
+R3        [Dack Fayden decides: Static Prison 80%, Scroll Rack 20%, Sunscour 0%, stop 0% -> stop [search]]
+R3        [Dack Fayden decides: Static Prison 80%, Scroll Rack 20%, Sunscour 0%, stop 0% -> Static Prison [search]]
+R3    Dack Fayden casts Static Prison
+R3      Kinnan casts Flusterstorm at Static Prison
+R3      Dack Fayden pays 2
+R3      Mystic Remora (Kinnan) is removed: exile
+R3  --- Sisay turn 3: life 39, 5 cards in hand, 2 lands
+R3    Sisay plays Command Tower
+R3        [Sisay decides: Magda, Brazen Outlaw 100%, stop 0% -> Magda, Brazen Outlaw [search]]
+R3    Sisay casts Magda, Brazen Outlaw
+R3  --- Rograkh/Silas turn 3: life 38, 3 cards in hand, 2 lands
+R3    Rograkh/Silas plays Ancient Tomb
+R3          [eval Silas Renn, Seeker Adept: u 7.16, score -2.27, won 0/6 lost 0, open eval -2.27 (life 9.12, board 9.50, power 0.70, hand 2.55, lands 2.00, treasures 0.00, combo 2.62, opp -28.90, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval stop (chosen): u -3.00, score -2.06, won 0/6 lost 0, open eval -2.06 (life 9.12, board 9.33, power 0.70, hand 2.40, lands 2.00, treasures 0.00, combo 2.62, opp -28.36, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 100%, stop 0% -> stop [search]]
+R3          [eval Silas Renn, Seeker Adept (chosen): u 7.16, score -0.46, won 0/6 lost 0, open eval -0.46 (life 9.17, board 10.42, power 0.70, hand 2.25, lands 2.00, treasures 0.00, combo 0.75, opp -25.77, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval stop: u -3.00, score -1.44, won 0/6 lost 0, open eval -1.44 (life 9.17, board 10.42, power 0.70, hand 2.25, lands 2.00, treasures 0.00, combo 0.75, opp -26.79, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 100%, stop 0% -> Silas Renn, Seeker Adept [search]]
+R3    Rograkh/Silas casts Silas Renn, Seeker Adept
+R3  --- Kinnan turn 3: life 40, 6 cards in hand, 2 lands
+R3    Kinnan plays Verdant Catacombs
+R3      cracks Verdant Catacombs for Tropical Island
+R3        [Kinnan decides: Formidable Speaker 82%, Valley Floodcaller 18%, stop 0% -> Formidable Speaker [search]]
+R3    Kinnan casts Formidable Speaker
+R4  --- Dack Fayden turn 4: life 40, 3 cards in hand, 3 lands
+R4      Static Prison: Dack Fayden pays {E} (1 left)
+R4    Dack Fayden plays Snow-Covered Plains
+R4        [Dack Fayden decides: Scroll Rack 100%, stop 0% -> stop [search]]
+R4        [Dack Fayden decides: Scroll Rack 100%, stop 0% -> Scroll Rack [search]]
+R4    Dack Fayden casts Scroll Rack
+R4  --- Sisay turn 4: life 39, 4 cards in hand, 3 lands
+R4    Sisay plays Boseiju, Who Endures
+R4    Sisay casts Sisay, Weatherlight Captain
+R4        [Sisay decides: Shang-Chi, Master of Kung Fu 50%, Sisay, Weatherlight Captain 50%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R4        [Sisay attack plan by search: filtered at Dack Fayden]
+R4    Sisay attacks Dack Fayden with 1 creature(s): 2 damage (life now 38)
+R4  --- Rograkh/Silas turn 4: life 38, 3 cards in hand, 3 lands
+R4    Rograkh/Silas plays Mana Confluence
+R4        [Rograkh/Silas attack plan by search: filtered at Kinnan]
+R4    Rograkh/Silas attacks Kinnan with 1 creature(s): 0 damage (life now 39)
+R4          [eval Silas Renn, Seeker Adept (chosen): u 6.42, score -2.03, won 0/6 lost 0, open eval -2.03 (life 9.33, board 9.83, power 0.76, hand 3.00, lands 2.50, treasures 0.00, combo 1.12, opp -28.69, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R4          [eval stop: u -3.00, score -2.12, won 0/6 lost 0, open eval -2.12 (life 9.42, board 9.33, power 0.58, hand 3.30, lands 2.50, treasures 0.00, combo 1.12, opp -28.50, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 100%, stop 0% -> Silas Renn, Seeker Adept [search]]
+R4    Rograkh/Silas casts Silas Renn, Seeker Adept
+R4  --- Kinnan turn 4: life 39, 5 cards in hand, 3 lands
+R4    Kinnan plays Gemstone Caverns
+R4          [eval Kinnan, Bonder Prodigy: u 7.43, score 7.32, won 0/6 lost 0, open eval 7.32 (life 9.38, board 11.25, power 1.05, hand 4.35, lands 2.80, treasures 0.00, combo 7.56, opp -28.61, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R4          [eval Invasion of Ikoria // Zilortha, Apex of Ikoria: u 6.00, score 5.55, won 0/6 lost 0, open eval 5.55 (life 9.71, board 8.67, power 0.93, hand 4.50, lands 2.70, treasures 0.00, combo 6.44, opp -27.10, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R4          [eval Thrasios, Triton Hero: u 4.40, score 7.56, won 0/6 lost 0, open eval 7.56 (life 9.50, board 10.33, power 0.87, hand 4.05, lands 2.80, treasures 0.00, combo 7.56, opp -27.12, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R4          [eval Valley Floodcaller (chosen): u 3.10, score 8.29, won 0/6 lost 0, open eval 8.29 (life 9.58, board 10.33, power 1.22, hand 3.90, lands 2.80, treasures 0.00, combo 7.56, opp -26.61, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R4          [eval stop: u -3.00, score 6.88, won 0/6 lost 0, open eval 6.88 (life 9.50, board 10.75, power 0.76, hand 4.35, lands 2.70, treasures 0.00, combo 7.56, opp -28.25, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 77%, Invasion of Ikoria // Zilortha, Apex of Ikoria 18%, Thrasios, Triton Hero 4%, Valley Floodcaller 1% -> Valley Floodcaller [search]]
+R4    Kinnan casts Valley Floodcaller
+R5  --- Dack Fayden turn 5: life 38, 2 cards in hand, 4 lands
+R5      Static Prison: Dack Fayden pays {E} (0 left)
+R5        [Dack Fayden decides: Touch the Spirit Realm 90%, Sunscour 10%, stop 0% -> Touch the Spirit Realm [search]]
+R5    Dack Fayden casts Touch the Spirit Realm
+R5      Sisay, Weatherlight Captain (Sisay) is removed: exile
+R5  --- Sisay turn 5: life 39, 4 cards in hand, 4 lands
+R5    Sisay plays Plateau
+R5    Sisay casts Sisay, Weatherlight Captain
+R5        [Sisay decides: Shang-Chi, Master of Kung Fu 92%, Sisay, Weatherlight Captain 7%, stop (hold mana) 1% -> Sisay, Weatherlight Captain [must]]
+R5        [Sisay attack plan by search: filtered at Dack Fayden]
+R5    Sisay attacks Dack Fayden with 1 creature(s): 2 damage (life now 36)
+R5  --- Rograkh/Silas turn 5: life 38, 3 cards in hand, 4 lands
+R5        [Rograkh/Silas decides: Borne Upon a Wind 100%, stop 0% -> Borne Upon a Wind [search]]
+R5    Rograkh/Silas casts Borne Upon a Wind
+R5        [Rograkh/Silas decides: Wishclaw Talisman 100%, stop 0% -> stop [search]]
+R5        [Rograkh/Silas attack plan by search: filtered at Dack Fayden]
+R5      Silas Renn: Rograkh/Silas may cast Lotus Petal from the graveyard this turn
+R5    Rograkh/Silas attacks Dack Fayden with 1 creature(s): 2 damage (life now 34)
+R5        [Rograkh/Silas decides: Silas Renn: cast Lotus Petal from the graveyard 99%, Wishclaw Talisman 1%, stop 0% -> stop [search]]
+R5  --- Kinnan turn 5: life 39, 4 cards in hand, 4 lands
+R5          [eval Kinnan, Bonder Prodigy (chosen): u 6.79, score -5.18, won 0/6 lost 1, open eval 13.79 (life 8.75, board 16.50, power 2.31, hand 4.50, lands 2.88, treasures 0.00, combo 8.00, opp -28.28, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/5 open, held mana up at turn end in 0]
+R5          [eval Invasion of Ikoria // Zilortha, Apex of Ikoria: u 6.00, score -29.40, won 0/6 lost 2, open eval 5.90 (life 9.31, board 10.75, power 1.57, hand 5.85, lands 2.55, treasures 0.00, combo 5.33, opp -29.14, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/4 open, held mana up at turn end in 0]
+R5          [eval Copy Artifact: u 5.90, score -26.31, won 0/6 lost 2, open eval 10.54 (life 8.94, board 15.88, power 1.57, hand 4.50, lands 2.85, treasures 0.00, combo 7.00, opp -29.59, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/4 open, held mana up at turn end in 0]
+R5          [eval Thrasios, Triton Hero: u 4.40, score -26.31, won 0/6 lost 2, open eval 10.54 (life 8.94, board 15.88, power 1.57, hand 4.50, lands 2.85, treasures 0.00, combo 7.00, opp -29.59, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/4 open, held mana up at turn end in 0]
+R5          [eval stop: u -3.00, score -12.12, won 0/6 lost 1, open eval 5.46 (life 9.20, board 11.20, power 0.84, hand 3.96, lands 2.76, treasures 0.00, combo 6.20, opp -28.39, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/5 open, held mana up at turn end in 0]
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 51%, Invasion of Ikoria // Zilortha, Apex of Ikoria 23%, Copy Artifact 21%, Thrasios, Triton Hero 5% -> Kinnan, Bonder Prodigy [search]]
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5        [Kinnan attack plan by search: filtered at Rograkh/Silas]
+R5    Kinnan attacks Rograkh/Silas with 1 creature(s): 2 damage (life now 36)
+R6  --- Dack Fayden turn 6: life 34, 2 cards in hand, 4 lands
+R6      Mystic Remora returns to the battlefield
+R6    Dack Fayden plays Emergence Zone
+R6        [Dack Fayden decides: Fiend Hunter 100%, stop 0% -> Fiend Hunter [search]]
+R6    Dack Fayden casts Fiend Hunter
+R6      Sisay, Weatherlight Captain (Sisay) is removed: exile
+R6  --- Sisay turn 6: life 39, 4 cards in hand, 5 lands
+R6    Sisay plays Bayou
+R6        [Sisay decides: stop (hold mana) 45%, Lavinia, Azorius Renegade 42%, Shang-Chi, Master of Kung Fu 13% -> Shang-Chi, Master of Kung Fu [search]]
+R6    Sisay casts Shang-Chi, Master of Kung Fu
+R6        [Sisay decides: stop (hold mana) 51%, Lavinia, Azorius Renegade 49% -> Lavinia, Azorius Renegade [search]]
+R6    Sisay casts Lavinia, Azorius Renegade
+R6        [Sisay attack plan by search: filtered at Dack Fayden]
+R6        [Sisay holds back 1 attacker(s) that would die to blocks]
+R6    Sisay attacks Kinnan with 1 creature(s): 2 damage (life now 37)
+R6      Rograkh/Silas tutors Thassa's Oracle (Wishclaw Talisman)
+R6      Kinnan gains control of Wishclaw Talisman
+R6        [Rograkh/Silas end of turn: Wishclaw Talisman 99%, pass 1% -> Wishclaw Talisman]
+R6  --- Rograkh/Silas turn 6: life 36, 5 cards in hand, 4 lands
+R6        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R6    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R6    Rograkh/Silas casts Thassa's Oracle
+R6    Rograkh/Silas casts Demonic Consultation
+R6      Sisay casts Fierce Guardianship at Demonic Consultation
+R6      Rograkh/Silas casts Fierce Guardianship at Fierce Guardianship
+R6      Rograkh/Silas counters Fierce Guardianship with Fierce Guardianship
+R6      Rograkh/Silas exiles its library
+R6  *** Dack Fayden is eliminated (life 34) by Rograkh/Silas
+R6  *** Sisay is eliminated (life 39) by Rograkh/Silas
+R6  *** Kinnan is eliminated (life 37) by Rograkh/Silas
+R6  *** Rograkh/Silas wins by combo
+Winner: Rograkh/Silas (combo)

@@ -161,6 +161,11 @@ fn playout_copy(g: &mut Game, me: PlayerId, base_seed: u64, r: u64) -> (Game, u6
 /// search.play_on: finish the active player's turn (p2's by default) from the current step, then everyone's turns
 /// until the end of p2's next turn (`horizon` of p2's turns)
 pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
+    play_on_with(g2, p2, active, |_| {})
+}
+
+/// `play_on`, calling `turn_end` once the active player's turn (and its extra turns) is over
+fn play_on_with(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>, turn_end: impl FnOnce(&Game)) -> Res {
     const STOP_ROUNDS: u32 = 20;
     let act = active.unwrap_or(p2);
     if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
@@ -171,6 +176,7 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
         crate::engine::turn::continue_turn(g2, act, step)?;
         crate::engine::turn::run_extra_turns(g2)?;
     }
+    turn_end(g2); // --- ai-eval
     let n = g2.players.len();
     let mut k = act.index();
     let mut left = g2.settings.search.horizon;
@@ -248,13 +254,108 @@ pub fn win_score(g: &Game, p: PlayerId) -> f64 {
     (100.0 - WIN_TURN_COST * later as f64).max(WIN_FLOOR)
 }
 
+// --- ai-eval: the board valued for what it will produce
+//
+// The unit is `strength`'s own: a card in hand is `HAND_W` (0.9). A permanent that makes cards or mana every turn is
+// worth what it will make over `OUTPUT_TURNS`, the two own turns after the playout ends (the second at half weight:
+// by then it may be gone or the game over), in cards:
+//   output_value = HAND_W * (1 + 0.5) * (cards a turn cycle + MANA_CARD * mana a turn)
+// One rate converts mana to cards: MANA_CARD = 0.4 / 0.9, a Treasure's value in `strength` (one mana, once) over a
+// card's. With it a permanent making one mana a turn is worth 0.6 over the window, what `strength` already gives a
+// land, so rocks, dorks and lands share one scale. Cards a turn cycle come from the card itself:
+// - `eng=N` (it draws N at upkeep), else the small table `OUTPUT_CARDS`, the rates measured while the engine was out
+//   at the Tier 6 table (audit/ai-foundations/step3-flow.md). The tax engines (Rhystic Study, Mystic Remora, Esper
+//   Sentinel, Kraum, Faerie Mastermind) draw off opponents' spells: their rate is for three opponents who cast, and
+//   scales with the live opponents who can (none in a goldfish, whose seats never cast).
+// - mana a turn: `rock=N:...` (N), a mana creature (`dork`: 1), Chrome Mox (1). A rock that doesn't untap (Mana Vault,
+//   Grim Monolith) or that is sacrificed for its mana (Lotus Petal, Lion's Eye Diamond) makes nothing past the turn.
+// A card whose `pval` already prices its output (Rhystic Study 4, an `eng` card 2, The One Ring 5, Consecrated Sphinx
+// 6, Smothering Tithe 4) counts the larger of the two, not both. Everything else adds the output to its `pval`.
+
+/// a card in hand, in `strength`
+pub const HAND_W: f64 = 0.9;
+/// the weights of the own turns after the playout over which a permanent's output counts
+pub const OUTPUT_TURNS: [f64; 2] = [1.0, 0.5];
+/// cards one mana is worth: a Treasure's 0.4 over a card's 0.9
+pub const MANA_CARD: f64 = 0.4 / HAND_W;
+
+/// cards a turn cycle while out, measured at the Tier 6 table (step3-flow.md), and whether the card draws off
+/// opponents' spells (a tax engine: the rate is for three opponents who cast)
+pub const OUTPUT_CARDS: [(&str, f64, bool); 9] = [
+    ("Rhystic Study", 3.0, true),
+    ("Mystic Remora", 2.7, true),
+    ("Esper Sentinel", 1.7, true),
+    ("Kraum, Ludevic's Opus", 1.2, true),
+    ("Faerie Mastermind", 0.7, true),
+    ("Necropotence", 4.0, false),
+    ("The One Ring", 2.0, false),
+    ("Tymna the Weaver", 1.0, false),
+    ("Thrasios, Triton Hero", 0.3, false),
+];
+
+/// what permanent m will produce in a turn cycle, in cards (mana converted at `MANA_CARD`)
+pub fn output_cards(g: &Game, m: crate::ids::PermId) -> f64 {
+    let x = g.perm(m);
+    let Some(c) = x.cd else { return 0.0 };
+    let d = g.db.get(c);
+    let t = &d.tags;
+    let cards = if let Some(n) = t.int(Tag::Eng)
+        && !t.has(Tag::Remora)
+    {
+        n.max(0) as f64
+    } else if let Some(&(_, n, tax)) = OUTPUT_CARDS.iter().find(|e| e.0 == &*d.name) {
+        if tax {
+            let casters = g.opps(x.owner).filter(|&q| !crate::goldfish::is_inert_key(g.player(q).key)).count();
+            n * casters.min(3) as f64 / 3.0
+        } else {
+            n
+        }
+    } else {
+        0.0
+    };
+    let one_shot = t.has(Tag::Nountap) || matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond");
+    let mana = if one_shot {
+        0
+    } else if let Some(r) = t.str(Tag::Rock) {
+        r.split_once(':').map_or(r, |x| x.0).parse().unwrap_or(1)
+    } else if t.has(Tag::Dork) || t.has(Tag::Chromemox) {
+        1
+    } else {
+        0
+    };
+    cards + MANA_CARD * mana as f64
+}
+
+/// permanent m's output over the window, in `strength`'s unit
+pub fn output_value(g: &Game, m: crate::ids::PermId) -> f64 {
+    HAND_W * OUTPUT_TURNS.iter().sum::<f64>() * output_cards(g, m)
+}
+
+/// a permanent's value in `strength`: its `pval` plus its output (the larger of the two when `pval` already prices
+/// the output)
+fn board_value(g: &Game, m: crate::ids::PermId) -> f64 {
+    use crate::engine::values::pval;
+    let v = pval(g, m);
+    if !g.settings.search.output {
+        return v;
+    }
+    let out = output_value(g, m);
+    if out == 0.0 {
+        return v;
+    }
+    let t = &g.db.get(g.perm(m).cd.expect("output_value is 0 for a card-less permanent")).tags;
+    let priced =
+        t.has(Tag::Rhystic) || t.has(Tag::Tithe) || t.has(Tag::Eng) || t.has(Tag::Onering) || t.has(Tag::Sphinx);
+    if priced { v.max(out) } else { v + out }
+}
+
 /// search.strength
 pub fn strength(g: &Game, q: PlayerId) -> f64 {
-    use crate::engine::values::{epow, pval};
+    use crate::engine::values::epow;
     let pl = g.player(q);
     let life = pl.life.clamp(0, 60) as f64;
     let live = || pl.perms.iter().copied().filter(|&m| !g.perm(m).phased);
-    let board = live().map(|m| pval(g, m)).psum();
+    let board = live().map(|m| board_value(g, m)).psum(); // --- ai-eval: was pval
     let power = live().filter(|&m| g.is_creature(m)).map(|m| epow(g, m) as f64).sum::<f64>(); // whole numbers
     0.25 * life
         + board
@@ -304,6 +405,18 @@ pub fn hold_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     }
     let s = brain::Situation::new(g, p);
     w * brain::hold_value(g, p, &s).1.max(0.0)
+}
+
+// --- ai-eval
+/// the held card and the bonus (`hold_w` times the heuristic's hold value) each open playout that keeps its mana up
+/// through p's turn earns (`Search::hold_kept`); None when nothing is held or `hold_w` is 0
+pub fn hold_credit(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
+    let w = g.settings.search.hold_w;
+    if w == 0.0 {
+        return None;
+    }
+    let (c, v) = brain::hold_value(g, p, &brain::Situation::new(g, p));
+    c.filter(|_| v > 0.0).map(|c| (c, w * v))
 }
 
 /// the n-th option labelled `label`
@@ -368,18 +481,48 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     // horizon, and a playout already won has nothing left to pay off (a held line that wins next turn at 96 plus a big
     // hold value would otherwise tie a win this turn at the cap)
     let mut open = vec![0.0; keyed.len()];
+    // --- ai-eval: the Part 1 diagnostic (stats only): a decision whose heuristic top is an engine, a commander or mana
+    let diag = if super::evdiag::on() { super::evdiag::top_class(g, p, opts) } else { None };
+    if let Some((ti, _)) = diag {
+        let top = match opts[ti].act {
+            Some(Action::Cast { card, .. }) => Some(card),
+            _ => None,
+        };
+        let hold = brain::hold_value(g, p, &brain::Situation::new(g, p)).0;
+        super::evdiag::begin(keyed.len(), top, hold);
+    }
+    // --- ai-eval: the hold bonus goes to each open playout that ended p's turn with the held card's mana still up,
+    // whatever the option: casting an engine that leaves the counter payable keeps the mana up too, and "stop" in main
+    // 1 often doesn't (the heuristic taps out in main 2). The "stop (hold mana)" label used to get it every time
+    // (Part 1: the label's line kept the mana up in 64-70% of main-1 playouts, a cast's in 60-66%).
+    let hold = if g.settings.search.hold_kept { hold_credit(g, p) } else { None };
+    let mut held = vec![0.0; keyed.len()];
     for r in 0..g.settings.search.rollouts as u64 {
         for (k, &(_, label, n)) in keyed.iter().enumerate() {
-            let v = playout_main(g, p, post, label, n, base_seed, r);
+            if diag.is_some() {
+                super::evdiag::option(k); // --- ai-eval
+            }
+            let (v, kept) = playout_main_kept(g, p, post, label, n, base_seed, r, hold.map(|h| h.0));
             scores[k] += v;
             if v < WIN_FLOOR {
                 open[k] += 1.0;
+                if kept {
+                    held[k] += 1.0; // --- ai-eval
+                }
             }
         }
     }
+    // the hold bonus each option earned in all
+    let holds: Vec<f64> = (0..keyed.len())
+        .map(|k| match hold {
+            Some((_, v)) => v * held[k], // --- ai-eval
+            None if g.settings.search.hold_kept => 0.0,
+            None => hold_bonus(g, p, &opts[keyed[k].0]) * open[k],
+        })
+        .collect();
     for (k, kk) in keyed.iter().enumerate() {
         scores[k] += ramp_bonus(g, p, &opts[kk.0]) * open[k];
-        scores[k] += hold_bonus(g, p, &opts[kk.0]) * open[k];
+        scores[k] += holds[k];
     }
     let mut best = 0;
     for k in 1..keyed.len() {
@@ -430,6 +573,22 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
     });
     let top = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
+    if let Some((ti, class)) = diag {
+        // --- ai-eval
+        let rows: Vec<super::evdiag::Row> = keyed
+            .iter()
+            .enumerate()
+            .map(|(k, kk)| super::evdiag::Row {
+                label: kk.1,
+                utility: opts[kk.0].utility,
+                score: scores[k] / n,
+                ramp: ramp_bonus(g, p, &opts[kk.0]),
+                hold: holds[k] / open[k].max(1.0), // per open playout
+            })
+            .collect();
+        let top_label = opts[ti].label.clone();
+        super::evdiag::end(g, p, class, &top_label, best, &rows);
+    }
     if keyed[best].0 != top {
         stat(|x| x.changed += 1);
     }
@@ -444,7 +603,23 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
 /// search.playout_main: one playout of main-phase option (label, n-th of that label) for p: copy r of the decision
 /// seeded base_seed. The score of the position it reaches (an option that can't be played: -50).
 pub fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize, base_seed: u64, r: u64) -> f64 {
+    playout_main_kept(g, p, post, label, n, base_seed, r, None).0
+}
+
+/// --- ai-eval: `playout_main`, and whether the playout kept the mana up for `hold` (`kept_up`) when p's turn ended
+#[allow(clippy::too_many_arguments)]
+fn playout_main_kept(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    label: &str,
+    n: usize,
+    base_seed: u64,
+    r: u64,
+    hold: Option<CardId>,
+) -> (f64, bool) {
     let (mut g2, w0) = playout_copy(g, p, base_seed, r);
+    let mut kept = false;
     let res = (|| -> Res<Option<f64>> {
         let opts = brain::main_options(&mut g2, p, post)?;
         let Some(i) = find(&opts, label, n) else { return Ok(Some(-50.0)) };
@@ -454,28 +629,40 @@ pub fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize
             }
             brain::main(&mut g2, p, post)?; // the rest of this phase, heuristically
         }
-        play_on_after_phase(&mut g2, p)?;
+        play_on_after_phase(&mut g2, p, hold, &mut kept)?;
         Ok(None)
     })();
     let cut = match res {
-        Ok(Some(v)) => return v,
+        Ok(Some(v)) => return (v, false),
         Ok(None) => false,
         Err(Stop::OutOfWork) => true,
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
         Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
     };
     let v = evaluate(&g2, p);
+    super::evdiag::playout(&g2, p, v); // --- ai-eval: stats only (nothing unless a diagnosed decision is open)
     done(g, &g2, w0, cut);
-    v
+    (v, kept)
 }
 
-/// search.play_on_after_phase: the chosen play is made and the phase finished: go on from the next step
-fn play_on_after_phase(g2: &mut Game, p2: PlayerId) -> Res {
+// --- ai-eval
+/// p kept the mana up for the held card h: it is still in hand and p can pay for it now
+pub fn kept_up(g: &Game, p: PlayerId, h: CardId) -> bool {
+    let (cg, cp) = crate::engine::mana::cost_of(g, p, h);
+    g.player(p).hand.contains(&h) && crate::engine::mana::can_pay(g, p, cg, &cp, false)
+}
+
+/// search.play_on_after_phase: the chosen play is made and the phase finished: go on from the next step. `kept` is
+/// set when p's turn ends with the mana up for `hold`.
+fn play_on_after_phase(g2: &mut Game, p2: PlayerId, hold: Option<CardId>, kept: &mut bool) -> Res {
     g2.step = match g2.step {
         Step::Main1 => Step::Combat,
         _ => Step::End,
     };
-    play_on(g2, p2, None)
+    play_on_with(g2, p2, None, |g| {
+        super::evdiag::turn_end(g, p2); // --- ai-eval: the diagnostic reads the turn end
+        *kept = hold.is_some_and(|h| kept_up(g, p2, h)); // --- ai-eval
+    })
 }
 
 // ------------------------------------------------------------------ attacks

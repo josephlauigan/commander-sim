@@ -338,7 +338,7 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
 
 // --- ai-flow
 /// the permanents that give their controller cards every turn cycle (`engine_first`)
-const CARD_ENGINES: [&str; 11] = [
+pub(crate) const CARD_ENGINES: [&str; 11] = [
     "Rhystic Study",
     "Mystic Remora",
     "Esper Sentinel",
@@ -362,8 +362,8 @@ const CARD_ENGINES: [&str; 11] = [
 /// the held counter's value and the reserve penalty are in those utilities). Returns the index in `opts`.
 pub fn engine_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
     use crate::hooks::Action;
-    if !t6_plans::is_t6(g, p) || crate::human::is_human(g, p) {
-        return None;
+    if !t6_plans::is_t6(g, p) || crate::human::is_human(g, p) || !g.settings.flow_must {
+        return None; // --- ai-eval: env AI_FLOW_MUST=0 turns A and B off
     }
     let stop = opts.iter().filter(|o| o.act.is_none()).map(|o| o.utility).fold(f64::NEG_INFINITY, f64::max);
     let (i, o) =
@@ -382,7 +382,7 @@ pub fn engine_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option
 /// a permanent that makes mana every turn: a rock, a mox, a mana creature (not a one-shot source: Lotus Petal, Lion's
 /// Eye Diamond, rituals). The look-ahead's position score values it near 0 against 0.9 for the card in hand, so
 /// casting it looked like a loss ("Chrome Mox 97% -> stop (hold mana)"); its mana pays every turn after the horizon.
-fn mana_permanent(g: &Game, c: CardId) -> bool {
+pub(crate) fn mana_permanent(g: &Game, c: CardId) -> bool {
     let d = g.db.get(c);
     !d.land
         && !d.instant

@@ -1,0 +1,247 @@
+Play-by-play of within-tier game 8 (seed 500008): Tier 6 (cEDH, B5), loose profile, lookahead AI
+Seat order: Kinnan, Dack Fayden, Rograkh/Silas, Sisay
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Mana Confluence
+R1  --- Dack Fayden turn 1: life 40, 7 cards in hand, 0 lands
+R1    Dack Fayden plays Eiganjo, Seat of the Empire
+R1    Dack Fayden casts Mox Opal
+R1        [Dack Fayden decides: Mox Opal 100%, stop 0% -> Mox Opal [must]]
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1    Rograkh/Silas plays Phyrexian Tower
+R1    Rograkh/Silas casts Paradise Mantle
+R1        [Rograkh/Silas decides: Paradise Mantle 100%, stop 0% -> Paradise Mantle [must]]
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1    Sisay plays Mana Confluence
+R1    Sisay casts Mox Diamond
+R1        [Sisay decides: Mox Diamond 100%, stop 0% -> Mox Diamond [must]]
+R1        [Sisay decides: Orcish Bowmasters 100%, stop 0% -> Orcish Bowmasters [search]]
+R1    Sisay casts Orcish Bowmasters
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Rejuvenating Springs
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2      Rograkh/Silas casts Red Elemental Blast at Kinnan, Bonder Prodigy
+R2      Kinnan casts Disrupting Shoal at Red Elemental Blast
+R2      Kinnan counters Red Elemental Blast with Disrupting Shoal
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2    Dack Fayden casts Swords to Plowshares -> Kinnan, Bonder Prodigy (Kinnan)
+R2      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R2        [Dack Fayden end of turn: Swords to Plowshares -> Kinnan, Bonder Prodigy 100%, pass 0% -> Swords to Plowshares -> Kinnan, Bonder Prodigy]
+R2  --- Dack Fayden turn 2: life 40, 5 cards in hand, 1 lands
+R2    Dack Fayden plays The Mycosynth Gardens
+R2        [Dack Fayden decides: Paladin Class 100%, stop 0% -> Paladin Class [search]]
+R2    Dack Fayden casts Paladin Class
+R2  --- Rograkh/Silas turn 2: life 39, 5 cards in hand, 1 lands
+R2    Rograkh/Silas plays Undercity Sewers
+R2          [eval Rograkh, Son of Rohgahh: u 7.11, score -2.90, won 0/6 lost 0, open eval -2.90 (life 8.92, board 6.33, power 0.23, hand 4.35, lands 1.20, treasures 0.00, combo 0.50, opp -24.60, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 5]
+R2          [eval stop (hold mana) (chosen): u 2.00, score 3.24, won 0/6 lost 0, open eval 1.24 (life 9.04, board 8.47, power 0.47, hand 3.75, lands 1.20, treasures 0.00, combo 0.00, opp -21.61, dead 0.00), ramp 0.00, hold 2.00, top card cast in 6/6 open, held mana up at turn end in 5]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R2          [eval Rograkh, Son of Rohgahh: u 7.11, score 0.55, won 0/6 lost 0, open eval 0.55 (life 9.54, board 8.17, power 0.47, hand 3.90, lands 1.30, treasures 0.00, combo 0.00, opp -22.80, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2          [eval stop (hold mana) (chosen): u 2.00, score 1.61, won 0/6 lost 0, open eval -0.39 (life 9.21, board 8.83, power 0.58, hand 3.90, lands 1.50, treasures 0.00, combo 0.00, opp -24.43, dead 0.00), ramp 0.00, hold 2.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R2  --- Sisay turn 2: life 40, 4 cards in hand, 1 lands
+R2    Sisay plays Boseiju, Who Endures
+R2    Sisay casts Sisay, Weatherlight Captain
+R2      Rograkh/Silas casts Daze at Sisay, Weatherlight Captain
+R2      Rograkh/Silas counters Sisay, Weatherlight Captain with Daze
+R2        [Sisay decides: Sisay, Weatherlight Captain 88%, Tyvar, Jubilant Brawler 8%, Lavinia, Azorius Renegade 3%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R2        [Sisay attack plan by search: filtered at Rograkh/Silas]
+R2    Sisay attacks Rograkh/Silas with 4 creature(s): 4 damage (life now 35)
+R3  --- Kinnan turn 3: life 42, 5 cards in hand, 2 lands
+R3    Kinnan plays Wooded Foothills
+R3      cracks Wooded Foothills for Tropical Island
+R3          [eval Rhystic Study: u 8.00, score 6.11, won 0/6 lost 0, open eval 6.11 (life 8.46, board 8.42, power 0.29, hand 5.10, lands 2.40, treasures 0.07, combo 7.56, opp -25.82, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval Chain of Vapor -> Paladin Class: u 2.75, score 0.58, won 0/6 lost 0, open eval 0.58 (life 9.88, board 4.17, power 0.00, hand 2.70, lands 2.40, treasures 0.00, combo 5.33, opp -23.86, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R3          [eval stop (chosen): u -3.00, score 8.93, won 0/6 lost 0, open eval 8.93 (life 8.33, board 8.92, power 0.29, hand 5.25, lands 2.40, treasures 0.07, combo 7.56, opp -23.35, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R3        [Kinnan decides: Rhystic Study 99%, Chain of Vapor -> Paladin Class 1%, stop 0% -> stop [search]]
+R3          [eval Rhystic Study (chosen): u 8.00, score 5.28, won 0/6 lost 0, open eval 5.28 (life 8.83, board 6.50, power 0.35, hand 4.95, lands 2.40, treasures 0.00, combo 6.44, opp -23.90, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval Chain of Vapor -> Paladin Class: u 2.75, score -0.94, won 0/6 lost 0, open eval -0.94 (life 9.96, board 2.88, power 0.17, hand 2.85, lands 2.40, treasures 0.00, combo 5.33, opp -24.59, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R3          [eval stop: u -3.00, score -0.83, won 0/6 lost 0, open eval -0.83 (life 9.79, board 3.83, power 0.12, hand 3.15, lands 2.40, treasures 0.00, combo 5.33, opp -25.50, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R3        [Kinnan decides: Rhystic Study 99%, Chain of Vapor -> Paladin Class 1%, stop 0% -> Rhystic Study [search]]
+R3    Kinnan casts Rhystic Study
+R3  --- Dack Fayden turn 3: life 40, 4 cards in hand, 2 lands
+R3    Dack Fayden plays Plains
+R3        [Dack Fayden decides: Voltaic Key 100%, stop 0% -> Voltaic Key [search]]
+R3    Dack Fayden casts Voltaic Key
+R3  --- Rograkh/Silas turn 3: life 35, 4 cards in hand, 2 lands
+R3    Rograkh/Silas plays Underground Sea
+R3          [eval Silas Renn, Seeker Adept: u 7.81, score -9.20, won 0/6 lost 0, open eval -9.20 (life 8.21, board 7.33, power 0.41, hand 3.45, lands 2.30, treasures 0.00, combo 0.75, opp -32.19, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 2]
+R3          [eval Rograkh, Son of Rohgahh: u 7.14, score -7.97, won 0/6 lost 0, open eval -7.97 (life 8.21, board 7.50, power 0.35, hand 3.75, lands 2.20, treasures 0.00, combo 0.38, opp -30.80, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R3          [eval Jeska's Will (chosen): u 2.50, score 2.51, won 0/6 lost 0, open eval 2.51 (life 6.33, board 9.17, power 0.47, hand 4.65, lands 2.30, treasures 0.00, combo 1.62, opp -29.84, dead 8.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R3          [eval stop (hold mana): u 2.75, score -5.14, won 0/6 lost 0, open eval -7.89 (life 8.67, board 7.33, power 0.35, hand 3.30, lands 2.20, treasures 0.00, combo 0.38, opp -30.59, dead 0.00), ramp 0.00, hold 2.75, top card cast in 2/6 open, held mana up at turn end in 2]
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 34%, stop (hold mana) 0%, Jeska's Will 0% -> Jeska's Will [search]]
+R3    Rograkh/Silas casts Jeska's Will
+R3      Jeska's Will adds 5 red mana
+R3          [eval Rograkh, Son of Rohgahh: u 7.11, score -22.31, won 0/6 lost 1, open eval -6.78 (life 6.10, board 9.70, power 0.28, hand 4.68, lands 2.40, treasures 0.00, combo 1.50, opp -34.28, dead 2.40), ramp 0.00, hold 0.00, top card cast in 4/5 open, held mana up at turn end in 0]
+R3          [eval Wheel of Fortune: u 5.50, score -19.37, won 0/6 lost 1, open eval -3.25 (life 6.75, board 10.10, power 0.56, hand 4.50, lands 2.40, treasures 0.00, combo 1.50, opp -34.08, dead 4.80), ramp 0.00, hold 0.00, top card cast in 4/5 open, held mana up at turn end in 0]
+R3          [eval stop (hold mana) (chosen): u 2.75, score -14.31, won 0/6 lost 1, open eval -0.48 (life 5.95, board 10.30, power 0.56, hand 5.04, lands 2.28, treasures 0.00, combo 1.50, opp -30.95, dead 4.80), ramp 0.00, hold 2.75, top card cast in 4/5 open, held mana up at turn end in 0]
+R3        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 82%, Wheel of Fortune 17%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3          [eval Rograkh, Son of Rohgahh: u 7.11, score -20.99, won 0/6 lost 1, open eval -5.19 (life 7.85, board 10.40, power 0.63, hand 3.24, lands 1.92, treasures 0.00, combo 1.20, opp -33.11, dead 2.40), ramp 0.00, hold 0.00, top card cast in 4/5 open, held mana up at turn end in 3]
+R3          [eval Wheel of Fortune: u 5.50, score -35.27, won 0/6 lost 2, open eval -2.90 (life 6.81, board 10.00, power 0.52, hand 3.83, lands 2.10, treasures 0.00, combo 4.50, opp -36.82, dead 6.00), ramp 0.00, hold 0.00, top card cast in 3/4 open, held mana up at turn end in 0]
+R3          [eval stop (hold mana) (chosen): u 2.75, score -4.43, won 0/6 lost 0, open eval -7.18 (life 8.75, board 9.00, power 0.70, hand 2.55, lands 1.90, treasures 0.00, combo 0.12, opp -30.60, dead 0.00), ramp 0.00, hold 2.75, top card cast in 5/6 open, held mana up at turn end in 6]
+R3        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 82%, Wheel of Fortune 17%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3  --- Sisay turn 3: life 40, 4 cards in hand, 2 lands
+R3    Sisay plays Windswept Heath
+R3      cracks Windswept Heath for Taiga
+R3        [Sisay decides: Tyvar, Jubilant Brawler 50%, Deadpool, Trading Card 27%, Lavinia, Azorius Renegade 20%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R3        [Sisay attack plan by search: filtered at Kinnan]
+R3    Sisay attacks Kinnan with 4 creature(s): 6 damage (life now 34)
+R3        [Sisay decides: Tyvar, Jubilant Brawler 50%, Deadpool, Trading Card 27%, Lavinia, Azorius Renegade 20%, stop (hold mana) 3% -> Deadpool, Trading Card [search]]
+R3    Sisay casts Deadpool, Trading Card
+R4  --- Kinnan turn 4: life 33, 6 cards in hand, 3 lands
+R4    Kinnan plays Waterlogged Grove
+R4          [eval Delighted Halfling (chosen): u 8.07, score 8.44, won 0/6 lost 0, open eval 8.44 (life 6.04, board 12.58, power 1.22, hand 5.85, lands 2.60, treasures 0.00, combo 9.78, opp -29.12, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval Kinnan, Bonder Prodigy: u 7.50, score 2.62, won 0/6 lost 0, open eval 2.62 (life 5.38, board 10.42, power 0.35, hand 6.00, lands 3.00, treasures 0.00, combo 8.67, opp -30.97, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R4          [eval Chain of Vapor -> Paladin Class: u 1.50, score 6.90, won 0/6 lost 0, open eval 6.90 (life 6.17, board 12.50, power 0.70, hand 5.70, lands 2.60, treasures 0.00, combo 9.78, opp -30.14, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval stop: u -3.00, score -9.55, won 0/6 lost 1, open eval 8.54 (life 6.80, board 12.60, power 0.70, hand 5.76, lands 2.64, treasures 0.00, combo 8.00, opp -27.43, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R4        [Kinnan decides: Delighted Halfling 64%, Kinnan, Bonder Prodigy 36%, Chain of Vapor -> Paladin Class 0%, stop 0% -> Delighted Halfling [search]]
+R4    Kinnan casts Delighted Halfling
+R4        [Kinnan decides: Chain of Vapor -> Paladin Class 99%, stop 1% -> Chain of Vapor -> Paladin Class [search]]
+R4    Kinnan casts Chain of Vapor -> Orc Army (Sisay)
+R4      Orc Army (Sisay) is removed: bounce
+R4  --- Dack Fayden turn 4: life 40, 3 cards in hand, 3 lands
+R4    Dack Fayden plays Ancient Den
+R4        [Dack Fayden decides: Preston, the Vanisher 100%, stop 0% -> stop [search]]
+R4        [Dack Fayden decides: Preston, the Vanisher 100%, stop 0% -> Preston, the Vanisher [search]]
+R4    Dack Fayden casts Preston, the Vanisher
+R4  --- Rograkh/Silas turn 4: life 35, 3 cards in hand, 3 lands
+R4          [eval Silas Renn, Seeker Adept: u 7.09, score -8.22, won 0/6 lost 0, open eval -8.22 (life 8.25, board 5.83, power 0.23, hand 3.60, lands 2.00, treasures 0.00, combo 4.00, opp -32.61, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 3]
+R4          [eval Rograkh, Son of Rohgahh (chosen): u 6.48, score -6.59, won 0/6 lost 0, open eval -6.59 (life 8.33, board 8.83, power 0.76, hand 4.05, lands 1.90, treasures 0.00, combo 4.50, opp -35.36, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 1]
+R4          [eval Demonic Tutor: u 6.22, score -8.54, won 0/6 lost 0, open eval -8.54 (life 8.04, board 8.47, power 0.70, hand 2.85, lands 1.80, treasures 0.00, combo 2.00, opp -32.89, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 6]
+R4          [eval stop (hold mana): u 2.75, score -8.17, won 0/6 lost 0, open eval -10.92 (life 7.88, board 7.72, power 0.41, hand 3.60, lands 2.00, treasures 0.00, combo 2.50, opp -35.67, dead 0.00), ramp 0.00, hold 2.75, top card cast in 2/6 open, held mana up at turn end in 4]
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 50%, Rograkh, Son of Rohgahh 28%, Demonic Tutor 21%, stop (hold mana) 1% -> Rograkh, Son of Rohgahh [search]]
+R4    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R4        [Rograkh/Silas decides: Demonic Tutor 72%, Silas Renn, Seeker Adept 25%, stop (hold mana) 2%, equip Paradise Mantle 1% -> Demonic Tutor [search]]
+R4    Rograkh/Silas casts Demonic Tutor
+R4      Rograkh/Silas tutors Thassa's Oracle
+R4        [Rograkh/Silas decides: stop (hold mana) 63%, equip Paradise Mantle 37% -> stop (hold mana) [search]]
+R4        [Rograkh/Silas decides: stop (hold mana) 63%, equip Paradise Mantle 37% -> stop (hold mana) [search]]
+R4  --- Sisay turn 4: life 39, 3 cards in hand, 3 lands
+R4        [Sisay decides: Tyvar, Jubilant Brawler 44%, stop (hold mana) 19%, Lavinia, Azorius Renegade 18%, The Cabbage Merchant 18% -> Lavinia, Azorius Renegade [search]]
+R4    Sisay casts Lavinia, Azorius Renegade
+R4        [Sisay attack plan by search: all at Kinnan]
+R4    Sisay attacks Kinnan with 6 creature(s): 6 damage (life now 25)
+R5    Kinnan casts Borne Upon a Wind
+R5      Rograkh/Silas casts An Offer You Can't Refuse at Borne Upon a Wind
+R5      Rograkh/Silas counters Borne Upon a Wind with An Offer You Can't Refuse
+R5        [Kinnan end of turn: Borne Upon a Wind 97%, Waterlogged Grove draw 3%, pass 0% -> Borne Upon a Wind]
+R5  --- Kinnan turn 5: life 23, 6 cards in hand, 4 lands
+R5    Kinnan plays Otawara, Soaring City
+R5          [eval Birds of Paradise: u 8.18, score -2.48, won 1/6 lost 1, open eval -2.72 (life 3.69, board 13.75, power 1.14, hand 5.18, lands 3.60, treasures 0.40, combo 7.00, opp -37.62, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R5          [eval Kinnan, Bonder Prodigy: u 7.60, score -30.42, won 0/6 lost 2, open eval 4.37 (life 3.69, board 17.62, power 1.75, hand 4.50, lands 3.60, treasures 0.00, combo 8.67, opp -34.95, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R5          [eval Chord of Calling: u 6.00, score -0.76, won 0/6 lost 0, open eval -0.76 (life 3.50, board 14.01, power 1.28, hand 5.10, lands 3.60, treasures 0.00, combo 5.33, opp -33.62, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R5          [eval Hullbreaker Horror: u 3.89, score 1.70, won 0/6 lost 0, open eval 1.70 (life 4.50, board 16.34, power 1.40, hand 5.40, lands 3.60, treasures 0.00, combo 5.67, opp -35.11, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R5          [eval Waterlogged Grove draw (chosen): u 0.60, score 17.41, won 1/6 lost 0, open eval 1.69 (life 2.45, board 16.70, power 1.40, hand 5.94, lands 3.00, treasures 0.00, combo 6.67, opp -34.37, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R5          [eval stop: u -3.00, score -14.40, won 1/6 lost 2, open eval 5.87 (life 4.58, board 17.00, power 1.63, hand 4.20, lands 3.60, treasures 0.00, combo 7.56, opp -32.28, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/3 open, held mana up at turn end in 0]
+R5        [Kinnan decides: Birds of Paradise 59%, Kinnan, Bonder Prodigy 33%, Chord of Calling 7%, Hullbreaker Horror 1% -> Waterlogged Grove draw [search]]
+R5    Kinnan sacrifices Waterlogged Grove: draws a card
+R5          [eval Birds of Paradise (chosen): u 8.18, score -34.38, won 0/6 lost 2, open eval -1.57 (life 4.56, board 11.25, power 0.61, hand 5.85, lands 3.00, treasures 0.00, combo 5.33, opp -32.27, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R5          [eval Kinnan, Bonder Prodigy: u 7.60, score -34.38, won 0/6 lost 2, open eval -1.57 (life 4.56, board 11.25, power 0.61, hand 5.85, lands 3.00, treasures 0.00, combo 5.33, opp -32.27, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R5          [eval stop (hold mana): u 2.75, score -46.94, won 0/6 lost 3, open eval 0.61 (life 4.67, board 12.83, power 0.70, hand 4.80, lands 3.00, treasures 0.00, combo 5.33, opp -30.69, dead 0.00), ramp 0.00, hold 2.75, top card cast in 3/3 open, held mana up at turn end in 0]
+R5        [Kinnan decides: Birds of Paradise 64%, Kinnan, Bonder Prodigy 36%, stop (hold mana) 0% -> Birds of Paradise [search]]
+R5    Kinnan casts Birds of Paradise
+R5          [eval Kinnan, Bonder Prodigy (chosen): u 5.68, score -0.02, won 0/6 lost 0, open eval -0.02 (life 3.79, board 11.75, power 0.70, hand 5.70, lands 3.00, treasures 0.00, combo 7.56, opp -32.49, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R5          [eval stop (hold mana): u 2.75, score -3.92, won 0/6 lost 0, open eval -6.67 (life 2.71, board 10.50, power 0.47, hand 5.70, lands 3.00, treasures 0.00, combo 7.56, opp -36.98, dead 0.00), ramp 0.00, hold 2.75, top card cast in 1/6 open, held mana up at turn end in 1]
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 95%, stop (hold mana) 5% -> Kinnan, Bonder Prodigy [search]]
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5  --- Dack Fayden turn 5: life 40, 2 cards in hand, 4 lands
+R5    Dack Fayden plays Plains
+R5        [Dack Fayden attack plan by search: filtered at Kinnan]
+R5    Dack Fayden attacks Kinnan with 2 creature(s): 0 damage (life now 22)
+R5  --- Rograkh/Silas turn 5: life 35, 3 cards in hand, 3 lands
+R5          [eval Silas Renn, Seeker Adept: u 7.76, score -9.96, won 0/6 lost 0, open eval -9.96 (life 8.50, board 8.42, power 0.58, hand 3.15, lands 2.00, treasures 0.00, combo 3.00, opp -40.19, dead 4.00), ramp 0.00, hold 0.00, top card cast in 1/6 open, held mana up at turn end in 0]
+R5          [eval Demonic Counsel (chosen): u 6.81, score -8.07, won 0/6 lost 0, open eval -8.07 (life 8.62, board 10.50, power 1.17, hand 3.30, lands 2.00, treasures 0.00, combo 3.00, opp -41.11, dead 4.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5          [eval equip Paradise Mantle: u 2.20, score -14.45, won 0/6 lost 0, open eval -14.45 (life 7.67, board 8.17, power 0.47, hand 3.15, lands 2.00, treasures 0.00, combo 3.00, opp -39.87, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R5          [eval stop: u -3.00, score -11.46, won 0/6 lost 0, open eval -11.46 (life 8.00, board 8.00, power 0.76, hand 3.60, lands 1.90, treasures 0.00, combo 3.00, opp -41.52, dead 4.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 72%, Demonic Counsel 28%, equip Paradise Mantle 0%, stop 0% -> Demonic Counsel [search]]
+R5    Rograkh/Silas casts Demonic Counsel
+R5        [Rograkh/Silas decides: equip Paradise Mantle 99%, stop 1% -> equip Paradise Mantle [search]]
+R5    Rograkh/Silas equips Paradise Mantle to Rograkh, Son of Rohgahh
+R5  --- Sisay turn 5: life 36, 3 cards in hand, 3 lands
+R5        [Sisay decides: stop (hold mana) 100%, Tyvar, Jubilant Brawler 0%, Gleaming Splendor 0%, The Cabbage Merchant 0% -> Tyvar, Jubilant Brawler [search]]
+R5    Sisay casts Tyvar, Jubilant Brawler
+R5        [Sisay decides: Tyvar, Jubilant Brawler +1 99%, stop 1% -> stop [search]]
+R5        [Sisay attack plan by search: all at Kinnan]
+R5    Sisay attacks Kinnan with 8 creature(s): 16 damage (life now 5)
+R5        [Sisay decides: Tyvar, Jubilant Brawler +1 100%, stop 0% -> Tyvar, Jubilant Brawler +1 [search]]
+R5    Sisay uses Tyvar, Jubilant Brawler (+1): untap a creature
+R5      Tyvar untaps Deadpool, Trading Card
+R6  --- Kinnan turn 6: life 5, 7 cards in hand, 4 lands
+R6    Kinnan plays Exotic Orchard
+R6  --- Dack Fayden turn 6: life 40, 2 cards in hand, 5 lands
+R6        [Dack Fayden decides: Disruptor Flute (naming Kinnan, Bonder Prodigy) 100%, stop 0% -> Disruptor Flute (naming Kinnan, Bonder Prodigy) [search]]
+R6    Dack Fayden casts Disruptor Flute
+R6      Disruptor Flute names Kinnan, Bonder Prodigy
+R6        [Dack Fayden attack plan by search: filtered at Sisay]
+R6      Preston, the Vanisher deals 3 to Tyvar, Jubilant Brawler (loyalty 1)
+R6      Preston, the Vanisher deals 3 to Tyvar, Jubilant Brawler (loyalty -2)
+R6    Dack Fayden attacks Sisay with 2 creature(s): 6 damage (life now 33)
+R6  --- Rograkh/Silas turn 6: life 35, 3 cards in hand, 3 lands
+R6          [eval Silas Renn, Seeker Adept (chosen): u 6.79, score 2.76, won 0/6 lost 0, open eval 2.76 (life 7.58, board 11.25, power 1.22, hand 3.60, lands 2.10, treasures 0.00, combo 2.50, opp -37.36, dead 12.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R6          [eval stop: u -3.00, score 2.72, won 0/6 lost 0, open eval 2.72 (life 7.33, board 11.25, power 1.22, hand 3.90, lands 2.10, treasures 0.00, combo 2.50, opp -37.45, dead 12.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R6        [Rograkh/Silas decides: Silas Renn, Seeker Adept 100%, stop 0% -> Silas Renn, Seeker Adept [search]]
+R6    Rograkh/Silas casts Silas Renn, Seeker Adept
+R6  --- Sisay turn 6: life 33, 3 cards in hand, 3 lands
+R6        [Sisay decides: Gleaming Splendor 35%, Teferi, Who Slows the Sunset 35%, stop (hold mana) 15%, The Cabbage Merchant 14% -> stop (hold mana) [search]]
+R6        [Sisay attack plan by search: filtered at Dack Fayden]
+R6    Sisay attacks Dack Fayden with 6 creature(s): 16 damage (life now 24)
+R6  *** Kinnan is eliminated (life -5) by Sisay
+R6    Sisay attacks Kinnan with 2 creature(s): 10 damage (life now -5)
+R6        [Sisay decides: Gleaming Splendor 35%, Teferi, Who Slows the Sunset 35%, stop (hold mana) 15%, The Cabbage Merchant 14% -> stop (hold mana) [search]]
+R7  --- Dack Fayden turn 7: life 24, 2 cards in hand, 5 lands
+R7    Dack Fayden casts Dack Fayden, Helping Hand
+R7      Sisay casts Mindbreak Trap at Dack Fayden, Helping Hand
+R7      Sisay counters Dack Fayden, Helping Hand with Mindbreak Trap
+R7        [Dack Fayden decides: Dack Fayden, Helping Hand 100%, stop 0% -> Dack Fayden, Helping Hand [must]]
+R7        [Dack Fayden attack plan by search: none at Rograkh/Silas]
+R7  --- Rograkh/Silas turn 7: life 35, 4 cards in hand, 3 lands
+R7    Rograkh/Silas plays Gemstone Caverns
+R7        [Rograkh/Silas attack plan by search: filtered at Dack Fayden]
+R7    Rograkh/Silas attacks Dack Fayden with 2 creature(s): 0 damage (life now 24)
+R7          [eval Silas Renn, Seeker Adept (chosen): u 6.77, score 4.90, won 0/6 lost 0, open eval 4.90 (life 7.71, board 7.50, power 0.35, hand 3.45, lands 2.60, treasures 0.00, combo 3.00, opp -33.43, dead 14.00), ramp 0.00, hold 0.00, top card cast in 1/6 open, held mana up at turn end in 0]
+R7          [eval stop: u -3.00, score 3.10, won 0/6 lost 0, open eval 3.10 (life 6.71, board 8.67, power 0.70, hand 3.90, lands 2.70, treasures 0.00, combo 3.00, opp -40.40, dead 18.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R7        [Rograkh/Silas decides: Silas Renn, Seeker Adept 100%, stop 0% -> Silas Renn, Seeker Adept [search]]
+R7    Rograkh/Silas casts Silas Renn, Seeker Adept
+R7  --- Sisay turn 7: life 30, 3 cards in hand, 3 lands
+R7        [Sisay decides: Green Sun's Zenith 74%, Gleaming Splendor 11%, Teferi, Who Slows the Sunset 11%, The Cabbage Merchant 4% -> Green Sun's Zenith [search]]
+R7    Sisay casts Green Sun's Zenith
+R7      Derevi untaps Mox Diamond
+R7        [Sisay attack plan by search: filtered at Dack Fayden]
+R7  *** Dack Fayden is eliminated (life -2) by Sisay
+R7      Derevi untaps Deadpool, Trading Card
+R7      Derevi untaps Lavinia, Azorius Renegade
+R7      Derevi untaps a land
+R7      Derevi untaps a land
+R7      Derevi untaps a land
+R7      Derevi untaps Orcish Bowmasters
+R7      Derevi taps Silas Renn, Seeker Adept
+R7    Sisay attacks Dack Fayden with 8 creature(s): 26 damage (life now -2)
+R7        [Sisay decides: Gleaming Splendor 42%, Teferi, Who Slows the Sunset 42%, The Cabbage Merchant 17%, stop 0% -> The Cabbage Merchant [search]]
+R7    Sisay casts The Cabbage Merchant
+R8  --- Rograkh/Silas turn 8: life 35, 4 cards in hand, 4 lands
+R8        [Rograkh/Silas attack plan by search: none at Sisay]
+R8  --- Sisay turn 8: life 27, 2 cards in hand, 3 lands
+R8    Sisay plays Starting Town
+R8    Sisay casts Sisay, Weatherlight Captain
+R8        [Sisay decides: Sisay, Weatherlight Captain 79%, Gleaming Splendor 10%, Teferi, Who Slows the Sunset 10%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R8        [Sisay attack plan by search: all at Rograkh/Silas]
+R8      Derevi untaps Lavinia, Azorius Renegade
+R8      Derevi untaps Mox Diamond
+R8      Derevi untaps a land
+R8      Derevi untaps a land
+R8      Derevi untaps a land
+R8    Sisay attacks Rograkh/Silas with 6 creature(s): 12 damage (life now 23)
+R8        [Sisay decides: Gleaming Splendor 50%, Teferi, Who Slows the Sunset 50%, stop 0% -> Teferi, Who Slows the Sunset [search]]
+R8    Sisay casts Teferi, Who Slows the Sunset
+R8        [Sisay decides: Teferi, Who Slows the Sunset +1 98%, Teferi, Who Slows the Sunset -2 2%, stop 0% -> Teferi, Who Slows the Sunset +1 [search]]
+R8    Sisay uses Teferi, Who Slows the Sunset (+1): untap / tap an artifact, creature and land; gain 2
+R8        [Sisay decides: Gleaming Splendor 100%, stop 0% -> Gleaming Splendor [search]]
+R8    Sisay casts Gleaming Splendor
+R9  --- Rograkh/Silas turn 9: life 23, 5 cards in hand, 4 lands
+R9        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R9    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R9    Rograkh/Silas casts Thassa's Oracle
+R9    Rograkh/Silas casts Demonic Consultation
+R9      Rograkh/Silas exiles its library
+R9  *** Sisay is eliminated (life 26) by Rograkh/Silas
+R9  *** Rograkh/Silas wins by combo
+Winner: Rograkh/Silas (combo)

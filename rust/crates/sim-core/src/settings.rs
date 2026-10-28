@@ -41,6 +41,12 @@ pub struct Search {
     /// the look-ahead's bonus for holding mana up (the "stop (hold mana)" line), times the heuristic's hold value
     /// (`search::hold_bonus`); 0: no bonus (the old search). Env SEARCH_HOLD_W overrides the default for A/B runs
     pub hold_w: f64,
+    /// --- ai-eval: `search::strength` values each permanent for what it will produce (`search::output_value`). Env
+    /// AI_EVAL_OUTPUT=0 turns it off (the old evaluation), for A/B runs
+    pub output: bool,
+    /// --- ai-eval: the hold bonus goes to each playout that kept the held card's mana up through p's turn
+    /// (`search::choose`), not to the "stop (hold mana)" label. Env AI_EVAL_HOLD=0: the old rule, for A/B runs
+    pub hold_kept: bool,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -65,6 +71,8 @@ impl Default for Search {
                 .filter(|v| !v.is_empty())
                 .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_HOLD_W {v:?}")))
                 .unwrap_or(HOLD_W),
+            output: matches!(std::env::var("AI_EVAL_OUTPUT").ok().as_deref(), Some("1")), // --- ai-eval
+            hold_kept: matches!(std::env::var("AI_EVAL_HOLD").ok().as_deref(), Some("1")), // --- ai-eval
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,
@@ -100,6 +108,10 @@ pub struct Settings {
     /// brings the closest line nearest. Off unless env PLANNER_PROGRESS=1 (an A/B switch: it measured slower, see
     /// audit/ai-foundations/step2-planner.md)
     pub planner_progress: bool,
+    /// --- ai-eval: step 3's fixes A and B (`t6_table::engine_first`: a Tier 6 engine, commander or mana permanent
+    /// the heuristic rates best is cast before the look-ahead). On unless env AI_FLOW_MUST=0 (an A/B switch: Part 1
+    /// of the ai-eval brief measures the look-ahead without them)
+    pub flow_must: bool,
 }
 
 impl Settings {
@@ -128,6 +140,7 @@ impl Settings {
             t6_moxd_lands: 3,
             planner: planner_default(), // --- ai-planner
             planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
+            flow_must: planner_from(std::env::var("AI_FLOW_MUST").ok().as_deref()), // --- ai-eval
         }
     }
 
