@@ -10,7 +10,7 @@ take Kefka with them.
 | | |
 |---|---|
 | **Commander** | Kefka, Court Mage ({2}{U}{B}{R}, 4/5, Grixis) // Kefka, Ruler of Ruin (5/7 flying) |
-| **Bracket** | 4 (3 Game Changers: Jeska's Will, Rhystic Study, Underworld Breach; Bracket 4 for the Crawler/Niv two-card win, see Bracket and Rule 0) |
+| **Bracket** | 4 (2 Game Changers: Jeska's Will, Underworld Breach; Bracket 4 for the Crawler/Niv two-card win, see Bracket and Rule 0) |
 | **Simulator** | deck key `kefka`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -30,7 +30,7 @@ is removed.
 
 ### Game plan
 - **Turns 1 to 3.** Develop cheap looters and discard fodder (Rummaging Goblin, Sawblade Scamp, Rank Rat, Blightspeaker),
-  play mana rocks (Arcane Signet, Sisay's Ring, Lotus Petal) and a land every turn. Cast Rhystic Study when you can.
+  play mana rocks (Arcane Signet, Sisay's Ring, Lotus Petal) and a land every turn.
   Keep the cards that want to be discarded in hand rather than playing them out.
 - **Turns 4 to 6.** Land Kefka (with Lightning Greaves for two triggers in one turn), keep attacking when it is
   safe, and use each trigger to bin madness, mayhem and graveyard-castable cards. Build toward {8}: Treasure,
@@ -42,6 +42,10 @@ is removed.
 - **Scarlet Spider, Kaine** (mayhem: cast from the graveyard for {B/R} the turn you discard it), **Demonic Embrace**
   (cast from the graveyard by paying 3 life and discarding another card), **Twinned Vision** (flashback draws two)
   and **Eternal Student** (exile from the graveyard for two flying Inklings).
+- **Stinkweed Imp** ({2}{B}, a 1/2 flier that destroys any creature it deals combat damage to) has dredge 5: once it
+  is in the graveyard, any draw, Kefka's included, can mill five cards instead and return it to your hand. Discard it
+  again for Kefka; the milled cards feed Underworld Breach and Yawgmoth's Will. Dredge needs five cards left in the
+  library.
 - **Garrison Excavator** makes a 2/2 Spirit every time cards leave your graveyard, so each of those becomes a body too.
 - **Underworld Breach** turns the discard pile into a second hand. Every nonland card in your graveyard gains escape:
   cast it for its mana cost plus exiling three other cards. Kefka's discards and the looters fill the graveyard, so
@@ -56,7 +60,7 @@ is removed.
 Rummaging Goblin, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
 isn't a land), Stadium Tidalmage, Alpharael, Rapturous Moment, Big Score and Seize the Spoils. They pick the right
 card to bin before Kefka's trigger and fix the hand after it. Rapturous Moment, Big Score and Seize the Spoils also
-make mana or Treasure toward the {8}. **Skullclamp** and **Rhystic Study** keep the hand full between triggers.
+make mana or Treasure toward the {8}. **Skullclamp** keeps the hand full between triggers.
 
 ### Kuja
 **Kuja, Genome Sorcerer** ({2}{B}{R}, 3/4) makes a tapped 0/1 Wizard at each of your end steps. Each token deals 1
@@ -153,7 +157,7 @@ Whisper** is a plain two-card draw.
 
 **Decorum Dissertation goes down early.** It costs five once; after that Paradigm casts a free copy at the start of each of your first main phases, two cards a turn for 2 life. Cast it on a quiet turn before the flip, so the extra cards feed Kefka's discards and the graveyard for Breach and Yawgmoth's Will. Watch your life total: each copy costs 2.
 
-**Rhystic Study and Skullclamp** keep the hand full between Kefka triggers.
+**Skullclamp** and **Decorum Dissertation** keep the hand full between Kefka triggers.
 
 **Mulligan.** Keep hands with lands, a rock or a cheap looter and a piece of interaction or card flow. A hand of only expensive spells and no way to discard them is slow; Kefka and the looters turn spare cards into new ones.
 
@@ -161,16 +165,16 @@ Whisper** is a plain two-card draw.
 
 - **Lands:** 36 (12 nonbasic + 24 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
-- **Card draw:** Kefka, Rhystic Study, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Fangtail's ping, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
+- **Card draw:** Kefka, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Fangtail's ping, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
 - **Interaction:** Lightning Bolt, Pongify, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; one-sided sweeper Massacre Wurm.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with three Game Changers: **Jeska's Will**, **Rhystic Study** and **Underworld Breach**. Three Game Changers alone would fit Bracket 3; the deck is Bracket 4 because of the two-card win. There is no two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Three tutors (Diabolic Tutor, Profane Tutor and Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
+**Bracket 4,** with two Game Changers: **Jeska's Will** and **Underworld Breach**. Two Game Changers alone would fit Bracket 3; the deck is Bracket 4 because of the two-card win. There is no two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Three tutors (Diabolic Tutor, Profane Tutor and Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
 
 Disclose before the game:
-- **Jeska's Will**, **Rhystic Study** and **Underworld Breach** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
+- **Jeska's Will** and **Underworld Breach** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
 - **The Crawler and Niv-Mizzet loops** with Kefka, Ruler of Ruin.
 - **The Breach + Brain Freeze line**, which can mill an opponent out in one turn (Dark Ritual, Lotus Petal and Grapeshot feed the storm count).
 - **Jin-Gitaxias, Progress Tyrant**, which counters the first artifact, instant or sorcery each opponent casts each turn.

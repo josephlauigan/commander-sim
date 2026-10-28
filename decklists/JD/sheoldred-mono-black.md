@@ -9,7 +9,7 @@ punisher out, because they then just refuel the table.
 | | |
 |---|---|
 | **Commander** | Sheoldred, the Apocalypse ({2}{B}{B}, 4/5 deathtouch, black) |
-| **Bracket** | 3 (1 Game Changer: Ad Nauseam) |
+| **Bracket** | 4 (4 Game Changers: Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel) |
 | **Simulator** | deck key `sheoldred`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -23,13 +23,14 @@ with her out. What breaks her is exile, bounce, or removal you can't answer. Kee
 bring her back (see "Protect her") before you start making the table draw.
 
 ### Game plan
-- **Turns 1-3:** play a mana rock (Arcane Signet, Fellwar Stone, Mind Stone, Charcoal Diamond, Commander's Sphere,
-  Potioner's Trove) and a cheap blocker or value creature (Burrog Banemaker, Fetid Imp, Undercity Dire Rat, Blood
+- **Turns 1-3:** play a mana rock (Arcane Signet, Fellwar Stone, Mind Stone, Commander's Sphere, Potioner's Trove)
+  and a cheap blocker or value creature (Burrog Banemaker, Fetid Imp, Undercity Dire Rat, Blood
   Artist, Phyrexian Rager, Vault Plunderer). **Underworld Dreams** ({B}{B}{B}) is a fine turn-3 play on its own: every
   card an opponent draws costs them 1.
 - **Turns 4-6:** Sheoldred on turn 3 or 4. Once she is out, equip protection first, then start the draw engines.
 - **Late game:** keep the engines running, drain with the creatures, and finish with Exsanguinate or
   Peer into the Abyss. If Sheoldred dies, recast her, or return her with Phyrexian Delver (see "Recursion").
+  Demonic Tutor finds whichever of the two you need.
 
 ### Punish their draws
 Sheoldred (2 life a card), **Underworld Dreams** and **Fate Unraveler** (1 damage a card each) stack: with all three
@@ -56,19 +57,28 @@ These are the cards that turn the punishers on. Play the symmetric ones only onc
 
 ### Draw your own
 Each card you draw is 2 life with Sheoldred out, so the deck is full of draw: **Phyrexian Arena** (a card each upkeep,
-1 life), **Seymour Flux** (pay 1 life each upkeep for a card and a +1/+1 counter), **Read the Bones**, **Ambition's
-Cost**, **Cast Away Doubt** (draw two; 2 damage to each player, which Sheoldred's lifegain more than covers),
-**Syphon Mind** (each other player discards; you draw a card for each), **Phyrexian Rager**, **Skyscanner**,
-**Deadly Dispute** (sacrifice a creature or artifact, draw two, make a Treasure), **Carnage Altar** ({3}, sacrifice a
+1 life), **Seymour Flux** (pay 1 life each upkeep for a card and a +1/+1 counter), **Ambition's Cost**, **Cast Away
+Doubt** (draw two; 2 damage to each player, which Sheoldred's lifegain more than covers), **Syphon Mind** (each other
+player discards; you draw a card for each), **Phyrexian Rager**, **Deadly Dispute** (sacrifice a creature or artifact, draw two, make a Treasure), **Carnage Altar** ({3}, sacrifice a
 creature: draw a card), **Bonders' Enclave** (draw with {3} and a creature of power 4 or more, which Sheoldred is) and
 **Gix, Yawgmoth Praetor** (when a creature deals combat damage to an opponent, its controller may pay 1 life to draw;
 that includes opposing creatures, so with Sheoldred out an attacker drawing off Gix costs them 2 more).
+
+**The One Ring** ({4}, indestructible) draws more every turn: tap it to add a burden counter, then draw a card per
+counter. You lose 1 life per counter each upkeep, but with Sheoldred out each of those draws is 2 life back, so it
+pays for itself. Cast, it also gives you protection from everything until your next turn. **Call of the Ring**
+({1}{B}) has the Ring tempt you each upkeep, and each time you choose a Ring-bearer you may pay 2 life to draw a
+card; Sheoldred gives the 2 back.
 
 **Ad Nauseam** ({3}{B}{B} instant) turns spare life into a hand: reveal the top card, put it into your hand, lose life
 equal to its mana value, repeat. Cast it at the end of the opponent's turn before yours, with your mana untapped,
 and stop at a hand you can use next turn (about seven plus a card per three mana) or while your life is still well
 above what the table could swing for. The cards are put into your hand, not drawn, so Sheoldred gains you nothing
 from them. The deck's low curve (average mana value under 3) makes it cheap: about 2–3 life a card.
+
+**Bolas's Citadel** ({3}{B}{B}{B}) lets you look at the top card of your library and play it, paying life equal to
+its mana value instead of mana. The low curve keeps that cheap, and Sheoldred's lifegain keeps the life total up.
+These cards are played, not drawn, so Sheoldred gains you nothing from them directly.
 
 ### Finishers
 **Exsanguinate** (X life from each opponent, you gain it) is the plain kill. **Peer into the Abyss** is the draw-based
@@ -85,7 +95,8 @@ the table's blockers.
   for a destroy effect or a bad block.
 - **Perigee Beckoner**: when it enters, another creature of yours gets +2/+0 and returns if it dies this turn. Cast it
   on Sheoldred before she attacks or blocks into a risk; warp ({1}{B}) lets you reuse it later.
-- **Recursion** (below) is the backup when protection isn't there.
+- **Recursion** (below) is the backup when protection isn't there, and **Demonic Tutor** ({1}{B}) finds Sheoldred
+  again if she was exiled or shuffled away.
 
 ### Remove threats
 12 removal spells keep the board manageable: **Terror** (nonblack, nonartifact), **Last Gasp** (-3/-3), **Vanquish the
@@ -94,20 +105,24 @@ Weak** (power 3 or less), **Disembowel** (X equals the target's mana value), **O
 an enchantment and a planeswalker, with a loss of 2 life and a card for you each time they have none; needs {B}{B}{B}{B}),
 **Soul Enervation** (flash, -4/-4), and the sacrifice-cost cheap ones **Silence the Echo** and **Lethal Throwdown** (each cheap
 with a creature to sacrifice; Silence the Echo can instead pay {3}). **Rooftop Assassin** (flash, flying, lifelink) destroys a creature that was dealt damage this turn, and
-**Accursed Marauder** makes each player sacrifice a nontoken creature (it can sacrifice itself). **Melancholic Poet**
-drains each opponent for 1 every time you cast an instant or sorcery that targets a creature.
+**Accursed Marauder** makes each player sacrifice a nontoken creature (it can sacrifice itself).
 
 ### Gain life, use it
-Sheoldred's lifegain turns on the lifegain payoffs: **Ulna Alley Shopkeep** (+2/+0 when you gained life), **Foolish
-Fate** (the target's controller loses 3 if you gained life this turn) and **Leech Collector // Bloodletting** (the first lifegain each turn prepares {B} Bloodletting: each opponent
-loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery.
-**Crawlspace** limits attacks: no more than two creatures can attack you each combat.
+Sheoldred's lifegain turns on the lifegain payoffs: **Foolish Fate** (the target's controller loses 3 if you gained
+life this turn) and **Leech Collector // Bloodletting** (the first lifegain each turn prepares {B} Bloodletting: each
+opponent loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery. The life is also a resource:
+it pays for The One Ring's burden counters, Call of the Ring, Bolas's Citadel and Ad Nauseam.
 
 ### Drain creatures
 **Blood Artist**, **Al Bhed Salvagers**, **Sneering Shadewriter** (drain 2 on entering) and **Screeching Soulbreaker**
 (drain 1 each attack) keep the pressure on when Sheoldred is gone. **Ob Nixilis, the Fallen** ({3}{B}{B}, 3/3) makes a
 player lose 3 life each time a land enters under your control and grows by three +1/+1 counters: one land drop a turn
-is 3 to an opponent and a bigger threat.
+is 3 to an opponent and a bigger threat. **Gray Merchant of Asphodel** ({3}{B}{B}) drains each opponent by your
+devotion to black when it enters, and you gain what they lose: Sheoldred ({B}{B}), Underworld Dreams ({B}{B}{B}),
+Phyrexian Arena ({B}{B}), Seizan ({B}{B}) and the Merchant itself ({B}{B}) all count, so with Sheoldred and
+Underworld Dreams out it is at least 7 from each. **Zulaport Cutthroat** drains each opponent
+1 (and gains you 1) whenever a creature you control dies; Carnage Altar, Deadly Dispute, Silence the Echo, Lethal
+Throwdown, Accursed Marauder and chump blocks feed it.
 **Fetid Imp** and **Burrog Banemaker** are deathtouch blockers that protect the life total. **Undercity Dire Rat** is a
 cheap body that leaves a Treasure.
 
@@ -117,9 +132,9 @@ if she died, Sneering Shadewriter for a second drain. It also triggers **Soul En
 cards leave your graveyard. Keep it for Sheoldred.
 
 ### Ramp
-Arcane Signet, Fellwar Stone, Mind Stone (it can cash in for a card), Charcoal Diamond, Commander's Sphere (also a
-card), Potioner's Trove and Undercity Dire Rat (a Treasure when it dies). Memory Jar and Otherworld Atlas are
-five- and four-mana artifacts you cast once the rocks are out.
+Five rocks, Arcane Signet, Fellwar Stone, Mind Stone (it can cash in for a card), Commander's Sphere (also a card)
+and Potioner's Trove, plus Undercity Dire Rat (a Treasure when it dies). Memory Jar, Otherworld Atlas, The One Ring
+and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 
 ### How it wins
 - **The slow drain.** Sheoldred plus Howling Mine, Seizan and the end-step engines drains each of three opponents every round; with Underworld Dreams and Fate Unraveler out it is faster.
@@ -129,7 +144,10 @@ five- and four-mana artifacts you cast once the rocks are out.
 
 ### Weak spots and how to play around them
 - **Exile, bounce and repeated removal on Sheoldred.** Play around it with Swiftfoot Boots and hold a protection spell;
-  keep Phyrexian Delver or a recast in reserve. Don't overextend into a wipe while she's your only engine.
+  keep Phyrexian Delver, Demonic Tutor or a recast in reserve. Don't overextend into a wipe while she's your only
+  engine. The One Ring's protection covers you for the turn it enters.
+- **Paying life without Sheoldred.** The One Ring's upkeep loss, Call of the Ring and Bolas's Citadel all cost life;
+  without her lifegain, stop tapping the Ring and play fewer cards off the Citadel.
 - **Opponents who stop draws or punish the symmetric cards.** If a deck is built around card draw, or has a combo that
   wants cards, hold the symmetric draw cards (the Mine, the Atlas, Mikokoro, the Sanitarium, Seizan, the wheels) until
   a punisher is out and kill that deck first.
@@ -143,26 +161,29 @@ five- and four-mana artifacts you cast once the rocks are out.
   own.
 - **With Sheoldred out:** equip Swiftfoot Boots or Darksteel Plate first, then the draw engines: Howling Mine, Seizan,
   Mikokoro and Otherworld Atlas at each opponent's end step, Memory Jar the turn she's safe. Hold a protection instant
-  for removal aimed at her.
+  for removal aimed at her. The One Ring and Bolas's Citadel turn her lifegain into cards.
 - **Without her:** removal, Underworld Dreams, Fate Unraveler and the drain creatures (Blood Artist, Al Bhed Salvagers,
-  Sneering Shadewriter, Screeching Soulbreaker) keep the pressure on until she comes back; hold the symmetric draw
-  cards.
-- **The kill:** Peer into the Abyss on an opponent with Sheoldred out, or Exsanguinate for the table.
+  Sneering Shadewriter, Screeching Soulbreaker, Gray Merchant, Zulaport Cutthroat) keep the pressure on until she
+  comes back; hold the symmetric draw cards.
+- **The kill:** Peer into the Abyss on an opponent with Sheoldred out, or Exsanguinate for the table. Demonic Tutor
+  finds Peer into the Abyss once she is safe.
 - **Mulligan:** keep hands with two or three lands, a rock and a creature or a draw spell; send back hands with no
   black source.
 
 ## Mana and consistency
 
 36 lands: 32 Swamp, Command Tower (makes black here), and three colorless lands that draw cards: Bonders' Enclave,
-Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 33 black sources. Ramp: six mana artifacts (Arcane
-Signet, Fellwar Stone, Mind Stone, Charcoal Diamond, Commander's Sphere, Potioner's Trove) plus Undercity Dire Rat.
+Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 33 black sources. Ramp: five mana artifacts (Arcane
+Signet, Fellwar Stone, Mind Stone, Commander's Sphere, Potioner's Trove) plus Undercity Dire Rat. Tutor: Demonic
+Tutor.
 Interaction: 12 removal spells, 4 protection cards (Swiftfoot Boots, Darksteel Plate, Masterful Flourish, Battle-Rage
 Blessing) and Perigee Beckoner.
 
 ## Bracket and Rule 0
 
-Bracket 3, one Game Changer (Ad Nauseam). There are no two-card combos, no extra turns and no mass land destruction. Tell the
-table that Howling Mine, Memory Jar, Dark Deal and the other draw cards are symmetric on purpose: they make everyone
+Bracket 4, on the Game Changer count: four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel).
+There are no two-card combos, no extra turns and no mass land destruction. Tell the table about the four Game
+Changers, and tell it that Howling Mine, Memory Jar, Dark Deal and the other draw cards are symmetric on purpose: they make everyone
 draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cost the opponents.
 
 ## Decklist by type (100)

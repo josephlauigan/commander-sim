@@ -776,8 +776,8 @@ mod tier_tests {
     #[test]
     fn all_means_the_decks_own_tiers() {
         let own = v(&["t1", "t2", "t3"]);
-        assert_eq!(select_tiers("sephfs", &own, "all", false).unwrap(), own);
-        assert_eq!(select_tiers("sephfs", &own, "t2", false).unwrap(), v(&["t2"]));
+        assert_eq!(select_tiers("cloud", &own, "all", false).unwrap(), own);
+        assert_eq!(select_tiers("cloud", &own, "t2", false).unwrap(), v(&["t2"]));
     }
 
     #[test]
@@ -802,13 +802,12 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str]); 12] = [
+        let want: [(&str, &[&str]); 11] = [
             ("yshtola", &["t5"]), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("seph", &["t3", "t4"]),
             ("sheoldred", &["t3", "t4"]),
             ("sauron", &["t3", "t4"]),
             ("kefka", &["t3"]),
-            ("sephfs", &["t5"]),
             ("veyran", &["t1", "t2", "t3"]),
             ("cloud", &["t1", "t2", "t3"]),
             ("thrasios", &["t5"]),

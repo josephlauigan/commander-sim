@@ -111,7 +111,8 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
 **Skyclave Apparition**, **Witherbloom Charm** (destroy a nonland permanent with mana value 2 or less, or sacrifice a
 permanent to draw two, or gain 5), **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Disenchant**; **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
+**Memory Trap** and **Assassin's Trophy** ({B}{G}, instant: destroy any permanent an opponent controls; they get a basic
+land); **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
 reuses an enters effect (a Titan, Skyclave Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible), **Blossoming
 Defense** ({G}: +2/+2 and hexproof) and **Lightning Greaves** protect Tymna.
