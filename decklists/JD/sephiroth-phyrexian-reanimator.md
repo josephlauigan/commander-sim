@@ -48,7 +48,7 @@ During each of your turns you may play a land and cast one permanent spell of ea
 - **A reanimation spell every turn.** Animate Dead and Necromancy are enchantments, so once one is in the graveyard Muldrotha recasts it each turn for another reanimation.
 - **Loop pieces back after removal.** Triskelion (as the artifact or the creature), Kitchen Finks, Nim Deathmantle, Ashnod's Altar, Phyrexian Altar, or Viscera Seer, so one answer no longer breaks a combo.
 - **Engines back after a wipe.** Aura Shards, Phyrexian Arena, Rhystic Study, or Skullclamp.
-- **A land from the graveyard each turn.** Replay Evolving Wilds or Fabled Passage for a basic every turn, or Strip Mine for land destruction every turn (say so before the game). Crucible of Worlds does the same without her.
+- **A land from the graveyard each turn.** Replay a fetch land every turn (1 life each time) for a dual or a basic, which also puts a land in the graveyard for Muldrotha to replay next turn, or Strip Mine for land destruction every turn (say so before the game). Crucible of Worlds does the same without her.
 
 She is a 6/6 for six and a fine reanimation target herself.
 
@@ -70,7 +70,7 @@ Swords to Plowshares, Path to Exile and Anguished Unmaking ({1}{W}{B}, exile any
 
 ### Mana, lands and utility
 
-Chromatic Lantern lets every land tap for any colour. Exotic Orchard, Command Tower and Ash Barrens (basic landcycling) fix colours; Evolving Wilds and Fabled Passage fetch basics, and Muldrotha can replay them. **Crucible of Worlds** ({3}) lets you play lands from your graveyard: Evolving Wilds or Fabled Passage every turn, Strip Mine every turn, and any land Glimpse the Unthinkable or Stitcher's Supplier milled. Strip Mine is optional land destruction. Treno, Dark City is a tapped blue-black Town. **Phyrexian Tower** taps for {C}, or taps and sacrifices a creature for {B}{B}, so it is a land and a sacrifice outlet. Blood Artist and Sephiroth, Fabled SOLDIER drain whenever creatures die, so Victimize's sacrifice, Grave Pact, Skullclamp and the loops all become life loss for the table. Viscera Seer is a one-mana free sacrifice outlet, and **Phyrexian Altar** ({3}) sacrifices a creature for one mana of any colour, a third altar beside Ashnod's Altar and Altar of Dementia. Mikaeus, Kitchen Finks, Triskelion, Nim Deathmantle, Ashnod's Altar, Altar of Dementia, Phyrexian Altar and Grave Titan are the combo pieces below. Archon of Cruelty, Rune-Scarred Demon and Sheoldred, Whispering One are bombs to reanimate rather than hard-cast.
+Chromatic Lantern lets every land tap for any colour. The mana base is the full set of original duals and on-colour fetch lands: the six fetches (Flooded Strand, Polluted Delta, Windswept Heath, Marsh Flats, Verdant Catacombs, Misty Rainforest) each find any of two basic types, so each one gets any dual or shock with a matching type, and Muldrotha can replay them. **Crucible of Worlds** ({3}) lets you play lands from your graveyard: a fetch land every turn, Strip Mine every turn, and any land Glimpse the Unthinkable or Stitcher's Supplier milled. Strip Mine is optional land destruction. **Phyrexian Tower** taps for {C}, or taps and sacrifices a creature for {B}{B}, so it is a land and a sacrifice outlet. Blood Artist and Sephiroth, Fabled SOLDIER drain whenever creatures die, so Victimize's sacrifice, Grave Pact, Skullclamp and the loops all become life loss for the table. Viscera Seer is a one-mana free sacrifice outlet, and **Phyrexian Altar** ({3}) sacrifices a creature for one mana of any colour, a third altar beside Ashnod's Altar and Altar of Dementia. Mikaeus, Kitchen Finks, Triskelion, Nim Deathmantle, Ashnod's Altar, Altar of Dementia, Phyrexian Altar and Grave Titan are the combo pieces below. Archon of Cruelty, Rune-Scarred Demon and Sheoldred, Whispering One are bombs to reanimate rather than hard-cast.
 
 ### How it wins
 
@@ -87,7 +87,7 @@ Three infinite loops (see Key lines), plus fair lines when the loops are answere
 - **Exile-based removal and theft** on a reanimated bomb: keep Ephemerate or Restoration Angel up for it.
 - **Wipes**: Arcane Denial, Ephemerate on the key creature, or hold the reanimation spell until after the wipe.
 - **Fast combo decks.** The deck is slower than the very fastest decks; use the cheap counters (Arcane Denial, Swan Song) and the cheap tutors to win first or stop them.
-- **Colour screw.** The commander costs four colours and the combo pieces need black, white and green. Count coloured sources for what you are about to cast and use Chromatic Lantern, Birds of Paradise and Exotic Orchard.
+- **Colour screw.** The commander costs four colours and the combo pieces need black, white and green. Count coloured sources for what you are about to cast and use Chromatic Lantern, Birds of Paradise and the fetch lands (crack a fetch for the dual that gives the colour you are short of).
 
 ## Key lines
 
@@ -140,7 +140,7 @@ Vampiric Tutor puts the card on top, so it costs your next draw; cast it at the 
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 37 lands: 24 nonbasic plus 5 Swamp, 3 Forest, 3 Plains, 2 Island (13 basics). The nonbasics are untapped shock and pain lands for fixing (Hallowed Fountain, Overgrown Tomb, Temple Garden, Watery Grave; Brushland, Caves of Koilos, Underground River, Yavimaya Coast), check lands (Glacial Fortress, Hinterland Harbor, Isolated Chapel, Sunpetal Grove, Woodland Cemetery), tapped lands (Arcane Sanctum, Treno, Dark City, Bojuka Bog), Command Tower, Exotic Orchard, Ash Barrens, Evolving Wilds, Fabled Passage, Strip Mine, Karn's Bastion and Phyrexian Tower. Arcane Sanctum gives blue for Arcane Denial, Swan Song, Gifts Ungiven, Rhystic Study and Glimpse the Unthinkable. Karn's Bastion is a colourless land that proliferates; Phyrexian Tower is a colourless land that sacrifices a creature for {B}{B}.
+The list is exactly 100 cards. 37 lands: 24 nonbasic plus 5 Swamp, 3 Forest, 3 Plains, 2 Island (13 basics). The nonbasics are the six original duals (Tundra, Underground Sea, Bayou, Savannah, Scrubland, Tropical Island), five shocks (Hallowed Fountain, Overgrown Tomb, Temple Garden, Watery Grave, Godless Shrine; pay 2 life to enter untapped), two pain lands (Caves of Koilos, Underground River), the six on-colour fetch lands (Flooded Strand, Polluted Delta, Windswept Heath, Marsh Flats, Verdant Catacombs, Misty Rainforest), Command Tower, Bojuka Bog (tapped), Strip Mine, Karn's Bastion and Phyrexian Tower. Every pair of the deck's four colours has a dual, so a fetch finds whichever two colours the hand is missing; only Bojuka Bog enters tapped. The fetches and shocks cost life (1 per fetch, 2 per untapped shock), which Sheoldred, the Apocalypse, Kitchen Finks and the drains give back. Karn's Bastion is a colourless land that proliferates; Phyrexian Tower is a colourless land that sacrifices a creature for {B}{B}.
 
 Mana: four rocks (Sol Ring, Arcane Signet, Talisman of Hierarchy, Chromatic Lantern), two creatures (Birds of Paradise, Sakura-Tribe Elder), Dark Ritual, and sacrifice mana from Phyrexian Altar and Phyrexian Tower. The deck cheats its threats in, so it has less ramp than a fair deck; Nim Deathmantle + Ashnod's Altar is mana only as part of the combo.
 
@@ -184,7 +184,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (10).** Anguished Unmaking, Arcane Denial, Dark Ritual, Entomb, Ephemerate, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Vampiric Tutor
 
-**Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Phyrexian Tower, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 5 Swamp, 3 Forest, 3 Plains, 2 Island
+**Lands (37).** Bayou, Bojuka Bog, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Karn's Bastion, Marsh Flats, Misty Rainforest, Overgrown Tomb, Phyrexian Tower, Polluted Delta, Savannah, Scrubland, Strip Mine, Temple Garden, Tropical Island, Tundra, Underground River, Underground Sea, Verdant Catacombs, Watery Grave, Windswept Heath, 5 Swamp, 3 Forest, 3 Plains, 2 Island
 
 ## Import list (100)
 
@@ -193,18 +193,16 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Anguished Unmaking
 1 Animate Dead
 1 Arcane Denial
-1 Arcane Sanctum
 1 Arcane Signet
 1 Archon of Cruelty
-1 Ash Barrens
 1 Ashnod's Altar
 1 Atraxa, Grand Unifier
 1 Aura Shards
 1 Austere Command
+1 Bayou
 1 Birds of Paradise
 1 Blood Artist
 1 Bojuka Bog
-1 Brushland
 1 Buried Alive
 1 Caves of Koilos
 1 Chromatic Lantern
@@ -219,23 +217,21 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Elesh Norn, Mother of Machines
 1 Entomb
 1 Ephemerate
-1 Evolving Wilds
-1 Exotic Orchard
-1 Fabled Passage
+1 Flooded Strand
 1 Gifts Ungiven
-1 Glacial Fortress
 1 Glimpse the Unthinkable
+1 Godless Shrine
 1 Grand Abolisher
 1 Grave Pact
 1 Grave Researcher // Reanimate
 1 Grave Titan
 1 Hallowed Fountain
-1 Hinterland Harbor
-1 Isolated Chapel
 1 Karn's Bastion
 1 Kitchen Finks
 1 Living Death
+1 Marsh Flats
 1 Mikaeus, the Unhallowed
+1 Misty Rainforest
 1 Muldrotha, the Gravetide
 1 Necromancy
 1 Nim Deathmantle
@@ -245,11 +241,14 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Phyrexian Altar
 1 Phyrexian Arena
 1 Phyrexian Tower
+1 Polluted Delta
 1 Reanimate
 1 Restoration Angel
 1 Rhystic Study
 1 Rune-Scarred Demon
 1 Sakura-Tribe Elder
+1 Savannah
+1 Scrubland
 1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Sheoldred, the Apocalypse
 1 Sheoldred, Whispering One
@@ -258,7 +257,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Stitcher's Supplier
 1 Strip Mine
 1 Summon: Bahamut
-1 Sunpetal Grove
 1 Swan Song
 1 Swords to Plowshares
 1 Talisman of Hierarchy
@@ -266,15 +264,17 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Temple Garden
 1 Tortured Existence
 1 Toxic Deluge
-1 Treno, Dark City
 1 Triskelion
+1 Tropical Island
+1 Tundra
 1 Underground River
+1 Underground Sea
 1 Vampiric Tutor
+1 Verdant Catacombs
 1 Victimize
 1 Viscera Seer
 1 Watery Grave
-1 Woodland Cemetery
-1 Yavimaya Coast
+1 Windswept Heath
 1 Yawgmoth's Will
 3 Forest
 2 Island
