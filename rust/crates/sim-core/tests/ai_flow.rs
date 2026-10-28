@@ -35,15 +35,15 @@ fn a_draw_engine_the_heuristic_rates_best_comes_before_the_look_ahead() {
     assert_eq!(engine_first(&g, P0, &opts), Some(1));
 }
 
-/// Passing rated higher (a counter held, the plan's hold_up), or a best play that is not an engine: the look-ahead
-/// decides as before
+/// Passing rated higher (a counter held, the plan's hold_up), or a best play that is not an engine (Demonic Tutor):
+/// the look-ahead decides as before
 #[test]
 fn passing_rated_higher_or_a_plain_best_play_leaves_it_to_the_look_ahead() {
     let mut g = kraum_table();
     hand(&mut g, P0, &["Rhystic Study", "Sol Ring"]);
     let opts = vec![cast(&g, "Rhystic Study", 3.0), stop(4.0)];
     assert_eq!(engine_first(&g, P0, &opts), None);
-    let opts = vec![cast(&g, "Sol Ring", 7.0), cast(&g, "Rhystic Study", 6.0), stop(1.0)];
+    let opts = vec![cast(&g, "Demonic Tutor", 7.0), cast(&g, "Rhystic Study", 6.0), stop(1.0)];
     assert_eq!(engine_first(&g, P0, &opts), None);
 }
 
@@ -78,4 +78,15 @@ fn a_draw_is_credited_to_its_source() {
     assert_eq!(st("fl|d|step|T2"), 1);
     assert_eq!(st("fl|d|engine|T2"), 2);
     assert_eq!(st("fl|dc|Rhystic Study"), 2);
+}
+
+/// A rock or mox the heuristic rates best is made before the look-ahead too; Lotus Petal (one-shot) is not
+#[test]
+fn a_mana_permanent_comes_before_the_look_ahead_but_not_a_one_shot() {
+    let mut g = kraum_table();
+    hand(&mut g, P0, &["Chrome Mox", "Lotus Petal", "Force of Will"]);
+    let opts = vec![cast(&g, "Chrome Mox", 6.0), stop(1.0)];
+    assert_eq!(engine_first(&g, P0, &opts), Some(0));
+    let opts = vec![cast(&g, "Lotus Petal", 6.0), stop(1.0)];
+    assert_eq!(engine_first(&g, P0, &opts), None);
 }

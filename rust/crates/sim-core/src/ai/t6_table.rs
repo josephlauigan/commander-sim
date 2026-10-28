@@ -353,8 +353,8 @@ const CARD_ENGINES: [&str; 11] = [
 ];
 
 // --- ai-flow
-/// Tier 6: when the heuristic's best play (above passing) is a card engine or a commander cast from the command zone,
-/// it is made without the look-ahead. The look-ahead plays to the end of p's next turn and scores a card in hand
+/// Tier 6: when the heuristic's best play (above passing) is a card engine, a commander cast from the command zone or
+/// a mana permanent (`mana_permanent`), it is made without the look-ahead. The look-ahead plays to the end of p's next turn and scores a card in hand
 /// above most permanents, so an engine's cards (one cycle in the playouts, every cycle after) never show: "Rhystic
 /// Study 100%, stop 0% -> stop", "Tymna the Weaver 100%, stop (hold mana) 0% -> stop (hold mana)" turn after turn.
 /// At the Tier 6 table a seen Rhystic Study was not cast by turn 4 in 25-65% of games, and Tymna was not out by the
@@ -374,7 +374,21 @@ pub fn engine_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option
     let Some(Action::Cast { card, .. }) = o.act else { return None };
     let pl = g.player(p);
     let commander = pl.is_commander(card) && !pl.hand.contains(&card);
-    (commander || CARD_ENGINES.contains(&&*g.db.get(card).name)).then_some(i)
+    let d = g.db.get(card);
+    (commander || CARD_ENGINES.contains(&&*d.name) || mana_permanent(g, card)).then_some(i)
+}
+
+// --- ai-flow
+/// a permanent that makes mana every turn: a rock, a mox, a mana creature (not a one-shot source: Lotus Petal, Lion's
+/// Eye Diamond, rituals). The look-ahead's position score values it near 0 against 0.9 for the card in hand, so
+/// casting it looked like a loss ("Chrome Mox 97% -> stop (hold mana)"); its mana pays every turn after the horizon.
+fn mana_permanent(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    !d.land
+        && !d.instant
+        && !d.sorcery
+        && !matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond")
+        && (d.tag(Tag::Rock) || d.tag(Tag::Dork) || d.tag(Tag::Moxd) || d.tag(Tag::Chromemox) || d.tag(Tag::Fastmana))
 }
 
 // --- t6 fast mana
