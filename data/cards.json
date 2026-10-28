@@ -53213,8 +53213,7 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "WB",
-    "t": true
+    "c": "WB"
    },
    "pow": 0,
    "tgh": 0,
@@ -53228,9 +53227,9 @@
    ],
    "protfrom": "",
    "ward": 0,
-   "identity": "BW",
-   "game_changer": false,
-   "source": "scryfall",
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 0,
