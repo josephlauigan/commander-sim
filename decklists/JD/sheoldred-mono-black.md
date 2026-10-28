@@ -50,9 +50,9 @@ These are the cards that turn the punishers on. Play the symmetric ones only onc
 - **The wheels**: **Memory Jar** ({T}, sacrifice: each player draws seven, then discards at the end step and gets their
   old hand back) is 14 life from each opponent with Sheoldred out, and you gain 14. **Dark Deal** has each player
   discard their hand and draw one fewer; a big opposing hand turns into a big loss.
-- **Hand one opponent cards**: **Painful Lesson** (target player draws two, loses 2), **Cost of Brilliance** (target
-  player draws two, loses 2, and a +1/+1 counter on a creature), **Vault Plunderer** (target player draws one, loses
-  1). With Sheoldred out these are 6 or 4 life against the chosen opponent. **Peer into the Abyss** makes one opponent
+- **Hand one opponent cards**: **Cost of Brilliance** (target player draws two, loses 2, and a +1/+1 counter on a
+  creature) and **Vault Plunderer** (target player draws one, loses 1). With Sheoldred out these are 6 or 3 life
+  against the chosen opponent. **Peer into the Abyss** makes one opponent
   draw half their library and lose half their life, which is lethal with Sheoldred out.
 
 ### Draw your own
@@ -85,7 +85,9 @@ These cards are played, not drawn, so Sheoldred gains you nothing from them dire
 kill. **Necrosquito** ({3}{B}, flying) is a body that grows into a finisher: it enters with two oil counters (a 2/2) and
 gets an oil counter, so +1/+1, whenever another creature or artifact you control goes to the graveyard. Carnage Altar,
 Deadly Dispute, the sacrifice-cost removal, chump blocks and your own Treasures and rocks all feed it, and it flies over
-the table's blockers.
+the table's blockers. **Grave Titan** ({4}{B}{B}, 6/6 deathtouch) makes two 2/2 Zombies when it enters and each time it
+attacks. The Zombies block for you and are the sacrifice fodder for Carnage Altar, Deadly Dispute and the
+sacrifice-cost removal, and each one that dies drains with Blood Artist and Zulaport Cutthroat out.
 
 ### Protect her
 - **Swiftfoot Boots** (hexproof and haste, equip {1}) and **Darksteel Plate** (indestructible, equip {2}): equip one
@@ -192,13 +194,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
 
-**Creatures (22).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Sneering Shadewriter, Undercity Dire Rat, Vault Plunderer, Zulaport Cutthroat
+**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Sneering Shadewriter, Undercity Dire Rat, Vault Plunderer, Zulaport Cutthroat
 
 **Enchantments (4).** Call of the Ring, Phyrexian Arena, Soul Enervation, Underworld Dreams
 
 **Artifacts (13).** Arcane Signet, Bolas's Citadel, Carnage Altar, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots, The One Ring
 
-**Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Silence the Echo, Syphon Mind
+**Sorceries (11).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Silence the Echo, Syphon Mind
 
 **Instants (12).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Masterful Flourish, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
 
@@ -233,6 +235,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Foolish Fate
 1 Geier Reach Sanitarium
 1 Gix, Yawgmoth Praetor
+1 Grave Titan
 1 Gray Merchant of Asphodel
 1 Howling Mine
 1 Invoke Despair
@@ -247,7 +250,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Ob Nixilis, the Fallen
 1 Otherworld Atlas
 1 Overkill
-1 Painful Lesson
 1 Peer into the Abyss
 1 Perigee Beckoner
 1 Phyrexian Arena
