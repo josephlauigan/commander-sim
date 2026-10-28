@@ -216,7 +216,9 @@ fn d_a_ready_line_comes_before_a_forced_rock() {
 }
 
 /// With the line not on offer (say the table could still stop it), Arcane Signet (two in, one out) would leave it a
-/// mana short: it is not forced. Lotus Petal (free, one out) leaves it payable and is.
+/// mana short: it is not forced.
+/// --- ai-eval: the old assertion that Lotus Petal (free, one out) *is* forced is gone with the cheap-rock rule that
+/// forced it (eval-fix.md, Part 3): no rock is forced now, and the look-ahead decides.
 #[test]
 fn d_a_forced_cast_that_breaks_a_ready_line_is_skipped() {
     let mut g = oracle_ready_with_a_signet();
@@ -226,9 +228,6 @@ fn d_a_forced_cast_that_breaks_a_ready_line_is_skipped() {
         .filter(|o| !o.label.starts_with("combo:"))
         .collect();
     assert!(opts.iter().any(|o| o.label == "Arcane Signet"), "{:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
-    let pick = ai::t6_table::must_option(&g, P0, &opts).map(|i| opts[i].label.clone());
-    assert_eq!(pick.as_deref(), Some("Lotus Petal"));
-    let opts: Vec<_> = opts.into_iter().filter(|o| o.label != "Lotus Petal").collect();
     let pick = ai::t6_table::must_option(&g, P0, &opts).map(|i| opts[i].label.clone());
     assert_ne!(pick.as_deref(), Some("Arcane Signet"));
 }

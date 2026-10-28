@@ -299,19 +299,9 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                     && combos::piece_gain(g, p, &g.db.get(*card).name) >= 1.0
                 {
                     89.0
-                } else if pr.is_none() && g.player(p).turns <= 4 && {
-                    // a cheap mana rock in the opening turns (Sol Ring lost to "stop (hold mana)" at 100%)
-                    let d = g.db.get(*card);
-                    !d.creature && (d.cmc as i32) <= 2 && (d.tag(Tag::Rock) || d.tag(Tag::Fastmana))
-                } {
-                    88.0
-                } else if chrome_mox_now(g, p, *card) {
-                    88.0 // --- t6 fast mana
-                } else if pr.is_none() && g.active == Some(p) && g.player(p).turns <= 3 && mana_first(g, p, *card) {
-                    // speed project: "mana first" on turns 1-3 (dorks, three-mana rocks): the look-ahead kept
-                    // voting them down for a draw engine or a stop
-                    88.0
                 } else {
+                    // --- ai-eval: the cheap-rock (turns 1-4), Chrome Mox and "mana first" (turns 1-3) rules are gone:
+                    // the look-ahead casts mana permanents itself now (eval-fix.md, Part 3: nothing lost without them)
                     continue;
                 }
             }
@@ -336,82 +326,3 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
     best.map(|b| b.2)
 }
 
-// --- ai-flow
-/// the permanents that give their controller cards every turn cycle (`engine_first`)
-pub(crate) const CARD_ENGINES: [&str; 11] = [
-    "Rhystic Study",
-    "Mystic Remora",
-    "Esper Sentinel",
-    "Sylvan Library",
-    "Necropotence",
-    "The One Ring",
-    "Faerie Mastermind",
-    "Consecrated Sphinx",
-    "Tymna the Weaver",
-    "Kraum, Ludevic's Opus",
-    "Thrasios, Triton Hero",
-];
-
-// --- ai-flow
-/// Tier 6: when the heuristic's best play (above passing) is a card engine, a commander cast from the command zone or
-/// a mana permanent (`mana_permanent`), it is made without the look-ahead. The look-ahead plays to the end of p's next turn and scores a card in hand
-/// above most permanents, so an engine's cards (one cycle in the playouts, every cycle after) never show: "Rhystic
-/// Study 100%, stop 0% -> stop", "Tymna the Weaver 100%, stop (hold mana) 0% -> stop (hold mana)" turn after turn.
-/// At the Tier 6 table a seen Rhystic Study was not cast by turn 4 in 25-65% of games, and Tymna was not out by the
-/// end of turn 4 in 62% (step3-flow.md). Passing still wins when the heuristic rates it higher (the plan's hold_up,
-/// the held counter's value and the reserve penalty are in those utilities). Returns the index in `opts`.
-pub fn engine_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
-    use crate::hooks::Action;
-    if !t6_plans::is_t6(g, p) || crate::human::is_human(g, p) || !g.settings.flow_must {
-        return None; // --- ai-eval: env AI_FLOW_MUST=0 turns A and B off
-    }
-    let stop = opts.iter().filter(|o| o.act.is_none()).map(|o| o.utility).fold(f64::NEG_INFINITY, f64::max);
-    let (i, o) =
-        opts.iter().enumerate().filter(|(_, o)| o.act.is_some()).max_by(|a, b| a.1.utility.total_cmp(&b.1.utility))?;
-    if o.utility <= stop {
-        return None;
-    }
-    let Some(Action::Cast { card, .. }) = o.act else { return None };
-    let pl = g.player(p);
-    let commander = pl.is_commander(card) && !pl.hand.contains(&card);
-    let d = g.db.get(card);
-    (commander || CARD_ENGINES.contains(&&*d.name) || mana_permanent(g, card)).then_some(i)
-}
-
-// --- ai-flow
-/// a permanent that makes mana every turn: a rock, a mox, a mana creature (not a one-shot source: Lotus Petal, Lion's
-/// Eye Diamond, rituals). The look-ahead's position score values it near 0 against 0.9 for the card in hand, so
-/// casting it looked like a loss ("Chrome Mox 97% -> stop (hold mana)"); its mana pays every turn after the horizon.
-pub(crate) fn mana_permanent(g: &Game, c: CardId) -> bool {
-    let d = g.db.get(c);
-    !d.land
-        && !d.instant
-        && !d.sorcery
-        && !matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond")
-        && (d.tag(Tag::Rock) || d.tag(Tag::Dork) || d.tag(Tag::Moxd) || d.tag(Tag::Chromemox) || d.tag(Tag::Fastmana))
-}
-
-// --- t6 fast mana
-/// Chrome Mox on a pool deck's own turns 1-3, with a card it would imprint: cast with the cheap rocks (the look-ahead
-/// voted "stop" over it at 100% on the heuristic: it scores the two cards in hand above a mox on the battlefield, and
-/// the mana pays off after its horizon). Not JD's Godo, whose play stays as it was.
-fn chrome_mox_now(g: &Game, p: PlayerId, c: CardId) -> bool {
-    let pl = g.player(p);
-    g.db.get(c).tag(Tag::Chromemox)
-        && pl.key != "godo"
-        && t6_plans::prio(g, p, c).is_none()
-        && g.active == Some(p)
-        && pl.turns <= 3
-        && !crate::engine::tutors::chrome_imprint_cands(g, p).is_empty()
-}
-
-/// Tier 6 speed project, "mana first" on turns 1-3: a mana creature (one or two mana) or a three-mana rock the plan
-/// has no opinion about is cast before the other plays. Never a commander, never when the card needs a gate
-/// (Chrome Mox, Mox Diamond have their own priority).
-fn mana_first(g: &Game, p: PlayerId, c: CardId) -> bool {
-    let d = g.db.get(c);
-    if d.land || g.player(p).is_commander(c) {
-        return false;
-    }
-    (d.creature && d.tag(Tag::Dork) && d.cmc <= 2) || (!d.creature && d.tag(Tag::Rock) && d.cmc == 3)
-}

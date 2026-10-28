@@ -69,7 +69,7 @@ pub fn class(g: &Game, p: PlayerId, c: CardId) -> Option<&'static str> {
         return Some("commander");
     }
     let d = g.db.get(c);
-    if super::t6_table::CARD_ENGINES.contains(&&*d.name)
+    if CARD_ENGINES.contains(&&*d.name)
         || d.tag(Tag::Rhystic)
         || d.tag(Tag::Eng)
         || d.tag(Tag::Onering)
@@ -78,7 +78,7 @@ pub fn class(g: &Game, p: PlayerId, c: CardId) -> Option<&'static str> {
     {
         return Some("engine");
     }
-    super::t6_table::mana_permanent(g, c).then_some("mana")
+    mana_permanent(g, c).then_some("mana")
 }
 
 /// the heuristic's top option (by utility) and its class, if it is one this diagnostic records
@@ -254,4 +254,30 @@ pub fn end(g: &mut Game, p: PlayerId, class: &str, top: &str, chosen: usize, row
     for l in log {
         crate::glog!(g, "{l}");
     }
+}
+
+/// the permanents that give their controller cards every turn cycle (the list step 3's fix A used)
+const CARD_ENGINES: [&str; 11] = [
+    "Rhystic Study",
+    "Mystic Remora",
+    "Esper Sentinel",
+    "Sylvan Library",
+    "Necropotence",
+    "The One Ring",
+    "Faerie Mastermind",
+    "Consecrated Sphinx",
+    "Tymna the Weaver",
+    "Kraum, Ludevic's Opus",
+    "Thrasios, Triton Hero",
+];
+
+/// a permanent that makes mana every turn: a rock, a mox, a mana creature (not Lotus Petal, Lion's Eye Diamond or a
+/// ritual; step 3's fix B's test)
+fn mana_permanent(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    !d.land
+        && !d.instant
+        && !d.sorcery
+        && !matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond")
+        && (d.tag(Tag::Rock) || d.tag(Tag::Dork) || d.tag(Tag::Moxd) || d.tag(Tag::Chromemox) || d.tag(Tag::Fastmana))
 }

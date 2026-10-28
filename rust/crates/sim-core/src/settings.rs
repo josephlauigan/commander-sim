@@ -121,10 +121,6 @@ pub struct Settings {
     /// brings the closest line nearest. Off unless env PLANNER_PROGRESS=1 (an A/B switch: it measured slower, see
     /// audit/ai-foundations/step2-planner.md)
     pub planner_progress: bool,
-    /// --- ai-eval: step 3's fixes A and B (`t6_table::engine_first`: a Tier 6 engine, commander or mana permanent
-    /// the heuristic rates best is cast before the look-ahead). On unless env AI_FLOW_MUST=0 (an A/B switch: Part 1
-    /// of the ai-eval brief measures the look-ahead without them)
-    pub flow_must: bool,
 }
 
 impl Settings {
@@ -153,7 +149,6 @@ impl Settings {
             t6_moxd_lands: 3,
             planner: planner_default(), // --- ai-planner
             planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
-            flow_must: planner_from(std::env::var("AI_FLOW_MUST").ok().as_deref()), // --- ai-eval
         }
     }
 
