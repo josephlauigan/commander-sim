@@ -103,6 +103,10 @@ impl GfGame {
                 .map(|(k, v)| (k.to_string(), *v))
                 .collect();
         extra.sort();
+        // --- ai-flow: in key order (the stats map has none), so the same seed gives the same game record
+        let mut flow: Vec<(String, i64)> =
+            p.stats.iter().filter(|(k, _)| k.starts_with("fl|")).map(|(k, v)| (k.to_string(), *v)).collect();
+        flow.sort();
         GfGame {
             kill,
             route,
@@ -116,7 +120,7 @@ impl GfGame {
             own_turns: p.turns, // --- ai-audit
             audit: sim_core::gf_audit::report(g, won), // --- ai-audit
             // --- ai-flow
-            flow: p.stats.iter().filter(|(k, _)| k.starts_with("fl|")).map(|(k, v)| (k.to_string(), *v)).collect(),
+            flow,
         }
     }
 }
