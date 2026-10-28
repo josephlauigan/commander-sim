@@ -27,8 +27,10 @@ pub enum AiMode {
 pub const RAMP_W: f64 = 0.0;
 
 // --- ai-eval
-/// the default margin (see `Search::margin`): one standard error of the paired difference
-pub const MARGIN: f64 = 1.0;
+/// the default margin (see `Search::margin`): two standard errors of the paired difference (about a 5% chance, per
+/// alternative, that noise alone lets the look-ahead overrule the heuristic; 1 kept the top play too seldom: Tymna
+/// out by turn 4 in 53% of Tier 6 games, 4,000 games, against 61% at 2 and A+B's 61%, 1,000 games: eval-fix.md)
+pub const MARGIN: f64 = 2.0;
 
 /// the default hold weight (see `Search::hold_w`)
 pub const HOLD_W: f64 = 1.0;

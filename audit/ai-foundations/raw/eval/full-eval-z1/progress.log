@@ -1,0 +1,6 @@
+start goldfish 17:01:12 X=1 --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done goldfish rc=0 17:03:59
+start realism-t6 17:03:59 X=1 --realism --pool t6 --games 4000 --jobs 16 --quiet
+done realism-t6 rc=0 17:14:33
+start all-decks 17:14:33 X=1 --all-decks --pool all --games 1000 --jobs 16 --quiet
+stopped all-decks (unit stopped to test the margin z) 17:15:37; half-written output deleted
