@@ -29,7 +29,6 @@ fn test_your_decks() {
             "kefka",
             "sauron",
             "seph",
-            "sephfs",
             "sheoldred",
             "thrasios",
             "veyran",

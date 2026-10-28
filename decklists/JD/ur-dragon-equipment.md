@@ -121,7 +121,10 @@ hasty 2/2s as you need. **Imperial Recruiter** finds Dualcaster or Godo (power 2
 
 - **Stack:** Force of Will, Force of Negation (noncreature spells; free on an opponent's turn), Pact of Negation, Mana Drain (the mana comes
   back on your next main phase: put it toward Godo).
-- **Removal:** Swords to Plowshares, Decimate, Chaos Warp, Assassin's Trophy, Cyclonic Rift.
+- **Removal:** Swords to Plowshares, Decimate, Chaos Warp, Cyclonic Rift.
+- **Board wipe:** **Kindred Dominance** ({5}{B}{B}, sorcery): name Dragon and every creature that isn't a Dragon is
+  destroyed. With Maskwood Nexus out all your creatures are Dragons, so it is one-sided; without it, Godo, the mana
+  creatures and the Paladins die too.
 - **Protection:** Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or
   enchantments during your turn), Teferi's Protection, Conqueror's Flail, Lightning Greaves, Swiftfoot Boots.
 
@@ -167,9 +170,9 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 
 **Artifacts (20).** Chrome Mox, Conqueror's Flail, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
-**Sorceries (7).** Decimate, Demonic Tutor, Imperial Seal, Nature's Lore, Rampant Growth, Steelshaper's Gift, Twinflame
+**Sorceries (8).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Rampant Growth, Steelshaper's Gift, Twinflame
 
-**Instants (12).** Assassin's Trophy, Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (11).** Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
 **Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
@@ -177,7 +180,6 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 
 ```
 1 Ancient Tomb
-1 Assassin's Trophy
 1 Badlands
 1 Bayou
 1 Birds of Paradise
@@ -218,6 +220,7 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Inventors' Fair
 1 Jaxis, the Troublemaker
 1 Kaldra Compleat
+1 Kindred Dominance
 1 Kura, the Boundless Sky
 1 Lightning Greaves
 1 Llanowar Elves
