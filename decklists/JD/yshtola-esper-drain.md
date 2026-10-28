@@ -5,7 +5,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
-| **Bracket** | 4 (9 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Mystical Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection) |
+| **Bracket** | 4 (11 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Mystical Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection, Orcish Bowmasters, Serra's Sanctum) |
 | **Simulator** | deck key `yshtola`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -118,11 +118,11 @@ Zur can find Arrest, Bound in Silence, Encrust, Luminous Bonds, Memory Trap, Mys
 
 The list is exactly 100 cards.
 
-37 lands (13 nonbasic, 8 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
+37 lands (14 nonbasic, 7 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 15 enchantments it taps for three or more by the mid-game.
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| White lands | 15 | 8 Plains plus Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
+| White lands | 15 | 7 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
 | Blue lands | 14 | 7 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
 | Black lands | 16 | 9 Swamp plus Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
 | Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
@@ -155,11 +155,11 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with nine Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell** and **Teferi's Protection**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
+**Bracket 4,** with eleven Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
 
 Disclose before the game:
 
-- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell** and **Teferi's Protection** (the nine Game Changers).
+- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the eleven Game Changers).
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
 - **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor, and Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
@@ -183,7 +183,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit
 
-**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Tundra, Underground River, Underground Sea, Watery Grave, 8 Plains, 7 Island, 9 Swamp
+**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Watery Grave, 7 Plains, 7 Island, 9 Swamp
 
 ## Import list (100)
 
@@ -245,6 +245,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Restoration Angel
 1 Sanguine Bond
 1 Scrubland
+1 Serra's Sanctum
 1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
@@ -265,6 +266,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Your Fate Ends Here
 1 Zur the Enchanter
 7 Island
-8 Plains
+7 Plains
 9 Swamp
 ```

@@ -12,7 +12,7 @@ to trigger counters on Godo, and to fast combo that wins before turn 5.
 | | |
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10, five colours) |
-| **Bracket** | 4 (15 Game Changers; a two-card infinite combo) |
+| **Bracket** | 4 (16 Game Changers; a two-card infinite combo) |
 | **Simulator** | Not wired in yet. Eminence and The Ur-Dragon's attack trigger are modeled in PR #139 (`impls/t45_urdragon.rs`); build on that when adding the deck key. |
 
 ## Strategy
@@ -144,19 +144,22 @@ trample), Wrenn and Six (returns fetch lands), Puresteel Paladin, and The Ur-Dra
 ## Mana and consistency
 
 34 lands, every one untapped: the nine original dual lands (Badlands, Bayou, Plateau, Scrubland, Taiga, Tropical
-Island, Tundra, Underground Sea, Volcanic Island), all ten shock lands, eight fetch lands (Bloodstained Mire, Flooded
-Strand, Marsh Flats, Misty Rainforest, Polluted Delta, Verdant Catacombs, Windswept Heath, Wooded Foothills), City of
-Brass, Mana Confluence, Command Tower, Ancient Tomb, Cavern of Souls (name Dragon), Inventors' Fair and one Forest.
-Every fetch finds a dual or shock land of two colours, and Nature's Lore and Rampant Growth find any land with the
-Forest type (Bayou, Taiga, Tropical Island and the green shock lands). The Forest is there for Blood Moon. Fast mana:
-Sol Ring, Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two
-land-ramp spells.
+Island, Tundra, Underground Sea, Volcanic Island), nine shock lands (all but Godless Shrine), eight fetch lands
+(Bloodstained Mire, Flooded Strand, Marsh Flats, Misty Rainforest, Polluted Delta, Verdant Catacombs, Windswept Heath,
+Wooded Foothills), City of Brass, Mana Confluence, Command Tower, Ancient Tomb, Cavern of Souls (name Dragon),
+Inventors' Fair, Gaea's Cradle and one Forest. Every fetch finds a dual or shock land of two colours, and Nature's Lore
+finds any land with the Forest type (Bayou, Taiga, Tropical Island and the green shock lands). Rampant Growth finds only
+a basic, so it needs the Forest, which is also there for Blood Moon. Fast mana: Sol Ring, Mana Vault, Grim Monolith,
+Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two land-ramp spells.
+
+**Gaea's Cradle** taps for {G} per creature you control. With a mana creature or two out it is a second Mana Vault, but
+on turns 1-2 with no creatures it makes nothing, so don't keep it as one of only two lands.
 
 ## Bracket and Rule 0
 
-Bracket 4: 15 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
+Bracket 4: 16 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
 Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will, Cyclonic Rift, Teferi's
-Protection, Ancient Tomb)
+Protection, Ancient Tomb, Gaea's Cradle)
 and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about the combo before the game.
 
 ## Decklist by type (100)
@@ -174,7 +177,7 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 
 **Instants (11).** Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
+**Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Gaea's Cradle, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
 ## Import list (100)
 
@@ -203,10 +206,10 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Flooded Strand
 1 Force of Negation
 1 Force of Will
+1 Gaea's Cradle
 1 Garruk's Uprising
 1 Gilgamesh, Master-at-Arms
 1 Glorybringer
-1 Godless Shrine
 1 Godo, Bandit Warlord
 1 Goldspan Dragon
 1 Grand Abolisher
