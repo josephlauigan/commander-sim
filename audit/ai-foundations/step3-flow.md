@@ -291,3 +291,17 @@ unit test.
    long games as draws), or the table's threat assessment. Which, if any?
 2. **The spread:** the two Rograkh decks are at about 20%. Their plans hold their cards, not their flow. Is it worth
    a deck-agent pass on their plans, or is 0-8 too tight a band for six lists?
+
+## Status (main session, 2026-10-28 15:10)
+
+- **A and B are provisional workarounds.** They make Tier 6 cast an engine, commander or mana permanent *before* the
+  look-ahead, because the look-ahead kept choosing "stop" over them. Why it did so was not diagnosed. The likely
+  causes, from `architecture-review.md`:
+  1. `search::strength` values a permanent's future output at about 0 (a card in hand is 0.9);
+  2. the horizon ends at the deck's next turn;
+  3. the hold value and hold bonus favour passing with mana up.
+
+  JD (2026-10-28): fix the evaluation at the cause instead, for every deck. A and B are to be removed once that fix
+  covers them.
+- **Full set:** realism t0-t5 is byte-identical between `full-base` and `full-final` (A and B are Tier 6 only). The
+  all-decks comparison was stopped before it finished and was not run.
