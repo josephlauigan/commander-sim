@@ -1292,7 +1292,15 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
                     let lbl = label(g, step);
                     let (n, seq) = (g.player(p).name, describe(g, &plan));
                     crate::glog!(g, "      [{n} decides: {lbl} [plan: {seq}; {when}]]");
-                    if super::planner::perform(g, p, step)? {
+                    let done = super::planner::perform(g, p, step)?;
+                    let k = match (when == super::planner::WINS, done) {
+                        (true, true) => "plan|this_turn_played",
+                        (true, false) => "plan|this_turn_play_failed",
+                        (false, true) => "plan|next_turn_played",
+                        (false, false) => "plan|next_turn_play_failed",
+                    };
+                    super::planner::bump(g, p, k);
+                    if done {
                         crate::t6stats::speed_decided(g, p, &lbl);
                         crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
                         continue;
@@ -1302,6 +1310,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
                     let (n, t, seq) = (g.player(p).name, g.db.get(tutor).name.to_string(), describe(g, &plan));
                     crate::glog!(g, "      [{n} keeps mana for {t} [plan: {seq}; at the end of the turn before ours]]");
                     opts = super::planner::reserve(g, p, tutor, opts);
+                    super::planner::bump(g, p, "plan|reserve");
                 }
                 Decision::None => {}
             }
@@ -1514,8 +1523,10 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
             let seq = super::planner::describe(g, &plan);
             crate::glog!(g, "      [{} end of turn: {lbl} [plan: {seq}; {why}]]", g.player(p).name);
             if !super::planner::perform(g, p, step)? {
+                super::planner::bump(g, p, "plan|eot_play_failed");
                 break;
             }
+            super::planner::bump(g, p, "plan|eot_played");
             g.player_mut(p).stat("eot_casts", 1);
         }
     }

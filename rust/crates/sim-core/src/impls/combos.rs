@@ -1653,6 +1653,11 @@ pub fn audit_mana(i: usize) -> u32 {
     all()[i].mana.0
 }
 
+/// --- ai-planner: a line's own loop mana, its coloured part
+pub fn audit_loop_pips(i: usize) -> &'static str {
+    all()[i].mana.1
+}
+
 pub fn audit_name(i: usize) -> &'static str {
     all()[i].name
 }

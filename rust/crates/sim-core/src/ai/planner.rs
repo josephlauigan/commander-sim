@@ -506,6 +506,11 @@ pub struct Found {
     pub pass_ready: bool,
     /// copies played on
     pub nodes: usize,
+    /// the search stopped at `MAX_NODES` copies, or with positions left at `MAX_DEPTH`
+    pub node_cap: bool,
+    pub depth_cap: bool,
+    /// at the start: a line was ready and affordable but the table or the plan slot said wait (`go_ok`)
+    pub go_waits: bool,
 }
 
 /// The search (see the module notes). `this_turn`: look for a line reached this turn first; `next`: then, if none, for
@@ -521,6 +526,9 @@ pub fn search(g: &mut Game, p: PlayerId, this_turn: bool, next: bool, eot: bool)
     let mut level = vec![Node { g: root, steps: vec![], known }];
     let mut all: Vec<Node> = vec![];
     let this_turn = this_turn && !eot;
+    found.go_waits = !eot
+        && combos::plan_lines(&level[0].g, p, true).is_empty()
+        && !combos::plan_lines(&level[0].g, p, false).is_empty();
     for depth in 0..=MAX_DEPTH {
         if this_turn {
             let mut best: Option<(usize, usize, usize, usize)> = None; // (protection, cards, node, line)
@@ -540,6 +548,8 @@ pub fn search(g: &mut Game, p: PlayerId, this_turn: bool, next: bool, eot: bool)
             }
         }
         if depth == MAX_DEPTH || found.nodes >= MAX_NODES {
+            found.depth_cap |= depth == MAX_DEPTH && !level.is_empty();
+            found.node_cap |= found.nodes >= MAX_NODES;
             all.append(&mut level);
             break;
         }
@@ -547,6 +557,7 @@ pub fn search(g: &mut Game, p: PlayerId, this_turn: bool, next: bool, eot: bool)
         'expand: for n in &level {
             for s in plays(&n.g, p, &n.known, eot) {
                 if found.nodes >= MAX_NODES {
+                    found.node_cap = true;
                     break 'expand;
                 }
                 found.nodes += 1;
@@ -626,6 +637,13 @@ fn instant_tutor(g: &Game, s: Step) -> Option<CardId> {
 /// the planner's decision at a main-phase decision of p's (`brain::main`)
 pub fn decide(g: &mut Game, p: PlayerId) -> Res<Decision> {
     let f = search(g, p, true, true, false)?;
+    count(g, p, &f, false);
+    if f.this_turn.is_some() || f.next_turn.as_ref().is_some_and(|v| !v.is_empty()) {
+        let hold = crate::impls::t6_plans::hold_up(g, p).is_some_and(|x| x > 0.0);
+        if hold {
+            bump(g, p, "plan|over_hold_up"); // the plan slot asks to pass with the mana up; the plan plays anyway
+        }
+    }
     if let Some(plan) = f.this_turn {
         return Ok(Decision::Play { step: plan[0], plan, why: WINS });
     }
@@ -634,6 +652,51 @@ pub fn decide(g: &mut Game, p: PlayerId) -> Res<Decision> {
         return Ok(Decision::Reserve { tutor: t, plan });
     }
     Ok(Decision::Play { step: plan[0], plan, why: if f.closer { CLOSER } else { READY } })
+}
+
+/// one planner counter of p's (`plan|...` stats: the goldfish report lists them; no play reads them)
+pub fn bump(g: &mut Game, p: PlayerId, k: crate::sym::Sym) {
+    g.player_mut(p).stat(k, 1);
+}
+
+/// the counters of one planner call (main phase, or the end-of-turn window)
+fn count(g: &mut Game, p: PlayerId, f: &Found, eot: bool) {
+    let k = |main: crate::sym::Sym, e: crate::sym::Sym| if eot { e } else { main };
+    bump(g, p, k("plan|calls", "plan|eot_calls"));
+    if f.this_turn.is_some() {
+        bump(g, p, "plan|this_turn_found");
+    } else if f.next_turn.as_ref().is_some_and(|v| !v.is_empty()) {
+        bump(g, p, k("plan|next_turn_found", "plan|eot_next_turn_found"));
+    } else if f.pass_ready {
+        bump(g, p, k("plan|none_pass_ready", "plan|eot_none_pass_ready"));
+    } else {
+        bump(g, p, k("plan|none", "plan|eot_none"));
+    }
+    if f.node_cap {
+        bump(g, p, k("plan|cap_nodes", "plan|eot_cap_nodes"));
+    }
+    if f.depth_cap {
+        bump(g, p, k("plan|cap_depth", "plan|eot_cap_depth"));
+    }
+    if f.go_waits {
+        bump(g, p, k("plan|go_ok_waits", "plan|eot_go_ok_waits"));
+    }
+    if slot_holds(g, p) {
+        bump(g, p, k("plan|slot_holds", "plan|eot_slot_holds"));
+    }
+}
+
+/// the plan slot keeps a tutor, a mana card or a piece in p's hand (or a commander piece in the command zone) now
+fn slot_holds(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.hand.iter().copied().chain(pl.cmds_in_zone()).any(|c| {
+        let useful = tutor_rule(g, c).is_some()
+            || mana_card(g, p, c)
+            || combos::audit_lines(g, p)
+                .into_iter()
+                .any(|i| combos::audit_groups(i).iter().any(|grp| grp.contains(&name(g, c))));
+        useful && crate::impls::t6_plans::prio(g, p, c).is_some_and(|x| x <= 0.0)
+    })
 }
 
 /// why a plan is made, as the trace says it
@@ -645,6 +708,7 @@ pub const CLOSER: &str = "a line nearer next turn";
 /// next turn, or nearer (an instant tutor, or the instant ritual that pays for it)
 pub fn eot_play(g: &mut Game, p: PlayerId) -> Res<Option<(Step, Vec<Step>, &'static str)>> {
     let f = search(g, p, false, true, true)?;
+    count(g, p, &f, true);
     let Some(plan) = f.next_turn.filter(|v| !v.is_empty()) else { return Ok(None) };
     Ok(Some((plan[0], plan, if f.closer { CLOSER } else { READY })))
 }
@@ -702,6 +766,42 @@ fn land_score(g: &mut Game, p: PlayerId) -> Res<(u8, usize)> {
     })
 }
 
+/// How many of the coloured pips of p's closest line (`distance`; the cheapest card of each piece group, its loop
+/// mana too) p's lands can make, one pip a land: the colours the line will need, which the usual land choice (the most
+/// new colours) doesn't read. A fetch land that found Badlands for a deck whose next line is Thassa's Oracle (UU) and
+/// Demonic Consultation (B) left it on one blue source for turns.
+fn line_colours(g: &Game, p: PlayerId) -> usize {
+    let lines = combos::audit_lines(g, p);
+    let dist = |i: usize| combos::audit_groups(i).iter().filter(|grp| !combos::group_held(g, p, grp)).count();
+    let Some(&i) = lines.iter().min_by_key(|&&i| dist(i)) else { return 0 };
+    let mut pips: Vec<char> = combos::audit_loop_pips(i).chars().collect();
+    for grp in combos::audit_groups(i) {
+        let cheapest =
+            grp.iter().filter_map(|n| g.db.id(n)).filter(|&c| !g.db.get(c).land).min_by_key(|&c| g.db.get(c).cmc);
+        if let Some(c) = cheapest {
+            pips.extend(g.db.get(c).pips.chars().filter(|ch| "WUBRG".contains(*ch)));
+        }
+    }
+    let mut lands: Vec<crate::cards::Colors> = g
+        .player(p)
+        .lands
+        .iter()
+        .filter(|&&l| g.land(l).on_bf)
+        .map(|&l| crate::engine::mana::land_colors_now(g, p, l))
+        .collect();
+    // the scarcest colour first, each pip from a land that makes the fewest colours
+    pips.sort_by_key(|&ch| lands.iter().filter(|c| c.has(ch)).count());
+    let mut n = 0;
+    for ch in pips {
+        let pick = (0..lands.len()).filter(|&k| lands[k].has(ch)).min_by_key(|&k| lands[k].count());
+        if let Some(k) = pick {
+            lands.remove(k);
+            n += 1;
+        }
+    }
+    n
+}
+
 /// The planner's land drop at the start of p's turn: each land in hand (each land a fetch land can find, for a fetch
 /// land) is played on a copy and the plan read from there (`land_score`). None when the usual choice
 /// (`turn::play_land`) scores as well as the best, or there is no choice: the usual choice stands.
@@ -738,6 +838,7 @@ pub fn choose_land(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<Card
     if options.len() < 2 {
         return Ok(None);
     }
+    bump(g, p, "plan|land_choices");
     let main1 = |g2: &mut Game| {
         g2.step = TurnStep::Main1;
         g2.active = Some(p);
@@ -746,20 +847,21 @@ pub fn choose_land(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<Card
     let mut d = copy(g, p);
     crate::engine::turn::play_land(&mut d, p)?;
     main1(&mut d);
-    let bar = land_score(&mut d, p)?;
-    let mut best: Option<((u8, usize), (CardId, Option<CardId>))> = None;
+    let bar = (land_score(&mut d, p)?, line_colours(&d, p));
+    let mut best: Option<(((u8, usize), usize), (CardId, Option<CardId>))> = None;
     for &(c, t) in &options {
         let mut g2 = copy(g, p);
         if play_land_for(&mut g2, p, c, t).is_err() || g2.over {
             continue;
         }
         main1(&mut g2);
-        let s = land_score(&mut g2, p)?;
+        let s = (land_score(&mut g2, p)?, line_colours(&g2, p));
         if s > bar && best.is_none_or(|b| s > b.0) {
             best = Some((s, (c, t)));
         }
     }
     if let Some((_, (c, t))) = best {
+        bump(g, p, "plan|land_changed");
         let what = t.map_or(String::new(), |t| format!(" for {}", name(g, t)));
         crate::glog!(
             g,

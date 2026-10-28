@@ -94,7 +94,7 @@ impl GfGame {
         let mut go: Vec<String> = p.stats.keys().filter_map(|k| k.strip_prefix("go|")).map(|s| s.to_string()).collect();
         go.sort();
         let mut extra: Vec<(String, i64)> =
-            p.stats.iter().filter(|(k, _)| k.starts_with("scion|")).map(|(k, v)| (k.to_string(), *v)).collect();
+            p.stats.iter().filter(|(k, _)| k.starts_with("scion|") || k.starts_with("plan|")).map(|(k, v)| (k.to_string(), *v)).collect();
         extra.sort();
         GfGame {
             kill,
