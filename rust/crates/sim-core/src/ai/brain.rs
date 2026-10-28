@@ -1327,6 +1327,18 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
                 continue;
             }
         }
+        // --- ai-flow: Tier 6: a card engine or the commander the heuristic rates best is cast before the look-ahead
+        // (which can't see its cards past its horizon)
+        if let Some(i) = super::t6_table::engine_first(g, p, &opts)
+            && let Some(a) = &opts[i].act
+        {
+            let lbl = format!("{} [engine]", opts[i].label);
+            if act::perform(g, p, a)? {
+                explain(g, p, &labels(&opts), &lbl, "decides");
+                crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
+                continue;
+            }
+        }
         if opts.len() >= 2
             && search::enabled(g, p)
             && let Some(i) = search::choose(g, p, post, &opts)

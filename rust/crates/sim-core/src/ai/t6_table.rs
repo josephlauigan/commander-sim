@@ -336,6 +336,47 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
     best.map(|b| b.2)
 }
 
+// --- ai-flow
+/// the permanents that give their controller cards every turn cycle (`engine_first`)
+const CARD_ENGINES: [&str; 11] = [
+    "Rhystic Study",
+    "Mystic Remora",
+    "Esper Sentinel",
+    "Sylvan Library",
+    "Necropotence",
+    "The One Ring",
+    "Faerie Mastermind",
+    "Consecrated Sphinx",
+    "Tymna the Weaver",
+    "Kraum, Ludevic's Opus",
+    "Thrasios, Triton Hero",
+];
+
+// --- ai-flow
+/// Tier 6: when the heuristic's best play (above passing) is a card engine or a commander cast from the command zone,
+/// it is made without the look-ahead. The look-ahead plays to the end of p's next turn and scores a card in hand
+/// above most permanents, so an engine's cards (one cycle in the playouts, every cycle after) never show: "Rhystic
+/// Study 100%, stop 0% -> stop", "Tymna the Weaver 100%, stop (hold mana) 0% -> stop (hold mana)" turn after turn.
+/// At the Tier 6 table a seen Rhystic Study was not cast by turn 4 in 25-65% of games, and Tymna was not out by the
+/// end of turn 4 in 62% (step3-flow.md). Passing still wins when the heuristic rates it higher (the plan's hold_up,
+/// the held counter's value and the reserve penalty are in those utilities). Returns the index in `opts`.
+pub fn engine_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
+    use crate::hooks::Action;
+    if !t6_plans::is_t6(g, p) || crate::human::is_human(g, p) {
+        return None;
+    }
+    let stop = opts.iter().filter(|o| o.act.is_none()).map(|o| o.utility).fold(f64::NEG_INFINITY, f64::max);
+    let (i, o) =
+        opts.iter().enumerate().filter(|(_, o)| o.act.is_some()).max_by(|a, b| a.1.utility.total_cmp(&b.1.utility))?;
+    if o.utility <= stop {
+        return None;
+    }
+    let Some(Action::Cast { card, .. }) = o.act else { return None };
+    let pl = g.player(p);
+    let commander = pl.is_commander(card) && !pl.hand.contains(&card);
+    (commander || CARD_ENGINES.contains(&&*g.db.get(card).name)).then_some(i)
+}
+
 // --- t6 fast mana
 /// Chrome Mox on a pool deck's own turns 1-3, with a card it would imprint: cast with the cheap rocks (the look-ahead
 /// voted "stop" over it at 100% on the heuristic: it scores the two cards in hand above a mox on the battlefield, and
