@@ -171,13 +171,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
 
-**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Leech Collector // Bloodletting, Melancholic Poet, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Skyscanner, Sneering Shadewriter, Ulna Alley Shopkeep, Undercity Dire Rat, Vault Plunderer
+**Creatures (22).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Sneering Shadewriter, Undercity Dire Rat, Vault Plunderer, Zulaport Cutthroat
 
-**Enchantments (3).** Phyrexian Arena, Soul Enervation, Underworld Dreams
+**Enchantments (4).** Call of the Ring, Phyrexian Arena, Soul Enervation, Underworld Dreams
 
-**Artifacts (13).** Arcane Signet, Carnage Altar, Charcoal Diamond, Commander's Sphere, Crawlspace, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots
+**Artifacts (13).** Arcane Signet, Bolas's Citadel, Carnage Altar, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots, The One Ring
 
-**Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Read the Bones, Silence the Echo, Syphon Mind
+**Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Painful Lesson, Peer into the Abyss, Silence the Echo, Syphon Mind
 
 **Instants (12).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Masterful Flourish, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
 
@@ -191,18 +191,19 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Arcane Signet
 1 Battle-Rage Blessing
 1 Blood Artist
+1 Bolas's Citadel
 1 Bonders' Enclave
 1 Burrog Banemaker
+1 Call of the Ring
 1 Carnage Altar
 1 Cast Away Doubt
-1 Charcoal Diamond
 1 Command Tower
 1 Commander's Sphere
 1 Cost of Brilliance
-1 Crawlspace
 1 Dark Deal
 1 Darksteel Plate
 1 Deadly Dispute
+1 Demonic Tutor
 1 Disembowel
 1 Exsanguinate
 1 Fate Unraveler
@@ -211,13 +212,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Foolish Fate
 1 Geier Reach Sanitarium
 1 Gix, Yawgmoth Praetor
+1 Gray Merchant of Asphodel
 1 Howling Mine
 1 Invoke Despair
 1 Last Gasp
 1 Leech Collector // Bloodletting
 1 Lethal Throwdown
 1 Masterful Flourish
-1 Melancholic Poet
 1 Memory Jar
 1 Mikokoro, Center of the Sea
 1 Mind Stone
@@ -232,7 +233,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Delver
 1 Phyrexian Rager
 1 Potioner's Trove
-1 Read the Bones
 1 Rooftop Assassin
 1 Screeching Soulbreaker
 1 Seizan, Perverter of Truth
@@ -240,17 +240,17 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Seymour Flux
 1 Sheoldred, the Apocalypse
 1 Silence the Echo
-1 Skyscanner
 1 Sneering Shadewriter
 1 Soul Enervation
 1 Swiftfoot Boots
 1 Syphon Mind
 1 Terror
-1 Ulna Alley Shopkeep
+1 The One Ring
 1 Undercity Dire Rat
 1 Underworld Dreams
 1 Vanquish the Weak
 1 Vault Plunderer
 1 Wander Off
+1 Zulaport Cutthroat
 32 Swamp
 ```

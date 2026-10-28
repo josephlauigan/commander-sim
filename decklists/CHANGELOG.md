@@ -13,6 +13,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-10-27.** Out: Wall of Omens. In: Galadriel's Dismissal. JD's choice (2026-10-27), not simulated: Galadriel's Dismissal (from Seph/Atraxa) for Wall of Omens: {W} instant protection for Cloud and his Equipment.
 - **2026-10-25.** Out: Wrecking Ball Arm. In: Buster Sword. JD's choice (10/25): Buster Sword is a cheaper Equipment (cast {3}, equip {2}) that gives +3/+2 and draws a card on each hit, with a free spell up to the damage dealt. Not simulated; the free-cast part isn't modeled yet.
 - **2026-10-18.** Out: Citizen's Arrest, Hero's Blade. In: Andúril, Narsil Reforged, Stroke of Midnight. Citizen's Arrest -> Stroke of Midnight: -1.4 over T1-T3 (instant answer to any nonland permanent). Hero's Blade -> Andúril, Narsil Reforged: -0.3 over T1-T3 (a +1/+1 counter on every creature each swing).
 - **2026-10-16.** Out: Duelist's Heritage, Ghostly Prison, Helm of Kaldra, Shield of Kaldra. In: Archangel of Tithes, Open the Armory, Silverblade Paladin, Sphere of Safety. Four swaps (JD, 10-16). Out: Helm of Kaldra, Shield of Kaldra, Ghostly Prison, Duelist's Heritage. In: Archangel of Tithes, Open the Armory, Sphere of Safety, Silverblade Paladin. JD is taking Helm and Shield of Kaldra for another deck; Ghostly Prison and Duelist's Heritage could not be found. Test: T1 29.1 -> 30.3 (+1.2, ±3.8, neutral). Buys: Sphere of Safety $4.38, Silverblade Paladin $0.87 = $5.25.
@@ -78,6 +79,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-27.** Out: Rhystic Study. In: Stinkweed Imp. JD's choice (2026-10-27), not simulated: Rhystic Study goes to Seph/Atraxa; Stinkweed Imp (binder) takes the slot: discard fodder that dredges back. Two Game Changers, still Bracket 4 (the two-card win).
 - **2026-10-19.** Out: Hallway Heckler. In: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied. Out: Hallway Heckler. In: Kuja, Genome Sorcerer. JD approved 10/19: +2.2 at T3 (30.2% -> 32.5%, ±2.4; 2,000 paired games, look-ahead, loose; audit/kefka/2026-10-19-kuja/). Kuja's Wizard tokens double the deck's burn damage (2.7 -> 5.7 per game).
 - **2026-10-18.** Out: Feed the Swarm. In: Marvin, Murderous Mimic. Feed the Swarm -> Marvin, Murderous Mimic: +0.2 at T3 in the coarse pass (copies Niv-Mizzet's draw, Fangtail, Blightspeaker, Rummaging Goblin).
 - **2026-10-18.** Out: Blazing Firesinger, Crux of Fate. In: Bribery, Fiery Emancipation. Kefka lift (JD approved 10/18): Crux of Fate=>Fiery Emancipation; Blazing Firesinger=>Bribery
@@ -198,6 +200,7 @@ Deck key `seph`, `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, t
 
 ### Changes
 
+- **2026-10-27.** Out: Assassin's Trophy, Diabolic Tutor, Galadriel's Dismissal, Harmonize, Hornet Queen, Melira, Sylvok Outcast, Mind Stone, Momentary Blink, Tireless Tracker, Unburial Rites, Zulaport Cutthroat. In: Crucible of Worlds, Dark Ritual, Dread Return, Glimpse the Unthinkable, Grave Researcher // Reanimate, Living Death, Phyrexian Altar, Phyrexian Tower, Rhystic Study, Rune-Scarred Demon, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel, Vampiric Tutor. JD's choice (2026-10-27), not simulated: Sephiroth FS is retired and nine of its cards come here (Sephiroth, Fabled SOLDIER, Vampiric Tutor, Grave Researcher // Reanimate, Living Death, Rune-Scarred Demon, Dark Ritual, Phyrexian Altar, Dread Return, Phyrexian Tower); Rhystic Study comes from Kefka; Crucible of Worlds and Glimpse the Unthinkable are buys. Zulaport Cutthroat goes to Sheoldred, Galadriel's Dismissal to Cloud, Assassin's Trophy to Tymna/Thrasios; with Melira out the deck has three loops. Five Game Changers, still Bracket 4.
 - **2026-10-24.** Out: Flickering Hound. In: Open the Armory. Flickering Hound -> Open the Armory (JD's choice, 2026-10-24). The Hound moves to Tymna/Thrasios. Open the Armory ({1}{W}) finds Animate Dead, Skullclamp or Nim Deathmantle. It's a second copy (Cloud keeps its own), so it's a buy. Not simulated.
 - **2026-10-18.** Out: Dread Return. In: Victimize. Dread Return -> Victimize: +0.8 over T3-T4 in the coarse pass (two creatures back for 3 mana, wins 77-82% when cast).
 - **2026-10-18.** Out: Consecrated Sphinx, Farewell, Force of Will, Teferi's Protection, Worldly Tutor. In: Arcane Denial, Austere Command, Harmonize, Hornet Queen, Tireless Tracker. Band calibration 10/18 (JD approved): Force of Will=>Hornet Queen;Farewell=>Austere Command;Teferi's Protection=>Arcane Denial;Consecrated Sphinx=>Harmonize;Worldly Tutor=>Tireless Tracker
@@ -279,6 +282,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-10-27.** Out: Charcoal Diamond, Crawlspace, Melancholic Poet, Read the Bones, Skyscanner, Ulna Alley Shopkeep. In: Bolas's Citadel, Call of the Ring, Demonic Tutor, Gray Merchant of Asphodel, The One Ring, Zulaport Cutthroat. JD's choice (2026-10-27), not simulated: from the retired Sephiroth FS deck, The One Ring, Demonic Tutor, Gray Merchant of Asphodel, Call of the Ring and Bolas's Citadel; Zulaport Cutthroat from Seph/Atraxa. Four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel): Bracket 3 -> Bracket 4.
 - **2026-10-25.** Out: Stir Up Trouble. In: Ob Nixilis, the Fallen. JD's choice (10/25): Stir Up Trouble had the lowest win rate when cast at T3 and T4. Ob Nixilis drains 3 per land drop. Not simulated; the landfall ability isn't modeled yet (body only).
 - **2026-10-18.** Out: Gray Merchant of Asphodel. In: Necrosquito. Band calibration 10/18 (JD approved): Gray Merchant of Asphodel=>Necrosquito
 - **2026-10-17.** Out: Restless Bloodseeker // Bloodsoaked Reveler. In: Ad Nauseam. Ad Nauseam (JD's pick): +1.6 over t3-t5 (look-ahead, 1,000 paired per tier, noise; positive in every tier) once the shared Ad Nauseam AI and the look-ahead's hold-mana credit were fixed. The deck's first Game Changer.
@@ -700,6 +704,7 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ### Changes
 
+- **2026-10-27.** Out: Disenchant. In: Assassin's Trophy. JD's choice (2026-10-27), not simulated: Assassin's Trophy (from Seph/Atraxa) for Disenchant.
 - **2026-10-24.** Out: Avenge. In: Flickering Hound. Avenge -> Flickering Hound (JD's choice, 2026-10-24; the Hound moves over from Seph/Atraxa). Avenge was stuck in hand in 75% of the games it was drawn (10/19 analysis, T5) and a wipe that hits the deck's own 30 creatures; Austere Command stays as the reset. The Hound flickers a creature on every creature cast: Sunblast Angel, Grave Titan, Sun Titan, Coiling Oracle. Not simulated.
 
 ## The Ur-Dragon — Five-Colour Dragons and Equipment

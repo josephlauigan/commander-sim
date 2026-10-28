@@ -188,7 +188,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Enchantments (4).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda
 
-**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
+**Instants (10).** Arcane Denial, Assassin's Trophy, Bite Down, Blossoming Defense, Dark Endurance, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
 
 **Sorceries (2).** Austere Command, Diabolic Tutor
 
@@ -201,6 +201,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Arcane Denial
 1 Arcane Signet
 1 Archon of Absolution
+1 Assassin's Trophy
 1 Austere Command
 1 Avacyn's Pilgrim
 1 Aven Mindcensor
@@ -223,7 +224,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Dauthi Voidwalker
 1 Deathcap Glade
 1 Diabolic Tutor
-1 Disenchant
 1 Dragonlord Dromoka
 1 Drowned Catacomb
 1 Elenda, the Dusk Rose

@@ -173,17 +173,17 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sephiroth, the Savior (Atraxa, Grand Unifier)
 
-**Creatures (23).** Archon of Cruelty, Birds of Paradise, Blood Artist, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Titan, Hornet Queen, Kitchen Finks, Melira Sylvok Outcast, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Sakura-Tribe Elder, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Tireless Tracker, Triskelion, Viscera Seer, Zulaport Cutthroat
+**Creatures (22).** Archon of Cruelty, Birds of Paradise, Blood Artist, Displacer Kitten, Elesh Norn Grand Cenobite, Elesh Norn Mother of Machines, Grand Abolisher, Grave Researcher // Reanimate, Grave Titan, Kitchen Finks, Mikaeus the Unhallowed, Muldrotha the Gravetide, Restoration Angel, Rune-Scarred Demon, Sakura-Tribe Elder, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Sheoldred the Apocalypse, Sheoldred Whispering One, Stitcher's Supplier, Summon: Bahamut, Triskelion, Viscera Seer
 
-**Enchantments (7).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Teleportation Circle, Tortured Existence
+**Enchantments (8).** Animate Dead, Aura Shards, Grave Pact, Necromancy, Phyrexian Arena, Rhystic Study, Teleportation Circle, Tortured Existence
 
-**Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Mind Stone, Nim Deathmantle, Skullclamp, Sol Ring, Talisman of Hierarchy
+**Artifacts (11).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Conjurer's Closet, Crucible of Worlds, Nim Deathmantle, Phyrexian Altar, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (11).** Austere Command, Buried Alive, Demonic Tutor, Diabolic Tutor, Harmonize, Open the Armory, Reanimate, Toxic Deluge, Unburial Rites, Victimize, Yawgmoth's Will
+**Sorceries (11).** Austere Command, Buried Alive, Demonic Tutor, Dread Return, Glimpse the Unthinkable, Living Death, Open the Armory, Reanimate, Toxic Deluge, Victimize, Yawgmoth's Will
 
-**Instants (11).** Anguished Unmaking, Arcane Denial, Assassin's Trophy, Entomb, Ephemerate, Galadriel's Dismissal, Gifts Ungiven, Momentary Blink, Path to Exile, Swan Song, Swords to Plowshares
+**Instants (10).** Anguished Unmaking, Arcane Denial, Dark Ritual, Entomb, Ephemerate, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Vampiric Tutor
 
-**Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 6 Swamp, 3 Forest, 3 Plains, 2 Island
+**Lands (37).** Arcane Sanctum, Ash Barrens, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hallowed Fountain, Hinterland Harbor, Isolated Chapel, Karn's Bastion, Overgrown Tomb, Phyrexian Tower, Strip Mine, Sunpetal Grove, Temple Garden, Treno Dark City, Underground River, Watery Grave, Woodland Cemetery, Yavimaya Coast, 5 Swamp, 3 Forest, 3 Plains, 2 Island
 
 ## Import list (100)
 
@@ -197,7 +197,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Archon of Cruelty
 1 Ash Barrens
 1 Ashnod's Altar
-1 Assassin's Trophy
 1 Atraxa, Grand Unifier
 1 Aura Shards
 1 Austere Command
@@ -210,9 +209,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Chromatic Lantern
 1 Command Tower
 1 Conjurer's Closet
+1 Crucible of Worlds
+1 Dark Ritual
 1 Demonic Tutor
-1 Diabolic Tutor
 1 Displacer Kitten
+1 Dread Return
 1 Elesh Norn, Grand Cenobite
 1 Elesh Norn, Mother of Machines
 1 Entomb
@@ -220,33 +221,35 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Evolving Wilds
 1 Exotic Orchard
 1 Fabled Passage
-1 Galadriel's Dismissal
 1 Gifts Ungiven
 1 Glacial Fortress
+1 Glimpse the Unthinkable
 1 Grand Abolisher
 1 Grave Pact
+1 Grave Researcher // Reanimate
 1 Grave Titan
 1 Hallowed Fountain
-1 Harmonize
 1 Hinterland Harbor
-1 Hornet Queen
 1 Isolated Chapel
 1 Karn's Bastion
 1 Kitchen Finks
-1 Melira, Sylvok Outcast
+1 Living Death
 1 Mikaeus, the Unhallowed
-1 Mind Stone
-1 Momentary Blink
 1 Muldrotha, the Gravetide
 1 Necromancy
 1 Nim Deathmantle
 1 Open the Armory
 1 Overgrown Tomb
 1 Path to Exile
+1 Phyrexian Altar
 1 Phyrexian Arena
+1 Phyrexian Tower
 1 Reanimate
 1 Restoration Angel
+1 Rhystic Study
+1 Rune-Scarred Demon
 1 Sakura-Tribe Elder
+1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Sheoldred, the Apocalypse
 1 Sheoldred, Whispering One
 1 Skullclamp
@@ -260,22 +263,20 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Talisman of Hierarchy
 1 Teleportation Circle
 1 Temple Garden
-1 Tireless Tracker
 1 Tortured Existence
 1 Toxic Deluge
 1 Treno, Dark City
 1 Triskelion
-1 Unburial Rites
 1 Underground River
+1 Vampiric Tutor
 1 Victimize
 1 Viscera Seer
 1 Watery Grave
 1 Woodland Cemetery
 1 Yavimaya Coast
 1 Yawgmoth's Will
-1 Zulaport Cutthroat
 3 Forest
 2 Island
 3 Plains
-6 Swamp
+5 Swamp
 ```

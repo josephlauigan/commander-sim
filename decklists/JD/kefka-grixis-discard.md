@@ -182,9 +182,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (24).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Susurian Voidborn, Viashino Fangtail
+**Creatures (25).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Stinkweed Imp, Susurian Voidborn, Viashino Fangtail
 
-**Enchantments (5).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Rhystic Study, Underworld Breach
+**Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Underworld Breach
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
@@ -246,7 +246,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Rank Rat
 1 Rapturous Moment
 1 Reality Shift
-1 Rhystic Study
 1 Rummaging Goblin
 1 Sawblade Scamp
 1 Scarlet Spider, Kaine
@@ -263,6 +262,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Spirebluff Canal
 1 Stadium Tidalmage
 1 Steam Vents
+1 Stinkweed Imp
 1 Stormcarved Coast
 1 Sulfur Falls
 1 Sulfurous Springs
