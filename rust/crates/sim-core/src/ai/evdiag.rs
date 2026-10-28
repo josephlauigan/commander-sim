@@ -32,6 +32,11 @@ pub fn set_seed(s: u64) {
     SEED.with(|x| x.set(s));
 }
 
+/// the seed `set_seed` recorded
+pub fn seed() -> u64 {
+    SEED.with(|x| x.get())
+}
+
 /// the terms of `search::strength` (decider's side) and of `evaluate` (the opponents' and the dead), as named
 pub const TERMS: [&str; 9] = ["life", "board", "power", "hand", "lands", "treasures", "combo", "opp", "dead"];
 

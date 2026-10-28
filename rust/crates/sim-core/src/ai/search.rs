@@ -408,6 +408,23 @@ pub fn hold_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
 }
 
 // --- ai-eval
+/// Does the look-ahead's pick beat the heuristic's top play by more than the noise? `d` holds, per rollout, the
+/// pick's value less the top play's (the same seeds, bonuses in, each capped at a win). The pick stands when the mean
+/// difference is above `z` standard errors of it. Six rollouts of a Tier 6 table differ by 12-18 points from a win or
+/// a loss in one copy, while casting an engine now or a phase later differs by 0-3 (the stop line casts the same card
+/// before the horizon in 70-97% of its playouts: eval-fix.md, Part 1), so the bare argmax picked among near-equal
+/// lines at random and passed over the heuristic's 95-100% play turn after turn.
+pub fn margin_holds(d: &[f64], z: f64) -> bool {
+    let n = d.len() as f64;
+    if n < 2.0 {
+        return d.iter().sum::<f64>() > 0.0;
+    }
+    let m = d.iter().sum::<f64>() / n;
+    let var = d.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0);
+    m > z * (var / n).sqrt()
+}
+
+// --- ai-eval
 /// the held card and the bonus (`hold_w` times the heuristic's hold value) each open playout that keeps its mana up
 /// through p's turn earns (`Search::hold_kept`); None when nothing is held or `hold_w` is 0
 pub fn hold_credit(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
@@ -497,6 +514,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     // (Part 1: the label's line kept the mana up in 64-70% of main-1 playouts, a cast's in 60-66%).
     let hold = if g.settings.search.hold_kept { hold_credit(g, p) } else { None };
     let mut held = vec![0.0; keyed.len()];
+    // --- ai-eval: each playout's value with its bonuses, for the paired margin test below
+    let hold_w1 = hold.map(|h| h.1);
+    let mut vals = vec![vec![]; keyed.len()];
     for r in 0..g.settings.search.rollouts as u64 {
         for (k, &(_, label, n)) in keyed.iter().enumerate() {
             if diag.is_some() {
@@ -510,6 +530,18 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
                     held[k] += 1.0; // --- ai-eval
                 }
             }
+            let extra = if v < WIN_FLOOR {
+                let h = match hold_w1 {
+                    Some(w) if kept => w,
+                    Some(_) => 0.0,
+                    None if g.settings.search.hold_kept => 0.0,
+                    None => hold_bonus(g, p, &opts[keyed[k].0]),
+                };
+                ramp_bonus(g, p, &opts[keyed[k].0]) + h
+            } else {
+                0.0
+            };
+            vals[k].push(v + extra); // --- ai-eval
         }
     }
     // the hold bonus each option earned in all
@@ -569,6 +601,26 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     if keyed[uncapped].0 != keyed[best].0 {
         crate::gf_audit::cap_changed(g); // --- ai-audit: the sure-win cap changed the pick
     }
+    let bare = best; // --- ai-eval: the pick before the margin (the noise diagnostic)
+    // --- ai-eval: the look-ahead departs from the heuristic's top play only on evidence (`margin_holds`)
+    let z = g.settings.search.margin;
+    let top_u = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
+    if z > 0.0
+        && keyed[best].0 != top_u
+        && let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u)
+    {
+        let extra = |k: usize| match g.player(p).key {
+            "karn" => crate::impls::karn::search_bonus(g, p, &opts[keyed[k].0]),
+            "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[keyed[k].0]),
+            _ => 0.0,
+        };
+        let (eb, et) = (extra(best), extra(ti));
+        let d: Vec<f64> =
+            vals[best].iter().zip(&vals[ti]).map(|(a, b)| (a + eb).min(100.0) - (b + et).min(100.0)).collect();
+        if !margin_holds(&d, z) {
+            best = ti;
+        }
+    }
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
     });
@@ -588,6 +640,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             .collect();
         let top_label = opts[ti].label.clone();
         super::evdiag::end(g, p, class, &top_label, best, &rows);
+        noise_diag(g, p, post, opts, &keyed, &vals, (bare, best, top_u), base_seed, hold, class);
     }
     if keyed[best].0 != top {
         stat(|x| x.changed += 1);
@@ -828,4 +881,79 @@ fn choose_counter_inner(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bo
         }
     }
     scores[0] > scores[1]
+}
+
+// --- ai-eval
+/// the pick from per-rollout values (`vals[k][r]`, bonuses in): the bare argmax of the capped sums (ties to the
+/// earlier option, the higher utility), and the pick after the margin against option `ti` (the heuristic's top)
+fn pick_of(vals: &[Vec<f64>], ti: usize, z: f64) -> (usize, usize) {
+    let s: Vec<f64> = vals.iter().map(|v| v.iter().sum::<f64>().min(100.0 * v.len() as f64)).collect();
+    let mut b = 0;
+    for k in 1..s.len() {
+        if s[k] > s[b] {
+            b = k;
+        }
+    }
+    let d: Vec<f64> = vals[b].iter().zip(&vals[ti]).map(|(a, t)| a.min(100.0) - t.min(100.0)).collect();
+    (b, if b != ti && !margin_holds(&d, z) { ti } else { b })
+}
+
+// --- ai-eval
+/// Part 2's noise diagnostic (env AI_EVAL_DIAG=1, decisions `evdiag` records): one `EVN` line with the paired
+/// top-minus-stop difference (mean, its standard error, the spread of each line), and the picks with and without the
+/// margin (z = 1) on this decision's seeds and on a second set of seeds. The second playouts spend no game budget
+/// (`search_work` is restored) and read no random numbers of the game, so play is unchanged.
+#[allow(clippy::too_many_arguments)]
+fn noise_diag(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    opts: &[Opt],
+    keyed: &[(usize, &str, usize)],
+    vals: &[Vec<f64>],
+    (bare, best, top_u): (usize, usize, usize),
+    base_seed: u64,
+    hold: Option<(CardId, f64)>,
+    class: &str,
+) {
+    let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u) else { return };
+    let Some(si) = keyed.iter().position(|kk| opts[kk.0].act.is_none()) else { return };
+    let sd = |x: &[f64]| {
+        let n = x.len() as f64;
+        let m = x.iter().sum::<f64>() / n;
+        (m, (x.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / (n - 1.0).max(1.0)).sqrt())
+    };
+    let cap = |v: &[f64]| v.iter().map(|x| x.min(100.0)).collect::<Vec<f64>>();
+    let d: Vec<f64> = cap(&vals[ti]).iter().zip(cap(&vals[si])).map(|(a, b)| a - b).collect();
+    let (md, sdd) = sd(&d);
+    let (_, sdt) = sd(&cap(&vals[ti]));
+    let (_, sds) = sd(&cap(&vals[si]));
+    let (_, m1) = pick_of(vals, ti, 1.0);
+    let work = g.search_work;
+    let seed2 = base_seed ^ 0x9E37_79B9_7F4A_7C15;
+    let mut alt = vec![vec![]; keyed.len()];
+    for r in 0..g.settings.search.rollouts as u64 {
+        for (k, &(i, label, n)) in keyed.iter().enumerate() {
+            let (v, kept) = playout_main_kept(g, p, post, label, n, seed2, r, hold.map(|h| h.0));
+            let extra = if v < WIN_FLOOR {
+                ramp_bonus(g, p, &opts[i]) + if kept { hold.map_or(0.0, |h| h.1) } else { 0.0 }
+            } else {
+                0.0
+            };
+            alt[k].push(v + extra);
+        }
+    }
+    g.search_work = work;
+    let (a0, a1) = pick_of(&alt, ti, 1.0);
+    let pl = g.player(p);
+    let step = if g.step == Step::Main1 { "main1" } else { "main2" };
+    eprintln!(
+        "EVN\t{}\t{}\t{}\t{class}\t{step}\t{}\t{md:.3}\t{:.3}\t{sdt:.3}\t{sds:.3}\t{sdd:.3}\t{bare}\t{m1}\t{best}\t{a0}\t{a1}\t{ti}\t{si}\t{}",
+        super::evdiag::seed(),
+        g.search_n,
+        pl.key,
+        u8::from(hold.is_some()),
+        sdd / (d.len() as f64).sqrt(),
+        keyed.len(),
+    );
 }

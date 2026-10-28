@@ -26,6 +26,10 @@ pub enum AiMode {
 /// (audit/ramp/2026-10-15)
 pub const RAMP_W: f64 = 0.0;
 
+// --- ai-eval
+/// the default margin (see `Search::margin`): one standard error of the paired difference
+pub const MARGIN: f64 = 1.0;
+
 /// the default hold weight (see `Search::hold_w`)
 pub const HOLD_W: f64 = 1.0;
 
@@ -47,6 +51,10 @@ pub struct Search {
     /// --- ai-eval: the hold bonus goes to each playout that kept the held card's mana up through p's turn
     /// (`search::choose`), not to the "stop (hold mana)" label. Env AI_EVAL_HOLD=0: the old rule, for A/B runs
     pub hold_kept: bool,
+    /// --- ai-eval: the look-ahead departs from the heuristic's top play only when its pick wins by more than `margin`
+    /// standard errors of the paired difference (`search::margin_holds`); 0: the bare argmax (the old search). Env
+    /// AI_EVAL_MARGIN overrides the default for A/B runs
+    pub margin: f64,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -71,8 +79,13 @@ impl Default for Search {
                 .filter(|v| !v.is_empty())
                 .map(|v| v.parse().unwrap_or_else(|_| panic!("bad SEARCH_HOLD_W {v:?}")))
                 .unwrap_or(HOLD_W),
-            output: matches!(std::env::var("AI_EVAL_OUTPUT").ok().as_deref(), Some("1")), // --- ai-eval
-            hold_kept: matches!(std::env::var("AI_EVAL_HOLD").ok().as_deref(), Some("1")), // --- ai-eval
+            output: planner_from(std::env::var("AI_EVAL_OUTPUT").ok().as_deref()), // --- ai-eval
+            hold_kept: planner_from(std::env::var("AI_EVAL_HOLD").ok().as_deref()), // --- ai-eval
+            margin: std::env::var("AI_EVAL_MARGIN")
+                .ok()
+                .filter(|v| !v.is_empty())
+                .map(|v| v.parse().unwrap_or_else(|_| panic!("bad AI_EVAL_MARGIN {v:?}")))
+                .unwrap_or(MARGIN), // --- ai-eval
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,

@@ -68,6 +68,11 @@ fn without_the_bonus_the_lookahead_taps_out() {
     let mut g = game();
     ad_nauseam_and_a_creature(&mut g);
     set_hold_w(&mut g, 0.0);
+    // --- ai-eval: the old search is also the bare argmax (margin 0): with the margin the heuristic's top play
+    // (holding for Ad Nauseam) stands, since Sheoldred's lead is inside the noise of six rollouts
+    let mut s = (*g.settings).clone();
+    s.search.margin = 0.0;
+    g.settings = Arc::new(s);
     let opts = brain::main_options(&mut g, P0, false).unwrap();
     let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
     assert_eq!(pick.as_deref(), Some("Sheoldred, the Apocalypse"), "the old search spends the mana");
