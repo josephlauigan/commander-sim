@@ -437,6 +437,7 @@ fn float_leftover(g: &mut Game, p: PlayerId, cols: Colors, n: u32) {
 pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res {
     g.mana_spent += n; // the record of mana spent on the spell being paid for
     g.mana_colored |= !w.cols.is_empty();
+    crate::t6stats::flow_spent(g, p, n); // --- ai-flow
     match w.src {
         Source::Treasure => {
             let st = g.turn_stamp();

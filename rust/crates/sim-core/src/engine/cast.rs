@@ -367,10 +367,13 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         }
         if has(g, q, Tag::Rhystic) {
             let src = find(g, q, Tag::Rhystic)[0];
-            if crate::engine::stack::may_window(g, q, Some(src), "draw unless they pay {1}", None)?
-                && cardcode::rhystic_unpaid(g, p)?
-            {
-                draw(g, q, 1, false)?;
+            if crate::engine::stack::may_window(g, q, Some(src), "draw unless they pay {1}", None)? {
+                // --- ai-flow: the tax decision, counted (stats only)
+                let unpaid = cardcode::rhystic_unpaid(g, p)?;
+                crate::t6stats::flow_tax(g, q, "Rhystic Study", !unpaid);
+                if unpaid {
+                    draw(g, q, 1, false)?;
+                }
             }
         }
         if has(g, q, Tag::Kaervek) && cmc > 0 {
@@ -906,6 +909,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         rp = f.controller;
     }
     if !ok {
+        crate::t6stats::flow_countered(g, p, c); // --- ai-flow
         let last = by;
         g.last_counter = last;
         let lt = last.map(|x| g.db.get(x));
@@ -972,7 +976,10 @@ pub fn flashback_grant(g: &mut Game, p: PlayerId) -> Res {
 /// spell c resolves; the abilities it triggers go on the stack once it has finished
 pub fn resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> Res {
     g.resolving += 1;
+    let flow_prev = g.player(p).flow_src; // --- ai-flow: the spell's draws are its own
+    crate::t6stats::flow_source(g, p, Some(c));
     let r = resolve_inner(g, p, c, ctx, zone);
+    crate::t6stats::flow_source(g, p, flow_prev);
     g.resolving -= 1;
     r?;
     if g.resolving == 0 && !g.trig_queue.is_empty() {

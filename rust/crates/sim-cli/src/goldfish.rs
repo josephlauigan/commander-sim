@@ -71,6 +71,8 @@ pub struct GfGame {
     /// --- ai-audit: own turns taken, and the loss accounting (gf_audit)
     pub own_turns: u32,
     pub audit: Option<sim_core::gf_audit::AuditOut>,
+    /// --- ai-flow: the deck's flow counters (`fl|...`, read by `flow::FlowTally`)
+    pub flow: Vec<(String, i64)>,
 }
 
 impl GfGame {
@@ -113,6 +115,8 @@ impl GfGame {
             extra,
             own_turns: p.turns, // --- ai-audit
             audit: sim_core::gf_audit::report(g, won), // --- ai-audit
+            // --- ai-flow
+            flow: p.stats.iter().filter(|(k, _)| k.starts_with("fl|")).map(|(k, v)| (k.to_string(), *v)).collect(),
         }
     }
 }
@@ -318,6 +322,14 @@ pub fn render(sim: &Sim, key: &str, games: &[GfGame], ai: &str, seed0: u64) -> S
         o += &format!("  {k}: in {:.1}% of games ({total} in all)\n", pct(*games_with, n));
     }
     o += &crate::gf_audit::render(games); // --- ai-audit
+    // --- ai-flow: the card and mana flow, own turns 1-8
+    let mut fl = crate::flow::FlowTally::default();
+    for g in games {
+        fl.add(key, g.flow.iter().map(|(k, v)| (k.as_str(), *v)));
+    }
+    if !fl.is_empty() {
+        o += &fl.render(&|k| sim.name_of(k));
+    }
     o
 }
 
@@ -531,6 +543,7 @@ mod tests {
             extra: vec![],
             own_turns: 0, // --- ai-audit
             audit: None,
+            flow: vec![], // --- ai-flow
         };
         let gs = vec![mk(Some(2), true), mk(Some(3), false), mk(Some(3), true), mk(None, false)];
         let s = summarize(&gs);

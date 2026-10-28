@@ -1444,6 +1444,8 @@ pub fn necro_pay(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
     }
     g.player_mut(p).stat("necro_cards", n as i64);
     crate::glog!(g, "  {} pays {n} life to Necropotence", g.player(p).name);
+    crate::t6stats::flow_life(g, p, "Necropotence", n as i64); // --- ai-flow
+    crate::t6stats::flow_engine_cards(g, p, "Necropotence", n as i64);
     Ok(())
 }
 

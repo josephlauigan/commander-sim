@@ -562,6 +562,9 @@ pub struct Player {
     pub cast_logged: usize,
     /// cards this player has seen (drawn, tutored)
     pub seen: IndexSet<CardId>,
+    /// --- ai-flow: the source of the effect resolving for this player (a spell, trigger or ability), which the flow
+    /// stats credit its draws to (`t6stats::flow_source`; Tier 6 players only)
+    pub flow_src: Option<CardId>,
     /// the turn draws are counted for (Narset, Parter of Veils)
     pub draw_st: Option<TurnStamp>,
     /// cards drawn this turn
@@ -823,6 +826,7 @@ impl Player {
             cast_turns: vec![],
             cast_logged: 0,
             seen: IndexSet::new(),
+            flow_src: None, // --- ai-flow
             draw_st: None,
             draw_n: 0,
             miracle: None,

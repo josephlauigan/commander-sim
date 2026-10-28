@@ -278,11 +278,13 @@ fn library(g: &mut Game, src: Src, p: PlayerId) -> Res {
         if sylvan_pays(g, p, d, paid) {
             paid += 1;
             lose_life(g, p, 4, Some(p), "other", None)?;
+            crate::t6stats::flow_life(g, p, "Sylvan Library", 4); // --- ai-flow
             crate::glog!(g, "    {} pays 4 life for a Sylvan Library card", g.player(p).name);
         } else {
             let pl = g.player_mut(p);
             remove_first(&mut pl.hand, c);
             pl.library.push(c);
+            crate::t6stats::flow_undraw(g, p, "Sylvan Library", 1); // --- ai-flow: put back, not drawn
         }
     }
     Ok(())

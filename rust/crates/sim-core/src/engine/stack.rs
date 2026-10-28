@@ -192,7 +192,9 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
             continue;
         }
         let prev = g.trig_current.replace(id);
+        let flow_prev = g.player(t.controller).flow_src; // --- ai-flow: the source in force before it
         let r = call(g, &t); // its trigger_window takes the item: priority, then it resolves
+        crate::t6stats::flow_source(g, t.controller, flow_prev);
         g.trig_current = prev;
         remove_item(g, id); // (if its guard failed this time, it no longer triggers)
         r?;
@@ -208,6 +210,8 @@ pub fn trigger_window(g: &mut Game, p: PlayerId, src: Option<PermId>, name: &str
         g.trig_probe = false;
         return Err(Stop::Probe(Probe { controller: p, src, name: name.into(), imp: imp.unwrap_or(3.0) }));
     }
+    let flow = src.and_then(|m| g.perm(m).cd); // --- ai-flow: the trigger's draws are its source's
+    crate::t6stats::flow_source(g, p, flow);
     if let Some(cur) = g.trig_current.take() {
         if on_stack(g, cur) {
             let first = g.active.unwrap_or(p);
@@ -274,8 +278,11 @@ pub fn trigger_window_card(g: &mut Game, p: PlayerId, cd: CardId, name: &str) ->
         return Err(Stop::Probe(Probe { controller: p, src: None, name: name.into(), imp: 3.0 }));
     }
     if g.trig_current.is_some() || g.over || !abilities_answered(g, Some(p)) {
-        return trigger_window(g, p, None, name, None);
+        let r = trigger_window(g, p, None, name, None);
+        crate::t6stats::flow_source(g, p, Some(cd)); // --- ai-flow: the card is the source (trigger_window has none)
+        return r;
     }
+    crate::t6stats::flow_source(g, p, Some(cd)); // --- ai-flow
     let full = format!("{}: {name}", g.db.get(cd).name);
     let it = new_item(g, p, Some(cd), Ctx::default(), "trigger", 3.0, StackKind::Trigger, full);
     stack_window(g, p, it)
@@ -428,6 +435,8 @@ pub fn ability_window(
     imp: Option<f64>,
     target: Option<PermId>,
 ) -> Res<bool> {
+    let flow = src.and_then(|m| g.perm(m).cd); // --- ai-flow: the ability's draws are its source's
+    crate::t6stats::flow_source(g, p, flow);
     // Tier 6: an activation that works on a piece of a modeled line is a win step the table may answer
     if let Some(m) = src
         && crate::impls::combos::normal_play_window(g, p, m)?
@@ -455,6 +464,7 @@ pub fn ability_window_card(
     imp: Option<f64>,
     target: Option<PermId>,
 ) -> Res<bool> {
+    crate::t6stats::flow_source(g, p, Some(cd)); // --- ai-flow
     if g.over || !abilities_answered(g, Some(p)) {
         return Ok(true);
     }

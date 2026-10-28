@@ -974,6 +974,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.combo_tried = false;
     pl.haste_all = false;
     crate::gf_audit::turn_start(g, p); // --- ai-audit
+    crate::t6stats::flow_turn_start(g, p); // --- ai-flow
     crate::glog!(
         g,
         "--- {} turn {}: life {}, {} cards in hand, {} lands",
@@ -1049,6 +1050,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if pl.t6 && pl.turns <= 5 {
         crate::t6stats::mana_snapshot(g, p);
     }
+    crate::t6stats::flow_main(g, p); // --- ai-flow
     let pl = g.player_mut(p);
     if matches!(pl.turns, 4 | 6 | 8) {
         let mana = total_mana(g, p, false) as i64;
@@ -1108,6 +1110,7 @@ fn step_end(g: &mut Game, p: PlayerId) -> Res {
         }
         Ok(())
     })();
+    crate::t6stats::flow_turn_end(g, p); // --- ai-flow
     let pl = g.player_mut(p);
     let t = pl.turns;
     for i in pl.cast_logged..pl.cast_names.len() {

@@ -471,11 +471,13 @@ pub fn ad_nauseam(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
         n += 1;
         let mv = g.db.get(c).cmc as i32;
         lose_life(g, p, mv, Some(p), "other", None)?;
+        crate::t6stats::flow_life(g, p, "Ad Nauseam", mv as i64); // --- ai-flow
         if crate::cardcode::combo_ready(g, p) {
             break; // enough: the combo is in hand
         }
     }
     g.player_mut(p).stat("adnaus_cards", n);
+    crate::t6stats::flow_engine_cards(g, p, "Ad Nauseam", n); // --- ai-flow
     crate::glog!(g, "    Ad Nauseam: {} cards, life now {}", n, g.player(p).life);
     Ok(())
 }

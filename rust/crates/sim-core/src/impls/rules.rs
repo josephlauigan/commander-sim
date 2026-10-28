@@ -724,8 +724,10 @@ fn remora(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         }
     } else if crate::cardcode::spare_after(g, caster, 4) {
         pay(g, caster, 4, "", false)?;
+        crate::t6stats::flow_tax(g, o, "Mystic Remora", true); // --- ai-flow
         return Ok(());
     }
+    crate::t6stats::flow_tax(g, o, "Mystic Remora", false); // --- ai-flow
     draw(g, o, 1, false)
 }
 

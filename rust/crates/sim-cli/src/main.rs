@@ -14,6 +14,7 @@ mod cardinfo;
 mod decks;
 mod explain;
 mod fit;
+mod flow; // --- ai-flow
 mod goldfish;
 mod gf_audit; // --- ai-audit
 mod knobs;
