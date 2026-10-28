@@ -1,0 +1,247 @@
+Play-by-play of goldfish game 195 (seed 500195): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Silence, Thassa's Oracle, Valley Floodcaller, Polluted Delta, Redirect Lightning, Verdant Catacombs, Swan Song
+R1    Scion plays Verdant Catacombs
+R1      cracks Verdant Catacombs for Bayou
+R1    Scion casts Mana Vault
+R1        [Scion decides: Mana Vault 100%, stop 0% -> Mana Vault [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 6 cards in hand, 1 lands
+R2      hand: Silence, Thassa's Oracle, Valley Floodcaller, Polluted Delta, Redirect Lightning, Swan Song
+R2    Scion plays Polluted Delta
+R2      cracks Polluted Delta for Tundra
+R2        [Scion decides: Demonic Tutor 99%, Valley Floodcaller 1%, stop (hold mana) 0% -> Demonic Tutor [search]]
+R2    Scion casts Demonic Tutor
+R2      Scion tutors Demonic Consultation
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 38, 6 cards in hand, 2 lands
+R3      hand: Silence, Thassa's Oracle, Valley Floodcaller, Redirect Lightning, Swan Song, Demonic Consultation
+R3        [Scion decides: stop (hold mana) 72%, Valley Floodcaller 28% -> stop (hold mana) [search]]
+R3        [Scion decides: stop (hold mana) 72%, Valley Floodcaller 28% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4    Scion casts Valley Floodcaller
+R4        [Scion end of turn: Valley Floodcaller 100%, pass 0% -> Valley Floodcaller]
+R4  --- Scion turn 4: life 38, 6 cards in hand, 2 lands
+R4      hand: Silence, Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond
+R4        [Scion attack plan by search: filtered at Goldfish 2]
+R4    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 37, 7 cards in hand, 2 lands
+R5      hand: Silence, Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Mindbreak Trap
+R5        [Scion attack plan by search: filtered at Goldfish 4]
+R5    Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R5      [audit] Scion discards Silence to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 36, 7 cards in hand, 2 lands
+R6      hand: Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Mindbreak Trap, Tainted Pact
+R6        [Scion attack plan by search: filtered at Goldfish 3]
+R6    Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R6      [audit] Scion discards Mindbreak Trap to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 35, 7 cards in hand, 2 lands
+R7      hand: Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Tainted Pact, Force of Will
+R7        [Scion attack plan by search: filtered at Goldfish 3]
+R7    Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 36)
+R7      [audit] Scion discards Tainted Pact to hand size (8 cards in hand; discard_keep would keep it)
+R7  --- Goldfish 2 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 34, 7 cards in hand, 2 lands
+R8      hand: Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher
+R8        [Scion decides: Ignoble Hierarch 59%, stop (hold mana) 41% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 2]
+R8    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R8        [Scion decides: Ignoble Hierarch 59%, stop (hold mana) 41% -> Ignoble Hierarch [search]]
+R8    Scion casts Ignoble Hierarch
+R8  --- Goldfish 2 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 38, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 33, 7 cards in hand, 2 lands
+R9      hand: Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher
+R9        [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R9        [Scion attack plan by search: filtered at Goldfish 4]
+R9    Scion attacks Goldfish 4 with 1 creature(s): 3 damage (life now 35)
+R9        [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R9      [audit] Scion discards Orim's Chant to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 35, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 32, 7 cards in hand, 2 lands
+R10     hand: Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher
+R10       [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 3]
+R10   Scion attacks Goldfish 3 with 1 creature(s): 3 damage (life now 33)
+R10       [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R10     [audit] Scion discards Necropotence to hand size (8 cards in hand)
+R10 --- Goldfish 2 turn 10: life 36, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 35, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 31, 7 cards in hand, 2 lands
+R11     hand: Thassa's Oracle, Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher
+R11       [Scion decides: Hexing Squelcher 79%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: filtered at Goldfish 2]
+R11   Scion attacks Goldfish 2 with 1 creature(s): 3 damage (life now 33)
+R11       [Scion decides: Hexing Squelcher 79%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R11     [audit] Scion discards Redirect Lightning to hand size (8 cards in hand)
+R11 --- Goldfish 2 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 35, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 30, 7 cards in hand, 2 lands
+R12     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher, Flusterstorm
+R12       [Scion decides: Hexing Squelcher 79%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: filtered at Goldfish 4]
+R12   Scion attacks Goldfish 4 with 1 creature(s): 3 damage (life now 32)
+R12       [Scion decides: Hexing Squelcher 79%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R12     [audit] Scion discards Flusterstorm to hand size (8 cards in hand)
+R12 --- Goldfish 2 turn 12: life 33, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 33, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 32, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 29, 7 cards in hand, 2 lands
+R13     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher, Flash Photography
+R13       [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R13       [Scion attack plan by search: filtered at Goldfish 3]
+R13   Scion attacks Goldfish 3 with 1 creature(s): 3 damage (life now 30)
+R13       [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R13     [audit] Scion discards Korvold, Fae-Cursed King to hand size (8 cards in hand)
+R13 --- Goldfish 2 turn 13: life 33, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 30, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 32, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 28, 7 cards in hand, 2 lands
+R14     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Hexing Squelcher, Flash Photography
+R14       [Scion decides: Mystic Remora 51%, Hexing Squelcher 44%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R14       [Scion attack plan by search: filtered at Goldfish 2]
+R14   Scion attacks Goldfish 2 with 1 creature(s): 3 damage (life now 30)
+R14       [Scion decides: Mystic Remora 51%, Hexing Squelcher 44%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R14     [audit] Scion discards Hexing Squelcher to hand size (8 cards in hand)
+R14 --- Goldfish 2 turn 14: life 30, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 3 turn 14: life 30, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 32, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15   Scion casts Mystic Remora
+R15       [Scion end of turn: Mystic Remora 100%, pass 0% -> Mystic Remora]
+R15 --- Scion turn 15: life 27, 6 cards in hand, 2 lands
+R15     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Flash Photography
+R15       [Scion attack plan by search: filtered at Goldfish 4]
+R15   Scion attacks Goldfish 4 with 1 creature(s): 3 damage (life now 29)
+R15 --- Goldfish 2 turn 15: life 30, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 3 turn 15: life 30, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 29, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 26, 7 cards in hand, 2 lands
+R16     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Flash Photography, An Offer You Can't Refuse
+R16   Scion plays Tarnished Citadel
+R16       [Scion attack plan by search: filtered at Goldfish 3]
+R16   Scion attacks Goldfish 3 with 1 creature(s): 3 damage (life now 27)
+R16 --- Goldfish 2 turn 16: life 30, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 3 turn 16: life 27, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 29, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Scion turn 17: life 25, 7 cards in hand, 3 lands
+R17     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Flash Photography, An Offer You Can't Refuse
+R17   Scion plays Bloodstained Mire
+R17     cracks Bloodstained Mire for Volcanic Island
+R17       [Scion attack plan by search: filtered at Goldfish 2]
+R17   Scion attacks Goldfish 2 with 1 creature(s): 3 damage (life now 27)
+R17 --- Goldfish 2 turn 17: life 27, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Goldfish 3 turn 17: life 27, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Goldfish 4 turn 17: life 29, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Scion turn 18: life 23, 7 cards in hand, 4 lands
+R18     hand: Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, Force of Will, Flash Photography, An Offer You Can't Refuse
+R18     Scion sacrifices Mystic Remora (cumulative upkeep 4)
+R18   Scion plays Arid Mesa
+R18     cracks Arid Mesa for Plateau
+R18       [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R18   Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R18   Scion casts Thassa's Oracle
+R18   Scion casts Demonic Consultation
+R18     Scion exiles its library
+R18 *** Goldfish 2 is eliminated (life 27) by Scion
+R18 *** Goldfish 3 is eliminated (life 27) by Scion
+R18 *** Goldfish 4 is eliminated (life 29) by Scion
+R18 *** Scion wins by combo
+Kill: own turn 18 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock)
+  T2  progressed (tutor) | held (payable, not offered): Silence, Swan Song
+  T3  idle | held (payable, not offered): Silence, Swan Song, Demonic Consultation, Lion's Eye Diamond
+  T4  idle | held (payable, not offered): Silence, Swan Song, Demonic Consultation, Lion's Eye Diamond
+  T5  idle | held (payable, not offered): Silence, Swan Song, Demonic Consultation, Lion's Eye Diamond, Tainted Pact
+  T6  idle | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond, Tainted Pact
+  T7  idle | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond, Tainted Pact
+  T8  progressed (fast mana / rock) | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond
+  T9  passed_castable: Hexing Squelcher [other] | held (payable, not offered): Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Orim's Chant
+  T10 passed_castable: Hexing Squelcher [other] | held (payable, not offered): Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond
+  T11 passed_castable: Hexing Squelcher [other] | held (payable, not offered): Redirect Lightning, Swan Song, Demonic Consultation, Lion's Eye Diamond, Flusterstorm
+  T12 passed_castable: Hexing Squelcher [other] | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond, Flusterstorm
+  T13 passed_castable: Hexing Squelcher [other] | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond
+  T14 passed_castable: Hexing Squelcher [other] | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond
+  T15 idle | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond, An Offer You Can't Refuse
+  T16 progressed (land only) | held (payable, not offered): Swan Song, Demonic Consultation, Lion's Eye Diamond, An Offer You Can't Refuse
+  T17 progressed (land only) | held (payable, not offered): Thassa's Oracle, Swan Song, Demonic Consultation, Lion's Eye Diamond, An Offer You Can't Refuse
+  T18 won
+  cleanup discards: Silence [protection], Mindbreak Trap [protection], Tainted Pact [combo piece] (kept by discard_keep), Orim's Chant [protection], Necropotence [draw], Redirect Lightning [other], Flusterstorm [protection], Korvold, Fae-Cursed King [other], Hexing Squelcher [other]
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Valley Floodcaller (1.4); T3 main 2 look-ahead "stop (hold mana)" over Valley Floodcaller (1.4); T8 main 1 look-ahead "stop (hold mana)" over Ignoble Hierarch (2.8); T9 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T9 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T10 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T10 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T11 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T11 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T12 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T12 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T13 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T13 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T14 main 1 look-ahead "stop (hold mana)" over Mystic Remora (4.7); T14 main 2 look-ahead "stop (hold mana)" over Mystic Remora (4.7)
+  crude best case: own turn 5 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with tutors: own turn 5 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 5 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

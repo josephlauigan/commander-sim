@@ -1,0 +1,256 @@
+Play-by-play of goldfish game 6 (seed 500006): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Starting Town, Gemstone Caverns, Pact of Negation, City of Brass, Marsh Flats, Enlightened Tutor, Arid Mesa
+R1    Kraum/Tymna plays City of Brass
+R1        [Kraum/Tymna decides: Enlightened Tutor 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R1        [Kraum/Tymna decides: Enlightened Tutor 100%, stop (hold mana) 0% -> Enlightened Tutor [search]]
+R1    Kraum/Tymna casts Enlightened Tutor
+R1      Kraum/Tymna searches for Mystic Remora
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 39, 6 cards in hand, 1 lands
+R2      hand: Starting Town, Gemstone Caverns, Pact of Negation, Marsh Flats, Arid Mesa, Orim's Chant
+R2        [Kraum/Tymna plays Starting Town [plan: the land drop the plan wants]]
+R2    Kraum/Tymna plays Starting Town
+R2        [Kraum/Tymna decides: Mystic Remora 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2        [Kraum/Tymna decides: Mystic Remora 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 39, 6 cards in hand, 2 lands
+R3      hand: Gemstone Caverns, Pact of Negation, Marsh Flats, Arid Mesa, Orim's Chant, Mystic Remora
+R3        [Kraum/Tymna plays Marsh Flats for Badlands [plan: the land drop the plan wants]]
+R3    Kraum/Tymna plays Marsh Flats
+R3      cracks Marsh Flats for Badlands
+R3        [Kraum/Tymna decides: Tymna the Weaver 55%, Mystic Remora 45%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R3        [Kraum/Tymna decides: Tymna the Weaver 55%, Mystic Remora 45%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 38, 6 cards in hand, 3 lands
+R4      hand: Gemstone Caverns, Pact of Negation, Arid Mesa, Orim's Chant, Mystic Remora, Cavern of Souls
+R4    Kraum/Tymna plays Gemstone Caverns
+R4        [Kraum/Tymna decides: Tymna the Weaver 55%, Mystic Remora 45%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4        [Kraum/Tymna decides: Tymna the Weaver 55%, Mystic Remora 45%, stop (hold mana) 0% -> Tymna the Weaver [search]]
+R4    Kraum/Tymna casts Tymna the Weaver
+R4        [Kraum/Tymna decides: Mystic Remora 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 37, 6 cards in hand, 4 lands
+R5      hand: Pact of Negation, Arid Mesa, Orim's Chant, Mystic Remora, Cavern of Souls, Plateau
+R5    Kraum/Tymna plays Cavern of Souls
+R5        [Kraum/Tymna decides: Kraum, Ludevic's Opus 91%, Mystic Remora 6%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R5    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R5      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R5        [Kraum/Tymna decides: Kraum, Ludevic's Opus 91%, Mystic Remora 6%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kraum/Tymna turn 6: life 38, 7 cards in hand, 5 lands
+R6      hand: Pact of Negation, Arid Mesa, Orim's Chant, Mystic Remora, Plateau, Verdant Catacombs, Misty Rainforest
+R6    Kraum/Tymna plays Plateau
+R6        [Kraum/Tymna decides: Kraum, Ludevic's Opus 68%, Imperial Seal 25%, Mystic Remora 5%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R6        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R6    Kraum/Tymna attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R6      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R6        [Kraum/Tymna decides: Kraum, Ludevic's Opus 65%, Imperial Seal 24%, Mystic Remora 4%, Voice of Victory 4% -> Voice of Victory [search]]
+R6    Kraum/Tymna casts Voice of Victory
+R6        [Kraum/Tymna decides: Imperial Seal 79%, Mystic Remora 14%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kraum/Tymna turn 7: life 39, 7 cards in hand, 6 lands
+R7      hand: Pact of Negation, Arid Mesa, Orim's Chant, Mystic Remora, Verdant Catacombs, Misty Rainforest, Imperial Seal
+R7    Kraum/Tymna plays Misty Rainforest
+R7      cracks Misty Rainforest for Volcanic Island
+R7        [Kraum/Tymna decides: Kraum, Ludevic's Opus 65%, Imperial Seal 24%, stop (hold mana) 7%, Mystic Remora 4% -> Imperial Seal [search]]
+R7    Kraum/Tymna casts Imperial Seal
+R7      Kraum/Tymna puts Thassa's Oracle on top of their library
+R7        [Kraum/Tymna decides: Kraum, Ludevic's Opus 85%, stop (hold mana) 9%, Mystic Remora 6% -> stop (hold mana) [search]]
+R7        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R7      Voice of Victory mobilizes: two tapped and attacking Warriors
+R7    Kraum/Tymna attacks Goldfish 3 with 4 creature(s): 5 damage (life now 35)
+R7      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R7        [Kraum/Tymna decides: Kraum, Ludevic's Opus 85%, stop (hold mana) 9%, Mystic Remora 6% -> Mystic Remora [search]]
+R7    Kraum/Tymna casts Mystic Remora
+R7        [Kraum/Tymna decides: Kraum, Ludevic's Opus 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 35, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Kraum/Tymna turn 8: life 37, 6 cards in hand, 7 lands
+R8      hand: Pact of Negation, Arid Mesa, Orim's Chant, Verdant Catacombs, Force of Negation, Thassa's Oracle
+R8    Kraum/Tymna plays Verdant Catacombs
+R8      cracks Verdant Catacombs for Underground Sea
+R8        [Kraum/Tymna decides: Kraum, Ludevic's Opus 89%, stop (hold mana) 10%, Gamble 2% -> Gamble [search]]
+R8    Kraum/Tymna casts Gamble
+R8      Kraum/Tymna tutors Tainted Pact
+R8      Gamble discards Thassa's Oracle
+R8        [Kraum/Tymna decides: Kraum, Ludevic's Opus 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R8        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R8      Voice of Victory mobilizes: two tapped and attacking Warriors
+R8    Kraum/Tymna attacks Goldfish 2 with 4 creature(s): 5 damage (life now 33)
+R8      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R8        [Kraum/Tymna decides: Kraum, Ludevic's Opus 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R8  --- Goldfish 2 turn 8: life 33, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 35, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 38, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Kraum/Tymna turn 9: life 37, 6 cards in hand, 8 lands
+R9      hand: Pact of Negation, Arid Mesa, Orim's Chant, Force of Negation, Tainted Pact, Cabal Ritual
+R9    Kraum/Tymna plays Arid Mesa
+R9      cracks Arid Mesa for Tundra
+R9        [Kraum/Tymna decides: Kraum, Ludevic's Opus 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R9        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R9      Voice of Victory mobilizes: two tapped and attacking Warriors
+R9    Kraum/Tymna attacks Goldfish 4 with 4 creature(s): 5 damage (life now 33)
+R9      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R9        [Kraum/Tymna decides: Kraum, Ludevic's Opus 89%, stop (hold mana) 10%, Orcish Bowmasters 1% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 35, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10   Kraum/Tymna casts Orcish Bowmasters
+R10       [Kraum/Tymna end of turn: Orcish Bowmasters 100%, pass 0% -> Orcish Bowmasters]
+R10 --- Kraum/Tymna turn 10: life 37, 6 cards in hand, 9 lands
+R10     hand: Pact of Negation, Orim's Chant, Force of Negation, Tainted Pact, Cabal Ritual, Final Fortune
+R10       [Kraum/Tymna decides: Kraum, Ludevic's Opus 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R10       [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R10     Voice of Victory mobilizes: two tapped and attacking Warriors
+R10   Kraum/Tymna attacks Goldfish 3 with 6 creature(s): 7 damage (life now 27)
+R10     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R10       [Kraum/Tymna decides: Kraum, Ludevic's Opus 68%, Diabolic Intent 25%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R10     [audit] Kraum/Tymna discards Orim's Chant to hand size (8 cards in hand)
+R10 --- Goldfish 2 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 27, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Kraum/Tymna turn 11: life 38, 7 cards in hand, 9 lands
+R11     hand: Pact of Negation, Force of Negation, Tainted Pact, Cabal Ritual, Final Fortune, Demonic Consultation, Diabolic Intent
+R11     Kraum/Tymna sacrifices Mystic Remora (cumulative upkeep 4)
+R11       [Kraum/Tymna decides: Esper Sentinel 80%, Kraum, Ludevic's Opus 13%, Diabolic Intent 5%, stop (hold mana) 1% -> Diabolic Intent [search]]
+R11   Kraum/Tymna casts Diabolic Intent
+R11     Kraum/Tymna tutors Ad Nauseam
+R11       [Kraum/Tymna decides: combo: Ad Nauseam into a win [plan: combo: Ad Nauseam into a win; wins this turn]]
+R11   Kraum/Tymna goes for Ad Nauseam into a win
+R11   Kraum/Tymna casts Ad Nauseam
+R11     Ad Nauseam: 13 cards, life now 15
+R11     Ad Nauseam found no line it can pay for
+R11     ...Ad Nauseam into a win stops at step 2 (play the line the cards drawn made ready)
+R11       [Kraum/Tymna decides: Chrome Mox 35%, Simian Spirit Guide 35%, Esper Sentinel 21%, Mox Opal 4% -> Cabal Ritual [search]]
+R11   Kraum/Tymna casts Cabal Ritual
+R11       [Kraum/Tymna decides: Chrome Mox 53%, Esper Sentinel 32%, Mox Opal 6%, Kraum, Ludevic's Opus 5% -> Intuition [search]]
+R11   Kraum/Tymna casts Intuition
+R11     Kraum/Tymna gets Demonic Tutor; Goldfish 2 bins Smothering Tithe, Vampiric Tutor
+R11       [Kraum/Tymna decides: Chrome Mox 56%, Esper Sentinel 34%, Mox Opal 7%, Demonic Tutor 2% -> Demonic Tutor [search]]
+R11   Kraum/Tymna casts Demonic Tutor
+R11     Kraum/Tymna tutors Underworld Breach
+R11       [Kraum/Tymna decides: Chrome Mox 58%, Esper Sentinel 35%, Mox Opal 7%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R11   Kraum/Tymna plays Exotic Orchard
+R11       [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R11     Voice of Victory mobilizes: two tapped and attacking Warriors
+R11   Kraum/Tymna attacks Goldfish 2 with 5 creature(s): 6 damage (life now 27)
+R11     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R11       [Kraum/Tymna decides: Chrome Mox 57%, Esper Sentinel 35%, Mox Opal 7%, Wishclaw Talisman 1% -> Chrome Mox [search]]
+R11   Kraum/Tymna casts Chrome Mox
+R11     Chrome Mox imprints Final Fortune
+R11       [Kraum/Tymna decides: Esper Sentinel 81%, Mox Opal 16%, Wishclaw Talisman 2%, stop (hold mana) 0% -> Esper Sentinel [search]]
+R11   Kraum/Tymna casts Esper Sentinel
+R11       [Kraum/Tymna decides: Mox Opal 97%, stop (hold mana) 3% -> Mox Opal [search]]
+R11   Kraum/Tymna casts Mox Opal
+R11       [Kraum/Tymna decides: Wishclaw Talisman 77%, stop (hold mana) 13%, Valley Floodcaller 7%, Culling the Weak 2% -> Valley Floodcaller [search]]
+R11   Kraum/Tymna casts Valley Floodcaller
+R11     [audit] Kraum/Tymna discards Tainted Pact to hand size (13 cards in hand; discard_keep would keep it)
+R11     [audit] Kraum/Tymna discards Sevinne's Reclamation to hand size (12 cards in hand)
+R11     [audit] Kraum/Tymna discards Silence to hand size (11 cards in hand)
+R11     [audit] Kraum/Tymna discards Culling the Weak to hand size (10 cards in hand)
+R11     [audit] Kraum/Tymna discards Into the Flood Maw to hand size (9 cards in hand)
+R11     [audit] Kraum/Tymna discards Wishclaw Talisman to hand size (8 cards in hand)
+R11 --- Goldfish 2 turn 11: life 27, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 27, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Kraum/Tymna turn 12: life 16, 7 cards in hand, 10 lands
+R12     hand: Pact of Negation, Force of Negation, Demonic Consultation, Command Tower, Brain Freeze, Mindbreak Trap, Underworld Breach
+R12   Kraum/Tymna plays Command Tower
+R12       [Kraum/Tymna decides: Kraum, Ludevic's Opus 80%, Tataru Taru 11%, stop (hold mana) 9% -> Tataru Taru [search]]
+R12   Kraum/Tymna casts Tataru Taru
+R12       [Kraum/Tymna decides: Kraum, Ludevic's Opus 82%, Beseech the Mirror 9%, stop (hold mana) 9% -> Beseech the Mirror [search]]
+R12   Kraum/Tymna casts Beseech the Mirror
+R12     Kraum/Tymna tutors Lion's Eye Diamond
+R12       [Kraum/Tymna decides: combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) [plan: combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish); wins this turn]]
+R12   Kraum/Tymna goes for Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish)
+R12   Kraum/Tymna casts Underworld Breach
+R12   Kraum/Tymna casts Lion's Eye Diamond
+R12   Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R12   Kraum/Tymna casts Brain Freeze
+R12     Brain Freeze: 5 copies, 3 cards each
+R12   Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R12   Kraum/Tymna casts Lion's Eye Diamond
+R12   Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R12   Kraum/Tymna casts Brain Freeze
+R12     Brain Freeze: 7 copies, 3 cards each
+R12   Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R12   Kraum/Tymna casts Lion's Eye Diamond
+R12   Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R12   Kraum/Tymna casts Brain Freeze
+R12     Brain Freeze: 9 copies, 3 cards each
+R12   Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R12   Kraum/Tymna casts Lion's Eye Diamond
+R12   Kraum/Tymna escapes Thassa's Oracle with Underworld Breach
+R12   Kraum/Tymna casts Thassa's Oracle
+R12 *** Goldfish 2 is eliminated (life 27) by Kraum/Tymna
+R12 *** Goldfish 3 is eliminated (life 27) by Kraum/Tymna
+R12 *** Goldfish 4 is eliminated (life 33) by Kraum/Tymna
+R12 *** Kraum/Tymna wins by combo
+Kill: own turn 12 (combo (unnamed))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (tutor) | held (payable, not offered): Pact of Negation, Orim's Chant
+  T2  passed_castable: Mystic Remora [draw] | held (payable, not offered): Pact of Negation, Orim's Chant
+  T3  passed_castable: Mystic Remora [draw] | held (payable, not offered): Pact of Negation, Orim's Chant
+  T4  passed_castable: Mystic Remora [draw] | held (payable, not offered): Pact of Negation, Orim's Chant
+  T5  passed_castable: Mystic Remora [draw] | held (payable, not offered): Pact of Negation, Orim's Chant
+  T6  passed_castable: Mystic Remora [draw], Imperial Seal [tutor] | held (payable, not offered): Pact of Negation, Orim's Chant
+  T7  progressed (tutor) | held (payable, not offered): Pact of Negation, Orim's Chant, Force of Negation, Thassa's Oracle
+  T8  progressed (tutor) | held (payable, not offered): Pact of Negation, Orim's Chant, Force of Negation, Thassa's Oracle, Tainted Pact, Cabal Ritual
+  T9  progressed (land only) | held (payable, not offered): Pact of Negation, Orim's Chant, Force of Negation, Tainted Pact, Cabal Ritual, Final Fortune
+  T10 passed_castable: Diabolic Intent [tutor] | held (payable, not offered): Pact of Negation, Orim's Chant, Force of Negation, Tainted Pact, Cabal Ritual, Final Fortune, Demonic Consultation
+  T11 passed_castable: Culling the Weak [ritual] | held (payable, not offered): Pact of Negation, Force of Negation, Tainted Pact, Cabal Ritual, Final Fortune, Demonic Consultation, Ad Nauseam, Sevinne's Reclamation, Brain Freeze, Into the Flood Maw, Mindbreak Trap, Underworld Breach, Silence
+  T12 won
+  cleanup discards: Orim's Chant [protection], Tainted Pact [combo piece] (kept by discard_keep), Sevinne's Reclamation [other], Silence [protection], Culling the Weak [ritual], Into the Flood Maw [other], Wishclaw Talisman [tutor]
+  stops with another option offered: T1 main 1 look-ahead "stop (hold mana)" over Enlightened Tutor (6.2); T2 main 1 look-ahead "stop (hold mana)" over Mystic Remora (8.4); T2 main 2 look-ahead "stop (hold mana)" over Mystic Remora (8.4); T3 main 1 look-ahead "stop (hold mana)" over Tymna the Weaver (8.6); T3 main 2 look-ahead "stop (hold mana)" over Tymna the Weaver (8.6); T4 main 1 look-ahead "stop (hold mana)" over Tymna the Weaver (8.6); T4 main 2 look-ahead "stop (hold mana)" over Mystic Remora (8.4); T5 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T5 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T6 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T6 main 2 look-ahead "stop (hold mana)" over Imperial Seal (6.2); T7 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T7 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T8 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T8 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T9 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T9 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T10 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T10 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T11 main 1 look-ahead "stop (hold mana)" over Chrome Mox (9.5)
+  crude best case: none
+  crude best case with tutors: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 10 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

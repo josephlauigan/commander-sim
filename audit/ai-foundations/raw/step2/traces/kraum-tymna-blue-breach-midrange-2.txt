@@ -1,0 +1,112 @@
+Play-by-play of goldfish game 2 (seed 500002): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Brain Freeze, Underground Sea, Arid Mesa, Scalding Tarn, Lotho, Corrupt Shirriff, Simian Spirit Guide, Mental Misstep
+R1    Kraum/Tymna plays Scalding Tarn
+R1      cracks Scalding Tarn for Badlands
+R1    Kraum/Tymna casts Mox Diamond
+R1        [Kraum/Tymna decides: Mox Diamond 100%, stop (hold mana) 0% -> Mox Diamond [must]]
+R1        [Kraum/Tymna decides: Simian Spirit Guide 71%, Tymna the Weaver 29%, Lotho, Corrupt Shirriff 1%, stop (hold mana) 0% -> Simian Spirit Guide [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 39, 4 cards in hand, 1 lands
+R2      hand: Brain Freeze, Underground Sea, Lotho, Corrupt Shirriff, Mental Misstep
+R2    Kraum/Tymna plays Underground Sea
+R2        [Kraum/Tymna decides: Tymna the Weaver 90%, Lotho, Corrupt Shirriff 10%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2        [Kraum/Tymna decides: Tymna the Weaver 90%, Lotho, Corrupt Shirriff 10%, stop (hold mana) 0% -> Tymna the Weaver [search]]
+R2    Kraum/Tymna casts Tymna the Weaver
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 39, 4 cards in hand, 2 lands
+R3      hand: Brain Freeze, Lotho, Corrupt Shirriff, Mental Misstep, Force of Negation
+R3        [Kraum/Tymna decides: Lotho, Corrupt Shirriff 52%, Voice of Victory 29%, stop (hold mana) 19% -> stop (hold mana) [search]]
+R3        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R3    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R3        [Kraum/Tymna decides: Lotho, Corrupt Shirriff 52%, Voice of Victory 29%, stop (hold mana) 19% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 40, 6 cards in hand, 2 lands
+R4      hand: Brain Freeze, Lotho, Corrupt Shirriff, Mental Misstep, Force of Negation, Voice of Victory, Starting Town
+R4    Kraum/Tymna plays Starting Town
+R4        [Kraum/Tymna decides: Lotho, Corrupt Shirriff 30%, stop (hold mana) 30%, Ragavan, Nimble Pilferer 20%, Voice of Victory 17% -> Voice of Victory [search]]
+R4    Kraum/Tymna casts Voice of Victory
+R4        [Kraum/Tymna decides: Ragavan, Nimble Pilferer 57%, stop (hold mana) 24%, Lotho, Corrupt Shirriff 12%, dash Ragavan 7% -> stop (hold mana) [search]]
+R4        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R4    Kraum/Tymna attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R4        [Kraum/Tymna decides: Ragavan, Nimble Pilferer 43%, Exhibition Tidecaller 29%, stop (hold mana) 18%, Lotho, Corrupt Shirriff 9% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 41, 6 cards in hand, 3 lands
+R5      hand: Brain Freeze, Lotho, Corrupt Shirriff, Mental Misstep, Force of Negation, Ragavan, Nimble Pilferer, Exhibition Tidecaller
+R5        [Kraum/Tymna decides: Dark Ritual 69%, Lotho, Corrupt Shirriff 10%, stop (hold mana) 10%, Ragavan, Nimble Pilferer 7% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R5      Voice of Victory mobilizes: two tapped and attacking Warriors
+R5    Kraum/Tymna attacks Goldfish 4 with 4 creature(s): 5 damage (life now 35)
+R5      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R5        [Kraum/Tymna decides: Dark Ritual 69%, Lotho, Corrupt Shirriff 10%, stop (hold mana) 10%, Ragavan, Nimble Pilferer 7% -> Ragavan, Nimble Pilferer [search]]
+R5    Kraum/Tymna casts Ragavan, Nimble Pilferer
+R5        [Kraum/Tymna decides: Dark Ritual 74%, Lotho, Corrupt Shirriff 11%, stop (hold mana) 11%, Exhibition Tidecaller 5% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 35, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kraum/Tymna turn 6: life 42, 7 cards in hand, 3 lands
+R6      hand: Brain Freeze, Lotho, Corrupt Shirriff, Mental Misstep, Force of Negation, Exhibition Tidecaller, Dark Ritual, Thassa's Oracle
+R6        [Kraum/Tymna decides: Dark Ritual 74%, Lotho, Corrupt Shirriff 11%, stop (hold mana) 11%, Exhibition Tidecaller 5% -> Lotho, Corrupt Shirriff [search]]
+R6    Kraum/Tymna casts Lotho, Corrupt Shirriff
+R6        [Kraum/Tymna decides: Dark Ritual 83%, stop (hold mana) 12%, Exhibition Tidecaller 5% -> Exhibition Tidecaller [search]]
+R6    Kraum/Tymna casts Exhibition Tidecaller
+R6        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R6      Voice of Victory mobilizes: two tapped and attacking Warriors
+R6    Kraum/Tymna attacks Goldfish 2 with 5 creature(s): 7 damage (life now 31)
+R6      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R6        [Kraum/Tymna decides: Diabolic Intent for Demonic Consultation [plan: Diabolic Intent for Demonic Consultation -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R6    Kraum/Tymna casts Diabolic Intent
+R6      Exhibition Tidecaller: Goldfish 3 mills 3
+R6      Kraum/Tymna tutors Demonic Consultation
+R6        [Kraum/Tymna decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R6      Kraum/Tymna casts Dark Ritual for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R6    Kraum/Tymna casts Dark Ritual
+R6      Exhibition Tidecaller: Goldfish 3 mills 3
+R6    Kraum/Tymna goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R6    Kraum/Tymna casts Thassa's Oracle
+R6    Kraum/Tymna casts Demonic Consultation
+R6      Exhibition Tidecaller: Goldfish 3 mills 3
+R6      Kraum/Tymna exiles its library
+R6  *** Goldfish 2 is eliminated (life 31) by Kraum/Tymna
+R6  *** Goldfish 3 is eliminated (life 38) by Kraum/Tymna
+R6  *** Goldfish 4 is eliminated (life 35) by Kraum/Tymna
+R6  *** Kraum/Tymna wins by combo
+Kill: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Mental Misstep, Brain Freeze
+  T2  passed_castable: Lotho, Corrupt Shirriff [other] | held (payable, not offered): Brain Freeze, Mental Misstep, Force of Negation
+  T3  passed_castable: Lotho, Corrupt Shirriff [other], Voice of Victory [other] | held (payable, not offered): Brain Freeze, Mental Misstep, Force of Negation
+  T4  passed_castable: Lotho, Corrupt Shirriff [other], Ragavan, Nimble Pilferer [other], Exhibition Tidecaller [other] | held (payable, not offered): Brain Freeze, Mental Misstep, Force of Negation
+  T5  passed_castable: Lotho, Corrupt Shirriff [other], Exhibition Tidecaller [other], Dark Ritual [ritual] | held (payable, not offered): Brain Freeze, Mental Misstep, Force of Negation, Thassa's Oracle
+  T6  won
+  cleanup discards: none
+  stops with another option offered: T2 main 1 look-ahead "stop (hold mana)" over Tymna the Weaver (7.2); T3 main 1 look-ahead "stop (hold mana)" over Lotho, Corrupt Shirriff (5.0); T3 main 2 look-ahead "stop (hold mana)" over Lotho, Corrupt Shirriff (5.0); T4 main 1 look-ahead "stop (hold mana)" over Ragavan, Nimble Pilferer (4.6); T4 main 2 look-ahead "stop (hold mana)" over Ragavan, Nimble Pilferer (4.6); T5 main 1 look-ahead "stop (hold mana)" over Dark Ritual (7.0); T5 main 2 look-ahead "stop (hold mana)" over Dark Ritual (7.0)
+  crude best case: none
+  crude best case with tutors: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

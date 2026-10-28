@@ -1,0 +1,281 @@
+Play-by-play of goldfish game 6 (seed 500006): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Emergence Zone, Mana Confluence, Mana Vault, Flash Photography, Arcane Signet, Force of Will, Simian Spirit Guide
+R1    Scion plays Mana Confluence
+R1    Scion casts Mana Vault
+R1        [Scion decides: Mana Vault 57%, Arcane Signet 43%, stop (hold mana) 0% -> Mana Vault [must]]
+R1    Scion casts Arcane Signet
+R1        [Scion decides: Arcane Signet 100%, stop (hold mana) 0% -> Arcane Signet [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 4 cards in hand, 1 lands
+R2      hand: Emergence Zone, Flash Photography, Force of Will, Pact of Negation
+R2    Scion plays Emergence Zone
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 39, 4 cards in hand, 2 lands
+R3      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 38, 5 cards in hand, 2 lands
+R4      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer, Silence
+R4        [Scion decides: Ignoble Hierarch 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4        [Scion decides: Ignoble Hierarch 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5    Scion sacrifices Emergence Zone: spells can be cast as though they had flash
+R5        [Scion end of turn: Emergence Zone 92%, pass 8% -> Emergence Zone]
+R5    Scion casts Ignoble Hierarch
+R5        [Scion end of turn: Ignoble Hierarch 100%, pass 0% -> Ignoble Hierarch]
+R5  --- Scion turn 5: life 37, 5 cards in hand, 1 lands
+R5      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer, Silence
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 36, 6 cards in hand, 1 lands
+R6      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer, Silence, Mindbreak Trap
+R6        [Scion decides: Chrome Mox 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Scion decides: Chrome Mox 100%, stop (hold mana) 0% -> Chrome Mox [search]]
+R6    Scion casts Chrome Mox
+R6      Chrome Mox imprints Veil of Summer
+R6        [Scion decides: Flash Photography 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Scion casts Flash Photography -> Mana Vault (Scion)
+R7      Flash Photography: a token copy of Mana Vault
+R7        [Scion end of turn: Flash Photography (flash, copy Mana Vault) 97%, pass 3% -> Flash Photography (flash, copy Mana Vault)]
+R7  --- Scion turn 7: life 35, 4 cards in hand, 1 lands
+R7      hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap
+R7        [Scion decides: Dark Ritual 94%, Flash Photography (flashback) 5%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R7        [Scion decides: Dark Ritual 94%, Flash Photography (flashback) 5%, stop (hold mana) 1% -> Dark Ritual [search]]
+R7    Scion casts Dark Ritual
+R7        [Scion decides: Scion of the Ur-Dragon 96%, Flash Photography (flashback) 4%, stop (hold mana) 1% -> Scion of the Ur-Dragon [search]]
+R7    Scion casts Scion of the Ur-Dragon
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 34, 4 cards in hand, 1 lands
+R8      hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap
+R8    Scion plays Scrubland
+R8        [Scion decides: Flash Photography (flashback) 71%, Scion of the Ur-Dragon: become Ancient Copper Dragon 19%, stop (hold mana) 9% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R8    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R8      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R8        [Scion decides: Flash Photography (flashback) 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 2]
+R8      Ancient Copper Dragon rolls 16: 16 Treasures
+R8    Scion attacks Goldfish 2 with 1 creature(s): 7 damage (life now 33)
+R8        [Scion decides: Flash Photography (flashback) 94%, stop (hold mana) 6% -> Flash Photography (flashback) [search]]
+R8    Scion casts Flash Photography
+R8      Flash Photography: a token copy of Ancient Copper Dragon
+R8  --- Goldfish 2 turn 8: life 33, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 33, 4 cards in hand, 2 lands
+R9      hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap
+R9    Scion plays Ancient Tomb
+R9        [Scion decides: stop (hold mana) 78%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 22% -> Scion of the Ur-Dragon: become Korvold, Fae-Cursed King [search]]
+R9    Scion activates Scion of the Ur-Dragon: search for Korvold, Fae-Cursed King
+R9      Scion of the Ur-Dragon becomes a copy of Korvold, Fae-Cursed King
+R9        [Scion attack plan by search: filtered at Goldfish 4]
+R9      Ancient Copper Dragon rolls 20: 20 Treasures
+R9    Scion attacks Goldfish 4 with 2 creature(s): 11 damage (life now 29)
+R9        [Scion decides: Borne Upon a Wind 79%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 29, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10   Scion casts Borne Upon a Wind
+R10       [Scion end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R10 --- Scion turn 10: life 31, 5 cards in hand, 3 lands
+R10     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Scalding Tarn
+R10       [Scion plays Scalding Tarn for Tropical Island [plan: the land drop the plan wants]]
+R10   Scion plays Scalding Tarn
+R10     cracks Scalding Tarn for Tropical Island
+R10       [Scion attack plan by search: filtered at Goldfish 3]
+R10     Ancient Copper Dragon rolls 19: 19 Treasures
+R10   Scion attacks Goldfish 3 with 2 creature(s): 11 damage (life now 29)
+R10 --- Goldfish 2 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 29, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 29, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 28, 5 cards in hand, 4 lands
+R11     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Plateau
+R11   Scion plays Plateau
+R11       [Scion decides: Rhystic Study 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: filtered at Goldfish 2]
+R11     Ancient Copper Dragon rolls 5: 5 Treasures
+R11   Scion attacks Goldfish 2 with 2 creature(s): 11 damage (life now 22)
+R11       [Scion decides: Rhystic Study 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R11 --- Goldfish 2 turn 11: life 22, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 29, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 29, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 26, 5 cards in hand, 5 lands
+R12     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Rhystic Study
+R12       [Scion decides: Rhystic Study 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: filtered at Goldfish 2]
+R12     Ancient Copper Dragon rolls 9: 9 Treasures
+R12   Scion attacks Goldfish 2 with 2 creature(s): 11 damage (life now 11)
+R12       [Scion decides: Rhystic Study 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R12 --- Goldfish 2 turn 12: life 11, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 29, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 29, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 24, 6 cards in hand, 5 lands
+R13     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Rhystic Study, An Offer You Can't Refuse
+R13   Scion plays Bloodstained Mire
+R13     cracks Bloodstained Mire for Badlands
+R13       [Scion decides: Rhystic Study 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R13       [Scion attack plan by search: filtered at Goldfish 2]
+R13 *** Goldfish 2 is eliminated (life 0) by Scion
+R13     Ancient Copper Dragon rolls 7: 7 Treasures
+R13   Scion attacks Goldfish 2 with 2 creature(s): 11 damage (life now 0)
+R13       [Scion decides: Rhystic Study 72%, stop (hold mana) 28% -> stop (hold mana) [search]]
+R13 --- Goldfish 3 turn 13: life 29, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 29, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 21, 6 cards in hand, 6 lands
+R14     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Rhystic Study, An Offer You Can't Refuse
+R14       [Scion decides: Hexing Squelcher 52%, Rhystic Study 35%, stop (hold mana) 13% -> stop (hold mana) [search]]
+R14       [Scion attack plan by search: filtered at Goldfish 3]
+R14     Ancient Copper Dragon rolls 12: 12 Treasures
+R14   Scion attacks Goldfish 3 with 2 creature(s): 11 damage (life now 18)
+R14       [Scion decides: Hexing Squelcher 52%, Rhystic Study 35%, stop (hold mana) 13% -> stop (hold mana) [search]]
+R14 --- Goldfish 3 turn 14: life 18, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 29, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 19, 7 cards in hand, 6 lands
+R15     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Rhystic Study, An Offer You Can't Refuse, Hexing Squelcher
+R15     Scion pays {4} to untap Mana Vault
+R15     Scion pays {4} to untap Mana Vault
+R15       [Scion decides: Sol Ring 51%, Hexing Squelcher 25%, Rhystic Study 17%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R15       [Scion attack plan by search: filtered at Goldfish 3]
+R15     Ancient Copper Dragon rolls 14: 14 Treasures
+R15   Scion attacks Goldfish 3 with 2 creature(s): 11 damage (life now 7)
+R15       [Scion decides: Sol Ring 51%, Hexing Squelcher 25%, Rhystic Study 17%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R15     [audit] Scion discards Silence to hand size (8 cards in hand)
+R15 --- Goldfish 3 turn 15: life 7, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 29, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 18, 7 cards in hand, 6 lands
+R16     hand: Force of Will, Pact of Negation, Mindbreak Trap, Rhystic Study, An Offer You Can't Refuse, Hexing Squelcher, Sol Ring
+R16     Scion pays {4} to untap Mana Vault
+R16     Scion pays {4} to untap Mana Vault
+R16       [Scion decides: Sol Ring 42%, Hexing Squelcher 30%, Rhystic Study 20%, stop (hold mana) 8% -> stop (hold mana) [search]]
+R16       [Scion attack plan by search: all at Goldfish 4]
+R16     Ancient Copper Dragon rolls 20: 20 Treasures
+R16   Scion attacks Goldfish 4 with 2 creature(s): 11 damage (life now 18)
+R16       [Scion decides: Sol Ring 42%, Hexing Squelcher 30%, Rhystic Study 20%, stop (hold mana) 8% -> stop (hold mana) [search]]
+R16     [audit] Scion discards Rhystic Study to hand size (8 cards in hand)
+R16 --- Goldfish 3 turn 16: life 7, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 18, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Scion turn 17: life 17, 7 cards in hand, 6 lands
+R17     hand: Force of Will, Pact of Negation, Mindbreak Trap, An Offer You Can't Refuse, Hexing Squelcher, Sol Ring, Underworld Breach
+R17     Scion pays {4} to untap Mana Vault
+R17     Scion pays {4} to untap Mana Vault
+R17   Scion plays Bayou
+R17       [Scion decides: Sol Ring 44%, Hexing Squelcher 44%, stop (hold mana) 11% -> stop (hold mana) [search]]
+R17       [Scion attack plan by search: filtered at Goldfish 3]
+R17 *** Goldfish 3 is eliminated (life -4) by Scion
+R17     Ancient Copper Dragon rolls 2: 2 Treasures
+R17   Scion attacks Goldfish 3 with 2 creature(s): 11 damage (life now -4)
+R17       [Scion decides: Sol Ring 44%, Hexing Squelcher 44%, stop (hold mana) 11% -> stop (hold mana) [search]]
+R17 --- Goldfish 4 turn 17: life 18, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Scion turn 18: life 16, 7 cards in hand, 7 lands
+R18     hand: Force of Will, Pact of Negation, Mindbreak Trap, An Offer You Can't Refuse, Hexing Squelcher, Sol Ring, Underworld Breach
+R18     Scion pays {4} to untap Mana Vault
+R18     Scion pays {4} to untap Mana Vault
+R18       [Scion decides: Hexing Squelcher 46%, Sol Ring 33%, stop (hold mana) 12%, Noxious Revival 9% -> Hexing Squelcher [search]]
+R18   Scion casts Hexing Squelcher
+R18       [Scion decides: Sol Ring 60%, stop (hold mana) 22%, Noxious Revival 17% -> Sol Ring [search]]
+R18   Scion casts Sol Ring
+R18       [Scion decides: stop (hold mana) 56%, Noxious Revival 44% -> Noxious Revival [search]]
+R18   Scion casts Noxious Revival
+R18     Scion puts Ancient Copper Dragon on top of its library (Noxious Revival)
+R18       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R18   Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R18     Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R18       [Scion attack plan by search: filtered at Goldfish 4]
+R18     Ancient Copper Dragon rolls 16: 16 Treasures
+R18     Ancient Copper Dragon rolls 20: 20 Treasures
+R18   Scion attacks Goldfish 4 with 2 creature(s): 13 damage (life now 5)
+R18 --- Goldfish 4 turn 18: life 5, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Scion turn 19: life 15, 5 cards in hand, 7 lands
+R19     hand: Force of Will, Pact of Negation, Mindbreak Trap, An Offer You Can't Refuse, Underworld Breach
+R19     Scion pays {4} to untap Mana Vault
+R19     Scion pays {4} to untap Mana Vault
+R19   Scion plays Savannah
+R19       [Scion attack plan by search: filtered at Goldfish 4]
+R19 *** Goldfish 4 is eliminated (life -8) by Scion
+R19   Scion attacks Goldfish 4 with 3 creature(s): 13 damage (life now -8)
+Kill: own turn 19 (commander damage)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Pact of Negation
+  T2  mana_short | held (payable, not offered): Pact of Negation, Veil of Summer
+  T3  mana_short | held (payable, not offered): Pact of Negation, Veil of Summer, Silence
+  T4  idle | held (payable, not offered): Pact of Negation, Veil of Summer, Silence
+  T5  mana_short | held (payable, not offered): Pact of Negation, Veil of Summer, Silence
+  T6  passed_castable: Flash Photography [other] | held (payable, not offered): Pact of Negation, Veil of Summer, Silence, Mindbreak Trap
+  T7  progressed (combo piece) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T8  progressed (other) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T9  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T10 mana_short | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T11 passed_castable: Rhystic Study [draw] | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T12 passed_castable: Rhystic Study [draw] | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, An Offer You Can't Refuse
+  T13 passed_castable: Rhystic Study [draw] | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, An Offer You Can't Refuse
+  T14 passed_castable: Rhystic Study [draw], Hexing Squelcher [other] | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, An Offer You Can't Refuse
+  T15 passed_castable: Rhystic Study [draw], Hexing Squelcher [other], Sol Ring [fast mana / rock] | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, An Offer You Can't Refuse
+  T16 passed_castable: Rhystic Study [draw], Hexing Squelcher [other], Sol Ring [fast mana / rock] | held (payable, not offered): Force of Will, Pact of Negation, Mindbreak Trap, An Offer You Can't Refuse, Underworld Breach
+  T17 passed_castable: Hexing Squelcher [other], Sol Ring [fast mana / rock] | held (payable, not offered): Force of Will, Pact of Negation, Mindbreak Trap, An Offer You Can't Refuse, Underworld Breach
+  T18 progressed (fast mana / rock) | held (payable, not offered): Force of Will, Pact of Negation, Mindbreak Trap, An Offer You Can't Refuse, Underworld Breach
+  T19 won
+  cleanup discards: Silence [protection], Rhystic Study [draw]
+  stops with another option offered: T4 main 1 look-ahead "stop (hold mana)" over Ignoble Hierarch (10.0); T4 main 2 look-ahead "stop (hold mana)" over Ignoble Hierarch (10.0); T6 main 1 look-ahead "stop (hold mana)" over Chrome Mox (8.2); T6 main 2 look-ahead "stop (hold mana)" over Flash Photography (5.8); T7 main 1 look-ahead "stop (hold mana)" over Dark Ritual (8.2); T8 main 1 look-ahead "stop (hold mana)" over Flash Photography (flashback) (6.0); T9 main 2 look-ahead "stop (hold mana)" over Borne Upon a Wind (4.6); T11 main 1 look-ahead "stop (hold mana)" over Rhystic Study (4.8); T11 main 2 look-ahead "stop (hold mana)" over Rhystic Study (4.8); T12 main 1 look-ahead "stop (hold mana)" over Rhystic Study (4.8); T12 main 2 look-ahead "stop (hold mana)" over Rhystic Study (4.8); T13 main 1 look-ahead "stop (hold mana)" over Rhystic Study (4.8); T13 main 2 look-ahead "stop (hold mana)" over Rhystic Study (4.2); T14 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T14 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T15 main 1 look-ahead "stop (hold mana)" over Sol Ring (5.3); T15 main 2 look-ahead "stop (hold mana)" over Sol Ring (5.3); T16 main 1 look-ahead "stop (hold mana)" over Sol Ring (5.0); T16 main 2 look-ahead "stop (hold mana)" over Sol Ring (5.0); T17 main 1 look-ahead "stop (hold mana)" over Sol Ring (4.6); T17 main 2 look-ahead "stop (hold mana)" over Sol Ring (4.6)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

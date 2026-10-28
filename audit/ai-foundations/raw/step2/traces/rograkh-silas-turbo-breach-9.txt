@@ -1,0 +1,134 @@
+Play-by-play of goldfish game 9 (seed 500009): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Jeska's Will, Polluted Delta, Beseech the Mirror, Snapback, Mox Amber, Wheel of Fortune, Mental Misstep
+R1    Rograkh/Silas plays Polluted Delta
+R1      cracks Polluted Delta for Undercity Sewers
+R1    Rograkh/Silas casts Mox Amber
+R1        [Rograkh/Silas decides: Mox Amber 100%, stop (hold mana) 0% -> Mox Amber [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 39, 6 cards in hand, 1 lands
+R2      hand: Jeska's Will, Beseech the Mirror, Snapback, Wheel of Fortune, Mental Misstep, Mana Vault
+R2    Rograkh/Silas casts Mana Vault
+R2        [Rograkh/Silas decides: Mana Vault 91%, Rograkh, Son of Rohgahh 9%, stop (hold mana) 0% -> Mana Vault [must]]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Rograkh/Silas turn 3: life 39, 6 cards in hand, 1 lands
+R3      hand: Jeska's Will, Beseech the Mirror, Snapback, Wheel of Fortune, Mental Misstep, Underworld Breach
+R3    Rograkh/Silas plays Wooded Foothills
+R3      cracks Wooded Foothills for Badlands
+R3        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 76%, Silas Renn, Seeker Adept 22%, stop (hold mana) 1%, Jeska's Will 1% -> stop (hold mana) [search]]
+R3        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 76%, Silas Renn, Seeker Adept 22%, stop (hold mana) 1%, Jeska's Will 1% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 38, 6 cards in hand, 2 lands
+R4      hand: Jeska's Will, Beseech the Mirror, Snapback, Wheel of Fortune, Mental Misstep, Underworld Breach
+R4        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 76%, Silas Renn, Seeker Adept 22%, stop (hold mana) 1%, Jeska's Will 1% -> stop (hold mana) [search]]
+R4        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 76%, Silas Renn, Seeker Adept 22%, stop (hold mana) 1%, Jeska's Will 1% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 38, 7 cards in hand, 2 lands
+R5      hand: Jeska's Will, Beseech the Mirror, Snapback, Wheel of Fortune, Mental Misstep, Underworld Breach, Diabolic Intent
+R5        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 73%, Silas Renn, Seeker Adept 21%, Cabal Ritual 5%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 73%, Silas Renn, Seeker Adept 21%, Cabal Ritual 5%, stop (hold mana) 1% -> Rograkh, Son of Rohgahh [search]]
+R5    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 86%, Diabolic Intent 12%, Jeska's Will 1%, Beseech the Mirror 1% -> Jeska's Will [search]]
+R5    Rograkh/Silas casts Jeska's Will
+R5      Jeska's Will adds 7 red mana
+R5      Jeska's Will exiles Last Chance, Gitaxian Probe, Mox Diamond (playable this turn)
+R5        [Rograkh/Silas decides: Gitaxian Probe 78%, stop (hold mana) 22% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Rograkh/Silas turn 6: life 38, 7 cards in hand, 2 lands
+R6      hand: Beseech the Mirror, Snapback, Wheel of Fortune, Mental Misstep, Underworld Breach, Diabolic Intent, Cabal Ritual
+R6        [Rograkh/Silas decides: Silas Renn, Seeker Adept 87%, Diabolic Intent 12%, Beseech the Mirror 1%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Rograkh/Silas decides: Silas Renn, Seeker Adept 87%, Diabolic Intent 12%, Beseech the Mirror 1%, stop (hold mana) 0% -> Silas Renn, Seeker Adept [search]]
+R6    Rograkh/Silas casts Silas Renn, Seeker Adept
+R6      [audit] Rograkh/Silas discards Wheel of Fortune to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Rograkh/Silas turn 7: life 38, 7 cards in hand, 2 lands
+R7      hand: Beseech the Mirror, Snapback, Mental Misstep, Underworld Breach, Diabolic Intent, Cabal Ritual, Windfall
+R7        [Rograkh/Silas decides: Mystic Remora 53%, Diabolic Intent 43%, Beseech the Mirror 2%, stop (hold mana) 1% -> Beseech the Mirror [search]]
+R7    Rograkh/Silas casts Beseech the Mirror
+R7      Rograkh/Silas tutors Thassa's Oracle
+R7        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R7    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R7      [audit] Rograkh/Silas discards Cabal Ritual to hand size (8 cards in hand)
+R7  --- Goldfish 2 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Rograkh/Silas turn 8: life 38, 7 cards in hand, 2 lands
+R8      hand: Snapback, Mental Misstep, Underworld Breach, Diabolic Intent, Windfall, Mystic Remora, Thassa's Oracle
+R8    Rograkh/Silas plays Bloodstained Mire
+R8      cracks Bloodstained Mire for Watery Grave
+R8        [Rograkh/Silas decides: Diabolic Intent for Tainted Pact [plan: Diabolic Intent for Tainted Pact; ready next turn]]
+R8    Rograkh/Silas casts Diabolic Intent
+R8      Rograkh/Silas tutors Tainted Pact
+R8        [Rograkh/Silas decides: Mystic Remora 87%, Rograkh, Son of Rohgahh 10%, stop (hold mana) 2%, Snapback 0% -> Rograkh, Son of Rohgahh [search]]
+R8    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R8        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R8    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R8  --- Goldfish 2 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Rograkh/Silas turn 9: life 36, 7 cards in hand, 3 lands
+R9      hand: Snapback, Mental Misstep, Underworld Breach, Windfall, Mystic Remora, Thassa's Oracle, Tainted Pact
+R9        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R9    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R9    Rograkh/Silas casts Thassa's Oracle
+R9    Rograkh/Silas casts Tainted Pact
+R9      Rograkh/Silas exiles its library
+R9  *** Goldfish 2 is eliminated (life 36) by Rograkh/Silas
+R9  *** Goldfish 3 is eliminated (life 40) by Rograkh/Silas
+R9  *** Goldfish 4 is eliminated (life 40) by Rograkh/Silas
+R9  *** Rograkh/Silas wins by combo
+Kill: own turn 9 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Mental Misstep
+  T2  progressed (fast mana / rock) | held (payable, not offered): Mental Misstep
+  T3  passed_castable: Jeska's Will [other] | held (payable, not offered): Wheel of Fortune, Mental Misstep, Underworld Breach
+  T4  passed_castable: Jeska's Will [other] | held (payable, not offered): Wheel of Fortune, Mental Misstep, Underworld Breach, Diabolic Intent
+  T5  passed_castable: Cabal Ritual [ritual] | held (payable, not offered): Wheel of Fortune, Mental Misstep, Underworld Breach, Diabolic Intent, Cabal Ritual, Last Chance, Mox Diamond
+  T6  passed_castable: Beseech the Mirror [tutor], Diabolic Intent [tutor] | held (payable, not offered): Wheel of Fortune, Mental Misstep, Underworld Breach, Cabal Ritual, Windfall
+  T7  progressed (tutor) | held (payable, not offered): Mental Misstep, Underworld Breach, Cabal Ritual, Windfall
+  T8  progressed (tutor) | held (payable, not offered): Mental Misstep, Underworld Breach, Windfall, Thassa's Oracle, Tainted Pact
+  T9  won
+  cleanup discards: Wheel of Fortune [other], Cabal Ritual [ritual]
+  stops with another option offered: T2 main 1 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T2 main 2 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T3 main 1 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T3 main 2 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T4 main 1 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T4 main 2 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T5 main 1 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T5 main 2 look-ahead "stop (hold mana)" over Gitaxian Probe (4.0); T6 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none
