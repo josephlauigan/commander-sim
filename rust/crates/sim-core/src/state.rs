@@ -562,6 +562,9 @@ pub struct Player {
     pub cast_logged: usize,
     /// cards this player has seen (drawn, tutored)
     pub seen: IndexSet<CardId>,
+    /// --- ai-flow: the source of the effect resolving for this player (a spell, trigger or ability), which the flow
+    /// stats credit its draws to (`t6stats::flow_source`; Tier 6 players only)
+    pub flow_src: Option<CardId>,
     /// the turn draws are counted for (Narset, Parter of Veils)
     pub draw_st: Option<TurnStamp>,
     /// cards drawn this turn
@@ -622,6 +625,12 @@ pub struct Player {
     pub delayed_draws: u32,
     /// the tutor being chosen puts the card on top (tutor_pick reads it)
     pub to_top: bool,
+    /// --- ai-fix: B: the cards p put on top of its library itself (Vampiric Tutor, Imperial Seal, Mystical Tutor,
+    /// Enlightened Tutor), top last: p knows them until the library is shuffled or they are drawn (`tutors::known_top`)
+    pub known_top: Vec<CardId>,
+    /// --- ai-planner: the card the line planner chose for the tutor being cast (`ai::planner`); a tutor takes it
+    /// when it meets the tutor's own restriction, else picks as usual. Set only around the planner's cast
+    pub plan_tutor: Option<CardId>,
     /// the permanent number (born) when this player's last turn ended
     pub last_turn_end: u32,
     /// the graveyard at the start of this turn
@@ -817,6 +826,7 @@ impl Player {
             cast_turns: vec![],
             cast_logged: 0,
             seen: IndexSet::new(),
+            flow_src: None, // --- ai-flow
             draw_st: None,
             draw_n: 0,
             miracle: None,
@@ -847,6 +857,8 @@ impl Player {
             drain_mana: 0,
             delayed_draws: 0,
             to_top: false,
+            known_top: vec![], // --- ai-fix: B
+            plan_tutor: None, // --- ai-planner
             last_turn_end: 0,
             gy_start: vec![],
             chasm_age: 0,
@@ -1279,6 +1291,9 @@ pub struct Game {
     pub board_cap: Option<usize>,
     /// a copy being played forward by the look-ahead
     pub in_search: bool,
+    /// --- ai-fix: E: in a look-ahead copy, the deciding player's own-turn count when the playout began (a win scores
+    /// by how many of its own turns later it came)
+    pub search_from: u32,
     /// play-by-play lines when tracing a game (`--trace`)
     pub log: Option<Vec<String>>,
     /// practice mode's people; a copy of the game never has any (see `control::Humans`)
@@ -1305,6 +1320,9 @@ pub struct Game {
     pub combo_spell: bool,
     /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
     pub t6_going: Option<PlayerId>,
+    /// --- ai-planner: a line planner's copy of the game, played for this player: nobody else takes priority (the
+    /// planner reads the table through `go_ok`, as the real game does, and never through the opponents' hidden hands)
+    pub plan_for: Option<PlayerId>,
     /// Karn, the Great Creator + Mycosynth Lattice: the player whose lock is on
     pub lattice_lock: Option<PlayerId>,
     /// Coat of Arms has entered (partials.coat_bonus applies)
@@ -1335,6 +1353,9 @@ pub struct Game {
     pub t0c: crate::impls::t0_captain::T0c,
     /// --- Tiers 1/2 (lightpaws): Flickerform's exiles waiting for the next end step (impls/t12_lightpaws.rs)
     pub t12lp: crate::impls::t12_lightpaws::T12,
+    /// --- ai-audit: the goldfish loss accounting of the deck under test (gf_audit.rs); None outside goldfish games
+    /// and in look-ahead copies
+    pub audit: Option<Box<crate::gf_audit::Audit>>,
 }
 
 impl Game {
@@ -1457,6 +1478,7 @@ impl Game {
             work_cap,
             board_cap: None,
             in_search: false,
+            search_from: 0, // --- ai-fix: E
             log: None,
             humans: Humans::none(),
             link: Link::default(),
@@ -1470,6 +1492,7 @@ impl Game {
             animated: vec![],
             combo_spell: false,
             t6_going: None,
+            plan_for: None, // --- ai-planner
             lattice_lock: None,
             coat: false,
             lineage: false,
@@ -1485,6 +1508,7 @@ impl Game {
             eot_returns: vec![],
             t0c: Default::default(),
             t12lp: Default::default(),
+            audit: None, // --- ai-audit
         }
     }
 

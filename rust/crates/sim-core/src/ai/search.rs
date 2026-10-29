@@ -88,8 +88,10 @@ fn decision_seed(g: &mut Game, parts: &str) -> u64 {
 /// search.clone: a copy of g to play on (the trace log isn't copied; a copy never has people in it)
 pub fn clone(g: &mut Game) -> Game {
     let log = g.log.take();
+    let audit = g.audit.take(); // --- ai-audit: a copy keeps no loss accounting
     let mut g2 = g.clone();
     g.log = log;
+    g.audit = audit; // --- ai-audit
     g2.cur_cast = None;
     g2.resolving = 0;
     g2.trig_probe = false;
@@ -99,10 +101,14 @@ pub fn clone(g: &mut Game) -> Game {
 
 /// search.determinize: hide what `me` can't know: re-deal opponents' hands from hand and library, shuffle my library
 pub fn determinize(g2: &mut Game, me: PlayerId, rng: &mut Rng) {
+    // --- ai-fix: I: the cards `me` put on top of its own library itself stay there (Vampiric Tutor's card was shuffled
+    // away, so no playout saw the line it completes next turn)
+    let known = crate::engine::tutors::known_top(g2, me).len();
     for i in 0..g2.players.len() {
         let q = &mut g2.players[i];
         if q.id == me {
-            rng.shuffle(&mut q.library);
+            let n = q.library.len() - known; // `known_top` holds only while they are the library's top cards
+            rng.shuffle(&mut q.library[..n]);
         } else if q.alive {
             let (cmd, cmd2) = (q.cmd, q.cmd2);
             // a commander put into hand (Command Beacon) is known
@@ -144,6 +150,7 @@ fn playout_copy(g: &mut Game, me: PlayerId, base_seed: u64, r: u64) -> (Game, u6
     let mut rng = Rng::from_u64(base_seed.wrapping_mul(31).wrapping_add(r));
     let mut g2 = clone(g);
     start(&mut g2, g);
+    g2.search_from = g.player(me).turns; // --- ai-fix: E: a win is scored by when it comes
     determinize(&mut g2, me, &mut rng);
     g2.rng = Rng::from_u64(rng.next_u64());
     let w = g2.work;
@@ -154,6 +161,11 @@ fn playout_copy(g: &mut Game, me: PlayerId, base_seed: u64, r: u64) -> (Game, u6
 /// search.play_on: finish the active player's turn (p2's by default) from the current step, then everyone's turns
 /// until the end of p2's next turn (`horizon` of p2's turns)
 pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
+    play_on_with(g2, p2, active, |_| {})
+}
+
+/// `play_on`, calling `turn_end` once the active player's turn (and its extra turns) is over
+fn play_on_with(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>, turn_end: impl FnOnce(&Game)) -> Res {
     const STOP_ROUNDS: u32 = 20;
     let act = active.unwrap_or(p2);
     if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
@@ -164,6 +176,7 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
         crate::engine::turn::continue_turn(g2, act, step)?;
         crate::engine::turn::run_extra_turns(g2)?;
     }
+    turn_end(g2); // --- ai-eval
     let n = g2.players.len();
     let mut k = act.index();
     let mut left = g2.settings.search.horizon;
@@ -184,8 +197,8 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
             continue;
         }
         brain::end_of_turn_window(g2, q)?;
-        if g2.over {
-            break;
+        if g2.over || (q == p2 && g2.settings.search.short) {
+            break; // --- ai-eval: a short playout ends with the turn cycle, before p2's next turn (`Search::short`)
         }
         if g2.player(q).alive {
             crate::engine::turn::play_turn(g2, q)?;
@@ -204,14 +217,14 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
 /// opponents (always below a win, however big the board)
 pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     if g.over {
-        return if g.winner == Some(p) { 100.0 } else { -100.0 };
+        return if g.winner == Some(p) { win_score(g, p) } else { -100.0 };
     }
     if !g.player(p).alive {
         return -100.0;
     }
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if opps.is_empty() {
-        return 100.0;
+        return win_score(g, p);
     }
     let dead = g.players.iter().filter(|q| q.id != p && !q.alive).count() as f64;
     let s = strength(g, p);
@@ -221,13 +234,128 @@ pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     95.0 * (raw / 100.0).tanh()
 }
 
+// --- ai-fix: E
+/// what a win loses for each of the winner's own turns it comes after the decision: winning this turn beats a play
+/// whose line still wins next turn (both scored 100, and since the sure-win cap the tie went to the higher utility)
+pub const WIN_TURN_COST: f64 = 4.0;
+/// a win never scores below this: above every position short of a win (`evaluate` keeps those under 95)
+pub const WIN_FLOOR: f64 = 96.0;
+
+// --- ai-fix: E
+/// a win for p, scored by when it came: 100 on the turn of the decision (or before p's next turn), less
+/// `WIN_TURN_COST` for each own turn of p's after it, never below `WIN_FLOOR`. The playout's game ended on p's
+/// own-turn count `g.player(p).turns` (frozen once the game is over); `g.search_from` is the count at the decision.
+/// Outside the look-ahead a win is 100.
+pub fn win_score(g: &Game, p: PlayerId) -> f64 {
+    if !g.in_search {
+        return 100.0;
+    }
+    let later = g.player(p).turns.saturating_sub(g.search_from);
+    (100.0 - WIN_TURN_COST * later as f64).max(WIN_FLOOR)
+}
+
+// --- ai-eval: the board valued for what it will produce
+//
+// The unit is `strength`'s own: a card in hand is `HAND_W` (0.9). A permanent that makes cards or mana every turn is
+// worth what it will make over `OUTPUT_TURNS`, the two own turns after the playout ends (the second at half weight:
+// by then it may be gone or the game over), in cards:
+//   output_value = HAND_W * (1 + 0.5) * (cards a turn cycle + MANA_CARD * mana a turn)
+// One rate converts mana to cards: MANA_CARD = 0.4 / 0.9, a Treasure's value in `strength` (one mana, once) over a
+// card's. With it a permanent making one mana a turn is worth 0.6 over the window, what `strength` already gives a
+// land, so rocks, dorks and lands share one scale. Cards a turn cycle come from the card itself:
+// - `eng=N` (it draws N at upkeep), else the small table `OUTPUT_CARDS`, the rates measured while the engine was out
+//   at the Tier 6 table (audit/ai-foundations/step3-flow.md). The tax engines (Rhystic Study, Mystic Remora, Esper
+//   Sentinel, Kraum, Faerie Mastermind) draw off opponents' spells: their rate is for three opponents who cast, and
+//   scales with the live opponents who can (none in a goldfish, whose seats never cast).
+// - mana a turn: `rock=N:...` (N), a mana creature (`dork`: 1), Chrome Mox (1). A rock that doesn't untap (Mana Vault,
+//   Grim Monolith) or that is sacrificed for its mana (Lotus Petal, Lion's Eye Diamond) makes nothing past the turn.
+// A card whose `pval` already prices its output (Rhystic Study 4, an `eng` card 2, The One Ring 5, Consecrated Sphinx
+// 6, Smothering Tithe 4) counts the larger of the two, not both. Everything else adds the output to its `pval`.
+
+/// a card in hand, in `strength`
+pub const HAND_W: f64 = 0.9;
+/// the weights of the own turns after the playout over which a permanent's output counts
+pub const OUTPUT_TURNS: [f64; 2] = [1.0, 0.5];
+/// cards one mana is worth: a Treasure's 0.4 over a card's 0.9
+pub const MANA_CARD: f64 = 0.4 / HAND_W;
+
+/// cards a turn cycle while out, measured at the Tier 6 table (step3-flow.md), and whether the card draws off
+/// opponents' spells (a tax engine: the rate is for three opponents who cast)
+pub const OUTPUT_CARDS: [(&str, f64, bool); 9] = [
+    ("Rhystic Study", 3.0, true),
+    ("Mystic Remora", 2.7, true),
+    ("Esper Sentinel", 1.7, true),
+    ("Kraum, Ludevic's Opus", 1.2, true),
+    ("Faerie Mastermind", 0.7, true),
+    ("Necropotence", 4.0, false),
+    ("The One Ring", 2.0, false),
+    ("Tymna the Weaver", 1.0, false),
+    ("Thrasios, Triton Hero", 0.3, false),
+];
+
+/// what permanent m will produce in a turn cycle, in cards (mana converted at `MANA_CARD`)
+pub fn output_cards(g: &Game, m: crate::ids::PermId) -> f64 {
+    let x = g.perm(m);
+    let Some(c) = x.cd else { return 0.0 };
+    let d = g.db.get(c);
+    let t = &d.tags;
+    let cards = if let Some(n) = t.int(Tag::Eng)
+        && !t.has(Tag::Remora)
+    {
+        n.max(0) as f64
+    } else if let Some(&(_, n, tax)) = OUTPUT_CARDS.iter().find(|e| e.0 == &*d.name) {
+        if tax {
+            let casters = g.opps(x.owner).filter(|&q| !crate::goldfish::is_inert_key(g.player(q).key)).count();
+            n * casters.min(3) as f64 / 3.0
+        } else {
+            n
+        }
+    } else {
+        0.0
+    };
+    let one_shot = t.has(Tag::Nountap) || matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond");
+    let mana = if one_shot {
+        0
+    } else if let Some(r) = t.str(Tag::Rock) {
+        r.split_once(':').map_or(r, |x| x.0).parse().unwrap_or(1)
+    } else if t.has(Tag::Dork) || t.has(Tag::Chromemox) {
+        1
+    } else {
+        0
+    };
+    cards + MANA_CARD * mana as f64
+}
+
+/// permanent m's output over the window, in `strength`'s unit
+pub fn output_value(g: &Game, m: crate::ids::PermId) -> f64 {
+    HAND_W * OUTPUT_TURNS.iter().sum::<f64>() * output_cards(g, m)
+}
+
+/// a permanent's value in `strength`: its `pval` plus its output (the larger of the two when `pval` already prices
+/// the output)
+fn board_value(g: &Game, m: crate::ids::PermId) -> f64 {
+    use crate::engine::values::pval;
+    let v = pval(g, m);
+    if !g.settings.search.output {
+        return v;
+    }
+    let out = output_value(g, m);
+    if out == 0.0 {
+        return v;
+    }
+    let t = &g.db.get(g.perm(m).cd.expect("output_value is 0 for a card-less permanent")).tags;
+    let priced =
+        t.has(Tag::Rhystic) || t.has(Tag::Tithe) || t.has(Tag::Eng) || t.has(Tag::Onering) || t.has(Tag::Sphinx);
+    if priced { v.max(out) } else { v + out }
+}
+
 /// search.strength
 pub fn strength(g: &Game, q: PlayerId) -> f64 {
-    use crate::engine::values::{epow, pval};
+    use crate::engine::values::epow;
     let pl = g.player(q);
     let life = pl.life.clamp(0, 60) as f64;
     let live = || pl.perms.iter().copied().filter(|&m| !g.perm(m).phased);
-    let board = live().map(|m| pval(g, m)).psum();
+    let board = live().map(|m| board_value(g, m)).psum(); // --- ai-eval: was pval
     let power = live().filter(|&m| g.is_creature(m)).map(|m| epow(g, m) as f64).sum::<f64>(); // whole numbers
     0.25 * life
         + board
@@ -277,6 +405,172 @@ pub fn hold_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     }
     let s = brain::Situation::new(g, p);
     w * brain::hold_value(g, p, &s).1.max(0.0)
+}
+
+// --- ai-eval
+/// Does the look-ahead's pick beat the heuristic's top play by more than the noise? `d` holds, per rollout, the
+/// pick's value less the top play's (the same seeds, bonuses in, each capped at a win). The pick stands when the mean
+/// difference is above `z` standard errors of it. Six rollouts of a Tier 6 table differ by 12-18 points from a win or
+/// a loss in one copy, while casting an engine now or a phase later differs by 0-3 (the stop line casts the same card
+/// before the horizon in 70-97% of its playouts: eval-fix.md, Part 1), so the bare argmax picked among near-equal
+/// lines at random and passed over the heuristic's 95-100% play turn after turn.
+pub fn margin_holds(d: &[f64], z: f64) -> bool {
+    let n = d.len() as f64;
+    if n < 2.0 {
+        return d.iter().sum::<f64>() > 0.0;
+    }
+    let m = d.iter().sum::<f64>() / n;
+    let var = d.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0);
+    m > z * (var / n).sqrt()
+}
+
+// --- ai-rollouts
+/// The adaptive rollouts' early stop: more rollouts can't be expected to carry the pick past the margin, because its
+/// mean gain over the top play is at or below `stop` standard errors of it (a mean at or below 0 always stops).
+pub fn hopeless(d: &[f64], stop: f64) -> bool {
+    let n = d.len() as f64;
+    if n < 2.0 {
+        return d.iter().sum::<f64>() <= 0.0;
+    }
+    let m = d.iter().sum::<f64>() / n;
+    let var = d.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0);
+    m <= 0.0 || m <= stop * (var / n).sqrt()
+}
+
+// --- ai-rollouts
+/// The pick from per-rollout values (`vals[k][r]`, bonuses in) and each option's deck bonus `ex[k]` (Karn's and
+/// Cloud's `search_bonus`, per rollout): (the bare argmax of the capped sums, ties to the earlier option; the pick
+/// after the margin against the heuristic's top play `ti`). `choose_inner`'s rule, on any number of rollouts.
+pub fn pick_with(vals: &[Vec<f64>], ex: &[f64], ti: usize, z: f64) -> (usize, usize) {
+    let s: Vec<f64> = vals
+        .iter()
+        .zip(ex)
+        .map(|(v, e)| (v.iter().sum::<f64>() + e * v.len() as f64).min(100.0 * v.len() as f64))
+        .collect();
+    let mut b = 0;
+    for k in 1..s.len() {
+        if s[k] > s[b] {
+            b = k;
+        }
+    }
+    let d = paired(vals, ex, b, ti);
+    (b, if b != ti && !margin_holds(&d, z) { ti } else { b })
+}
+
+/// --- ai-rollouts: per rollout, option a's value less option b's (deck bonuses in, each capped at a win)
+fn paired(vals: &[Vec<f64>], ex: &[f64], a: usize, b: usize) -> Vec<f64> {
+    vals[a].iter().zip(&vals[b]).map(|(x, y)| (x + ex[a]).min(100.0) - (y + ex[b]).min(100.0)).collect()
+}
+
+// --- ai-rollouts
+/// The adaptive rollouts' knobs (`Search::adapt_*`, and the margin's z)
+#[derive(Debug, Clone, Copy)]
+pub struct Adapt {
+    pub batch: u32,
+    pub cap: u32,
+    pub stop: f64,
+    pub z: f64,
+}
+
+// --- ai-rollouts
+/// Adaptive rollouts. `(bare, best)` is the decision on the rollouts in `vals` so far. When the margin hands it back
+/// (the bare pick isn't the top play `ti`, and the pick is), `more(vals, r0..r1)` appends rollouts r0..r1 of every
+/// option (new seeds, the same for every option), `a.batch` at a time, and the pick is made again on all of them. It
+/// stops when the pick stands (the margin holds), when the look-ahead's best is the top play itself, when the
+/// pick's gain is `hopeless` (at or below `a.stop` standard errors), or at `a.cap` rollouts per option. Returns the
+/// new (bare, best).
+pub fn adapt_rollouts(
+    vals: &mut Vec<Vec<f64>>,
+    ex: &[f64],
+    ti: usize,
+    (mut bare, mut best): (usize, usize),
+    a: &Adapt,
+    mut more: impl FnMut(&mut Vec<Vec<f64>>, std::ops::Range<u64>),
+) -> (usize, usize) {
+    while bare != ti && best == ti && !hopeless(&paired(vals, ex, bare, ti), a.stop) {
+        let used = vals[0].len() as u32;
+        if used >= a.cap || a.batch == 0 {
+            break;
+        }
+        let next = (used + a.batch).min(a.cap);
+        more(vals, used as u64..next as u64);
+        (bare, best) = pick_with(vals, ex, ti, a.z);
+    }
+    (bare, best)
+}
+
+/// --- ai-rollouts: rollouts `rs` (seeds (base_seed, r)) of every option, appended to `vals` with their bonuses, as
+/// `choose_inner` adds them. `diag`: the Part 1 diagnostic is open, and records these playouts too.
+#[allow(clippy::too_many_arguments)]
+fn rollout_vals(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    opts: &[Opt],
+    keyed: &[(usize, &str, usize)],
+    base_seed: u64,
+    rs: std::ops::Range<u64>,
+    hold: Option<(CardId, f64)>,
+    vals: &mut [Vec<f64>],
+    diag: bool,
+) {
+    for r in rs {
+        for (k, &(i, label, n)) in keyed.iter().enumerate() {
+            if diag {
+                super::evdiag::option(k);
+            }
+            let (v, kept) = playout_main_kept(g, p, post, label, n, base_seed, r, hold.map(|h| h.0));
+            let extra = if v < WIN_FLOOR {
+                let h = match hold {
+                    Some((_, w)) if kept => w,
+                    Some(_) => 0.0,
+                    None if g.settings.search.hold_kept => 0.0,
+                    None => hold_bonus(g, p, &opts[i]),
+                };
+                ramp_bonus(g, p, &opts[i]) + h
+            } else {
+                0.0
+            };
+            vals[k].push(v + extra);
+        }
+    }
+}
+
+/// --- ai-rollouts: each option's deck bonus per rollout (Karn's and Cloud's `search_bonus`; 0 for other decks)
+fn deck_extras(g: &Game, p: PlayerId, opts: &[Opt], keyed: &[(usize, &str, usize)]) -> Vec<f64> {
+    keyed
+        .iter()
+        .map(|kk| match g.player(p).key {
+            "karn" => crate::impls::karn::search_bonus(g, p, &opts[kk.0]),
+            "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[kk.0]),
+            _ => 0.0,
+        })
+        .collect()
+}
+
+/// --- ai-rollouts: the knobs of the adaptive rollouts in g's settings (None: off)
+fn adapt_of(g: &Game) -> Option<Adapt> {
+    let s = &g.settings.search;
+    s.adapt.then_some(Adapt { batch: s.adapt_batch, cap: s.adapt_cap, stop: s.adapt_stop, z: margin_z(s) })
+}
+
+/// --- ai-rollouts: the margin's z for this decision: `adapt_z` at every look when the adaptive rollouts are on and can
+/// look more than once (a test repeated after each batch at z = 2 lets through more noise than one test does),
+/// `margin` otherwise (a cap at `rollouts` is one look). 0 stays 0 (the bare argmax).
+pub fn margin_z(s: &crate::settings::Search) -> f64 {
+    if s.adapt && s.adapt_cap > s.rollouts && s.margin > 0.0 { s.adapt_z } else { s.margin }
+}
+
+// --- ai-eval
+/// the held card and the bonus (`hold_w` times the heuristic's hold value) each open playout that keeps its mana up
+/// through p's turn earns (`Search::hold_kept`); None when nothing is held or `hold_w` is 0
+pub fn hold_credit(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
+    let w = g.settings.search.hold_w;
+    if w == 0.0 {
+        return None;
+    }
+    let (c, v) = brain::hold_value(g, p, &brain::Situation::new(g, p));
+    c.filter(|_| v > 0.0).map(|c| (c, w * v))
 }
 
 /// the n-th option labelled `label`
@@ -337,14 +631,67 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     let parts = format!("{}:{}:{}", g.player(p).key, g.player(p).hand.len(), g.player(p).perms.len());
     let base_seed = decision_seed(g, &parts);
     let mut scores = vec![0.0; keyed.len()];
+    // --- ai-fix: E: the playouts that did not end in p's win: the ramp and hold bonuses value what pays off after the
+    // horizon, and a playout already won has nothing left to pay off (a held line that wins next turn at 96 plus a big
+    // hold value would otherwise tie a win this turn at the cap)
+    let mut open = vec![0.0; keyed.len()];
+    // --- ai-eval: the Part 1 diagnostic (stats only): a decision whose heuristic top is an engine, a commander or mana
+    let diag = if super::evdiag::on() { super::evdiag::top_class(g, p, opts) } else { None };
+    if let Some((ti, _)) = diag {
+        let top = match opts[ti].act {
+            Some(Action::Cast { card, .. }) => Some(card),
+            _ => None,
+        };
+        let hold = brain::hold_value(g, p, &brain::Situation::new(g, p)).0;
+        super::evdiag::begin(keyed.len(), top, hold);
+    }
+    // --- ai-eval: the hold bonus goes to each open playout that ended p's turn with the held card's mana still up,
+    // whatever the option: casting an engine that leaves the counter payable keeps the mana up too, and "stop" in main
+    // 1 often doesn't (the heuristic taps out in main 2). The "stop (hold mana)" label used to get it every time
+    // (Part 1: the label's line kept the mana up in 64-70% of main-1 playouts, a cast's in 60-66%).
+    let hold = if g.settings.search.hold_kept { hold_credit(g, p) } else { None };
+    let mut held = vec![0.0; keyed.len()];
+    // --- ai-eval: each playout's value with its bonuses, for the paired margin test below
+    let hold_w1 = hold.map(|h| h.1);
+    let mut vals = vec![vec![]; keyed.len()];
     for r in 0..g.settings.search.rollouts as u64 {
         for (k, &(_, label, n)) in keyed.iter().enumerate() {
-            scores[k] += playout_main(g, p, post, label, n, base_seed, r);
+            if diag.is_some() {
+                super::evdiag::option(k); // --- ai-eval
+            }
+            let (v, kept) = playout_main_kept(g, p, post, label, n, base_seed, r, hold.map(|h| h.0));
+            scores[k] += v;
+            if v < WIN_FLOOR {
+                open[k] += 1.0;
+                if kept {
+                    held[k] += 1.0; // --- ai-eval
+                }
+            }
+            let extra = if v < WIN_FLOOR {
+                let h = match hold_w1 {
+                    Some(w) if kept => w,
+                    Some(_) => 0.0,
+                    None if g.settings.search.hold_kept => 0.0,
+                    None => hold_bonus(g, p, &opts[keyed[k].0]),
+                };
+                ramp_bonus(g, p, &opts[keyed[k].0]) + h
+            } else {
+                0.0
+            };
+            vals[k].push(v + extra); // --- ai-eval
         }
     }
+    // the hold bonus each option earned in all
+    let holds: Vec<f64> = (0..keyed.len())
+        .map(|k| match hold {
+            Some((_, v)) => v * held[k], // --- ai-eval
+            None if g.settings.search.hold_kept => 0.0,
+            None => hold_bonus(g, p, &opts[keyed[k].0]) * open[k],
+        })
+        .collect();
     for (k, kk) in keyed.iter().enumerate() {
-        scores[k] += ramp_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
-        scores[k] += hold_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
+        scores[k] += ramp_bonus(g, p, &opts[kk.0]) * open[k];
+        scores[k] += holds[k];
     }
     let mut best = 0;
     for k in 1..keyed.len() {
@@ -378,6 +725,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     // a bonus never lifts a line above a sure win: when every playout of the best play wins, a held line that also wins
     // (the heuristic combos next turn) scored 100 plus its hold bonus and beat it, so a ready Thassa's Oracle waited
     // turn after turn in goldfish games. Capped lines tie, and a tie goes to the play the heuristic rates higher.
+    let uncapped = best; // --- ai-audit
     for s in &mut scores {
         *s = s.min(100.0 * n);
     }
@@ -387,10 +735,73 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             best = k;
         }
     }
+    if keyed[uncapped].0 != keyed[best].0 {
+        crate::gf_audit::cap_changed(g); // --- ai-audit: the sure-win cap changed the pick
+    }
+    let bare = best; // --- ai-eval: the pick before the margin (the noise diagnostic)
+    // --- ai-eval: the look-ahead departs from the heuristic's top play only on evidence (`margin_holds`)
+    let z = margin_z(&g.settings.search); // --- ai-rollouts: `adapt_z` when adaptive
+    let top_u = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
+    if z > 0.0
+        && keyed[best].0 != top_u
+        && let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u)
+    {
+        let extra = |k: usize| match g.player(p).key {
+            "karn" => crate::impls::karn::search_bonus(g, p, &opts[keyed[k].0]),
+            "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[keyed[k].0]),
+            _ => 0.0,
+        };
+        let (eb, et) = (extra(best), extra(ti));
+        let d: Vec<f64> =
+            vals[best].iter().zip(&vals[ti]).map(|(a, b)| (a + eb).min(100.0) - (b + et).min(100.0)).collect();
+        if !margin_holds(&d, z) {
+            best = ti;
+        }
+    }
+    // --- ai-rollouts: a decision the margin hands back gets more rollouts of the same options (`adapt_rollouts`)
+    let hb6 = bare != best; // handed back on the first rollouts
+    let mut bare = bare;
+    if let Some(a) = adapt_of(g)
+        && z > 0.0
+        && bare != best
+        && let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u)
+    {
+        let ex = deck_extras(g, p, opts, &keyed);
+        let on = diag.is_some();
+        (bare, best) = adapt_rollouts(&mut vals, &ex, ti, (bare, best), &a, |v, rs| {
+            rollout_vals(g, p, post, opts, &keyed, base_seed, rs, hold, v, on)
+        });
+        let m = vals[0].len() as f64;
+        if m > n {
+            for (k, v) in vals.iter().enumerate() {
+                scores[k] = (v.iter().sum::<f64>() + ex[k] * m).min(100.0 * m) * n / m; // per `n` rollouts, as before
+            }
+        }
+    }
+    if super::evdiag::fallback_on() {
+        fallback_diag(g, p, post, opts, &keyed, &vals, (bare, best, top_u), base_seed, hold, hb6); // --- ai-eval
+    }
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
     });
     let top = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
+    if let Some((ti, class)) = diag {
+        // --- ai-eval
+        let rows: Vec<super::evdiag::Row> = keyed
+            .iter()
+            .enumerate()
+            .map(|(k, kk)| super::evdiag::Row {
+                label: kk.1,
+                utility: opts[kk.0].utility,
+                score: scores[k] / n,
+                ramp: ramp_bonus(g, p, &opts[kk.0]),
+                hold: holds[k] / open[k].max(1.0), // per open playout
+            })
+            .collect();
+        let top_label = opts[ti].label.clone();
+        super::evdiag::end(g, p, class, &top_label, best, &rows);
+        noise_diag(g, p, post, opts, &keyed, &vals, (bare, best, top_u), base_seed, hold, class);
+    }
     if keyed[best].0 != top {
         stat(|x| x.changed += 1);
     }
@@ -405,7 +816,23 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
 /// search.playout_main: one playout of main-phase option (label, n-th of that label) for p: copy r of the decision
 /// seeded base_seed. The score of the position it reaches (an option that can't be played: -50).
 pub fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize, base_seed: u64, r: u64) -> f64 {
+    playout_main_kept(g, p, post, label, n, base_seed, r, None).0
+}
+
+/// --- ai-eval: `playout_main`, and whether the playout kept the mana up for `hold` (`kept_up`) when p's turn ended
+#[allow(clippy::too_many_arguments)]
+fn playout_main_kept(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    label: &str,
+    n: usize,
+    base_seed: u64,
+    r: u64,
+    hold: Option<CardId>,
+) -> (f64, bool) {
     let (mut g2, w0) = playout_copy(g, p, base_seed, r);
+    let mut kept = false;
     let res = (|| -> Res<Option<f64>> {
         let opts = brain::main_options(&mut g2, p, post)?;
         let Some(i) = find(&opts, label, n) else { return Ok(Some(-50.0)) };
@@ -415,28 +842,40 @@ pub fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize
             }
             brain::main(&mut g2, p, post)?; // the rest of this phase, heuristically
         }
-        play_on_after_phase(&mut g2, p)?;
+        play_on_after_phase(&mut g2, p, hold, &mut kept)?;
         Ok(None)
     })();
     let cut = match res {
-        Ok(Some(v)) => return v,
+        Ok(Some(v)) => return (v, false),
         Ok(None) => false,
         Err(Stop::OutOfWork) => true,
         Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
         Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
     };
     let v = evaluate(&g2, p);
+    super::evdiag::playout(&g2, p, v); // --- ai-eval: stats only (nothing unless a diagnosed decision is open)
     done(g, &g2, w0, cut);
-    v
+    (v, kept)
 }
 
-/// search.play_on_after_phase: the chosen play is made and the phase finished: go on from the next step
-fn play_on_after_phase(g2: &mut Game, p2: PlayerId) -> Res {
+// --- ai-eval
+/// p kept the mana up for the held card h: it is still in hand and p can pay for it now
+pub fn kept_up(g: &Game, p: PlayerId, h: CardId) -> bool {
+    let (cg, cp) = crate::engine::mana::cost_of(g, p, h);
+    g.player(p).hand.contains(&h) && crate::engine::mana::can_pay(g, p, cg, &cp, false)
+}
+
+/// search.play_on_after_phase: the chosen play is made and the phase finished: go on from the next step. `kept` is
+/// set when p's turn ends with the mana up for `hold`.
+fn play_on_after_phase(g2: &mut Game, p2: PlayerId, hold: Option<CardId>, kept: &mut bool) -> Res {
     g2.step = match g2.step {
         Step::Main1 => Step::Combat,
         _ => Step::End,
     };
-    play_on(g2, p2, None)
+    play_on_with(g2, p2, None, |g| {
+        super::evdiag::turn_end(g, p2); // --- ai-eval: the diagnostic reads the turn end
+        *kept = hold.is_some_and(|h| kept_up(g, p2, h)); // --- ai-eval
+    })
 }
 
 // ------------------------------------------------------------------ attacks
@@ -602,4 +1041,152 @@ fn choose_counter_inner(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bo
         }
     }
     scores[0] > scores[1]
+}
+
+// --- ai-eval
+/// the pick from per-rollout values (`vals[k][r]`, bonuses in): the bare argmax of the capped sums (ties to the
+/// earlier option, the higher utility), and the pick after the margin against option `ti` (the heuristic's top)
+fn pick_of(vals: &[Vec<f64>], ti: usize, z: f64) -> (usize, usize) {
+    let s: Vec<f64> = vals.iter().map(|v| v.iter().sum::<f64>().min(100.0 * v.len() as f64)).collect();
+    let mut b = 0;
+    for k in 1..s.len() {
+        if s[k] > s[b] {
+            b = k;
+        }
+    }
+    let d: Vec<f64> = vals[b].iter().zip(&vals[ti]).map(|(a, t)| a.min(100.0) - t.min(100.0)).collect();
+    (b, if b != ti && !margin_holds(&d, z) { ti } else { b })
+}
+
+// --- ai-eval
+/// Part 2's noise diagnostic (env AI_EVAL_DIAG=1, decisions `evdiag` records): one `EVN` line with the paired
+/// top-minus-stop difference (mean, its standard error, the spread of each line), and the picks with and without the
+/// margin (z = 1) on this decision's seeds and on a second set of seeds. The second playouts spend no game budget
+/// (`search_work` is restored) and read no random numbers of the game, so play is unchanged.
+#[allow(clippy::too_many_arguments)]
+fn noise_diag(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    opts: &[Opt],
+    keyed: &[(usize, &str, usize)],
+    vals: &[Vec<f64>],
+    (bare, best, top_u): (usize, usize, usize),
+    base_seed: u64,
+    hold: Option<(CardId, f64)>,
+    class: &str,
+) {
+    let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u) else { return };
+    let Some(si) = keyed.iter().position(|kk| opts[kk.0].act.is_none()) else { return };
+    let sd = |x: &[f64]| {
+        let n = x.len() as f64;
+        let m = x.iter().sum::<f64>() / n;
+        (m, (x.iter().map(|v| (v - m) * (v - m)).sum::<f64>() / (n - 1.0).max(1.0)).sqrt())
+    };
+    let cap = |v: &[f64]| v.iter().map(|x| x.min(100.0)).collect::<Vec<f64>>();
+    let d: Vec<f64> = cap(&vals[ti]).iter().zip(cap(&vals[si])).map(|(a, b)| a - b).collect();
+    let (md, sdd) = sd(&d);
+    let (_, sdt) = sd(&cap(&vals[ti]));
+    let (_, sds) = sd(&cap(&vals[si]));
+    let (_, m1) = pick_of(vals, ti, 1.0);
+    let work = g.search_work;
+    let seed2 = base_seed ^ 0x9E37_79B9_7F4A_7C15;
+    let mut alt = vec![vec![]; keyed.len()];
+    for r in 0..g.settings.search.rollouts as u64 {
+        for (k, &(i, label, n)) in keyed.iter().enumerate() {
+            let (v, kept) = playout_main_kept(g, p, post, label, n, seed2, r, hold.map(|h| h.0));
+            let extra = if v < WIN_FLOOR {
+                ramp_bonus(g, p, &opts[i]) + if kept { hold.map_or(0.0, |h| h.1) } else { 0.0 }
+            } else {
+                0.0
+            };
+            alt[k].push(v + extra);
+        }
+    }
+    g.search_work = work;
+    let (a0, a1) = pick_of(&alt, ti, 1.0);
+    let pl = g.player(p);
+    let step = if g.step == Step::Main1 { "main1" } else { "main2" };
+    eprintln!(
+        "EVN\t{}\t{}\t{}\t{class}\t{step}\t{}\t{md:.3}\t{:.3}\t{sdt:.3}\t{sds:.3}\t{sdd:.3}\t{bare}\t{m1}\t{best}\t{a0}\t{a1}\t{ti}\t{si}\t{}",
+        super::evdiag::seed(),
+        g.search_n,
+        pl.key,
+        u8::from(hold.is_some()),
+        sdd / (d.len() as f64).sqrt(),
+        keyed.len(),
+    );
+}
+
+// --- ai-eval
+/// The fallback diagnostic (env AI_EVAL_FALLBACK=1), for every main-phase look-ahead decision: one `EVF` line with
+/// the kinds of the heuristic's top play and of the look-ahead's bare pick, whether the margin handed the decision
+/// back to the heuristic, the paired standard error of the top play against its best alternative, and whether the
+/// bare and the final pick change on a second set of seeds. The second playouts spend no game budget (`search_work`
+/// is restored) and read none of the game's random numbers, so play is unchanged.
+/// --- ai-rollouts: then the rollouts per option the decision used, whether the margin handed it back on its first
+/// `rollouts`, and the rollouts the second set used. Both sets decide by the same rule, adaptive rollouts included,
+/// and "bare" is the argmax over all the rollouts a set used.
+#[allow(clippy::too_many_arguments)]
+fn fallback_diag(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    opts: &[Opt],
+    keyed: &[(usize, &str, usize)],
+    vals: &[Vec<f64>],
+    (bare, best, top_u): (usize, usize, usize),
+    base_seed: u64,
+    hold: Option<(CardId, f64)>,
+    hb6: bool,
+) {
+    let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u) else { return };
+    let z = margin_z(&g.settings.search); // --- ai-rollouts
+    let sum = |v: &Vec<f64>| v.iter().map(|x| x.min(100.0)).sum::<f64>();
+    let alt = if bare != ti {
+        bare
+    } else {
+        match (0..keyed.len()).filter(|&k| k != ti).max_by(|&a, &b| sum(&vals[a]).total_cmp(&sum(&vals[b]))) {
+            Some(k) => k,
+            None => return,
+        }
+    };
+    let d: Vec<f64> = vals[ti].iter().zip(&vals[alt]).map(|(a, b)| a.min(100.0) - b.min(100.0)).collect();
+    let n = d.len() as f64;
+    let m = d.iter().sum::<f64>() / n;
+    let se = (d.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0).max(1.0) / n).sqrt();
+    let work = g.search_work;
+    let seed2 = base_seed ^ 0x9E37_79B9_7F4A_7C15;
+    let mut alt_vals = vec![vec![]; keyed.len()];
+    // --- ai-rollouts: the second set of seeds is decided by the same rule, adaptive rollouts included
+    rollout_vals(g, p, post, opts, keyed, seed2, 0..g.settings.search.rollouts as u64, hold, &mut alt_vals, false);
+    let ex = deck_extras(g, p, opts, keyed);
+    let (mut a0, mut a1) = pick_with(&alt_vals, &ex, ti, z);
+    if let Some(a) = adapt_of(g)
+        && z > 0.0
+    {
+        (a0, a1) = adapt_rollouts(&mut alt_vals, &ex, ti, (a0, a1), &a, |v, rs| {
+            rollout_vals(g, p, post, opts, keyed, seed2, rs, hold, v, false)
+        });
+    }
+    g.search_work = work;
+    let pl = g.player(p);
+    eprintln!(
+        "EVF\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{m:.3}\t{se:.3}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+        super::evdiag::seed(),
+        pl.key,
+        u8::from(pl.t6),
+        if g.step == Step::Main1 { "main1" } else { "main2" },
+        super::evdiag::kind(g, p, &opts[top_u]),
+        super::evdiag::kind(g, p, &opts[keyed[bare].0]),
+        keyed.len(),
+        u8::from(bare != ti && best == ti),
+        u8::from(bare != a0),
+        u8::from(best != a1),
+        u8::from(bare == ti),
+        u8::from(best == ti),
+        vals[0].len(),
+        u8::from(hb6),
+        alt_vals[0].len(),
+    );
 }

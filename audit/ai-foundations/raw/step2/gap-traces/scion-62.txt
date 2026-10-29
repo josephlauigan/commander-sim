@@ -1,0 +1,209 @@
+Play-by-play of goldfish game 62 (seed 500062): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Beseech the Mirror, Imperial Seal, Underworld Breach, Mox Diamond, Ancient Tomb, Bloodstained Mire, Ancient Copper Dragon
+R1    Scion plays Bloodstained Mire
+R1      cracks Bloodstained Mire for Scrubland
+R1        [Scion decides: Imperial Seal 100%, stop 0% -> Imperial Seal [search]]
+R1    Scion casts Imperial Seal
+R1      Scion puts Demonic Consultation on top of their library
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 37, 6 cards in hand, 1 lands
+R2      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Ancient Tomb, Ancient Copper Dragon, Thassa's Oracle
+R2    Scion plays Ancient Tomb
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 37, 6 cards in hand, 2 lands
+R3      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Ancient Copper Dragon, Thassa's Oracle, Demonic Consultation
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 37, 7 cards in hand, 2 lands
+R4      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Ancient Copper Dragon, Thassa's Oracle, Demonic Consultation, Prismari, the Inspiration
+R4      [audit] Scion discards Prismari, the Inspiration to hand size (8 cards in hand)
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 37, 7 cards in hand, 2 lands
+R5      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Ancient Copper Dragon, Thassa's Oracle, Demonic Consultation, Tinder Wall
+R5      [audit] Scion discards Ancient Copper Dragon to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 37, 7 cards in hand, 2 lands
+R6      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant
+R6      [audit] Scion discards Korvold, Fae-Cursed King to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 37, 7 cards in hand, 2 lands
+R7      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant
+R7        [Scion decides: Enlightened Tutor 100%, stop 0% -> Enlightened Tutor [search]]
+R7    Scion casts Enlightened Tutor
+R7      Scion searches for Esper Sentinel
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 37, 7 cards in hand, 2 lands
+R8      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant
+R8        [Scion decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R8    Scion casts Esper Sentinel
+R8  --- Goldfish 2 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 37, 7 cards in hand, 2 lands
+R9      hand: Beseech the Mirror, Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant
+R9        [Scion attack plan by search: filtered at Goldfish 2]
+R9    Scion attacks Goldfish 2 with 1 creature(s): 1 damage (life now 39)
+R9      [audit] Scion discards Beseech the Mirror to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 39, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 37, 7 cards in hand, 2 lands
+R10     hand: Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant, Mindbreak Trap
+R10   Scion plays Emergence Zone
+R10       [Scion attack plan by search: filtered at Goldfish 3]
+R10   Scion attacks Goldfish 3 with 1 creature(s): 1 damage (life now 39)
+R10 --- Goldfish 2 turn 10: life 39, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 39, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11   Scion sacrifices Emergence Zone: spells can be cast as though they had flash
+R11       [Scion end of turn: Emergence Zone 92%, pass 8% -> Emergence Zone]
+R11 --- Scion turn 11: life 37, 7 cards in hand, 2 lands
+R11     hand: Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant, Mindbreak Trap
+R11   Scion plays Misty Rainforest
+R11     cracks Misty Rainforest for Volcanic Island
+R11       [Scion attack plan by search: filtered at Goldfish 4]
+R11   Scion attacks Goldfish 4 with 1 creature(s): 1 damage (life now 39)
+R11 --- Goldfish 2 turn 11: life 39, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 39, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 39, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 36, 7 cards in hand, 3 lands
+R12     hand: Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant, Mindbreak Trap
+R12   Scion plays Badlands
+R12       [Scion attack plan by search: filtered at Goldfish 2]
+R12   Scion attacks Goldfish 2 with 1 creature(s): 1 damage (life now 38)
+R12 --- Goldfish 2 turn 12: life 38, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 39, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 39, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 36, 7 cards in hand, 4 lands
+R13     hand: Underworld Breach, Mox Diamond, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant, Mindbreak Trap
+R13       [Scion decides: Borne Upon a Wind 100%, stop 0% -> Borne Upon a Wind [search]]
+R13   Scion casts Borne Upon a Wind
+R13       [Scion attack plan by search: filtered at Goldfish 3]
+R13   Scion attacks Goldfish 3 with 1 creature(s): 1 damage (life now 38)
+R13     [audit] Scion discards Mox Diamond to hand size (8 cards in hand)
+R13 --- Goldfish 2 turn 13: life 38, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 38, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 39, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 36, 7 cards in hand, 4 lands
+R14     hand: Underworld Breach, Thassa's Oracle, Demonic Consultation, Tinder Wall, Orim's Chant, Mindbreak Trap, Brain Freeze
+R14       [Scion attack plan by search: filtered at Goldfish 4]
+R14   Scion attacks Goldfish 4 with 1 creature(s): 1 damage (life now 38)
+R14     [audit] Scion discards Orim's Chant to hand size (8 cards in hand)
+R14 --- Goldfish 2 turn 14: life 38, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 3 turn 14: life 38, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 38, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 36, 7 cards in hand, 4 lands
+R15     hand: Underworld Breach, Thassa's Oracle, Demonic Consultation, Tinder Wall, Mindbreak Trap, Brain Freeze, Rite of Flame
+R15       [Scion attack plan by search: filtered at Goldfish 2]
+R15   Scion attacks Goldfish 2 with 1 creature(s): 1 damage (life now 37)
+R15     [audit] Scion discards Rite of Flame to hand size (8 cards in hand)
+R15 --- Goldfish 2 turn 15: life 37, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 3 turn 15: life 38, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 38, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 36, 7 cards in hand, 4 lands
+R16     hand: Underworld Breach, Thassa's Oracle, Demonic Consultation, Tinder Wall, Mindbreak Trap, Brain Freeze, Chain of Vapor
+R16   Scion plays Plateau
+R16       [Scion attack plan by search: filtered at Goldfish 4]
+R16   Scion attacks Goldfish 4 with 1 creature(s): 1 damage (life now 37)
+R16 --- Goldfish 2 turn 16: life 37, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 3 turn 16: life 38, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 37, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Scion turn 17: life 36, 7 cards in hand, 5 lands
+R17     hand: Underworld Breach, Thassa's Oracle, Demonic Consultation, Tinder Wall, Mindbreak Trap, Brain Freeze, Chain of Vapor
+R17   Scion plays Tundra
+R17       [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R17   Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R17   Scion casts Thassa's Oracle
+R17   Scion casts Demonic Consultation
+R17     Scion exiles its library
+R17 *** Goldfish 2 is eliminated (life 37) by Scion
+R17 *** Goldfish 3 is eliminated (life 38) by Scion
+R17 *** Goldfish 4 is eliminated (life 37) by Scion
+R17 *** Scion wins by combo
+Kill: own turn 17 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (tutor) | held (payable, not offered): Mox Diamond
+  T2  progressed (land only) | held (payable, not offered): Mox Diamond, Demonic Consultation
+  T3  idle | held (payable, not offered): Mox Diamond, Demonic Consultation
+  T4  idle | held (payable, not offered): Mox Diamond, Demonic Consultation
+  T5  idle | held (payable, not offered): Mox Diamond, Demonic Consultation, Orim's Chant
+  T6  idle | held (payable, not offered): Mox Diamond, Demonic Consultation, Orim's Chant
+  T7  progressed (tutor) | held (payable, not offered): Mox Diamond, Demonic Consultation, Orim's Chant
+  T8  progressed (draw) | held (payable, not offered): Mox Diamond, Demonic Consultation, Orim's Chant
+  T9  idle | held (payable, not offered): Mox Diamond, Demonic Consultation, Orim's Chant
+  T10 progressed (land only) | held (payable, not offered): Mox Diamond, Demonic Consultation, Orim's Chant
+  T11 progressed (land only) | held (payable, not offered): Underworld Breach, Mox Diamond, Demonic Consultation, Orim's Chant
+  T12 progressed (land only) | held (payable, not offered): Underworld Breach, Mox Diamond, Demonic Consultation, Orim's Chant
+  T13 progressed (draw) | held (payable, not offered): Underworld Breach, Mox Diamond, Demonic Consultation, Orim's Chant
+  T14 idle | held (payable, not offered): Underworld Breach, Demonic Consultation, Orim's Chant, Brain Freeze, Rite of Flame
+  T15 idle | held (payable, not offered): Underworld Breach, Demonic Consultation, Brain Freeze, Rite of Flame, Chain of Vapor
+  T16 progressed (land only) | held (payable, not offered): Underworld Breach, Demonic Consultation, Brain Freeze, Chain of Vapor
+  T17 won
+  cleanup discards: Prismari, the Inspiration [combo piece], Ancient Copper Dragon [other], Korvold, Fae-Cursed King [other], Beseech the Mirror [tutor], Mox Diamond [fast mana / rock], Orim's Chant [protection], Rite of Flame [ritual]
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: own turn 10 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 10 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

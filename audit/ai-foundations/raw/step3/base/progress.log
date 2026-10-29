@@ -1,0 +1,14 @@
+start goldfish 19:41:14
+done goldfish rc=0 19:44:38
+start realism-t6 19:44:50
+done realism-t6 rc=0 19:56:38
+start realism-t6 19:58:46
+done realism-t6 rc=0 20:10:32
+start realism-t6 20:12:26
+done realism-t6 rc=0 20:24:13
+start realism-t6 20:25:56
+stopped realism-t6 (run d, commander funnel) 20:37:15; half-written output deleted
+start diag-t6-1000 10:43:26
+done diag-t6-1000 rc=0 10:46:16
+start realism-t6 11:52:58
+done realism-t6 rc=0 12:04:44

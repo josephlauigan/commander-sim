@@ -1,0 +1,134 @@
+Play-by-play of goldfish game 6 (seed 500006): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Tundra, Lotus Petal, Chrome Mox, Colossal Skyturtle, Silence, Fierce Guardianship, Volcanic Island
+R1    Sisay plays Mana Confluence
+R1    Sisay casts Lotus Petal
+R1        [Sisay decides: Lotus Petal 82%, Chrome Mox 18%, stop 0% -> Lotus Petal [must]]
+R1    Sisay casts Chrome Mox
+R1      Chrome Mox imprints Silence
+R1        [Sisay decides: Chrome Mox 100%, stop 0% -> Chrome Mox [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 40, 4 cards in hand, 1 lands
+R2      hand: Tundra, Colossal Skyturtle, Fierce Guardianship, Volcanic Island
+R2    Sisay plays Volcanic Island
+R2    Sisay casts Sisay, Weatherlight Captain
+R2        [Sisay decides: Sisay, Weatherlight Captain 84%, Mox Diamond 16%, stop (hold mana) 0% -> Sisay, Weatherlight Captain [must]]
+R2    Sisay casts Mox Diamond
+R2        [Sisay decides: Mox Diamond 100%, stop 0% -> Mox Diamond [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 40, 2 cards in hand, 2 lands
+R3      hand: Colossal Skyturtle, Fierce Guardianship
+R3    Sisay activates Sisay: Mount Doom
+R3        [Sisay decides: Sisay: Mount Doom 73%, Birds of Paradise 27%, stop 0% -> Sisay: Mount Doom [must]]
+R3        [Sisay attack plan by search: filtered at Goldfish 2]
+R3    Sisay attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 40, 3 cards in hand, 3 lands
+R4      hand: Colossal Skyturtle, Fierce Guardianship, Birds of Paradise
+R4    Sisay plays Wooded Foothills
+R4      cracks Wooded Foothills for Tropical Island
+R4    Sisay activates Sisay: Gaea's Cradle
+R4        [Sisay decides: Sisay: Gaea's Cradle 72%, Birds of Paradise 27%, channel Colossal Skyturtle: Lotus Petal 1%, stop 0% -> Sisay: Gaea's Cradle [must]]
+R4        [Sisay decides: Birds of Paradise 100%, stop 0% -> Birds of Paradise [search]]
+R4    Sisay casts Birds of Paradise
+R4        [Sisay attack plan by search: filtered at Goldfish 4]
+R4    Sisay attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 38, 2 cards in hand, 5 lands
+R5      hand: Colossal Skyturtle, Fierce Guardianship
+R5    Sisay activates Sisay: Ragavan, Nimble Pilferer
+R5        [Sisay decides: Sisay: Ragavan, Nimble Pilferer 73%, Delighted Halfling 27%, Colossal Skyturtle 0%, stop 0% -> Sisay: Ragavan, Nimble Pilferer [must]]
+R5        [Sisay decides: Delighted Halfling 95%, channel Colossal Skyturtle: Lotus Petal 5%, stop 0% -> Delighted Halfling [search]]
+R5    Sisay casts Delighted Halfling
+R5        [Sisay decides: channel Colossal Skyturtle: Lotus Petal 100%, stop 0% -> stop [search]]
+R5        [Sisay attack plan by search: filtered at Goldfish 3]
+R5    Sisay attacks Goldfish 3 with 1 creature(s): 3 damage (life now 37)
+R5        [Sisay decides: channel Colossal Skyturtle: Lotus Petal 100%, stop 0% -> stop [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 37, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 37, 2 cards in hand, 5 lands
+R6      hand: Colossal Skyturtle, Fierce Guardianship
+R6    Sisay activates Sisay: Marvin, Murderous Mimic
+R6        [Sisay decides: Sisay: Marvin, Murderous Mimic 99%, Colossal Skyturtle 1%, stop 0% -> Sisay: Marvin, Murderous Mimic [must]]
+R6        [Sisay decides: Colossal Skyturtle 100%, stop 0% -> stop [search]]
+R6        [Sisay attack plan by search: filtered at Goldfish 4]
+R6    Sisay attacks Goldfish 4 with 2 creature(s): 5 damage (life now 33)
+R6    Sisay activates Sisay: Shang-Chi, Master of Kung Fu
+R6        [Sisay decides: Sisay: Shang-Chi, Master of Kung Fu 99%, Colossal Skyturtle 1%, stop 0% -> Sisay: Shang-Chi, Master of Kung Fu [must]]
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 37, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 33, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Sisay turn 7: life 36, 3 cards in hand, 5 lands
+R7      hand: Colossal Skyturtle, Fierce Guardianship, Mockingbird
+R7    Sisay activates Sisay: Ioreth of the Healing House
+R7        [Sisay decides: Sisay: Ioreth of the Healing House 99%, Colossal Skyturtle 1%, Spider-Woman, Stunning Savior 0%, stop 0% -> Sisay: Ioreth of the Healing House [must]]
+R7        [Sisay decides: Colossal Skyturtle 43%, Spider-Woman, Stunning Savior 19%, untap (Marvin, Murderous Mimic) 19%, untap (Ioreth of the Healing House) 19% -> Colossal Skyturtle [search]]
+R7    Sisay casts Colossal Skyturtle
+R7        [Sisay decides: untap (Marvin, Murderous Mimic) 38%, untap (Ioreth of the Healing House) 38%, Spider-Woman, Stunning Savior 23%, stop 0% -> untap (Marvin, Murderous Mimic) [search]]
+R7      Marvin, Murderous Mimic untaps Gaea's Cradle
+R7        [Sisay decides: Spider-Woman, Stunning Savior 69%, Mockingbird (X = 6, copy Colossal Skyturtle) 25%, untap (Ioreth of the Healing House) 6%, stop 0% -> Spider-Woman, Stunning Savior [search]]
+R7    Sisay casts Spider-Woman, Stunning Savior
+R7        [Sisay decides: Mockingbird (X = 6, copy Colossal Skyturtle) 82%, untap (Ioreth of the Healing House) 18%, stop 0% -> Mockingbird (X = 6, copy Colossal Skyturtle) [search]]
+R7    Sisay casts Mockingbird -> Colossal Skyturtle (Sisay)
+R7      Mockingbird enters as a copy of Colossal Skyturtle
+R7        [Sisay decides: untap (Ioreth of the Healing House) 100%, stop 0% -> untap (Ioreth of the Healing House) [search]]
+R7      Ioreth of the Healing House untaps Gaea's Cradle
+R7        [Sisay attack plan by search: filtered at Goldfish 2]
+R7    Sisay attacks Goldfish 2 with 2 creature(s): 8 damage (life now 30)
+R7  --- Goldfish 2 turn 7: life 30, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 37, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 33, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Sisay turn 8: life 35, 1 cards in hand, 5 lands
+R8      hand: Fierce Guardianship
+R8    Sisay goes for Ioreth + Marvin + a legend that taps for mana (DDR)
+R8    Sisay activates Sisay: Selvala, Heart of the Wilds
+R8  *** Goldfish 2 is eliminated (life 30) by Sisay
+R8  *** Goldfish 3 is eliminated (life 37) by Sisay
+R8  *** Goldfish 4 is eliminated (life 33) by Sisay
+R8  *** Sisay wins by combo
+R8        [Sisay decides: combo: Ioreth + Marvin + a legend that taps for mana (DDR) 49%, combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 49%, Sisay: Derevi, Empyrial Tactician 2%, Relic of Legends 0% -> combo: Ioreth + Marvin + a legend that taps for mana (DDR) [must]]
+Kill: own turn 8 (Ioreth + Marvin + a legend that taps for mana (DDR))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Silence, Fierce Guardianship
+  T2  progressed (combo piece) | held (payable, not offered): Fierce Guardianship
+  T3  progressed (abilities only) | held (payable, not offered): Fierce Guardianship
+  T4  progressed (fast mana / rock) | held (payable, not offered): Fierce Guardianship
+  T5  progressed (fast mana / rock) | held (payable, not offered): Fierce Guardianship
+  T6  passed_castable: Colossal Skyturtle [other] | held (payable, not offered): Fierce Guardianship, Mockingbird
+  T7  progressed (other) | held (payable, not offered): Fierce Guardianship, Mockingbird
+  T8  won
+  cleanup discards: none
+  stops with another option offered: T5 main 1 look-ahead "stop" over channel Colossal Skyturtle: Lotus Petal (7.0); T5 main 2 look-ahead "stop" over channel Colossal Skyturtle: Lotus Petal (7.0); T6 main 1 look-ahead "stop" over Colossal Skyturtle (5.8)
+  crude best case: none
+  crude best case with tutors: none

@@ -1,0 +1,181 @@
+Play-by-play of goldfish game 9 (seed 500009): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mystic Remora, Dark Ritual, Demonic Tutor, Verdant Catacombs, Rain of Filth, Marsh Flats, Sol Ring
+R1    Kraum/Tymna plays Verdant Catacombs
+R1      cracks Verdant Catacombs for Underground Sea
+R1    Kraum/Tymna casts Sol Ring
+R1        [Kraum/Tymna decides: Sol Ring 47%, Dark Ritual 37%, Mystic Remora 16%, stop 0% -> Sol Ring [must]]
+R1    Kraum/Tymna casts Fellwar Stone
+R1        [Kraum/Tymna decides: Fellwar Stone 100%, stop 0% -> Fellwar Stone [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 39, 5 cards in hand, 1 lands
+R2      hand: Mystic Remora, Dark Ritual, Demonic Tutor, Rain of Filth, Marsh Flats
+R2        [Kraum/Tymna plays Marsh Flats for Badlands [plan: the land drop the plan wants]]
+R2    Kraum/Tymna plays Marsh Flats
+R2      cracks Marsh Flats for Badlands
+R2        [Kraum/Tymna decides: Mystic Remora 41%, Dark Ritual 39%, Demonic Tutor 12%, Kraum, Ludevic's Opus 7% -> Kraum, Ludevic's Opus [search]]
+R2    Kraum/Tymna casts Kraum, Ludevic's Opus
+R2        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R2    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 4 damage (life now 36)
+R2  --- Goldfish 2 turn 2: life 36, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 38, 5 cards in hand, 2 lands
+R3      hand: Mystic Remora, Dark Ritual, Demonic Tutor, Rain of Filth, Red Elemental Blast
+R3    Kraum/Tymna casts Mox Amber
+R3        [Kraum/Tymna decides: Mox Amber 86%, Mystic Remora 6%, Dark Ritual 6%, Demonic Tutor 2% -> Mox Amber [must]]
+R3        [Kraum/Tymna decides: Tymna the Weaver 48%, Mystic Remora 40%, Demonic Tutor 12%, stop (hold mana) 0% -> Demonic Tutor [search]]
+R3    Kraum/Tymna casts Demonic Tutor
+R3      Kraum/Tymna tutors Thassa's Oracle
+R3        [Kraum/Tymna decides: Mystic Remora 85%, Tymna the Weaver 15%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R3        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R3    Kraum/Tymna attacks Goldfish 4 with 1 creature(s): 4 damage (life now 36)
+R3        [Kraum/Tymna decides: Mystic Remora 85%, Tymna the Weaver 15%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 36, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 36, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 38, 5 cards in hand, 2 lands
+R4      hand: Mystic Remora, Dark Ritual, Rain of Filth, Red Elemental Blast, Thassa's Oracle
+R4        [Kraum/Tymna decides: Dark Ritual [plan: Dark Ritual -> combo: Ad Nauseam into a win; wins this turn]]
+R4    Kraum/Tymna casts Dark Ritual
+R4        [Kraum/Tymna decides: combo: Ad Nauseam into a win [plan: combo: Ad Nauseam into a win; wins this turn]]
+R4    Kraum/Tymna goes for Ad Nauseam into a win
+R4    Kraum/Tymna casts Ad Nauseam
+R4      Ad Nauseam: 15 cards, life now 19
+R4      Ad Nauseam found no line it can pay for
+R4      ...Ad Nauseam into a win stops at step 2 (play the line the cards drawn made ready)
+R4        [Kraum/Tymna decides: Chrome Mox 70%, Mystic Remora 23%, Tymna the Weaver 4%, Gleaming Splendor 1% -> stop (hold mana) [search]]
+R4    Kraum/Tymna plays Windswept Heath
+R4      cracks Windswept Heath for Tundra
+R4        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R4    Kraum/Tymna attacks Goldfish 3 with 1 creature(s): 4 damage (life now 36)
+R4        [Kraum/Tymna decides: Chrome Mox 56%, Tymna the Weaver 23%, Mystic Remora 19%, Gleaming Splendor 1% -> Grand Abolisher [search]]
+R4    Kraum/Tymna casts Grand Abolisher
+R4        [Kraum/Tymna decides: Chrome Mox 74%, Mystic Remora 25%, Exhibition Tidecaller 0%, stop (hold mana) 0% -> Exhibition Tidecaller [search]]
+R4    Kraum/Tymna casts Exhibition Tidecaller
+R4        [Kraum/Tymna decides: Chrome Mox 95%, Mystic Remora 5%, stop (hold mana) 0% -> Mystic Remora [search]]
+R4    Kraum/Tymna casts Mystic Remora
+R4        [Kraum/Tymna decides: Chrome Mox 100%, stop 0% -> Chrome Mox [search]]
+R4    Kraum/Tymna casts Chrome Mox
+R4      Chrome Mox imprints Rain of Filth
+R4      [audit] Kraum/Tymna discards Arid Mesa to hand size (13 cards in hand)
+R4      [audit] Kraum/Tymna discards Deflecting Swat to hand size (12 cards in hand)
+R4      [audit] Kraum/Tymna discards Rite of Flame to hand size (11 cards in hand)
+R4      [audit] Kraum/Tymna discards Chain of Vapor to hand size (10 cards in hand)
+R4      [audit] Kraum/Tymna discards Into the Flood Maw to hand size (9 cards in hand)
+R4      [audit] Kraum/Tymna discards Faerie Mastermind to hand size (8 cards in hand)
+R4  --- Goldfish 2 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 18, 7 cards in hand, 3 lands
+R5      hand: Red Elemental Blast, Thassa's Oracle, Flash Photography, Brain Freeze, Gleaming Splendor, Scalding Tarn, Lion's Eye Diamond
+R5    Kraum/Tymna plays Scalding Tarn
+R5      cracks Scalding Tarn for Volcanic Island
+R5        [Kraum/Tymna decides: Mox Opal 91%, Tymna the Weaver 8%, Flash Photography 1%, Gleaming Splendor 0% -> Mox Opal [search]]
+R5    Kraum/Tymna casts Mox Opal
+R5        [Kraum/Tymna decides: Tymna the Weaver 89%, Flash Photography 7%, Gleaming Splendor 4%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R5    Kraum/Tymna attacks Goldfish 2 with 2 creature(s): 6 damage (life now 30)
+R5        [Kraum/Tymna decides: Tymna the Weaver 89%, Flash Photography 7%, Gleaming Splendor 4%, stop (hold mana) 1% -> Gleaming Splendor [search]]
+R5    Kraum/Tymna casts Gleaming Splendor
+R5        [Kraum/Tymna decides: Tymna the Weaver 92%, Flash Photography 7%, stop (hold mana) 1% -> Tymna the Weaver [search]]
+R5    Kraum/Tymna casts Tymna the Weaver
+R5        [Kraum/Tymna decides: Flash Photography 58%, stop (hold mana) 42% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 30, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Kraum/Tymna casts Flash Photography -> Grand Abolisher (Kraum/Tymna)
+R6      Exhibition Tidecaller: Goldfish 3 mills 3
+R6      Flash Photography: a token copy of Grand Abolisher
+R6        [Kraum/Tymna end of turn: Flash Photography (flash, copy Grand Abolisher) 98%, pass 2% -> Flash Photography (flash, copy Grand Abolisher)]
+R6  --- Kraum/Tymna turn 6: life 17, 4 cards in hand, 4 lands
+R6      hand: Red Elemental Blast, Thassa's Oracle, Brain Freeze, Lion's Eye Diamond
+R6    Kraum/Tymna plays Scrubland
+R6        [Kraum/Tymna decides: Flash Photography (flashback) 85%, stop (hold mana) 15% -> stop (hold mana) [search]]
+R6        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R6    Kraum/Tymna attacks Goldfish 3 with 4 creature(s): 10 damage (life now 26)
+R6      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R6        [Kraum/Tymna decides: Necropotence 70%, Flash Photography (flashback) 26%, stop (hold mana) 4% -> Flash Photography (flashback) [search]]
+R6    Kraum/Tymna casts Flash Photography
+R6      Exhibition Tidecaller: Goldfish 4 mills 3
+R6      Flash Photography: a token copy of Grand Abolisher
+R6        [Kraum/Tymna decides: Necropotence 70%, stop (hold mana) 30% -> Necropotence [search]]
+R6    Kraum/Tymna casts Necropotence
+R6    Kraum/Tymna pays 4 life to Necropotence
+R6      [audit] Kraum/Tymna discards Misty Rainforest to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 30, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 26, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kraum/Tymna turn 7: life 14, 7 cards in hand, 5 lands
+R7      hand: Red Elemental Blast, Thassa's Oracle, Brain Freeze, Lion's Eye Diamond, Flooded Strand, Underworld Breach, Misdirection
+R7    Kraum/Tymna plays Flooded Strand
+R7      cracks Flooded Strand for Plateau
+R7        [Kraum/Tymna decides: combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) [plan: combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish); wins this turn]]
+R7    Kraum/Tymna goes for Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish)
+R7    Kraum/Tymna casts Underworld Breach
+R7    Kraum/Tymna casts Lion's Eye Diamond
+R7    Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R7    Kraum/Tymna casts Brain Freeze
+R7      Exhibition Tidecaller: Goldfish 4 mills 3
+R7      Brain Freeze: 3 copies, 3 cards each
+R7    Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R7    Kraum/Tymna casts Lion's Eye Diamond
+R7    Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R7    Kraum/Tymna casts Brain Freeze
+R7      Exhibition Tidecaller: Goldfish 4 mills 3
+R7      Brain Freeze: 5 copies, 3 cards each
+R7    Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R7    Kraum/Tymna casts Lion's Eye Diamond
+R7    Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R7    Kraum/Tymna casts Brain Freeze
+R7      Exhibition Tidecaller: Goldfish 4 mills 3
+R7      Brain Freeze: 7 copies, 3 cards each
+R7    Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R7    Kraum/Tymna casts Lion's Eye Diamond
+R7    Kraum/Tymna escapes Brain Freeze with Underworld Breach
+R7    Kraum/Tymna casts Brain Freeze
+R7      Exhibition Tidecaller: Goldfish 4 mills 3
+R7      Brain Freeze: 9 copies, 3 cards each
+R7    Kraum/Tymna escapes Lion's Eye Diamond with Underworld Breach
+R7    Kraum/Tymna casts Lion's Eye Diamond
+R7    Kraum/Tymna escapes Thassa's Oracle with Underworld Breach
+R7    Kraum/Tymna casts Thassa's Oracle
+R7  *** Goldfish 2 is eliminated (life 30) by Kraum/Tymna
+R7  *** Goldfish 3 is eliminated (life 26) by Kraum/Tymna
+R7  *** Goldfish 4 is eliminated (life 36) by Kraum/Tymna
+R7  *** Kraum/Tymna wins by combo
+Kill: own turn 7 (combo (unnamed))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Rain of Filth
+  T2  progressed (other) | held (payable, not offered): Rain of Filth, Red Elemental Blast
+  T3  passed_castable: Mystic Remora [draw] | held (payable, not offered): Rain of Filth, Red Elemental Blast, Dark Ritual
+  T4  passed_castable: Faerie Mastermind [other], Gleaming Splendor [other] | held (payable, not offered): Dark Ritual, Rain of Filth, Red Elemental Blast, Thassa's Oracle, Ad Nauseam, Chain of Vapor, Rite of Flame, Brain Freeze, Into the Flood Maw, Deflecting Swat, Lion's Eye Diamond, Flash Photography
+  T5  passed_castable: Flash Photography [other] | held (payable, not offered): Red Elemental Blast, Thassa's Oracle, Brain Freeze, Lion's Eye Diamond
+  T6  progressed (draw) | held (payable, not offered): Red Elemental Blast, Thassa's Oracle, Brain Freeze, Lion's Eye Diamond
+  T7  won
+  cleanup discards: Arid Mesa [land], Deflecting Swat [other], Rite of Flame [ritual], Chain of Vapor [other], Into the Flood Maw [other], Faerie Mastermind [other], Misty Rainforest [land]
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Mystic Remora (8.4); T3 main 2 look-ahead "stop (hold mana)" over Mystic Remora (8.4); T4 main 1 look-ahead "stop (hold mana)" over Chrome Mox (9.5); T5 main 1 look-ahead "stop (hold mana)" over Tymna the Weaver (8.6); T5 main 2 look-ahead "stop (hold mana)" over Flash Photography (4.1); T6 main 1 look-ahead "stop (hold mana)" over Flash Photography (flashback) (5.5)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

@@ -1,0 +1,29 @@
+
+=== Realism: Tier 4 (Low B4) [loose, lookahead AI, 1000 games, seeds 500000-500999; 5 decks, 4 a pod] ===
+targets: data/realism/t4.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     31.5%     28.7-34.4   32.8%     31.3-34.3  PASS
+  seat 2 share of decisive games (%)                     24.8%     22.2-27.6   27.8%     26.3-29.3  FAIL
+  seat 3 share of decisive games (%)                     23.5%     21.0-26.2   21.6%     20.1-23.1  FAIL
+  seat 4 share of decisive games (%)                     20.2%     17.8-22.8   17.9%     16.4-19.4  FAIL
+  median round of a decisive win (rounds)                  8.0       8.0-8.0     8.0           7-9  PASS
+  win round, 75th minus 25th percentile (rounds)           3.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                33.5%     30.6-36.5   17.9%     16.4-19.4  reference
+  wins by damage (combat or other) (%)                   66.1%     63.1-69.0   79.7%     78.2-81.2  reference
+  wins by commander damage (%)                            0.4%       0.2-1.0    2.2%       0.7-3.7  reference
+  wins by poison (%)                                      0.0%       0.0-0.4    0.1%         0-1.6  reference
+  deck win spread, best minus worst deck (pts)            31.7             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 0.4%       0.2-1.0       -             -  no target
+  2 of 5 targets pass (3 statistics have no target yet; 4 reference values, not scored)
+Games: 1000, decisive 1000 (100.0%), round-cap timeouts 0.0%
+Each deck's share of the decisive games it sat in: Chulane 14.6% of 801; Edgar Markov 46.3% of 805; Krenko 28.8% of 799; Prosper 15.3% of 784; Yuriko 19.7% of 811
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins (n=44123, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins (n=44123, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins (n=44123, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight), share of seat wins (n=44123, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight) (n=15302, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight) (n=8113, read 2026-10-25) [reference, not scored]
+  win_damage: Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight) (n=8113, read 2026-10-25) [reference, not scored]
+  win_commander_damage: Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight) (n=8113, read 2026-10-25) [reference, not scored]
+  win_poison: Playgroup commanders.json, wins of Chulane, Edgar, Krenko, Prosper, Yuriko (equal weight) (n=8113, read 2026-10-25) [reference, not scored]

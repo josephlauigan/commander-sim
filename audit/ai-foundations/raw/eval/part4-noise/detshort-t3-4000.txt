@@ -1,0 +1,29 @@
+
+=== Realism: Tier 3 (High B3) [loose, lookahead AI, 4000 games, seeds 500000-503999; 5 decks, 4 a pod] ===
+targets: data/realism/t3.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     30.2%     28.7-31.6   32.3%     30.8-33.8  FAIL
+  seat 2 share of decisive games (%)                     25.9%     24.5-27.2   27.7%     26.2-29.2  FAIL
+  seat 3 share of decisive games (%)                     23.1%     21.8-24.4   22.0%     20.5-23.5  PASS
+  seat 4 share of decisive games (%)                     20.9%     19.7-22.2   18.0%     16.5-19.5  FAIL
+  median round of a decisive win (rounds)                 10.0     10.0-10.0     8.0           7-9  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                15.6%     14.5-16.7   16.5%         15-18  PASS
+  wins by damage (combat or other) (%)                   57.1%     55.5-58.6   59.8%     58.3-61.3  FAIL
+  wins by commander damage (%)                            9.0%      8.2-10.0   14.4%     12.9-15.9  FAIL
+  wins by poison (%)                                     18.3%     17.2-19.6    9.3%      7.8-10.8  FAIL
+  deck win spread, best minus worst deck (pts)            20.4             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 4.3%       3.7-5.0       -             -  no target
+  2 of 9 targets pass (3 statistics have no target yet)
+Games: 4000, decisive 3980 (99.5%), round-cap timeouts 0.5%
+Each deck's share of the decisive games it sat in: Atraxa 27.4% of 3246; Aurelia 25.6% of 3133; Korvold 16.5% of 3164; Marwyn 18.7% of 3209; Tergrid 36.9% of 3168
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  seat2_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  seat3_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  seat4_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  win_round_median: Playgroup commander stats, average win turn of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=7223, read 2026-10-24)
+  win_combo_alt: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)
+  win_damage: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)
+  win_commander_damage: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)
+  win_poison: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)

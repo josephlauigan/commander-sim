@@ -39,7 +39,7 @@ pub fn tutor_prio(g: &Game, p: PlayerId, kind: &str, life: i32) -> i32 {
         return 0; // Vampiric Tutor / Imperial Seal: 2 life is a real cost only near death
     }
     let kind = match kind {
-        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" => kind,
+        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" | "ae" => kind, // --- ai-fix: B: "ae"
         _ => "any",
     };
     TUTOR_DEPTH.set(TUTOR_DEPTH.get() + 1);
@@ -61,6 +61,27 @@ pub fn tutor_prio(g: &Game, p: PlayerId, kind: &str, life: i32) -> i32 {
         v -= 10.0;
     }
     v as i32
+}
+
+// --- ai-fix: B
+/// the tutor kind (`decks::tutor_ok`) a spell's own search names, when its ability language restricts it: Enlightened
+/// Tutor is tagged `tut=any` but searches for an artifact or enchantment ("ae"), so it was scored for finding Thassa's
+/// Oracle. None: no restricted search (the `tut` tag stands).
+pub fn search_kind(g: &Game, c: CardId) -> Option<&'static str> {
+    use crate::dsl::model::Ability;
+    g.db.get(c).abilities.iter().find_map(|a| match a {
+        Ability::Spell { effects } => effects.iter().filter(|e| e.kind == "search").find_map(|e| {
+            match e.filter.as_ref()?.kind.as_deref()? {
+                "ae" => Some("ae"),
+                "artifact" => Some("art"),
+                "enchantment" => Some("ench"),
+                "creature" => Some("cre"),
+                "instant_or_sorcery" => Some("is"),
+                _ => None,
+            }
+        }),
+        _ => None,
+    })
 }
 
 fn creatures_of(g: &Game, p: PlayerId) -> usize {
@@ -231,7 +252,7 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 62;
     }
     if let Some(k) = t.str(Tag::Tut) {
-        return tutor_prio(g, p, k, 0);
+        return tutor_prio(g, p, search_kind(g, c).unwrap_or(k), 0); // --- ai-fix: B: what it can really find
     }
     if t.has(Tag::Draw) && (d.instant || d.sorcery) {
         return 46;
@@ -417,7 +438,9 @@ pub fn spell_importance(g: &Game, p: PlayerId, c: CardId) -> f64 {
 pub fn tutor_pick(g: &Game, p: PlayerId, ok: impl Fn(CardId) -> bool) -> Option<CardId> {
     let names: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| ok(c)).collect();
     let pl = g.player(p);
-    let have = |c: CardId| pl.hand.contains(&c) || pl.perms.iter().any(|&m| g.perm(m).cd == Some(c));
+    let top = crate::engine::tutors::known_top(g, p); // --- ai-fix: B: a card p put on top itself is on its way
+    let have =
+        |c: CardId| pl.hand.contains(&c) || pl.perms.iter().any(|&m| g.perm(m).cd == Some(c)) || top.contains(&c);
     plans::wish_raw(g, p).into_iter().find(|&w| names.contains(&w) && !have(w))
 }
 

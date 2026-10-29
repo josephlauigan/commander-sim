@@ -1,0 +1,121 @@
+Play-by-play of goldfish game 4 (seed 500004): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mana Vault, Bloodstained Mire, Dark Ritual, City of Brass, Watery Grave, Talisman of Dominance, Defense Grid
+R1    Rograkh/Silas plays City of Brass
+R1    Rograkh/Silas casts Mana Vault
+R1        [Rograkh/Silas decides: Mana Vault 43%, Mox Opal 32%, Dark Ritual 25%, stop 0% -> Mana Vault [must]]
+R1    Rograkh/Silas casts Talisman of Dominance
+R1        [Rograkh/Silas decides: Talisman of Dominance 46%, Mox Opal 46%, Defense Grid 8%, stop 0% -> Talisman of Dominance [must]]
+R1    Rograkh/Silas casts Mox Opal
+R1        [Rograkh/Silas decides: Mox Opal 85%, Defense Grid 15%, stop 0% -> Mox Opal [must]]
+R1        [Rograkh/Silas decides: Defense Grid 100%, stop 0% -> stop [search]]
+R1        [Rograkh/Silas decides: Defense Grid 100%, stop 0% -> Defense Grid [search]]
+R1    Rograkh/Silas casts Defense Grid
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 39, 3 cards in hand, 1 lands
+R2      hand: Bloodstained Mire, Dark Ritual, Watery Grave
+R2        [Rograkh/Silas plays Bloodstained Mire for Underground Sea [plan: the land drop the plan wants]]
+R2    Rograkh/Silas plays Bloodstained Mire
+R2      cracks Bloodstained Mire for Underground Sea
+R2        [Rograkh/Silas decides: Silas Renn, Seeker Adept 67%, Rograkh, Son of Rohgahh 33%, stop 0% -> Silas Renn, Seeker Adept [search]]
+R2    Rograkh/Silas casts Silas Renn, Seeker Adept
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop 0% -> Rograkh, Son of Rohgahh [search]]
+R2    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Rograkh/Silas turn 3: life 35, 3 cards in hand, 2 lands
+R3      hand: Dark Ritual, Watery Grave, Ancient Tomb
+R3        [Rograkh/Silas plays Watery Grave [plan: the land drop the plan wants]]
+R3    Rograkh/Silas pays 2 life for an untapped Watery Grave
+R3    Rograkh/Silas plays Watery Grave
+R3        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R3    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 32, 3 cards in hand, 3 lands
+R4      hand: Dark Ritual, Ancient Tomb, Blood Crypt
+R4    Rograkh/Silas plays Ancient Tomb
+R4    Rograkh/Silas casts Springleaf Drum
+R4        [Rograkh/Silas decides: Springleaf Drum 100%, stop 0% -> Springleaf Drum [must]]
+R4        [Rograkh/Silas attack plan by search: filtered at Goldfish 3]
+R4    Rograkh/Silas attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 31, 2 cards in hand, 4 lands
+R5      hand: Dark Ritual, Blood Crypt
+R5    Rograkh/Silas plays Blood Crypt
+R5        [Rograkh/Silas attack plan by search: filtered at Goldfish 4]
+R5    Rograkh/Silas attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Rograkh/Silas turn 6: life 30, 2 cards in hand, 5 lands
+R6      hand: Dark Ritual, Yawgmoth's Will
+R6        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R6    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R6  --- Goldfish 2 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Rograkh/Silas turn 7: life 29, 3 cards in hand, 5 lands
+R7      hand: Dark Ritual, Yawgmoth's Will, Infernal Plunge
+R7        [Rograkh/Silas attack plan by search: filtered at Goldfish 4]
+R7    Rograkh/Silas attacks Goldfish 4 with 1 creature(s): 2 damage (life now 36)
+R7  --- Goldfish 2 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Rograkh/Silas turn 8: life 28, 4 cards in hand, 5 lands
+R8      hand: Dark Ritual, Yawgmoth's Will, Infernal Plunge, Thassa's Oracle
+R8        [Rograkh/Silas decides: Diabolic Intent for Demonic Consultation [plan: Diabolic Intent for Demonic Consultation -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R8    Rograkh/Silas casts Diabolic Intent
+R8      Rograkh/Silas tutors Demonic Consultation
+R8        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R8    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R8    Rograkh/Silas casts Thassa's Oracle
+R8    Rograkh/Silas casts Demonic Consultation
+R8      Rograkh/Silas exiles its library
+R8  *** Goldfish 2 is eliminated (life 36) by Rograkh/Silas
+R8  *** Goldfish 3 is eliminated (life 38) by Rograkh/Silas
+R8  *** Goldfish 4 is eliminated (life 36) by Rograkh/Silas
+R8  *** Rograkh/Silas wins by combo
+Kill: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Dark Ritual
+  T2  progressed (other) | held (payable, not offered): Dark Ritual
+  T3  mana_short | held (payable, not offered): Dark Ritual
+  T4  progressed (fast mana / rock) | held (payable, not offered): Dark Ritual
+  T5  progressed (land only) | held (payable, not offered): Dark Ritual, Yawgmoth's Will
+  T6  idle | held (payable, not offered): Dark Ritual, Yawgmoth's Will, Infernal Plunge
+  T7  idle | held (payable, not offered): Dark Ritual, Yawgmoth's Will, Infernal Plunge, Thassa's Oracle
+  T8  won
+  cleanup discards: none
+  stops with another option offered: T1 main 1 look-ahead "stop" over Defense Grid (6.8)
+  crude best case: none
+  crude best case with tutors: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

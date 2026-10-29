@@ -1,0 +1,142 @@
+Play-by-play of goldfish game 6 (seed 500006): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Elvish Mystic, Misty Rainforest, Commandeer, Talisman of Curiosity, Botanical Sanctum, Rejuvenating Springs, Hullbreaker Horror
+R1    Kinnan plays Rejuvenating Springs
+R1    Kinnan casts Elvish Mystic
+R1        [Kinnan decides: Elvish Mystic 100%, stop 0% -> Elvish Mystic [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Misty Rainforest, Commandeer, Talisman of Curiosity, Botanical Sanctum, Hullbreaker Horror, Force of Negation
+R2    Kinnan plays Botanical Sanctum
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 67%, Talisman of Curiosity 33%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Misty Rainforest, Commandeer, Talisman of Curiosity, Hullbreaker Horror, Force of Negation, Misdirection
+R3    Kinnan plays Tropical Island
+R3        [Kinnan decides: Talisman of Curiosity 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3        [Kinnan attack plan by search: filtered at Goldfish 2]
+R3    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3        [Kinnan decides: Talisman of Curiosity 99%, stop (hold mana) 1% -> Talisman of Curiosity [search]]
+R3    Kinnan casts Talisman of Curiosity
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kinnan turn 4: life 40, 5 cards in hand, 3 lands
+R4      hand: Misty Rainforest, Commandeer, Hullbreaker Horror, Force of Negation, Misdirection
+R4    Kinnan plays Misty Rainforest
+R4      cracks Misty Rainforest for Breeding Pool
+R4        [Kinnan decides: Volatile Stormdrake 72%, stop (hold mana) 17%, Kinnan: dig five 8%, Hullbreaker Horror 3% -> Hullbreaker Horror [search]]
+R4    Kinnan casts Hullbreaker Horror
+R4        [Kinnan attack plan by search: filtered at Goldfish 3]
+R4    Kinnan attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kinnan turn 5: life 39, 4 cards in hand, 4 lands
+R5      hand: Commandeer, Force of Negation, Misdirection, Volatile Stormdrake
+R5        [Kinnan decides: Sylvan Library 62%, Volatile Stormdrake 28%, stop (hold mana) 7%, Kinnan: dig five 3% -> Kinnan: dig five [search]]
+R5        [Kinnan attack plan by search: filtered at Goldfish 4]
+R5    Kinnan attacks Goldfish 4 with 2 creature(s): 9 damage (life now 31)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 31, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kinnan turn 6: life 39, 5 cards in hand, 4 lands
+R6      hand: Commandeer, Force of Negation, Misdirection, Volatile Stormdrake, Sylvan Library
+R6        [Kinnan decides: Sylvan Library 45%, Nature's Rhythm 27%, Volatile Stormdrake 20%, stop (hold mana) 5% -> Nature's Rhythm [search]]
+R6    Kinnan casts Nature's Rhythm
+R6        [Kinnan attack plan by search: filtered at Goldfish 3]
+R6    Kinnan attacks Goldfish 3 with 3 creature(s): 12 damage (life now 26)
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 26, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 31, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kinnan turn 7: life 39, 5 cards in hand, 4 lands
+R7      hand: Commandeer, Force of Negation, Misdirection, Volatile Stormdrake, Sylvan Library
+R7    Kinnan plays Ancient Tomb
+R7        [Kinnan decides: harmonize Nature's Rhythm 74%, Sylvan Library 16%, Volatile Stormdrake 7%, stop (hold mana) 2% -> Volatile Stormdrake [search]]
+R7    Kinnan casts Volatile Stormdrake
+R7        [Kinnan decides: harmonize Nature's Rhythm 59%, Sylvan Library 36%, stop (hold mana) 4%, Kinnan: dig five 2% -> Sylvan Library [search]]
+R7    Kinnan casts Sylvan Library
+R7        [Kinnan decides: harmonize Nature's Rhythm 85%, stop (hold mana) 15% -> stop (hold mana) [search]]
+R7        [Kinnan attack plan by search: filtered at Goldfish 3]
+R7    Kinnan attacks Goldfish 3 with 4 creature(s): 13 damage (life now 13)
+R7  --- Goldfish 2 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 13, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 31, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8      Thrasios reveals Llanowar Elves: drawn
+R8        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R8  --- Kinnan turn 8: life 37, 4 cards in hand, 5 lands
+R8      hand: Commandeer, Force of Negation, Misdirection, Llanowar Elves
+R8        [Kinnan decides: harmonize Nature's Rhythm 85%, The One Ring 11%, stop (hold mana) 2%, Kinnan: dig five 1% -> The One Ring [search]]
+R8    Kinnan casts The One Ring
+R8      The One Ring cast in Main1 step of Kinnan's turn (life 37)
+R8      Kinnan gains protection from everything until their next turn
+R8        [Kinnan decides: harmonize Nature's Rhythm 79%, stop (hold mana) 14%, Llanowar Elves 5%, The One Ring 2% -> The One Ring [search]]
+R8    Kinnan taps The One Ring: burden 1, life 37, Main1 step of Kinnan's turn
+R8        [Kinnan decides: harmonize Nature's Rhythm 81%, stop (hold mana) 14%, Llanowar Elves 5% -> harmonize Nature's Rhythm [search]]
+R8      2 damage to Kinnan is prevented
+R8      1 damage to Kinnan is prevented
+R8    Kinnan harmonizes Nature's Rhythm (X=9)
+R8        [Kinnan attack plan by search: filtered at Goldfish 2]
+R8    Kinnan attacks Goldfish 2 with 4 creature(s): 10 damage (life now 28)
+R8  --- Goldfish 2 turn 8: life 28, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 13, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 31, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Kinnan turn 9: life 37, 11 cards in hand, 5 lands
+R9      hand: Commandeer, Force of Negation, Misdirection, Llanowar Elves, Copy Artifact, Fierce Guardianship, Island, Mental Misstep, City of Brass, Copy Enchantment, Basalt Monolith
+R9    Kinnan no longer has protection from everything
+R9    Kinnan loses 1 life to The One Ring's burden (life 37)
+R9    Kinnan plays Island
+R9        [Kinnan decides: Basalt Monolith 87%, stop (hold mana) 10%, Kinnan: dig five 1%, The One Ring 1% -> Kinnan: dig five [search]]
+R9        [Kinnan decides: Basalt Monolith 88%, stop (hold mana) 10%, The One Ring 1%, Llanowar Elves 1% -> Basalt Monolith [search]]
+R9    Kinnan casts Basalt Monolith
+R9        [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, stop (hold mana) 0%, Copy Artifact 0%, The One Ring 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R9    Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R9  *** Goldfish 2 is eliminated (life 28) by Kinnan
+R9  *** Goldfish 3 is eliminated (life 13) by Kinnan
+R9  *** Goldfish 4 is eliminated (life 31) by Kinnan
+R9  *** Kinnan wins by combo
+Kill: own turn 9 (Kinnan + Basalt Monolith + Thrasios (draw the deck))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock)
+  T2  progressed (combo piece) | held (payable, not offered): Force of Negation
+  T3  progressed (fast mana / rock) | held (payable, not offered): Force of Negation, Misdirection
+  T4  progressed (combo piece) | held (payable, not offered): Commandeer, Force of Negation, Misdirection
+  T5  progressed (abilities only) | held (payable, not offered): Commandeer, Force of Negation, Misdirection
+  T6  progressed (tutor) | held (payable, not offered): Commandeer, Force of Negation, Misdirection
+  T7  progressed (draw) | held (payable, not offered): Commandeer, Force of Negation, Misdirection
+  T8  progressed (tutor) | held (payable, not offered): Commandeer, Force of Negation, Misdirection, Copy Artifact
+  T9  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Talisman of Curiosity (8.5); T7 main 1 look-ahead "stop (hold mana)" over harmonize Nature's Rhythm (5.5)
+  crude best case: own turn 9 (Kinnan + Basalt Monolith)
+  crude best case with tutors: own turn 7 (Kinnan + Basalt Monolith)

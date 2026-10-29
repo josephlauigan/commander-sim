@@ -1,0 +1,185 @@
+Play-by-play of goldfish game 7 (seed 500007): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Starting Town, City of Brass, Ragavan, Nimble Pilferer, Arcane Signet, Lion's Eye Diamond, Commandeer, Exotic Orchard
+R1        [Kraum/Tymna plays Starting Town [plan: the land drop the plan wants]]
+R1    Kraum/Tymna plays Starting Town
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: City of Brass, Ragavan, Nimble Pilferer, Arcane Signet, Lion's Eye Diamond, Commandeer, Exotic Orchard, Rite of Flame
+R2        [Kraum/Tymna plays City of Brass [plan: the land drop the plan wants]]
+R2    Kraum/Tymna plays City of Brass
+R2    Kraum/Tymna casts Arcane Signet
+R2        [Kraum/Tymna decides: Arcane Signet 99%, Ragavan, Nimble Pilferer 1%, dash Ragavan 0%, stop 0% -> Arcane Signet [must]]
+R2        [Kraum/Tymna decides: Ragavan, Nimble Pilferer 100%, stop 0% -> stop [search]]
+R2        [Kraum/Tymna decides: Ragavan, Nimble Pilferer 100%, stop 0% -> Ragavan, Nimble Pilferer [search]]
+R2    Kraum/Tymna casts Ragavan, Nimble Pilferer
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 39, 5 cards in hand, 2 lands
+R3      hand: Lion's Eye Diamond, Commandeer, Exotic Orchard, Rite of Flame, Arid Mesa
+R3        [Kraum/Tymna plays Arid Mesa for Badlands [plan: the land drop the plan wants]]
+R3    Kraum/Tymna plays Arid Mesa
+R3      cracks Arid Mesa for Badlands
+R3        [Kraum/Tymna decides: Tymna the Weaver 84%, Rite of Flame 16%, stop 0% -> Tymna the Weaver [search]]
+R3    Kraum/Tymna casts Tymna the Weaver
+R3        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R3    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 36, 6 cards in hand, 3 lands
+R4      hand: Lion's Eye Diamond, Commandeer, Exotic Orchard, Rite of Flame, Force of Will, Flusterstorm
+R4    Kraum/Tymna plays Exotic Orchard
+R4        [Kraum/Tymna decides: Kraum, Ludevic's Opus 88%, Lotho, Corrupt Shirriff 10%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R4    Kraum/Tymna attacks Goldfish 3 with 2 creature(s): 4 damage (life now 36)
+R4      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R4        [Kraum/Tymna decides: Kraum, Ludevic's Opus 88%, Lotho, Corrupt Shirriff 10%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 37, 7 cards in hand, 4 lands
+R5      hand: Lion's Eye Diamond, Commandeer, Rite of Flame, Force of Will, Flusterstorm, Lotho, Corrupt Shirriff, City of Traitors
+R5    Kraum/Tymna plays City of Traitors
+R5        [Kraum/Tymna decides: Kraum, Ludevic's Opus 82%, Lotho, Corrupt Shirriff 9%, Borne Upon a Wind 6%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R5    Kraum/Tymna attacks Goldfish 4 with 2 creature(s): 4 damage (life now 36)
+R5      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R5        [Kraum/Tymna decides: Kraum, Ludevic's Opus 63%, Intuition 23%, Lotho, Corrupt Shirriff 7%, Borne Upon a Wind 5% -> stop (hold mana) [search]]
+R5      [audit] Kraum/Tymna discards Commandeer to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Kraum/Tymna casts Borne Upon a Wind
+R6        [Kraum/Tymna end of turn: Intuition 83%, Borne Upon a Wind 17%, pass 0% -> Borne Upon a Wind]
+R6    Kraum/Tymna casts Lotho, Corrupt Shirriff
+R6        [Kraum/Tymna end of turn: Intuition 55%, Lotho, Corrupt Shirriff 45%, pass 0% -> Lotho, Corrupt Shirriff]
+R6    Kraum/Tymna casts Intuition
+R6      Kraum/Tymna gets Ad Nauseam; Goldfish 2 bins Simian Spirit Guide, Esper Sentinel
+R6        [Kraum/Tymna end of turn: Intuition 100%, pass 0% -> Intuition]
+R6    Kraum/Tymna casts Rite of Flame
+R6      Kraum/Tymna adds 2 red (Rite of Flame)
+R6        [Kraum/Tymna end of turn: Rite of Flame 100%, pass 0% -> Rite of Flame]
+R6    Kraum/Tymna casts Ad Nauseam
+R6      Ad Nauseam: 5 cards, life now 34
+R6        [Kraum/Tymna end of turn: Ad Nauseam 100%, pass 0% -> Ad Nauseam]
+R6    Kraum/Tymna casts Mox Diamond
+R6        [Kraum/Tymna end of turn: Mox Diamond 100%, pass 0% -> Mox Diamond]
+R6  --- Kraum/Tymna turn 6: life 34, 7 cards in hand, 5 lands
+R6      hand: Lion's Eye Diamond, Force of Will, Flusterstorm, An Offer You Can't Refuse, Otawara, Soaring City, Silence, Mana Vault
+R6      Kraum/Tymna sacrifices City of Traitors (another land was played)
+R6    Kraum/Tymna plays Otawara, Soaring City
+R6        [Kraum/Tymna decides: Mana Vault 97%, Kraum, Ludevic's Opus 3%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R6    Kraum/Tymna attacks Goldfish 2 with 3 creature(s): 6 damage (life now 32)
+R6      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R6        [Kraum/Tymna decides: Mana Vault 96%, Kraum, Ludevic's Opus 3%, Imperial Seal 1%, stop (hold mana) 0% -> Kraum, Ludevic's Opus [search]]
+R6    Kraum/Tymna casts Kraum, Ludevic's Opus
+R6        [Kraum/Tymna decides: Mana Vault 99%, Imperial Seal 1%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6      [audit] Kraum/Tymna discards Silence to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 32, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kraum/Tymna turn 7: life 34, 7 cards in hand, 5 lands
+R7      hand: Lion's Eye Diamond, Force of Will, Flusterstorm, An Offer You Can't Refuse, Mana Vault, Force of Negation, Imperial Seal
+R7    Kraum/Tymna plays Misty Rainforest
+R7      cracks Misty Rainforest for Underground Sea
+R7        [Kraum/Tymna decides: Mana Vault 91%, Imperial Seal 7%, stop (hold mana) 2% -> Mana Vault [search]]
+R7    Kraum/Tymna casts Mana Vault
+R7        [Kraum/Tymna decides: Imperial Seal 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R7        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R7    Kraum/Tymna attacks Goldfish 4 with 4 creature(s): 10 damage (life now 26)
+R7      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R7        [Kraum/Tymna decides: Fellwar Stone 91%, Imperial Seal 7%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 32, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 26, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Kraum/Tymna turn 8: life 34, 7 cards in hand, 6 lands
+R8      hand: Lion's Eye Diamond, Force of Will, Flusterstorm, An Offer You Can't Refuse, Force of Negation, Imperial Seal, Fellwar Stone
+R8        [Kraum/Tymna decides: Fellwar Stone 86%, Imperial Seal 9%, stop (hold mana) 3%, Grand Abolisher 2% -> Imperial Seal [search]]
+R8    Kraum/Tymna casts Imperial Seal
+R8      Kraum/Tymna puts Thassa's Oracle on top of their library
+R8        [Kraum/Tymna decides: Fellwar Stone 95%, stop (hold mana) 3%, Grand Abolisher 2% -> stop (hold mana) [search]]
+R8        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R8    Kraum/Tymna attacks Goldfish 3 with 4 creature(s): 10 damage (life now 26)
+R8      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R8        [Kraum/Tymna decides: Fellwar Stone 95%, stop (hold mana) 3%, Grand Abolisher 2% -> stop (hold mana) [search]]
+R8      [audit] Kraum/Tymna discards Flusterstorm to hand size (8 cards in hand)
+R8  --- Goldfish 2 turn 8: life 32, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 26, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 26, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Kraum/Tymna turn 9: life 33, 7 cards in hand, 6 lands
+R9      hand: Lion's Eye Diamond, Force of Will, An Offer You Can't Refuse, Force of Negation, Fellwar Stone, Grand Abolisher, Thassa's Oracle
+R9        [Kraum/Tymna decides: Fellwar Stone 93%, stop (hold mana) 4%, Grand Abolisher 3% -> stop (hold mana) [search]]
+R9        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R9    Kraum/Tymna attacks Goldfish 2 with 4 creature(s): 10 damage (life now 22)
+R9      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R9        [Kraum/Tymna decides: Fellwar Stone 93%, stop (hold mana) 4%, Grand Abolisher 3% -> stop (hold mana) [search]]
+R9      [audit] Kraum/Tymna discards Orim's Chant to hand size (9 cards in hand)
+R9      [audit] Kraum/Tymna discards Dark Ritual to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 22, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 26, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 26, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Kraum/Tymna turn 10: life 34, 7 cards in hand, 6 lands
+R10     hand: Lion's Eye Diamond, Force of Will, An Offer You Can't Refuse, Force of Negation, Fellwar Stone, Grand Abolisher, Thassa's Oracle
+R10       [Kraum/Tymna decides: Demonic Tutor for Demonic Consultation [plan: Demonic Tutor for Demonic Consultation -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R10   Kraum/Tymna casts Demonic Tutor
+R10     Kraum/Tymna tutors Demonic Consultation
+R10       [Kraum/Tymna decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R10   Kraum/Tymna goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R10   Kraum/Tymna casts Thassa's Oracle
+R10   Kraum/Tymna casts Demonic Consultation
+R10     Kraum/Tymna exiles its library
+R10 *** Goldfish 2 is eliminated (life 22) by Kraum/Tymna
+R10 *** Goldfish 3 is eliminated (life 26) by Kraum/Tymna
+R10 *** Goldfish 4 is eliminated (life 26) by Kraum/Tymna
+R10 *** Kraum/Tymna wins by combo
+Kill: own turn 10 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (land only) | held (payable, not offered): Lion's Eye Diamond
+  T2  progressed (fast mana / rock) | held (payable, not offered): Lion's Eye Diamond, Rite of Flame
+  T3  progressed (other) | held (payable, not offered): Lion's Eye Diamond, Rite of Flame, Flusterstorm
+  T4  passed_castable: Lotho, Corrupt Shirriff [other] | held (payable, not offered): Lion's Eye Diamond, Rite of Flame, Force of Will, Flusterstorm, Commandeer
+  T5  progressed (land only) | held (payable, not offered): Lion's Eye Diamond, Commandeer, Rite of Flame, Force of Will, Flusterstorm
+  T6  passed_castable: Mana Vault [fast mana / rock], Imperial Seal [tutor] | held (payable, not offered): Lion's Eye Diamond, Force of Will, Flusterstorm, An Offer You Can't Refuse, Silence, Force of Negation
+  T7  passed_castable: Imperial Seal [tutor] | held (payable, not offered): Lion's Eye Diamond, Force of Will, Flusterstorm, An Offer You Can't Refuse, Force of Negation
+  T8  progressed (tutor) | held (payable, not offered): Lion's Eye Diamond, Force of Will, Flusterstorm, An Offer You Can't Refuse, Force of Negation, Thassa's Oracle
+  T9  idle | held (payable, not offered): Lion's Eye Diamond, Force of Will, An Offer You Can't Refuse, Force of Negation, Thassa's Oracle, Dark Ritual, Orim's Chant
+  T10 won
+  cleanup discards: Commandeer [other], Silence [protection], Flusterstorm [protection], Orim's Chant [protection], Dark Ritual [ritual]
+  stops with another option offered: T2 main 1 look-ahead "stop" over Ragavan, Nimble Pilferer (4.6); T4 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T4 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T5 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T5 main 2 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T6 main 1 look-ahead "stop (hold mana)" over Mana Vault (10.7); T6 main 2 look-ahead "stop (hold mana)" over Mana Vault (10.7); T7 main 1 look-ahead "stop (hold mana)" over Imperial Seal (7.2); T7 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (8.8); T8 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (8.4); T8 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (8.4); T9 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (8.1); T9 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (8.1)
+  crude best case: none
+  crude best case with tutors: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 10 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

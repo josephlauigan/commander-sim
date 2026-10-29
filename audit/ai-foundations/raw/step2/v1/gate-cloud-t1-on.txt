@@ -1,0 +1,15 @@
+
+=== Cloud vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 500 games] ===
+Win rate  18.4%   95% CI 15.2-22.0%   (even share 25%: -6.6 pts)
+Average turn (your own turn count) of wins 11.4, of losses 8.0
+Plan online (first attack by an equipped Cloud): 72.0% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Lathril (lathril-golgari-elves)              63.2%            24.1%           11.8%
+  Teysa Karlov (teysa-orzhov-aristocrats)      61.0%            24.6%           13.6%
+  Light-Paws (light-paws-aura-voltron)         61.0%            38.4%           28.2%
+  Isshin (isshin-mardu-attack-triggers)        57.8%            32.2%           18.4%
+  Tatyova (tatyova-simic-landfall)             57.0%            16.5%            9.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(93s total)

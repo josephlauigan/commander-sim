@@ -1,0 +1,52 @@
+Play-by-play of goldfish game 2 (seed 500002): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 6 cards in hand, 0 lands
+R1      hand: Botanical Sanctum, Mirage Mirror, Dizzy Spell, Misty Rainforest, Scalding Tarn, Gene Pollinator
+R1    Kinnan plays Botanical Sanctum
+R1    Kinnan casts Gene Pollinator
+R1        [Kinnan decides: Gene Pollinator 100%, stop 0% -> Gene Pollinator [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 5 cards in hand, 1 lands
+R2      hand: Mirage Mirror, Dizzy Spell, Misty Rainforest, Scalding Tarn, Talisman of Curiosity
+R2    Kinnan plays Misty Rainforest
+R2      cracks Misty Rainforest for Breeding Pool
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 50%, Talisman of Curiosity 25%, Springleaf Drum 25%, stop 0% -> Kinnan, Bonder Prodigy [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 39, 5 cards in hand, 2 lands
+R3      hand: Mirage Mirror, Dizzy Spell, Scalding Tarn, Talisman of Curiosity, Springleaf Drum
+R3    Kinnan plays Scalding Tarn
+R3      cracks Scalding Tarn for Tropical Island
+R3    Kinnan casts Talisman of Curiosity
+R3        [Kinnan decides: Talisman of Curiosity 50%, Springleaf Drum 50%, Transmute Artifact 0%, Mirage Mirror 0% -> Talisman of Curiosity [must]]
+R3    Kinnan casts Springleaf Drum
+R3        [Kinnan decides: Springleaf Drum 99%, Transmute Artifact 1%, Mirage Mirror 0%, Dizzy Spell: transmute 0% -> Springleaf Drum [must]]
+R3        [Kinnan decides: Transmute Artifact 84%, Mirage Mirror 9%, Dizzy Spell: transmute 7%, stop 0% -> Transmute Artifact [search]]
+R3    Kinnan casts Transmute Artifact
+R3    Kinnan casts Mirage Mirror
+R3        [Kinnan decides: Mirage Mirror 96%, Basalt Monolith ability 4%, stop 0% -> Mirage Mirror [must]]
+R3        [Kinnan decides: combo: Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 100%, stop 0% -> combo: Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) [search]]
+R3    Kinnan goes for Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet)
+R3  *** Goldfish 2 is eliminated (life 40) by Kinnan
+R3  *** Goldfish 3 is eliminated (life 40) by Kinnan
+R3  *** Goldfish 4 is eliminated (life 40) by Kinnan
+R3  *** Kinnan wins by combo
+Kill: own turn 3 (Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Dizzy Spell
+  T2  progressed (combo piece) | held (payable, not offered): Dizzy Spell
+  T3  won
+  cleanup discards: none
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: none

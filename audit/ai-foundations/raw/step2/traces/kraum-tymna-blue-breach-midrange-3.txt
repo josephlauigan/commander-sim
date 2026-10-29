@@ -1,0 +1,319 @@
+Play-by-play of goldfish game 3 (seed 500003): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mana Confluence, Ad Nauseam, Marsh Flats, Chain of Vapor, Borne Upon a Wind, Smothering Tithe, City of Brass
+R1    Kraum/Tymna plays City of Brass
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Mana Confluence, Ad Nauseam, Marsh Flats, Chain of Vapor, Borne Upon a Wind, Smothering Tithe, Gleaming Splendor
+R2    Kraum/Tymna plays Mana Confluence
+R2        [Kraum/Tymna decides: Gleaming Splendor 71%, Borne Upon a Wind 29%, stop (hold mana) 0% -> Gleaming Splendor [search]]
+R2    Kraum/Tymna casts Gleaming Splendor
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 39, 6 cards in hand, 2 lands
+R3      hand: Ad Nauseam, Marsh Flats, Chain of Vapor, Borne Upon a Wind, Smothering Tithe, Red Elemental Blast
+R3        [Kraum/Tymna plays Marsh Flats for Tundra [plan: the land drop the plan wants]]
+R3    Kraum/Tymna plays Marsh Flats
+R3      cracks Marsh Flats for Tundra
+R3        [Kraum/Tymna decides: Tymna the Weaver 87%, Borne Upon a Wind 11%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R3        [Kraum/Tymna decides: Tymna the Weaver 87%, Borne Upon a Wind 11%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4    Kraum/Tymna casts Borne Upon a Wind
+R4        [Kraum/Tymna end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R4  --- Kraum/Tymna turn 4: life 37, 6 cards in hand, 3 lands
+R4      hand: Ad Nauseam, Chain of Vapor, Smothering Tithe, Red Elemental Blast, Force of Will, Scalding Tarn
+R4    Kraum/Tymna plays Scalding Tarn
+R4      cracks Scalding Tarn for Volcanic Island
+R4        [Kraum/Tymna decides: Tymna the Weaver 96%, Smothering Tithe 3%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4        [Kraum/Tymna decides: Tymna the Weaver 96%, Smothering Tithe 3%, stop (hold mana) 1% -> Tymna the Weaver [search]]
+R4    Kraum/Tymna casts Tymna the Weaver
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 35, 6 cards in hand, 4 lands
+R5      hand: Ad Nauseam, Chain of Vapor, Smothering Tithe, Red Elemental Blast, Force of Will, Mockingbird
+R5        [Kraum/Tymna decides: Esper Sentinel 98%, Smothering Tithe 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: all at Goldfish 4]
+R5    Kraum/Tymna attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R5      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R5        [Kraum/Tymna decides: Esper Sentinel 98%, Smothering Tithe 2%, stop (hold mana) 1% -> Smothering Tithe [search]]
+R5    Kraum/Tymna casts Smothering Tithe
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kraum/Tymna turn 6: life 35, 7 cards in hand, 4 lands
+R6      hand: Ad Nauseam, Chain of Vapor, Red Elemental Blast, Force of Will, Mockingbird, Esper Sentinel, Misdirection
+R6        [Kraum/Tymna decides: combo: Ad Nauseam into a win [plan: combo: Ad Nauseam into a win; wins this turn]]
+R6    Kraum/Tymna goes for Ad Nauseam into a win
+R6    Kraum/Tymna casts Ad Nauseam
+R6      Ad Nauseam: 15 cards, life now 20
+R6      Ad Nauseam found no line it can pay for
+R6      ...Ad Nauseam into a win stops at step 2 (play the line the cards drawn made ready)
+R6        [Kraum/Tymna decides: Mox Diamond 34%, Sol Ring 34%, Esper Sentinel 29%, Enlightened Tutor 2% -> stop (hold mana) [search]]
+R6    Kraum/Tymna plays City of Traitors
+R6        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R6    Kraum/Tymna attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R6      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R6        [Kraum/Tymna decides: Mox Diamond 34%, Sol Ring 34%, Esper Sentinel 29%, Enlightened Tutor 2% -> Wishclaw Talisman [search]]
+R6    Kraum/Tymna casts Wishclaw Talisman
+R6        [Kraum/Tymna decides: Mox Diamond 34%, Sol Ring 34%, Esper Sentinel 29%, Enlightened Tutor 2% -> Orcish Bowmasters [search]]
+R6    Kraum/Tymna casts Orcish Bowmasters
+R6        [Kraum/Tymna decides: Mox Diamond 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6      [audit] Kraum/Tymna discards Starting Town to hand size (20 cards in hand)
+R6      [audit] Kraum/Tymna discards Scrubland to hand size (19 cards in hand)
+R6      [audit] Kraum/Tymna discards Verdant Catacombs to hand size (18 cards in hand)
+R6      [audit] Kraum/Tymna discards Mockingbird to hand size (17 cards in hand)
+R6      [audit] Kraum/Tymna discards Misdirection to hand size (16 cards in hand)
+R6      [audit] Kraum/Tymna discards Necropotence to hand size (15 cards in hand)
+R6      [audit] Kraum/Tymna discards Final Fortune to hand size (14 cards in hand)
+R6      [audit] Kraum/Tymna discards Snapback to hand size (13 cards in hand)
+R6      [audit] Kraum/Tymna discards Flusterstorm to hand size (12 cards in hand)
+R6      [audit] Kraum/Tymna discards Chain of Vapor to hand size (11 cards in hand)
+R6      [audit] Kraum/Tymna discards Beseech the Mirror to hand size (10 cards in hand)
+R6      [audit] Kraum/Tymna discards Red Elemental Blast to hand size (9 cards in hand)
+R6      [audit] Kraum/Tymna discards An Offer You Can't Refuse to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 39, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kraum/Tymna turn 7: life 21, 7 cards in hand, 5 lands
+R7      hand: Force of Will, Esper Sentinel, Underground Sea, Enlightened Tutor, Pact of Negation, Mox Diamond, Sol Ring
+R7      Kraum/Tymna sacrifices City of Traitors (another land was played)
+R7    Kraum/Tymna plays Underground Sea
+R7        [Kraum/Tymna decides: Esper Sentinel 35%, Mox Diamond 29%, Sol Ring 29%, Kraum, Ludevic's Opus 6% -> stop (hold mana) [search]]
+R7        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R7    Kraum/Tymna attacks Goldfish 2 with 3 creature(s): 4 damage (life now 35)
+R7      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R7        [Kraum/Tymna decides: Esper Sentinel 35%, Mox Diamond 28%, Sol Ring 28%, Kraum, Ludevic's Opus 6% -> Enlightened Tutor [search]]
+R7    Kraum/Tymna casts Enlightened Tutor
+R7      Kraum/Tymna searches for Underworld Breach
+R7        [Kraum/Tymna decides: Esper Sentinel 35%, Mox Diamond 29%, Sol Ring 29%, Kraum, Ludevic's Opus 6% -> Kraum, Ludevic's Opus [search]]
+R7    Kraum/Tymna casts Kraum, Ludevic's Opus
+R7        [Kraum/Tymna decides: Esper Sentinel 38%, Mox Diamond 31%, Sol Ring 31%, Grand Abolisher 0% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 35, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Kraum/Tymna turn 8: life 21, 7 cards in hand, 5 lands
+R8      hand: Force of Will, Esper Sentinel, Pact of Negation, Mox Diamond, Sol Ring, Rite of Flame, Grand Abolisher
+R8        [Kraum/Tymna decides: Esper Sentinel 46%, Mox Diamond 27%, Sol Ring 27%, Grand Abolisher 1% -> Esper Sentinel [search]]
+R8    Kraum/Tymna casts Esper Sentinel
+R8        [Kraum/Tymna decides: Mox Diamond 49%, Sol Ring 49%, Grand Abolisher 1%, stop (hold mana) 0% -> Grand Abolisher [search]]
+R8    Kraum/Tymna casts Grand Abolisher
+R8        [Kraum/Tymna decides: Mox Diamond 50%, Sol Ring 50%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R8        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R8    Kraum/Tymna attacks Goldfish 4 with 4 creature(s): 8 damage (life now 30)
+R8      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R8        [Kraum/Tymna decides: Mox Diamond 33%, Sol Ring 33%, Fellwar Stone 33%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R8  --- Goldfish 2 turn 8: life 35, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 38, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 30, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Kraum/Tymna turn 9: life 21, 7 cards in hand, 5 lands
+R9      hand: Force of Will, Pact of Negation, Mox Diamond, Sol Ring, Rite of Flame, Underworld Breach, Fellwar Stone
+R9        [Kraum/Tymna decides: Mox Diamond 33%, Sol Ring 33%, Fellwar Stone 33%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R9        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R9    Kraum/Tymna attacks Goldfish 3 with 6 creature(s): 11 damage (life now 27)
+R9      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R9        [Kraum/Tymna decides: Chrome Mox 57%, Mox Diamond 14%, Sol Ring 14%, Fellwar Stone 14% -> stop (hold mana) [search]]
+R9      [audit] Kraum/Tymna discards Cabal Ritual to hand size (9 cards in hand)
+R9      [audit] Kraum/Tymna discards Rite of Flame to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 35, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 27, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 30, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Kraum/Tymna turn 10: life 22, 7 cards in hand, 5 lands
+R10     hand: Force of Will, Pact of Negation, Mox Diamond, Sol Ring, Underworld Breach, Fellwar Stone, Chrome Mox
+R10   Kraum/Tymna plays Misty Rainforest
+R10       [Kraum/Tymna decides: Chrome Mox 66%, Mox Diamond 11%, Sol Ring 11%, Fellwar Stone 11% -> Chrome Mox [search]]
+R10   Kraum/Tymna casts Chrome Mox
+R10     Chrome Mox imprints Force of Will
+R10       [Kraum/Tymna decides: Mox Diamond 33%, Sol Ring 33%, Fellwar Stone 33%, stop (hold mana) 1% -> Sol Ring [search]]
+R10   Kraum/Tymna casts Sol Ring
+R10       [Kraum/Tymna decides: Mox Diamond 50%, Fellwar Stone 50%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R10       [Kraum/Tymna attack plan by search: none at Goldfish 2]
+R10       [Kraum/Tymna decides: Mox Diamond 50%, Fellwar Stone 50%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 35, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 27, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 30, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Kraum/Tymna turn 11: life 22, 4 cards in hand, 6 lands
+R11     hand: Pact of Negation, Mox Diamond, Underworld Breach, Fellwar Stone
+R11   Kraum/Tymna plays Badlands
+R11       [Kraum/Tymna decides: Mox Diamond 49%, Fellwar Stone 49%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R11       [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R11   Kraum/Tymna attacks Goldfish 2 with 6 creature(s): 11 damage (life now 24)
+R11     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R11       [Kraum/Tymna decides: Mox Diamond 48%, Fellwar Stone 48%, stop (hold mana) 4% -> stop (hold mana) [search]]
+R11 --- Goldfish 2 turn 11: life 24, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 27, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 30, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Kraum/Tymna turn 12: life 23, 5 cards in hand, 7 lands
+R12     hand: Pact of Negation, Mox Diamond, Underworld Breach, Fellwar Stone, Dispel
+R12       [Kraum/Tymna decides: Mox Diamond 46%, Fellwar Stone 46%, stop (hold mana) 6%, Exhibition Tidecaller 3% -> stop (hold mana) [search]]
+R12       [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R12   Kraum/Tymna attacks Goldfish 2 with 6 creature(s): 11 damage (life now 13)
+R12     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R12       [Kraum/Tymna decides: Mox Diamond 31%, Fellwar Stone 31%, Mox Opal 31%, stop (hold mana) 4% -> Mox Diamond [search]]
+R12   Kraum/Tymna casts Mox Diamond
+R12     Mox Diamond goes to the graveyard (no land to discard)
+R12       [Kraum/Tymna decides: Fellwar Stone 46%, Mox Opal 46%, stop (hold mana) 6%, Exhibition Tidecaller 3% -> stop (hold mana) [search]]
+R12 --- Goldfish 2 turn 12: life 13, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 27, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 30, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Kraum/Tymna turn 13: life 24, 6 cards in hand, 7 lands
+R13     hand: Pact of Negation, Underworld Breach, Fellwar Stone, Dispel, Exhibition Tidecaller, Mox Opal
+R13       [Kraum/Tymna decides: Fellwar Stone 44%, Mox Opal 44%, stop (hold mana) 8%, Exhibition Tidecaller 4% -> stop (hold mana) [search]]
+R13       [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R13   Kraum/Tymna attacks Goldfish 2 with 6 creature(s): 11 damage (life now 2)
+R13     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R13       [Kraum/Tymna decides: Fellwar Stone 44%, Mox Opal 44%, stop (hold mana) 8%, Exhibition Tidecaller 4% -> stop (hold mana) [search]]
+R13     [audit] Kraum/Tymna discards Exhibition Tidecaller to hand size (8 cards in hand)
+R13 --- Goldfish 2 turn 13: life 2, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 27, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 30, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Kraum/Tymna turn 14: life 25, 7 cards in hand, 7 lands
+R14     hand: Pact of Negation, Underworld Breach, Fellwar Stone, Dispel, Mox Opal, Mindbreak Trap, Flooded Strand
+R14   Kraum/Tymna plays Flooded Strand
+R14     cracks Flooded Strand for Plateau
+R14       [Kraum/Tymna decides: Fellwar Stone 31%, Mox Opal 31%, Lotus Petal 31%, stop (hold mana) 8% -> stop (hold mana) [search]]
+R14       [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R14   Kraum/Tymna attacks Goldfish 3 with 5 creature(s): 7 damage (life now 20)
+R14 *** Goldfish 2 is eliminated (life -2) by Kraum/Tymna
+R14   Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 4 damage (life now -2)
+R14     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R14       [Kraum/Tymna decides: Fellwar Stone 31%, Mox Opal 31%, Lotus Petal 31%, stop (hold mana) 8% -> stop (hold mana) [search]]
+R14     [audit] Kraum/Tymna discards Mindbreak Trap to hand size (8 cards in hand)
+R14 --- Goldfish 3 turn 14: life 20, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 30, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Kraum/Tymna turn 15: life 25, 7 cards in hand, 8 lands
+R15     hand: Pact of Negation, Underworld Breach, Fellwar Stone, Dispel, Mox Opal, Lotus Petal, Fierce Guardianship
+R15       [Kraum/Tymna decides: Fellwar Stone 30%, Mox Opal 30%, Lotus Petal 30%, stop (hold mana) 11% -> stop (hold mana) [search]]
+R15       [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R15   Kraum/Tymna attacks Goldfish 4 with 6 creature(s): 11 damage (life now 19)
+R15     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R15       [Kraum/Tymna decides: Fellwar Stone 30%, Mox Opal 30%, Lotus Petal 30%, stop (hold mana) 11% -> stop (hold mana) [search]]
+R15     [audit] Kraum/Tymna discards Deflecting Swat to hand size (9 cards in hand)
+R15     [audit] Kraum/Tymna discards Fierce Guardianship to hand size (8 cards in hand)
+R15 --- Goldfish 3 turn 15: life 20, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 19, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Kraum/Tymna turn 16: life 26, 7 cards in hand, 8 lands
+R16     hand: Pact of Negation, Underworld Breach, Fellwar Stone, Dispel, Mox Opal, Lotus Petal, Exotic Orchard
+R16   Kraum/Tymna plays Exotic Orchard
+R16       [Kraum/Tymna decides: Fellwar Stone 25%, Mox Opal 25%, Lotus Petal 25%, Lotho, Corrupt Shirriff 13% -> stop (hold mana) [search]]
+R16       [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R16   Kraum/Tymna attacks Goldfish 4 with 6 creature(s): 11 damage (life now 8)
+R16     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R16       [Kraum/Tymna decides: Fellwar Stone 25%, Mox Opal 25%, Lotus Petal 25%, Lotho, Corrupt Shirriff 13% -> stop (hold mana) [search]]
+R16     [audit] Kraum/Tymna discards Into the Flood Maw to hand size (8 cards in hand)
+R16 --- Goldfish 3 turn 16: life 20, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 8, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Kraum/Tymna turn 17: life 27, 7 cards in hand, 9 lands
+R17     hand: Pact of Negation, Underworld Breach, Fellwar Stone, Dispel, Mox Opal, Lotus Petal, Lotho, Corrupt Shirriff
+R17   Kraum/Tymna plays Otawara, Soaring City
+R17       [Kraum/Tymna decides: Fellwar Stone 22%, Mox Opal 22%, Lotus Petal 22%, Lotho, Corrupt Shirriff 17% -> stop (hold mana) [search]]
+R17       [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R17   Kraum/Tymna attacks Goldfish 3 with 3 creature(s): 3 damage (life now 17)
+R17 *** Goldfish 4 is eliminated (life 0) by Kraum/Tymna
+R17   Kraum/Tymna attacks Goldfish 4 with 3 creature(s): 8 damage (life now 0)
+R17     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R17       [Kraum/Tymna decides: Fellwar Stone 22%, Mox Opal 22%, Lotus Petal 22%, Lotho, Corrupt Shirriff 17% -> stop (hold mana) [search]]
+R17     [audit] Kraum/Tymna discards Lotho, Corrupt Shirriff to hand size (8 cards in hand)
+R17 --- Goldfish 3 turn 17: life 17, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Kraum/Tymna turn 18: life 28, 7 cards in hand, 10 lands
+R18     hand: Pact of Negation, Underworld Breach, Fellwar Stone, Dispel, Mox Opal, Lotus Petal, Bloodstained Mire
+R18   Kraum/Tymna plays Bloodstained Mire
+R18       [Kraum/Tymna decides: stop (hold mana) 21%, Fellwar Stone 20%, Mox Opal 20%, Lotus Petal 20% -> Fellwar Stone [search]]
+R18   Kraum/Tymna casts Fellwar Stone
+R18       [Kraum/Tymna decides: stop (hold mana) 26%, Mox Opal 25%, Lotus Petal 25%, Mana Vault 25% -> Mox Opal [search]]
+R18   Kraum/Tymna casts Mox Opal
+R18       [Kraum/Tymna decides: stop (hold mana) 34%, Lotus Petal 33%, Mana Vault 33% -> Lotus Petal [search]]
+R18   Kraum/Tymna casts Lotus Petal
+R18       [Kraum/Tymna decides: stop (hold mana) 51%, Mana Vault 49% -> Mana Vault [search]]
+R18   Kraum/Tymna casts Mana Vault
+R18       [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R18   Kraum/Tymna attacks Goldfish 3 with 6 creature(s): 11 damage (life now 6)
+R18     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R18 --- Goldfish 3 turn 18: life 6, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Kraum/Tymna turn 19: life 29, 4 cards in hand, 11 lands
+R19     hand: Pact of Negation, Underworld Breach, Dispel, Polluted Delta
+R19   Kraum/Tymna plays Polluted Delta
+R19       [Kraum/Tymna decides: stop (hold mana) 95%, Culling the Weak 5% -> Culling the Weak [search]]
+R19   Kraum/Tymna casts Culling the Weak
+R19       [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R19 *** Goldfish 3 is eliminated (life -4) by Kraum/Tymna
+R19   Kraum/Tymna attacks Goldfish 3 with 5 creature(s): 10 damage (life now -4)
+Kill: own turn 19 (damage)
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short | held (payable, not offered): Chain of Vapor
+  T2  progressed (other) | held (payable, not offered): Chain of Vapor, Red Elemental Blast
+  T3  progressed (land only) | held (payable, not offered): Chain of Vapor, Red Elemental Blast
+  T4  passed_castable: Smothering Tithe [other] | held (payable, not offered): Chain of Vapor, Red Elemental Blast, Mockingbird
+  T5  passed_castable: Esper Sentinel [draw] | held (payable, not offered): Chain of Vapor, Red Elemental Blast, Mockingbird
+  T6  passed_castable: Esper Sentinel [draw], Enlightened Tutor [tutor], Mox Diamond [fast mana / rock], Sol Ring [fast mana / rock] | held (payable, not offered): Ad Nauseam, Chain of Vapor, Red Elemental Blast, Force of Will, Mockingbird, Misdirection, Necropotence, An Offer You Can't Refuse, Pact of Negation, Snapback, Flusterstorm, Final Fortune
+  T7  passed_castable: Esper Sentinel [draw], Mox Diamond [fast mana / rock], Sol Ring [fast mana / rock], Grand Abolisher [protection] | held (payable, not offered): Force of Will, Pact of Negation, Rite of Flame
+  T8  passed_castable: Mox Diamond [fast mana / rock], Sol Ring [fast mana / rock], Fellwar Stone [fast mana / rock] | held (payable, not offered): Force of Will, Pact of Negation, Rite of Flame, Underworld Breach
+  T9  passed_castable: Mox Diamond [fast mana / rock], Sol Ring [fast mana / rock], Fellwar Stone [fast mana / rock], Chrome Mox [fast mana / rock] | held (payable, not offered): Force of Will, Pact of Negation, Rite of Flame, Underworld Breach, Cabal Ritual
+  T10 passed_castable: Mox Diamond [fast mana / rock], Fellwar Stone [fast mana / rock] | held (payable, not offered): Force of Will, Pact of Negation, Underworld Breach
+  T11 passed_castable: Mox Diamond [fast mana / rock], Fellwar Stone [fast mana / rock] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel
+  T12 passed_castable: Fellwar Stone [fast mana / rock], Exhibition Tidecaller [other], Mox Opal [fast mana / rock] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel
+  T13 passed_castable: Fellwar Stone [fast mana / rock], Exhibition Tidecaller [other], Mox Opal [fast mana / rock] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel, Mindbreak Trap
+  T14 passed_castable: Fellwar Stone [fast mana / rock], Mox Opal [fast mana / rock], Lotus Petal [fast mana / rock] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel, Mindbreak Trap, Fierce Guardianship
+  T15 passed_castable: Fellwar Stone [fast mana / rock], Mox Opal [fast mana / rock], Lotus Petal [fast mana / rock] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel, Fierce Guardianship, Deflecting Swat
+  T16 passed_castable: Fellwar Stone [fast mana / rock], Mox Opal [fast mana / rock], Lotus Petal [fast mana / rock], Lotho, Corrupt Shirriff [other] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel, Into the Flood Maw
+  T17 passed_castable: Fellwar Stone [fast mana / rock], Mox Opal [fast mana / rock], Lotus Petal [fast mana / rock], Lotho, Corrupt Shirriff [other] | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel
+  T18 progressed (fast mana / rock) | held (payable, not offered): Pact of Negation, Underworld Breach, Dispel
+  T19 won
+  cleanup discards: Starting Town [land], Scrubland [land], Verdant Catacombs [land], Mockingbird [other], Misdirection [other], Necropotence [draw], Final Fortune [other], Snapback [other], Flusterstorm [protection], Chain of Vapor [other], Beseech the Mirror [tutor], Red Elemental Blast [protection], An Offer You Can't Refuse [protection], Cabal Ritual [ritual], Rite of Flame [ritual], Exhibition Tidecaller [other], Mindbreak Trap [protection], Deflecting Swat [other], Fierce Guardianship [protection], Into the Flood Maw [other], Lotho, Corrupt Shirriff [other]
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Tymna the Weaver (6.7); T3 main 2 look-ahead "stop (hold mana)" over Tymna the Weaver (6.7); T4 main 1 look-ahead "stop (hold mana)" over Tymna the Weaver (8.6); T5 main 1 look-ahead "stop (hold mana)" over Esper Sentinel (9.0); T6 main 1 look-ahead "stop (hold mana)" over Mox Diamond (9.2); T6 main 2 look-ahead "stop (hold mana)" over Mox Diamond (9.2); T7 main 1 look-ahead "stop (hold mana)" over Esper Sentinel (9.0); T7 main 2 look-ahead "stop (hold mana)" over Esper Sentinel (9.0); T8 main 1 look-ahead "stop (hold mana)" over Mox Diamond (8.4); T8 main 2 look-ahead "stop (hold mana)" over Mox Diamond (8.4); T9 main 1 look-ahead "stop (hold mana)" over Mox Diamond (8.1); T9 main 2 look-ahead "stop (hold mana)" over Chrome Mox (9.5); T10 main 1 look-ahead "stop (hold mana)" over Mox Diamond (7.8); T10 main 2 look-ahead "stop (hold mana)" over Mox Diamond (7.8); T11 main 1 look-ahead "stop (hold mana)" over Mox Diamond (7.4); T11 main 2 look-ahead "stop (hold mana)" over Mox Diamond (7.4); T12 main 1 look-ahead "stop (hold mana)" over Mox Diamond (7.1); T12 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (7.1); T13 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (6.7); T13 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (6.7); T14 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (6.3); T14 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (6.3); T15 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (6.0); T15 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (6.0); T16 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (5.7); T16 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (5.7); T17 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (5.3); T17 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (5.3)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

@@ -696,6 +696,7 @@ pub fn tutor_ok(g: &Game, kind: &str, c: CardId) -> bool {
         "cre2" => d.creature && d.pow <= 2,
         "cre" => d.creature,
         "ench" => d.types.has(Types::ENCHANTMENT),
+        "ae" => d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT), // --- ai-fix: B: Enlightened Tutor
         _ => true,
     }
 }
@@ -703,7 +704,7 @@ pub fn tutor_ok(g: &Game, kind: &str, c: CardId) -> bool {
 /// the kinds TUTOR_OK knows (any other kind finds anything)
 fn tutor_ok_known(kind: &str) -> &str {
     match kind {
-        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" => kind,
+        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" | "ae" => kind, // --- ai-fix: B: "ae"
         _ => "any",
     }
 }
@@ -762,6 +763,14 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
 
 /// ais.tutor_pick: deck-specific wish lists first; otherwise the highest-priority legal card
 pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
+    // --- ai-planner: the line planner's choice (`Player::plan_tutor`), when it is in the library and meets the
+    // tutor's restriction; otherwise the usual pick
+    if let Some(c) = g.player(p).plan_tutor
+        && searchable(g, p).contains(&c)
+        && tutor_ok(g, tutor_ok_known(kind), c)
+    {
+        return Some(c);
+    }
     if let Some(c) = tutor_pick_named(g, p, kind) {
         return Some(c);
     }
@@ -780,8 +789,11 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
             0.0
         }
     };
-    let cands: Vec<CardId> =
-        searchable(g, p).into_iter().filter(|&c| tutor_ok(g, okk, c) && !g.db.get(c).land).collect();
+    let top = crate::engine::tutors::known_top(g, p); // --- ai-fix: B: not the card it already put on top
+    let cands: Vec<CardId> = searchable(g, p)
+        .into_iter()
+        .filter(|&c| tutor_ok(g, okk, c) && !g.db.get(c).land && !top.contains(&c))
+        .collect();
     if cands.is_empty() {
         return None;
     }
@@ -1432,6 +1444,8 @@ pub fn necro_pay(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
     }
     g.player_mut(p).stat("necro_cards", n as i64);
     crate::glog!(g, "  {} pays {n} life to Necropotence", g.player(p).name);
+    crate::t6stats::flow_life(g, p, "Necropotence", n as i64); // --- ai-flow
+    crate::t6stats::flow_engine_cards(g, p, "Necropotence", n as i64);
     Ok(())
 }
 

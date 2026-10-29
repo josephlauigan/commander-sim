@@ -46,6 +46,7 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
         let mut lib = std::mem::take(&mut g.player_mut(p).library);
         g.rng.shuffle(&mut lib);
         g.player_mut(p).library = lib;
+        g.player_mut(p).known_top.clear(); // --- ai-fix: B: a shuffle ends what p knew of its top cards
         return Ok(());
     }
     let pl = g.player_mut(p);
@@ -65,7 +66,28 @@ pub fn shuffle_library(g: &mut Game, p: PlayerId) {
     let mut lib = std::mem::take(&mut g.player_mut(p).library);
     g.rng.shuffle(&mut lib);
     g.player_mut(p).library = lib;
+    g.player_mut(p).known_top.clear(); // --- ai-fix: B: a shuffle ends what p knew of its top cards
     crate::impls::t45_heliod_zur::searched(g, p); // --- Tiers 4/5 (heliod-zur): Archivist of Oghma
+}
+
+// --- ai-fix: B
+/// p puts its card c on top of its library and knows it is there (a tutor to the top of the library)
+pub fn put_known_top(g: &mut Game, p: PlayerId, c: CardId) {
+    let pl = g.player_mut(p);
+    pl.library.push(c);
+    pl.known_top.push(c);
+}
+
+// --- ai-fix: B
+/// the cards p knows are on top of its library, top last (`Player::known_top`). A card drawn (or moved) since drops
+/// out; the record ends once its cards are no longer the top of the library (a shuffle, or a card put above them).
+pub fn known_top(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let pl = g.player(p);
+    if pl.known_top.is_empty() {
+        return vec![];
+    }
+    let rec: Vec<CardId> = pl.known_top.iter().copied().filter(|c| pl.library.contains(c)).collect();
+    if pl.library.ends_with(&rec) { rec } else { vec![] }
 }
 
 /// Atraxa, Grand Unifier: reveal the top ten; for each card type put one card of that type into your hand (a
@@ -416,8 +438,8 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
         return Ok(());
     }
     shuffle_library(g, p);
+    put_known_top(g, p, c); // --- ai-fix: B: p knows the card it put there
     let pl = g.player_mut(p);
-    pl.library.push(c);
     pl.stat("tutored", 1);
     g.log_secret(
         p,
@@ -449,11 +471,13 @@ pub fn ad_nauseam(g: &mut Game, p: PlayerId, floor: Option<i32>) -> Res {
         n += 1;
         let mv = g.db.get(c).cmc as i32;
         lose_life(g, p, mv, Some(p), "other", None)?;
+        crate::t6stats::flow_life(g, p, "Ad Nauseam", mv as i64); // --- ai-flow
         if crate::cardcode::combo_ready(g, p) {
             break; // enough: the combo is in hand
         }
     }
     g.player_mut(p).stat("adnaus_cards", n);
+    crate::t6stats::flow_engine_cards(g, p, "Ad Nauseam", n); // --- ai-flow
     crate::glog!(g, "    Ad Nauseam: {} cards, life now {}", n, g.player(p).life);
     Ok(())
 }

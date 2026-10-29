@@ -1,0 +1,10 @@
+start t6-game8 15:40:09 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --calibrate within --pool t6 --trace 8 --jobs 16
+done t6-game8 rc=0 15:40:10
+start t6-game10 15:40:10 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --calibrate within --pool t6 --trace 10 --jobs 16
+done t6-game10 rc=0 15:40:12
+start t6-game11 15:40:12 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --calibrate within --pool t6 --trace 11 --jobs 16
+done t6-game11 rc=0 15:40:13
+start t6-game64 15:40:13 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --calibrate within --pool t6 --trace 64 --jobs 16
+done t6-game64 rc=0 15:40:16
+start t3-game3 15:40:16 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --calibrate within --pool t3 --trace 3 --jobs 16
+done t3-game3 rc=0 15:40:17

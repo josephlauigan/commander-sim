@@ -1,0 +1,137 @@
+Play-by-play of goldfish game 2 (seed 500002): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Faerie Mastermind, Manamorphose, Flash Photography, Intuition, Dark Ritual, Mana Confluence, Arid Mesa
+R1    Scion plays Mana Confluence
+R1        [Scion decides: Manamorphose 73%, Faerie Mastermind 24%, Dark Ritual 3%, stop 0% -> Manamorphose [search]]
+R1    Scion casts Manamorphose
+R1        [Scion decides: Faerie Mastermind 88%, Dark Ritual 12%, stop 0% -> Faerie Mastermind [search]]
+R1    Scion casts Faerie Mastermind
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 5 cards in hand, 1 lands
+R2      hand: Flash Photography, Intuition, Dark Ritual, Arid Mesa, Necropotence
+R2    Scion plays Arid Mesa
+R2      cracks Arid Mesa for Tundra
+R2        [Scion decides: Dark Ritual 99%, stop 1% -> stop [search]]
+R2        [Scion attack plan by search: filtered at Goldfish 2]
+R2    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R2        [Scion decides: Dark Ritual 99%, stop 1% -> Dark Ritual [search]]
+R2    Scion casts Dark Ritual
+R2        [Scion decides: Intuition 55%, Necropotence 45%, stop 0% -> Necropotence [search]]
+R2    Scion casts Necropotence
+R2    Scion pays 5 life to Necropotence
+R2      [audit] Scion discards Flash Photography to hand size (8 cards in hand)
+R2  --- Goldfish 2 turn 2: life 38, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 34, 7 cards in hand, 2 lands
+R3      hand: Intuition, Crop Rotation, Chain of Vapor, Shifting Woodland, Beseech the Mirror, Brain Freeze, Imperial Seal
+R3    Scion plays Shifting Woodland
+R3        [Scion decides: Imperial Seal 100%, stop 0% -> stop [search]]
+R3        [Scion attack plan by search: filtered at Goldfish 3]
+R3    Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R3        [Scion decides: Imperial Seal 100%, stop 0% -> Imperial Seal [search]]
+R3    Scion casts Imperial Seal
+R3      Scion puts Thassa's Oracle on top of their library
+R3    Scion pays 3 life to Necropotence
+R3      [audit] Scion discards Beseech the Mirror to hand size (8 cards in hand)
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 29, 7 cards in hand, 3 lands
+R4      hand: Intuition, Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Birds of Paradise, Arcane Signet
+R4    Scion casts Arcane Signet
+R4        [Scion decides: Birds of Paradise 49%, Arcane Signet 49%, Intuition 1%, stop 0% -> Arcane Signet [must]]
+R4        [Scion decides: Birds of Paradise 100%, stop 0% -> Birds of Paradise [search]]
+R4    Scion casts Birds of Paradise
+R4        [Scion attack plan by search: filtered at Goldfish 4]
+R4    Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R4    Scion pays 3 life to Necropotence
+R4      [audit] Scion discards Intuition to hand size (8 cards in hand)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 26, 7 cards in hand, 3 lands
+R5      hand: Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Cabal Ritual, Sevinne's Reclamation, Savannah
+R5    Scion plays Savannah
+R5        [Scion decides: Scion of the Ur-Dragon 100%, stop 0% -> stop [search]]
+R5        [Scion attack plan by search: filtered at Goldfish 2]
+R5    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R5        [Scion decides: Scion of the Ur-Dragon 100%, stop 0% -> Scion of the Ur-Dragon [search]]
+R5    Scion casts Scion of the Ur-Dragon
+R5    Scion pays 2 life to Necropotence
+R5      [audit] Scion discards Smothering Tithe to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 24, 7 cards in hand, 4 lands
+R6      hand: Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Cabal Ritual, Sevinne's Reclamation, An Offer You Can't Refuse
+R6        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 84%, stop (hold mana) 16% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R6    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R6      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R6        [Scion attack plan by search: none at Goldfish 2]
+R6    Scion pays 1 life to Necropotence
+R6      [audit] Scion discards Sevinne's Reclamation to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Scion casts Mystical Tutor
+R7      Scion puts Demonic Consultation on top of their library
+R7        [Scion end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R7  --- Scion turn 7: life 23, 6 cards in hand, 4 lands
+R7      hand: Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+R7        [Scion attack plan by search: filtered at Goldfish 3]
+R7    Scion attacks Goldfish 3 with 2 creature(s): 6 damage (life now 32)
+R7    Scion pays 2 life to Necropotence
+R7      [audit] Scion discards Brain Freeze to hand size (8 cards in hand)
+R7  --- Goldfish 2 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 32, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 21, 7 cards in hand, 4 lands
+R8      hand: Crop Rotation, Chain of Vapor, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Demonic Consultation, Mana Vault
+R8        [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 100%, Mana Vault 0%, stop (hold mana) 0% -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [search]]
+R8    Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R8    Scion casts Thassa's Oracle
+R8    Scion casts Demonic Consultation
+R8      Scion exiles its library
+R8  *** Goldfish 2 is eliminated (life 36) by Scion
+R8  *** Goldfish 3 is eliminated (life 32) by Scion
+R8  *** Goldfish 4 is eliminated (life 38) by Scion
+R8  *** Scion wins by combo
+Kill: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (combo piece)
+  T2  progressed (ritual) | held (payable, not offered): Crop Rotation, Flash Photography
+  T3  progressed (tutor) | held (payable, not offered): Crop Rotation, Chain of Vapor, Brain Freeze
+  T4  progressed (fast mana / rock) | held (payable, not offered): Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle
+  T5  progressed (combo piece) | held (payable, not offered): Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Cabal Ritual, Sevinne's Reclamation
+  T6  progressed (abilities only) | held (payable, not offered): Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Cabal Ritual, Sevinne's Reclamation, An Offer You Can't Refuse
+  T7  idle | held (payable, not offered): Crop Rotation, Chain of Vapor, Brain Freeze, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T8  won
+  cleanup discards: Flash Photography [other], Beseech the Mirror [tutor], Intuition [tutor], Smothering Tithe [other], Sevinne's Reclamation [other], Brain Freeze [combo piece]
+  stops with another option offered: T2 main 1 look-ahead "stop" over Dark Ritual (1.5); T3 main 1 look-ahead "stop" over Imperial Seal (7.2); T5 main 1 look-ahead "stop" over Scion of the Ur-Dragon (8.5)
+  crude best case: none
+  crude best case with tutors: none

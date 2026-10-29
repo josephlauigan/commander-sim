@@ -258,11 +258,35 @@ pub const MUST_PRIO: f64 = 90.0;
 /// the highest-priority cast whose plan priority (`t6_plans::prio`) is at least `MUST_PRIO` (commanders, fast mana,
 /// the protection pre-cast), a card that would complete one of the player's lines (`combos::piece_gain` >= 1.0), or
 /// Sisay's fetch. None while the plan's `hold_up` slot asks to pass with the mana up.
+/// --- ai-fix: D: a `combo:` option (a line ready, affordable and cleared to go) comes first, and a forced cast that
+/// would leave a ready line unpayable is not forced.
 pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
     use crate::hooks::Action;
     if t6_plans::hold_up(g, p).is_some_and(|x| x > 0.0) {
         return None;
     }
+    // --- ai-fix: D: a ready, affordable line (offered only when the table and the plan say go) comes before any
+    // forced play; for every deck, as it already did for Sisay
+    let line = |o: &crate::hooks::Opt| matches!(o.act, Some(Action::Plan { .. })) && o.label.starts_with("combo: ");
+    if let Some(i) = opts.iter().position(line) {
+        return Some(i);
+    }
+    // --- ai-fix: D: the lines ready now, read once and only if a cast is forced; a forced cast that would leave one of
+    // them unpayable is skipped (a rock or dork cast first made Oracle + Consultation one mana short)
+    let mut ready: Option<Vec<((u32, String), Vec<CardId>)>> = None;
+    let mut keeps_lines = |c: CardId| -> bool {
+        let lines = ready.get_or_insert_with(|| combos::ready_lines(g, p));
+        if lines.is_empty() {
+            return true;
+        }
+        let u = crate::engine::mana::mana_units(g, p, false);
+        let Some(after) = crate::engine::mana::units_after_cast(g, p, c, &u) else { return true };
+        lines.iter().filter(|(_, cards)| !cards.contains(&c)).all(|((gn, pips), cards)| {
+            let mut skip = cards.clone();
+            skip.push(c);
+            crate::engine::mana::units_pay_with_rituals(g, p, &after, *gn, pips, &skip)
+        })
+    };
     let mut best: Option<(f64, f64, usize)> = None;
     for (i, o) in opts.iter().enumerate() {
         let score = match &o.act {
@@ -275,19 +299,9 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                     && combos::piece_gain(g, p, &g.db.get(*card).name) >= 1.0
                 {
                     89.0
-                } else if pr.is_none() && g.player(p).turns <= 4 && {
-                    // a cheap mana rock in the opening turns (Sol Ring lost to "stop (hold mana)" at 100%)
-                    let d = g.db.get(*card);
-                    !d.creature && (d.cmc as i32) <= 2 && (d.tag(Tag::Rock) || d.tag(Tag::Fastmana))
-                } {
-                    88.0
-                } else if chrome_mox_now(g, p, *card) {
-                    88.0 // --- t6 fast mana
-                } else if pr.is_none() && g.active == Some(p) && g.player(p).turns <= 3 && mana_first(g, p, *card) {
-                    // speed project: "mana first" on turns 1-3 (dorks, three-mana rocks): the look-ahead kept
-                    // voting them down for a draw engine or a stop
-                    88.0
                 } else {
+                    // --- ai-eval: the cheap-rock (turns 1-4), Chrome Mox and "mana first" (turns 1-3) rules are gone:
+                    // the look-ahead casts mana permanents itself now (eval-fix.md, Part 3: nothing lost without them)
                     continue;
                 }
             }
@@ -300,6 +314,11 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
             }
             _ => continue,
         };
+        if let Some(Action::Cast { card, .. }) = &o.act
+            && !keeps_lines(*card)
+        {
+            continue; // --- ai-fix: D
+        }
         if best.is_none_or(|b| (score, o.utility) > (b.0, b.1)) {
             best = Some((score, o.utility, i));
         }
@@ -307,27 +326,3 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
     best.map(|b| b.2)
 }
 
-// --- t6 fast mana
-/// Chrome Mox on a pool deck's own turns 1-3, with a card it would imprint: cast with the cheap rocks (the look-ahead
-/// voted "stop" over it at 100% on the heuristic: it scores the two cards in hand above a mox on the battlefield, and
-/// the mana pays off after its horizon). Not JD's Godo, whose play stays as it was.
-fn chrome_mox_now(g: &Game, p: PlayerId, c: CardId) -> bool {
-    let pl = g.player(p);
-    g.db.get(c).tag(Tag::Chromemox)
-        && pl.key != "godo"
-        && t6_plans::prio(g, p, c).is_none()
-        && g.active == Some(p)
-        && pl.turns <= 3
-        && !crate::engine::tutors::chrome_imprint_cands(g, p).is_empty()
-}
-
-/// Tier 6 speed project, "mana first" on turns 1-3: a mana creature (one or two mana) or a three-mana rock the plan
-/// has no opinion about is cast before the other plays. Never a commander, never when the card needs a gate
-/// (Chrome Mox, Mox Diamond have their own priority).
-fn mana_first(g: &Game, p: PlayerId, c: CardId) -> bool {
-    let d = g.db.get(c);
-    if d.land || g.player(p).is_commander(c) {
-        return false;
-    }
-    (d.creature && d.tag(Tag::Dork) && d.cmc <= 2) || (!d.creature && d.tag(Tag::Rock) && d.cmc == 3)
-}

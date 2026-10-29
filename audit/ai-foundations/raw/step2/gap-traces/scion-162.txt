@@ -1,0 +1,117 @@
+Play-by-play of goldfish game 162 (seed 500162): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Simian Spirit Guide, An Offer You Can't Refuse, Polluted Delta, Thassa's Oracle, Ancient Copper Dragon, Scalding Tarn, Shifting Woodland
+R1    Scion plays Scalding Tarn
+R1      cracks Scalding Tarn for Badlands
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 7 cards in hand, 1 lands
+R2      hand: Simian Spirit Guide, An Offer You Can't Refuse, Polluted Delta, Thassa's Oracle, Ancient Copper Dragon, Shifting Woodland, Esper Sentinel
+R2    Scion plays Polluted Delta
+R2      cracks Polluted Delta for Tropical Island
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3    Scion casts Vampiric Tutor
+R3      Scion puts Demonic Consultation on top of their library
+R3        [Scion end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R3  --- Scion turn 3: life 36, 6 cards in hand, 2 lands
+R3      hand: Simian Spirit Guide, An Offer You Can't Refuse, Thassa's Oracle, Ancient Copper Dragon, Shifting Woodland, Esper Sentinel
+R3    Scion plays Shifting Woodland
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 36, 6 cards in hand, 3 lands
+R4      hand: Simian Spirit Guide, An Offer You Can't Refuse, Thassa's Oracle, Ancient Copper Dragon, Esper Sentinel, Demonic Consultation
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 36, 7 cards in hand, 3 lands
+R5      hand: Simian Spirit Guide, An Offer You Can't Refuse, Thassa's Oracle, Ancient Copper Dragon, Esper Sentinel, Demonic Consultation, Smothering Tithe
+R5        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R5        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R5      [audit] Scion discards Ancient Copper Dragon to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 36, 7 cards in hand, 3 lands
+R6      hand: Simian Spirit Guide, An Offer You Can't Refuse, Thassa's Oracle, Esper Sentinel, Demonic Consultation, Smothering Tithe, The Cabbage Merchant
+R6    Scion plays Gemstone Caverns
+R6        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R6        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 36, 7 cards in hand, 4 lands
+R7      hand: Simian Spirit Guide, An Offer You Can't Refuse, Thassa's Oracle, Esper Sentinel, Demonic Consultation, Smothering Tithe, The Cabbage Merchant
+R7    Scion plays Bayou
+R7        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R7        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 36, 7 cards in hand, 5 lands
+R8      hand: Simian Spirit Guide, An Offer You Can't Refuse, Thassa's Oracle, Esper Sentinel, Demonic Consultation, Smothering Tithe, The Cabbage Merchant
+R8    Scion plays Ancient Tomb
+R8        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R8        [Scion decides: The Cabbage Merchant 90%, stop (hold mana) 10% -> The Cabbage Merchant [search]]
+R8    Scion casts The Cabbage Merchant
+R8  --- Goldfish 2 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 36, 5 cards in hand, 6 lands
+R9      hand: An Offer You Can't Refuse, Thassa's Oracle, Esper Sentinel, Demonic Consultation, Smothering Tithe
+R9        [Scion plays Verdant Catacombs for Underground Sea [plan: the land drop the plan wants]]
+R9    Scion plays Verdant Catacombs
+R9      cracks Verdant Catacombs for Underground Sea
+R9        [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R9    Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R9    Scion casts Thassa's Oracle
+R9    Scion casts Demonic Consultation
+R9      Scion exiles its library
+R9  *** Goldfish 2 is eliminated (life 40) by Scion
+R9  *** Goldfish 3 is eliminated (life 40) by Scion
+R9  *** Goldfish 4 is eliminated (life 40) by Scion
+R9  *** Scion wins by combo
+Kill: own turn 9 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  progressed (land only) | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Vampiric Tutor
+  T3  progressed (land only) | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Demonic Consultation
+  T4  idle | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Demonic Consultation
+  T5  passed_castable: The Cabbage Merchant [other] | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Demonic Consultation
+  T6  passed_castable: The Cabbage Merchant [other] | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Demonic Consultation
+  T7  passed_castable: The Cabbage Merchant [other] | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Demonic Consultation
+  T8  progressed (other) | held (payable, not offered): Simian Spirit Guide, An Offer You Can't Refuse, Demonic Consultation
+  T9  won
+  cleanup discards: Ancient Copper Dragon [other]
+  stops with another option offered: T5 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T5 main 2 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T6 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T6 main 2 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T7 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T7 main 2 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T8 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6)
+  crude best case: none
+  crude best case with tutors: own turn 3 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 3 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

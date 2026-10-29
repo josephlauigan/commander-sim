@@ -1,0 +1,10 @@
+start t6-z2 17:15:45 AI_EVAL_MARGIN=2 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-z2 rc=0 17:18:21
+start t3-z2 17:18:21 AI_EVAL_MARGIN=2 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done t3-z2 rc=0 17:19:55
+start t6-z1.5 17:19:55 AI_EVAL_MARGIN=1.5 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-z1.5 rc=0 17:22:36
+start t3-z1.5 17:22:36 AI_EVAL_MARGIN=1.5 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done t3-z1.5 rc=0 17:24:04
+start t3-z1 17:24:04 X=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done t3-z1 rc=0 17:25:32

@@ -1,0 +1,46 @@
+16:48:01 start goldfish-off
+16:51:09 done goldfish-off (exit 0)
+16:51:09 start goldfish-on
+16:54:16 done goldfish-on (exit 0)
+16:54:16 start gate-t3-off
+16:55:54 done gate-t3-off (exit 0)
+16:55:54 start gate-t3-on
+16:57:40 done gate-t3-on (exit 0)
+16:57:40 start gate-cloud-t1-off
+16:59:13 done gate-cloud-t1-off (exit 0)
+16:59:13 start gate-cloud-t1-on
+17:00:46 done gate-cloud-t1-on (exit 0)
+17:00:46 start scion-t6-off
+17:05:54 done scion-t6-off (exit 0)
+17:05:54 start scion-t6-on
+17:10:14 done scion-t6-on (exit 0)
+17:10:14 start realism-t6-off
+17:22:29 done realism-t6-off (exit 0)
+17:22:29 start realism-t6-on
+17:32:34 done realism-t6-on (exit 0)
+17:32:34 all done
+17:45:33 start goldfish-on
+17:48:39 done goldfish-on (exit 0)
+17:48:39 start gate-t3-on
+17:50:22 done gate-t3-on (exit 0)
+17:50:22 start gate-cloud-t1-on
+17:51:55 done gate-cloud-t1-on (exit 0)
+17:51:55 start scion-t6-on
+17:56:44 done scion-t6-on (exit 0)
+17:56:44 start realism-t6-on
+18:08:36 done realism-t6-on (exit 0)
+18:08:36 all done
+18:50:19 final runs
+18:50:19 start goldfish-off
+18:53:27 done goldfish-off (exit 0)
+18:53:27 start goldfish-on
+18:56:31 done goldfish-on (exit 0)
+18:56:31 start gate-t3-on
+18:58:12 done gate-t3-on (exit 0)
+18:58:12 start gate-cloud-t1-on
+18:59:46 done gate-cloud-t1-on (exit 0)
+18:59:46 start scion-t6-on
+19:04:35 done scion-t6-on (exit 0)
+19:04:35 start realism-t6-on
+19:16:21 done realism-t6-on (exit 0)
+19:16:29 final done

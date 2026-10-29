@@ -1,0 +1,896 @@
+
+=== Dack Fayden (dack-fayden-white-stax) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 10.0, mean 9.7 (over the 1842 kills)
+  won by turn: T1 0.0%  T2 1.1%  T3 9.5%  T4 22.2%  T5 30.1%  T6 35.9%  T7 39.7%  T8 44.2%
+  no kill by round 20: 7.9% (of which the deck itself lost: 0.9% of games)
+How it won (share of kills): Dack Fayden: the first flip wins the turn (35 piles) 50.9%, damage 35.8%, commander damage 12.1%, Preston + Felidar Guardian + Radiant Solar (flicker spell) 1.2%
+Mulligans: kept 7 cards 83.8% (no mulligan 59.4%, the free mulligan 24.5%), 6 cards 10.3%, 5 or fewer 5.8%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median none, mean 5.6, reached in 48.0% of games
+Protection on the kill turn: 48.2% of kills held a protection card or had a cast lock in force
+  counted (4): Bilbo's Gambit, Ephemerate, Orim's Chant, Silence
+Went for (share of games): Dack Fayden: the first flip wins the turn (35 piles) 46.9%, Preston + Felidar Guardian + Radiant Solar (flicker spell) 1.1%
+  converted: Dack Fayden: the first flip wins the turn (35 piles) 100.0% of tries, Preston + Felidar Guardian + Radiant Solar (flicker spell) 100.0% of tries
+Commander cast: 99.2% of games, median own turn 5.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (78390 in all)
+  plan|eot_calls: in 100.0% of games (18944 in all)
+  plan|eot_none: in 100.0% of games (18936 in all)
+  plan|eot_none_pass_ready: in 0.4% of games (8 in all)
+  plan|eot_slot_holds: in 0.6% of games (40 in all)
+  plan|land_changed: in 42.9% of games (1031 in all)
+  plan|land_choices: in 94.7% of games (5293 in all)
+  plan|next_turn_found: in 0.3% of games (7 in all)
+  plan|next_turn_played: in 0.3% of games (7 in all)
+  plan|none: in 100.0% of games (76435 in all)
+  plan|none_pass_ready: in 0.4% of games (29 in all)
+  plan|slot_holds: in 10.3% of games (315 in all)
+  plan|this_turn_found: in 48.0% of games (1919 in all)
+  plan|this_turn_played: in 48.0% of games (1919 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 20944 (10.47 a game; 7787 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                      8.8%        5.7%      0.92
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          5.7%        3.5%      0.60
+  no_land_drop             0.6%        0.1%      0.06
+  mana_short               8.7%       11.5%      0.91
+  progressed              72.9%       78.2%      7.63
+  idle                     3.3%        0.9%      0.34
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 39%, fast mana / rock 30%, combo piece 14%, land only 9%, draw 4%, tutor 2%, abilities only 2%, protection 0%
+    on turns 1-4: other 37%, fast mana / rock 36%, combo piece 13%, land only 6%, draw 4%, tutor 3%, abilities only 0%, protection 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 164 (11%), tutor 19 (1%), fast mana / rock 108 (7%), draw 69 (4%), other 1176 (77%)
+    most passed: Erode 138, Soul Partition 114, Cloudshift 102, Get Lost 99, Calamity's Wake 90, Cursed Totem 80, Eldrazi Confluence 72, Disruptor Flute 56, Void Mirror 55, Reprieve 55, Prismatic Lens 43, Portable Hole 41
+  payable but never offered as a play (card-turns; in 73.3% of turns): combo piece 2734 (7%), tutor 52 (0%), fast mana / rock 3568 (9%), draw 2020 (5%), protection 6262 (16%), other 23880 (62%)
+    most held: Chalice of the Void 2968, Path to Exile 2637, Bilbo's Gambit 2584, Lion's Eye Diamond 2572, March of Otherworldly Light 2570, Ephemerate 2542, Swords to Plowshares 2480, Mandate of Peace 2009, Angel's Grace 1982, Orim's Chant 1910, Abeyance 1905, Silence 1768
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Dack Fayden: the first flip wins the turn (35 piles) 937, combo: Preston + Felidar Guardian + Radiant Solar (flicker spell) 23
+Cleanup discards to 7: 1530 (0.77 a game, in 14.5% of games); combo pieces 2 (in 0.1% of games); 6 that ai::discard_keep would have kept
+  by role: combo piece 2 (0%), fast mana / rock 127 (8%), draw 89 (6%), protection 126 (8%), land 353 (23%), other 833 (54%)
+  most discarded: Lion's Eye Diamond 82, Chalice of the Void 81, Plains 69, Silence 68, Mandate of Peace 67, Angel's Grace 60, Orim's Chant 58, Abeyance 55, Razorgrass Ambush // Razorgrass Field 52, March of Otherworldly Light 48, Sunscour 44, Calamity's Wake 40
+  median kill turn: games with a combo piece discarded 16.0 (2 games), without 10.0 (1998 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 2697 (1.35 a game; 596 on turns 1-4; 0 with a line ready) | < 0: 547, 0-3: 953, 3-6: 885, 6-10: 281, >= 10: 31
+      best other option: Basalt Monolith ability 251, Karn, the Great Creator +1 197, The One Ring 194, Staff of Compleation ability 153, Sunscour 82, Tezzeret, Cruel Captain -3 71, Disruptor Flute (naming Goblin Roughrider) 66, Tezzeret, Cruel Captain +0 65
+      look-ahead score, best other minus stop: mean -4.12; within 1 point of the stop 1471 of 2697
+  main 1 look-ahead "stop (hold mana)": 2595 (1.30 a game; 201 on turns 1-4; 0 with a line ready) | < 0: 626, 0-3: 1551, 3-6: 347, 6-10: 71
+      best other option: Staff of Compleation ability 337, Karn, the Great Creator +1 272, Basalt Monolith ability 202, Cloudshift 117, Calamity's Wake 116, Soul Partition 111, Get Lost 99, Erode 82
+      look-ahead score, best other minus stop: mean -1.39; within 1 point of the stop 1887 of 2595
+  main 1 heuristic  "stop": 13404 (6.70 a game; 6288 on turns 1-4; 0 with a line ready) | nothing else offered: 13404
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 1268 (0.63 a game; 258 on turns 1-4; 0 with a line ready) | nothing else offered: 1268
+      best other option: -
+  main 2 look-ahead "stop": 1239 (0.62 a game; 275 on turns 1-4; 0 with a line ready) | < 0: 346, 0-3: 620, 3-6: 228, 6-10: 40, >= 10: 5
+      best other option: Basalt Monolith ability 134, Radiant Solar (discard: venture, gain 3) 105, Monumental Henge digs for a historic card 91, charge Jeweled Amulet 88, Sunscour 75, Staff of Compleation ability 58, Vanquish the Horde 50, The One Ring 49
+      look-ahead score, best other minus stop: mean -6.82; within 1 point of the stop 640 of 1239
+  main 2 look-ahead "stop (hold mana)": 2236 (1.12 a game; 166 on turns 1-4; 0 with a line ready) | < 0: 568, 0-3: 1481, 3-6: 165, 6-10: 22
+      best other option: Staff of Compleation ability 252, Monumental Henge digs for a historic card 171, Basalt Monolith ability 171, Karn, the Great Creator +1 143, Calamity's Wake 108, Get Lost 98, charge Jeweled Amulet 93, Cloudshift 89
+      look-ahead score, best other minus stop: mean -1.79; within 1 point of the stop 1485 of 2236
+  main 2 heuristic  "stop": 14415 (7.21 a game; 6645 on turns 1-4; 0 with a line ready) | nothing else offered: 14415
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 1196 (0.60 a game; 257 on turns 1-4; 0 with a line ready) | nothing else offered: 1196
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 75.7% of games, median own turn 5.0
+  best case by turn (share of all games): T1 0.1%  T2 1.9%  T3 11.1%  T4 29.6%  T5 45.4%  T6 55.5%
+  lines: Dack Fayden: the first flip wins the turn (35 piles) 1514
+  kill turn - best case (1362 games with both): median 6.0, mean 5.87; < 0: 0.0%, 0: 16.1%, 1: 12.1%, 2: 6.4%, 3: 4.6%, 4-5: 10.6%, 6+: 50.2%
+  games with a best case and no kill by the round cap: 152
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 75.7% of games, median own turn 5.0
+  best case by turn (share of all games): T1 0.1%  T2 1.9%  T3 11.1%  T4 29.6%  T5 45.4%  T6 55.5%
+  lines: Dack Fayden: the first flip wins the turn (35 piles) 1514
+  kill turn - best case (1362 games with both): median 6.0, mean 5.87; < 0: 0.0%, 0: 16.1%, 1: 12.1%, 2: 6.4%, 3: 4.6%, 4-5: 10.6%, 6+: 50.2%
+  games with a best case and no kill by the round cap: 152
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 75.7% of games, median own turn 5.0
+  best case by turn (share of all games): T1 0.1%  T2 1.9%  T3 11.1%  T4 29.6%  T5 45.4%  T6 55.5%
+  lines: Dack Fayden: the first flip wins the turn (35 piles) 1514
+  kill turn - best case (1362 games with both): median 6.0, mean 5.87; < 0: 0.0%, 0: 16.1%, 1: 12.1%, 2: 6.4%, 3: 4.6%, 4-5: 10.6%, 6+: 50.2%
+  games with a best case and no kill by the round cap: 152
+
+--- Card and mana flow: Dack Fayden (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    90    78    70    64    60
+  cards seen by the turn's end (cum.)   7.7   8.9  10.0  11.2  12.4  13.8  15.2  16.7
+  cards drawn                         1.05  1.11  1.15  1.19  1.28  1.37  1.51  1.52
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+    cantrips (spells)                 0.03  0.04  0.04  0.03  0.03  0.03  0.03  0.02
+    engines                           0.00  0.02  0.05  0.10  0.16  0.23  0.33  0.33
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    other permanents                  0.01  0.05  0.06  0.06  0.08  0.11  0.15  0.17
+  cards to hand by tutors and others  0.00  0.04  0.07  0.05  0.05  0.05  0.07  0.06
+  cards in hand (main phase)          6.79  5.50  4.65  4.19  3.96  3.90  3.81  3.83
+  spells cast, own turn               1.25  1.24  1.21  1.16  1.13  1.20  1.11  1.09
+  spells cast, others' turns after it  0.00  0.00  0.01  0.01  0.02  0.01  0.01  0.02
+  spells countered (of those)         0.00  0.00  0.00  0.01  0.01  0.01  0.02  0.02
+  mana available (main phase)         0.91  2.60  4.15  5.03  5.77  6.51  7.24  8.17
+  mana spent, own turn                1.27  2.68  3.78  4.20  4.37  4.92  4.94  5.17
+  mana spent, others' turns after it  0.02  0.11  0.22  0.38  0.48  0.69  0.90  1.11
+  life paid for cards                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  land drop made (%)                    99    95    78    62    48    42    41    41
+  missed, a land in hand (%)             0     0     0     1     0     1     1     2
+  missed, no land in hand (%)            1     5    21    37    52    57    58    58
+  cards drawn by source card, turns 1-8, per game: The One Ring 0.85, Staff of Compleation 0.28, Scout's Warning 0.12, Radiant Solar 0.12, Vexing Bauble 0.11, Reprieve 0.10
+  The One Ring out: 0.30 cycles a game, 2.83 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    The One Ring             T2 8/1/1  T3 9/4/4  T4 10/6/6  T6 12/11/11  T8 14/13/13; countered 0.001 a game
+  seen, never cast, at the end of turn 4 (where it is, games): The One Ring|hand 25, The One Ring|hand_payable 27
+  life paid by card, turns 1-8, per game: -
+
+=== Kinnan (kinnan-bonder-mana-combo) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 8.0, mean 8.3 (over the 1981 kills)
+  won by turn: T1 0.0%  T2 0.1%  T3 2.4%  T4 10.2%  T5 21.1%  T6 32.0%  T7 44.4%  T8 55.8%
+  no kill by round 20: 0.9% (of which the deck itself lost: 0.8% of games)
+How it won (share of kills): Kinnan + Basalt Monolith + Thrasios (draw the deck) 44.0%, Hullbreaker Horror + Kinnan + two rocks cast between each other 34.0%, damage 11.3%, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 10.6%, commander damage 0.2%
+Mulligans: kept 7 cards 82.1% (no mulligan 54.4%, the free mulligan 27.8%), 6 cards 11.9%, 5 or fewer 6.0%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 8.0, mean 7.8, reached in 87.8% of games
+Protection on the kill turn: 86.1% of kills held a protection card or had a cast lock in force
+  counted (11): An Offer You Can't Refuse, Dispel, Disrupting Shoal, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Pact of Negation, Swan Song
+Went for (share of games): Kinnan + Basalt Monolith + Thrasios (draw the deck) 43.6%, Hullbreaker Horror + Kinnan + two rocks cast between each other 33.6%, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 10.5%
+  converted: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100.0% of tries, Hullbreaker Horror + Kinnan + two rocks cast between each other 100.0% of tries, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 100.0% of tries
+Commander cast: 100.0% of games, median own turn 2.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (59018 in all)
+  plan|cap_nodes: in 0.3% of games (12 in all)
+  plan|eot_calls: in 100.0% of games (14662 in all)
+  plan|eot_next_turn_found: in 0.1% of games (1 in all)
+  plan|eot_none: in 100.0% of games (14440 in all)
+  plan|eot_none_pass_ready: in 10.8% of games (221 in all)
+  plan|eot_played: in 0.1% of games (1 in all)
+  plan|land_changed: in 24.2% of games (618 in all)
+  plan|land_choices: in 97.5% of games (6294 in all)
+  plan|next_turn_found: in 0.6% of games (15 in all)
+  plan|next_turn_played: in 0.6% of games (15 in all)
+  plan|none: in 100.0% of games (56594 in all)
+  plan|none_pass_ready: in 3.9% of games (151 in all)
+  plan|over_hold_up: in 68.2% of games (1744 in all)
+  plan|this_turn_found: in 87.8% of games (2258 in all)
+  plan|this_turn_played: in 87.8% of games (2258 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 16661 (8.33 a game; 7950 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     11.9%        2.6%      0.99
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          8.0%        4.6%      0.66
+  no_land_drop             0.2%        0.2%      0.02
+  mana_short               8.9%       12.1%      0.74
+  progressed              68.1%       78.6%      5.67
+  idle                     2.9%        2.0%      0.24
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): combo piece 39%, fast mana / rock 16%, other 15%, land only 9%, tutor 8%, draw 6%, abilities only 6%
+    on turns 1-4: combo piece 53%, fast mana / rock 19%, other 9%, land only 7%, draw 6%, tutor 5%, abilities only 1%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 309 (18%), tutor 141 (8%), fast mana / rock 304 (18%), draw 142 (8%), other 790 (47%)
+    most passed: Sink into Stupor // Soporific Springs 180, Thrasios, Triton Hero 95, The Cabbage Merchant 83, Mirage Mirror 74, Hidden Strings 64, High Fae Trickster 57, Valley Floodcaller 49, Nature's Rhythm 47, Flash Photography 46, Rhystic Study 45, Formidable Speaker 40, Finale of Devastation 40
+  payable but never offered as a play (card-turns; in 77.3% of turns): combo piece 31 (0%), tutor 1218 (3%), fast mana / rock 1330 (3%), protection 18273 (47%), other 18368 (47%)
+    most held: Chain of Vapor 2085, Pact of Negation 2038, An Offer You Can't Refuse 1912, Swan Song 1900, Mental Misstep 1872, Dispel 1775, Flusterstorm 1769, Disrupting Shoal 1730, Imposter Mech 1572, Snapback 1565, Fierce Guardianship 1559, Dramatic Reversal 1386
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 872, combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 674, combo: Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 210
+Cleanup discards to 7: 1955 (0.98 a game, in 28.8% of games); combo pieces 3 (in 0.1% of games); 113 that ai::discard_keep would have kept
+  by role: combo piece 3 (0%), tutor 82 (4%), fast mana / rock 136 (7%), draw 24 (1%), protection 103 (5%), land 301 (15%), other 1306 (67%)
+  most discarded: Imposter Mech 131, Commandeer 107, Misdirection 107, Copy Enchantment 105, Sudden Substitution 104, Dramatic Reversal 99, Cryptolith Rite 95, Dizzy Spell 68, Wan Shi Tong, Librarian 63, Snapback 53, Mox Diamond 47, Sink into Stupor // Soporific Springs 44
+  median kill turn: games with a combo piece discarded 9.0 (3 games), without 8.0 (1997 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 962 (0.48 a game; 433 on turns 1-4; 0 with a line ready) | < 0: 192, 0-3: 70, 3-6: 401, 6-10: 218, >= 10: 81
+      best other option: Basalt Monolith ability 192, Kinnan: dig five 168, The One Ring 71, Gene Pollinator 23, Mystic Remora 20, Sylvan Library 20, Birds of Paradise 18, Elvish Mystic 17
+      look-ahead score, best other minus stop: mean -4.19; within 1 point of the stop 350 of 962
+  main 1 look-ahead "stop (hold mana)": 4367 (2.18 a game; 802 on turns 1-4; 0 with a line ready) | < 0: 230, 0-3: 627, 3-6: 2985, 6-10: 418, >= 10: 107
+      best other option: Kinnan: dig five 1552, The One Ring 190, Basalt Monolith ability 177, The Cabbage Merchant 115, Valley Floodcaller 95, Thrasios, Triton Hero 93, Hidden Strings 88, Sink into Stupor // Soporific Springs 85
+      look-ahead score, best other minus stop: mean -1.20; within 1 point of the stop 2542 of 4367
+  main 1 heuristic  "stop": 6415 (3.21 a game; 4671 on turns 1-4; 0 with a line ready) | nothing else offered: 6415
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 3416 (1.71 a game; 1845 on turns 1-4; 0 with a line ready) | nothing else offered: 3416
+      best other option: -
+  main 2 look-ahead "stop": 297 (0.15 a game; 106 on turns 1-4; 0 with a line ready) | < 0: 165, 0-3: 28, 3-6: 72, 6-10: 28, >= 10: 4
+      best other option: Basalt Monolith ability 139, Kinnan: dig five 33, The One Ring 27, Thrasios: scry 1, a land or a card 26, Mystic Remora 11, Faerie Mastermind 5, Lotus Petal 4, Rhystic Study 4
+      look-ahead score, best other minus stop: mean -6.29; within 1 point of the stop 84 of 297
+  main 2 look-ahead "stop (hold mana)": 2374 (1.19 a game; 488 on turns 1-4; 0 with a line ready) | < 0: 574, 0-3: 769, 3-6: 913, 6-10: 105, >= 10: 13
+      best other option: Kinnan: dig five 306, Basalt Monolith ability 289, Thrasios: scry 1, a land or a card 197, The One Ring 168, Sink into Stupor // Soporific Springs 126, Hidden Strings 84, Dizzy Spell: transmute 77, Thrasios, Triton Hero 66
+      look-ahead score, best other minus stop: mean -2.12; within 1 point of the stop 1104 of 2374
+  main 2 heuristic  "stop": 7557 (3.78 a game; 5115 on turns 1-4; 0 with a line ready) | nothing else offered: 7557
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 4437 (2.22 a game; 2037 on turns 1-4; 0 with a line ready) | nothing else offered: 4437
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 30.6% of games, median own turn 6.0
+  best case by turn (share of all games): T1 0.8%  T2 3.8%  T3 7.2%  T4 9.8%  T5 12.1%  T6 15.3%
+  lines: Kinnan + Basalt Monolith 404, Hullbreaker Horror + Kinnan + two rocks cast between each other 198, Hullbreaker Horror + Urza / Sol Ring + free artifacts 9
+  kill turn - best case (603 games with both): median 1.0, mean 1.54; < 0: 0.0%, 0: 46.1%, 1: 21.7%, 2: 9.6%, 3: 7.3%, 4-5: 7.8%, 6+: 7.5%
+  games with a best case and no kill by the round cap: 8
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 67.9% of games, median own turn 6.0
+  best case by turn (share of all games): T1 0.8%  T2 3.8%  T3 8.2%  T4 14.3%  T5 23.8%  T6 35.6%
+  lines: Kinnan + Basalt Monolith 1285, Hullbreaker Horror + Kinnan + two rocks cast between each other 72, Hullbreaker Horror + Urza / Sol Ring + free artifacts 1
+  kill turn - best case (1342 games with both): median 2.0, mean 2.09; < 0: 0.0%, 0: 28.2%, 1: 21.5%, 2: 17.3%, 3: 11.8%, 4-5: 12.7%, 6+: 8.4%
+  games with a best case and no kill by the round cap: 16
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 30.6% of games, median own turn 6.0
+  best case by turn (share of all games): T1 0.8%  T2 3.8%  T3 7.2%  T4 9.8%  T5 12.1%  T6 15.3%
+  lines: Kinnan + Basalt Monolith 404, Hullbreaker Horror + Kinnan + two rocks cast between each other 198, Hullbreaker Horror + Urza / Sol Ring + free artifacts 9
+  kill turn - best case (603 games with both): median 1.0, mean 1.54; < 0: 0.0%, 0: 46.1%, 1: 21.7%, 2: 9.6%, 3: 7.3%, 4-5: 7.8%, 6+: 7.5%
+  games with a best case and no kill by the round cap: 8
+
+--- Card and mana flow: Kinnan (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100   100    98    90    79    68    56
+  cards seen by the turn's end (cum.)   7.8   8.8  10.1  11.6  13.3  15.3  17.0  18.7
+  cards drawn                         1.00  1.03  1.12  1.38  1.75  2.12  2.37  2.43
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+    cantrips (spells)                 0.00  0.01  0.02  0.03  0.02  0.02  0.02  0.02
+    engines                           0.00  0.02  0.07  0.17  0.28  0.33  0.32  0.22
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.00  0.00  0.02  0.01  0.02
+    other permanents                  0.00  0.00  0.03  0.19  0.45  0.75  1.02  1.17
+  cards to hand by tutors and others  0.00  0.03  0.18  0.24  0.26  0.36  0.43  0.48
+  cards in hand (main phase)          6.76  5.79  5.56  5.26  5.23  5.47  5.88  6.20
+  spells cast, own turn               1.07  1.23  1.24  1.20  1.18  1.11  1.11  1.13
+  spells cast, others' turns after it  0.00  0.00  0.05  0.09  0.10  0.14  0.16  0.22
+  spells countered (of those)         0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  mana available (main phase)         1.01  2.72  4.73  6.46  7.86  9.27 10.57 11.73
+  mana spent, own turn                1.07  2.61  4.50  5.90  6.99  7.92  8.85  9.24
+  mana spent, others' turns after it  0.03  0.16  0.77  1.02  1.33  1.48  1.60  1.80
+  life paid for cards                 0.00  0.01  0.05  0.15  0.17  0.06  0.05  0.06
+  land drop made (%)                   100    93    66    49    42    40    40    38
+  missed, a land in hand (%)             0     0     0     1     0     1     0     0
+  missed, no land in hand (%)            0     7    34    51    57    59    59    62
+  cards drawn by source card, turns 1-8, per game: Consecrated Sphinx 2.19, The One Ring 0.95, Thrasios, Triton Hero 0.28, Sylvan Library 0.14, Borne Upon a Wind 0.12, Kinnan, Bonder Prodigy 0.04, Waterlogged Grove 0.03, Mystic Remora 0.01, Basalt Monolith 0.01, Valley Floodcaller 0.01, Endurance 0.00, Formidable Speaker 0.00, Trophy Mage 0.00
+  Thrasios, Triton Hero out: 0.93 cycles a game, 0.30 cards a cycle out
+  Faerie Mastermind out: 0.63 cycles a game, 0.00 cards a cycle out
+  Mystic Remora out: 0.56 cycles a game, 0.02 cards a cycle out
+  Consecrated Sphinx out: 0.54 cycles a game, 4.04 cards a cycle out
+  Sylvan Library out: 0.51 cycles a game, 0.28 cards a cycle out
+  Rhystic Study out: 0.44 cycles a game, 0.00 cards a cycle out
+  The One Ring out: 0.39 cycles a game, 2.44 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Consecrated Sphinx       T2 9/0/0  T3 10/2/3  T4 12/5/7  T6 15/9/18  T8 15/9/22; countered 0.000 a game
+    Faerie Mastermind        T2 7/1/1  T3 9/3/5  T4 10/6/9  T6 14/10/19  T8 18/15/29; countered 0.000 a game
+    Mystic Remora            T2 9/5/5  T3 11/8/8  T4 14/12/12  T6 22/20/14  T8 28/26/12; countered 0.000 a game
+    Rhystic Study            T2 8/1/1  T3 9/4/4  T4 12/8/8  T6 17/13/13  T8 20/17/17; countered 0.000 a game
+    Sylvan Library           T2 9/3/3  T3 11/7/7  T4 12/9/9  T6 16/15/15  T8 21/19/19; countered 0.000 a game
+    The One Ring             T2 9/1/1  T3 10/6/6  T4 11/9/9  T6 13/11/12  T8 14/11/12; countered 0.000 a game
+    Thrasios, Triton Hero    T2 10/2/2  T3 14/5/10  T4 17/10/18  T6 22/16/33  T8 27/21/43; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Consecrated Sphinx|gy 13, Consecrated Sphinx|hand 96, Consecrated Sphinx|hand_payable 17, Consecrated Sphinx|lib 1, Consecrated Sphinx|other 1, Faerie Mastermind|exile 1, Faerie Mastermind|gy 2, Faerie Mastermind|hand 3, Faerie Mastermind|hand_payable 62, Faerie Mastermind|lib 7, Mystic Remora|gy 1, Mystic Remora|hand 1, Mystic Remora|hand_payable 36, Rhystic Study|exile 1, Rhystic Study|gy 1, Rhystic Study|hand 26, Rhystic Study|hand_payable 52, Rhystic Study|lib 1, Sylvan Library|exile 1, Sylvan Library|hand 3, Sylvan Library|hand_payable 36, The One Ring|gy 5, The One Ring|hand 33, The One Ring|hand_payable 6, Thrasios, Triton Hero|gy 1, Thrasios, Triton Hero|hand 3, Thrasios, Triton Hero|hand_payable 122, Thrasios, Triton Hero|lib 4
+  life paid by card, turns 1-8, per game: Sylvan Library 0.47
+
+=== Kraum/Tymna (kraum-tymna-blue-breach-midrange) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 8.0, mean 8.6 (over the 1983 kills)
+  won by turn: T1 0.1%  T2 0.7%  T3 3.6%  T4 10.7%  T5 19.8%  T6 32.5%  T7 44.4%  T8 54.2%
+  no kill by round 20: 0.8% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 87.2%, damage 8.1%, combo (unnamed) 3.0%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 1.1%, commander damage 0.6%
+Mulligans: kept 7 cards 79.6% (no mulligan 49.2%, the free mulligan 30.4%), 6 cards 13.2%, 5 or fewer 7.2%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 8.0, mean 7.9, reached in 94.3% of games
+Protection on the kill turn: 89.1% of kills held a protection card or had a cast lock in force
+  counted (14): An Offer You Can't Refuse, Dispel, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Grand Abolisher, Mental Misstep, Mindbreak Trap, Orim's Chant, Pact of Negation, Red Elemental Blast, Silence, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 86.7%, Ad Nauseam into a win 18.9%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 3.3%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 3.0%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 99.7% of tries, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 33.3% of tries
+Commander cast: 88.0% of games, median own turn 3.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (51123 in all)
+  plan|cap_nodes: in 4.3% of games (158 in all)
+  plan|eot_calls: in 99.9% of games (15756 in all)
+  plan|eot_next_turn_found: in 14.3% of games (288 in all)
+  plan|eot_none: in 99.5% of games (14364 in all)
+  plan|eot_none_pass_ready: in 49.2% of games (1104 in all)
+  plan|eot_played: in 14.3% of games (288 in all)
+  plan|eot_slot_holds: in 94.7% of games (9892 in all)
+  plan|land_changed: in 54.8% of games (1689 in all)
+  plan|land_choices: in 98.8% of games (6470 in all)
+  plan|next_turn_found: in 35.1% of games (1181 in all)
+  plan|next_turn_played: in 21.6% of games (502 in all)
+  plan|none: in 99.5% of games (45708 in all)
+  plan|none_pass_ready: in 37.4% of games (1590 in all)
+  plan|over_hold_up: in 81.7% of games (3256 in all)
+  plan|reserve: in 16.0% of games (679 in all)
+  plan|slot_holds: in 99.2% of games (31680 in all)
+  plan|this_turn_found: in 94.3% of games (2644 in all)
+  plan|this_turn_play_failed: in 0.1% of games (1 in all)
+  plan|this_turn_played: in 94.3% of games (2643 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 17468 (8.73 a game; 7912 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     11.4%        2.7%      0.99
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          8.2%        4.8%      0.71
+  no_land_drop             4.5%        2.1%      0.40
+  mana_short              10.1%       15.7%      0.88
+  progressed              60.4%       71.8%      5.28
+  idle                     5.4%        2.9%      0.47
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 29%, fast mana / rock 22%, tutor 20%, land only 12%, draw 10%, ritual 4%, combo piece 2%, protection 1%, abilities only 0%
+    on turns 1-4: other 31%, fast mana / rock 25%, tutor 19%, draw 10%, land only 9%, ritual 5%, protection 1%, combo piece 1%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): tutor 328 (19%), ritual 257 (15%), fast mana / rock 113 (6%), draw 216 (12%), protection 41 (2%), other 796 (45%)
+    most passed: Mnemonic Betrayal 266, Culling the Weak 222, Exhibition Tidecaller 113, Ragavan, Nimble Pilferer 87, Mystic Remora 82, Gamble 72, Gleaming Splendor 65, Voice of Victory 53, Enlightened Tutor 52, Flash Photography 51, Rhystic Study 50, Ranger-Captain of Eos 45
+  payable but never offered as a play (card-turns; in 81.7% of turns): combo piece 15629 (29%), tutor 1867 (3%), ritual 2724 (5%), draw 79 (0%), protection 22903 (42%), other 11565 (21%)
+    most held: Thassa's Oracle 3417, Lion's Eye Diamond 2883, Tainted Pact 2606, Underworld Breach 2481, Pact of Negation 2435, Swan Song 2244, Mental Misstep 2198, Red Elemental Blast 2092, Brain Freeze 2034, Flusterstorm 1934, Dispel 1916, An Offer You Can't Refuse 1876
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 1639, combo: Ad Nauseam into a win 378, combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 53, combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 43
+Cleanup discards to 7: 5778 (2.89 a game, in 57.8% of games); combo pieces 70 (in 3.5% of games); 70 that ai::discard_keep would have kept
+  by role: combo piece 70 (1%), tutor 275 (5%), ritual 445 (8%), fast mana / rock 7 (0%), draw 260 (4%), protection 1205 (21%), land 657 (11%), other 2859 (49%)
+  most discarded: Commandeer 294, Misdirection 266, Deflecting Swat 263, Sevinne's Reclamation 261, Rain of Filth 260, Orim's Chant 257, Final Fortune 254, Silence 243, Snapback 197, Chain of Vapor 158, Mnemonic Betrayal 154, Into the Flood Maw 140
+  median kill turn: games with a combo piece discarded 13.0 (70 games), without 8.0 (1930 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 459 (0.23 a game; 272 on turns 1-4; 0 with a line ready) | 0-3: 39, 3-6: 171, 6-10: 235, >= 10: 14
+      best other option: Tymna the Weaver 40, Kraum, Ludevic's Opus 36, Gamble 27, Gleaming Splendor 25, Wishclaw Talisman 19, Ragavan, Nimble Pilferer 18, Enlightened Tutor 18, Culling the Weak 17
+      look-ahead score, best other minus stop: mean -4.95; within 1 point of the stop 166 of 459
+  main 1 look-ahead "stop (hold mana)": 2472 (1.24 a game; 533 on turns 1-4; 0 with a line ready) | < 0: 83, 0-3: 910, 3-6: 919, 6-10: 517, >= 10: 43
+      best other option: Kraum, Ludevic's Opus 304, Culling the Weak 266, Mnemonic Betrayal 214, Tymna the Weaver 107, Borne Upon a Wind 85, Ragavan, Nimble Pilferer 85, Gamble 75, Valley Floodcaller 74
+      look-ahead score, best other minus stop: mean -2.75; within 1 point of the stop 1180 of 2472
+  main 1 heuristic  "stop": 6454 (3.23 a game; 4758 on turns 1-4; 0 with a line ready) | nothing else offered: 6454
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 6615 (3.31 a game; 2151 on turns 1-4; 0 with a line ready) | nothing else offered: 6615
+      best other option: -
+  main 2 look-ahead "stop": 106 (0.05 a game; 55 on turns 1-4; 0 with a line ready) | 0-3: 23, 3-6: 29, 6-10: 52, >= 10: 2
+      best other option: Enlightened Tutor 9, Culling the Weak 8, Mystic Remora 8, Exhibition Tidecaller 7, Mnemonic Betrayal 6, Orcish Bowmasters 6, Mox Diamond 6, Diabolic Intent 5
+      look-ahead score, best other minus stop: mean -5.28; within 1 point of the stop 43 of 106
+  main 2 look-ahead "stop (hold mana)": 1935 (0.97 a game; 345 on turns 1-4; 0 with a line ready) | < 0: 98, 0-3: 868, 3-6: 706, 6-10: 247, >= 10: 16
+      best other option: Culling the Weak 255, Mnemonic Betrayal 188, Kraum, Ludevic's Opus 177, Borne Upon a Wind 101, Valley Floodcaller 93, Mystic Remora 87, Faerie Mastermind 79, Wishclaw Talisman 76
+      look-ahead score, best other minus stop: mean -2.54; within 1 point of the stop 892 of 1935
+  main 2 heuristic  "stop": 6763 (3.38 a game; 5015 on turns 1-4; 0 with a line ready) | nothing else offered: 6763
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 6684 (3.34 a game; 2283 on turns 1-4; 0 with a line ready) | nothing else offered: 6684
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 5.0% of games, median own turn 6.0
+  best case by turn (share of all games): T1 0.2%  T2 0.7%  T3 1.2%  T4 1.7%  T5 2.5%  T6 3.0%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 79, Ad Nauseam into a win 21, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 1
+  kill turn - best case (99 games with both): median 1.0, mean 1.34; < 0: 0.0%, 0: 44.4%, 1: 26.3%, 2: 10.1%, 3: 7.1%, 4-5: 7.1%, 6+: 5.1%
+  games with a best case and no kill by the round cap: 2
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 78.0% of games, median own turn 6.0
+  best case by turn (share of all games): T1 0.4%  T2 2.3%  T3 8.1%  T4 20.2%  T5 32.1%  T6 44.0%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 1504, Ad Nauseam into a win 52, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 4
+  kill turn - best case (1544 games with both): median 1.0, mean 2.53; < 0: 0.0%, 0: 23.5%, 1: 27.6%, 2: 13.7%, 3: 8.0%, 4-5: 12.9%, 6+: 14.2%
+  games with a best case and no kill by the round cap: 16
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 45.2% of games, median own turn 7.0
+  best case by turn (share of all games): T1 0.2%  T2 1.0%  T3 3.5%  T4 7.5%  T5 13.1%  T6 18.8%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 830, Ad Nauseam into a win 67, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 8
+  kill turn - best case (895 games with both): median 0.0, mean 1.38; < 0: 0.0%, 0: 52.1%, 1: 18.9%, 2: 10.9%, 3: 5.0%, 4-5: 6.7%, 6+: 6.4%
+  games with a best case and no kill by the round cap: 10
+
+--- Card and mana flow: Kraum/Tymna (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    96    89    80    68    56
+  cards seen by the turn's end (cum.)   7.8   9.0  10.6  12.6  14.8  16.9  19.0  21.3
+  cards drawn                         1.02  1.17  1.50  1.86  2.07  2.16  2.34  2.46
+    draw step                         1.00  1.00  0.99  0.98  0.96  0.94  0.93  0.92
+    cantrips (spells)                 0.01  0.02  0.01  0.02  0.03  0.02  0.02  0.02
+    engines                           0.01  0.05  0.11  0.23  0.41  0.53  0.69  0.83
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.08  0.37  0.62  0.66  0.66  0.69  0.69
+    other permanents                  0.01  0.03  0.01  0.01  0.01  0.00  0.01  0.01
+  cards to hand by tutors and others  0.04  0.07  0.09  0.13  0.17  0.16  0.15  0.12
+  cards in hand (main phase)          6.73  5.56  5.29  5.55  5.95  6.25  6.51  6.65
+  spells cast, own turn               1.07  0.99  1.12  1.21  1.34  1.42  1.43  1.54
+  spells cast, others' turns after it  0.05  0.05  0.07  0.12  0.12  0.13  0.13  0.13
+  spells countered (of those)         0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  mana available (main phase)         1.02  2.62  3.46  4.17  4.91  5.71  6.57  7.64
+  mana spent, own turn                0.96  2.04  2.61  2.97  3.14  3.14  3.00  3.03
+  mana spent, others' turns after it  0.05  0.06  0.12  0.22  0.24  0.29  0.26  0.25
+  life paid for cards                 0.01  0.15  0.50  0.93  1.21  1.36  1.60  1.84
+  land drop made (%)                    99    91    68    51    46    47    44    47
+  missed, a land in hand (%)             0     1     3     8     9     9    11    11
+  missed, no land in hand (%)            1     8    29    41    46    44    45    42
+  cards drawn by source card, turns 1-8, per game: Tymna the Weaver 3.01, Ad Nauseam 1.50, Necropotence 0.61, Borne Upon a Wind 0.13, Mystic Remora 0.01, Ragavan, Nimble Pilferer 0.00, Valley Floodcaller 0.00, Exhibition Tidecaller 0.00, Wishclaw Talisman 0.00, Voice of Victory 0.00
+  Tymna the Weaver out: 3.20 cycles a game, 0.94 cards a cycle out
+  Kraum, Ludevic's Opus out: 1.49 cycles a game, 0.00 cards a cycle out
+  Esper Sentinel out: 0.70 cycles a game, 0.00 cards a cycle out
+  Mystic Remora out: 0.51 cycles a game, 0.02 cards a cycle out
+  Rhystic Study out: 0.50 cycles a game, 0.00 cards a cycle out
+  Faerie Mastermind out: 0.40 cycles a game, 0.00 cards a cycle out
+  Necropotence out: 0.23 cycles a game, 2.69 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Ad Nauseam               T2 8/0/0  T3 10/0/0  T4 12/1/0  T6 21/7/0  T8 24/13/0; countered 0.000 a game
+    Esper Sentinel           T2 9/7/7  T3 13/10/9  T4 16/14/12  T6 21/19/17  T8 24/23/21; countered 0.000 a game
+    Faerie Mastermind        T2 7/3/3  T3 8/5/4  T4 11/6/6  T6 16/12/11  T8 19/16/14; countered 0.000 a game
+    Kraum, Ludevic's Opus    T2 100/3/3  T3 100/10/10  T4 100/27/27  T6 100/58/58  T8 100/73/73; countered 0.000 a game
+    Mystic Remora            T2 10/6/6  T3 12/8/8  T4 15/12/11  T6 22/18/11  T8 28/24/10; countered 0.000 a game
+    Necropotence             T2 8/1/1  T3 10/2/2  T4 12/4/4  T6 15/7/7  T8 19/9/9; countered 0.000 a game
+    Rhystic Study            T2 10/2/2  T3 13/5/5  T4 16/10/10  T6 21/17/17  T8 26/23/23; countered 0.000 a game
+    Tymna the Weaver         T2 100/27/27  T3 100/60/60  T4 100/73/73  T6 100/82/82  T8 100/86/86; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Ad Nauseam|gy 2, Ad Nauseam|hand 134, Ad Nauseam|hand_payable 54, Esper Sentinel|exile 1, Esper Sentinel|hand 2, Esper Sentinel|hand_payable 42, Faerie Mastermind|exile 6, Faerie Mastermind|gy 3, Faerie Mastermind|hand 6, Faerie Mastermind|hand_payable 58, Kraum, Ludevic's Opus|other 1300, Mystic Remora|gy 1, Mystic Remora|hand 1, Mystic Remora|hand_payable 58, Necropotence|gy 11, Necropotence|hand 26, Necropotence|hand_payable 97, Rhystic Study|gy 1, Rhystic Study|hand 30, Rhystic Study|hand_payable 77, Tymna the Weaver|other 486
+  life paid by card, turns 1-8, per game: Ad Nauseam 2.26, Necropotence 0.61, Tymna the Weaver 2.96
+
+=== Rograkh/Silas (rograkh-silas-turbo-breach) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 9.1 (over the 1749 kills)
+  won by turn: T1 0.0%  T2 1.1%  T3 6.5%  T4 13.7%  T5 21.0%  T6 31.1%  T7 39.0%  T8 46.0%
+  no kill by round 20: 12.6% (of which the deck itself lost: 0.1% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 96.7%, combo (unnamed) 1.9%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.5%, damage 0.5%, commander damage 0.4%, other 0.1%
+Mulligans: kept 7 cards 83.2% (no mulligan 55.8%, the free mulligan 27.4%), 6 cards 12.3%, 5 or fewer 4.5%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 9.0, mean 8.9, reached in 90.6% of games
+Protection on the kill turn: 81.6% of kills held a protection card or had a cast lock in force
+  counted (11): An Offer You Can't Refuse, Daze, Fierce Guardianship, Flusterstorm, Force of Will, Mental Misstep, Mindbreak Trap, Pact of Negation, Pyroblast, Red Elemental Blast, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 84.9%, Ad Nauseam into a win 15.5%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 1.6%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 1.1%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 99.6% of tries, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 39.1% of tries
+Commander cast: 99.0% of games, median own turn 2.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (62920 in all)
+  plan|cap_depth: in 0.1% of games (3 in all)
+  plan|cap_nodes: in 4.4% of games (178 in all)
+  plan|eot_calls: in 100.0% of games (19132 in all)
+  plan|eot_next_turn_found: in 10.6% of games (211 in all)
+  plan|eot_none: in 99.2% of games (17976 in all)
+  plan|eot_none_pass_ready: in 44.2% of games (945 in all)
+  plan|eot_played: in 10.6% of games (211 in all)
+  plan|land_changed: in 31.7% of games (891 in all)
+  plan|land_choices: in 96.2% of games (5986 in all)
+  plan|next_turn_found: in 34.0% of games (1233 in all)
+  plan|next_turn_played: in 23.9% of games (536 in all)
+  plan|none: in 99.2% of games (57415 in all)
+  plan|none_pass_ready: in 35.4% of games (1829 in all)
+  plan|reserve: in 12.4% of games (697 in all)
+  plan|this_turn_found: in 90.6% of games (2443 in all)
+  plan|this_turn_play_failed: in 0.1% of games (1 in all)
+  plan|this_turn_played: in 90.6% of games (2442 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 20921 (10.46 a game; 7846 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                      8.4%        3.5%      0.87
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable         13.2%        7.4%      1.38
+  no_land_drop             0.4%        0.3%      0.05
+  mana_short               5.8%        5.0%      0.60
+  progressed              59.2%       80.1%      6.19
+  idle                    13.0%        3.8%      1.36
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 28%, fast mana / rock 28%, land only 16%, tutor 16%, draw 7%, ritual 2%, combo piece 2%, abilities only 0%
+    on turns 1-4: other 32%, fast mana / rock 27%, tutor 18%, land only 12%, draw 6%, ritual 3%, combo piece 1%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): tutor 295 (9%), ritual 326 (10%), fast mana / rock 427 (13%), draw 265 (8%), other 1993 (60%)
+    most passed: Snapback 473, Mnemonic Betrayal 465, Snap 438, Culling the Weak 304, Infernal Plunge 229, Praetor's Grasp 98, Gamble 82, Grim Monolith 82, Jeska's Will 74, Lotus Petal 73, Grinding Station 73, Vexing Bauble 64
+  payable but never offered as a play (card-turns; in 86.8% of turns): combo piece 20210 (26%), tutor 1287 (2%), ritual 6341 (8%), fast mana / rock 2194 (3%), draw 100 (0%), protection 26980 (35%), other 20643 (27%)
+    most held: Thassa's Oracle 5247, Demonic Consultation 4404, Pact of Negation 2980, Into the Flood Maw 2951, Swan Song 2902, Mental Misstep 2900, Lion's Eye Diamond 2834, An Offer You Can't Refuse 2796, Chain of Vapor 2701, Pyroblast 2699, Brain Freeze 2634, Red Elemental Blast 2574
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 1621, combo: Ad Nauseam into a win 310, combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 25, combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 16, Dark Ritual 1
+Cleanup discards to 7: 4713 (2.36 a game, in 53.1% of games); combo pieces 81 (in 4.0% of games); 99 that ai::discard_keep would have kept
+  by role: combo piece 81 (2%), tutor 145 (3%), ritual 428 (9%), fast mana / rock 312 (7%), draw 185 (4%), protection 338 (7%), land 393 (8%), other 2831 (60%)
+  most discarded: Commandeer 239, Wheel of Fortune 230, Deflecting Swat 226, Misdirection 224, Yawgmoth's Will 223, Flare of Duplication 217, Windfall 215, Rain of Filth 211, Final Fortune 204, Last Chance 178, Mox Diamond 144, Cabal Ritual 144
+  median kill turn: games with a combo piece discarded no kill (81 games), without 9.0 (1919 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 833 (0.42 a game; 484 on turns 1-4; 0 with a line ready) | < 0: 19, 0-3: 179, 3-6: 259, 6-10: 365, >= 10: 11
+      best other option: Rograkh, Son of Rohgahh 158, Silas Renn, Seeker Adept 61, Grinding Station ability 54, Gitaxian Probe 25, Grinding Station 24, Gamble 23, Demonic Counsel 23, Ragavan, Nimble Pilferer 21
+      look-ahead score, best other minus stop: mean -2.65; within 1 point of the stop 505 of 833
+  main 1 look-ahead "stop (hold mana)": 5365 (2.68 a game; 847 on turns 1-4; 0 with a line ready) | < 0: 488, 0-3: 3624, 3-6: 847, 6-10: 385, >= 10: 21
+      best other option: Grinding Station ability 617, Culling the Weak 518, Snapback 497, Mnemonic Betrayal 467, Snap 460, equip Paradise Mantle 355, Infernal Plunge 300, Silas Renn, Seeker Adept 195
+      look-ahead score, best other minus stop: mean -1.58; within 1 point of the stop 3402 of 5365
+  main 1 heuristic  "stop": 6393 (3.20 a game; 4264 on turns 1-4; 0 with a line ready) | nothing else offered: 6393
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 6711 (3.36 a game; 1993 on turns 1-4; 0 with a line ready) | nothing else offered: 6711
+      best other option: -
+  main 2 look-ahead "stop": 367 (0.18 a game; 126 on turns 1-4; 0 with a line ready) | < 0: 26, 0-3: 135, 3-6: 110, 6-10: 96
+      best other option: Grinding Station ability 67, Silas Renn: cast Lotus Petal from the graveyard 28, Vexing Bauble ability 26, Rograkh, Son of Rohgahh 23, Grinding Station 20, equip Paradise Mantle 16, Silas Renn: cast Sol Ring from the graveyard 15, Vexing Bauble 13
+      look-ahead score, best other minus stop: mean -4.38; within 1 point of the stop 221 of 367
+  main 2 look-ahead "stop (hold mana)": 5563 (2.78 a game; 689 on turns 1-4; 0 with a line ready) | < 0: 786, 0-3: 3555, 3-6: 1028, 6-10: 191, >= 10: 3
+      best other option: Grinding Station ability 806, Culling the Weak 497, Snapback 484, Vexing Bauble ability 455, Mnemonic Betrayal 455, Snap 449, equip Paradise Mantle 341, Infernal Plunge 281
+      look-ahead score, best other minus stop: mean -1.22; within 1 point of the stop 3747 of 5563
+  main 2 heuristic  "stop": 6813 (3.41 a game; 4623 on turns 1-4; 0 with a line ready) | nothing else offered: 6813
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 6429 (3.21 a game; 2135 on turns 1-4; 0 with a line ready) | nothing else offered: 6429
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 5.2% of games, median own turn 8.0
+  best case by turn (share of all games): T1 0.1%  T2 0.6%  T3 1.1%  T4 1.4%  T5 1.6%  T6 2.0%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 81, Ad Nauseam into a win 20, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 2
+  kill turn - best case (99 games with both): median 0.0, mean 1.10; < 0: 0.0%, 0: 62.6%, 1: 13.1%, 2: 9.1%, 3: 4.0%, 4-5: 6.1%, 6+: 5.1%
+  games with a best case and no kill by the round cap: 4
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 66.0% of games, median own turn 7.0
+  best case by turn (share of all games): T1 0.4%  T2 2.5%  T3 7.8%  T4 14.8%  T5 21.3%  T6 27.5%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 1240, Ad Nauseam into a win 76, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 3
+  kill turn - best case (1148 games with both): median 1.0, mean 2.16; < 0: 0.0%, 0: 35.0%, 1: 28.8%, 2: 9.2%, 3: 4.8%, 4-5: 9.3%, 6+: 12.8%
+  games with a best case and no kill by the round cap: 171
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 43.1% of games, median own turn 8.0
+  best case by turn (share of all games): T1 0.1%  T2 1.6%  T3 4.6%  T4 8.0%  T5 11.4%  T6 14.6%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 794, Ad Nauseam into a win 63, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 6
+  kill turn - best case (757 games with both): median 0.0, mean 1.24; < 0: 0.0%, 0: 59.6%, 1: 16.4%, 2: 6.9%, 3: 3.6%, 4-5: 7.4%, 6+: 6.2%
+  games with a best case and no kill by the round cap: 106
+
+--- Card and mana flow: Rograkh/Silas (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    93    86    79    69    61
+  cards seen by the turn's end (cum.)   8.0   9.3  10.8  12.5  14.1  15.6  17.1  18.5
+  cards drawn                         1.14  1.20  1.35  1.51  1.60  1.62  1.63  1.56
+    draw step                         1.00  0.99  0.99  0.97  0.95  0.93  0.93  0.92
+    cantrips (spells)                 0.07  0.03  0.04  0.07  0.07  0.06  0.06  0.04
+    engines                           0.03  0.05  0.19  0.27  0.41  0.47  0.47  0.40
+    wheels                            0.02  0.09  0.10  0.17  0.13  0.10  0.10  0.12
+    commanders                        0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    other permanents                  0.02  0.03  0.03  0.04  0.05  0.05  0.07  0.09
+  cards to hand by tutors and others  0.06  0.12  0.18  0.19  0.15  0.13  0.10  0.08
+  cards in hand (main phase)          6.80  5.57  5.37  5.45  5.61  5.88  6.12  6.34
+  spells cast, own turn               1.26  2.03  1.19  1.15  1.08  1.07  1.04  1.03
+  spells cast, others' turns after it  0.07  0.05  0.06  0.06  0.07  0.07  0.07  0.06
+  spells countered (of those)         0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  mana available (main phase)         1.04  2.51  3.46  4.13  4.74  5.35  5.89  6.46
+  mana spent, own turn                1.01  2.26  2.43  2.33  2.10  2.04  1.93  1.95
+  mana spent, others' turns after it  0.07  0.07  0.10  0.19  0.23  0.20  0.22  0.19
+  life paid for cards                 0.03  0.07  0.25  0.31  0.53  0.57  0.60  0.46
+  land drop made (%)                    99    88    62    48    39    34    32    31
+  missed, a land in hand (%)             0     0     1     1     3     2     2     2
+  missed, no land in hand (%)            1    12    37    51    59    64    67    66
+  cards drawn by source card, turns 1-8, per game: Ad Nauseam 0.92, Necropotence 0.89, Timetwister 0.68, Vexing Bauble 0.30, Gitaxian Probe 0.15, Borne Upon a Wind 0.13, Praetor's Grasp 0.09, Windfall 0.04
+  Mystic Remora out: 0.46 cycles a game, 0.00 cards a cycle out
+  Rhystic Study out: 0.41 cycles a game, 0.00 cards a cycle out
+  Necropotence out: 0.25 cycles a game, 3.62 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Ad Nauseam               T2 8/0/0  T3 10/1/0  T4 12/2/0  T6 15/5/0  T8 18/8/0; countered 0.000 a game
+    Mystic Remora            T2 9/6/6  T3 11/8/8  T4 13/11/10  T6 18/17/10  T8 22/21/8; countered 0.000 a game
+    Necropotence             T2 8/1/1  T3 10/3/3  T4 11/5/5  T6 13/7/7  T8 14/8/8; countered 0.000 a game
+    Rhystic Study            T2 9/2/2  T3 11/4/4  T4 14/9/9  T6 17/14/14  T8 21/18/18; countered 0.000 a game
+    Timetwister              T2 8/2/0  T3 10/3/0  T4 11/5/0  T6 13/9/0  T8 15/12/0; countered 0.000 a game
+    Wheel of Fortune         T2 8/0/0  T3 10/0/0  T4 12/0/0  T6 17/0/0  T8 21/0/0; countered 0.000 a game
+    Windfall                 T2 8/0/0  T3 10/0/0  T4 11/0/0  T6 15/1/0  T8 18/1/0; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Ad Nauseam|exile 3, Ad Nauseam|gy 1, Ad Nauseam|hand 135, Ad Nauseam|hand_payable 39, Ad Nauseam|lib 3, Mystic Remora|exile 2, Mystic Remora|gy 3, Mystic Remora|hand 1, Mystic Remora|hand_payable 26, Necropotence|exile 3, Necropotence|gy 13, Necropotence|hand 26, Necropotence|hand_payable 50, Necropotence|lib 7, Rhystic Study|exile 5, Rhystic Study|gy 5, Rhystic Study|hand 30, Rhystic Study|hand_payable 51, Timetwister|exile 8, Timetwister|gy 7, Timetwister|hand 26, Timetwister|hand_payable 51, Wheel of Fortune|exile 29, Wheel of Fortune|gy 9, Wheel of Fortune|hand 35, Wheel of Fortune|hand_payable 129, Wheel of Fortune|lib 7, Windfall|exile 25, Windfall|gy 11, Windfall|hand 35, Windfall|hand_payable 111, Windfall|lib 4
+  life paid by card, turns 1-8, per game: Ad Nauseam 1.36, Necropotence 0.89
+
+=== Rograkh/Thrasios (rograkh-thrasios-creature-combo) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 9.1 (over the 1996 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.0%  T4 1.8%  T5 7.4%  T6 19.1%  T7 34.1%  T8 49.6%
+  no kill by round 20: 0.2% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Eternal Witness + Snap + Gaea's Cradle 42.6%, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 42.2%, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7.8%, damage 4.4%, Badgermole Cub + clone + Eternal Witness + Snap 3.0%
+Mulligans: kept 7 cards 88.5% (no mulligan 63.8%, the free mulligan 24.8%), 6 cards 7.9%, 5 or fewer 3.5%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 9.0, mean 8.8, reached in 95.5% of games
+Protection on the kill turn: 85.6% of kills held a protection card or had a cast lock in force
+  counted (10): Fierce Guardianship, Flare of Denial, Flusterstorm, Force of Negation, Force of Will, Louisoix's Sacrifice, Mental Misstep, Mindbreak Trap, Pact of Negation, Swan Song
+Went for (share of games): Eternal Witness + Snap + Gaea's Cradle 42.9%, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 42.1%, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7.8%, Badgermole Cub + clone + Eternal Witness + Snap 3.0%
+  converted: Eternal Witness + Snap + Gaea's Cradle 99.1% of tries, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 100.0% of tries, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 100.0% of tries, Badgermole Cub + clone + Eternal Witness + Snap 100.0% of tries
+Commander cast: 100.0% of games, median own turn 1.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (68286 in all)
+  plan|eot_calls: in 100.0% of games (16150 in all)
+  plan|eot_none: in 100.0% of games (15726 in all)
+  plan|eot_none_pass_ready: in 20.9% of games (424 in all)
+  plan|eot_slot_holds: in 89.5% of games (10550 in all)
+  plan|land_changed: in 42.3% of games (1184 in all)
+  plan|land_choices: in 98.2% of games (6275 in all)
+  plan|next_turn_found: in 0.7% of games (14 in all)
+  plan|next_turn_played: in 0.7% of games (14 in all)
+  plan|none: in 100.0% of games (65104 in all)
+  plan|none_pass_ready: in 20.9% of games (1112 in all)
+  plan|slot_holds: in 95.5% of games (46114 in all)
+  plan|this_turn_found: in 95.5% of games (2056 in all)
+  plan|this_turn_played: in 95.5% of games (2056 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 18150 (9.07 a game; 8000 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     11.0%        0.4%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          8.2%        5.0%      0.74
+  no_land_drop             0.7%        0.2%      0.07
+  mana_short               3.5%        4.9%      0.32
+  progressed              72.4%       87.2%      6.57
+  idle                     4.2%        2.2%      0.38
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 33%, fast mana / rock 21%, combo piece 21%, tutor 11%, land only 7%, draw 4%, abilities only 1%
+    on turns 1-4: other 35%, combo piece 29%, fast mana / rock 20%, tutor 6%, land only 5%, draw 4%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 103 (6%), tutor 180 (10%), fast mana / rock 412 (22%), draw 139 (8%), other 1019 (55%)
+    most passed: Phyrexian Metamorph 117, Spellseeker 105, Noxious Revival 94, Badgermole Cub 84, Hidden Strings 71, Wild Growth 69, Birds of Paradise 66, Invasion of Ikoria // Zilortha, Apex of Ikoria 62, Rhystic Study 60, Earthcraft 59, Delighted Halfling 59, Hexing Squelcher 58
+  payable but never offered as a play (card-turns; in 79.2% of turns): combo piece 13857 (27%), tutor 5623 (11%), fast mana / rock 1359 (3%), protection 17459 (34%), other 12422 (24%)
+    most held: Snap 3750, Mental Misstep 2368, Finale of Devastation 2204, Pact of Negation 2171, Veil of Summer 2161, Phantasmal Image 2109, Swan Song 2091, Green Sun's Zenith 2048, Chain of Vapor 1905, Flusterstorm 1886, Fierce Guardianship 1840, Oboro Breezecaller 1821
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Eternal Witness + Snap + Gaea's Cradle 895, combo: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 841, combo: Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 157, combo: Badgermole Cub + clone + Eternal Witness + Snap 60
+Cleanup discards to 7: 2173 (1.09 a game, in 34.8% of games); combo pieces 0 (in 0.0% of games); 15 that ai::discard_keep would have kept
+  by role: tutor 102 (5%), fast mana / rock 305 (14%), draw 36 (2%), protection 557 (26%), land 107 (5%), other 1066 (49%)
+  most discarded: Cryptolith Rite 149, Training Grounds 144, Chain of Vapor 141, Deflecting Swat 139, Flare of Duplication 137, Mox Diamond 101, Mindbreak Trap 95, Fierce Guardianship 88, Flare of Denial 85, Flusterstorm 77, Louisoix's Sacrifice 72, Hidden Strings 71
+  median kill turn: games with a combo piece discarded - (0 games), without 9.0 (2000 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 980 (0.49 a game; 451 on turns 1-4; 0 with a line ready) | 0-3: 124, 3-6: 421, 6-10: 381, >= 10: 54
+      best other option: Kinnan: dig five 64, Spellseeker 33, Chatterstorm 32, untap a basic land (Earthcraft) 31, The Cabbage Merchant 30, Badgermole Cub 29, Expedition Map: find a land 29, Expedition Map 29
+      look-ahead score, best other minus stop: mean -4.53; within 1 point of the stop 383 of 980
+  main 1 look-ahead "stop (hold mana)": 3287 (1.64 a game; 443 on turns 1-4; 0 with a line ready) | < 0: 1, 0-3: 1123, 3-6: 1408, 6-10: 691, >= 10: 64
+      best other option: Kinnan: dig five 407, Expedition Map: find a land 273, untap a basic land (Earthcraft) 116, untap lands (Candelabra) 115, harmonize Nature's Rhythm 92, Spellseeker 88, Noxious Revival 88, Phyrexian Metamorph 71
+      look-ahead score, best other minus stop: mean -2.72; within 1 point of the stop 1553 of 3287
+  main 1 heuristic  "stop": 7717 (3.86 a game; 5404 on turns 1-4; 0 with a line ready) | nothing else offered: 7717
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 4492 (2.25 a game; 1669 on turns 1-4; 0 with a line ready) | nothing else offered: 4492
+      best other option: -
+  main 2 look-ahead "stop": 667 (0.33 a game; 196 on turns 1-4; 0 with a line ready) | < 0: 328, 0-3: 102, 3-6: 137, 6-10: 89, >= 10: 11
+      best other option: Thrasios: scry 1, a land or a card 328, untap a basic land (Earthcraft) 48, Expedition Map: find a land 17, Noxious Revival 16, Expedition Map 15, Badgermole Cub 12, Kinnan: dig five 12, The Cabbage Merchant 12
+      look-ahead score, best other minus stop: mean -5.51; within 1 point of the stop 172 of 667
+  main 2 look-ahead "stop (hold mana)": 4189 (2.09 a game; 523 on turns 1-4; 0 with a line ready) | < 0: 2044, 0-3: 1268, 3-6: 633, 6-10: 238, >= 10: 6
+      best other option: Thrasios: scry 1, a land or a card 2042, Expedition Map: find a land 318, untap a basic land (Earthcraft) 237, Kinnan: dig five 109, Noxious Revival 95, untap lands (Candelabra) 86, Wild Growth 59, Phyrexian Metamorph 59
+      look-ahead score, best other minus stop: mean -1.73; within 1 point of the stop 2305 of 4189
+  main 2 heuristic  "stop": 8011 (4.01 a game; 5674 on turns 1-4; 0 with a line ready) | nothing else offered: 8011
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 3264 (1.63 a game; 1571 on turns 1-4; 0 with a line ready) | nothing else offered: 3264
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 2.8% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.1%  T5 0.1%  T6 0.2%
+  lines: Eternal Witness + Snap + Gaea's Cradle 22, Badgermole Cub + clone + Eternal Witness + Snap 15, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 11, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7
+  kill turn - best case (55 games with both): median 0.0, mean 0.29; < 0: 0.0%, 0: 80.0%, 1: 16.4%, 2: 0.0%, 3: 1.8%, 4-5: 1.8%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 42.8% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.2%  T4 1.2%  T5 3.5%  T6 7.6%
+  lines: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 663, Eternal Witness + Snap + Gaea's Cradle 146, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 42, Badgermole Cub + clone + Eternal Witness + Snap 5
+  kill turn - best case (852 games with both): median 1.0, mean 1.26; < 0: 0.0%, 0: 46.6%, 1: 23.1%, 2: 12.2%, 3: 7.5%, 4-5: 6.6%, 6+: 4.0%
+  games with a best case and no kill by the round cap: 4
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 2.8% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.1%  T5 0.1%  T6 0.2%
+  lines: Eternal Witness + Snap + Gaea's Cradle 22, Badgermole Cub + clone + Eternal Witness + Snap 15, Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 11, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7
+  kill turn - best case (55 games with both): median 0.0, mean 0.29; < 0: 0.0%, 0: 80.0%, 1: 16.4%, 2: 0.0%, 3: 1.8%, 4-5: 1.8%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+
+--- Card and mana flow: Rograkh/Thrasios (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100   100   100    98    93    81    66
+  cards seen by the turn's end (cum.)   7.9   9.0  10.3  11.8  13.8  16.0  18.3  20.3
+  cards drawn                         1.01  1.03  1.10  1.31  1.79  2.25  2.60  2.89
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+    cantrips (spells)                 0.00  0.02  0.02  0.02  0.03  0.03  0.03  0.04
+    engines                           0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.01
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.01  0.07  0.28  0.72  1.19  1.52  1.79
+    other permanents                  0.01  0.00  0.00  0.01  0.04  0.03  0.05  0.05
+  cards to hand by tutors and others  0.02  0.08  0.20  0.27  0.29  0.33  0.38  0.40
+  cards in hand (main phase)          6.85  5.88  5.61  5.14  5.19  5.72  6.47  7.19
+  spells cast, own turn               2.06  1.14  1.25  1.27  1.40  1.57  1.77  1.89
+  spells cast, others' turns after it  0.00  0.00  0.02  0.05  0.08  0.12  0.14  0.17
+  spells countered (of those)         0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  mana available (main phase)         0.93  2.67  3.77  5.50  7.48  9.59 11.69 13.80
+  mana spent, own turn                1.05  2.10  3.07  4.19  5.52  6.79  7.55  8.23
+  mana spent, others' turns after it  0.00  0.04  0.64  1.89  3.15  4.19  4.83  4.97
+  life paid for cards                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  land drop made (%)                   100    96    77    62    49    44    38    38
+  missed, a land in hand (%)             0     0     0     1     1     1     2     2
+  missed, no land in hand (%)            0     3    23    37    50    55    60    60
+  cards drawn by source card, turns 1-8, per game: Thrasios, Triton Hero 4.58, Borne Upon a Wind 0.17, Kinnan, Bonder Prodigy 0.02, Cloud of Faeries 0.01, Spellseeker 0.01, Valley Floodcaller 0.01, Springheart Nantuko 0.01, Candelabra of Tawnos 0.01, Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun 0.01, Expedition Map 0.01, Mystic Remora 0.01, Earthcraft 0.01, Magus of the Candelabra 0.00, Vibrance 0.00, Minamo, School at Water's Edge 0.00, Formidable Speaker 0.00
+  Thrasios, Triton Hero out: 5.09 cycles a game, 0.90 cards a cycle out
+  Faerie Mastermind out: 0.60 cycles a game, 0.00 cards a cycle out
+  Rhystic Study out: 0.47 cycles a game, 0.00 cards a cycle out
+  Mystic Remora out: 0.46 cycles a game, 0.01 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Faerie Mastermind        T2 8/1/1  T3 10/4/5  T4 11/8/8  T6 17/13/16  T8 23/19/23; countered 0.000 a game
+    Mystic Remora            T2 8/4/4  T3 9/6/6  T4 11/9/8  T6 18/15/11  T8 23/21/11; countered 0.000 a game
+    Rhystic Study            T2 8/1/1  T3 9/4/4  T4 11/7/7  T6 18/15/15  T8 23/20/20; countered 0.000 a game
+    Thrasios, Triton Hero    T2 100/79/79  T3 100/89/89  T4 100/92/92  T6 100/96/96  T8 100/97/97; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Faerie Mastermind|exile 5, Faerie Mastermind|gy 1, Faerie Mastermind|hand 5, Faerie Mastermind|hand_payable 64, Mystic Remora|exile 3, Mystic Remora|gy 3, Mystic Remora|hand_payable 30, Rhystic Study|exile 1, Rhystic Study|gy 5, Rhystic Study|hand 15, Rhystic Study|hand_payable 60, Thrasios, Triton Hero|other 165
+  life paid by card, turns 1-8, per game: -
+
+=== Sisay (sisay-legends-toolbox) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 7.0, mean 7.2 (over the 1998 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.3%  T4 2.5%  T5 16.5%  T6 44.1%  T7 66.8%  T8 79.8%
+  no kill by round 20: 0.1% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 69.3%, Ioreth + Marvin + a legend that taps for mana (DDR) 29.2%, damage 1.5%, commander damage 0.1%
+Mulligans: kept 7 cards 89.1% (no mulligan 60.5%, the free mulligan 28.6%), 6 cards 7.8%, 5 or fewer 3.0%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 7.0, mean 7.2, reached in 98.3% of games
+Protection on the kill turn: 73.4% of kills held a protection card or had a cast lock in force
+  counted (10): An Offer You Can't Refuse, Ertai Resurrected, Fierce Guardianship, Flusterstorm, Force of Will, Mental Misstep, Mindbreak Trap, Pact of Negation, Silence, Swan Song
+Went for (share of games): Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 69.2%, Ioreth + Marvin + a legend that taps for mana (DDR) 29.8%
+  converted: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 100.0% of tries, Ioreth + Marvin + a legend that taps for mana (DDR) 97.8% of tries
+Commander cast: 100.0% of games, median own turn 3.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (49518 in all)
+  plan|cap_nodes: in 0.3% of games (6 in all)
+  plan|eot_calls: in 100.0% of games (12529 in all)
+  plan|eot_next_turn_found: in 1.8% of games (36 in all)
+  plan|eot_none: in 100.0% of games (11673 in all)
+  plan|eot_none_pass_ready: in 40.6% of games (820 in all)
+  plan|eot_played: in 1.8% of games (36 in all)
+  plan|eot_slot_holds: in 100.0% of games (2000 in all)
+  plan|land_changed: in 39.4% of games (1017 in all)
+  plan|land_choices: in 97.2% of games (5590 in all)
+  plan|next_turn_found: in 20.7% of games (559 in all)
+  plan|next_turn_played: in 16.6% of games (389 in all)
+  plan|none: in 100.0% of games (43299 in all)
+  plan|none_pass_ready: in 59.6% of games (3449 in all)
+  plan|reserve: in 4.5% of games (170 in all)
+  plan|slot_holds: in 100.0% of games (5858 in all)
+  plan|this_turn_found: in 98.3% of games (2211 in all)
+  plan|this_turn_played: in 98.3% of games (2211 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 14493 (7.25 a game; 7993 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     13.8%        0.6%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          3.1%        2.8%      0.23
+  no_land_drop             0.1%        0.0%      0.01
+  mana_short              12.2%       15.5%      0.89
+  progressed              69.1%       80.1%      5.00
+  idle                     1.7%        0.9%      0.12
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): combo piece 37%, fast mana / rock 21%, other 13%, tutor 11%, land only 8%, abilities only 5%, draw 4%
+    on turns 1-4: combo piece 42%, fast mana / rock 25%, other 11%, tutor 10%, land only 7%, draw 4%, abilities only 1%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 130 (24%), tutor 103 (19%), fast mana / rock 61 (11%), draw 58 (11%), other 188 (35%)
+    most passed: Marvin, Murderous Mimic 45, Abrupt Decay 34, Chord of Calling 33, Emiel the Blessed 29, Gleaming Splendor 28, Ioreth of the Healing House 27, The Cabbage Merchant 27, Mystic Remora 21, Lavinia, Azorius Renegade 21, Eladamri's Call 20, Spider-Woman, Stunning Savior 19, Esper Sentinel 18
+  payable but never offered as a play (card-turns; in 70.2% of turns): tutor 1708 (8%), fast mana / rock 938 (4%), protection 10226 (46%), other 9189 (42%)
+    most held: Pact of Negation 1406, Mental Misstep 1322, Flusterstorm 1228, Legolas's Quick Reflexes 1221, Swan Song 1207, An Offer You Can't Refuse 1181, Cyclonic Rift 1179, Into the Flood Maw 1139, Mockingbird 1059, Silence 1043, Redirect Lightning 1018, Swords to Plowshares 1014
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 1371, combo: Ioreth + Marvin + a legend that taps for mana (DDR) 606
+Cleanup discards to 7: 330 (0.17 a game, in 6.7% of games); combo pieces 10 (in 0.5% of games); 2 that ai::discard_keep would have kept
+  by role: combo piece 10 (3%), tutor 15 (5%), fast mana / rock 53 (16%), draw 8 (2%), protection 29 (9%), other 215 (65%)
+  most discarded: Colossal Skyturtle 26, Legolas's Quick Reflexes 21, Deafening Silence 20, Deadpool, Trading Card 18, Mox Diamond 16, Touch the Spirit Realm 15, Deflecting Swat 15, Teferi, Who Slows the Sunset 14, Silence 12, Smothering Tithe 11, Abrupt Decay 11, Crop Rotation 11
+  median kill turn: games with a combo piece discarded 14.0 (10 games), without 7.0 (1990 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 728 (0.36 a game; 282 on turns 1-4; 0 with a line ready) | < 0: 66, 0-3: 146, 3-6: 263, 6-10: 166, >= 10: 87
+      best other option: Emiel the Blessed ability 66, Tyvar, Jubilant Brawler +1 54, Teferi, Time Raveler +1 37, Teferi, Who Slows the Sunset +1 33, untap (Ioreth of the Healing House) 30, Marvin, Murderous Mimic 27, Chord of Calling 25, Relic of Legends 20
+      look-ahead score, best other minus stop: mean -4.86; within 1 point of the stop 337 of 728
+  main 1 look-ahead "stop (hold mana)": 1322 (0.66 a game; 252 on turns 1-4; 0 with a line ready) | < 0: 217, 0-3: 652, 3-6: 297, 6-10: 117, >= 10: 39
+      best other option: Emiel the Blessed ability 190, untap (Ioreth of the Healing House) 127, Abrupt Decay 81, Teferi, Time Raveler +1 81, untap (Marvin, Murderous Mimic) 76, Tyvar, Jubilant Brawler +1 75, Teferi, Who Slows the Sunset +1 56, Ioreth of the Healing House 28
+      look-ahead score, best other minus stop: mean -2.32; within 1 point of the stop 871 of 1322
+  main 1 heuristic  "stop": 7871 (3.94 a game; 5645 on turns 1-4; 0 with a line ready) | nothing else offered: 7871
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 3125 (1.56 a game; 1800 on turns 1-4; 0 with a line ready) | nothing else offered: 3125
+      best other option: -
+  main 2 look-ahead "stop": 130 (0.07 a game; 51 on turns 1-4; 0 with a line ready) | < 0: 34, 0-3: 21, 3-6: 37, 6-10: 34, >= 10: 4
+      best other option: Emiel the Blessed ability 34, Abrupt Decay 8, Demonic Tutor 7, untap (Ioreth of the Healing House) 6, Kinnan: dig five 5, Enlightened Tutor 5, Eladamri's Call 5, Tyvar, Jubilant Brawler +1 5
+      look-ahead score, best other minus stop: mean -5.64; within 1 point of the stop 59 of 130
+  main 2 look-ahead "stop (hold mana)": 788 (0.39 a game; 123 on turns 1-4; 0 with a line ready) | < 0: 269, 0-3: 372, 3-6: 114, 6-10: 30, >= 10: 3
+      best other option: Emiel the Blessed ability 242, Abrupt Decay 87, Teferi, Time Raveler +1 64, untap (Ioreth of the Healing House) 55, Marvin, Murderous Mimic 26, Ioreth of the Healing House 23, untap (Marvin, Murderous Mimic) 19, Lavinia, Azorius Renegade 17
+      look-ahead score, best other minus stop: mean -1.20; within 1 point of the stop 529 of 788
+  main 2 heuristic  "stop": 8152 (4.08 a game; 5855 on turns 1-4; 0 with a line ready) | nothing else offered: 8152
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 3420 (1.71 a game; 1915 on turns 1-4; 0 with a line ready) | nothing else offered: 3420
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 1.0% of games, median own turn 9.5
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.1%  T5 0.1%  T6 0.1%
+  lines: Ioreth + Marvin + a legend that taps for mana (DDR) 16, Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 4
+  kill turn - best case (20 games with both): median 0.5, mean 0.85; < 0: 0.0%, 0: 50.0%, 1: 15.0%, 2: 35.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 0.4% of games, median own turn 8.5
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.1%
+  lines: Ioreth + Marvin + a legend that taps for mana (DDR) 7, Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 1
+  kill turn - best case (8 games with both): median 0.0, mean 0.62; < 0: 0.0%, 0: 62.5%, 1: 12.5%, 2: 25.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+
+--- Card and mana flow: Sisay (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100   100   100    98    84    56    33
+  cards seen by the turn's end (cum.)   7.9   8.9  10.0  11.1  12.1  13.2  14.2  15.2
+  cards drawn                         1.01  1.02  1.02  1.03  1.03  1.03  1.04  1.05
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+    cantrips (spells)                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    engines                           0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.00  0.01  0.01  0.01  0.00
+    other permanents                  0.01  0.02  0.02  0.03  0.03  0.03  0.03  0.04
+  cards to hand by tutors and others  0.00  0.02  0.03  0.07  0.06  0.06  0.06  0.06
+  cards in hand (main phase)          6.86  5.78  5.44  4.97  4.50  4.40  4.58  4.91
+  spells cast, own turn               0.93  1.02  1.28  1.19  1.01  0.78  0.66  0.68
+  spells cast, others' turns after it  0.04  0.03  0.04  0.04  0.04  0.03  0.03  0.04
+  spells countered (of those)         0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  mana available (main phase)         1.00  2.77  3.80  5.16  6.87  8.19  8.89  9.31
+  mana spent, own turn                0.81  2.31  3.44  5.21  7.22  8.11  8.08  7.80
+  mana spent, others' turns after it  0.04  0.03  0.06  0.14  0.25  0.29  0.34  0.49
+  life paid for cards                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  land drop made (%)                   100    96    74    57    40    31    30    26
+  missed, a land in hand (%)             0     0     0     0     0     0     0     1
+  missed, no land in hand (%)            0     4    26    43    60    68    70    73
+  cards drawn by source card, turns 1-8, per game: Emiel the Blessed 0.05, Sisay, Weatherlight Captain 0.02, Derevi, Empyrial Tactician 0.01, Selvala, Heart of the Wilds 0.01, Tyvar, Jubilant Brawler 0.00, Mystic Remora 0.00, Teferi, Who Slows the Sunset 0.00, Ragavan, Nimble Pilferer 0.00, Tataru Taru 0.00, Ioreth of the Healing House 0.00, Kinnan, Bonder Prodigy 0.00, Magda, Brazen Outlaw 0.00, Marvin, Murderous Mimic 0.00, Teferi, Time Raveler 0.00
+  Esper Sentinel out: 0.44 cycles a game, 0.00 cards a cycle out
+  Mystic Remora out: 0.35 cycles a game, 0.01 cards a cycle out
+  Rhystic Study out: 0.23 cycles a game, 0.00 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Esper Sentinel           T2 7/3/3  T3 9/5/6  T4 10/7/9  T6 15/13/14  T8 19/16/18; countered 0.000 a game
+    Mystic Remora            T2 8/4/4  T3 9/6/6  T4 10/9/8  T6 17/16/9  T8 25/23/6; countered 0.000 a game
+    Rhystic Study            T2 8/0/0  T3 9/2/2  T4 10/5/5  T6 14/11/11  T8 17/15/15; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Esper Sentinel|hand_payable 58, Mystic Remora|exile 1, Mystic Remora|hand_payable 32, Rhystic Study|gy 1, Rhystic Study|hand 11, Rhystic Study|hand_payable 90
+  life paid by card, turns 1-8, per game: -
+
+=== Scion (scion) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 9.8 (over the 1976 kills)
+  won by turn: T1 0.1%  T2 0.7%  T3 4.8%  T4 10.9%  T5 18.8%  T6 27.8%  T7 35.5%  T8 42.5%
+  no kill by round 20: 1.2% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 74.3%, damage 18.0%, commander damage 5.4%, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 0.9%, combo (unnamed) 0.8%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.6%, other 0.1%
+Mulligans: kept 7 cards 88.3% (no mulligan 59.3%, the free mulligan 29.1%), 6 cards 9.3%, 5 or fewer 2.3%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 9.0, mean 8.4, reached in 76.2% of games
+Protection on the kill turn: 80.7% of kills held a protection card or had a cast lock in force
+  counted (10): An Offer You Can't Refuse, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Orim's Chant, Pact of Negation, Silence, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 73.7%, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 0.9%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.9%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 0.8%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 99.7% of tries, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 94.4% of tries, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 61.1% of tries
+Commander cast: 67.2% of games, median own turn 5.0 (of the games it was cast)
+  plan|calls: in 100.0% of games (56390 in all)
+  plan|cap_nodes: in 0.9% of games (42 in all)
+  plan|eot_calls: in 99.9% of games (18062 in all)
+  plan|eot_next_turn_found: in 13.0% of games (260 in all)
+  plan|eot_none: in 99.5% of games (17013 in all)
+  plan|eot_none_pass_ready: in 38.8% of games (789 in all)
+  plan|eot_played: in 13.0% of games (260 in all)
+  plan|land_changed: in 50.0% of games (1411 in all)
+  plan|land_choices: in 98.1% of games (6489 in all)
+  plan|next_turn_found: in 32.8% of games (1028 in all)
+  plan|next_turn_played: in 20.1% of games (441 in all)
+  plan|none: in 99.4% of games (52523 in all)
+  plan|none_pass_ready: in 24.0% of games (965 in all)
+  plan|reserve: in 13.9% of games (587 in all)
+  plan|this_turn_found: in 76.2% of games (1874 in all)
+  plan|this_turn_played: in 76.2% of games (1874 in all)
+  scion|act|Ancient Copper Dragon: in 56.0% of games (1145 in all)
+  scion|act|Korvold, Fae-Cursed King: in 44.2% of games (887 in all)
+  scion|act|Prismari, the Inspiration: in 0.6% of games (11 in all)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 19802 (9.90 a game; 7888 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     10.0%        2.8%      0.99
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          3.6%        3.6%      0.36
+  no_land_drop             1.2%        0.2%      0.12
+  mana_short              12.2%       17.3%      1.21
+  progressed              62.6%       72.1%      6.20
+  idle                    10.3%        4.0%      1.02
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 19%, fast mana / rock 19%, land only 18%, tutor 17%, combo piece 14%, draw 10%, abilities only 2%, ritual 1%
+    on turns 1-4: fast mana / rock 26%, tutor 20%, other 17%, land only 13%, combo piece 12%, draw 11%, ritual 2%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 47 (6%), tutor 171 (21%), ritual 9 (1%), fast mana / rock 164 (20%), draw 121 (15%), other 314 (38%)
+    most passed: Noxious Revival 56, Gamble 52, Tinder Wall 46, Esper Sentinel 45, The Cabbage Merchant 40, Lotus Petal 32, Valley Floodcaller 29, Ranger-Captain of Eos 29, Manamorphose 27, Beseech the Mirror 26, Rhystic Study 25, Storm-Kiln Artist 25
+  payable but never offered as a play (card-turns; in 83.8% of turns): combo piece 16489 (28%), tutor 3455 (6%), ritual 3340 (6%), fast mana / rock 2290 (4%), draw 43 (0%), protection 21020 (36%), other 12082 (21%)
+    most held: Thassa's Oracle 4844, Demonic Consultation 3283, Mental Misstep 2608, Lion's Eye Diamond 2523, Pact of Negation 2402, Chain of Vapor 2332, An Offer You Can't Refuse 2331, Brain Freeze 2270, Flusterstorm 2202, Swan Song 2191, Underworld Breach 2115, Orim's Chant 2068
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 1474, combo: Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 18, combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 17, combo: Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 16
+Cleanup discards to 7: 2359 (1.18 a game, in 35.0% of games); combo pieces 98 (in 4.6% of games); 27 that ai::discard_keep would have kept
+  by role: combo piece 98 (4%), tutor 220 (9%), ritual 139 (6%), fast mana / rock 183 (8%), draw 59 (3%), protection 334 (14%), land 425 (18%), other 901 (38%)
+  most discarded: Orim's Chant 137, Sevinne's Reclamation 136, Final Fortune 135, Crop Rotation 134, Veil of Summer 116, Misdirection 114, Silence 110, Redirect Lightning 72, Mox Diamond 71, Prismari, the Inspiration 71, Cabal Ritual 63, Ancient Copper Dragon 53
+  median kill turn: games with a combo piece discarded 12.0 (92 games), without 9.0 (1908 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 810 (0.41 a game; 356 on turns 1-4; 0 with a line ready) | 0-3: 162, 3-6: 344, 6-10: 270, >= 10: 34
+      best other option: Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 101, Scion of the Ur-Dragon 66, Scion of the Ur-Dragon: become Ancient Copper Dragon 39, Demonic Tutor 24, Gamble 24, Deathrite Shaman 24, Diabolic Intent 24, Ragavan, Nimble Pilferer 23
+      look-ahead score, best other minus stop: mean -5.42; within 1 point of the stop 258 of 810
+  main 1 look-ahead "stop (hold mana)": 2265 (1.13 a game; 319 on turns 1-4; 0 with a line ready) | < 0: 53, 0-3: 1302, 3-6: 587, 6-10: 296, >= 10: 27
+      best other option: Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 457, Deathrite Shaman drain 405, Lotus Petal 109, Scion of the Ur-Dragon 94, Scion of the Ur-Dragon: become Ancient Copper Dragon 81, Noxious Revival 70, Valley Floodcaller 57, Arcane Signet 54
+      look-ahead score, best other minus stop: mean -2.02; within 1 point of the stop 1354 of 2265
+  main 1 heuristic  "stop": 8196 (4.10 a game; 5036 on turns 1-4; 0 with a line ready) | nothing else offered: 8196
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 7196 (3.60 a game; 1973 on turns 1-4; 0 with a line ready) | nothing else offered: 7196
+      best other option: -
+  main 2 look-ahead "stop": 140 (0.07 a game; 61 on turns 1-4; 0 with a line ready) | 0-3: 9, 3-6: 82, 6-10: 42, >= 10: 7
+      best other option: Noxious Revival 11, Esper Sentinel 11, Gamble 8, Ranger-Captain of Eos 8, Birds of Paradise 6, Intuition 6, Tinder Wall 5, Valley Floodcaller 5
+      look-ahead score, best other minus stop: mean -7.54; within 1 point of the stop 33 of 140
+  main 2 look-ahead "stop (hold mana)": 696 (0.35 a game; 128 on turns 1-4; 0 with a line ready) | < 0: 34, 0-3: 367, 3-6: 243, 6-10: 50, >= 10: 2
+      best other option: Lotus Petal 102, Noxious Revival 56, Valley Floodcaller 50, Arcane Signet 41, Orcish Bowmasters 40, Gamble 34, Chrome Mox 32, Ignoble Hierarch 22
+      look-ahead score, best other minus stop: mean -2.41; within 1 point of the stop 372 of 696
+  main 2 heuristic  "stop": 8669 (4.33 a game; 5351 on turns 1-4; 0 with a line ready) | nothing else offered: 8669
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 8322 (4.16 a game; 2130 on turns 1-4; 0 with a line ready) | nothing else offered: 8322
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 4.0% of games, median own turn 7.0
+  best case by turn (share of all games): T1 0.2%  T2 0.4%  T3 0.7%  T4 0.9%  T5 1.1%  T6 1.7%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 67, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 10, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 4
+  kill turn - best case (81 games with both): median 0.0, mean 0.52; < 0: 0.0%, 0: 81.5%, 1: 8.6%, 2: 1.2%, 3: 4.9%, 4-5: 2.5%, 6+: 1.2%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 71.3% of games, median own turn 6.0
+  best case by turn (share of all games): T1 0.6%  T2 3.0%  T3 8.5%  T4 17.1%  T5 26.9%  T6 36.6%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 1409, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 14, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 3
+  kill turn - best case (1404 games with both): median 2.0, mean 3.22; < 0: 0.0%, 0: 26.5%, 1: 20.7%, 2: 9.2%, 3: 8.6%, 4-5: 11.5%, 6+: 23.5%
+  games with a best case and no kill by the round cap: 22
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 42.8% of games, median own turn 8.0
+  best case by turn (share of all games): T1 0.2%  T2 1.4%  T3 3.1%  T4 6.3%  T5 11.1%  T6 15.6%
+  lines: Thassa's Oracle + Demonic Consultation / Tainted Pact 811, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 32, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 12
+  kill turn - best case (845 games with both): median 0.0, mean 1.12; < 0: 0.0%, 0: 68.0%, 1: 10.5%, 2: 5.1%, 3: 4.3%, 4-5: 5.6%, 6+: 6.5%
+  games with a best case and no kill by the round cap: 10
+
+--- Card and mana flow: Scion (2000 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    95    89    81    72    65
+  cards seen by the turn's end (cum.)   7.9   9.2  10.5  11.8  13.4  14.9  16.4  17.8
+  cards drawn                         1.04  1.14  1.16  1.31  1.51  1.66  1.69  1.70
+    draw step                         1.00  1.00  0.99  0.97  0.95  0.93  0.92  0.92
+    cantrips (spells)                 0.01  0.06  0.04  0.04  0.05  0.08  0.05  0.08
+    engines                           0.01  0.05  0.11  0.18  0.23  0.22  0.21  0.25
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    other permanents                  0.01  0.04  0.02  0.12  0.28  0.43  0.50  0.46
+  cards to hand by tutors and others  0.04  0.12  0.13  0.12  0.12  0.14  0.11  0.10
+  cards in hand (main phase)          6.86  5.81  5.25  5.02  4.97  5.04  5.23  5.42
+  spells cast, own turn               0.92  1.00  1.00  1.08  1.15  1.15  1.07  1.05
+  spells cast, others' turns after it  0.05  0.06  0.07  0.06  0.08  0.07  0.09  0.11
+  spells countered (of those)         0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  mana available (main phase)         1.11  2.70  3.68  4.60  6.19  8.44 11.17 14.41
+  mana spent, own turn                0.85  1.74  2.33  3.05  3.44  3.42  3.10  2.80
+  mana spent, others' turns after it  0.05  0.07  0.11  0.11  0.14  0.12  0.16  0.20
+  life paid for cards                 0.01  0.05  0.11  0.18  0.23  0.22  0.21  0.25
+  land drop made (%)                   100    94    70    55    44    39    37    39
+  missed, a land in hand (%)             0     0     0     1     3     4     5     4
+  missed, no land in hand (%)            0     6    29    44    54    56    57    57
+  cards drawn by source card, turns 1-8, per game: Korvold, Fae-Cursed King 1.33, Necropotence 1.04, Manamorphose 0.20, Borne Upon a Wind 0.15, Ragavan, Nimble Pilferer 0.01, Mystic Remora 0.01, Ancient Copper Dragon 0.01, Scion of the Ur-Dragon 0.00, Valley Floodcaller 0.00, Prismari, the Inspiration 0.00, Emergence Zone 0.00, Storm-Kiln Artist 0.00, Deathrite Shaman 0.00, Underworld Breach 0.00
+  Esper Sentinel out: 0.90 cycles a game, 0.00 cards a cycle out
+  Faerie Mastermind out: 0.47 cycles a game, 0.00 cards a cycle out
+  Rhystic Study out: 0.45 cycles a game, 0.00 cards a cycle out
+  Mystic Remora out: 0.45 cycles a game, 0.01 cards a cycle out
+  Necropotence out: 0.26 cycles a game, 3.94 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Esper Sentinel           T2 12/8/7  T3 16/12/11  T4 19/16/15  T6 26/24/23  T8 32/31/30; countered 0.000 a game
+    Faerie Mastermind        T2 8/4/4  T3 9/7/6  T4 10/8/8  T6 14/12/11  T8 17/16/15; countered 0.000 a game
+    Mystic Remora            T2 8/6/6  T3 10/8/8  T4 11/10/10  T6 15/14/7  T8 20/19/8; countered 0.000 a game
+    Necropotence             T2 8/1/1  T3 9/3/3  T4 11/5/5  T6 13/8/8  T8 14/10/10; countered 0.000 a game
+    Rhystic Study            T2 9/3/3  T3 10/6/6  T4 12/8/8  T6 15/12/12  T8 18/16/16; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Esper Sentinel|exile 1, Esper Sentinel|gy 2, Esper Sentinel|hand 1, Esper Sentinel|hand_payable 53, Faerie Mastermind|exile 2, Faerie Mastermind|gy 2, Faerie Mastermind|hand 5, Faerie Mastermind|hand_payable 32, Mystic Remora|exile 1, Mystic Remora|hand_payable 16, Necropotence|exile 1, Necropotence|gy 4, Necropotence|hand 16, Necropotence|hand_payable 86, Rhystic Study|gy 1, Rhystic Study|hand 20, Rhystic Study|hand_payable 40
+  life paid by card, turns 1-8, per game: Necropotence 1.04
+
+=== Goldfish summary (own turn of the kill; no opponents interacting) ===
+  deck                                median   mean   by T1   by T2   by T3  no kill  protection
+  dack-fayden-white-stax                10.0    9.7    0.0%    1.1%    9.5%     7.9%       48.2%
+  kinnan-bonder-mana-combo               8.0    8.3    0.0%    0.1%    2.4%     0.9%       86.1%
+  kraum-tymna-blue-breach-midrange       8.0    8.6    0.1%    0.7%    3.6%     0.8%       89.1%
+  rograkh-silas-turbo-breach             9.0    9.1    0.0%    1.1%    6.5%    12.6%       81.6%
+  rograkh-thrasios-creature-combo        9.0    9.1    0.0%    0.0%    0.0%     0.2%       85.6%
+  sisay-legends-toolbox                  7.0    7.2    0.0%    0.0%    0.3%     0.1%       73.4%
+  scion                                  9.0    9.8    0.1%    0.7%    4.8%     1.2%       80.7%
+
+(166s total)

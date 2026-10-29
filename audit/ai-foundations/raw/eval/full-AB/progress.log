@@ -1,0 +1,4 @@
+start all-decks 20:17:33 X=1 --all-decks --pool all --games 1000 --jobs 16 --quiet
+done all-decks rc=0 21:13:59
+start scion-t6 21:13:59 X=1 --deck scion --pool t6 --games 1000 --jobs 16 --quiet
+done scion-t6 rc=0 21:16:10

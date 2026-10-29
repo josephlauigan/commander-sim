@@ -1,0 +1,147 @@
+Play-by-play of goldfish game 4 (seed 500004): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Hexing Squelcher, Brain Freeze, Mindbreak Trap, Command Tower, Tarnished Citadel, Orcish Bowmasters, Crop Rotation
+R1    Scion plays Tarnished Citadel
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Hexing Squelcher, Brain Freeze, Mindbreak Trap, Command Tower, Orcish Bowmasters, Crop Rotation, Tainted Pact
+R2    Scion plays Command Tower
+R2        [Scion decides: Hexing Squelcher 85%, Orcish Bowmasters 15%, stop 0% -> stop [search]]
+R2        [Scion decides: Hexing Squelcher 85%, Orcish Bowmasters 15%, stop 0% -> stop [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3    Scion casts Orcish Bowmasters
+R3        [Scion end of turn: Orcish Bowmasters 100%, pass 0% -> Orcish Bowmasters]
+R3  --- Scion turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Hexing Squelcher, Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Prismari, the Inspiration
+R3        [Scion decides: Hexing Squelcher 100%, stop 0% -> stop [search]]
+R3        [Scion attack plan by search: filtered at Goldfish 3]
+R3    Scion attacks Goldfish 3 with 2 creature(s): 2 damage (life now 38)
+R3        [Scion decides: Hexing Squelcher 100%, stop 0% -> Hexing Squelcher [search]]
+R3    Scion casts Hexing Squelcher
+R3  --- Goldfish 2 turn 3: life 39, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 40, 6 cards in hand, 2 lands
+R4      hand: Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Prismari, the Inspiration, Necropotence
+R4        [Scion decides: Borne Upon a Wind 100%, stop 0% -> stop [search]]
+R4        [Scion attack plan by search: filtered at Goldfish 4]
+R4    Scion attacks Goldfish 4 with 3 creature(s): 4 damage (life now 36)
+R4        [Scion decides: Borne Upon a Wind 100%, stop 0% -> Borne Upon a Wind [search]]
+R4    Scion casts Borne Upon a Wind
+R4  --- Goldfish 2 turn 4: life 39, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 40, 7 cards in hand, 2 lands
+R5      hand: Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Prismari, the Inspiration, Necropotence, Volcanic Island
+R5    Scion plays Ancient Tomb
+R5        [Scion attack plan by search: filtered at Goldfish 2]
+R5    Scion attacks Goldfish 2 with 3 creature(s): 4 damage (life now 35)
+R5  --- Goldfish 2 turn 5: life 35, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 40, 7 cards in hand, 3 lands
+R6      hand: Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Prismari, the Inspiration, Necropotence, Volcanic Island
+R6    Scion plays Volcanic Island
+R6        [Scion attack plan by search: filtered at Goldfish 3]
+R6    Scion attacks Goldfish 3 with 3 creature(s): 4 damage (life now 34)
+R6  --- Goldfish 2 turn 6: life 35, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 34, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 40, 7 cards in hand, 4 lands
+R7      hand: Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Prismari, the Inspiration, Necropotence, Demonic Consultation
+R7        [Scion decides: The Cabbage Merchant 64%, stop (hold mana) 36% -> stop (hold mana) [search]]
+R7        [Scion attack plan by search: filtered at Goldfish 4]
+R7    Scion attacks Goldfish 4 with 3 creature(s): 4 damage (life now 32)
+R7        [Scion decides: The Cabbage Merchant 64%, stop (hold mana) 36% -> stop (hold mana) [search]]
+R7      [audit] Scion discards Prismari, the Inspiration to hand size (8 cards in hand)
+R7  --- Goldfish 2 turn 7: life 35, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 34, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 32, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 40, 7 cards in hand, 4 lands
+R8      hand: Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Necropotence, Demonic Consultation, The Cabbage Merchant
+R8    Scion plays City of Brass
+R8        [Scion decides: Necropotence 61%, The Cabbage Merchant 25%, stop (hold mana) 14% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 2]
+R8    Scion attacks Goldfish 2 with 3 creature(s): 4 damage (life now 31)
+R8        [Scion decides: Necropotence 61%, The Cabbage Merchant 25%, stop (hold mana) 14% -> Necropotence [search]]
+R8    Scion casts Necropotence
+R8    Scion pays 2 life to Necropotence
+R8      [audit] Scion discards Mindbreak Trap to hand size (8 cards in hand)
+R8  --- Goldfish 2 turn 8: life 31, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 34, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 32, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 37, 7 cards in hand, 5 lands
+R9      hand: Brain Freeze, Crop Rotation, Tainted Pact, Demonic Consultation, The Cabbage Merchant, Plateau, Imperial Seal
+R9    Scion plays Plateau
+R9        [Scion decides: Scion of the Ur-Dragon 77%, Imperial Seal 21%, The Cabbage Merchant 2%, stop 0% -> Imperial Seal [search]]
+R9    Scion casts Imperial Seal
+R9      Scion puts Thassa's Oracle on top of their library
+R9        [Scion decides: The Cabbage Merchant 100%, stop 0% -> The Cabbage Merchant [search]]
+R9    Scion casts The Cabbage Merchant
+R9        [Scion attack plan by search: filtered at Goldfish 3]
+R9    Scion attacks Goldfish 3 with 3 creature(s): 4 damage (life now 30)
+R9    Scion pays 4 life to Necropotence
+R9      [audit] Scion discards Storm-Kiln Artist to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 31, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 30, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 32, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 31, 7 cards in hand, 6 lands
+R10     hand: Brain Freeze, Crop Rotation, Tainted Pact, Demonic Consultation, Thassa's Oracle, Beseech the Mirror, Starting Town
+R10   Scion plays Starting Town
+R10       [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 100%, Scion of the Ur-Dragon 0%, Beseech the Mirror 0%, stop 0% -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [search]]
+R10   Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R10   Scion casts Thassa's Oracle
+R10   Scion casts Demonic Consultation
+R10     Scion exiles its library
+R10 *** Goldfish 2 is eliminated (life 31) by Scion
+R10 *** Goldfish 3 is eliminated (life 30) by Scion
+R10 *** Goldfish 4 is eliminated (life 32) by Scion
+R10 *** Scion wins by combo
+Kill: own turn 10 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short | held (payable, not offered): Crop Rotation
+  T2  passed_castable: Hexing Squelcher [other] | held (payable, not offered): Brain Freeze, Crop Rotation, Tainted Pact
+  T3  progressed (other) | held (payable, not offered): Brain Freeze, Crop Rotation, Tainted Pact
+  T4  no_land_drop | held (payable, not offered): Brain Freeze, Crop Rotation, Tainted Pact
+  T5  mana_short | held (payable, not offered): Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact
+  T6  mana_short | held (payable, not offered): Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Demonic Consultation
+  T7  passed_castable: The Cabbage Merchant [other] | held (payable, not offered): Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Demonic Consultation
+  T8  passed_castable: The Cabbage Merchant [other] | held (payable, not offered): Brain Freeze, Mindbreak Trap, Crop Rotation, Tainted Pact, Demonic Consultation
+  T9  progressed (tutor) | held (payable, not offered): Brain Freeze, Crop Rotation, Tainted Pact, Demonic Consultation
+  T10 won
+  cleanup discards: Prismari, the Inspiration [combo piece], Mindbreak Trap [protection], Storm-Kiln Artist [other]
+  stops with another option offered: T2 main 1 look-ahead "stop" over Hexing Squelcher (4.6); T2 main 2 look-ahead "stop" over Hexing Squelcher (4.6); T3 main 1 look-ahead "stop" over Hexing Squelcher (4.6); T4 main 1 look-ahead "stop" over Borne Upon a Wind (4.6); T7 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (2.9); T7 main 2 look-ahead "stop (hold mana)" over The Cabbage Merchant (2.9); T8 main 1 look-ahead "stop (hold mana)" over Necropotence (3.8)
+  crude best case: none
+  crude best case with tutors: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

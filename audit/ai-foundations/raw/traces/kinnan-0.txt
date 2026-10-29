@@ -1,0 +1,218 @@
+Play-by-play of goldfish game 0 (seed 500000): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Waterlogged Grove, Force of Will, Pact of Negation, Tarnished Citadel, Rejuvenating Springs, Misty Rainforest, Delighted Halfling
+R1    Kinnan plays Tarnished Citadel
+R1    Kinnan casts Delighted Halfling
+R1        [Kinnan decides: Delighted Halfling 100%, stop (hold mana) 0% -> Delighted Halfling [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Waterlogged Grove, Force of Will, Pact of Negation, Rejuvenating Springs, Misty Rainforest, Scalding Tarn
+R2    Kinnan plays Rejuvenating Springs
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, Valley Floodcaller 0%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Waterlogged Grove, Force of Will, Pact of Negation, Misty Rainforest, Scalding Tarn, Valley Floodcaller
+R3    Kinnan plays Waterlogged Grove
+R3        [Kinnan decides: stop (hold mana) 66%, Valley Floodcaller 34% -> stop (hold mana) [search]]
+R3        [Kinnan attack plan by search: filtered at Goldfish 2]
+R3    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3        [Kinnan decides: stop (hold mana) 66%, Valley Floodcaller 34% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4    Kinnan casts Valley Floodcaller
+R4        [Kinnan end of turn: Valley Floodcaller 99%, Waterlogged Grove draw 1%, pass 0% -> Valley Floodcaller]
+R4    Kinnan sacrifices Waterlogged Grove: draws a card
+R4        [Kinnan end of turn: Waterlogged Grove draw 94%, pass 6% -> Waterlogged Grove draw]
+R4  --- Kinnan turn 4: life 40, 6 cards in hand, 2 lands
+R4      hand: Force of Will, Pact of Negation, Misty Rainforest, Scalding Tarn, Windswept Heath, Borne Upon a Wind
+R4    Kinnan plays Exotic Orchard
+R4        [Kinnan decides: Borne Upon a Wind 70%, stop (hold mana) 30% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: filtered at Goldfish 3]
+R4    Kinnan attacks Goldfish 3 with 2 creature(s): 4 damage (life now 36)
+R4        [Kinnan decides: Borne Upon a Wind 70%, stop (hold mana) 30% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5    Kinnan casts Borne Upon a Wind
+R5        [Kinnan end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R5  --- Kinnan turn 5: life 40, 6 cards in hand, 3 lands
+R5      hand: Force of Will, Pact of Negation, Misty Rainforest, Scalding Tarn, Windswept Heath, An Offer You Can't Refuse
+R5    Kinnan plays Misty Rainforest
+R5      cracks Misty Rainforest for Breeding Pool
+R5        [Kinnan attack plan by search: filtered at Goldfish 4]
+R5    Kinnan attacks Goldfish 4 with 2 creature(s): 4 damage (life now 36)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kinnan turn 6: life 39, 6 cards in hand, 4 lands
+R6      hand: Force of Will, Pact of Negation, Scalding Tarn, Windswept Heath, An Offer You Can't Refuse, Disrupting Shoal
+R6    Kinnan plays Windswept Heath
+R6      cracks Windswept Heath for Tropical Island
+R6        [Kinnan decides: stop (hold mana) 74%, Arcane Signet 16%, Kinnan: dig five 10% -> Kinnan: dig five [search]]
+R6        [Kinnan attack plan by search: filtered at Goldfish 2]
+R6    Kinnan attacks Goldfish 2 with 2 creature(s): 4 damage (life now 34)
+R6  --- Goldfish 2 turn 6: life 34, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kinnan turn 7: life 38, 6 cards in hand, 5 lands
+R7      hand: Force of Will, Pact of Negation, Scalding Tarn, An Offer You Can't Refuse, Disrupting Shoal, Arcane Signet
+R7    Kinnan plays Yavimaya Coast
+R7        [Kinnan decides: stop (hold mana) 78%, Arcane Signet 12%, Kinnan: dig five 11% -> Kinnan: dig five [search]]
+R7        [Kinnan attack plan by search: filtered at Goldfish 4]
+R7    Kinnan attacks Goldfish 4 with 3 creature(s): 6 damage (life now 30)
+R7  --- Goldfish 2 turn 7: life 34, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 30, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Kinnan turn 8: life 38, 6 cards in hand, 6 lands
+R8      hand: Force of Will, Pact of Negation, Scalding Tarn, An Offer You Can't Refuse, Disrupting Shoal, Arcane Signet
+R8    Kinnan plays Ancient Tomb
+R8        [Kinnan decides: stop (hold mana) 81%, Kinnan: dig five 11%, Arcane Signet 8% -> Kinnan: dig five [search]]
+R8        [Kinnan decides: stop (hold mana) 90%, Arcane Signet 10% -> stop (hold mana) [search]]
+R8        [Kinnan attack plan by search: filtered at Goldfish 3]
+R8    Kinnan attacks Goldfish 3 with 3 creature(s): 6 damage (life now 30)
+R8        [Kinnan decides: stop (hold mana) 90%, Arcane Signet 10% -> stop (hold mana) [search]]
+R8  --- Goldfish 2 turn 8: life 34, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 30, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 30, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9    Kinnan casts Arcane Signet
+R9        [Kinnan end of turn: Hidden Strings 56%, Arcane Signet 44%, pass 0% -> Arcane Signet]
+R9    Kinnan casts Hidden Strings
+R9      Hidden Strings untaps Delighted Halfling
+R9      Hidden Strings untaps Arcane Signet
+R9        [Kinnan end of turn: Hidden Strings 100%, pass 0% -> Hidden Strings]
+R9    Kinnan casts High Fae Trickster
+R9        [Kinnan end of turn: High Fae Trickster 100%, pass 0% -> High Fae Trickster]
+R9  --- Kinnan turn 9: life 35, 7 cards in hand, 7 lands
+R9      hand: Force of Will, Pact of Negation, Scalding Tarn, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Flesh Duplicate
+R9    Kinnan plays Scalding Tarn
+R9      cracks Scalding Tarn for Island
+R9        [Kinnan decides: Flesh Duplicate 62%, stop (hold mana) 34%, Kinnan: dig five 5% -> stop (hold mana) [search]]
+R9        [Kinnan attack plan by search: filtered at Goldfish 3]
+R9    Kinnan attacks Goldfish 3 with 5 creature(s): 14 damage (life now 16)
+R9        [Kinnan decides: Flesh Duplicate 48%, Kinnan: dig five 26%, stop (hold mana) 26% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 34, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 16, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 30, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10   Kinnan casts Flesh Duplicate
+R10     Flesh Duplicate enters as a copy of Consecrated Sphinx
+R10       [Kinnan end of turn: Flesh Duplicate 91%, Endurance 9%, Mox Diamond 0%, pass 0% -> Flesh Duplicate]
+R10   Kinnan casts Endurance
+R10     Goldfish 2's graveyard (9 cards) goes to the bottom of its library (Endurance)
+R10       [Kinnan end of turn: Endurance 96%, Mox Diamond 4%, pass 0% -> Endurance]
+R10   Kinnan casts Mox Diamond
+R10       [Kinnan end of turn: Mox Diamond 98%, pass 2% -> Mox Diamond]
+R10 --- Kinnan turn 10: life 34, 7 cards in hand, 8 lands
+R10     hand: Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Misdirection, Sudden Substitution
+R10   Kinnan plays Polluted Delta
+R10       [Kinnan decides: stop (hold mana) 88%, Kinnan: dig five 12% -> stop (hold mana) [search]]
+R10       [Kinnan attack plan by search: filtered at Goldfish 4]
+R10   Kinnan attacks Goldfish 4 with 2 creature(s): 4 damage (life now 26)
+R10 *** Goldfish 3 is eliminated (life -1) by Kinnan
+R10   Kinnan attacks Goldfish 3 with 5 creature(s): 17 damage (life now -1)
+R10       [Kinnan decides: Kinnan: dig five 50%, stop (hold mana) 50% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 34, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 26, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11   Kinnan casts Lotus Petal
+R11       [Kinnan end of turn: Lotus Petal 99%, pass 1% -> Lotus Petal]
+R11 --- Kinnan turn 11: life 34, 10 cards in hand, 9 lands
+R11     hand: Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Misdirection, Sudden Substitution, Chord of Calling, Copy Enchantment, Gemstone Caverns
+R11   Kinnan plays Gemstone Caverns
+R11       [Kinnan decides: Chord of Calling 71%, stop (hold mana) 26%, Kinnan: dig five 4% -> stop (hold mana) [search]]
+R11       [Kinnan attack plan by search: filtered at Goldfish 2]
+R11   Kinnan attacks Goldfish 2 with 7 creature(s): 21 damage (life now 13)
+R11       [Kinnan decides: Chord of Calling 58%, Kinnan: dig five 21%, stop (hold mana) 21% -> Chord of Calling [search]]
+R11   Kinnan casts Chord of Calling
+R11     [audit] Kinnan discards Force of Will to hand size (9 cards in hand)
+R11     [audit] Kinnan discards Misdirection to hand size (8 cards in hand)
+R11 --- Goldfish 2 turn 11: life 13, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 26, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Kinnan turn 12: life 32, 11 cards in hand, 10 lands
+R12     hand: Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Sudden Substitution, Copy Enchantment, Botanical Sanctum, Enduring Vitality, Imposter Mech, Dispel, Trophy Mage
+R12   Kinnan plays Botanical Sanctum
+R12       [Kinnan decides: stop (hold mana) 68%, Enduring Vitality 12%, Trophy Mage 10%, Kinnan: dig five 9% -> stop (hold mana) [search]]
+R12       [Kinnan attack plan by search: filtered at Goldfish 4]
+R12   Kinnan attacks Goldfish 4 with 4 creature(s): 7 damage (life now 19)
+R12 *** Goldfish 2 is eliminated (life -2) by Kinnan
+R12   Kinnan attacks Goldfish 2 with 4 creature(s): 15 damage (life now -2)
+R12       [Kinnan decides: Kinnan: dig five 43%, stop (hold mana) 43%, Enduring Vitality 8%, Trophy Mage 6% -> Kinnan: dig five [search]]
+R12       [Kinnan decides: Kinnan: dig five 43%, stop (hold mana) 43%, Enduring Vitality 8%, Trophy Mage 6% -> Kinnan: dig five [search]]
+R12       [Kinnan decides: stop (hold mana) 87%, Trophy Mage 13%, Gene Pollinator 1% -> Trophy Mage [search]]
+R12   Kinnan casts Trophy Mage
+R12     [audit] Kinnan discards Sudden Substitution to hand size (11 cards in hand)
+R12     [audit] Kinnan discards Copy Enchantment to hand size (10 cards in hand)
+R12     [audit] Kinnan discards Enduring Vitality to hand size (9 cards in hand)
+R12     [audit] Kinnan discards Basalt Monolith to hand size (8 cards in hand; discard_keep would keep it)
+R12 --- Goldfish 4 turn 12: life 19, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Kinnan turn 13: life 29, 11 cards in hand, 11 lands
+R13     hand: Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Imposter Mech, Dispel, Gene Pollinator, Wan Shi Tong, Librarian, Sol Ring, Fierce Guardianship, Colossal Skyturtle
+R13       [Kinnan decides: Sol Ring 45%, Rhystic Study 27%, stop (hold mana) 17%, Colossal Skyturtle 8% -> Sol Ring [search]]
+R13   Kinnan casts Sol Ring
+R13       [Kinnan decides: Rhystic Study 50%, stop (hold mana) 30%, Colossal Skyturtle 15%, Kinnan: dig five 4% -> Rhystic Study [search]]
+R13   Kinnan casts Rhystic Study
+R13       [Kinnan decides: stop (hold mana) 61%, Colossal Skyturtle 30%, Kinnan: dig five 8%, Gene Pollinator 0% -> Colossal Skyturtle [search]]
+R13   Kinnan casts Colossal Skyturtle
+R13       [Kinnan decides: stop (hold mana) 88%, Kinnan: dig five 12%, Gene Pollinator 0% -> Kinnan: dig five [search]]
+R13     Clever Impersonator enters as a copy of Consecrated Sphinx
+R13       [Kinnan decides: stop (hold mana) 100%, Gene Pollinator 0% -> Gene Pollinator [search]]
+R13   Kinnan casts Gene Pollinator
+R13       [Kinnan attack plan by search: filtered at Goldfish 4]
+R13 *** Goldfish 4 is eliminated (life -9) by Kinnan
+R13   Kinnan attacks Goldfish 4 with 10 creature(s): 28 damage (life now -9)
+Kill: own turn 13 (damage)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Pact of Negation
+  T2  progressed (combo piece) | held (payable, not offered): Pact of Negation
+  T3  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation
+  T4  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation
+  T5  mana_short | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal
+  T6  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal
+  T7  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal
+  T8  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal
+  T9  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Mox Diamond
+  T10 mana_short | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Misdirection, Sudden Substitution
+  T11 progressed (tutor) | held (payable, not offered): Force of Will, Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Misdirection, Sudden Substitution, Copy Enchantment
+  T12 passed_castable: Enduring Vitality [other], Gene Pollinator [fast mana / rock] | held (payable, not offered): Pact of Negation, An Offer You Can't Refuse, Disrupting Shoal, Snapback, Sudden Substitution, Copy Enchantment, Imposter Mech, Dispel
+  T13 won
+  cleanup discards: Force of Will [protection], Misdirection [other], Sudden Substitution [other], Copy Enchantment [other], Enduring Vitality [other], Basalt Monolith [combo piece] (kept by discard_keep)
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Valley Floodcaller (3.1); T3 main 2 look-ahead "stop (hold mana)" over Valley Floodcaller (3.1); T4 main 1 look-ahead "stop (hold mana)" over Borne Upon a Wind (4.6); T4 main 2 look-ahead "stop (hold mana)" over Borne Upon a Wind (4.6); T8 main 1 look-ahead "stop (hold mana)" over Arcane Signet (2.8); T8 main 2 look-ahead "stop (hold mana)" over Arcane Signet (2.8); T9 main 1 look-ahead "stop (hold mana)" over Flesh Duplicate (5.6); T9 main 2 look-ahead "stop (hold mana)" over Flesh Duplicate (5.6); T10 main 1 look-ahead "stop (hold mana)" over Kinnan: dig five (3.0); T10 main 2 look-ahead "stop (hold mana)" over Kinnan: dig five (5.0); T11 main 1 look-ahead "stop (hold mana)" over Chord of Calling (6.0); T12 main 1 look-ahead "stop (hold mana)" over Enduring Vitality (3.3)
+  crude best case: none
+  crude best case with tutors: own turn 11 (Kinnan + Basalt Monolith)

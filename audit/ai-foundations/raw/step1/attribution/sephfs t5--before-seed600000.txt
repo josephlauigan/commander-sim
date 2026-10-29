@@ -1,0 +1,8 @@
+usage: commander-sim [-h] [--deck KEY] [--swap "OUT=>IN"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]
+                     [--goldfish KEYS]
+                     [--knobs FILE] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]
+                     [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]
+                     [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]
+                     [--temp T] [--quiet] [--jobs N]
+       commander-sim swaptest | searchtest | pools ...   (commander-sim swaptest --help)
+commander-sim: error: argument --deck: invalid choice: 'sephfs t5' (choose from 'seph', 'veyran', 'sauron', 'galadriel', 'yshtola', 'alela', 'kefka', 'sheoldred', 'cloud', 'thrasios', 'sephfs', 'karn', 'scion')

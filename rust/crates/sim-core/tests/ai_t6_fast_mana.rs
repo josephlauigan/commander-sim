@@ -1,5 +1,6 @@
-//! Tier 6 fast mana on turns 1-3 (ai/t6_table.rs `must_option`): Chrome Mox with a card to imprint is cast before the
-//! look-ahead, which voted "stop" over it (the two cards in hand score above a mox on the battlefield).
+//! Tier 6 fast mana on turns 1-3 (ai/t6_table.rs `must_option`).
+//! --- ai-eval: the Chrome Mox rule is gone (eval-fix.md, Part 3): the look-ahead's evaluation values the mox for its
+//! mana now, and nothing was lost without the rule. Chrome Mox is never forced; the look-ahead decides.
 
 use sim_core::ai::t6_table;
 use sim_core::ids::PlayerId;
@@ -24,10 +25,11 @@ fn must_label(g: &mut Game) -> Option<String> {
     t6_table::must_option(g, P0, &opts).map(|i| opts[i].label.clone())
 }
 
+/// --- ai-eval: was `chrome_mox_with_a_spare_card_is_cast_on_turn_one` (forced by the removed rule)
 #[test]
-fn chrome_mox_with_a_spare_card_is_cast_on_turn_one() {
+fn chrome_mox_with_a_spare_card_is_left_to_the_look_ahead() {
     let mut g = turn_one(&["Chrome Mox", "Brainstorm"]);
-    assert_eq!(must_label(&mut g).as_deref(), Some("Chrome Mox"));
+    assert_eq!(must_label(&mut g), None);
 }
 
 #[test]

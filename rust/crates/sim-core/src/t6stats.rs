@@ -92,6 +92,7 @@ pub fn removal_hit(g: &mut Game, actor: PlayerId, spell: Option<CardId>, owner: 
 /// p cast a card: count the stax pieces
 pub fn cast(g: &mut Game, p: PlayerId, c: CardId) {
     mana_cast(g, p, c);
+    flow_cast(g, p); // --- ai-flow
     if is_t6(g, p) && STAX.contains(&&*g.db.get(c).name) {
         let k = format!("ix|stax|{}", card(g, c));
         bump(g, p, k);
@@ -198,7 +199,8 @@ pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
 // - `mn|cast|T<n>`: mana cards cast on turn n (n = 1-3)
 // - `mn|n|T<n>`: 1 when the player reached turn n (the divisor)
 
-const RITUALS: [&str; 14] = [
+// --- ai-audit: pub (gf_audit reads it)
+pub const RITUALS: [&str; 14] = [
     "Dark Ritual",
     "Cabal Ritual",
     "Rite of Flame",
@@ -325,5 +327,340 @@ pub fn eot_window(g: &mut Game, p: PlayerId) {
     if thr {
         bump(g, p, "mn|eotw|thr".to_string());
         g.player_mut(p).stat(intern("mn|eotw|can"), mana / 4);
+    }
+}
+
+// ---------------------------------------------------------------------------------------------------- flow
+// --- ai-flow: card and mana flow of a Tier 6 player, per own turn 1-8 (stats only: nothing here decides or draws a
+// random number). Keys, T<t> the own turn:
+// - `fl|n|T<t>`: the turn began (the divisor); `fl|ne|T<t>`: it reached its end step (the divisor of the end-of-turn
+//   snapshots); `fl|hand0`: the kept hand's size
+// - `fl|d|<class>|T<t>`: cards drawn, by source (`step`, `cantrip`, `engine`, `wheel`, `cmdr`, `other`), counted on
+//   the own turn the card can first be used (this turn on its own turn, else its next); Necropotence's and Ad
+//   Nauseam's cards and Thrasios's land-or-hand card count as their source's draws; `fl|dc|<card>`: the same by card
+//   (turns 1-8 together); `fl|dnew|T<t>`: those that were new to the player (not seen before)
+// - `fl|seen|T<t>`: distinct cards seen by the end of own turn t (the kept hand, which setup marks seen, then every
+//   card a draw, tutor or engine put into the hand); `fl|seenD|T<t>`: those new since the end of the turn before (so tutored cards are
+//   `fl|tut|T<t>`, `seenD` less the turn's new draws); `fl|_seen`: the last snapshot (transient)
+// - `fl|cast|T<t>` / `fl|casto|T<t>`: spells cast on own turn t / on the other turns that follow it
+// - `fl|mana|T<t>` / `fl|hand|T<t>`: mana available and cards in hand at the start of the main phase (after the
+//   land drop); `fl|out|<card>`: own turns 2-8 that began with that draw engine out; `fl|tax|<card>|trig|paid`: its
+//   tax triggers and the paid ones (`flow_tax`); `fl|spent|T<t>` /
+//   `fl|spento|T<t>`: mana spent on own turn t / on the other turns that follow it
+// - `fl|life|<card>|T<t>`: life paid for cards (Necropotence, Ad Nauseam, Sylvan Library, Tymna)
+// - `fl|land|T<t>`: a land was played; `fl|nold|T<t>`: none was; `fl|noldh|T<t>`: none was with a land in hand
+
+/// the card-draw engines the flow report names (the brief's list)
+pub const FLOW_ENGINES: [&str; 7] = [
+    "Rhystic Study",
+    "Mystic Remora",
+    "Esper Sentinel",
+    "Sylvan Library",
+    "Necropotence",
+    "The One Ring",
+    "Ad Nauseam",
+];
+
+/// the wheels: each player (or the caster) draws a new hand
+pub const FLOW_WHEELS: [&str; 8] = [
+    "Timetwister",
+    "Windfall",
+    "Wheel of Fortune",
+    "Echo of Eons",
+    "Reforge the Soul",
+    "Wheel of Misfortune",
+    "Winds of Change",
+    "Magus of the Wheel",
+];
+
+const FLOW_TURNS: u32 = 8;
+
+fn flow_on(g: &Game, p: PlayerId) -> bool {
+    !g.in_search && g.player(p).t6
+}
+
+/// the own turn on which p can first use what it gets now (this turn on its own turn, else its next)
+fn flow_use_turn(g: &Game, p: PlayerId) -> u32 {
+    (g.player(p).turns + u32::from(g.active != Some(p))).max(1)
+}
+
+fn flow_add(g: &mut Game, p: PlayerId, key: String, n: i64) {
+    g.player_mut(p).stat(intern(&key), n);
+}
+
+/// the source whose effect is resolving for p (a spell, a trigger or an activated ability of p's): draws are
+/// credited to it. Set by the stack's windows and by `cast::resolve`.
+pub fn flow_source(g: &mut Game, p: PlayerId, c: Option<CardId>) {
+    if g.player(p).t6 {
+        g.player_mut(p).flow_src = c;
+    }
+}
+
+/// the class of a draw source for p
+fn flow_class(g: &Game, p: PlayerId, c: Option<CardId>) -> &'static str {
+    let Some(c) = c else { return "other" };
+    let d = g.db.get(c);
+    let n = &*d.name;
+    if FLOW_ENGINES.contains(&n) {
+        "engine"
+    } else if FLOW_WHEELS.contains(&n) {
+        "wheel"
+    } else if g.player(p).is_commander(c) || n.starts_with("Dack Fayden") {
+        "cmdr"
+    } else if d.instant || d.sorcery {
+        "cantrip"
+    } else {
+        "other"
+    }
+}
+
+/// p drew card c (`step`: the draw step's own draw; `new`: c was not seen before)
+pub fn flow_draw(g: &mut Game, p: PlayerId, step: bool, new: bool) {
+    if !flow_on(g, p) {
+        return;
+    }
+    let src = g.player(p).flow_src;
+    let cls = if step { "step" } else { flow_class(g, p, src) };
+    flow_cards(g, p, cls, if step { None } else { src }, 1, new as i64);
+}
+
+/// p got n cards from the library into its hand from source `src` of class `cls` (`fresh` of them new)
+fn flow_cards(g: &mut Game, p: PlayerId, cls: &str, src: Option<CardId>, n: i64, fresh: i64) {
+    let t = flow_use_turn(g, p);
+    if t > FLOW_TURNS || n == 0 {
+        return;
+    }
+    flow_add(g, p, format!("fl|d|{cls}|T{t}"), n);
+    flow_add(g, p, format!("fl|dnew|T{t}"), fresh);
+    if let Some(c) = src {
+        let k = format!("fl|dc|{}", g.db.get(c).name);
+        flow_add(g, p, k, n);
+    }
+}
+
+/// an engine that is not a draw put n new cards into p's hand (Necropotence, Ad Nauseam, Thrasios)
+pub fn flow_engine_cards(g: &mut Game, p: PlayerId, name: &str, n: i64) {
+    if !flow_on(g, p) {
+        return;
+    }
+    let src = g.db.id(name);
+    let cls = match src {
+        Some(c) => flow_class(g, p, Some(c)),
+        None => "other",
+    };
+    flow_cards(g, p, cls, src, n, n);
+}
+
+/// a card p drew from `name` went back (Sylvan Library's cards not paid for): it is not a draw
+pub fn flow_undraw(g: &mut Game, p: PlayerId, name: &str, n: i64) {
+    if !flow_on(g, p) || n == 0 {
+        return;
+    }
+    let t = flow_use_turn(g, p);
+    if t > FLOW_TURNS {
+        return;
+    }
+    flow_add(g, p, format!("fl|d|engine|T{t}"), -n);
+    flow_add(g, p, format!("fl|dnew|T{t}"), -n);
+    flow_add(g, p, format!("fl|dc|{name}"), -n);
+}
+
+/// p paid n life for card `name`
+pub fn flow_life(g: &mut Game, p: PlayerId, name: &str, n: i64) {
+    if !flow_on(g, p) || n <= 0 {
+        return;
+    }
+    let t = g.player(p).turns.max(1);
+    if t <= FLOW_TURNS {
+        flow_add(g, p, format!("fl|life|{name}|T{t}"), n);
+    }
+}
+
+/// own turn t, the cycle it starts (that turn, and the other players' turns until p's next)
+fn flow_cycle(g: &Game, p: PlayerId) -> Option<(u32, bool)> {
+    let t = g.player(p).turns;
+    (1..=FLOW_TURNS).contains(&t).then_some((t, g.active == Some(p)))
+}
+
+fn flow_cast(g: &mut Game, p: PlayerId) {
+    if !flow_on(g, p) {
+        return;
+    }
+    if let Some((t, own)) = flow_cycle(g, p) {
+        flow_add(g, p, format!("fl|{}|T{t}", if own { "cast" } else { "casto" }), 1);
+    }
+}
+
+/// p's spell c was countered: `fl|ctrd|T<t>` (own turn t's cycle), and `fl|ctrdc|<card>` for a draw engine
+pub fn flow_countered(g: &mut Game, p: PlayerId, c: CardId) {
+    if !flow_on(g, p) {
+        return;
+    }
+    if let Some((t, _)) = flow_cycle(g, p) {
+        flow_add(g, p, format!("fl|ctrd|T{t}"), 1);
+        let n = g.db.get(c).name.to_string();
+        if FLOW_ENGINES.contains(&n.as_str()) || FLOW_OUT.contains(&n.as_str()) {
+            flow_add(g, p, format!("fl|ctrdc|{n}"), 1);
+        }
+    }
+}
+
+/// p spent n mana (a mana unit used to pay)
+pub fn flow_spent(g: &mut Game, p: PlayerId, n: u32) {
+    if n == 0 || !flow_on(g, p) {
+        return;
+    }
+    if let Some((t, own)) = flow_cycle(g, p) {
+        flow_add(g, p, format!("fl|{}|T{t}", if own { "spent" } else { "spento" }), n as i64);
+    }
+}
+
+/// the start of p's own turn (after `turns` counts it)
+pub fn flow_turn_start(g: &mut Game, p: PlayerId) {
+    if !flow_on(g, p) {
+        return;
+    }
+    let t = g.player(p).turns;
+    if t == 1 {
+        // the kept hand is already seen (setup_game): the baseline of the per-turn new cards
+        let (h, s) = (g.player(p).hand.len() as i64, g.player(p).seen.len() as i64);
+        g.player_mut(p).stats.insert(intern("fl|hand0"), h);
+        g.player_mut(p).stats.insert(intern("fl|_seen"), s);
+    }
+    if t <= FLOW_TURNS {
+        flow_add(g, p, format!("fl|n|T{t}"), 1);
+    }
+    // the draw engines that were out through the turns before this one (turns 2-8: the draws they made then count
+    // toward this turn): `fl|out|<card>`, so the report can give draws per turn cycle out
+    if (2..=FLOW_TURNS).contains(&t) {
+        let out: Vec<String> = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased)
+            .filter_map(|&m| g.perm(m).cd)
+            .map(|c| g.db.get(c).name.to_string())
+            .filter(|n| FLOW_ENGINES.contains(&n.as_str()) || FLOW_OUT.contains(&n.as_str()))
+            .collect();
+        for n in out {
+            flow_add(g, p, format!("fl|out|{n}"), 1);
+        }
+    }
+}
+
+/// the other draw permanents whose turns out the report counts
+const FLOW_OUT: [&str; 5] =
+    ["Kraum, Ludevic's Opus", "Tymna the Weaver", "Thrasios, Triton Hero", "Faerie Mastermind", "Consecrated Sphinx"];
+
+/// a tax trigger of p's engine `name` (Rhystic Study, Mystic Remora, Esper Sentinel) resolved against an opponent's
+/// spell: `fl|tax|<card>|trig` and, when the caster paid, `fl|tax|<card>|paid` (turns 1-8 of p)
+pub fn flow_tax(g: &mut Game, p: PlayerId, name: &str, paid: bool) {
+    if !flow_on(g, p) || flow_use_turn(g, p) > FLOW_TURNS {
+        return;
+    }
+    flow_add(g, p, format!("fl|tax|{name}|trig"), 1);
+    if paid {
+        flow_add(g, p, format!("fl|tax|{name}|paid"), 1);
+    }
+}
+
+/// the start of p's main phase, after the land drop: the mana available
+pub fn flow_main(g: &mut Game, p: PlayerId) {
+    if !flow_on(g, p) {
+        return;
+    }
+    let t = g.player(p).turns;
+    if t <= FLOW_TURNS {
+        let mana = crate::engine::mana::total_mana(g, p, false) as i64;
+        let hand = g.player(p).hand.len() as i64;
+        flow_add(g, p, format!("fl|mana|T{t}"), mana);
+        flow_add(g, p, format!("fl|hand|T{t}"), hand);
+        g.player_mut(p).stats.insert(intern("fl|_mana"), mana); // the main phase's mana (the turn-4 fate)
+    }
+}
+
+/// the end of p's own turn: the cards seen so far and the land drop
+pub fn flow_turn_end(g: &mut Game, p: PlayerId) {
+    if !flow_on(g, p) {
+        return;
+    }
+    let t = g.player(p).turns;
+    if !(1..=FLOW_TURNS).contains(&t) {
+        return;
+    }
+    let pl = g.player(p);
+    let seen = pl.seen.len() as i64;
+    let last = pl.stats.get(&intern("fl|_seen")).copied().unwrap_or(0);
+    let played = pl.land_turn == t as i32;
+    let land_in_hand = pl.hand.iter().any(|&c| g.db.get(c).land);
+    g.player_mut(p).stats.insert(intern("fl|_seen"), seen);
+    flow_add(g, p, format!("fl|ne|T{t}"), 1);
+    flow_add(g, p, format!("fl|seen|T{t}"), seen);
+    flow_add(g, p, format!("fl|seenD|T{t}"), seen - last);
+    // the turn's new draws are all counted by now (later ones count toward the next turn): the rest came by tutors
+    let dnew = g.player(p).stats.get(&intern(&format!("fl|dnew|T{t}"))).copied().unwrap_or(0);
+    flow_add(g, p, format!("fl|tut|T{t}"), seen - last - dnew);
+    // the engine funnel by the end of this turn: seen, cast, out (`fl|ef|<card>|seen|cast|out|T<t>`); the
+    // commanders count as seen from the start, and a wheel is never out
+    let funnel: Vec<(String, bool, bool, bool)> = FLOW_ENGINES
+        .iter()
+        .chain(FLOW_OUT.iter())
+        .chain(FLOW_WHEELS.iter())
+        .filter_map(|&n| {
+            let c = g.db.id(n)?;
+            let pl = g.player(p);
+            if pl.is_commander(c) {
+                let out = pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(c));
+                return Some((n.to_string(), true, pl.cast_names.contains(&c), out));
+            }
+            if !pl.deck_names.contains(&c) {
+                return None;
+            }
+            let out = pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(c));
+            Some((n.to_string(), pl.seen.contains(&c), pl.cast_names.contains(&c), out))
+        })
+        .collect();
+    // where a seen engine that was never cast is at the end of turn 4 (`fl|ez|<card>|<zone>`): still in hand (and
+    // whether p had the mana for it then), or gone (graveyard: discarded; exile: pitched or imprinted; library)
+    if t == 4 {
+        let fates: Vec<String> = funnel
+            .iter()
+            .filter(|f| f.1 && !f.2)
+            .filter_map(|f| {
+                let c = g.db.id(&f.0)?;
+                let pl = g.player(p);
+                let z = if pl.hand.contains(&c) {
+                    let mana = pl.stats.get(&intern("fl|_mana")).copied().unwrap_or(0);
+                    if (g.db.get(c).cmc as i64) <= mana { "hand_payable" } else { "hand" }
+                } else if pl.gy.contains(&c) {
+                    "gy"
+                } else if pl.exile.contains(&c) {
+                    "exile"
+                } else if pl.library.contains(&c) {
+                    "lib"
+                } else {
+                    "other"
+                };
+                Some(format!("fl|ez|{}|{z}", f.0))
+            })
+            .collect();
+        for k in fates {
+            flow_add(g, p, k, 1);
+        }
+    }
+    for (n, s, c, o) in funnel {
+        for (what, yes) in [("seen", s), ("cast", c), ("out", o)] {
+            if yes {
+                flow_add(g, p, format!("fl|ef|{n}|{what}|T{t}"), 1);
+            }
+        }
+    }
+    if played {
+        flow_add(g, p, format!("fl|land|T{t}"), 1);
+    } else {
+        flow_add(g, p, format!("fl|nold|T{t}"), 1);
+        if land_in_hand {
+            flow_add(g, p, format!("fl|noldh|T{t}"), 1);
+        }
     }
 }

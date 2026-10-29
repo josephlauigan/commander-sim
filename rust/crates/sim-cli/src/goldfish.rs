@@ -68,6 +68,11 @@ pub struct GfGame {
     pub cmd_turn: Option<u32>,
     /// deck-specific counters (`scion|...`: Scion of the Ur-Dragon's activations by Dragon)
     pub extra: Vec<(String, i64)>,
+    /// --- ai-audit: own turns taken, and the loss accounting (gf_audit)
+    pub own_turns: u32,
+    pub audit: Option<sim_core::gf_audit::AuditOut>,
+    /// --- ai-flow: the deck's flow counters (`fl|...`, read by `flow::FlowTally`)
+    pub flow: Vec<(String, i64)>,
 }
 
 impl GfGame {
@@ -91,8 +96,17 @@ impl GfGame {
         let mut go: Vec<String> = p.stats.keys().filter_map(|k| k.strip_prefix("go|")).map(|s| s.to_string()).collect();
         go.sort();
         let mut extra: Vec<(String, i64)> =
-            p.stats.iter().filter(|(k, _)| k.starts_with("scion|")).map(|(k, v)| (k.to_string(), *v)).collect();
+            // --- ai-planner: and the planner's counters (`plan|...`)
+            p.stats
+                .iter()
+                .filter(|(k, _)| k.starts_with("scion|") || k.starts_with("plan|"))
+                .map(|(k, v)| (k.to_string(), *v))
+                .collect();
         extra.sort();
+        // --- ai-flow: in key order (the stats map has none), so the same seed gives the same game record
+        let mut flow: Vec<(String, i64)> =
+            p.stats.iter().filter(|(k, _)| k.starts_with("fl|")).map(|(k, v)| (k.to_string(), *v)).collect();
+        flow.sort();
         GfGame {
             kill,
             route,
@@ -103,6 +117,10 @@ impl GfGame {
             go,
             cmd_turn: p.milestone.get("cmd_cast").copied(),
             extra,
+            own_turns: p.turns, // --- ai-audit
+            audit: sim_core::gf_audit::report(g, won), // --- ai-audit
+            // --- ai-flow
+            flow,
         }
     }
 }
@@ -307,6 +325,15 @@ pub fn render(sim: &Sim, key: &str, games: &[GfGame], ai: &str, seed0: u64) -> S
     for (k, (games_with, total)) in &extra {
         o += &format!("  {k}: in {:.1}% of games ({total} in all)\n", pct(*games_with, n));
     }
+    o += &crate::gf_audit::render(games); // --- ai-audit
+    // --- ai-flow: the card and mana flow, own turns 1-8
+    let mut fl = crate::flow::FlowTally::default();
+    for g in games {
+        fl.add(key, g.flow.iter().map(|(k, v)| (k.as_str(), *v)));
+    }
+    if !fl.is_empty() {
+        o += &fl.render(&|k| sim.name_of(k));
+    }
     o
 }
 
@@ -351,8 +378,11 @@ pub fn main(sim: &Sim, a: &Args) -> Result<(), String> {
         let gf = GfGame::read(&g);
         println!(
             "Kill: {}",
-            gf.kill.map_or("none".to_string(), |t| format!("own turn {t} ({})", gf.route.unwrap_or_default()))
+            gf.kill.map_or("none".to_string(), |t| format!("own turn {t} ({})", gf.route.clone().unwrap_or_default()))
         );
+        if let Some(au) = &gf.audit {
+            print!("{}", crate::gf_audit::render_trace(au)); // --- ai-audit
+        }
         return Ok(());
     }
     sim.prog.lock().unwrap().on = !a.quiet;
@@ -438,6 +468,62 @@ mod tests {
         assert_ne!(a, c);
     }
 
+    // --- ai-audit
+    /// every own turn of the deck falls in exactly one bucket: the bucket counts sum to the own turns, turn by turn
+    /// in order, and a kill's last turn (only it) is `won`
+    #[test]
+    fn the_loss_buckets_sum_to_the_own_turns() {
+        use sim_core::gf_audit::Bucket;
+        let sim = sim();
+        for key in ["scion", "kinnan-bonder-mana-combo"] {
+            let games = run_deck(&sim, key, "loose", 16, 500000).unwrap();
+            let audits: Vec<&sim_core::gf_audit::AuditOut> = games.iter().map(|g| g.audit.as_ref().unwrap()).collect();
+            let (all, early) = crate::gf_audit::bucket_counts(&audits);
+            let own: u32 = games.iter().map(|g| g.own_turns).sum();
+            assert_eq!(all.iter().map(|x| x.1).sum::<usize>() as u32, own, "{key}: buckets vs own turns");
+            let own4: u32 = games.iter().map(|g| g.own_turns.min(4)).sum();
+            assert_eq!(early.iter().map(|x| x.1).sum::<usize>() as u32, own4, "{key}: turns 1-4");
+            for g in &games {
+                let a = g.audit.as_ref().unwrap();
+                let turns: Vec<u32> = a.turns.iter().map(|t| t.turn).collect();
+                assert_eq!(turns, (1..=g.own_turns).collect::<Vec<_>>(), "{key}: one record per own turn");
+                let won = a.turns.iter().filter(|t| t.bucket == Bucket::Won).count();
+                assert_eq!(won, g.kill.is_some() as usize, "{key}: one won turn per kill");
+                if let Some(k) = g.kill {
+                    assert_eq!(a.turns.last().unwrap().bucket, Bucket::Won);
+                    assert_eq!(k, g.own_turns);
+                }
+            }
+            assert!(crate::gf_audit::render(&games).contains("Loss accounting"));
+        }
+    }
+
+    /// the accounting is stats only: the same games with it switched off play out the same
+    #[test]
+    fn the_loss_accounting_changes_no_play() {
+        let sim = sim();
+        let key = "scion";
+        let deck = sim.seat(key, &list_of(&sim, key).unwrap()).unwrap();
+        let seats = seats(&sim, &deck).unwrap();
+        let st = sim.settings(profile("loose").unwrap());
+        for seed in 500000..500008 {
+            let on = sim.play(seed, &seats, &st, true);
+            let mut g = sim_core::engine::turn::setup_game(
+                sim.engine.db.clone(),
+                sim.engine.registry.clone(),
+                std::sync::Arc::new(st.clone()),
+                seed,
+                &seats,
+                true,
+            );
+            assert!(g.audit.is_some());
+            g.audit = None;
+            sim_core::engine::turn::run_rounds(&mut g, ROUNDS);
+            let strip = |l: &Vec<String>| l.iter().filter(|x| !x.contains("[audit]")).cloned().collect::<Vec<_>>();
+            assert_eq!(strip(on.log.as_ref().unwrap()), strip(g.log.as_ref().unwrap()), "seed {seed}");
+        }
+    }
+
     #[test]
     fn the_deck_keys_are_yours_and_the_tier_6_pool() {
         let sim = sim();
@@ -459,6 +545,9 @@ mod tests {
             go: vec![],
             cmd_turn: None,
             extra: vec![],
+            own_turns: 0, // --- ai-audit
+            audit: None,
+            flow: vec![], // --- ai-flow
         };
         let gs = vec![mk(Some(2), true), mk(Some(3), false), mk(Some(3), true), mk(None, false)];
         let s = summarize(&gs);

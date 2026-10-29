@@ -1,0 +1,18 @@
+start check-base-t6 15:54:19 AI_FLOW_MUST=0 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done check-base-t6 rc=0 15:57:09
+start both-t6 15:57:09 AI_FLOW_MUST=0 AI_EVAL_OUTPUT=1 AI_EVAL_HOLD=1 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done both-t6 rc=0 15:59:57
+start output-t6 15:59:57 AI_FLOW_MUST=0 AI_EVAL_OUTPUT=1 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done output-t6 rc=0 16:03:03
+start hold-t6 16:03:03 AI_FLOW_MUST=0 AI_EVAL_HOLD=1 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done hold-t6 rc=0 16:05:49
+start all3-t6 16:08:14 AI_FLOW_MUST=0 AI_EVAL_OUTPUT=1 AI_EVAL_HOLD=1 AI_EVAL_MARGIN=1 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done all3-t6 rc=0 16:10:53
+start AB-t6 16:10:53 X=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done AB-t6 rc=0 16:13:30
+start all3-t3 16:13:30 AI_FLOW_MUST=0 AI_EVAL_OUTPUT=1 AI_EVAL_HOLD=1 AI_EVAL_MARGIN=1 AI_EVAL_DIAG=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done all3-t3 rc=0 16:14:59
+start noise-base-t6 16:16:58 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done noise-base-t6 rc=0 16:20:23
+start noise-all3-t6 16:20:23 AI_FLOW_MUST=0 AI_EVAL_OUTPUT=1 AI_EVAL_HOLD=1 AI_EVAL_MARGIN=1 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done noise-all3-t6 rc=0 16:23:24

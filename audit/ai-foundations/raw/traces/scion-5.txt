@@ -1,0 +1,200 @@
+Play-by-play of goldfish game 5 (seed 500005): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Brain Freeze, Mindbreak Trap, Noxious Revival, Mockingbird, Verdant Catacombs, Gamble, Ancient Tomb
+R1    Scion plays Verdant Catacombs
+R1      cracks Verdant Catacombs for Badlands
+R1        [Scion decides: Gamble 100%, stop 0% -> stop [search]]
+R1        [Scion decides: Gamble 100%, stop 0% -> stop [search]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 7 cards in hand, 1 lands
+R2      hand: Brain Freeze, Mindbreak Trap, Noxious Revival, Mockingbird, Gamble, Ancient Tomb, Force of Will
+R2    Scion plays Savannah
+R2        [Scion decides: Gamble 100%, stop 0% -> stop [search]]
+R2        [Scion decides: Gamble 100%, stop 0% -> stop [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 39, 7 cards in hand, 2 lands
+R3      hand: Brain Freeze, Mindbreak Trap, Noxious Revival, Mockingbird, Gamble, Ancient Tomb, Force of Will
+R3    Scion plays Ancient Tomb
+R3        [Scion decides: Gamble 100%, stop 0% -> Gamble [search]]
+R3    Scion casts Gamble
+R3      Scion tutors Thassa's Oracle
+R3      Gamble discards Brain Freeze
+R3        [Scion decides: Noxious Revival 100%, stop 0% -> Noxious Revival [search]]
+R3    Scion casts Noxious Revival
+R3      Scion puts Brain Freeze on top of its library (Noxious Revival)
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 39, 5 cards in hand, 3 lands
+R4      hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 39, 6 cards in hand, 3 lands
+R5      hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 39, 7 cards in hand, 3 lands
+R6      hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Ranger-Captain of Eos
+R6    Scion plays City of Brass
+R6        [Scion decides: Ranger-Captain of Eos 100%, stop 0% -> stop [search]]
+R6        [Scion decides: Ranger-Captain of Eos 100%, stop 0% -> Ranger-Captain of Eos [search]]
+R6    Scion casts Ranger-Captain of Eos
+R6      Scion searches for Ragavan, Nimble Pilferer
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 38, 7 cards in hand, 4 lands
+R7      hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Ragavan, Nimble Pilferer
+R7    Scion plays Arid Mesa
+R7      cracks Arid Mesa for Scrubland
+R7        [Scion decides: Ragavan, Nimble Pilferer 89%, dash Ragavan 11%, stop 0% -> stop [search]]
+R7        [Scion attack plan by search: filtered at Goldfish 2]
+R7    Scion attacks Goldfish 2 with 1 creature(s): 3 damage (life now 37)
+R7        [Scion decides: Ragavan, Nimble Pilferer 100%, stop 0% -> Ragavan, Nimble Pilferer [search]]
+R7    Scion casts Ragavan, Nimble Pilferer
+R7  --- Goldfish 2 turn 7: life 37, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 37, 6 cards in hand, 5 lands
+R8      hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze
+R8        [Scion attack plan by search: filtered at Goldfish 4]
+R8    Scion attacks Goldfish 4 with 2 creature(s): 5 damage (life now 35)
+R8        [Scion decides: Scion of the Ur-Dragon 91%, Prismari, the Inspiration 8%, stop (hold mana) 1% -> Scion of the Ur-Dragon [search]]
+R8    Scion casts Scion of the Ur-Dragon
+R8  --- Goldfish 2 turn 8: life 37, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 35, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 36, 7 cards in hand, 5 lands
+R9      hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Prismari, the Inspiration
+R9        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 84%, stop (hold mana) 16% -> stop (hold mana) [search]]
+R9        [Scion attack plan by search: filtered at Goldfish 3]
+R9    Scion attacks Goldfish 3 with 3 creature(s): 9 damage (life now 31)
+R9        [Scion decides: Prismari, the Inspiration 62%, stop (hold mana) 38% -> Prismari, the Inspiration [search]]
+R9    Scion casts Prismari, the Inspiration
+R9  --- Goldfish 2 turn 9: life 37, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 31, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 35, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 33, 7 cards in hand, 5 lands
+R10     hand: Mindbreak Trap, Mockingbird, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Flusterstorm
+R10       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 64%, Chrome Mox 24%, stop (hold mana) 13% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R10   Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R10     Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R10       [Scion decides: Chrome Mox 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 2]
+R10     Ancient Copper Dragon rolls 2: 2 Treasures
+R10   Scion attacks Goldfish 2 with 4 creature(s): 18 damage (life now 19)
+R10       [Scion decides: Mockingbird (X = 5, copy Ancient Copper Dragon) 76%, stop (hold mana) 13%, Chrome Mox 10% -> Mockingbird (X = 5, copy Ancient Copper Dragon) [search]]
+R10   Scion casts Mockingbird -> Ancient Copper Dragon (Scion)
+R10     Mockingbird enters as a copy of Ancient Copper Dragon
+R10       [Scion decides: Chrome Mox 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 19, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 31, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 35, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 30, 7 cards in hand, 5 lands
+R11     hand: Mindbreak Trap, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Flusterstorm, Chrome Mox
+R11       [Scion decides: stop (hold mana) 44%, Chrome Mox 34%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 13%, Arcane Signet 9% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: all at Goldfish 4]
+R11     Ancient Copper Dragon rolls 19: 19 Treasures
+R11   Scion attacks Goldfish 4 with 5 creature(s): 22 damage (life now 13)
+R11       [Scion decides: stop (hold mana) 50%, Chrome Mox 39%, Arcane Signet 11% -> stop (hold mana) [search]]
+R11     [audit] Scion discards Force of Will to hand size (8 cards in hand)
+R11 --- Goldfish 2 turn 11: life 19, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 31, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 13, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 30, 7 cards in hand, 5 lands
+R12     hand: Mindbreak Trap, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Flusterstorm, Chrome Mox, Arcane Signet
+R12       [Scion decides: stop (hold mana) 45%, Chrome Mox 35%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 13%, Arcane Signet 7% -> Scion of the Ur-Dragon: become Korvold, Fae-Cursed King [search]]
+R12   Scion activates Scion of the Ur-Dragon: search for Korvold, Fae-Cursed King
+R12     Scion of the Ur-Dragon becomes a copy of Korvold, Fae-Cursed King
+R12       [Scion decides: stop (hold mana) 52%, Chrome Mox 40%, Arcane Signet 8% -> Chrome Mox [search]]
+R12   Scion casts Chrome Mox
+R12     Chrome Mox imprints Sevinne's Reclamation
+R12       [Scion decides: stop (hold mana) 87%, Arcane Signet 13% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: filtered at Goldfish 3]
+R12   Scion attacks Goldfish 3 with 3 creature(s): 10 damage (life now 21)
+R12 *** Goldfish 4 is eliminated (life 0) by Scion
+R12     Ancient Copper Dragon rolls 13: 13 Treasures
+R12   Scion attacks Goldfish 4 with 2 creature(s): 13 damage (life now 0)
+R12       [Scion decides: stop (hold mana) 87%, Arcane Signet 13% -> stop (hold mana) [search]]
+R12 --- Goldfish 2 turn 12: life 19, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 21, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 30, 7 cards in hand, 5 lands
+R13     hand: Mindbreak Trap, Thassa's Oracle, Brain Freeze, Flusterstorm, Arcane Signet, Final Fortune, Pact of Negation
+R13       [Scion decides: stop (hold mana) 90%, Arcane Signet 10% -> Arcane Signet [search]]
+R13   Scion casts Arcane Signet
+R13       [Scion attack plan by search: filtered at Goldfish 2]
+R13 *** Goldfish 2 is eliminated (life -4) by Scion
+R13     Ancient Copper Dragon rolls 17: 17 Treasures
+R13   Scion attacks Goldfish 2 with 5 creature(s): 23 damage (life now -4)
+R13 --- Goldfish 3 turn 13: life 21, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 30, 7 cards in hand, 5 lands
+R14     hand: Mindbreak Trap, Thassa's Oracle, Brain Freeze, Flusterstorm, Final Fortune, Pact of Negation, Force of Negation
+R14       [Scion decides: Manamorphose 79%, stop (hold mana) 21% -> Manamorphose [search]]
+R14   Scion casts Manamorphose
+R14   Scion plays Command Tower
+R14       [Scion attack plan by search: filtered at Goldfish 3]
+R14 *** Goldfish 3 is eliminated (life -2) by Scion
+R14   Scion attacks Goldfish 3 with 5 creature(s): 23 damage (life now -2)
+Kill: own turn 14 (damage)
+Loss accounting [ai-audit], by own turn:
+  T1  passed_castable: Gamble [tutor] | held (payable, not offered): Noxious Revival
+  T2  passed_castable: Gamble [tutor] | held (payable, not offered): Noxious Revival
+  T3  progressed (tutor) | held (payable, not offered): Noxious Revival, Sevinne's Reclamation
+  T4  idle | held (payable, not offered): Sevinne's Reclamation
+  T5  idle | held (payable, not offered): Sevinne's Reclamation
+  T6  progressed (tutor) | held (payable, not offered): Mockingbird, Sevinne's Reclamation, Brain Freeze
+  T7  progressed (other) | held (payable, not offered): Mockingbird, Sevinne's Reclamation, Brain Freeze
+  T8  progressed (combo piece) | held (payable, not offered): Mockingbird, Sevinne's Reclamation, Brain Freeze, Mindbreak Trap, Force of Will, Thassa's Oracle
+  T9  progressed (combo piece) | held (payable, not offered): Mockingbird, Sevinne's Reclamation, Brain Freeze, Flusterstorm, Mindbreak Trap, Force of Will, Thassa's Oracle
+  T10 passed_castable: Chrome Mox [fast mana / rock] | held (payable, not offered): Mockingbird, Sevinne's Reclamation, Brain Freeze, Flusterstorm, Mindbreak Trap, Force of Will, Thassa's Oracle
+  T11 passed_castable: Chrome Mox [fast mana / rock], Arcane Signet [fast mana / rock] | held (payable, not offered): Mindbreak Trap, Force of Will, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Flusterstorm
+  T12 passed_castable: Arcane Signet [fast mana / rock] | held (payable, not offered): Mindbreak Trap, Sevinne's Reclamation, Thassa's Oracle, Brain Freeze, Flusterstorm, Final Fortune, Pact of Negation
+  T13 progressed (fast mana / rock) | held (payable, not offered): Mindbreak Trap, Thassa's Oracle, Brain Freeze, Flusterstorm, Final Fortune, Pact of Negation, Force of Negation
+  T14 won
+  cleanup discards: Force of Will [protection]
+  stops with another option offered: T1 main 1 look-ahead "stop" over Gamble (3.6); T1 main 2 look-ahead "stop" over Gamble (3.6); T2 main 1 look-ahead "stop" over Gamble (3.6); T2 main 2 look-ahead "stop" over Gamble (3.6); T6 main 1 look-ahead "stop" over Ranger-Captain of Eos (4.8); T7 main 1 look-ahead "stop" over Ragavan, Nimble Pilferer (4.6); T9 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T10 main 1 look-ahead "stop (hold mana)" over Chrome Mox (8.2); T10 main 2 look-ahead "stop (hold mana)" over Chrome Mox (8.2); T11 main 1 look-ahead "stop (hold mana)" over Chrome Mox (3.0); T11 main 2 look-ahead "stop (hold mana)" over Chrome Mox (3.0); T12 main 1 look-ahead "stop (hold mana)" over Arcane Signet (1.4); T12 main 2 look-ahead "stop (hold mana)" over Arcane Signet (1.4)
+  crude best case: none
+  crude best case with tutors: own turn 11 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
