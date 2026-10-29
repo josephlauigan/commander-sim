@@ -463,6 +463,8 @@ above takes their place, and per-deck traces are listed for JD.
    now go to each deck's hand-tuned heuristic. Options: (a) accept and recalibrate Tiers 0-5 later; (b) keep the
    margin for Tier 6 and JD's decks only (the old bare argmax elsewhere), which brings back most of the Tier 0-5
    calibration but breaks "every deck"; (c) revert to A+B. The conservative call taken here is (a), not retuned.
+   **JD (2026-10-29): (a). "We can wait recalibrate until the very end":** Tiers 0-5 are recalibrated once, after
+   the remaining AI-foundations work, not now.
 2. **The noise that's left is hidden information:** every playout re-deals the opponents' hands, and the margin still
    hands back about half of all main-phase decisions. The next lever is more rollouts only for the decisions the
    margin hands back (about 2-3 times the look-ahead's cost), or a playout that keeps the known cards. Worth testing?
