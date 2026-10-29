@@ -1,0 +1,59 @@
+Play-by-play of goldfish game 1 (seed 500001): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mox Diamond, Swan Song, Starting Town, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose
+R1    Scion plays Starting Town
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Mox Diamond, Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose, Noble Hierarch
+R2    Scion casts Noble Hierarch
+R2        [Scion decides: Noble Hierarch 100%, stop (hold mana) 0% -> Noble Hierarch [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 40, 7 cards in hand, 1 lands
+R3      hand: Mox Diamond, Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose, Chain of Vapor
+R3        [Scion keeps mana for Mystical Tutor [plan: Mystical Tutor for Demonic Consultation; at the end of the turn before ours]]
+R3        [Scion keeps mana for Mystical Tutor [plan: Mystical Tutor for Demonic Consultation; at the end of the turn before ours]]
+R3      [audit] Scion discards Mox Diamond to hand size (8 cards in hand)
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4        [Scion end of turn: Mystical Tutor for Demonic Consultation [plan: Mystical Tutor for Demonic Consultation; ready next turn]]
+R4    Scion casts Mystical Tutor
+R4      Scion puts Demonic Consultation on top of their library
+R4  --- Scion turn 4: life 40, 6 cards in hand, 1 lands
+R4      hand: Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Manamorphose, Chain of Vapor
+R4        [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R4      Scion casts Cabal Ritual for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R4    Scion casts Cabal Ritual
+R4    Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R4    Scion casts Thassa's Oracle
+R4    Scion casts Demonic Consultation
+R4      Scion exiles its library
+R4  *** Goldfish 2 is eliminated (life 40) by Scion
+R4  *** Goldfish 3 is eliminated (life 40) by Scion
+R4  *** Goldfish 4 is eliminated (life 40) by Scion
+R4  *** Scion wins by combo
+Kill: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (land only) | held (payable, not offered): Mox Diamond
+  T2  progressed (fast mana / rock) | held (payable, not offered): Mox Diamond, Swan Song, An Offer You Can't Refuse, Chain of Vapor
+  T3  idle | held (payable, not offered): Mox Diamond, Swan Song, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Chain of Vapor
+  T4  won
+  cleanup discards: Mox Diamond [fast mana / rock]
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: own turn 3 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

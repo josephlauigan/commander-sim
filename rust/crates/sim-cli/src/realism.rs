@@ -336,6 +336,16 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
             .map(|(k, w, d)| format!("{} {:.1}% of {d}", sim.name_of(k), 100.0 * *w as f64 / (*d).max(1) as f64))
             .collect();
         println!("Each deck's share of the decisive games it sat in: {}", per.join("; "));
+        // --- ai-flow: the card and mana flow of the Tier 6 decks (only Tier 6 players keep the counters)
+        let mut fl = crate::flow::FlowTally::default();
+        for g in &games {
+            for p in &g.players {
+                fl.add(p.key, p.stats.iter().map(|(k, v)| (*k, *v)));
+            }
+        }
+        if !fl.is_empty() {
+            print!("{}", fl.render(&|k| sim.name_of(k)));
+        }
         if !targets.is_empty() {
             println!("Target sources:");
             for st in &STATS {

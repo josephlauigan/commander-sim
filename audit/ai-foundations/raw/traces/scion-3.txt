@@ -1,0 +1,228 @@
+Play-by-play of goldfish game 3 (seed 500003): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Underground Sea, Mana Vault, Hexing Squelcher, Enlightened Tutor, Pact of Negation, Mox Diamond, Windswept Heath
+R1    Scion plays Windswept Heath
+R1      cracks Windswept Heath for Tropical Island
+R1    Scion casts Mana Vault
+R1        [Scion decides: Mana Vault 100%, stop (hold mana) 0% -> Mana Vault [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 5 cards in hand, 1 lands
+R2      hand: Underground Sea, Hexing Squelcher, Enlightened Tutor, Pact of Negation, Mox Diamond
+R2    Scion plays Misty Rainforest
+R2      cracks Misty Rainforest for Savannah
+R2    Scion casts Mox Diamond
+R2        [Scion decides: Enlightened Tutor 55%, Mox Diamond 45%, stop (hold mana) 0% -> Mox Diamond [must]]
+R2        [Scion decides: Enlightened Tutor 93%, Hexing Squelcher 7%, stop (hold mana) 0% -> Enlightened Tutor [search]]
+R2    Scion casts Enlightened Tutor
+R2      Scion searches for Esper Sentinel
+R2        [Scion decides: Hexing Squelcher 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R2        [Scion decides: Hexing Squelcher 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 38, 2 cards in hand, 2 lands
+R3      hand: Hexing Squelcher, Pact of Negation
+R3        [Scion decides: Hexing Squelcher 52%, Esper Sentinel 42%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R3        [Scion decides: Hexing Squelcher 52%, Esper Sentinel 42%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 38, 3 cards in hand, 2 lands
+R4      hand: Hexing Squelcher, Pact of Negation, Esper Sentinel
+R4        [Scion decides: Intuition 87%, Hexing Squelcher 6%, Esper Sentinel 5%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4        [Scion decides: Intuition 87%, Hexing Squelcher 6%, Esper Sentinel 5%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5    Scion casts Intuition
+R5      Scion gets Noble Hierarch; Goldfish 2 bins Sol Ring, Ignoble Hierarch
+R5        [Scion end of turn: Intuition 100%, pass 0% -> Intuition]
+R5  --- Scion turn 5: life 38, 4 cards in hand, 2 lands
+R5      hand: Hexing Squelcher, Pact of Negation, Esper Sentinel, Noble Hierarch
+R5        [Scion decides: Noble Hierarch 99%, Ranger-Captain of Eos 1%, Hexing Squelcher 0%, Esper Sentinel 0% -> stop (hold mana) [search]]
+R5        [Scion decides: Noble Hierarch 99%, Ranger-Captain of Eos 1%, Hexing Squelcher 0%, Esper Sentinel 0% -> Esper Sentinel [search]]
+R5    Scion casts Esper Sentinel
+R5        [Scion decides: Noble Hierarch 100%, Hexing Squelcher 0%, stop (hold mana) 0% -> Noble Hierarch [search]]
+R5    Scion casts Noble Hierarch
+R5        [Scion decides: Hexing Squelcher 90%, stop (hold mana) 10% -> Hexing Squelcher [search]]
+R5    Scion casts Hexing Squelcher
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 38, 2 cards in hand, 2 lands
+R6      hand: Pact of Negation, Ranger-Captain of Eos
+R6    Scion plays Scalding Tarn
+R6      cracks Scalding Tarn for Badlands
+R6        [Scion decides: Scion of the Ur-Dragon 97%, Ranger-Captain of Eos 2%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Scion attack plan by search: filtered at Goldfish 2]
+R6    Scion attacks Goldfish 2 with 2 creature(s): 3 damage (life now 37)
+R6        [Scion decides: Scion of the Ur-Dragon 97%, Ranger-Captain of Eos 2%, stop (hold mana) 0% -> Scion of the Ur-Dragon [search]]
+R6    Scion casts Scion of the Ur-Dragon
+R6  --- Goldfish 2 turn 6: life 37, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 36, 2 cards in hand, 3 lands
+R7      hand: Pact of Negation, Ranger-Captain of Eos
+R7        [Scion decides: Ranger-Captain of Eos 60%, Scion of the Ur-Dragon: become Ancient Copper Dragon 27%, stop (hold mana) 13% -> stop (hold mana) [search]]
+R7        [Scion attack plan by search: filtered at Goldfish 3]
+R7    Scion attacks Goldfish 3 with 3 creature(s): 7 damage (life now 33)
+R7        [Scion decides: Ranger-Captain of Eos 82%, stop (hold mana) 18% -> Ranger-Captain of Eos [search]]
+R7    Scion casts Ranger-Captain of Eos
+R7      Scion searches for Ragavan, Nimble Pilferer
+R7        [Scion decides: Ragavan, Nimble Pilferer 90%, stop (hold mana) 10% -> Ragavan, Nimble Pilferer [search]]
+R7    Scion casts Ragavan, Nimble Pilferer
+R7  --- Goldfish 2 turn 7: life 37, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 33, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 35, 2 cards in hand, 3 lands
+R8      hand: Pact of Negation, Force of Negation
+R8        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 2]
+R8    Scion attacks Goldfish 2 with 5 creature(s): 12 damage (life now 25)
+R8  --- Goldfish 2 turn 8: life 25, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 33, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 34, 3 cards in hand, 3 lands
+R9      hand: Pact of Negation, Force of Negation, Misdirection
+R9        [Scion decides: Borne Upon a Wind 55%, Scion of the Ur-Dragon: become Ancient Copper Dragon 30%, stop (hold mana) 14% -> Borne Upon a Wind [search]]
+R9    Scion casts Borne Upon a Wind
+R9        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> stop (hold mana) [search]]
+R9        [Scion attack plan by search: filtered at Goldfish 2]
+R9    Scion attacks Goldfish 2 with 5 creature(s): 12 damage (life now 13)
+R9  --- Goldfish 2 turn 9: life 13, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 33, 4 cards in hand, 3 lands
+R10     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+R10       [Scion decides: Smothering Tithe 80%, Scion of the Ur-Dragon: become Ancient Copper Dragon 13%, stop (hold mana) 6% -> Smothering Tithe [search]]
+R10   Scion casts Smothering Tithe
+R10       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 2]
+R10   Scion attacks Goldfish 2 with 5 creature(s): 12 damage (life now 1)
+R10 --- Goldfish 2 turn 10: life 1, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 32, 4 cards in hand, 3 lands
+R11     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+R11   Scion plays City of Brass
+R11       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: filtered at Goldfish 4]
+R11   Scion attacks Goldfish 4 with 4 creature(s): 8 damage (life now 32)
+R11 *** Goldfish 2 is eliminated (life -3) by Scion
+R11   Scion attacks Goldfish 2 with 1 creature(s): 4 damage (life now -3)
+R11 --- Goldfish 3 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 32, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 31, 4 cards in hand, 4 lands
+R12     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+R12       [Scion decides: Beseech the Mirror 65%, Scion of the Ur-Dragon: become Ancient Copper Dragon 24%, stop (hold mana) 11% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: filtered at Goldfish 4]
+R12   Scion attacks Goldfish 4 with 5 creature(s): 12 damage (life now 20)
+R12       [Scion decides: Beseech the Mirror 85%, stop (hold mana) 15% -> stop (hold mana) [search]]
+R12 --- Goldfish 3 turn 12: life 33, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 20, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 30, 5 cards in hand, 4 lands
+R13     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame, Beseech the Mirror
+R13   Scion plays Boseiju, Who Endures
+R13       [Scion decides: Beseech the Mirror 65%, Scion of the Ur-Dragon: become Ancient Copper Dragon 24%, stop (hold mana) 11% -> stop (hold mana) [search]]
+R13       [Scion attack plan by search: filtered at Goldfish 4]
+R13   Scion attacks Goldfish 4 with 5 creature(s): 12 damage (life now 8)
+R13       [Scion decides: Beseech the Mirror 85%, stop (hold mana) 15% -> stop (hold mana) [search]]
+R13 --- Goldfish 3 turn 13: life 33, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 8, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 29, 5 cards in hand, 5 lands
+R14     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame, Beseech the Mirror
+R14       [Scion decides: Beseech the Mirror 64%, Scion of the Ur-Dragon: become Ancient Copper Dragon 24%, stop (hold mana) 11%, Arcane Signet 1% -> Beseech the Mirror [search]]
+R14   Scion casts Beseech the Mirror
+R14     Scion tutors Thassa's Oracle
+R14       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 66%, stop (hold mana) 31%, Arcane Signet 2% -> Arcane Signet [search]]
+R14   Scion casts Arcane Signet
+R14       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> stop (hold mana) [search]]
+R14       [Scion attack plan by search: filtered at Goldfish 3]
+R14   Scion attacks Goldfish 3 with 2 creature(s): 3 damage (life now 30)
+R14 *** Goldfish 4 is eliminated (life -1) by Scion
+R14   Scion attacks Goldfish 4 with 3 creature(s): 9 damage (life now -1)
+R14 --- Goldfish 3 turn 14: life 30, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 27, 5 cards in hand, 5 lands
+R15     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame, Thassa's Oracle
+R15       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 68%, stop (hold mana) 32% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R15   Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R15     Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R15       [Scion attack plan by search: filtered at Goldfish 3]
+R15     Ancient Copper Dragon rolls 3: 3 Treasures
+R15   Scion attacks Goldfish 3 with 5 creature(s): 14 damage (life now 16)
+R15 --- Goldfish 3 turn 15: life 16, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16   Scion casts Vampiric Tutor
+R16     Scion puts Demonic Consultation on top of their library
+R16       [Scion end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R16 --- Scion turn 16: life 24, 5 cards in hand, 5 lands
+R16     hand: Pact of Negation, Force of Negation, Misdirection, Rite of Flame, Thassa's Oracle
+R16       [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 100%, stop (hold mana) 0%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 0% -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [search]]
+R16   Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R16   Scion casts Thassa's Oracle
+R16   Scion casts Demonic Consultation
+R16     Scion exiles its library
+R16 *** Goldfish 3 is eliminated (life 16) by Scion
+R16 *** Scion wins by combo
+Kill: own turn 16 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Pact of Negation, Mox Diamond
+  T2  passed_castable: Hexing Squelcher [other] | held (payable, not offered): Pact of Negation
+  T3  passed_castable: Hexing Squelcher [other], Esper Sentinel [draw] | held (payable, not offered): Pact of Negation
+  T4  passed_castable: Hexing Squelcher [other], Esper Sentinel [draw] | held (payable, not offered): Pact of Negation
+  T5  passed_castable: Ranger-Captain of Eos [tutor] | held (payable, not offered): Pact of Negation
+  T6  passed_castable: Ranger-Captain of Eos [tutor] | held (payable, not offered): Pact of Negation
+  T7  progressed (tutor) | held (payable, not offered): Pact of Negation, Force of Negation
+  T8  mana_short | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection
+  T9  progressed (draw) | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+  T10 progressed (other) | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+  T11 progressed (land only) | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+  T12 passed_castable: Beseech the Mirror [tutor] | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+  T13 passed_castable: Beseech the Mirror [tutor] | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame
+  T14 progressed (tutor) | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame, Thassa's Oracle
+  T15 progressed (abilities only) | held (payable, not offered): Pact of Negation, Force of Negation, Misdirection, Rite of Flame, Thassa's Oracle, Vampiric Tutor
+  T16 won
+  cleanup discards: none
+  stops with another option offered: T2 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T2 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T3 main 1 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T3 main 2 look-ahead "stop (hold mana)" over Hexing Squelcher (4.6); T4 main 1 look-ahead "stop (hold mana)" over Intuition (7.2); T4 main 2 look-ahead "stop (hold mana)" over Intuition (7.2); T5 main 1 look-ahead "stop (hold mana)" over Noble Hierarch (10.0); T6 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon (8.5); T7 main 1 look-ahead "stop (hold mana)" over Ranger-Captain of Eos (4.8); T8 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T9 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T10 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T11 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T12 main 1 look-ahead "stop (hold mana)" over Beseech the Mirror (5.0); T12 main 2 look-ahead "stop (hold mana)" over Beseech the Mirror (5.0); T13 main 1 look-ahead "stop (hold mana)" over Beseech the Mirror (5.0); T13 main 2 look-ahead "stop (hold mana)" over Beseech the Mirror (5.0); T14 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0)
+  crude best case: none
+  crude best case with tutors: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

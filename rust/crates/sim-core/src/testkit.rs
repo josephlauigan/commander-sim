@@ -28,9 +28,9 @@ pub fn db() -> Arc<CardDb> {
     DB.get_or_init(|| Arc::new(CardDb::load(&data_dir().join("cards.json")).unwrap())).clone()
 }
 
-/// Decks that used to be registered (thrasios, garland, omnath, godo, retired pool decks) and now exist only for
-/// tests of their engine and card code: the real commanders and colour identity, a library of basic lands (omnath
-/// and godo: their real lists). The deck AI keys on the seat key alone, so these seats still run the key-gated code.
+/// Decks that used to be registered (thrasios, garland, omnath, godo, sephfs, retired pool decks) and now exist only for
+/// tests of their engine and card code: the real commanders and colour identity, a library of basic lands (omnath,
+/// godo and sephfs: their real lists). The deck AI keys on the seat key alone, so these seats still run the key-gated code.
 fn retired_decks() -> Vec<RawDeck> {
     let lib = |cmds: &[&str], basics: &[&str]| -> Vec<String> {
         cmds.iter()
@@ -85,6 +85,15 @@ fn retired_decks() -> Vec<RawDeck> {
             "Godo, Bandit Warlord",
             "R",
             include_str!("../../../../decklists/pool/retired/godo-cedh-equipment.md"),
+        ),
+        // retired 2026-10-27 (its cards went to Seph/Atraxa and Sheoldred): its card tests still seat it with its real
+        // list, and the deck AI still keys on "sephfs"
+        listed(
+            "sephfs",
+            "Sephiroth FS",
+            "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+            "B",
+            include_str!("../../../../decklists/pool/retired/sephiroth-fs-wipe-steal.md"),
         ),
     ]
 }

@@ -1,0 +1,99 @@
+Play-by-play of goldfish game 0 (seed 500000): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Otawara, Soaring City, Flooded Strand, Swan Song, City of Brass, Teferi, Who Slows the Sunset, Pact of Negation, Volcanic Island
+R1    Sisay plays City of Brass
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Otawara, Soaring City, Flooded Strand, Swan Song, Teferi, Who Slows the Sunset, Pact of Negation, Volcanic Island, Scrubland
+R2    Sisay plays Volcanic Island
+R2        [Sisay decides: Orcish Bowmasters 95%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R2        [Sisay decides: Orcish Bowmasters 95%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3    Sisay casts Orcish Bowmasters
+R3        [Sisay end of turn: Orcish Bowmasters 100%, pass 0% -> Orcish Bowmasters]
+R3  --- Sisay turn 3: life 39, 6 cards in hand, 2 lands
+R3      hand: Otawara, Soaring City, Flooded Strand, Swan Song, Teferi, Who Slows the Sunset, Pact of Negation, Scrubland
+R3    Sisay plays Mount Doom
+R3    Sisay casts Sisay, Weatherlight Captain
+R3        [Sisay decides: Sisay, Weatherlight Captain 100%, stop (hold mana) 0% -> Sisay, Weatherlight Captain [must]]
+R3        [Sisay attack plan by search: filtered at Goldfish 4]
+R3    Sisay attacks Goldfish 4 with 2 creature(s): 2 damage (life now 38)
+R3  --- Goldfish 2 turn 3: life 39, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 37, 6 cards in hand, 3 lands
+R4      hand: Otawara, Soaring City, Flooded Strand, Swan Song, Teferi, Who Slows the Sunset, Pact of Negation, Scrubland
+R4    Sisay plays Scrubland
+R4        [Sisay decides: Teferi, Who Slows the Sunset 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R4        [Sisay attack plan by search: filtered at Goldfish 3]
+R4    Sisay attacks Goldfish 3 with 3 creature(s): 4 damage (life now 36)
+R4        [Sisay decides: Teferi, Who Slows the Sunset 82%, stop (hold mana) 18% -> Teferi, Who Slows the Sunset [search]]
+R4    Sisay casts Teferi, Who Slows the Sunset
+R4        [Sisay decides: Teferi, Who Slows the Sunset +1 89%, stop (hold mana) 8%, Teferi, Who Slows the Sunset -2 3% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 39, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 35, 5 cards in hand, 4 lands
+R5      hand: Otawara, Soaring City, Flooded Strand, Swan Song, Pact of Negation, Bayou
+R5    Sisay plays Otawara, Soaring City
+R5    Sisay activates Sisay: Selvala, Heart of the Wilds
+R5        [Sisay decides: Sisay: Selvala, Heart of the Wilds 100%, Derevi, Empyrial Tactician 0%, stop (hold mana) 0%, Teferi, Who Slows the Sunset -2 0% -> Sisay: Selvala, Heart of the Wilds [must]]
+R5        [Sisay decides: stop (hold mana) 51%, Teferi, Who Slows the Sunset +1 28%, Teferi, Who Slows the Sunset -2 22% -> Teferi, Who Slows the Sunset -2 [search]]
+R5    Sisay uses Teferi, Who Slows the Sunset (-2): look at three, take one
+R5        [Sisay decides: Lotus Petal 100%, stop (hold mana) 0% -> Lotus Petal [search]]
+R5    Sisay casts Lotus Petal
+R5        [Sisay attack plan by search: filtered at Goldfish 2]
+R5    Sisay attacks Goldfish 2 with 3 creature(s): 7 damage (life now 32)
+R5  --- Goldfish 2 turn 5: life 32, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 33, 5 cards in hand, 5 lands
+R6      hand: Flooded Strand, Swan Song, Pact of Negation, Bayou, Derevi, Empyrial Tactician
+R6    Sisay plays Bayou
+R6    Sisay activates Sisay: Emiel the Blessed
+R6        [Sisay decides: Sisay: Emiel the Blessed 99%, Derevi, Empyrial Tactician 0%, Lavinia, Azorius Renegade 0%, stop (hold mana) 0% -> Sisay: Emiel the Blessed [must]]
+R6    Sisay activates Sisay: Gaea's Cradle
+R6        [Sisay decides: Sisay: Gaea's Cradle 99%, Derevi, Empyrial Tactician 0%, Lavinia, Azorius Renegade 0%, stop (hold mana) 0% -> Sisay: Gaea's Cradle [must]]
+R6        [Sisay decides: stop (hold mana) 69%, Teferi, Who Slows the Sunset +1 30%, Emiel the Blessed ability 1% -> Teferi, Who Slows the Sunset +1 [search]]
+R6    Sisay uses Teferi, Who Slows the Sunset (+1): untap / tap an artifact, creature and land; gain 2
+R6    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R6    Sisay casts Derevi, Empyrial Tactician
+R6      Emiel puts 1 +1/+1 counter(s) on Derevi, Empyrial Tactician
+R6      Derevi untaps a land
+R6  *** Goldfish 2 is eliminated (life 32) by Sisay
+R6  *** Goldfish 3 is eliminated (life 36) by Sisay
+R6  *** Goldfish 4 is eliminated (life 38) by Sisay
+R6  *** Sisay wins by combo
+R6        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 95%, Sisay: Marvin, Murderous Mimic 5%, Derevi, Empyrial Tactician 0%, Lavinia, Azorius Renegade 0% -> combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [must]]
+Kill: own turn 6 (Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short | held (payable, not offered): Swan Song, Pact of Negation
+  T2  progressed (land only) | held (payable, not offered): Swan Song, Pact of Negation
+  T3  progressed (combo piece) | held (payable, not offered): Swan Song, Pact of Negation
+  T4  progressed (other) | held (payable, not offered): Swan Song, Pact of Negation
+  T5  progressed (fast mana / rock) | held (payable, not offered): Swan Song, Pact of Negation
+  T6  won
+  cleanup discards: none
+  stops with another option offered: T2 main 1 look-ahead "stop (hold mana)" over Orcish Bowmasters (2.9); T2 main 2 look-ahead "stop (hold mana)" over Orcish Bowmasters (2.9); T4 main 1 look-ahead "stop (hold mana)" over Teferi, Who Slows the Sunset (5.5); T4 main 2 look-ahead "stop (hold mana)" over Teferi, Who Slows the Sunset +1 (5.2)
+  crude best case: none
+  crude best case with tutors: none

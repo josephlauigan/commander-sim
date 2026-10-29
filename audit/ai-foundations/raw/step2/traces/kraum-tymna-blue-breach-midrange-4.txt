@@ -1,0 +1,100 @@
+Play-by-play of goldfish game 4 (seed 500004): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 5 cards in hand, 0 lands
+R1      hand: Command Tower, Silence, Ragavan, Nimble Pilferer, Fierce Guardianship, Volcanic Island
+R1    Kraum/Tymna plays Command Tower
+R1        [Kraum/Tymna decides: Ragavan, Nimble Pilferer 100%, stop 0% -> Ragavan, Nimble Pilferer [search]]
+R1    Kraum/Tymna casts Ragavan, Nimble Pilferer
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 40, 4 cards in hand, 1 lands
+R2      hand: Silence, Fierce Guardianship, Volcanic Island, Mockingbird
+R2    Kraum/Tymna plays Volcanic Island
+R2    Kraum/Tymna casts Mana Vault
+R2        [Kraum/Tymna decides: Mana Vault 100%, stop 0% -> Mana Vault [must]]
+R2        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R2    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R2        [Kraum/Tymna decides: Tymna the Weaver 80%, Kraum, Ludevic's Opus 20%, stop (hold mana) 0% -> Kraum, Ludevic's Opus [search]]
+R2    Kraum/Tymna casts Kraum, Ludevic's Opus
+R2  --- Goldfish 2 turn 2: life 38, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 40, 3 cards in hand, 2 lands
+R3      hand: Silence, Fierce Guardianship, Mockingbird
+R3        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R3    Kraum/Tymna attacks Goldfish 3 with 2 creature(s): 6 damage (life now 34)
+R3        [Kraum/Tymna decides: Tymna the Weaver 100%, stop 0% -> Tymna the Weaver [search]]
+R3    Kraum/Tymna casts Tymna the Weaver
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 34, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 39, 4 cards in hand, 2 lands
+R4      hand: Silence, Fierce Guardianship, Mockingbird, Vampiric Tutor
+R4        [Kraum/Tymna decides: Demonic Tutor 100%, stop 0% -> stop [search]]
+R4        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R4    Kraum/Tymna attacks Goldfish 4 with 3 creature(s): 8 damage (life now 32)
+R4      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R4        [Kraum/Tymna decides: Demonic Tutor 50%, Imperial Seal 50%, stop 0% -> Demonic Tutor [search]]
+R4    Kraum/Tymna casts Demonic Tutor
+R4      Kraum/Tymna tutors Thassa's Oracle
+R4        [Kraum/Tymna decides: Imperial Seal 100%, stop 0% -> Imperial Seal [search]]
+R4    Kraum/Tymna casts Imperial Seal
+R4      Kraum/Tymna puts Tainted Pact on top of their library
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 34, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 32, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 37, 5 cards in hand, 2 lands
+R5      hand: Silence, Fierce Guardianship, Mockingbird, Vampiric Tutor, Thassa's Oracle
+R5        [Kraum/Tymna keeps mana for Vampiric Tutor [plan: Vampiric Tutor for Dark Ritual; at the end of the turn before ours]]
+R5        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R5    Kraum/Tymna attacks Goldfish 2 with 3 creature(s): 8 damage (life now 30)
+R5      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R5        [Kraum/Tymna keeps mana for Vampiric Tutor [plan: Vampiric Tutor for Scrubland; at the end of the turn before ours]]
+R5  --- Goldfish 2 turn 5: life 30, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 34, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 32, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6        [Kraum/Tymna end of turn: Vampiric Tutor for Cabal Ritual [plan: Vampiric Tutor for Cabal Ritual; ready next turn]]
+R6    Kraum/Tymna casts Vampiric Tutor
+R6      Kraum/Tymna puts Cabal Ritual on top of their library
+R6  --- Kraum/Tymna turn 6: life 35, 6 cards in hand, 2 lands
+R6      hand: Silence, Fierce Guardianship, Mockingbird, Thassa's Oracle, Tainted Pact, Sevinne's Reclamation
+R6        [Kraum/Tymna decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R6      Kraum/Tymna casts Cabal Ritual for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R6    Kraum/Tymna casts Cabal Ritual
+R6    Kraum/Tymna goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R6    Kraum/Tymna casts Thassa's Oracle
+R6    Kraum/Tymna casts Tainted Pact
+R6      Kraum/Tymna exiles its library
+R6  *** Goldfish 2 is eliminated (life 30) by Kraum/Tymna
+R6  *** Goldfish 3 is eliminated (life 34) by Kraum/Tymna
+R6  *** Goldfish 4 is eliminated (life 32) by Kraum/Tymna
+R6  *** Kraum/Tymna wins by combo
+Kill: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (other) | held (payable, not offered): Silence, Mockingbird
+  T2  progressed (fast mana / rock) | held (payable, not offered): Silence, Mockingbird, Fierce Guardianship
+  T3  progressed (other) | held (payable, not offered): Silence, Mockingbird, Vampiric Tutor, Fierce Guardianship
+  T4  progressed (tutor) | held (payable, not offered): Silence, Mockingbird, Vampiric Tutor, Fierce Guardianship
+  T5  idle | held (payable, not offered): Silence, Mockingbird, Vampiric Tutor, Thassa's Oracle, Tainted Pact, Fierce Guardianship, Sevinne's Reclamation
+  T6  won
+  cleanup discards: none
+  stops with another option offered: T4 main 1 look-ahead "stop" over Demonic Tutor (7.2)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

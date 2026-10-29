@@ -83,6 +83,9 @@ pub mod t6_plan_kraum;
 pub mod t6_plan_rograkh_silas;
 pub mod t6_plan_rograkh_thrasios;
 pub mod t6_plan_sisay;
+pub mod t6_plan_scion; // --- scion
+pub mod t6_scion; // --- scion
+pub mod t6_combos_scion; // --- scion
 pub mod smaug;
 pub mod karn;
 pub mod t3_aurelia;
@@ -192,6 +195,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t45_urza_yawgmoth::register(&mut r, db)?; // --- Tiers 4/5 (urza-yawgmoth)
     t45_edgar::register(&mut r, db)?; // --- Tiers 4/5 (edgar)
     t45_urdragon::register(&mut r, db)?; // --- Tiers 4/5 (urdragon)
+    t6_scion::register(&mut r, db)?; // --- scion: Prismari's storm
     t12_isshin::register(&mut r, db)?; // --- Tiers 1/2 (isshin)
     t12_lathril::register(&mut r, db)?; // --- Tiers 1/2 (lathril)
     t12_lightpaws::register(&mut r, db)?; // --- Tiers 1/2 (lightpaws)

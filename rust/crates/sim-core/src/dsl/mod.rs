@@ -1261,7 +1261,7 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
             "graveyard" => g.player_mut(p).gy.push(c),
             "top" => {
                 crate::engine::tutors::shuffle_library(g, p);
-                g.player_mut(p).library.push(c);
+                crate::engine::tutors::put_known_top(g, p, c); // --- ai-fix: B: p knows the card it put there
             }
             _ => {
                 g.player_mut(p).hand.push(c);

@@ -1,0 +1,19 @@
+start goldfish 19:13:43 X=1 --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done goldfish rc=0 19:16:27
+start realism-t6 19:16:27 X=1 --realism --pool t6 --games 4000 --jobs 16 --quiet
+done realism-t6 rc=0 19:26:39
+start all-decks 19:26:39 X=1 --all-decks --pool all --games 1000 --jobs 16 --quiet
+done all-decks rc=0 20:17:33
+start realism-t0 21:18:38 X=1 --realism --pool t0 --games 4000 --jobs 16 --quiet
+done realism-t0 rc=0 21:31:46
+start realism-t1 21:31:46 X=1 --realism --pool t1 --games 4000 --jobs 16 --quiet
+done realism-t1 rc=0 21:43:07
+start realism-t2 21:43:07 X=1 --realism --pool t2 --games 4000 --jobs 16 --quiet
+done realism-t2 rc=0 21:59:27
+start realism-t3 21:59:27 X=1 --realism --pool t3 --games 4000 --jobs 16 --quiet
+done realism-t3 rc=0 22:05:03
+start realism-t4 22:05:03 X=1 --realism --pool t4 --games 4000 --jobs 16 --quiet
+done realism-t4 rc=0 22:14:09
+start realism-t5 22:14:09 X=1 --realism --pool t5 --games 4000 --jobs 16 --quiet
+done realism-t5 rc=0 22:20:57
+ALLDONE

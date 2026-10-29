@@ -310,6 +310,11 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if base <= 0.0 && crate::impls::t6_plans::prio(g, p, c).is_some() {
         return None; // a Tier 6 deck plan set this card to 0: it waits (no DSL-value fallback)
     }
+    // --- ai-fix: C: a ritual the deck has no priority for is worth the play its mana makes possible this turn. Not on
+    // a Yawgmoth's Will turn: every spell is storm for the line then, and the old value stands
+    if base <= 0.0 && !pl.yawg && crate::engine::mana::ritual_out(g, p, c).is_some() {
+        return ritual_utility(g, p, s, c);
+    }
     // its own priority said no (or it's kept for responses): keep it
     let hand_written = g.registry.get(c).is_some_and(|i| i.prio.is_some());
     // JD's decks: a 0 from the deck's own priority is deliberate for an instant (held for responses) and for removal,
@@ -366,6 +371,47 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
         u += veyran_sequence(g, p, c);
     }
     Some(u)
+}
+
+// --- ai-fix: C
+/// a spell a ritual makes castable is worth casting the ritual for when it has at least this utility (tutors, the
+/// commander and a line count whatever their utility)
+pub const RITUAL_GOOD_SPELL: f64 = 5.0;
+/// how much less a ritual is worth than the play it makes possible
+pub const RITUAL_DISCOUNT: f64 = 0.25;
+
+// --- ai-fix: C
+/// A ritual's utility: worth casting when the mana it nets lets p cast something this turn that it can't pay for now:
+/// a catalogued line (`combos::line_enabled_by`), a tutor, its commander, or a good spell (`RITUAL_GOOD_SPELL`). It is
+/// worth that play's utility less `RITUAL_DISCOUNT`, and nothing (None) otherwise: mana with nothing to spend it on is
+/// lost at the end of the step, the reason Cabal Ritual, Rite of Flame and Desperate Ritual had priority 0.
+pub fn ritual_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f64> {
+    use crate::engine::mana::{mana_units, plan_pay, ritual_net, units_after_ritual};
+    let u = mana_units(g, p, false);
+    let after = units_after_ritual(g, p, c, &u)?;
+    let mut best = crate::impls::combos::line_enabled_by(g, p, c, &after);
+    let pl = g.player(p);
+    let mut cands: Vec<(CardId, &str)> = pl
+        .hand
+        .iter()
+        .copied()
+        .filter(|&x| x != c && !g.db.get(x).land && ritual_net(g, p, x) <= 0)
+        .map(|x| (x, "hand"))
+        .collect();
+    cands.extend(pl.cmds_in_zone().map(|x| (x, "cmd")));
+    for (x, zone) in cands {
+        let (xg, xp) = cost_of(g, p, x);
+        if plan_pay(g, &u, xg, &xp).is_some() || plan_pay(g, &after, xg, &xp).is_none() || !castable(g, p, x, zone) {
+            continue; // payable without the ritual, or not even with it
+        }
+        let d = g.db.get(x);
+        let tutor = [Tag::Tut, Tag::Xtutor, Tag::Seal, Tag::Top].iter().any(|&t| d.tag(t));
+        let Some(v) = card_utility(g, p, s, x) else { continue };
+        if tutor || pl.is_commander(x) || v >= RITUAL_GOOD_SPELL {
+            best = Some(best.map_or(v, |b: f64| b.max(v)));
+        }
+    }
+    best.map(|v| v - RITUAL_DISCOUNT)
 }
 
 /// brain.veyran_sequence: Veyran doubles every cast trigger, so a spell cast while Veyran waits in the command zone
@@ -1164,7 +1210,9 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         }
         // Tier 6 near a win, or an opposing commander one card from its combo: the answer stays up
         let near = (s.combo_near && crate::impls::t6_plans::is_t6(g, p)) || s.cmdr_combo;
-        u -= reserve_penalty(g, p, c, hold_card, hold_v, near);
+        if crate::engine::mana::ritual_net(g, p, c) <= 0 {
+            u -= reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
+        }
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
         {
@@ -1232,7 +1280,41 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             return Ok(());
         }
         g.tick()?;
-        let opts = main_options(g, p, post)?;
+        let mut opts = main_options(g, p, post)?;
+        crate::gf_audit::decision(g, p, &opts); // --- ai-audit
+        // --- ai-planner: the line planner comes first for a Tier 6 deck: the first play of a plan that wins this turn,
+        // else of one that leaves a line ready next turn, is made now, and the plan is made again at the next decision.
+        // A next-turn plan that starts with an instant tutor keeps the tutor's mana up for the end-of-turn window.
+        if super::planner::applies(g, p) {
+            use super::planner::{Decision, describe, label};
+            match super::planner::decide(g, p)? {
+                Decision::Play { step, plan, why: when } => {
+                    let lbl = label(g, step);
+                    let (n, seq) = (g.player(p).name, describe(g, &plan));
+                    crate::glog!(g, "      [{n} decides: {lbl} [plan: {seq}; {when}]]");
+                    let done = super::planner::perform(g, p, step)?;
+                    let k = match (when == super::planner::WINS, done) {
+                        (true, true) => "plan|this_turn_played",
+                        (true, false) => "plan|this_turn_play_failed",
+                        (false, true) => "plan|next_turn_played",
+                        (false, false) => "plan|next_turn_play_failed",
+                    };
+                    super::planner::bump(g, p, k);
+                    if done {
+                        crate::t6stats::speed_decided(g, p, &lbl);
+                        crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
+                        continue;
+                    }
+                }
+                Decision::Reserve { tutor, plan } => {
+                    let (n, t, seq) = (g.player(p).name, g.db.get(tutor).name.to_string(), describe(g, &plan));
+                    crate::glog!(g, "      [{n} keeps mana for {t} [plan: {seq}; at the end of the turn before ours]]");
+                    opts = super::planner::reserve(g, p, tutor, opts);
+                    super::planner::bump(g, p, "plan|reserve");
+                }
+                Decision::None => {}
+            }
+        }
         if crate::impls::t6_plans::is_t6(g, p)
             && let Some(i) = super::t6_table::must_option(g, p, &opts)
             && let Some(a) = &opts[i].act
@@ -1241,6 +1323,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let lbl = format!("{} [must]", opts[i].label);
             if act::perform(g, p, a)? {
                 explain(g, p, &labels(&opts), &lbl, "decides");
+                crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
                 continue;
             }
         }
@@ -1251,8 +1334,12 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let o = &opts[i];
             let lbl = format!("{} [search]", o.label);
             explain(g, p, &labels(&opts), &lbl, "decides");
-            let Some(a) = &o.act else { return Ok(()) };
+            let Some(a) = &o.act else {
+                crate::gf_audit::stop(g, p, &opts, i, true); // --- ai-audit
+                return Ok(());
+            };
             if act::perform(g, p, a)? {
+                crate::gf_audit::acted(g, p, &lbl); // --- ai-audit
                 continue;
             }
         }
@@ -1264,10 +1351,12 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let o = &opts[i];
             let Some(a) = &o.act else {
                 explain(g, p, &labels(&opts), &o.label, "decides");
+                crate::gf_audit::stop(g, p, &opts, i, false); // --- ai-audit
                 return Ok(());
             };
             if act::perform(g, p, a)? {
                 explain(g, p, &labels(&opts), &o.label, "decides");
+                crate::gf_audit::acted(g, p, &o.label); // --- ai-audit
                 acted = true;
                 break;
             }
@@ -1423,6 +1512,24 @@ fn overload_rift(g: &Game, p: PlayerId, opts: Vec<Opt>) -> Vec<Opt> {
 pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
     crate::t6stats::eot_window(g, p);
     crate::engine::turn::erebos_draw(g, p)?;
+    // --- ai-planner: the planner's instant tutor (or the instant ritual that pays for it) for a line ready next turn
+    if super::planner::applies(g, p) {
+        for _ in 0..3 {
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+            let Some((step, plan, why)) = super::planner::eot_play(g, p)? else { break };
+            let lbl = super::planner::label(g, step);
+            let seq = super::planner::describe(g, &plan);
+            crate::glog!(g, "      [{} end of turn: {lbl} [plan: {seq}; {why}]]", g.player(p).name);
+            if !super::planner::perform(g, p, step)? {
+                super::planner::bump(g, p, "plan|eot_play_failed");
+                break;
+            }
+            super::planner::bump(g, p, "plan|eot_played");
+            g.player_mut(p).stat("eot_casts", 1);
+        }
+    }
     for _ in 0..6 {
         if g.over || !g.player(p).alive {
             return Ok(());

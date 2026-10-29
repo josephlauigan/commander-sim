@@ -688,8 +688,10 @@ fn sentinel(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     }
     if x != 0 && can_pay(g, caster, x.max(0) as u32, "", false) && total_mana(g, caster, false) as i32 >= x + 2 {
         pay(g, caster, x.max(0) as u32, "", false)?;
+        crate::t6stats::flow_tax(g, o, "Esper Sentinel", true); // --- ai-flow
         return Ok(());
     }
+    crate::t6stats::flow_tax(g, o, "Esper Sentinel", false); // --- ai-flow
     draw(g, o, 1, false)
 }
 

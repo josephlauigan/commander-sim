@@ -1,0 +1,194 @@
+Play-by-play of goldfish game 3 (seed 500003): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Underground Sea, Mana Vault, Hexing Squelcher, Enlightened Tutor, Pact of Negation, Mox Diamond, Windswept Heath
+R1    Scion plays Windswept Heath
+R1      cracks Windswept Heath for Tropical Island
+R1    Scion casts Mana Vault
+R1        [Scion decides: Mana Vault 100%, stop (hold mana) 0% -> Mana Vault [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 5 cards in hand, 1 lands
+R2      hand: Underground Sea, Hexing Squelcher, Enlightened Tutor, Pact of Negation, Mox Diamond
+R2        [Scion plays Underground Sea [plan: the land drop the plan wants]]
+R2    Scion plays Underground Sea
+R2    Scion casts Mox Diamond
+R2        [Scion decides: Mox Diamond 100%, stop (hold mana) 0% -> Mox Diamond [must]]
+R2        [Scion decides: Enlightened Tutor 80%, Hexing Squelcher 20%, stop (hold mana) 0% -> Hexing Squelcher [search]]
+R2    Scion casts Hexing Squelcher
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 39, 2 cards in hand, 2 lands
+R3      hand: Enlightened Tutor, Pact of Negation
+R3        [Scion decides: Enlightened Tutor 90%, Mockingbird (X = 1, copy Hexing Squelcher) 7%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R3        [Scion attack plan by search: filtered at Goldfish 2]
+R3    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3        [Scion decides: Enlightened Tutor 90%, Mockingbird (X = 1, copy Hexing Squelcher) 7%, stop (hold mana) 2% -> Mockingbird (X = 1, copy Hexing Squelcher) [search]]
+R3    Scion casts Mockingbird -> Hexing Squelcher (Scion)
+R3      Mockingbird enters as a copy of Hexing Squelcher
+R3        [Scion decides: Enlightened Tutor 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 39, 2 cards in hand, 2 lands
+R4      hand: Enlightened Tutor, Pact of Negation
+R4    Scion plays Scrubland
+R4        [Scion decides: Enlightened Tutor 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4        [Scion attack plan by search: filtered at Goldfish 4]
+R4    Scion attacks Goldfish 4 with 2 creature(s): 4 damage (life now 36)
+R4        [Scion decides: Enlightened Tutor 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 39, 2 cards in hand, 3 lands
+R5      hand: Enlightened Tutor, Pact of Negation
+R5        [Scion decides: Enlightened Tutor 95%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R5        [Scion attack plan by search: filtered at Goldfish 3]
+R5    Scion attacks Goldfish 3 with 2 creature(s): 4 damage (life now 36)
+R5        [Scion decides: Enlightened Tutor 95%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 39, 3 cards in hand, 3 lands
+R6      hand: Enlightened Tutor, Pact of Negation, Silence
+R6    Scion plays Savannah
+R6        [Scion decides: Scion of the Ur-Dragon 96%, Enlightened Tutor 4%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Scion attack plan by search: filtered at Goldfish 2]
+R6    Scion attacks Goldfish 2 with 2 creature(s): 4 damage (life now 34)
+R6        [Scion decides: Scion of the Ur-Dragon 96%, Enlightened Tutor 4%, stop (hold mana) 0% -> Scion of the Ur-Dragon [search]]
+R6    Scion casts Scion of the Ur-Dragon
+R6  --- Goldfish 2 turn 6: life 34, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 39, 3 cards in hand, 4 lands
+R7      hand: Enlightened Tutor, Pact of Negation, Silence
+R7        [Scion decides: Korvold, Fae-Cursed King 49%, Enlightened Tutor 36%, Scion of the Ur-Dragon: become Ancient Copper Dragon 12%, stop (hold mana) 2% -> Enlightened Tutor [search]]
+R7    Scion casts Enlightened Tutor
+R7      Scion searches for Esper Sentinel
+R7        [Scion decides: Korvold, Fae-Cursed King 77%, Scion of the Ur-Dragon: become Ancient Copper Dragon 19%, stop (hold mana) 4% -> Korvold, Fae-Cursed King [search]]
+R7    Scion casts Korvold, Fae-Cursed King
+R7        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 84%, stop (hold mana) 16% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R7    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R7      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R7        [Scion attack plan by search: filtered at Goldfish 3]
+R7      Ancient Copper Dragon rolls 8: 8 Treasures
+R7    Scion attacks Goldfish 3 with 3 creature(s): 10 damage (life now 26)
+R7        [Scion decides: Esper Sentinel 88%, stop (hold mana) 12% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 34, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 26, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 39, 3 cards in hand, 4 lands
+R8      hand: Pact of Negation, Silence, Esper Sentinel
+R8        [Scion decides: Esper Sentinel 73%, Noxious Revival 18%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 3]
+R8    Scion attacks Goldfish 3 with 4 creature(s): 14 damage (life now 12)
+R8        [Scion decides: Esper Sentinel 73%, Noxious Revival 18%, stop (hold mana) 10% -> Noxious Revival [search]]
+R8    Scion casts Noxious Revival
+R8      Scion puts Ancient Copper Dragon on top of its library (Noxious Revival)
+R8        [Scion decides: Esper Sentinel 88%, stop (hold mana) 12% -> Esper Sentinel [search]]
+R8    Scion casts Esper Sentinel
+R8  --- Goldfish 2 turn 8: life 34, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 12, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 38, 3 cards in hand, 4 lands
+R9      hand: Pact of Negation, Silence, Marsh Flats
+R9    Scion plays Marsh Flats
+R9      cracks Marsh Flats for Plateau
+R9        [Scion decides: Ancient Copper Dragon 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R9        [Scion attack plan by search: filtered at Goldfish 2]
+R9    Scion attacks Goldfish 2 with 2 creature(s): 3 damage (life now 31)
+R9  *** Goldfish 3 is eliminated (life -1) by Scion
+R9    Scion attacks Goldfish 3 with 3 creature(s): 13 damage (life now -1)
+R9        [Scion decides: Ancient Copper Dragon 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 31, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 36, 4 cards in hand, 5 lands
+R10     hand: Pact of Negation, Silence, Ancient Copper Dragon, Flusterstorm
+R10   Scion plays Tarnished Citadel
+R10       [Scion decides: Ancient Copper Dragon 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 2]
+R10   Scion attacks Goldfish 2 with 5 creature(s): 17 damage (life now 14)
+R10       [Scion decides: Ancient Copper Dragon 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 14, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 36, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 35, 5 cards in hand, 6 lands
+R11     hand: Pact of Negation, Silence, Ancient Copper Dragon, Flusterstorm, Underworld Breach
+R11   Scion plays Arid Mesa
+R11     cracks Arid Mesa for Tundra
+R11       [Scion decides: Ancient Copper Dragon 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: all at Goldfish 4]
+R11   Scion attacks Goldfish 4 with 5 creature(s): 18 damage (life now 18)
+R11       [Scion decides: Ancient Copper Dragon 78%, Tinder Wall 16%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R11 --- Goldfish 2 turn 11: life 14, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 18, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 33, 6 cards in hand, 7 lands
+R12     hand: Pact of Negation, Silence, Ancient Copper Dragon, Flusterstorm, Underworld Breach, Tinder Wall
+R12       [Scion decides: Ancient Copper Dragon 49%, Necropotence 37%, Tinder Wall 10%, stop (hold mana) 4% -> Ancient Copper Dragon [search]]
+R12   Scion casts Ancient Copper Dragon
+R12       [Scion decides: Necropotence 81%, Tinder Wall 13%, stop (hold mana) 5% -> Necropotence [search]]
+R12   Scion casts Necropotence
+R12       [Scion decides: Tinder Wall 72%, stop (hold mana) 28% -> Tinder Wall [search]]
+R12   Scion casts Tinder Wall
+R12       [Scion attack plan by search: filtered at Goldfish 2]
+R12 *** Goldfish 2 is eliminated (life -8) by Scion
+R12   Scion attacks Goldfish 2 with 5 creature(s): 22 damage (life now -8)
+R12     [audit] Scion discards Silence to hand size (8 cards in hand)
+R12 --- Goldfish 4 turn 12: life 18, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 32, 7 cards in hand, 7 lands
+R13     hand: Pact of Negation, Flusterstorm, Underworld Breach, Mystical Tutor, Brain Freeze, Cabal Ritual, Tainted Pact
+R13       [Scion attack plan by search: filtered at Goldfish 4]
+R13 *** Goldfish 4 is eliminated (life -11) by Scion
+R13   Scion attacks Goldfish 4 with 6 creature(s): 29 damage (life now -11)
+Kill: own turn 13 (damage)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Pact of Negation, Mox Diamond
+  T2  progressed (fast mana / rock) | held (payable, not offered): Pact of Negation
+  T3  passed_castable: Enlightened Tutor [tutor] | held (payable, not offered): Pact of Negation, Mockingbird
+  T4  passed_castable: Enlightened Tutor [tutor] | held (payable, not offered): Pact of Negation
+  T5  passed_castable: Enlightened Tutor [tutor] | held (payable, not offered): Pact of Negation, Silence
+  T6  passed_castable: Enlightened Tutor [tutor] | held (payable, not offered): Pact of Negation, Silence
+  T7  passed_castable: Esper Sentinel [draw] | held (payable, not offered): Pact of Negation, Silence
+  T8  no_land_drop | held (payable, not offered): Pact of Negation, Silence
+  T9  passed_castable: Ancient Copper Dragon [other] | held (payable, not offered): Pact of Negation, Silence, Flusterstorm
+  T10 passed_castable: Ancient Copper Dragon [other] | held (payable, not offered): Pact of Negation, Silence, Flusterstorm, Underworld Breach
+  T11 passed_castable: Ancient Copper Dragon [other], Tinder Wall [other] | held (payable, not offered): Pact of Negation, Silence, Flusterstorm, Underworld Breach
+  T12 progressed (draw) | held (payable, not offered): Pact of Negation, Silence, Flusterstorm, Underworld Breach, Mystical Tutor, Brain Freeze, Cabal Ritual
+  T13 won
+  cleanup discards: Silence [protection]
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Enlightened Tutor (6.0); T3 main 2 look-ahead "stop (hold mana)" over Enlightened Tutor (6.0); T4 main 1 look-ahead "stop (hold mana)" over Enlightened Tutor (6.0); T4 main 2 look-ahead "stop (hold mana)" over Enlightened Tutor (6.0); T5 main 1 look-ahead "stop (hold mana)" over Enlightened Tutor (5.3); T5 main 2 look-ahead "stop (hold mana)" over Enlightened Tutor (5.3); T6 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon (8.5); T7 main 2 look-ahead "stop (hold mana)" over Esper Sentinel (4.4); T8 main 1 look-ahead "stop (hold mana)" over Esper Sentinel (4.4); T9 main 1 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8); T9 main 2 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8); T10 main 1 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8); T10 main 2 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8); T11 main 1 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8); T11 main 2 look-ahead "stop (hold mana)" over Ancient Copper Dragon (5.8)
+  crude best case: none
+  crude best case with tutors: own turn 12 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 13 (Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table))

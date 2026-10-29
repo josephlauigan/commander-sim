@@ -1,0 +1,201 @@
+Play-by-play of goldfish game 6 (seed 500006): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Emergence Zone, Mana Confluence, Mana Vault, Flash Photography, Arcane Signet, Force of Will, Simian Spirit Guide
+R1    Scion plays Mana Confluence
+R1    Scion casts Mana Vault
+R1        [Scion decides: Mana Vault 57%, Arcane Signet 43%, stop (hold mana) 0% -> Mana Vault [must]]
+R1    Scion casts Arcane Signet
+R1        [Scion decides: Arcane Signet 100%, stop (hold mana) 0% -> Arcane Signet [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 4 cards in hand, 1 lands
+R2      hand: Emergence Zone, Flash Photography, Force of Will, Pact of Negation
+R2    Scion plays Emergence Zone
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 39, 4 cards in hand, 2 lands
+R3      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 38, 5 cards in hand, 2 lands
+R4      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer, Silence
+R4        [Scion decides: Ignoble Hierarch 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4        [Scion decides: Ignoble Hierarch 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5    Scion sacrifices Emergence Zone: spells can be cast as though they had flash
+R5        [Scion end of turn: Emergence Zone 92%, pass 8% -> Emergence Zone]
+R5    Scion casts Ignoble Hierarch
+R5        [Scion end of turn: Ignoble Hierarch 100%, pass 0% -> Ignoble Hierarch]
+R5  --- Scion turn 5: life 37, 5 cards in hand, 1 lands
+R5      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer, Silence
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 36, 6 cards in hand, 1 lands
+R6      hand: Flash Photography, Force of Will, Pact of Negation, Veil of Summer, Silence, Mindbreak Trap
+R6        [Scion decides: Chrome Mox 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Scion decides: Chrome Mox 100%, stop (hold mana) 0% -> Chrome Mox [search]]
+R6    Scion casts Chrome Mox
+R6      Chrome Mox imprints Veil of Summer
+R6        [Scion decides: Flash Photography 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Scion casts Flash Photography -> Mana Vault (Scion)
+R7      Flash Photography: a token copy of Mana Vault
+R7        [Scion end of turn: Flash Photography (flash, copy Mana Vault) 97%, pass 3% -> Flash Photography (flash, copy Mana Vault)]
+R7  --- Scion turn 7: life 35, 4 cards in hand, 1 lands
+R7      hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap
+R7        [Scion decides: Flash Photography (flashback) 87%, stop (hold mana) 11%, Dark Ritual 2% -> Dark Ritual [search]]
+R7    Scion casts Dark Ritual
+R7        [Scion decides: Scion of the Ur-Dragon 96%, Flash Photography (flashback) 4%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R7        [Scion decides: Scion of the Ur-Dragon 96%, Flash Photography (flashback) 4%, stop (hold mana) 1% -> Scion of the Ur-Dragon [search]]
+R7    Scion casts Scion of the Ur-Dragon
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 34, 4 cards in hand, 1 lands
+R8      hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap
+R8    Scion plays Scrubland
+R8        [Scion decides: Flash Photography (flashback) 71%, Scion of the Ur-Dragon: become Ancient Copper Dragon 19%, stop (hold mana) 9% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R8    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R8      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R8        [Scion decides: Flash Photography (flashback) 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 2]
+R8      Ancient Copper Dragon rolls 16: 16 Treasures
+R8    Scion attacks Goldfish 2 with 1 creature(s): 7 damage (life now 33)
+R8        [Scion decides: Flash Photography (flashback) 94%, stop (hold mana) 6% -> Flash Photography (flashback) [search]]
+R8    Scion casts Flash Photography
+R8      Flash Photography: a token copy of Ancient Copper Dragon
+R8  --- Goldfish 2 turn 8: life 33, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 33, 4 cards in hand, 2 lands
+R9      hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap
+R9    Scion plays Ancient Tomb
+R9        [Scion decides: stop (hold mana) 78%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 22% -> Scion of the Ur-Dragon: become Korvold, Fae-Cursed King [search]]
+R9    Scion activates Scion of the Ur-Dragon: search for Korvold, Fae-Cursed King
+R9      Scion of the Ur-Dragon becomes a copy of Korvold, Fae-Cursed King
+R9        [Scion attack plan by search: filtered at Goldfish 4]
+R9      Ancient Copper Dragon rolls 20: 20 Treasures
+R9    Scion attacks Goldfish 4 with 2 creature(s): 11 damage (life now 29)
+R9        [Scion decides: Borne Upon a Wind 79%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 29, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10   Scion casts Borne Upon a Wind
+R10       [Scion end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R10 --- Scion turn 10: life 31, 5 cards in hand, 3 lands
+R10     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Scalding Tarn
+R10   Scion plays Plateau
+R10       [Scion attack plan by search: filtered at Goldfish 3]
+R10     Ancient Copper Dragon rolls 7: 7 Treasures
+R10   Scion attacks Goldfish 3 with 2 creature(s): 11 damage (life now 29)
+R10 --- Goldfish 2 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 29, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 29, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 29, 5 cards in hand, 4 lands
+R11     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Scalding Tarn
+R11   Scion plays Scalding Tarn
+R11     cracks Scalding Tarn for Underground Sea
+R11       [Scion attack plan by search: filtered at Goldfish 2]
+R11     Ancient Copper Dragon rolls 11: 11 Treasures
+R11   Scion attacks Goldfish 2 with 2 creature(s): 11 damage (life now 22)
+R11 --- Goldfish 2 turn 11: life 22, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 29, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 29, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 26, 5 cards in hand, 5 lands
+R12     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Thassa's Oracle
+R12       [Scion attack plan by search: filtered at Goldfish 2]
+R12     Ancient Copper Dragon rolls 5: 5 Treasures
+R12   Scion attacks Goldfish 2 with 2 creature(s): 11 damage (life now 11)
+R12 --- Goldfish 2 turn 12: life 11, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 29, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 29, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 24, 6 cards in hand, 5 lands
+R13     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Thassa's Oracle, Redirect Lightning
+R13       [Scion attack plan by search: filtered at Goldfish 2]
+R13 *** Goldfish 2 is eliminated (life 0) by Scion
+R13     Ancient Copper Dragon rolls 12: 12 Treasures
+R13   Scion attacks Goldfish 2 with 2 creature(s): 11 damage (life now 0)
+R13 --- Goldfish 3 turn 13: life 29, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 29, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14   Scion casts Vampiric Tutor
+R14     Scion puts Demonic Consultation on top of their library
+R14       [Scion end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R14 --- Scion turn 14: life 20, 6 cards in hand, 5 lands
+R14     hand: Force of Will, Pact of Negation, Silence, Mindbreak Trap, Thassa's Oracle, Redirect Lightning
+R14     Scion pays {4} to untap Mana Vault
+R14     Scion pays {4} to untap Mana Vault
+R14       [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 100%, stop (hold mana) 0% -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [search]]
+R14   Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R14   Scion casts Thassa's Oracle
+R14   Scion casts Demonic Consultation
+R14     Scion exiles its library
+R14 *** Goldfish 3 is eliminated (life 29) by Scion
+R14 *** Goldfish 4 is eliminated (life 29) by Scion
+R14 *** Scion wins by combo
+Kill: own turn 14 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Pact of Negation
+  T2  mana_short | held (payable, not offered): Pact of Negation, Veil of Summer
+  T3  mana_short | held (payable, not offered): Pact of Negation, Veil of Summer, Silence
+  T4  idle | held (payable, not offered): Pact of Negation, Veil of Summer, Silence
+  T5  mana_short | held (payable, not offered): Pact of Negation, Veil of Summer, Silence
+  T6  passed_castable: Flash Photography [other] | held (payable, not offered): Pact of Negation, Veil of Summer, Silence, Mindbreak Trap
+  T7  progressed (combo piece) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T8  progressed (other) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T9  progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T10 mana_short | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap
+  T11 progressed (land only) | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, Thassa's Oracle
+  T12 idle | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, Thassa's Oracle, Redirect Lightning
+  T13 idle | held (payable, not offered): Force of Will, Pact of Negation, Silence, Mindbreak Trap, Thassa's Oracle, Redirect Lightning, Vampiric Tutor
+  T14 won
+  cleanup discards: none
+  stops with another option offered: T4 main 1 look-ahead "stop (hold mana)" over Ignoble Hierarch (10.0); T4 main 2 look-ahead "stop (hold mana)" over Ignoble Hierarch (10.0); T6 main 1 look-ahead "stop (hold mana)" over Chrome Mox (8.2); T6 main 2 look-ahead "stop (hold mana)" over Flash Photography (5.8); T7 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon (8.5); T8 main 1 look-ahead "stop (hold mana)" over Flash Photography (flashback) (6.0); T9 main 2 look-ahead "stop (hold mana)" over Borne Upon a Wind (4.6)
+  crude best case: own turn 14 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with tutors: own turn 13 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

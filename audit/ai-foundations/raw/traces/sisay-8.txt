@@ -1,0 +1,94 @@
+Play-by-play of goldfish game 8 (seed 500008): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mindbreak Trap, Deadpool, Trading Card, Misty Rainforest, Mox Diamond, Boseiju, Who Endures, Orcish Bowmasters, Tyvar, Jubilant Brawler
+R1    Sisay plays Mana Confluence
+R1    Sisay casts Mox Diamond
+R1        [Sisay decides: Mox Diamond 100%, stop 0% -> Mox Diamond [must]]
+R1        [Sisay decides: Orcish Bowmasters 100%, stop 0% -> Orcish Bowmasters [search]]
+R1    Sisay casts Orcish Bowmasters
+R1  --- Goldfish 2 turn 1: life 39, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 40, 4 cards in hand, 1 lands
+R2      hand: Mindbreak Trap, Deadpool, Trading Card, Boseiju, Who Endures, Tyvar, Jubilant Brawler
+R2    Sisay plays Boseiju, Who Endures
+R2    Sisay casts Sisay, Weatherlight Captain
+R2        [Sisay decides: Sisay, Weatherlight Captain 97%, Tyvar, Jubilant Brawler 2%, Lavinia, Azorius Renegade 1%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R2        [Sisay attack plan by search: filtered at Goldfish 3]
+R2    Sisay attacks Goldfish 3 with 2 creature(s): 2 damage (life now 38)
+R2  --- Goldfish 2 turn 2: life 39, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 38, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 40, 4 cards in hand, 2 lands
+R3      hand: Mindbreak Trap, Deadpool, Trading Card, Tyvar, Jubilant Brawler, Lavinia, Azorius Renegade
+R3    Sisay plays Windswept Heath
+R3      cracks Windswept Heath for Bayou
+R3        [Sisay decides: Tyvar, Jubilant Brawler 45%, Deadpool, Trading Card 34%, Lavinia, Azorius Renegade 18%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R3        [Sisay attack plan by search: filtered at Goldfish 4]
+R3    Sisay attacks Goldfish 4 with 3 creature(s): 4 damage (life now 36)
+R3        [Sisay decides: Tyvar, Jubilant Brawler 45%, Deadpool, Trading Card 34%, Lavinia, Azorius Renegade 18%, stop (hold mana) 3% -> Deadpool, Trading Card [search]]
+R3    Sisay casts Deadpool, Trading Card
+R3  --- Goldfish 2 turn 3: life 39, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 36, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 39, 3 cards in hand, 3 lands
+R4      hand: Mindbreak Trap, Tyvar, Jubilant Brawler, Lavinia, Azorius Renegade
+R4        [Sisay decides: Bloom Tender 98%, Tyvar, Jubilant Brawler 1%, stop (hold mana) 0%, Lavinia, Azorius Renegade 0% -> Tyvar, Jubilant Brawler [search]]
+R4    Sisay casts Tyvar, Jubilant Brawler
+R4        [Sisay decides: Tyvar, Jubilant Brawler +1 99%, stop 1% -> Tyvar, Jubilant Brawler +1 [search]]
+R4    Sisay uses Tyvar, Jubilant Brawler (+1): untap a creature
+R4        [Sisay attack plan by search: filtered at Goldfish 2]
+R4    Sisay attacks Goldfish 2 with 4 creature(s): 12 damage (life now 27)
+R4  --- Goldfish 2 turn 4: life 27, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 36, 3 cards in hand, 3 lands
+R5      hand: Mindbreak Trap, Lavinia, Azorius Renegade, Bloom Tender
+R5        [Sisay decides: Bloom Tender 99%, stop (hold mana) 0%, Lavinia, Azorius Renegade 0%, Tyvar, Jubilant Brawler +1 0% -> Bloom Tender [search]]
+R5    Sisay casts Bloom Tender
+R5    Sisay activates Sisay: Derevi, Empyrial Tactician
+R5      Derevi untaps Bloom Tender
+R5        [Sisay decides: Sisay: Derevi, Empyrial Tactician 100%, Lavinia, Azorius Renegade 0%, stop (hold mana) 0%, Tyvar, Jubilant Brawler +1 0% -> Sisay: Derevi, Empyrial Tactician [must]]
+R5    Sisay activates Sisay: Emiel the Blessed
+R5        [Sisay decides: Sisay: Emiel the Blessed 100%, Lavinia, Azorius Renegade 0%, stop (hold mana) 0%, Tyvar, Jubilant Brawler +1 0% -> Sisay: Emiel the Blessed [must]]
+R5        [Sisay decides: Tyvar, Jubilant Brawler +1 100%, stop 0% -> Tyvar, Jubilant Brawler +1 [search]]
+R5    Sisay uses Tyvar, Jubilant Brawler (+1): untap a creature
+R5      Tyvar untaps Bloom Tender
+R5    Sisay activates Sisay: Mount Doom
+R5        [Sisay decides: Sisay: Mount Doom 100%, Lavinia, Azorius Renegade 0%, stop (hold mana) 0%, Emiel the Blessed ability 0% -> Sisay: Mount Doom [must]]
+R5        [Sisay attack plan by search: filtered at Goldfish 2]
+R5      Derevi untaps Bloom Tender
+R5      Derevi untaps Sisay, Weatherlight Captain
+R5      Derevi untaps Deadpool, Trading Card
+R5      Derevi untaps Mox Diamond
+R5    Sisay attacks Goldfish 2 with 4 creature(s): 14 damage (life now 13)
+R5    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R5  *** Goldfish 2 is eliminated (life 13) by Sisay
+R5  *** Goldfish 3 is eliminated (life 38) by Sisay
+R5  *** Goldfish 4 is eliminated (life 36) by Sisay
+R5  *** Sisay wins by combo
+R5        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 95%, Sisay: Gaea's Cradle 5%, Lavinia, Azorius Renegade 0%, stop (hold mana) 0% -> combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [must]]
+Kill: own turn 5 (Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock)
+  T2  progressed (combo piece)
+  T3  passed_castable: Tyvar, Jubilant Brawler [other] | held (payable, not offered): Mindbreak Trap
+  T4  progressed (other) | held (payable, not offered): Mindbreak Trap
+  T5  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Tyvar, Jubilant Brawler (3.6)
+  crude best case: none
+  crude best case with tutors: none

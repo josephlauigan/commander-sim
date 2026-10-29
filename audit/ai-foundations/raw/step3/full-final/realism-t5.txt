@@ -1,0 +1,38 @@
+
+=== Realism: Tier 5 (High B4) [loose, lookahead AI, 3989 games, seeds 500000-503999; 5 decks, 4 a pod] ===
+targets: data/realism/t5.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.6%     28.2-31.0   31.8%     30.3-33.3  FAIL
+  seat 2 share of decisive games (%)                     26.4%     25.1-27.8   27.8%     26.3-29.3  PASS
+  seat 3 share of decisive games (%)                     23.1%     21.8-24.5   22.4%     20.9-23.9  PASS
+  seat 4 share of decisive games (%)                     20.9%     19.6-22.2   18.0%     16.5-19.5  FAIL
+  median round of a decisive win (rounds)                  8.0       8.0-8.0     7.0           6-8  PASS
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                63.8%     62.3-65.2   37.9%     36.4-39.4  reference
+  wins by damage (combat or other) (%)                   31.7%     30.3-33.1   50.4%     48.9-51.9  reference
+  wins by commander damage (%)                            4.6%       3.9-5.2    9.6%      8.1-11.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.1    2.2%       0.7-3.7  reference
+  deck win spread, best minus worst deck (pts)            18.2             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 2.5%       2.0-3.0       -             -  no target
+  3 of 5 targets pass (3 statistics have no target yet; 4 reference values, not scored)
+Games: 3989, decisive 3974 (99.6%), round-cap timeouts 0.4%
+Each deck's share of the decisive games it sat in: Kinnan 36.1% of 3245; Miirym 28.8% of 3130; Urza 21.6% of 3157; Yawgmoth 17.9% of 3198; Zur the Enchanter 20.6% of 3166
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=8442, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_damage: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_commander_damage: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_poison: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+
+WARNING: 11 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500034  panic: attempt to add with overflow
+   seed 500224  panic: attempt to add with overflow
+   seed 500542  panic: attempt to subtract with overflow
+   seed 500641  panic: attempt to subtract with overflow
+   seed 500818  panic: attempt to add with overflow
+  Please send me that output so I can fix the cause.

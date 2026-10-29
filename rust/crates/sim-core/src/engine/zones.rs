@@ -100,8 +100,10 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         if pl.draw_n == 1 {
             pl.miracle = Some((st, c));
         }
-        pl.seen.insert(c);
+        let new = pl.seen.insert(c); // --- ai-flow: new to the player (the flow stats)
         pl.stat("cards_drawn", 1);
+        crate::gf_audit::draw(g, p, c); // --- ai-audit
+        crate::t6stats::flow_draw(g, p, step && k == 0, new); // --- ai-flow
         if has(g, p, Tag::Ironman)
             && let Some(a) = army_of(g, p)
         {
@@ -573,6 +575,10 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
     }
     let owner = x.orig;
     if let Some(cd) = x.phys {
+        if g.player(owner).is_commander(cd) {
+            g.player_mut(owner).set_cmd_zone(cd, true); // --- scion: Scion as a copy is still the commander
+            return;
+        }
         let pl = g.player_mut(owner);
         match zone {
             Zone::Exile => pl.exile.push(cd),

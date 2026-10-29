@@ -1,0 +1,111 @@
+Play-by-play of goldfish game 5 (seed 500005): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mental Misstep, Fyndhorn Elves, Force of Will, Force of Negation, Forest, Sol Ring, Talisman of Curiosity
+R1    Kinnan plays Forest
+R1    Kinnan casts Sol Ring
+R1        [Kinnan decides: Sol Ring 40%, Fyndhorn Elves 30%, Elvish Mystic 30%, stop (hold mana) 0% -> Sol Ring [must]]
+R1    Kinnan casts Talisman of Curiosity
+R1        [Kinnan decides: Talisman of Curiosity 100%, stop (hold mana) 0% -> Talisman of Curiosity [must]]
+R1    Kinnan casts Fyndhorn Elves
+R1        [Kinnan decides: Fyndhorn Elves 50%, Elvish Mystic 50%, stop (hold mana) 0% -> Fyndhorn Elves [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 39, 4 cards in hand, 1 lands
+R2      hand: Mental Misstep, Force of Will, Force of Negation, Elvish Mystic
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Elvish Mystic 79%, Kinnan, Bonder Prodigy 21%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2    Kinnan casts Elvish Mystic
+R2        [Kinnan decides: Elvish Mystic 100%, stop (hold mana) 0% -> Elvish Mystic [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 38, 4 cards in hand, 1 lands
+R3      hand: Mental Misstep, Force of Will, Force of Negation, Snapback
+R3        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 71%, stop (hold mana) 26%, Kinnan: dig five 4% -> stop (hold mana) [search]]
+R3        [Kinnan attack plan by search: filtered at Goldfish 2]
+R3    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 58%, Kinnan: dig five 21%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kinnan turn 4: life 38, 5 cards in hand, 1 lands
+R4      hand: Mental Misstep, Force of Will, Force of Negation, Snapback, Invasion of Ikoria // Zilortha, Apex of Ikoria
+R4        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 71%, stop (hold mana) 26%, Kinnan: dig five 4% -> Invasion of Ikoria // Zilortha, Apex of Ikoria [search]]
+R4    Kinnan casts Invasion of Ikoria // Zilortha, Apex of Ikoria
+R4      Kinnan puts Hullbreaker Horror onto the battlefield (Invasion of Ikoria, X = 8)
+R4        [Kinnan attack plan by search: filtered at Goldfish 4]
+R4    Kinnan attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kinnan turn 5: life 38, 5 cards in hand, 1 lands
+R5      hand: Mental Misstep, Force of Will, Force of Negation, Snapback, Flusterstorm
+R5    Kinnan plays Misty Rainforest
+R5      cracks Misty Rainforest for Tropical Island
+R5        [Kinnan decides: stop (hold mana) 88%, Kinnan: dig five 12% -> stop (hold mana) [search]]
+R5        [Kinnan attack plan by search: filtered at Goldfish 3]
+R5    Kinnan attacks Goldfish 3 with 2 creature(s): 9 damage (life now 31)
+R5        [Kinnan decides: Kinnan: dig five 50%, stop (hold mana) 50% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 31, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kinnan turn 6: life 37, 5 cards in hand, 2 lands
+R6      hand: Mental Misstep, Force of Will, Force of Negation, Snapback, Flusterstorm
+R6        [Kinnan decides: stop (hold mana) 59%, Thrasios, Triton Hero 33%, Kinnan: dig five 8% -> stop (hold mana) [search]]
+R6        [Kinnan attack plan by search: filtered at Goldfish 2]
+R6    Kinnan attacks Goldfish 2 with 2 creature(s): 9 damage (life now 29)
+R6        [Kinnan decides: Kinnan: dig five 39%, stop (hold mana) 39%, Thrasios, Triton Hero 22% -> Thrasios, Triton Hero [search]]
+R6    Kinnan casts Thrasios, Triton Hero
+R6        [Kinnan decides: Kinnan: dig five 50%, stop (hold mana) 50%, Thrasios: scry 1, a land or a card 0% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 29, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 31, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7      Thrasios reveals Verdant Catacombs: onto the battlefield tapped
+R7      cracks Verdant Catacombs for Breeding Pool
+R7        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R7      Thrasios reveals Transmute Artifact: drawn
+R7        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R7  --- Kinnan turn 7: life 36, 6 cards in hand, 3 lands
+R7      hand: Mental Misstep, Force of Will, Force of Negation, Snapback, Flusterstorm, Transmute Artifact
+R7        [Kinnan decides: Transmute Artifact 47%, stop (hold mana) 47%, Kinnan: dig five 6% -> Kinnan: dig five [search]]
+R7        [Kinnan decides: Transmute Artifact 50%, stop (hold mana) 50% -> Transmute Artifact [search]]
+R7    Kinnan casts Transmute Artifact
+R7        [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, stop (hold mana) 0%, Basalt Monolith ability 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R7    Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R7  *** Goldfish 2 is eliminated (life 29) by Kinnan
+R7  *** Goldfish 3 is eliminated (life 31) by Kinnan
+R7  *** Goldfish 4 is eliminated (life 38) by Kinnan
+R7  *** Kinnan wins by combo
+Kill: own turn 7 (Kinnan + Basalt Monolith + Thrasios (draw the deck))
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (combo piece) | held (payable, not offered): Mental Misstep
+  T2  progressed (combo piece) | held (payable, not offered): Mental Misstep, Snapback
+  T3  passed_castable: Invasion of Ikoria // Zilortha, Apex of Ikoria [tutor] | held (payable, not offered): Mental Misstep, Force of Will, Force of Negation, Snapback
+  T4  progressed (tutor) | held (payable, not offered): Mental Misstep, Force of Will, Force of Negation, Snapback, Flusterstorm
+  T5  mana_short | held (payable, not offered): Mental Misstep, Force of Will, Force of Negation, Snapback, Flusterstorm
+  T6  progressed (combo piece) | held (payable, not offered): Mental Misstep, Force of Will, Force of Negation, Snapback, Flusterstorm
+  T7  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Invasion of Ikoria // Zilortha, Apex of Ikoria (6.0); T3 main 2 look-ahead "stop (hold mana)" over Invasion of Ikoria // Zilortha, Apex of Ikoria (6.0); T5 main 1 look-ahead "stop (hold mana)" over Kinnan: dig five (3.0); T5 main 2 look-ahead "stop (hold mana)" over Kinnan: dig five (5.0); T6 main 1 look-ahead "stop (hold mana)" over Thrasios, Triton Hero (4.4); T6 main 2 look-ahead "stop (hold mana)" over Kinnan: dig five (5.0)
+  crude best case: none
+  crude best case with tutors: none

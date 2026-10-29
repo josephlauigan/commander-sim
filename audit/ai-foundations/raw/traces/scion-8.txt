@@ -1,0 +1,112 @@
+Play-by-play of goldfish game 8 (seed 500008): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Beseech the Mirror, Necropotence, Silence, Chain of Vapor, Starting Town, Sol Ring, City of Brass
+R1    Scion plays City of Brass
+R1    Scion casts Sol Ring
+R1        [Scion decides: Sol Ring 100%, stop 0% -> Sol Ring [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 6 cards in hand, 1 lands
+R2      hand: Beseech the Mirror, Necropotence, Silence, Chain of Vapor, Starting Town, Underground Sea
+R2    Scion plays Plateau
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 39, 6 cards in hand, 2 lands
+R3      hand: Beseech the Mirror, Necropotence, Silence, Chain of Vapor, Starting Town, Underground Sea
+R3    Scion plays Starting Town
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 39, 6 cards in hand, 3 lands
+R4      hand: Beseech the Mirror, Necropotence, Silence, Chain of Vapor, Underground Sea, Scalding Tarn
+R4    Scion plays Underground Sea
+R4        [Scion decides: Necropotence 73%, Beseech the Mirror 27%, stop 0% -> Necropotence [search]]
+R4    Scion casts Necropotence
+R4    Scion pays 3 life to Necropotence
+R4      [audit] Scion discards Ancient Copper Dragon to hand size (8 cards in hand)
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 35, 7 cards in hand, 4 lands
+R5      hand: Beseech the Mirror, Silence, Chain of Vapor, Scalding Tarn, Orim's Chant, Flash Photography, Smothering Tithe
+R5    Scion plays Scalding Tarn
+R5      cracks Scalding Tarn for Tundra
+R5        [Scion decides: Scion of the Ur-Dragon 82%, Flash Photography 10%, Smothering Tithe 6%, Beseech the Mirror 2% -> Beseech the Mirror [search]]
+R5    Scion casts Beseech the Mirror
+R5      Scion tutors Thassa's Oracle
+R5    Scion pays 2 life to Necropotence
+R5      [audit] Scion discards Flash Photography to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 31, 7 cards in hand, 5 lands
+R6      hand: Silence, Chain of Vapor, Orim's Chant, Smothering Tithe, Thassa's Oracle, Force of Negation, Simian Spirit Guide
+R6        [Scion decides: Scion of the Ur-Dragon 73%, Smothering Tithe 26%, stop (hold mana) 1% -> Smothering Tithe [search]]
+R6    Scion casts Smothering Tithe
+R6    Scion pays 3 life to Necropotence
+R6      [audit] Scion discards Force of Negation to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Scion casts Mystical Tutor
+R7      Scion puts Demonic Consultation on top of their library
+R7        [Scion end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R7  --- Scion turn 7: life 28, 6 cards in hand, 5 lands
+R7      hand: Silence, Chain of Vapor, Orim's Chant, Thassa's Oracle, Boseiju, Who Endures, Rite of Flame
+R7    Scion plays Boseiju, Who Endures
+R7        [Scion decides: Scion of the Ur-Dragon 100%, stop 0% -> Scion of the Ur-Dragon [search]]
+R7    Scion casts Scion of the Ur-Dragon
+R7    Scion pays 3 life to Necropotence
+R7      [audit] Scion discards Storm-Kiln Artist to hand size (8 cards in hand)
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 24, 7 cards in hand, 6 lands
+R8      hand: Silence, Chain of Vapor, Orim's Chant, Thassa's Oracle, Rite of Flame, Demonic Consultation, Tataru Taru
+R8        [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 100%, Tataru Taru 0%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 0%, stop 0% -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [search]]
+R8    Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R8    Scion casts Thassa's Oracle
+R8    Scion casts Demonic Consultation
+R8      Scion exiles its library
+R8  *** Goldfish 2 is eliminated (life 40) by Scion
+R8  *** Goldfish 3 is eliminated (life 40) by Scion
+R8  *** Goldfish 4 is eliminated (life 40) by Scion
+R8  *** Scion wins by combo
+Kill: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Silence, Chain of Vapor
+  T2  mana_short | held (payable, not offered): Silence, Chain of Vapor
+  T3  mana_short | held (payable, not offered): Silence, Chain of Vapor
+  T4  progressed (draw) | held (payable, not offered): Silence, Chain of Vapor, Orim's Chant
+  T5  progressed (tutor) | held (payable, not offered): Silence, Chain of Vapor, Orim's Chant
+  T6  progressed (other) | held (payable, not offered): Silence, Chain of Vapor, Orim's Chant, Thassa's Oracle, Force of Negation, Simian Spirit Guide
+  T7  progressed (combo piece) | held (payable, not offered): Silence, Chain of Vapor, Orim's Chant, Thassa's Oracle, Rite of Flame
+  T8  won
+  cleanup discards: Ancient Copper Dragon [other], Flash Photography [other], Force of Negation [protection], Storm-Kiln Artist [other]
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: none

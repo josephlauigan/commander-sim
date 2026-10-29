@@ -1,0 +1,129 @@
+Play-by-play of goldfish game 6 (seed 500006): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 6 cards in hand, 0 lands
+R1      hand: Wishclaw Talisman, Rain of Filth, Ragavan, Nimble Pilferer, Marsh Flats, Talisman of Dominance, Paradise Mantle
+R1    Rograkh/Silas plays Badlands
+R1    Rograkh/Silas casts Paradise Mantle
+R1        [Rograkh/Silas decides: Paradise Mantle 98%, Ragavan, Nimble Pilferer 2%, stop 0% -> Paradise Mantle [must]]
+R1    Rograkh/Silas casts Talisman of Dominance
+R1        [Rograkh/Silas decides: Talisman of Dominance 93%, Wishclaw Talisman 5%, Ragavan, Nimble Pilferer 2%, dash Ragavan 0% -> Talisman of Dominance [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 40, 4 cards in hand, 1 lands
+R2      hand: Wishclaw Talisman, Rain of Filth, Ragavan, Nimble Pilferer, Marsh Flats
+R2    Rograkh/Silas plays Marsh Flats
+R2      cracks Marsh Flats for Undercity Sewers
+R2        [Rograkh/Silas decides: Silas Renn, Seeker Adept 63%, Rograkh, Son of Rohgahh 31%, Wishclaw Talisman 4%, Ragavan, Nimble Pilferer 2% -> Silas Renn, Seeker Adept [search]]
+R2    Rograkh/Silas casts Silas Renn, Seeker Adept
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop 0% -> Rograkh, Son of Rohgahh [search]]
+R2    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Rograkh/Silas turn 3: life 38, 4 cards in hand, 2 lands
+R3      hand: Wishclaw Talisman, Rain of Filth, Ragavan, Nimble Pilferer, Culling the Weak
+R3    Rograkh/Silas plays Mana Confluence
+R3        [Rograkh/Silas decides: Wishclaw Talisman 67%, Ragavan, Nimble Pilferer 27%, dash Ragavan 3%, equip Paradise Mantle 2% -> stop [search]]
+R3        [Rograkh/Silas attack plan by search: filtered at Goldfish 3]
+R3    Rograkh/Silas attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R3        [Rograkh/Silas decides: Wishclaw Talisman 69%, Ragavan, Nimble Pilferer 28%, equip Paradise Mantle 3%, stop 0% -> stop [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 38, 4 cards in hand, 3 lands
+R4      hand: Wishclaw Talisman, Rain of Filth, Ragavan, Nimble Pilferer, Culling the Weak
+R4        [Rograkh/Silas decides: Wishclaw Talisman 67%, Ragavan, Nimble Pilferer 27%, dash Ragavan 3%, equip Paradise Mantle 2% -> dash Ragavan [search]]
+R4    Rograkh/Silas dashes Ragavan
+R4        [Rograkh/Silas decides: Wishclaw Talisman 92%, equip Paradise Mantle 3%, Culling the Weak 3%, Infernal Plunge 2% -> stop [search]]
+R4        [Rograkh/Silas attack plan by search: all at Goldfish 4]
+R4    Rograkh/Silas attacks Goldfish 4 with 2 creature(s): 4 damage (life now 36)
+R4        [Rograkh/Silas decides: Wishclaw Talisman 92%, equip Paradise Mantle 3%, Culling the Weak 3%, Infernal Plunge 2% -> Culling the Weak [search]]
+R4    Rograkh/Silas casts Culling the Weak
+R4        [Rograkh/Silas decides: Wishclaw Talisman 96%, equip Paradise Mantle 4%, stop 0% -> Wishclaw Talisman [search]]
+R4    Rograkh/Silas casts Wishclaw Talisman
+R4        [Rograkh/Silas decides: equip Paradise Mantle 99%, stop 1% -> equip Paradise Mantle [search]]
+R4    Rograkh/Silas equips Paradise Mantle to Silas Renn, Seeker Adept
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 36, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 37, 2 cards in hand, 3 lands
+R5      hand: Rain of Filth, Infernal Plunge
+R5        [Rograkh/Silas decides: Snapback 97%, stop 3% -> stop [search]]
+R5        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R5    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R5        [Rograkh/Silas decides: Snapback 97%, stop 3% -> stop [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 36, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Rograkh/Silas turn 6: life 37, 3 cards in hand, 3 lands
+R6      hand: Rain of Filth, Infernal Plunge, Snapback
+R6        [Rograkh/Silas decides: Snapback 97%, stop 3% -> Snapback [search]]
+R6    Rograkh/Silas casts Snapback
+R6        [Rograkh/Silas attack plan by search: filtered at Goldfish 3]
+R6    Rograkh/Silas attacks Goldfish 3 with 1 creature(s): 2 damage (life now 36)
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Rograkh/Silas turn 7: life 37, 3 cards in hand, 3 lands
+R7      hand: Rain of Filth, Infernal Plunge, Force of Will
+R7        [Rograkh/Silas decides: Borne Upon a Wind 100%, stop 0% -> Borne Upon a Wind [search]]
+R7    Rograkh/Silas casts Borne Upon a Wind
+R7        [Rograkh/Silas decides: Imperial Seal 100%, stop 0% -> Imperial Seal [search]]
+R7    Rograkh/Silas casts Imperial Seal
+R7      Rograkh/Silas puts Thassa's Oracle on top of their library
+R7        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R7    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R7  --- Goldfish 2 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Rograkh/Silas turn 8: life 34, 3 cards in hand, 3 lands
+R8      hand: Rain of Filth, Infernal Plunge, Force of Will
+R8        [Rograkh/Silas decides: Wishclaw Talisman 100%, stop 0% -> Wishclaw Talisman [search]]
+R8      Rograkh/Silas tutors Demonic Consultation (Wishclaw Talisman)
+R8      Goldfish 2 gains control of Wishclaw Talisman
+R8        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R8    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R8    Rograkh/Silas casts Thassa's Oracle
+R8    Rograkh/Silas casts Demonic Consultation
+R8      Rograkh/Silas exiles its library
+R8  *** Goldfish 2 is eliminated (life 36) by Rograkh/Silas
+R8  *** Goldfish 3 is eliminated (life 36) by Rograkh/Silas
+R8  *** Goldfish 4 is eliminated (life 36) by Rograkh/Silas
+R8  *** Rograkh/Silas wins by combo
+Kill: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Rain of Filth
+  T2  progressed (other) | held (payable, not offered): Rain of Filth, Culling the Weak
+  T3  passed_castable: Wishclaw Talisman [tutor], Ragavan, Nimble Pilferer [other] | held (payable, not offered): Rain of Filth, Culling the Weak
+  T4  progressed (tutor) | held (payable, not offered): Rain of Filth, Culling the Weak, Infernal Plunge
+  T5  passed_castable: Snapback [other] | held (payable, not offered): Rain of Filth, Infernal Plunge
+  T6  progressed (other) | held (payable, not offered): Rain of Filth, Infernal Plunge, Force of Will
+  T7  progressed (tutor) | held (payable, not offered): Rain of Filth, Infernal Plunge, Force of Will
+  T8  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop" over Wishclaw Talisman (5.5); T3 main 2 look-ahead "stop" over Wishclaw Talisman (5.5); T4 main 1 look-ahead "stop" over Wishclaw Talisman (5.5); T5 main 1 look-ahead "stop" over Snapback (0.5); T5 main 2 look-ahead "stop" over Snapback (0.5)
+  crude best case: none
+  crude best case with tutors: own turn 7 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: none

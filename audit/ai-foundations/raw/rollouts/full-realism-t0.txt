@@ -1,0 +1,29 @@
+
+=== Realism: Tier 0 (Bracket 2 precons) [loose, lookahead AI, 4000 games, seeds 500000-503999; 5 decks, 4 a pod] ===
+targets: data/realism/t0.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     30.1%     28.7-31.5   32.1%     30.6-33.6  FAIL
+  seat 2 share of decisive games (%)                     26.7%     25.3-28.1   27.3%     25.8-28.8  PASS
+  seat 3 share of decisive games (%)                     22.4%     21.2-23.7   22.2%     20.7-23.7  PASS
+  seat 4 share of decisive games (%)                     20.8%     19.6-22.1   18.4%     16.9-19.9  FAIL
+  median round of a decisive win (rounds)                 11.0     11.0-11.0     9.0          8-10  FAIL
+  win round, 75th minus 25th percentile (rounds)           3.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                 0.5%       0.3-0.8   13.8%     12.3-15.3  FAIL
+  wins by damage (combat or other) (%)                   96.8%     96.2-97.3   82.3%     80.8-83.8  FAIL
+  wins by commander damage (%)                            2.7%       2.3-3.3    3.7%       2.2-5.2  PASS
+  wins by poison (%)                                      0.0%       0.0-0.1    0.2%         0-1.7  PASS
+  deck win spread, best minus worst deck (pts)            12.8             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 7.6%       6.8-8.5       -             -  no target
+  4 of 9 targets pass (3 statistics have no target yet)
+Games: 4000, decisive 3983 (99.6%), round-cap timeouts 0.4%
+Each deck's share of the decisive games it sat in: Anikthea 31.3% of 3254; Captain America 23.2% of 3131; Giada 31.4% of 3162; Stella Lee 18.6% of 3207; Zurgo Stormrender 20.5% of 3178
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=11116, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)
+  win_damage: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)
+  win_commander_damage: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)
+  win_poison: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)

@@ -122,6 +122,13 @@ pub fn play_land(g: &mut Game, p: PlayerId) -> Res {
             return Ok(());
         }
     }
+    // --- ai-planner: a Tier 6 deck's land drop (and a fetch land's land) is the planner's when it changes what the
+    // deck's plan reaches; otherwise the usual choice below
+    if ai::planner::applies(g, p)
+        && let Some((c, t)) = ai::planner::choose_land(g, p)?
+    {
+        return ai::planner::play_land_for(g, p, c, t);
+    }
     let pl = g.player(p);
     let mut lands: Vec<CardId> = pl.hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
     if pl.yawg {
@@ -250,6 +257,7 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     pl.land_turn = pl.turns as i32;
     cardcode::land_etb(g, p, l)?; // CI.LAND_ETB (Bojuka Bog ...)
     g.player_mut(p).lands_played += 1;
+    crate::gf_audit::land_played(g, p); // --- ai-audit
     crate::glog!(g, "  {} {} {}", g.player(p).name, how, g.db.get(c).name);
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
@@ -295,7 +303,7 @@ pub fn remove_land(g: &mut Game, p: PlayerId, l: LandId) {
 }
 
 /// fetch lands' basic land types (Prismatic Vista fetches a basic)
-fn true_fetch(name: &str) -> Option<&'static str> {
+pub fn true_fetch(name: &str) -> Option<&'static str> { // --- ai-planner: pub (the planner's land choice)
     Some(match name {
         "Polluted Delta" => "UB",
         "Flooded Strand" => "WU",
@@ -344,7 +352,9 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     }
     let have = colors_have(g, p, Some(l));
     let mut scored = vec![];
-    for &c in &cands {
+    // --- ai-planner: the line planner chose the land to fetch (`Player::plan_tutor`, legal: one of `cands`)
+    let forced = g.player(p).plan_tutor.filter(|t| cands.contains(t));
+    for &c in cands.iter().filter(|&&c| forced.is_none_or(|t| t == c)) {
         let cols = tag_cols(g, p, c);
         let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
         let ncols = g.db.get(c).tags.str(Tag::C).map_or(0, |s| s.chars().count()) as f64;
@@ -791,8 +801,10 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
         g.tick()?; // each discard can set off triggers (Tergrid): count it
         let h = held(g);
-        let lands: Vec<CardId> = h.iter().copied().filter(|&c| g.db.get(c).land).collect();
-        let c = if lands.len() >= 2 { lands[0] } else { max_by(&h, |c| g.db.get(c).cmc as f64).unwrap() };
+        // --- ai-fix: G: keep the line's pieces, the lands and protection it needs and what it can cast soonest (it
+        // threw away the dearest card, Thassa's Oracle included)
+        let c = ai::cleanup_discard(g, p, &h);
+        crate::gf_audit::discard(g, p, c); // --- ai-audit: the cleanup discard (not logged otherwise)
         discard_cards(g, p, &[c])?;
     }
     g.player_mut(p).last_turn_end = g.enter_no; // Premature Burial: what entered since this turn ended
@@ -850,6 +862,9 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
         if g.humans.any() {
             crate::human::mana::empty_pools(g); // practice mode empties the mana pools between steps
         }
+        if !matches!(st, Step::Start | Step::End) && crate::goldfish::is_inert(g, p) {
+            continue; // --- scion: an inert goldfish seat skips its main phases and combat
+        }
         match st {
             Step::Start => step_start(g, p)?,
             Step::Main1 => step_main1(g, p)?,
@@ -882,6 +897,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     crate::impls::alela::mirror_revert(g)?; // Mirage Mirror: copies end with the previous turn
+    crate::impls::t6_scion::copy_revert(g); // --- scion: Scion of the Ur-Dragon's copy ends with the turn (cleanup)
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
         q.floating.any = 0;
@@ -957,6 +973,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.trample = false;
     pl.combo_tried = false;
     pl.haste_all = false;
+    crate::gf_audit::turn_start(g, p); // --- ai-audit
+    crate::t6stats::flow_turn_start(g, p); // --- ai-flow
     crate::glog!(
         g,
         "--- {} turn {}: life {}, {} cards in hand, {} lands",
@@ -1018,8 +1036,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     let pl = g.player_mut(p);
     pl.lands_played = 0;
     pl.extra_land_now = 0;
-    if crate::human::is_human(g, p) {
-        return Ok(()); // practice mode: the person plays lands in the main phase
+    if crate::human::is_human(g, p) || crate::goldfish::is_inert(g, p) {
+        return Ok(()); // practice mode: the person plays lands in the main phase (--- scion: an inert seat plays none)
     }
     play_land(g, p)?;
     if !g.hooks.is_empty() {
@@ -1032,6 +1050,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if pl.t6 && pl.turns <= 5 {
         crate::t6stats::mana_snapshot(g, p);
     }
+    crate::t6stats::flow_main(g, p); // --- ai-flow
     let pl = g.player_mut(p);
     if matches!(pl.turns, 4 | 6 | 8) {
         let mana = total_mana(g, p, false) as i64;
@@ -1058,6 +1077,7 @@ fn step_main1(g: &mut Game, p: PlayerId) -> Res {
     if !g.hooks.is_empty() {
         more_lands(g, p)?;
     }
+    crate::gf_audit::main_end(g, p); // --- ai-audit (after the extra land drops: a land drawn in main 1 is played)
     Ok(())
 }
 
@@ -1072,6 +1092,7 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
         return crate::human::human::human_main(g, p, true);
     }
     ai::main(g, p, true)?;
+    crate::gf_audit::main_end(g, p); // --- ai-audit
     crate::t6stats::mana_held(g, p);
     if g.player(p).key == "veyran" && has(g, p, Tag::Veyran) && ai::engine_payoff(g, p) {
         let t = g.player(p).turns;
@@ -1089,6 +1110,7 @@ fn step_end(g: &mut Game, p: PlayerId) -> Res {
         }
         Ok(())
     })();
+    crate::t6stats::flow_turn_end(g, p); // --- ai-flow
     let pl = g.player_mut(p);
     let t = pl.turns;
     for i in pl.cast_logged..pl.cast_names.len() {
@@ -1219,10 +1241,21 @@ pub fn setup_game_for(
             mull_rngs.push((p, r));
             continue;
         }
+        if crate::goldfish::is_inert(&g, p) {
+            // --- scion: an inert goldfish seat keeps its first seven
+            let pl = g.player_mut(p);
+            for _ in 0..7 {
+                if let Some(c) = pl.library.pop() {
+                    pl.hand.push(c);
+                }
+            }
+            continue;
+        }
         mulligan(&mut g, p, &mut r);
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
     }
+    crate::gf_audit::start(&mut g); // --- ai-audit: goldfish games only
     (g, mull_rngs)
 }
 
@@ -1262,7 +1295,8 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
                     continue;
                 }
                 if g.player(p).alive && !g.over {
-                    if r > 1 && !crate::human::is_human(g, p) {
+                    // --- scion: nor for an inert goldfish seat
+                    if r > 1 && !crate::human::is_human(g, p) && !crate::goldfish::is_inert(g, p) {
                         ai::end_of_turn_window(g, p)?; // not for a person's seat
                     }
                     if g.player(p).alive && !g.over {

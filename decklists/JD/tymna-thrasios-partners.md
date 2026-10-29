@@ -111,7 +111,8 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
 **Skyclave Apparition**, **Witherbloom Charm** (destroy a nonland permanent with mana value 2 or less, or sacrifice a
 permanent to draw two, or gain 5), **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Disenchant**; **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
+**Memory Trap** and **Assassin's Trophy** ({B}{G}, instant: destroy any permanent an opponent controls; they get a basic
+land); **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
 reuses an enters effect (a Titan, Skyclave Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible), **Blossoming
 Defense** ({G}: +2/+2 and hexproof) and **Lightning Greaves** protect Tymna.
@@ -188,7 +189,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Enchantments (4).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda
 
-**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
+**Instants (10).** Arcane Denial, Assassin's Trophy, Bite Down, Blossoming Defense, Dark Endurance, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
 
 **Sorceries (2).** Austere Command, Diabolic Tutor
 
@@ -201,6 +202,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Arcane Denial
 1 Arcane Signet
 1 Archon of Absolution
+1 Assassin's Trophy
 1 Austere Command
 1 Avacyn's Pilgrim
 1 Aven Mindcensor
@@ -223,7 +225,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Dauthi Voidwalker
 1 Deathcap Glade
 1 Diabolic Tutor
-1 Disenchant
 1 Dragonlord Dromoka
 1 Drowned Catacomb
 1 Elenda, the Dusk Rose

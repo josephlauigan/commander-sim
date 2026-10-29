@@ -1,0 +1,278 @@
+Play-by-play of goldfish game 74 (seed 500074): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Volcanic Island, Underground Sea, Brain Freeze, Noble Hierarch, Rite of Flame, Mystic Remora, Vampiric Tutor
+R1    Scion plays Underground Sea
+R1        [Scion decides: Mystic Remora 100%, stop 0% -> Mystic Remora [search]]
+R1    Scion casts Mystic Remora
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Volcanic Island, Brain Freeze, Noble Hierarch, Rite of Flame, Vampiric Tutor, Silence
+R2    Scion plays Volcanic Island
+R2    Scion casts Lotus Petal
+R2        [Scion decides: Lotus Petal 100%, stop 0% -> Lotus Petal [must]]
+R2    Scion casts Noble Hierarch
+R2        [Scion decides: Noble Hierarch 100%, stop 0% -> Noble Hierarch [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 40, 4 cards in hand, 2 lands
+R3      hand: Brain Freeze, Rite of Flame, Vampiric Tutor, Silence
+R3        [Scion decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R3    Scion casts Esper Sentinel
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 40, 4 cards in hand, 2 lands
+R4      hand: Brain Freeze, Rite of Flame, Vampiric Tutor, Silence
+R4        [Scion attack plan by search: filtered at Goldfish 2]
+R4    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 40, 5 cards in hand, 2 lands
+R5      hand: Brain Freeze, Rite of Flame, Vampiric Tutor, Silence, Tainted Pact
+R5      Scion sacrifices Mystic Remora (cumulative upkeep 4)
+R5        [Scion attack plan by search: filtered at Goldfish 3]
+R5    Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Scion casts Vampiric Tutor
+R6      Scion puts Thassa's Oracle on top of their library
+R6        [Scion end of turn: Vampiric Tutor 92%, Mystical Tutor 8%, pass 0% -> Vampiric Tutor]
+R6    Scion casts Mystical Tutor
+R6      Scion puts Force of Will on top of their library
+R6        [Scion end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R6  --- Scion turn 6: life 38, 4 cards in hand, 2 lands
+R6      hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact
+R6        [Scion attack plan by search: filtered at Goldfish 4]
+R6    Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 38, 5 cards in hand, 2 lands
+R7      hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will
+R7        [Scion decides: Mockingbird (X = 0, copy Esper Sentinel) 100%, stop 0% -> Mockingbird (X = 0, copy Esper Sentinel) [search]]
+R7    Scion casts Mockingbird -> Esper Sentinel (Scion)
+R7      Mockingbird enters as a copy of Esper Sentinel
+R7        [Scion attack plan by search: filtered at Goldfish 2]
+R7    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R7  --- Goldfish 2 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 38, 5 cards in hand, 2 lands
+R8      hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will
+R8    Scion plays Command Tower
+R8        [Scion attack plan by search: filtered at Goldfish 3]
+R8    Scion attacks Goldfish 3 with 2 creature(s): 2 damage (life now 36)
+R8  --- Goldfish 2 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 38, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 38, 5 cards in hand, 3 lands
+R9      hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will
+R9        [Scion decides: Rhystic Study 100%, stop 0% -> stop [search]]
+R9        [Scion attack plan by search: filtered at Goldfish 4]
+R9    Scion attacks Goldfish 4 with 2 creature(s): 2 damage (life now 36)
+R9        [Scion decides: Rhystic Study 100%, stop 0% -> Rhystic Study [search]]
+R9    Scion casts Rhystic Study
+R9  --- Goldfish 2 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 38, 5 cards in hand, 3 lands
+R10     hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will
+R10       [Scion decides: Cabal Ritual 100%, stop 0% -> stop [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 2]
+R10   Scion attacks Goldfish 2 with 2 creature(s): 2 damage (life now 34)
+R10       [Scion decides: Cabal Ritual 100%, stop 0% -> Cabal Ritual [search]]
+R10   Scion casts Cabal Ritual
+R10       [Scion decides: Scion of the Ur-Dragon 100%, stop 0% -> Scion of the Ur-Dragon [search]]
+R10   Scion casts Scion of the Ur-Dragon
+R10 --- Goldfish 2 turn 10: life 34, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 36, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 36, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 38, 5 cards in hand, 3 lands
+R11     hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will
+R11       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 100%, stop 0% -> stop [search]]
+R11       [Scion attack plan by search: filtered at Goldfish 3]
+R11   Scion attacks Goldfish 3 with 3 creature(s): 6 damage (life now 30)
+R11 --- Goldfish 2 turn 11: life 34, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 30, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 36, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 38, 6 cards in hand, 3 lands
+R12     hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will, Orim's Chant
+R12       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 100%, stop 0% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R12   Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R12     Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R12       [Scion attack plan by search: filtered at Goldfish 4]
+R12     Ancient Copper Dragon rolls 1: 1 Treasures
+R12   Scion attacks Goldfish 4 with 3 creature(s): 8 damage (life now 28)
+R12 --- Goldfish 2 turn 12: life 34, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 30, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 28, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 38, 7 cards in hand, 3 lands
+R13     hand: Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will, Orim's Chant, Dark Ritual
+R13       [Scion decides: Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 99%, stop 1% -> stop [search]]
+R13       [Scion attack plan by search: filtered at Goldfish 2]
+R13   Scion attacks Goldfish 2 with 3 creature(s): 6 damage (life now 28)
+R13     [audit] Scion discards Silence to hand size (8 cards in hand)
+R13 --- Goldfish 2 turn 13: life 28, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 30, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 28, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 38, 7 cards in hand, 3 lands
+R14     hand: Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Orim's Chant, Dark Ritual, Redirect Lightning
+R14       [Scion decides: Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 99%, stop 1% -> stop [search]]
+R14       [Scion attack plan by search: filtered at Goldfish 3]
+R14   Scion attacks Goldfish 3 with 3 creature(s): 6 damage (life now 24)
+R14     [audit] Scion discards Orim's Chant to hand size (8 cards in hand)
+R14 --- Goldfish 2 turn 14: life 28, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 3 turn 14: life 24, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 28, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 38, 7 cards in hand, 3 lands
+R15     hand: Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Redirect Lightning, Simian Spirit Guide
+R15       [Scion decides: Storm-Kiln Artist 99%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 1%, stop 0% -> Storm-Kiln Artist [search]]
+R15   Scion casts Storm-Kiln Artist
+R15       [Scion decides: Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 99%, stop 1% -> stop [search]]
+R15       [Scion attack plan by search: filtered at Goldfish 4]
+R15   Scion attacks Goldfish 4 with 3 creature(s): 6 damage (life now 22)
+R15 --- Goldfish 2 turn 15: life 28, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 3 turn 15: life 24, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 22, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 38, 6 cards in hand, 3 lands
+R16     hand: Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Redirect Lightning
+R16       [Scion decides: Lotho, Corrupt Shirriff 95%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 5%, stop 0% -> Lotho, Corrupt Shirriff [search]]
+R16   Scion casts Lotho, Corrupt Shirriff
+R16       [Scion decides: Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 99%, stop 1% -> Scion of the Ur-Dragon: become Korvold, Fae-Cursed King [search]]
+R16   Scion activates Scion of the Ur-Dragon: search for Korvold, Fae-Cursed King
+R16     Scion of the Ur-Dragon becomes a copy of Korvold, Fae-Cursed King
+R16       [Scion attack plan by search: filtered at Goldfish 3]
+R16   Scion attacks Goldfish 3 with 3 creature(s): 7 damage (life now 17)
+R16 --- Goldfish 2 turn 16: life 28, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 3 turn 16: life 17, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 22, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Scion turn 17: life 38, 7 cards in hand, 3 lands
+R17     hand: Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Redirect Lightning, Valley Floodcaller
+R17       [Scion decides: Valley Floodcaller 67%, stop (hold mana) 33% -> stop (hold mana) [search]]
+R17       [Scion attack plan by search: filtered at Goldfish 3]
+R17   Scion attacks Goldfish 3 with 4 creature(s): 9 damage (life now 8)
+R17       [Scion decides: Valley Floodcaller 67%, stop (hold mana) 33% -> stop (hold mana) [search]]
+R17     [audit] Scion discards Redirect Lightning to hand size (8 cards in hand)
+R17 --- Goldfish 2 turn 17: life 28, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Goldfish 3 turn 17: life 8, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Goldfish 4 turn 17: life 22, 7 cards in hand, 0 lands
+R17     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18   Scion casts Valley Floodcaller
+R18       [Scion end of turn: Valley Floodcaller 100%, pass 0% -> Valley Floodcaller]
+R18 --- Scion turn 18: life 38, 6 cards in hand, 3 lands
+R18     hand: Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Mental Misstep
+R18       [Scion attack plan by search: all at Goldfish 2]
+R18   Scion attacks Goldfish 2 with 5 creature(s): 11 damage (life now 17)
+R18 --- Goldfish 2 turn 18: life 17, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Goldfish 3 turn 18: life 8, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R18 --- Goldfish 4 turn 18: life 22, 7 cards in hand, 0 lands
+R18     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Scion turn 19: life 38, 7 cards in hand, 3 lands
+R19     hand: Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Mental Misstep, Underworld Breach
+R19       [Scion attack plan by search: all at Goldfish 4]
+R19   Scion attacks Goldfish 4 with 5 creature(s): 11 damage (life now 11)
+R19     [audit] Scion discards Rite of Flame to hand size (8 cards in hand)
+R19 --- Goldfish 2 turn 19: life 17, 7 cards in hand, 0 lands
+R19     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Goldfish 3 turn 19: life 8, 7 cards in hand, 0 lands
+R19     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R19 --- Goldfish 4 turn 19: life 11, 7 cards in hand, 0 lands
+R19     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R20 --- Scion turn 20: life 38, 7 cards in hand, 3 lands
+R20     hand: Brain Freeze, Tainted Pact, Force of Will, Dark Ritual, Mental Misstep, Underworld Breach, Force of Negation
+R20       [Scion decides: stop (hold mana) 99%, Deathrite Shaman 1% -> stop (hold mana) [search]]
+R20       [Scion attack plan by search: filtered at Goldfish 2]
+R20   Scion attacks Goldfish 2 with 2 creature(s): 2 damage (life now 15)
+R20 *** Goldfish 3 is eliminated (life -1) by Scion
+R20   Scion attacks Goldfish 3 with 3 creature(s): 9 damage (life now -1)
+R20       [Scion decides: stop (hold mana) 99%, Deathrite Shaman 1% -> stop (hold mana) [search]]
+R20     [audit] Scion discards Dark Ritual to hand size (8 cards in hand)
+R20 --- Goldfish 2 turn 20: life 15, 7 cards in hand, 0 lands
+R20     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R20 --- Goldfish 4 turn 20: life 11, 7 cards in hand, 0 lands
+R20     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+Kill: none
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (draw) | held (payable, not offered): Vampiric Tutor
+  T2  progressed (fast mana / rock) | held (payable, not offered): Rite of Flame, Brain Freeze, Vampiric Tutor, Silence
+  T3  progressed (draw) | held (payable, not offered): Silence
+  T4  mana_short
+  T5  idle | held (payable, not offered): Brain Freeze, Rite of Flame, Vampiric Tutor, Silence, Tainted Pact, Mystical Tutor
+  T6  idle | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact
+  T7  progressed (other) | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact, Mockingbird
+  T8  progressed (land only) | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact
+  T9  progressed (draw) | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact
+  T10 progressed (combo piece) | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will
+  T11 idle | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact, Orim's Chant
+  T12 progressed (abilities only) | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact, Orim's Chant, Dark Ritual
+  T13 idle | held (payable, not offered): Brain Freeze, Rite of Flame, Silence, Tainted Pact, Force of Will, Orim's Chant, Dark Ritual, Redirect Lightning
+  T14 idle | held (payable, not offered): Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Orim's Chant, Dark Ritual, Redirect Lightning, Simian Spirit Guide
+  T15 progressed (other) | held (payable, not offered): Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Redirect Lightning, Simian Spirit Guide
+  T16 progressed (other) | held (payable, not offered): Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Redirect Lightning
+  T17 idle | held (payable, not offered): Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Redirect Lightning, Mental Misstep
+  T18 idle | held (payable, not offered): Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Mental Misstep, Underworld Breach
+  T19 idle | held (payable, not offered): Brain Freeze, Rite of Flame, Tainted Pact, Force of Will, Dark Ritual, Mental Misstep, Underworld Breach, Force of Negation
+  T20 idle | held (payable, not offered): Brain Freeze, Tainted Pact, Force of Will, Dark Ritual, Mental Misstep, Underworld Breach, Force of Negation
+  cleanup discards: Silence [protection], Orim's Chant [protection], Redirect Lightning [other], Rite of Flame [ritual], Dark Ritual [ritual]
+  stops with another option offered: T9 main 1 look-ahead "stop" over Rhystic Study (5.0); T10 main 1 look-ahead "stop" over Cabal Ritual (8.2); T11 main 1 look-ahead "stop" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T13 main 1 look-ahead "stop" over Scion of the Ur-Dragon: become Korvold, Fae-Cursed King (2.0); T14 main 1 look-ahead "stop" over Scion of the Ur-Dragon: become Korvold, Fae-Cursed King (2.0); T15 main 1 look-ahead "stop" over Scion of the Ur-Dragon: become Korvold, Fae-Cursed King (2.0); T17 main 1 look-ahead "stop (hold mana)" over Valley Floodcaller (3.1); T17 main 2 look-ahead "stop (hold mana)" over Valley Floodcaller (3.1); T20 main 1 look-ahead "stop (hold mana)" over Deathrite Shaman (-1.5); T20 main 2 look-ahead "stop (hold mana)" over Deathrite Shaman (-1.5)
+  crude best case: none
+  crude best case with tutors: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

@@ -5,7 +5,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
-| **Bracket** | 4 (9 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Mystical Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection) |
+| **Bracket** | 4 (11 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Mystical Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection, Orcish Bowmasters, Serra's Sanctum) |
 | **Simulator** | deck key `yshtola`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -118,19 +118,18 @@ Zur can find Arrest, Bound in Silence, Encrust, Luminous Bonds, Memory Trap, Mys
 
 The list is exactly 100 cards.
 
-37 lands (13 nonbasic, 8 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic.
+37 lands (14 nonbasic, 7 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 15 enchantments it taps for three or more by the mid-game.
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| White lands | 15 | 8 Plains plus Adarkar Wastes, Caves of Koilos, Command Tower, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum |
-| Blue lands | 12 | 7 Island plus Adarkar Wastes, Command Tower, Glacial Fortress, Prairie Stream, Underground River |
-| Black lands | 14 | 9 Swamp plus Caves of Koilos, Command Tower, Isolated Chapel, Shattered Sanctum, Underground River |
-| Any colour, with a condition | 2 | Exotic Orchard (an opponent's land), Spire of Industry (1 life, with an artifact) |
-| No mana the turn they land | 3 | Evolving Wilds, Terramorphic Expanse, Fabled Passage (each finds any basic, now one of 24) |
+| White lands | 15 | 7 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
+| Blue lands | 14 | 7 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
+| Black lands | 16 | 9 Swamp plus Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
+| Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
 | Always enter tapped | 0 | no land always enters tapped |
-| Sometimes enter tapped | 4 | Glacial Fortress, Isolated Chapel (need a basic type), Prairie Stream (two basics), Shattered Sanctum (two other lands); with 24 basics they rarely do |
+| Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
 
-Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so Swamps outnumber the other basics. Blue has the fewest sources. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception.
+Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
 **Curve.** One-drops 7, two-drops 7, three-drops 23, four-drops 16 (counting Y'shtola), five 5, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
@@ -152,15 +151,15 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Board wipes (two):** Austere Command, Farewell.
 - **Protection:** Teferi's Protection.
 
-**Life is a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
+**Life is a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, the fetch lands (1 each), the shocks (2 to enter untapped) and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with nine Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell** and **Teferi's Protection**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
+**Bracket 4,** with eleven Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
 
 Disclose before the game:
 
-- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell** and **Teferi's Protection** (the nine Game Changers).
+- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the eleven Game Changers).
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
 - **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor, and Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
@@ -184,7 +183,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit
 
-**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse, Underground River, 8 Plains, 7 Island, 9 Swamp
+**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Watery Grave, 7 Plains, 7 Island, 9 Swamp
 
 ## Import list (100)
 
@@ -210,25 +209,24 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Dovin's Veto
 1 Encrust
 1 Esper Sentinel
-1 Evolving Wilds
-1 Exotic Orchard
 1 Exsanguinate
-1 Fabled Passage
 1 Farewell
 1 Fatal Push
+1 Flooded Strand
 1 Force of Will
 1 Generous Gift
-1 Glacial Fortress
 1 Go for the Throat
+1 Godless Shrine
 1 Gonti, Lord of Luxury
 1 Grand Arbiter Augustin IV
+1 Hallowed Fountain
 1 Hostage Taker
 1 Idyllic Tutor
 1 Ill-Gotten Inheritance
-1 Isolated Chapel
 1 Lightning Greaves
 1 Luminous Bonds
 1 Marauding Blight-Priest
+1 Marsh Flats
 1 Massacre Wurm
 1 Memory Trap
 1 Mystic Remora
@@ -239,33 +237,35 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Orcish Bowmasters
 1 Path to Exile
 1 Polluted Bonds
-1 Prairie Stream
+1 Polluted Delta
 1 Prayer of Binding
 1 Prison Sentence
 1 Propaganda
 1 Read the Bones
 1 Restoration Angel
 1 Sanguine Bond
-1 Shattered Sanctum
+1 Scrubland
+1 Serra's Sanctum
 1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
-1 Spire of Industry
 1 Static Net
 1 Talisman of Progress
 1 Teferi's Protection
-1 Terramorphic Expanse
 1 Tezzeret's Gambit
 1 The Eternal Wanderer
 1 Thief of Sanity
+1 Tundra
 1 Underground River
+1 Underground Sea
 1 Urborg Syphon-Mage
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
+1 Watery Grave
 1 Windborn Muse
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here
 1 Zur the Enchanter
 7 Island
-8 Plains
+7 Plains
 9 Swamp
 ```

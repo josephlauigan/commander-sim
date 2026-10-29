@@ -20,12 +20,12 @@ pub const FILES: [(&str, &str, &str); 12] = [
     ("sheoldred", "JD", "sheoldred-mono-black.md"),
     ("cloud", "JD", "cloud-midgar-equipment.md"),
     ("thrasios", "JD", "tymna-thrasios-partners.md"),
-    ("sephfs", "JD", "sephiroth-fs-wipe-steal.md"),
     ("karn", "JD", "karn-colorless-artifacts.md"),
+    ("scion", "JD", "scion-ur-dragon-turbo.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 12] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "sephfs", "karn"];
+pub const MINE: [&str; 12] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "karn", "scion"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 

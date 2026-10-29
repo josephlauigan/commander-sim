@@ -1,0 +1,260 @@
+Play-by-play of goldfish game 0 (seed 500000): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Verdant Catacombs, Grinding Station, Pact of Negation, Timetwister, Final Fortune, Simian Spirit Guide, Flooded Strand
+R1    Rograkh/Silas plays Flooded Strand
+R1      cracks Flooded Strand for Watery Grave
+R1        [Rograkh/Silas decides: Grinding Station 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R1        [Rograkh/Silas decides: Grinding Station 99%, stop (hold mana) 1% -> Grinding Station [search]]
+R1    Rograkh/Silas casts Grinding Station
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 39, 5 cards in hand, 1 lands
+R2      hand: Verdant Catacombs, Pact of Negation, Timetwister, Final Fortune, Dark Ritual
+R2    Rograkh/Silas plays Verdant Catacombs
+R2      cracks Verdant Catacombs for Badlands
+R2        [Rograkh/Silas decides: Dark Ritual 61%, Rograkh, Son of Rohgahh 39%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2        [Rograkh/Silas decides: Dark Ritual 61%, Rograkh, Son of Rohgahh 39%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Rograkh/Silas turn 3: life 38, 5 cards in hand, 2 lands
+R3      hand: Pact of Negation, Timetwister, Final Fortune, Dark Ritual, Flusterstorm
+R3        [Rograkh/Silas plays Scalding Tarn for Underground Sea [plan: the land drop the plan wants]]
+R3    Rograkh/Silas plays Scalding Tarn
+R3      cracks Scalding Tarn for Underground Sea
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 65%, Rograkh, Son of Rohgahh 32%, Timetwister 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 65%, Rograkh, Son of Rohgahh 32%, Timetwister 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 37, 5 cards in hand, 3 lands
+R4      hand: Pact of Negation, Timetwister, Final Fortune, Dark Ritual, Flusterstorm
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 65%, Rograkh, Son of Rohgahh 32%, Timetwister 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 65%, Rograkh, Son of Rohgahh 32%, Timetwister 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 37, 6 cards in hand, 3 lands
+R5      hand: Pact of Negation, Timetwister, Final Fortune, Dark Ritual, Flusterstorm, Commandeer
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 59%, Rograkh, Son of Rohgahh 29%, Mystic Remora 10%, Timetwister 2% -> stop (hold mana) [search]]
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 59%, Rograkh, Son of Rohgahh 29%, Mystic Remora 10%, Timetwister 2% -> Rograkh, Son of Rohgahh [search]]
+R5    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 83%, Mystic Remora 14%, Timetwister 2%, stop (hold mana) 1% -> Mystic Remora [search]]
+R5    Rograkh/Silas casts Mystic Remora
+R5        [Rograkh/Silas decides: Dark Ritual 98%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Rograkh/Silas turn 6: life 37, 6 cards in hand, 3 lands
+R6      hand: Pact of Negation, Timetwister, Final Fortune, Dark Ritual, Flusterstorm, Commandeer
+R6        [Rograkh/Silas decides: Dark Ritual 95%, Borne Upon a Wind 3%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R6        [Rograkh/Silas decides: Dark Ritual 95%, Borne Upon a Wind 3%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Rograkh/Silas casts Borne Upon a Wind
+R7        [Rograkh/Silas end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R7  --- Rograkh/Silas turn 7: life 37, 7 cards in hand, 3 lands
+R7      hand: Pact of Negation, Timetwister, Final Fortune, Dark Ritual, Flusterstorm, Commandeer, Mox Diamond
+R7        [Rograkh/Silas decides: Dark Ritual 98%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R7        [Rograkh/Silas decides: Dark Ritual 98%, stop (hold mana) 2% -> Dark Ritual [search]]
+R7    Rograkh/Silas casts Dark Ritual
+R7        [Rograkh/Silas decides: Silas Renn, Seeker Adept 96%, Timetwister 3%, stop (hold mana) 1% -> Silas Renn, Seeker Adept [search]]
+R7    Rograkh/Silas casts Silas Renn, Seeker Adept
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Rograkh/Silas turn 8: life 37, 7 cards in hand, 3 lands
+R8      hand: Pact of Negation, Timetwister, Final Fortune, Flusterstorm, Commandeer, Mox Diamond, Culling the Weak
+R8        [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R8    Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R8      [audit] Rograkh/Silas discards Commandeer to hand size (8 cards in hand)
+R8  --- Goldfish 2 turn 8: life 38, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Rograkh/Silas turn 9: life 37, 7 cards in hand, 3 lands
+R9      hand: Pact of Negation, Timetwister, Final Fortune, Flusterstorm, Mox Diamond, Culling the Weak, Misdirection
+R9      Rograkh/Silas sacrifices Mystic Remora (cumulative upkeep 4)
+R9        [Rograkh/Silas decides: Timetwister 57%, stop (hold mana) 31%, Chrome Mox 12% -> stop (hold mana) [search]]
+R9        [Rograkh/Silas attack plan by search: filtered at Goldfish 3]
+R9    Rograkh/Silas attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R9        [Rograkh/Silas decides: Timetwister 57%, stop (hold mana) 31%, Chrome Mox 12% -> Chrome Mox [search]]
+R9    Rograkh/Silas casts Chrome Mox
+R9      Chrome Mox imprints Final Fortune
+R9        [Rograkh/Silas decides: Timetwister 64%, stop (hold mana) 35%, Grinding Station ability 1% -> stop (hold mana) [search]]
+R9  --- Goldfish 2 turn 9: life 38, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 38, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10   Rograkh/Silas activates Grinding Station
+R10       [Rograkh/Silas end of turn: Grinding Station ability 83%, pass 17% -> Grinding Station ability]
+R10 --- Rograkh/Silas turn 10: life 37, 6 cards in hand, 3 lands
+R10     hand: Pact of Negation, Timetwister, Flusterstorm, Mox Diamond, Culling the Weak, Misdirection
+R10       [Rograkh/Silas decides: Timetwister 65%, stop (hold mana) 35% -> stop (hold mana) [search]]
+R10       [Rograkh/Silas attack plan by search: all at Goldfish 4]
+R10     Silas Renn: Rograkh/Silas may cast Chrome Mox from the graveyard this turn
+R10   Rograkh/Silas attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R10       [Rograkh/Silas decides: Timetwister 57%, stop (hold mana) 31%, Silas Renn: cast Chrome Mox from the graveyard 12% -> Timetwister [search]]
+R10   Rograkh/Silas casts Timetwister
+R10       [Rograkh/Silas decides: Mox Amber 99%, stop 1% -> Mox Amber [search]]
+R10   Rograkh/Silas casts Mox Amber
+R10       [Rograkh/Silas decides: Sol Ring 100%, Grinding Station ability 0%, stop 0% -> Sol Ring [search]]
+R10   Rograkh/Silas casts Sol Ring
+R10       [Rograkh/Silas decides: Grinding Station ability 96%, stop 4% -> Grinding Station ability [search]]
+R10   Rograkh/Silas activates Grinding Station
+R10 --- Goldfish 2 turn 10: life 38, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 38, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 38, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Rograkh/Silas turn 11: life 37, 5 cards in hand, 3 lands
+R11     hand: Necropotence, Otawara, Soaring City, Bloodstained Mire, Volcanic Island, Deflecting Swat
+R11   Rograkh/Silas plays Otawara, Soaring City
+R11       [Rograkh/Silas decides: Necropotence 52%, Mystic Remora 47%, Grinding Station ability 0%, stop 0% -> stop [search]]
+R11       [Rograkh/Silas attack plan by search: none at Goldfish 2]
+R11       [Rograkh/Silas decides: Necropotence 52%, Mystic Remora 47%, Grinding Station ability 0%, stop 0% -> Necropotence [search]]
+R11   Rograkh/Silas casts Necropotence
+R11       [Rograkh/Silas decides: Mystic Remora 100%, Grinding Station ability 0%, stop 0% -> Mystic Remora [search]]
+R11   Rograkh/Silas casts Mystic Remora
+R11       [Rograkh/Silas decides: Grinding Station ability 96%, stop 4% -> Grinding Station ability [search]]
+R11   Rograkh/Silas activates Grinding Station
+R11   Rograkh/Silas pays 5 life to Necropotence
+R11     [audit] Rograkh/Silas discards Volcanic Island to hand size (8 cards in hand)
+R11 --- Goldfish 2 turn 11: life 38, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 38, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 38, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Rograkh/Silas turn 12: life 32, 7 cards in hand, 4 lands
+R12     hand: Bloodstained Mire, Deflecting Swat, Rhystic Study, Snap, Arid Mesa, Rain of Filth, Lion's Eye Diamond
+R12   Rograkh/Silas plays Arid Mesa
+R12     cracks Arid Mesa for Blood Crypt
+R12       [Rograkh/Silas decides: Rhystic Study 99%, Snap 1%, stop 0% -> Rhystic Study [search]]
+R12   Rograkh/Silas casts Rhystic Study
+R12       [Rograkh/Silas attack plan by search: filtered at Goldfish 2]
+R12     Silas Renn: Rograkh/Silas may cast Sol Ring from the graveyard this turn
+R12   Rograkh/Silas attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R12       [Rograkh/Silas decides: Silas Renn: cast Sol Ring from the graveyard 100%, stop 0% -> stop [search]]
+R12   Rograkh/Silas pays 3 life to Necropotence
+R12     [audit] Rograkh/Silas discards Polluted Delta to hand size (8 cards in hand)
+R12 --- Goldfish 2 turn 12: life 36, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 38, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 38, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Rograkh/Silas turn 13: life 28, 7 cards in hand, 5 lands
+R13     hand: Bloodstained Mire, Deflecting Swat, Snap, Rain of Filth, Lion's Eye Diamond, Lotus Petal, Paradise Mantle
+R13   Rograkh/Silas plays Bloodstained Mire
+R13     cracks Bloodstained Mire for Undercity Sewers
+R13       [Rograkh/Silas decides: Lotus Petal 38%, Paradise Mantle 38%, Snap 23%, stop 1% -> Snap [search]]
+R13   Rograkh/Silas casts Snap
+R13       [Rograkh/Silas decides: Lotus Petal 50%, Paradise Mantle 50%, stop 1% -> stop [search]]
+R13       [Rograkh/Silas attack plan by search: filtered at Goldfish 4]
+R13     Silas Renn: Rograkh/Silas may cast Sol Ring from the graveyard this turn
+R13   Rograkh/Silas attacks Goldfish 4 with 1 creature(s): 2 damage (life now 36)
+R13       [Rograkh/Silas decides: Silas Renn: cast Sol Ring from the graveyard 100%, Lotus Petal 0%, Paradise Mantle 0%, stop 0% -> Lotus Petal [search]]
+R13   Rograkh/Silas casts Lotus Petal
+R13       [Rograkh/Silas decides: Silas Renn: cast Sol Ring from the graveyard 100%, Paradise Mantle 0%, Grinding Station ability 0%, stop 0% -> Grinding Station ability [search]]
+R13   Rograkh/Silas activates Grinding Station
+R13       [Rograkh/Silas decides: Silas Renn: cast Sol Ring from the graveyard 100%, Paradise Mantle 0%, stop 0% -> Paradise Mantle [search]]
+R13   Rograkh/Silas casts Paradise Mantle
+R13     Grinding Station untaps (Paradise Mantle entered)
+R13       [Rograkh/Silas decides: Silas Renn: cast Sol Ring from the graveyard 100%, equip Paradise Mantle 0%, Grinding Station ability 0%, stop 0% -> Silas Renn: cast Sol Ring from the graveyard [search]]
+R13   Rograkh/Silas casts Sol Ring from the graveyard (Silas Renn)
+R13   Rograkh/Silas casts Sol Ring
+R13       [Rograkh/Silas decides: equip Paradise Mantle 89%, Grinding Station ability 11%, stop 0% -> stop [search]]
+R13   Rograkh/Silas pays 5 life to Necropotence
+R13     [audit] Rograkh/Silas discards City of Traitors to hand size (8 cards in hand)
+R13 --- Goldfish 2 turn 13: life 36, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 38, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 36, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Rograkh/Silas turn 14: life 22, 7 cards in hand, 6 lands
+R14     hand: Deflecting Swat, Rain of Filth, Lion's Eye Diamond, City of Brass, An Offer You Can't Refuse, Tainted Pact, Yawgmoth's Will
+R14   Rograkh/Silas plays City of Brass
+R14       [Rograkh/Silas decides: stop (hold mana) 61%, equip Paradise Mantle 35%, Grinding Station ability 4% -> stop (hold mana) [search]]
+R14       [Rograkh/Silas attack plan by search: filtered at Goldfish 3]
+R14     Silas Renn: Rograkh/Silas may cast Mox Amber from the graveyard this turn
+R14   Rograkh/Silas attacks Goldfish 3 with 1 creature(s): 2 damage (life now 36)
+R14       [Rograkh/Silas decides: Silas Renn: cast Mox Amber from the graveyard 63%, stop (hold mana) 22%, equip Paradise Mantle 13%, Grinding Station ability 2% -> stop (hold mana) [search]]
+R14   Rograkh/Silas pays 2 life to Necropotence
+R14     [audit] Rograkh/Silas discards Deflecting Swat to hand size (8 cards in hand)
+R14 --- Goldfish 2 turn 14: life 36, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 3 turn 14: life 36, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 36, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15   Rograkh/Silas activates Grinding Station
+R15       [Rograkh/Silas end of turn: Grinding Station ability 83%, pass 17% -> Grinding Station ability]
+R15 --- Rograkh/Silas turn 15: life 20, 7 cards in hand, 7 lands
+R15     hand: Rain of Filth, Lion's Eye Diamond, An Offer You Can't Refuse, Tainted Pact, Yawgmoth's Will, Talisman of Dominance, Jeska's Will
+R15     Rograkh/Silas sacrifices Mystic Remora (cumulative upkeep 4)
+R15       [Rograkh/Silas decides: Jeska's Will 60%, stop (hold mana) 23%, equip Paradise Mantle 13%, Talisman of Dominance 2% -> Jeska's Will [search]]
+R15   Rograkh/Silas casts Jeska's Will
+R15     Jeska's Will adds 7 red mana
+R15     Jeska's Will exiles Vexing Bauble, Thassa's Oracle, Borne Upon a Wind (playable this turn)
+R15       [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R15   Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R15   Rograkh/Silas casts Thassa's Oracle
+R15   Rograkh/Silas casts Tainted Pact
+R15     Rograkh/Silas exiles its library
+R15 *** Goldfish 2 is eliminated (life 36) by Rograkh/Silas
+R15 *** Goldfish 3 is eliminated (life 36) by Rograkh/Silas
+R15 *** Goldfish 4 is eliminated (life 36) by Rograkh/Silas
+R15 *** Rograkh/Silas wins by combo
+Kill: own turn 15 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (other) | held (payable, not offered): Pact of Negation, Dark Ritual
+  T2  passed_castable: Dark Ritual [ritual] | held (payable, not offered): Pact of Negation, Flusterstorm
+  T3  passed_castable: Timetwister [draw] | held (payable, not offered): Pact of Negation, Dark Ritual, Flusterstorm
+  T4  passed_castable: Timetwister [draw] | held (payable, not offered): Pact of Negation, Dark Ritual, Flusterstorm
+  T5  passed_castable: Timetwister [draw], Mystic Remora [draw], Dark Ritual [ritual] | held (payable, not offered): Pact of Negation, Dark Ritual, Flusterstorm
+  T6  passed_castable: Dark Ritual [ritual] | held (payable, not offered): Pact of Negation, Flusterstorm
+  T7  progressed (ritual) | held (payable, not offered): Pact of Negation, Flusterstorm, Mox Diamond, Culling the Weak, Final Fortune
+  T8  idle | held (payable, not offered): Pact of Negation, Mox Diamond
+  T9  passed_castable: Timetwister [draw] | held (payable, not offered): Pact of Negation, Flusterstorm, Mox Diamond, Culling the Weak
+  T10 no_land_drop | held (payable, not offered): Pact of Negation, Flusterstorm, Mox Diamond, Culling the Weak, Infernal Plunge
+  T11 progressed (draw) | held (payable, not offered): Deflecting Swat
+  T12 progressed (draw) | held (payable, not offered): Deflecting Swat, Rain of Filth, Lion's Eye Diamond
+  T13 progressed (fast mana / rock) | held (payable, not offered): Deflecting Swat, Rain of Filth, Lion's Eye Diamond
+  T14 progressed (land only) | held (payable, not offered): Deflecting Swat, Rain of Filth, Lion's Eye Diamond, An Offer You Can't Refuse, Tainted Pact, Yawgmoth's Will
+  T15 won
+  cleanup discards: Commandeer [other], Volcanic Island [land], Polluted Delta [land], City of Traitors [land], Deflecting Swat [other]
+  stops with another option offered: T1 main 1 look-ahead "stop (hold mana)" over Grinding Station (5.5); T2 main 1 look-ahead "stop (hold mana)" over Dark Ritual (7.9); T2 main 2 look-ahead "stop (hold mana)" over Dark Ritual (7.9); T3 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T3 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T4 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T4 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T5 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T5 main 2 look-ahead "stop (hold mana)" over Dark Ritual (7.9); T6 main 1 look-ahead "stop (hold mana)" over Dark Ritual (7.9); T6 main 2 look-ahead "stop (hold mana)" over Dark Ritual (7.9); T7 main 1 look-ahead "stop (hold mana)" over Dark Ritual (7.9); T9 main 1 look-ahead "stop (hold mana)" over Timetwister (4.6); T9 main 2 look-ahead "stop (hold mana)" over Timetwister (4.6); T10 main 1 look-ahead "stop (hold mana)" over Timetwister (4.6); T11 main 1 look-ahead "stop" over Necropotence (6.5); T12 main 2 look-ahead "stop" over Silas Renn: cast Sol Ring from the graveyard (8.8); T13 main 1 look-ahead "stop" over Lotus Petal (1.0); T13 main 2 look-ahead "stop" over equip Paradise Mantle (2.2); T14 main 1 look-ahead "stop (hold mana)" over equip Paradise Mantle (2.2); T14 main 2 look-ahead "stop (hold mana)" over Silas Renn: cast Mox Amber from the graveyard (3.8)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

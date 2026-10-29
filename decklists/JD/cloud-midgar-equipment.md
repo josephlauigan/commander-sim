@@ -108,8 +108,10 @@ that creature indestructible.
   creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
   Bastion Protector (commander creatures get +2/+2 and indestructible).
-- **Protect the team.** Wall of Omens (a 0/4 defender that draws a card when it enters) blocks early, and Elspeth, Sun's
-  Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
+- **Answer in response.** **Galadriel's Dismissal** ({W}, instant) phases Cloud out in response to removal; his
+  Equipment phases out with him and comes back still attached at your next turn.
+- **Protect the team.** Kicked ({2}{W} more), Galadriel's Dismissal phases out every creature you control, an answer
+  to a board wipe. Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
   power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
 
 ### Removal
@@ -145,7 +147,7 @@ that creature indestructible.
 ## Key lines
 
 - **Turn 2 Cloud:** search a Sword or Champion's Helm; turn three cast and equip it and attack with protection up
-  (Swiftfoot Boots or Giver of Runes).
+  (Swiftfoot Boots, Giver of Runes or Galadriel's Dismissal).
 - **Best opening:** Sol Ring on turn one, Cloud on turn two, then cast and equip a Sword on turn three.
 - **Mulligan:** keep hands with two lands (or a land and Sol Ring) and a play of two mana or less. Throw back hands that
   can not make {W}{W} by turn three.
@@ -153,7 +155,7 @@ that creature indestructible.
   and a Sword, attach all, and attack.
 - **Winds of Abandon:** {1}{W} exiles one creature that is not yours (its controller fetches a basic land); at six mana
   overload it ({4}{W}{W}) to exile every creature you do not control, a one-sided wipe that leaves your Equipment and carriers.
-- **Removal in response to an equip:** have Giver of Runes, Zack Fair or Swiftfoot Boots ready.
+- **Removal in response to an equip:** have Giver of Runes, Zack Fair, Galadriel's Dismissal or Swiftfoot Boots ready.
 
 ## Tutor targets by board state
 
@@ -170,7 +172,7 @@ that creature indestructible.
 33 lands: 28 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Path of Ancestry (enters tapped; scry 1
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
-White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Wall of Omens, Puresteel Paladin and the Swords.
+White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
 Interaction: Wrath of God, Day of Judgment, Fumigate, Sphere of Safety, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
 Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 11 Equipment in the deck, so Cloud's search always finds one.
 
@@ -186,7 +188,7 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (31).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Wall of Omens, Windborn Muse, Zack Fair
+**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Windborn Muse, Zack Fair
 
 **Enchantments (3).** Court of Ardenvale, Smothering Tithe, Sphere of Safety
 
@@ -194,7 +196,7 @@ on its own. Tell the table before the game that:
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
-**Instants (6).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Stroke of Midnight
+**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Galadriel's Dismissal, Stand Up for Yourself, Stroke of Midnight
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -237,6 +239,7 @@ on its own. Tell the table before the game that:
 1 Fireshrieker
 1 Forum Familiar
 1 Fumigate
+1 Galadriel's Dismissal
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
@@ -270,7 +273,6 @@ on its own. Tell the table before the game that:
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel
-1 Wall of Omens
 1 Windborn Muse
 1 Winds of Abandon
 1 Wrath of God

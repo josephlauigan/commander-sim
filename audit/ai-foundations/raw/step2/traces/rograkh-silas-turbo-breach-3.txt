@@ -1,0 +1,100 @@
+Play-by-play of goldfish game 3 (seed 500003): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Scalding Tarn, Mental Misstep, Lion's Eye Diamond, Gemstone Caverns, Flusterstorm, Vampiric Tutor, Pact of Negation
+R1        [Rograkh/Silas plays Scalding Tarn for Undercity Sewers [plan: the land drop the plan wants]]
+R1    Rograkh/Silas plays Scalding Tarn
+R1      cracks Scalding Tarn for Undercity Sewers
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 39, 7 cards in hand, 1 lands
+R2      hand: Mental Misstep, Lion's Eye Diamond, Gemstone Caverns, Flusterstorm, Vampiric Tutor, Pact of Negation, Into the Flood Maw
+R2    Rograkh/Silas plays Gemstone Caverns
+R2    Rograkh/Silas casts Paradise Mantle
+R2        [Rograkh/Silas decides: Paradise Mantle 92%, Rograkh, Son of Rohgahh 8%, stop (hold mana) 0% -> Paradise Mantle [must]]
+R2        [Rograkh/Silas decides: Silas Renn, Seeker Adept 67%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2        [Rograkh/Silas decides: Silas Renn, Seeker Adept 67%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3    Rograkh/Silas casts Vampiric Tutor
+R3      Rograkh/Silas puts Thassa's Oracle on top of their library
+R3        [Rograkh/Silas end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R3  --- Rograkh/Silas turn 3: life 37, 5 cards in hand, 2 lands
+R3      hand: Mental Misstep, Lion's Eye Diamond, Flusterstorm, Pact of Negation, Into the Flood Maw
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 37, 6 cards in hand, 2 lands
+R4      hand: Mental Misstep, Lion's Eye Diamond, Flusterstorm, Pact of Negation, Into the Flood Maw, Thassa's Oracle
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 37, 7 cards in hand, 2 lands
+R5      hand: Mental Misstep, Lion's Eye Diamond, Flusterstorm, Pact of Negation, Into the Flood Maw, Thassa's Oracle, Rite of Flame
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 65%, Rograkh, Son of Rohgahh 32%, Borne Upon a Wind 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 65%, Rograkh, Son of Rohgahh 32%, Borne Upon a Wind 2%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5      [audit] Rograkh/Silas discards Flusterstorm to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Rograkh/Silas casts Borne Upon a Wind
+R6        [Rograkh/Silas end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R6    Rograkh/Silas casts Sol Ring
+R6        [Rograkh/Silas end of turn: Sol Ring 100%, pass 0% -> Sol Ring]
+R6  --- Rograkh/Silas turn 6: life 37, 6 cards in hand, 2 lands
+R6      hand: Mental Misstep, Lion's Eye Diamond, Pact of Negation, Into the Flood Maw, Thassa's Oracle, Rite of Flame
+R6    Rograkh/Silas plays Underground Sea
+R6        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R6        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Rograkh/Silas turn 7: life 37, 6 cards in hand, 3 lands
+R7      hand: Mental Misstep, Lion's Eye Diamond, Pact of Negation, Into the Flood Maw, Thassa's Oracle, Rite of Flame
+R7        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R7    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R7    Rograkh/Silas casts Thassa's Oracle
+R7    Rograkh/Silas casts Demonic Consultation
+R7      Rograkh/Silas exiles its library
+R7  *** Goldfish 2 is eliminated (life 40) by Rograkh/Silas
+R7  *** Goldfish 3 is eliminated (life 40) by Rograkh/Silas
+R7  *** Goldfish 4 is eliminated (life 40) by Rograkh/Silas
+R7  *** Rograkh/Silas wins by combo
+Kill: own turn 7 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (land only) | held (payable, not offered): Mental Misstep, Lion's Eye Diamond, Pact of Negation
+  T2  progressed (fast mana / rock) | held (payable, not offered): Mental Misstep, Lion's Eye Diamond, Flusterstorm, Vampiric Tutor, Pact of Negation, Into the Flood Maw
+  T3  idle | held (payable, not offered): Mental Misstep, Lion's Eye Diamond, Flusterstorm, Pact of Negation, Into the Flood Maw, Thassa's Oracle
+  T4  idle | held (payable, not offered): Mental Misstep, Lion's Eye Diamond, Flusterstorm, Pact of Negation, Into the Flood Maw, Thassa's Oracle, Rite of Flame
+  T5  idle | held (payable, not offered): Mental Misstep, Lion's Eye Diamond, Flusterstorm, Pact of Negation, Into the Flood Maw, Thassa's Oracle, Rite of Flame
+  T6  progressed (land only) | held (payable, not offered): Mental Misstep, Lion's Eye Diamond, Pact of Negation, Into the Flood Maw, Thassa's Oracle, Rite of Flame
+  T7  won
+  cleanup discards: Flusterstorm [protection]
+  stops with another option offered: T2 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T2 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T3 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T3 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T4 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T4 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T5 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T5 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T6 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T6 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2)
+  crude best case: none
+  crude best case with tutors: own turn 7 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 7 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

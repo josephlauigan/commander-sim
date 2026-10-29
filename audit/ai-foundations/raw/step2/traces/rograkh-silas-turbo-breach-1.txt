@@ -1,0 +1,83 @@
+Play-by-play of goldfish game 1 (seed 500001): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Mystical Tutor, Otawara, Soaring City, Badlands, Daze, Imperial Seal, Gamble, Scalding Tarn
+R1    Rograkh/Silas plays Badlands
+R1        [Rograkh/Silas decides: Imperial Seal 97%, Gamble 3%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R1        [Rograkh/Silas decides: Imperial Seal 97%, Gamble 3%, stop (hold mana) 1% -> Imperial Seal [search]]
+R1    Rograkh/Silas casts Imperial Seal
+R1      Rograkh/Silas puts Thassa's Oracle on top of their library
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 38, 6 cards in hand, 1 lands
+R2      hand: Mystical Tutor, Otawara, Soaring City, Daze, Gamble, Scalding Tarn, Red Elemental Blast
+R2        [Rograkh/Silas plays Otawara, Soaring City [plan: the land drop the plan wants]]
+R2    Rograkh/Silas plays Otawara, Soaring City
+R2        [Rograkh/Silas keeps mana for Mystical Tutor [plan: Mystical Tutor for Demonic Consultation; at the end of the turn before ours]]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 99%, stop (hold mana) 0%, Gamble 0% -> Gamble [search]]
+R2    Rograkh/Silas casts Gamble
+R2      Rograkh/Silas tutors Demonic Consultation
+R2      Gamble discards Demonic Consultation
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop 0% -> stop [search]]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop 0% -> stop [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3    Rograkh/Silas casts Mystical Tutor
+R3      Rograkh/Silas puts Tainted Pact on top of their library
+R3        [Rograkh/Silas end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R3  --- Rograkh/Silas turn 3: life 38, 4 cards in hand, 2 lands
+R3      hand: Daze, Scalding Tarn, Red Elemental Blast, Thassa's Oracle
+R3    Rograkh/Silas plays Scalding Tarn
+R3      cracks Scalding Tarn for Watery Grave
+R3        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 87%, Silas Renn, Seeker Adept 11%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R3        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 87%, Silas Renn, Seeker Adept 11%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 37, 4 cards in hand, 3 lands
+R4      hand: Daze, Red Elemental Blast, Thassa's Oracle, Tainted Pact
+R4    Rograkh/Silas plays Undercity Sewers
+R4        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 87%, Silas Renn, Seeker Adept 11%, stop (hold mana) 3% -> Rograkh, Son of Rohgahh [search]]
+R4    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 80%, stop (hold mana) 20% -> Silas Renn, Seeker Adept [search]]
+R4    Rograkh/Silas casts Silas Renn, Seeker Adept
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 37, 4 cards in hand, 4 lands
+R5      hand: Daze, Red Elemental Blast, Thassa's Oracle, Tainted Pact
+R5        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R5    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R5    Rograkh/Silas casts Thassa's Oracle
+R5    Rograkh/Silas casts Tainted Pact
+R5      Rograkh/Silas exiles its library
+R5  *** Goldfish 2 is eliminated (life 40) by Rograkh/Silas
+R5  *** Goldfish 3 is eliminated (life 40) by Rograkh/Silas
+R5  *** Goldfish 4 is eliminated (life 40) by Rograkh/Silas
+R5  *** Rograkh/Silas wins by combo
+Kill: own turn 5 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  passed_castable: Gamble [tutor] | held (payable, not offered): Red Elemental Blast
+  T2  progressed (tutor) | held (payable, not offered): Mystical Tutor, Daze, Red Elemental Blast
+  T3  progressed (land only) | held (payable, not offered): Daze, Red Elemental Blast, Thassa's Oracle, Tainted Pact
+  T4  progressed (other) | held (payable, not offered): Daze, Red Elemental Blast, Thassa's Oracle, Tainted Pact
+  T5  won
+  cleanup discards: none
+  stops with another option offered: T1 main 1 look-ahead "stop (hold mana)" over Imperial Seal (5.7); T2 main 1 look-ahead "stop" over Rograkh, Son of Rohgahh (7.5); T2 main 2 look-ahead "stop" over Rograkh, Son of Rohgahh (7.5); T3 main 1 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T3 main 2 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5)
+  crude best case: none
+  crude best case with tutors: own turn 5 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 5 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

@@ -653,6 +653,7 @@ fn tymna(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     lose_life(g, p, x, Some(p), "other", None)?;
+    crate::t6stats::flow_life(g, p, "Tymna the Weaver", x as i64); // --- ai-flow
     draw(g, p, x as u32, false)?;
     stat(g, p, "jr_tymna_draws", x as i64);
     let turns = g.player(p).turns;

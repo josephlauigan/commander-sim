@@ -1,0 +1,388 @@
+Play-by-play of within-tier game 3 (seed 500003): Tier 3 (High B3), loose profile, lookahead AI
+Seat order: Marwyn, Tergrid, Aurelia, Atraxa
+R1  --- Marwyn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Marwyn plays Forest
+R1          [eval Llanowar Elves: u 8.50, score 7.82, won 0/6 lost 0, open eval 7.82 (life 10.00, board 7.92, power 0.70, hand 5.25, lands 1.20, treasures 0.00, combo 2.00, opp -18.81, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R1          [eval Allosaurus Shepherd: u 4.40, score 5.71, won 0/6 lost 0, open eval 5.71 (life 10.00, board 6.50, power 0.70, hand 4.35, lands 1.20, treasures 0.00, combo 2.00, opp -18.72, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R1          [eval stop (chosen): u -3.00, score 8.08, won 0/6 lost 0, open eval 8.08 (life 10.00, board 7.92, power 0.70, hand 5.25, lands 1.20, treasures 0.00, combo 2.00, opp -18.53, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R1        [Marwyn decides: Llanowar Elves 98%, Allosaurus Shepherd 2%, stop 0% -> stop [search]]
+R1          [eval Llanowar Elves (chosen): u 8.50, score 8.30, won 0/6 lost 0, open eval 8.30 (life 10.00, board 7.50, power 0.70, hand 5.40, lands 1.20, treasures 0.00, combo 1.33, opp -17.37, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R1          [eval Allosaurus Shepherd: u 4.40, score 6.12, won 0/6 lost 0, open eval 6.12 (life 10.00, board 5.92, power 0.70, hand 4.50, lands 1.30, treasures 0.00, combo 1.33, opp -17.30, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R1          [eval stop: u -3.00, score 3.17, won 0/6 lost 0, open eval 3.17 (life 10.00, board 2.33, power 0.41, hand 5.25, lands 1.20, treasures 0.00, combo 1.33, opp -17.19, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R1        [Marwyn decides: Llanowar Elves 98%, Allosaurus Shepherd 2%, stop 0% -> Llanowar Elves [search]]
+R1    Marwyn casts Llanowar Elves
+R1  --- Tergrid turn 1: life 40, 7 cards in hand, 0 lands
+R1    Tergrid plays Swamp
+R1  --- Aurelia turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aurelia plays Mountain
+R1  --- Atraxa turn 1: life 40, 7 cards in hand, 0 lands
+R1    Atraxa plays Command Tower
+R2  --- Marwyn turn 2: life 40, 6 cards in hand, 1 lands
+R2    Marwyn plays Wirewood Lodge
+R2          [eval Marwyn, the Nurturer: u 9.92, score 11.05, won 0/6 lost 0, open eval 11.05 (life 10.08, board 7.75, power 1.69, hand 4.80, lands 1.50, treasures 0.00, combo 5.33, opp -19.45, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R2          [eval Elvish Visionary (chosen): u 4.40, score 15.37, won 0/6 lost 0, open eval 15.37 (life 10.04, board 12.92, power 1.34, hand 4.65, lands 1.60, treasures 0.00, combo 5.33, opp -19.54, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R2          [eval Allosaurus Shepherd: u 4.40, score 13.35, won 0/6 lost 0, open eval 13.35 (life 10.04, board 10.67, power 1.17, hand 4.65, lands 1.60, treasures 0.00, combo 5.33, opp -19.29, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R2          [eval stop: u -3.00, score 14.01, won 0/6 lost 0, open eval 14.01 (life 10.12, board 10.42, power 1.98, hand 4.50, lands 1.40, treasures 0.00, combo 5.33, opp -18.83, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/6 open, held mana up at turn end in 0]
+R2        [Marwyn decides: Marwyn, the Nurturer 99%, Elvish Visionary 0%, Allosaurus Shepherd 0%, stop 0% -> Elvish Visionary [search]]
+R2    Marwyn casts Elvish Visionary
+R2        [Marwyn decides: Allosaurus Shepherd 100%, stop 0% -> stop [search]]
+R2        [Marwyn decides: Allosaurus Shepherd 100%, stop 0% -> Allosaurus Shepherd [search]]
+R2    Marwyn casts Allosaurus Shepherd
+R2  --- Tergrid turn 2: life 40, 7 cards in hand, 1 lands
+R2    Tergrid plays Swamp
+R2        [Tergrid decides: Virus Beetle 84%, Feed the Swarm -> Allosaurus Shepherd 16%, stop 0% -> Virus Beetle [search]]
+R2    Tergrid casts Virus Beetle
+R2  --- Aurelia turn 2: life 40, 6 cards in hand, 1 lands
+R2    Aurelia plays Slayers' Stronghold
+R2  --- Atraxa turn 2: life 40, 6 cards in hand, 1 lands
+R2    Atraxa plays Plains
+R3  --- Marwyn turn 3: life 40, 4 cards in hand, 2 lands
+R3          [eval Elvish Mystic: u 9.82, score 13.34, won 0/6 lost 0, open eval 13.34 (life 10.00, board 13.75, power 1.17, hand 4.05, lands 1.40, treasures 0.00, combo 5.33, opp -21.53, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval Marwyn, the Nurturer: u 9.82, score 15.81, won 0/6 lost 0, open eval 15.81 (life 9.96, board 15.50, power 2.45, hand 3.45, lands 1.40, treasures 0.00, combo 5.33, opp -21.25, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval stop (chosen): u -3.00, score 16.85, won 0/6 lost 0, open eval 16.85 (life 9.92, board 16.50, power 2.39, hand 3.75, lands 1.40, treasures 0.00, combo 5.33, opp -21.34, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3        [Marwyn decides: Elvish Mystic 50%, Marwyn, the Nurturer 50%, stop 0% -> stop [search]]
+R3        [Marwyn attack plan by search: filtered at Tergrid]
+R3    Marwyn attacks Tergrid with 2 creature(s): 1 damage (life now 39)
+R3          [eval Elvish Mystic: u 9.82, score 16.65, won 0/6 lost 0, open eval 16.65 (life 10.04, board 15.42, power 1.28, hand 4.35, lands 1.30, treasures 0.00, combo 5.33, opp -20.01, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval Marwyn, the Nurturer (chosen): u 9.82, score 18.32, won 0/6 lost 0, open eval 18.32 (life 10.08, board 15.08, power 2.68, hand 3.75, lands 1.40, treasures 0.00, combo 5.33, opp -18.76, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval stop: u -3.00, score 10.48, won 0/6 lost 0, open eval 10.48 (life 10.04, board 9.42, power 1.17, hand 4.35, lands 1.40, treasures 0.00, combo 5.33, opp -20.62, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R3        [Marwyn decides: Elvish Mystic 50%, Marwyn, the Nurturer 50%, stop 0% -> Marwyn, the Nurturer [search]]
+R3    Marwyn casts Marwyn, the Nurturer
+R3  --- Tergrid turn 3: life 39, 6 cards in hand, 2 lands
+R3    Tergrid plays Swamp
+R3        [Tergrid decides: Feed the Swarm -> Marwyn, the Nurturer 75%, Demonic Tutor 25%, stop 0% -> Demonic Tutor [search]]
+R3    Tergrid casts Demonic Tutor
+R3      Tergrid tutors Sol Ring
+R3          [eval Sol Ring: u 8.64, score -4.89, won 0/6 lost 0, open eval -4.89 (life 9.38, board 8.33, power 1.22, hand 3.75, lands 2.40, treasures 0.00, combo 0.00, opp -30.24, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval stop (chosen): u -3.00, score -3.66, won 0/6 lost 0, open eval -3.66 (life 9.75, board 11.00, power 1.40, hand 4.50, lands 2.40, treasures 0.00, combo 0.00, opp -32.92, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3        [Tergrid decides: Sol Ring 100%, stop 0% -> stop [search]]
+R3          [eval Sol Ring (chosen): u 8.64, score -3.62, won 0/6 lost 0, open eval -3.62 (life 9.38, board 7.00, power 1.22, hand 3.15, lands 2.40, treasures 0.00, combo 0.00, opp -26.97, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3          [eval stop: u -3.00, score -4.79, won 0/6 lost 0, open eval -4.79 (life 9.58, board 9.17, power 1.17, hand 4.35, lands 2.40, treasures 0.00, combo 0.00, opp -31.72, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R3        [Tergrid decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R3    Tergrid casts Sol Ring
+R3  --- Aurelia turn 3: life 40, 6 cards in hand, 2 lands
+R3    Aurelia plays Arid Mesa
+R3      cracks Arid Mesa for Sacred Foundry
+R3  --- Atraxa turn 3: life 40, 6 cards in hand, 2 lands
+R3    Atraxa plays Karn's Bastion
+R3        [Atraxa decides: Flux Channeler 93%, Vraska's Fall 7%, stop 0% -> stop [search]]
+R3        [Atraxa decides: Flux Channeler 93%, Vraska's Fall 7%, stop 0% -> Vraska's Fall [search]]
+R3    Atraxa casts Vraska's Fall
+R4  --- Marwyn turn 4: life 40, 5 cards in hand, 2 lands
+R4          [eval Elvish Mystic (chosen): u 10.00, score 15.97, won 0/6 lost 0, open eval 15.97 (life 10.00, board 14.83, power 2.22, hand 4.05, lands 1.40, treasures 0.00, combo 5.33, opp -20.79, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval stop: u -3.00, score 15.66, won 0/6 lost 0, open eval 15.66 (life 10.00, board 15.92, power 1.92, hand 4.20, lands 1.50, treasures 0.00, combo 5.33, opp -22.12, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4        [Marwyn decides: Elvish Mystic 100%, stop 0% -> Elvish Mystic [search]]
+R4    Marwyn casts Elvish Mystic
+R4        [Marwyn attack plan by search: filtered at Tergrid]
+R4    Marwyn attacks Tergrid with 2 creature(s): 3 damage (life now 36)
+R4  --- Tergrid turn 4: life 36, 5 cards in hand, 3 lands
+R4    Tergrid plays Swamp
+R4          [eval Tergrid, God of Fright // Tergrid's Lantern: u 7.50, score 4.18, won 0/6 lost 0, open eval 4.18 (life 8.46, board 13.44, power 2.16, hand 1.35, lands 3.90, treasures 0.00, combo 0.00, opp -24.85, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R4          [eval Feed the Swarm -> Marwyn, the Nurturer: u 7.12, score 7.92, won 0/6 lost 0, open eval 7.92 (life 8.79, board 15.75, power 1.93, hand 1.65, lands 3.40, treasures 0.00, combo 0.00, opp -23.13, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval Waste Not: u 5.50, score 14.70, won 0/6 lost 0, open eval 14.70 (life 9.29, board 21.27, power 3.44, hand 1.20, lands 3.90, treasures 0.00, combo 0.00, opp -23.29, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval Rankle, Master of Pranks: u 5.20, score 16.86, won 0/6 lost 0, open eval 16.86 (life 8.38, board 22.33, power 3.79, hand 0.90, lands 3.90, treasures 0.00, combo 0.00, opp -21.28, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval Crypt Ghast (chosen): u 4.60, score 20.38, won 0/6 lost 0, open eval 20.38 (life 9.75, board 23.32, power 3.91, hand 0.30, lands 4.00, treasures 0.00, combo 0.00, opp -19.26, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R4          [eval stop: u -3.00, score 15.33, won 0/6 lost 0, open eval 15.33 (life 8.67, board 22.39, power 3.21, hand 2.25, lands 4.30, treasures 0.00, combo 0.00, opp -24.25, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4        [Tergrid decides: Tergrid, God of Fright // Tergrid's Lantern 51%, Feed the Swarm -> Marwyn, the Nurturer 35%, Waste Not 7%, Rankle, Master of Pranks 5% -> Crypt Ghast [search]]
+R4    Tergrid casts Crypt Ghast
+R4        [Tergrid decides: Feed the Swarm -> Marwyn, the Nurturer 74%, Waste Not 15%, Rankle, Master of Pranks 11%, stop 0% -> Feed the Swarm -> Marwyn, the Nurturer [search]]
+R4    Tergrid casts Feed the Swarm -> Allosaurus Shepherd (Marwyn)
+R4      Allosaurus Shepherd (Marwyn) is removed: destroy
+R4        [Tergrid decides: Waste Not 100%, stop 0% -> stop [search]]
+R4        [Tergrid decides: Waste Not 100%, stop 0% -> Waste Not [search]]
+R4    Tergrid casts Waste Not
+R4  --- Aurelia turn 4: life 39, 6 cards in hand, 3 lands
+R4        [Aurelia decides: stop (hold mana) 100%, Land Tax 0% -> stop (hold mana) [search]]
+R4        [Aurelia decides: stop (hold mana) 100%, Land Tax 0% -> Land Tax [search]]
+R4    Aurelia casts Land Tax
+R4  --- Atraxa turn 4: life 40, 5 cards in hand, 3 lands
+R4    Atraxa plays Windswept Heath
+R4      cracks Windswept Heath for Indatha Triome
+R4        [Atraxa decides: Flux Channeler 100%, stop 0% -> stop [search]]
+R4        [Atraxa decides: Flux Channeler 100%, stop 0% -> stop [search]]
+R5  --- Marwyn turn 5: life 40, 5 cards in hand, 2 lands
+R5    Marwyn plays Forest
+R5        [Marwyn decides: Finale of Devastation 46%, Freyalise, Llanowar's Fury 28%, Dionus, Elvish Archdruid 14%, Harmonize 11% -> Dionus, Elvish Archdruid [search]]
+R5    Marwyn casts Dionus, Elvish Archdruid
+R5        [Marwyn attack plan by search: filtered at Aurelia]
+R5      Dionus untaps Marwyn, the Nurturer and puts a +1/+1 counter on it
+R5    Marwyn attacks Aurelia with 1 creature(s): 4 damage (life now 35)
+R5        [Marwyn decides: Harmonize 100%, stop 0% -> Harmonize [search]]
+R5    Marwyn casts Harmonize
+R5  --- Tergrid turn 5: life 35, 2 cards in hand, 4 lands
+R5    Tergrid plays Swamp
+R5          [eval Tergrid, God of Fright // Tergrid's Lantern (chosen): u 7.38, score 31.73, won 0/6 lost 0, open eval 31.73 (life 10.88, board 35.43, power 6.42, hand 0.90, lands 6.00, treasures 0.07, combo 0.00, opp -26.76, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5          [eval Rankle, Master of Pranks: u 5.20, score 31.29, won 0/6 lost 0, open eval 31.29 (life 10.50, board 35.43, power 6.42, hand 0.90, lands 6.00, treasures 0.07, combo 0.00, opp -26.89, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5          [eval Elderfang Disciple: u 4.40, score 29.14, won 0/6 lost 0, open eval 29.14 (life 11.12, board 33.98, power 6.71, hand 0.75, lands 5.00, treasures 0.07, combo 0.00, opp -25.87, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5          [eval stop: u -3.00, score 21.33, won 0/6 lost 0, open eval 21.33 (life 10.21, board 30.38, power 5.42, hand 0.60, lands 5.60, treasures 0.00, combo 0.00, opp -29.36, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5        [Tergrid decides: Tergrid, God of Fright // Tergrid's Lantern 86%, Rankle, Master of Pranks 10%, Elderfang Disciple 4%, stop 0% -> Tergrid, God of Fright // Tergrid's Lantern [search]]
+R5    Tergrid casts Tergrid, God of Fright // Tergrid's Lantern
+R5        [Tergrid decides: Rankle, Master of Pranks 69%, Elderfang Disciple 31%, stop 0% -> Elderfang Disciple [search]]
+R5    Tergrid casts Elderfang Disciple
+R5      Tergrid puts Flux Channeler onto the battlefield under Tergrid's control
+R5        [Tergrid attack plan by search: filtered at Atraxa]
+R5    Tergrid attacks Atraxa with 1 creature(s): 2 damage (life now 35)
+R5  --- Aurelia turn 5: life 33, 5 cards in hand, 3 lands
+R5    Aurelia plays Mountain
+R5        [Aurelia decides: Blasphemous Act 100%, stop (hold mana) 0%, Lightning Greaves 0% -> stop (hold mana) [search]]
+R5        [Aurelia decides: Blasphemous Act 100%, stop (hold mana) 0%, Lightning Greaves 0% -> stop (hold mana) [search]]
+R5  --- Atraxa turn 5: life 35, 4 cards in hand, 4 lands
+R5        [Atraxa decides: Voidwing Hybrid 100%, stop 0% -> stop [search]]
+R5        [Atraxa decides: Voidwing Hybrid 100%, stop 0% -> stop [search]]
+R6  --- Marwyn turn 6: life 38, 5 cards in hand, 3 lands
+R6        [Marwyn decides: Finale of Devastation 32%, Freyalise, Llanowar's Fury 19%, Genesis Wave 19%, Elvish Archdruid 11% -> Elvish Archdruid [search]]
+R6    Marwyn casts Elvish Archdruid
+R6        [Marwyn decides: Finale of Devastation 45%, Freyalise, Llanowar's Fury 28%, Boreal Druid 16%, Imperious Perfect 11% -> Boreal Druid [search]]
+R6      Dionus untaps Marwyn, the Nurturer and puts a +1/+1 counter on it
+R6    Marwyn casts Boreal Druid
+R6        [Marwyn decides: Genesis Wave 37%, Finale of Devastation 34%, Freyalise, Llanowar's Fury 21%, Imperious Perfect 8% -> Imperious Perfect [search]]
+R6    Marwyn casts Imperious Perfect
+R6        [Marwyn decides: Finale of Devastation 41%, Genesis Wave 34%, Freyalise, Llanowar's Fury 25%, stop 0% -> stop [search]]
+R6        [Marwyn attack plan by search: all at Tergrid]
+R6      Dionus untaps Dionus, Elvish Archdruid and puts a +1/+1 counter on it
+R6      Dionus untaps Elvish Mystic and puts a +1/+1 counter on it
+R6    Marwyn attacks Tergrid with 2 creature(s): 6 damage (life now 35)
+R6        [Marwyn decides: Finale of Devastation 43%, Genesis Wave 32%, Freyalise, Llanowar's Fury 26%, stop 0% -> Genesis Wave [search]]
+R6    Marwyn casts Genesis Wave
+R6      Marwyn reveals the top 7 cards (Genesis Wave, X = 7)
+R6      Elvish Harbinger enters (Genesis Wave)
+R6      Eternal Witness enters (Genesis Wave)
+R6      Priest of Titania enters (Genesis Wave)
+R6  --- Tergrid turn 6: life 35, 4 cards in hand, 5 lands
+R6    Tergrid plays Swamp
+R6        [Tergrid decides: Blasphemous Edict 47%, Aclazotz, Deepest Betrayal // Temple of the Dead 24%, Rankle, Master of Pranks 19%, Swiftfoot Boots 10% -> Blasphemous Edict [search]]
+R6    Tergrid casts Blasphemous Edict
+R6      Marwyn sacrifices 8 creature(s)
+R6      Tergrid puts Eternal Witness onto the battlefield under Tergrid's control
+R6      Tergrid puts Boreal Druid onto the battlefield under Tergrid's control
+R6      Tergrid puts Imperious Perfect onto the battlefield under Tergrid's control
+R6      Tergrid puts Priest of Titania onto the battlefield under Tergrid's control
+R6      Tergrid puts Elvish Harbinger onto the battlefield under Tergrid's control
+R6      Tergrid puts Dionus, Elvish Archdruid onto the battlefield under Tergrid's control
+R6      Tergrid puts Elvish Archdruid onto the battlefield under Tergrid's control
+R6      Tergrid sacrifices 5 creature(s)
+R6          [eval Tergrid, God of Fright // Tergrid's Lantern: u 6.10, score 49.90, won 0/6 lost 0, open eval 49.90 (life 9.67, board 47.56, power 17.09, hand 1.65, lands 4.40, treasures 0.00, combo 0.00, opp -20.50, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R6          [eval Demonic Tutor: u 5.70, score 55.87, won 0/6 lost 0, open eval 55.87 (life 9.96, board 52.83, power 17.79, hand 1.65, lands 4.50, treasures 0.00, combo 0.00, opp -17.90, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R6          [eval Aclazotz, Deepest Betrayal // Temple of the Dead: u 5.40, score 66.38, won 0/6 lost 0, open eval 66.38 (life 11.46, board 68.14, power 27.07, hand 1.20, lands 5.70, treasures 0.00, combo 0.00, opp -15.53, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R6          [eval Rankle, Master of Pranks (chosen): u 5.20, score 68.56, won 1/6 lost 0, open eval 63.07 (life 10.35, board 68.92, power 30.17, hand 0.72, lands 4.32, treasures 0.00, combo 0.00, opp -18.32, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R6          [eval Swiftfoot Boots: u 4.50, score 56.35, won 0/6 lost 0, open eval 56.35 (life 10.42, board 53.21, power 17.21, hand 1.80, lands 4.70, treasures 0.00, combo 0.00, opp -20.16, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R6          [eval stop: u -3.00, score 62.40, won 0/6 lost 0, open eval 62.40 (life 10.42, board 63.63, power 25.32, hand 1.20, lands 4.30, treasures 0.00, combo 0.00, opp -16.78, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R6        [Tergrid decides: Tergrid, God of Fright // Tergrid's Lantern 36%, Demonic Tutor 24%, Aclazotz, Deepest Betrayal // Temple of the Dead 18%, Rankle, Master of Pranks 15% -> Rankle, Master of Pranks [search]]
+R6    Tergrid casts Rankle, Master of Pranks
+R6        [Tergrid decides: Demonic Tutor 77%, Swiftfoot Boots 23%, stop 0% -> Swiftfoot Boots [search]]
+R6    Tergrid casts Swiftfoot Boots
+R6        [Tergrid decides: Demonic Tutor 79%, equip Swiftfoot Boots 21%, stop 0% -> stop [search]]
+R6        [Tergrid attack plan by search: filtered at Marwyn]
+R6    Tergrid attacks Marwyn with 1 creature(s): 3 damage (life now 34)
+R6        [Tergrid decides: Demonic Tutor 94%, equip Swiftfoot Boots 6%, stop 0% -> Demonic Tutor [search]]
+R6    Tergrid casts Demonic Tutor
+R6      Tergrid tutors Sheoldred, Whispering One
+R6  --- Aurelia turn 6: life 32, 6 cards in hand, 4 lands
+R6    Aurelia plays Plains
+R6        [Aurelia decides: Blasphemous Act 99%, Grand Abolisher 1%, Lightning Greaves 0%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R6        [Aurelia decides: Blasphemous Act 99%, Grand Abolisher 1%, Lightning Greaves 0%, stop (hold mana) 0% -> Lightning Greaves [search]]
+R6    Aurelia casts Lightning Greaves
+R6        [Aurelia decides: Blasphemous Act 99%, Grand Abolisher 1%, stop (hold mana) 0% -> Blasphemous Act [search]]
+R6    Aurelia casts Blasphemous Act
+R6      board wipe resolves (dmg13)
+R6        Eternal Witness (Tergrid) is removed by the wipe (dmg13)
+R6        Boreal Druid (Tergrid) is removed by the wipe (dmg13)
+R6        Imperious Perfect (Tergrid) is removed by the wipe (dmg13)
+R6        Priest of Titania (Tergrid) is removed by the wipe (dmg13)
+R6        Elvish Harbinger (Tergrid) is removed by the wipe (dmg13)
+R6        Dionus, Elvish Archdruid (Tergrid) is removed by the wipe (dmg13)
+R6        Elvish Archdruid (Tergrid) is removed by the wipe (dmg13)
+R6        Rankle, Master of Pranks (Tergrid) is removed by the wipe (dmg13)
+R6        Token (Tergrid) is removed by the wipe (dmg13)
+R6        [Aurelia decides: Grand Abolisher 100%, stop 0% -> Grand Abolisher [search]]
+R6    Aurelia casts Grand Abolisher
+R6        [Aurelia decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R6    Aurelia equips Lightning Greaves to Grand Abolisher
+R6  --- Atraxa turn 6: life 34, 4 cards in hand, 4 lands
+R6    Atraxa plays Flooded Strand
+R6      cracks Flooded Strand for Spara's Headquarters
+R6        [Atraxa decides: Voidwing Hybrid 100%, stop 0% -> Voidwing Hybrid [search]]
+R6    Atraxa casts Voidwing Hybrid
+R7  --- Marwyn turn 7: life 34, 1 cards in hand, 3 lands
+R7  --- Tergrid turn 7: life 38, 3 cards in hand, 6 lands
+R7    Tergrid plays Swamp
+R7          [eval Tergrid, God of Fright // Tergrid's Lantern (chosen): u 6.20, score 17.57, won 0/6 lost 0, open eval 17.57 (life 6.79, board 28.58, power 4.61, hand 1.80, lands 5.10, treasures 0.00, combo 0.00, opp -28.13, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R7          [eval Sheoldred, Whispering One: u 5.40, score 17.20, won 0/6 lost 0, open eval 17.20 (life 7.42, board 24.67, power 4.90, hand 1.65, lands 4.40, treasures 0.00, combo 0.00, opp -24.71, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R7          [eval Painful Quandary: u 4.50, score 3.79, won 0/6 lost 0, open eval 3.79 (life 8.46, board 15.17, power 1.46, hand 1.50, lands 4.40, treasures 0.00, combo 0.00, opp -26.99, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R7          [eval Soul Shatter: u 2.00, score 3.79, won 0/6 lost 0, open eval 3.79 (life 8.46, board 15.17, power 1.46, hand 1.50, lands 4.40, treasures 0.00, combo 0.00, opp -26.99, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R7          [eval stop: u -3.00, score 10.31, won 0/6 lost 0, open eval 10.31 (life 7.75, board 22.75, power 3.62, hand 2.25, lands 5.10, treasures 0.00, combo 0.00, opp -30.52, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R7        [Tergrid decides: Tergrid, God of Fright // Tergrid's Lantern 61%, Sheoldred, Whispering One 27%, Painful Quandary 11%, Soul Shatter 1% -> Tergrid, God of Fright // Tergrid's Lantern [search]]
+R7    Tergrid casts Tergrid, God of Fright // Tergrid's Lantern
+R7        [Tergrid decides: equip Swiftfoot Boots 100%, stop 0% -> stop [search]]
+R7        [Tergrid decides: equip Swiftfoot Boots 100%, stop 0% -> equip Swiftfoot Boots [search]]
+R7    Tergrid equips Swiftfoot Boots to Tergrid, God of Fright // Tergrid's Lantern
+R7  --- Aurelia turn 7: life 32, 6 cards in hand, 5 lands
+R7    Aurelia plays Mountain
+R7          [eval Aurelia, the Warleader (chosen): u 7.07, score 3.14, won 0/6 lost 0, open eval 3.14 (life 7.33, board 17.33, power 1.75, hand 4.80, lands 4.20, treasures 0.00, combo 1.00, opp -33.07, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R7          [eval Puresteel Paladin: u 3.17, score -1.33, won 0/6 lost 0, open eval -1.33 (life 7.38, board 12.50, power 0.99, hand 6.30, lands 4.20, treasures 0.00, combo 0.50, opp -33.28, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R7          [eval stop (hold mana): u 2.04, score -0.75, won 0/6 lost 0, open eval -2.80 (life 7.50, board 14.08, power 1.40, hand 5.55, lands 4.20, treasures 0.00, combo 1.00, opp -36.69, dead 0.00), ramp 0.00, hold 2.04, top card cast in 2/6 open, held mana up at turn end in 0]
+R7        [Aurelia decides: Aurelia, the Warleader 97%, Puresteel Paladin 2%, stop (hold mana) 1% -> Aurelia, the Warleader [search]]
+R7    Aurelia casts Aurelia, the Warleader
+R7        [Aurelia attack plan by search: filtered at Tergrid]
+R7        [Aurelia holds back 1 attacker(s) that would die to blocks]
+R7      Aurelia: untap, additional combat
+R7    Aurelia attacks Tergrid with 1 creature(s): 3 damage (life now 35)
+R7    Aurelia attacks Marwyn with 1 creature(s): 2 damage (life now 32)
+R7        [Aurelia attacks: Tergrid 100%, Marwyn 0%, Atraxa 0% -> Tergrid]
+R7        [Aurelia holds back 1 attacker(s) that would die to blocks]
+R7    Aurelia attacks Tergrid with 1 creature(s): 3 damage (life now 32)
+R7    Aurelia attacks Marwyn with 1 creature(s): 2 damage (life now 30)
+R7      Tergrid puts Plains onto the battlefield under Tergrid's control
+R7  --- Atraxa turn 7: life 33, 3 cards in hand, 5 lands
+R7          [eval Atraxa, Praetors' Voice: u 6.58, score -13.09, won 0/6 lost 0, open eval -13.09 (life 8.00, board 9.93, power 1.28, hand 3.30, lands 3.30, treasures 0.00, combo 0.00, opp -39.77, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R7          [eval Evolution Sage: u 4.80, score -13.46, won 0/6 lost 0, open eval -13.46 (life 7.54, board 9.53, power 1.93, hand 2.40, lands 3.20, treasures 0.00, combo 0.00, opp -39.00, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 6]
+R7          [eval Narset, Parter of Veils: u 3.58, score -13.42, won 0/6 lost 0, open eval -13.42 (life 8.00, board 10.20, power 1.40, hand 3.30, lands 3.30, treasures 0.00, combo 0.00, opp -40.62, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R7          [eval Contaminant Grafter: u 3.28, score -13.68, won 0/6 lost 0, open eval -13.68 (life 7.58, board 10.00, power 2.57, hand 3.00, lands 3.50, treasures 0.00, combo 0.00, opp -41.39, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R7          [eval stop (hold mana) (chosen): u 2.75, score -11.54, won 0/6 lost 0, open eval -14.29 (life 7.75, board 8.93, power 1.92, hand 3.00, lands 3.20, treasures 0.00, combo 0.00, opp -40.04, dead 0.00), ramp 0.00, hold 2.75, top card cast in 4/6 open, held mana up at turn end in 1]
+R7        [Atraxa decides: Atraxa, Praetors' Voice 78%, Evolution Sage 13%, Narset, Parter of Veils 4%, Contaminant Grafter 3% -> stop (hold mana) [search]]
+R7        [Atraxa attack plan by search: filtered at Tergrid]
+R7      Tergrid gets 1 poison counter(s) (toxic)
+R7    Atraxa attacks Tergrid with 1 creature(s): 2 damage (life now 30)
+R7          [eval Atraxa, Praetors' Voice: u 6.58, score -11.31, won 0/6 lost 0, open eval -11.31 (life 8.92, board 10.67, power 2.27, hand 2.55, lands 3.10, treasures 0.00, combo 0.00, opp -39.63, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 0]
+R7          [eval Evolution Sage: u 4.80, score -19.10, won 0/6 lost 0, open eval -19.10 (life 7.92, board 9.20, power 1.81, hand 1.50, lands 3.20, treasures 0.00, combo 0.00, opp -44.24, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 6]
+R7          [eval Narset, Parter of Veils (chosen): u 3.58, score -10.44, won 0/6 lost 0, open eval -10.44 (life 7.92, board 12.82, power 1.75, hand 3.30, lands 3.20, treasures 0.00, combo 0.00, opp -40.06, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R7          [eval Contaminant Grafter: u 3.28, score -15.94, won 0/6 lost 0, open eval -15.94 (life 8.08, board 9.50, power 2.39, hand 1.95, lands 3.30, treasures 0.00, combo 0.00, opp -42.34, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R7          [eval stop (hold mana): u 2.75, score -12.57, won 0/6 lost 0, open eval -15.32 (life 7.88, board 8.67, power 1.63, hand 2.55, lands 3.20, treasures 0.00, combo 0.00, opp -40.30, dead 0.00), ramp 0.00, hold 2.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R7        [Atraxa decides: Atraxa, Praetors' Voice 78%, Evolution Sage 13%, Narset, Parter of Veils 4%, Contaminant Grafter 3% -> Narset, Parter of Veils [search]]
+R7    Atraxa casts Narset, Parter of Veils
+R7        [Atraxa decides: Narset, Parter of Veils -2 99%, stop 1% -> Narset, Parter of Veils -2 [search]]
+R7    Atraxa uses Narset, Parter of Veils (-2): dig for a noncreature, nonland card
+R7      Narset: Atraxa takes a card
+R7          [eval Sol Ring: u 8.10, score -13.98, won 0/6 lost 0, open eval -13.98 (life 6.83, board 12.50, power 2.51, hand 1.80, lands 3.20, treasures 0.00, combo 0.00, opp -41.84, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R7          [eval stop (chosen): u -3.00, score -13.58, won 0/6 lost 0, open eval -13.58 (life 7.38, board 11.33, power 1.63, hand 2.55, lands 3.20, treasures 0.00, combo 0.00, opp -40.55, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R7        [Atraxa decides: Sol Ring 100%, stop 0% -> stop [search]]
+R8  --- Marwyn turn 8: life 30, 2 cards in hand, 3 lands
+R8    Marwyn plays Gaea's Cradle
+R8  --- Tergrid turn 8: life 30, 4 cards in hand, 8 lands
+R8    Tergrid plays Swamp
+R8        [Tergrid decides: Sheoldred, Whispering One 44%, Phyrexian Obliterator 36%, Painful Quandary 18%, Soul Shatter 1% -> Phyrexian Obliterator [search]]
+R8    Tergrid casts Phyrexian Obliterator
+R8        [Tergrid decides: Sheoldred, Whispering One 69%, Painful Quandary 28%, Soul Shatter 2%, stop 0% -> Sheoldred, Whispering One [search]]
+R8    Tergrid casts Sheoldred, Whispering One
+R8        [Tergrid attack plan by search: filtered at Aurelia]
+R8    Tergrid attacks Aurelia with 1 creature(s): 4 damage (life now 28)
+R8  --- Aurelia turn 8: life 28, 7 cards in hand, 6 lands
+R8    Aurelia plays Mountain
+R8        [Aurelia decides: Combat Celebrant 60%, Puresteel Paladin 40%, stop 0% -> stop [search]]
+R8        [Aurelia attack plan by search: filtered at Tergrid]
+R8        [Aurelia holds back 1 attacker(s) that would die to blocks]
+R8      Aurelia: untap, additional combat
+R8    Aurelia attacks Tergrid with 1 creature(s): 3 damage (life now 27)
+R8      Grand Abolisher deals 2 to Narset, Parter of Veils (loyalty 1)
+R8    Aurelia attacks Atraxa with 1 creature(s): 2 damage (life now 33)
+R8        [Aurelia attacks: Tergrid 100%, Atraxa 0%, Marwyn 0% -> Tergrid]
+R8        [Aurelia holds back 1 attacker(s) that would die to blocks]
+R8    Aurelia attacks Tergrid with 1 creature(s): 3 damage (life now 24)
+R8      Grand Abolisher deals 2 to Narset, Parter of Veils (loyalty -1)
+R8    Aurelia attacks Atraxa with 1 creature(s): 2 damage (life now 33)
+R8        [Aurelia decides: Combat Celebrant 60%, Puresteel Paladin 40%, stop 0% -> Combat Celebrant [search]]
+R8    Aurelia casts Combat Celebrant
+R8        [Aurelia decides: Puresteel Paladin 100%, stop 0% -> Puresteel Paladin [search]]
+R8    Aurelia casts Puresteel Paladin
+R8      Tergrid puts Plains onto the battlefield under Tergrid's control
+R8  --- Atraxa turn 8: life 33, 4 cards in hand, 5 lands
+R8          [eval Sol Ring: u 7.75, score -34.96, won 0/6 lost 0, open eval -34.96 (life 6.88, board 8.17, power 2.16, hand 2.40, lands 3.40, treasures 0.00, combo 0.00, opp -62.25, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 2]
+R8          [eval Atraxa, Praetors' Voice: u 6.58, score -37.77, won 0/6 lost 0, open eval -37.77 (life 7.83, board 4.00, power 1.46, hand 2.10, lands 3.40, treasures 0.00, combo 0.00, opp -61.65, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8          [eval Evolution Sage: u 4.80, score -32.10, won 0/6 lost 0, open eval -32.10 (life 7.08, board 6.17, power 1.69, hand 2.25, lands 3.40, treasures 0.00, combo 0.00, opp -59.27, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8          [eval Contaminant Grafter: u 3.28, score -32.64, won 0/6 lost 0, open eval -32.64 (life 6.33, board 10.67, power 2.33, hand 2.55, lands 3.80, treasures 0.00, combo 0.00, opp -62.01, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8          [eval Ichor Rats (chosen): u 2.67, score -28.23, won 0/6 lost 0, open eval -28.23 (life 6.79, board 9.83, power 2.27, hand 1.80, lands 3.30, treasures 0.00, combo 0.00, opp -57.29, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8          [eval stop (hold mana): u 2.75, score -33.18, won 0/6 lost 0, open eval -35.93 (life 7.00, board 6.17, power 1.93, hand 2.40, lands 3.40, treasures 0.00, combo 0.00, opp -61.68, dead 0.00), ramp 0.00, hold 2.75, top card cast in 6/6 open, held mana up at turn end in 1]
+R8        [Atraxa decides: Sol Ring 72%, Atraxa, Praetors' Voice 22%, Evolution Sage 4%, Contaminant Grafter 1% -> Ichor Rats [search]]
+R8    Atraxa casts Ichor Rats
+R8      Marwyn gets 1 poison counter(s)
+R8      Tergrid gets 1 poison counter(s)
+R8      Aurelia gets 1 poison counter(s)
+R8      Atraxa gets 1 poison counter(s)
+R8          [eval Sol Ring: u 7.75, score -39.10, won 0/6 lost 1, open eval -26.92 (life 7.30, board 9.80, power 2.31, hand 1.98, lands 3.24, treasures 0.00, combo 0.00, opp -54.16, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R8          [eval stop (chosen): u -3.00, score -30.60, won 0/6 lost 0, open eval -30.60 (life 6.46, board 10.50, power 2.39, hand 1.80, lands 3.20, treasures 0.00, combo 0.00, opp -60.66, dead 2.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8        [Atraxa decides: Sol Ring 100%, stop 0% -> stop [search]]
+R8        [Atraxa attack plan by search: filtered at Tergrid]
+R8      Tergrid gets 1 poison counter(s) (toxic)
+R8    Atraxa attacks Tergrid with 1 creature(s): 2 damage (life now 22)
+R8          [eval Sol Ring: u 7.75, score -23.38, won 0/6 lost 0, open eval -23.38 (life 7.46, board 9.67, power 2.22, hand 2.10, lands 3.20, treasures 0.00, combo 0.00, opp -51.33, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8          [eval stop (chosen): u -3.00, score -20.73, won 0/6 lost 0, open eval -20.73 (life 7.62, board 9.17, power 2.04, hand 2.55, lands 3.20, treasures 0.00, combo 0.00, opp -47.24, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R8        [Atraxa decides: Sol Ring 100%, stop 0% -> stop [search]]
+R9  --- Marwyn turn 9: life 30, 2 cards in hand, 4 lands
+R9        [Marwyn decides: Kenrith's Transformation 95%, Kenrith's Transformation -> Sheoldred, Whispering One 5%, stop 0% -> Kenrith's Transformation [search]]
+R9    Marwyn casts Kenrith's Transformation
+R9      Sheoldred, Whispering One (Tergrid) is removed: elk
+R9      Sheoldred, Whispering One becomes a 3/3 Elk with no abilities
+R9    Marwyn plays Forest
+R9  --- Tergrid turn 9: life 22, 2 cards in hand, 10 lands
+R9      Tergrid puts Puresteel Paladin onto the battlefield under Tergrid's control
+R9      Aurelia sacrifices Puresteel Paladin (edict)
+R9      Tergrid puts Voidwing Hybrid onto the battlefield under Tergrid's control
+R9      Atraxa sacrifices Voidwing Hybrid (edict)
+R9        [Tergrid decides: Painful Quandary 83%, Charcoal Diamond 10%, Soul Shatter 7%, stop 0% -> stop [search]]
+R9        [Tergrid attack plan by search: filtered at Marwyn]
+R9    Tergrid attacks Marwyn with 3 creature(s): 12 damage (life now 18)
+R9        [Tergrid decides: Painful Quandary 83%, Charcoal Diamond 10%, Soul Shatter 7%, stop 0% -> stop [search]]
+R9  --- Aurelia turn 9: life 28, 7 cards in hand, 7 lands
+R9    Aurelia plays Mountain
+R9        [Aurelia decides: Blade Historian 100%, stop 0% -> Blade Historian [search]]
+R9    Aurelia casts Blade Historian
+R9        [Aurelia attack plan by search: all at Tergrid]
+R9      Aurelia: untap, additional combat
+R9      Combat Celebrant exerts: untap, additional combat
+R9    Aurelia attacks Tergrid with 3 creature(s): 0 damage (life now 22)
+R9        [Aurelia attacks: Tergrid 100%, Atraxa 0%, Marwyn 0% -> Tergrid]
+R9    Aurelia attacks Tergrid with 3 creature(s): 18 damage (life now 4)
+R9        [Aurelia attacks: Tergrid 100%, Atraxa 0%, Marwyn 0% -> Tergrid]
+R9  *** Tergrid is eliminated (life -14) by Aurelia
+R9    Aurelia attacks Tergrid with 3 creature(s): 18 damage (life now -14)
+R9  --- Atraxa turn 9: life 33, 4 cards in hand, 5 lands
+R9          [eval Sol Ring: u 7.40, score -30.58, won 0/6 lost 1, open eval -16.69 (life 5.35, board 7.20, power 2.24, hand 3.60, lands 3.36, treasures 0.00, combo 0.00, opp -58.73, dead 19.20), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R9          [eval Atraxa, Praetors' Voice: u 6.58, score -42.72, won 0/6 lost 2, open eval -14.08 (life 5.62, board 9.25, power 2.54, hand 3.38, lands 3.30, treasures 0.00, combo 0.00, opp -63.06, dead 24.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R9          [eval Evolution Sage: u 4.80, score -28.97, won 0/6 lost 1, open eval -14.77 (life 5.55, board 9.60, power 2.24, hand 3.06, lands 3.24, treasures 0.00, combo 0.00, opp -58.58, dead 19.20), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R9          [eval Contaminant Grafter (chosen): u 3.28, score -20.83, won 0/6 lost 1, open eval -4.99 (life 5.05, board 13.80, power 3.29, hand 3.78, lands 3.60, treasures 0.00, combo 0.00, opp -54.00, dead 19.20), ramp 0.00, hold 0.00, top card cast in 4/5 open, held mana up at turn end in 0]
+R9          [eval Ixhel, Scion of Atraxa: u 3.08, score -29.16, won 0/6 lost 1, open eval -14.99 (life 5.85, board 8.20, power 2.31, hand 2.88, lands 3.24, treasures 0.00, combo 0.00, opp -60.08, dead 21.60), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R9          [eval stop (hold mana): u 2.75, score -39.01, won 0/6 lost 2, open eval -12.64 (life 7.38, board 8.25, power 2.19, hand 3.38, lands 3.30, treasures 0.00, combo 0.00, opp -61.91, dead 24.00), ramp 0.00, hold 2.75, top card cast in 4/4 open, held mana up at turn end in 0]
+R9        [Atraxa decides: Sol Ring 64%, Atraxa, Praetors' Voice 28%, Evolution Sage 5%, Contaminant Grafter 1% -> Contaminant Grafter [search]]
+R9    Atraxa casts Contaminant Grafter
+R9        [Atraxa attack plan by search: none at Marwyn]
+R10 --- Marwyn turn 10: life 18, 2 cards in hand, 5 lands
+R10       [Marwyn decides: Yeva, Nature's Herald 100%, stop 0% -> stop [search]]
+R10       [Marwyn decides: Yeva, Nature's Herald 100%, stop 0% -> Yeva, Nature's Herald [search]]
+R10   Marwyn casts Yeva, Nature's Herald
+R10 --- Aurelia turn 10: life 28, 7 cards in hand, 8 lands
+R10   Aurelia plays Plains
+R10       [Aurelia attack plan by search: filtered at Marwyn]
+R10       [Aurelia holds back 2 attacker(s) that would die to blocks]
+R10     Aurelia: untap, additional combat
+R10   Aurelia attacks Marwyn with 2 creature(s): 6 damage (life now 12)
+R10       [Aurelia attacks: Marwyn 98%, Atraxa 2% -> Marwyn]
+R10 *** Marwyn is eliminated (life -10) by Aurelia
+R10   Aurelia attacks Marwyn with 4 creature(s): 22 damage (life now -10)
+R10 --- Atraxa turn 10: life 33, 4 cards in hand, 5 lands
+R10   Atraxa plays Watery Grave
+R10         [eval Sol Ring: u 7.05, score -71.73, won 0/6 lost 4, open eval -15.18 (life 5.62, board 13.03, power 3.50, hand 2.70, lands 3.90, treasures 0.00, combo 0.00, opp -69.00, dead 24.00), ramp 0.00, hold 0.00, top card cast in 2/2 open, held mana up at turn end in 0]
+R10         [eval Atraxa, Praetors' Voice: u 6.58, score -83.89, won 0/6 lost 5, open eval -3.32 (life 1.00, board 8.00, power 1.40, hand 3.60, lands 3.60, treasures 0.00, combo 0.00, opp -45.10, dead 24.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 0]
+R10         [eval Evolution Sage: u 4.80, score -84.03, won 0/6 lost 5, open eval -4.18 (life 1.00, board 8.00, power 1.40, hand 2.70, lands 3.60, treasures 0.00, combo 0.00, opp -45.10, dead 24.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 0]
+R10         [eval Ixhel, Scion of Atraxa (chosen): u 3.08, score -41.61, won 0/6 lost 2, open eval -12.41 (life 4.69, board 7.25, power 1.84, hand 2.03, lands 3.75, treasures 0.00, combo 0.00, opp -56.76, dead 24.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R10         [eval stop (hold mana): u 2.75, score -49.19, won 0/6 lost 3, open eval -3.88 (life 3.75, board 6.00, power 1.63, hand 2.10, lands 4.00, treasures 0.00, combo 0.00, opp -45.73, dead 24.00), ramp 0.00, hold 2.75, top card cast in 2/3 open, held mana up at turn end in 0]
+R10       [Atraxa decides: Sol Ring 57%, Atraxa, Praetors' Voice 35%, Evolution Sage 6%, Ixhel, Scion of Atraxa 1% -> Ixhel, Scion of Atraxa [search]]
+R10   Atraxa casts Ixhel, Scion of Atraxa
+R10         [eval Sol Ring (chosen): u 7.05, score -23.30, won 0/6 lost 1, open eval -7.96 (life 4.20, board 17.76, power 3.78, hand 2.52, lands 4.56, treasures 0.00, combo 0.00, opp -65.32, dead 24.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R10         [eval stop: u -3.00, score -44.13, won 0/6 lost 2, open eval -16.20 (life 4.75, board 16.50, power 4.38, hand 2.92, lands 4.35, treasures 0.00, combo 0.00, opp -74.19, dead 24.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R10       [Atraxa decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R10   Atraxa casts Sol Ring
+R10       [Atraxa attack plan by search: filtered at Aurelia]
+R10       [Atraxa holds back 1 attacker(s) that would die to blocks]
+R10     Aurelia gets 1 poison counter(s) (toxic)
+R10   Atraxa attacks Aurelia with 1 creature(s): 5 damage (life now 23)
+R11 --- Aurelia turn 11: life 23, 7 cards in hand, 9 lands
+R11   Aurelia plays Mountain
+R11       [Aurelia decides: Fighter Class 100%, stop 0% -> stop [search]]
+R11       [Aurelia attack plan by search: all at Atraxa]
+R11     Aurelia: untap, additional combat
+R11     Combat Celebrant exerts: untap, additional combat
+R11   Aurelia attacks Atraxa with 4 creature(s): 10 damage (life now 23)
+R11   Aurelia attacks Atraxa with 3 creature(s): 18 damage (life now 5)
+R11 *** Atraxa is eliminated (life -13) by Aurelia
+R11   Aurelia attacks Atraxa with 3 creature(s): 18 damage (life now -13)
+Winner: Aurelia (damage)

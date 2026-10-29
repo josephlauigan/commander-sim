@@ -576,7 +576,9 @@ fn resolve_combat_inner(
     if g.over || !g.player(d).alive {
         return Ok(vec![]);
     }
-    let mut assign = if crate::human::is_human(g, d) {
+    let mut assign = if crate::goldfish::is_inert(g, d) {
+        vec![] // --- scion: an inert goldfish seat never blocks
+    } else if crate::human::is_human(g, d) {
         crate::human::combat::human_blocks(g, p, &atk, d, unbl)? // the person declares blockers
     } else {
         let mut rng = std::mem::replace(&mut g.rng, crate::rng::Rng::from_u64(0));

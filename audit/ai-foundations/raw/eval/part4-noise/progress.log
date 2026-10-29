@@ -1,0 +1,39 @@
+start cur-t6-diag 18:14:13 X=1 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done cur-t6-diag rc=0 18:18:29
+start cur-t6 18:18:29 X=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done cur-t6 rc=0 18:21:06
+start cur-t3-diag 18:21:06 X=1 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done cur-t3-diag rc=0 18:23:48
+start cur-t3 18:23:48 X=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done cur-t3 rc=0 18:25:23
+start det-t6-diag 18:25:23 AI_EVAL_DET=1 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done det-t6-diag rc=0 18:29:25
+start det-t6 18:29:25 AI_EVAL_DET=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done det-t6 rc=0 18:31:56
+start det-t3-diag 18:31:56 AI_EVAL_DET=1 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done det-t3-diag rc=0 18:35:00
+start det-t3 18:35:00 AI_EVAL_DET=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done det-t3 rc=0 18:36:45
+start short-t6-diag 18:36:45 AI_EVAL_SHORT=1 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done short-t6-diag rc=0 18:40:11
+start short-t6 18:40:11 AI_EVAL_SHORT=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done short-t6 rc=0 18:42:20
+start short-t3-diag 18:42:20 AI_EVAL_SHORT=1 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done short-t3-diag rc=0 18:43:59
+start short-t3 18:43:59 AI_EVAL_SHORT=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done short-t3 rc=0 18:44:59
+start detshort-t6-diag 18:44:59 AI_EVAL_DET=1 AI_EVAL_SHORT=1 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done detshort-t6-diag rc=0 18:48:21
+start detshort-t6 18:48:21 AI_EVAL_DET=1 AI_EVAL_SHORT=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done detshort-t6 rc=0 18:50:29
+start detshort-t3-diag 18:50:29 AI_EVAL_DET=1 AI_EVAL_SHORT=1 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done detshort-t3-diag rc=0 18:52:19
+start detshort-t3 18:52:19 AI_EVAL_DET=1 AI_EVAL_SHORT=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done detshort-t3 rc=0 18:53:33
+ALLDONE
+start cur-t3-4000 18:54:22 X=1 --realism --pool t3 --games 4000 --jobs 16 --quiet
+done cur-t3-4000 rc=0 18:59:46
+start detshort-t3-4000 18:59:46 AI_EVAL_DET=1 AI_EVAL_SHORT=1 --realism --pool t3 --games 4000 --jobs 16 --quiet
+done detshort-t3-4000 rc=0 19:03:59
+start det-t3-4000 19:04:31 AI_EVAL_DET=1 --realism --pool t3 --games 4000 --jobs 16 --quiet
+done det-t3-4000 rc=0 19:10:06

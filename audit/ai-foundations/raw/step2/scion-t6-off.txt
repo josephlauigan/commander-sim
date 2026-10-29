@@ -1,0 +1,42 @@
+
+=== Scion vs Tier 6 (cEDH, B5) [loose, lookahead AI, 2000 games] ===
+Win rate  29.3%   95% CI 27.3-31.3%   (even share 25%: +4.3 pts)
+Average turn (your own turn count) of wins 7.9, of losses 7.4
+Plan online (first combo attempt): 34.9% of games
+Wins by: combo 85%, damage 15%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-bonder-mana-combo)            50.5%            22.4%           11.3%
+  Rograkh/Thrasios (rograkh-thrasios-creatur   50.5%            18.5%            9.7%
+  Dack Fayden (dack-fayden-white-stax)         50.1%            23.5%           11.5%
+  Kraum/Tymna (kraum-tymna-blue-breach-midra   50.0%            26.9%           13.4%
+  Rograkh/Silas (rograkh-silas-turbo-breach)   49.8%            18.1%            8.8%
+  Sisay (sisay-legends-toolbox)                49.1%            32.3%           15.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  -- Tier 6 report (2000 games, 1989 decisive; round-cap draws 0.6%) --
+  win share by seat of decisive games: seat 1 26.1% (real 34.1%, sim 30-38) OUT; seat 2 26.4% (real 27.3%, sim 24-31); seat 3 26.0% (real 22.5%, sim 19-26) OUT; seat 4 21.4% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 520 (26.0% of games), win round 8.2/7.0, mulligans 43.9%, tries 0.32/game, stopped 28%, taken 0.74+0.94/game, died 74%, death round 7.7, first out 63%, wins by round <=4/5/6/8: 33/89/187/340 of 520, T4 mana 4.7 hand 5.0, commander out turn 3.4
+      seat 2: wins 525 (26.2% of games), win round 8.1/7.0, mulligans 41.2%, tries 0.33/game, stopped 30%, taken 0.73+0.89/game, died 74%, death round 7.8, first out 62%, wins by round <=4/5/6/8: 35/91/212/346 of 525, T4 mana 4.7 hand 5.0, commander out turn 3.3
+      seat 3: wins 518 (25.9% of games), win round 7.9/7.0, mulligans 40.5%, tries 0.32/game, stopped 28%, taken 0.60+0.86/game, died 74%, death round 7.8, first out 63%, wins by round <=4/5/6/8: 57/108/207/339 of 518, T4 mana 4.6 hand 5.0, commander out turn 3.3
+      seat 4: wins 426 (21.3% of games), win round 8.0/7.0, mulligans 44.4%, tries 0.25/game, stopped 26%, taken 0.55+0.83/game, died 78%, death round 7.8, first out 67%, wins by round <=4/5/6/8: 40/86/173/268 of 426, T4 mana 4.6 hand 5.0, commander out turn 3.2
+  Scion: seated 2000, won 586 (29.3%; 0 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 479 (82%), damage 80 (14%), commander damage 10 (2%), combo (unnamed) 7 (1%), Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 6 (1%), Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 4 (1%)
+      win round: average 7.9, median 7.0
+      went for a combo 737 times (0.37 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 707, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 15, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 8, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 7]; stopped 242 (33%)
+      stopped by: Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 53, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 23, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mindbreak Trap 23, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 21, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Negation 17, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Will 16
+      stopped by card: (no card named: a cost, a ward or a lock) 59, Mindbreak Trap 24, Mental Misstep 23, Swan Song 23, Force of Negation 17, Force of Will 16
+      speed (median round): ready 6.0 (35% of games), one tutor away 6.0 (43% of games), went for a line 6.0 (35% of games), won 7.0
+      ready before go: went for it later in 68 of 706 ready games (median wait 0.0 rounds, mean 0.14); never went in 8
+      while ready and not gone it chose: stop 83, Scion of the Ur-Dragon 19, stop (hold mana) 14, combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 7, Deathrite Shaman drain 5, Dark Ritual 5
+      while one tutor away (not ready) it chose: stop (hold mana) 250, stop 240, Demonic Tutor 93, Diabolic Intent 75, Scion of the Ur-Dragon 72, Enlightened Tutor 54, Scion of the Ur-Dragon: become Ancient Copper Dragon 19, Storm-Kiln Artist 14
+      tutors held when it passed then: Diabolic Intent 180, Mystical Tutor 150, Enlightened Tutor 133, Demonic Tutor 63
+      mana T1-T5: 1.11 2.71 3.73 4.60 5.55; mana permanents: 0.00 0.49 0.71 0.86 0.95; mana cards in hand: 1.30 0.81 0.71 0.69 0.77 (castable 1.00 0.79 0.70 0.68 0.77); cast on T1-3: 0.58 0.30 0.23
+      held at the end of turns 1-3 with the mana to cast (card-turns): Mox Diamond 76 (T1 70/T2 5/T3 1; rule 68, lost 8), Deathrite Shaman 7 (T1 0/T2 3/T3 4; lost 7), Chrome Mox 3 (T1 2/T2 1/T3 0; lost 3), Mana Vault 3 (T1 1/T2 1/T3 1; lost 3), Noble Hierarch 2 (T1 0/T2 1/T3 1; lost 2), Sol Ring 1 (T1 0/T2 0/T3 1; lost 1); rituals and one-shots: Lion's Eye Diamond 499 (T1 146/T2 161/T3 192), Rite of Flame 223 (T1 41/T2 78/T3 104), Dark Ritual 112 (T1 25/T2 44/T3 43), Cabal Ritual 109 (T1 9/T2 44/T3 56)
+      Thrasios digs per seated game: end of the turn before its own 0.00, own turn 0.00 (of which a land onto the battlefield 0.00); end-of-turn windows per game 6.6, untapped mana at them 3.3, windows with Thrasios in play 0.0 offering 0.00 digs each
+      mulligans: 814 of 2000 hands (40.7%): one 581, two 187, three 46
+      by mulligans (none/one/two/three): win % 30.0/27.7/31.6/21.7, median win round 7/7/7/6
+      counters resolved: 1724 (Force of Negation 294, Force of Will 273, An Offer You Can't Refuse 253, Mindbreak Trap 223, Mental Misstep 220); hit Dack Fayden 343, Kinnan 324, Kraum/Tymna 299, Rograkh/Silas 296, Rograkh/Thrasios 245
+      removal resolved: 373 (ability 362, Touch the Spirit Realm 5, Fiend Hunter 3, All-Fates Stalker 3); hit Sisay 83, Kinnan 75, Dack Fayden 71, Kraum/Tymna 57, Rograkh/Thrasios 49
+      stax cast: 48 (Silence 42, Orim's Chant 6)
+
+(308s total)

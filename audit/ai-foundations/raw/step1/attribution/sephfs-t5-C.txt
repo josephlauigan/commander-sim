@@ -1,0 +1,24 @@
+
+=== Sephiroth FS vs Tier 5 (High B4) [loose, lookahead AI, 995 games] ===
+Win rate  17.0%   95% CI 14.8-19.4%   (even share 25%: -8.0 pts)
+Average turn (your own turn count) of wins 12.7, of losses 8.3
+Plan online (Sephiroth flipped (the fourth drain of a turn)): 28.5% of games
+Wins by: damage 91%, combo 8%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Miirym (miirym-temur-dragons)                61.1%            30.9%           19.5%
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            23.6%           14.7%
+  Urza (urza-mono-blue-artifacts)              59.7%            27.3%           15.8%
+  Kinnan (kinnan-simic-mana-combo)             59.6%            34.9%           20.3%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   58.6%            21.4%           12.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(123s total)
+
+WARNING: 5 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500273  panic: attempt to add with overflow
+   seed 500621  panic: attempt to subtract with overflow
+   seed 500670  panic: attempt to subtract with overflow
+   seed 500729  panic: attempt to add with overflow
+   seed 500840  panic: attempt to multiply with overflow
+  Please send me that output so I can fix the cause.

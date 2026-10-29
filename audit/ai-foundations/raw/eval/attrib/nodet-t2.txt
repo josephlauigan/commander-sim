@@ -1,0 +1,29 @@
+
+=== Realism: Tier 2 (Mid B3) [loose, lookahead AI, 1000 games, seeds 500000-500999; 5 decks, 4 a pod] ===
+targets: data/realism/t2.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     27.7%     25.0-30.6   30.9%     29.4-32.4  FAIL
+  seat 2 share of decisive games (%)                     23.3%     20.7-26.0   28.1%     26.6-29.6  FAIL
+  seat 3 share of decisive games (%)                     27.5%     24.8-30.4   22.3%     20.8-23.8  FAIL
+  seat 4 share of decisive games (%)                     21.6%     19.1-24.3   18.6%     17.1-20.1  FAIL
+  median round of a decisive win (rounds)                 12.0     11.0-12.0     9.0          8-10  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                 9.2%      7.5-11.1   21.2%     19.7-22.7  FAIL
+  wins by damage (combat or other) (%)                   82.5%     80.0-84.8   72.6%     71.1-74.1  FAIL
+  wins by commander damage (%)                            8.3%      6.8-10.2    5.7%       4.2-7.2  FAIL
+  wins by poison (%)                                      0.0%       0.0-0.4    0.5%           0-2  PASS
+  deck win spread, best minus worst deck (pts)            28.5             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                16.3%     14.1-18.7       -             -  no target
+  1 of 9 targets pass (3 statistics have no target yet)
+Games: 1000, decisive 972 (97.2%), round-cap timeouts 2.8%
+Each deck's share of the decisive games it sat in: Brago 11.6% of 774; Kaalia of the Vast 30.0% of 787; Lord Windgrace 29.3% of 779; Meren of Clan Nel Toth 13.5% of 763; Sythis 40.1% of 785
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins (n=26535, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins (n=26535, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins (n=26535, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight), share of seat wins (n=26535, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight) (n=9246, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight) (n=4757, read 2026-10-25)
+  win_damage: Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight) (n=4757, read 2026-10-25)
+  win_commander_damage: Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight) (n=4757, read 2026-10-25)
+  win_poison: Playgroup commanders.json, wins of Brago, Kaalia, Lord Windgrace, Meren, Sythis (equal weight) (n=4757, read 2026-10-25)

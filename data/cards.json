@@ -51531,6 +51531,45 @@
    "spell_prio": false
   },
   {
+   "name": "Glimpse the Unthinkable",
+   "types": "S",
+   "generic": 0,
+   "pips": "UB",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "mill"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Target player mills ten cards."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Glissa Sunslayer",
    "types": "C",
    "generic": 1,
@@ -53174,8 +53213,7 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "c": "WB",
-    "t": true
+    "c": "WB"
    },
    "pow": 0,
    "tgh": 0,
@@ -53189,9 +53227,9 @@
    ],
    "protfrom": "",
    "ward": 0,
-   "identity": "BW",
-   "game_changer": false,
-   "source": "scryfall",
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -95653,6 +95691,55 @@
    "spell_prio": false
   },
   {
+   "name": "Prismari, the Inspiration",
+   "types": "C",
+   "generic": 5,
+   "pips": "UR",
+   "tags": {
+    "leg": true,
+    "pow": "7",
+    "bomb": "7",
+    "fly": true
+   },
+   "pow": 7,
+   "tgh": 7,
+   "bomb": 7,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "ward"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "RU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Ward—Pay 5 life.",
+    "Instant and sorcery spells you cast have storm."
+   ],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Prismatic Ending",
    "types": "S",
    "generic": 0,
@@ -109851,6 +109938,44 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Serra's Sanctum",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "leg": true,
+    "c": "W"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": true,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
    },
    "phyrexian": "",
    "land_etb_fx": [],
@@ -132041,6 +132166,66 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "land_etb_fx": [],
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Tinder Wall",
+   "types": "C",
+   "generic": 0,
+   "pips": "G",
+   "tags": {
+    "pow": "0",
+    "tgh": "3"
+   },
+   "pow": 0,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "sac": "self"
+     },
+     "effects": [
+      {
+       "do": "add_mana",
+       "n": 2
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "defender"
+   ],
+   "subtypes": [
+    "plant",
+    "wall"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GR",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{R}, Sacrifice ~: It deals 2 damage to target creature it's blocking."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "land_etb_fx": [],
