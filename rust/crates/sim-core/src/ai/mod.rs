@@ -88,8 +88,19 @@ pub fn style(g: &Game, key: &str) -> Style {
     }
 }
 
+// --- scion
+/// JD's Tier 6 decks: they play through the outside decks' AI and the Tier 6 table rules (so they are not in
+/// `MAIN_STYLES`, which would switch on the hand-written main-deck plans and switch off the combo lines), with their
+/// own style. Scion is a turbo deck: the default temperature and aggression (its attacks are Scion's own, for
+/// Copper Dragon's Treasures), and less caution than the pool's 0.5, so it spends its mana on its plan instead of
+/// passing with a counterspell up.
+pub const T6_JD_STYLES: [(&str, Style); 1] = [("scion", st(1.0, 0.6, 0.35))];
+
 /// the built-in style: your deck's, or the outside deck's configured one, or the pool default
 pub fn base_style(key: &str) -> Style {
+    if let Some(x) = T6_JD_STYLES.iter().find(|x| x.0 == key) {
+        return x.1; // --- scion
+    }
     match MAIN_STYLES.iter().find(|x| x.0 == key) {
         Some(x) => x.1,
         None => plans::config(key).style.unwrap_or(pool::DEFAULT_STYLE),

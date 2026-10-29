@@ -79,3 +79,10 @@ name = "Karn"
 commander = "Karn, Legacy Reforged"
 ident = ""
 tiers = ["t4", "t5"]
+
+[scion]
+file = "JD/scion-ur-dragon-turbo.md"
+name = "Scion"
+commander = "Scion of the Ur-Dragon"
+ident = "WUBRG"
+tiers = ["t6"]

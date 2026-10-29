@@ -573,6 +573,10 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
     }
     let owner = x.orig;
     if let Some(cd) = x.phys {
+        if g.player(owner).is_commander(cd) {
+            g.player_mut(owner).set_cmd_zone(cd, true); // --- scion: Scion as a copy is still the commander
+            return;
+        }
         let pl = g.player_mut(owner);
         match zone {
             Zone::Exile => pl.exile.push(cd),

@@ -234,6 +234,14 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
         return Ok(());
     }
+    // --- scion: Prismari, the Inspiration's "Ward—Pay 5 life" (Scion as a copy of it too)
+    if spell.is_some()
+        && let Some(a) = actor.filter(|&a| a != owner)
+        && !crate::impls::t6_scion::prismari_ward(g, a, m)?
+    {
+        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
+        return Ok(());
+    }
     // --- Tiers 1/2 (kaalia-sythis): Valgavoth, Terror Eater's "Ward—Sacrifice three nonland permanents"
     if spell.is_some()
         && let Some(a) = actor.filter(|&a| a != owner)

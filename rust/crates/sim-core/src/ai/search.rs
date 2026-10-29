@@ -375,6 +375,18 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         }
     }
     let n = g.settings.search.rollouts as f64;
+    // a bonus never lifts a line above a sure win: when every playout of the best play wins, a held line that also wins
+    // (the heuristic combos next turn) scored 100 plus its hold bonus and beat it, so a ready Thassa's Oracle waited
+    // turn after turn in goldfish games. Capped lines tie, and a tie goes to the play the heuristic rates higher.
+    for s in &mut scores {
+        *s = s.min(100.0 * n);
+    }
+    best = 0;
+    for k in 1..keyed.len() {
+        if scores[k] > scores[best] {
+            best = k;
+        }
+    }
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
     });

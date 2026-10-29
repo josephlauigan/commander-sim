@@ -2,7 +2,7 @@
 //! prefix of an option's name also works (`--gam 960`), --swap repeats, and a bad value is an error naming the
 //! option (exit code 2).
 
-pub const DECK_KEYS: [&str; 11] = crate::decks::MINE;
+pub const DECK_KEYS: [&str; 12] = crate::decks::MINE;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
@@ -33,6 +33,8 @@ pub struct Args {
     pub no_explain: bool,
     pub no_preflight: bool,
     pub preflight_only: bool,
+    /// --goldfish KEYS: these decks alone against three inert seats (goldfish.rs)
+    pub goldfish: Option<String>,
 }
 
 struct Opt {
@@ -53,7 +55,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 31] = [
+const OPTS: [Opt; 32] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -65,6 +67,16 @@ const OPTS: [Opt; 31] = [
          (data/my_decks.toml: e.g. cloud t1-t3, sauron t3-t4). A tier outside them is refused unless --any-tier",
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
+    opt(
+        "--goldfish",
+        false,
+        &[],
+        "KEYS",
+        "goldfish: each deck (comma-separated: your deck keys, Tier 6 pool keys, or t6 for all six) plays alone \
+         against three inert seats (40 life, they never cast, attack, block or respond; no tier limit). Reports the \
+         kill turn (median, mean, share by turn 1-8), how it won, mulligans, the ready turn and protection held on \
+         the kill turn. With --trace GAME: one game's play-by-play",
+    ),
     opt("--calibrate", false, &["within", "ordering", "all"], "", "pool balance checks (no --deck needed)"),
     opt(
         "--realism",
@@ -153,6 +165,7 @@ const OPTS: [Opt; 31] = [
 
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
+     \x20                    [--goldfish KEYS]\n\
      \x20                    [--knobs FILE] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
@@ -178,7 +191,7 @@ pub fn help() -> String {
         }
     }
     s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck seph \
-          --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
+          --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish scion,t6 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
 
@@ -241,6 +254,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         no_explain: false,
         no_preflight: false,
         preflight_only: false,
+        goldfish: None,
     };
     let (mut games, mut n, mut profiles, mut profile, mut jobs) = (None, None, None, None, None);
     let mut i = 0;
@@ -284,6 +298,7 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--no-explain" => a.no_explain = true,
             "--no-preflight" => a.no_preflight = true,
             "--preflight-only" => a.preflight_only = true,
+            "--goldfish" => a.goldfish = Some(val),
             "--calibrate" => a.calibrate = Some(val),
             "--realism" => a.realism = true,
             "--knobs" => a.knobs = Some(val),
@@ -395,6 +410,20 @@ mod any_tier_tests {
         assert!(p("--deck sauron --pool t1 --any-tier").unwrap().any_tier);
         assert!(p("--deck sauron --pool t1 --any").unwrap().any_tier);
         assert!(p("--any-tier=x").is_err());
+    }
+}
+
+#[cfg(test)]
+mod goldfish_flag_tests {
+    use super::*;
+
+    #[test]
+    fn goldfish_takes_deck_keys_and_is_in_the_help() {
+        let argv: Vec<String> = "--goldfish scion,t6 --games 50".split_whitespace().map(|x| x.to_string()).collect();
+        let a = parse(&argv).unwrap();
+        assert_eq!((a.goldfish.as_deref(), a.games), (Some("scion,t6"), 50));
+        assert!(help().contains("--goldfish KEYS") && usage().contains("--goldfish"));
+        assert_eq!(parse(&["--goldfish".to_string()]).unwrap_err().code, 2);
     }
 }
 

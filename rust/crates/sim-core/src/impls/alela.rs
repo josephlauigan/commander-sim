@@ -1462,7 +1462,8 @@ fn scrap_self(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
 
 // ------------------------------------------------------------------ Mirage Mirror
 /// the permanent's face becomes card `cd` (name, body, keywords, hooks), as a copy; no enter effects
-fn set_face(g: &mut Game, m: PermId, cd: CardId) {
+pub(crate) fn set_face(g: &mut Game, m: PermId, cd: CardId) {
+    // --- scion: also Scion of the Ur-Dragon's "becomes a copy" (impls/t6_scion.rs)
     let (name, pow, tgh, fly, dt, vig, ll, war, noatk, dsl) = {
         let d = g.db.get(cd);
         let t = &d.tags;

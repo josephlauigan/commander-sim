@@ -1,0 +1,117 @@
+14,000 games (goldfish, 7 decks), lookahead AI, 16 worker threads: about 44 minutes
+  progress  10.0%  0m09s elapsed, ~1m25s left
+
+=== Scion (scion) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 10.0, mean 10.2 (over the 1923 kills)
+  won by turn: T1 0.0%  T2 0.3%  T3 2.9%  T4 7.2%  T5 13.7%  T6 23.1%  T7 31.7%  T8 39.3%
+  no kill by round 20: 3.9% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 73.0%, damage 18.8%, commander damage 6.4%, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 0.9%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.4%, combo (unnamed) 0.4%
+Mulligans: kept 7 cards 88.3% (no mulligan 59.3%, the free mulligan 29.1%), 6 cards 9.3%, 5 or fewer 2.3%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 10.0, mean 8.7, reached in 71.9% of games
+Protection on the kill turn: 80.5% of kills held a protection card or had a cast lock in force
+  counted (10): An Offer You Can't Refuse, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Orim's Chant, Pact of Negation, Silence, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 70.2%, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 0.9%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.5%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 0.4%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 99.9% of tries, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 100.0% of tries, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 88.9% of tries
+Commander cast: 67.7% of games, median own turn 5.0 (of the games it was cast)
+  scion|act|Ancient Copper Dragon: in 53.7% of games (1098 in all)
+  scion|act|Korvold, Fae-Cursed King: in 41.6% of games (839 in all)
+  scion|act|Prismari, the Inspiration: in 0.7% of games (14 in all)
+  progress  20.0%  0m26s elapsed, ~1m47s left
+
+=== Dack Fayden (dack-fayden-white-stax) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 10.5, mean 9.9 (over the 1791 kills)
+  won by turn: T1 0.0%  T2 0.8%  T3 6.9%  T4 18.6%  T5 27.8%  T6 33.3%  T7 37.4%  T8 41.4%
+  no kill by round 20: 10.4% (of which the deck itself lost: 1.6% of games)
+How it won (share of kills): Dack Fayden: the first flip wins the turn (35 piles) 50.0%, damage 34.6%, commander damage 14.7%, Preston + Felidar Guardian + Radiant Solar (flicker spell) 0.8%
+Mulligans: kept 7 cards 83.8% (no mulligan 59.4%, the free mulligan 24.5%), 6 cards 10.3%, 5 or fewer 5.8%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median none, mean 5.7, reached in 45.8% of games
+Protection on the kill turn: 47.3% of kills held a protection card or had a cast lock in force
+  counted (4): Bilbo's Gambit, Ephemerate, Orim's Chant, Silence
+Went for (share of games): Dack Fayden: the first flip wins the turn (35 piles) 44.8%, Preston + Felidar Guardian + Radiant Solar (flicker spell) 0.7%
+  converted: Dack Fayden: the first flip wins the turn (35 piles) 100.0% of tries, Preston + Felidar Guardian + Radiant Solar (flicker spell) 100.0% of tries
+Commander cast: 99.6% of games, median own turn 5.0 (of the games it was cast)
+  progress  30.0%  0m51s elapsed, ~2m00s left
+  progress  40.0%  1m08s elapsed, ~1m43s left
+
+=== Kinnan (kinnan-bonder-mana-combo) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 8.0, mean 8.7 (over the 1980 kills)
+  won by turn: T1 0.0%  T2 0.1%  T3 2.1%  T4 9.4%  T5 20.2%  T6 30.6%  T7 41.6%  T8 51.5%
+  no kill by round 20: 1.0% (of which the deck itself lost: 0.6% of games)
+How it won (share of kills): Kinnan + Basalt Monolith + Thrasios (draw the deck) 48.0%, Hullbreaker Horror + Kinnan + two rocks cast between each other 32.5%, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 10.9%, damage 8.5%, commander damage 0.2%
+Mulligans: kept 7 cards 82.1% (no mulligan 54.4%, the free mulligan 27.8%), 6 cards 11.9%, 5 or fewer 6.0%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 8.0, mean 8.3, reached in 91.0% of games
+Protection on the kill turn: 86.1% of kills held a protection card or had a cast lock in force
+  counted (11): An Offer You Can't Refuse, Dispel, Disrupting Shoal, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Pact of Negation, Swan Song
+Went for (share of games): Kinnan + Basalt Monolith + Thrasios (draw the deck) 47.5%, Hullbreaker Horror + Kinnan + two rocks cast between each other 32.1%, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 10.8%
+  converted: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100.0% of tries, Hullbreaker Horror + Kinnan + two rocks cast between each other 100.0% of tries, Kinnan + Basalt Monolith + Mirage Mirror ({U}{G} outlet) 100.0% of tries
+Commander cast: 100.0% of games, median own turn 2.0 (of the games it was cast)
+  progress  50.0%  1m26s elapsed, ~1m26s left
+
+=== Kraum/Tymna (kraum-tymna-blue-breach-midrange) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 9.5 (over the 1855 kills)
+  won by turn: T1 0.1%  T2 0.3%  T3 2.0%  T4 6.7%  T5 15.1%  T6 25.5%  T7 36.1%  T8 46.0%
+  no kill by round 20: 7.2% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 82.9%, damage 13.2%, combo (unnamed) 2.7%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 1.1%, commander damage 0.2%
+Mulligans: kept 7 cards 79.6% (no mulligan 49.2%, the free mulligan 30.4%), 6 cards 13.2%, 5 or fewer 7.2%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 9.0, mean 8.3, reached in 84.2% of games
+Protection on the kill turn: 90.5% of kills held a protection card or had a cast lock in force
+  counted (14): An Offer You Can't Refuse, Dispel, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Grand Abolisher, Mental Misstep, Mindbreak Trap, Orim's Chant, Pact of Negation, Red Elemental Blast, Silence, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 76.8%, Ad Nauseam into a win 6.4%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 2.5%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 1.4%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 100.0% of tries, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 69.0% of tries
+Commander cast: 89.3% of games, median own turn 3.0 (of the games it was cast)
+  progress  60.0%  1m44s elapsed, ~1m09s left
+  progress  70.0%  2m02s elapsed, ~0m52s left
+
+=== Rograkh/Silas (rograkh-silas-turbo-breach) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 10.0, mean 9.2 (over the 1578 kills)
+  won by turn: T1 0.0%  T2 0.6%  T3 4.8%  T4 11.5%  T5 18.9%  T6 27.1%  T7 34.8%  T8 41.0%
+  no kill by round 20: 21.1% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 98.5%, combo (unnamed) 0.9%, damage 0.4%, other 0.1%, commander damage 0.1%
+Mulligans: kept 7 cards 83.2% (no mulligan 55.8%, the free mulligan 27.4%), 6 cards 12.3%, 5 or fewer 4.5%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 10.0, mean 9.1, reached in 82.5% of games
+Protection on the kill turn: 77.3% of kills held a protection card or had a cast lock in force
+  counted (11): An Offer You Can't Refuse, Daze, Fierce Guardianship, Flusterstorm, Force of Will, Mental Misstep, Mindbreak Trap, Pact of Negation, Pyroblast, Red Elemental Blast, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 77.9%, Ad Nauseam into a win 5.2%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 0.7%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.1%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 99.8% of tries
+Commander cast: 97.5% of games, median own turn 2.0 (of the games it was cast)
+  progress  80.0%  2m32s elapsed, ~0m38s left
+
+=== Rograkh/Thrasios (rograkh-thrasios-creature-combo) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 9.3 (over the 1990 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.1%  T4 1.4%  T5 6.5%  T6 16.4%  T7 30.2%  T8 45.1%
+  no kill by round 20: 0.5% (of which the deck itself lost: 0.1% of games)
+How it won (share of kills): Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 44.4%, Eternal Witness + Snap + Gaea's Cradle 41.2%, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7.7%, damage 4.4%, Badgermole Cub + clone + Eternal Witness + Snap 2.2%
+Mulligans: kept 7 cards 88.5% (no mulligan 63.8%, the free mulligan 24.8%), 6 cards 7.9%, 5 or fewer 3.5%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 9.0, mean 9.1, reached in 95.1% of games
+Protection on the kill turn: 85.0% of kills held a protection card or had a cast lock in force
+  counted (10): Fierce Guardianship, Flare of Denial, Flusterstorm, Force of Negation, Force of Will, Louisoix's Sacrifice, Mental Misstep, Mindbreak Trap, Pact of Negation, Swan Song
+Went for (share of games): Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 44.2%, Eternal Witness + Snap + Gaea's Cradle 41.5%, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 7.8%, Badgermole Cub + clone + Eternal Witness + Snap 2.2%
+  converted: Oboro Breezecaller + Gaea's Cradle + Talon Gates of Madara 100.0% of tries, Eternal Witness + Snap + Gaea's Cradle 98.8% of tries, Badgermole Cub + clone + Oboro Breezecaller + Gaea's Cradle 99.4% of tries, Badgermole Cub + clone + Eternal Witness + Snap 100.0% of tries
+Commander cast: 100.0% of games, median own turn 1.0 (of the games it was cast)
+  progress  90.0%  2m55s elapsed, ~0m19s left
+  progress 100.0%  3m09s elapsed, ~0m00s left
+
+=== Sisay (sisay-legends-toolbox) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 7.0, mean 7.6 (over the 1996 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.1%  T4 1.6%  T5 12.8%  T6 36.8%  T7 61.2%  T8 76.2%
+  no kill by round 20: 0.2% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 63.9%, Ioreth + Marvin + a legend that taps for mana (DDR) 34.5%, damage 1.5%, commander damage 0.1%
+Mulligans: kept 7 cards 89.1% (no mulligan 60.5%, the free mulligan 28.6%), 6 cards 7.8%, 5 or fewer 3.0%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 7.0, mean 7.5, reached in 98.2% of games
+Protection on the kill turn: 73.0% of kills held a protection card or had a cast lock in force
+  counted (10): An Offer You Can't Refuse, Ertai Resurrected, Fierce Guardianship, Flusterstorm, Force of Will, Mental Misstep, Mindbreak Trap, Pact of Negation, Silence, Swan Song
+Went for (share of games): Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 63.8%, Ioreth + Marvin + a legend that taps for mana (DDR) 35.0%
+  converted: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 100.0% of tries, Ioreth + Marvin + a legend that taps for mana (DDR) 98.4% of tries
+Commander cast: 100.0% of games, median own turn 3.0 (of the games it was cast)
+
+=== Goldfish summary (own turn of the kill; no opponents interacting) ===
+  deck                                median   mean   by T1   by T2   by T3  no kill  protection
+  scion                                 10.0   10.2    0.0%    0.3%    2.9%     3.9%       80.5%
+  dack-fayden-white-stax                10.5    9.9    0.0%    0.8%    6.9%    10.4%       47.3%
+  kinnan-bonder-mana-combo               8.0    8.7    0.0%    0.1%    2.1%     1.0%       86.1%
+  kraum-tymna-blue-breach-midrange       9.0    9.5    0.1%    0.3%    2.0%     7.2%       90.5%
+  rograkh-silas-turbo-breach            10.0    9.2    0.0%    0.6%    4.8%    21.1%       77.3%
+  rograkh-thrasios-creature-combo        9.0    9.3    0.0%    0.0%    0.1%     0.5%       85.0%
+  sisay-legends-toolbox                  7.0    7.6    0.0%    0.0%    0.1%     0.2%       73.0%
+
+(190s total)

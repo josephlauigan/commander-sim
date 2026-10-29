@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 77); // eleven decks of yours x seven tiers
+    assert_eq!(played, 84); // twelve decks of yours x seven tiers
 }
 
 #[test]

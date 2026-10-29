@@ -1,0 +1,22 @@
+
+=== Scion (scion) goldfish [adaptive AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 11.0, mean 11.1 (over the 1901 kills)
+  won by turn: T1 0.0%  T2 0.1%  T3 2.1%  T4 6.3%  T5 11.9%  T6 18.9%  T7 26.0%  T8 32.1%
+  no kill by round 20: 5.0% (of which the deck itself lost: 0.1% of games)
+How it won (share of kills): Thassa's Oracle + Demonic Consultation / Tainted Pact 69.6%, damage 23.5%, commander damage 5.6%, combo (unnamed) 0.5%, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 0.5%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.3%
+Mulligans: kept 7 cards 88.3% (no mulligan 59.3%, the free mulligan 29.1%), 6 cards 9.3%, 5 or fewer 2.3%
+Ready turn (a line first ready, as the Tier 6 speed counters measure it): median 12.0, mean 9.2, reached in 67.8% of games
+Protection on the kill turn: 81.6% of kills held a protection card or had a cast lock in force
+  counted (10): An Offer You Can't Refuse, Flusterstorm, Force of Negation, Force of Will, Mental Misstep, Mindbreak Trap, Orim's Chant, Pact of Negation, Silence, Swan Song
+Went for (share of games): Thassa's Oracle + Demonic Consultation / Tainted Pact 66.3%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 0.6%, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 0.6%, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 0.5%
+  converted: Thassa's Oracle + Demonic Consultation / Tainted Pact 99.8% of tries, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 81.8% of tries, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 54.5% of tries
+Commander cast: 70.5% of games, median own turn 5.0 (of the games it was cast)
+  scion|act|Ancient Copper Dragon: in 57.4% of games (1215 in all)
+  scion|act|Korvold, Fae-Cursed King: in 42.5% of games (852 in all)
+  scion|act|Prismari, the Inspiration: in 0.5% of games (9 in all)
+
+=== Goldfish summary (own turn of the kill; no opponents interacting) ===
+  deck                                median   mean   by T1   by T2   by T3  no kill  protection
+  scion                                 11.0   11.1    0.0%    0.1%    2.1%     5.0%       81.6%
+
+(0s total)

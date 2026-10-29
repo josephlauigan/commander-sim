@@ -9,6 +9,7 @@ pub mod dsl;
 pub mod engine;
 pub mod export;
 pub mod flow;
+pub mod goldfish; // --- scion: commander-sim --goldfish
 pub mod hooks;
 pub mod human;
 pub mod ids;
