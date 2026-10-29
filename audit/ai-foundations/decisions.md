@@ -13,3 +13,7 @@ JD (2026-10-27): "Do all three sequentially" (step 1 bug fixes, step 2 line plan
 - **The eval is the look-ahead for every tier (eval-fix.md, decision 1a).** Tiers 0-5's 9 lost targets
   (22 → 13 of 46) are not retuned now: "We can wait recalibrate until the very end". One recalibration of Tiers 0-5
   comes after the rest of the AI-foundations work, so later look-ahead changes don't force a second one.
+- **When to recalibrate (JD, 2026-10-29): once, after Phase 4 of the realism plan** (`documents/realism.md`: after
+  Phase 2's one card model, Phase 3's engine structures and Phase 4's generic AI), not at the end of AI foundations.
+  JD: "I won't plan swap decisions until after everything is done." Until then, the Tier 0-5 scorecard (13 of 46
+  passing after the eval fix) and JD's deck baselines are known to be off calibration.
