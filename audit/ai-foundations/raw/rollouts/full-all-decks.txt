@@ -1,0 +1,27 @@
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=1000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3                 t4                 t5                 t6     average over its tiers
+  seph                        -                  -  25.9% (23.3-28.7)  16.8% (14.6-19.2)                  -                  -          21.4% over t3, t4
+  veyran      14.6% (12.5-16.9)  13.6% (11.6-15.9)  11.7% ( 9.9-13.8)                  -                  -                  -           13.3% over t1-t3
+  sauron                      -                  -  26.1% (23.5-28.9)  21.8% (19.4-24.5)                  -                  -          23.9% over t3, t4
+  galadriel    5.7% ( 4.4- 7.3)   5.3% ( 4.1- 6.9)                  -                  -                  -                  -           5.5% over t1, t2
+  yshtola                     -                  -                  -                  -  23.7% (21.2-26.5)                  -              23.7% over t5
+  alela        3.7% ( 2.7- 5.1)                  -                  -                  -                  -                  -               3.7% over t1
+  kefka                       -                  -  19.2% (16.9-21.8)                  -                  -                  -              19.2% over t3
+  sheoldred                   -                  -  18.5% (16.2-21.0)  20.6% (18.2-23.2)                  -                  -          19.6% over t3, t4
+  cloud       20.9% (18.5-23.5)  14.0% (12.0-16.3)  17.5% (15.3-20.0)                  -                  -                  -           17.5% over t1-t3
+  thrasios                    -                  -                  -                  -   9.8% ( 8.1-11.8)                  -               9.8% over t5
+  sephfs                      -                  -                  -                  -  19.4% (17.0-21.9)                  -              19.4% over t5
+  karn                        -                  -                  -  17.4% (15.2-19.9)  20.6% (18.2-23.2)                  -          19.0% over t4, t5
+  scion                       -                  -                  -                  -                  -  28.0% (25.3-30.9)              28.0% over t6
+
+(4159s total)
+
+WARNING: 13 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500102  panic: attempt to add with overflow
+   seed 500442  panic: attempt to subtract with overflow
+   seed 500468  panic: attempt to add with overflow
+   seed 500523  panic: attempt to add with overflow
+   seed 500830  panic: attempt to subtract with overflow
+  Please send me that output so I can fix the cause.

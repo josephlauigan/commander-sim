@@ -1,0 +1,11 @@
+goldfish 189s exit 0
+realism t0 930s exit 0
+realism:t1 700s exit 0
+realism:t2 1050s exit 0
+done
+realism:t3 377s exit 0
+realism:t4 605s exit 0
+realism:t5 470s exit 0
+realism:t6 746s exit 0
+all-decks 3477s exit 0
+done

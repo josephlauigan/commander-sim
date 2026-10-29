@@ -14,6 +14,9 @@ mod cardinfo;
 mod decks;
 mod explain;
 mod fit;
+mod flow; // --- ai-flow
+mod goldfish;
+mod gf_audit; // --- ai-audit
 mod knobs;
 mod play;
 mod poolmode;
@@ -129,6 +132,9 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
     }
     if a.realism {
         return realism::run(sim, &a).map(|()| 0);
+    }
+    if a.goldfish.is_some() {
+        return goldfish::main(sim, &a).map(|()| 0);
     }
     let mut swaps = vec![];
     let (mut base, mut var) = (vec![], vec![]);

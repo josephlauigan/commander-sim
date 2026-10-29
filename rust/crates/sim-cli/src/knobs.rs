@@ -10,6 +10,8 @@
 //! cthresh_default = 6    # outside decks' counter threshold (importance a spell needs to be countered)
 //! instant_extra = 0      # extra importance instant removal needs before it is used proactively
 //! t6_moxd_lands = 3      # Tier 6: lands (hand + battlefield, the discard included) needed to cast Mox Diamond
+//! [ai]
+//! planner = false        # --- ai-planner: the Tier 6 line planner off (the step 1 AI; env PLANNER=0 too)
 //! [cthresh]
 //! seph = 6               # one of your decks' counter threshold
 //! [search]               # the look-ahead's knobs (no effect with --ai adaptive)
@@ -49,6 +51,8 @@ pub struct Knobs {
     pub cthresh_default: Option<i32>,
     pub instant_extra: Option<i32>,
     pub t6_moxd_lands: Option<usize>,
+    /// --- ai-planner: `[ai] planner`
+    pub planner: Option<bool>,
     pub cthresh: BTreeMap<String, i32>,
     pub search: SearchKnobs,
     pub style: BTreeMap<String, StyleKnob>,
@@ -123,6 +127,14 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
                     k.t6_moxd_lands = Some(int(x, "t6_moxd_lands", (1, 6)).map_err(at)? as usize);
                 }
             }
+            // --- ai-planner
+            "ai" => {
+                let tb = table(v, "ai").map_err(at)?;
+                only(tb, "ai", &["planner"]).map_err(at)?;
+                if let Some(x) = tb.get("planner") {
+                    k.planner = Some(x.as_bool().ok_or_else(|| at("planner must be true or false".into()))?);
+                }
+            }
             "cthresh" => {
                 for (d, x) in table(v, "cthresh").map_err(at)? {
                     deck(d, "cthresh").map_err(at)?;
@@ -164,7 +176,7 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
             }
             _ => {
                 return Err(at(format!(
-                    "unknown key `{key}` (known: tier, note, [table], [cthresh], [search], [style.<deck>], [fit])"
+                    "unknown key `{key}` (known: tier, note, [table], [ai], [cthresh], [search], [style.<deck>], [fit])"
                 )));
             }
         }
@@ -186,6 +198,9 @@ impl Knobs {
         }
         if let Some(x) = self.t6_moxd_lands {
             st.t6_moxd_lands = x;
+        }
+        if let Some(x) = self.planner {
+            st.planner = x; // --- ai-planner
         }
         for (d, x) in &self.cthresh {
             st.cthresh.insert(d.clone(), *x);
@@ -249,6 +264,9 @@ impl Knobs {
         if !tb.is_empty() {
             o.push_str(&format!("[table]\n{}\n\n", tb.join("\n")));
         }
+        if let Some(x) = self.planner {
+            o.push_str(&format!("[ai]\nplanner = {x}\n\n")); // --- ai-planner
+        }
         if !self.cthresh.is_empty() {
             o.push_str("[cthresh]\n");
             for (d, x) in &self.cthresh {
@@ -311,6 +329,20 @@ mod tests {
         let mut st = base.clone();
         p("").unwrap().apply(&mut st);
         assert_eq!(format!("{st:?}"), format!("{base:?}"));
+    }
+
+    // --- ai-planner
+    #[test]
+    fn the_planner_knob_is_read_applied_and_written() {
+        let k = p("[ai]\nplanner = false\n").unwrap();
+        assert_eq!(k.planner, Some(false));
+        let mut st = Settings::new(Profile::Loose, AiMode::Adaptive, 1.0);
+        st.planner = true;
+        k.apply(&mut st);
+        assert!(!st.planner);
+        assert_eq!(p(&k.to_toml(&[], &[])).unwrap(), k);
+        assert!(p("[ai]\nplanner = 1\n").is_err());
+        assert!(p("[ai]\nplaner = false\n").is_err());
     }
 
     #[test]

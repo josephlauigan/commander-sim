@@ -1,0 +1,101 @@
+Play-by-play of goldfish game 3 (seed 500003): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 6 cards in hand, 0 lands
+R1      hand: Ragavan, Nimble Pilferer, Legolas's Quick Reflexes, Birds of Paradise, Bloom Tender, Noble Hierarch, Otawara, Soaring City
+R1    Sisay plays Otawara, Soaring City
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Ragavan, Nimble Pilferer, Legolas's Quick Reflexes, Birds of Paradise, Bloom Tender, Noble Hierarch, Loki's Scepter
+R2    Sisay casts Sol Ring
+R2        [Sisay decides: Sol Ring 100%, stop 0% -> Sol Ring [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 40, 6 cards in hand, 1 lands
+R3      hand: Ragavan, Nimble Pilferer, Legolas's Quick Reflexes, Birds of Paradise, Bloom Tender, Noble Hierarch, Loki's Scepter
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 40, 7 cards in hand, 1 lands
+R4      hand: Ragavan, Nimble Pilferer, Legolas's Quick Reflexes, Birds of Paradise, Bloom Tender, Noble Hierarch, Loki's Scepter, Green Sun's Zenith
+R4    Sisay plays Plateau
+R4    Sisay casts Sisay, Weatherlight Captain
+R4        [Sisay decides: Loki's Scepter 69%, Sisay, Weatherlight Captain 31%, Ragavan, Nimble Pilferer 0%, dash Ragavan 0% -> Sisay, Weatherlight Captain [must]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 40, 7 cards in hand, 2 lands
+R5      hand: Ragavan, Nimble Pilferer, Legolas's Quick Reflexes, Birds of Paradise, Bloom Tender, Noble Hierarch, Loki's Scepter, Green Sun's Zenith
+R5        [Sisay decides: Loki's Scepter 91%, Enlightened Tutor 8%, Ragavan, Nimble Pilferer 0%, dash Ragavan 0% -> Loki's Scepter [search]]
+R5    Sisay casts Loki's Scepter
+R5        [Sisay decides: Birds of Paradise 31%, Bloom Tender 31%, Noble Hierarch 31%, Green Sun's Zenith 3% -> Bloom Tender [search]]
+R5    Sisay casts Bloom Tender
+R5        [Sisay attack plan by search: filtered at Goldfish 2]
+R5    Sisay attacks Goldfish 2 with 1 creature(s): 3 damage (life now 37)
+R5  --- Goldfish 2 turn 5: life 37, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 40, 6 cards in hand, 2 lands
+R6      hand: Ragavan, Nimble Pilferer, Legolas's Quick Reflexes, Birds of Paradise, Noble Hierarch, Green Sun's Zenith, Enlightened Tutor
+R6    Sisay activates Sisay: Mount Doom
+R6        [Sisay decides: Sisay: Mount Doom 93%, Green Sun's Zenith 3%, Enlightened Tutor 3%, Birds of Paradise 0% -> Sisay: Mount Doom [must]]
+R6        [Sisay decides: Green Sun's Zenith 46%, Enlightened Tutor 46%, Birds of Paradise 3%, Noble Hierarch 3% -> Green Sun's Zenith [search]]
+R6    Sisay casts Green Sun's Zenith
+R6      Derevi untaps Bloom Tender
+R6        [Sisay decides: Enlightened Tutor 84%, Birds of Paradise 6%, Noble Hierarch 6%, Ragavan, Nimble Pilferer 4% -> Enlightened Tutor [search]]
+R6    Sisay casts Enlightened Tutor
+R6      Sisay searches for Marvin, Murderous Mimic
+R6        [Sisay decides: Birds of Paradise 36%, Noble Hierarch 36%, Ragavan, Nimble Pilferer 25%, dash Ragavan 3% -> Birds of Paradise [search]]
+R6    Sisay casts Birds of Paradise
+R6        [Sisay decides: Noble Hierarch 56%, Ragavan, Nimble Pilferer 39%, dash Ragavan 5%, stop 0% -> Noble Hierarch [search]]
+R6    Sisay casts Noble Hierarch
+R6        [Sisay decides: Ragavan, Nimble Pilferer 100%, stop 0% -> Ragavan, Nimble Pilferer [search]]
+R6    Sisay casts Ragavan, Nimble Pilferer
+R6        [Sisay attack plan by search: filtered at Goldfish 2]
+R6      Derevi untaps Bloom Tender
+R6    Sisay attacks Goldfish 2 with 1 creature(s): 7 damage (life now 30)
+R6  --- Goldfish 2 turn 6: life 30, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Sisay turn 7: life 39, 2 cards in hand, 3 lands
+R7      hand: Legolas's Quick Reflexes, Into the Flood Maw
+R7    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R7    Sisay activates Sisay: Emiel the Blessed
+R7  *** Goldfish 2 is eliminated (life 30) by Sisay
+R7  *** Goldfish 3 is eliminated (life 40) by Sisay
+R7  *** Goldfish 4 is eliminated (life 40) by Sisay
+R7  *** Sisay wins by combo
+R7        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 95%, Sisay: Emiel the Blessed 5%, Marvin, Murderous Mimic 0%, stop 0% -> combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [must]]
+Kill: own turn 7 (Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  progressed (fast mana / rock)
+  T3  mana_short
+  T4  progressed (combo piece)
+  T5  progressed (combo piece) | held (payable, not offered): Legolas's Quick Reflexes
+  T6  progressed (tutor) | held (payable, not offered): Legolas's Quick Reflexes, Into the Flood Maw
+  T7  won
+  cleanup discards: none
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: none

@@ -1,0 +1,41 @@
+
+=== Scion vs Tier 6 (cEDH, B5) [loose, lookahead AI, 2000 games] ===
+Win rate  26.6%   95% CI 24.7-28.6%   (even share 25%: +1.6 pts)
+Average turn (your own turn count) of wins 8.6, of losses 7.7
+Plan online (first combo attempt): 28.6% of games
+Wins by: combo 83%, damage 16%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-bonder-mana-combo)            50.5%            22.7%           11.6%
+  Rograkh/Thrasios (rograkh-thrasios-creatur   50.5%            20.9%           10.7%
+  Dack Fayden (dack-fayden-white-stax)         50.1%            26.2%           12.9%
+  Kraum/Tymna (kraum-tymna-blue-breach-midra   50.0%            24.9%           12.5%
+  Rograkh/Silas (rograkh-silas-turbo-breach)   49.8%            17.9%            8.7%
+  Sisay (sisay-legends-toolbox)                49.1%            34.4%           16.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  -- Tier 6 report (2000 games, 1979 decisive; round-cap draws 1.1%) --
+  win share by seat of decisive games: seat 1 26.9% (real 34.1%, sim 30-38) OUT; seat 2 27.5% (real 27.3%, sim 24-31); seat 3 22.9% (real 22.5%, sim 19-26); seat 4 22.6% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 533 (26.6% of games), win round 8.4/8.0, mulligans 43.9%, tries 0.30/game, stopped 21%, taken 0.82+0.88/game, died 73%, death round 8.1, first out 62%, wins by round <=4/5/6/8: 17/66/168/316 of 533, T4 mana 4.7 hand 5.0, commander out turn 3.6
+      seat 2: wins 545 (27.2% of games), win round 8.4/7.0, mulligans 41.2%, tries 0.30/game, stopped 21%, taken 0.72+0.90/game, died 72%, death round 8.2, first out 61%, wins by round <=4/5/6/8: 24/84/189/341 of 545, T4 mana 4.7 hand 5.0, commander out turn 3.5
+      seat 3: wins 453 (22.6% of games), win round 8.4/8.0, mulligans 40.5%, tries 0.25/game, stopped 23%, taken 0.69+0.85/game, died 77%, death round 8.2, first out 64%, wins by round <=4/5/6/8: 32/79/158/267 of 453, T4 mana 4.6 hand 5.0, commander out turn 3.4
+      seat 4: wins 448 (22.4% of games), win round 8.7/8.0, mulligans 44.4%, tries 0.24/game, stopped 21%, taken 0.60+0.87/game, died 77%, death round 8.1, first out 66%, wins by round <=4/5/6/8: 29/67/141/263 of 448, T4 mana 4.6 hand 5.0, commander out turn 3.4
+  Scion: seated 2000, won 532 (26.6%; 7 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 426 (81%), damage 76 (14%), commander damage 10 (2%), Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 5 (1%), Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 4 (1%), combo (unnamed) 4 (1%)
+      win round: average 8.5, median 8.0
+      went for a combo 585 times (0.29 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 568, Scion as Prismari + Underworld Breach + Manamorphose + Brain Freeze (at the table) 6, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 6, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 5]; stopped 146 (25%)
+      stopped by: Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 23, Thassa's Oracle + Demonic Consultation / Tainted Pact by Pact of Negation 16, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 16, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mindbreak Trap 16, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 15, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Negation 9
+      stopped by card: (no card named: a cost, a ward or a lock) 23, Pact of Negation 17, Mindbreak Trap 17, Mental Misstep 16, Swan Song 15, Force of Negation 9
+      speed (median round): ready 6.0 (32% of games), one tutor away 6.0 (41% of games), went for a line 7.0 (29% of games), won 8.0
+      ready before go: went for it later in 199 of 644 ready games (median wait 0.0 rounds, mean 0.61); never went in 73
+      while ready and not gone it chose: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 556, stop (hold mana) 354, stop 256, Scion of the Ur-Dragon 99, Flash Photography 20, Scion of the Ur-Dragon: become Ancient Copper Dragon 16
+      while one tutor away (not ready) it chose: stop (hold mana) 290, stop 220, Demonic Tutor 79, Diabolic Intent 76, Scion of the Ur-Dragon 65, Enlightened Tutor 64, Scion of the Ur-Dragon: become Ancient Copper Dragon 16, Hexing Squelcher 14
+      tutors held when it passed then: Diabolic Intent 172, Mystical Tutor 171, Enlightened Tutor 119, Demonic Tutor 82
+      mana T1-T5: 1.12 2.71 3.73 4.56 5.41; mana permanents: 0.00 0.49 0.71 0.86 0.97; mana cards in hand: 1.30 0.82 0.72 0.73 0.83 (castable 1.00 0.80 0.71 0.72 0.82); cast on T1-3: 0.58 0.29 0.21
+      held at the end of turns 1-3 with the mana to cast (card-turns): Mox Diamond 74 (T1 70/T2 4/T3 0; rule 68, lost 6), Deathrite Shaman 6 (T1 0/T2 3/T3 3; lost 6), Chrome Mox 6 (T1 2/T2 2/T3 2; lost 6), Noble Hierarch 5 (T1 0/T2 2/T3 3; lost 5), Ignoble Hierarch 3 (T1 0/T2 0/T3 3; lost 3), Mana Vault 3 (T1 1/T2 1/T3 1; lost 3); rituals and one-shots: Lion's Eye Diamond 498 (T1 146/T2 164/T3 188), Rite of Flame 222 (T1 41/T2 75/T3 106), Cabal Ritual 167 (T1 14/T2 62/T3 91), Dark Ritual 55 (T1 15/T2 17/T3 23)
+      mulligans: 814 of 2000 hands (40.7%): one 581, two 187, three 46
+      by mulligans (none/one/two/three): win % 27.6/22.7/30.5/19.6, median win round 7/8/9/9
+      counters resolved: 1705 (Force of Negation 279, An Offer You Can't Refuse 265, Force of Will 258, Mental Misstep 236, Mindbreak Trap 203); hit Dack Fayden 345, Kinnan 323, Rograkh/Silas 302, Kraum/Tymna 278, Rograkh/Thrasios 255
+      removal resolved: 403 (ability 387, Fiend Hunter 10, All-Fates Stalker 5, Touch the Spirit Realm 1); hit Dack Fayden 95, Kinnan 83, Sisay 77, Rograkh/Thrasios 63, Kraum/Tymna 56
+      stax cast: 90 (Silence 70, Orim's Chant 20)
+
+(316s total)

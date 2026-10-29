@@ -776,8 +776,8 @@ mod tier_tests {
     #[test]
     fn all_means_the_decks_own_tiers() {
         let own = v(&["t1", "t2", "t3"]);
-        assert_eq!(select_tiers("sephfs", &own, "all", false).unwrap(), own);
-        assert_eq!(select_tiers("sephfs", &own, "t2", false).unwrap(), v(&["t2"]));
+        assert_eq!(select_tiers("cloud", &own, "all", false).unwrap(), own);
+        assert_eq!(select_tiers("cloud", &own, "t2", false).unwrap(), v(&["t2"]));
     }
 
     #[test]
@@ -808,13 +808,13 @@ mod tier_tests {
             ("sheoldred", &["t3", "t4"]),
             ("sauron", &["t3", "t4"]),
             ("kefka", &["t3"]),
-            ("sephfs", &["t5"]),
             ("veyran", &["t1", "t2", "t3"]),
             ("cloud", &["t1", "t2", "t3"]),
             ("thrasios", &["t5"]),
             ("alela", &["t1"]),
             ("galadriel", &["t1", "t2"]),
             ("karn", &["t4", "t5"]),
+            ("scion", &["t6"]),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t) in want {

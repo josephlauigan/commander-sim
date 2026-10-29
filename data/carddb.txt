@@ -43,6 +43,7 @@ Exotic Orchard|L|-|c=A
 Fabled Passage|L|-|c=A f
 Farewell|S|4WW|wipe=farewell
 Glacial Fortress|L|-|c=WU ck
+Godless Shrine|L|-|c=WB
 Grave Titan|C|4BB|bomb=7 pow=6 dt titan
 Gray Merchant of Asphodel|C|3BB|bomb=4 pow=2 gray
 Grisly Salvage|I|BG|fill=grisly

@@ -22,8 +22,8 @@ pub const MY_DECKS: [&str; 12] = [
     "sheoldred",
     "cloud",
     "thrasios",
-    "sephfs",
     "karn",
+    "scion",
 ];
 
 fn read(path: &Path) -> Option<String> {

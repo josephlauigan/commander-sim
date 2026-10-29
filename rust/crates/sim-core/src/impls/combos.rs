@@ -12,7 +12,7 @@ use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
+use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, pay, seq_cost}; // --- ai-fix: C
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
@@ -118,6 +118,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t3_lines::COMBOS.iter()) // --- t3 lines
             .chain(super::cc_brago::COMBOS.iter()) // --- casual combos (brago)
             .chain(super::cc_teysa::COMBOS.iter()) // --- casual combos (teysa)
+            .chain(super::t6_combos_scion::COMBOS.iter()) // --- scion
             .collect()
     });
     &ALL
@@ -415,7 +416,42 @@ pub fn mana_need(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> (u32, 
 /// the combo and its mana (the loop's own and the pieces' still to cast) can be paid for
 fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
     let (gn, pips) = mana_need(g, p, cmb, casts);
-    can_pay(g, p, gn, &pips, false)
+    // --- ai-fix: C: with the rituals in hand cast first (each once; never a piece of the line, nor a card it casts)
+    can_pay_with_rituals(g, p, gn, &pips, &line_cards(g, p, cmb, casts))
+}
+
+// --- ai-fix: C
+/// the cards in p's hand a line uses: the pieces of its groups and the cards it casts (no ritual among them is spent
+/// as mana for the line)
+fn line_cards(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> Vec<CardId> {
+    let mut v: Vec<CardId> = casts.to_vec();
+    v.extend(
+        g.player(p).hand.iter().copied().filter(|&c| cmb.groups.iter().any(|grp| grp.contains(&name_of(g, c)))),
+    );
+    v
+}
+
+// --- ai-fix: C
+/// before a line runs: cast the rituals it needs (`affordable` counted them), one at a time, until its mana can be paid
+/// from what is open. (the mana is there, a ritual was cast)
+fn cast_rituals_for(g: &mut Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> Res<(bool, bool)> {
+    let mut cast = false;
+    loop {
+        let (gn, pips) = mana_need(g, p, cmb, casts);
+        if can_pay(g, p, gn, &pips, false) {
+            return Ok((true, cast));
+        }
+        let skip = line_cards(g, p, cmb, casts);
+        let Some(&r) = crate::engine::mana::rituals_in_hand(g, p, &skip).first() else { return Ok((false, cast)) };
+        crate::glog!(g, "    {} casts {} for {}", g.player(p).name, name_of(g, r), cmb.name);
+        if !crate::ai::brain::do_cast(g, p, r, None)? {
+            return Ok((false, cast));
+        }
+        cast = true;
+        if g.over {
+            return Ok((false, cast));
+        }
+    }
 }
 
 // ------------------------------------------------------------------ execution
@@ -460,6 +496,21 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     if g.player(p).combo_turn == Some((turns, cmb.name)) {
         return Ok(false);
     }
+    // --- ai-fix: C: the rituals the line counted on are cast first; then the line is read again
+    let (gn, pips) = mana_need(g, p, cmb, &casts);
+    let (keys, casts) = if can_pay(g, p, gn, &pips, false) {
+        (keys, casts)
+    } else {
+        let (paid, cast) = cast_rituals_for(g, p, cmb, &casts)?;
+        if !paid {
+            return Ok(cast); // a ritual cast (or countered) changed the turn state
+        }
+        let (ok, keys, casts) = (cmb.ready)(g, p);
+        if !ok || !affordable(g, p, cmb, &casts) {
+            return Ok(true);
+        }
+        (keys, casts)
+    };
     let pl = g.player_mut(p);
     pl.combo_turn = Some((turns, cmb.name));
     pl.stat("combo_attempt", 1);
@@ -692,6 +743,47 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
     Ok(out)
 }
 
+// --- ai-fix: C
+/// What ritual `r` is worth to p's catalogued lines: the utility of going for a line that is ready now, can't be paid
+/// for from the open mana, and can once `r` is cast (`after`: p's mana units then), gated as `combo_options` gates its
+/// offer (a piece held, not gone for this turn, the Tier 6 table's `go_ok`). None if no line needs it. A ritual that is
+/// itself a piece of the line, or one of its casts, doesn't count.
+pub fn line_enabled_by(g: &Game, p: PlayerId, r: CardId, after: &[crate::engine::mana::Unit]) -> Option<f64> {
+    let key = g.player(p).key;
+    if crate::ai::is_main(key) && key != "karn" {
+        return None; // JD's decks run their lines from their own code (`combo_options` offers them none)
+    }
+    let rn = name_of(g, r);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for cmb in all() {
+        let piece_held = cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)));
+        if !piece_held || cmb.groups.iter().any(|grp| grp.contains(&rn)) {
+            continue;
+        }
+        if g.player(p).combo_turn == Some((g.player(p).turns, cmb.name)) {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if !ok || casts.contains(&r) {
+            continue;
+        }
+        let (gn, pips) = mana_need(g, p, cmb, &casts);
+        if can_pay(g, p, gn, &pips, false) || crate::engine::mana::plan_pay(g, after, gn, &pips).is_none() {
+            continue;
+        }
+        if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            continue;
+        }
+        return Some(14.0);
+    }
+    None
+}
+
 /// any modeled combo is ready (Ad Nauseam stops there)
 pub fn combo_ready(g: &Game, p: PlayerId) -> bool {
     all().iter().any(|cmb| (cmb.ready)(g, p).0)
@@ -709,13 +801,25 @@ fn full_deck_names(g: &Game, p: PlayerId) -> Vec<&str> {
 /// combos.missing_pieces: for tutors, the pieces of this player's closest combo that it doesn't have (any combo
 /// whose pieces are in its deck; a combo with some pieces already in hand or play first)
 pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
+    // --- ai-fix: B: a line complete but for its mana wants the mana first
+    let mana = mana_for_lines(g, p);
+    if !mana.is_empty() {
+        return mana;
+    }
     let deck = full_deck_names(g, p);
+    // --- ai-fix: B: a card p put on top of its library itself is on its way: not missing
+    let top: Vec<&str> = crate::engine::tutors::known_top(g, p).into_iter().map(|c| name_of(g, c)).collect();
     let mut best: Option<(usize, Vec<&str>)> = None;
     for cmb in all() {
         if !cmb.groups.iter().all(|grp| grp.iter().any(|n| deck.contains(n))) {
             continue;
         }
-        let miss: Vec<&[&str]> = cmb.groups.iter().copied().filter(|grp| !has_piece(g, p, grp)).collect();
+        let miss: Vec<&[&str]> = cmb
+            .groups
+            .iter()
+            .copied()
+            .filter(|grp| !has_piece(g, p, grp) && !grp.iter().any(|n| top.contains(n)))
+            .collect();
         if miss.is_empty() {
             continue;
         }
@@ -729,6 +833,69 @@ pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
         }
     }
     best.map_or(vec![], |b| b.1.iter().filter_map(|n| g.db.id(n)).collect())
+}
+
+// --- ai-fix: B
+/// For tutors: the mana to fetch for a line of p's deck whose every piece p holds but which it can't pay for (rituals
+/// in hand counted). First the library cards that make it payable this turn once in hand: a ritual or a noncreature
+/// rock cast from the open mana, or a land while p's land drop is still to come. Then, when p's mana next turn
+/// (`next_turn_mana`) falls short of the line, the cards that close the gap by then: a land if it holds none, a rock
+/// that makes more than it costs. Empty when no line waits for mana, or no card helps.
+fn mana_for_lines(g: &Game, p: PlayerId) -> Vec<CardId> {
+    use crate::engine::mana::{
+        land_card_unit, mana_units, next_turn_mana, ritual_out, units_after_cast, units_pay_with_rituals,
+    };
+    let pl = g.player(p);
+    let u = mana_units(g, p, false);
+    let drop_now = g.active == Some(p) && pl.land_turn != pl.turns as i32;
+    let land_in_hand = pl.hand.iter().any(|&c| g.db.get(c).land);
+    let next = next_turn_mana(g, p);
+    let (mut now, mut later): (Vec<CardId>, Vec<CardId>) = (vec![], vec![]);
+    for i in lines_of(g, p).iter().copied() {
+        let cmb = all()[i];
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if !ok || affordable(g, p, cmb, &casts) {
+            continue;
+        }
+        let (gn, pips) = mana_need(g, p, cmb, &casts);
+        let total = gn + pips.chars().count() as u32;
+        let skip = line_cards(g, p, cmb, &casts);
+        let mut seen: Vec<&str> = vec![];
+        for &c in &pl.library {
+            let d = g.db.get(c);
+            if seen.contains(&&*d.name) {
+                continue;
+            }
+            seen.push(&*d.name);
+            let rock = !d.creature && d.tags.str(Tag::Rock).is_some();
+            if d.land {
+                let mut v = u.clone();
+                v.push(land_card_unit(g, p, c));
+                if drop_now && units_pay_with_rituals(g, p, &v, gn, &pips, &skip) {
+                    now.push(c);
+                } else if !land_in_hand && next < total && next + land_card_unit(g, p, c).amt >= total {
+                    later.push(c);
+                }
+            } else if rock || ritual_out(g, p, c).is_some() {
+                let after = units_after_cast(g, p, c, &u);
+                if after.is_some_and(|v| units_pay_with_rituals(g, p, &v, gn, &pips, &skip)) {
+                    now.push(c);
+                } else if rock && next < total {
+                    let (cg, cp) = cost_of(g, p, c);
+                    let out: u32 = d.tags.str(Tag::Rock).and_then(|r| r.split(':').next()?.parse().ok()).unwrap_or(1);
+                    if next + out >= total + cg + cp.chars().count() as u32 {
+                        later.push(c);
+                    }
+                }
+            }
+        }
+    }
+    for c in later {
+        if !now.contains(&c) {
+            now.push(c);
+        }
+    }
+    now
 }
 
 /// combos.piece_threat: extra value of m if it's a piece of a combo whose other pieces its controller has on the
@@ -1423,6 +1590,109 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
     }
 }
 
+// --- ai-audit: read-only accessors for the goldfish loss accounting (gf_audit.rs), stats only
+/// the first line that is ready and affordable for p now, by the same test as `t6_measure`
+pub fn audit_ready(g: &Game, p: PlayerId) -> Option<&'static str> {
+    let mine = lines_of(g, p);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    for (i, &cmb) in all().iter().enumerate() {
+        if !mine.contains(&i) && !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && cmb.steps.is_empty()
+        {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if ok && affordable(g, p, cmb, &casts) {
+            return Some(cmb.name);
+        }
+    }
+    None
+}
+
+// --- ai-fix: D
+/// every line ready and affordable for p now (the test `audit_ready` makes), each with its mana need and the cards in
+/// hand it uses (its pieces and casts): what a forced play must leave payable
+pub fn ready_lines(g: &Game, p: PlayerId) -> Vec<((u32, String), Vec<CardId>)> {
+    let mine = lines_of(g, p);
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    let mut out = vec![];
+    for (i, &cmb) in all().iter().enumerate() {
+        let piece_held = cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)));
+        if !mine.contains(&i) && !piece_held && cmb.steps.is_empty() {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if ok && affordable(g, p, cmb, &casts) {
+            out.push((mana_need(g, p, cmb, &casts), line_cards(g, p, cmb, &casts)));
+        }
+    }
+    out
+}
+
+/// the catalogued lines of p's deck (indices into `all()`)
+pub fn audit_lines(g: &Game, p: PlayerId) -> Vec<usize> {
+    lines_of(g, p).to_vec()
+}
+
+/// a line's piece groups (a quiet line's marker left out)
+pub fn audit_groups(i: usize) -> &'static [&'static [&'static str]] {
+    real_groups(all()[i])
+}
+
+/// a line's own loop mana
+pub fn audit_mana(i: usize) -> u32 {
+    all()[i].mana.0
+}
+
+/// --- ai-planner: a line's own loop mana, its coloured part
+pub fn audit_loop_pips(i: usize) -> &'static str {
+    all()[i].mana.1
+}
+
+pub fn audit_name(i: usize) -> &'static str {
+    all()[i].name
+}
+
+// --- ai-fix: G
+/// The cards in p's hand to keep as pieces of p's own catalogued lines (`lines_of`), each with the share of its
+/// line's piece groups p holds (the closest line's pieces rank first). A group already held on the battlefield, among
+/// p's lands or as a commander in the command zone needs nothing from the hand; otherwise its cheapest card in hand is
+/// kept, and a second card of the same group is spare.
+pub fn line_keepers(g: &Game, p: PlayerId) -> Vec<(CardId, f64)> {
+    let pl = g.player(p);
+    let mut out_names: std::collections::HashSet<&str> =
+        pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)).collect();
+    out_names.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).cd)));
+    out_names.extend(pl.cmds_in_zone().map(|c| name_of(g, c)));
+    let in_hand = |grp: &[&str]| -> Option<CardId> {
+        pl.hand.iter().copied().filter(|&c| grp.contains(&name_of(g, c))).min_by_key(|&c| g.db.get(c).cmc)
+    };
+    let mut keep: Vec<(CardId, f64)> = vec![];
+    for i in lines_of(g, p).iter().copied() {
+        let grps = real_groups(all()[i]);
+        let out = |grp: &[&str]| grp.iter().any(|n| out_names.contains(n));
+        let held = grps.iter().filter(|grp| out(grp) || in_hand(grp).is_some()).count();
+        let share = held as f64 / grps.len() as f64;
+        for grp in grps.iter().filter(|grp| !out(grp)) {
+            let Some(c) = in_hand(grp) else { continue };
+            match keep.iter_mut().find(|x| x.0 == c) {
+                Some(x) => x.1 = x.1.max(share),
+                None => keep.push((c, share)),
+            }
+        }
+    }
+    keep
+}
+
 /// is `cmb` one tutor away for p (see `t6_measure`)?
 fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pl = g.player(p);
@@ -1457,4 +1727,55 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
         }
     }
     false
+}
+
+// --- ai-planner: read-only accessors for the line planner (`ai::planner`)
+/// The lines p could go for now, as `combo_options` offers them: a piece held (or a stepped line that is ready), not
+/// gone for this turn, ready and affordable (rituals in hand counted), and at Tier 6 cleared by the table and the plan
+/// slot (`go_ok`) when `table` is true. Each comes with the cards in p's hand it uses (its pieces and casts).
+pub fn plan_lines(g: &Game, p: PlayerId, table: bool) -> Vec<(usize, Vec<CardId>)> {
+    let held: std::collections::HashSet<&str> = {
+        let pl = g.player(p);
+        let mut s: std::collections::HashSet<&str> = pl.hand.iter().map(|&c| name_of(g, c)).collect();
+        s.extend(pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)));
+        s
+    };
+    let t6 = crate::impls::t6_plans::is_t6(g, p);
+    let mut out = vec![];
+    for (i, cmb) in all().iter().enumerate() {
+        if !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)))
+            && (cmb.steps.is_empty() || !(cmb.ready)(g, p).0)
+        {
+            continue;
+        }
+        if g.player(p).combo_turn == Some((g.player(p).turns, cmb.name)) {
+            continue;
+        }
+        let (ok, _, casts) = (cmb.ready)(g, p);
+        if !ok || !affordable(g, p, cmb, &casts) {
+            continue;
+        }
+        if table && t6 && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
+            continue;
+        }
+        out.push((i, line_cards(g, p, cmb, &casts)));
+    }
+    out
+}
+
+/// is a card of this piece group held by p: on the battlefield, in hand, among its lands, or a commander in the
+/// command zone (the line's own `ready` decides whether it can be used)
+pub fn group_held(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
+    has_piece(g, p, grp) || g.player(p).cmds_in_zone().any(|c| grp.contains(&name_of(g, c)))
+}
+
+/// is a card of this piece group on p's battlefield (a permanent, or a land)
+pub fn group_out(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
+    grp.iter().any(|n| on_bf(g, p, n).is_some())
+        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && grp.contains(&name_of(g, g.land(l).cd)))
+}
+
+/// the mana cards a tutor should fetch for a line complete but for its mana (`mana_for_lines`)
+pub fn plan_mana_targets(g: &Game, p: PlayerId) -> Vec<CardId> {
+    mana_for_lines(g, p)
 }

@@ -230,7 +230,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     }
     let tre = if no_art_mana { 0 } else { pl.live_treasures() };
     let bonus = if hooked { hooks::total_count(g, Event::TreasureBonus, p) } else { 0 };
-    for _ in 0..tre {
+    // one unit per Treasure, at most 1000: a doubling loop (Miirym t5: Thrakkus copies doubling the power of Old
+    // Gnawbone copies) can make billions, and a unit each ran the game out of memory; 1000 mana pays for anything
+    for _ in 0..tre.min(1000) {
         u.push(Unit { src: Source::Treasure, cols: ident, amt: (1 + bonus).max(0) as u32 });
     }
     if hooked {
@@ -239,7 +241,8 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         u.extend(cardcode::hand_mana(g, p)); // Spirit Guides need no hooked permanent
     }
     let f = pl.floating;
-    let float = |n: u32, src: Source, cols: Colors| (0..n).map(move |_| Unit { src, cols, amt: 1 });
+    // floating mana, at most 1000 of each kind (the same doubling boards float billions)
+    let float = |n: u32, src: Source, cols: Colors| (0..n.min(1000)).map(move |_| Unit { src, cols, amt: 1 });
     u.extend(float(f.r, Source::FloatR, Colors::from_letters("R")));
     u.extend(float(f.any, Source::FloatAny, ident));
     u.extend(float(f.u, Source::FloatU, Colors::from_letters("U")));
@@ -434,6 +437,7 @@ fn float_leftover(g: &mut Game, p: PlayerId, cols: Colors, n: u32) {
 pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res {
     g.mana_spent += n; // the record of mana spent on the spell being paid for
     g.mana_colored |= !w.cols.is_empty();
+    crate::t6stats::flow_spent(g, p, n); // --- ai-flow
     match w.src {
         Source::Treasure => {
             let st = g.turn_stamp();
@@ -623,4 +627,183 @@ pub fn seq_cost(g: &Game, p: PlayerId, cards: &[CardId]) -> (u32, String) {
         pips.push_str(&cp);
     }
     (gn, pips)
+}
+
+// --- ai-fix: C: rituals in hand counted as mana
+/// The mana ritual `c` adds as it resolves: (amount, colours). A ritual is an instant or sorcery whose only effect adds
+/// mana and that needs no additional cost (Culling the Weak's sacrifice is left out), or one of the hand-written ones:
+/// Cabal Ritual (five with threshold), Rite of Flame (two, plus one for each in a graveyard), Desperate Ritual. The
+/// ability language's rituals add mana of any of p's colours, as `add_mana` does.
+pub fn ritual_out(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, Colors)> {
+    use crate::dsl::model::{Ability, Num};
+    let d = g.db.get(c);
+    if d.land || !(d.instant || d.sorcery) {
+        return None;
+    }
+    let red = Colors::from_letters("R");
+    match &*d.name {
+        "Cabal Ritual" => return Some((if g.player(p).gy.len() >= 7 { 5 } else { 3 }, g.player(p).ident)),
+        "Rite of Flame" => {
+            let copies = g.players.iter().flat_map(|q| q.gy.iter()).filter(|&&x| &*g.db.get(x).name == "Rite of Flame");
+            return Some((2 + copies.count() as u32, red));
+        }
+        "Desperate Ritual" => return Some((3, red)),
+        _ => {}
+    }
+    if g.registry.get(c).is_some_and(|i| i.resolve.is_some()) {
+        return None; // another hand-written spell
+    }
+    let mut out = None;
+    for a in d.abilities.iter() {
+        match a {
+            Ability::AdditionalCost { .. } => return None,
+            Ability::Spell { effects } => {
+                if effects.is_empty() || !effects.iter().all(|e| e.kind == "add_mana") {
+                    return None;
+                }
+                let n: i32 = effects.iter().map(|e| if let Some(Num::Int(k)) = &e.n { *k } else { 0 }).sum();
+                if n <= 0 {
+                    return None;
+                }
+                out = Some((n as u32, g.player(p).ident));
+            }
+            _ => {}
+        }
+    }
+    out
+}
+
+/// what a ritual nets: the mana it adds less its cost now (0 for a card that is no ritual)
+pub fn ritual_net(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let Some((out, _)) = ritual_out(g, p, c) else { return 0 };
+    let (gn, pips) = cost_of(g, p, c);
+    out as i32 - gn as i32 - pips.chars().count() as i32
+}
+
+/// p's mana units once ritual `c` is cast from `u`: its cost paid, its mana added. None: no ritual, or `u` can't pay
+/// for it. A source that made more than the cost used keeps the rest (it floats, as `pay` leaves it).
+pub fn units_after_ritual(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
+    let (out, cols) = ritual_out(g, p, c)?;
+    let (gn, pips) = cost_of(g, p, c);
+    let (used, _) = plan_pay(g, u, gn, &pips)?;
+    let mut v: Vec<Unit> =
+        u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
+    let src = if cols == Colors::from_letters("R") { Source::FloatR } else { Source::FloatAny };
+    v.extend((0..out).map(|_| Unit { src, cols, amt: 1 }));
+    Some(v)
+}
+
+/// the rituals in p's hand that net mana and can be cast now, the biggest net first; never one in `skip` (a piece of
+/// the line being paid for, or a card it casts)
+pub fn rituals_in_hand(g: &Game, p: PlayerId, skip: &[CardId]) -> Vec<CardId> {
+    let mut v: Vec<CardId> = g
+        .player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| !skip.contains(&c) && ritual_net(g, p, c) > 0 && crate::engine::cast::castable(g, p, c, "hand"))
+        .collect();
+    v.sort_by_key(|&c| -ritual_net(g, p, c)); // stable: hand order breaks ties
+    v
+}
+
+/// can p pay `generic` + `pips` now, casting rituals from its hand first if it must? Each ritual counts once, and only
+/// in the order `rituals_in_hand` gives (the one that nets most first). A person's pool is never stretched this way.
+pub fn can_pay_with_rituals(g: &Game, p: PlayerId, generic: u32, pips: &str, skip: &[CardId]) -> bool {
+    if crate::human::is_human(g, p) {
+        return can_pay(g, p, generic, pips, false);
+    }
+    let mut u = mana_units(g, p, false);
+    if plan_pay(g, &u, generic, pips).is_some() {
+        return true;
+    }
+    for c in rituals_in_hand(g, p, skip) {
+        if let Some(v) = units_after_ritual(g, p, c, &u) {
+            u = v;
+            if plan_pay(g, &u, generic, pips).is_some() {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+// --- ai-fix: D
+/// p's mana units once card `c` is cast from `u`: its cost paid, and the mana it makes this turn added (a ritual's, or
+/// a noncreature rock's: it can tap as it enters; a dork is summoning sick, Chrome Mox's colour is unknown, so neither
+/// adds any). None if `u` can't pay for it.
+pub fn units_after_cast(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
+    if ritual_out(g, p, c).is_some() {
+        return units_after_ritual(g, p, c, u);
+    }
+    let (gn, pips) = cost_of(g, p, c);
+    let (used, _) = plan_pay(g, u, gn, &pips)?;
+    let mut v: Vec<Unit> =
+        u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
+    let d = g.db.get(c);
+    if !d.creature
+        && let Some(rock) = d.tags.str(Tag::Rock)
+    {
+        let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
+        let amt: u32 = a.parse().unwrap_or(1);
+        v.push(Unit { src: Source::FloatAny, cols: tag_colors(col, g.player(p).ident), amt });
+    }
+    Some(v)
+}
+
+/// can units `u` pay `generic` + `pips`, with p's rituals in hand cast first if they must (as `can_pay_with_rituals`)?
+pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, pips: &str, skip: &[CardId]) -> bool {
+    if plan_pay(g, u, generic, pips).is_some() {
+        return true;
+    }
+    let mut u = u.to_vec();
+    for c in rituals_in_hand(g, p, skip) {
+        if let Some(v) = units_after_ritual(g, p, c, &u) {
+            u = v;
+            if plan_pay(g, &u, generic, pips).is_some() {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+// --- ai-fix: B
+/// the mana a land card would add once played, as a unit: its tagged colours (`A`: p's identity) and amount. A guess
+/// for a card not yet on the battlefield: no Blood Moon, no enters-tapped rule.
+pub fn land_card_unit(g: &Game, p: PlayerId, c: CardId) -> Unit {
+    let t = &g.db.get(c).tags;
+    let amt = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
+    Unit { src: Source::FloatAny, cols: tag_colors(t.str(Tag::C).unwrap_or("C"), g.player(p).ident), amt }
+}
+
+// --- ai-fix: B
+/// About how much mana p will have on its next turn: every land and mana permanent untapped (Mana Vault and its kind
+/// too), a dork no longer summoning sick, and one more land if it holds one. Colours are not counted.
+pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
+    let pl = g.player(p);
+    let lands: u32 = pl
+        .lands
+        .iter()
+        .filter(|&&l| g.land(l).on_bf)
+        .map(|&l| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32)
+        .sum();
+    let perms: u32 = pl
+        .perms
+        .iter()
+        .filter(|&&m| !g.perm(m).phased)
+        .filter_map(|&m| g.perm(m).cd)
+        .map(|c| {
+            let t = &g.db.get(c).tags;
+            if let Some(r) = t.str(Tag::Rock) {
+                r.split_once(':').map_or(r, |x| x.0).parse().unwrap_or(1)
+            } else if t.has(Tag::Dork) || t.has(Tag::Chromemox) {
+                1
+            } else {
+                0
+            }
+        })
+        .sum();
+    let drop = u32::from(pl.hand.iter().any(|&c| g.db.get(c).land));
+    lands + perms + drop
 }

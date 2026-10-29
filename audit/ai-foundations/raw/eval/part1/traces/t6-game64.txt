@@ -1,0 +1,274 @@
+Play-by-play of within-tier game 64 (seed 500064): Tier 6 (cEDH, B5), loose profile, lookahead AI
+Seat order: Rograkh/Thrasios, Kinnan, Kraum/Tymna, Sisay
+R1  --- Rograkh/Thrasios turn 1: life 40, 7 cards in hand, 0 lands
+R1    Rograkh/Thrasios plays Volcanic Island
+R1    Rograkh/Thrasios casts Rograkh, Son of Rohgahh
+R1        [Rograkh/Thrasios decides: Rograkh, Son of Rohgahh 69%, Springleaf Drum 24%, Mystic Remora 7%, stop (hold mana) 0% -> Rograkh, Son of Rohgahh [must]]
+R1    Rograkh/Thrasios casts Springleaf Drum
+R1        [Rograkh/Thrasios decides: Springleaf Drum 77%, Mystic Remora 23%, stop (hold mana) 0% -> Springleaf Drum [must]]
+R1          [eval Mystic Remora: u 6.40, score 8.14, won 0/6 lost 0, open eval 8.14 (life 10.00, board 11.33, power 0.23, hand 5.55, lands 1.10, treasures 0.00, combo 2.08, opp -21.69, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R1          [eval stop (hold mana) (chosen): u 0.75, score 8.84, won 0/6 lost 0, open eval 8.09 (life 10.00, board 11.33, power 0.23, hand 5.70, lands 1.10, treasures 0.00, combo 2.08, opp -21.88, dead 0.00), ramp 0.00, hold 0.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R1        [Rograkh/Thrasios decides: Mystic Remora 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R1          [eval Mystic Remora: u 6.40, score 5.28, won 0/6 lost 0, open eval 5.28 (life 10.00, board 9.33, power 0.23, hand 4.80, lands 1.20, treasures 0.00, combo 1.12, opp -21.12, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R1          [eval stop (hold mana) (chosen): u 0.75, score 7.78, won 0/6 lost 0, open eval 7.03 (life 10.00, board 11.33, power 0.23, hand 4.50, lands 1.20, treasures 0.00, combo 1.12, opp -20.98, dead 0.00), ramp 0.00, hold 0.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R1        [Rograkh/Thrasios decides: Mystic Remora 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1        [Kinnan plays Mana Confluence [plan: the land drop the plan wants]]
+R1    Kinnan plays Mana Confluence
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kraum/Tymna plays Exotic Orchard
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1    Sisay plays City of Brass
+R1    Sisay casts Noble Hierarch
+R1        [Sisay decides: Noble Hierarch 50%, Ignoble Hierarch 50%, stop 0% -> Noble Hierarch [must]]
+R1    Sisay casts Ignoble Hierarch
+R1        [Sisay decides: Ignoble Hierarch 100%, stop 0% -> Ignoble Hierarch [must]]
+R2  --- Rograkh/Thrasios turn 2: life 40, 6 cards in hand, 1 lands
+R2    Rograkh/Thrasios plays Boseiju, Who Endures
+R2    Rograkh/Thrasios casts Thrasios, Triton Hero
+R2        [Rograkh/Thrasios decides: Thrasios, Triton Hero 81%, Mystic Remora 16%, Kinnan, Bonder Prodigy 3%, stop (hold mana) 0% -> Thrasios, Triton Hero [must]]
+R2          [eval Mystic Remora: u 6.40, score 8.60, won 0/6 lost 0, open eval 8.60 (life 9.75, board 17.72, power 1.11, hand 4.50, lands 1.80, treasures 0.00, combo 1.70, opp -27.48, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2          [eval stop (hold mana) (chosen): u 0.75, score 10.85, won 0/6 lost 0, open eval 10.10 (life 9.75, board 18.88, power 1.11, hand 4.80, lands 1.80, treasures 0.00, combo 1.70, opp -27.32, dead 0.00), ramp 0.00, hold 0.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R2        [Rograkh/Thrasios decides: Mystic Remora 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2          [eval Mystic Remora (chosen): u 6.40, score 9.15, won 0/6 lost 0, open eval 9.15 (life 10.00, board 17.98, power 1.11, hand 4.65, lands 1.80, treasures 0.00, combo 1.14, opp -27.01, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2          [eval stop (hold mana): u 0.75, score 5.85, won 0/6 lost 0, open eval 5.10 (life 10.00, board 14.50, power 0.58, hand 4.50, lands 1.80, treasures 0.00, combo 1.14, opp -27.15, dead 0.00), ramp 0.00, hold 0.75, top card cast in 3/6 open, held mana up at turn end in 6]
+R2        [Rograkh/Thrasios decides: Mystic Remora 100%, stop (hold mana) 0% -> Mystic Remora [search]]
+R2    Rograkh/Thrasios casts Mystic Remora
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Ancient Tomb
+R2    Kinnan casts Mox Opal
+R2        [Kinnan decides: Mox Opal 49%, Grim Monolith 37%, Copy Artifact 14%, stop 0% -> Mox Opal [must]]
+R2    Kinnan casts Grim Monolith
+R2        [Kinnan decides: Grim Monolith 72%, Copy Artifact 28%, stop 0% -> Grim Monolith [must]]
+R2          [eval The One Ring: u 6.60, score -2.25, won 0/6 lost 0, open eval -2.25 (life 9.25, board 10.09, power 0.58, hand 4.05, lands 1.80, treasures 0.00, combo 5.33, opp -33.51, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2          [eval stop (chosen): u -5.00, score 0.43, won 0/6 lost 0, open eval 0.43 (life 9.25, board 13.33, power 0.76, hand 3.75, lands 1.80, treasures 0.00, combo 6.44, opp -34.89, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2        [Kinnan decides: The One Ring 100%, stop 0% -> stop [search]]
+R2          [eval The One Ring (chosen): u 6.60, score 1.83, won 0/6 lost 0, open eval 1.83 (life 9.21, board 13.75, power 0.70, hand 3.60, lands 1.80, treasures 0.00, combo 5.33, opp -32.46, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2          [eval stop: u -5.00, score 0.99, won 0/6 lost 0, open eval 0.99 (life 9.42, board 15.25, power 0.41, hand 2.85, lands 1.80, treasures 0.00, combo 5.33, opp -34.01, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R2        [Kinnan decides: The One Ring 100%, stop 0% -> The One Ring [search]]
+R2    Kinnan casts The One Ring
+R2      The One Ring cast in Main2 step of Kinnan's turn (life 38)
+R2      Kinnan gains protection from everything until their next turn
+R2        [Kinnan decides: The One Ring 100%, stop 0% -> The One Ring [search]]
+R2    Kinnan taps The One Ring: burden 1, life 38, Main2 step of Kinnan's turn
+R2    Kinnan casts Mana Vault
+R2        [Kinnan decides: Mana Vault 100%, stop 0% -> Mana Vault [must]]
+R2  --- Kraum/Tymna turn 2: life 40, 7 cards in hand, 1 lands
+R2        [Kraum/Tymna plays Bloodstained Mire for Badlands [plan: the land drop the plan wants]]
+R2    Kraum/Tymna plays Bloodstained Mire
+R2      cracks Bloodstained Mire for Badlands
+R2    Kraum/Tymna casts Arcane Signet
+R2        [Kraum/Tymna decides: Arcane Signet 100%, stop 0% -> Arcane Signet [must]]
+R2  --- Sisay turn 2: life 39, 4 cards in hand, 1 lands
+R2    Sisay plays Ancient Tomb
+R2    Sisay casts Sisay, Weatherlight Captain
+R2        [Sisay decides: Sisay, Weatherlight Captain 90%, Gleaming Splendor 7%, Enduring Vitality 3%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R3  --- Rograkh/Thrasios turn 3: life 40, 10 cards in hand, 2 lands
+R3    Rograkh/Thrasios plays Command Tower
+R3    Rograkh/Thrasios casts Chrome Mox
+R3      Chrome Mox imprints Nature's Rhythm
+R3        [Rograkh/Thrasios decides: Snap -> Sisay, Weatherlight Captain 76%, Chrome Mox 17%, Kinnan, Bonder Prodigy 3%, Hexing Squelcher 3% -> Chrome Mox [must]]
+R3        [Rograkh/Thrasios decides: Snap -> Sisay, Weatherlight Captain 92%, Kinnan, Bonder Prodigy 4%, Hexing Squelcher 4%, stop (hold mana) 1% -> Hexing Squelcher [search]]
+R3    Rograkh/Thrasios casts Hexing Squelcher
+R3        [Rograkh/Thrasios decides: Snap -> Sisay, Weatherlight Captain 95%, Kinnan, Bonder Prodigy 4%, stop (hold mana) 1% -> Kinnan, Bonder Prodigy [search]]
+R3    Rograkh/Thrasios casts Kinnan, Bonder Prodigy
+R3        [Rograkh/Thrasios attack plan by search: all at Sisay]
+R3    Rograkh/Thrasios attacks Sisay with 1 creature(s): 1 damage (life now 37)
+R3  --- Kinnan turn 3: life 38, 4 cards in hand, 2 lands
+R3    Kinnan no longer has protection from everything
+R3    Kinnan loses 1 life to The One Ring's burden (life 38)
+R3    Kinnan plays Gemstone Caverns
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 86%, Copy Artifact 13%, Endurance 1%, The One Ring 0% -> Kinnan, Bonder Prodigy [must]]
+R3        [Kinnan decides: Copy Artifact 89%, Endurance 4%, The One Ring 3%, Kinnan: dig five 3% -> stop [search]]
+R3        [Kinnan decides: Copy Artifact 74%, Kinnan: dig five 20%, Endurance 4%, The One Ring 3% -> The One Ring [search]]
+R3    Kinnan taps The One Ring: burden 2, life 37, Main2 step of Kinnan's turn
+R3        [Kinnan decides: Copy Artifact 76%, Kinnan: dig five 21%, Endurance 4%, stop 0% -> Copy Artifact [search]]
+R3    Kinnan casts Copy Artifact
+R3      Copy Artifact enters as a copy of Springleaf Drum
+R3        [Kinnan decides: Kinnan: dig five 84%, Endurance 15%, stop 0% -> Endurance [search]]
+R3    Kinnan casts Endurance
+R3  --- Kraum/Tymna turn 3: life 39, 6 cards in hand, 2 lands
+R3        [Kraum/Tymna plays Scalding Tarn for Tundra [plan: the land drop the plan wants]]
+R3    Kraum/Tymna plays Scalding Tarn
+R3      cracks Scalding Tarn for Tundra
+R3        [Kraum/Tymna decides: stop (hold mana) 99%, Tymna the Weaver 1%, Flash Photography 0%, Gleaming Splendor 0% -> Flash Photography [search]]
+R3    Kraum/Tymna casts Flash Photography
+R3      Flash Photography: a token copy of The One Ring
+R3        [Kraum/Tymna decides: The One Ring 99%, stop 1% -> stop [search]]
+R3        [Kraum/Tymna decides: The One Ring 99%, stop 1% -> stop [search]]
+R3  --- Sisay turn 3: life 37, 4 cards in hand, 2 lands
+R3        [Sisay decides: Gleaming Splendor 45%, Lotho, Corrupt Shirriff 27%, Enduring Vitality 22%, Mockingbird (X = 1, copy Hexing Squelcher) 6% -> Lotho, Corrupt Shirriff [search]]
+R3    Sisay casts Lotho, Corrupt Shirriff
+R3        [Sisay decides: Gleaming Splendor 61%, Enduring Vitality 30%, Mockingbird (X = 1, copy Hexing Squelcher) 8%, stop 0% -> Enduring Vitality [search]]
+R3    Sisay casts Enduring Vitality
+R3        [Sisay decides: Gleaming Splendor 88%, Mockingbird (X = 1, copy Hexing Squelcher) 12%, stop 0% -> Mockingbird (X = 1, copy Hexing Squelcher) [search]]
+R3    Sisay casts Mockingbird -> Hexing Squelcher (Rograkh/Thrasios)
+R3      Mockingbird enters as a copy of Hexing Squelcher
+R4  --- Rograkh/Thrasios turn 4: life 40, 8 cards in hand, 3 lands
+R4        [Rograkh/Thrasios plays Dryad Arbor [plan: the land drop the plan wants]]
+R4    Rograkh/Thrasios plays Dryad Arbor
+R4        [Rograkh/Thrasios decides: Seedborn Muse 46%, Snap -> Sisay, Weatherlight Captain 34%, stop (hold mana) 21% -> stop (hold mana) [search]]
+R4        [Rograkh/Thrasios attack plan by search: filtered at Kraum/Tymna]
+R4    Rograkh/Thrasios attacks Kraum/Tymna with 3 creature(s): 5 damage (life now 33)
+R4        [Rograkh/Thrasios decides: Seedborn Muse 46%, Snap -> Sisay, Weatherlight Captain 34%, stop (hold mana) 21%, Thrasios: scry 1, a land or a card 0% -> stop (hold mana) [search]]
+R4    Kinnan untaps Grim Monolith
+R4        [Kinnan end of turn: untap Grim Monolith 99%, pass 1% -> untap Grim Monolith]
+R4  --- Kinnan turn 4: life 37, 3 cards in hand, 3 lands
+R4    Kinnan loses 2 life to The One Ring's burden (life 37)
+R4        [Kinnan decides: The One Ring 73%, Kinnan: dig five 27%, stop 0% -> The One Ring [search]]
+R4    Kinnan taps The One Ring: burden 3, life 34, Main1 step of Kinnan's turn
+R4        [Kinnan decides: Borne Upon a Wind 70%, Valley Floodcaller 16%, Kinnan: dig five 14%, stop 0% -> stop [search]]
+R4    Kinnan plays Waterlogged Grove
+R4        [Kinnan attack plan by search: none at Rograkh/Thrasios]
+R4        [Kinnan decides: Kinnan: dig five 55%, Borne Upon a Wind 37%, Valley Floodcaller 8%, stop 0% -> Valley Floodcaller [search]]
+R4    Kinnan casts Valley Floodcaller
+R4        [Kinnan decides: Kinnan: dig five 60%, Borne Upon a Wind 40%, stop 0% -> Kinnan: dig five [search]]
+R4        [Kinnan decides: Borne Upon a Wind 100%, stop 0% -> stop [search]]
+R4    Kraum/Tymna taps The One Ring: burden 1, life 33, End step of Kinnan's turn
+R4        [Kraum/Tymna end of turn: The One Ring 97%, pass 3% -> The One Ring]
+R4  --- Kraum/Tymna turn 4: life 33, 6 cards in hand, 3 lands
+R4    Kraum/Tymna loses 1 life to The One Ring's burden (life 33)
+R4    Kraum/Tymna plays Ancient Tomb
+R4          [eval Sol Ring: u 7.64, score -26.21, won 0/6 lost 0, open eval -26.21 (life 6.62, board 9.58, power 0.64, hand 5.55, lands 3.00, treasures 0.00, combo 1.12, opp -55.05, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 1]
+R4          [eval Tymna the Weaver: u 6.91, score -26.41, won 0/6 lost 0, open eval -26.41 (life 5.92, board 8.80, power 0.52, hand 5.25, lands 3.00, treasures 0.07, combo 1.12, opp -53.39, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval Gleaming Splendor: u 5.50, score -22.34, won 0/6 lost 0, open eval -22.34 (life 5.83, board 15.08, power 1.28, hand 4.95, lands 3.00, treasures 0.20, combo 0.62, opp -55.04, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 4]
+R4          [eval Flash Photography (flashback): u 5.50, score -28.07, won 0/6 lost 0, open eval -28.07 (life 6.17, board 9.50, power 0.58, hand 5.10, lands 3.00, treasures 0.00, combo 0.12, opp -55.08, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval The One Ring: u 3.00, score -25.44, won 0/6 lost 0, open eval -25.44 (life 5.96, board 9.58, power 0.53, hand 5.10, lands 3.00, treasures 0.13, combo 2.62, opp -54.48, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 2]
+R4          [eval stop (hold mana) (chosen): u 6.00, score -20.22, won 0/6 lost 0, open eval -25.22 (life 6.33, board 11.17, power 0.47, hand 5.25, lands 3.00, treasures 0.20, combo 2.62, opp -56.42, dead 0.00), ramp 0.00, hold 5.00, top card cast in 6/6 open, held mana up at turn end in 2]
+R4        [Kraum/Tymna decides: Sol Ring 52%, Tymna the Weaver 25%, stop (hold mana) 10%, Gleaming Splendor 6% -> stop (hold mana) [search]]
+R4          [eval Sol Ring: u 7.64, score -37.93, won 0/6 lost 1, open eval -25.51 (life 5.50, board 11.40, power 1.19, hand 5.76, lands 3.00, treasures 0.08, combo 1.80, opp -56.48, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 2]
+R4          [eval Tymna the Weaver: u 6.91, score -26.07, won 0/6 lost 0, open eval -26.07 (life 5.75, board 12.67, power 0.58, hand 5.70, lands 3.00, treasures 0.00, combo 1.62, opp -57.65, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 2]
+R4          [eval Gleaming Splendor (chosen): u 5.50, score -21.55, won 0/6 lost 0, open eval -21.55 (life 5.46, board 16.00, power 1.57, hand 5.40, lands 3.00, treasures 0.07, combo 2.50, opp -57.17, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 4]
+R4          [eval Flash Photography (flashback): u 5.50, score -27.84, won 0/6 lost 0, open eval -27.84 (life 5.25, board 12.33, power 0.82, hand 4.80, lands 3.00, treasures 0.00, combo 1.12, opp -57.56, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval The One Ring: u 3.00, score -24.45, won 0/6 lost 0, open eval -24.45 (life 5.67, board 12.50, power 0.93, hand 6.15, lands 3.00, treasures 0.13, combo 1.62, opp -56.44, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 2]
+R4          [eval stop (hold mana): u 6.00, score -21.88, won 0/6 lost 0, open eval -26.88 (life 5.88, board 9.80, power 0.58, hand 5.70, lands 3.00, treasures 0.07, combo 1.50, opp -55.93, dead 0.00), ramp 0.00, hold 5.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4        [Kraum/Tymna decides: Sol Ring 52%, Tymna the Weaver 25%, stop (hold mana) 10%, Gleaming Splendor 6% -> Gleaming Splendor [search]]
+R4    Kraum/Tymna casts Gleaming Splendor
+R4      Rograkh/Thrasios casts Fierce Guardianship at Gleaming Splendor
+R4      Rograkh/Thrasios counters Gleaming Splendor with Fierce Guardianship
+R4          [eval Sol Ring: u 7.72, score -27.32, won 0/6 lost 0, open eval -27.32 (life 5.83, board 11.17, power 0.76, hand 4.95, lands 3.00, treasures 0.00, combo 2.00, opp -57.50, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval The One Ring: u 3.00, score -25.33, won 0/6 lost 0, open eval -25.33 (life 5.79, board 10.33, power 0.64, hand 5.10, lands 2.90, treasures 0.00, combo 5.00, opp -57.52, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval Gamble: u 0.80, score -23.90, won 0/6 lost 0, open eval -23.90 (life 5.79, board 12.75, power 0.76, hand 5.10, lands 3.00, treasures 0.07, combo 3.50, opp -56.76, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 4]
+R4          [eval Tymna the Weaver (chosen): u -1.01, score -23.05, won 0/6 lost 0, open eval -23.05 (life 4.96, board 11.42, power 1.28, hand 5.10, lands 3.00, treasures 0.00, combo 4.50, opp -55.37, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 1]
+R4          [eval stop (hold mana): u 6.00, score -32.78, won 0/6 lost 1, open eval -25.34 (life 5.90, board 10.40, power 0.63, hand 5.58, lands 3.00, treasures 0.00, combo 4.80, opp -57.78, dead 0.00), ramp 0.00, hold 5.00, top card cast in 5/5 open, held mana up at turn end in 5]
+R4        [Kraum/Tymna decides: Sol Ring 84%, stop (hold mana) 15%, The One Ring 1%, Gamble 0% -> Tymna the Weaver [search]]
+R4    Kraum/Tymna casts Tymna the Weaver
+R4      Kinnan casts Force of Will at Tymna the Weaver
+R4      Kinnan counters Tymna the Weaver with Force of Will
+R4          [eval Sol Ring (chosen): u 7.67, score -24.09, won 0/6 lost 0, open eval -24.09 (life 5.79, board 10.33, power 0.82, hand 5.40, lands 3.00, treasures 0.00, combo 0.62, opp -51.99, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval The One Ring: u 3.00, score -24.20, won 0/6 lost 0, open eval -24.20 (life 5.79, board 10.33, power 0.82, hand 5.40, lands 3.00, treasures 0.00, combo 0.62, opp -52.11, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4          [eval stop: u -2.00, score -26.19, won 0/6 lost 0, open eval -26.19 (life 5.17, board 11.17, power 0.99, hand 4.95, lands 3.00, treasures 0.07, combo 0.62, opp -54.48, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R4        [Kraum/Tymna decides: Sol Ring 99%, The One Ring 1%, stop 0% -> Sol Ring [search]]
+R4    Kraum/Tymna casts Sol Ring
+R4        [Kraum/Tymna decides: The One Ring 99%, stop 1% -> The One Ring [search]]
+R4    Kraum/Tymna taps The One Ring: burden 2, life 30, Main2 step of Kraum/Tymna's turn
+R4  --- Sisay turn 4: life 34, 2 cards in hand, 2 lands
+R4    Sisay activates Sisay: Derevi, Empyrial Tactician
+R4      Derevi untaps Sisay, Weatherlight Captain
+R4        [Sisay decides: Sisay: Derevi, Empyrial Tactician 99%, Gleaming Splendor 0%, stop (hold mana) 0% -> Sisay: Derevi, Empyrial Tactician [must]]
+R4        [Sisay decides: Gleaming Splendor 62%, stop (hold mana) 38% -> stop (hold mana) [search]]
+R4        [Sisay attack plan by search: filtered at Rograkh/Thrasios]
+R4    Rograkh/Thrasios answers the attack: Snap -> Sisay, Weatherlight Captain
+R4    Rograkh/Thrasios casts Snap -> Sisay, Weatherlight Captain (Sisay)
+R4      Rograkh/Thrasios pays 2 life for ward (Sisay, Weatherlight Captain)
+R4      Sisay, Weatherlight Captain (Sisay) is removed: bounce
+R4      Derevi untaps Hexing Squelcher
+R4    Sisay attacks Rograkh/Thrasios with 3 creature(s): 2 damage (life now 36)
+R4        [Sisay decides: Gleaming Splendor 62%, stop (hold mana) 38% -> Gleaming Splendor [search]]
+R4    Sisay casts Gleaming Splendor
+R5    Rograkh/Thrasios casts Borne Upon a Wind
+R5        [Rograkh/Thrasios end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R5    Rograkh/Thrasios casts Lotus Petal
+R5        [Rograkh/Thrasios end of turn: Wild Growth 50%, Lotus Petal 50%, pass 0% -> Lotus Petal]
+R5    Rograkh/Thrasios casts Wild Growth
+R5        [Rograkh/Thrasios end of turn: Wild Growth 100%, pass 0% -> Wild Growth]
+R5      Thrasios reveals Force of Will: drawn
+R5      Rograkh/Thrasios draws a second card: Sisay creates a Treasure (Gleaming Splendor)
+R5        [Rograkh/Thrasios end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R5  --- Rograkh/Thrasios turn 5: life 36, 8 cards in hand, 4 lands
+R5    Rograkh/Thrasios plays Urza's Saga
+R5    Rograkh/Thrasios casts Rograkh, Son of Rohgahh
+R5        [Rograkh/Thrasios decides: Rograkh, Son of Rohgahh 80%, Seedborn Muse 16%, stop (hold mana) 4%, Kinnan: dig five 1% -> Rograkh, Son of Rohgahh [must]]
+R5        [Rograkh/Thrasios decides: Seedborn Muse 80%, stop (hold mana) 20% -> Seedborn Muse [search]]
+R5    Rograkh/Thrasios casts Seedborn Muse
+R5        [Rograkh/Thrasios attack plan by search: filtered at Kinnan]
+R5        [Rograkh/Thrasios holds back 3 attacker(s) that would die to blocks]
+R5    Rograkh/Thrasios attacks Kraum/Tymna with 3 creature(s): 5 damage (life now 25)
+R5  --- Kinnan turn 5: life 32, 3 cards in hand, 4 lands
+R5    Kinnan loses 3 life to The One Ring's burden (life 32)
+R5    Kinnan plays Tarnished Citadel
+R5        [Kinnan decides: The One Ring 55%, Borne Upon a Wind 37%, Kinnan: dig five 7%, stop 0% -> Kinnan: dig five [search]]
+R5        [Kinnan decides: The One Ring 60%, Borne Upon a Wind 40%, stop 0% -> The One Ring [search]]
+R5    Kinnan taps The One Ring: burden 4, life 27, Main1 step of Kinnan's turn
+R5      Kinnan draws a second card: Sisay creates a Treasure (Gleaming Splendor)
+R5          [eval Mox Diamond: u 5.49, score -17.21, won 0/6 lost 1, open eval -0.66 (life 4.05, board 36.10, power 4.55, hand 2.88, lands 3.00, treasures 0.00, combo 5.33, opp -56.61, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 1]
+R5          [eval Llanowar Elves (chosen): u 2.36, score -9.19, won 0/6 lost 1, open eval 8.97 (life 4.25, board 37.90, power 5.46, hand 2.16, lands 3.12, treasures 0.00, combo 5.33, opp -48.66, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 2]
+R5          [eval Borne Upon a Wind: u 1.80, score -18.88, won 0/6 lost 1, open eval -2.65 (life 4.25, board 31.80, power 3.92, hand 2.34, lands 3.00, treasures 0.00, combo 5.33, opp -53.50, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 4]
+R5          [eval stop (hold mana): u 5.00, score -13.59, won 0/6 lost 1, open eval -1.10 (life 4.40, board 32.40, power 4.55, hand 3.06, lands 3.00, treasures 0.00, combo 5.33, opp -56.29, dead 2.40), ramp 0.00, hold 4.00, top card cast in 5/5 open, held mana up at turn end in 4]
+R5        [Kinnan decides: Mox Diamond 59%, stop (hold mana) 36%, Llanowar Elves 3%, Borne Upon a Wind 1% -> Llanowar Elves [search]]
+R5    Kinnan casts Llanowar Elves
+R5          [eval Mox Diamond: u 6.43, score -12.83, won 0/6 lost 1, open eval 4.60 (life 4.20, board 30.50, power 3.92, hand 2.70, lands 2.64, treasures 0.00, combo 5.33, opp -44.44, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R5          [eval stop (chosen): u -2.00, score -9.81, won 0/6 lost 1, open eval 8.22 (life 4.10, board 34.00, power 3.78, hand 2.88, lands 3.00, treasures 0.00, combo 5.33, opp -44.40, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/5 open, held mana up at turn end in 0]
+R5        [Kinnan decides: Mox Diamond 100%, stop 0% -> stop [search]]
+R5        [Kinnan attack plan by search: none at Rograkh/Thrasios]
+R5          [eval Mox Diamond: u 6.43, score 5.65, won 0/6 lost 0, open eval 5.65 (life 4.88, board 36.22, power 4.61, hand 2.85, lands 3.20, treasures 0.00, combo 5.33, opp -51.10, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5          [eval stop (chosen): u -2.00, score 9.74, won 0/6 lost 0, open eval 9.74 (life 4.83, board 36.50, power 4.78, hand 3.00, lands 3.20, treasures 0.00, combo 6.44, opp -48.36, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 0]
+R5        [Kinnan decides: Mox Diamond 100%, stop 0% -> stop [search]]
+R5  --- Kraum/Tymna turn 5: life 25, 6 cards in hand, 4 lands
+R5    Kraum/Tymna loses 2 life to The One Ring's burden (life 25)
+R5    Kraum/Tymna plays Cavern of Souls
+R5        [Kraum/Tymna decides: Chain of Vapor -> Kinnan, Bonder Prodigy 46%, stop (hold mana) 15%, Tymna the Weaver 11%, Kraum, Ludevic's Opus 11% -> Kraum, Ludevic's Opus [search]]
+R5    Kraum/Tymna casts Kraum, Ludevic's Opus
+R5      Rograkh/Thrasios casts Pact of Negation at Kraum, Ludevic's Opus
+R5      Rograkh/Thrasios counters Kraum, Ludevic's Opus with Pact of Negation
+R5        [Kraum/Tymna decides: Chain of Vapor -> Kinnan, Bonder Prodigy 72%, stop (hold mana) 24%, The One Ring 3%, Gamble 1% -> Gamble [search]]
+R5    Kraum/Tymna casts Gamble
+R5      Rograkh/Thrasios casts Mental Misstep at Gamble
+R5      Rograkh/Thrasios counters Gamble with Mental Misstep
+R5        [Kraum/Tymna decides: Chain of Vapor -> Kinnan, Bonder Prodigy 73%, stop (hold mana) 24%, The One Ring 3% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna decides: Chain of Vapor -> Kinnan, Bonder Prodigy 73%, stop (hold mana) 24%, The One Ring 3% -> Chain of Vapor -> Kinnan, Bonder Prodigy [search]]
+R5    Kraum/Tymna casts Chain of Vapor -> Kinnan, Bonder Prodigy (Rograkh/Thrasios)
+R5      Rograkh/Thrasios draws a second card: Sisay creates a Treasure (Gleaming Splendor)
+R5      Rograkh/Thrasios casts Louisoix's Sacrifice at Chain of Vapor
+R5      Rograkh/Thrasios counters Chain of Vapor with Louisoix's Sacrifice
+R5        [Kraum/Tymna decides: The One Ring 100%, stop 0% -> The One Ring [search]]
+R5    Kraum/Tymna taps The One Ring: burden 3, life 23, Main2 step of Kraum/Tymna's turn
+R5      Kraum/Tymna draws a second card: Sisay creates a Treasure (Gleaming Splendor)
+R5    Sisay casts Worldly Tutor
+R5      Sisay puts Bloom Tender on top of their library
+R5        [Sisay end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R5  --- Sisay turn 5: life 31, 1 cards in hand, 2 lands
+R5        [Sisay decides: Bloom Tender [plan: Bloom Tender -> Sisay, Weatherlight Captain; ready next turn]]
+R5    Sisay casts Bloom Tender
+R5        [Sisay decides: Sisay, Weatherlight Captain [plan: Sisay, Weatherlight Captain; ready next turn]]
+R5    Sisay casts Sisay, Weatherlight Captain
+R6      Thrasios reveals Crop Rotation: drawn
+R6        [Rograkh/Thrasios end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R6      Thrasios reveals Birds of Paradise: drawn
+R6      Rograkh/Thrasios draws a second card: Sisay creates a Treasure (Gleaming Splendor)
+R6        [Rograkh/Thrasios end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R6  --- Rograkh/Thrasios turn 6: life 34, 8 cards in hand, 5 lands
+R6      Rograkh/Thrasios sacrifices Mystic Remora (cumulative upkeep 4)
+R6    Rograkh/Thrasios plays Emergence Zone
+R6          [eval Gene Pollinator: u 8.37, score 20.52, won 3/6 lost 2, open eval 23.11 (life 8.25, board 36.55, power 6.30, hand 1.80, lands 3.60, treasures 0.00, combo 6.75, opp -38.43, dead 0.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 0]
+R6          [eval Crop Rotation (chosen): u 7.88, score 100.00, won 6/6 lost 0, open eval 0.00 (life 0.00, board 0.00, power 0.00, hand 0.00, lands 0.00, treasures 0.00, combo 0.00, opp 0.00, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/0 open, held mana up at turn end in 0]
+R6          [eval Biomancer's Familiar: u 7.34, score -29.07, won 1/6 lost 3, open eval 12.79 (life 7.62, board 29.02, power 4.38, hand 2.25, lands 3.60, treasures 0.00, combo 6.75, opp -39.91, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/2 open, held mana up at turn end in 0]
+R6          [eval Birds of Paradise: u 4.95, score 86.81, won 5/6 lost 0, open eval 20.85 (life 6.50, board 34.00, power 5.60, hand 2.70, lands 3.60, treasures 0.00, combo 7.68, opp -37.76, dead 0.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 0]
+R6          [eval Kinnan: dig five: u 3.00, score -34.67, won 2/6 lost 4, open eval 0.00 (life 0.00, board 0.00, power 0.00, hand 0.00, lands 0.00, treasures 0.00, combo 0.00, opp 0.00, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/0 open, held mana up at turn end in 0]
+R6          [eval stop: u -3.00, score 84.18, won 5/6 lost 0, open eval 5.11 (life 7.00, board 34.05, power 5.60, hand 1.80, lands 3.00, treasures 0.00, combo 6.75, opp -52.82, dead 0.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 0]
+R6        [Rograkh/Thrasios decides: Gene Pollinator 50%, Crop Rotation 30%, Biomancer's Familiar 18%, Birds of Paradise 2% -> Crop Rotation [search]]
+R6    Rograkh/Thrasios casts Crop Rotation
+R6      Crop Rotation: Rograkh/Thrasios sacrifices Command Tower for Gaea's Cradle
+R6        [Rograkh/Thrasios decides: combo: Eternal Witness + Snap + Gaea's Cradle [plan: combo: Eternal Witness + Snap + Gaea's Cradle; wins this turn]]
+R6    Rograkh/Thrasios goes for Eternal Witness + Snap + Gaea's Cradle
+R6    Rograkh/Thrasios casts Green Sun's Zenith
+R6      Green Sun's Zenith puts Eternal Witness onto the battlefield
+R6      Eternal Witness returns Snap
+R6    Rograkh/Thrasios casts Snap
+R6    Rograkh/Thrasios casts Finale of Devastation
+R6  *** Kinnan is eliminated (life 27) by Rograkh/Thrasios
+R6  *** Kraum/Tymna is eliminated (life 23) by Rograkh/Thrasios
+R6  *** Sisay is eliminated (life 30) by Rograkh/Thrasios
+R6  *** Rograkh/Thrasios wins by combo
+Winner: Rograkh/Thrasios (combo)

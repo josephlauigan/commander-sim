@@ -1,0 +1,213 @@
+Play-by-play of goldfish game 0 (seed 500000): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Flooded Strand, Windswept Heath, Chrome Mox, Mox Opal, Mockingbird, Scrubland, Into the Flood Maw
+R1        [Kraum/Tymna plays Flooded Strand for Underground Sea [plan: the land drop the plan wants]]
+R1    Kraum/Tymna plays Flooded Strand
+R1      cracks Flooded Strand for Underground Sea
+R1    Kraum/Tymna casts Chrome Mox
+R1      Chrome Mox imprints Mockingbird
+R1        [Kraum/Tymna decides: Chrome Mox 50%, Mox Opal 50%, stop 0% -> Chrome Mox [must]]
+R1    Kraum/Tymna casts Mox Opal
+R1        [Kraum/Tymna decides: Mox Opal 100%, stop 0% -> Mox Opal [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kraum/Tymna turn 2: life 39, 4 cards in hand, 1 lands
+R2      hand: Windswept Heath, Scrubland, Into the Flood Maw, City of Traitors
+R2    Kraum/Tymna plays Scrubland
+R2        [Kraum/Tymna decides: Tymna the Weaver 96%, Gleaming Splendor 4%, stop 0% -> Tymna the Weaver [search]]
+R2    Kraum/Tymna casts Tymna the Weaver
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 39, 4 cards in hand, 2 lands
+R3      hand: Windswept Heath, Into the Flood Maw, City of Traitors, Gleaming Splendor
+R3        [Kraum/Tymna plays Windswept Heath for Tundra [plan: the land drop the plan wants]]
+R3    Kraum/Tymna plays Windswept Heath
+R3      cracks Windswept Heath for Tundra
+R3        [Kraum/Tymna decides: Gleaming Splendor 100%, stop 0% -> Gleaming Splendor [search]]
+R3    Kraum/Tymna casts Gleaming Splendor
+R3        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R3    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R3    Kraum/Tymna casts Mox Diamond
+R3        [Kraum/Tymna decides: Mox Diamond 100%, stop 0% -> Mox Diamond [must]]
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 39, 2 cards in hand, 3 lands
+R4      hand: Into the Flood Maw, Brain Freeze
+R4        [Kraum/Tymna decides: Demonic Tutor 50%, Kraum, Ludevic's Opus 50%, stop 0% -> stop [search]]
+R4        [Kraum/Tymna attack plan by search: all at Goldfish 3]
+R4    Kraum/Tymna attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R4        [Kraum/Tymna decides: Demonic Tutor 49%, Kraum, Ludevic's Opus 49%, stop (hold mana) 2% -> Demonic Tutor [search]]
+R4    Kraum/Tymna casts Demonic Tutor
+R4      Kraum/Tymna tutors Thassa's Oracle
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kraum/Tymna turn 5: life 40, 4 cards in hand, 3 lands
+R5      hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle
+R5    Kraum/Tymna plays Misty Rainforest
+R5      cracks Misty Rainforest for Volcanic Island
+R5        [Kraum/Tymna decides: Kraum, Ludevic's Opus 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R5    Kraum/Tymna attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R5      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R5        [Kraum/Tymna decides: Fellwar Stone 98%, Kraum, Ludevic's Opus 2%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kraum/Tymna turn 6: life 40, 5 cards in hand, 4 lands
+R6      hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Fellwar Stone
+R6        [Kraum/Tymna decides: Fellwar Stone 97%, Kraum, Ludevic's Opus 3%, stop (hold mana) 0%, Orcish Bowmasters 0% -> stop (hold mana) [search]]
+R6        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R6    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R6      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R6        [Kraum/Tymna decides: Fellwar Stone 97%, Kraum, Ludevic's Opus 3%, Voice of Victory 0%, stop (hold mana) 0% -> Voice of Victory [search]]
+R6    Kraum/Tymna casts Voice of Victory
+R6        [Kraum/Tymna decides: Fellwar Stone 99%, Kraum, Ludevic's Opus 0%, stop (hold mana) 0%, Orcish Bowmasters 0% -> Kraum, Ludevic's Opus [search]]
+R6    Kraum/Tymna casts Kraum, Ludevic's Opus
+R6  --- Goldfish 2 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kraum/Tymna turn 7: life 41, 6 cards in hand, 4 lands
+R7      hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Fellwar Stone, Orcish Bowmasters
+R7        [Kraum/Tymna decides: Fellwar Stone 50%, Lotus Petal 50%, stop (hold mana) 0%, Orcish Bowmasters 0% -> stop (hold mana) [search]]
+R7        [Kraum/Tymna attack plan by search: filtered at Goldfish 3]
+R7      Voice of Victory mobilizes: two tapped and attacking Warriors
+R7    Kraum/Tymna attacks Goldfish 3 with 5 creature(s): 9 damage (life now 29)
+R7      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R7        [Kraum/Tymna decides: Fellwar Stone 50%, Lotus Petal 50%, stop (hold mana) 0%, Orcish Bowmasters 0% -> Fellwar Stone [search]]
+R7    Kraum/Tymna casts Fellwar Stone
+R7        [Kraum/Tymna decides: Lotus Petal 99%, stop (hold mana) 1%, Orcish Bowmasters 0% -> stop (hold mana) [search]]
+R7  --- Goldfish 2 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 29, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8    Kraum/Tymna casts Orcish Bowmasters
+R8        [Kraum/Tymna end of turn: Orcish Bowmasters 100%, pass 0% -> Orcish Bowmasters]
+R8  --- Kraum/Tymna turn 8: life 42, 6 cards in hand, 4 lands
+R8      hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Lotus Petal, Snapback
+R8        [Kraum/Tymna decides: Lotus Petal 50%, Mox Amber 50%, stop (hold mana) 0% -> Lotus Petal [search]]
+R8    Kraum/Tymna casts Lotus Petal
+R8        [Kraum/Tymna decides: Mox Amber 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R8        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R8      Voice of Victory mobilizes: two tapped and attacking Warriors
+R8    Kraum/Tymna attacks Goldfish 2 with 7 creature(s): 11 damage (life now 25)
+R8      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R8        [Kraum/Tymna decides: Mox Amber 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R8  --- Goldfish 2 turn 8: life 25, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 29, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 37, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Kraum/Tymna turn 9: life 43, 7 cards in hand, 4 lands
+R9      hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Snapback, Mox Amber, Force of Will
+R9    Kraum/Tymna plays Exotic Orchard
+R9        [Kraum/Tymna decides: Mox Amber 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R9        [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R9      Voice of Victory mobilizes: two tapped and attacking Warriors
+R9    Kraum/Tymna attacks Goldfish 4 with 7 creature(s): 11 damage (life now 26)
+R9      Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R9        [Kraum/Tymna decides: Mox Amber 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R9      [audit] Kraum/Tymna discards Snapback to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 25, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 29, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 26, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Kraum/Tymna turn 10: life 44, 7 cards in hand, 5 lands
+R10     hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Mox Amber, Force of Will, Starting Town
+R10   Kraum/Tymna plays Starting Town
+R10       [Kraum/Tymna decides: Mox Amber 98%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R10       [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R10     Voice of Victory mobilizes: two tapped and attacking Warriors
+R10   Kraum/Tymna attacks Goldfish 4 with 7 creature(s): 11 damage (life now 15)
+R10     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R10       [Kraum/Tymna decides: Mox Amber 96%, Exhibition Tidecaller 3%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R10     [audit] Kraum/Tymna discards Exhibition Tidecaller to hand size (8 cards in hand)
+R10 --- Goldfish 2 turn 10: life 25, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 29, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 15, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Kraum/Tymna turn 11: life 45, 7 cards in hand, 6 lands
+R11     hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Mox Amber, Force of Will, City of Brass
+R11   Kraum/Tymna plays City of Brass
+R11       [Kraum/Tymna decides: Mox Amber 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R11       [Kraum/Tymna attack plan by search: filtered at Goldfish 4]
+R11     Voice of Victory mobilizes: two tapped and attacking Warriors
+R11   Kraum/Tymna attacks Goldfish 4 with 7 creature(s): 11 damage (life now 4)
+R11     Kraum/Tymna pays 1 life to Tymna the Weaver and draws 1
+R11       [Kraum/Tymna decides: Mox Amber 97%, stop (hold mana) 3%, Mnemonic Betrayal 0% -> stop (hold mana) [search]]
+R11     [audit] Kraum/Tymna discards Mnemonic Betrayal to hand size (8 cards in hand)
+R11 --- Goldfish 2 turn 11: life 25, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 29, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 4, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Kraum/Tymna turn 12: life 46, 7 cards in hand, 7 lands
+R12     hand: Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Mox Amber, Force of Will, Badlands
+R12   Kraum/Tymna plays Badlands
+R12       [Kraum/Tymna decides: Mox Amber 80%, Wishclaw Talisman 17%, stop (hold mana) 3% -> Mox Amber [search]]
+R12   Kraum/Tymna casts Mox Amber
+R12       [Kraum/Tymna decides: Wishclaw Talisman 85%, stop (hold mana) 15% -> Wishclaw Talisman [search]]
+R12   Kraum/Tymna casts Wishclaw Talisman
+R12       [Kraum/Tymna decides: stop (hold mana) 56%, Wishclaw Talisman 44% -> Wishclaw Talisman [search]]
+R12     Kraum/Tymna tutors Demonic Consultation (Wishclaw Talisman)
+R12     Goldfish 3 gains control of Wishclaw Talisman
+R12       [Kraum/Tymna decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R12   Kraum/Tymna goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R12   Kraum/Tymna casts Thassa's Oracle
+R12   Kraum/Tymna casts Demonic Consultation
+R12     Kraum/Tymna exiles its library
+R12 *** Goldfish 2 is eliminated (life 25) by Kraum/Tymna
+R12 *** Goldfish 3 is eliminated (life 29) by Kraum/Tymna
+R12 *** Goldfish 4 is eliminated (life 4) by Kraum/Tymna
+R12 *** Kraum/Tymna wins by combo
+Kill: own turn 12 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Mockingbird, Into the Flood Maw
+  T2  progressed (other) | held (payable, not offered): Into the Flood Maw
+  T3  progressed (fast mana / rock) | held (payable, not offered): Into the Flood Maw, Brain Freeze
+  T4  progressed (tutor) | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle
+  T5  passed_castable: Fellwar Stone [fast mana / rock] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle
+  T6  passed_castable: Fellwar Stone [fast mana / rock], Orcish Bowmasters [other] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle
+  T7  passed_castable: Lotus Petal [fast mana / rock] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Snapback
+  T8  passed_castable: Mox Amber [fast mana / rock] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Snapback, Force of Will
+  T9  passed_castable: Mox Amber [fast mana / rock] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Snapback, Force of Will
+  T10 passed_castable: Mox Amber [fast mana / rock], Exhibition Tidecaller [other] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Force of Will
+  T11 passed_castable: Mox Amber [fast mana / rock], Mnemonic Betrayal [other] | held (payable, not offered): Into the Flood Maw, Brain Freeze, Mental Misstep, Thassa's Oracle, Force of Will
+  T12 won
+  cleanup discards: Snapback [other], Exhibition Tidecaller [other], Mnemonic Betrayal [other]
+  stops with another option offered: T4 main 1 look-ahead "stop" over Demonic Tutor (7.2); T5 main 1 look-ahead "stop (hold mana)" over Kraum, Ludevic's Opus (7.2); T5 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (11.0); T6 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (10.7); T7 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (8.8); T7 main 2 look-ahead "stop (hold mana)" over Lotus Petal (8.8); T8 main 1 look-ahead "stop (hold mana)" over Mox Amber (8.4); T8 main 2 look-ahead "stop (hold mana)" over Mox Amber (8.4); T9 main 1 look-ahead "stop (hold mana)" over Mox Amber (8.1); T9 main 2 look-ahead "stop (hold mana)" over Mox Amber (8.1); T10 main 1 look-ahead "stop (hold mana)" over Mox Amber (7.8); T10 main 2 look-ahead "stop (hold mana)" over Mox Amber (7.8); T11 main 1 look-ahead "stop (hold mana)" over Mox Amber (7.4); T11 main 2 look-ahead "stop (hold mana)" over Mox Amber (7.4)
+  crude best case: none
+  crude best case with tutors: own turn 12 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: none

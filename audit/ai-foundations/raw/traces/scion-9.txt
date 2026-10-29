@@ -1,0 +1,140 @@
+Play-by-play of goldfish game 9 (seed 500009): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Scalding Tarn, Arcane Signet, Manamorphose, Mockingbird, Emergence Zone, Korvold, Fae-Cursed King, Tinder Wall
+R1    Scion plays Scalding Tarn
+R1      cracks Scalding Tarn for Underground Sea
+R1    Scion casts Chrome Mox
+R1      Chrome Mox imprints Mockingbird
+R1        [Scion decides: Chrome Mox 100%, stop 0% -> Chrome Mox [must]]
+R1    Scion casts Arcane Signet
+R1        [Scion decides: Arcane Signet 100%, stop 0% -> Arcane Signet [must]]
+R1        [Scion decides: Tinder Wall 100%, stop 0% -> stop [search]]
+R1        [Scion decides: Tinder Wall 100%, stop 0% -> stop [search]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 39, 4 cards in hand, 1 lands
+R2      hand: Manamorphose, Emergence Zone, Korvold, Fae-Cursed King, Tinder Wall
+R2    Scion plays City of Brass
+R2        [Scion decides: Manamorphose 60%, Tinder Wall 40%, stop 0% -> stop [search]]
+R2        [Scion decides: Manamorphose 60%, Tinder Wall 40%, stop 0% -> Manamorphose [search]]
+R2    Scion casts Manamorphose
+R2        [Scion decides: Tinder Wall 100%, stop 0% -> Tinder Wall [search]]
+R2    Scion casts Tinder Wall
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 38, 3 cards in hand, 2 lands
+R3      hand: Emergence Zone, Korvold, Fae-Cursed King, Prismari, the Inspiration
+R3    Scion plays Emergence Zone
+R3        [Scion decides: Storm-Kiln Artist 69%, Korvold, Fae-Cursed King 31%, stop 0% -> Korvold, Fae-Cursed King [search]]
+R3    Scion casts Korvold, Fae-Cursed King
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 37, 3 cards in hand, 3 lands
+R4      hand: Prismari, the Inspiration, Storm-Kiln Artist, Misty Rainforest
+R4    Scion plays Tropical Island
+R4        [Scion decides: Storm-Kiln Artist 100%, stop 0% -> Storm-Kiln Artist [search]]
+R4    Scion casts Storm-Kiln Artist
+R4        [Scion attack plan by search: none at Goldfish 2]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 36, 2 cards in hand, 4 lands
+R5      hand: Prismari, the Inspiration, Misty Rainforest
+R5    Scion plays Flooded Strand
+R5      cracks Flooded Strand for Scrubland
+R5        [Scion decides: Scion of the Ur-Dragon 100%, stop 0% -> Scion of the Ur-Dragon [search]]
+R5    Scion casts Scion of the Ur-Dragon
+R5        [Scion attack plan by search: filtered at Goldfish 2]
+R5    Scion attacks Goldfish 2 with 1 creature(s): 6 damage (life now 34)
+R5  --- Goldfish 2 turn 5: life 34, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 34, 3 cards in hand, 4 lands
+R6      hand: Prismari, the Inspiration, Misty Rainforest, Tainted Pact
+R6    Scion plays Bloodstained Mire
+R6      cracks Bloodstained Mire for Volcanic Island
+R6        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 100%, stop 0% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R6    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R6      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R6        [Scion attack plan by search: filtered at Goldfish 2]
+R6      Ancient Copper Dragon rolls 12: 12 Treasures
+R6    Scion attacks Goldfish 2 with 2 creature(s): 13 damage (life now 21)
+R6        [Scion decides: Prismari, the Inspiration 97%, stop (hold mana) 3% -> Prismari, the Inspiration [search]]
+R6    Scion casts Prismari, the Inspiration
+R6        [Scion decides: Esper Sentinel 88%, stop (hold mana) 12% -> Esper Sentinel [search]]
+R6    Scion casts Esper Sentinel
+R6        [Scion decides: Faerie Mastermind 75%, stop (hold mana) 25% -> Faerie Mastermind [search]]
+R6    Scion casts Faerie Mastermind
+R6        [Scion decides: Sol Ring 100%, stop (hold mana) 0% -> Sol Ring [search]]
+R6    Scion casts Sol Ring
+R6  --- Goldfish 2 turn 6: life 21, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 33, 7 cards in hand, 4 lands
+R7      hand: Misty Rainforest, Tainted Pact, Swan Song, Cabal Ritual, Orim's Chant, Verdant Catacombs, Bayou
+R7    Scion plays Bayou
+R7        [Scion decides: Necropotence 96%, stop (hold mana) 4% -> stop (hold mana) [search]]
+R7        [Scion attack plan by search: filtered at Goldfish 3]
+R7    Scion attacks Goldfish 3 with 3 creature(s): 7 damage (life now 33)
+R7  *** Goldfish 2 is eliminated (life -1) by Scion
+R7    Scion attacks Goldfish 2 with 2 creature(s): 22 damage (life now -1)
+R7      [audit] Scion discards Misty Rainforest to hand size (8 cards in hand)
+R7  --- Goldfish 3 turn 7: life 33, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 33, 7 cards in hand, 5 lands
+R8      hand: Tainted Pact, Swan Song, Cabal Ritual, Orim's Chant, Verdant Catacombs, Necropotence, Demonic Consultation
+R8    Scion plays Verdant Catacombs
+R8      cracks Verdant Catacombs for Savannah
+R8        [Scion decides: Imperial Seal 66%, Necropotence 33%, stop (hold mana) 1% -> Imperial Seal [search]]
+R8    Scion casts Imperial Seal
+R8      Scion puts Thassa's Oracle on top of their library
+R8        [Scion decides: Necropotence 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R8        [Scion attack plan by search: filtered at Goldfish 4]
+R8    Scion attacks Goldfish 4 with 5 creature(s): 30 damage (life now 10)
+R8        [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 100%, Necropotence 0%, stop (hold mana) 0% -> combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [search]]
+R8    Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R8    Scion casts Thassa's Oracle
+R8    Scion casts Demonic Consultation
+R8      Prismari's storm copies Demonic Consultation 2 time(s)
+R8      Scion exiles its library
+R8  *** Goldfish 3 is eliminated (life 33) by Scion
+R8  *** Goldfish 4 is eliminated (life 10) by Scion
+R8  *** Scion wins by combo
+Kill: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  passed_castable: Tinder Wall [other] | held (payable, not offered): Mockingbird
+  T2  progressed (combo piece)
+  T3  progressed (other)
+  T4  progressed (other)
+  T5  progressed (combo piece)
+  T6  progressed (combo piece) | held (payable, not offered): Tainted Pact, Swan Song, Cabal Ritual, Orim's Chant
+  T7  progressed (land only) | held (payable, not offered): Tainted Pact, Swan Song, Cabal Ritual, Orim's Chant, Necropotence, Demonic Consultation
+  T8  won
+  cleanup discards: Misty Rainforest [land]
+  stops with another option offered: T1 main 1 look-ahead "stop" over Tinder Wall (4.2); T1 main 2 look-ahead "stop" over Tinder Wall (4.2); T2 main 1 look-ahead "stop" over Manamorphose (4.6); T7 main 1 look-ahead "stop (hold mana)" over Necropotence (5.5); T8 main 1 look-ahead "stop (hold mana)" over Necropotence (6.0)
+  crude best case: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with tutors: own turn 8 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

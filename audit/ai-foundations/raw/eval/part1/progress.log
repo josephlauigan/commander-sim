@@ -1,0 +1,4 @@
+start realism-t6-1000 15:33:23 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --realism --pool t6 --games 1000 --jobs 16 --quiet
+done realism-t6-1000 rc=0 15:36:13
+start realism-t3-1000 15:36:13 AI_FLOW_MUST=0 AI_EVAL_DIAG=1 --realism --pool t3 --games 1000 --jobs 16 --quiet
+done realism-t3-1000 rc=0 15:37:53

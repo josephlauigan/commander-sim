@@ -1,0 +1,110 @@
+Play-by-play of goldfish game 4 (seed 500004): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 5 cards in hand, 0 lands
+R1      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Scalding Tarn, Flusterstorm, Ancient Tomb, Delighted Halfling
+R1    Kinnan plays Ancient Tomb
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 5 cards in hand, 1 lands
+R2      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Scalding Tarn, Flusterstorm, Delighted Halfling, The Cabbage Merchant
+R2    Kinnan plays Scalding Tarn
+R2      cracks Scalding Tarn for Breeding Pool
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 39, 5 cards in hand, 2 lands
+R3      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Flusterstorm, Delighted Halfling, The Cabbage Merchant, Force of Will
+R3    Kinnan casts Delighted Halfling
+R3        [Kinnan decides: Delighted Halfling 99%, stop (hold mana) 0%, The Cabbage Merchant 0%, Borne Upon a Wind 0% -> Delighted Halfling [must]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kinnan turn 4: life 39, 5 cards in hand, 2 lands
+R4      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Flusterstorm, The Cabbage Merchant, Force of Will, Borne Upon a Wind
+R4    Kinnan casts Kinnan, Bonder Prodigy
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 90%, stop (hold mana) 8%, The Cabbage Merchant 1%, Borne Upon a Wind 1% -> Kinnan, Bonder Prodigy [must]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kinnan turn 5: life 39, 6 cards in hand, 2 lands
+R5      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Flusterstorm, The Cabbage Merchant, Force of Will, Borne Upon a Wind, Dispel
+R5        [Kinnan decides: Fellwar Stone 99%, stop (hold mana) 1%, The Cabbage Merchant 0%, Borne Upon a Wind 0% -> stop (hold mana) [search]]
+R5        [Kinnan attack plan by search: filtered at Goldfish 2]
+R5    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R5        [Kinnan decides: Fellwar Stone 99%, stop (hold mana) 1%, The Cabbage Merchant 0%, Borne Upon a Wind 0% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Kinnan casts Borne Upon a Wind
+R6        [Kinnan end of turn: Borne Upon a Wind 100%, pass 0% -> Borne Upon a Wind]
+R6    Kinnan casts Fellwar Stone
+R6        [Kinnan end of turn: Fellwar Stone 100%, pass 0% -> Fellwar Stone]
+R6  --- Kinnan turn 6: life 37, 6 cards in hand, 2 lands
+R6      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Flusterstorm, The Cabbage Merchant, Force of Will, Dispel, Forest
+R6    Kinnan plays Forest
+R6        [Kinnan decides: stop (hold mana) 51%, The Cabbage Merchant 34%, Invasion of Ikoria // Zilortha, Apex of Ikoria 8%, Kinnan: dig five 7% -> stop (hold mana) [search]]
+R6        [Kinnan attack plan by search: filtered at Goldfish 4]
+R6    Kinnan attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R6        [Kinnan decides: Kinnan: dig five 35%, stop (hold mana) 35%, The Cabbage Merchant 24%, Invasion of Ikoria // Zilortha, Apex of Ikoria 6% -> Invasion of Ikoria // Zilortha, Apex of Ikoria [search]]
+R6    Kinnan casts Invasion of Ikoria // Zilortha, Apex of Ikoria
+R6      Kinnan puts Thrasios, Triton Hero onto the battlefield (Invasion of Ikoria, X = 6)
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kinnan turn 7: life 35, 5 cards in hand, 3 lands
+R7      hand: Flusterstorm, The Cabbage Merchant, Force of Will, Dispel, Transmute Artifact
+R7        [Kinnan decides: stop (hold mana) 55%, The Cabbage Merchant 37%, Kinnan: dig five 7% -> stop (hold mana) [search]]
+R7        [Kinnan attack plan by search: filtered at Goldfish 3]
+R7    Kinnan attacks Goldfish 3 with 2 creature(s): 3 damage (life now 37)
+R7        [Kinnan decides: Kinnan: dig five 37%, stop (hold mana) 37%, The Cabbage Merchant 25%, Thrasios: scry 1, a land or a card 0% -> Kinnan: dig five [search]]
+R7  --- Goldfish 2 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 37, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Kinnan turn 8: life 33, 6 cards in hand, 3 lands
+R8      hand: Flusterstorm, The Cabbage Merchant, Force of Will, Dispel, Transmute Artifact, Mindbreak Trap
+R8    Kinnan plays Verdant Catacombs
+R8      cracks Verdant Catacombs for Tropical Island
+R8        [Kinnan decides: stop (hold mana) 54%, The Cabbage Merchant 36%, Kinnan: dig five 7%, Transmute Artifact 3% -> Transmute Artifact [search]]
+R8    Kinnan casts Transmute Artifact
+R8        [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, The Cabbage Merchant 0%, Basalt Monolith ability 0%, stop 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R8    Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R8  *** Goldfish 2 is eliminated (life 38) by Kinnan
+R8  *** Goldfish 3 is eliminated (life 37) by Kinnan
+R8  *** Goldfish 4 is eliminated (life 38) by Kinnan
+R8  *** Kinnan wins by combo
+Kill: own turn 8 (Kinnan + Basalt Monolith + Thrasios (draw the deck))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  mana_short
+  T3  progressed (fast mana / rock) | held (payable, not offered): Flusterstorm
+  T4  progressed (combo piece) | held (payable, not offered): Flusterstorm, Dispel
+  T5  idle | held (payable, not offered): Flusterstorm, Dispel
+  T6  progressed (tutor) | held (payable, not offered): Flusterstorm, Dispel
+  T7  progressed (abilities only) | held (payable, not offered): Flusterstorm, Dispel
+  T8  won
+  cleanup discards: none
+  stops with another option offered: T5 main 1 look-ahead "stop (hold mana)" over Fellwar Stone (10.0); T5 main 2 look-ahead "stop (hold mana)" over Fellwar Stone (10.0); T6 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6); T7 main 1 look-ahead "stop (hold mana)" over The Cabbage Merchant (4.6)
+  crude best case: none
+  crude best case with tutors: none

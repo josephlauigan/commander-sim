@@ -1,0 +1,137 @@
+Play-by-play of goldfish game 1 (seed 500001): Sisay alone, lookahead AI
+Seat order: Sisay, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Polluted Delta, Plateau, Redirect Lightning, Eladamri's Call, Deadpool, Trading Card, Mystic Remora, Agatha's Soul Cauldron
+R1    Sisay plays Polluted Delta
+R1      cracks Polluted Delta for Scrubland
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Sisay turn 2: life 39, 7 cards in hand, 1 lands
+R2      hand: Plateau, Redirect Lightning, Eladamri's Call, Deadpool, Trading Card, Mystic Remora, Agatha's Soul Cauldron, Volcanic Island
+R2    Sisay plays Volcanic Island
+R2        [Sisay decides: Mystic Remora 85%, Agatha's Soul Cauldron 15%, stop 0% -> Agatha's Soul Cauldron [search]]
+R2    Sisay casts Agatha's Soul Cauldron
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Sisay turn 3: life 39, 6 cards in hand, 2 lands
+R3      hand: Plateau, Redirect Lightning, Eladamri's Call, Deadpool, Trading Card, Mystic Remora, Crop Rotation
+R3    Sisay plays Plateau
+R3    Sisay casts Sisay, Weatherlight Captain
+R3        [Sisay decides: Sisay, Weatherlight Captain 88%, Mystic Remora 12%, stop (hold mana) 0% -> Sisay, Weatherlight Captain [must]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Sisay turn 4: life 39, 6 cards in hand, 3 lands
+R4      hand: Redirect Lightning, Eladamri's Call, Deadpool, Trading Card, Mystic Remora, Crop Rotation, Swan Song
+R4        [Sisay decides: Mystic Remora 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R4        [Sisay attack plan by search: filtered at Goldfish 2]
+R4    Sisay attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R4        [Sisay decides: Mystic Remora 93%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Sisay turn 5: life 39, 7 cards in hand, 3 lands
+R5      hand: Redirect Lightning, Eladamri's Call, Deadpool, Trading Card, Mystic Remora, Crop Rotation, Swan Song, Tyvar, Jubilant Brawler
+R5        [Sisay decides: Mana Vault 100%, Mystic Remora 0%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R5        [Sisay attack plan by search: filtered at Goldfish 4]
+R5    Sisay attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R5        [Sisay decides: Mana Vault 100%, Mystic Remora 0%, stop (hold mana) 0% -> Mana Vault [search]]
+R5    Sisay casts Mana Vault
+R5        [Sisay decides: Mystic Remora 46%, Deadpool, Trading Card 34%, stop (hold mana) 20% -> stop (hold mana) [search]]
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Sisay turn 6: life 39, 7 cards in hand, 3 lands
+R6      hand: Redirect Lightning, Eladamri's Call, Deadpool, Trading Card, Mystic Remora, Crop Rotation, Swan Song, Tyvar, Jubilant Brawler
+R6    Sisay plays Savannah
+R6        [Sisay decides: Eladamri's Call 81%, Tyvar, Jubilant Brawler 10%, Deadpool, Trading Card 7%, Mystic Remora 1% -> stop (hold mana) [search]]
+R6        [Sisay attack plan by search: filtered at Goldfish 3]
+R6    Sisay attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R6        [Sisay decides: Eladamri's Call 81%, Tyvar, Jubilant Brawler 10%, Deadpool, Trading Card 7%, Mystic Remora 1% -> Deadpool, Trading Card [search]]
+R6    Sisay casts Deadpool, Trading Card
+R6  --- Goldfish 2 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Sisay turn 7: life 39, 6 cards in hand, 4 lands
+R7      hand: Redirect Lightning, Eladamri's Call, Mystic Remora, Crop Rotation, Swan Song, Tyvar, Jubilant Brawler
+R7        [Sisay decides: Eladamri's Call 47%, Demonic Tutor 47%, Tyvar, Jubilant Brawler 6%, Mystic Remora 1% -> Tyvar, Jubilant Brawler [search]]
+R7    Sisay casts Tyvar, Jubilant Brawler
+R7        [Sisay decides: Tyvar, Jubilant Brawler +1 99%, stop 1% -> Tyvar, Jubilant Brawler +1 [search]]
+R7    Sisay uses Tyvar, Jubilant Brawler (+1): untap a creature
+R7        [Sisay attack plan by search: filtered at Goldfish 2]
+R7    Sisay attacks Goldfish 2 with 2 creature(s): 10 damage (life now 28)
+R7  --- Goldfish 2 turn 7: life 28, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Sisay turn 8: life 36, 6 cards in hand, 4 lands
+R8      hand: Redirect Lightning, Eladamri's Call, Mystic Remora, Crop Rotation, Swan Song, Demonic Tutor
+R8        [Sisay decides: Eladamri's Call 33%, Demonic Tutor 33%, Green Sun's Zenith 33%, Mystic Remora 1% -> Demonic Tutor [search]]
+R8    Sisay casts Demonic Tutor
+R8      Sisay tutors Derevi, Empyrial Tactician
+R8        [Sisay decides: Green Sun's Zenith 97%, Mystic Remora 2%, stop (hold mana) 1%, Tyvar, Jubilant Brawler +1 0% -> Green Sun's Zenith [search]]
+R8    Sisay casts Green Sun's Zenith
+R8        [Sisay decides: Eladamri's Call 69%, Crop Rotation 17%, Mystic Remora 8%, Derevi, Empyrial Tactician 5% -> Crop Rotation [search]]
+R8    Sisay casts Crop Rotation
+R8      Crop Rotation: Sisay sacrifices Volcanic Island for Gaea's Cradle
+R8        [Sisay decides: Eladamri's Call 82%, Mystic Remora 10%, Derevi, Empyrial Tactician 6%, Tyvar, Jubilant Brawler +1 1% -> Derevi, Empyrial Tactician [search]]
+R8    Sisay casts Derevi, Empyrial Tactician
+R8      Derevi untaps Bloom Tender
+R8    Sisay activates Sisay: Emiel the Blessed
+R8        [Sisay decides: Sisay: Emiel the Blessed 96%, Eladamri's Call 3%, Mystic Remora 0%, stop (hold mana) 0% -> Sisay: Emiel the Blessed [must]]
+R8        [Sisay decides: Eladamri's Call 88%, Mystic Remora 11%, Tyvar, Jubilant Brawler +1 1%, stop (hold mana) 1% -> Eladamri's Call [search]]
+R8    Sisay casts Eladamri's Call
+R8      Sisay searches for Marvin, Murderous Mimic
+R8        [Sisay decides: Mystic Remora 48%, Tyvar, Jubilant Brawler +1 31%, stop (hold mana) 21% -> Mystic Remora [search]]
+R8    Sisay casts Mystic Remora
+R8        [Sisay decides: Tyvar, Jubilant Brawler +1 100%, stop 0% -> Tyvar, Jubilant Brawler +1 [search]]
+R8    Sisay uses Tyvar, Jubilant Brawler (+1): untap a creature
+R8      Tyvar untaps Bloom Tender
+R8    Sisay activates Sisay: Mount Doom
+R8        [Sisay decides: Sisay: Mount Doom 100%, Marvin, Murderous Mimic 0%, stop (hold mana) 0%, Emiel the Blessed ability 0% -> Sisay: Mount Doom [must]]
+R8        [Sisay attack plan by search: filtered at Goldfish 2]
+R8      Derevi untaps Bloom Tender
+R8      Derevi untaps a land
+R8    Sisay attacks Goldfish 2 with 2 creature(s): 12 damage (life now 16)
+R8    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R8  *** Goldfish 2 is eliminated (life 16) by Sisay
+R8  *** Goldfish 3 is eliminated (life 38) by Sisay
+R8  *** Goldfish 4 is eliminated (life 38) by Sisay
+R8  *** Sisay wins by combo
+R8        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) 95%, Sisay: Ioreth of the Healing House 5%, Marvin, Murderous Mimic 0%, stop (hold mana) 0% -> combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [must]]
+Kill: own turn 8 (Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  progressed (other) | held (payable, not offered): Redirect Lightning
+  T3  progressed (combo piece) | held (payable, not offered): Redirect Lightning, Swan Song
+  T4  passed_castable: Mystic Remora [draw] | held (payable, not offered): Redirect Lightning, Swan Song
+  T5  passed_castable: Mystic Remora [draw], Deadpool, Trading Card [other] | held (payable, not offered): Redirect Lightning, Swan Song
+  T6  passed_castable: Eladamri's Call [tutor], Mystic Remora [draw], Tyvar, Jubilant Brawler [other] | held (payable, not offered): Redirect Lightning, Crop Rotation, Swan Song
+  T7  progressed (other) | held (payable, not offered): Redirect Lightning, Crop Rotation, Swan Song
+  T8  won
+  cleanup discards: none
+  stops with another option offered: T4 main 1 look-ahead "stop (hold mana)" over Mystic Remora (5.3); T4 main 2 look-ahead "stop (hold mana)" over Mystic Remora (5.3); T5 main 1 look-ahead "stop (hold mana)" over Mana Vault (10.3); T5 main 2 look-ahead "stop (hold mana)" over Mystic Remora (3.6); T6 main 1 look-ahead "stop (hold mana)" over Eladamri's Call (7.6)
+  crude best case: none
+  crude best case with tutors: none

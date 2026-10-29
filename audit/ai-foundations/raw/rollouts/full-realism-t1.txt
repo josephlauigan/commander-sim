@@ -1,0 +1,29 @@
+
+=== Realism: Tier 1 (High B2 / Low B3) [loose, lookahead AI, 4000 games, seeds 500000-503999; 5 decks, 4 a pod] ===
+targets: data/realism/t1.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     30.3%     28.9-31.7   31.3%     29.8-32.8  PASS
+  seat 2 share of decisive games (%)                     26.0%     24.7-27.4   26.9%     25.4-28.4  PASS
+  seat 3 share of decisive games (%)                     23.1%     21.8-24.4   22.9%     21.4-24.4  PASS
+  seat 4 share of decisive games (%)                     20.7%     19.4-21.9   18.9%     17.4-20.4  FAIL
+  median round of a decisive win (rounds)                  9.0       9.0-9.0     8.0           7-9  PASS
+  win round, 75th minus 25th percentile (rounds)           3.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                 2.5%       2.0-3.0   11.3%      9.8-12.8  FAIL
+  wins by damage (combat or other) (%)                   64.7%     63.2-66.2   70.4%     68.9-71.9  FAIL
+  wins by commander damage (%)                           32.8%     31.4-34.3   18.1%     16.6-19.6  FAIL
+  wins by poison (%)                                      0.0%       0.0-0.1    0.2%         0-1.7  PASS
+  deck win spread, best minus worst deck (pts)            27.4             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 3.5%       3.0-4.1       -             -  no target
+  5 of 9 targets pass (3 statistics have no target yet)
+Games: 4000, decisive 3985 (99.6%), round-cap timeouts 0.4%
+Each deck's share of the decisive games it sat in: Isshin 26.8% of 3258; Lathril 18.7% of 3136; Light-Paws 44.7% of 3164; Tatyova 17.6% of 3209; Teysa Karlov 17.3% of 3173
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=10576, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)
+  win_damage: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)
+  win_commander_damage: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)
+  win_poison: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)

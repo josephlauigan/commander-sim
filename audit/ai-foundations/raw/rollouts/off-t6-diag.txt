@@ -1,0 +1,265 @@
+
+=== Realism: Tier 6 (cEDH, B5) [loose, lookahead AI, 1000 games, seeds 500000-500999; 6 decks, 4 a pod] ===
+targets: data/realism/t6.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     30.6%     27.8-33.5   31.8%     30.3-33.3  PASS
+  seat 2 share of decisive games (%)                     26.4%     23.7-29.2   27.3%     25.8-28.8  PASS
+  seat 3 share of decisive games (%)                     23.0%     20.5-25.8   22.1%     20.6-23.6  PASS
+  seat 4 share of decisive games (%)                     20.0%     17.6-22.6   18.8%     17.3-20.3  PASS
+  median round of a decisive win (rounds)                  7.0       7.0-8.0     7.0           6-8  PASS
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                89.9%     87.9-91.6   47.8%     46.3-49.3  reference
+  wins by damage (combat or other) (%)                    9.4%      7.7-11.4   39.9%     38.4-41.4  reference
+  wins by commander damage (%)                            0.7%       0.3-1.5   11.6%     10.1-13.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.4    0.7%         0-2.2  reference
+  deck win spread, best minus worst deck (pts)            12.4             -     4.0           0-8  FAIL
+  games over 15 rounds (round cap 20) (%)                 4.4%       3.3-5.9       -             -  no target
+  5 of 6 targets pass (2 statistics have no target yet; 4 reference values, not scored)
+Games: 1000, decisive 990 (99.0%), round-cap timeouts 1.0%
+Each deck's share of the decisive games it sat in: Dack Fayden 26.0% of 655; Kinnan 21.1% of 654; Kraum/Tymna 28.7% of 638; Rograkh/Silas 19.4% of 656; Rograkh/Thrasios 23.2% of 690; Sisay 31.8% of 667
+
+--- Card and mana flow: Dack Fayden (665 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    95    88    77    53    43
+  cards seen by the turn's end (cum.)   7.7   8.9  10.0  11.3  12.6  13.8  15.1  16.4
+  cards drawn                         1.05  1.13  1.18  1.26  1.40  1.36  1.37  1.46
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+    cantrips (spells)                 0.04  0.05  0.04  0.03  0.03  0.03  0.01  0.02
+    engines                           0.00  0.00  0.03  0.08  0.15  0.15  0.14  0.13
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.01  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.02
+    other permanents                  0.02  0.07  0.11  0.15  0.22  0.17  0.23  0.29
+  cards to hand by tutors and others  0.00  0.03  0.05  0.05  0.03  0.03  0.02  0.03
+  cards in hand (main phase)          6.80  5.42  4.38  3.56  3.04  2.76  2.93  2.93
+  spells cast, own turn               1.32  1.33  1.42  1.29  1.20  1.23  1.20  1.28
+  spells cast, others' turns after it  0.03  0.03  0.04  0.06  0.04  0.04  0.06  0.05
+  spells countered (of those)         0.11  0.12  0.14  0.13  0.14  0.16  0.23  0.19
+  mana available (main phase)         0.91  2.57  4.08  5.06  5.94  6.75  7.02  7.71
+  mana spent, own turn                1.31  2.59  3.64  3.83  4.27  5.40  5.42  6.05
+  mana spent, others' turns after it  0.05  0.14  0.35  0.43  0.53  0.44  0.59  0.66
+  life paid for cards                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.03
+  land drop made (%)                    99    94    80    64    52    44    41    37
+  missed, a land in hand (%)             0     0     0     0     0     0     0     1
+  missed, no land in hand (%)            1     6    20    36    48    56    59    62
+  cards drawn by source card, turns 1-8, per game: The One Ring 0.48, Staff of Compleation 0.23, Vexing Bauble 0.14, Scout's Warning 0.11, Reprieve 0.11, Gleaming Splendor 0.07, Tezzeret, Cruel Captain 0.05, Radiant Solar 0.05, Basalt Monolith 0.04, Fiend Hunter 0.03, Static Prison 0.03, Talon Gates of Madara 0.02, Coalition Relic 0.02, Touch the Spirit Realm 0.01, Dack Fayden, Helping Hand 0.01, Monumental Henge 0.01, Preston, the Vanisher 0.01, Timetwister 0.01, Ad Nauseam 0.01, Selvala, Heart of the Wilds 0.01, Mystic Remora 0.00, Urza's Cave 0.00, All-Fates Stalker 0.00, Apple of Eden, Isu Relic 0.00, Blind Obedience 0.00, Borne Upon a Wind 0.00, Felidar Guardian 0.00, Rhystic Study 0.00, Werefox Bodyguard 0.00
+  The One Ring out: 0.17 cycles a game, 2.76 cards a cycle out
+  Mystic Remora out: 0.00 cycles a game, 1.00 cards a cycle out; 1.33 tax triggers a cycle, 25% paid
+  Rhystic Study out: 0.00 cycles a game, 1.00 cards a cycle out; 7.00 tax triggers a cycle, 86% paid
+  engine funnel, % of turns ended (seen / cast / out):
+    The One Ring             T2 8/1/1  T3 8/4/3  T4 9/7/5  T6 11/10/6  T8 14/12/9; countered 0.024 a game
+  seen, never cast, at the end of turn 4 (where it is, games): The One Ring|hand 9, The One Ring|hand_payable 7
+  life paid by card, turns 1-8, per game: Ad Nauseam 0.01
+
+--- Card and mana flow: Kinnan (661 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    98    96    89    73    54    38
+  cards seen by the turn's end (cum.)   7.7   8.9  10.3  12.0  14.1  16.0  18.2  20.1
+  cards drawn                         1.00  1.12  1.26  1.74  1.99  2.24  2.77  2.89
+    draw step                         1.00  1.00  1.00  1.00  0.99  0.99  0.98  0.98
+    cantrips (spells)                 0.00  0.01  0.02  0.01  0.01  0.02  0.03  0.01
+    engines                           0.00  0.09  0.22  0.46  0.69  0.72  0.80  0.77
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.03  0.02  0.00  0.01  0.06
+    other permanents                  0.00  0.03  0.02  0.25  0.27  0.50  0.96  1.06
+  cards to hand by tutors and others  0.00  0.03  0.13  0.14  0.20  0.24  0.30  0.33
+  cards in hand (main phase)          6.65  5.45  5.12  4.75  4.72  4.76  5.12  5.27
+  spells cast, own turn               1.05  1.27  1.28  1.35  1.36  1.23  1.35  1.28
+  spells cast, others' turns after it  0.18  0.15  0.18  0.18  0.25  0.26  0.26  0.28
+  spells countered (of those)         0.07  0.09  0.09  0.10  0.13  0.16  0.16  0.13
+  mana available (main phase)         1.02  2.52  4.05  5.12  6.07  6.95  7.29  7.62
+  mana spent, own turn                0.94  2.50  3.89  5.07  6.22  6.62  7.43  7.76
+  mana spent, others' turns after it  0.05  0.12  0.40  0.54  0.76  0.85  0.72  0.56
+  life paid for cards                 0.00  0.01  0.04  0.16  0.14  0.06  0.04  0.04
+  land drop made (%)                    99    91    66    52    45    42    41    43
+  missed, a land in hand (%)             0     0     0     0     0     0     0     2
+  missed, no land in hand (%)            1     9    34    47    54    57    58    56
+  cards drawn by source card, turns 1-8, per game: Mystic Remora 1.14, Consecrated Sphinx 1.11, Rhystic Study 0.76, The One Ring 0.48, Faerie Mastermind 0.21, Necropotence 0.10, Borne Upon a Wind 0.09, Sylvan Library 0.08, Kinnan, Bonder Prodigy 0.07, Thrasios, Triton Hero 0.07, Esper Sentinel 0.06, Basalt Monolith 0.05, Colossal Skyturtle 0.04, Tymna the Weaver 0.03, The Cabbage Merchant 0.03, Formidable Speaker 0.02, Waterlogged Grove 0.02, Endurance 0.02, Volatile Stormdrake 0.02, Enduring Vitality 0.01, Selvala, Heart of the Wilds 0.01, Tyvar, Jubilant Brawler 0.00, Felidar Guardian 0.00, Radiant Solar 0.00, Tataru Taru 0.00, Voice of Victory 0.00, Wishclaw Talisman 0.00
+  Thrasios, Triton Hero out: 0.56 cycles a game, 0.12 cards a cycle out
+  Mystic Remora out: 0.36 cycles a game, 3.17 cards a cycle out; 3.31 tax triggers a cycle, 8% paid
+  Sylvan Library out: 0.30 cycles a game, 0.25 cards a cycle out
+  Faerie Mastermind out: 0.27 cycles a game, 0.78 cards a cycle out
+  Rhystic Study out: 0.26 cycles a game, 2.96 cards a cycle out; 4.64 tax triggers a cycle, 37% paid
+  The One Ring out: 0.24 cycles a game, 2.04 cards a cycle out
+  Consecrated Sphinx out: 0.13 cycles a game, 8.21 cards a cycle out
+  Tymna the Weaver out: 0.04 cycles a game, 0.88 cards a cycle out
+  Esper Sentinel out: 0.03 cycles a game, 1.90 cards a cycle out; 2.76 tax triggers a cycle, 31% paid
+  Necropotence out: 0.03 cycles a game, 3.37 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Consecrated Sphinx       T2 9/0/0  T3 10/1/1  T4 12/1/2  T6 18/6/8  T8 23/13/12; countered 0.005 a game
+    Faerie Mastermind        T2 7/1/1  T3 9/2/3  T4 12/6/7  T6 17/10/11  T8 20/13/12; countered 0.002 a game
+    Mystic Remora            T2 10/6/5  T3 11/10/8  T4 14/12/10  T6 17/15/8  T8 22/17/5; countered 0.029 a game
+    Rhystic Study            T2 8/1/1  T3 9/4/4  T4 10/6/5  T6 14/8/8  T8 18/11/13; countered 0.020 a game
+    Sylvan Library           T2 9/3/2  T3 10/6/5  T4 11/8/7  T6 14/11/9  T8 16/14/12; countered 0.017 a game
+    The One Ring             T2 11/1/1  T3 12/4/3  T4 14/7/6  T6 16/12/10  T8 20/16/14; countered 0.021 a game
+    Thrasios, Triton Hero    T2 10/2/2  T3 15/4/6  T4 19/8/14  T6 23/13/23  T8 28/17/30; countered 0.017 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Consecrated Sphinx|exile 3, Consecrated Sphinx|gy 15, Consecrated Sphinx|hand 41, Consecrated Sphinx|hand_payable 4, Consecrated Sphinx|lib 1, Consecrated Sphinx|other 1, Faerie Mastermind|exile 5, Faerie Mastermind|gy 3, Faerie Mastermind|hand 3, Faerie Mastermind|hand_payable 24, Mystic Remora|gy 1, Mystic Remora|hand_payable 10, Mystic Remora|lib 1, Rhystic Study|exile 4, Rhystic Study|gy 1, Rhystic Study|hand 11, Rhystic Study|hand_payable 11, Rhystic Study|other 1, Sylvan Library|hand 2, Sylvan Library|hand_payable 15, Sylvan Library|lib 1, The One Ring|gy 2, The One Ring|hand 23, The One Ring|hand_payable 18, The One Ring|other 1, Thrasios, Triton Hero|exile 6, Thrasios, Triton Hero|hand 2, Thrasios, Triton Hero|hand_payable 55, Thrasios, Triton Hero|lib 3
+  life paid by card, turns 1-8, per game: Necropotence 0.10, Sylvan Library 0.28, Tymna the Weaver 0.03
+
+--- Card and mana flow: Kraum/Tymna (643 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    95    89    73    57    44
+  cards seen by the turn's end (cum.)   7.8   9.1  10.9  13.4  16.0  18.6  21.5  24.1
+  cards drawn                         1.02  1.25  1.74  2.37  2.65  2.80  2.88  2.95
+    draw step                         1.00  1.00  1.00  0.99  0.97  0.96  0.95  0.95
+    cantrips (spells)                 0.00  0.02  0.01  0.02  0.03  0.03  0.01  0.02
+    engines                           0.00  0.15  0.41  0.73  0.81  0.88  0.93  0.93
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.05  0.26  0.53  0.75  0.82  0.84  0.89
+    other permanents                  0.02  0.04  0.07  0.10  0.10  0.11  0.14  0.15
+  cards to hand by tutors and others  0.02  0.07  0.09  0.13  0.16  0.15  0.17  0.14
+  cards in hand (main phase)          6.68  5.49  5.17  5.56  5.92  6.21  6.39  6.59
+  spells cast, own turn               1.00  1.04  1.11  1.31  1.46  1.56  1.69  1.57
+  spells cast, others' turns after it  0.18  0.21  0.24  0.31  0.38  0.39  0.43  0.44
+  spells countered (of those)         0.05  0.10  0.08  0.10  0.12  0.14  0.16  0.16
+  mana available (main phase)         1.02  2.59  3.52  4.20  4.95  5.48  6.15  6.91
+  mana spent, own turn                0.90  2.03  2.68  3.26  3.78  4.35  5.02  5.37
+  mana spent, others' turns after it  0.10  0.15  0.27  0.42  0.58  0.59  0.85  0.98
+  life paid for cards                 0.00  0.10  0.29  0.65  0.90  0.88  0.74  0.56
+  land drop made (%)                    99    92    72    56    51    55    58    56
+  missed, a land in hand (%)             0     0     1     3     6     4     4     3
+  missed, no land in hand (%)            1     7    27    41    43    41    38    41
+  cards drawn by source card, turns 1-8, per game: Tymna the Weaver 1.95, Kraum, Ludevic's Opus 1.00, Mystic Remora 0.94, Rhystic Study 0.92, Esper Sentinel 0.70, Ad Nauseam 0.53, Necropotence 0.43, Faerie Mastermind 0.16, Borne Upon a Wind 0.10, Gleaming Splendor 0.06, The One Ring 0.03, Consecrated Sphinx 0.02, Tataru Taru 0.02, Exhibition Tidecaller 0.01, Selvala, Heart of the Wilds 0.01, Felidar Guardian 0.01, Ragavan, Nimble Pilferer 0.00, Reprieve 0.00, Valley Floodcaller 0.00, Gitaxian Probe 0.00, The Cabbage Merchant 0.00
+  Tymna the Weaver out: 2.05 cycles a game, 0.95 cards a cycle out
+  Kraum, Ludevic's Opus out: 0.73 cycles a game, 1.37 cards a cycle out
+  Esper Sentinel out: 0.43 cycles a game, 1.60 cards a cycle out; 2.15 tax triggers a cycle, 32% paid
+  Mystic Remora out: 0.33 cycles a game, 2.88 cards a cycle out; 2.98 tax triggers a cycle, 7% paid
+  Rhystic Study out: 0.29 cycles a game, 3.17 cards a cycle out; 5.26 tax triggers a cycle, 42% paid
+  Faerie Mastermind out: 0.27 cycles a game, 0.59 cards a cycle out
+  Necropotence out: 0.12 cycles a game, 3.54 cards a cycle out
+  The One Ring out: 0.01 cycles a game, 2.75 cards a cycle out
+  Consecrated Sphinx out: 0.00 cycles a game, 8.00 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Ad Nauseam               T2 9/0/0  T3 10/0/0  T4 13/2/0  T6 24/10/0  T8 30/14/0; countered 0.020 a game
+    Esper Sentinel           T2 8/7/7  T3 12/10/9  T4 15/13/9  T6 21/18/10  T8 27/25/14; countered 0.006 a game
+    Faerie Mastermind        T2 9/4/4  T3 10/6/5  T4 12/8/6  T6 15/10/6  T8 19/13/9; countered 0.006 a game
+    Kraum, Ludevic's Opus    T2 100/2/2  T3 100/9/8  T4 100/21/19  T6 100/45/35  T8 100/63/50; countered 0.023 a game
+    Mystic Remora            T2 10/9/6  T3 12/11/8  T4 14/12/8  T6 19/16/6  T8 24/20/6; countered 0.039 a game
+    Necropotence             T2 9/0/0  T3 10/1/1  T4 13/3/3  T6 18/7/5  T8 27/11/6; countered 0.022 a game
+    Rhystic Study            T2 9/3/2  T3 10/6/5  T4 14/9/7  T6 19/14/10  T8 22/18/12; countered 0.036 a game
+    Tymna the Weaver         T2 100/20/19  T3 100/55/51  T4 100/73/59  T6 100/89/65  T8 100/94/61; countered 0.058 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Ad Nauseam|hand 45, Ad Nauseam|hand_payable 20, Ad Nauseam|lib 2, Esper Sentinel|hand_payable 15, Faerie Mastermind|exile 6, Faerie Mastermind|gy 2, Faerie Mastermind|hand 1, Faerie Mastermind|hand_payable 14, Kraum, Ludevic's Opus|other 475, Mystic Remora|exile 1, Mystic Remora|hand_payable 14, Necropotence|exile 1, Necropotence|gy 7, Necropotence|hand 5, Necropotence|hand_payable 43, Rhystic Study|exile 4, Rhystic Study|gy 1, Rhystic Study|hand 12, Rhystic Study|hand_payable 10, Rhystic Study|lib 1, Tymna the Weaver|other 165
+  life paid by card, turns 1-8, per game: Ad Nauseam 0.85, Necropotence 0.43, Tymna the Weaver 1.82
+
+--- Card and mana flow: Rograkh/Silas (663 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    96    89    71    52    40
+  cards seen by the turn's end (cum.)   7.9   9.2  10.7  12.5  14.1  16.1  17.8  19.4
+  cards drawn                         1.08  1.19  1.43  1.71  1.78  1.88  1.83  1.78
+    draw step                         1.00  1.00  1.00  0.99  0.97  0.95  0.94  0.94
+    cantrips (spells)                 0.05  0.02  0.03  0.05  0.05  0.06  0.03  0.06
+    engines                           0.00  0.10  0.27  0.48  0.57  0.68  0.60  0.52
+    wheels                            0.01  0.03  0.08  0.15  0.14  0.10  0.20  0.13
+    commanders                        0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    other permanents                  0.01  0.03  0.05  0.04  0.05  0.09  0.05  0.12
+  cards to hand by tutors and others  0.05  0.06  0.12  0.15  0.11  0.13  0.11  0.14
+  cards in hand (main phase)          6.77  5.46  5.21  5.14  5.28  5.47  5.48  5.40
+  spells cast, own turn               1.25  1.98  1.26  1.24  1.20  1.24  1.33  1.22
+  spells cast, others' turns after it  0.19  0.20  0.21  0.23  0.20  0.21  0.25  0.17
+  spells countered (of those)         0.10  0.12  0.09  0.11  0.12  0.14  0.16  0.14
+  mana available (main phase)         1.03  2.41  3.28  3.88  4.28  4.65  5.06  5.42
+  mana spent, own turn                0.98  2.19  2.62  2.91  2.96  3.32  3.66  3.85
+  mana spent, others' turns after it  0.13  0.13  0.20  0.27  0.30  0.28  0.44  0.48
+  life paid for cards                 0.00  0.01  0.06  0.24  0.22  0.39  0.22  0.08
+  land drop made (%)                    98    88    62    49    39    38    34    34
+  missed, a land in hand (%)             0     0     0     1     2     1     1     0
+  missed, no land in hand (%)            2    12    38    49    59    61    65    66
+  cards drawn by source card, turns 1-8, per game: Rhystic Study 0.79, Mystic Remora 0.75, Necropotence 0.55, Timetwister 0.50, Ad Nauseam 0.24, Vexing Bauble 0.16, Gitaxian Probe 0.12, Wheel of Fortune 0.11, Praetor's Grasp 0.08, Borne Upon a Wind 0.08, Windfall 0.03, Felidar Guardian 0.01, Grinding Station 0.01, The One Ring 0.01, Ragavan, Nimble Pilferer 0.00, Silas Renn, Seeker Adept 0.00, Wishclaw Talisman 0.00, Paradise Mantle 0.00, Radiant Solar 0.00, Reprieve 0.00, Selvala, Heart of the Wilds 0.00
+  Mystic Remora out: 0.27 cycles a game, 2.78 cards a cycle out; 2.98 tax triggers a cycle, 8% paid
+  Rhystic Study out: 0.22 cycles a game, 3.50 cards a cycle out; 5.80 tax triggers a cycle, 41% paid
+  Necropotence out: 0.13 cycles a game, 4.40 cards a cycle out
+  The One Ring out: 0.01 cycles a game, 1.50 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Ad Nauseam               T2 8/0/0  T3 10/0/0  T4 12/1/0  T6 13/3/0  T8 16/6/0; countered 0.009 a game
+    Mystic Remora            T2 8/6/5  T3 10/8/6  T4 11/9/6  T6 14/11/5  T8 14/12/4; countered 0.027 a game
+    Necropotence             T2 9/0/0  T3 11/2/1  T4 13/5/4  T6 16/10/6  T8 17/12/6; countered 0.029 a game
+    Rhystic Study            T2 11/2/2  T3 12/6/5  T4 14/8/6  T6 16/11/8  T8 17/11/8; countered 0.024 a game
+    Timetwister              T2 8/1/0  T3 9/2/0  T4 11/4/0  T6 15/7/0  T8 18/11/0; countered 0.000 a game
+    Wheel of Fortune         T2 9/0/0  T3 11/0/0  T4 13/0/0  T6 19/1/0  T8 21/2/0; countered 0.000 a game
+    Windfall                 T2 8/0/0  T3 9/0/0  T4 11/0/0  T6 16/1/0  T8 18/0/0; countered 0.000 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Ad Nauseam|exile 1, Ad Nauseam|gy 1, Ad Nauseam|hand 55, Ad Nauseam|hand_payable 13, Mystic Remora|exile 1, Mystic Remora|hand_payable 10, Necropotence|exile 3, Necropotence|gy 6, Necropotence|hand 12, Necropotence|hand_payable 25, Necropotence|lib 1, Rhystic Study|exile 3, Rhystic Study|gy 1, Rhystic Study|hand 14, Rhystic Study|hand_payable 20, Timetwister|exile 4, Timetwister|gy 3, Timetwister|hand 13, Timetwister|hand_payable 27, Wheel of Fortune|exile 5, Wheel of Fortune|gy 3, Wheel of Fortune|hand 17, Wheel of Fortune|hand_payable 51, Wheel of Fortune|lib 2, Windfall|exile 7, Windfall|gy 7, Windfall|hand 12, Windfall|hand_payable 38, Windfall|lib 1
+  life paid by card, turns 1-8, per game: Ad Nauseam 0.35, Necropotence 0.55
+
+--- Card and mana flow: Rograkh/Thrasios (695 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    99    96    89    74    57    43
+  cards seen by the turn's end (cum.)   7.9   9.1  10.5  12.1  14.1  15.9  18.1  20.2
+  cards drawn                         1.01  1.13  1.25  1.52  1.88  2.20  2.48  2.53
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  1.00  1.00
+    cantrips (spells)                 0.00  0.01  0.01  0.01  0.03  0.02  0.02  0.03
+    engines                           0.00  0.10  0.11  0.24  0.36  0.54  0.50  0.45
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.02
+    commanders                        0.00  0.01  0.05  0.16  0.33  0.49  0.69  0.79
+    other permanents                  0.01  0.01  0.08  0.11  0.16  0.15  0.27  0.25
+  cards to hand by tutors and others  0.02  0.07  0.16  0.18  0.22  0.20  0.23  0.28
+  cards in hand (main phase)          6.80  5.71  5.42  4.91  4.80  4.84  5.10  5.25
+  spells cast, own turn               2.04  1.13  1.33  1.37  1.50  1.49  1.62  1.60
+  spells cast, others' turns after it  0.13  0.12  0.16  0.16  0.24  0.25  0.29  0.30
+  spells countered (of those)         0.11  0.06  0.06  0.08  0.12  0.09  0.10  0.10
+  mana available (main phase)         0.94  2.54  3.58  4.92  6.34  7.94  8.81  9.85
+  mana spent, own turn                1.00  2.08  3.23  4.43  6.00  7.18  7.67  8.75
+  mana spent, others' turns after it  0.03  0.03  0.25  0.65  1.23  1.65  2.03  2.44
+  life paid for cards                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  land drop made (%)                    99    96    80    66    56    48    45    47
+  missed, a land in hand (%)             0     0     0     0     0     1     1     0
+  missed, no land in hand (%)            1     4    20    34    43    52    55    52
+  cards drawn by source card, turns 1-8, per game: Thrasios, Triton Hero 1.59, Mystic Remora 0.92, Rhystic Study 0.69, Faerie Mastermind 0.26, Borne Upon a Wind 0.10, The Cabbage Merchant 0.09, Talon Gates of Madara 0.04, Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun 0.02, Esper Sentinel 0.02, Consecrated Sphinx 0.02, Expedition Map 0.02, Radiant Solar 0.01, Spellseeker 0.01, The One Ring 0.01, Vibrance 0.01, Selvala, Heart of the Wilds 0.01, Timetwister 0.01, Valley Floodcaller 0.01, Cloud of Faeries 0.01, Earthcraft 0.00, Formidable Speaker 0.00, Reprieve 0.00, Springheart Nantuko 0.00, Candelabra of Tawnos 0.00, Emergence Zone 0.00, Kinnan, Bonder Prodigy 0.00
+  Thrasios, Triton Hero out: 3.08 cycles a game, 0.52 cards a cycle out
+  Faerie Mastermind out: 0.25 cycles a game, 1.05 cards a cycle out
+  Mystic Remora out: 0.23 cycles a game, 3.91 cards a cycle out; 3.85 tax triggers a cycle, 6% paid
+  Rhystic Study out: 0.19 cycles a game, 3.66 cards a cycle out; 5.51 tax triggers a cycle, 38% paid
+  Esper Sentinel out: 0.01 cycles a game, 2.80 cards a cycle out; 3.40 tax triggers a cycle, 18% paid
+  The One Ring out: 0.00 cycles a game, 3.00 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Faerie Mastermind        T2 8/1/1  T3 8/3/3  T4 10/5/6  T6 15/10/9  T8 20/15/11; countered 0.006 a game
+    Mystic Remora            T2 8/5/4  T3 10/8/6  T4 11/10/6  T6 15/11/4  T8 19/14/5; countered 0.035 a game
+    Rhystic Study            T2 8/0/0  T3 10/2/2  T4 12/6/5  T6 16/10/8  T8 17/13/9; countered 0.022 a game
+    Thrasios, Triton Hero    T2 100/76/65  T3 100/88/71  T4 100/93/76  T6 100/96/80  T8 100/98/76; countered 0.128 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Faerie Mastermind|exile 3, Faerie Mastermind|hand 2, Faerie Mastermind|hand_payable 25, Faerie Mastermind|lib 1, Mystic Remora|exile 1, Mystic Remora|hand_payable 9, Mystic Remora|other 1, Rhystic Study|exile 2, Rhystic Study|gy 7, Rhystic Study|hand 8, Rhystic Study|hand_payable 21, Rhystic Study|lib 1, Thrasios, Triton Hero|other 47
+  life paid by card, turns 1-8, per game: -
+
+--- Card and mana flow: Sisay (673 games; own turns 1-8) ---
+  own turn                              T1    T2    T3    T4    T5    T6    T7    T8
+  turns that began (%)                 100   100    98    95    88    72    54    39
+  cards seen by the turn's end (cum.)   7.9   9.0  10.2  11.6  13.2  14.6  15.9  17.0
+  cards drawn                         1.02  1.12  1.19  1.36  1.57  1.66  1.57  1.79
+    draw step                         1.00  1.00  1.00  1.00  1.00  1.00  0.99  1.00
+    cantrips (spells)                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    engines                           0.00  0.09  0.17  0.24  0.40  0.55  0.49  0.62
+    wheels                            0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+    commanders                        0.00  0.00  0.00  0.00  0.02  0.00  0.01  0.00
+    other permanents                  0.02  0.03  0.02  0.12  0.14  0.11  0.09  0.17
+  cards to hand by tutors and others -0.00  0.01  0.04  0.05  0.06  0.05  0.06  0.08
+  cards in hand (main phase)          6.81  5.71  5.27  4.90  4.53  4.41  4.32  4.47
+  spells cast, own turn               0.93  1.06  1.31  1.34  1.29  1.20  1.23  1.30
+  spells cast, others' turns after it  0.12  0.12  0.14  0.18  0.21  0.20  0.17  0.19
+  spells countered (of those)         0.04  0.07  0.10  0.10  0.12  0.14  0.13  0.18
+  mana available (main phase)         1.02  2.73  3.85  4.82  6.16  7.31  7.98  8.50
+  mana spent, own turn                0.80  2.31  3.40  4.77  6.45  7.36  8.14  8.53
+  mana spent, others' turns after it  0.06  0.08  0.12  0.26  0.38  0.33  0.52  0.45
+  life paid for cards                 0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00
+  land drop made (%)                   100    96    78    59    50    45    37    38
+  missed, a land in hand (%)             0     0     0     0     0     0     0     0
+  missed, no land in hand (%)            0     4    22    40    50    55    63    62
+  cards drawn by source card, turns 1-8, per game: Mystic Remora 0.64, Rhystic Study 0.57, Esper Sentinel 0.54, Selvala, Heart of the Wilds 0.05, Teferi, Time Raveler 0.04, Magda, Brazen Outlaw 0.03, Sisay, Weatherlight Captain 0.03, Gleaming Splendor 0.03, Derevi, Empyrial Tactician 0.02, The Cabbage Merchant 0.02, Tataru Taru 0.02, Emiel the Blessed 0.02, Colossal Skyturtle 0.01, Consecrated Sphinx 0.01, Touch the Spirit Realm 0.01, Faerie Mastermind 0.01, Mount Doom 0.01, Ragavan, Nimble Pilferer 0.00, Radiant Solar 0.00, Teferi, Who Slows the Sunset 0.00, Felidar Guardian 0.00, Tyvar, Jubilant Brawler 0.00, Valley Floodcaller 0.00
+  Esper Sentinel out: 0.32 cycles a game, 1.66 cards a cycle out; 2.35 tax triggers a cycle, 34% paid
+  Mystic Remora out: 0.20 cycles a game, 3.17 cards a cycle out; 3.35 tax triggers a cycle, 10% paid
+  Rhystic Study out: 0.18 cycles a game, 3.18 cards a cycle out; 5.56 tax triggers a cycle, 43% paid
+  Faerie Mastermind out: 0.01 cycles a game, 1.50 cards a cycle out
+  Thrasios, Triton Hero out: 0.00 cycles a game, 0.00 cards a cycle out
+  engine funnel, % of turns ended (seen / cast / out):
+    Esper Sentinel           T2 8/4/4  T3 10/7/6  T4 10/8/8  T6 11/8/8  T8 14/11/8; countered 0.007 a game
+    Mystic Remora            T2 8/5/3  T3 9/7/4  T4 11/9/5  T6 14/13/4  T8 16/14/4; countered 0.051 a game
+    Rhystic Study            T2 7/0/0  T3 9/2/1  T4 10/4/3  T6 17/10/8  T8 16/12/9; countered 0.019 a game
+  seen, never cast, at the end of turn 4 (where it is, games): Esper Sentinel|gy 1, Esper Sentinel|hand_payable 11, Mystic Remora|hand_payable 10, Mystic Remora|lib 1, Rhystic Study|exile 2, Rhystic Study|gy 2, Rhystic Study|hand 5, Rhystic Study|hand_payable 29, Rhystic Study|lib 2
+  life paid by card, turns 1-8, per game: -
+Target sources:
+  seat1_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  seat2_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  seat3_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  seat4_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  win_round_median: JD's speed target (TARGETS-t6.md, 2026-10-19); Playgroup average win turn of the Tier 6 commanders, 6-7 (n=2722, read 2026-10-22)
+  win_combo_alt: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  win_damage: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  win_commander_damage: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  win_poison: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  deck_win_spread: EDHTop16 commander stats, 2026-04-18 to 2026-10-17 (TARGETS-t6.md); band set by JD (n=4700, read 2026-10-17)

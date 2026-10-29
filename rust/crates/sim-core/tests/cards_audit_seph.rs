@@ -168,5 +168,11 @@ fn late_tutors_find_the_wipe_under_pressure_and_muldrotha_in_a_long_game() {
     perm(&mut g, P0, "Archon of Cruelty");
     assert_eq!(seph::seph_tutor_target(&g, P0), Some("Muldrotha, the Gravetide")); // the long game
     g.player_mut(P0).turns = 4;
+    // the tutor looks in the library: keep Swan Song there whatever the opening hand dealt
+    let sw = card(&g, "Swan Song");
+    g.player_mut(P0).hand.retain(|&c| c != sw);
+    if !g.player(P0).library.contains(&sw) {
+        g.player_mut(P0).library.push(sw);
+    }
     assert_eq!(seph::seph_tutor_target(&g, P0), Some("Swan Song"));
 }

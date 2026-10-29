@@ -45,11 +45,11 @@ fn go(g: &mut Game) {
 }
 
 #[test]
-fn the_gate_is_the_seven_tier_6_keys() {
+fn the_gate_is_the_eight_tier_6_keys() {
     for k in t6_plans::T6_KEYS {
         assert!(t6_plans::is_t6_key(k));
     }
-    assert_eq!(t6_plans::T6_KEYS.len(), 7);
+    assert_eq!(t6_plans::T6_KEYS.len(), 8); // the six pool decks, godo (a test seat) and scion
     for k in ["seph", "sauron", "yshtola", "cloud", "kefka"] {
         assert!(!t6_plans::is_t6_key(k));
     }
@@ -154,7 +154,8 @@ fn going_waits_when_the_table_can_stop_it_and_goes_when_it_cannot() {
 
 #[test]
 fn silence_is_cast_before_the_line_when_opponents_could_answer() {
-    let mut g = oracle_table(&[KRAUM, SISAY, "seph", "sauron"], 5);
+    // two blue opponents who could answer: Y'shtola's list holds enough interaction to count (stop chance 0.25)
+    let mut g = oracle_table(&[KRAUM, SISAY, "yshtola", "sauron"], 5);
     lands(&mut g, P0, "Plains", 2, false);
     hand(&mut g, P0, &["Silence"]);
     lands(&mut g, P1, "Island", 4, false);

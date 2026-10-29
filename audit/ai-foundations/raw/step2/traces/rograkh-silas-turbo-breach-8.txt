@@ -1,0 +1,88 @@
+Play-by-play of goldfish game 8 (seed 500008): Rograkh/Silas alone, lookahead AI
+Seat order: Rograkh/Silas, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Rograkh/Silas turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Phyrexian Tower, Jeska's Will, Red Elemental Blast, Paradise Mantle, Wheel of Fortune, Final Fortune, An Offer You Can't Refuse
+R1    Rograkh/Silas plays Phyrexian Tower
+R1    Rograkh/Silas casts Paradise Mantle
+R1        [Rograkh/Silas decides: Paradise Mantle 100%, stop 0% -> Paradise Mantle [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Rograkh/Silas turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Jeska's Will, Red Elemental Blast, Wheel of Fortune, Final Fortune, An Offer You Can't Refuse, Daze
+R2    Rograkh/Silas plays Undercity Sewers
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Rograkh/Silas turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Jeska's Will, Red Elemental Blast, Wheel of Fortune, Final Fortune, An Offer You Can't Refuse, Daze
+R3    Rograkh/Silas plays Underground Sea
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1%, Jeska's Will 0% -> stop (hold mana) [search]]
+R3        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1%, Jeska's Will 0% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Rograkh/Silas turn 4: life 40, 6 cards in hand, 3 lands
+R4      hand: Jeska's Will, Red Elemental Blast, Wheel of Fortune, Final Fortune, An Offer You Can't Refuse, Daze
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 61%, Rograkh, Son of Rohgahh 30%, Demonic Tutor 8%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4        [Rograkh/Silas decides: Silas Renn, Seeker Adept 61%, Rograkh, Son of Rohgahh 30%, Demonic Tutor 8%, stop (hold mana) 1% -> Demonic Tutor [search]]
+R4    Rograkh/Silas casts Demonic Tutor
+R4      Rograkh/Silas tutors Thassa's Oracle
+R4        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Rograkh/Silas turn 5: life 40, 7 cards in hand, 3 lands
+R5      hand: Jeska's Will, Red Elemental Blast, Wheel of Fortune, Final Fortune, An Offer You Can't Refuse, Daze, Thassa's Oracle
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 66%, Rograkh, Son of Rohgahh 33%, stop (hold mana) 1%, Gamble 0% -> Gamble [search]]
+R5    Rograkh/Silas casts Gamble
+R5      Rograkh/Silas tutors Demonic Consultation
+R5      Gamble discards Final Fortune
+R5        [Rograkh/Silas decides: Rograkh, Son of Rohgahh 87%, Silas Renn, Seeker Adept 11%, stop (hold mana) 3% -> Rograkh, Son of Rohgahh [search]]
+R5    Rograkh/Silas casts Rograkh, Son of Rohgahh
+R5        [Rograkh/Silas decides: Silas Renn, Seeker Adept 78%, stop (hold mana) 19%, equip Paradise Mantle 3% -> Silas Renn, Seeker Adept [search]]
+R5    Rograkh/Silas casts Silas Renn, Seeker Adept
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Rograkh/Silas turn 6: life 40, 7 cards in hand, 3 lands
+R6      hand: Jeska's Will, Red Elemental Blast, Wheel of Fortune, An Offer You Can't Refuse, Daze, Thassa's Oracle, Demonic Consultation
+R6        [Rograkh/Silas decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R6    Rograkh/Silas goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R6    Rograkh/Silas casts Thassa's Oracle
+R6    Rograkh/Silas casts Demonic Consultation
+R6      Rograkh/Silas exiles its library
+R6  *** Goldfish 2 is eliminated (life 40) by Rograkh/Silas
+R6  *** Goldfish 3 is eliminated (life 40) by Rograkh/Silas
+R6  *** Goldfish 4 is eliminated (life 40) by Rograkh/Silas
+R6  *** Rograkh/Silas wins by combo
+Kill: own turn 6 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (fast mana / rock) | held (payable, not offered): Red Elemental Blast, An Offer You Can't Refuse, Daze
+  T2  progressed (land only) | held (payable, not offered): Red Elemental Blast, An Offer You Can't Refuse, Daze
+  T3  progressed (land only) | held (payable, not offered): Red Elemental Blast, Wheel of Fortune, An Offer You Can't Refuse, Daze
+  T4  progressed (tutor) | held (payable, not offered): Red Elemental Blast, Wheel of Fortune, An Offer You Can't Refuse, Daze, Thassa's Oracle
+  T5  progressed (tutor) | held (payable, not offered): Red Elemental Blast, Wheel of Fortune, An Offer You Can't Refuse, Daze, Thassa's Oracle, Demonic Consultation
+  T6  won
+  cleanup discards: none
+  stops with another option offered: T2 main 1 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T2 main 2 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5); T3 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T3 main 2 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T4 main 1 look-ahead "stop (hold mana)" over Silas Renn, Seeker Adept (8.2); T4 main 2 look-ahead "stop (hold mana)" over Rograkh, Son of Rohgahh (7.5)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

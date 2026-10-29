@@ -1,0 +1,182 @@
+===== noise (EVN lines), old evaluation (noise-base-t6) and the three rules (noise-all3-t6)
+== noise-base-t6
+group                           dec |  mean d     |d|   SE(d) |d|<SE CRNcut |  flipB  flipM |   topB   topM chosen
+all                           15155 |   -0.73    7.96    7.72    47%    48% |    60%    48% |    30%    59%    30%
+commander/main1/nohold         5012 |   -1.47    6.68    6.64    47%    54% |    61%    52% |    25%    54%    25%
+commander/main2/nohold         2770 |   -0.90    7.56    6.50    43%    45% |    57%    48% |    30%    56%    30%
+engine/main1/nohold            1760 |    0.36    7.39    7.75    52%    46% |    62%    46% |    35%    64%    35%
+engine/main2/nohold             936 |    0.17    8.70    7.82    47%    39% |    51%    33% |    43%    72%    43%
+group                           dec |  mean d     |d|   SE(d) |d|<SE CRNcut |  flipB  flipM |   topB   topM chosen
+mana/main1/nohold              2933 |   -0.33    9.14    9.49    48%    50% |    63%    48% |    30%    59%    30%
+mana/main2/nohold              1744 |   -0.61   10.45    9.72    46%    40% |    57%    45% |    35%    62%    35%
+== noise-all3-t6
+group                           dec |  mean d     |d|   SE(d) |d|<SE CRNcut |  flipB  flipM |   topB   topM chosen
+all                           10168 |    0.45    7.35    7.57    53%    50% |    56%    41% |    39%    69%    69%
+commander/main1/hold           1648 |   -0.17    5.98    6.40    56%    49% |    56%    46% |    33%    63%    63%
+commander/main1/nohold         2250 |    0.29    5.46    5.93    54%    54% |    56%    41% |    36%    68%    68%
+commander/main2/hold            353 |   -0.32    8.41    7.34    47%    46% |    50%    37% |    39%    66%    66%
+commander/main2/nohold          480 |    0.88    8.18    7.34    46%    45% |    54%    37% |    47%    72%    72%
+engine/main1/hold               585 |    0.41    7.50    8.12    56%    46% |    55%    37% |    39%    72%    72%
+engine/main1/nohold            1090 |    0.38    6.67    7.01    53%    52% |    57%    40% |    42%    72%    72%
+engine/main2/hold               129 |   -0.34    9.54    9.00    51%    48% |    56%    40% |    40%    71%    71%
+engine/main2/nohold             255 |    3.05    9.40    9.31    45%    41% |    47%    26% |    55%    80%    80%
+group                           dec |  mean d     |d|   SE(d) |d|<SE CRNcut |  flipB  flipM |   topB   topM chosen
+mana/main1/hold                1008 |    0.11    8.65    9.11    53%    47% |    63%    49% |    32%    65%    65%
+mana/main1/nohold              1637 |    0.36    8.53    8.90    53%    54% |    56%    40% |    41%    72%    72%
+mana/main2/hold                 257 |    2.20   10.22    9.99    44%    37% |    57%    44% |    34%    65%    65%
+mana/main2/nohold               476 |    2.57   10.72    9.95    45%    45% |    52%    33% |    49%    78%    78%
+===== output: top - stop
+commander/main1/hold                          1960  14.8  58.4  3.6 |  -2.88  11.6  0.001 -0.000  -0.08  -0.05   0.03   0.01   0.05   0.00  -0.00   0.02  -0.12   3.05   0.24   0.50
+commander/main1/nohold                        3060  34.3  32.5  3.4 |  -0.52  12.3 -0.000  0.005   0.01  -0.05  -0.04  -0.00   0.04   0.01  -0.00   0.02   0.03  -0.00   0.47   0.47
+commander/main2/hold                          1361  18.6  58.3  3.3 |  -2.20  12.2  0.004  0.005   0.85  -0.06   0.61   0.07   0.07   0.00  -0.00   0.03   0.01   3.03   0.30   0.56
+commander/main2/nohold                        1364  42.7  36.8  2.9 |   0.35  14.2  0.001  0.004   0.63  -0.01   0.53   0.07   0.04   0.05  -0.01   0.16  -0.39  -0.00   0.55   0.55
+engine/main1/hold                              604  21.0  56.5  3.6 |  -2.23  13.7 -0.001  0.001   0.53  -0.05   0.38   0.01   0.14   0.03   0.00   0.12  -0.01   2.91   0.29   0.51
+engine/main1/nohold                           1141  41.5  33.4  3.2 |   0.89  12.5  0.002 -0.004   0.60  -0.08   0.54   0.09   0.12   0.01   0.00   0.03  -0.13  -0.00   0.52   0.52
+engine/main2/hold                              430  34.0  42.3  3.4 |  -1.30  15.0  0.014  0.017   2.28  -0.22   1.38   0.06   0.54   0.04  -0.00   0.22   0.32   2.98   0.48   0.63
+engine/main2/nohold                            532  53.0  25.6  3.0 |   3.55  14.5  0.020  0.006   2.47  -0.19   1.49   0.08   0.44   0.04  -0.00   0.29   0.42  -0.00   0.68   0.68
+group                                          dec  top% stop% opts | top - stop, mean over all decisions (raw terms over open playouts)
+mana/main1/hold                               1253  17.6  49.3  4.1 |  -2.68  15.9  0.004  0.003   0.50  -0.07   0.45   0.10  -0.03  -0.00   0.00  -0.06   0.10   3.36   0.30   0.50
+mana/main1/nohold                             1884  40.4  33.5  3.3 |   1.11  15.3  0.005 -0.005   0.18   0.01   0.43   0.10   0.02   0.02   0.00   0.09  -0.50  -0.00   0.52   0.52
+mana/main2/hold                                864  22.8  48.7  3.7 |  -2.08  16.1  0.010  0.015   2.09  -0.13   1.95   0.27  -0.03   0.02   0.02   0.15  -0.18   3.36   0.38   0.61
+mana/main2/nohold                             1027  45.5  32.2  3.0 |   2.35  20.5  0.017  0.003   1.77  -0.07   1.63   0.26  -0.14   0.04   0.01   0.11  -0.21  -0.00   0.58   0.58
+                                                                    |  score    sd    win   loss  oeval   life  board  power   hand  lands  treas  combo    opp   hold    t>s  t>s-h
+commander/main1/hold                       1960   14.8   58.4 |     0.71     0.72 |     0.62     0.68
+commander/main1/nohold                     3060   34.3   32.5 |     0.70     0.71 |     0.00     0.00
+commander/main2/hold                       1361   18.6   58.3 |     0.73     0.74 |     0.68     1.00
+commander/main2/nohold                     1364   42.7   36.8 |     0.74     0.78 |     0.00     0.00
+engine/main1/hold                           604   21.0   56.5 |     0.99     0.88 |     0.61     0.64
+engine/main1/nohold                        1141   41.5   33.4 |     0.98     0.93 |     0.00     0.00
+engine/main2/hold                           430   34.0   42.3 |     0.99     0.68 |     0.69     1.00
+engine/main2/nohold                         532   53.0   25.6 |     0.98     0.69 |     0.00     0.00
+group                                       dec   top%  stop% | cast:top cast:stp | held:top held:stp
+mana/main1/hold                            1253   17.6   49.3 |     1.00     0.95 |     0.67     0.71
+mana/main1/nohold                          1884   40.4   33.5 |     1.00     0.97 |     0.00     0.00
+mana/main2/hold                             864   22.8   48.7 |     1.00     0.80 |     0.76     0.99
+mana/main2/nohold                          1027   45.5   32.2 |     1.00     0.76 |     0.00     0.00
+===== hold: top - stop
+commander/main1/hold                          1561  31.6  33.6  3.4 |  -0.55  11.8  0.001  0.004  -0.08  -0.03   0.00   0.00   0.08  -0.00  -0.00  -0.02  -0.13   0.22   0.46   0.49
+commander/main1/nohold                        3007  33.8  32.5  3.4 |  -0.12  10.8 -0.001  0.001  -0.01  -0.04  -0.04   0.01   0.05   0.01   0.00   0.01  -0.01  -0.00   0.47   0.47
+commander/main2/hold                           739  33.6  45.1  3.0 |  -2.25  15.0 -0.001  0.021   0.79  -0.05   0.44   0.06   0.12  -0.01  -0.01   0.07   0.18   0.91   0.44   0.51
+commander/main2/nohold                        1179  44.8  34.6  2.9 |   0.49  14.2  0.000  0.001   0.65  -0.02   0.59   0.08  -0.00   0.02  -0.01   0.23  -0.22  -0.00   0.58   0.58
+engine/main1/hold                              531  36.7  32.6  3.6 |   0.62  13.7  0.006 -0.001   0.56  -0.05   0.51   0.01   0.20   0.02  -0.00   0.17  -0.25   0.20   0.52   0.54
+engine/main1/nohold                           1188  45.5  30.3  3.2 |   0.93  11.9  0.002 -0.003   0.53  -0.08   0.40   0.04   0.10   0.03  -0.00   0.02   0.05  -0.01   0.56   0.55
+engine/main2/hold                              273  45.1  30.4  3.1 |   0.12  17.2  0.009  0.018   2.47  -0.25   1.79   0.12   0.63   0.10  -0.01   0.53  -0.38   0.87   0.58   0.66
+engine/main2/nohold                            428  49.1  30.8  2.9 |   1.29  14.8  0.013  0.018   2.22  -0.23   1.69   0.17   0.50   0.10  -0.00   0.33  -0.17  -0.00   0.62   0.62
+group                                          dec  top% stop% opts | top - stop, mean over all decisions (raw terms over open playouts)
+mana/main1/hold                               1028  33.8  27.1  3.8 |   0.90  14.3  0.008 -0.001   0.20  -0.03   0.27   0.05   0.03   0.01   0.01   0.02  -0.19   0.12   0.55   0.55
+mana/main1/nohold                             1780  37.8  33.3  3.4 |  -0.25  16.2  0.005  0.009   0.12  -0.00   0.10   0.03  -0.03  -0.00  -0.01  -0.01   0.01  -0.02   0.50   0.50
+mana/main2/hold                                489  37.0  36.0  3.5 |  -0.54  15.0  0.011  0.021   1.25  -0.17   1.45   0.30  -0.10  -0.04  -0.00  -0.02   0.23   0.70   0.55   0.58
+mana/main2/nohold                              881  48.4  29.7  3.0 |   2.39  18.4  0.025  0.013   1.73  -0.12   1.91   0.35  -0.27  -0.01  -0.00   0.16   0.06  -0.00   0.61   0.61
+                                                                    |  score    sd    win   loss  oeval   life  board  power   hand  lands  treas  combo    opp   hold    t>s  t>s-h
+commander/main1/hold                       1561   31.6   33.6 |     0.70     0.70 |     0.74     0.80
+commander/main1/nohold                     3007   33.8   32.5 |     0.71     0.71 |     0.00     0.00
+commander/main2/hold                        739   33.6   45.1 |     0.71     0.72 |     0.65     1.00
+commander/main2/nohold                     1179   44.8   34.6 |     0.74     0.76 |     0.00     0.00
+engine/main1/hold                           531   36.7   32.6 |     0.99     0.90 |     0.73     0.79
+engine/main1/nohold                        1188   45.5   30.3 |     0.99     0.93 |     0.00     0.00
+engine/main2/hold                           273   45.1   30.4 |     0.98     0.68 |     0.67     1.00
+engine/main2/nohold                         428   49.1   30.8 |     0.98     0.70 |     0.00     0.00
+group                                       dec   top%  stop% | cast:top cast:stp | held:top held:stp
+mana/main1/hold                            1028   33.8   27.1 |     1.00     0.96 |     0.79     0.83
+mana/main1/nohold                          1780   37.8   33.3 |     1.00     0.96 |     0.00     0.00
+mana/main2/hold                             489   37.0   36.0 |     1.00     0.80 |     0.78     1.00
+mana/main2/nohold                           881   48.4   29.7 |     1.00     0.76 |     0.00     0.00
+===== both: top - stop
+commander/main1/hold                          1470  34.1  32.1  3.4 |   0.25  10.9  0.004 -0.001   0.02  -0.05  -0.05  -0.02   0.06  -0.01  -0.01   0.02   0.10   0.24   0.48   0.50
+commander/main1/nohold                        3110  34.3  31.0  3.4 |   0.08  12.0  0.000 -0.000   0.12  -0.04   0.00   0.01   0.05   0.00  -0.00   0.00   0.14  -0.00   0.48   0.48
+commander/main2/hold                           719  33.9  43.0  3.1 |  -1.11  14.4 -0.003  0.008   0.87   0.00   0.72   0.10   0.19   0.01  -0.02   0.08  -0.36   0.90   0.47   0.54
+commander/main2/nohold                        1195  41.7  36.3  2.9 |  -0.09  15.6 -0.001  0.008   0.62  -0.03   0.49   0.06   0.01   0.04  -0.01   0.17  -0.15  -0.00   0.55   0.55
+engine/main1/hold                              520  38.7  32.7  3.6 |   0.42  15.0  0.004  0.002   0.58  -0.03   0.39   0.03   0.13  -0.01  -0.01   0.05   0.19   0.11   0.53   0.54
+engine/main1/nohold                           1165  43.6  33.0  3.2 |   0.08  13.1 -0.002  0.002   0.59  -0.04   0.36   0.06   0.10   0.00   0.00   0.09   0.18  -0.01   0.53   0.53
+engine/main2/hold                              273  43.2  33.7  3.3 |  -1.16  16.4 -0.001  0.020   1.94  -0.24   0.95   0.00   0.52   0.05  -0.01   0.29   0.26   0.83   0.55   0.61
+engine/main2/nohold                            468  58.3  24.6  2.9 |   2.04  15.9  0.012  0.017   2.92  -0.27   1.52   0.07   0.55   0.07  -0.01   0.30   0.65  -0.00   0.71   0.71
+group                                          dec  top% stop% opts | top - stop, mean over all decisions (raw terms over open playouts)
+mana/main1/hold                               1011  33.8  29.6  3.9 |  -0.21  14.5  0.005  0.010   0.33  -0.04   0.36   0.06  -0.00   0.01   0.00  -0.04  -0.05   0.16   0.52   0.53
+mana/main1/nohold                             1945  38.7  33.2  3.4 |   0.06  16.0  0.005  0.005   0.29  -0.04   0.30   0.06  -0.03  -0.01  -0.00   0.05   0.02  -0.01   0.50   0.50
+mana/main2/hold                                532  39.7  29.5  3.6 |   1.61  15.2  0.019  0.010   2.06  -0.17   1.39   0.23  -0.14  -0.04  -0.01  -0.01   0.77   0.73   0.59   0.63
+mana/main2/nohold                              962  46.6  30.4  3.0 |   2.61  18.6  0.024  0.011   1.81  -0.12   1.75   0.25  -0.17   0.02   0.01   0.11  -0.16  -0.00   0.61   0.61
+                                                                    |  score    sd    win   loss  oeval   life  board  power   hand  lands  treas  combo    opp   hold    t>s  t>s-h
+commander/main1/hold                       1470   34.1   32.1 |     0.70     0.70 |     0.72     0.79
+commander/main1/nohold                     3110   34.3   31.0 |     0.71     0.71 |     0.00     0.00
+commander/main2/hold                        719   33.9   43.0 |     0.71     0.73 |     0.66     1.00
+commander/main2/nohold                     1195   41.7   36.3 |     0.73     0.77 |     0.00     0.00
+engine/main1/hold                           520   38.7   32.7 |     0.99     0.90 |     0.75     0.79
+engine/main1/nohold                        1165   43.6   33.0 |     0.98     0.93 |     0.00     0.00
+engine/main2/hold                           273   43.2   33.7 |     0.99     0.70 |     0.66     1.00
+engine/main2/nohold                         468   58.3   24.6 |     0.98     0.69 |     0.00     0.00
+group                                       dec   top%  stop% | cast:top cast:stp | held:top held:stp
+mana/main1/hold                            1011   33.8   29.6 |     1.00     0.96 |     0.78     0.83
+mana/main1/nohold                          1945   38.7   33.2 |     1.00     0.96 |     0.00     0.00
+mana/main2/hold                             532   39.7   29.5 |     1.00     0.80 |     0.78     1.00
+mana/main2/nohold                           962   46.6   30.4 |     1.00     0.76 |     0.00     0.00
+===== all3: top - stop
+commander/main1/hold                          1331  62.7  15.7  3.4 |  -0.37  11.9  0.002  0.003  -0.08  -0.06  -0.04   0.03   0.05  -0.00  -0.01  -0.03  -0.01   0.27   0.46   0.48
+commander/main1/nohold                        2567  67.4  13.2  3.3 |   0.33  10.2  0.001 -0.000   0.21  -0.06   0.09   0.02   0.04   0.01  -0.00  -0.03   0.13  -0.00   0.51   0.51
+commander/main2/hold                           352  65.9  19.6  3.0 |  -0.24  15.7 -0.003  0.002   1.07  -0.00   0.85   0.14   0.19   0.04  -0.01   0.07  -0.32   0.87   0.50   0.57
+commander/main2/nohold                         481  72.1  17.3  2.8 |   0.82  14.6  0.002  0.002   0.83  -0.03   0.52   0.05  -0.01   0.01  -0.01   0.05   0.09  -0.00   0.58   0.58
+engine/main1/hold                              481  70.9  13.9  3.5 |   0.50  13.8  0.006  0.006   1.09  -0.16   0.44   0.04   0.02  -0.03  -0.00  -0.05   0.98   0.15   0.54   0.55
+engine/main1/nohold                           1194  73.1  14.7  3.1 |   0.35  11.9  0.001  0.002   0.72  -0.02   0.43   0.06   0.11   0.01   0.01  -0.01   0.16  -0.01   0.50   0.50
+engine/main2/hold                              127  70.9  15.7  3.1 |  -0.21  15.1  0.004  0.020   2.26  -0.14   1.97   0.13   0.59   0.11  -0.09   0.15  -0.87   0.77   0.55   0.63
+engine/main2/nohold                            257  79.8   7.4  2.9 |   2.97  14.4  0.018  0.011   3.01  -0.21   2.03   0.21   0.64   0.10  -0.01   0.24   0.02  -0.01   0.70   0.70
+group                                          dec  top% stop% opts | top - stop, mean over all decisions (raw terms over open playouts)
+mana/main1/hold                                856  66.9  13.6  3.9 |   0.39  14.1  0.005  0.001  -0.01  -0.05   0.10  -0.11  -0.07  -0.03   0.01  -0.04   0.00   0.20   0.51   0.53
+mana/main1/nohold                             1789  70.4  15.5  3.3 |   0.20  15.0  0.001  0.001   0.41  -0.02   0.24   0.06   0.01  -0.00   0.00   0.02   0.16  -0.02   0.50   0.50
+mana/main2/hold                                248  66.1  16.5  3.6 |   2.25  15.4  0.013  0.001   1.86  -0.14   1.45   0.25  -0.02  -0.04  -0.01  -0.03   0.28   0.74   0.58   0.62
+mana/main2/nohold                              485  77.7  12.8  2.9 |   2.54  18.3  0.022  0.001   0.94  -0.13   1.06   0.14  -0.17  -0.04   0.00   0.01  -0.00  -0.02   0.58   0.58
+                                                                    |  score    sd    win   loss  oeval   life  board  power   hand  lands  treas  combo    opp   hold    t>s  t>s-h
+commander/main1/hold                       1331   62.7   15.7 |     0.70     0.69 |     0.72     0.80
+commander/main1/nohold                     2567   67.4   13.2 |     0.72     0.71 |     0.00     0.00
+commander/main2/hold                        352   65.9   19.6 |     0.73     0.69 |     0.64     1.00
+commander/main2/nohold                      481   72.1   17.3 |     0.74     0.74 |     0.00     0.00
+engine/main1/hold                           481   70.9   13.9 |     0.99     0.88 |     0.75     0.80
+engine/main1/nohold                        1194   73.1   14.7 |     0.98     0.93 |     0.00     0.00
+engine/main2/hold                           127   70.9   15.7 |     0.99     0.72 |     0.70     1.00
+engine/main2/nohold                         257   79.8    7.4 |     0.99     0.71 |     0.00     0.00
+group                                       dec   top%  stop% | cast:top cast:stp | held:top held:stp
+mana/main1/hold                             856   66.9   13.6 |     1.00     0.95 |     0.77     0.83
+mana/main1/nohold                          1789   70.4   15.5 |     1.00     0.96 |     0.00     0.00
+mana/main2/hold                             248   66.1   16.5 |     1.00     0.82 |     0.76     1.00
+mana/main2/nohold                           485   77.7   12.8 |     1.00     0.76 |     0.00     0.00
+===== flow
+== check-base-t6
+Dack Fayden        seen T2/3/4/6 8.8/10.1/11.2/13.7     spent T2/3/4 2.25/3.00/3.19   T4 seen/cast/out:
+Kinnan             seen T2/3/4/6 8.8/10.2/11.9/15.6     spent T2/3/4 2.36/3.43/4.57   T4 seen/cast/out: Remora 14/10/7 Rhystic 11/6/6 Thrasios 18/9/14
+Kraum/Tymna        seen T2/3/4/6 9.0/10.7/12.7/17.5     spent T2/3/4 1.82/2.40/2.80   T4 seen/cast/out: Sentinel 16/12/10 Kraum 100/27/24 Remora 15/11/8 Rhystic 12/7/5 Tymna 100/47/38
+Rograkh/Silas      seen T2/3/4/6 9.2/10.8/12.4/15.7     spent T2/3/4 1.70/2.09/2.35   T4 seen/cast/out: Remora 12/9/7 Rhystic 14/9/8
+Rograkh/Thrasios   seen T2/3/4/6 9.0/10.4/11.9/15.5     spent T2/3/4 1.97/2.58/3.50   T4 seen/cast/out: Remora 11/8/5 Rhystic 11/6/4 Thrasios 100/92/78
+Sisay              seen T2/3/4/6 9.0/10.2/11.6/14.3     spent T2/3/4 2.26/3.28/4.47   T4 seen/cast/out: Sentinel 11/7/7 Remora 10/8/6 Rhystic 10/4/3
+== AB-t6
+Dack Fayden        seen T2/3/4/6 8.8/10.0/11.2/13.7     spent T2/3/4 2.22/2.87/3.46   T4 seen/cast/out:
+Kinnan             seen T2/3/4/6 8.8/10.2/11.9/16.1     spent T2/3/4 2.31/3.57/4.82   T4 seen/cast/out: Remora 14/12/9 Rhystic 11/7/6 Thrasios 17/8/12
+Kraum/Tymna        seen T2/3/4/6 9.1/10.7/13.0/18.4     spent T2/3/4 1.80/2.54/3.16   T4 seen/cast/out: Sentinel 15/12/10 Kraum 100/21/19 Remora 15/13/9 Rhystic 12/9/6 Tymna 100/73/61
+Rograkh/Silas      seen T2/3/4/6 9.1/10.5/12.2/15.6     spent T2/3/4 1.97/2.32/2.61   T4 seen/cast/out: Remora 11/10/7 Rhystic 15/8/6
+Rograkh/Thrasios   seen T2/3/4/6 9.0/10.4/11.9/15.9     spent T2/3/4 1.97/2.63/3.43   T4 seen/cast/out: Remora 11/9/7 Rhystic 11/6/5 Thrasios 100/92/77
+Sisay              seen T2/3/4/6 9.0/10.2/11.6/14.3     spent T2/3/4 2.24/3.23/4.63   T4 seen/cast/out: Sentinel 10/7/6 Remora 11/9/6 Rhystic 10/3/2
+== output-t6
+Dack Fayden        seen T2/3/4/6 8.8/10.1/11.3/13.8     spent T2/3/4 2.27/2.96/3.38   T4 seen/cast/out:
+Kinnan             seen T2/3/4/6 8.9/10.2/12.0/15.9     spent T2/3/4 2.35/3.53/4.67   T4 seen/cast/out: Remora 14/11/7 Rhystic 11/6/6 Thrasios 17/8/13
+Kraum/Tymna        seen T2/3/4/6 9.1/10.8/12.8/18.0     spent T2/3/4 1.91/2.48/2.92   T4 seen/cast/out: Sentinel 16/12/10 Kraum 100/28/24 Remora 14/10/7 Rhystic 12/7/6 Tymna 100/49/39
+Rograkh/Silas      seen T2/3/4/6 9.2/10.9/12.4/15.6     spent T2/3/4 1.73/2.08/2.41   T4 seen/cast/out: Remora 12/9/6 Rhystic 14/8/7
+Rograkh/Thrasios   seen T2/3/4/6 9.0/10.3/12.0/15.8     spent T2/3/4 1.96/2.53/3.54   T4 seen/cast/out: Remora 12/8/6 Rhystic 12/6/5 Thrasios 100/93/79
+Sisay              seen T2/3/4/6 9.0/10.3/11.6/14.5     spent T2/3/4 2.28/3.30/4.58   T4 seen/cast/out: Sentinel 11/8/8 Remora 11/8/6 Rhystic 10/4/3
+== hold-t6
+Dack Fayden        seen T2/3/4/6 8.8/10.1/11.3/13.8     spent T2/3/4 2.30/3.08/3.53   T4 seen/cast/out:
+Kinnan             seen T2/3/4/6 8.8/10.2/12.0/16.0     spent T2/3/4 2.40/3.69/4.59   T4 seen/cast/out: Remora 15/12/8 Rhystic 10/6/5 Thrasios 18/9/15
+Kraum/Tymna        seen T2/3/4/6 9.1/10.8/13.0/18.1     spent T2/3/4 1.88/2.76/3.22   T4 seen/cast/out: Sentinel 16/13/11 Kraum 100/28/25 Remora 14/12/9 Rhystic 12/8/5 Tymna 100/56/43
+Rograkh/Silas      seen T2/3/4/6 9.2/10.9/12.7/16.0     spent T2/3/4 1.80/2.55/2.77   T4 seen/cast/out: Remora 12/9/6 Rhystic 15/9/8
+Rograkh/Thrasios   seen T2/3/4/6 9.0/10.4/12.1/16.1     spent T2/3/4 2.00/2.77/3.85   T4 seen/cast/out: Remora 11/9/7 Rhystic 11/6/5 Thrasios 100/92/79
+Sisay              seen T2/3/4/6 9.0/10.3/11.6/14.3     spent T2/3/4 2.31/3.41/4.77   T4 seen/cast/out: Sentinel 11/8/7 Remora 11/8/6 Rhystic 11/4/2
+== both-t6
+Dack Fayden        seen T2/3/4/6 8.8/10.1/11.3/13.8     spent T2/3/4 2.32/3.13/3.51   T4 seen/cast/out:
+Kinnan             seen T2/3/4/6 8.9/10.2/12.1/16.3     spent T2/3/4 2.40/3.70/4.85   T4 seen/cast/out: Remora 15/12/9 Rhystic 11/5/5 Thrasios 18/9/15
+Kraum/Tymna        seen T2/3/4/6 9.1/10.9/13.1/18.5     spent T2/3/4 1.98/2.84/3.19   T4 seen/cast/out: Sentinel 17/14/12 Kraum 100/30/26 Remora 14/12/8 Rhystic 13/9/6 Tymna 100/57/45
+Rograkh/Silas      seen T2/3/4/6 9.2/10.9/12.5/15.7     spent T2/3/4 1.81/2.48/2.69   T4 seen/cast/out: Remora 13/10/7 Rhystic 14/9/8
+Rograkh/Thrasios   seen T2/3/4/6 9.0/10.4/12.1/16.1     spent T2/3/4 2.00/2.79/3.92   T4 seen/cast/out: Remora 11/9/7 Rhystic 11/6/5 Thrasios 100/93/79
+Sisay              seen T2/3/4/6 9.0/10.3/11.6/14.2     spent T2/3/4 2.31/3.37/4.64   T4 seen/cast/out: Sentinel 11/8/9 Remora 11/8/6 Rhystic 10/4/3
+== all3-t6
+Dack Fayden        seen T2/3/4/6 8.9/10.0/11.2/13.8     spent T2/3/4 2.57/3.53/3.76   T4 seen/cast/out:
+Kinnan             seen T2/3/4/6 8.9/10.2/12.0/16.0     spent T2/3/4 2.45/3.75/5.02   T4 seen/cast/out: Remora 14/12/9 Rhystic 11/7/7 Thrasios 18/8/14
+Kraum/Tymna        seen T2/3/4/6 9.1/10.9/13.3/18.9     spent T2/3/4 2.02/2.78/3.36   T4 seen/cast/out: Sentinel 15/13/11 Kraum 100/25/23 Remora 15/13/9 Rhystic 14/8/7 Tymna 100/67/56
+Rograkh/Silas      seen T2/3/4/6 9.2/10.9/12.7/15.8     spent T2/3/4 2.23/2.51/2.81   T4 seen/cast/out: Remora 12/10/7 Rhystic 14/8/6
+Rograkh/Thrasios   seen T2/3/4/6 9.0/10.4/12.0/16.1     spent T2/3/4 2.02/3.02/4.20   T4 seen/cast/out: Remora 12/9/7 Rhystic 12/5/4 Thrasios 100/92/76
+Sisay              seen T2/3/4/6 9.0/10.2/11.6/14.5     spent T2/3/4 2.30/3.37/4.70   T4 seen/cast/out: Sentinel 10/8/8 Remora 11/8/5 Rhystic 10/3/2

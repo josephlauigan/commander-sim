@@ -1,0 +1,234 @@
+Play-by-play of goldfish game 7 (seed 500007): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 6 cards in hand, 0 lands
+R1      hand: Beseech the Mirror, Gemstone Caverns, Tinder Wall, Noble Hierarch, Mindbreak Trap, Badlands
+R1        [Scion plays Badlands [plan: the land drop the plan wants]]
+R1    Scion plays Badlands
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Beseech the Mirror, Gemstone Caverns, Tinder Wall, Noble Hierarch, Mindbreak Trap, Tundra
+R2        [Scion plays Tundra [plan: the land drop the plan wants]]
+R2    Scion plays Tundra
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Beseech the Mirror, Gemstone Caverns, Tinder Wall, Noble Hierarch, Mindbreak Trap, Intuition
+R3    Scion plays Gemstone Caverns
+R3        [Scion decides: Intuition 100%, stop 0% -> Intuition [search]]
+R3    Scion casts Intuition
+R3      Scion gets Lotus Petal; Goldfish 2 bins Mana Vault, Sol Ring
+R3    Scion casts Lotus Petal
+R3        [Scion decides: Lotus Petal 100%, stop 0% -> Lotus Petal [must]]
+R3    Scion casts Noble Hierarch
+R3        [Scion decides: Noble Hierarch 99%, Tinder Wall 1%, stop 0% -> Noble Hierarch [must]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 40, 4 cards in hand, 3 lands
+R4      hand: Beseech the Mirror, Tinder Wall, Mindbreak Trap, Emergence Zone
+R4    Scion plays Emergence Zone
+R4        [Scion decides: Tinder Wall 54%, stop (hold mana) 46% -> stop (hold mana) [search]]
+R4        [Scion decides: Tinder Wall 54%, stop (hold mana) 46% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5    Scion sacrifices Emergence Zone: spells can be cast as though they had flash
+R5        [Scion end of turn: Emergence Zone 92%, pass 8% -> Emergence Zone]
+R5    Scion casts Tinder Wall
+R5        [Scion end of turn: Tinder Wall 100%, pass 0% -> Tinder Wall]
+R5  --- Scion turn 5: life 40, 3 cards in hand, 3 lands
+R5      hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach
+R5  --- Goldfish 2 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 40, 4 cards in hand, 3 lands
+R6      hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach, Mental Misstep
+R6    Scion plays Volcanic Island
+R6  --- Goldfish 2 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 40, 4 cards in hand, 4 lands
+R7      hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach, Mental Misstep
+R7  --- Goldfish 2 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 40, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Scion turn 8: life 40, 5 cards in hand, 4 lands
+R8      hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation
+R8  --- Goldfish 2 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 40, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 40, 6 cards in hand, 4 lands
+R9      hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor
+R9        [Scion decides: Ranger-Captain of Eos 82%, stop (hold mana) 18% -> stop (hold mana) [search]]
+R9        [Scion decides: Ranger-Captain of Eos 82%, stop (hold mana) 18% -> Ranger-Captain of Eos [search]]
+R9    Scion casts Ranger-Captain of Eos
+R9      Scion searches for Ragavan, Nimble Pilferer
+R9        [Scion decides: Ragavan, Nimble Pilferer 90%, stop (hold mana) 10% -> Ragavan, Nimble Pilferer [search]]
+R9    Scion casts Ragavan, Nimble Pilferer
+R9  --- Goldfish 2 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 40, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 40, 6 cards in hand, 4 lands
+R10     hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor
+R10       [Scion decides: stop (hold mana) 77%, Arcane Signet 23% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 2]
+R10   Scion attacks Goldfish 2 with 2 creature(s): 5 damage (life now 35)
+R10       [Scion decides: Scion of the Ur-Dragon 94%, stop (hold mana) 5%, Arcane Signet 1% -> Scion of the Ur-Dragon [search]]
+R10   Scion casts Scion of the Ur-Dragon
+R10 --- Goldfish 2 turn 10: life 35, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 40, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Scion turn 11: life 40, 7 cards in hand, 4 lands
+R11     hand: Beseech the Mirror, Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor, Arcane Signet
+R11       [Scion decides: Borne Upon a Wind 54%, Scion of the Ur-Dragon: become Ancient Copper Dragon 29%, stop (hold mana) 14%, Arcane Signet 3% -> Arcane Signet [search]]
+R11   Scion casts Arcane Signet
+R11       [Scion decides: Borne Upon a Wind 55%, Scion of the Ur-Dragon: become Ancient Copper Dragon 30%, stop (hold mana) 14% -> Borne Upon a Wind [search]]
+R11   Scion casts Borne Upon a Wind
+R11       [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 84%, stop (hold mana) 16% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R11   Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R11     Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R11       [Scion attack plan by search: filtered at Goldfish 3]
+R11     Ancient Copper Dragon rolls 10: 10 Treasures
+R11   Scion attacks Goldfish 3 with 3 creature(s): 11 damage (life now 29)
+R11       [Scion decides: Beseech the Mirror 85%, stop (hold mana) 15% -> Beseech the Mirror [search]]
+R11   Scion casts Beseech the Mirror
+R11     Scion tutors Thassa's Oracle
+R11 --- Goldfish 2 turn 11: life 35, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 29, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 40, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 40, 7 cards in hand, 4 lands
+R12     hand: Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor, Final Fortune, Thassa's Oracle
+R12       [Scion decides: stop (hold mana) 78%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 22% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: filtered at Goldfish 4]
+R12   Scion attacks Goldfish 4 with 3 creature(s): 9 damage (life now 31)
+R12     [audit] Scion discards Sevinne's Reclamation to hand size (8 cards in hand)
+R12 --- Goldfish 2 turn 12: life 35, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 29, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 4 turn 12: life 31, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 40, 7 cards in hand, 4 lands
+R13     hand: Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Final Fortune, Thassa's Oracle, Brain Freeze
+R13   Scion plays Underground Sea
+R13       [Scion decides: stop (hold mana) 78%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 22% -> Scion of the Ur-Dragon: become Korvold, Fae-Cursed King [search]]
+R13   Scion activates Scion of the Ur-Dragon: search for Korvold, Fae-Cursed King
+R13     Scion of the Ur-Dragon becomes a copy of Korvold, Fae-Cursed King
+R13       [Scion attack plan by search: filtered at Goldfish 2]
+R13   Scion attacks Goldfish 2 with 3 creature(s): 10 damage (life now 25)
+R13     [audit] Scion discards Final Fortune to hand size (8 cards in hand)
+R13 --- Goldfish 2 turn 13: life 25, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 3 turn 13: life 29, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Goldfish 4 turn 13: life 31, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 40, 7 cards in hand, 5 lands
+R14     hand: Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze, Misdirection
+R14       [Scion attack plan by search: filtered at Goldfish 4]
+R14   Scion attacks Goldfish 4 with 3 creature(s): 10 damage (life now 21)
+R14     [audit] Scion discards Misdirection to hand size (8 cards in hand)
+R14 --- Goldfish 2 turn 14: life 25, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 3 turn 14: life 29, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Goldfish 4 turn 14: life 21, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 40, 7 cards in hand, 5 lands
+R15     hand: Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze, Mockingbird
+R15   Scion plays Shifting Woodland
+R15       [Scion attack plan by search: filtered at Goldfish 3]
+R15   Scion attacks Goldfish 3 with 3 creature(s): 10 damage (life now 19)
+R15 --- Goldfish 2 turn 15: life 25, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 3 turn 15: life 19, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Goldfish 4 turn 15: life 21, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 40, 7 cards in hand, 6 lands
+R16     hand: Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze, Mockingbird
+R16       [Scion keeps mana for Mystical Tutor [plan: Mystical Tutor for Tainted Pact; at the end of the turn before ours]]
+R16       [Scion attack plan by search: filtered at Goldfish 2]
+R16   Scion attacks Goldfish 2 with 3 creature(s): 10 damage (life now 15)
+R16       [Scion keeps mana for Mystical Tutor [plan: Mystical Tutor for Tainted Pact; at the end of the turn before ours]]
+R16     [audit] Scion discards Mockingbird to hand size (8 cards in hand)
+R16 --- Goldfish 2 turn 16: life 15, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 3 turn 16: life 19, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Goldfish 4 turn 16: life 21, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17       [Scion end of turn: Mystical Tutor for Tainted Pact [plan: Mystical Tutor for Tainted Pact; ready next turn]]
+R17   Scion casts Mystical Tutor
+R17     Scion puts Tainted Pact on top of their library
+R17 --- Scion turn 17: life 40, 6 cards in hand, 6 lands
+R17     hand: Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze
+R17       [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R17   Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R17   Scion casts Thassa's Oracle
+R17   Scion casts Tainted Pact
+R17     Scion exiles its library
+R17 *** Goldfish 2 is eliminated (life 15) by Scion
+R17 *** Goldfish 3 is eliminated (life 19) by Scion
+R17 *** Goldfish 4 is eliminated (life 21) by Scion
+R17 *** Scion wins by combo
+Kill: own turn 17 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  mana_short
+  T3  progressed (tutor)
+  T4  progressed (land only) | held (payable, not offered): Mindbreak Trap, Underworld Breach
+  T5  idle | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep
+  T6  progressed (land only) | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep
+  T7  idle | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation
+  T8  idle | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor
+  T9  progressed (tutor) | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor
+  T10 passed_castable: Arcane Signet [fast mana / rock] | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor
+  T11 progressed (tutor) | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor, Final Fortune, Thassa's Oracle
+  T12 idle | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Sevinne's Reclamation, Chain of Vapor, Final Fortune, Thassa's Oracle, Brain Freeze
+  T13 progressed (land only) | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Final Fortune, Thassa's Oracle, Brain Freeze, Misdirection
+  T14 idle | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze, Misdirection, Mockingbird
+  T15 progressed (land only) | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze, Mockingbird
+  T16 idle | held (payable, not offered): Mindbreak Trap, Underworld Breach, Mental Misstep, Chain of Vapor, Thassa's Oracle, Brain Freeze, Mockingbird, Mystical Tutor
+  T17 won
+  cleanup discards: Sevinne's Reclamation [other], Final Fortune [other], Misdirection [other], Mockingbird [other]
+  stops with another option offered: T4 main 1 look-ahead "stop (hold mana)" over Tinder Wall (2.5); T4 main 2 look-ahead "stop (hold mana)" over Tinder Wall (2.5); T9 main 1 look-ahead "stop (hold mana)" over Ranger-Captain of Eos (4.8); T10 main 1 look-ahead "stop (hold mana)" over Arcane Signet (2.0); T12 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Korvold, Fae-Cursed King (2.0)
+  crude best case: none
+  crude best case with tutors: own turn 15 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 17 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

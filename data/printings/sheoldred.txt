@@ -5,18 +5,19 @@
 1 Arcane Signet (msc) 191
 1 Battle-Rage Blessing (dmu) 80
 1 Blood Artist (ema) 81
+1 Bolas's Citadel (plg21) 3
 1 Bonders' Enclave (fic) 376
 1 Burrog Banemaker (sos) 75
+1 Call of the Ring (ltr) 79
 1 Carnage Altar (c13) 238
 1 Cast Away Doubt (fra) 51
-1 Charcoal Diamond (cmr) 303
 1 Command Tower (fic) 484
 1 Commander's Sphere (cmm) 655
 1 Cost of Brilliance (sos) 77
-1 Crawlspace (dmr) 375
 1 Dark Deal (frf) 66
 1 Darksteel Plate (fic) 342
 1 Deadly Dispute (j25) 115
+1 Demonic Tutor (ddc) 49
 1 Disembowel (rvr) 74
 1 Exsanguinate (plst) CMM-156
 1 Fate Unraveler (bng) 68
@@ -25,27 +26,26 @@
 1 Foolish Fate (sos) 83
 1 Geier Reach Sanitarium (emn) 203
 1 Gix, Yawgmoth Praetor (fca) 35
+1 Grave Titan (ecc) 74
+1 Gray Merchant of Asphodel (ths) 89
 1 Howling Mine (brr) 83
 1 Invoke Despair (neo) 506
 1 Last Gasp (fra) 56
 1 Leech Collector // Bloodletting (sos) 88
 1 Lethal Throwdown (mh3) 99
 1 Masterful Flourish (sos) 89
-1 Melancholic Poet (sos) 90
 1 Memory Jar (ulg) 129
 1 Mikokoro, Center of the Sea (dmc) 217
 1 Mind Stone (dmr) 385
 1 Necrosquito (one) 100
 1 Otherworld Atlas (avr) 219
 1 Overkill (fin) 109
-1 Painful Lesson (akh) 102
 1 Peer into the Abyss (plst) M21-117
 1 Perigee Beckoner (eoe) 112
 1 Phyrexian Arena (fdn) 322
 1 Phyrexian Delver (inv) 115
 1 Phyrexian Rager (dmr) 99
 1 Potioner's Trove (sos) 251
-1 Read the Bones (dmc) 117
 1 Rooftop Assassin (otj) 103
 1 Screeching Soulbreaker (fra) 65
 1 Seizan, Perverter of Truth (mul) 145
@@ -53,17 +53,47 @@
 1 Seymour Flux (fin) 558
 1 Sheoldred, the Apocalypse (dmu) 436
 1 Silence the Echo (fra) 66
-1 Skyscanner (m21) 238
 1 Sneering Shadewriter (sos) 101
 1 Soul Enervation (mkm) 106
-1 Stir Up Trouble (hob) 84
-32 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
 1 Swiftfoot Boots (brr) 121
 1 Syphon Mind (scd) 111
 1 Terror (dmr) 103
-1 Ulna Alley Shopkeep (sos) 103
+1 The One Ring (ltr) 451
 1 Undercity Dire Rat (fin) 123
 1 Underworld Dreams (thb) 121
 1 Vanquish the Weak (xln) 127
 1 Vault Plunderer (otj) 114
 1 Wander Off (sos) 104
+1 Zulaport Cutthroat (soc) 233

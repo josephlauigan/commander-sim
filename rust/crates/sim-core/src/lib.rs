@@ -10,6 +10,8 @@ pub mod engine;
 pub mod exec_tags;
 pub mod export;
 pub mod flow;
+pub mod goldfish; // --- scion: commander-sim --goldfish
+pub mod gf_audit; // --- ai-audit: goldfish loss accounting (stats only)
 pub mod hooks;
 pub mod human;
 pub mod ids;

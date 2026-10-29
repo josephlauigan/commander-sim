@@ -1,0 +1,141 @@
+Play-by-play of goldfish game 2 (seed 500002): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Faerie Mastermind, Manamorphose, Flash Photography, Intuition, Dark Ritual, Mana Confluence, Arid Mesa
+R1    Scion plays Mana Confluence
+R1        [Scion decides: Dark Ritual 74%, Manamorphose 19%, Faerie Mastermind 6%, stop 0% -> Faerie Mastermind [search]]
+R1    Scion casts Faerie Mastermind
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 5 cards in hand, 1 lands
+R2      hand: Manamorphose, Flash Photography, Intuition, Dark Ritual, Arid Mesa
+R2    Scion plays Arid Mesa
+R2      cracks Arid Mesa for Tundra
+R2        [Scion decides: Dark Ritual 91%, Manamorphose 9%, stop 0% -> Dark Ritual [search]]
+R2    Scion casts Dark Ritual
+R2        [Scion decides: Intuition 53%, Necropotence 43%, Manamorphose 4%, stop 0% -> Necropotence [search]]
+R2    Scion casts Necropotence
+R2        [Scion attack plan by search: filtered at Goldfish 2]
+R2    Scion attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R2    Scion pays 5 life to Necropotence
+R2      [audit] Scion discards Misdirection to hand size (8 cards in hand)
+R2  --- Goldfish 2 turn 2: life 38, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 34, 7 cards in hand, 2 lands
+R3      hand: Manamorphose, Flash Photography, Intuition, Arcane Signet, Scrubland, Orim's Chant, Rhystic Study
+R3    Scion plays Scrubland
+R3    Scion casts Arcane Signet
+R3        [Scion decides: Arcane Signet 92%, Intuition 6%, Rhystic Study 2%, Manamorphose 0% -> Arcane Signet [must]]
+R3        [Scion decides: Manamorphose 100%, stop 0% -> Manamorphose [search]]
+R3    Scion casts Manamorphose
+R3        [Scion attack plan by search: filtered at Goldfish 4]
+R3    Scion attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R3    Scion pays 3 life to Necropotence
+R3      [audit] Scion discards Emergence Zone to hand size (8 cards in hand)
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 31, 7 cards in hand, 3 lands
+R4      hand: Flash Photography, Intuition, Orim's Chant, Rhystic Study, Underground Sea, Badlands, Savannah
+R4    Scion plays Badlands
+R4        [Scion decides: Scion of the Ur-Dragon 68%, Intuition 18%, Flash Photography 8%, Rhystic Study 6% -> Scion of the Ur-Dragon [search]]
+R4    Scion casts Scion of the Ur-Dragon
+R4        [Scion attack plan by search: filtered at Goldfish 3]
+R4    Scion attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4    Scion pays 2 life to Necropotence
+R4      [audit] Scion discards Savannah to hand size (8 cards in hand)
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 29, 7 cards in hand, 4 lands
+R5      hand: Flash Photography, Intuition, Orim's Chant, Rhystic Study, Underground Sea, Beseech the Mirror, Tropical Island
+R5    Scion plays Tropical Island
+R5        [Scion decides: Intuition 54%, Flash Photography 24%, Rhystic Study 13%, Beseech the Mirror 6% -> Beseech the Mirror [search]]
+R5    Scion casts Beseech the Mirror
+R5      Scion tutors Thassa's Oracle
+R5        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 100%, stop 0% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R5    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R5      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R5        [Scion attack plan by search: filtered at Goldfish 2]
+R5      Ancient Copper Dragon rolls 13: 13 Treasures
+R5    Scion attacks Goldfish 2 with 2 creature(s): 8 damage (life now 30)
+R5        [Scion decides: Intuition 57%, Flash Photography 28%, Rhystic Study 14%, stop 0% -> Intuition [search]]
+R5    Scion casts Intuition
+R5      Scion gets Vampiric Tutor; Goldfish 3 bins Diabolic Intent, Imperial Seal
+R5        [Scion decides: Flash Photography 67%, Rhystic Study 33%, stop 0% -> Flash Photography [search]]
+R5    Scion casts Flash Photography
+R5      Flash Photography: a token copy of Ancient Copper Dragon
+R5        [Scion decides: Flash Photography (flashback) 55%, Rhystic Study 45%, stop 0% -> stop [search]]
+R5    Scion pays 3 life to Necropotence
+R5      [audit] Scion discards Starting Town to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 30, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6    Scion casts Vampiric Tutor
+R6      Scion puts Demonic Consultation on top of their library
+R6        [Scion end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R6  --- Scion turn 6: life 24, 6 cards in hand, 5 lands
+R6      hand: Orim's Chant, Rhystic Study, Underground Sea, Thassa's Oracle, Final Fortune, Birds of Paradise
+R6    Scion plays Underground Sea
+R6        [Scion decides: Flash Photography (flashback) 47%, Rhystic Study 34%, Birds of Paradise 18%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 1% -> stop [search]]
+R6        [Scion attack plan by search: filtered at Goldfish 2]
+R6      Ancient Copper Dragon rolls 3: 3 Treasures
+R6    Scion attacks Goldfish 2 with 3 creature(s): 12 damage (life now 18)
+R6        [Scion decides: Flash Photography (flashback) 47%, Rhystic Study 35%, Birds of Paradise 18%, stop 0% -> Flash Photography (flashback) [search]]
+R6    Scion casts Flash Photography
+R6      Flash Photography: a token copy of Necropotence
+R6        [Scion decides: Rhystic Study 66%, Birds of Paradise 34%, stop 0% -> Rhystic Study [search]]
+R6    Scion casts Rhystic Study
+R6        [Scion decides: Birds of Paradise 100%, stop 0% -> Birds of Paradise [search]]
+R6    Scion casts Birds of Paradise
+R6    Scion pays 5 life to Necropotence
+R6      [audit] Scion discards Bayou to hand size (8 cards in hand)
+R6  --- Goldfish 2 turn 6: life 18, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 19, 7 cards in hand, 6 lands
+R7      hand: Orim's Chant, Thassa's Oracle, Final Fortune, Demonic Consultation, Shifting Woodland, Chrome Mox, Pact of Negation
+R7    Scion plays Shifting Woodland
+R7        [Scion decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R7    Scion goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R7    Scion casts Thassa's Oracle
+R7    Scion casts Demonic Consultation
+R7      Scion exiles its library
+R7  *** Goldfish 2 is eliminated (life 18) by Scion
+R7  *** Goldfish 3 is eliminated (life 38) by Scion
+R7  *** Goldfish 4 is eliminated (life 38) by Scion
+R7  *** Scion wins by combo
+Kill: own turn 7 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (other)
+  T2  progressed (ritual) | held (payable, not offered): Flash Photography
+  T3  progressed (combo piece) | held (payable, not offered): Orim's Chant
+  T4  progressed (combo piece) | held (payable, not offered): Orim's Chant
+  T5  passed_castable: Rhystic Study [draw] | held (payable, not offered): Orim's Chant, Thassa's Oracle, Vampiric Tutor
+  T6  progressed (fast mana / rock) | held (payable, not offered): Orim's Chant, Thassa's Oracle, Final Fortune
+  T7  won
+  cleanup discards: Misdirection [other], Emergence Zone [land], Savannah [land], Starting Town [land], Bayou [land]
+  stops with another option offered: T5 main 2 look-ahead "stop" over Flash Photography (flashback) (6.0); T6 main 1 look-ahead "stop" over Flash Photography (flashback) (5.9)
+  crude best case: none
+  crude best case with tutors: none
+  crude best case with legal tutors: none

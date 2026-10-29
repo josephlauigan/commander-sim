@@ -1,0 +1,15 @@
+
+=== Veyran vs Tier 3 (High B3) [loose, lookahead AI, 1000 games] ===
+Win rate   9.6%   95% CI 7.9-11.6%   (even share 25%: -15.4 pts)
+Average turn (your own turn count) of wins 12.2, of losses 9.3
+Plan online (Veyran + a magecraft payoff on the battlefield): 54.8% of games
+Wins by: damage 98%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Aurelia (aurelia-boros-extra-combats)        61.3%            30.8%           20.9%
+  Tergrid (tergrid-mono-black-disruption)      60.9%            45.3%           29.2%
+  Korvold (korvold-jund-sacrifice)             59.8%            22.7%           15.7%
+  Atraxa (atraxa-infect)                       59.4%            30.1%           10.4%
+  Marwyn (marwyn-mono-green-elves)             58.6%            21.2%           13.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(101s total)

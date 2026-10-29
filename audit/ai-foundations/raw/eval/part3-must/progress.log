@@ -1,0 +1,21 @@
+start t6-none 16:29:35 AI_EVAL_MUST_OFF=none --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-none rc=0 16:32:12
+start gf-none 16:32:12 AI_EVAL_MUST_OFF=none --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done gf-none rc=0 16:34:56
+start t6-rock 16:34:56 AI_EVAL_MUST_OFF=rock --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-rock rc=0 16:37:30
+start gf-rock 16:37:30 AI_EVAL_MUST_OFF=rock --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done gf-rock rc=0 16:40:28
+start t6-chrome 16:40:28 AI_EVAL_MUST_OFF=chrome --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-chrome rc=0 16:43:04
+start gf-chrome 16:43:04 AI_EVAL_MUST_OFF=chrome --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done gf-chrome rc=0 16:45:50
+start t6-first 16:45:50 AI_EVAL_MUST_OFF=first --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-first rc=0 16:48:24
+start gf-first 16:48:24 AI_EVAL_MUST_OFF=first --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done gf-first rc=0 16:51:11
+start t6-rock-chrome-first 16:51:11 AI_EVAL_MUST_OFF=rock,chrome,first --realism --pool t6 --games 1000 --jobs 16 --quiet
+done t6-rock-chrome-first rc=0 16:53:53
+start gf-rock-chrome-first 16:53:53 AI_EVAL_MUST_OFF=rock,chrome,first --goldfish t6,scion --games 2000 --seed 500000 --jobs 16 --quiet
+done gf-rock-chrome-first rc=0 16:56:39
+ALLDONE

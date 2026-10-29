@@ -1,0 +1,67 @@
+Play-by-play of goldfish game 1 (seed 500001): Kraum/Tymna alone, lookahead AI
+Seat order: Kraum/Tymna, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Flash Photography, Plateau, Windswept Heath, Polluted Delta, Voice of Victory, Vampiric Tutor, Ragavan, Nimble Pilferer
+R1    Kraum/Tymna plays Windswept Heath
+R1      cracks Windswept Heath for Scrubland
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2    Kraum/Tymna casts Vampiric Tutor
+R2      Kraum/Tymna puts Thassa's Oracle on top of their library
+R2        [Kraum/Tymna end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R2  --- Kraum/Tymna turn 2: life 37, 6 cards in hand, 1 lands
+R2      hand: Flash Photography, Plateau, Polluted Delta, Voice of Victory, Ragavan, Nimble Pilferer, Necropotence
+R2        [Kraum/Tymna plays Polluted Delta for Volcanic Island [plan: the land drop the plan wants]]
+R2    Kraum/Tymna plays Polluted Delta
+R2      cracks Polluted Delta for Volcanic Island
+R2        [Kraum/Tymna decides: Ragavan, Nimble Pilferer 52%, Voice of Victory 42%, dash Ragavan 6%, stop 0% -> dash Ragavan [search]]
+R2    Kraum/Tymna dashes Ragavan
+R2        [Kraum/Tymna attack plan by search: filtered at Goldfish 2]
+R2    Kraum/Tymna attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R2  --- Goldfish 2 turn 2: life 38, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kraum/Tymna turn 3: life 36, 6 cards in hand, 2 lands
+R3      hand: Flash Photography, Plateau, Voice of Victory, Necropotence, Thassa's Oracle, Ragavan, Nimble Pilferer
+R3    Kraum/Tymna plays Plateau
+R3    Kraum/Tymna casts Arcane Signet
+R3        [Kraum/Tymna decides: Arcane Signet 91%, Tymna the Weaver 8%, Ragavan, Nimble Pilferer 0%, Voice of Victory 0% -> Arcane Signet [must]]
+R3        [Kraum/Tymna decides: Tymna the Weaver 97%, Ragavan, Nimble Pilferer 2%, Voice of Victory 1%, dash Ragavan 0% -> Ragavan, Nimble Pilferer [search]]
+R3    Kraum/Tymna casts Ragavan, Nimble Pilferer
+R3        [Kraum/Tymna decides: Voice of Victory 100%, stop 0% -> Voice of Victory [search]]
+R3    Kraum/Tymna casts Voice of Victory
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kraum/Tymna turn 4: life 36, 3 cards in hand, 3 lands
+R4      hand: Flash Photography, Necropotence, Thassa's Oracle
+R4        [Kraum/Tymna decides: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact [plan: combo: Thassa's Oracle + Demonic Consultation / Tainted Pact; wins this turn]]
+R4    Kraum/Tymna goes for Thassa's Oracle + Demonic Consultation / Tainted Pact
+R4    Kraum/Tymna casts Thassa's Oracle
+R4    Kraum/Tymna casts Demonic Consultation
+R4      Kraum/Tymna exiles its library
+R4  *** Goldfish 2 is eliminated (life 38) by Kraum/Tymna
+R4  *** Goldfish 3 is eliminated (life 40) by Kraum/Tymna
+R4  *** Goldfish 4 is eliminated (life 40) by Kraum/Tymna
+R4  *** Kraum/Tymna wins by combo
+Kill: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short | held (payable, not offered): Vampiric Tutor
+  T2  progressed (other)
+  T3  progressed (fast mana / rock) | held (payable, not offered): Flash Photography, Thassa's Oracle
+  T4  won
+  cleanup discards: none
+  stops with another option offered: none
+  crude best case: none
+  crude best case with tutors: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)
+  crude best case with legal tutors: own turn 4 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

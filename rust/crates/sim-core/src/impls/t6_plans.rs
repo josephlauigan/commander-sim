@@ -1,6 +1,6 @@
 //! Tier 6 table support: who is a Tier 6 player, and the plan slots the deck agents fill.
 //!
-//! SLOT CONTRACT. Each of the seven Tier 6 decks (the six pool keys and `godo`) has one file
+//! SLOT CONTRACT. Each of the eight Tier 6 decks (the six pool keys, `godo` and `scion`) has one file
 //! `impls/t6_plan_<name>.rs` with five functions. The shared AI calls them through the dispatch below (the only
 //! `match` on the deck key); a deck agent edits ONLY its own plan file. Each returns `None` for "no opinion", and
 //! then the shared Tier 6 table rules (`ai/t6_table.rs`) and the generic AI decide, exactly as before.
@@ -23,11 +23,12 @@ use crate::state::Game;
 
 use super::{
     t6_plan_dack as dack, t6_plan_godo as godo, t6_plan_kinnan as kinnan, t6_plan_kraum as kraum,
-    t6_plan_rograkh_silas as rsilas, t6_plan_rograkh_thrasios as rthras, t6_plan_sisay as sisay,
+    t6_plan_rograkh_silas as rsilas, t6_plan_rograkh_thrasios as rthras, t6_plan_scion as scion, t6_plan_sisay as sisay,
 };
 
-/// the seven Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/` and Godo (retired 2026-10-25, a test seat)
-pub const T6_KEYS: [&str; 7] = [
+/// the eight Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/`, Godo (retired 2026-10-25, a test seat)
+/// and JD's Scion
+pub const T6_KEYS: [&str; 8] = [
     "dack-fayden-white-stax",
     "kinnan-bonder-mana-combo",
     "kraum-tymna-blue-breach-midrange",
@@ -35,6 +36,7 @@ pub const T6_KEYS: [&str; 7] = [
     "rograkh-thrasios-creature-combo",
     "sisay-legends-toolbox",
     "godo",
+    "scion", // --- scion: JD's Scion of the Ur-Dragon turbo deck
 ];
 
 /// the one gate: is this deck key a Tier 6 deck?
@@ -57,6 +59,7 @@ macro_rules! dispatch {
             "rograkh-thrasios-creature-combo" => rthras::$f($g, $p $(, $a)*),
             "sisay-legends-toolbox" => sisay::$f($g, $p $(, $a)*),
             "godo" => godo::$f($g, $p $(, $a)*),
+            "scion" => scion::$f($g, $p $(, $a)*), // --- scion
             _ => None,
         }
     };

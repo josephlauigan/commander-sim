@@ -1,0 +1,227 @@
+Play-by-play of goldfish game 7 (seed 500007): Scion alone, lookahead AI
+Seat order: Scion, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Scion turn 1: life 40, 6 cards in hand, 0 lands
+R1      hand: Beseech the Mirror, Gemstone Caverns, Tinder Wall, Noble Hierarch, Mindbreak Trap, Badlands
+R1    Scion plays Gemstone Caverns
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Scion turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Beseech the Mirror, Tinder Wall, Noble Hierarch, Mindbreak Trap, Badlands, Tundra
+R2    Scion plays Badlands
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Scion turn 3: life 40, 6 cards in hand, 2 lands
+R3      hand: Beseech the Mirror, Tinder Wall, Noble Hierarch, Mindbreak Trap, Tundra, Intuition
+R3    Scion plays Tundra
+R3        [Scion decides: Intuition 100%, stop 0% -> Intuition [search]]
+R3    Scion casts Intuition
+R3      Scion gets Lotus Petal; Goldfish 2 bins Mana Vault, Sol Ring
+R3    Scion casts Lotus Petal
+R3        [Scion decides: Lotus Petal 100%, stop 0% -> Lotus Petal [must]]
+R3    Scion casts Noble Hierarch
+R3        [Scion decides: Noble Hierarch 99%, Tinder Wall 1%, stop 0% -> Noble Hierarch [must]]
+R3  --- Goldfish 2 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Scion turn 4: life 40, 4 cards in hand, 3 lands
+R4      hand: Beseech the Mirror, Tinder Wall, Mindbreak Trap, Emergence Zone
+R4    Scion plays Emergence Zone
+R4        [Scion decides: Tinder Wall 45%, stop (hold mana) 39%, Dark Ritual 16% -> Dark Ritual [search]]
+R4    Scion casts Dark Ritual
+R4        [Scion decides: Scion of the Ur-Dragon 90%, Tinder Wall 6%, Beseech the Mirror 3%, stop (hold mana) 1% -> Scion of the Ur-Dragon [search]]
+R4    Scion casts Scion of the Ur-Dragon
+R4  --- Goldfish 2 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Scion turn 5: life 40, 3 cards in hand, 4 lands
+R5      hand: Beseech the Mirror, Tinder Wall, Mindbreak Trap
+R5    Scion plays Boseiju, Who Endures
+R5        [Scion decides: Tinder Wall 51%, Scion of the Ur-Dragon: become Ancient Copper Dragon 41%, stop (hold mana) 8% -> Tinder Wall [search]]
+R5    Scion casts Tinder Wall
+R5        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 84%, stop (hold mana) 16% -> stop (hold mana) [search]]
+R5        [Scion attack plan by search: filtered at Goldfish 2]
+R5    Scion attacks Goldfish 2 with 1 creature(s): 5 damage (life now 35)
+R5  --- Goldfish 2 turn 5: life 35, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 40, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Scion turn 6: life 40, 2 cards in hand, 5 lands
+R6      hand: Beseech the Mirror, Mindbreak Trap
+R6        [Scion decides: Scion of the Ur-Dragon: become Ancient Copper Dragon 84%, stop (hold mana) 16% -> Scion of the Ur-Dragon: become Ancient Copper Dragon [search]]
+R6    Scion activates Scion of the Ur-Dragon: search for Ancient Copper Dragon
+R6      Scion of the Ur-Dragon becomes a copy of Ancient Copper Dragon
+R6        [Scion attack plan by search: filtered at Goldfish 3]
+R6      Ancient Copper Dragon rolls 19: 19 Treasures
+R6    Scion attacks Goldfish 3 with 1 creature(s): 7 damage (life now 33)
+R6        [Scion decides: Beseech the Mirror 93%, stop (hold mana) 7% -> Beseech the Mirror [search]]
+R6    Scion casts Beseech the Mirror
+R6      Scion tutors Thassa's Oracle
+R6  --- Goldfish 2 turn 6: life 35, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 33, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 40, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Scion turn 7: life 40, 3 cards in hand, 5 lands
+R7      hand: Mindbreak Trap, Force of Will, Thassa's Oracle
+R7        [Scion decides: Enlightened Tutor 99%, stop (hold mana) 1%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 1% -> stop (hold mana) [search]]
+R7        [Scion attack plan by search: filtered at Goldfish 4]
+R7    Scion attacks Goldfish 4 with 1 creature(s): 5 damage (life now 35)
+R7        [Scion decides: Enlightened Tutor 99%, stop (hold mana) 1% -> Enlightened Tutor [search]]
+R7    Scion casts Enlightened Tutor
+R7      Scion searches for Esper Sentinel
+R7  --- Goldfish 2 turn 7: life 35, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 33, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 35, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8    Scion sacrifices Emergence Zone: spells can be cast as though they had flash
+R8        [Scion end of turn: Emergence Zone 92%, pass 8% -> Emergence Zone]
+R8  --- Scion turn 8: life 40, 3 cards in hand, 4 lands
+R8      hand: Mindbreak Trap, Force of Will, Thassa's Oracle
+R8        [Scion decides: Esper Sentinel 82%, stop (hold mana) 11%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 7% -> Esper Sentinel [search]]
+R8    Scion casts Esper Sentinel
+R8        [Scion decides: stop (hold mana) 59%, Scion of the Ur-Dragon: become Korvold, Fae-Cursed King 41% -> Scion of the Ur-Dragon: become Korvold, Fae-Cursed King [search]]
+R8    Scion activates Scion of the Ur-Dragon: search for Korvold, Fae-Cursed King
+R8      Scion of the Ur-Dragon becomes a copy of Korvold, Fae-Cursed King
+R8        [Scion attack plan by search: filtered at Goldfish 4]
+R8    Scion attacks Goldfish 4 with 1 creature(s): 6 damage (life now 29)
+R8  --- Goldfish 2 turn 8: life 35, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 33, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 29, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Scion turn 9: life 40, 4 cards in hand, 4 lands
+R9      hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual
+R9    Scion plays Bloodstained Mire
+R9      cracks Bloodstained Mire for Underground Sea
+R9        [Scion attack plan by search: filtered at Goldfish 4]
+R9    Scion attacks Goldfish 4 with 2 creature(s): 6 damage (life now 23)
+R9  --- Goldfish 2 turn 9: life 35, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 23, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Scion turn 10: life 39, 4 cards in hand, 5 lands
+R10     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual
+R10       [Scion decides: Manamorphose 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R10       [Scion attack plan by search: filtered at Goldfish 4]
+R10 *** Goldfish 4 is eliminated (life 17) by Scion
+R10   Scion attacks Goldfish 4 with 2 creature(s): 6 damage (life now 17)
+R10       [Scion decides: Manamorphose 90%, stop (hold mana) 10% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 35, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11   Scion casts Manamorphose
+R11       [Scion end of turn: Manamorphose 100%, pass 0% -> Manamorphose]
+R11 --- Scion turn 11: life 39, 5 cards in hand, 5 lands
+R11     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+R11       [Scion decides: Prismari, the Inspiration 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R11       [Scion attack plan by search: filtered at Goldfish 3]
+R11   Scion attacks Goldfish 3 with 2 creature(s): 6 damage (life now 27)
+R11       [Scion decides: Prismari, the Inspiration 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R11 --- Goldfish 2 turn 11: life 35, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 27, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Scion turn 12: life 39, 6 cards in hand, 5 lands
+R12     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Prismari, the Inspiration
+R12   Scion plays City of Brass
+R12       [Scion decides: Prismari, the Inspiration 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R12       [Scion attack plan by search: filtered at Goldfish 3]
+R12   Scion attacks Goldfish 3 with 2 creature(s): 6 damage (life now 21)
+R12       [Scion decides: Prismari, the Inspiration 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R12 --- Goldfish 2 turn 12: life 35, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12 --- Goldfish 3 turn 12: life 21, 7 cards in hand, 0 lands
+R12     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R13 --- Scion turn 13: life 39, 6 cards in hand, 6 lands
+R13     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Prismari, the Inspiration
+R13   Scion plays Shifting Woodland
+R13       [Scion decides: Prismari, the Inspiration 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R13       [Scion attack plan by search: filtered at Goldfish 3]
+R13 *** Goldfish 3 is eliminated (life 15) by Scion
+R13   Scion attacks Goldfish 3 with 2 creature(s): 6 damage (life now 15)
+R13       [Scion decides: Prismari, the Inspiration 94%, stop (hold mana) 6% -> stop (hold mana) [search]]
+R13 --- Goldfish 2 turn 13: life 35, 7 cards in hand, 0 lands
+R13     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R14 --- Scion turn 14: life 39, 6 cards in hand, 7 lands
+R14     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Prismari, the Inspiration
+R14       [Scion decides: Prismari, the Inspiration 90%, stop (hold mana) 6%, Chrome Mox 4% -> stop (hold mana) [search]]
+R14       [Scion attack plan by search: filtered at Goldfish 2]
+R14   Scion attacks Goldfish 2 with 2 creature(s): 6 damage (life now 29)
+R14       [Scion decides: Prismari, the Inspiration 90%, stop (hold mana) 6%, Chrome Mox 4% -> stop (hold mana) [search]]
+R14 --- Goldfish 2 turn 14: life 29, 7 cards in hand, 0 lands
+R14     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R15 --- Scion turn 15: life 39, 7 cards in hand, 7 lands
+R15     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Prismari, the Inspiration, Chrome Mox
+R15   Scion plays Polluted Delta
+R15     cracks Polluted Delta for Scrubland
+R15       [Scion decides: Prismari, the Inspiration 90%, stop (hold mana) 6%, Chrome Mox 4% -> stop (hold mana) [search]]
+R15       [Scion attack plan by search: filtered at Goldfish 2]
+R15   Scion attacks Goldfish 2 with 2 creature(s): 6 damage (life now 23)
+R15       [Scion decides: Prismari, the Inspiration 90%, stop (hold mana) 6%, Chrome Mox 4% -> stop (hold mana) [search]]
+R15 --- Goldfish 2 turn 15: life 23, 7 cards in hand, 0 lands
+R15     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R16 --- Scion turn 16: life 38, 7 cards in hand, 8 lands
+R16     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse, Prismari, the Inspiration, Chrome Mox
+R16   Scion plays Ancient Tomb
+R16       [Scion decides: Prismari, the Inspiration 90%, stop (hold mana) 6%, Chrome Mox 4% -> Prismari, the Inspiration [search]]
+R16   Scion casts Prismari, the Inspiration
+R16       [Scion decides: stop (hold mana) 56%, Chrome Mox 44% -> Chrome Mox [search]]
+R16   Scion casts Chrome Mox
+R16     Chrome Mox imprints Cabal Ritual
+R16       [Scion attack plan by search: filtered at Goldfish 2]
+R16   Scion attacks Goldfish 2 with 2 creature(s): 6 damage (life now 17)
+R16 --- Goldfish 2 turn 16: life 17, 7 cards in hand, 0 lands
+R16     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R17 --- Scion turn 17: life 38, 4 cards in hand, 9 lands
+R17     hand: Mindbreak Trap, Force of Will, Thassa's Oracle, An Offer You Can't Refuse
+R17       [Scion decides: stop (hold mana) 97%, Birds of Paradise 3% -> Birds of Paradise [search]]
+R17   Scion casts Birds of Paradise
+R17       [Scion attack plan by search: filtered at Goldfish 2]
+R17 *** Goldfish 2 is eliminated (life 4) by Scion
+R17   Scion attacks Goldfish 2 with 3 creature(s): 13 damage (life now 4)
+Kill: own turn 17 (commander damage)
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short
+  T2  mana_short
+  T3  progressed (tutor)
+  T4  progressed (combo piece) | held (payable, not offered): Mindbreak Trap
+  T5  progressed (other) | held (payable, not offered): Mindbreak Trap
+  T6  progressed (tutor) | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle
+  T7  progressed (tutor) | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle
+  T8  progressed (draw) | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual
+  T9  progressed (land only) | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual
+  T10 idle | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual
+  T11 passed_castable: Prismari, the Inspiration [combo piece] | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T12 passed_castable: Prismari, the Inspiration [combo piece] | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T13 passed_castable: Prismari, the Inspiration [combo piece] | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T14 passed_castable: Prismari, the Inspiration [combo piece], Chrome Mox [fast mana / rock] | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T15 passed_castable: Prismari, the Inspiration [combo piece], Chrome Mox [fast mana / rock] | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T16 progressed (combo piece) | held (payable, not offered): Mindbreak Trap, Force of Will, Thassa's Oracle, Cabal Ritual, An Offer You Can't Refuse
+  T17 won
+  cleanup discards: none
+  stops with another option offered: T5 main 1 look-ahead "stop (hold mana)" over Scion of the Ur-Dragon: become Ancient Copper Dragon (4.0); T7 main 1 look-ahead "stop (hold mana)" over Enlightened Tutor (7.2); T10 main 1 look-ahead "stop (hold mana)" over Manamorphose (4.6); T10 main 2 look-ahead "stop (hold mana)" over Manamorphose (4.6); T11 main 1 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T11 main 2 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T12 main 1 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T12 main 2 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T13 main 1 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T13 main 2 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T14 main 1 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T14 main 2 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T15 main 1 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0); T15 main 2 look-ahead "stop (hold mana)" over Prismari, the Inspiration (6.0)
+  crude best case: none
+  crude best case with tutors: own turn 7 (Thassa's Oracle + Demonic Consultation / Tainted Pact)

@@ -1,0 +1,106 @@
+Play-by-play of goldfish game 7 (seed 500007): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Elvish Spirit Guide, Force of Negation, Otawara, Soaring City, Invasion of Ikoria // Zilortha, Apex of Ikoria, Fyndhorn Elves, Tropical Island, Sink into Stupor // Soporific Springs
+R1    Kinnan plays Tropical Island
+R1    Kinnan casts Kinnan, Bonder Prodigy
+R1        [Kinnan decides: Kinnan, Bonder Prodigy 67%, Fyndhorn Elves 33%, stop 0% -> Kinnan, Bonder Prodigy [must]]
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2      hand: Force of Negation, Otawara, Soaring City, Invasion of Ikoria // Zilortha, Apex of Ikoria, Fyndhorn Elves, Sink into Stupor // Soporific Springs, Finale of Devastation
+R2    Kinnan plays Otawara, Soaring City
+R2    Kinnan casts Fyndhorn Elves
+R2        [Kinnan decides: Fyndhorn Elves 100%, stop 0% -> Fyndhorn Elves [must]]
+R2        [Kinnan attack plan by search: filtered at Goldfish 2]
+R2    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R2  --- Goldfish 2 turn 2: life 38, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 40, 5 cards in hand, 2 lands
+R3      hand: Force of Negation, Invasion of Ikoria // Zilortha, Apex of Ikoria, Sink into Stupor // Soporific Springs, Finale of Devastation, Dizzy Spell
+R3    Kinnan plays Gemstone Caverns
+R3        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 47%, Finale of Devastation 47%, stop (hold mana) 5%, Dizzy Spell: transmute 1% -> stop (hold mana) [search]]
+R3        [Kinnan attack plan by search: filtered at Goldfish 4]
+R3    Kinnan attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R3        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 47%, Finale of Devastation 47%, stop (hold mana) 5%, Dizzy Spell: transmute 1% -> stop (hold mana) [search]]
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kinnan turn 4: life 40, 5 cards in hand, 3 lands
+R4      hand: Force of Negation, Invasion of Ikoria // Zilortha, Apex of Ikoria, Sink into Stupor // Soporific Springs, Finale of Devastation, Dizzy Spell
+R4        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 47%, Finale of Devastation 47%, stop (hold mana) 5%, Dizzy Spell: transmute 1% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: filtered at Goldfish 3]
+R4    Kinnan attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 47%, Finale of Devastation 47%, stop (hold mana) 5%, Dizzy Spell: transmute 1% -> Finale of Devastation [search]]
+R4    Kinnan casts Finale of Devastation
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kinnan turn 5: life 40, 5 cards in hand, 3 lands
+R5      hand: Force of Negation, Invasion of Ikoria // Zilortha, Apex of Ikoria, Sink into Stupor // Soporific Springs, Dizzy Spell, Consecrated Sphinx
+R5    Kinnan plays Waterlogged Grove
+R5        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 65%, Consecrated Sphinx 26%, stop (hold mana) 7%, Dizzy Spell: transmute 2% -> Consecrated Sphinx [search]]
+R5    Kinnan casts Consecrated Sphinx
+R5        [Kinnan attack plan by search: filtered at Goldfish 2]
+R5    Kinnan attacks Goldfish 2 with 2 creature(s): 3 damage (life now 35)
+R5  --- Goldfish 2 turn 5: life 35, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kinnan turn 6: life 39, 10 cards in hand, 4 lands
+R6      hand: Force of Negation, Invasion of Ikoria // Zilortha, Apex of Ikoria, Sink into Stupor // Soporific Springs, Dizzy Spell, Sylvan Library, Dramatic Reversal, Talisman of Curiosity, Misty Rainforest, Grim Monolith, Chord of Calling
+R6    Kinnan plays Misty Rainforest
+R6      cracks Misty Rainforest for Breeding Pool
+R6        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 26%, Sylvan Library 26%, Chord of Calling 26%, Talisman of Curiosity 9% -> Talisman of Curiosity [search]]
+R6    Kinnan casts Talisman of Curiosity
+R6        [Kinnan decides: Invasion of Ikoria // Zilortha, Apex of Ikoria 28%, Sylvan Library 28%, Chord of Calling 28%, Formidable Speaker 7% -> Formidable Speaker [search]]
+R6    Kinnan casts Formidable Speaker
+R6        [Kinnan decides: Sylvan Library 84%, Grim Monolith 13%, Dizzy Spell: transmute 3%, Sink into Stupor // Soporific Springs 0% -> Sylvan Library [search]]
+R6    Kinnan casts Sylvan Library
+R6        [Kinnan attack plan by search: filtered at Goldfish 2]
+R6    Kinnan attacks Goldfish 2 with 3 creature(s): 7 damage (life now 28)
+R6  --- Goldfish 2 turn 6: life 28, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Kinnan turn 7: life 37, 11 cards in hand, 5 lands
+R7      hand: Invasion of Ikoria // Zilortha, Apex of Ikoria, Sink into Stupor // Soporific Springs, Dizzy Spell, Dramatic Reversal, Grim Monolith, Chord of Calling, Hullbreaker Horror, Arcane Signet, Gene Pollinator, Lotus Petal, Snapback
+R7        [Kinnan decides: combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 100%, Invasion of Ikoria // Zilortha, Apex of Ikoria 0%, Chord of Calling 0%, Hullbreaker Horror 0% -> combo: Hullbreaker Horror + Kinnan + two rocks cast between each other [search]]
+R7    Kinnan goes for Hullbreaker Horror + Kinnan + two rocks cast between each other
+R7    Kinnan casts Hullbreaker Horror
+R7    Kinnan casts Grim Monolith
+R7  *** Goldfish 2 is eliminated (life 28) by Kinnan
+R7  *** Goldfish 3 is eliminated (life 38) by Kinnan
+R7  *** Goldfish 4 is eliminated (life 38) by Kinnan
+R7  *** Kinnan wins by combo
+Kill: own turn 7 (Hullbreaker Horror + Kinnan + two rocks cast between each other)
+Loss accounting [ai-audit], by own turn:
+  T1  progressed (combo piece) | held (payable, not offered): Invasion of Ikoria // Zilortha, Apex of Ikoria, Finale of Devastation
+  T2  progressed (fast mana / rock) | held (payable, not offered): Dizzy Spell
+  T3  passed_castable: Finale of Devastation [tutor] | held (payable, not offered): Force of Negation, Dizzy Spell
+  T4  progressed (tutor) | held (payable, not offered): Force of Negation, Dizzy Spell
+  T5  progressed (other) | held (payable, not offered): Force of Negation, Dizzy Spell
+  T6  progressed (fast mana / rock) | held (payable, not offered): Force of Negation, Dizzy Spell, Dramatic Reversal, Invasion of Ikoria // Zilortha, Apex of Ikoria, Chord of Calling
+  T7  won
+  cleanup discards: none
+  stops with another option offered: T3 main 1 look-ahead "stop (hold mana)" over Invasion of Ikoria // Zilortha, Apex of Ikoria (6.0); T3 main 2 look-ahead "stop (hold mana)" over Invasion of Ikoria // Zilortha, Apex of Ikoria (6.0); T4 main 1 look-ahead "stop (hold mana)" over Invasion of Ikoria // Zilortha, Apex of Ikoria (6.0)
+  crude best case: none
+  crude best case with tutors: own turn 6 (Kinnan + Basalt Monolith)

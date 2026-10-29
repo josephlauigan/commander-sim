@@ -1,0 +1,15 @@
+
+=== Cloud vs Tier 2 (Mid B3) [loose, lookahead AI, 1000 games] ===
+Win rate  14.1%   95% CI 12.1-16.4%   (even share 25%: -10.9 pts)
+Average turn (your own turn count) of wins 12.4, of losses 10.0
+Plan online (first attack by an equipped Cloud): 74.6% of games
+Wins by: damage 95%, timeout 5%
+  Opponent                                    seated  won when seated  eliminated you
+  Kaalia of the Vast (kaalia-mardu-creature-   61.3%            33.1%           21.2%
+  Sythis (sythis-selesnya-enchantress)         60.9%            42.5%           23.1%
+  Lord Windgrace (lord-windgrace-jund-lands)   59.8%            27.3%           18.2%
+  Brago (brago-azorius-blink-control)          59.4%            19.7%           11.5%
+  Meren of Clan Nel Toth (meren-golgari-recu   58.6%            20.0%           10.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(222s total)

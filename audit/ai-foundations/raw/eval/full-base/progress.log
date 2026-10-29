@@ -1,0 +1,2 @@
+start scion-t6 21:16:10 X=1 --deck scion --pool t6 --games 1000 --jobs 16 --quiet
+done scion-t6 rc=0 21:18:38

@@ -1,0 +1,15 @@
+
+=== Cloud vs Tier 3 (High B3) [loose, lookahead AI, 1000 games] ===
+Win rate  18.6%   95% CI 16.3-21.1%   (even share 25%: -6.4 pts)
+Average turn (your own turn count) of wins 11.6, of losses 8.5
+Plan online (first attack by an equipped Cloud): 76.4% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Aurelia (aurelia-boros-extra-combats)        61.3%            33.1%           23.0%
+  Tergrid (tergrid-mono-black-disruption)      60.9%            39.1%           23.0%
+  Korvold (korvold-jund-sacrifice)             59.8%            18.1%           12.9%
+  Atraxa (atraxa-infect)                       59.4%            26.6%           10.1%
+  Marwyn (marwyn-mono-green-elves)             58.6%            18.3%           12.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(101s total)

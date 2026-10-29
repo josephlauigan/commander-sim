@@ -1,0 +1,264 @@
+Play-by-play of within-tier game 11 (seed 500011): Tier 6 (cEDH, B5), loose profile, lookahead AI
+Seat order: Dack Fayden, Sisay, Kraum/Tymna, Kinnan
+R1  --- Dack Fayden turn 1: life 40, 7 cards in hand, 0 lands
+R1    Dack Fayden plays City of Traitors
+R1    Dack Fayden casts Mana Vault
+R1        [Dack Fayden decides: Mana Vault 93%, Pearl Medallion 7%, stop 0% -> Mana Vault [must]]
+R1        [Dack Fayden decides: Pearl Medallion 100%, stop 0% -> Pearl Medallion [search]]
+R1    Dack Fayden casts Pearl Medallion
+R1  --- Sisay turn 1: life 40, 7 cards in hand, 0 lands
+R1        [Sisay plays Bayou [plan: the land drop the plan wants]]
+R1    Sisay plays Bayou
+R1    Sisay casts Mana Vault
+R1        [Sisay decides: Mana Vault 57%, Noble Hierarch 43%, stop 0% -> Mana Vault [must]]
+R1    Sisay casts Noble Hierarch
+R1        [Sisay decides: Noble Hierarch 100%, stop 0% -> Noble Hierarch [must]]
+R1  --- Kraum/Tymna turn 1: life 40, 7 cards in hand, 0 lands
+R1        [Kraum/Tymna plays Arid Mesa for Volcanic Island [plan: the land drop the plan wants]]
+R1    Kraum/Tymna plays Arid Mesa
+R1      cracks Arid Mesa for Volcanic Island
+R1    Kraum/Tymna casts Lotus Petal
+R1        [Kraum/Tymna decides: Lotus Petal 100%, stop (hold mana) 0% -> Lotus Petal [must]]
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Waterlogged Grove
+R2  --- Dack Fayden turn 2: life 40, 5 cards in hand, 1 lands
+R2        [Dack Fayden decides: Chalice of the Void 98%, play Razorgrass Ambush // Razorgrass Field as a land 2%, stop 0% -> Chalice of the Void [search]]
+R2    Dack Fayden casts Chalice of the Void
+R2      Chalice of the Void enters with 1 charge counter(s)
+R2        [Dack Fayden decides: play Razorgrass Ambush // Razorgrass Field as a land 100%, stop 0% -> stop [search]]
+R2        [Dack Fayden decides: play Razorgrass Ambush // Razorgrass Field as a land 100%, stop 0% -> play Razorgrass Ambush // Razorgrass Field as a land [search]]
+R2    Dack Fayden plays Razorgrass Ambush // Razorgrass Field
+R2      Dack Fayden sacrifices City of Traitors (another land was played)
+R2    Dack Fayden casts The Mind Stone
+R2        [Dack Fayden decides: The Mind Stone 100%, Soul Partition 0%, stop 0% -> The Mind Stone [must]]
+R2        [Dack Fayden decides: Soul Partition 100%, stop 0% -> stop [search]]
+R2  --- Sisay turn 2: life 40, 4 cards in hand, 1 lands
+R2    Sisay plays Command Tower
+R2    Sisay casts Sisay, Weatherlight Captain
+R2        [Sisay decides: Sisay, Weatherlight Captain 64%, Teferi, Time Raveler 34%, Deadpool, Trading Card 3%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R2  --- Kraum/Tymna turn 2: life 39, 6 cards in hand, 1 lands
+R2        [Kraum/Tymna plays Scalding Tarn for Tundra [plan: the land drop the plan wants]]
+R2    Kraum/Tymna plays Scalding Tarn
+R2      cracks Scalding Tarn for Tundra
+R2          [eval Tymna the Weaver: u 6.45, score -7.20, won 0/6 lost 0, open eval -7.20 (life 9.67, board 3.67, power 0.47, hand 4.50, lands 1.80, treasures 0.13, combo 3.00, opp -30.84, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R2          [eval stop (hold mana) (chosen): u 0.00, score -6.37, won 0/6 lost 0, open eval -8.37 (life 9.46, board 3.50, power 0.58, hand 3.90, lands 1.80, treasures 0.13, combo 3.00, opp -31.21, dead 0.00), ramp 0.00, hold 2.00, top card cast in 4/6 open, held mana up at turn end in 0]
+R2        [Kraum/Tymna decides: Tymna the Weaver 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2          [eval Tymna the Weaver: u 6.45, score -6.11, won 0/6 lost 0, open eval -6.11 (life 9.62, board 2.83, power 0.41, hand 4.50, lands 1.80, treasures 0.00, combo 3.00, opp -28.61, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/6 open, held mana up at turn end in 0]
+R2          [eval stop (hold mana) (chosen): u 0.00, score -3.43, won 0/6 lost 0, open eval -5.43 (life 9.50, board 4.00, power 0.70, hand 4.50, lands 1.80, treasures 0.00, combo 3.00, opp -29.22, dead 0.00), ramp 0.00, hold 2.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R2        [Kraum/Tymna decides: Tymna the Weaver 100%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Tarnished Citadel
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R3    Dack Fayden casts Soul Partition -> Sisay, Weatherlight Captain (Sisay)
+R3      Sisay, Weatherlight Captain (Sisay) is removed: exile
+R3        [Dack Fayden end of turn: Soul Partition -> Sisay, Weatherlight Captain 100%, pass 0% -> Soul Partition -> Sisay, Weatherlight Captain]
+R3  --- Dack Fayden turn 3: life 36, 2 cards in hand, 1 lands
+R3    Dack Fayden plays Plains
+R3        [Dack Fayden decides: Trinisphere 100%, stop 0% -> stop [search]]
+R3        [Dack Fayden decides: Trinisphere 100%, stop 0% -> Trinisphere [search]]
+R3    Dack Fayden casts Trinisphere
+R3      Kraum/Tymna casts Force of Negation at Trinisphere
+R3      Kraum/Tymna counters Trinisphere with Force of Negation
+R3  --- Sisay turn 3: life 40, 4 cards in hand, 2 lands
+R3    Sisay plays Verdant Catacombs
+R3      cracks Verdant Catacombs for Savannah
+R3    Sisay casts Sisay, Weatherlight Captain
+R3      Kinnan casts Force of Will at Sisay, Weatherlight Captain
+R3      Kinnan counters Sisay, Weatherlight Captain with Force of Will
+R3        [Sisay decides: Sisay, Weatherlight Captain 59%, Teferi, Time Raveler 33%, Enduring Vitality 4%, Deadpool, Trading Card 3% -> Sisay, Weatherlight Captain [must]]
+R3  --- Kraum/Tymna turn 3: life 38, 4 cards in hand, 2 lands
+R3    Kraum/Tymna plays Gemstone Caverns
+R3          [eval Tymna the Weaver: u 7.54, score -2.01, won 0/6 lost 0, open eval -2.01 (life 9.71, board 4.67, power 0.58, hand 3.75, lands 2.40, treasures 0.07, combo 3.00, opp -26.29, dead 0.00), ramp 0.00, hold 0.00, top card cast in 5/6 open, held mana up at turn end in 6]
+R3          [eval stop (hold mana) (chosen): u 4.53, score 2.17, won 0/6 lost 0, open eval -2.36 (life 9.58, board 3.50, power 0.70, hand 3.90, lands 2.40, treasures 0.00, combo 3.00, opp -25.57, dead 0.00), ramp 0.00, hold 4.53, top card cast in 4/6 open, held mana up at turn end in 6]
+R3        [Kraum/Tymna decides: Tymna the Weaver 95%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R3          [eval Tymna the Weaver: u 7.54, score 0.22, won 0/6 lost 0, open eval 0.22 (life 9.50, board 5.67, power 1.17, hand 4.05, lands 2.40, treasures 0.00, combo 3.00, opp -25.55, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R3          [eval stop (hold mana) (chosen): u 4.53, score 1.07, won 0/6 lost 0, open eval -3.46 (life 9.50, board 3.33, power 0.58, hand 3.15, lands 2.40, treasures 0.00, combo 3.00, opp -25.61, dead 0.00), ramp 0.00, hold 4.53, top card cast in 5/6 open, held mana up at turn end in 6]
+R3        [Kraum/Tymna decides: Tymna the Weaver 95%, stop (hold mana) 5% -> stop (hold mana) [search]]
+R3  --- Kinnan turn 3: life 38, 5 cards in hand, 2 lands
+R3    Kinnan casts Chrome Mox
+R3      Chrome Mox imprints Commandeer
+R3        [Kinnan decides: Chrome Mox 98%, stop (hold mana) 2% -> Chrome Mox [must]]
+R3        [Kinnan decides: transmute Drift of Phantasms 96%, Enduring Vitality 2%, Drift of Phantasms 1%, Valley Floodcaller 0% -> transmute Drift of Phantasms [search]]
+R3    Kinnan transmutes Drift of Phantasms
+R3      Kinnan reveals Basalt Monolith (transmute)
+R3        [Kinnan attack plan by search: filtered at Sisay]
+R3    Kinnan attacks Sisay with 1 creature(s): 2 damage (life now 37)
+R4  --- Dack Fayden turn 4: life 35, 1 cards in hand, 2 lands
+R4  --- Sisay turn 4: life 37, 4 cards in hand, 3 lands
+R4        [Sisay decides: Teferi, Time Raveler 81%, Enduring Vitality 11%, Deadpool, Trading Card 8%, stop 0% -> Deadpool, Trading Card [search]]
+R4    Sisay casts Deadpool, Trading Card
+R4  --- Kraum/Tymna turn 4: life 38, 4 cards in hand, 3 lands
+R4    Kraum/Tymna plays Ancient Tomb
+R4          [eval Mox Diamond: u 8.87, score -3.69, won 0/6 lost 0, open eval -3.69 (life 9.33, board 6.00, power 1.40, hand 3.75, lands 2.70, treasures 0.00, combo 3.00, opp -30.07, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval Tymna the Weaver: u 8.03, score -3.95, won 0/6 lost 0, open eval -3.95 (life 9.42, board 5.17, power 1.17, hand 3.60, lands 2.70, treasures 0.00, combo 3.00, opp -29.22, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval Kraum, Ludevic's Opus: u 6.72, score -5.72, won 0/6 lost 0, open eval -5.72 (life 8.67, board 4.83, power 1.28, hand 3.45, lands 2.80, treasures 0.00, combo 3.00, opp -30.11, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval stop (hold mana) (chosen): u 5.53, score -0.68, won 0/6 lost 0, open eval -5.21 (life 9.12, board 4.50, power 1.05, hand 3.60, lands 2.70, treasures 0.00, combo 3.00, opp -29.47, dead 0.00), ramp 0.00, hold 4.53, top card cast in 6/6 open, held mana up at turn end in 6]
+R4        [Kraum/Tymna decides: Mox Diamond 63%, Tymna the Weaver 27%, Kraum, Ludevic's Opus 7%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R4          [eval Mox Diamond: u 8.87, score -1.60, won 0/6 lost 0, open eval -1.60 (life 9.42, board 5.83, power 1.28, hand 4.05, lands 2.70, treasures 0.00, combo 3.00, opp -27.97, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval Tymna the Weaver: u 8.03, score -2.05, won 0/6 lost 0, open eval -2.05 (life 9.42, board 5.83, power 1.28, hand 3.90, lands 2.70, treasures 0.00, combo 3.00, opp -28.30, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval Kraum, Ludevic's Opus: u 6.72, score -2.29, won 0/6 lost 0, open eval -2.29 (life 8.71, board 6.83, power 1.75, hand 4.20, lands 2.70, treasures 0.00, combo 3.00, opp -29.61, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R4          [eval stop (hold mana) (chosen): u 5.53, score 0.01, won 0/6 lost 0, open eval -4.52 (life 9.50, board 4.00, power 0.70, hand 3.15, lands 2.70, treasures 0.00, combo 3.00, opp -27.81, dead 0.00), ramp 0.00, hold 4.53, top card cast in 6/6 open, held mana up at turn end in 6]
+R4        [Kraum/Tymna decides: Mox Diamond 63%, Tymna the Weaver 27%, Kraum, Ludevic's Opus 7%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R4  --- Kinnan turn 4: life 37, 4 cards in hand, 2 lands
+R4    Kinnan casts Basalt Monolith
+R4        [Kinnan decides: Basalt Monolith 98%, Enduring Vitality 2%, Valley Floodcaller 0%, stop (hold mana) 0% -> Basalt Monolith [must]]
+R4        [Kinnan decides: stop (hold mana) 80%, Valley Floodcaller 17%, Basalt Monolith ability 3% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: all at Sisay]
+R4    Kinnan attacks Sisay with 1 creature(s): 0 damage (life now 36)
+R4        [Kinnan decides: stop (hold mana) 80%, Valley Floodcaller 17%, Basalt Monolith ability 3% -> stop (hold mana) [search]]
+R5  --- Dack Fayden turn 5: life 34, 2 cards in hand, 2 lands
+R5  --- Sisay turn 5: life 36, 4 cards in hand, 3 lands
+R5    Sisay plays Boseiju, Who Endures
+R5        [Sisay decides: Teferi, Time Raveler 88%, Enduring Vitality 12%, stop 0% -> Enduring Vitality [search]]
+R5    Sisay casts Enduring Vitality
+R5        [Sisay decides: Teferi, Time Raveler 100%, stop 0% -> Teferi, Time Raveler [search]]
+R5    Sisay casts Teferi, Time Raveler
+R5        [Sisay decides: Teferi, Time Raveler -3 80%, Teferi, Time Raveler +1 20%, stop 0% -> Teferi, Time Raveler -3 [search]]
+R5    Sisay uses Teferi, Time Raveler (-3): bounce and draw
+R5      Pearl Medallion (Dack Fayden) is removed: bounce
+R5  --- Kraum/Tymna turn 5: life 38, 4 cards in hand, 4 lands
+R5          [eval Mox Diamond: u 8.31, score -9.19, won 0/6 lost 0, open eval -9.19 (life 9.46, board 5.83, power 1.05, hand 5.40, lands 2.50, treasures 0.00, combo 4.50, opp -38.46, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R5          [eval Tymna the Weaver: u 7.53, score -10.85, won 0/6 lost 0, open eval -10.85 (life 9.67, board 4.83, power 0.93, hand 5.25, lands 2.50, treasures 0.00, combo 4.50, opp -39.17, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R5          [eval Kraum, Ludevic's Opus (chosen): u 6.30, score -7.50, won 0/6 lost 0, open eval -7.50 (life 8.96, board 5.67, power 1.52, hand 4.95, lands 2.50, treasures 0.00, combo 3.00, opp -34.51, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R5          [eval stop (hold mana): u 3.75, score -8.35, won 0/6 lost 0, open eval -11.10 (life 9.29, board 5.33, power 1.28, hand 4.80, lands 2.50, treasures 0.00, combo 3.00, opp -37.95, dead 0.00), ramp 0.00, hold 2.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R5        [Kraum/Tymna decides: Mox Diamond 63%, Tymna the Weaver 28%, Kraum, Ludevic's Opus 8%, stop (hold mana) 1% -> Kraum, Ludevic's Opus [search]]
+R5    Kraum/Tymna casts Kraum, Ludevic's Opus
+R5          [eval Mox Diamond: u 8.31, score -9.01, won 0/6 lost 0, open eval -9.01 (life 8.83, board 4.17, power 1.17, hand 4.65, lands 2.50, treasures 0.00, combo 3.00, opp -33.84, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R5          [eval stop (hold mana) (chosen): u 3.75, score -6.13, won 0/6 lost 0, open eval -8.88 (life 9.00, board 4.17, power 1.17, hand 4.65, lands 2.50, treasures 0.00, combo 3.00, opp -33.86, dead 0.00), ramp 0.00, hold 2.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R5        [Kraum/Tymna decides: Mox Diamond 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5        [Kraum/Tymna attack plan by search: filtered at Sisay]
+R5      Kraum, Ludevic's Opus deals 4 to Teferi, Time Raveler (loyalty -3)
+R5    Kraum/Tymna attacks Sisay with 1 creature(s): 4 damage (life now 32)
+R5          [eval Mox Diamond: u 8.31, score -4.35, won 0/6 lost 0, open eval -4.35 (life 8.71, board 5.50, power 1.40, hand 5.40, lands 2.50, treasures 0.00, combo 3.00, opp -31.10, dead 0.00), ramp 0.00, hold 0.00, top card cast in 6/6 open, held mana up at turn end in 6]
+R5          [eval stop (hold mana) (chosen): u 3.75, score -2.94, won 0/6 lost 0, open eval -5.69 (life 9.00, board 4.83, power 1.28, hand 5.40, lands 2.50, treasures 0.00, combo 3.00, opp -32.01, dead 0.00), ramp 0.00, hold 2.75, top card cast in 6/6 open, held mana up at turn end in 6]
+R5        [Kraum/Tymna decides: Mox Diamond 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R5    Kinnan casts Valley Floodcaller
+R5        [Kinnan end of turn: Valley Floodcaller 100%, Basalt Monolith ability 0%, pass 0% -> Valley Floodcaller]
+R5  --- Kinnan turn 5: life 36, 3 cards in hand, 2 lands
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 93%, Enduring Vitality 6%, stop (hold mana) 1%, Basalt Monolith ability 0% -> Kinnan, Bonder Prodigy [must]]
+R5        [Kinnan attack plan by search: none at Dack Fayden]
+R6  --- Dack Fayden turn 6: life 33, 4 cards in hand, 2 lands
+R6    Dack Fayden casts Chrome Mox
+R6      Chrome Mox imprints Paladin Class
+R6        [Dack Fayden decides: Chrome Mox 96%, Pearl Medallion 4%, stop 0% -> Chrome Mox [must]]
+R6        [Dack Fayden decides: Pearl Medallion 100%, stop 0% -> Pearl Medallion [search]]
+R6    Dack Fayden casts Pearl Medallion
+R6  --- Sisay turn 6: life 32, 3 cards in hand, 4 lands
+R6    Sisay plays Volcanic Island
+R6    Sisay casts Sisay, Weatherlight Captain
+R6        [Sisay decides: Sisay, Weatherlight Captain 92%, Relic of Legends 8%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R6        [Sisay attack plan by search: all at Kraum/Tymna]
+R6    Sisay attacks Kraum/Tymna with 1 creature(s): 4 damage (life now 32)
+R6  --- Kraum/Tymna turn 6: life 32, 6 cards in hand, 4 lands
+R6    Kraum/Tymna plays Bloodstained Mire
+R6      cracks Bloodstained Mire for Underground Sea
+R6          [eval Mox Diamond (chosen): u 8.61, score -67.68, won 0/6 lost 4, open eval -3.05 (life 7.62, board 14.25, power 2.80, hand 6.30, lands 3.00, treasures 0.00, combo 3.00, opp -40.18, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/2 open, held mana up at turn end in 2]
+R6          [eval Tymna the Weaver: u 8.10, score -67.76, won 0/6 lost 4, open eval -3.28 (life 7.38, board 14.25, power 2.80, hand 6.30, lands 3.00, treasures 0.00, combo 3.00, opp -40.18, dead 0.00), ramp 0.00, hold 0.00, top card cast in 2/2 open, held mana up at turn end in 2]
+R6          [eval stop (hold mana): u 7.50, score -79.54, won 0/6 lost 5, open eval -7.24 (life 8.25, board 12.00, power 3.15, hand 6.30, lands 3.00, treasures 0.00, combo 3.00, opp -43.34, dead 0.00), ramp 0.00, hold 5.00, top card cast in 1/1 open, held mana up at turn end in 1]
+R6        [Kraum/Tymna decides: Mox Diamond 52%, Tymna the Weaver 31%, stop (hold mana) 17% -> Mox Diamond [search]]
+R6    Kraum/Tymna casts Mox Diamond
+R6      Mox Diamond goes to the graveyard (no land to discard)
+R6          [eval Tymna the Weaver: u 8.10, score -84.83, won 0/6 lost 5, open eval -9.00 (life 6.25, board 11.00, power 2.80, hand 4.50, lands 3.60, treasures 0.00, combo 3.00, opp -40.66, dead 0.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 1]
+R6          [eval stop (hold mana) (chosen): u 7.50, score -78.28, won 0/6 lost 5, open eval 0.32 (life 7.25, board 16.50, power 2.45, hand 6.30, lands 3.00, treasures 0.00, combo 3.00, opp -38.16, dead 0.00), ramp 0.00, hold 5.00, top card cast in 1/1 open, held mana up at turn end in 1]
+R6        [Kraum/Tymna decides: Tymna the Weaver 64%, stop (hold mana) 36% -> stop (hold mana) [search]]
+R6        [Kraum/Tymna attack plan by search: filtered at Sisay]
+R6    Kraum/Tymna attacks Sisay with 1 creature(s): 4 damage (life now 24)
+R6          [eval Tymna the Weaver (chosen): u 8.10, score -37.09, won 0/6 lost 2, open eval -5.64 (life 7.19, board 14.62, power 2.62, hand 5.85, lands 3.15, treasures 0.00, combo 3.00, opp -42.40, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 4]
+R6          [eval stop (hold mana): u 7.50, score -48.19, won 0/6 lost 3, open eval -6.38 (life 7.58, board 12.50, power 2.68, hand 5.70, lands 3.20, treasures 0.00, combo 3.00, opp -41.42, dead 0.00), ramp 0.00, hold 5.00, top card cast in 3/3 open, held mana up at turn end in 3]
+R6        [Kraum/Tymna decides: Tymna the Weaver 64%, stop (hold mana) 36% -> Tymna the Weaver [search]]
+R6    Kraum/Tymna casts Tymna the Weaver
+R6  --- Kinnan turn 6: life 35, 4 cards in hand, 2 lands
+R6        [Kinnan decides: Enduring Vitality 77%, Kinnan: dig five 13%, stop (hold mana) 10%, Basalt Monolith ability 0% -> Enduring Vitality [search]]
+R6    Kinnan casts Enduring Vitality
+R6        [Kinnan decides: Kinnan: dig five 55%, stop (hold mana) 43%, Basalt Monolith ability 2% -> stop (hold mana) [search]]
+R6        [Kinnan attack plan by search: all at Sisay]
+R6    Kinnan attacks Sisay with 2 creature(s): 0 damage (life now 24)
+R6        [Kinnan decides: stop (hold mana) 96%, Basalt Monolith ability 4% -> stop (hold mana) [search]]
+R7  --- Dack Fayden turn 7: life 32, 2 cards in hand, 2 lands
+R7        [Dack Fayden decides: Gleaming Splendor 100%, stop 0% -> Gleaming Splendor [search]]
+R7    Dack Fayden casts Gleaming Splendor
+R7  --- Sisay turn 7: life 24, 3 cards in hand, 5 lands
+R7    Sisay plays Taiga
+R7    Sisay activates Sisay: Derevi, Empyrial Tactician
+R7      Derevi untaps Mana Vault
+R7        [Sisay decides: Sisay: Derevi, Empyrial Tactician 100%, Relic of Legends 0%, stop 0% -> Sisay: Derevi, Empyrial Tactician [must]]
+R7    Sisay activates Sisay: Emiel the Blessed
+R7        [Sisay decides: Sisay: Emiel the Blessed 100%, Relic of Legends 0%, stop 0% -> Sisay: Emiel the Blessed [must]]
+R7          [eval Relic of Legends: u 3.10, score -46.49, won 0/6 lost 3, open eval 7.02 (life 2.67, board 29.35, power 8.40, hand 2.40, lands 3.80, treasures 0.00, combo 3.00, opp -42.21, dead 0.00), ramp 0.00, hold 0.00, top card cast in 3/3 open, held mana up at turn end in 0]
+R7          [eval Emiel the Blessed ability (chosen): u -0.45, score -14.11, won 1/6 lost 2, open eval 6.45 (life 3.50, board 28.35, power 7.70, hand 3.30, lands 3.80, treasures 0.00, combo 2.25, opp -42.10, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/3 open, held mana up at turn end in 0]
+R7          [eval stop: u -3.00, score -27.07, won 0/6 lost 2, open eval 9.40 (life 3.19, board 29.89, power 8.66, hand 2.25, lands 3.75, treasures 0.00, combo 3.00, opp -40.80, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 0]
+R7        [Sisay decides: Relic of Legends 97%, Emiel the Blessed ability 3%, stop 0% -> Emiel the Blessed ability [search]]
+R7    Sisay activates Emiel the Blessed
+R7  --- Kraum/Tymna turn 7: life 31, 5 cards in hand, 5 lands
+R7    Kraum/Tymna plays Starting Town
+R7        [Kraum/Tymna attack plan by search: all at Sisay]
+R7    Kraum/Tymna attacks Sisay with 2 creature(s): 4 damage (life now 16)
+R7          [eval Tymna the Weaver (chosen): u 6.95, score -36.41, won 0/6 lost 2, open eval -4.62 (life 7.44, board 11.75, power 2.10, hand 5.62, lands 3.90, treasures 0.00, combo 7.50, opp -43.19, dead 0.00), ramp 0.00, hold 0.00, top card cast in 4/4 open, held mana up at turn end in 4]
+R7          [eval stop (hold mana): u 3.75, score -52.81, won 0/6 lost 3, open eval -11.12 (life 7.08, board 10.17, power 1.98, hand 5.70, lands 3.80, treasures 0.00, combo 3.00, opp -43.50, dead 0.00), ramp 0.00, hold 2.75, top card cast in 2/3 open, held mana up at turn end in 3]
+R7        [Kraum/Tymna decides: Tymna the Weaver 96%, stop (hold mana) 4% -> Tymna the Weaver [search]]
+R7    Kraum/Tymna casts Tymna the Weaver
+R7  --- Kinnan turn 7: life 34, 4 cards in hand, 2 lands
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 94%, Mirage Mirror 3%, stop (hold mana) 3%, Basalt Monolith ability 0% -> Kinnan, Bonder Prodigy [must]]
+R7        [Kinnan attack plan by search: filtered at Kraum/Tymna]
+R7    Kinnan attacks Kraum/Tymna with 1 creature(s): 3 damage (life now 28)
+R8  --- Dack Fayden turn 8: life 31, 2 cards in hand, 2 lands
+R8    Dack Fayden casts Dack Fayden, Helping Hand
+R8      Dack reveals 3 creature cards: Fiend Hunter, All-Fates Stalker, Radiant Solar
+R8      Kraum/Tymna gains control of Fiend Hunter (Dack Fayden)
+R8      Kinnan gains control of All-Fates Stalker (Dack Fayden)
+R8      Sisay gains control of Radiant Solar (Dack Fayden)
+R8      Sisay, Weatherlight Captain (Sisay) is removed: exile
+R8      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R8      Dack Fayden ventures into Lost Mine of Phandelver
+R8      Dack Fayden ventures: Cave Entrance
+R8        [Dack Fayden decides: Dack Fayden, Helping Hand 98%, Felidar Guardian 2%, stop 0% -> Dack Fayden, Helping Hand [must]]
+R8  --- Sisay turn 8: life 16, 3 cards in hand, 6 lands
+R8      Sisay pays {4} to untap Mana Vault
+R8    Sisay casts Sisay, Weatherlight Captain
+R8      Emiel puts 1 +1/+1 counter(s) on Sisay, Weatherlight Captain
+R8      Sisay ventures into Lost Mine of Phandelver
+R8      Sisay ventures: Cave Entrance
+R8        [Sisay decides: Sisay, Weatherlight Captain 98%, Relic of Legends 2%, Emiel the Blessed ability 0%, stop 0% -> Sisay, Weatherlight Captain [must]]
+R8        [Sisay attack plan by search: filtered at Dack Fayden]
+R8      Derevi untaps Mana Vault
+R8    Sisay attacks Kraum/Tymna with 1 creature(s): 4 damage (life now 24)
+R8          [eval Relic of Legends: u 2.75, score 81.49, won 5/6 lost 0, open eval 8.96 (life 3.50, board 30.05, power 9.10, hand 3.60, lands 3.60, treasures 0.00, combo 3.00, opp -43.39, dead 0.00), ramp 0.00, hold 0.00, top card cast in 1/1 open, held mana up at turn end in 0]
+R8          [eval Emiel the Blessed ability: u -0.45, score 81.89, won 5/6 lost 0, open eval 11.31 (life 2.50, board 30.05, power 8.75, hand 4.50, lands 3.60, treasures 0.00, combo 3.00, opp -40.44, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/1 open, held mana up at turn end in 0]
+R8          [eval stop (chosen): u -3.00, score 82.06, won 5/6 lost 0, open eval 12.37 (life 3.50, board 30.05, power 8.75, hand 4.50, lands 3.60, treasures 0.00, combo 3.00, opp -40.30, dead 0.00), ramp 0.00, hold 0.00, top card cast in 0/1 open, held mana up at turn end in 0]
+R8        [Sisay decides: Relic of Legends 96%, Emiel the Blessed ability 4%, stop 0% -> stop [search]]
+R8  --- Kraum/Tymna turn 8: life 24, 5 cards in hand, 6 lands
+R8        [Kraum/Tymna attack plan by search: all at Sisay]
+R8    Kraum/Tymna attacks Sisay with 3 creature(s): 5 damage (life now 12)
+R8        [Kraum/Tymna decides: stop (hold mana) 100%, Tymna the Weaver 0% -> stop (hold mana) [search]]
+R8  --- Kinnan turn 8: life 33, 5 cards in hand, 2 lands
+R8    Kinnan plays Rejuvenating Springs
+R8    Kinnan casts Kinnan, Bonder Prodigy
+R8        [Kinnan decides: stop (hold mana) 59%, Kinnan, Bonder Prodigy 34%, Mirage Mirror 7%, Basalt Monolith ability 0% -> Kinnan, Bonder Prodigy [must]]
+R8        [Kinnan attack plan by search: all at Dack Fayden]
+R8    Kinnan attacks Sisay with 1 creature(s): 0 damage (life now 12)
+R9  --- Dack Fayden turn 9: life 30, 3 cards in hand, 2 lands
+R9    Dack Fayden plays Cavern of Souls
+R9        [Dack Fayden decides: Felidar Guardian 100%, stop 0% -> Felidar Guardian [search]]
+R9    Dack Fayden casts Felidar Guardian
+R9      Chalice of the Void enters with 1 charge counter(s)
+R9      Chalice of the Void is blinked
+R9        [Dack Fayden attack plan by search: filtered at Sisay]
+R9        [Dack Fayden holds back 1 attacker(s) that would die to blocks]
+R9    Dack Fayden attacks Kraum/Tymna with 1 creature(s): 4 damage (life now 20)
+R9    Sisay activates Emiel the Blessed
+R9        [Sisay end of turn: Emiel the Blessed ability 74%, pass 26% -> Emiel the Blessed ability]
+R9  --- Sisay turn 9: life 12, 4 cards in hand, 6 lands
+R9      Sisay pays {4} to untap Mana Vault
+R9    Sisay activates Sisay: Gaea's Cradle
+R9        [Sisay decides: Sisay: Gaea's Cradle 100%, Relic of Legends 0%, Lotus Petal 0%, Emiel the Blessed ability 0% -> Sisay: Gaea's Cradle [must]]
+R9        [Sisay decides: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn) [plan: combo: Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn); wins this turn]]
+R9    Sisay goes for Derevi + Emiel + Gaea's Cradle / Bloom Tender (Flash Unicorn)
+R9    Sisay activates Sisay: Mount Doom
+R9  *** Dack Fayden is eliminated (life 29) by Sisay
+R9  *** Kraum/Tymna is eliminated (life 20) by Sisay
+R9  *** Kinnan is eliminated (life 32) by Sisay
+R9  *** Sisay wins by combo
+Winner: Sisay (combo)

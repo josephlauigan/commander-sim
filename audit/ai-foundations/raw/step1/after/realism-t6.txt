@@ -1,0 +1,30 @@
+
+=== Realism: Tier 6 (cEDH, B5) [loose, lookahead AI, 4000 games, seeds 500000-503999; 6 decks, 4 a pod] ===
+targets: data/realism/t6.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     28.6%     27.2-30.0   31.8%     30.3-33.3  FAIL
+  seat 2 share of decisive games (%)                     25.7%     24.3-27.1   27.3%     25.8-28.8  FAIL
+  seat 3 share of decisive games (%)                     23.7%     22.4-25.0   22.1%     20.6-23.6  FAIL
+  seat 4 share of decisive games (%)                     22.1%     20.8-23.4   18.8%     17.3-20.3  FAIL
+  median round of a decisive win (rounds)                  8.0       8.0-8.0     7.0           6-8  PASS
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                91.0%     90.1-91.9   47.8%     46.3-49.3  reference
+  wins by damage (combat or other) (%)                    8.7%       7.8-9.6   39.9%     38.4-41.4  reference
+  wins by commander damage (%)                            0.3%       0.2-0.6   11.6%     10.1-13.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.1    0.7%         0-2.2  reference
+  deck win spread, best minus worst deck (pts)            10.7             -     4.0           0-8  FAIL
+  games over 15 rounds (round cap 20) (%)                 5.6%       4.9-6.3       -             -  no target
+  1 of 6 targets pass (2 statistics have no target yet; 4 reference values, not scored)
+Games: 4000, decisive 3953 (98.8%), round-cap timeouts 1.2%
+Each deck's share of the decisive games it sat in: Dack Fayden 22.1% of 2667; Kinnan 24.4% of 2653; Kraum/Tymna 28.3% of 2583; Rograkh/Silas 22.4% of 2647; Rograkh/Thrasios 21.2% of 2655; Sisay 31.8% of 2607
+Target sources:
+  seat1_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  seat2_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  seat3_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  seat4_win: TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player games (https://topdeck.gg) (n=29864, read 2026-10-24)
+  win_round_median: JD's speed target (TARGETS-t6.md, 2026-10-19); Playgroup average win turn of the Tier 6 commanders, 6-7 (n=2722, read 2026-10-22)
+  win_combo_alt: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  win_damage: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  win_commander_damage: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  win_poison: Playgroup commanders.json, wins of the Tier 6 commanders (casual logs) (n=2722, read 2026-10-22) [reference, not scored]
+  deck_win_spread: EDHTop16 commander stats, 2026-04-18 to 2026-10-17 (TARGETS-t6.md); band set by JD (n=4700, read 2026-10-17)

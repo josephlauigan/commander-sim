@@ -1,0 +1,194 @@
+Play-by-play of goldfish game 8 (seed 500008): Kinnan alone, lookahead AI
+Seat order: Kinnan, Goldfish 2, Goldfish 3, Goldfish 4
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Hullbreaker Horror, Flooded Strand, Mana Confluence, Rejuvenating Springs, Disrupting Shoal, Chord of Calling, Chain of Vapor
+R1    Kinnan plays Mana Confluence
+R1  --- Goldfish 2 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 3 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R1  --- Goldfish 4 turn 1: life 40, 7 cards in hand, 0 lands
+R1      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2      hand: Hullbreaker Horror, Flooded Strand, Rejuvenating Springs, Disrupting Shoal, Chord of Calling, Chain of Vapor, Rhystic Study
+R2    Kinnan plays Rejuvenating Springs
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [must]]
+R2  --- Goldfish 2 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 3 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R2  --- Goldfish 4 turn 2: life 40, 7 cards in hand, 0 lands
+R2      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Kinnan turn 3: life 40, 7 cards in hand, 2 lands
+R3      hand: Hullbreaker Horror, Flooded Strand, Disrupting Shoal, Chord of Calling, Chain of Vapor, Rhystic Study, Flusterstorm
+R3    Kinnan plays Wooded Foothills
+R3      cracks Wooded Foothills for Breeding Pool
+R3        [Kinnan attack plan by search: filtered at Goldfish 2]
+R3    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 38)
+R3  --- Goldfish 2 turn 3: life 38, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 3 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R3  --- Goldfish 4 turn 3: life 40, 7 cards in hand, 0 lands
+R3      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Kinnan turn 4: life 39, 7 cards in hand, 3 lands
+R4      hand: Hullbreaker Horror, Flooded Strand, Disrupting Shoal, Chord of Calling, Chain of Vapor, Rhystic Study, Flusterstorm
+R4    Kinnan plays Flooded Strand
+R4      cracks Flooded Strand for Tropical Island
+R4        [Kinnan decides: Rhystic Study 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: filtered at Goldfish 3]
+R4    Kinnan attacks Goldfish 3 with 1 creature(s): 2 damage (life now 38)
+R4        [Kinnan decides: Rhystic Study 97%, stop (hold mana) 3% -> stop (hold mana) [search]]
+R4  --- Goldfish 2 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 3 turn 4: life 38, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R4  --- Goldfish 4 turn 4: life 40, 7 cards in hand, 0 lands
+R4      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Kinnan turn 5: life 38, 7 cards in hand, 4 lands
+R5      hand: Hullbreaker Horror, Disrupting Shoal, Chord of Calling, Chain of Vapor, Rhystic Study, Flusterstorm, Dramatic Reversal
+R5        [Kinnan decides: Rhystic Study 62%, stop (hold mana) 38% -> stop (hold mana) [search]]
+R5        [Kinnan attack plan by search: filtered at Goldfish 4]
+R5    Kinnan attacks Goldfish 4 with 1 creature(s): 2 damage (life now 38)
+R5        [Kinnan decides: Rhystic Study 62%, stop (hold mana) 38% -> stop (hold mana) [search]]
+R5      [audit] Kinnan discards Hullbreaker Horror to hand size (8 cards in hand)
+R5  --- Goldfish 2 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 3 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R5  --- Goldfish 4 turn 5: life 38, 7 cards in hand, 0 lands
+R5      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Kinnan turn 6: life 38, 7 cards in hand, 4 lands
+R6      hand: Disrupting Shoal, Chord of Calling, Chain of Vapor, Rhystic Study, Flusterstorm, Dramatic Reversal, Sudden Substitution
+R6    Kinnan plays Waterlogged Grove
+R6        [Kinnan decides: Rhystic Study 62%, stop (hold mana) 38% -> stop (hold mana) [search]]
+R6        [Kinnan attack plan by search: filtered at Goldfish 2]
+R6    Kinnan attacks Goldfish 2 with 1 creature(s): 2 damage (life now 36)
+R6        [Kinnan decides: Rhystic Study 62%, stop (hold mana) 38% -> stop (hold mana) [search]]
+R6  --- Goldfish 2 turn 6: life 36, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 3 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R6  --- Goldfish 4 turn 6: life 38, 7 cards in hand, 0 lands
+R6      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7    Kinnan sacrifices Waterlogged Grove: draws a card
+R7        [Kinnan end of turn: Waterlogged Grove draw 94%, pass 6% -> Waterlogged Grove draw]
+R7  --- Kinnan turn 7: life 38, 8 cards in hand, 4 lands
+R7      hand: Disrupting Shoal, Chord of Calling, Chain of Vapor, Rhystic Study, Flusterstorm, Dramatic Reversal, Sudden Substitution, Sol Ring
+R7        [Kinnan decides: Sol Ring 89%, Rhystic Study 7%, stop (hold mana) 4%, Llanowar Elves 1% -> Llanowar Elves [search]]
+R7    Kinnan casts Llanowar Elves
+R7        [Kinnan decides: Sol Ring 95%, stop (hold mana) 4%, Rhystic Study 0% -> stop (hold mana) [search]]
+R7        [Kinnan attack plan by search: filtered at Goldfish 3]
+R7    Kinnan attacks Goldfish 3 with 1 creature(s): 2 damage (life now 36)
+R7        [Kinnan decides: Sol Ring 95%, stop (hold mana) 4%, Rhystic Study 0% -> Rhystic Study [search]]
+R7    Kinnan casts Rhystic Study
+R7  --- Goldfish 2 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 3 turn 7: life 36, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R7  --- Goldfish 4 turn 7: life 38, 7 cards in hand, 0 lands
+R7      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Kinnan turn 8: life 38, 7 cards in hand, 4 lands
+R8      hand: Disrupting Shoal, Chord of Calling, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution, Sol Ring
+R8    Kinnan plays Tarnished Citadel
+R8        [Kinnan decides: Sol Ring 80%, Chord of Calling 14%, stop (hold mana) 5%, Kinnan: dig five 1% -> stop (hold mana) [search]]
+R8        [Kinnan attack plan by search: filtered at Goldfish 4]
+R8    Kinnan attacks Goldfish 4 with 1 creature(s): 2 damage (life now 36)
+R8        [Kinnan decides: Sol Ring 77%, Chord of Calling 13%, Kinnan: dig five 5%, stop (hold mana) 5% -> Chord of Calling [search]]
+R8    Kinnan casts Chord of Calling
+R8  --- Goldfish 2 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 3 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R8  --- Goldfish 4 turn 8: life 36, 7 cards in hand, 0 lands
+R8      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Kinnan turn 9: life 38, 6 cards in hand, 5 lands
+R9      hand: Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution, Sol Ring
+R9        [Kinnan decides: Sol Ring 91%, stop (hold mana) 8%, Kinnan: dig five 1% -> stop (hold mana) [search]]
+R9        [Kinnan attack plan by search: filtered at Goldfish 2]
+R9    Kinnan attacks Goldfish 2 with 2 creature(s): 3 damage (life now 33)
+R9        [Kinnan decides: Sol Ring 85%, Kinnan: dig five 8%, stop (hold mana) 8%, Thrasios: scry 1, a land or a card 0% -> Thrasios: scry 1, a land or a card [search]]
+R9      Thrasios reveals Sylvan Library: drawn
+R9        [Kinnan decides: Sol Ring 75%, Sylvan Library 18%, stop (hold mana) 7% -> stop (hold mana) [search]]
+R9      [audit] Kinnan discards Sudden Substitution to hand size (8 cards in hand)
+R9  --- Goldfish 2 turn 9: life 33, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 3 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R9  --- Goldfish 4 turn 9: life 36, 7 cards in hand, 0 lands
+R9      hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Kinnan turn 10: life 38, 7 cards in hand, 5 lands
+R10     hand: Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sol Ring, Copy Enchantment, Sylvan Library
+R10       [Kinnan decides: Sol Ring 66%, Sylvan Library 23%, stop (hold mana) 9%, Kinnan: dig five 1% -> Sol Ring [search]]
+R10   Kinnan casts Sol Ring
+R10       [Kinnan decides: Sylvan Library 69%, stop (hold mana) 25%, Kinnan: dig five 3%, Dizzy Spell: transmute 2% -> stop (hold mana) [search]]
+R10       [Kinnan attack plan by search: filtered at Goldfish 4]
+R10   Kinnan attacks Goldfish 4 with 2 creature(s): 3 damage (life now 33)
+R10       [Kinnan decides: Sylvan Library 57%, Kinnan: dig five 21%, stop (hold mana) 21%, Dizzy Spell: transmute 2% -> Dizzy Spell: transmute [search]]
+R10   Kinnan transmutes Dizzy Spell
+R10       [Kinnan decides: Mana Vault 72%, Sylvan Library 25%, stop (hold mana) 3%, Thrasios: scry 1, a land or a card 0% -> stop (hold mana) [search]]
+R10 --- Goldfish 2 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 3 turn 10: life 36, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R10 --- Goldfish 4 turn 10: life 33, 7 cards in hand, 0 lands
+R10     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11     Thrasios reveals Arcane Signet: drawn
+R11       [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R11 --- Kinnan turn 11: life 38, 8 cards in hand, 5 lands
+R11     hand: Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Copy Enchantment, Sylvan Library, Mana Vault, Arcane Signet
+R11   Kinnan plays Misty Rainforest
+R11     cracks Misty Rainforest for Island
+R11       [Kinnan decides: Mana Vault 58%, Sylvan Library 29%, stop (hold mana) 11%, Kinnan: dig five 1% -> Sylvan Library [search]]
+R11   Kinnan casts Sylvan Library
+R11       [Kinnan decides: Mana Vault 82%, stop (hold mana) 15%, Kinnan: dig five 2%, Arcane Signet 1% -> Mana Vault [search]]
+R11   Kinnan casts Mana Vault
+R11       [Kinnan decides: stop (hold mana) 85%, Kinnan: dig five 12%, Arcane Signet 3% -> Kinnan: dig five [search]]
+R11     Clever Impersonator enters as a copy of Rhystic Study
+R11       [Kinnan decides: stop (hold mana) 89%, Arcane Signet 11% -> stop (hold mana) [search]]
+R11       [Kinnan attack plan by search: filtered at Goldfish 3]
+R11   Kinnan attacks Goldfish 3 with 2 creature(s): 3 damage (life now 33)
+R11       [Kinnan decides: stop (hold mana) 88%, Arcane Signet 11%, Thrasios: scry 1, a land or a card 0% -> stop (hold mana) [search]]
+R11 --- Goldfish 2 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 3 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R11 --- Goldfish 4 turn 11: life 33, 7 cards in hand, 0 lands
+R11     hand: Wastes, Wastes, Wastes, Wastes, Wastes, Wastes, Wastes
+R12     Thrasios reveals Drift of Phantasms: drawn
+R12       [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, pass 1% -> Thrasios: scry 1, a land or a card]
+R12 --- Kinnan turn 12: life 37, 7 cards in hand, 6 lands
+R12     hand: Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Copy Enchantment, Arcane Signet, Drift of Phantasms
+R12       [Kinnan decides: transmute Drift of Phantasms 96%, stop (hold mana) 2%, Drift of Phantasms 1%, Kinnan: dig five 0% -> Grim Monolith [search]]
+R12   Kinnan casts Grim Monolith
+R12       [Kinnan decides: transmute Drift of Phantasms 96%, stop (hold mana) 2%, Drift of Phantasms 1%, Kinnan: dig five 0% -> Kinnan: dig five [search]]
+R12       [Kinnan decides: transmute Drift of Phantasms 96%, stop (hold mana) 2%, Drift of Phantasms 1%, Arcane Signet 0% -> transmute Drift of Phantasms [search]]
+R12   Kinnan transmutes Drift of Phantasms
+R12     Kinnan reveals Basalt Monolith (transmute)
+R12       [Kinnan decides: Basalt Monolith 99%, Arcane Signet 1%, stop 0% -> Basalt Monolith [search]]
+R12   Kinnan casts Basalt Monolith
+R12       [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, Arcane Signet 0%, Basalt Monolith ability 0%, stop 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R12   Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R12 *** Goldfish 2 is eliminated (life 33) by Kinnan
+R12 *** Goldfish 3 is eliminated (life 33) by Kinnan
+R12 *** Goldfish 4 is eliminated (life 33) by Kinnan
+R12 *** Kinnan wins by combo
+Kill: own turn 12 (Kinnan + Basalt Monolith + Thrasios (draw the deck))
+Loss accounting [ai-audit], by own turn:
+  T1  mana_short | held (payable, not offered): Chain of Vapor
+  T2  progressed (combo piece) | held (payable, not offered): Disrupting Shoal, Chain of Vapor, Flusterstorm
+  T3  mana_short | held (payable, not offered): Disrupting Shoal, Chain of Vapor, Flusterstorm
+  T4  passed_castable: Rhystic Study [draw] | held (payable, not offered): Disrupting Shoal, Chord of Calling, Chain of Vapor, Flusterstorm, Dramatic Reversal
+  T5  passed_castable: Rhystic Study [draw] | held (payable, not offered): Disrupting Shoal, Chord of Calling, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution
+  T6  passed_castable: Rhystic Study [draw] | held (payable, not offered): Disrupting Shoal, Chord of Calling, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution
+  T7  passed_castable: Sol Ring [combo piece] | held (payable, not offered): Disrupting Shoal, Chord of Calling, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution
+  T8  passed_castable: Sol Ring [combo piece] | held (payable, not offered): Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution
+  T9  passed_castable: Sol Ring [combo piece], Sylvan Library [draw] | held (payable, not offered): Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Sudden Substitution, Copy Enchantment
+  T10 passed_castable: Sylvan Library [draw], Mana Vault [combo piece] | held (payable, not offered): Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Copy Enchantment, Dizzy Spell
+  T11 progressed (combo piece) | held (payable, not offered): Disrupting Shoal, Chain of Vapor, Flusterstorm, Dramatic Reversal, Copy Enchantment
+  T12 won
+  cleanup discards: Hullbreaker Horror [combo piece], Sudden Substitution [other]
+  stops with another option offered: T4 main 1 look-ahead "stop (hold mana)" over Rhystic Study (8.4); T4 main 2 look-ahead "stop (hold mana)" over Rhystic Study (8.4); T5 main 1 look-ahead "stop (hold mana)" over Rhystic Study (5.5); T5 main 2 look-ahead "stop (hold mana)" over Rhystic Study (5.5); T6 main 1 look-ahead "stop (hold mana)" over Rhystic Study (5.5); T6 main 2 look-ahead "stop (hold mana)" over Rhystic Study (5.5); T7 main 1 look-ahead "stop (hold mana)" over Sol Ring (8.1); T8 main 1 look-ahead "stop (hold mana)" over Sol Ring (7.8); T9 main 1 look-ahead "stop (hold mana)" over Sol Ring (7.4); T9 main 2 look-ahead "stop (hold mana)" over Sol Ring (7.4); T10 main 1 look-ahead "stop (hold mana)" over Sylvan Library (6.0); T10 main 2 look-ahead "stop (hold mana)" over Mana Vault (7.1); T11 main 1 look-ahead "stop (hold mana)" over Arcane Signet (1.7); T11 main 2 look-ahead "stop (hold mana)" over Arcane Signet (1.7)
+  crude best case: own turn 11 (Hullbreaker Horror + Kinnan + two rocks cast between each other)
+  crude best case with tutors: own turn 8 (Kinnan + Basalt Monolith)
