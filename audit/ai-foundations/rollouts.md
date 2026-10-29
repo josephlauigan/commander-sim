@@ -260,8 +260,7 @@ did (the machine's load was higher during that run); treat it as approximate. Th
 3 of 6 in both (seats 30.1 / 28.6 / 20.8 / 20.6, spread 12.9, inside the noise of 1,000 games).
 
 **The Ad Nauseam test (decision 6) at z = 2.36:** with the adaptive rollouts on, the look-ahead still casts Sheoldred
-(16.47 against 15.70 a playout), so the lead is not an artefact of the repeated looks. The test stays pinned to the
-six-rollout rule until JD decides.
+(16.47 against 15.70 a playout), so the lead is not an artefact of the repeated looks.
 
 **JD (2026-10-29): accepted.** `search_hold.rs` now expects Sheoldred with the adaptive rollouts on (the default),
 and keeps the six-rollout rule's hold as a separate test.
