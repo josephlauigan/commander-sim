@@ -4,7 +4,9 @@ use std::path::PathBuf;
 const USAGE: &str = "usage:
   cardgen export [--out DIR] [--offline]        write data/cards.json and data/decks.json
   cardgen audit [--deck KEY | --cards FILE | --mine | --md FILE | --hooks [--all]]
-                                                how faithfully the cards are modeled; what is left to port
+  cardgen audit --paths [--deck KEY] [--md FILE]
+                                                how faithfully the cards are modeled; what is left to port;
+                                                --paths: each card's paths into the sim and its doubles
   cardgen validate                              check every pool deck (size, singleton, colours, bans, Game Changers)
   cardgen deck KEY LIST|- [--dry-run] [--log TEXT] [--offline]
                                                 replace a deck's list (KEY: your deck key, a pool deck key, or a path)
@@ -65,8 +67,10 @@ fn audit(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
     use cardgen::audit as a;
     let mut inp = cardgen::export::Inputs::load(project)?;
     let md = opt(args, "--md")?;
+    let paths = flag(args, "--paths");
     if let Some(f) = &md {
-        a::check_md_target(f)?; // before anything else: a refused path writes nothing
+        // before anything else: a refused path writes nothing
+        if paths { a::check_md_target_for(f, cardgen::paths::MD_HEADER)? } else { a::check_md_target(f)? }
     }
     let deck = opt(args, "--deck")?;
     let cards_file = opt(args, "--cards")?;
@@ -90,6 +94,19 @@ fn audit(project: &Project, args: &mut Vec<String>) -> Result<(), String> {
         return Ok(());
     }
     let au = a::Audit::new(&inp, &built.cards)?;
+    if paths {
+        let (db, reg) = a::engine_db(&inp)?;
+        let all = cardgen::paths::all_paths(&db, &reg, &au, &inp, &cardgen::paths::paths_ok(&inp));
+        let played = inp.wanted().played;
+        let d = deck.as_deref().map(|k| cardgen::paths::deck_cards(&inp, k)).transpose()?;
+        let lits = cardgen::paths::name_literals(&inp, &db)?;
+        if let Some(f) = &md {
+            let text = cardgen::paths::report(&all, &played, d.as_ref(), &lits, true);
+            std::fs::write(f, text).map_err(|e| format!("{f}: {e}"))?;
+        }
+        print!("{}", cardgen::paths::report(&all, &played, d.as_ref(), &lits, false));
+        return Ok(());
+    }
     if let Some(f) = cards_file {
         let text = std::fs::read_to_string(&f).map_err(|e| format!("{f}: {e}"))?;
         for name in text.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#')) {

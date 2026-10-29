@@ -188,6 +188,12 @@ impl<'a> Audit<'a> {
         if let Some((s, n)) = self.overrides.get(name) {
             return (s.to_string(), n.to_string());
         }
+        self.auto_status(name, mine)
+    }
+
+    /// (status, note) from the card data alone, without a hand verdict (audit.toml [card_notes], an override's status):
+    /// "Full-auto" here means every Oracle line compiled, nothing unparsed and no ability keyword dropped
+    pub fn auto_status(&self, name: &str, mine: bool) -> (String, String) {
         let Some(cd) = self.cards.get(name) else { return ("Unmodeled".into(), "not in the card database".into()) };
         if ["Plains", "Island", "Swamp", "Mountain", "Forest", "Wastes"].contains(&name) {
             return ("Full".into(), "basic land".into());
@@ -467,9 +473,10 @@ pub fn mine_report(a: &Audit) -> String {
 
 /// What is left to port: events the Python code handled for a card that sim-core's registry doesn't handle, for the
 /// cards the decks play (all of them with `all`).
-pub fn hooks_report(inp: &Inputs, built: &BTreeMap<String, Cd>, all: bool) -> Result<String, String> {
+/// The engine's card database and card-code registry, built in memory from the inputs as `cardgen export` would
+/// write them (no file is read back): the real registry, so every way a card gets code is counted.
+pub fn engine_db(inp: &Inputs) -> Result<(sim_core::cards::CardDb, sim_core::hooks::Registry), String> {
     use sim_core::export::RawCard;
-    use sim_core::hooks::Event;
     #[derive(serde::Deserialize)]
     struct File {
         cards: Vec<RawCard>,
@@ -478,6 +485,12 @@ pub fn hooks_report(inp: &Inputs, built: &BTreeMap<String, Cd>, all: bool) -> Re
     let raw: File = serde_json::from_str(&exported.cards_json).map_err(|e| e.to_string())?;
     let db = sim_core::cards::CardDb::from_raw(&raw.cards)?;
     let reg = sim_core::impls::registry(&db)?;
+    Ok((db, reg))
+}
+
+pub fn hooks_report(inp: &Inputs, built: &BTreeMap<String, Cd>, all: bool) -> Result<String, String> {
+    use sim_core::hooks::Event;
+    let (db, reg) = engine_db(inp)?;
     let w = inp.wanted();
     let mut out = String::new();
     let (mut total, mut done) = (0, 0);
@@ -525,6 +538,11 @@ pub fn hooks_report(inp: &Inputs, built: &BTreeMap<String, Cd>, all: bool) -> Re
 /// `cardgen audit --md FILE` may write only the model-status table: never a decklist (anything under a `decklists`
 /// directory) and never an existing file that is not such a table. The deck docs have to stay loadable.
 pub fn check_md_target(path: &str) -> Result<(), String> {
+    check_md_target_for(path, "| Tier | Deck |")
+}
+
+/// `check_md_target` for a report whose files start with `header`
+pub fn check_md_target_for(path: &str, header: &str) -> Result<(), String> {
     let p = std::path::Path::new(path);
     let abs = std::fs::canonicalize(p).unwrap_or_else(|_| p.to_path_buf());
     if p.components().chain(abs.components()).any(|c| c.as_os_str() == "decklists") {
@@ -532,7 +550,7 @@ pub fn check_md_target(path: &str) -> Result<(), String> {
     }
     if let Ok(text) = std::fs::read_to_string(p)
         && !text.trim().is_empty()
-        && !text.starts_with("| Tier | Deck |")
+        && !text.starts_with(header)
     {
         return Err(format!("{path}: exists and is not an audit table; refusing to overwrite it"));
     }
