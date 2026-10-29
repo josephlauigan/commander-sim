@@ -197,8 +197,8 @@ fn play_on_with(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>, turn_end:
             continue;
         }
         brain::end_of_turn_window(g2, q)?;
-        if g2.over {
-            break;
+        if g2.over || (q == p2 && g2.settings.search.short) {
+            break; // --- ai-eval: a short playout ends with the turn cycle, before p2's next turn (`Search::short`)
         }
         if g2.player(q).alive {
             crate::engine::turn::play_turn(g2, q)?;
@@ -621,6 +621,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             best = ti;
         }
     }
+    if super::evdiag::fallback_on() {
+        fallback_diag(g, p, post, opts, &keyed, &vals, (bare, best, top_u), base_seed, hold); // --- ai-eval
+    }
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
     });
@@ -955,5 +958,72 @@ fn noise_diag(
         u8::from(hold.is_some()),
         sdd / (d.len() as f64).sqrt(),
         keyed.len(),
+    );
+}
+
+// --- ai-eval
+/// The fallback diagnostic (env AI_EVAL_FALLBACK=1), for every main-phase look-ahead decision: one `EVF` line with
+/// the kinds of the heuristic's top play and of the look-ahead's bare pick, whether the margin handed the decision
+/// back to the heuristic, the paired standard error of the top play against its best alternative, and whether the
+/// bare and the final pick change on a second set of seeds. The second playouts spend no game budget (`search_work`
+/// is restored) and read none of the game's random numbers, so play is unchanged.
+#[allow(clippy::too_many_arguments)]
+fn fallback_diag(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    opts: &[Opt],
+    keyed: &[(usize, &str, usize)],
+    vals: &[Vec<f64>],
+    (bare, best, top_u): (usize, usize, usize),
+    base_seed: u64,
+    hold: Option<(CardId, f64)>,
+) {
+    let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u) else { return };
+    let z = g.settings.search.margin;
+    let sum = |v: &Vec<f64>| v.iter().map(|x| x.min(100.0)).sum::<f64>();
+    let alt = if bare != ti {
+        bare
+    } else {
+        match (0..keyed.len()).filter(|&k| k != ti).max_by(|&a, &b| sum(&vals[a]).total_cmp(&sum(&vals[b]))) {
+            Some(k) => k,
+            None => return,
+        }
+    };
+    let d: Vec<f64> = vals[ti].iter().zip(&vals[alt]).map(|(a, b)| a.min(100.0) - b.min(100.0)).collect();
+    let n = d.len() as f64;
+    let m = d.iter().sum::<f64>() / n;
+    let se = (d.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0).max(1.0) / n).sqrt();
+    let work = g.search_work;
+    let seed2 = base_seed ^ 0x9E37_79B9_7F4A_7C15;
+    let mut alt_vals = vec![vec![]; keyed.len()];
+    for r in 0..g.settings.search.rollouts as u64 {
+        for (k, &(i, label, nn)) in keyed.iter().enumerate() {
+            let (v, kept) = playout_main_kept(g, p, post, label, nn, seed2, r, hold.map(|h| h.0));
+            let extra = if v < WIN_FLOOR {
+                ramp_bonus(g, p, &opts[i]) + if kept { hold.map_or(0.0, |h| h.1) } else { 0.0 }
+            } else {
+                0.0
+            };
+            alt_vals[k].push(v + extra);
+        }
+    }
+    g.search_work = work;
+    let (a0, a1) = pick_of(&alt_vals, ti, z);
+    let pl = g.player(p);
+    eprintln!(
+        "EVF\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{m:.3}\t{se:.3}\t{}\t{}\t{}\t{}",
+        super::evdiag::seed(),
+        pl.key,
+        u8::from(pl.t6),
+        if g.step == Step::Main1 { "main1" } else { "main2" },
+        super::evdiag::kind(g, p, &opts[top_u]),
+        super::evdiag::kind(g, p, &opts[keyed[bare].0]),
+        keyed.len(),
+        u8::from(bare != ti && best == ti),
+        u8::from(bare != a0),
+        u8::from(best != a1),
+        u8::from(bare == ti),
+        u8::from(best == ti),
     );
 }

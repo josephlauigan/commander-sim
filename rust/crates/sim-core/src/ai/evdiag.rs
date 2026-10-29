@@ -281,3 +281,22 @@ fn mana_permanent(g: &Game, c: CardId) -> bool {
         && !matches!(&*d.name, "Lotus Petal" | "Lion's Eye Diamond")
         && (d.tag(Tag::Rock) || d.tag(Tag::Dork) || d.tag(Tag::Moxd) || d.tag(Tag::Chromemox) || d.tag(Tag::Fastmana))
 }
+
+/// is the fallback diagnostic on (env AI_EVAL_FALLBACK=1)? One `EVF` line per main-phase look-ahead decision
+/// (`search::fallback_diag`)
+pub fn fallback_on() -> bool {
+    static ON: OnceLock<bool> = OnceLock::new();
+    *ON.get_or_init(|| matches!(std::env::var("AI_EVAL_FALLBACK").ok().as_deref(), Some("1")))
+}
+
+/// the kind of play an option is: engine, commander, mana (as `class`), creature, removal, stop or other
+pub fn kind(g: &Game, p: PlayerId, o: &Opt) -> &'static str {
+    match &o.act {
+        None => "stop",
+        Some(Action::Cast { card, .. }) => {
+            class(g, p, *card).unwrap_or(if g.db.get(*card).creature { "creature" } else { "other" })
+        }
+        Some(Action::Removal { .. } | Action::Wipe { .. }) => "removal",
+        Some(_) => "other",
+    }
+}

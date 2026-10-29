@@ -57,6 +57,14 @@ pub struct Search {
     /// standard errors of the paired difference (`search::margin_holds`); 0: the bare argmax (the old search). Env
     /// AI_EVAL_MARGIN overrides the default for A/B runs
     pub margin: f64,
+    /// --- ai-eval: inside a playout the heuristic makes its top play instead of sampling (temperature near 0,
+    /// `ai::temp`): the standard error of a decision fell from 7.6 to 6.3 (Tier 6) and 5.7 to 3.8 (Tier 3), and
+    /// fewer close calls go back to the heuristic (eval-fix.md). Env AI_EVAL_DET=0 turns it off, for A/B runs
+    pub det: bool,
+    /// --- ai-eval: a playout ends at the end of the current turn cycle, before the decider's next turn (its
+    /// end-of-turn window still runs). Env AI_EVAL_SHORT=1 turns it on (an A/B switch; off: it moved Tier 3 twice as
+    /// far as the current look-ahead, eval-fix.md)
+    pub short: bool,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -88,6 +96,8 @@ impl Default for Search {
                 .filter(|v| !v.is_empty())
                 .map(|v| v.parse().unwrap_or_else(|_| panic!("bad AI_EVAL_MARGIN {v:?}")))
                 .unwrap_or(MARGIN), // --- ai-eval
+            det: planner_from(std::env::var("AI_EVAL_DET").ok().as_deref()),       // --- ai-eval
+            short: matches!(std::env::var("AI_EVAL_SHORT").ok().as_deref(), Some("1")), // --- ai-eval
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,

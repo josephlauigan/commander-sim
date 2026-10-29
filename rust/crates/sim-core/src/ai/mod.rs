@@ -111,6 +111,9 @@ pub fn base_style(key: &str) -> Style {
 
 /// brain.T: the temperature p's choices are sampled at
 pub fn temp(g: &Game, p: PlayerId) -> f64 {
+    if g.in_search && g.settings.search.det {
+        return 1e-6; // --- ai-eval: a deterministic playout: the top play (`Search::det`)
+    }
     (style(g, g.player(p).key).temp * g.settings.temp_scale).max(0.05)
 }
 
