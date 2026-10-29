@@ -424,6 +424,136 @@ pub fn margin_holds(d: &[f64], z: f64) -> bool {
     m > z * (var / n).sqrt()
 }
 
+// --- ai-rollouts
+/// The adaptive rollouts' early stop: more rollouts can't be expected to carry the pick past the margin, because its
+/// mean gain over the top play is at or below `stop` standard errors of it (a mean at or below 0 always stops).
+pub fn hopeless(d: &[f64], stop: f64) -> bool {
+    let n = d.len() as f64;
+    if n < 2.0 {
+        return d.iter().sum::<f64>() <= 0.0;
+    }
+    let m = d.iter().sum::<f64>() / n;
+    let var = d.iter().map(|x| (x - m) * (x - m)).sum::<f64>() / (n - 1.0);
+    m <= 0.0 || m <= stop * (var / n).sqrt()
+}
+
+// --- ai-rollouts
+/// The pick from per-rollout values (`vals[k][r]`, bonuses in) and each option's deck bonus `ex[k]` (Karn's and
+/// Cloud's `search_bonus`, per rollout): (the bare argmax of the capped sums, ties to the earlier option; the pick
+/// after the margin against the heuristic's top play `ti`). `choose_inner`'s rule, on any number of rollouts.
+pub fn pick_with(vals: &[Vec<f64>], ex: &[f64], ti: usize, z: f64) -> (usize, usize) {
+    let s: Vec<f64> = vals
+        .iter()
+        .zip(ex)
+        .map(|(v, e)| (v.iter().sum::<f64>() + e * v.len() as f64).min(100.0 * v.len() as f64))
+        .collect();
+    let mut b = 0;
+    for k in 1..s.len() {
+        if s[k] > s[b] {
+            b = k;
+        }
+    }
+    let d = paired(vals, ex, b, ti);
+    (b, if b != ti && !margin_holds(&d, z) { ti } else { b })
+}
+
+/// --- ai-rollouts: per rollout, option a's value less option b's (deck bonuses in, each capped at a win)
+fn paired(vals: &[Vec<f64>], ex: &[f64], a: usize, b: usize) -> Vec<f64> {
+    vals[a].iter().zip(&vals[b]).map(|(x, y)| (x + ex[a]).min(100.0) - (y + ex[b]).min(100.0)).collect()
+}
+
+// --- ai-rollouts
+/// The adaptive rollouts' knobs (`Search::adapt_*`, and the margin's z)
+#[derive(Debug, Clone, Copy)]
+pub struct Adapt {
+    pub batch: u32,
+    pub cap: u32,
+    pub stop: f64,
+    pub z: f64,
+}
+
+// --- ai-rollouts
+/// Adaptive rollouts. `(bare, best)` is the decision on the rollouts in `vals` so far. When the margin hands it back
+/// (the bare pick isn't the top play `ti`, and the pick is), `more(vals, r0..r1)` appends rollouts r0..r1 of every
+/// option (new seeds, the same for every option), `a.batch` at a time, and the pick is made again on all of them. It
+/// stops when the pick stands (the margin holds), when the look-ahead's best is the top play itself, when the
+/// pick's gain is `hopeless` (at or below `a.stop` standard errors), or at `a.cap` rollouts per option. Returns the
+/// new (bare, best).
+pub fn adapt_rollouts(
+    vals: &mut Vec<Vec<f64>>,
+    ex: &[f64],
+    ti: usize,
+    (mut bare, mut best): (usize, usize),
+    a: &Adapt,
+    mut more: impl FnMut(&mut Vec<Vec<f64>>, std::ops::Range<u64>),
+) -> (usize, usize) {
+    while bare != ti && best == ti && !hopeless(&paired(vals, ex, bare, ti), a.stop) {
+        let used = vals[0].len() as u32;
+        if used >= a.cap || a.batch == 0 {
+            break;
+        }
+        let next = (used + a.batch).min(a.cap);
+        more(vals, used as u64..next as u64);
+        (bare, best) = pick_with(vals, ex, ti, a.z);
+    }
+    (bare, best)
+}
+
+/// --- ai-rollouts: rollouts `rs` (seeds (base_seed, r)) of every option, appended to `vals` with their bonuses, as
+/// `choose_inner` adds them. `diag`: the Part 1 diagnostic is open, and records these playouts too.
+#[allow(clippy::too_many_arguments)]
+fn rollout_vals(
+    g: &mut Game,
+    p: PlayerId,
+    post: bool,
+    opts: &[Opt],
+    keyed: &[(usize, &str, usize)],
+    base_seed: u64,
+    rs: std::ops::Range<u64>,
+    hold: Option<(CardId, f64)>,
+    vals: &mut [Vec<f64>],
+    diag: bool,
+) {
+    for r in rs {
+        for (k, &(i, label, n)) in keyed.iter().enumerate() {
+            if diag {
+                super::evdiag::option(k);
+            }
+            let (v, kept) = playout_main_kept(g, p, post, label, n, base_seed, r, hold.map(|h| h.0));
+            let extra = if v < WIN_FLOOR {
+                let h = match hold {
+                    Some((_, w)) if kept => w,
+                    Some(_) => 0.0,
+                    None if g.settings.search.hold_kept => 0.0,
+                    None => hold_bonus(g, p, &opts[i]),
+                };
+                ramp_bonus(g, p, &opts[i]) + h
+            } else {
+                0.0
+            };
+            vals[k].push(v + extra);
+        }
+    }
+}
+
+/// --- ai-rollouts: each option's deck bonus per rollout (Karn's and Cloud's `search_bonus`; 0 for other decks)
+fn deck_extras(g: &Game, p: PlayerId, opts: &[Opt], keyed: &[(usize, &str, usize)]) -> Vec<f64> {
+    keyed
+        .iter()
+        .map(|kk| match g.player(p).key {
+            "karn" => crate::impls::karn::search_bonus(g, p, &opts[kk.0]),
+            "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[kk.0]),
+            _ => 0.0,
+        })
+        .collect()
+}
+
+/// --- ai-rollouts: the knobs of the adaptive rollouts in g's settings (None: off)
+fn adapt_of(g: &Game) -> Option<Adapt> {
+    let s = &g.settings.search;
+    s.adapt.then_some(Adapt { batch: s.adapt_batch, cap: s.adapt_cap, stop: s.adapt_stop, z: s.margin })
+}
+
 // --- ai-eval
 /// the held card and the bonus (`hold_w` times the heuristic's hold value) each open playout that keeps its mana up
 /// through p's turn earns (`Search::hold_kept`); None when nothing is held or `hold_w` is 0
@@ -621,8 +751,28 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             best = ti;
         }
     }
+    // --- ai-rollouts: a decision the margin hands back gets more rollouts of the same options (`adapt_rollouts`)
+    let hb6 = bare != best; // handed back on the first rollouts
+    let mut bare = bare;
+    if let Some(a) = adapt_of(g)
+        && z > 0.0
+        && bare != best
+        && let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u)
+    {
+        let ex = deck_extras(g, p, opts, &keyed);
+        let on = diag.is_some();
+        (bare, best) = adapt_rollouts(&mut vals, &ex, ti, (bare, best), &a, |v, rs| {
+            rollout_vals(g, p, post, opts, &keyed, base_seed, rs, hold, v, on)
+        });
+        let m = vals[0].len() as f64;
+        if m > n {
+            for (k, v) in vals.iter().enumerate() {
+                scores[k] = (v.iter().sum::<f64>() + ex[k] * m).min(100.0 * m) * n / m; // per `n` rollouts, as before
+            }
+        }
+    }
     if super::evdiag::fallback_on() {
-        fallback_diag(g, p, post, opts, &keyed, &vals, (bare, best, top_u), base_seed, hold); // --- ai-eval
+        fallback_diag(g, p, post, opts, &keyed, &vals, (bare, best, top_u), base_seed, hold, hb6); // --- ai-eval
     }
     LAST_SCORES.with(|l| {
         *l.borrow_mut() = keyed.iter().zip(&scores).map(|(k, s)| (k.1.to_string(), s / n)).collect();
@@ -967,6 +1117,9 @@ fn noise_diag(
 /// back to the heuristic, the paired standard error of the top play against its best alternative, and whether the
 /// bare and the final pick change on a second set of seeds. The second playouts spend no game budget (`search_work`
 /// is restored) and read none of the game's random numbers, so play is unchanged.
+/// --- ai-rollouts: then the rollouts per option the decision used, whether the margin handed it back on its first
+/// `rollouts`, and the rollouts the second set used. Both sets decide by the same rule, adaptive rollouts included,
+/// and "bare" is the argmax over all the rollouts a set used.
 #[allow(clippy::too_many_arguments)]
 fn fallback_diag(
     g: &mut Game,
@@ -978,6 +1131,7 @@ fn fallback_diag(
     (bare, best, top_u): (usize, usize, usize),
     base_seed: u64,
     hold: Option<(CardId, f64)>,
+    hb6: bool,
 ) {
     let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u) else { return };
     let z = g.settings.search.margin;
@@ -997,22 +1151,21 @@ fn fallback_diag(
     let work = g.search_work;
     let seed2 = base_seed ^ 0x9E37_79B9_7F4A_7C15;
     let mut alt_vals = vec![vec![]; keyed.len()];
-    for r in 0..g.settings.search.rollouts as u64 {
-        for (k, &(i, label, nn)) in keyed.iter().enumerate() {
-            let (v, kept) = playout_main_kept(g, p, post, label, nn, seed2, r, hold.map(|h| h.0));
-            let extra = if v < WIN_FLOOR {
-                ramp_bonus(g, p, &opts[i]) + if kept { hold.map_or(0.0, |h| h.1) } else { 0.0 }
-            } else {
-                0.0
-            };
-            alt_vals[k].push(v + extra);
-        }
+    // --- ai-rollouts: the second set of seeds is decided by the same rule, adaptive rollouts included
+    rollout_vals(g, p, post, opts, keyed, seed2, 0..g.settings.search.rollouts as u64, hold, &mut alt_vals, false);
+    let ex = deck_extras(g, p, opts, keyed);
+    let (mut a0, mut a1) = pick_with(&alt_vals, &ex, ti, z);
+    if let Some(a) = adapt_of(g)
+        && z > 0.0
+    {
+        (a0, a1) = adapt_rollouts(&mut alt_vals, &ex, ti, (a0, a1), &a, |v, rs| {
+            rollout_vals(g, p, post, opts, keyed, seed2, rs, hold, v, false)
+        });
     }
     g.search_work = work;
-    let (a0, a1) = pick_of(&alt_vals, ti, z);
     let pl = g.player(p);
     eprintln!(
-        "EVF\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{m:.3}\t{se:.3}\t{}\t{}\t{}\t{}",
+        "EVF\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{m:.3}\t{se:.3}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
         super::evdiag::seed(),
         pl.key,
         u8::from(pl.t6),
@@ -1025,5 +1178,8 @@ fn fallback_diag(
         u8::from(best != a1),
         u8::from(bare == ti),
         u8::from(best == ti),
+        vals[0].len(),
+        u8::from(hb6),
+        alt_vals[0].len(),
     );
 }

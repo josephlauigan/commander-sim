@@ -35,6 +35,20 @@ pub const MARGIN: f64 = 2.0;
 /// the default hold weight (see `Search::hold_w`)
 pub const HOLD_W: f64 = 1.0;
 
+// --- ai-rollouts: the adaptive rollouts' defaults (see `Search::adapt`)
+pub const ADAPT_CAP: u32 = 24;
+pub const ADAPT_BATCH: u32 = 6;
+pub const ADAPT_STOP: f64 = 0.5;
+
+/// --- ai-rollouts: a number from env `key`, or `default` when it is unset or empty
+fn env_num<T: std::str::FromStr>(key: &str, default: T) -> T {
+    std::env::var(key)
+        .ok()
+        .filter(|v| !v.is_empty())
+        .map(|v| v.parse().unwrap_or_else(|_| panic!("bad {key} {v:?}")))
+        .unwrap_or(default)
+}
+
 #[derive(Debug, Clone)]
 pub struct Search {
     pub rollouts: u32,
@@ -65,6 +79,19 @@ pub struct Search {
     /// end-of-turn window still runs). Env AI_EVAL_SHORT=1 turns it on (an A/B switch; off: it moved Tier 3 twice as
     /// far as the current look-ahead, eval-fix.md)
     pub short: bool,
+    /// --- ai-rollouts: adaptive rollouts. When the margin would hand a main-phase decision back to the heuristic,
+    /// the same options get `adapt_batch` more rollouts at a time (new seeds, shared by every option), and the
+    /// margin is tested again, until it holds, it clearly can't (`adapt_stop`) or `adapt_cap` rollouts in all
+    /// (`search::adapt_rollouts`). Env AI_EVAL_ADAPT=1 turns it on (an A/B switch)
+    pub adapt: bool,
+    /// --- ai-rollouts: the most rollouts per option a decision may use, the first `rollouts` included. Env
+    /// AI_EVAL_ADAPT_CAP
+    pub adapt_cap: u32,
+    /// --- ai-rollouts: the rollouts per option added at a time. Env AI_EVAL_ADAPT_BATCH
+    pub adapt_batch: u32,
+    /// --- ai-rollouts: the early stop: no more rollouts once the pick's mean gain over the top play is at or below
+    /// this many standard errors of it. Env AI_EVAL_ADAPT_STOP
+    pub adapt_stop: f64,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -98,6 +125,10 @@ impl Default for Search {
                 .unwrap_or(MARGIN), // --- ai-eval
             det: planner_from(std::env::var("AI_EVAL_DET").ok().as_deref()),       // --- ai-eval
             short: matches!(std::env::var("AI_EVAL_SHORT").ok().as_deref(), Some("1")), // --- ai-eval
+            adapt: matches!(std::env::var("AI_EVAL_ADAPT").ok().as_deref(), Some("1")), // --- ai-rollouts
+            adapt_cap: env_num("AI_EVAL_ADAPT_CAP", ADAPT_CAP),                          // --- ai-rollouts
+            adapt_batch: env_num("AI_EVAL_ADAPT_BATCH", ADAPT_BATCH),                    // --- ai-rollouts
+            adapt_stop: env_num("AI_EVAL_ADAPT_STOP", ADAPT_STOP),                       // --- ai-rollouts
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,
