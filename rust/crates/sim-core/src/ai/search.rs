@@ -551,7 +551,14 @@ fn deck_extras(g: &Game, p: PlayerId, opts: &[Opt], keyed: &[(usize, &str, usize
 /// --- ai-rollouts: the knobs of the adaptive rollouts in g's settings (None: off)
 fn adapt_of(g: &Game) -> Option<Adapt> {
     let s = &g.settings.search;
-    s.adapt.then_some(Adapt { batch: s.adapt_batch, cap: s.adapt_cap, stop: s.adapt_stop, z: s.margin })
+    s.adapt.then_some(Adapt { batch: s.adapt_batch, cap: s.adapt_cap, stop: s.adapt_stop, z: margin_z(s) })
+}
+
+/// --- ai-rollouts: the margin's z for this decision: `adapt_z` at every look when the adaptive rollouts are on and can
+/// look more than once (a test repeated after each batch at z = 2 lets through more noise than one test does),
+/// `margin` otherwise (a cap at `rollouts` is one look). 0 stays 0 (the bare argmax).
+pub fn margin_z(s: &crate::settings::Search) -> f64 {
+    if s.adapt && s.adapt_cap > s.rollouts && s.margin > 0.0 { s.adapt_z } else { s.margin }
 }
 
 // --- ai-eval
@@ -733,7 +740,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     }
     let bare = best; // --- ai-eval: the pick before the margin (the noise diagnostic)
     // --- ai-eval: the look-ahead departs from the heuristic's top play only on evidence (`margin_holds`)
-    let z = g.settings.search.margin;
+    let z = margin_z(&g.settings.search); // --- ai-rollouts: `adapt_z` when adaptive
     let top_u = (0..opts.len()).fold(0, |b, i| if opts[i].utility > opts[b].utility { i } else { b });
     if z > 0.0
         && keyed[best].0 != top_u
@@ -1134,7 +1141,7 @@ fn fallback_diag(
     hb6: bool,
 ) {
     let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u) else { return };
-    let z = g.settings.search.margin;
+    let z = margin_z(&g.settings.search); // --- ai-rollouts
     let sum = |v: &Vec<f64>| v.iter().map(|x| x.min(100.0)).sum::<f64>();
     let alt = if bare != ti {
         bare

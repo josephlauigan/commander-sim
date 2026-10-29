@@ -53,3 +53,12 @@ done full-realism-t5 rc=0 09:53:08 secs=679.608389684
 start full-all-decks 09:53:08 X=1 --all-decks --pool all --games 1000 --jobs 22 --quiet
 done full-all-decks rc=0 11:02:27 secs=4158.604036026
 PHASE2 done
+start z236-t6-diag 11:09:45 X=1  AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done z236-t6-diag rc=0 11:15:56 secs=371.064661496
+start z236-t6 11:15:56 X=1  --realism --pool t6 --games 1000 --jobs 22 --quiet
+done z236-t6 rc=0 11:19:27 secs=211.074802771
+start z236-t3-diag 11:19:27 X=1  AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done z236-t3-diag rc=0 11:23:53 secs=265.800186405
+start z236-t3 11:23:53 X=1  --realism --pool t3 --games 1000 --jobs 22 --quiet
+done z236-t3 rc=0 11:26:20 secs=146.756296225
+PHASE1 z236 done

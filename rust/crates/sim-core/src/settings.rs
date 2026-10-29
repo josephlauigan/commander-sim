@@ -39,6 +39,10 @@ pub const HOLD_W: f64 = 1.0;
 pub const ADAPT_CAP: u32 = 24;
 pub const ADAPT_BATCH: u32 = 6;
 pub const ADAPT_STOP: f64 = 0.5;
+/// --- ai-rollouts: the margin's z when the adaptive rollouts are on: Pocock's boundary for up to four looks (6, 12, 18 and 24
+/// rollouts) at the one-sided error of a single look at z = 2, so testing again after each batch doesn't let more
+/// noise through
+pub const ADAPT_Z: f64 = 2.36;
 
 /// --- ai-rollouts: a number from env `key`, or `default` when it is unset or empty
 fn env_num<T: std::str::FromStr>(key: &str, default: T) -> T {
@@ -93,6 +97,9 @@ pub struct Search {
     /// --- ai-rollouts: the early stop: no more rollouts once the pick's mean gain over the top play is at or below
     /// this many standard errors of it. Env AI_EVAL_ADAPT_STOP
     pub adapt_stop: f64,
+    /// --- ai-rollouts: the margin's z at every look, the first included, when `adapt` is on (`search::margin_z`).
+    /// Env AI_EVAL_ADAPT_Z
+    pub adapt_z: f64,
     pub playout_work: u64,
     pub game_decisions: u32,
     pub board_limit: usize,
@@ -130,6 +137,7 @@ impl Default for Search {
             adapt_cap: env_num("AI_EVAL_ADAPT_CAP", ADAPT_CAP),                          // --- ai-rollouts
             adapt_batch: env_num("AI_EVAL_ADAPT_BATCH", ADAPT_BATCH),                    // --- ai-rollouts
             adapt_stop: env_num("AI_EVAL_ADAPT_STOP", ADAPT_STOP),                       // --- ai-rollouts
+            adapt_z: env_num("AI_EVAL_ADAPT_Z", ADAPT_Z),                                // --- ai-rollouts
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,

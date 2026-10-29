@@ -235,3 +235,30 @@ timed alone (the brief times Tier 6 and Tier 3).
    it is under 2x at equal threads); the full set's current eval at `--jobs 22` for a clean time comparison; traces of
    the Tymna decisions that now depart at Tier 6; `--deck thrasios --pool t5` and `--deck alela --pool t1` at 4,000
    games, current against adaptive, to tell their moves from noise.
+
+## Follow-up: the margin's z for repeated looks (coordinator, 2026-10-29, JD: "skip the rerun")
+
+Testing the margin again after each batch at z = 2 lets more noise through than one test does: with the adaptive
+rollouts on, the look-ahead's departures from the heuristic doubled and the final pick's flips on a second seed set
+rose from 10.9% to 16.7%. The fix: when the adaptive rollouts can look more than once, every look (the first
+included) uses `adapt_z` = 2.36, Pocock's boundary for four looks (6, 12, 18, 24 rollouts) at the one-sided error of
+one look at z = 2 (`search::margin_z`, `Search::adapt_z`, env `AI_EVAL_ADAPT_Z`; test
+`repeated_looks_use_the_stricter_z`). A cap at `rollouts` is one look and keeps z = 2.
+
+Measured on Tier 6 and Tier 3 only, 1,000 games each (`z236-*`, `phase1.sh z236`); the full set was not rerun (JD).
+
+| | eval (adapt off) | adapt, z = 2 | adapt, z = 2.36 |
+| --- | --- | --- | --- |
+| handed back, Tier 6 / Tier 3 | 50.6% / 42.1% | 34.1% / 27.4% | 38.7% / 30.5% |
+| look-ahead departs from the top play, Tier 6 / Tier 3 | 7.9% / – | 15.2% / 18.5% | 10.9% / 15.3% |
+| final pick changes on a second seed set, Tier 6 / Tier 3 | 10.9% / – | 16.7% / 14.8% | 11.5% / 11.3% |
+| rollouts per option, Tier 6 / Tier 3 | 6 / 6 | 10.95 / 10.27 | 11.62 / 10.84 |
+| s per 1,000 games, Tier 6 / Tier 3 (22 threads) | 120 / 91 | 194 / 106 | 211 / 147 |
+
+The flip rate is back at the eval's, and most of the hand-back cut stays. Tier 3's time rose more than its rollouts
+did (the machine's load was higher during that run); treat it as approximate. The Tier 6 scorecard at 1,000 games is
+3 of 6 in both (seats 30.1 / 28.6 / 20.8 / 20.6, spread 12.9, inside the noise of 1,000 games).
+
+**The Ad Nauseam test (decision 6) at z = 2.36:** with the adaptive rollouts on, the look-ahead still casts Sheoldred
+(16.47 against 15.70 a playout), so the lead is not an artefact of the repeated looks. The test stays pinned to the
+six-rollout rule until JD decides.

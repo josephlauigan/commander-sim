@@ -123,3 +123,25 @@ fn in_a_game_the_cap_bounds_the_rollouts_and_six_is_the_old_rule() {
     // the options tried: up to `top_k` plays and "stop"; six rollouts each with the switch off
     assert!(n >= n_off && n <= n_off * 4, "{n} playouts against {n_off}");
 }
+
+/// The margin's z: Pocock's 2.36 at every look when the adaptive rollouts can look more than once, so testing again
+/// after each batch lets through no more noise than one test at z = 2; the plain margin when they're off or capped at
+/// one look, and 0 (the bare argmax) stays 0
+#[test]
+fn repeated_looks_use_the_stricter_z() {
+    let mut s = sim_core::settings::Search::default();
+    s.margin = 2.0;
+    s.adapt_z = 2.36;
+    s.rollouts = 6;
+    s.adapt = true;
+    s.adapt_cap = 24;
+    assert_eq!(search::margin_z(&s), 2.36);
+    s.adapt_cap = 6;
+    assert_eq!(search::margin_z(&s), 2.0);
+    s.adapt_cap = 24;
+    s.adapt = false;
+    assert_eq!(search::margin_z(&s), 2.0);
+    s.adapt = true;
+    s.margin = 0.0;
+    assert_eq!(search::margin_z(&s), 0.0);
+}
