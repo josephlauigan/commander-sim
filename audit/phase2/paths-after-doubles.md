@@ -6,19 +6,19 @@ Every path a card's behaviour reaches the sim by, and the cards where two paths 
 
 | | all cards | cards the decks play |
 |---|---|---|
-| cards with a path | 2746 | 1931 |
-| with compiled abilities | 892 | 548 |
-| with executing tags | 366 | 271 |
-| with code rule slots | 1678 | 1251 |
-| with code AI slots only | 180 | 138 |
+| cards with a path | 2749 | 1906 |
+| with compiled abilities | 893 | 543 |
+| with executing tags | 366 | 267 |
+| with code rule slots | 1680 | 1233 |
+| with code AI slots only | 180 | 137 |
 | double: hard | 0 | 0 |
 | double: shadowed | 25 | 20 |
 | double: competing | 21 | 14 |
-| double: split | 161 | 123 |
+| double: split | 161 | 122 |
 | double: split (paths_ok) | 29 | 20 |
 | rule code: dsl-covers | 20 | 14 |
 | rule code: dsl-partial | 186 | 138 |
-| rule code: dsl-none | 1472 | 1099 |
+| rule code: dsl-none | 1474 | 1081 |
 
 ## Hard, shadowed and competing doubles
 
@@ -173,7 +173,6 @@ Every path a card's behaviour reaches the sim by, and the cards where two paths 
 | Marsh Flats | split | activated + code land_etb | activated | - | land_etb | - | dsl-partial |
 | Mirari's Wake | split | static:anthem + code land_mana | static:anthem | - | land_mana | - | dsl-partial |
 | Misty Rainforest | split | activated + code land_etb | activated | - | land_etb | - | dsl-partial |
-| Moseo, Vein's New Dean | split | tag tok + code end_step | - | tok(enter) | end_step | - | dsl-none |
 | Mossborn Hydra | split | triggered:landfall + code as_enters | triggered:landfall | - | as_enters | - | dsl-partial |
 | Myr Battlesphere | split | triggered:etb + code attack | triggered:etb | - | attack | - | dsl-partial |
 | Myriad Landscape | split | activated + code land_etb | activated | - | land_etb | - | dsl-partial |
@@ -254,6 +253,7 @@ Every path a card's behaviour reaches the sim by, and the cards where two paths 
 | Magitek Scythe | split | static:equip_bonus static:equip_cost + code etb; (no deck plays it) | static:equip_bonus static:equip_cost | - | etb | prio | dsl-partial |
 | Mirri, Weatherlight Duelist | split | static:self_keyword + code attack_cap blocks; (no deck plays it) | static:self_keyword | - | attack_cap blocks | - | dsl-partial |
 | Mithril Coat | split | static:equip_cost static:equip_keyword static:self_keyword + code etb; (no deck plays it) | static:equip_cost static:equip_keyword static:self_keyword | - | etb | - | dsl-partial |
+| Moseo, Vein's New Dean | split | tag tok + code end_step; (no deck plays it) | - | tok(enter) | end_step | - | dsl-none |
 | Myrel, Shield of Argive | split | triggered:attack + code can_cast; (no deck plays it) | triggered:attack | - | can_cast | - | dsl-partial |
 | Orysa, Tide Choreographer | split | triggered:etb + code self_cost; (no deck plays it) | triggered:etb | - | self_cost | - | dsl-partial |
 | Postmortem Professor | split | static:cant_block + code attack; (no deck plays it) | static:cant_block | - | attack | gy_options | dsl-partial |
@@ -296,11 +296,11 @@ Every path a card's behaviour reaches the sim by, and the cards where two paths 
 
 ## Path 5: card names as string literals in engine/, ai/ and cardcode.rs (inventory)
 
-411 literals naming 266 distinct cards (test modules left out)
+447 literals naming 279 distinct cards (test modules left out)
 
 | File | Literals | Distinct cards |
 |---|---|---|
-| ai/decks.rs | 70 | 47 |
+| ai/decks.rs | 72 | 47 |
 | ai/plans.rs | 63 | 48 |
 | ai/seph.rs | 48 | 34 |
 | engine/turn.rs | 41 | 31 |
@@ -308,13 +308,16 @@ Every path a card's behaviour reaches the sim by, and the cards where two paths 
 | ai/veyran.rs | 37 | 31 |
 | engine/stack.rs | 22 | 18 |
 | engine/zones.rs | 20 | 18 |
+| engine/mana.rs | 19 | 18 |
 | ai/mod.rs | 17 | 17 |
-| engine/mana.rs | 15 | 15 |
+| ai/evdiag.rs | 13 | 13 |
+| ai/search.rs | 12 | 12 |
 | engine/combat.rs | 11 | 11 |
 | cardcode.rs | 9 | 9 |
+| engine/cast.rs | 6 | 6 |
 | ai/t6_table.rs | 5 | 4 |
-| engine/cast.rs | 5 | 5 |
 | engine/removal.rs | 5 | 5 |
+| ai/planner.rs | 3 | 3 |
 | engine/values.rs | 3 | 3 |
 | ai/brain.rs | 2 | 2 |
-| ai/search.rs | 1 | 1 |
+| engine/tutors.rs | 2 | 1 |
