@@ -62,7 +62,7 @@ cardgen validate                                                        # check 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
 - `--deck`: `seph`, `veyran`, `sauron`, `galadriel`, `yshtola`, `alela`, `kefka`, `sheoldred`, `cloud`,
-  `thrasios`, `sephfs`, `karn` or `scion`.
+  `thrasios`, `karn` or `scion`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -96,7 +96,7 @@ the same opponents and draws.
 
 | JD's decks | Tiers |
 | --- | --- |
-| yshtola, sephfs, thrasios | t5 |
+| yshtola, thrasios | t5 |
 | sheoldred, sauron, seph | t3-t4 |
 | kefka | t3 |
 | cloud, veyran | t1-t3 |

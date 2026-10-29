@@ -73,13 +73,6 @@ commander2 = "Thrasios, Triton Hero"
 ident = "WUBG"
 tiers = ["t5"]
 
-[sephfs]
-file = "JD/sephiroth-fs-wipe-steal.md"
-name = "Sephiroth FS"
-commander = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
-ident = "B"
-tiers = ["t5"]
-
 [karn]
 file = "JD/karn-colorless-artifacts.md"
 name = "Karn"
