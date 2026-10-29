@@ -43,3 +43,5 @@ Smoke result: 36.0% -> 42.0% (+6.0, noise ±6.8): no clear effect at 50 games, t
 measurement. Why: drawn in 16% of games, cast in only 37.5% of those (stuck 62.5%: five mana, and it ranks below
 the wipes and the commander); Mind Stone was cast in 90%. Wins when cast 66.7% (3 games: no signal). The real
 test is a full-size run; the likely strength is chapter III after one of the deck's own wipes (an opponent's yard too).
+
+**Retired 2026-10-27 (JD).** Its cards went to other decks, none of it simulated: Sephiroth, Fabled SOLDIER, Vampiric Tutor, Grave Researcher // Reanimate, Living Death, Rune-Scarred Demon, Dark Ritual, Phyrexian Altar, Dread Return and Phyrexian Tower to Seph/Atraxa; The One Ring, Demonic Tutor, Gray Merchant of Asphodel, Call of the Ring and Bolas's Citadel to Sheoldred; the rest to bulk. The list is kept in `decklists/pool/retired/sephiroth-fs-wipe-steal.md` so the Rust tests can seat it. This file is kept as history.

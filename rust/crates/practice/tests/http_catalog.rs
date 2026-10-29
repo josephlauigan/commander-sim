@@ -30,7 +30,6 @@ fn test_your_decks() {
             "sauron",
             "scion",
             "seph",
-            "sephfs",
             "sheoldred",
             "thrasios",
             "veyran",

@@ -2,6 +2,7 @@
 1 Arcane Denial (all) 22b
 1 Arcane Signet (p30m) 1P
 1 Archon of Absolution (eld) 3
+1 Assassin's Trophy (2x2) 372
 1 Austere Command (brc) 69
 1 Avacyn's Pilgrim (isd) 170
 1 Aven Mindcensor (clb) 688
@@ -24,7 +25,6 @@
 1 Dauthi Voidwalker (tdc) 176
 1 Deathcap Glade (sos) 253
 1 Diabolic Tutor (sld) 1592
-1 Disenchant (ath) 5
 1 Dragonlord Dromoka (2x2) 376
 1 Drowned Catacomb (m11) 224
 1 Elenda, the Dusk Rose (2x2) 377
@@ -35,13 +35,20 @@
 1 Falcon and Redwing (msc) 14
 1 Fellwar Stone (cmm) 657
 1 Flickering Hound (fra) 7
-3 Forest (mdd) 301
+1 Forest (mdd) 301
+1 Forest (mdd) 301
+1 Forest (mdd) 301
 1 Ghostly Prison (soc) 146
 1 Glacial Fortress (msc) 248
 1 Grave Titan (pdp12) 2
 1 Helm of Kaldra (plst) 5DN-131
 1 Hero of Bladehold (mbs) 8
-6 Island (mdd) 294
+1 Island (mdd) 294
+1 Island (mdd) 294
+1 Island (mdd) 294
+1 Island (mdd) 294
+1 Island (mdd) 294
+1 Island (mdd) 294
 1 Isolated Chapel (isd) 242
 1 Lightning Greaves (cmm) 398
 1 Llanowar Wastes (c19) 258
@@ -52,7 +59,13 @@
 1 Orzhov Signet (drc) 134
 1 Paradox Surveyor (sos) 208
 1 Path to Exile (blc) 147
-7 Plains (mdd) 292
+1 Plains (mdd) 292
+1 Plains (mdd) 292
+1 Plains (mdd) 292
+1 Plains (mdd) 292
+1 Plains (mdd) 292
+1 Plains (mdd) 292
+1 Plains (mdd) 292
 1 Port Town (msc) 256
 1 Propaganda (plst) C16-94
 1 Resplendent Angel (lci) 32
@@ -64,7 +77,12 @@
 1 Sun Titan (afc) 73
 1 Sunblast Angel (ddi) 21
 1 Sunpetal Grove (ltc) 336
-6 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
+1 Swamp (mdd) 296
 1 Swords to Plowshares (ice) 54
 1 Talisman of Curiosity (pip) 245
 1 Talisman of Unity (mrd) 257
