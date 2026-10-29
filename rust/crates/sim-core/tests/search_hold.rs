@@ -53,14 +53,28 @@ fn only_the_hold_line_gets_the_bonus() {
     assert_eq!(search::hold_bonus(&g, P0, hold), 0.0, "hold_w 0: the old search");
 }
 
+/// --- ai-rollouts: with the adaptive rollouts (the default) the look-ahead finds casting Sheoldred ahead of holding
+/// five mana for Ad Nauseam (16.5 against 15.7 a playout) past the margin at z = 2.36, and casts it: the deck has no
+/// counterspell to hold for, and a resolved Sheoldred is the stronger play (JD accepted it, 2026-10-29, rollouts.md)
 #[test]
-fn lookahead_keeps_ad_nauseams_mana_up() {
+fn with_adaptive_rollouts_the_lookahead_casts_sheoldred_over_holding() {
     let mut g = game();
     ad_nauseam_and_a_creature(&mut g);
     set_hold_w(&mut g, 1.0);
-    // --- ai-rollouts: at six rollouts the margin hands this close call back to the heuristic (hold). With adaptive
-    // rollouts (24) the look-ahead finds Sheoldred ahead by more than two standard errors (16.5 against 15.7 a
-    // playout) and casts it: a change for JD to judge (rollouts.md). This test pins the six-rollout rule.
+    assert!(g.settings.search.adapt, "adaptive rollouts are the default");
+    let opts = brain::main_options(&mut g, P0, false).unwrap();
+    let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
+    let scores = search::LAST_SCORES.with(|l| l.borrow().clone());
+    assert_eq!(pick.as_deref(), Some("Sheoldred, the Apocalypse"), "{scores:?}");
+}
+
+#[test]
+fn at_six_rollouts_the_lookahead_keeps_ad_nauseams_mana_up() {
+    let mut g = game();
+    ad_nauseam_and_a_creature(&mut g);
+    set_hold_w(&mut g, 1.0);
+    // --- ai-rollouts: the six-rollout rule (adaptive rollouts off): the margin hands this close call back to the
+    // heuristic, which holds the mana
     let mut s = (*g.settings).clone();
     s.search.adapt = false;
     g.settings = Arc::new(s);
