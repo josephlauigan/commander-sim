@@ -2,7 +2,8 @@
 
 A five-colour combo deck that wins with Godo, Bandit Warlord and Helm of the Host, with Equipment and Dragons as the
 value engine around it. **Godo** puts Helm of the Host onto the battlefield when he enters; Helm makes a hasty token
-copy of him every combat, and each copy's first attack adds another combat, so the turn never ends. **Gilgamesh,
+copy of him every combat, and each copy's first attack adds another combat, so the turn never ends. **Combat
+Celebrant** is a second, cheaper creature for the same loop: three mana instead of six. **Gilgamesh,
 Master-at-Arms** is a Samurai, so every Godo attack untaps him and he digs six cards for Equipment on every attack.
 **Maskwood Nexus** makes every creature a Dragon (Eminence discount, Ur-Dragon draws) and a Samurai (Godo untaps the
 whole team). The Ur-Dragon itself is a nine-drop: in most games it is a cost reducer from the command zone and a late
@@ -12,7 +13,7 @@ to trigger counters on Godo, and to fast combo that wins before turn 5.
 | | |
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10, five colours) |
-| **Bracket** | 4 (16 Game Changers; a two-card infinite combo) |
+| **Bracket** | 4 (17 Game Changers; two two-card infinite combos) |
 | **Simulator** | Not wired in yet. Eminence and The Ur-Dragon's attack trigger are modeled in PR #139 (`impls/t45_urdragon.rs`); build on that when adding the deck key. |
 
 ## Strategy
@@ -32,8 +33,9 @@ hand onto the battlefield.*
 
 ### Game plan
 
-**Opening hand.** Keep two or more mana sources with fast mana or a mana creature among them, plus a path to Godo: Godo
-himself, Imperial Recruiter, Worldly Tutor or Demonic Tutor. Ship hands with no acceleration.
+**Opening hand.** Keep two or more mana sources with fast mana or a mana creature among them, plus a path to Godo or
+Helm: Godo himself, Imperial Recruiter, Worldly Tutor or Demonic Tutor, or Helm (or a Helm tutor) with Combat Celebrant.
+Ship hands with no acceleration.
 
 **Turns 1-3.** Fast mana, mana creatures, land ramp. Puresteel Paladin or Stoneforge Mystic if there is a spare mana.
 
@@ -60,6 +62,17 @@ creature, except it isn't legendary, and it gains haste. On Godo:
 Godo himself never has to attack. Backups when the trigger is countered or Godo is removed: **Peter Parker's Camera**
 copies Godo's enter trigger (Hammer first, then Helm, which Hammer attaches), and **Jaxis, the Troublemaker** makes a
 hasty token copy of Godo, with a fresh enter trigger.
+
+**Combat Celebrant** ({2}{R}, 4/1): if it hasn't been exerted this turn, you may exert it as it attacks; when you do,
+untap all other creatures you control and add a combat. With Helm on it:
+
+1. Beginning of combat: Helm makes a hasty token Celebrant that has never been exerted.
+2. The token attacks and exerts: everything else untaps, and there is another combat.
+3. The new combat begins, Helm makes another fresh token, and it repeats.
+
+It costs half of Godo, but it doesn't fetch Helm. Find Helm with Stoneforge Mystic, Steelshaper's Gift, Enlightened
+Tutor, Gilgamesh or Inventors' Fair, and attach it the same ways as above. Worldly Tutor finds Celebrant; Imperial
+Recruiter can't (power 4). It is a 4/1, so cast it the turn you go off.
 
 ### Gilgamesh and the Samurai
 
@@ -106,7 +119,7 @@ attach on entering), **Brass Squire** (attach for free), **Stoneforge Mystic**, 
   Magnificent (a Treasure each upkeep, damage equal to your Treasures on attack), Goldspan Dragon (Treasures that make
   two mana).
 - **Engines:** Terror of the Peaks (damage equal to each creature's power as it enters; spells that target it cost 3
-  life), Hellkite Tyrant (steals artifacts, wins with 20 artifacts at your upkeep), Nicol Bolas, the Ravager (each
+  life), Nicol Bolas, the Ravager (each
   opponent discards; transforms into a planeswalker that draws two or deals 10), Dragonlord Ojutai (hexproof while
   untapped, card selection on each hit), Kura, the Boundless Sky (flying deathtouch; three lands or an X/X when it
   dies).
@@ -130,15 +143,18 @@ hasty 2/2s as you need. **Imperial Recruiter** finds Dualcaster or Godo (power 2
 
 ### Card flow
 
-The One Ring, Rhystic Study, Sylvan Library, Garruk's Uprising (a card for each creature with power 4 or more, and
-trample), Wrenn and Six (returns fetch lands), Puresteel Paladin, and The Ur-Dragon's attack trigger.
+The One Ring, Rhystic Study, Sylvan Library, Wrenn and Six (returns fetch lands), Puresteel Paladin, and The Ur-Dragon's
+attack trigger. **Smothering Tithe** makes a Treasure for each card an opponent draws unless they pay {2}: mana for Godo
+and the equip, and artifacts for Puresteel Paladin's metalcraft.
 
 ## Key lines
 
 - **Turn 1-2:** fast mana and a mana creature; Puresteel Paladin or Stoneforge Mystic.
 - **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down or Conqueror's Flail equipped first if you
   have them.
-- **Godo answered:** Camera or Jaxis copies Godo for a fresh trigger; otherwise switch to Dualcaster and Twinflame.
+- **Celebrant turn:** Helm already out (or found and attached) plus three mana for Combat Celebrant.
+- **Godo answered:** Camera or Jaxis copies Godo for a fresh trigger; otherwise switch to Celebrant, or Dualcaster and
+  Twinflame.
 - **Maskwood turn:** every creature is a Dragon and a Samurai: cast creatures for {1} less and attack with everything.
 
 ## Mana and consistency
@@ -157,19 +173,19 @@ on turns 1-2 with no creatures it makes nothing, so don't keep it as one of only
 
 ## Bracket and Rule 0
 
-Bracket 4: 16 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
-Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will, Cyclonic Rift, Teferi's
-Protection, Ancient Tomb, Gaea's Cradle)
-and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about the combo before the game.
+Bracket 4: 17 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
+Smothering Tithe, Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will,
+Cyclonic Rift, Teferi's Protection, Ancient Tomb, Gaea's Cradle) and two two-card infinite combos (Godo or Combat
+Celebrant plus Helm of the Host). Tell the table about the combos before the game.
 
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (21).** Birds of Paradise, Brass Squire, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Hellkite Tyrant, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Smaug the Magnificent, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (21).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Smaug the Magnificent, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
-**Enchantments (4).** Garruk's Uprising, Rhystic Study, Sigarda's Aid, Sylvan Library
+**Enchantments (4).** Rhystic Study, Sigarda's Aid, Smothering Tithe, Sylvan Library
 
 **Artifacts (20).** Chrome Mox, Conqueror's Flail, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
@@ -194,6 +210,7 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Chaos Warp
 1 Chrome Mox
 1 City of Brass
+1 Combat Celebrant
 1 Command Tower
 1 Conqueror's Flail
 1 Cyclonic Rift
@@ -207,7 +224,6 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Force of Negation
 1 Force of Will
 1 Gaea's Cradle
-1 Garruk's Uprising
 1 Gilgamesh, Master-at-Arms
 1 Glorybringer
 1 Godo, Bandit Warlord
@@ -216,7 +232,6 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Grim Monolith
 1 Hallowed Fountain
 1 Hammer of Nazahn
-1 Hellkite Tyrant
 1 Helm of the Host
 1 Imperial Recruiter
 1 Imperial Seal
@@ -251,6 +266,7 @@ and a two-card infinite combo (Godo plus Helm of the Host). Tell the table about
 1 Shadowspear
 1 Sigarda's Aid
 1 Smaug the Magnificent
+1 Smothering Tithe
 1 Sol Ring
 1 Steam Vents
 1 Steelshaper's Gift
