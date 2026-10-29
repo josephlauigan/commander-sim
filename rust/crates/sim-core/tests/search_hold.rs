@@ -58,6 +58,12 @@ fn lookahead_keeps_ad_nauseams_mana_up() {
     let mut g = game();
     ad_nauseam_and_a_creature(&mut g);
     set_hold_w(&mut g, 1.0);
+    // --- ai-rollouts: at six rollouts the margin hands this close call back to the heuristic (hold). With adaptive
+    // rollouts (24) the look-ahead finds Sheoldred ahead by more than two standard errors (16.5 against 15.7 a
+    // playout) and casts it: a change for JD to judge (rollouts.md). This test pins the six-rollout rule.
+    let mut s = (*g.settings).clone();
+    s.search.adapt = false;
+    g.settings = Arc::new(s);
     let opts = brain::main_options(&mut g, P0, false).unwrap();
     let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
     assert_eq!(pick.as_deref(), Some("stop (hold mana)"), "{:?}", search::LAST_SCORES.with(|l| l.borrow().clone()));

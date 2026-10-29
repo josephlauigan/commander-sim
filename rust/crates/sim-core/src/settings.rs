@@ -82,7 +82,8 @@ pub struct Search {
     /// --- ai-rollouts: adaptive rollouts. When the margin would hand a main-phase decision back to the heuristic,
     /// the same options get `adapt_batch` more rollouts at a time (new seeds, shared by every option), and the
     /// margin is tested again, until it holds, it clearly can't (`adapt_stop`) or `adapt_cap` rollouts in all
-    /// (`search::adapt_rollouts`). Env AI_EVAL_ADAPT=1 turns it on (an A/B switch)
+    /// (`search::adapt_rollouts`). On by default: the hand-back rate fell from 50.6% to 34.1% (Tier 6) and 42.1% to
+    /// 27.4% (Tier 3) at 1.6 and 1.2 times the time (rollouts.md). Env AI_EVAL_ADAPT=0 turns it off, for A/B runs
     pub adapt: bool,
     /// --- ai-rollouts: the most rollouts per option a decision may use, the first `rollouts` included. Env
     /// AI_EVAL_ADAPT_CAP
@@ -125,7 +126,7 @@ impl Default for Search {
                 .unwrap_or(MARGIN), // --- ai-eval
             det: planner_from(std::env::var("AI_EVAL_DET").ok().as_deref()),       // --- ai-eval
             short: matches!(std::env::var("AI_EVAL_SHORT").ok().as_deref(), Some("1")), // --- ai-eval
-            adapt: matches!(std::env::var("AI_EVAL_ADAPT").ok().as_deref(), Some("1")), // --- ai-rollouts
+            adapt: planner_from(std::env::var("AI_EVAL_ADAPT").ok().as_deref()), // --- ai-rollouts
             adapt_cap: env_num("AI_EVAL_ADAPT_CAP", ADAPT_CAP),                          // --- ai-rollouts
             adapt_batch: env_num("AI_EVAL_ADAPT_BATCH", ADAPT_BATCH),                    // --- ai-rollouts
             adapt_stop: env_num("AI_EVAL_ADAPT_STOP", ADAPT_STOP),                       // --- ai-rollouts

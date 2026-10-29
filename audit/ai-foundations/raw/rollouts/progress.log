@@ -1,0 +1,36 @@
+start off-t6-diag 07:17:09 X=1  AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done off-t6-diag rc=0 07:20:17 secs=188.670847899
+start off-t6 07:20:17 X=1  --realism --pool t6 --games 1000 --jobs 22 --quiet
+done off-t6 rc=0 07:22:17 secs=119.747800747
+start off-t3-diag 07:22:17 X=1  AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done off-t3-diag rc=0 07:25:00 secs=162.630495672
+start off-t3 07:25:00 X=1  --realism --pool t3 --games 1000 --jobs 22 --quiet
+done off-t3 rc=0 07:26:30 secs=90.505526603
+PHASE1 off done
+start a24-t6-diag 07:26:30 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done a24-t6-diag rc=0 07:32:12 secs=341.691171273
+start a24-t6 07:32:12 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done a24-t6 rc=0 07:35:26 secs=194.028370155
+start a24-t3-diag 07:35:26 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done a24-t3-diag rc=0 07:38:22 secs=176.061014312
+start a24-t3 07:38:22 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done a24-t3 rc=0 07:40:08 secs=106.311825841
+PHASE1 a24 done
+start a30-t6-diag 07:40:18 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=30 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done a30-t6-diag rc=0 07:46:29 secs=371.212243368
+start a30-t6 07:46:29 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=30 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done a30-t6 rc=0 07:50:00 secs=210.860797190
+start a30-t3-diag 07:50:00 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=30 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done a30-t3-diag rc=0 07:53:07 secs=187.171304547
+start a30-t3 07:53:07 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=30 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=0.5 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done a30-t3 rc=0 07:54:52 secs=104.965474947
+PHASE1 a30 done
+start a24s1-t6-diag 07:54:52 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=1.0 AI_EVAL_FALLBACK=1 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done a24s1-t6-diag rc=0 07:59:41 secs=289.283142519
+start a24s1-t6 07:59:41 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=1.0 --realism --pool t6 --games 1000 --jobs 22 --quiet
+done a24s1-t6 rc=0 08:02:31 secs=169.737798624
+start a24s1-t3-diag 08:02:31 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=1.0 AI_EVAL_FALLBACK=1 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done a24s1-t3-diag rc=0 08:04:54 secs=142.762439810
+start a24s1-t3 08:04:54 X=1 AI_EVAL_ADAPT=1 AI_EVAL_ADAPT_CAP=24 AI_EVAL_ADAPT_BATCH=6 AI_EVAL_ADAPT_STOP=1.0 --realism --pool t3 --games 1000 --jobs 22 --quiet
+done a24s1-t3 rc=0 08:06:17 secs=83.456776268
+PHASE1 a24s1 done
