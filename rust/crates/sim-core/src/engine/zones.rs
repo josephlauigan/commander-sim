@@ -1587,7 +1587,7 @@ pub fn edict(g: &mut Game, q: PlayerId, least_power: bool) -> Res {
     if crate::human::is_human(g, q) && !cr.is_empty() {
         return crate::human::choices::sacrifice_creature(g, q, &cr, "Sacrifice a creature (edict)");
     }
-    if let Some(m) = min_by(&cr, |x| sac_worth(g, x)) {
+    if let Some(m) = crate::ai::values::read_as(g, q, || min_by(&cr, |x| sac_worth(g, x))) {
         let name = g.perm(m).name.to_string();
         die(g, m, "sac")?;
         if !g.perm(m).on_bf {

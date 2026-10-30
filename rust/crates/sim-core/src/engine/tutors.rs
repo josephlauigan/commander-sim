@@ -152,6 +152,9 @@ fn type_codes(g: &Game, c: CardId) -> Vec<char> {
 pub fn card_worth(g: &Game, p: PlayerId, c: CardId, in_gy: bool) -> f64 {
     let mut v = ai::deck_prio(g, p, c);
     let d = g.db.get(c);
+    if v <= 0.0 && crate::ai::values::on(g, p) {
+        v = crate::ai::values::card_worth(g, p, c); // --- phase4-values: its worth now, held interaction included
+    }
     if v <= 0.0 && d.has_dsl() {
         v = crate::dsl::card_value(g, p, c) * 10.0;
     }

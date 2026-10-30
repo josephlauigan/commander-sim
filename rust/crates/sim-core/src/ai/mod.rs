@@ -28,6 +28,7 @@ pub mod seph;
 pub mod t6_table;
 pub mod tape;
 pub mod topdeck;
+pub mod values; // --- phase4-values
 pub mod veyran;
 
 use crate::engine::repl;

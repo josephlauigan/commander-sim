@@ -364,7 +364,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
             .count();
         u += 0.9 * n_pay as f64 * if has(g, p, Tag::Veyran) { 2.0 } else { 1.0 };
     }
-    if (d.bomb >= 5 || pl.is_commander(c) || base >= 70.0) && !d.land {
+    if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
     }
     if pl.key == "veyran" && !pl.is_commander(c) {
@@ -466,7 +466,7 @@ pub fn spare_creature(g: &Game, p: PlayerId) -> Option<PermId> {
             g.is_creature(m) && !x.phased && (!x.is_cmd || free_commander(g, m)) && !x.army
         })
         .collect();
-    let worth = |m: PermId| if free_commander(g, m) { 0.0 } else { pval(g, m) };
+    let worth = |m: PermId| if free_commander(g, m) { 0.0 } else { super::values::pval_for(g, p, m) };
     let m = min_by(&cands, worth)?;
     (worth(m) <= SPARE_VALUE).then_some(m)
 }
@@ -590,13 +590,14 @@ fn swamp_land(g: &Game, p: PlayerId) -> bool {
 
 /// sacrifice fodder for removal costs: creatures that are tokens or no bomb
 fn rem_fodder(g: &Game, p: PlayerId) -> Vec<PermId> {
+    let fodder_max = if super::values::on(g, p) { super::values::BOMB } else { f64::MIN_POSITIVE }; // --- phase4-values
     g.player(p)
         .perms
         .iter()
         .copied()
         .filter(|&m| {
             let x = g.perm(m);
-            g.is_creature(m) && (x.token || x.cd.is_none_or(|cd| g.db.get(cd).bomb == 0))
+            g.is_creature(m) && (x.token || x.cd.is_none_or(|cd| super::values::bomb_of(g, p, cd) < fodder_max))
         })
         .collect()
 }
@@ -666,8 +667,8 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
                 tg = on_arch;
             }
         }
-        let Some(best) = max_by(&tg, |m| pval(g, m)) else { continue };
-        let mut v = pval(g, best);
+        let Some(best) = max_by(&tg, |m| super::values::pval_for(g, p, m)) else { continue };
+        let mut v = super::values::pval_for(g, p, best);
         if Some(g.perm(best).owner) == s.leader {
             v *= 1.25;
         }
@@ -678,7 +679,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
                 continue; // Tier 6: held for the win attempt, not fired at the first creature
             }
         }
-        if s.combo_near && pval(g, best) >= 8.0 {
+        if s.combo_near && super::values::pval_for(g, p, best) >= 8.0 {
             v += 2.0;
         }
         if !main && v < 2.5 {
@@ -686,7 +687,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         }
         // the yshtola seat: spot removal only on targets worth it; her MV3+ spells are also her trigger
         let ysh_bonus = if g.player(p).key == "yshtola" {
-            match crate::impls::yshtola::removal_adjust(g, p, c, pval(g, best)) {
+            match crate::impls::yshtola::removal_adjust(g, p, c, super::values::pval_for(g, p, best)) {
                 Some(b) => b,
                 None => continue,
             }
@@ -719,11 +720,11 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         {
             let kd = format!("dmg{}", rk[3..].parse::<i32>().unwrap_or(0) + 2); // Burst Lightning kicked: 4 damage
             let tg4 = legal_targets(g, p, &kd, tgt, mv4, Some(c));
-            if let Some(b4) = max_by(&tg4, |m| pval(g, m))
-                && pval(g, b4) > v + 1.0
+            if let Some(b4) = max_by(&tg4, |m| super::values::pval_for(g, p, m))
+                && super::values::pval_for(g, p, b4) > v + 1.0
             {
                 out.push(Opt {
-                    utility: pval(g, b4) - 4.5,
+                    utility: super::values::pval_for(g, p, b4) - 4.5,
                     label: format!("{} (kicked) -> {}", d.name, g.perm(b4).name),
                     act: Some(Action::Removal { card: c, targets: tg4, kick: k as u32, kind: Some(intern(&kd)) }),
                 });
@@ -862,7 +863,11 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
         return Ok(false);
     }
     let live: Vec<(f64, PermId)> =
-        tg.iter().copied().filter(|&m| g.perm(m).on_bf && !untargetable(g, m)).map(|m| (pval(g, m) / 1.5, m)).collect();
+        tg.iter()
+            .copied()
+            .filter(|&m| g.perm(m).on_bf && !untargetable(g, m))
+            .map(|m| (super::values::pval_for(g, p, m) / 1.5, m))
+            .collect();
     if live.is_empty() {
         return Ok(false);
     }

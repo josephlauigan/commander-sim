@@ -117,6 +117,9 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
             0
         };
     }
+    if super::values::on(g, p) {
+        return derived_prio(g, p, c); // --- phase4-values
+    }
     if d.perm {
         let ci = crate::cardcode::combo_imp(g, p, c);
         if ci >= 7.0 {
@@ -341,6 +344,112 @@ pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 40;
     }
     0 // compiled abilities: the interpreter's value decides; combat tricks: no proactive value
+}
+
+// --- phase4-values
+/// `generic_prio` on derived values (`ai/values.rs`): the card rules that are code (preconditions, a card's own
+/// timing, held interaction, combo roles) stay; the table's fixed numbers are replaced by the worth the card's
+/// abilities give now
+pub fn derived_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let pl = g.player(p);
+    let d = g.db.get(c);
+    let t = &d.tags;
+    let cfg = plans::config(pl.key);
+    let derived = || super::values::cast_prio(g, p, c);
+    let ci = if d.perm { crate::cardcode::combo_imp(g, p, c) } else { 0.0 };
+    if ci >= 7.0 {
+        return (50.0 + 4.0 * ci) as i32;
+    }
+    if t.has(Tag::Chromemox) {
+        let spare = pl
+            .hand
+            .iter()
+            .filter(|&&x| {
+                let xd = g.db.get(x);
+                !xd.land && !xd.types.has(Types::ARTIFACT) && xd.pips.chars().any(|ch| pl.ident.has(ch))
+            })
+            .count();
+        return if spare >= 2 { plans::ramp_prio(g, p, c, 1) } else { 0 };
+    }
+    if t.has(Tag::Moxd) {
+        let n = pl.hand.iter().filter(|&&x| g.db.get(x).land).count();
+        return if n >= 2 || (n >= 1 && pl.land_turn == pl.turns as i32) { plans::ramp_prio(g, p, c, 1) } else { 0 };
+    }
+    if t.has(Tag::Grim) {
+        return plans::ramp_prio(g, p, c, 3);
+    }
+    let etb_removal = t.has(Tag::Rem) && t.has(Tag::Etb) && d.perm;
+    let held = t.has(Tag::Ctr) || t.has(Tag::Rem) || t.has(Tag::Wipe) || t.str(Tag::Prot).is_some_and(|s| s != "boots");
+    if !etb_removal && held {
+        return 0; // held / cast by the response logic
+    }
+    const SPECIAL: [Tag; 6] = [Tag::Rean, Tag::Fill, Tag::Yawg, Tag::Avarice, Tag::Mastery, Tag::Crackle];
+    if SPECIAL.iter().any(|&k| t.has(k)) && !d.has_dsl() && !d.creature {
+        return 0;
+    }
+    // a card's own preconditions and timing (code, not table rows)
+    if (t.has(Tag::Tokx) && total_mana(g, p, false) < 5)
+        || (t.has(Tag::Stampede) && creatures_of(g, p) < 6)
+        || (t.has(Tag::Loam) && pl.gy.iter().filter(|&&x| g.db.get(x).land).count() < 2)
+        || (t.has(Tag::Rishkar)
+            && pl.perms.iter().filter(|&&m| g.is_creature(m)).map(|&m| epow(g, m)).max().unwrap_or(0) < 4)
+        || t.has(Tag::Xtutor)
+        || t.has(Tag::Krasis)
+        || t.has(Tag::Combatspell)
+    {
+        return 0;
+    }
+    if t.has(Tag::Tithe) {
+        return crate::cardcode::tithe_prio(g, p, c);
+    }
+    if t.has(Tag::Necro) {
+        return decks::necro_prio(g, p, c);
+    }
+    if t.has(Tag::Rhystic) {
+        return plans::rhystic_prio(g, p, c);
+    }
+    if t.has(Tag::Seal) {
+        return tutor_prio(g, p, "any", 2);
+    }
+    if t.has(Tag::Jeska) {
+        return plans::jeska_prio(g, p, c);
+    }
+    if t.has(Tag::Intuition) || t.has(Tag::Gifts) {
+        return tutor_prio(g, p, "any", 0);
+    }
+    if t.has(Tag::Adnaus) {
+        return plans::adnaus_prio(g, p, c);
+    }
+    if t.has(Tag::Citadel) {
+        return plans::citadel_prio(g, p, c);
+    }
+    if t.has(Tag::Agent) {
+        return plans::agent_prio(g, p, c);
+    }
+    if t.has(Tag::Braids) {
+        return plans::braids_prio(g, p, c);
+    }
+    if let Some(k) = t.str(Tag::Tut) {
+        return tutor_prio(g, p, search_kind(g, c).unwrap_or(k), 0);
+    }
+    if t.has(Tag::Aura) {
+        if !pl.perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased) {
+            return 0;
+        }
+        if let Some(v) = cfg.aura_prio {
+            return v; // the plan file's knob
+        }
+    }
+    if ci > 0.0 {
+        return derived().max((50.0 + 4.0 * ci) as i32); // a combo piece: 9 = completes it, 7 = one short
+    }
+    if d.perm && crate::cardcode::is_combo_piece(g, c) {
+        return derived().max(48);
+    }
+    if d.perm && !d.creature && g.registry.get(c).is_some_and(|i| i.live()) && let Some(v) = cfg.hooked_prio {
+        return v; // the plan file's knob
+    }
+    derived()
 }
 
 // ------------------------------------------------------------------ what opponents think of a card

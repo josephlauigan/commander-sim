@@ -1163,6 +1163,10 @@ pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     if lands.len() > 4 || spells.is_empty() {
         lands.first().copied()
     } else {
+        if crate::ai::values::on(g, p) {
+            // --- phase4-values: the spell worth least to this hand
+            return min_by(&spells, |c| crate::ai::values::worth(g, p, c, true));
+        }
         max_by(&spells, |c| g.db.get(c).cmc as f64)
     }
 }
