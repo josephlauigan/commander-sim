@@ -292,7 +292,7 @@ fn journey_to_eternity_returns_its_creature_and_becomes_atzal() {
     zones::die(&mut g, host, "destroy").unwrap();
     assert_eq!(on_bf(&g, P0, "Elvish Mystic").len(), 1, "the creature returns");
     let jc = card(&g, "Journey to Eternity // Atzal, Cave of Eternity");
-    let atzal = g.player(P0).lands.iter().copied().find(|&l| g.land(l).cd == jc).expect("Atzal is a land now");
+    let atzal = g.player(P0).lands.iter().copied().find(|&l| g.land(l).card() == jc).expect("Atzal is a land now");
     assert!(sim_core::engine::mana::land_colors_now(&g, P0, atzal).count() >= 2, "any colour");
     // {3}{B}{G}, {T}: return a creature card from the graveyard
     to_gy(&mut g, P0, "Massacre Wurm");

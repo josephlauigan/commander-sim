@@ -630,13 +630,13 @@ fn lodge_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
 /// Yavimaya, Cradle of Growth on any battlefield (and not a plain Mountain under Blood Moon): every land is a Forest
 pub fn yavimaya_out(g: &Game) -> bool {
     g.players.iter().filter(|q| q.alive).any(|q| {
-        q.lands.iter().any(|&l| &*g.db.get(g.land(l).cd).name == YAVIMAYA && !crate::engine::mana::moon_land(g, l))
+        q.lands.iter().any(|&l| &*g.db.get(g.land(l).card()).name == YAVIMAYA && !crate::engine::mana::moon_land(g, l))
     })
 }
 
 /// is land l a Forest (by name, by type, or by Yavimaya)?
 pub fn is_forest(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     &*d.name == "Forest" || d.has_subtype("forest") || yavimaya_out(g)
 }
 

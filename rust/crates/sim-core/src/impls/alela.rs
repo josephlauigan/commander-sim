@@ -583,7 +583,7 @@ fn opposition_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         if g.land(l).tapped {
             continue;
         }
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         let amt = d.tags.int(Tag::Amt).filter(|&v| v != 0).unwrap_or(1);
         srcs.push((amt as f64 + 0.1 * land_colors_now(g, p, l).count() as f64, Tapped::Land(l), d.name.to_string()));
     }

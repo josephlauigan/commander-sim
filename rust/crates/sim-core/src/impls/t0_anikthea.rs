@@ -1401,13 +1401,13 @@ pub fn register_calix(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// without a Swamp (a land with the Swamp type) it taps for colourless only
 fn tainted_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
     let swamp = g.player(p).lands.iter().any(|&x| {
-        let d = g.db.get(g.land(x).cd);
+        let d = g.db.get(g.land(x).card());
         d.has_subtype("swamp") || &*d.name == "Swamp"
     });
     if !swamp {
         return Colors::NONE;
     }
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     Colors::from_letters(d.tags.str(crate::tag::Tag::C).unwrap_or("C"))
 }
 

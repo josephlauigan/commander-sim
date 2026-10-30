@@ -933,7 +933,7 @@ fn run(
                 let k = n(g, ctx).max(0) as usize;
                 let mut tapped: Vec<_> = g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
                 let worth = |l| {
-                    let t = &g.db.get(g.land(l).cd).tags;
+                    let t = &g.db.get(g.land(l).card()).tags;
                     10 * t.int(crate::tag::Tag::Amt).unwrap_or(1) as i32
                         + crate::engine::mana::land_colors_now(g, p, l).count() as i32
                 };

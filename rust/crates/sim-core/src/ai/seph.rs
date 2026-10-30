@@ -407,7 +407,9 @@ pub fn options(g: &mut Game, p: PlayerId, s: &Situation, _post: bool) -> Res<Vec
     if hc != 0.0 {
         o.push(plan(hc * (1.0 - 0.35 * s.ctr_risk), "hardcast bomb", hardcast_go));
     }
-    let deserts = s.opps.iter().any(|&q| g.player(q).lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Desert)));
+    let deserts = s.opps.iter().any(|&q| {
+        g.player(q).lands.iter().any(|&l| g.db.get(g.land(l).card()).tag(Tag::Desert))
+    });
     if deserts
         && (rean || gy_bomb)
         && payable_in_hand(g, p, |c| {
@@ -791,7 +793,7 @@ pub fn seph_trophy_grounds(g: &mut Game, p: PlayerId) -> Res<bool> {
         return Ok(false);
     }
     for q in g.opps(p).collect::<Vec<_>>() {
-        let Some(l) = g.player(q).lands.iter().copied().find(|&l| g.db.get(g.land(l).cd).tag(Tag::Desert)) else {
+        let Some(l) = g.player(q).lands.iter().copied().find(|&l| g.db.get(g.land(l).card()).tag(Tag::Desert)) else {
             continue;
         };
         for c in g.player(p).hand.clone() {
@@ -806,7 +808,7 @@ pub fn seph_trophy_grounds(g: &mut Game, p: PlayerId) -> Res<bool> {
                 }
                 if g.player(q).lands.contains(&l) {
                     crate::engine::turn::remove_land(g, q, l);
-                    let cd = g.land(l).cd;
+                    let cd = g.land(l).card();
                     g.player_mut(q).gy.push(cd);
                     land_ramp(g, q, 1, true)?;
                 }

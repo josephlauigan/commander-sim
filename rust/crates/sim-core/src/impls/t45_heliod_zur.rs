@@ -616,7 +616,7 @@ fn buried_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !pay_without(g, p, l, 2, "")? {
         return Ok(false);
     }
-    let ruin = g.land(l).cd;
+    let ruin = g.land(l).card();
     sac_land(g, p, l)?;
     let what = format!("{} to hand", cname(g, c));
     if crate::engine::stack::ability_window_card(g, p, ruin, &what, None, None)? {
@@ -656,7 +656,7 @@ fn hall_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     let what = format!("{} on top", cname(g, c));
-    if crate::engine::stack::ability_window_card(g, p, g.land(l).cd, &what, None, None)? {
+    if crate::engine::stack::ability_window_card(g, p, g.land(l).card(), &what, None, None)? {
         let gy = &mut g.player_mut(p).gy;
         if let Some(i) = gy.iter().position(|&x| x == c) {
             gy.remove(i);

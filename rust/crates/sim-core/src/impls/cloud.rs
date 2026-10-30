@@ -252,7 +252,7 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
             // nonbasic landwalk: unblockable while the defending player controls a nonbasic land
             "Trailblazer's Boots" => {
                 let d = owner(g, b);
-                if d != p && g.player(d).lands.iter().any(|&l| g.land(l).on_bf && !g.db.get(g.land(l).cd).basic) {
+                if d != p && g.player(d).lands.iter().any(|&l| g.land(l).on_bf && !g.db.get(g.land(l).card()).basic) {
                     return true;
                 }
             }
@@ -1414,14 +1414,14 @@ fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
     }
     let Some(l) = g.player(p).lands.iter().copied().find(|&l| {
         let x = g.land(l);
-        x.on_bf && !x.tapped && *g.db.get(x.cd).name == *PLAZA
+        x.on_bf && !x.tapped && *g.db.get(x.card()).name == *PLAZA
     }) else {
         return Ok(false);
     };
     if !crate::impls::lands::can_pay_without(g, p, l, 3, "") {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::engine::turn::remove_land(g, p, l); // tapped and exiled as the cost: the other lands pay the {3}
     if !pay(g, p, 3, "", false)? {
         g.player_mut(p).lands.push(l);
@@ -1783,7 +1783,7 @@ fn protection_follows(g: &Game, p: PlayerId, left: u32) -> bool {
         return true;
     }
     let plaza =
-        pl.lands.iter().any(|&l| g.land(l).on_bf && !g.land(l).tapped && *g.db.get(g.land(l).cd).name == *PLAZA);
+        pl.lands.iter().any(|&l| g.land(l).on_bf && !g.land(l).tapped && *g.db.get(g.land(l).card()).name == *PLAZA);
     if plaza && left >= 3 {
         return true;
     }

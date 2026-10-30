@@ -88,7 +88,7 @@ fn in_hand(g: &Game, p: PlayerId, n: &str) -> bool {
 fn on_bf(g: &Game, p: PlayerId, n: &str) -> bool {
     // lands are not permanents in this engine: look in the land list too
     crate::ai::plans::on_bf(g, p, n).is_some()
-        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && name(g, g.land(l).cd) == n)
+        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && name(g, g.land(l).card()) == n)
 }
 
 fn in_gy(g: &Game, p: PlayerId, f: impl Fn(&str) -> bool) -> bool {
@@ -98,7 +98,7 @@ fn in_gy(g: &Game, p: PlayerId, f: impl Fn(&str) -> bool) -> bool {
 /// Cradle is in play, or Itlimoc (a transformed Growing Rites of Itlimoc, which taps the same way)
 fn cradle_out(g: &Game, p: PlayerId) -> bool {
     on_bf(g, p, CRADLE)
-        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && name(g, g.land(l).cd) == super::t6_green2::RITES)
+        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && name(g, g.land(l).card()) == super::t6_green2::RITES)
 }
 
 /// cast priority of `c` (0-100 scale like `deck_prio`; 0 or less keeps it in hand); None = no opinion

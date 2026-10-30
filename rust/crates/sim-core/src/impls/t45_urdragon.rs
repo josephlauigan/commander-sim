@@ -512,7 +512,7 @@ fn haven_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !pay_without(g, p, l, 2, "")? {
         return Ok(false);
     }
-    let haven = g.land(l).cd;
+    let haven = g.land(l).card();
     sac_land(g, p, l)?;
     let what = format!("{} to hand", cname(g, c));
     if crate::engine::stack::ability_window_card(g, p, haven, &what, None, None)? {

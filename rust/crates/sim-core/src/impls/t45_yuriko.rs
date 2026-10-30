@@ -391,7 +391,7 @@ fn shizo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "gains fear", None, Some(m))? && live(g, m) {
+    if ability_window_card(g, p, g.land(l).card(), "gains fear", None, Some(m))? && live(g, m) {
         eot_kw(g, m, "fear");
         crate::glog!(g, "    {} gains fear until end of turn (Shizo)", g.perm(m).name);
     }
@@ -575,7 +575,7 @@ const SEA_GATE: &str = "Sea Gate Restoration // Sea Gate, Reborn";
 pub const SPECIMEN: &str = "Hydroelectric Specimen // Hydroelectric Laboratory";
 
 fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    Colors::from_letters(if cname(g, g.land(l).cd) == AGADEEM { "B" } else { "U" })
+    Colors::from_letters(if cname(g, g.land(l).card()) == AGADEEM { "B" } else { "U" })
 }
 
 /// the land face, when the land drop has no other use (t6_lands' rule)

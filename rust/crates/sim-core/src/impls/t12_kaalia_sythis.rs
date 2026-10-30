@@ -576,7 +576,7 @@ fn harvest_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
-    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).cd == c) {
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).card() == c) {
         g.land_mut(l).tapped = true; // This land enters tapped.
     }
     Ok(true)

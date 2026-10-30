@@ -2870,7 +2870,7 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
             let d = &g.land(l).data;
             let charge = d.get(DataKey::Charge).map(Val::int);
             let kept = d.int(DataKey::Counters);
-            if VIVID.contains(&&*g.db.get(g.land(l).cd).name) && charge.unwrap_or(2) > 0 {
+            if VIVID.contains(&&*g.db.get(g.land(l).card()).name) && charge.unwrap_or(2) > 0 {
                 g.land_mut(l).data.set(DataKey::Charge, Val::Int(charge.unwrap_or(2) + dbl as i64));
             }
             if kept > 0 {
@@ -2962,11 +2962,11 @@ fn urborg(g: &Game) -> bool {
     g.players
         .iter()
         .filter(|q| q.alive)
-        .any(|q| q.lands.iter().any(|&l| &*g.db.get(g.land(l).cd).name == "Urborg, Tomb of Yawgmoth"))
+        .any(|q| q.lands.iter().any(|&l| &*g.db.get(g.land(l).card()).name == "Urborg, Tomb of Yawgmoth"))
 }
 
 fn is_swamp(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     d.has_subtype("swamp") || &*d.name == "Swamp" || urborg(g)
 }
 
@@ -3329,7 +3329,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
                 );
             }
             crate::engine::turn::remove_land(g, p, l);
-            let cd = g.land(l).cd;
+            let cd = g.land(l).card();
             g.player_mut(p).gy.push(cd);
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);

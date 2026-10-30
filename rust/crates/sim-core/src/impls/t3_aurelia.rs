@@ -611,7 +611,7 @@ fn stronghold_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "+2/+0, vigilance and haste", None, Some(m))? && live(g, m) {
+    if ability_window_card(g, p, g.land(l).card(), "+2/+0, vigilance and haste", None, Some(m))? && live(g, m) {
         let x = g.perm_mut(m);
         x.eot_pt = (x.eot_pt.0 + 2, x.eot_pt.1);
         grant(g, m, "vigilance");
@@ -658,7 +658,7 @@ fn sunhome_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "double strike", None, Some(m))? && live(g, m) {
+    if ability_window_card(g, p, g.land(l).card(), "double strike", None, Some(m))? && live(g, m) {
         grant(g, m, "double strike");
         crate::glog!(g, "    {} gains double strike (Sunhome)", g.perm(m).name);
     }

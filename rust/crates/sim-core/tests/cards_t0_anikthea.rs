@@ -553,7 +553,7 @@ fn a_bounceland_played_with_no_other_land_returns_itself() {
     g.player_mut(P0).hand.retain(|&x| x != c2);
     sim_core::engine::turn::play_land_card(&mut g, P0, c2, "plays").unwrap();
     assert_eq!(g.player(P0).lands.len(), 1);
-    assert_eq!(&*g.db.get(g.land(g.player(P0).lands[0]).cd).name, "Orzhov Basilica");
+    assert_eq!(&*g.db.get(g.land(g.player(P0).lands[0]).card()).name, "Orzhov Basilica");
 }
 
 #[test]

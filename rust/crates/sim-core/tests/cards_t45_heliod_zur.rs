@@ -36,7 +36,7 @@ fn opts(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> 
 }
 
 fn land_opts(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
-    let f = g.registry.get(g.land(l).cd).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.land(l).card()).unwrap().land_options.unwrap();
     f(g, l, p, post).unwrap()
 }
 
@@ -420,5 +420,5 @@ fn imprisoned_in_the_moon_makes_a_creature_a_wastes() {
     assert!(!g.perm(t).on_bf);
     assert_eq!(g.player(P1).lands.len(), lands0 + 1);
     let l = *g.player(P1).lands.last().unwrap();
-    assert_eq!(&*g.db.get(g.land(l).cd).name, "Wastes");
+    assert_eq!(&*g.db.get(g.land(l).card()).name, "Wastes");
 }

@@ -56,7 +56,7 @@ pub fn owns_perm(g: &Game, m: PermId) -> bool {
 
 /// A land whose abilities are all listed here.
 pub fn owns_land(g: &Game, l: LandId) -> bool {
-    LANDS.contains(&&*g.db.get(g.land(l).cd).name)
+    LANDS.contains(&&*g.db.get(g.land(l).card()).name)
 }
 
 // ------------------------------------------------------------------ helpers
@@ -84,7 +84,7 @@ fn land_tap_ok(g: &Game, l: LandId) -> Why {
 }
 
 fn lname(g: &Game, l: LandId) -> String {
-    g.db.get(g.land(l).cd).name.to_string()
+    g.db.get(g.land(l).card()).name.to_string()
 }
 
 /// the engine's own code for the ability, run for the person; Some(why) if it refused
@@ -662,7 +662,7 @@ fn enclave(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     mana::pay_from_pool(g, p, 3, "");
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Bonders' Enclave", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "draw a card", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "draw a card", None, None)? {
         zones::draw(g, p, 1, false)?;
     }
     crate::engine::life::check_state(g)?;
@@ -689,7 +689,7 @@ fn ruin(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     };
     let c = arts[k];
     mana::pay_from_pool(g, p, 2, "");
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Buried Ruin", g.player(p).name);
     if ability_window_card(g, p, cd, &format!("return {} to hand", g.db.get(c).name), None, None)? {
@@ -740,7 +740,7 @@ fn vault(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
         return Ok(Some(why));
     }
     mana::pay_from_pool(g, p, 2 * x, "");
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Treasure Vault for {} Treasure(s)", g.player(p).name, x);
     if ability_window_card(g, p, cd, &format!("create {x} Treasure tokens"), None, None)? {
@@ -756,7 +756,7 @@ fn urza_factory(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     mana::pay_from_pool(g, p, 7, "");
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Urza's Factory", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "create a 2/2 Assembly-Worker", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "create a 2/2 Assembly-Worker", None, None)? {
         let mut spec = Tokens::new(1, 2);
         spec.tgh = Some(2);
         spec.color = Some(Colors::NONE);
@@ -776,7 +776,7 @@ fn animate(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     }
     let new_land = g.player(p).land_turn == g.player(p).turns as i32 && g.player(p).lands.last() == Some(&l);
     mana::pay_from_pool(g, p, cost, "");
-    if !ability_window_card(g, p, g.land(l).cd, "becomes a creature", None, None)? {
+    if !ability_window_card(g, p, g.land(l).card(), "becomes a creature", None, None)? {
         return Ok(None);
     }
     let m = crate::impls::karn::animate(g, p, l);
@@ -809,6 +809,6 @@ fn land_pump(g: &mut Game, p: PlayerId, l: LandId, pay: u32, by: (i32, i32)) -> 
         mana::pay_from_pool(g, p, pay, "");
     }
     g.land_mut(l).tapped = true;
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     pump(g, p, None, Some(cd), t, by)
 }

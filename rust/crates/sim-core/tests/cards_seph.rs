@@ -862,7 +862,7 @@ fn muldrotha_the_ai_plays_a_land_from_the_graveyard() {
     let tower = take(&mut g, P0, "Command Tower");
     g.player_mut(P0).gy.push(tower);
     turn::play_land(&mut g, P0).unwrap();
-    assert!(g.player(P0).lands.iter().any(|&l| g.land(l).cd == tower));
+    assert!(g.player(P0).lands.iter().any(|&l| g.land(l).card() == tower));
     assert!(mine::muld_used(&g, P0).contains(&"L"));
 }
 

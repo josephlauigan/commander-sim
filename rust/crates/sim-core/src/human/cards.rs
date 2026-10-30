@@ -908,22 +908,22 @@ fn strip(_g: &Game) -> Vec<LandAbility> {
         let labels: Vec<String> = tg
             .iter()
             .map(|&(q, x)| {
-                format!("{} ({})", cname(g, g.land(x).cd), if q == p { "yours".to_string() } else { pname(g, q) })
+                format!("{} ({})", cname(g, g.land(x).card()), if q == p { "yours".to_string() } else { pname(g, q) })
             })
             .collect();
         let Some(k) = pick(g, p, "target", "Strip Mine: destroy which land?", &labels)? else { return Ok(None) };
         let (q, x) = tg[k];
         crate::engine::turn::remove_land(g, p, l);
-        let cd = g.land(l).cd;
+        let cd = g.land(l).card();
         g.player_mut(p).gy.push(cd);
         crate::glog!(
             g,
             "  {} sacrifices Strip Mine: destroy {} ({})",
             pname(g, p),
-            cname(g, g.land(x).cd),
+            cname(g, g.land(x).card()),
             pname(g, q)
         );
-        let what = format!("destroy {}", cname(g, g.land(x).cd));
+        let what = format!("destroy {}", cname(g, g.land(x).card()));
         if crate::engine::stack::ability_window_card(g, p, cd, &what, None, None)? && g.player(q).lands.contains(&x) {
             crate::impls::fixes::destroy_land(g, q, x)?;
         }
@@ -945,7 +945,7 @@ fn lighthouse(_g: &Game) -> Vec<LandAbility> {
         super::mana::pay_from_pool(g, p, 1, "UR");
         g.land_mut(l).tapped = true;
         crate::glog!(g, "  {} loots with Desolate Lighthouse", pname(g, p));
-        let cd = g.land(l).cd;
+        let cd = g.land(l).card();
         if crate::engine::stack::ability_window_card(g, p, cd, "draw, then discard", None, None)? {
             crate::engine::zones::draw(g, p, 1, false)?;
             crate::engine::cast::discard_worst(g, p, 1)?;
@@ -961,7 +961,7 @@ fn summit(_g: &Game) -> Vec<LandAbility> {
         }
         super::mana::pay_from_pool(g, p, 2, "UR");
         g.land_mut(l).tapped = true;
-        let cd = g.land(l).cd;
+        let cd = g.land(l).card();
         if crate::engine::stack::ability_window_card(g, p, cd, "surveil 1", None, None)? {
             choices::scry(g, p, 1, true)?;
         }
@@ -998,7 +998,7 @@ fn baraddur(_g: &Game) -> Vec<LandAbility> {
             }
             g.land_mut(l).tapped = true;
             crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {}", pname(g, p), x);
-            let cd = g.land(l).cd;
+            let cd = g.land(l).card();
             if crate::engine::stack::ability_window_card(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
                 crate::engine::zones::amass(g, p, x)?;
             }
@@ -1030,7 +1030,7 @@ fn mistrise(_g: &Game) -> Vec<LandAbility> {
 
 /// cards.land_abilities
 pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
-    match &*cname(g, g.land(l).cd) {
+    match &*cname(g, g.land(l).card()) {
         "Strip Mine" => strip(g),
         "Desolate Lighthouse" => lighthouse(g),
         "Spectacle Summit" => summit(g),
@@ -2518,7 +2518,11 @@ fn ghost_quarter(_g: &Game) -> Vec<LandAbility> {
             let labels: Vec<String> = tg
                 .iter()
                 .map(|&(q, x)| {
-                    format!("{} ({})", cname(g, g.land(x).cd), if q == p { "yours".to_string() } else { pname(g, q) })
+                    format!(
+                        "{} ({})",
+                        cname(g, g.land(x).card()),
+                        if q == p { "yours".to_string() } else { pname(g, q) }
+                    )
                 })
                 .collect();
             let Some(k) = pick(g, p, "target", "Ghost Quarter: destroy which land?", &labels)? else {

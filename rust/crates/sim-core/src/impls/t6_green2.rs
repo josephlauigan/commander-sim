@@ -186,7 +186,7 @@ pub fn mycospawn_kicked(g: &mut Game, p: PlayerId) -> Res {
     if !trigger_window(g, p, None, "Sowing Mycospawn: exile target land", Some(4.0))? {
         return Ok(());
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::engine::turn::remove_land(g, q, l);
     g.player_mut(q).exile.push(cd);
     crate::glog!(g, "    {} is exiled (Sowing Mycospawn, kicked)", cname(g, cd));

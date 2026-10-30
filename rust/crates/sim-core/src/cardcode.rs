@@ -28,12 +28,12 @@ fn imp_of(g: &Game, c: CardId) -> Option<CardImpl> {
 /// a land with its own colour rules (CI.LAND_COLS: Plaza of Heroes, Unclaimed Territory, Vivid lands, Gemstone
 /// Mine ...). None: the land's `c` tag decides.
 pub fn land_colors(g: &Game, p: PlayerId, l: LandId) -> Option<crate::cards::Colors> {
-    imp_of(g, g.land(l).cd)?.land_cols.map(|f| f(g, p, l))
+    imp_of(g, g.land(l).card())?.land_cols.map(|f| f(g, p, l))
 }
 
 /// CI.DYN_MANA, the mana a land makes now (Gaea's Cradle). None: its tag's amount.
 pub fn dyn_mana_land(g: &Game, p: PlayerId, l: LandId) -> Option<u32> {
-    imp_of(g, g.land(l).cd)?.dyn_mana_land.map(|f| f(g, p, l))
+    imp_of(g, g.land(l).card())?.dyn_mana_land.map(|f| f(g, p, l))
 }
 
 /// CI.DYN_MANA for a nonland permanent (Priest of Titania)
@@ -101,7 +101,7 @@ pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: crate::engine::mana::Unit
 
 /// CI.ON_TAP for a land (Vivid lands' charge counters ...)
 pub fn on_tap_land(g: &mut Game, p: PlayerId, l: LandId, n: u32) -> crate::flow::Res {
-    match imp_of(g, g.land(l).cd).and_then(|i| i.on_tap_land) {
+    match imp_of(g, g.land(l).card()).and_then(|i| i.on_tap_land) {
         Some(f) => f(g, p, l, n),
         None => Ok(()),
     }
@@ -741,7 +741,7 @@ pub fn defend_hooks(
             if crate::engine::mana::moon_land(g, l) {
                 continue; // Blood Moon: no abilities
             }
-            if let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_defend) {
+            if let Some(f) = imp_of(g, g.land(l).card()).and_then(|i| i.land_defend) {
                 f(g, l, d, p, atk, assign)?;
             }
         }
@@ -858,7 +858,7 @@ pub fn land_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     if crate::engine::mana::moon_land(g, l) {
         return Ok(()); // Blood Moon: a plain Mountain has no enters ability
     }
-    match imp_of(g, g.land(l).cd).and_then(|i| i.land_etb) {
+    match imp_of(g, g.land(l).card()).and_then(|i| i.land_etb) {
         Some(f) => f(g, p, l),
         None => Ok(()),
     }
@@ -987,7 +987,7 @@ pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
     for l in g.player(p).lands.clone() {
         if g.player(p).lands.contains(&l)
             && !crate::engine::mana::moon_land(g, l)
-            && let Some(f) = imp_of(g, g.land(l).cd).and_then(|i| i.land_upkeep)
+            && let Some(f) = imp_of(g, g.land(l).card()).and_then(|i| i.land_upkeep)
         {
             f(g, l, p)?;
         }

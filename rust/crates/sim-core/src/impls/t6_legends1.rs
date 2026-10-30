@@ -49,7 +49,7 @@ fn untap_land(g: &Game, p: PlayerId) -> Option<(crate::ids::LandId, f64)> {
         .filter(|&l| g.land(l).tapped)
         .map(|l| {
             let amt = crate::cardcode::dyn_mana_land(g, p, l)
-                .map_or_else(|| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1), |n| n as i32);
+                .map_or_else(|| g.db.get(g.land(l).card()).tags.int(Tag::Amt).unwrap_or(1), |n| n as i32);
             (l, amt as f64)
         })
         .fold(None, |b: Option<(crate::ids::LandId, f64)>, x| match b {

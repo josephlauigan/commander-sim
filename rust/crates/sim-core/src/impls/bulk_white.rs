@@ -100,7 +100,7 @@ fn plan(utility: f64, label: String, f: crate::hooks::PlanFn, arg: i64) -> Opt {
 
 /// the Plains p controls (any land with the Plains type)
 pub fn plains(g: &Game, p: PlayerId) -> u32 {
-    g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).has_subtype("plains")).count() as u32
+    g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).card()).has_subtype("plains")).count() as u32
 }
 
 /// a flag set for the rest of this turn

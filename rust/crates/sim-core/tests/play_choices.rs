@@ -80,7 +80,7 @@ fn basic_land_search() {
     let asked = h.asked();
     assert_eq!(asked[0].choices[..asked[0].choices.len() - 1], ["Island", "Mountain", "Swamp"]);
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(&*g.db.get(g.land(l).cd).name, "Island");
+    assert_eq!(&*g.db.get(g.land(l).card()).name, "Island");
     assert!(g.land(l).tapped);
 }
 

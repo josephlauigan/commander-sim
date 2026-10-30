@@ -429,7 +429,7 @@ pub fn melira(g: &Game, p: PlayerId) -> bool {
 
 /// Glacial Chasm
 pub fn chasm(g: &Game, p: PlayerId) -> bool {
-    g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Chasm))
+    g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).card()).tag(Tag::Chasm))
 }
 
 /// damage to p from an opponent would be prevented (attack and burn AIs look elsewhere)

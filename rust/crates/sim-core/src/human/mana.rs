@@ -326,7 +326,7 @@ fn unit_colours(g: &Game, u: &Unit) -> String {
         cols.push('C');
     }
     let cd = match u.src {
-        Source::Land(l) => Some(g.land(l).cd),
+        Source::Land(l) => Some(g.land(l).card()),
         Source::Perm(m) => g.perm(m).cd,
         _ => None,
     };
@@ -342,7 +342,7 @@ fn unit_colours(g: &Game, u: &Unit) -> String {
 fn restricted_type(g: &Game, src: Source) -> Option<Sym> {
     let Source::Land(l) = src else { return None };
     let land = g.land(l);
-    if !RESTRICTED_LANDS.contains(&&*g.db.get(land.cd).name) {
+    if !RESTRICTED_LANDS.contains(&&*g.db.get(land.card()).name) {
         return None;
     }
     match land.data.get(DataKey::Ctype) {
@@ -354,7 +354,7 @@ fn restricted_type(g: &Game, src: Source) -> Option<Sym> {
 fn source_name(g: &Game, src: Source) -> String {
     match src {
         Source::Treasure => "a Treasure".into(),
-        Source::Land(l) => g.db.get(g.land(l).cd).name.to_string(),
+        Source::Land(l) => g.db.get(g.land(l).card()).name.to_string(),
         Source::Perm(m) | Source::Scion(m) | Source::Quirion(_, m) | Source::Symbiote(_, m, _) => {
             g.perm(m).name.to_string()
         }

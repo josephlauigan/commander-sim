@@ -2106,7 +2106,7 @@ fn draw_land_go(g: &mut Game, p: PlayerId, l: LandId, loot: bool) -> Res<bool> {
     let (name, what) =
         if loot { (GEIER, "each player draws, then discards") } else { (MIKOKORO, "each player draws a card") };
     crate::glog!(g, "  {} uses {}", pname(g, p), name);
-    if crate::engine::stack::ability_window_card(g, p, g.land(l).cd, what, Some(3.0), None)? {
+    if crate::engine::stack::ability_window_card(g, p, g.land(l).card(), what, Some(3.0), None)? {
         let order = apnap(g, p);
         for &q in &order {
             draw(g, q, 1, false)?;

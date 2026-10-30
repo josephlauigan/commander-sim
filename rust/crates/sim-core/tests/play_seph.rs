@@ -120,7 +120,7 @@ fn yawgmoths_will() {
     seat(&mut g, P0, vec![act(json!({"do": "land", "zone": "gy", "card": 0})), pass()]);
     human_main(&mut g, P0, false).unwrap();
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(&*g.db.get(g.land(l).cd).name, "Swamp");
+    assert_eq!(&*g.db.get(g.land(l).card()).name, "Swamp");
     float_mana(&mut g, P0, &[('B', 1)]);
     assert_eq!(legal::check_cast_gy(&g, P0, entomb), None); // its normal cost, from the graveyard
 }

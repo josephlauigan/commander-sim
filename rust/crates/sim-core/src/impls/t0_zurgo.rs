@@ -1135,7 +1135,7 @@ fn windbrisk_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.land_mut(l).tapped = true;
     g.land_mut(l).data.set(DataKey::Hidden, Val::None);
     let what = format!("play {}", g.db.get(c).name);
-    if !ability_window_card(g, p, g.land(l).cd, &what, None, None)? {
+    if !ability_window_card(g, p, g.land(l).card(), &what, None, None)? {
         return Ok(true);
     }
     if g.db.get(c).land {
@@ -1257,8 +1257,9 @@ pub const FILTER_LANDS: [&str; 5] = ["Fetid Heath", "Cascade Bluffs", "Twilight 
 /// make one of its colours to pay for it (no such source: colourless only). A filter can be paid by another filter
 /// that is itself paid for, but two filters with no real source between them make nothing
 fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
-    let name_of = |x: crate::ids::LandId| &*g.db.get(g.land(x).cd).name;
-    let mine_of = |x: crate::ids::LandId| Colors::from_letters(g.db.get(g.land(x).cd).tags.str(Tag::C).unwrap_or("C"));
+    let name_of = |x: crate::ids::LandId| &*g.db.get(g.land(x).card()).name;
+    let mine_of =
+        |x: crate::ids::LandId| Colors::from_letters(g.db.get(g.land(x).card()).tags.str(Tag::C).unwrap_or("C"));
     let mine = mine_of(l);
     let mut avail = Colors::NONE; // colours the untapped non-filter lands make
     let mut filters = vec![];

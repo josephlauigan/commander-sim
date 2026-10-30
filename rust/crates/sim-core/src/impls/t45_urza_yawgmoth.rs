@@ -191,7 +191,7 @@ pub fn untap_lock(g: &Game, p: PlayerId) -> Option<UntapLock> {
 /// how much p wants land l untapped: one mana, a little more for each colour it makes
 fn land_value(g: &Game, p: PlayerId, l: LandId) -> f64 {
     let cols = crate::engine::mana::land_colors_now(g, p, l);
-    1.0 + 0.05 * cols.count() as f64 + if g.db.get(g.land(l).cd).basic { 0.01 } else { 0.0 }
+    1.0 + 0.05 * cols.count() as f64 + if g.db.get(g.land(l).card()).basic { 0.01 } else { 0.0 }
 }
 
 /// how much p wants permanent m untapped (Static Orb): mana rocks and dorks first, then creatures
@@ -228,7 +228,7 @@ fn apply_lock(g: &mut Game, p: PlayerId, k: UntapLock) {
     let before = lands.len();
     if k.b2b {
         lands.retain(|&l| {
-            let basic = g.db.get(g.land(l).cd).basic;
+            let basic = g.db.get(g.land(l).card()).basic;
             if !basic {
                 g.land_mut(l).tapped = true;
             }
@@ -293,7 +293,7 @@ fn unwinding_clock(g: &mut Game, p: PlayerId) {
             }
         }
         for l in g.player(q).lands.clone() {
-            if g.land(l).tapped && g.db.get(g.land(l).cd).types.has(Types::ARTIFACT) {
+            if g.land(l).tapped && g.db.get(g.land(l).card()).types.has(Types::ARTIFACT) {
                 g.land_mut(l).tapped = false;
             }
         }
@@ -466,7 +466,7 @@ fn charge(g: &Game, l: LandId) -> i64 {
 fn artifacts_of(g: &Game, p: PlayerId) -> u32 {
     let pl = g.player(p);
     let perms = pl.perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count() as u32;
-    let lands = pl.lands.iter().filter(|&&l| g.db.get(g.land(l).cd).types.has(Types::ARTIFACT)).count() as u32;
+    let lands = pl.lands.iter().filter(|&&l| g.db.get(g.land(l).card()).types.has(Types::ARTIFACT)).count() as u32;
     perms + lands + pl.treasures
 }
 

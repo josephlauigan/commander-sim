@@ -502,7 +502,7 @@ fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
             }
             if let Some(l) = l {
                 g.land_mut(l).tapped = false;
-                crate::glog!(g, "    Hidden Strings untaps {}", g.db.get(g.land(l).cd).name);
+                crate::glog!(g, "    Hidden Strings untaps {}", g.db.get(g.land(l).card()).name);
             }
         }
         g.bf_ver += 1;

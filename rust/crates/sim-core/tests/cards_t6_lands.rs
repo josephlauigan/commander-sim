@@ -18,7 +18,7 @@ fn play_land(g: &mut Game, p: PlayerId, name: &str) {
 }
 
 fn names(g: &Game, p: PlayerId) -> Vec<String> {
-    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect()
+    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).card()).name.to_string()).collect()
 }
 
 // ------------------------------------------------------------------ City of Brass
@@ -411,7 +411,7 @@ fn razorgrass_field_is_played_as_a_land_that_taps_for_w_and_enters_tapped_unless
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     assert!(!g.player(P0).hand.contains(&c));
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(g.land(l).cd, c);
+    assert_eq!(g.land(l).card(), c);
     assert_eq!(g.player(P0).lands_played, 1, "it was the land drop");
     // few lands on the battlefield and a comfortable life: the AI pays 3 life only when that makes mana it can use
     assert_eq!(g.land(l).tapped, g.player(P0).life == life, "tapped exactly when no life was paid");
@@ -486,7 +486,7 @@ fn shatterskull_the_hammer_pass_is_played_as_a_land_that_taps_for_r() {
     let o = o.iter().find(|x| x.label.contains("as a land")).expect("land option");
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(g.land(l).cd, c);
+    assert_eq!(g.land(l).card(), c);
     g.land_mut(l).tapped = false;
     assert!(mana::mana_units(&g, P0, false).iter().any(|x| x.src == mana::Source::Land(l) && x.cols.has('R')));
 }

@@ -24,7 +24,7 @@ fn go(g: &mut Game, p: PlayerId, o: &Opt) -> bool {
 }
 
 fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<sim_core::ids::LandId> {
-    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).cd).name == name)
+    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).card()).name == name)
 }
 
 // ------------------------------------------------------------------ creature lands

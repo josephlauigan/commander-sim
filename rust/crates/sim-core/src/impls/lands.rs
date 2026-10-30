@@ -43,7 +43,7 @@ fn name_of(g: &Game, c: CardId) -> &str {
 }
 
 fn land_name(g: &Game, l: LandId) -> &str {
-    name_of(g, g.land(l).cd)
+    name_of(g, g.land(l).card())
 }
 
 fn has_land(g: &Game, p: PlayerId, l: LandId) -> bool {
@@ -80,10 +80,10 @@ pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
         if crate::engine::mana::moon_land(g, l) {
             continue; // Blood Moon: no abilities
         }
-        if crate::impls::t6_stax::needle_stops(g, name_of(g, g.land(l).cd)) {
+        if crate::impls::t6_stax::needle_stops(g, name_of(g, g.land(l).card())) {
             continue; // Pithing Needle names this land
         }
-        if let Some(f) = g.registry.get(g.land(l).cd).and_then(|i| i.land_options) {
+        if let Some(f) = g.registry.get(g.land(l).card()).and_then(|i| i.land_options) {
             o.extend(f(g, l, p, post)?);
         }
     }
@@ -96,7 +96,7 @@ pub fn land_upkeep(g: &mut Game, p: PlayerId) -> Res {
         if crate::engine::mana::moon_land(g, l) {
             continue;
         }
-        if let Some(f) = g.registry.get(g.land(l).cd).and_then(|i| i.land_upkeep) {
+        if let Some(f) = g.registry.get(g.land(l).card()).and_then(|i| i.land_upkeep) {
             f(g, l, p)?;
         }
     }
@@ -124,7 +124,7 @@ pub fn can_pay_without(g: &mut Game, p: PlayerId, l: LandId, generic: u32, pips:
 
 /// lands.sac_land: p sacrifices land l (it goes to the graveyard)
 pub fn sac_land(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if has_land(g, p, l) {
         crate::engine::turn::remove_land(g, p, l);
         g.player_mut(p).gy.push(cd);
@@ -140,7 +140,7 @@ fn destroy_land(g: &mut Game, q: PlayerId, l: LandId) -> Res {
     if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::engine::turn::remove_land(g, q, l);
     g.player_mut(q).gy.push(cd);
     crate::glog!(g, "    {} ({}) is destroyed", name_of(g, cd), g.player(q).name);
@@ -180,7 +180,7 @@ pub fn revert_animated(g: &mut Game) -> Res {
             g.land_mut(l).on_bf = true;
             g.player_mut(p).lands.push(l);
         } else if g.perm(m).owner == p && g.player(p).alive {
-            let cd = g.land(l).cd;
+            let cd = g.land(l).card();
             g.player_mut(p).gy.push(cd);
         }
     }
@@ -299,7 +299,7 @@ fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !has_land(g, p, l) || g.land(l).tapped || !pay_without(g, p, l, ml.generic, ml.pips)? {
         return Ok(false);
     }
-    if !ability_window_card(g, p, g.land(l).cd, "becomes a creature", None, None)? {
+    if !ability_window_card(g, p, g.land(l).card(), "becomes a creature", None, None)? {
         return Ok(true);
     }
     animate(g, p, l, ml.pw, ml.tg, ml.kws, ml.fly);
@@ -334,7 +334,7 @@ fn cycler_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices {}: draws a card", g.player(p).name, land_name(g, l));
-    if ability_window_card(g, p, g.land(l).cd, "draw a card", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "draw a card", None, None)? {
         draw(g, p, 1, false)?;
     }
     Ok(true)
@@ -441,7 +441,7 @@ pub fn best_key_land(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
     let key: Vec<(PlayerId, LandId)> = cands
         .into_iter()
         .filter(|&(_, l)| {
-            KEY_LANDS.contains(&land_name(g, l)) || g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1) >= 2
+            KEY_LANDS.contains(&land_name(g, l)) || g.db.get(g.land(l).card()).tags.int(Tag::Amt).unwrap_or(1) >= 2
         })
         .collect();
     max_by(&key, |x| threat(g, p, x.0))
@@ -477,7 +477,7 @@ pub(crate) fn ld_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     sac_land(g, p, l)?;
     let what = format!("destroy {}", land_name(g, t));
-    if !ability_window_card(g, p, g.land(l).cd, &what, None, None)? || !has_land(g, q, t) {
+    if !ability_window_card(g, p, g.land(l).card(), &what, None, None)? || !has_land(g, q, t) {
         return Ok(true);
     }
     destroy_land(g, q, t)?;
@@ -507,7 +507,7 @@ fn locthwain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Castle Locthwain", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "draw a card", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "draw a card", None, None)? {
         draw(g, p, 1, false)?;
         let n = g.player(p).hand.len() as i32;
         lose_life(g, p, n, Some(p), "other", None)?;
@@ -546,7 +546,7 @@ fn embereth_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Castle Embereth", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "creatures get +1/+0", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "creatures get +1/+0", None, None)? {
         for m in g.player(p).perms.clone() {
             if g.is_creature(m) {
                 g.perm_mut(m).eot_pt.0 += 1;
@@ -575,7 +575,7 @@ pub(crate) fn war_room_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.land_mut(l).tapped = true;
     lose_life(g, p, n, Some(p), "other", None)?;
     crate::glog!(g, "  {} uses War Room", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "draw a card", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "draw a card", None, None)? {
         draw(g, p, 1, false)?;
     }
     Ok(true)
@@ -617,7 +617,7 @@ pub(crate) fn bastion_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     g.player_mut(p).stat("proliferate_bastion", 1);
-    if ability_window_card(g, p, g.land(l).cd, "proliferate", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "proliferate", None, None)? {
         super::common::proliferate(g, p, 1)?;
     }
     Ok(true)
@@ -651,7 +651,7 @@ fn ruins_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} puts {} on top with Academy Ruins", g.player(p).name, name_of(g, c));
     let what = format!("{} on top", name_of(g, c));
-    if ability_window_card(g, p, g.land(l).cd, &what, None, None)? && remove_first(&mut g.player_mut(p).gy, c) {
+    if ability_window_card(g, p, g.land(l).card(), &what, None, None)? && remove_first(&mut g.player_mut(p).gy, c) {
         g.player_mut(p).library.push(c);
     }
     Ok(true)
@@ -698,7 +698,7 @@ fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Vault of the Archangel", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "deathtouch and lifelink", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "deathtouch and lifelink", None, None)? {
         for m in g.player(p).perms.clone() {
             if g.is_creature(m) {
                 let kw = &mut g.perm_mut(m).eot_kw;
@@ -736,7 +736,7 @@ fn pendelhaven_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "+1/+2", None, Some(m))? && g.perm(m).on_bf && g.perm(m).owner == p {
+    if ability_window_card(g, p, g.land(l).card(), "+1/+2", None, Some(m))? && g.perm(m).on_bf && g.perm(m).owner == p {
         let x = g.perm_mut(m);
         x.eot_pt.0 += 1;
         x.eot_pt.1 += 2;
@@ -773,7 +773,7 @@ fn oran_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "+1/+1 counters", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "+1/+1 counters", None, None)? {
         for m in new {
             if g.perm(m).on_bf && g.perm(m).owner == p {
                 crate::cardcode::put_plus(g, m, 1);
@@ -822,7 +822,7 @@ fn mortuary(g: &mut Game, p: PlayerId, _l: LandId) -> Res {
 }
 
 fn is_island(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     &*d.name == "Island" || d.has_subtype("island")
 }
 
@@ -942,7 +942,7 @@ fn mosswort_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.land_mut(l).tapped = true;
     g.land_mut(l).data.set(DataKey::Hidden, Val::None);
     let what = format!("play {}", name_of(g, c));
-    if !ability_window_card(g, p, g.land(l).cd, &what, None, None)? {
+    if !ability_window_card(g, p, g.land(l).card(), &what, None, None)? {
         return Ok(true);
     }
     if g.db.get(c).land {
@@ -967,7 +967,7 @@ fn emeria(g: &mut Game, _l: LandId, p: PlayerId) -> Res {
         .lands
         .iter()
         .filter(|&&x| {
-            let d = g.db.get(g.land(x).cd);
+            let d = g.db.get(g.land(x).card());
             &*d.name == "Plains" || d.has_subtype("plains")
         })
         .count();
@@ -1109,7 +1109,7 @@ fn orchard_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
     let mut cols = Colors::NONE;
     for q in g.opps(p) {
         for &x in &g.player(q).lands {
-            let d = g.db.get(g.land(x).cd);
+            let d = g.db.get(g.land(x).card());
             if &*d.name == "Exotic Orchard" {
                 continue;
             }

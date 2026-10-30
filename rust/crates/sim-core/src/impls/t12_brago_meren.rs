@@ -761,7 +761,7 @@ fn can_return(g: &Game, p: PlayerId) -> bool {
     pl.hand.iter().any(|&c| REANIMATION.contains(&cname(g, c)))
         || RETURNERS.iter().any(|n| mine(g, p, n).is_some())
         || pl.commanders().any(|c| cname(g, c) == RETURNERS[0] && pl.cmd_zone_of(c))
-        || pl.lands.iter().any(|&l| cname(g, g.land(l).cd) == JOURNEY)
+        || pl.lands.iter().any(|&l| cname(g, g.land(l).card()) == JOURNEY)
 }
 
 fn buried_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -878,7 +878,7 @@ fn atzal_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         g.land_mut(l).tapped = false;
         return Ok(false);
     }
-    let jc = g.land(l).cd;
+    let jc = g.land(l).card();
     if !ability_window_card(g, p, jc, "return a creature card from your graveyard", None, None)? {
         return Ok(true);
     }

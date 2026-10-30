@@ -1191,7 +1191,7 @@ pub fn mox_discard_key(g: &Game, p: PlayerId, c: CardId) -> f64 {
         .iter()
         .copied()
         .filter(|&x| x != c && g.db.get(x).land)
-        .chain(pl.lands.iter().map(|&l| g.land(l).cd))
+        .chain(pl.lands.iter().map(|&l| g.land(l).card()))
         .collect();
     let covered = |ch: char| others.iter().any(|&o| g.db.get(o).tags.str(Tag::C).is_some_and(|s| s.contains(ch)));
     let needed = |ch: char| pl.hand.iter().any(|&x| !g.db.get(x).land && g.db.get(x).pips.contains(ch));
@@ -1659,7 +1659,7 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
             continue;
         }
         g.land_mut(l).data.set(DataKey::In, Val::Bool(true));
-        let cd = g.land(l).cd;
+        let cd = g.land(l).card();
         if crate::engine::mana::moon_land(g, l) {
             continue; // Blood Moon: a plain Mountain has no enters trigger
         }
@@ -1697,8 +1697,8 @@ fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
         make_tokens(g, p, Tokens::new(1, 2))?; // Felidar Retreat: 2/2 Cat per land
     }
     let lands = g.player(p).lands.clone();
-    let fields = lands.iter().filter(|&&l| g.db.get(g.land(l).cd).tag(Tag::Fotd)).count();
-    let mut names: Vec<CardId> = lands.iter().map(|&l| g.land(l).cd).collect();
+    let fields = lands.iter().filter(|&&l| g.db.get(g.land(l).card()).tag(Tag::Fotd)).count();
+    let mut names: Vec<CardId> = lands.iter().map(|&l| g.land(l).card()).collect();
     names.sort();
     names.dedup();
     if fields > 0 && names.len() >= 7 {

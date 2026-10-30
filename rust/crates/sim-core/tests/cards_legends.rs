@@ -367,7 +367,7 @@ fn cartographers_survey_puts_two_lands_in() {
     let c = card(&g, "Cartographer's Survey");
     let f = g.registry.get(c).unwrap().resolve.unwrap();
     f(&mut g, P0, c, &Ctx::default()).unwrap();
-    let ls: Vec<&str> = g.player(P0).lands.iter().map(|&l| &*g.db.get(g.land(l).cd).name).collect();
+    let ls: Vec<&str> = g.player(P0).lands.iter().map(|&l| &*g.db.get(g.land(l).card()).name).collect();
     assert_eq!(ls.len(), 2);
     assert!(ls.contains(&"Command Tower")); // the land making the most colours first
     assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));

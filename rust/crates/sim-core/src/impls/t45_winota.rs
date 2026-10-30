@@ -543,7 +543,7 @@ const PATHWAYS: [(&str, &str, &str); 1] = [(PATHWAY, "R", "W")];
 /// As it is played, the face whose colour p needs more: the coloured pips of its hand against its other lands'
 /// sources of that colour
 fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    let name = g.db.get(g.land(l).cd).name.clone();
+    let name = g.db.get(g.land(l).card()).name.clone();
     let Some(&(_, front, back)) = PATHWAYS.iter().find(|x| *x.0 == *name) else { return Ok(()) };
     let need = |g: &Game, col: &str| {
         let ch = col.chars().next().unwrap();
@@ -565,7 +565,7 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
 
 /// the face it was played as; one put onto the battlefield another way is its front face
 fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    let name = &g.db.get(g.land(l).cd).name;
+    let name = &g.db.get(g.land(l).card()).name;
     let front = PATHWAYS.iter().find(|x| *x.0 == **name).map_or("C", |x| x.1);
     match g.land(l).data.get(DataKey::Mode) {
         Some(Val::Str(s)) => Colors::from_letters(s),

@@ -221,7 +221,7 @@ fn adanto_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if crate::engine::stack::ability_window_card(g, p, cd, "a 1/1 lifelink Vampire", None, None)? {
         let spec = Tokens {
             lifelink: true,
@@ -323,9 +323,9 @@ fn springbloom(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let lands = g.player(o).lands.clone();
-    let l = first_min(&lands, |l| (!BASICS.contains(&&*g.db.get(g.land(l).cd).name), !g.land(l).tapped)).unwrap();
+    let l = first_min(&lands, |l| (!BASICS.contains(&&*g.db.get(g.land(l).card()).name), !g.land(l).tapped)).unwrap();
     crate::engine::turn::remove_land(g, o, l);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     g.player_mut(o).gy.push(cd);
     land_ramp(g, o, 2, true)
 }

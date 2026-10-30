@@ -62,7 +62,7 @@ pub fn islands(g: &Game, p: PlayerId) -> Vec<LandId> {
         .iter()
         .copied()
         .filter(|&l| {
-            let d = g.db.get(g.land(l).cd);
+            let d = g.db.get(g.land(l).card());
             &*d.name == "Island" || d.has_subtype("island")
         })
         .collect()
@@ -129,7 +129,7 @@ pub fn pay_alt_cost(g: &mut Game, p: PlayerId, card: CardId, spell: Option<CardI
             // return an Island you control to its owner's hand: an untapped one is kept for mana if there is a choice
             let is = islands(g, p);
             let l = min_by(&is, |l| if g.land(l).tapped { 0.0 } else { 1.0 }).unwrap();
-            let cd = g.land(l).cd;
+            let cd = g.land(l).card();
             crate::engine::turn::remove_land(g, p, l);
             g.player_mut(p).hand.push(cd);
         }

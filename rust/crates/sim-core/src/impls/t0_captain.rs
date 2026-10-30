@@ -886,7 +886,7 @@ fn tower_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "look at the top three cards", Some(3.0), None)? {
+    if ability_window_card(g, p, g.land(l).card(), "look at the top three cards", Some(3.0), None)? {
         let mut top = pop_top(g, p, 3);
         let heroes: Vec<CardId> = top.iter().copied().filter(|&c| hero_card(g, c)).collect();
         if let Some(c) = max_by(&heroes, |c| hero_worth(g, c)) {

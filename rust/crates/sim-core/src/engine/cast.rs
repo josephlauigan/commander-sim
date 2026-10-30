@@ -82,7 +82,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             let lands = g.player(p).lands.clone();
             // a tapped basic first
             let key = |l: crate::ids::LandId| {
-                let basic = BASIC_LANDS.contains(&&*g.db.get(g.land(l).cd).name);
+                let basic = BASIC_LANDS.contains(&&*g.db.get(g.land(l).card()).name);
                 (!g.land(l).tapped as i32 as f64) * 2.0 + (!basic as i32 as f64)
             };
             if let Some(l) = min_by(&lands, key) {
@@ -125,7 +125,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         }
         match choice {
             Choice::Land(l) => {
-                let cd = g.land(l).cd;
+                let cd = g.land(l).card();
                 g.player_mut(p).lands.retain(|&x| x != l);
                 g.land_mut(l).on_bf = false;
                 g.player_mut(p).gy.push(cd);

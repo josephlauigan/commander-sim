@@ -88,7 +88,7 @@ fn cname(g: &Game, c: CardId) -> &str {
 }
 
 fn lname(g: &Game, l: LandId) -> &str {
-    cname(g, g.land(l).cd)
+    cname(g, g.land(l).card())
 }
 
 /// p's land of this name on the battlefield
@@ -145,7 +145,7 @@ pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
 
 /// a land p keeps: the Dark Depths line, Field of the Dead, lands that make two or more mana
 fn key_land(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     matches!(&*d.name, DEPTHS | STAGE | FIELD | "Gaea's Cradle" | "Urborg, Tomb of Yawgmoth")
         || d.tags.int(Tag::Amt).unwrap_or(1) >= 2
 }
@@ -154,7 +154,7 @@ fn key_land(g: &Game, l: LandId) -> bool {
 fn worst_land(g: &Game, p: PlayerId, except: Option<LandId>) -> Option<LandId> {
     let ls: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&l| Some(l) != except).collect();
     min_by(&ls, |l| {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         100.0 * key_land(g, l) as i32 as f64
             + 10.0 * !g.land(l).tapped as i32 as f64
             + land_colors_now(g, p, l).count() as f64
@@ -274,7 +274,7 @@ fn depths_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || ice(g, l) == 0 || !pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if !ability_window_card(g, p, cd, "remove an ice counter", None, None)? || !g.player(p).lands.contains(&l) {
         return Ok(true);
     }
@@ -309,7 +309,7 @@ fn stage_copy(g: &mut Game, p: PlayerId) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(s).tapped = true;
-    let cd = g.land(s).cd;
+    let cd = g.land(s).card();
     crate::glog!(g, "  {} activates Thespian's Stage: a copy of Dark Depths", pname(g, p));
     if !ability_window_card(g, p, cd, "becomes a copy of Dark Depths", Some(8.0), None)? {
         return Ok(false);
@@ -467,12 +467,12 @@ fn mina_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     // a tapped land first (it comes back untapped), a fetch land or bounce land before a basic
     let ls = g.player(p).lands.clone();
     let Some(l) = max_by(&ls, |l| {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         10.0 * g.land(l).tapped as i32 as f64 + 3.0 * d.tag(Tag::F) as i32 as f64 - 20.0 * key_land(g, l) as i32 as f64
     }) else {
         return Ok(false);
     };
-    let c = g.land(l).cd;
+    let c = g.land(l).card();
     crate::engine::turn::remove_land(g, p, l);
     g.player_mut(p).hand.push(c);
     crate::glog!(g, "  {} activates Mina and Denn, returning {}", pname(g, p), cname(g, c));
@@ -673,7 +673,7 @@ fn nissa_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
 fn nissa_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let ls = g.player(p).lands.clone();
     let Some(l) = max_by(&ls, |l| {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         10.0 * g.land(l).tapped as i32 as f64 + d.tags.int(Tag::Amt).unwrap_or(1) as f64
     }) else {
         return Ok(());

@@ -415,7 +415,7 @@ fn henge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Monumental Henge", g.player(p).name);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if !ability_window_card(g, p, cd, "look at the top five cards", None, None)? {
         return Ok(true);
     }

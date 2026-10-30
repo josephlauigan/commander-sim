@@ -381,7 +381,8 @@ pub struct CopyOf {
     pub exc: CopyExc,
 }
 
-/// A nonland permanent or a token (Python's `Perm`, every slot kept).
+/// A permanent or a token, land or not (Python's `Perm`, every slot kept, and its `Land`). A land is put in by
+/// `Game::add_land` and listed in `Player::lands`; every other permanent in `Player::perms`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Perm {
     pub id: PermId,
@@ -439,15 +440,11 @@ pub struct Perm {
     pub exc: CopyExc,
 }
 
-/// A land on the battlefield (Python's `Land`).
-#[derive(Debug, Clone, PartialEq)]
-pub struct Land {
-    pub id: LandId,
-    pub cd: CardId,
-    pub owner: PlayerId,
-    pub tapped: bool,
-    pub data: PermData,
-    pub on_bf: bool,
+impl Perm {
+    /// the card this permanent is (a land always has one); panics on a token
+    pub fn card(&self) -> CardId {
+        self.cd.expect("a permanent with a card")
+    }
 }
 
 // ------------------------------------------------------------------ players
@@ -1088,8 +1085,8 @@ pub struct Game {
     /// the card code (hooks.rs)
     pub registry: Arc<crate::hooks::Registry>,
     pub players: Vec<Player>,
+    /// the one permanent arena: every permanent and token, land or not, by its `PermId`
     pub perms: Vec<Perm>,
-    pub lands: Vec<Land>,
     /// play decisions (Python's `g.rng`, seeded `play:{seed}`)
     pub rng: Rng,
     pub round: u32,
@@ -1373,7 +1370,6 @@ impl Game {
             registry,
             players,
             perms: vec![],
-            lands: vec![],
             rng,
             round: 0,
             active: None,
@@ -1528,12 +1524,12 @@ impl Game {
         &mut self.perms[m.index()]
     }
 
-    pub fn land(&self, l: LandId) -> &Land {
-        &self.lands[l.index()]
+    pub fn land(&self, l: LandId) -> &Perm {
+        &self.perms[l.index()]
     }
 
-    pub fn land_mut(&mut self, l: LandId) -> &mut Land {
-        &mut self.lands[l.index()]
+    pub fn land_mut(&mut self, l: LandId) -> &mut Perm {
+        &mut self.perms[l.index()]
     }
 
     /// Python's `g.opps(p)`: the other living players, in seat order
@@ -1662,8 +1658,12 @@ impl Game {
     pub fn add_land(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
         // --- Tiers 1/2 (windgrace): Spelunking, "lands you control enter untapped"
         let tapped = tapped && !crate::impls::t12_windgrace::lands_enter_untapped(self, p);
-        let id = LandId(self.lands.len() as u32);
-        self.lands.push(Land { id, cd, owner: p, tapped, data: PermData::default(), on_bf: true });
+        // a land is a permanent in the one arena, on the battlefield at once; it is listed in `Player::lands`
+        let id = self.new_perm(p, Some(cd), crate::sym::intern(""), 0, 0);
+        let x = self.perm_mut(id);
+        x.tapped = tapped;
+        x.sick = false;
+        x.on_bf = true;
         self.player_mut(p).lands.push(id);
         id
     }

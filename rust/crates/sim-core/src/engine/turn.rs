@@ -57,12 +57,16 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
 
 /// the basic land types of a land on the battlefield: under Blood Moon a nonbasic land is only a Mountain
 fn land_types(g: &Game, l: LandId) -> crate::cards::Colors {
-    if crate::engine::mana::moon_land(g, l) { crate::cards::Colors::from_letters("R") } else { g.db.get(g.land(l).cd).land_types }
+    if crate::engine::mana::moon_land(g, l) {
+        crate::cards::Colors::from_letters("R")
+    } else {
+        g.db.get(g.land(l).card()).land_types
+    }
 }
 
 fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool {
     let pl = g.player(p);
-    let lt = |l: LandId| g.db.get(g.land(l).cd);
+    let lt = |l: LandId| g.db.get(g.land(l).card());
     match rule {
         EnterRule::Control(ts) => pl.lands.iter().any(|&l| land_types(g, l).intersects(ts)),
         EnterRule::Fewer(n) => pl.lands.len() as u32 <= n,
@@ -192,7 +196,7 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     // --- casual speed: a bounceland with no other land to return returns itself (a lost land drop, every turn
     // it's chosen again), and Lotus Field with fewer than two others sacrifices itself: any other land goes first
     if t.has(Tag::Bounceland)
-        && !g.player(p).lands.iter().any(|&x| g.land(x).on_bf && !g.db.get(g.land(x).cd).tag(Tag::Bounceland))
+        && !g.player(p).lands.iter().any(|&x| g.land(x).on_bf && !g.db.get(g.land(x).card()).tag(Tag::Bounceland))
     {
         s -= 20.0;
     }
@@ -264,11 +268,11 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     if t.has(Tag::Chasm) {
         // Glacial Chasm: when it enters, sacrifice a land
         g.player_mut(p).chasm_age = 0;
-        let others: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&x| g.land(x).cd != c).collect();
+        let others: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&x| g.land(x).card() != c).collect();
         let x = min_by(&others, |x| (!g.land(x).tapped) as i32 as f64 * 10.0 + land_colors_now(g, p, x).count() as f64)
             .unwrap_or(l);
         remove_land(g, p, x);
-        let cd = g.land(x).cd;
+        let cd = g.land(x).card();
         g.player_mut(p).gy.push(cd);
         crate::glog!(g, "    sacrifices {}", g.db.get(cd).name);
     }
@@ -279,12 +283,12 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
             .lands
             .iter()
             .copied()
-            .filter(|&x| g.land(x).cd != c && !g.db.get(g.land(x).cd).tag(Tag::Bounceland))
+            .filter(|&x| g.land(x).card() != c && !g.db.get(g.land(x).card()).tag(Tag::Bounceland))
             .collect();
         // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
         let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
         remove_land(g, p, x);
-        let cd = g.land(x).cd;
+        let cd = g.land(x).card();
         g.player_mut(p).hand.push(cd);
     }
     landfall(g, p)?;
@@ -325,7 +329,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     if crate::engine::mana::moon_land(g, l) {
         return Ok(()); // Blood Moon: a fetch land has no ability
     }
-    let name = g.db.get(g.land(l).cd).name.to_string();
+    let name = g.db.get(g.land(l).card()).name.to_string();
     let kinds = true_fetch(&name);
     let basics = ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"];
     let cands: Vec<CardId> = match kinds {
@@ -344,7 +348,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         if crate::impls::titania::is_deck(g.player(p).key) {
             // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
             remove_land(g, p, l);
-            let fetch = g.land(l).cd;
+            let fetch = g.land(l).card();
             g.player_mut(p).gy.push(fetch);
             fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
         }
@@ -367,7 +371,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         .unwrap()
         .0;
     remove_land(g, p, l);
-    let fetch = g.land(l).cd;
+    let fetch = g.land(l).card();
     g.player_mut(p).gy.push(fetch);
     let lib = &mut g.player_mut(p).library;
     let i = lib.iter().position(|&x| x == c).unwrap();
@@ -490,7 +494,7 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
         .players
         .iter()
         .filter(|q| q.alive)
-        .any(|q| q.lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Tabernacle)));
+        .any(|q| q.lands.iter().any(|&l| g.db.get(g.land(l).card()).tag(Tag::Tabernacle)));
     if tabernacle {
         // The Tabernacle at Pendrell Vale: each creature is destroyed unless its controller pays {1}
         let mut cr: Vec<_> =
@@ -513,9 +517,9 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
             lose_life(g, p, cost, Some(p), "other", None)?;
             crate::glog!(g, "  {} pays {} life for Glacial Chasm", g.player(p).name, cost);
         } else {
-            let l = g.player(p).lands.iter().copied().find(|&l| g.db.get(g.land(l).cd).tag(Tag::Chasm)).unwrap();
+            let l = g.player(p).lands.iter().copied().find(|&l| g.db.get(g.land(l).card()).tag(Tag::Chasm)).unwrap();
             remove_land(g, p, l);
-            let cd = g.land(l).cd;
+            let cd = g.land(l).card();
             g.player_mut(p).gy.push(cd);
             g.player_mut(p).chasm_age = 0;
             crate::glog!(g, "  {} lets Glacial Chasm go", g.player(p).name);
@@ -778,7 +782,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     }
     let nomax = |g: &Game| {
         has(g, p, Tag::Nomax)
-            || g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Nomax))
+            || g.player(p).lands.iter().any(|&l| g.db.get(g.land(l).card()).tag(Tag::Nomax))
             || g.player(p).nomax_turn == Some(g.player(p).turns)
             || g.player(p).t0s.nomax
     };

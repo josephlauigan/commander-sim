@@ -459,7 +459,7 @@ fn lname(g: &Game, c: CardId) -> &str {
 pub fn land_want(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let pl = g.player(p);
     let held: Vec<&str> =
-        pl.lands.iter().map(|&l| lname(g, g.land(l).cd)).chain(pl.hand.iter().map(|&h| lname(g, h))).collect();
+        pl.lands.iter().map(|&l| lname(g, g.land(l).card())).chain(pl.hand.iter().map(|&h| lname(g, h))).collect();
     let name = lname(g, c);
     let n = |x: &str| held.iter().filter(|&&h| h == x).count();
     if TRON.contains(&name) {
@@ -532,7 +532,7 @@ fn land_ok(g: &Game, l: crate::ids::LandId, p: PlayerId) -> bool {
     g.land(l).on_bf
         && g.player(p).lands.contains(&l)
         && !g.land(l).tapped
-        && !crate::impls::t6_stax::needle_stops(g, lname(g, g.land(l).cd))
+        && !crate::impls::t6_stax::needle_stops(g, lname(g, g.land(l).card()))
 }
 
 /// {3}, {T}, sacrifice Urza's Cave: a land card onto the battlefield tapped. The AI does it for a Tron piece, Mishra's
@@ -557,7 +557,7 @@ fn cave_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !land_ok(g, l, p) || !crate::impls::lands::pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     if ability_window_card(g, p, cd, "search for a land", None, None)? {
         fetch_land(g, p, false, true)?;
@@ -595,7 +595,7 @@ fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Inventors' Fair
 pub(crate) fn artifact_total(g: &Game, p: PlayerId) -> i32 {
     artifacts(g, p)
-        + g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).types.has(Types::ARTIFACT)).count() as i32
+        + g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).card()).types.has(Types::ARTIFACT)).count() as i32
 }
 
 /// At the beginning of your upkeep, if you control three or more artifacts, you gain 1 life.
@@ -603,7 +603,7 @@ fn fair_upkeep(g: &mut Game, l: crate::ids::LandId, p: PlayerId) -> Res {
     if g.land(l).owner != p || artifact_total(g, p) < 3 {
         return Ok(());
     }
-    if crate::engine::stack::trigger_window_card(g, p, g.land(l).cd, "gain 1 life")? {
+    if crate::engine::stack::trigger_window_card(g, p, g.land(l).card(), "gain 1 life")? {
         gain(g, p, 1)?;
     }
     Ok(())
@@ -635,7 +635,7 @@ pub(crate) fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !land_ok(g, l, p) || artifact_total(g, p) < 3 || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     if ability_window_card(g, p, cd, "search for an artifact", None, None)? {
         crate::impls::t1::tutor_named(g, p, &|g, c| art_card(g, c), 1, "hand")?;
@@ -682,7 +682,7 @@ fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "can't be blocked", None, Some(m))? && live(g, m) {
+    if ability_window_card(g, p, g.land(l).card(), "can't be blocked", None, Some(m))? && live(g, m) {
         let st = g.turn_stamp();
         g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
         crate::glog!(g, "    {} can't be blocked this turn (Rogue's Passage)", g.perm(m).name);
@@ -693,7 +693,7 @@ fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 // ================================================================== Endless Atlas
 /// {2}, {T}: draw a card. Activate only if you control three or more lands with the same name.
 pub(crate) fn atlas_ready(g: &Game, p: PlayerId) -> bool {
-    let names: Vec<&str> = g.player(p).lands.iter().map(|&l| lname(g, g.land(l).cd)).collect();
+    let names: Vec<&str> = g.player(p).lands.iter().map(|&l| lname(g, g.land(l).card())).collect();
     names.iter().any(|n| names.iter().filter(|&m| m == n).count() >= 3)
 }
 

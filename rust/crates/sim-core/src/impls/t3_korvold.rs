@@ -96,7 +96,7 @@ fn apnap(g: &Game, p: PlayerId) -> Vec<PlayerId> {
 pub(crate) fn worst_land(g: &Game, q: PlayerId) -> Option<LandId> {
     let lands = &g.player(q).lands;
     let key = |l: LandId| {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         let cols = d.tags.str(Tag::C).map_or(0, |s| s.chars().count());
         (!g.land(l).tapped, cols, !d.basic)
     };
@@ -107,7 +107,7 @@ pub(crate) fn worst_land(g: &Game, q: PlayerId) -> Option<LandId> {
 /// an opposing Tergrid takes it. Called by the ability language's land sacrifice too.
 pub fn sac_worst_land(g: &mut Game, q: PlayerId) -> Res {
     let Some(l) = worst_land(g, q) else { return Ok(()) };
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::glog!(g, "    {} sacrifices {}", pname(g, q), g.db.get(cd).name);
     super::lands::sac_land(g, q, l)?;
     if !g.hooks.is_empty() {
@@ -929,7 +929,7 @@ fn rebirth_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.player_mut(p).hand.remove(i);
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
-    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).cd == c) {
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).card() == c) {
         g.land_mut(l).tapped = true; // This land enters tapped.
     }
     Ok(true)

@@ -288,7 +288,8 @@ fn sba_moon_saga(g: &mut Game) -> Res {
         let p = PlayerId(i as u8);
         for (l, _) in g.players[i].sagas.clone() {
             if g.players[i].lands.contains(&l) && crate::engine::mana::moon_land(g, l) {
-                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", g.db.get(g.land(l).cd).name);
+                let n = &g.db.get(g.land(l).card()).name;
+                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", n);
                 crate::impls::lands::sac_land(g, p, l)?;
                 g.players[i].sagas.retain(|x| x.0 != l);
             }

@@ -22,7 +22,7 @@ fn name(g: &Game, c: CardId) -> String {
 }
 
 fn lands_named(g: &Game, p: PlayerId, n: &str) -> usize {
-    g.player(p).lands.iter().filter(|&&l| &*g.db.get(g.land(l).cd).name == n).count()
+    g.player(p).lands.iter().filter(|&&l| &*g.db.get(g.land(l).card()).name == n).count()
 }
 
 /// every option the AI has for p's permanents, lands and hooks, main phase two
@@ -131,7 +131,7 @@ fn wayfarers_bauble_fetches_a_wastes_tapped() {
     assert_eq!(g.player(P0).lands.len(), 3);
     let l = *g.player(P0).lands.last().unwrap();
     assert!(g.land(l).tapped);
-    assert_eq!(name(&g, g.land(l).cd), "Wastes");
+    assert_eq!(name(&g, g.land(l).card()), "Wastes");
 }
 
 #[test]

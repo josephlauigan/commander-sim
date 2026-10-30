@@ -395,7 +395,7 @@ fn signature(g: &Game, p: PlayerId) -> u64 {
         pl.perms.iter().filter_map(|&m| g.perm(m).cd.map(|c| (c.0, g.perm(m).tapped))).collect();
     perms.sort_unstable();
     perms.hash(&mut h);
-    let mut lands: Vec<(u16, bool)> = pl.lands.iter().map(|&l| (g.land(l).cd.0, g.land(l).tapped)).collect();
+    let mut lands: Vec<(u16, bool)> = pl.lands.iter().map(|&l| (g.land(l).card().0, g.land(l).tapped)).collect();
     lands.sort_unstable();
     lands.hash(&mut h);
     let f = pl.floating;

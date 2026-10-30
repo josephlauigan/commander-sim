@@ -336,7 +336,7 @@ fn a_spell_land_is_played_as_a_land_when_short() {
     assert_eq!(o.len(), 1);
     assert!(run(&mut g, P0, &o[0]));
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(g.land(l).cd, c);
+    assert_eq!(g.land(l).card(), c);
     assert!(sim_core::engine::mana::land_colors_now(&g, P0, l).has('U'));
 }
 

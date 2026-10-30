@@ -27,7 +27,7 @@ fn named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
 }
 
 fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
-    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).cd).name == name)
+    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).card()).name == name)
 }
 
 fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
@@ -44,7 +44,7 @@ fn opts(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> 
 }
 
 fn land_opts(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
-    let f = g.registry.get(g.land(l).cd).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.land(l).card()).unwrap().land_options.unwrap();
     f(g, l, p, post).unwrap()
 }
 

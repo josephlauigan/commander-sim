@@ -357,7 +357,7 @@ fn monumental_henge_digs_five_for_a_historic_card() {
     lib_top(&mut g, P0, &["Mountain", "Forest", "Sol Ring", "Island", "Swamp"]);
     let size = g.player(P0).library.len();
     let hand0 = g.player(P0).hand.len();
-    let f = g.registry.get(g.land(ls[0]).cd).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.land(ls[0]).card()).unwrap().land_options.unwrap();
     assert!(f(&mut g, ls[0], P0, Some(false)).unwrap().is_empty(), "not before combat");
     let o = f(&mut g, ls[0], P0, None).unwrap();
     assert_eq!(o.len(), 1);
@@ -380,7 +380,7 @@ fn monumental_henge_is_not_offered_without_a_historic_card_on_top() {
     let ls = lands(&mut g, P0, "Monumental Henge", 1, false);
     lands(&mut g, P0, "Plains", 4, false);
     lib_top(&mut g, P0, &["Mountain", "Forest", "Island", "Swamp", "Mountain"]);
-    let f = g.registry.get(g.land(ls[0]).cd).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.land(ls[0]).card()).unwrap().land_options.unwrap();
     assert!(f(&mut g, ls[0], P0, None).unwrap().is_empty());
     // a legendary creature counts as historic too
     g.player_mut(P0).library.pop();

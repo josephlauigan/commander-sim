@@ -70,7 +70,7 @@ fn spire_of_industry_needs_an_artifact_and_costs_a_life() {
     assert_eq!(cols(&g, spire), "", "no artifact: colourless only");
     perm(&mut g, P0, "Arcane Signet");
     assert!(land_colors_now(&g, P0, spire).count() > 1, "with an artifact, any colour of the identity");
-    assert!(g.db.get(g.land(spire).cd).tag(Tag::Pain), "coloured mana costs 1 life (the pain tag)");
+    assert!(g.db.get(g.land(spire).card()).tag(Tag::Pain), "coloured mana costs 1 life (the pain tag)");
 }
 
 #[test]
@@ -127,9 +127,9 @@ fn spectator_seating_makes_red_or_white_and_sulfur_falls_deals_no_damage() {
     let mut g = table(&["thrasios", "veyran"]);
     let ss = lands(&mut g, P0, "Spectator Seating", 1, false)[0];
     assert_eq!(cols(&g, ss), "WR");
-    assert!(!g.db.get(g.land(ss).cd).tag(Tag::Pain));
+    assert!(!g.db.get(g.land(ss).card()).tag(Tag::Pain));
     let sf = lands(&mut g, P0, "Sulfur Falls", 1, false)[0];
-    assert!(!g.db.get(g.land(sf).cd).tag(Tag::Pain), "a check land, not a painland");
+    assert!(!g.db.get(g.land(sf).card()).tag(Tag::Pain), "a check land, not a painland");
 }
 
 #[test]

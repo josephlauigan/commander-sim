@@ -77,7 +77,7 @@ fn tag_colors(v: &str, ident: Colors) -> Colors {
 /// ability (Ancient Tomb's damage, Urza's Saga's chapters, manlands, utility abilities, enters-tapped rules) and
 /// taps for {R} only. Cheap: a basic or a game with no hooked card answers at once.
 pub fn moon_land(g: &Game, l: LandId) -> bool {
-    moon_card(g, g.land(l).cd)
+    moon_card(g, g.land(l).card())
 }
 
 /// the same for a land card that is about to enter
@@ -87,7 +87,7 @@ pub fn moon_card(g: &Game, cd: CardId) -> bool {
 
 /// what land L taps for, the board-wide checks (Blood Moon, Dryad of the Ilysian Grove) already made
 fn land_cols(g: &Game, p: PlayerId, l: LandId, anyc: bool, moon: bool, dryad: bool) -> Colors {
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     let ident = g.player(p).ident;
     if moon && !BASIC_NAMES.contains(&&*d.name) {
         return Colors::from_letters("R");
@@ -114,7 +114,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     let ident = pl.ident;
     let mut u = vec![];
     let anyc = has(g, p, Tag::Lantern)
-        || (pl.lands.iter().any(|&l| g.db.get(g.land(l).cd).tag(Tag::Worldtree)) && pl.lands.len() >= 6);
+        || (pl.lands.iter().any(|&l| g.db.get(g.land(l).card()).tag(Tag::Worldtree)) && pl.lands.len() >= 6);
     let art = g.pay_for.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT));
     let hooked = !g.hooks.is_empty();
     let moon = hooked && cardcode::blood_moon(g);
@@ -124,9 +124,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         if land.tapped {
             continue;
         }
-        let t = &g.db.get(land.cd).tags;
+        let t = &g.db.get(land.card()).tags;
         // Blood Moon: a plain Mountain with no abilities of its own (the board-wide check was made above)
-        let plain = moon && !BASIC_NAMES.contains(&&*g.db.get(land.cd).name);
+        let plain = moon && !BASIC_NAMES.contains(&&*g.db.get(land.card()).name);
         if !plain && t.has(Tag::Workshop) && !art {
             continue; // Mishra's Workshop: artifact spells only
         }
@@ -314,7 +314,7 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
 fn is_pain(g: &Game, src: Source) -> bool {
     match src {
         Source::Land(l) => {
-            let t = &g.db.get(g.land(l).cd).tags;
+            let t = &g.db.get(g.land(l).card()).tags;
             (t.has(Tag::Tomb) || t.has(Tag::Pain)) && !moon_land(g, l)
         }
         Source::Perm(m) => g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Pain)),
@@ -471,7 +471,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
             if !moon_land(g, l) {
                 cardcode::on_tap_land(g, p, l, n)?;
             }
-            let t = &g.db.get(g.land(l).cd).tags;
+            let t = &g.db.get(g.land(l).card()).tags;
             let plain = moon_land(g, l); // Blood Moon: no Tomb damage, no pain
             let (tomb, pain) = (!plain && t.has(Tag::Tomb), !plain && t.has(Tag::Pain));
             if tomb {
@@ -786,7 +786,7 @@ pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
         .lands
         .iter()
         .filter(|&&l| g.land(l).on_bf)
-        .map(|&l| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32)
+        .map(|&l| g.db.get(g.land(l).card()).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32)
         .sum();
     let perms: u32 = pl
         .perms

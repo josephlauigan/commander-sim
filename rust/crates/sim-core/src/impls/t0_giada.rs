@@ -405,7 +405,7 @@ fn shepherd_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "return a nonland permanent card", Some(5.0))? {
         return Ok(());
     }
-    let plains = g.player(p).lands.last().is_some_and(|&l| g.db.get(g.land(l).cd).has_subtype("plains"));
+    let plains = g.player(p).lands.last().is_some_and(|&l| g.db.get(g.land(l).card()).has_subtype("plains"));
     // the card may have left in response
     let Some(i) = g.player(p).gy.iter().position(|&c| c == t) else { return Ok(()) };
     g.player_mut(p).gy.remove(i);

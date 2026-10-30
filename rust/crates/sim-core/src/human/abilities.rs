@@ -46,7 +46,7 @@ fn tap_ok(g: &Game, m: PermId, creature: bool) -> Why {
 }
 
 fn land_tap_ok(g: &Game, l: LandId) -> Why {
-    if g.land(l).tapped { Some(format!("{} is tapped.", name(g, g.land(l).cd))) } else { None }
+    if g.land(l).tapped { Some(format!("{} is tapped.", name(g, g.land(l).card()))) } else { None }
 }
 
 fn pay(g: &mut Game, p: PlayerId, gn: u32, pips: &str, what: &str) -> Why {
@@ -236,7 +236,7 @@ fn passage(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     g.land_mut(l).tapped = true;
     let m = cre[k];
     crate::glog!(g, "  {} activates Rogue's Passage: {} can't be blocked this turn", g.player(p).name, g.perm(m).name);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if stack::ability_window_card(g, p, cd, &format!("{} can't be blocked", g.perm(m).name), None, Some(m))?
         && g.perm(m).on_bf
     {
@@ -252,17 +252,17 @@ fn grounds(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
         return Ok(Some(why));
     }
     let deserts: Vec<LandId> =
-        g.player(p).lands.iter().copied().filter(|&x| g.db.get(g.land(x).cd).tag(Tag::Desert)).collect();
+        g.player(p).lands.iter().copied().filter(|&x| g.db.get(g.land(x).card()).tag(Tag::Desert)).collect();
     if let Some(why) = pay(g, p, 2, "", "Scavenger Grounds") {
         return Ok(Some(why));
     }
     g.land_mut(l).tapped = true;
     let d = if deserts.contains(&l) { l } else { deserts[0] }; // it is a Desert itself: sacrifice it (the usual choice)
     engine::turn::remove_land(g, p, d);
-    let dcd = g.land(d).cd;
+    let dcd = g.land(d).card();
     g.player_mut(p).gy.push(dcd);
     crate::glog!(g, "  {} activates Scavenger Grounds", g.player(p).name);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if !stack::ability_window_card(g, p, cd, "exile all graveyards", Some(9.0), None)? {
         return Ok(None);
     }
@@ -278,7 +278,7 @@ fn grounds(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
 pub fn land_abilities(g: &Game, p: PlayerId, l: LandId) -> Vec<LandAbility> {
     let mut out = super::cards::land_abilities(g, p, l);
     out.extend(super::karn::land_abilities(g, p, l));
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     if d.tag(Tag::Passage) {
         out.push(ability("{4}, {T}: target creature can't be blocked this turn", passage));
     }

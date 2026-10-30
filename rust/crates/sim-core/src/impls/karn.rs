@@ -43,7 +43,7 @@ fn live(g: &Game, m: PermId) -> bool {
 }
 
 fn land_name(g: &Game, l: LandId) -> &str {
-    &g.db.get(g.land(l).cd).name
+    &g.db.get(g.land(l).card()).name
 }
 
 fn is_art_card(g: &Game, c: CardId) -> bool {
@@ -58,7 +58,7 @@ pub fn karn_of(g: &Game, p: PlayerId) -> Option<PermId> {
 /// the artifacts p controls: artifact permanents (cards and artifact tokens), Treasure / Food / Clue / Blood tokens,
 /// artifact lands (Treasure Vault, Darksteel Citadel); an animated Mishra's Factory is one of the permanents
 pub fn artifacts(g: &Game, p: PlayerId) -> u32 {
-    let lands = g.player(p).lands.iter().filter(|&&l| is_art_card(g, g.land(l).cd)).count() as u32;
+    let lands = g.player(p).lands.iter().filter(|&&l| is_art_card(g, g.land(l).card())).count() as u32;
     crate::impls::sheoldred::artifact_count(g, p) as u32 + lands
 }
 
@@ -191,7 +191,7 @@ fn tower_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
 /// Urza's Workshop: {C}, or with three or more artifacts {C} for each Urza's land you control
 fn workshop_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
     if artifacts(g, p) >= 3 {
-        let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).cd).has_subtype("urza's")).count();
+        let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).card()).has_subtype("urza's")).count();
         (n as u32).max(1)
     } else {
         1
@@ -287,7 +287,7 @@ fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || g.land(l).tapped || !super::lands::pay_without(g, p, l, cost, "")? {
         return Ok(false);
     }
-    if !crate::engine::stack::ability_window_card(g, p, g.land(l).cd, "becomes a creature", None, None)? {
+    if !crate::engine::stack::ability_window_card(g, p, g.land(l).card(), "becomes a creature", None, None)? {
         return Ok(true);
     }
     animate(g, p, l);

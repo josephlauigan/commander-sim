@@ -44,7 +44,7 @@ fn run_each_combat(g: &mut Game, src: PermId, active: PlayerId) {
 }
 
 fn land_option(g: &mut Game, p: PlayerId, l: LandId) -> Vec<sim_core::hooks::Opt> {
-    let c = g.land(l).cd;
+    let c = g.land(l).card();
     let f = g.registry.get(c).and_then(|i| i.land_options).expect("land option hook");
     f(g, l, p, Some(false)).unwrap()
 }

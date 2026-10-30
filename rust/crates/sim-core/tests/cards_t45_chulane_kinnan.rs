@@ -94,7 +94,7 @@ fn mana_breach_returns_a_land_of_the_caster() {
     cast_event(&mut g, P1, c);
     assert_eq!(g.player(P1).lands.len(), 2);
     assert!(!g.player(P1).lands.contains(&t), "the tapped land goes back first");
-    assert!(g.player(P1).hand.contains(&g.land(t).cd));
+    assert!(g.player(P1).hand.contains(&g.land(t).card()));
     let n0 = g.player(P0).lands.len();
     let c = card(&g, "Counterspell");
     cast_event(&mut g, P2, c);
@@ -130,7 +130,7 @@ fn azorius_chancery_returns_a_land_and_taps_for_two() {
     let plains = lands(&mut g, P0, "Plains", 1, false)[0];
     let c = take(&mut g, P0, "Azorius Chancery");
     sim_core::engine::turn::play_land_card(&mut g, P0, c, "plays").unwrap();
-    assert!(!g.player(P0).lands.contains(&plains) && g.player(P0).hand.contains(&g.land(plains).cd));
+    assert!(!g.player(P0).lands.contains(&plains) && g.player(P0).hand.contains(&g.land(plains).card()));
     let l = *g.player(P0).lands.last().unwrap();
     assert!(g.land(l).tapped, "enters tapped");
     g.land_mut(l).tapped = false;

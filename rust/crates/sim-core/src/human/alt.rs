@@ -77,7 +77,7 @@ pub fn land_alts(g: &mut Game, p: PlayerId, l: LandId) -> Res<Vec<(String, Opt)>
     if crate::engine::mana::moon_land(g, l) || g.land(l).tapped {
         return Ok(vec![]);
     }
-    let Some(f) = g.registry.get(g.land(l).cd).and_then(|i| i.land_options) else { return Ok(vec![]) };
+    let Some(f) = g.registry.get(g.land(l).card()).and_then(|i| i.land_options) else { return Ok(vec![]) };
     let mut out: Vec<(String, Opt)> =
         f(g, l, p, Some(false))?.into_iter().filter(|o| o.act.is_some()).map(|o| (o.label.clone(), o)).collect();
     if out.is_empty() {
@@ -94,7 +94,7 @@ pub fn gy_hook(g: &Game, c: CardId) -> bool {
     g.registry.get(c).is_some_and(|i| i.gy_options.is_some())
 }
 pub fn land_hook(g: &Game, l: LandId) -> bool {
-    g.registry.get(g.land(l).cd).is_some_and(|i| i.land_options.is_some())
+    g.registry.get(g.land(l).card()).is_some_and(|i| i.land_options.is_some())
 }
 
 /// Run one hook option for the person. Ok(None) when it was done (or the person backed out); else why not.
@@ -167,7 +167,7 @@ fn forced_gy(g: &Game, c: CardId) -> Option<(String, Opt)> {
 fn forced_land(g: &Game, l: LandId) -> Option<(String, Opt)> {
     use crate::impls::{lands, legends, sheoldred, t6_lands};
     let n = l.0 as i64;
-    Some(match &*g.db.get(g.land(l).cd).name {
+    Some(match &*g.db.get(g.land(l).card()).name {
         "Command Beacon" => forced("{T}, sacrifice: put your commander into your hand", legends::beacon_go, n),
         "Karn's Bastion" => forced("{4}, {T}: proliferate", lands::bastion_go, n),
         "Geier Reach Sanitarium" => {

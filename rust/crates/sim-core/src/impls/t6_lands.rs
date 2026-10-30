@@ -25,7 +25,7 @@ use crate::sym::Sym;
 use crate::tag::Tag;
 
 fn name_of(g: &Game, l: LandId) -> &str {
-    &g.db.get(g.land(l).cd).name
+    &g.db.get(g.land(l).card()).name
 }
 
 // ================================================================== City of Brass
@@ -101,7 +101,7 @@ pub(crate) fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     crate::engine::turn::remove_land(g, p, l); // {T} and exile it as costs
     g.player_mut(p).exile.push(cd);
     crate::glog!(g, "  {} exiles Abstergo Entertainment", g.player(p).name);
@@ -266,7 +266,7 @@ fn temple_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Deserted Temple: untaps {}", g.player(p).name, name_of(g, t));
-    if ability_window_card(g, p, g.land(l).cd, "untap a land", None, None)? && g.player(p).lands.contains(&t) {
+    if ability_window_card(g, p, g.land(l).card(), "untap a land", None, None)? && g.player(p).lands.contains(&t) {
         g.land_mut(t).tapped = false;
     }
     Ok(true)
@@ -283,7 +283,7 @@ fn minamo(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<
     }
     let mut best: Option<(i64, i32, String)> = None; // (arg, gain, label)
     for t in g.player(p).lands.clone() {
-        if t != l && g.land(t).tapped && g.db.get(g.land(t).cd).tag(Tag::Leg) {
+        if t != l && g.land(t).tapped && g.db.get(g.land(t).card()).tag(Tag::Leg) {
             let d = land_untap_gain(g, p, t);
             if d >= 3 && best.as_ref().is_none_or(|b| d > b.1) {
                 best = Some((pack(l.0, t.0), d, name_of(g, t).to_string()));
@@ -317,7 +317,7 @@ fn minamo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let perm = t & (1 << 31) != 0;
     let t = t & !(1 << 31);
     crate::glog!(g, "  {} uses Minamo: untaps a legendary permanent", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "untap a legendary permanent", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "untap a legendary permanent", None, None)? {
         if perm {
             let m = PermId(t);
             if g.perm(m).on_bf && g.perm(m).owner == p {
@@ -369,7 +369,7 @@ pub fn emergence_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 1, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     super::lands::sac_land(g, p, l)?; // {T} and sacrifice are costs
     crate::glog!(g, "  {} sacrifices Emergence Zone: spells can be cast as though they had flash", g.player(p).name);
     if ability_window_card(g, p, cd, "cast spells as though they had flash", None, None)? {
@@ -401,7 +401,7 @@ fn hamlet_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     let mut seen: Vec<(CardId, u32)> = vec![];
     for q in g.opps(p).collect::<Vec<_>>() {
         for &x in &g.player(q).lands {
-            let cd = g.land(x).cd;
+            let cd = g.land(x).card();
             if g.registry
                 .get(cd)
                 .is_some_and(|i| i.land_options.is_some() || i.land_defend.is_some() || i.land_upkeep.is_some())
@@ -485,7 +485,7 @@ fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.land_mut(l).tapped = true;
     discard_worst(g, p, 1)?; // the cost
     crate::glog!(g, "  {} uses Fomori Vault", g.player(p).name);
-    if !ability_window_card(g, p, g.land(l).cd, "look at the top cards, one to hand", None, None)? {
+    if !ability_window_card(g, p, g.land(l).card(), "look at the top cards, one to hand", None, None)? {
         return Ok(true);
     }
     let n = (artifacts(g, p) as usize).min(g.player(p).library.len());
@@ -583,7 +583,7 @@ fn mount_ping_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Mount Doom: 1 damage to each opponent", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "1 damage to each opponent", None, None)? {
+    if ability_window_card(g, p, g.land(l).card(), "1 damage to each opponent", None, None)? {
         for q in g.opps(p).filter(|&q| g.player(q).alive).collect::<Vec<_>>() {
             lose_life(g, q, 1, Some(p), "burn", None)?;
         }
@@ -598,7 +598,7 @@ fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let (keep, _) = mount_wipe_plan(g, p, art);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     super::lands::sac_land(g, p, l)?; // {T} and sacrifice are costs
     crate::glog!(g, "  {} sacrifices Mount Doom and {}", g.player(p).name, g.perm(art).name);
     die(g, art, "sac")?;
@@ -666,7 +666,7 @@ pub(crate) fn mdfc_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         lose_life(g, p, 3, Some(p), "other", None)?;
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
-    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).cd == c) {
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).card() == c) {
         if !paid {
             g.land_mut(l).tapped = true;
         }
@@ -866,7 +866,7 @@ fn smash_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// defender against an attacker worth at least 5 (phasing it out of the attack)
 fn gates_phase(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<PermId>> {
     let Some(t) = super::common::best_opp_creature(g, p, |m| pval(g, m) >= 3.0) else { return Ok(None) };
-    if ability_window_card(g, p, g.land(l).cd, "target creature phases out", None, Some(t))? && g.perm(t).on_bf {
+    if ability_window_card(g, p, g.land(l).card(), "target creature phases out", None, Some(t))? && g.perm(t).on_bf {
         g.perm_mut(t).phased = true;
         g.bf_ver += 1;
         crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(t).name);

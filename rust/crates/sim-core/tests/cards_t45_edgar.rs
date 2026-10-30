@@ -47,7 +47,7 @@ fn opts(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> 
 }
 
 fn land_opts(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
-    let f = g.registry.get(g.land(l).cd).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.land(l).card()).unwrap().land_options.unwrap();
     f(g, l, p, post).unwrap()
 }
 

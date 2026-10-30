@@ -107,7 +107,7 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
     }
     if ca.is_some_and(|d| d.tag(Tag::Swampwalk))
         && g.player(xb.owner).lands.iter().any(|&l| {
-            matches!(&*g.db.get(g.land(l).cd).name, "Swamp" | "Watery Grave" | "Blood Crypt" | "Overgrown Tomb")
+            matches!(&*g.db.get(g.land(l).card()).name, "Swamp" | "Watery Grave" | "Blood Crypt" | "Overgrown Tomb")
         })
     {
         return false; // Sheoldred, Whispering One: swampwalk
@@ -1179,11 +1179,11 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 .lands
                 .iter()
                 .copied()
-                .filter(|&l| g.db.get(g.land(l).cd).tag(Tag::Passage) && !g.land(l).tapped)
+                .filter(|&l| g.db.get(g.land(l).card()).tag(Tag::Passage) && !g.land(l).tapped)
                 .collect();
             let mut passage = None;
             for l in cands {
-                let name = g.db.get(g.land(l).cd).name.to_string();
+                let name = g.db.get(g.land(l).card()).name.to_string();
                 if !blocked(g, p, &name) {
                     passage = Some(l);
                     break;

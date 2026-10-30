@@ -554,7 +554,7 @@ fn moon_on(g: &Game, src: Src) -> bool {
 }
 
 fn nonbasic_lands(g: &Game, p: PlayerId) -> i32 {
-    g.player(p).lands.iter().filter(|&&l| !is_basic(g, g.land(l).cd)).count() as i32
+    g.player(p).lands.iter().filter(|&&l| !is_basic(g, g.land(l).card())).count() as i32
 }
 
 fn moon_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {

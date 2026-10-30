@@ -147,7 +147,7 @@ fn plaza_of_heroes_protects_cloud() {
     assert!(sim_core::engine::values::untargetable(&g, cl));
     assert!(sim_core::engine::values::indestructible(&g, cl));
     assert!(!g.land(pl).on_bf && !g.player(P0).lands.contains(&pl));
-    assert!(g.player(P0).exile.contains(&g.land(pl).cd));
+    assert!(g.player(P0).exile.contains(&g.land(pl).card()));
     assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "paid {{3}} with the other lands");
 }
 

@@ -78,7 +78,7 @@ fn fetch_lands(g: &Game, p: PlayerId) -> Vec<LandId> {
         .filter(|&l| {
             let x = g.land(l);
             // a fetch land Primeval Titan put in tapped can not pay its {T} until it untaps
-            x.on_bf && is_fetch(g, x.cd) && !(x.tapped && x.data.truthy(DataKey::TitanTapped))
+            x.on_bf && is_fetch(g, x.card()) && !(x.tapped && x.data.truthy(DataKey::TitanTapped))
         })
         .collect()
 }

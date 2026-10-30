@@ -568,7 +568,7 @@ fn cast_harrow(g: &mut Game) {
     g.player_mut(P0).hand.retain(|&x| x != c);
     let l = g.player(P0).lands[0];
     sim_core::engine::turn::remove_land(g, P0, l);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     g.player_mut(P0).gy.push(cd);
     g.player_mut(P0).hand.push(c);
     cast::cast_card(g, P0, c, "hand", Ctx::default()).unwrap();
@@ -584,7 +584,7 @@ fn a_fetch_land_is_two_landfall_triggers() {
     sim_core::engine::turn::play_land(&mut g, P0).unwrap();
     assert_eq!(g.perm(bill).plus, 2, "the Wilds, and the Forest it finds");
     assert_eq!(g.player(P0).lands.len(), before + 1);
-    assert!(g.player(P0).lands.iter().all(|&l| &*g.db.get(g.land(l).cd).name != "Evolving Wilds"));
+    assert!(g.player(P0).lands.iter().all(|&l| &*g.db.get(g.land(l).card()).name != "Evolving Wilds"));
 }
 
 #[test]

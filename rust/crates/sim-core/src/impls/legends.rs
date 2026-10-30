@@ -298,7 +298,7 @@ pub(crate) fn beacon_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !(g.land(l).on_bf && g.player(p).lands.contains(&l)) || g.land(l).tapped || !g.player(p).cmd_in_zone {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     sac_land(g, p, l)?;
     stat(g, p, "jr_beacon", 1);
     let cmd = g.player(p).cmd;
@@ -1272,7 +1272,7 @@ fn korlash_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
         .player(p)
         .lands
         .iter()
-        .filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B') && !crate::engine::mana::moon_land(g, l))
+        .filter(|&&l| g.db.get(g.land(l).card()).land_types.has('B') && !crate::engine::mana::moon_land(g, l))
         .count() as i32;
     (n, n)
 }

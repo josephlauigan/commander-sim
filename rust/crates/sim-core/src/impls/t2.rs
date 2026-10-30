@@ -945,10 +945,10 @@ fn gitrog_up(g: &mut Game, src: Src, p: PlayerId) -> Res {
         let lands = g.player(p).lands.clone();
         let l = first_min(&lands, |l| {
             let land = g.land(l);
-            (!land.tapped, g.db.get(land.cd).tags.str(Tag::C).map_or(0, |s| s.chars().count()))
+            (!land.tapped, g.db.get(land.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()))
         })
         .unwrap();
-        let cd = g.land(l).cd;
+        let cd = g.land(l).card();
         remove_land(g, p, l);
         g.player_mut(p).gy.push(cd);
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
@@ -1388,7 +1388,7 @@ fn carpet(g: &mut Game, src: Src, p: PlayerId) -> Res {
                 .lands
                 .iter()
                 .filter(|&&l| {
-                    let d = g.db.get(g.land(l).cd);
+                    let d = g.db.get(g.land(l).card());
                     d.has_subtype("island") || &*d.name == "Island"
                 })
                 .count()

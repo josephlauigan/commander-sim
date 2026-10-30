@@ -228,7 +228,7 @@ fn breach_cast(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
     }
     let Some(l) = breach_land(g, caster) else { return Ok(()) };
     crate::engine::turn::remove_land(g, caster, l);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     g.player_mut(caster).hand.push(cd);
     crate::glog!(g, "    {} returns {} to hand (Mana Breach)", pname(g, caster), cname(g, cd));
     Ok(())
@@ -267,7 +267,7 @@ fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
         Some(Val::Str(s)) => Colors::from_letters(s),
         // put onto the battlefield some other way: its front face (not worked out again: a pick looped through an
         // opponent's Exotic Orchard and Pathway)
-        _ => Colors::from_letters(crate::impls::t45_prosper::pathway_front(&g.db.get(g.land(l).cd).name)),
+        _ => Colors::from_letters(crate::impls::t45_prosper::pathway_front(&g.db.get(g.land(l).card()).name)),
     }
 }
 

@@ -38,7 +38,7 @@ fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, a
 /// the mana land l makes when tapped now (Gaea's Cradle counts creatures; Talon Gates of Madara makes {C})
 fn land_yield(g: &Game, p: PlayerId, l: LandId) -> u32 {
     let base = crate::cardcode::dyn_mana_land(g, p, l)
-        .map_or_else(|| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
+        .map_or_else(|| g.db.get(g.land(l).card()).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
     (base as i32 + eh::total_land_mana(g, p, l)).max(0) as u32
 }
 
@@ -116,7 +116,7 @@ fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !land_on(g, p, b) {
         return Ok(true);
     }
-    let cd = g.land(b).cd;
+    let cd = g.land(b).card();
     remove_land(g, p, b);
     g.player_mut(p).hand.push(cd);
     if !ability_window(g, p, Some(src), "untap target land", None, None)? {
@@ -129,7 +129,7 @@ fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
             "    {} returns {} and untaps {} (Oboro Breezecaller)",
             g.player(p).name,
             g.db.get(cd).name,
-            g.db.get(g.land(t).cd).name
+            g.db.get(g.land(t).card()).name
         );
     }
     Ok(true)
@@ -151,7 +151,7 @@ fn cub_tapped(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
 
 // ================================================================== Earthcraft
 fn is_basic_land(g: &Game, l: LandId) -> bool {
-    crate::engine::mana::BASIC_NAMES.contains(&&*g.db.get(g.land(l).cd).name)
+    crate::engine::mana::BASIC_NAMES.contains(&&*g.db.get(g.land(l).card()).name)
 }
 
 /// the creature the AI taps for Earthcraft: one that has nothing better to do (summoning sick, or can't attack, or
@@ -203,7 +203,7 @@ fn earthcraft_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
     }
     if land_on(g, p, l) && is_basic_land(g, l) {
         g.land_mut(l).tapped = false;
-        crate::glog!(g, "    Earthcraft: {} taps to untap {}", g.perm(c).name, g.db.get(g.land(l).cd).name);
+        crate::glog!(g, "    Earthcraft: {} taps to untap {}", g.perm(c).name, g.db.get(g.land(l).card()).name);
     }
     Ok(true)
 }
@@ -383,7 +383,7 @@ fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         let l = LandId(arg as _);
         if land_on(g, p, l) {
             g.land_mut(l).tapped = false;
-            crate::glog!(g, "    Formidable Speaker untaps {}", g.db.get(g.land(l).cd).name);
+            crate::glog!(g, "    Formidable Speaker untaps {}", g.db.get(g.land(l).card()).name);
         }
     }
     Ok(true)
@@ -425,7 +425,7 @@ fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn vibrance_land_wanted(g: &Game, p: PlayerId) -> bool {
     let held = |name: &str| {
         g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
-            || g.player(p).lands.iter().any(|&l| &*g.db.get(g.land(l).cd).name == name)
+            || g.player(p).lands.iter().any(|&l| &*g.db.get(g.land(l).card()).name == name)
     };
     g.player(p)
         .library

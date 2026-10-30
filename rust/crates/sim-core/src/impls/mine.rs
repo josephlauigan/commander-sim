@@ -605,7 +605,7 @@ fn baraddur_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {x}", g.player(p).name);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if card_ability_window(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
         amass(g, p, x as i32)?;
     }
@@ -812,7 +812,7 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
                 .iter()
                 .map(|&m| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m)))
                 .collect();
-            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.land(l).cd).name)));
+            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.land(l).card()).name)));
             if labels.is_empty() {
                 continue;
             }
@@ -828,7 +828,7 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
             } else {
                 let l = lands[k - perms.len()];
                 crate::engine::turn::remove_land(g, q, l);
-                let cd = g.land(l).cd;
+                let cd = g.land(l).card();
                 g.player_mut(q).gy.push(cd);
             }
             continue;
@@ -865,7 +865,7 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
 fn sac_last_land(g: &mut Game, q: PlayerId) {
     let l = *g.player(q).lands.last().unwrap();
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     g.player_mut(q).gy.push(cd);
 }
 
@@ -2281,18 +2281,19 @@ fn strip(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<O
     let mut tg: Vec<(PlayerId, LandId)> = vec![];
     for q in g.opps(p) {
         for &x in &g.player(q).lands {
-            if crate::impls::lands::KEY_LANDS.contains(&&*g.db.get(g.land(x).cd).name) {
+            if crate::impls::lands::KEY_LANDS.contains(&&*g.db.get(g.land(x).card()).name) {
                 tg.push((q, x));
             }
         }
     }
-    let Some((_, x)) = first_max(&tg, |(q, x)| (STRIP_FIRST.contains(&&*g.db.get(g.land(x).cd).name), threat(g, p, q)))
+    let Some((_, x)) =
+        first_max(&tg, |(q, x)| (STRIP_FIRST.contains(&&*g.db.get(g.land(x).card()).name), threat(g, p, q)))
     else {
         return Ok(vec![]);
     };
     Ok(vec![Opt {
         utility: 3.0,
-        label: format!("Strip Mine -> {}", g.db.get(g.land(x).cd).name),
+        label: format!("Strip Mine -> {}", g.db.get(g.land(x).card()).name),
         act: Some(Action::Plan { f: strip_go, arg: ((x.0 as i64) << 32) | l.0 as i64 }),
     }])
 }
@@ -2304,9 +2305,9 @@ fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     crate::engine::turn::remove_land(g, p, l);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     g.player_mut(p).gy.push(cd);
-    let xn = g.db.get(g.land(x).cd).name.to_string();
+    let xn = g.db.get(g.land(x).card()).name.to_string();
     crate::glog!(g, "  {} sacrifices Strip Mine: destroy {xn} ({})", g.player(p).name, g.player(q).name);
     if ability_window_card(g, p, cd, &format!("destroy {xn}"), None, None)? && g.player(q).lands.contains(&x) {
         crate::impls::fixes::destroy_land(g, q, x)?;
@@ -3404,7 +3405,7 @@ fn lighthouse_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     g.land_mut(l).tapped = true;
     crate::glog!(g, "  {} loots with Desolate Lighthouse", g.player(p).name);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if ability_window_card(g, p, cd, "draw, then discard", None, None)? {
         draw(g, p, 1, false)?;
         discard_worst(g, p, 1)?;
@@ -3430,7 +3431,7 @@ fn summit_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.land_mut(l).tapped = true;
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     if ability_window_card(g, p, cd, "surveil 1", None, None)? {
         crate::cardcode::scry(g, p, 1, true)?;
     }

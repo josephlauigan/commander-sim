@@ -95,7 +95,7 @@ fn lib_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
 fn land_on_bf(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
     let rites = super::t6_green2::RITES;
     g.player(p).lands.iter().copied().find(|&l| {
-        let n = cname(g, g.land(l).cd);
+        let n = cname(g, g.land(l).card());
         g.land(l).on_bf && (n == name || (name == CRADLE && n == rites))
     })
 }
@@ -681,7 +681,7 @@ fn doom_in(g: &mut Game, p: PlayerId) -> Res<bool> {
 /// Mount Doom's ping (40 of them, each untapped by the loop): the ability answer window is its answer
 fn doom_ping(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(l) = land_on_bf(g, p, DOOM) else { return Ok(false) };
-    Ok(ability_window_card(g, p, g.land(l).cd, "1 damage to each opponent (again and again)", None, None)?
+    Ok(ability_window_card(g, p, g.land(l).card(), "1 damage to each opponent (again and again)", None, None)?
         && land_on_bf(g, p, DOOM).is_some())
 }
 
@@ -1019,7 +1019,7 @@ fn gates_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
             g.add_land(p, c, false)
         }
     };
-    if !ability_window_card(g, p, g.land(l).cd, "target creature phases out (every time)", None, None)? {
+    if !ability_window_card(g, p, g.land(l).card(), "target creature phases out (every time)", None, None)? {
         return Ok(false);
     }
     let victims: Vec<PermId> =
@@ -1154,7 +1154,7 @@ const ALL_CLONES: &[&str] = &[MOCKINGBIRD, IMAGE, FLESH, IMPERSONATOR];
 fn blue_land(g: &Game, p: PlayerId) -> bool {
     g.player(p).lands.iter().any(|&l| {
         g.land(l).on_bf
-            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES | super::t6_green2::RITES)
+            && !matches!(cname(g, g.land(l).card()), CRADLE | GATES | super::t6_green2::RITES)
             && crate::engine::mana::land_colors_now(g, p, l).has('U')
     })
 }

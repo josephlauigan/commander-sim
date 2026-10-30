@@ -614,7 +614,9 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
     if which == "veyran" {
         // Mistrise Village: {U},{T}: the next spell can't be countered
         let ml =
-            g.player(p).lands.iter().copied().find(|&l| g.db.get(g.land(l).cd).tag(Tag::Mistrise) && !g.land(l).tapped);
+            g.player(p).lands.iter().copied().find(|&l| {
+                g.db.get(g.land(l).card()).tag(Tag::Mistrise) && !g.land(l).tapped
+            });
         if let Some(l) = ml {
             g.land_mut(l).tapped = true;
             if can_pay(g, p, 0, "U", false) {

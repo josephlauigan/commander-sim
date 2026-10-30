@@ -364,7 +364,7 @@ fn malakir_rebirth_returns_the_creature_tapped_and_plays_as_a_tapped_land() {
     let o = hand_opts(&mut g, c, P0, Some(false)).pop().expect("land option");
     assert!(run(&mut g, o, P0));
     let land = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(land).cd == c && g.land(land).tapped);
+    assert!(g.land(land).card() == c && g.land(land).tapped);
 }
 
 // ------------------------------------------------------------------ Mindslicer, Rankle, Sangromancer, The Raven Man

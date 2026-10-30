@@ -467,7 +467,7 @@ fn primeval_titan_enters_and_attacks_for_two_lands_each_fetch_lands_first() {
     zones::enter(&mut g, P0, t, zones::Enter { sick: false, ..Default::default() }).unwrap();
     let lands: Vec<_> = g.player(P0).lands.clone();
     assert_eq!(lands.len(), before + 2, "two lands");
-    let names: Vec<String> = lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect();
+    let names: Vec<String> = lands.iter().map(|&l| g.db.get(g.land(l).card()).name.to_string()).collect();
     assert!(lands.iter().all(|&l| g.land(l).tapped), "all enter tapped: {names:?}");
     let fetches = ["Evolving Wilds", "Terramorphic Expanse", "Fabled Passage"];
     assert!(names.iter().all(|n| fetches.contains(&n.as_str())), "fetch lands first: {names:?}");

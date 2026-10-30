@@ -8,7 +8,7 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 
 fn land_names(g: &Game, p: PlayerId) -> Vec<String> {
-    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect()
+    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).card()).name.to_string()).collect()
 }
 
 fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {

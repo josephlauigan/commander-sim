@@ -313,7 +313,7 @@ pub fn uba_draw(g: &mut Game, p: PlayerId) -> Res<bool> {
 // ================================================================== Pathways
 /// the colour a Pathway's face gives: the one p's hand needs more, against the sources p already has
 fn pathway_pick(g: &Game, p: PlayerId, l: LandId) -> char {
-    let d = g.db.get(g.land(l).cd);
+    let d = g.db.get(g.land(l).card());
     let cols: Vec<char> = d.tags.str(Tag::C).unwrap_or("").chars().collect();
     let need = |col: char| -> i32 {
         let pips: i32 = g
@@ -340,7 +340,7 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     let col = pathway_pick(g, p, l);
     let s = intern(&col.to_string());
     g.land_mut(l).data.set(DataKey::ChosenColor, Val::Str(s));
-    crate::glog!(g, "    {} plays {} as the {{{col}}} face", pname(g, p), cname(g, g.land(l).cd));
+    crate::glog!(g, "    {} plays {} as the {{{col}}} face", pname(g, p), cname(g, g.land(l).card()));
     Ok(())
 }
 
@@ -361,7 +361,7 @@ pub(crate) fn pathway_front(name: &str) -> &'static str {
 fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
     match g.land(l).data.get(DataKey::ChosenColor) {
         Some(Val::Str(s)) => Colors::from_letters(s),
-        _ => Colors::from_letters(pathway_front(&g.db.get(g.land(l).cd).name)),
+        _ => Colors::from_letters(pathway_front(&g.db.get(g.land(l).card()).name)),
     }
 }
 

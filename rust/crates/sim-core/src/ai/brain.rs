@@ -583,7 +583,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
 
 fn swamp_land(g: &Game, p: PlayerId) -> bool {
     g.player(p).lands.iter().any(|&l| {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         d.has_subtype("swamp") || &*d.name == "Swamp"
     })
 }

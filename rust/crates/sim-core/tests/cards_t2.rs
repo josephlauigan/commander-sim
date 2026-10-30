@@ -176,7 +176,7 @@ fn gitrog_sacrifices_a_tapped_land_and_draws_or_itself() {
     let gm = perm(&mut g, P0, "The Gitrog Monster");
     let n = g.player(P0).hand.len();
     fire(&mut g, Event::Upkeep, P0);
-    let left: Vec<String> = g.player(P0).lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect();
+    let left: Vec<String> = g.player(P0).lands.iter().map(|&l| g.db.get(g.land(l).card()).name.to_string()).collect();
     assert_eq!(left, ["Forest", "Forest", "Mountain"]);
     assert_eq!(names(&g, &g.player(P0).gy.clone()), ["Swamp"]);
     assert_eq!(g.player(P0).hand.len(), n + 1, "a land went to the graveyard: draw");
@@ -234,7 +234,7 @@ fn windgrace_minus_three_returns_the_two_best_lands() {
         opts.iter().map(|o| (o.label.clone(), (o.utility * 1000.0).round() / 1000.0)).collect();
     assert_eq!(got, [("Lord Windgrace +2".to_string(), 2.8), ("Lord Windgrace -3".to_string(), 4.05)]);
     assert!(run(&mut g, P0, &opts[1]));
-    let ls: Vec<String> = g.player(P0).lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect();
+    let ls: Vec<String> = g.player(P0).lands.iter().map(|&l| g.db.get(g.land(l).card()).name.to_string()).collect();
     assert_eq!(ls, ["Raging Ravine", "Forest"]);
     assert_eq!(names(&g, &g.player(P0).gy.clone()), ["Bojuka Bog"]);
     assert_eq!(g.perm(wg).loyalty, Some(2));

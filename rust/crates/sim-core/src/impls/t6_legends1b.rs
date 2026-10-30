@@ -50,7 +50,7 @@ fn can_tap(g: &Game, m: PermId) -> bool {
 
 fn land_yield(g: &Game, p: PlayerId, l: LandId) -> u32 {
     let base = crate::cardcode::dyn_mana_land(g, p, l)
-        .map_or_else(|| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
+        .map_or_else(|| g.db.get(g.land(l).card()).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
     (base as i32 + eh::total_land_mana(g, p, l)).max(0) as u32
 }
 
@@ -181,7 +181,7 @@ fn untap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if let Some(l) = land {
         if g.land(l).on_bf {
             g.land_mut(l).tapped = false;
-            crate::glog!(g, "    {} untaps {}", g.perm(src).name, g.db.get(g.land(l).cd).name);
+            crate::glog!(g, "    {} untaps {}", g.perm(src).name, g.db.get(g.land(l).card()).name);
         }
     }
     Ok(true)

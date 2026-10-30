@@ -29,7 +29,7 @@ pub fn destroy_land(g: &mut Game, q: PlayerId, l: LandId) -> Res {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.land(l).cd;
+    let cd = g.land(l).card();
     g.player_mut(q).gy.push(cd);
     crate::glog!(g, "    {} ({}) is destroyed", g.db.get(cd).name, pname(g, q));
     if !g.hooks.is_empty() {
@@ -45,11 +45,11 @@ pub fn best_opp_land(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
         .opps(p)
         .flat_map(|q| g.player(q).lands.iter().map(move |&l| (q, l)))
         .filter(|&(_, l)| {
-            !matches!(&*g.db.get(g.land(l).cd).name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest")
+            !matches!(&*g.db.get(g.land(l).card()).name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest")
         })
         .collect();
     first_max(&lands, |(q, l)| {
-        let t = &g.db.get(g.land(l).cd).tags;
+        let t = &g.db.get(g.land(l).card()).tags;
         (t.int(Tag::Amt).unwrap_or(1), t.str(Tag::C).map_or(0, |s| s.chars().count()), threat(g, p, q))
     })
 }
@@ -673,7 +673,7 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let lands = g.player(p).lands.clone();
     let mut keys = vec![];
     for &l in &lands {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.land(l).card());
         // --- Tiers 1/2 (windgrace): Dark Depths and Thespian's Stage stay too
         let keep = matches!(&*d.name, "Gaea's Cradle" | "Ancient Tomb" | "Dark Depths" | "Thespian's Stage");
         let k = (keep, !g.land(l).tapped, d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), g.rng.random());
@@ -683,7 +683,7 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let sac = lands[i];
     let (target, _) = crop_target(g, p);
     crate::engine::turn::remove_land(g, p, sac);
-    let cd = g.land(sac).cd;
+    let cd = g.land(sac).card();
     g.player_mut(p).gy.push(cd);
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;

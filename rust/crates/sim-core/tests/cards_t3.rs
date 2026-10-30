@@ -91,7 +91,7 @@ fn legions_landing_flips_into_adanto_which_makes_lifelink_tokens() {
     stack::settle_stack(&mut g).unwrap();
     assert!(named(&g, P0, "Legion's Landing // Adanto, the First Fort").is_empty());
     let adanto =
-        *g.player(P0).lands.iter().find(|&&l| &*g.db.get(g.land(l).cd).name == "Adanto, the First Fort").unwrap();
+        *g.player(P0).lands.iter().find(|&&l| &*g.db.get(g.land(l).card()).name == "Adanto, the First Fort").unwrap();
     lands(&mut g, P0, "Plains", 3, false);
     assert!(
         sim_core::cardcode::land_options(&mut g, P0, Some(false)).unwrap().iter().all(|o| o.label != "Adanto token")

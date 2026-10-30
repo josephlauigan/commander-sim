@@ -86,7 +86,7 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         .enumerate()
         .map(|(i, &l)| {
             let land = g.land(l);
-            let mut d = json!({"name": &*g.db.get(land.cd).name, "tapped": land.tapped, "i": i});
+            let mut d = json!({"name": &*g.db.get(land.card()).name, "tapped": land.tapped, "i": i});
             if you && seam::land_has_ability(g, p, l) {
                 d["ability"] = true.into();
             }
