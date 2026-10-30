@@ -1568,7 +1568,7 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
 
 // ------------------------------------------------------------------ static abilities
 /// (controller, source, ability) for every static or replacement ability of this kind on the battlefield
-fn statics<'a>(g: &'a Game, kind: &'a str) -> impl Iterator<Item = (PlayerId, PermId, Arc<[Ability]>, usize)> + 'a {
+pub(crate) fn statics<'a>(g: &'a Game, kind: &'a str) -> impl Iterator<Item = (PlayerId, PermId, Arc<[Ability]>, usize)> + 'a {
     g.players.iter().filter(|q| q.alive).flat_map(move |q| {
         q.perms
             .iter()
@@ -1592,155 +1592,15 @@ fn statics<'a>(g: &'a Game, kind: &'a str) -> impl Iterator<Item = (PlayerId, Pe
     })
 }
 
-/// Power and toughness changes beyond printed stats and counters: until-end-of-turn pumps, Auras (card code), then
-/// the ability language's anthems, equipment bonuses and self-scaling creatures. Python's `dsl.pt`.
+/// Power and toughness changes beyond printed stats and counters (Python's `dsl.pt`): `chars::pt_changes`
 pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
-    let x = g.perm(m);
-    let (mut dp, mut dt) = x.eot_pt;
-    if !g.auras.is_empty() || g.selfpt || g.player(x.owner).elspeth_emblem {
-        let (a, b) = crate::cardcode::attached_bonus(g, m);
-        dp += a;
-        dt += b;
-    }
-    if !active(g) {
-        return (dp, dt);
-    }
-    let cre = g.is_creature(m);
-    // one pass over the statics of the three kinds that change power and toughness (anthem, equip_bonus,
-    // bma_anthem); the sums do not depend on the order
-    let owner = x.owner;
-    for q in g.players.iter().filter(|q| q.alive) {
-        for src in q.perms.iter().copied().chain(land_sources(g, q.id)) {
-            let s = g.perm(src);
-            let Some(cd) = s.cd else { continue };
-            if s.phased || s.owner != q.id {
-                continue;
-            }
-            for a in g.db.get(cd).abilities.iter() {
-                let Ability::Static { kind, pow, tgh, filter, per, .. } = a else { continue };
-                match kind.as_str() {
-                    "anthem" => {
-                        if cre && matches(g, q.id, m, filter.as_ref(), Some(src)) {
-                            // --- Tier 3 (marwyn): "+1/+1 for each +1/+1 counter on ~" (Joraga Warcaller)
-                            let k =
-                                if per.is_some() { num(g, q.id, per.as_ref(), &DslCtx::base(), Some(src)) } else { 1 };
-                            dp += pow.unwrap_or(0) * k;
-                            dt += tgh.unwrap_or(0) * k;
-                        }
-                    }
-                    "equip_bonus" => {
-                        if s.attached == Some(m) {
-                            dp += pow.unwrap_or(0);
-                            dt += tgh.unwrap_or(0);
-                        }
-                    }
-                    "bma_anthem" => {
-                        if s.plus >= 7 && cre && owner == q.id {
-                            dp += 5; // Beastmaster Ascension with 7+ quest counters
-                            dt += 5;
-                        }
-                    }
-                    _ => {}
-                }
-            }
-        }
-    }
-    if let Some((bp, bt)) = crate::impls::cloud::base_pt(g, m) {
-        dp += bp - x.pow; // Wrecking Ball Arm, Hulkbuster Armor: base power and toughness
-        dt += bt - x.tgh;
-    }
-    let shaped = crate::impls::cloud::steelshaper_bonus(g, m); // Auriok Steelshaper
-    dp += shaped;
-    dt += shaped;
-    if let Some(cd) = x.cd {
-        for a in g.db.get(cd).abilities.iter() {
-            if let Ability::Static { kind, per, pow, tgh, base0, .. } = a
-                && kind == "self_scaling"
-            {
-                let k = num(g, x.owner, per.as_ref(), &DslCtx::base(), Some(m));
-                dp += pow.unwrap_or(1) * k;
-                dt += tgh.unwrap_or(0) * k;
-                if *base0 == Some(true) {
-                    dt += k;
-                }
-            }
-        }
-    }
-    (dp, dt)
+    crate::engine::chars::pt_changes(g, m)
 }
 
-/// Does m have keyword kw (lower case)? Python's `dsl.has_kw`.
+/// Does m have keyword kw (lower case)? Python's `dsl.has_kw`: `chars::has_keyword`
+#[inline]
 pub fn has_kw(g: &Game, m: PermId, kw: &str) -> bool {
-    let x = g.perm(m);
-    if kw == "flying" && crate::impls::cloud::loses_flying(g, m) {
-        return false; // Colossus Hammer
-    }
-    if x.eot_kw.contains(&kw) {
-        return true;
-    }
-    if kw == "trample" && x.data.get(crate::state::DataKey::Role) == Some(&crate::state::Val::Bool(true)) {
-        return true; // a Monster Role
-    }
-    if matches!(kw, "menace" | "cant_block") && x.data.truthy(crate::state::DataKey::Suspect) {
-        return true; // suspected
-    }
-    if kw == "flying" && g.is_creature(m) && g.player(x.owner).elspeth_emblem {
-        return true; // Elspeth's emblem
-    }
-    match x.cd {
-        None => {
-            if let Some(crate::state::Val::List(v)) = x.data.get(crate::state::DataKey::Kws)
-                && v.iter().any(|k| matches!(k, crate::state::Val::Str(s) if *s == kw))
-            {
-                return true; // a token made with keywords (Samurai)
-            }
-        }
-        Some(c) => {
-            if !x.neutered && g.db.get(c).has_kw(kw) {
-                return true;
-            }
-        }
-    }
-    if !g.auras.is_empty() && crate::cardcode::attached_kw(g, m, kw) {
-        return true;
-    }
-    if !g.hooks.is_empty() && crate::cardcode::granted_kw(g, m, kw) {
-        return true;
-    }
-    if !active(g) {
-        return false;
-    }
-    if let Some(cd) = x.cd {
-        for a in g.db.get(cd).abilities.iter() {
-            if let Ability::Static { kind, keyword, .. } = a {
-                match kind.as_str() {
-                    "unblockable" if kw == "unblockable" => return true,
-                    "cant_block" if kw == "cant_block" => return true,
-                    "self_keyword" if keyword.as_deref() == Some(kw) => return true,
-                    _ => {}
-                }
-            }
-        }
-    }
-    let cre = g.is_creature(m);
-    for (q, src, ab, i) in statics(g, "keyword") {
-        if let Ability::Static { keyword, filter, .. } = &ab[i]
-            && keyword.as_deref() == Some(kw)
-            && (cre || noncreature_ok(filter.as_ref())) // Tier 3 (aurelia): "permanents you control have" (Avacyn)
-            && matches(g, q, m, filter.as_ref(), Some(src))
-        {
-            return true;
-        }
-    }
-    for (_, src, ab, i) in statics(g, "equip_keyword") {
-        if let Ability::Static { keyword, .. } = &ab[i]
-            && keyword.as_deref() == Some(kw)
-            && g.perm(src).attached == Some(m)
-        {
-            return true;
-        }
-    }
-    false
+    crate::engine::chars::has_keyword(g, m, kw)
 }
 
 const ETB_TAGS: [Tag; 19] = [
@@ -1897,7 +1757,7 @@ pub fn no_lifegain(g: &Game, p: PlayerId) -> bool {
 // --- Tier 3 (aurelia)
 /// a keyword static whose filter names a type wider than creatures ("permanents you control have indestructible")
 /// reaches noncreature permanents too
-fn noncreature_ok(f: Option<&Filter>) -> bool {
+pub(crate) fn noncreature_ok(f: Option<&Filter>) -> bool {
     f.and_then(|f| f.kind.as_deref()).is_some_and(|k| k != "creature")
 }
 
