@@ -151,6 +151,9 @@ pub struct Knobs {
     pub gate: bool,
     /// the stakes test's close call: the policy's top two real options within this much utility
     pub close: f64,
+    /// the fewest shared copies on which the search may overrule the policy's top play, or call a leader clear
+    /// (`AI_SEARCH_PAIRS`; today's margin has 6 at the least)
+    pub pairs: usize,
 }
 
 fn env_or<T: std::str::FromStr>(key: &str, d: T) -> T {
@@ -168,6 +171,7 @@ pub const WIDEN: f64 = 0.5;
 pub const MIN_VISITS: u32 = 2;
 pub const MAX_VISITS: u32 = 24;
 pub const CLOSE: f64 = 0.5;
+pub const PAIRS: usize = 6;
 
 fn env_knobs() -> &'static Knobs {
     static K: OnceLock<Knobs> = OnceLock::new();
@@ -180,6 +184,7 @@ fn env_knobs() -> &'static Knobs {
         max_visits: env_or("AI_SEARCH_MAX", MAX_VISITS),
         gate: !matches!(std::env::var("AI_SEARCH_GATE").ok().as_deref(), Some("0")),
         close: env_or("AI_SEARCH_CLOSE", CLOSE),
+        pairs: env_or("AI_SEARCH_PAIRS", PAIRS),
     })
 }
 
@@ -422,7 +427,9 @@ pub fn search_root(
         let l = leader(&vals);
         let clear = (0..nk).filter(|&k| k != l).all(|k| {
             let d = paired(&vals, l, k);
-            d.len() >= 2 && super::search::margin_holds(&d, z)
+            // overruling the policy's top needs `pairs` shared copies; the rest (and keeping the top) two
+            let need = if ti == Some(k) { kn.pairs.max(2) } else { 2 };
+            d.len() >= need && super::search::margin_holds(&d, z)
         });
         if clear {
             break;
@@ -441,10 +448,17 @@ pub fn search_root(
 }
 
 /// the pick: the leader, held to the margin against the policy's top `ti` (on their shared copies)
-pub fn pick(vals: &[Vec<f64>], ti: Option<usize>, z: f64) -> usize {
+pub fn pick(vals: &[Vec<f64>], ti: Option<usize>, z: f64, pairs: usize) -> usize {
     let l = leader(vals);
     match ti {
-        Some(t) if l != t && !super::search::margin_holds(&paired(vals, l, t), z) => t,
+        Some(t)
+            if l != t && {
+                let d = paired(vals, l, t);
+                d.len() < pairs || !super::search::margin_holds(&d, z)
+            } =>
+        {
+            t
+        }
         _ => l,
     }
 }
@@ -486,7 +500,7 @@ pub fn choose_main(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Optio
         };
         v + extra
     });
-    let best = pick(&s.vals, ti, z);
+    let best = pick(&s.vals, ti, z, kn.pairs);
     super::search::LAST_SCORES.with(|l| {
         *l.borrow_mut() = cands.iter().zip(&s.vals).map(|(c, v)| (c.1.0.clone(), mean(v))).collect();
     });

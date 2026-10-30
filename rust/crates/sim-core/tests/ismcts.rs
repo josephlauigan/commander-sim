@@ -110,7 +110,8 @@ fn the_budget_is_respected() {
 }
 
 /// Early stopping fires on a dominant candidate: once every candidate has its first playouts, a candidate clearly
-/// ahead of every other (the margin holds against each) ends the search long before the per-candidate cap
+/// ahead of every other (the margin holds against each, on 6 shared copies against the top play) ends the search
+/// long before the per-candidate cap
 #[test]
 fn early_stopping_fires_on_a_dominant_candidate() {
     knobs(|k| {
@@ -126,13 +127,13 @@ fn early_stopping_fires_on_a_dominant_candidate() {
         noise(j) + if k == 2 { 50.0 } else { 10.0 }
     });
     let n: usize = s.vals.iter().map(|v| v.len()).sum();
-    assert_eq!(ismcts::pick(&s.vals, Some(0), 2.36), 2);
-    assert!(n <= 5 * 4, "{n} playouts");
-    // no candidate ahead: it runs on (to the hopeless stop against the top or the cap), and keeps the top
+    assert_eq!(ismcts::pick(&s.vals, Some(0), 2.36, 6), 2);
+    assert!(n <= 5 * 6, "{n} playouts");
+    // no candidate ahead: the hopeless stop (no gain over the top play) ends it early too, and the top play stays
     let s = ismcts::search_root(&mut g, P0, keys, Some(0), 2.36, 24, |_, k, j| noise(j + k as u64));
     let m: usize = s.vals.iter().map(|v| v.len()).sum();
-    assert!(m > n, "{m} against {n}");
-    assert_eq!(ismcts::pick(&s.vals, Some(0), 2.36), 0);
+    assert!(m < 5 * 24, "{m} playouts");
+    assert_eq!(ismcts::pick(&s.vals, Some(0), 2.36, 6), 0);
 }
 
 /// With little at stake the policy's top play is made without a search, and counted as a policy decision
