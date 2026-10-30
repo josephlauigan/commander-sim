@@ -897,7 +897,7 @@ fn combat_spell(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 /// World at War's rebound: another additional combat
 fn war_rebound(g: &mut Game, p: PlayerId, c: CardId) -> Res {
-    if remove_card(&mut g.player_mut(p).exile, c) {
+    if g.player_mut(p).exile.take(c) {
         let pl = g.player_mut(p);
         pl.gy.push(c);
         pl.extra_combats += 1;

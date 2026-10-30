@@ -1303,7 +1303,7 @@ fn voidborn_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     pay(g, p, cg, &cp, false)?;
-    remove_card(&mut g.player_mut(p).exile, c);
+    g.player_mut(p).exile.take(c);
     g.player_mut(p).flag_turn.shift_remove(&intern("voidborn_warped"));
     cast_card(g, p, c, "lib", Ctx::default())?;
     Ok(true)

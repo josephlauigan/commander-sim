@@ -276,7 +276,7 @@ fn lord_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg
     if crate::impls::t45_winota::jailed(g) {
         return Ok(());
     }
-    remove_card(&mut g.player_mut(d).exile, c);
+    g.player_mut(d).exile.take(c);
     enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
     crate::glog!(g, "    Lord of the Void puts {} onto the battlefield", cname(g, c));
     Ok(())
@@ -480,7 +480,7 @@ fn valg_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let mv = g.db.get(c).cmc as i32;
-    remove_card(&mut g.player_mut(q).exile, c);
+    g.player_mut(q).exile.take(c);
     if let Some(i) = g.t12_void.iter().position(|&e| e == (c, q)) {
         g.t12_void.remove(i);
     }

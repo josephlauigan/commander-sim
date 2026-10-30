@@ -689,7 +689,7 @@ fn taker(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if tok || g.perm(t).on_bf || !g.player(owner).exile.contains(&cd) {
         return Ok(()); // a token, a commander, or saved
     }
-    remove_card(&mut g.player_mut(owner).exile, cd);
+    g.player_mut(owner).exile.take(cd);
     if !(g.perm(src).on_bf && g.perm(src).owner == o) {
         enter(g, owner, cd, Enter::default())?; // the Taker already left: the card returns at once
         return Ok(());

@@ -462,7 +462,7 @@ fn shinobi(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i3
         if def.perm {
             enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
         } else if def.instant || def.sorcery {
-            remove_first(&mut g.player_mut(d).exile, c);
+            g.player_mut(d).exile.take(c);
             g.player_mut(p).hand.push(c);
             cast_card(g, p, c, "hand", Ctx { owner: Some(d), ..Ctx::default() })?; // back to d's graveyard
         }
@@ -1152,7 +1152,7 @@ fn ragavan(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i3
                 )?)
         {
             pay(g, p, gen_, &pips, false)?;
-            remove_first(&mut g.player_mut(d).exile, c);
+            g.player_mut(d).exile.take(c);
             enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
         }
     }

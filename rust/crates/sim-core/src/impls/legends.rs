@@ -1689,7 +1689,7 @@ pub fn suspend_upkeep(g: &mut Game, p: PlayerId) -> Res {
         }
         let pl = g.player_mut(p);
         pl.suspended.remove(i);
-        remove_card(&mut pl.exile, c);
+        pl.exile.take(c);
         crate::glog!(g, "  {} casts {} from suspend", pname(g, p), cname(g, c));
         cast_card(g, p, c, "lib", Ctx::default())?;
     }
@@ -1793,7 +1793,7 @@ pub fn jar_end(g: &mut Game) -> Res {
         let hand = g.player(q).hand.clone();
         discard_cards(g, q, &hand)?;
         for c in held {
-            if remove_card(&mut g.player_mut(q).exile, c) {
+            if g.player_mut(q).exile.take(c) {
                 g.player_mut(q).hand.push(c);
             }
         }

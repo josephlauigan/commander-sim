@@ -433,7 +433,7 @@ fn witch(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32
         };
         c = ok[k];
     }
-    remove_card(&mut g.player_mut(p).exile, c);
+    g.player_mut(p).exile.take(c);
     remove_card(&mut held, c);
     save(g, &held);
     crate::glog!(g, "    Scarlet Witch: {} casts {} free", g.player(p).name, g.db.get(c).name);

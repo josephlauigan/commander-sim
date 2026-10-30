@@ -1161,7 +1161,7 @@ fn foundry_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         foundry_pile(g, p, src).into_iter().filter_map(|x| free_worth(g, p, x).map(|w| (w, x))).collect();
     pile.sort_by(|a, b| b.0.total_cmp(&a.0));
     for (_, x) in pile {
-        if g.over || !g.player(p).alive || !remove_card(&mut g.player_mut(p).exile, x) {
+        if g.over || !g.player(p).alive || !g.player_mut(p).exile.take(x) {
             continue;
         }
         if let Some(e) = g.player_mut(p).t0s.foundry_exiled.iter_mut().find(|e| e.0 == src) {

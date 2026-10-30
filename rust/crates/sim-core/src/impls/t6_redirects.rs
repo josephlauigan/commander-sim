@@ -453,7 +453,7 @@ fn soul_partition_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Re
         && g.player(owner).exile.contains(&card)
     {
         let pl = g.player_mut(owner);
-        remove_card(&mut pl.exile, card);
+        pl.exile.take(card);
         pl.hand.push(card);
         crate::glog!(g, "    {} may play {} again (Soul Partition)", pname(g, owner), cname(g, card));
     }

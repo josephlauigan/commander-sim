@@ -749,12 +749,15 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     g.player_mut(p).impulse_long = keep;
-    for c in std::mem::take(&mut g.player_mut(p).impulse) {
-        // Jeska's Will: unplayed exiled cards stay in exile
-        let pl = g.player_mut(p);
-        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
-            pl.hand.remove(i);
-            pl.exile.push(c);
+    // "you may play it this turn" ends with this turn, whoever was given it (an opponent's impulse on p's turn too):
+    // the unplayed cards go back to exile (Jeska's Will: unplayed exiled cards stay in exile)
+    for q in (0..g.players.len()).map(|i| PlayerId(i as u8)) {
+        for c in std::mem::take(&mut g.player_mut(q).impulse) {
+            let pl = g.player_mut(q);
+            if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+                pl.hand.remove(i);
+                pl.exile.push(c);
+            }
         }
     }
     crate::impls::t0_zurgo::end_cleanup(g, p); // t0-zurgo: Neriv's cards go back to exile, Grenzo's are gone

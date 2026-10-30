@@ -976,9 +976,9 @@ fn cast_rean(g: &mut Game, p: PlayerId, c: CardId, zone: &str, ctx: Ctx, flash_s
     let extra = if src != p { format!(" in {}'s graveyard", name_of(g, src)) } else { String::new() };
     crate::glog!(g, "  {} casts {} targeting {}{extra}", name_of(g, p), card_name(g, c), card_name(g, cd));
     let in_hand_dest = from_hand;
-    macro_rules! dest {
-        () => {
-            if in_hand_dest { &mut g.player_mut(p).gy } else { &mut g.player_mut(p).exile }
+    macro_rules! dest_push {
+        ($c:expr) => {
+            if in_hand_dest { g.player_mut(p).gy.push($c) } else { g.player_mut(p).exile.push($c) }
         };
     }
     if g.over || !g.player(p).alive {
@@ -989,7 +989,7 @@ fn cast_rean(g: &mut Game, p: PlayerId, c: CardId, zone: &str, ctx: Ctx, flash_s
         || crate::ai::decks::sauron_grounds_response(g, p, value)?
         || (!g.hooks.is_empty() && crate::cardcode::gy_response(g, p, value, src)?)
     {
-        dest!().push(c);
+        dest_push!(c);
         return Ok(None);
     }
     let n0 = g.player(p).perms.len();
@@ -1003,7 +1003,7 @@ fn cast_rean(g: &mut Game, p: PlayerId, c: CardId, zone: &str, ctx: Ctx, flash_s
             zones::die(g, m, "sac")?;
         }
     }
-    dest!().push(c);
+    dest_push!(c);
     engine::life::check_state(g)?;
     Ok(None)
 }
