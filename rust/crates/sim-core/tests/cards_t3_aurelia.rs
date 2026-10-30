@@ -6,7 +6,7 @@ use sim_core::engine::life::lose_life;
 use sim_core::engine::removal::apply_removal;
 use sim_core::engine::values::{indestructible, no_damage};
 use sim_core::engine::{cast, zones};
-use sim_core::ids::{CardId, LandId, PermId, PlayerId};
+use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::impls::t3_aurelia as t3;
 use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;
@@ -43,8 +43,8 @@ fn run_each_combat(g: &mut Game, src: PermId, active: PlayerId) {
     f(g, src, active).unwrap();
 }
 
-fn land_option(g: &mut Game, p: PlayerId, l: LandId) -> Vec<sim_core::hooks::Opt> {
-    let c = g.land(l).cd;
+fn land_option(g: &mut Game, p: PlayerId, l: PermId) -> Vec<sim_core::hooks::Opt> {
+    let c = g.perm(l).card();
     let f = g.registry.get(c).and_then(|i| i.land_options).expect("land option hook");
     f(g, l, p, Some(false)).unwrap()
 }
@@ -377,7 +377,7 @@ fn slayers_stronghold_gives_a_new_creature_haste() {
     act(&mut g, P0, &opts[0]);
     assert!(combat::has_haste(&g, m) && combat::kw(&g, m, "vigilance"));
     assert_eq!(g.perm(m).eot_pt, (2, 0));
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }
 
 #[test]
@@ -428,8 +428,8 @@ fn boros_garrison_returns_a_land() {
     sim_core::engine::turn::play_land_card(&mut g, P0, c, "plays").unwrap();
     assert!(!g.player(P0).lands.contains(&plains), "the Plains goes back");
     assert!(g.player(P0).hand.contains(&card(&g, "Plains")));
-    let gar: Vec<LandId> = g.player(P0).lands.clone();
+    let gar: Vec<PermId> = g.player(P0).lands.clone();
     assert_eq!(gar.len(), 1);
-    assert!(g.land(gar[0]).tapped, "enters tapped");
+    assert!(g.perm(gar[0]).tapped, "enters tapped");
     let _: CardId = c;
 }

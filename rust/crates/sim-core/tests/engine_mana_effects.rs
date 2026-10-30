@@ -94,5 +94,5 @@ fn speaker_untaps_a_tapped_magus_which_then_untaps_cradle() {
     let o = options(&mut g, mg, P0, Some(false));
     assert_eq!(o.len(), 1, "Magus can untap Cradle again");
     assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
-    assert!(!g.land(cr).tapped);
+    assert!(!g.perm(cr).tapped);
 }

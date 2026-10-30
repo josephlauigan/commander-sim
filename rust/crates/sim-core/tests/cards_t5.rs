@@ -159,7 +159,7 @@ fn nether_traitor_returns_when_a_creature_card_dies() {
     zones::die(&mut g, w, "destroy").unwrap();
     assert_eq!(names(&g, P0), ["Nether Traitor"]);
     let l = g.player(P0).lands[0];
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }
 
 // ------------------------------------------------------------------ Zur's deck
@@ -232,9 +232,9 @@ fn seedborn_muse_untaps_in_other_players_untap_steps() {
     let r = perm(&mut g, P0, "Sol Ring");
     g.perm_mut(r).tapped = true;
     hooks::fire_trigger(&mut g, Event::Upkeep, Call::Player { p: P0 }).unwrap();
-    assert!(ls.iter().all(|&l| g.land(l).tapped) && g.perm(r).tapped);
+    assert!(ls.iter().all(|&l| g.perm(l).tapped) && g.perm(r).tapped);
     hooks::fire_trigger(&mut g, Event::Upkeep, Call::Player { p: P1 }).unwrap();
-    assert!(ls.iter().all(|&l| !g.land(l).tapped) && !g.perm(r).tapped);
+    assert!(ls.iter().all(|&l| !g.perm(l).tapped) && !g.perm(r).tapped);
 }
 
 #[test]

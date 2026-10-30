@@ -74,7 +74,7 @@ fn louisoix_counters_godos_enter_trigger_paying_two_extra() {
     perm(&mut g, P1, "Godo, Bandit Warlord");
     assert!(on_bf(&g, P1, "Helm of the Host").is_none(), "countered");
     assert!(in_gy(&g, P0, "Louisoix's Sacrifice"));
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "{{U}} plus {{2}}");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "{{U}} plus {{2}}");
 }
 
 #[test]

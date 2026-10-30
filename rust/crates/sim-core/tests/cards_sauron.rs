@@ -43,7 +43,7 @@ fn take_option(g: &mut Game, p: PlayerId, label: &str) -> bool {
 }
 
 fn tapped_lands(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| g.perm(l).tapped).count()
 }
 
 // ======================================================== Sauron

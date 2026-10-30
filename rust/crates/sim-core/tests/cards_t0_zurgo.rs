@@ -540,7 +540,7 @@ fn windbrisk_heights_hides_a_card_and_plays_it_after_a_three_creature_attack() {
     let lib = g.player(P0).library.len();
     cardcode::land_etb(&mut g, P0, l).unwrap();
     assert_eq!(g.player(P0).library.len(), lib - 1, "one card hidden, the other three back on the bottom");
-    let Some(Val::Card(c)) = g.land(l).data.get(DataKey::Hidden).cloned() else { panic!("nothing hidden") };
+    let Some(Val::Card(c)) = g.perm(l).data.get(DataKey::Hidden).cloned() else { panic!("nothing hidden") };
     let hook = card_hook(&g, "Windbrisk Heights");
     let opts = (hook.land_options.unwrap())(&mut g, l, P0, Some(true)).unwrap();
     assert!(opts.is_empty(), "not attacked with three");
@@ -549,8 +549,8 @@ fn windbrisk_heights_hides_a_card_and_plays_it_after_a_three_creature_attack() {
     assert_eq!(opts.len(), 1);
     let Some(Action::Plan { f, arg }) = opts.into_iter().next().unwrap().act else { panic!() };
     assert!(f(&mut g, P0, arg).unwrap());
-    assert!(g.land(l).data.get(DataKey::Hidden) == Some(&Val::None) || g.land(l).data.get(DataKey::Hidden).is_none());
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).data.get(DataKey::Hidden) == Some(&Val::None) || g.perm(l).data.get(DataKey::Hidden).is_none());
+    assert!(g.perm(l).tapped);
     let _ = c;
 }
 

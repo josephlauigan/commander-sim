@@ -10,7 +10,7 @@ use sim_core::engine::combat::combat;
 // the tax prompt is a yes/no choice: pick(0) pays, pick(1) declines
 
 fn untapped_lands(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 fn logged(g: &mut Game, p: PlayerId) -> Vec<String> {

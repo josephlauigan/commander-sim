@@ -10,7 +10,7 @@
 use crate::cards::CardDb;
 use crate::export::{RawDeck, load_decks};
 use crate::hooks::Registry;
-use crate::ids::{CardId, LandId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::rng::Rng;
 use crate::settings::{AiMode, Profile, Settings};
 use crate::state::{Game, Player, Step};
@@ -203,7 +203,7 @@ pub fn hand(g: &mut Game, p: PlayerId, names: &[&str]) -> Vec<CardId> {
 }
 
 /// n copies of a land on p's battlefield (no landfall, as in the Python)
-pub fn lands(g: &mut Game, p: PlayerId, name: &str, n: usize, tapped: bool) -> Vec<LandId> {
+pub fn lands(g: &mut Game, p: PlayerId, name: &str, n: usize, tapped: bool) -> Vec<PermId> {
     (0..n)
         .map(|_| {
             let c = take(g, p, name);

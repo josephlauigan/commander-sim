@@ -155,7 +155,7 @@ fn castle_locthwain_draws_once_and_costs_the_cards_in_hand() {
     assert!(go(&mut g, P0, &o[0]));
     assert_eq!(g.player(P0).hand.len(), 2);
     assert_eq!(g.player(P0).life, life - 2, "two cards in hand after the draw");
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
     assert!(land_opts(&mut g, P0, None, "Castle Locthwain").is_empty(), "tapped: once");
 }
 

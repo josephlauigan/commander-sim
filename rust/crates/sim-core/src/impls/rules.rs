@@ -880,12 +880,12 @@ fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
         }
         let lands = g.player(q).lands.clone();
         if lands.len() > 1 {
-            let amt = |l: crate::ids::LandId| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1);
+            let amt = |l: crate::ids::PermId| g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1);
             let best = first_max(&lands, amt).unwrap();
             for l in lands {
                 if l != best {
                     crate::engine::turn::remove_land(g, q, l);
-                    let cd = g.land(l).cd;
+                    let cd = g.perm(l).card();
                     g.player_mut(q).gy.push(cd);
                 }
             }

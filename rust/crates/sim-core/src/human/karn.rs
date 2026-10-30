@@ -15,7 +15,7 @@ use crate::engine::values::{epow, untargetable};
 use crate::engine::zones::{self, Tokens, die};
 use crate::flow::Res;
 use crate::hooks::Action;
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 
 const PERMS: [&str; 17] = [
@@ -55,8 +55,8 @@ pub fn owns_perm(g: &Game, m: PermId) -> bool {
 }
 
 /// A land whose abilities are all listed here.
-pub fn owns_land(g: &Game, l: LandId) -> bool {
-    LANDS.contains(&&*g.db.get(g.land(l).cd).name)
+pub fn owns_land(g: &Game, l: PermId) -> bool {
+    LANDS.contains(&&*g.db.get(g.perm(l).card()).name)
 }
 
 // ------------------------------------------------------------------ helpers
@@ -79,12 +79,12 @@ fn tap_ok(g: &Game, m: PermId, creature: bool) -> Why {
     None
 }
 
-fn land_tap_ok(g: &Game, l: LandId) -> Why {
-    if g.land(l).tapped { Some(format!("{} is tapped.", lname(g, l))) } else { None }
+fn land_tap_ok(g: &Game, l: PermId) -> Why {
+    if g.perm(l).tapped { Some(format!("{} is tapped.", lname(g, l))) } else { None }
 }
 
-fn lname(g: &Game, l: LandId) -> String {
-    g.db.get(g.land(l).cd).name.to_string()
+fn lname(g: &Game, l: PermId) -> String {
+    g.db.get(g.perm(l).card()).name.to_string()
 }
 
 /// the engine's own code for the ability, run for the person; Some(why) if it refused
@@ -609,7 +609,7 @@ fn pump(g: &mut Game, p: PlayerId, src: Option<PermId>, card: Option<CardId>, t:
 
 // ------------------------------------------------------------------ lands
 /// the abilities of p's land l that this module lists
-pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
+pub fn land_abilities(g: &Game, _p: PlayerId, l: PermId) -> Vec<LandAbility> {
     match &*lname(g, l) {
         "Bonders' Enclave" => {
             vec![ability("{3}, {T}: draw a card (you control a creature with power 4 or greater)", enclave)]
@@ -648,7 +648,7 @@ pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
     }
 }
 
-fn enclave(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn enclave(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
@@ -660,16 +660,16 @@ fn enclave(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
         return Ok(Some(why));
     }
     mana::pay_from_pool(g, p, 3, "");
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Bonders' Enclave", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "draw a card", None, None)? {
+    if ability_window_card(g, p, g.perm(l).card(), "draw a card", None, None)? {
         zones::draw(g, p, 1, false)?;
     }
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
 
-fn ruin(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn ruin(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
@@ -689,7 +689,7 @@ fn ruin(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     };
     let c = arts[k];
     mana::pay_from_pool(g, p, 2, "");
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Buried Ruin", g.player(p).name);
     if ability_window_card(g, p, cd, &format!("return {} to hand", g.db.get(c).name), None, None)? {
@@ -702,7 +702,7 @@ fn ruin(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     Ok(None)
 }
 
-fn fair(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn fair(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
@@ -715,7 +715,7 @@ fn fair(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     run(g, p, Action::Plan { f: crate::impls::karn_engines::fair_go, arg: l.0 as i64 }, "Inventors' Fair")
 }
 
-fn war_room(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn war_room(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
@@ -729,7 +729,7 @@ fn war_room(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     run(g, p, Action::Plan { f: crate::impls::lands::war_room_go, arg: l.0 as i64 }, "War Room")
 }
 
-fn vault(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn vault(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
@@ -740,7 +740,7 @@ fn vault(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
         return Ok(Some(why));
     }
     mana::pay_from_pool(g, p, 2 * x, "");
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Treasure Vault for {} Treasure(s)", g.player(p).name, x);
     if ability_window_card(g, p, cd, &format!("create {x} Treasure tokens"), None, None)? {
@@ -749,14 +749,14 @@ fn vault(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     Ok(None)
 }
 
-fn urza_factory(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn urza_factory(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l).or_else(|| need(g, p, 7, "", "Urza's Factory")) {
         return Ok(Some(why));
     }
     mana::pay_from_pool(g, p, 7, "");
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Urza's Factory", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).cd, "create a 2/2 Assembly-Worker", None, None)? {
+    if ability_window_card(g, p, g.perm(l).card(), "create a 2/2 Assembly-Worker", None, None)? {
         let mut spec = Tokens::new(1, 2);
         spec.tgh = Some(2);
         spec.color = Some(Colors::NONE);
@@ -768,7 +768,7 @@ fn urza_factory(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
 
 /// {1} / {2}: the land becomes a 2/2 Assembly-Worker artifact creature until end of turn (the engine's token standing
 /// in for the land). A land that came under your control this turn is summoning sick.
-fn animate(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn animate(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cost = crate::impls::karn::cost_of_land(g, l);
     let nm = lname(g, l);
     if let Some(why) = land_tap_ok(g, l).or_else(|| need(g, p, cost, "", &nm)) {
@@ -776,7 +776,7 @@ fn animate(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
     }
     let new_land = g.player(p).land_turn == g.player(p).turns as i32 && g.player(p).lands.last() == Some(&l);
     mana::pay_from_pool(g, p, cost, "");
-    if !ability_window_card(g, p, g.land(l).cd, "becomes a creature", None, None)? {
+    if !ability_window_card(g, p, g.perm(l).card(), "becomes a creature", None, None)? {
         return Ok(None);
     }
     let m = crate::impls::karn::animate(g, p, l);
@@ -787,7 +787,7 @@ fn animate(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
 }
 
 /// the land's own {T} ability (while it is not a creature): pump an Assembly-Worker; `pay` is the generic cost
-fn land_pump(g: &mut Game, p: PlayerId, l: LandId, pay: u32, by: (i32, i32)) -> Res<Why> {
+fn land_pump(g: &mut Game, p: PlayerId, l: PermId, pay: u32, by: (i32, i32)) -> Res<Why> {
     let nm = lname(g, l);
     if let Some(why) = land_tap_ok(g, l).or_else(|| need(g, p, pay, "", &nm)) {
         return Ok(Some(why));
@@ -808,7 +808,7 @@ fn land_pump(g: &mut Game, p: PlayerId, l: LandId, pay: u32, by: (i32, i32)) -> 
     if pay > 0 {
         mana::pay_from_pool(g, p, pay, "");
     }
-    g.land_mut(l).tapped = true;
-    let cd = g.land(l).cd;
+    g.perm_mut(l).tapped = true;
+    let cd = g.perm(l).card();
     pump(g, p, None, Some(cd), t, by)
 }

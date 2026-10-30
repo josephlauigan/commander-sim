@@ -123,9 +123,6 @@ pub fn card_record(cd: &Cd, cache: &Cache, hooks: Option<&Hooks>) -> J {
         "derived" => obj! {"cmc" => cd.cmc, "land" => land, "creature" => cd.creature(), "instant" => cd.instant(),
             "sorcery" => cd.sorcery(), "perm" => cd.perm()},
         "phyrexian" => cardinfo::phyrexian(cache, cd),
-        "land_etb_fx" => J::Arr(if land {
-            cardinfo::land_etb_fx(cache, cd).into_iter().map(|(k, n)| J::Arr(vec![J::from(k), J::from(n)])).collect()
-        } else { vec![] }),
         "enters_rule" => if land { cardinfo::enters_rule(cache, cd).unwrap_or(J::Null) } else { J::Null },
         "land_types" => J::Arr(lt.iter().map(|s| J::from(s.as_str())).collect()),
         "basic" => basic,

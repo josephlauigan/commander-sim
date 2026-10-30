@@ -37,7 +37,7 @@ use crate::engine::zones::{searchable, to_zone_card};
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
 use crate::human::human_of;
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -541,7 +541,7 @@ fn share(g: &Game, q: PlayerId, a: PlayerId) -> Vec<PermId> {
 #[derive(Clone, Copy)]
 enum Tapped {
     Perm(PermId),
-    Land(LandId),
+    Land(PermId),
 }
 
 /// alela._opp_tap
@@ -549,7 +549,7 @@ fn opp_tap(g: &mut Game, q: PlayerId, tapper: PermId, what: Tapped, name: &str) 
     g.perm_mut(tapper).tapped = true;
     match what {
         Tapped::Perm(m) => g.perm_mut(m).tapped = true,
-        Tapped::Land(l) => g.land_mut(l).tapped = true,
+        Tapped::Land(l) => g.perm_mut(l).tapped = true,
     }
     crate::glog!(g, "    Opposition: {} taps {} to tap {}", pname(g, q), name_of(g, tapper), name);
 }
@@ -580,10 +580,10 @@ fn opposition_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         srcs.push((n as f64 + 0.5, Tapped::Perm(m), x.name.to_string()));
     }
     for &l in &g.player(p).lands {
-        if g.land(l).tapped {
+        if g.perm(l).tapped {
             continue;
         }
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.perm(l).card());
         let amt = d.tags.int(Tag::Amt).filter(|&v| v != 0).unwrap_or(1);
         srcs.push((amt as f64 + 0.1 * land_colors_now(g, p, l).count() as f64, Tapped::Land(l), d.name.to_string()));
     }
@@ -705,7 +705,7 @@ fn prison_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 /// Aether Hub: {E} on entry
-fn hub_etb(g: &mut Game, p: PlayerId, _l: LandId) -> Res {
+fn hub_etb(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
     g.player_mut(p).energy += 1;
     Ok(())
 }
@@ -716,11 +716,11 @@ fn hub_spare(g: &Game, p: PlayerId) -> i32 {
 }
 
 /// {T}: {C}, or pay {E} for any colour (energy that Static Prison needs is kept)
-fn hub_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+fn hub_cols(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if hub_spare(g, p) > 0 { g.player(p).ident } else { Colors::NONE }
 }
 
-fn hub_tap(g: &mut Game, p: PlayerId, _l: LandId, _used: u32) -> Res {
+fn hub_tap(g: &mut Game, p: PlayerId, _l: PermId, _used: u32) -> Res {
     if "WUBRG".chars().any(|x| g.tap_cols.has(x)) {
         let e = g.player(p).energy;
         g.player_mut(p).energy = (e - 1).max(0);

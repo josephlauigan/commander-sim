@@ -223,9 +223,9 @@ fn aggravated_assault_adds_a_combat_and_loops_with_the_sword() {
     lands(&mut g, P0, "Mountain", 2, false);
     lands(&mut g, P0, "Plains", 3, false);
     assert!(t3_lines::assault_again(&mut g, P0, 2, &[]).unwrap(), "seven power, five mana: one more combat");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "{{3}}{{R}}{{R}} paid");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "{{3}}{{R}}{{R}} paid");
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert!(!t3_lines::assault_again(&mut g, P0, 3, &[]).unwrap(), "no Sword hit: once a turn");
     let sword = perm(&mut g, P0, "Sword of Feast and Famine");

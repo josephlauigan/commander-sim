@@ -41,18 +41,18 @@ fn untap_gain(g: &Game, p: PlayerId, m: PermId) -> f64 {
 }
 
 /// the tapped land of p that untapping pays the most: (land, mana it makes)
-fn untap_land(g: &Game, p: PlayerId) -> Option<(crate::ids::LandId, f64)> {
+fn untap_land(g: &Game, p: PlayerId) -> Option<(crate::ids::PermId, f64)> {
     g.player(p)
         .lands
         .iter()
         .copied()
-        .filter(|&l| g.land(l).tapped)
+        .filter(|&l| g.perm(l).tapped)
         .map(|l| {
             let amt = crate::cardcode::dyn_mana_land(g, p, l)
-                .map_or_else(|| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1), |n| n as i32);
+                .map_or_else(|| g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1), |n| n as i32);
             (l, amt as f64)
         })
-        .fold(None, |b: Option<(crate::ids::LandId, f64)>, x| match b {
+        .fold(None, |b: Option<(crate::ids::PermId, f64)>, x| match b {
             Some(y) if y.1 >= x.1 => Some(y),
             _ => Some(x),
         })
@@ -90,7 +90,7 @@ fn derevi_pick(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
         if !trigger_window(g, p, Some(src), "untap target permanent", None)? {
             return Ok(false);
         }
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
         crate::glog!(g, "    Derevi untaps a land");
         return Ok(true);
     }

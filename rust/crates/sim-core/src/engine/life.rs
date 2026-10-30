@@ -153,7 +153,7 @@ pub fn check_state(g: &mut Game) -> Res {
     }
     for i in 0..g.players.len() {
         let q = PlayerId(i as u8);
-        if g.player(q).alive && g.player(q).lands.iter().any(|&l| !g.land(l).data.truthy(crate::state::DataKey::In)) {
+        if g.player(q).alive && g.player(q).lands.iter().any(|&l| !g.perm(l).data.truthy(crate::state::DataKey::In)) {
             crate::engine::zones::lands_entered(g, q)?; // a land put onto the battlefield without landfall's path
         }
     }
@@ -288,7 +288,8 @@ fn sba_moon_saga(g: &mut Game) -> Res {
         let p = PlayerId(i as u8);
         for (l, _) in g.players[i].sagas.clone() {
             if g.players[i].lands.contains(&l) && crate::engine::mana::moon_land(g, l) {
-                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", g.db.get(g.land(l).cd).name);
+                let n = &g.db.get(g.perm(l).card()).name;
+                crate::glog!(g, "    {} has no chapter abilities under Blood Moon and is sacrificed", n);
                 crate::impls::lands::sac_land(g, p, l)?;
                 g.players[i].sagas.retain(|x| x.0 != l);
             }

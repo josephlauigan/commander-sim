@@ -554,7 +554,7 @@ fn moon_on(g: &Game, src: Src) -> bool {
 }
 
 fn nonbasic_lands(g: &Game, p: PlayerId) -> i32 {
-    g.player(p).lands.iter().filter(|&&l| !is_basic(g, g.land(l).cd)).count() as i32
+    g.player(p).lands.iter().filter(|&&l| !is_basic(g, g.perm(l).card())).count() as i32
 }
 
 fn moon_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
@@ -608,7 +608,7 @@ fn extra_turn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let need = gn + pips.len() as u32 + 2; // Godo and an equip
     let fortune = crate::engine::mana::cost_of(g, p, c);
     let now = crate::engine::mana::total_mana(g, p, false).saturating_sub(fortune.0 + fortune.1.len() as u32);
-    let tapped = pl.lands.iter().filter(|&&l| g.land(l).tapped).count() as u32
+    let tapped = pl.lands.iter().filter(|&&l| g.perm(l).tapped).count() as u32
         + pl.perms.iter().filter(|&&m| live(g, m) && g.perm(m).tapped && is_artifact(g, m)).count() as u32;
     let all = crate::engine::mana::total_mana(g, p, false) + tapped;
     let equip = on_bf_named(g, p, "Helm of the Host")

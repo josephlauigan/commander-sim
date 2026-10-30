@@ -32,7 +32,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::human::{cards, choices, human_of};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
 use crate::sym::{Sym, intern};
@@ -580,8 +580,8 @@ pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
 
 // ======================================================== Barad-dûr
 /// enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died
-fn baraddur(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || post.is_none() || g.died_turn != Some(g.turn_stamp()) {
+fn baraddur(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped || post.is_none() || g.died_turn != Some(g.turn_stamp()) {
         return Ok(vec![]);
     }
     let mut x = 0u32;
@@ -599,13 +599,13 @@ fn baraddur(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec
 }
 
 fn baraddur_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (l, x) = (LandId(arg as u32), (arg >> 32) as u32);
-    if g.land(l).tapped || !pay_without(g, p, l, 2 * x, "B")? {
+    let (l, x) = (PermId(arg as u32), (arg >> 32) as u32);
+    if g.perm(l).tapped || !pay_without(g, p, l, 2 * x, "B")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {x}", g.player(p).name);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     if card_ability_window(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
         amass(g, p, x as i32)?;
     }
@@ -812,7 +812,7 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
                 .iter()
                 .map(|&m| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m)))
                 .collect();
-            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.land(l).cd).name)));
+            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.perm(l).card()).name)));
             if labels.is_empty() {
                 continue;
             }
@@ -828,7 +828,7 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
             } else {
                 let l = lands[k - perms.len()];
                 crate::engine::turn::remove_land(g, q, l);
-                let cd = g.land(l).cd;
+                let cd = g.perm(l).card();
                 g.player_mut(q).gy.push(cd);
             }
             continue;
@@ -865,7 +865,7 @@ fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
 fn sac_last_land(g: &mut Game, q: PlayerId) {
     let l = *g.player(q).lands.last().unwrap();
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     g.player_mut(q).gy.push(cd);
 }
 
@@ -2274,39 +2274,40 @@ const STRIP_FIRST: [&str; 6] = [
 ];
 
 /// {T}, sacrifice: destroy target land (an opponent's key land: Cradle, Coffers, Urborg, Tomb ...)
-fn strip(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped {
+fn strip(g: &mut Game, l: PermId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped {
         return Ok(vec![]);
     }
-    let mut tg: Vec<(PlayerId, LandId)> = vec![];
+    let mut tg: Vec<(PlayerId, PermId)> = vec![];
     for q in g.opps(p) {
         for &x in &g.player(q).lands {
-            if crate::impls::lands::KEY_LANDS.contains(&&*g.db.get(g.land(x).cd).name) {
+            if crate::impls::lands::KEY_LANDS.contains(&&*g.db.get(g.perm(x).card()).name) {
                 tg.push((q, x));
             }
         }
     }
-    let Some((_, x)) = first_max(&tg, |(q, x)| (STRIP_FIRST.contains(&&*g.db.get(g.land(x).cd).name), threat(g, p, q)))
+    let Some((_, x)) =
+        first_max(&tg, |(q, x)| (STRIP_FIRST.contains(&&*g.db.get(g.perm(x).card()).name), threat(g, p, q)))
     else {
         return Ok(vec![]);
     };
     Ok(vec![Opt {
         utility: 3.0,
-        label: format!("Strip Mine -> {}", g.db.get(g.land(x).cd).name),
+        label: format!("Strip Mine -> {}", g.db.get(g.perm(x).card()).name),
         act: Some(Action::Plan { f: strip_go, arg: ((x.0 as i64) << 32) | l.0 as i64 }),
     }])
 }
 
 fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (l, x) = (LandId(arg as u32), LandId((arg >> 32) as u32));
-    let q = g.land(x).owner;
+    let (l, x) = (PermId(arg as u32), PermId((arg >> 32) as u32));
+    let q = g.perm(x).owner;
     if !g.player(p).lands.contains(&l) || !g.player(q).lands.contains(&x) {
         return Ok(false);
     }
     crate::engine::turn::remove_land(g, p, l);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     g.player_mut(p).gy.push(cd);
-    let xn = g.db.get(g.land(x).cd).name.to_string();
+    let xn = g.db.get(g.perm(x).card()).name.to_string();
     crate::glog!(g, "  {} sacrifices Strip Mine: destroy {xn} ({})", g.player(p).name, g.player(q).name);
     if ability_window_card(g, p, cd, &format!("destroy {xn}"), None, None)? && g.player(q).lands.contains(&x) {
         crate::impls::fixes::destroy_land(g, q, x)?;
@@ -3386,8 +3387,8 @@ pub fn veyran_protect(
 
 // ------------------------------------------------------------------ Veyran's utility lands (end of an opponent's turn)
 /// {1}{U}{R}, {T}: draw a card, then discard a card (with mana left over at the end of an opponent's turn)
-fn lighthouse(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || g.active == Some(p) || !can_pay_without(g, p, l, 1, "UR") {
+fn lighthouse(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || g.active == Some(p) || !can_pay_without(g, p, l, 1, "UR") {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -3398,13 +3399,13 @@ fn lighthouse(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<V
 }
 
 fn lighthouse_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 1, "UR")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 1, "UR")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} loots with Desolate Lighthouse", g.player(p).name);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     if ability_window_card(g, p, cd, "draw, then discard", None, None)? {
         draw(g, p, 1, false)?;
         discard_worst(g, p, 1)?;
@@ -3413,8 +3414,8 @@ fn lighthouse_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 /// {2}{U}{R}, {T}: surveil 1 (with mana left over at the end of an opponent's turn)
-fn summit(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || g.active == Some(p) || !can_pay_without(g, p, l, 2, "UR") {
+fn summit(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || g.active == Some(p) || !can_pay_without(g, p, l, 2, "UR") {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -3425,12 +3426,12 @@ fn summit(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<O
 }
 
 fn summit_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 2, "UR")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 2, "UR")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    let cd = g.land(l).cd;
+    g.perm_mut(l).tapped = true;
+    let cd = g.perm(l).card();
     if ability_window_card(g, p, cd, "surveil 1", None, None)? {
         crate::cardcode::scry(g, p, 1, true)?;
     }
@@ -3590,7 +3591,7 @@ fn ralz_minus7(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ------------------------------------------------------------------ lands: Plaza of Heroes, Unclaimed Territory
 /// mine.plaza_colors: {C}; any colour for legendary spells; colours among your legendary permanents
-fn plaza_colors(g: &Game, p: PlayerId, _l: LandId) -> crate::cards::Colors {
+fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> crate::cards::Colors {
     if g.pay_for.is_some_and(|c| g.db.get(c).tag(Tag::Leg)) {
         return g.player(p).ident; // a legendary spell: any colour
     }
@@ -3632,9 +3633,9 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
 }
 
 /// mine.territory_colors: {C}, or any colour for a creature spell of the named type (a changeling is every type)
-fn territory_colors(g: &Game, p: PlayerId, l: LandId) -> crate::cards::Colors {
+fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> crate::cards::Colors {
     let Some(pf) = g.pay_for.filter(|&c| g.db.get(c).creature) else { return crate::cards::Colors::NONE };
-    let t = match g.land(l).data.get(DataKey::Ctype) {
+    let t = match g.perm(l).data.get(DataKey::Ctype) {
         Some(Val::Str(s)) => *s,
         _ => territory_type(g, p),
     };

@@ -231,7 +231,7 @@ fn wayfarers_bauble_from_the_pool() {
     human_main(&mut g, P0, false).unwrap();
     assert!(!g.perm(b).on_bf, "the Bauble is sacrificed");
     assert_eq!(g.player(P0).lands.len(), 3, "a basic land is fetched");
-    assert!(g.land(*g.player(P0).lands.last().unwrap()).tapped, "tapped");
+    assert!(g.perm(*g.player(P0).lands.last().unwrap()).tapped, "tapped");
 }
 
 #[test]

@@ -146,9 +146,9 @@ fn plaza_of_heroes_protects_cloud() {
     assert!(saved);
     assert!(sim_core::engine::values::untargetable(&g, cl));
     assert!(sim_core::engine::values::indestructible(&g, cl));
-    assert!(!g.land(pl).on_bf && !g.player(P0).lands.contains(&pl));
-    assert!(g.player(P0).exile.contains(&g.land(pl).cd));
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "paid {{3}} with the other lands");
+    assert!(!g.perm(pl).on_bf && !g.player(P0).lands.contains(&pl));
+    assert!(g.player(P0).exile.contains(&g.perm(pl).card()));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "paid {{3}} with the other lands");
 }
 
 #[test]
@@ -159,7 +159,7 @@ fn plaza_needs_three_other_mana() {
     let cl = perm(&mut g, P0, CLOUD);
     let saved = sim_core::impls::cloud::cloud_protect(&mut g, P0, cl, "exile", Some(P1), None).unwrap();
     assert!(!saved);
-    assert!(g.land(pl).on_bf);
+    assert!(g.perm(pl).on_bf);
 }
 
 #[test]

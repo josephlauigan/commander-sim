@@ -27,7 +27,7 @@ use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window};
 use crate::engine::values::colors_of;
 use crate::flow::Res;
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Game, Step as TurnStep};
 use crate::sym::intern;
 use crate::tag::Tag;
@@ -92,11 +92,11 @@ fn lib_card(g: &Game, p: PlayerId, name: &str) -> Option<CardId> {
 
 /// p's land of this name; Gaea's Cradle also matches Itlimoc, Cradle of the Sun (a transformed Growing Rites taps the same
 /// way, and the lines' untaps work on it)
-fn land_on_bf(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
+fn land_on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
     let rites = super::t6_green2::RITES;
     g.player(p).lands.iter().copied().find(|&l| {
-        let n = cname(g, g.land(l).cd);
-        g.land(l).on_bf && (n == name || (name == CRADLE && n == rites))
+        let n = cname(g, g.perm(l).card());
+        g.perm(l).on_bf && (n == name || (name == CRADLE && n == rites))
     })
 }
 
@@ -681,7 +681,7 @@ fn doom_in(g: &mut Game, p: PlayerId) -> Res<bool> {
 /// Mount Doom's ping (40 of them, each untapped by the loop): the ability answer window is its answer
 fn doom_ping(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(l) = land_on_bf(g, p, DOOM) else { return Ok(false) };
-    Ok(ability_window_card(g, p, g.land(l).cd, "1 damage to each opponent (again and again)", None, None)?
+    Ok(ability_window_card(g, p, g.perm(l).card(), "1 damage to each opponent (again and again)", None, None)?
         && land_on_bf(g, p, DOOM).is_some())
 }
 
@@ -1019,7 +1019,7 @@ fn gates_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
             g.add_land(p, c, false)
         }
     };
-    if !ability_window_card(g, p, g.land(l).cd, "target creature phases out (every time)", None, None)? {
+    if !ability_window_card(g, p, g.perm(l).card(), "target creature phases out (every time)", None, None)? {
         return Ok(false);
     }
     let victims: Vec<PermId> =
@@ -1153,8 +1153,8 @@ const ALL_CLONES: &[&str] = &[MOCKINGBIRD, IMAGE, FLESH, IMPERSONATOR];
 /// a land other than Cradle and Gates that taps for {U} (the one Cub earthbends)
 fn blue_land(g: &Game, p: PlayerId) -> bool {
     g.player(p).lands.iter().any(|&l| {
-        g.land(l).on_bf
-            && !matches!(cname(g, g.land(l).cd), CRADLE | GATES | super::t6_green2::RITES)
+        g.perm(l).on_bf
+            && !matches!(cname(g, g.perm(l).card()), CRADLE | GATES | super::t6_green2::RITES)
             && crate::engine::mana::land_colors_now(g, p, l).has('U')
     })
 }

@@ -367,10 +367,10 @@ fn cartographers_survey_puts_two_lands_in() {
     let c = card(&g, "Cartographer's Survey");
     let f = g.registry.get(c).unwrap().resolve.unwrap();
     f(&mut g, P0, c, &Ctx::default()).unwrap();
-    let ls: Vec<&str> = g.player(P0).lands.iter().map(|&l| &*g.db.get(g.land(l).cd).name).collect();
+    let ls: Vec<&str> = g.player(P0).lands.iter().map(|&l| &*g.db.get(g.perm(l).card()).name).collect();
     assert_eq!(ls.len(), 2);
     assert!(ls.contains(&"Command Tower")); // the land making the most colours first
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
     assert_eq!(g.player(P0).library.len(), 3);
 }
 
@@ -415,12 +415,12 @@ fn vivid_creek_makes_any_colour_twice() {
     for _ in 0..2 {
         assert!(mana::can_pay(&g, P0, 0, "R", false));
         mana::pay(&mut g, P0, 0, "R", false).unwrap();
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert!(!mana::can_pay(&g, P0, 0, "R", false)); // the counters are gone: {U} only
     assert!(mana::can_pay(&g, P0, 0, "U", false));
     mana::pay(&mut g, P0, 0, "U", false).unwrap();
-    assert_eq!(g.land(l).data.int(DataKey::Charge), 0);
+    assert_eq!(g.perm(l).data.int(DataKey::Charge), 0);
 }
 
 // ======================================================== Mithril Coat

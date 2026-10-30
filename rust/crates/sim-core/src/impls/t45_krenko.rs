@@ -237,8 +237,8 @@ fn king_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 /// a Mountain of q's: a land with the type, or a nonbasic one under Blood Moon
 fn has_mountain(g: &Game, q: PlayerId) -> bool {
     g.player(q).lands.iter().any(|&l| {
-        let lt = &g.land(l);
-        lt.on_bf && (moon_land(g, l) || g.db.get(lt.cd).land_types.intersects(Colors::from_letters("R")))
+        let lt = &g.perm(l);
+        lt.on_bf && (moon_land(g, l) || g.db.get(lt.card()).land_types.intersects(Colors::from_letters("R")))
     })
 }
 

@@ -52,7 +52,7 @@ use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, draw, enter, enter_token_copy, exile_perm, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, WalkerAb, aura, walker};
 use crate::impls::lands::{can_pay_without, pay_without, sac_land};
 use crate::state::{CopyExc, CopyOf, Ctx, DataKey, Game, Step, Val};
@@ -584,17 +584,17 @@ fn best_gy(g: &Game, p: PlayerId, t: Types) -> Option<CardId> {
     max_by(&cs, |c| card_worth(g, p, c, false))
 }
 
-fn pack(l: LandId, c: CardId) -> i64 {
+fn pack(l: PermId, c: CardId) -> i64 {
     ((c.0 as i64) << 32) | l.0 as i64
 }
 
-fn unpack(arg: i64) -> (LandId, CardId) {
-    (LandId((arg & 0xffff_ffff) as u32), CardId((arg >> 32) as u16))
+fn unpack(arg: i64) -> (PermId, CardId) {
+    (PermId((arg & 0xffff_ffff) as u32), CardId((arg >> 32) as u16))
 }
 
 /// {2},{T}, sacrifice: the best artifact card from your graveyard to your hand (at the end-of-turn window)
-fn buried_ruin(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || !can_pay_without(g, p, l, 2, "") {
+fn buried_ruin(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || !can_pay_without(g, p, l, 2, "") {
         return Ok(vec![]);
     }
     let Some(c) = best_gy(g, p, Types::ARTIFACT) else { return Ok(vec![]) };
@@ -610,13 +610,13 @@ fn buried_ruin(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<
 
 fn buried_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (l, c) = unpack(arg);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !g.player(p).gy.contains(&c) {
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !g.player(p).gy.contains(&c) {
         return Ok(false);
     }
     if !pay_without(g, p, l, 2, "")? {
         return Ok(false);
     }
-    let ruin = g.land(l).cd;
+    let ruin = g.perm(l).card();
     sac_land(g, p, l)?;
     let what = format!("{} to hand", cname(g, c));
     if crate::engine::stack::ability_window_card(g, p, ruin, &what, None, None)? {
@@ -631,8 +631,8 @@ fn buried_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 /// {1}{W},{T}: the best enchantment card from your graveyard on top of your library (at the end-of-turn window)
-fn hall(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || !can_pay_without(g, p, l, 1, "W") {
+fn hall(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || !can_pay_without(g, p, l, 1, "W") {
         return Ok(vec![]);
     }
     let Some(c) = best_gy(g, p, Types::ENCHANTMENT) else { return Ok(vec![]) };
@@ -648,15 +648,15 @@ fn hall(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt
 
 fn hall_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (l, c) = unpack(arg);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !g.player(p).gy.contains(&c) {
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !g.player(p).gy.contains(&c) {
         return Ok(false);
     }
     if !pay_without(g, p, l, 1, "W")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     let what = format!("{} on top", cname(g, c));
-    if crate::engine::stack::ability_window_card(g, p, g.land(l).cd, &what, None, None)? {
+    if crate::engine::stack::ability_window_card(g, p, g.perm(l).card(), &what, None, None)? {
         let gy = &mut g.player_mut(p).gy;
         if let Some(i) = gy.iter().position(|&x| x == c) {
             gy.remove(i);

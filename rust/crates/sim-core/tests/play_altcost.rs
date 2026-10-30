@@ -73,7 +73,7 @@ fn you_use_phyrexian_tower() {
         "you chose the creature"
     );
     assert!(!g.perm(t).on_bf, "sacrificed");
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
     assert_eq!(pool_total(&g, P0), 2, "{{B}}{{B}} added");
 }
 
@@ -187,7 +187,7 @@ fn you_use_geier_reach_sanitarium_with_the_mana_you_tapped() {
     let l = lands(&mut g, P0, "Geier Reach Sanitarium", 1, false)[0];
     pool(&mut g, P0, &[('B', 2)]);
     main(&mut g, P0, vec![act(json!({"do": "use", "land": 0})), pick(0), pick(0)]); // the ability, then the discard
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
     assert_eq!(pool_total(&g, P0), 0, "{{2}} paid from your pool");
 }
 

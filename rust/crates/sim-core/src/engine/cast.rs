@@ -70,7 +70,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             })
             .collect();
     enum Choice {
-        Land(crate::ids::LandId),
+        Land(crate::ids::PermId),
         Sac(Fodder),
         Discard,
         Tap(PermId),
@@ -81,9 +81,9 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         if t.contains("sacrifice a land") {
             let lands = g.player(p).lands.clone();
             // a tapped basic first
-            let key = |l: crate::ids::LandId| {
-                let basic = BASIC_LANDS.contains(&&*g.db.get(g.land(l).cd).name);
-                (!g.land(l).tapped as i32 as f64) * 2.0 + (!basic as i32 as f64)
+            let key = |l: crate::ids::PermId| {
+                let basic = BASIC_LANDS.contains(&&*g.db.get(g.perm(l).card()).name);
+                (!g.perm(l).tapped as i32 as f64) * 2.0 + (!basic as i32 as f64)
             };
             if let Some(l) = min_by(&lands, key) {
                 choice = Some(Choice::Land(l));
@@ -125,9 +125,9 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         }
         match choice {
             Choice::Land(l) => {
-                let cd = g.land(l).cd;
+                let cd = g.perm(l).card();
                 g.player_mut(p).lands.retain(|&x| x != l);
-                g.land_mut(l).on_bf = false;
+                g.perm_mut(l).on_bf = false;
                 g.player_mut(p).gy.push(cd);
                 if !g.hooks.is_empty() {
                     fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) })?;
@@ -319,7 +319,7 @@ pub fn pact_affordable(g: &Game, p: PlayerId, cost: &str) -> bool {
     }
     let mut g2 = g.clone();
     for l in g2.player(p).lands.clone() {
-        g2.land_mut(l).tapped = false;
+        g2.perm_mut(l).tapped = false;
     }
     for m in g2.player(p).perms.clone() {
         g2.perm_mut(m).tapped = false;

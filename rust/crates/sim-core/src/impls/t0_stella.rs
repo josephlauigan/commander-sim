@@ -862,9 +862,9 @@ fn revelation_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<S
         g.player_mut(p).library.extend(gy);
         shuffle_library(g, p);
         draw(g, p, x as u32, false)?;
-        let tapped: Vec<_> = g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).take(5).collect();
+        let tapped: Vec<_> = g.player(p).lands.iter().copied().filter(|&l| g.perm(l).tapped).take(5).collect();
         for l in tapped {
-            g.land_mut(l).tapped = false;
+            g.perm_mut(l).tapped = false;
         }
         g.player_mut(p).t0s.nomax = true;
     } else {

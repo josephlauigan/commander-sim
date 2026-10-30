@@ -124,7 +124,7 @@ fn mazemind_tome_draws_for_two_and_is_exiled_at_four_pages_for_four_life() {
             assert_eq!(g.perm(t).data.int(DataKey::Counters), i);
         }
         for l in g.player(P0).lands.clone() {
-            g.land_mut(l).tapped = false;
+            g.perm_mut(l).tapped = false;
         }
     }
     assert_eq!(g.player(P0).hand.len(), hand0 + 4);
@@ -194,7 +194,7 @@ fn mirrorworks_copies_a_nontoken_artifact_for_two() {
     assert_eq!(on(&g, P0, "Sol Ring"), 2, "the card and its token copy");
     let toks = g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).on_bf).count();
     assert_eq!(toks, 1, "the copy does not copy itself");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "{{2}} was paid");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "{{2}} was paid");
 }
 
 #[test]
@@ -279,7 +279,7 @@ fn blueprints_echo_is_paid_with_spare_mana() {
     lands(&mut g, P0, "Wastes", 9, false);
     upkeep(&mut g);
     assert!(g.perm(b).on_bf, "echo paid");
-    assert!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count() >= 6);
+    assert!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count() >= 6);
     upkeep(&mut g);
     assert!(g.perm(b).on_bf, "echo is paid only once");
 }

@@ -22,7 +22,7 @@ fn name(g: &Game, c: CardId) -> String {
 }
 
 fn lands_named(g: &Game, p: PlayerId, n: &str) -> usize {
-    g.player(p).lands.iter().filter(|&&l| &*g.db.get(g.land(l).cd).name == n).count()
+    g.player(p).lands.iter().filter(|&&l| &*g.db.get(g.perm(l).card()).name == n).count()
 }
 
 /// every option the AI has for p's permanents, lands and hooks, main phase two
@@ -130,8 +130,8 @@ fn wayfarers_bauble_fetches_a_wastes_tapped() {
     assert!(!g.perm(b).on_bf);
     assert_eq!(g.player(P0).lands.len(), 3);
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(l).tapped);
-    assert_eq!(name(&g, g.land(l).cd), "Wastes");
+    assert!(g.perm(l).tapped);
+    assert_eq!(name(&g, g.perm(l).card()), "Wastes");
 }
 
 #[test]
@@ -142,7 +142,7 @@ fn burnished_hart_fetches_two_wastes_tapped() {
     assert!(run(&mut g, "Burnished Hart"));
     assert!(!g.perm(h).on_bf);
     assert_eq!(g.player(P0).lands.len(), 5);
-    assert!(g.player(P0).lands[3..].iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands[3..].iter().all(|&l| g.perm(l).tapped));
 }
 
 #[test]
@@ -196,7 +196,7 @@ fn urzas_cave_fetches_the_tron_piece_onto_the_battlefield_tapped() {
     assert!(!g.player(P0).lands.contains(&cave), "sacrificed");
     assert_eq!(lands_named(&g, P0, "Urza's Tower"), 1);
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }
 
 #[test]
@@ -380,7 +380,7 @@ fn batterskull_makes_a_germ_that_it_pumps_and_returns_for_three() {
     assert!(!has_opt(&mut g, "Batterskull: return"), "carried by the Germ");
     sim_core::engine::zones::die(&mut g, germ, "destroy").unwrap();
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     let o = all_opts(&mut g);
     assert!(

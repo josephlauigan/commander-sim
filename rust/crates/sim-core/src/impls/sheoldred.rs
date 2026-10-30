@@ -20,7 +20,7 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Perm, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -2059,27 +2059,27 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 
 /// Geier Reach Sanitarium: {2}, {T}: each player draws a card, then discards a card (all the draws, then all the
 /// discards, the active player first)
-fn geier_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn geier_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     draw_land_options(g, l, p, post, 0.2, "Geier Reach Sanitarium: each player draws, then discards", geier_go)
 }
 
 /// Mikokoro, Center of the Sea: {2}, {T}: each player draws a card (the active player first). Ranked just above the
 /// Sanitarium: the opponents keep the card.
-fn mikokoro_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn mikokoro_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     draw_land_options(g, l, p, post, 0.1, "Mikokoro, Center of the Sea: each player draws", mikokoro_go)
 }
 
 /// a {2}, {T} land whose activation makes each player draw: offered in the Bell's windows, with spare mana
 fn draw_land_options(
     g: &mut Game,
-    l: LandId,
+    l: PermId,
     p: PlayerId,
     post: Option<bool>,
     below_bell: f64,
     label: &str,
     go: fn(&mut Game, PlayerId, i64) -> Res<bool>,
 ) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || !g.player(p).lands.contains(&l) {
+    if g.perm(l).tapped || !g.player(p).lands.contains(&l) {
         return Ok(vec![]);
     }
     let Some(u) = punish_window_utility(g, p, post) else { return Ok(vec![]) };
@@ -2090,23 +2090,23 @@ fn draw_land_options(
 }
 
 pub(crate) fn geier_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    draw_land_go(g, p, LandId(arg as u32), true)
+    draw_land_go(g, p, PermId(arg as u32), true)
 }
 
 pub(crate) fn mikokoro_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    draw_land_go(g, p, LandId(arg as u32), false)
+    draw_land_go(g, p, PermId(arg as u32), false)
 }
 
 /// pay {2}, tap the land, then each player draws a card (and with `loot`, all the draws, then each discards one)
-fn draw_land_go(g: &mut Game, p: PlayerId, l: LandId, loot: bool) -> Res<bool> {
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 2, "")? {
+fn draw_land_go(g: &mut Game, p: PlayerId, l: PermId, loot: bool) -> Res<bool> {
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 2, "")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     let (name, what) =
         if loot { (GEIER, "each player draws, then discards") } else { (MIKOKORO, "each player draws a card") };
     crate::glog!(g, "  {} uses {}", pname(g, p), name);
-    if crate::engine::stack::ability_window_card(g, p, g.land(l).cd, what, Some(3.0), None)? {
+    if crate::engine::stack::ability_window_card(g, p, g.perm(l).card(), what, Some(3.0), None)? {
         let order = apnap(g, p);
         for &q in &order {
             draw(g, q, 1, false)?;
@@ -2478,8 +2478,8 @@ fn tower_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
 
 /// {T}, Sacrifice a creature: Add {B}{B}. Offered when a death payoff makes the sacrifice worth it (the same test as
 /// common's outlets), or on p's own turn when the extra mana puts a spell in hand within reach
-fn tower_options(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || !g.player(p).lands.contains(&l) || human(g, p) {
+fn tower_options(g: &mut Game, l: PermId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped || !g.player(p).lands.contains(&l) || human(g, p) {
         return Ok(vec![]);
     }
     let Some(m) = tower_fodder(g, p) else { return Ok(vec![]) };
@@ -2498,12 +2498,12 @@ fn tower_options(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> R
 }
 
 fn tower_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if g.land(l).tapped || !g.player(p).lands.contains(&l) {
+    let l = PermId(arg as u32);
+    if g.perm(l).tapped || !g.player(p).lands.contains(&l) {
         return Ok(false);
     }
     let Some(m) = tower_fodder(g, p) else { return Ok(false) };
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} sacrifices {} to Phyrexian Tower", pname(g, p), g.perm(m).name);
     crate::engine::zones::die(g, m, "sac")?;
     g.player_mut(p).floating.b += 2;

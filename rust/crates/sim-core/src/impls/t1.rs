@@ -14,7 +14,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::human::{choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Sacrificed, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, PermData, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -1710,7 +1710,7 @@ pub fn put_land(g: &mut Game, p: PlayerId) -> Res {
     }) {
         remove_first(&mut g.player_mut(p).hand, c);
         let tapped = crate::engine::turn::land_enters_tapped(g, p, c);
-        let l: LandId = g.add_land(p, c, tapped);
+        let l: PermId = g.add_land(p, c, tapped);
         landfall(g, p)?;
         if g.db.get(c).tag(Tag::F) && g.player(p).lands.last() == Some(&l) {
             crate::engine::turn::crack_fetch(g, p, l)?;
@@ -1771,7 +1771,7 @@ fn zr(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 }
 
 /// lands tap for double
-fn zr_mana(g: &Game, src: Src, p: PlayerId, _l: LandId) -> i32 {
+fn zr_mana(g: &Game, src: Src, p: PlayerId, _l: PermId) -> i32 {
     (g.perm(src).owner == p) as i32
 }
 

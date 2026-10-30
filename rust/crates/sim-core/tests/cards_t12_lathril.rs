@@ -128,7 +128,7 @@ fn bounty_puts_a_land_onto_the_battlefield_tapped_and_an_elf_into_hand() {
     cast::resolve(&mut g, P0, b, &Ctx::default(), "hand").unwrap();
     assert_eq!(g.player(P0).lands.len(), lands + 1);
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(l).tapped && &*g.db.get(g.land(l).cd).name == "Forest");
+    assert!(g.perm(l).tapped && &*g.db.get(g.perm(l).card()).name == "Forest");
     assert_eq!(g.player(P0).hand.len(), hand + 1);
     let elf = *g.player(P0).hand.last().unwrap();
     assert!(["Elvish Mystic", "Wood Elves"].contains(&&*g.db.get(elf).name));

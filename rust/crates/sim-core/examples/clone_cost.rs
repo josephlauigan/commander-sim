@@ -3,7 +3,7 @@
 //!     cargo run --release -p sim-core --example clone_cost
 
 use sim_core::ids::PlayerId;
-use sim_core::state::{DataKey, Land, PermData, Val};
+use sim_core::state::{DataKey, Val};
 use sim_core::sym::intern;
 use sim_core::testkit;
 use std::time::Instant;
@@ -24,9 +24,7 @@ fn main() {
         }
         for _ in 0..8 {
             let c = g.player_mut(p).library.pop().unwrap();
-            let id = sim_core::ids::LandId(g.lands.len() as u32);
-            g.lands.push(Land { id, cd: c, owner: p, tapped: false, data: PermData::default(), on_bf: true });
-            g.player_mut(p).lands.push(id);
+            g.add_land(p, c, false);
         }
         for k in 0..15 {
             let c = g.player(p).library[k];
@@ -48,6 +46,7 @@ fn main() {
         let c = g.clone();
         keep += c.perms.len();
     }
+    let lands: usize = g.players.iter().map(|q| q.lands.len()).sum();
     let per = t.elapsed().as_secs_f64() / n as f64;
-    println!("{} permanents, {} lands: {:.2} µs per copy ({keep})", g.perms.len(), g.lands.len(), per * 1e6);
+    println!("{} permanents, {} lands: {:.2} µs per copy ({keep})", g.perms.len() - lands, lands, per * 1e6);
 }

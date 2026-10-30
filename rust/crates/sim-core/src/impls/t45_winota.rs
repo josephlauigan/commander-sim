@@ -57,7 +57,7 @@ use crate::engine::values::{card_name, epow, etgh, has_type, no_sac, pval, untar
 use crate::engine::zones::{Enter, Tokens, die, enter, land_ramp, make_tokens};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::common::{AURA, AuraSpec, aura};
 use crate::impls::partials::eot_kw;
@@ -542,8 +542,8 @@ const PATHWAYS: [(&str, &str, &str); 1] = [(PATHWAY, "R", "W")];
 
 /// As it is played, the face whose colour p needs more: the coloured pips of its hand against its other lands'
 /// sources of that colour
-fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    let name = g.db.get(g.land(l).cd).name.clone();
+fn pathway_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    let name = g.db.get(g.perm(l).card()).name.clone();
     let Some(&(_, front, back)) = PATHWAYS.iter().find(|x| *x.0 == *name) else { return Ok(()) };
     let need = |g: &Game, col: &str| {
         let ch = col.chars().next().unwrap();
@@ -558,16 +558,16 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         pips as f64 - 0.8 * have as f64
     };
     let pick = if need(g, back) > need(g, front) { back } else { front };
-    g.land_mut(l).data.set(DataKey::Mode, Val::Str(intern(pick)));
+    g.perm_mut(l).data.set(DataKey::Mode, Val::Str(intern(pick)));
     crate::glog!(g, "    {} is played as its {{{pick}}} face", name);
     Ok(())
 }
 
 /// the face it was played as; one put onto the battlefield another way is its front face
-fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    let name = &g.db.get(g.land(l).cd).name;
+fn pathway_cols(g: &Game, _p: PlayerId, l: PermId) -> Colors {
+    let name = &g.db.get(g.perm(l).card()).name;
     let front = PATHWAYS.iter().find(|x| *x.0 == **name).map_or("C", |x| x.1);
-    match g.land(l).data.get(DataKey::Mode) {
+    match g.perm(l).data.get(DataKey::Mode) {
         Some(Val::Str(s)) => Colors::from_letters(s),
         _ => Colors::from_letters(front),
     }
@@ -636,7 +636,7 @@ fn jailer_lock(g: &Game, src: Src, _caster: PlayerId, c: CardId, zone: Sym) -> b
 
 // ================================================================== Sundering Eruption // Volcanic Fissure
 /// the land Sundering Eruption destroys: the best opposing nonbasic, else a land of the most threatening opponent
-fn eruption_target(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
+fn eruption_target(g: &Game, p: PlayerId) -> Option<(PlayerId, PermId)> {
     if let Some(x) = crate::impls::fixes::best_opp_land(g, p) {
         return Some(x);
     }
@@ -645,7 +645,7 @@ fn eruption_target(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
         .lands
         .iter()
         .copied()
-        .find(|&l| !g.land(l).tapped)
+        .find(|&l| !g.perm(l).tapped)
         .or(g.player(q).lands.first().copied())
         .map(|l| (q, l))
 }

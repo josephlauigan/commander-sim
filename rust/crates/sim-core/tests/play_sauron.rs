@@ -167,7 +167,7 @@ fn rogues_passage() {
     seat(&mut g, P0, vec![pick(0), pick_label(l)]); // the ability, then the creature
     let land = g.player(P0).lands[0];
     assert_eq!(use_land(&mut g, P0, land).unwrap(), None);
-    assert!(g.land(land).tapped);
+    assert!(g.perm(land).tapped);
     let i = attack_candidates(&g, P0).iter().position(|&x| x == t).unwrap();
     seat(&mut g, P0, vec![picks(&[i])]);
     combat::combat(&mut g, P0).unwrap(); // Guttersnipe can't block it
@@ -261,7 +261,7 @@ fn rhystic_study_asks() {
     let l = lands(&mut g, P0, "Island", 1, false)[0];
     seat(&mut g, P0, vec![pick(0)]); // yes: pay {1} (taps the Island)
     assert!(!rules::rhystic_unpaid(&mut g, P0).unwrap());
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
     seat(&mut g, P0, vec![pick(1)]); // no
     assert!(rules::rhystic_unpaid(&mut g, P0).unwrap());
 }

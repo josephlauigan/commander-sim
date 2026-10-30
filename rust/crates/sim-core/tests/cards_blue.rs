@@ -492,7 +492,7 @@ fn starwinder_warp_costs_two_blue_blue() {
     assert!(do_opt(&mut g, P0, "Starwinder (warp)"));
     let m = perm_named(&g, P0, "Starwinder");
     assert!(g.perm(m).data.truthy(DataKey::Warp));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 0);
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 0);
 }
 
 // ================================================================== Hope-Ender Coatl
@@ -525,7 +525,7 @@ fn hope_ender_coatl_is_cast_as_a_counter_and_then_enters() {
         let (gn, pips) = cost_of(&g, P1, c);
         pay(&mut g, P1, gn, &pips, false).unwrap();
         for &l in &g.player(P1).lands.clone() {
-            g.land_mut(l).tapped = true; // nothing left to pay the {1}
+            g.perm_mut(l).tapped = true; // nothing left to pay the {1}
         }
         cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap();
         if has_perm(&g, P0, "Hope-Ender Coatl") {

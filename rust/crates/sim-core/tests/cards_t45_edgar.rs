@@ -6,7 +6,7 @@ use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::values::{epow, etgh, has_type};
 use sim_core::engine::{cast, life, mana, zones};
 use sim_core::hooks::{Action, Call, Event, Opt};
-use sim_core::ids::{CardId, LandId, PermId, PlayerId};
+use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::impls::{combos, t45_edgar};
 use sim_core::state::{Ctx, DataKey, Game};
 use sim_core::testkit::*;
@@ -46,8 +46,8 @@ fn opts(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> 
     f(g, src, p, post).unwrap()
 }
 
-fn land_opts(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
-    let f = g.registry.get(g.land(l).cd).unwrap().land_options.unwrap();
+fn land_opts(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let f = g.registry.get(g.perm(l).card()).unwrap().land_options.unwrap();
     f(g, l, p, post).unwrap()
 }
 
@@ -441,5 +441,5 @@ fn voldaren_estate_colours_only_vampire_spells_and_makes_blood() {
     let blood = o.iter().find(|x| x.label.contains("Blood token")).expect("{2} with three Vampires").clone();
     assert!(run(&mut g, P0, &blood));
     assert_eq!(g.player(P0).bloods, 1);
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }

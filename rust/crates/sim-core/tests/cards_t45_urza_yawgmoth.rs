@@ -45,7 +45,7 @@ fn tokens(g: &Game, p: PlayerId, ty: &str) -> Vec<PermId> {
 }
 
 fn untapped_lands(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 fn run(g: &mut Game, o: Opt, p: PlayerId) -> bool {
@@ -120,7 +120,7 @@ fn static_orb_untaps_two_permanents_and_unwinding_clock_untaps_artifacts_on_othe
     let isl = lands(&mut g, P0, "Island", 1, true);
     untap(&mut g, P1);
     assert!(!g.perm(vault).tapped && !g.perm(sig).tapped, "the Clock untaps artifacts");
-    assert!(g.land(isl[0]).tapped, "not lands");
+    assert!(g.perm(isl[0]).tapped, "not lands");
     // Urza taps no Orb for mana
     let mut g = urza();
     perm(&mut g, P0, "Urza, Lord High Artificer");
@@ -235,7 +235,7 @@ fn uthros_stations_with_a_creature_and_taps_for_each_artifact_at_twelve() {
     assert_eq!(o.len(), 1);
     assert!(run(&mut g, o.into_iter().next().unwrap(), P0));
     assert!(g.perm(big).tapped);
-    assert_eq!(g.land(l).data.int(DataKey::Charge), 12);
+    assert_eq!(g.perm(l).data.int(DataKey::Charge), 12);
     for n in ["Sol Ring", "Ornithopter", "Mox Opal", "Arcane Signet"] {
         perm(&mut g, P0, n);
     }

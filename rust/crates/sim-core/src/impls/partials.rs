@@ -17,7 +17,7 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, CardImpl, Event, Opt, Registry, Sacrificed, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
 use crate::sym::{Sym, intern};
@@ -314,13 +314,13 @@ fn druid3_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     g.perm_mut(src).data.set(DataKey::Level, Val::Int(3));
     let lands = g.player(p).lands.clone();
     let l = first_min(&lands, |l| {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.perm(l).card());
         (d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), !matches!(&*d.name, "Forest" | "Island"))
     })
     .unwrap();
     crate::engine::turn::remove_land(g, p, l);
     let n = g.player(p).lands.len() as i32 + 1;
-    let name = intern(&g.db.get(g.land(l).cd).name);
+    let name = intern(&g.db.get(g.perm(l).card()).name);
     let m = g.new_perm(p, None, name, n, n);
     let x = g.perm_mut(m);
     x.sick = false;
@@ -471,10 +471,10 @@ pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: Unit) -> Res {
         Source::Quirion(src, _dork) => {
             let now = turn_now(g);
             g.perm_mut(src).data.set(DataKey::Used, now);
-            let forest = g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).cd).name == "Forest");
+            let forest = g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == "Forest");
             if let Some(l) = forest {
                 crate::engine::turn::remove_land(g, p, l);
-                let cd = g.land(l).cd;
+                let cd = g.perm(l).card();
                 g.player_mut(p).hand.push(cd);
             }
         }
@@ -1496,12 +1496,12 @@ fn chain(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     if let Some(back) = best_opp_nonland(g, q, |_, _| true).filter(|&b| pval(g, b) >= 5.0) {
         let lands = g.player(q).lands.clone();
         let l = first_min(&lands, |l| {
-            let x = g.land(l);
-            (g.db.get(x.cd).tags.str(Tag::C).map_or(0, |s| s.chars().count()), !x.tapped)
+            let x = g.perm(l);
+            (g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()), !x.tapped)
         })
         .unwrap();
         crate::engine::turn::remove_land(g, q, l);
-        let cd = g.land(l).cd;
+        let cd = g.perm(l).card();
         g.player_mut(q).gy.push(cd);
         crate::glog!(g, "    {} sacrifices {} to copy Chain of Vapor", pname(g, q), g.db.get(cd).name);
         apply_removal(g, Some(q), back, "bounce", None)?;
@@ -1745,7 +1745,7 @@ pub fn domain(g: &Game, p: PlayerId) -> i32 {
         .iter()
         .filter(|(t, n)| {
             g.player(p).lands.iter().any(|&l| {
-                let d = g.db.get(g.land(l).cd);
+                let d = g.db.get(g.perm(l).card());
                 &*d.name == *n || d.has_subtype(t)
             })
         })
@@ -2327,14 +2327,14 @@ fn multani_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     pay(g, p, 1, "G", false)?;
     let mut lands = g.player(p).lands.clone();
-    let key = |g: &Game, l: LandId| {
-        let x = g.land(l);
-        (!x.tapped, g.db.get(x.cd).tags.str(Tag::C).map_or(0, |s| s.chars().count()))
+    let key = |g: &Game, l: PermId| {
+        let x = g.perm(l);
+        (!x.tapped, g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()))
     };
     lands.sort_by_key(|&l| key(g, l)); // stable, as Python's sorted
     for l in lands.into_iter().take(2) {
         crate::engine::turn::remove_land(g, p, l);
-        let cd = g.land(l).cd;
+        let cd = g.perm(l).card();
         g.player_mut(p).hand.push(cd);
     }
     if !ability_window_card(g, p, c, "return to hand")? || !g.player(p).gy.contains(&c) {
@@ -2486,7 +2486,7 @@ fn quirion(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
         return vec![];
     }
     let pl = g.player(p);
-    if !pl.lands.iter().any(|&l| &*g.db.get(g.land(l).cd).name == "Forest") || pl.land_turn == pl.turns as i32 {
+    if !pl.lands.iter().any(|&l| &*g.db.get(g.perm(l).card()).name == "Forest") || pl.land_turn == pl.turns as i32 {
         return vec![];
     }
     let Some((d, amt)) = best_dork(g, p) else { return vec![] };

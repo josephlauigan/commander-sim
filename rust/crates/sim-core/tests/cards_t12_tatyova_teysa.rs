@@ -95,7 +95,7 @@ fn beanstalk_giant_is_as_big_as_the_lands_and_its_adventure_ramps() {
     let o = hand_opts(&mut g, c, P0).pop().expect("the adventure");
     assert!(run(&mut g, o, P0));
     assert_eq!(g.player(P0).lands.len(), 4, "a basic land onto the battlefield");
-    assert!(!g.land(*g.player(P0).lands.last().unwrap()).tapped, "untapped");
+    assert!(!g.perm(*g.player(P0).lands.last().unwrap()).tapped, "untapped");
     assert!(g.player(P0).hand.contains(&c) && g.player(P0).adv_done.contains(&c), "the Giant is still to cast");
     assert!(hand_opts(&mut g, c, P0).is_empty(), "one adventure");
     g.player_mut(P0).hand.retain(|&x| x != c);
@@ -138,7 +138,7 @@ fn roiling_regrowth_and_entish_restoration_trade_a_land_for_more() {
     perm(&mut g, P0, "Rampaging Baloths");
     resolve(&mut g, P0, "Entish Restoration");
     assert_eq!(g.player(P0).lands.len(), 8, "a creature with power 4 or more: three");
-    let tapped = g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count();
+    let tapped = g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count();
     assert_eq!(tapped, 5, "the found lands enter tapped (a tapped land is sacrificed first)");
 }
 
@@ -195,7 +195,7 @@ fn wrenn_and_seven_abilities() {
     let l = g.player(P0).lands.len();
     (ab[1].eff)(&mut g, P0, w).unwrap();
     assert_eq!(g.player(P0).lands.len(), l + 2);
-    assert!(g.player(P0).lands.iter().all(|&x| g.land(x).tapped));
+    assert!(g.player(P0).lands.iter().all(|&x| g.perm(x).tapped));
     // -3: the Treefolk
     lands(&mut g, P0, "Forest", 4, false);
     (ab[2].eff)(&mut g, P0, w).unwrap();

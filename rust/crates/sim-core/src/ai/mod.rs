@@ -365,7 +365,7 @@ pub fn cleanup_discard(g: &Game, p: PlayerId, hand: &[CardId]) -> CardId {
         !x.phased && x.cd.is_some_and(|c| [Tag::Rock, Tag::Dork, Tag::Fastmana].iter().any(|&t| g.db.get(c).tag(t)))
     };
     let sources =
-        pl.lands.iter().filter(|&&l| g.land(l).on_bf).count() + pl.perms.iter().filter(|&&m| mana_perm(m)).count();
+        pl.lands.iter().filter(|&&l| g.perm(l).on_bf).count() + pl.perms.iter().filter(|&&m| mana_perm(m)).count();
     let cost = |c: CardId| {
         let (gn, pips) = cost_of(g, p, c);
         gn as usize + pips.chars().count()
@@ -614,15 +614,17 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
     if which == "veyran" {
         // Mistrise Village: {U},{T}: the next spell can't be countered
         let ml =
-            g.player(p).lands.iter().copied().find(|&l| g.db.get(g.land(l).cd).tag(Tag::Mistrise) && !g.land(l).tapped);
+            g.player(p).lands.iter().copied().find(|&l| {
+                g.db.get(g.perm(l).card()).tag(Tag::Mistrise) && !g.perm(l).tapped
+            });
         if let Some(l) = ml {
-            g.land_mut(l).tapped = true;
+            g.perm_mut(l).tapped = true;
             if can_pay(g, p, 0, "U", false) {
                 pay(g, p, 0, "U", false)?;
                 uncounterable = true;
                 crate::glog!(g, "    Mistrise Village: the loop spell can't be countered");
             } else {
-                g.land_mut(l).tapped = false;
+                g.perm_mut(l).tapped = false;
             }
         }
     }

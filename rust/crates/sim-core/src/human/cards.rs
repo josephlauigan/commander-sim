@@ -5,7 +5,7 @@
 use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, choices, legal};
 use crate::flow::Res;
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 
 /// `hc.choose(g, p, kind, prompt, [legal.describe_target(g, p, m) for m in cands], cancel=...)`: the permanent the
@@ -338,8 +338,8 @@ fn tapped(g: &Game, m: PermId, what: Option<&str>) -> Why {
     }
 }
 
-fn land_tapped(g: &Game, l: LandId, what: &str) -> Why {
-    if g.land(l).tapped { Some(format!("{what} is tapped.")) } else { None }
+fn land_tapped(g: &Game, l: PermId, what: &str) -> Why {
+    if g.perm(l).tapped { Some(format!("{what} is tapped.")) } else { None }
 }
 
 // ------------------------------------------------------------------ planeswalkers
@@ -899,31 +899,31 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
 
 // ------------------------------------------------------------------ lands
 fn strip(_g: &Game) -> Vec<LandAbility> {
-    vec![ability("{T}, sacrifice: destroy target land", |g: &mut Game, p: PlayerId, l: LandId| {
+    vec![ability("{T}, sacrifice: destroy target land", |g: &mut Game, p: PlayerId, l: PermId| {
         if let Some(why) = land_tapped_if(g, l, "Strip Mine") {
             return Ok(Some(why));
         }
-        let tg: Vec<(PlayerId, LandId)> =
+        let tg: Vec<(PlayerId, PermId)> =
             g.players.iter().filter(|q| q.alive).flat_map(|q| q.lands.iter().map(move |&x| (q.id, x))).collect();
         let labels: Vec<String> = tg
             .iter()
             .map(|&(q, x)| {
-                format!("{} ({})", cname(g, g.land(x).cd), if q == p { "yours".to_string() } else { pname(g, q) })
+                format!("{} ({})", cname(g, g.perm(x).card()), if q == p { "yours".to_string() } else { pname(g, q) })
             })
             .collect();
         let Some(k) = pick(g, p, "target", "Strip Mine: destroy which land?", &labels)? else { return Ok(None) };
         let (q, x) = tg[k];
         crate::engine::turn::remove_land(g, p, l);
-        let cd = g.land(l).cd;
+        let cd = g.perm(l).card();
         g.player_mut(p).gy.push(cd);
         crate::glog!(
             g,
             "  {} sacrifices Strip Mine: destroy {} ({})",
             pname(g, p),
-            cname(g, g.land(x).cd),
+            cname(g, g.perm(x).card()),
             pname(g, q)
         );
-        let what = format!("destroy {}", cname(g, g.land(x).cd));
+        let what = format!("destroy {}", cname(g, g.perm(x).card()));
         if crate::engine::stack::ability_window_card(g, p, cd, &what, None, None)? && g.player(q).lands.contains(&x) {
             crate::impls::fixes::destroy_land(g, q, x)?;
         }
@@ -931,21 +931,21 @@ fn strip(_g: &Game) -> Vec<LandAbility> {
     })]
 }
 
-fn land_tapped_if(g: &Game, l: LandId, what: &str) -> Why {
+fn land_tapped_if(g: &Game, l: PermId, what: &str) -> Why {
     land_tapped(g, l, what)
 }
 
 fn lighthouse(_g: &Game) -> Vec<LandAbility> {
-    vec![ability("{1}{U}{R}, {T}: draw a card, then discard a card", |g: &mut Game, p: PlayerId, l: LandId| {
+    vec![ability("{1}{U}{R}, {T}: draw a card, then discard a card", |g: &mut Game, p: PlayerId, l: PermId| {
         if let Some(why) =
             land_tapped(g, l, "Desolate Lighthouse").or_else(|| cost(g, p, 1, "UR", "Desolate Lighthouse"))
         {
             return Ok(Some(why));
         }
         super::mana::pay_from_pool(g, p, 1, "UR");
-        g.land_mut(l).tapped = true;
+        g.perm_mut(l).tapped = true;
         crate::glog!(g, "  {} loots with Desolate Lighthouse", pname(g, p));
-        let cd = g.land(l).cd;
+        let cd = g.perm(l).card();
         if crate::engine::stack::ability_window_card(g, p, cd, "draw, then discard", None, None)? {
             crate::engine::zones::draw(g, p, 1, false)?;
             crate::engine::cast::discard_worst(g, p, 1)?;
@@ -955,13 +955,13 @@ fn lighthouse(_g: &Game) -> Vec<LandAbility> {
 }
 
 fn summit(_g: &Game) -> Vec<LandAbility> {
-    vec![ability("{2}{U}{R}, {T}: surveil 1", |g: &mut Game, p: PlayerId, l: LandId| {
+    vec![ability("{2}{U}{R}, {T}: surveil 1", |g: &mut Game, p: PlayerId, l: PermId| {
         if let Some(why) = land_tapped(g, l, "Spectacle Summit").or_else(|| cost(g, p, 2, "UR", "Spectacle Summit")) {
             return Ok(Some(why));
         }
         super::mana::pay_from_pool(g, p, 2, "UR");
-        g.land_mut(l).tapped = true;
-        let cd = g.land(l).cd;
+        g.perm_mut(l).tapped = true;
+        let cd = g.perm(l).card();
         if crate::engine::stack::ability_window_card(g, p, cd, "surveil 1", None, None)? {
             choices::scry(g, p, 1, true)?;
         }
@@ -972,7 +972,7 @@ fn summit(_g: &Game) -> Vec<LandAbility> {
 fn baraddur(_g: &Game) -> Vec<LandAbility> {
     vec![ability(
         "{X}{X}{B}, {T}: amass Orcs X (only if a creature died this turn)",
-        |g: &mut Game, p: PlayerId, l: LandId| {
+        |g: &mut Game, p: PlayerId, l: PermId| {
             if let Some(why) = land_tapped(g, l, "Barad-dûr") {
                 return Ok(Some(why));
             }
@@ -996,9 +996,9 @@ fn baraddur(_g: &Game) -> Vec<LandAbility> {
             if let Some(why) = super::mana::pay_from_pool(g, p, 2 * x as u32, "B") {
                 return Ok(Some(format!("Can't activate Barad-dûr. {why}")));
             }
-            g.land_mut(l).tapped = true;
+            g.perm_mut(l).tapped = true;
             crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {}", pname(g, p), x);
-            let cd = g.land(l).cd;
+            let cd = g.perm(l).card();
             if crate::engine::stack::ability_window_card(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
                 crate::engine::zones::amass(g, p, x)?;
             }
@@ -1010,13 +1010,13 @@ fn baraddur(_g: &Game) -> Vec<LandAbility> {
 fn mistrise(_g: &Game) -> Vec<LandAbility> {
     vec![ability(
         "{U}, {T}: the next spell you cast this turn can't be countered",
-        |g: &mut Game, p: PlayerId, l: LandId| {
+        |g: &mut Game, p: PlayerId, l: PermId| {
             if let Some(why) = land_tapped(g, l, "Mistrise Village").or_else(|| cost(g, p, 0, "U", "Mistrise Village"))
             {
                 return Ok(Some(why));
             }
             super::mana::pay_from_pool(g, p, 0, "U");
-            g.land_mut(l).tapped = true;
+            g.perm_mut(l).tapped = true;
             g.player_mut(p).mistrise_next = Some(g.turn_stamp());
             crate::glog!(
                 g,
@@ -1029,8 +1029,8 @@ fn mistrise(_g: &Game) -> Vec<LandAbility> {
 }
 
 /// cards.land_abilities
-pub fn land_abilities(g: &Game, _p: PlayerId, l: LandId) -> Vec<LandAbility> {
-    match &*cname(g, g.land(l).cd) {
+pub fn land_abilities(g: &Game, _p: PlayerId, l: PermId) -> Vec<LandAbility> {
+    match &*cname(g, g.perm(l).card()) {
         "Strip Mine" => strip(g),
         "Desolate Lighthouse" => lighthouse(g),
         "Spectacle Summit" => summit(g),
@@ -2479,7 +2479,7 @@ fn ragavan_dash_person(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
 /// Phyrexian Tower: {T}, sacrifice a creature: add {B}{B}. The person picks the creature (the AI only offers it when
 /// a death payoff makes it worth it).
 fn tower(_g: &Game) -> Vec<LandAbility> {
-    vec![ability("{T}, sacrifice a creature: add {B}{B}", |g: &mut Game, p: PlayerId, l: LandId| {
+    vec![ability("{T}, sacrifice a creature: add {B}{B}", |g: &mut Game, p: PlayerId, l: PermId| {
         if let Some(why) = land_tapped(g, l, "Phyrexian Tower") {
             return Ok(Some(why));
         }
@@ -2491,7 +2491,7 @@ fn tower(_g: &Game) -> Vec<LandAbility> {
         let Some(k) = pick(g, p, "choose", "Phyrexian Tower: sacrifice which creature?", &labels)? else {
             return Ok(None);
         };
-        g.land_mut(l).tapped = true;
+        g.perm_mut(l).tapped = true;
         crate::glog!(g, "  {} sacrifices {} to Phyrexian Tower", pname(g, p), g.perm(cre[k]).name);
         crate::engine::zones::die(g, cre[k], "sac")?;
         g.player_mut(p).pool.add('B', 2);
@@ -2504,11 +2504,11 @@ fn tower(_g: &Game) -> Vec<LandAbility> {
 fn ghost_quarter(_g: &Game) -> Vec<LandAbility> {
     vec![ability(
         "{T}, sacrifice: destroy target land (its controller may search for a basic)",
-        |g: &mut Game, p: PlayerId, l: LandId| {
+        |g: &mut Game, p: PlayerId, l: PermId| {
             if let Some(why) = land_tapped(g, l, "Ghost Quarter") {
                 return Ok(Some(why));
             }
-            let tg: Vec<(PlayerId, LandId)> = g
+            let tg: Vec<(PlayerId, PermId)> = g
                 .players
                 .iter()
                 .filter(|q| q.alive)
@@ -2518,7 +2518,11 @@ fn ghost_quarter(_g: &Game) -> Vec<LandAbility> {
             let labels: Vec<String> = tg
                 .iter()
                 .map(|&(q, x)| {
-                    format!("{} ({})", cname(g, g.land(x).cd), if q == p { "yours".to_string() } else { pname(g, q) })
+                    format!(
+                        "{} ({})",
+                        cname(g, g.perm(x).card()),
+                        if q == p { "yours".to_string() } else { pname(g, q) }
+                    )
                 })
                 .collect();
             let Some(k) = pick(g, p, "target", "Ghost Quarter: destroy which land?", &labels)? else {

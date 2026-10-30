@@ -31,7 +31,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
 use crate::human::{cards, choices, human_of};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -274,9 +274,9 @@ fn coat_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// {T}, sacrifice: the commander from the command zone to hand, where casting it pays no commander tax. Used on your
 /// turn when Jodah is castable from hand after the sacrifice, and the tax is 4 or more, or it is 2 and Jodah can't be
 /// cast from the command zone this turn
-fn beacon(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn beacon(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let pl = g.player(p);
-    if post.is_none() || g.land(l).tapped || g.active != Some(p) || !pl.cmd_in_zone || pl.tax < 2 {
+    if post.is_none() || g.perm(l).tapped || g.active != Some(p) || !pl.cmd_in_zone || pl.tax < 2 {
         return Ok(vec![]);
     }
     let cmd = pl.cmd;
@@ -294,11 +294,11 @@ fn beacon(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<O
 }
 
 pub(crate) fn beacon_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !(g.land(l).on_bf && g.player(p).lands.contains(&l)) || g.land(l).tapped || !g.player(p).cmd_in_zone {
+    let l = PermId(arg as u32);
+    if !(g.perm(l).on_bf && g.player(p).lands.contains(&l)) || g.perm(l).tapped || !g.player(p).cmd_in_zone {
         return Ok(false);
     }
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     sac_land(g, p, l)?;
     stat(g, p, "jr_beacon", 1);
     let cmd = g.player(p).cmd;
@@ -1272,7 +1272,7 @@ fn korlash_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
         .player(p)
         .lands
         .iter()
-        .filter(|&&l| g.db.get(g.land(l).cd).land_types.has('B') && !crate::engine::mana::moon_land(g, l))
+        .filter(|&&l| g.db.get(g.perm(l).card()).land_types.has('B') && !crate::engine::mana::moon_land(g, l))
         .count() as i32;
     (n, n)
 }
@@ -1853,7 +1853,7 @@ fn elder_mana(_g: &Game, _p: PlayerId, _m: PermId) -> u32 {
 // ------------------------------------------------------------------ lands (Python's mine.py)
 /// mine.plaza_colors: Plaza of Heroes: any colour for a legendary spell; otherwise the colours among your legendary
 /// permanents (its {C} is the empty set)
-fn plaza_colors(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if g.pay_for.is_some_and(|c| g.db.get(c).tag(Tag::Leg)) {
         return g.player(p).ident;
     }
@@ -1900,9 +1900,9 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
 
 /// mine.territory_colors: Unclaimed Territory: {C}, or any colour for a creature spell of the named type (a
 /// changeling is every type)
-fn territory_colors(g: &Game, p: PlayerId, l: LandId) -> Colors {
+fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> Colors {
     let Some(pf) = g.pay_for.map(|c| g.db.get(c)).filter(|d| d.creature) else { return Colors::NONE };
-    let t = match g.land(l).data.get(DataKey::Ctype) {
+    let t = match g.perm(l).data.get(DataKey::Ctype) {
         Some(Val::Str(s)) => *s,
         _ => territory_type(g, p),
     };

@@ -28,7 +28,7 @@ fn paying_taps_the_sources() {
     lands(&mut g, P0, "Island", 2, false);
     lands(&mut g, P0, "Mountain", 1, false);
     assert!(mana::pay(&mut g, P0, 0, "UU", false).unwrap());
-    let tapped: Vec<bool> = g.player(P0).lands.iter().map(|&l| g.land(l).tapped).collect();
+    let tapped: Vec<bool> = g.player(P0).lands.iter().map(|&l| g.perm(l).tapped).collect();
     assert_eq!(tapped, [true, true, false]);
     assert!(!mana::pay(&mut g, P0, 0, "U", false).unwrap()); // nothing blue left
 }
@@ -47,7 +47,7 @@ fn treasure_is_spent_last() {
     zones::add_treasure(&mut g, P0, 1).unwrap();
     mana::pay(&mut g, P0, 1, "", false).unwrap();
     assert_eq!(g.player(P0).treasures, 1);
-    assert!(g.land(g.player(P0).lands[0]).tapped);
+    assert!(g.perm(g.player(P0).lands[0]).tapped);
 }
 
 #[test]
@@ -138,7 +138,7 @@ fn a_counter_needs_its_mana() {
     let ls = lands(&mut g, P0, "Island", 2, false);
     let titan = card(&g, "Grave Titan");
     assert_eq!(stack::pick_counter(&g, P0, titan), Some(card(&g, "Counterspell")));
-    g.land_mut(ls[0]).tapped = true;
+    g.perm_mut(ls[0]).tapped = true;
     assert_eq!(stack::pick_counter(&g, P0, titan), None);
 }
 
@@ -172,7 +172,7 @@ fn path_gives_a_tapped_land() {
     let t = perm(&mut g, P1, "Hellkite Tyrant");
     let path = card(&g, "Path to Exile");
     removal::apply_removal(&mut g, Some(P0), t, "exile", Some(path)).unwrap();
-    let tapped: Vec<bool> = g.player(P1).lands.iter().map(|&l| g.land(l).tapped).collect();
+    let tapped: Vec<bool> = g.player(P1).lands.iter().map(|&l| g.perm(l).tapped).collect();
     assert_eq!(tapped, [true]);
 }
 
@@ -221,7 +221,7 @@ fn teferis_protection_effects() {
     hand(&mut g, s, &["Teferi's Protection"]);
     assert!(zones::cast_teferis_protection(&mut g, s, 8.0).unwrap());
     assert!(g.player(s).perms.iter().all(|&m| g.perm(m).phased));
-    assert!(g.player(s).lands.iter().all(|&l| g.land(l).tapped)); // its lands phased out too: no mana
+    assert!(g.player(s).lands.iter().all(|&l| g.perm(l).tapped)); // its lands phased out too: no mana
     assert_eq!(g.player(s).exile, [card(&g, "Teferi's Protection")]);
     life::lose_life(&mut g, s, 10, Some(r), "other", None).unwrap();
     life::gain(&mut g, s, 5).unwrap();
@@ -293,7 +293,7 @@ fn a_pact_is_affordable_from_everything_untapped() {
     let mut g = table(&["veyran", "seph"]);
     let ls = lands(&mut g, P0, "Island", 5, true); // all tapped now
     assert!(pact_affordable(&g, P0, "3UU")); // Pact of Negation: everything untaps at the upkeep
-    assert!(g.land(ls[0]).tapped); // the real game is untouched
+    assert!(g.perm(ls[0]).tapped); // the real game is untouched
     g.player_mut(P0).pact_debts.push((1, String::new()));
     assert!(!pact_affordable(&g, P0, "3UU")); // a debt already owed
 }

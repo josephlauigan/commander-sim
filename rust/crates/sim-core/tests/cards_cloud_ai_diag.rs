@@ -276,7 +276,7 @@ fn probe_j_options_after_helm() {
     let opts = brain::main_options(&mut g, P0, false).unwrap();
     let o = opts.iter().find(|o| o.label == "Champion's Helm").unwrap();
     act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap();
-    println!("lands untapped: {}", g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count());
+    println!("lands untapped: {}", g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count());
     for o in brain::main_options(&mut g, P0, false).unwrap() {
         println!("   after Helm: {:6.2} {}", o.utility, o.label);
     }

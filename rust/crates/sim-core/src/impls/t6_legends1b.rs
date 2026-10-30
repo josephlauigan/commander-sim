@@ -11,7 +11,7 @@ use crate::engine::values::pval;
 use crate::engine::zones::{Enter, enter, max_by, mill};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 use crate::sym::intern;
 use crate::tag::Tag;
@@ -48,9 +48,9 @@ fn can_tap(g: &Game, m: PermId) -> bool {
         && (!x.sick || !g.is_creature(m) || crate::dsl::has_kw(g, m, "haste") || ability_haste(g, x.owner))
 }
 
-fn land_yield(g: &Game, p: PlayerId, l: LandId) -> u32 {
+fn land_yield(g: &Game, p: PlayerId, l: PermId) -> u32 {
     let base = crate::cardcode::dyn_mana_land(g, p, l)
-        .map_or_else(|| g.db.get(g.land(l).cd).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
+        .map_or_else(|| g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
     (base as i32 + eh::total_land_mana(g, p, l)).max(0) as u32
 }
 
@@ -99,7 +99,7 @@ fn untap_plan(g: &Game, p: PlayerId, src: PermId) -> Option<(i64, f64)> {
         }
     };
     for &l in &g.player(p).lands {
-        if g.land(l).on_bf && g.land(l).tapped {
+        if g.perm(l).on_bf && g.perm(l).tapped {
             take((1 << 60) | l.0 as i64, land_yield(g, p, l) as f64);
         }
     }
@@ -161,9 +161,9 @@ fn untap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         2 => vec![PermId(((arg >> 20) & mask) as _), PermId((arg & mask) as _)],
         _ => vec![],
     };
-    let land = (kind == 1).then(|| LandId((arg & mask) as _));
+    let land = (kind == 1).then(|| PermId((arg & mask) as _));
     let ok = |m: &PermId| *m != src && live(g, *m) && g.perm(*m).owner == p && g.perm(*m).tapped;
-    if !targets.iter().all(ok) || land.is_some_and(|l| !(g.land(l).on_bf && g.land(l).tapped)) {
+    if !targets.iter().all(ok) || land.is_some_and(|l| !(g.perm(l).on_bf && g.perm(l).tapped)) {
         return Ok(false);
     }
     bump(g, p);
@@ -179,9 +179,9 @@ fn untap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         }
     }
     if let Some(l) = land {
-        if g.land(l).on_bf {
-            g.land_mut(l).tapped = false;
-            crate::glog!(g, "    {} untaps {}", g.perm(src).name, g.db.get(g.land(l).cd).name);
+        if g.perm(l).on_bf {
+            g.perm_mut(l).tapped = false;
+            crate::glog!(g, "    {} untaps {}", g.perm(src).name, g.db.get(g.perm(l).card()).name);
         }
     }
     Ok(true)

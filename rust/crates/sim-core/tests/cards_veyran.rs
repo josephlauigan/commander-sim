@@ -53,7 +53,7 @@ fn on_cast(g: &mut Game, p: PlayerId, name: &str) {
 }
 
 fn tapped(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| g.perm(l).tapped).count()
 }
 
 fn tokens(g: &Game, p: PlayerId) -> Vec<PermId> {

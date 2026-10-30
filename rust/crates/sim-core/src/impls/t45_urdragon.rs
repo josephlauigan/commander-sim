@@ -53,7 +53,7 @@ use crate::engine::values::{card_name, colors_of, epow, has_type};
 use crate::engine::zones::{Enter, Tokens, Zone, add_treasure, draw, enter, enter_token_copy_with, leave, make_tokens};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::lands::{can_pay_without, pay_without, sac_land};
 use crate::impls::partials::eot_kw;
 use crate::state::{CopyExc, Ctx, DataKey, Game, Val};
@@ -476,7 +476,7 @@ fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 // ================================================================== Haven of the Spirit Dragon
 /// {C}, or one mana of any colour for a Dragon creature spell
-fn haven_colors(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+fn haven_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     match g.pay_for {
         Some(c) if dragon_creature_card(g, c) => g.player(p).ident,
         _ => Colors::NONE,
@@ -489,8 +489,8 @@ fn best_gy_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
 }
 
 /// {2},{T}, sacrifice: the best Dragon creature card from your graveyard to your hand (at the end-of-turn window)
-fn haven_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || !can_pay_without(g, p, l, 2, "") {
+fn haven_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || !can_pay_without(g, p, l, 2, "") {
         return Ok(vec![]);
     }
     let Some(c) = best_gy_dragon(g, p) else { return Ok(vec![]) };
@@ -505,14 +505,14 @@ fn haven_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
 }
 
 fn haven_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (l, c) = (LandId((arg & 0xffff_ffff) as u32), CardId((arg >> 32) as u16));
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !g.player(p).gy.contains(&c) {
+    let (l, c) = (PermId((arg & 0xffff_ffff) as u32), CardId((arg >> 32) as u16));
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !g.player(p).gy.contains(&c) {
         return Ok(false);
     }
     if !pay_without(g, p, l, 2, "")? {
         return Ok(false);
     }
-    let haven = g.land(l).cd;
+    let haven = g.perm(l).card();
     sac_land(g, p, l)?;
     let what = format!("{} to hand", cname(g, c));
     if crate::engine::stack::ability_window_card(g, p, haven, &what, None, None)? {

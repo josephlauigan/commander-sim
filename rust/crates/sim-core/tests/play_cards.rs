@@ -141,7 +141,7 @@ fn desolate_lighthouse_loots() {
     seat(&mut g, P0, vec![act(json!({"do": "use", "land": 0})), pick(0), pick(0), pass()]);
     human_main(&mut g, P0, false).unwrap();
     assert_eq!((g.player(P0).hand.len(), g.player(P0).gy.len()), (n, 1));
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }
 
 // ------------------------------------------------------------------ Citadel

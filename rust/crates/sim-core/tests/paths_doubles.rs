@@ -232,7 +232,7 @@ fn snap_bounces_its_target_and_untaps_exactly_two_lands() {
     cast::cast_card(&mut g, P0, c, "hand", Ctx { target: Some(t), ..Ctx::default() }).unwrap();
     settle(&mut g);
     assert!(!g.perm(t).on_bf && g.player(P1).hand.contains(&card(&g, "Grave Titan")), "bounced to its owner");
-    let untapped = g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count();
+    let untapped = g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
     assert_eq!(untapped, 2, "two lands untapped, not four");
     assert!(g.player(P0).gy.contains(&c));
 }

@@ -9,7 +9,7 @@ use sim_core::engine::mana::{mana_units, total_mana};
 use sim_core::engine::values::{epow, etgh, indestructible};
 use sim_core::engine::{cast, turn, zones};
 use sim_core::hooks::{Action, Call, Event, Opt};
-use sim_core::ids::{CardId, LandId, PermId, PlayerId};
+use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::impls::combos;
 use sim_core::state::{Ctx, DataKey, Game, Val};
 use sim_core::testkit::*;
@@ -26,8 +26,8 @@ fn named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| g.perm(m).on_bf && &*g.perm(m).name == name).collect()
 }
 
-fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
-    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).cd).name == name)
+fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
+    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == name)
 }
 
 fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
@@ -43,8 +43,8 @@ fn opts(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> 
     f(g, src, p, post).unwrap()
 }
 
-fn land_opts(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
-    let f = g.registry.get(g.land(l).cd).unwrap().land_options.unwrap();
+fn land_opts(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let f = g.registry.get(g.perm(l).card()).unwrap().land_options.unwrap();
     f(g, l, p, post).unwrap()
 }
 
@@ -98,8 +98,8 @@ fn gruul_turf_and_rakdos_carnarium_return_a_land_and_tap_for_two() {
         turn::play_land_card(&mut g, P0, c, "plays").unwrap();
         assert!(!g.player(P0).lands.contains(&forest) && in_hand(&g, P0, "Forest"), "{name} returns a land");
         let l = land_named(&g, P0, name).unwrap();
-        assert!(g.land(l).tapped, "{name} enters tapped");
-        g.land_mut(l).tapped = false;
+        assert!(g.perm(l).tapped, "{name} enters tapped");
+        g.perm_mut(l).tapped = false;
         let u = mana_units(&g, P0, false);
         assert!(u.iter().any(|w| w.amt == 2 && w.cols.has(a) && w.cols.has(b)), "{name}: {{T}}: two mana");
     }
@@ -115,8 +115,8 @@ fn lotus_field_sacrifices_two_lands_and_taps_for_three_of_one_colour() {
     assert_eq!(g.player(P0).lands.len(), 2, "two of the three others are sacrificed");
     assert_eq!(g.player(P0).gy.iter().filter(|&&x| &*g.db.get(x).name == "Forest").count(), 2, "the tapped ones");
     let l = land_named(&g, P0, "Lotus Field").unwrap();
-    assert!(g.land(l).tapped);
-    g.land_mut(l).tapped = false;
+    assert!(g.perm(l).tapped);
+    g.perm_mut(l).tapped = false;
     assert!(mana_units(&g, P0, false).iter().any(|w| w.amt == 3 && w.cols.has('G')), "three mana of one colour");
     // with no other land it sacrifices itself
     let mut g = windgrace();
@@ -132,7 +132,7 @@ fn dark_depths_makes_no_mana_and_its_last_ice_counter_makes_marit_lage() {
     let d = lands(&mut g, P0, "Dark Depths", 1, false)[0];
     assert_eq!(total_mana(&g, P0, false), 0, "no mana ability");
     lands(&mut g, P0, "Forest", 3, false);
-    g.land_mut(d).data.set(DataKey::IceRemoved, Val::Int(9));
+    g.perm_mut(d).data.set(DataKey::IceRemoved, Val::Int(9));
     g.active = Some(P1); // an opponent's end of turn
     let o = land_opts(&mut g, d, P0, None);
     assert!(run(&mut g, P0, &pick(&o, "remove an ice counter")));
@@ -169,7 +169,7 @@ fn dark_depths_and_thespians_stage_combo_makes_marit_lage() {
     combos::attempt(&mut g, P0, i as i64).unwrap();
     assert!(lage(&g, P0).is_some(), "Marit Lage");
     assert!(in_gy(&g, P0, "Dark Depths") && in_gy(&g, P0, "Thespian's Stage"), "the legend rule and the sacrifice");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "the Stage and {{2}} paid");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "the Stage and {{2}} paid");
 }
 
 #[test]
@@ -210,7 +210,7 @@ fn elvish_reclaimer_sacrifices_a_tapped_land_for_the_missing_combo_half() {
     assert!(g.player(P0).gy.iter().any(|&c| g.db.get(c).basic), "a tapped basic sacrificed (paid {{2}} first)");
     assert_eq!(g.player(P0).lands.len(), 4);
     let s = land_named(&g, P0, "Thespian's Stage").expect("the Stage");
-    assert!(g.land(s).tapped, "onto the battlefield tapped");
+    assert!(g.perm(s).tapped, "onto the battlefield tapped");
     assert!(land_named(&g, P0, "Dark Depths").is_some(), "never a key land");
 }
 
@@ -240,7 +240,7 @@ fn mina_and_denn_return_a_land_and_replay_it_for_landfall() {
     let o = opts(&mut g, m, P0, Some(false));
     assert!(run(&mut g, P0, &pick(&o, "Mina and Denn")));
     assert_eq!(g.player(P0).lands.len(), 5, "a tapped land returned and played again");
-    assert!(g.player(P0).lands.iter().any(|&l| !g.land(l).tapped), "untapped");
+    assert!(g.player(P0).lands.iter().any(|&l| !g.perm(l).tapped), "untapped");
     assert_eq!(g.player(P0).lands_played, 2, "the second land drop");
     assert_eq!(g.player(P1).life, life - 1, "Tannuk's landfall");
     assert!(g.player(P0).perms.iter().any(|&x| has_kw(&g, x, "trample")), "target creature gains trample");
@@ -260,7 +260,7 @@ fn lumra_is_as_big_as_your_lands_and_returns_every_land_card() {
     }
     let l = perm(&mut g, P0, "Lumra, Bellow of the Woods");
     assert_eq!(g.player(P0).lands.len(), 5, "both land cards back");
-    assert!(g.player(P0).lands.iter().filter(|&&x| g.land(x).tapped).count() == 2, "tapped");
+    assert!(g.player(P0).lands.iter().filter(|&&x| g.perm(x).tapped).count() == 2, "tapped");
     assert!(in_gy(&g, P0, "Sol Ring") && in_gy(&g, P0, "Cultivate"), "milled four");
     assert_eq!((epow(&g, l), etgh(&g, l)), (5, 5), "power and toughness: the lands you control");
 }
@@ -308,7 +308,7 @@ fn soul_of_windgrace_takes_a_land_from_any_graveyard() {
     g.player_mut(P1).gy.push(c);
     perm(&mut g, P0, "Soul of Windgrace");
     let l = land_named(&g, P0, "Island").expect("under your control");
-    assert!(g.land(l).tapped && !g.player(P1).gy.contains(&c));
+    assert!(g.perm(l).tapped && !g.player(P1).gy.contains(&c));
 }
 
 #[test]
@@ -342,11 +342,11 @@ fn spelunking_draws_puts_a_land_in_and_lands_enter_untapped() {
     perm(&mut g, P0, "Spelunking");
     assert!(in_hand(&g, P0, "Sol Ring"), "draw a card");
     let l = land_named(&g, P0, "Overgrown Tomb").expect("then a land from hand");
-    assert!(!g.land(l).tapped);
+    assert!(!g.perm(l).tapped);
     let t = lands(&mut g, P0, "Golgari Rot Farm", 1, true)[0];
-    assert!(!g.land(t).tapped, "lands you control enter untapped, even put onto the battlefield tapped");
+    assert!(!g.perm(t).tapped, "lands you control enter untapped, even put onto the battlefield tapped");
     let o = lands(&mut g, P1, "Forest", 1, true)[0];
-    assert!(g.land(o).tapped, "only yours");
+    assert!(g.perm(o).tapped, "only yours");
 }
 
 // ------------------------------------------------------------------ Tannuk
@@ -458,7 +458,7 @@ fn scapeshift_trades_lands_for_dark_depths_and_thespians_stage() {
     resolve(&mut g, P0, "Scapeshift", Ctx::default());
     assert_eq!(g.player(P0).lands.len(), 3, "three sacrificed, three found");
     assert!(land_named(&g, P0, "Dark Depths").is_some() && land_named(&g, P0, "Thespian's Stage").is_some());
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "tapped");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "tapped");
     assert_eq!(g.player(P0).gy.iter().filter(|&&c| &*g.db.get(c).name == "Forest").count(), 3);
 }
 
@@ -475,7 +475,7 @@ fn worldsouls_rage_deals_x_and_puts_x_lands_in() {
     let lost: i32 = [P1, PlayerId(2)].iter().zip(&lives).map(|(&q, &l)| l - g.player(q).life).sum();
     assert_eq!(lost, 3, "X damage to an opponent (no creature worth it)");
     assert_eq!(g.player(P0).lands.len(), 3, "up to X land cards");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
     assert!(land_named(&g, P0, "Overgrown Tomb").is_some(), "from the graveyard too");
 }
 

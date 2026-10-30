@@ -49,7 +49,7 @@ use crate::engine::values::{epow, etgh, pval, threat};
 use crate::engine::zones::{Enter, die, draw, enter, enter_token_copy, max_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, aura};
 use crate::impls::partials::{at_once, remove_card};
 use crate::impls::t3::{ability, plan};
@@ -576,13 +576,13 @@ fn harvest_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
-    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).cd == c) {
-        g.land_mut(l).tapped = true; // This land enters tapped.
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.perm(l).card() == c) {
+        g.perm_mut(l).tapped = true; // This land enters tapped.
     }
     Ok(true)
 }
 
-fn haven_cols(_g: &Game, _p: PlayerId, _l: LandId) -> Colors {
+fn haven_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("GW")
 }
 

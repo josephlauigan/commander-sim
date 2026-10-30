@@ -188,7 +188,7 @@ fn composer_of_spring_puts_a_land_in_tapped_and_a_creature_with_six() {
     let n = g.player(P0).lands.len();
     perm(&mut g, P0, "Abundance");
     assert_eq!(g.player(P0).lands.len(), n + 1, "a land from the hand");
-    assert!(g.land(*g.player(P0).lands.last().unwrap()).tapped);
+    assert!(g.perm(*g.player(P0).lands.last().unwrap()).tapped);
     assert!(g.player(P0).hand.contains(&card(&g, "Grave Titan")), "only five enchantments' worth: no creature");
     for nm in ["Mirari's Wake", "Sandwurm Convergence", "Khalni Heart Expedition", "Boon of the Spirit Realm"] {
         perm(&mut g, P0, nm);
@@ -553,7 +553,7 @@ fn a_bounceland_played_with_no_other_land_returns_itself() {
     g.player_mut(P0).hand.retain(|&x| x != c2);
     sim_core::engine::turn::play_land_card(&mut g, P0, c2, "plays").unwrap();
     assert_eq!(g.player(P0).lands.len(), 1);
-    assert_eq!(&*g.db.get(g.land(g.player(P0).lands[0]).cd).name, "Orzhov Basilica");
+    assert_eq!(&*g.db.get(g.perm(g.player(P0).lands[0]).card()).name, "Orzhov Basilica");
 }
 
 #[test]

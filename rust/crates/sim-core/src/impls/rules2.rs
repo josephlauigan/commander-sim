@@ -23,7 +23,7 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
@@ -208,20 +208,20 @@ pub fn chatterfang_squirrels(g: &mut Game, p: PlayerId, n: i32) -> Res {
 /// Fix (Rust only): Python registers this on "Legion's Landing // Adanto, the First Fort", which is never a land, and
 /// reads `p.adanto`, which nothing sets, so the flipped land never made a token. It is registered on the land Legion's
 /// Landing becomes (t1.ADANTO), without the `p.adanto` check.
-fn adanto(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || !super::lands::can_pay_without(g, p, l, 2, "W") {
+fn adanto(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || !super::lands::can_pay_without(g, p, l, 2, "W") {
         return Ok(vec![]);
     }
     Ok(vec![plan(1.2, "Adanto token".into(), adanto_go, l.0 as i64)])
 }
 
 fn adanto_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !super::lands::pay_without(g, p, l, 2, "W")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !super::lands::pay_without(g, p, l, 2, "W")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    let cd = g.land(l).cd;
+    g.perm_mut(l).tapped = true;
+    let cd = g.perm(l).card();
     if crate::engine::stack::ability_window_card(g, p, cd, "a 1/1 lifelink Vampire", None, None)? {
         let spec = Tokens {
             lifelink: true,
@@ -323,9 +323,9 @@ fn springbloom(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let lands = g.player(o).lands.clone();
-    let l = first_min(&lands, |l| (!BASICS.contains(&&*g.db.get(g.land(l).cd).name), !g.land(l).tapped)).unwrap();
+    let l = first_min(&lands, |l| (!BASICS.contains(&&*g.db.get(g.perm(l).card()).name), !g.perm(l).tapped)).unwrap();
     crate::engine::turn::remove_land(g, o, l);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     g.player_mut(o).gy.push(cd);
     land_ramp(g, o, 2, true)
 }
@@ -1785,7 +1785,7 @@ fn spinner_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let lands = g.player(p).lands.clone();
-    let l = lands.iter().copied().find(|&l| g.land(l).tapped).unwrap_or(lands[0]);
+    let l = lands.iter().copied().find(|&l| g.perm(l).tapped).unwrap_or(lands[0]);
     super::lands::animate(g, p, l, x, x, &["trample", "haste"], false);
     Ok(true)
 }

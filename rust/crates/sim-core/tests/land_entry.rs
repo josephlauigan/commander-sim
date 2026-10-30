@@ -87,13 +87,13 @@ fn the_ai_pays_for_a_shock_land_only_when_it_uses_the_mana() {
     let vents = card(&g, "Steam Vents");
     play_land_card(&mut g, P0, vents, "plays").unwrap();
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(!g.land(l).tapped);
+    assert!(!g.perm(l).tapped);
     assert_eq!(g.player(P0).life, 38);
     let mut g = table(&["sauron", "veyran"]);
     g.player_mut(P0).turns = 6;
     g.player_mut(P0).hand.clear(); // nothing to cast: save the life
     play_land_card(&mut g, P0, vents, "plays").unwrap();
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
     assert_eq!(g.player(P0).life, 40);
 }

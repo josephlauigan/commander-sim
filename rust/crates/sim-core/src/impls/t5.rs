@@ -390,7 +390,7 @@ fn seedborn(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     for l in g.player(o).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     for m in g.player(o).perms.clone() {
         g.perm_mut(m).tapped = false;

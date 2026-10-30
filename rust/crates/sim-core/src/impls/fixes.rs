@@ -14,7 +14,7 @@ use crate::engine::values::{epow, has_type, pval, threat};
 use crate::engine::zones::{Enter, Tokens, bounce, die, enter, landfall, leave, make_tokens, min_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -24,12 +24,12 @@ fn pname(g: &Game, p: PlayerId) -> Sym {
 }
 
 /// fixes.destroy_land: q's land is destroyed (its card to the graveyard)
-pub fn destroy_land(g: &mut Game, q: PlayerId, l: LandId) -> Res {
+pub fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     if !g.player(q).lands.contains(&l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     g.player_mut(q).gy.push(cd);
     crate::glog!(g, "    {} ({}) is destroyed", g.db.get(cd).name, pname(g, q));
     if !g.hooks.is_empty() {
@@ -40,16 +40,16 @@ pub fn destroy_land(g: &mut Game, q: PlayerId, l: LandId) -> Res {
 
 /// fixes.best_opp_land: the most valuable opposing land: nonbasics that make several colours or big mana, of the
 /// leading player
-pub fn best_opp_land(g: &Game, p: PlayerId) -> Option<(PlayerId, LandId)> {
-    let lands: Vec<(PlayerId, LandId)> = g
+pub fn best_opp_land(g: &Game, p: PlayerId) -> Option<(PlayerId, PermId)> {
+    let lands: Vec<(PlayerId, PermId)> = g
         .opps(p)
         .flat_map(|q| g.player(q).lands.iter().map(move |&l| (q, l)))
         .filter(|&(_, l)| {
-            !matches!(&*g.db.get(g.land(l).cd).name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest")
+            !matches!(&*g.db.get(g.perm(l).card()).name, "Plains" | "Island" | "Swamp" | "Mountain" | "Forest")
         })
         .collect();
     first_max(&lands, |(q, l)| {
-        let t = &g.db.get(g.land(l).cd).tags;
+        let t = &g.db.get(g.perm(l).card()).tags;
         (t.int(Tag::Amt).unwrap_or(1), t.str(Tag::C).map_or(0, |s| s.chars().count()), threat(g, p, q))
     })
 }
@@ -354,7 +354,7 @@ fn decimate_ok(_g: &Game, _src: Src, _caster: PlayerId, _c: CardId, _zone: Sym) 
     true
 }
 
-type DecimateTargets = (Option<PermId>, Option<PermId>, Option<PermId>, Vec<(PlayerId, LandId)>);
+type DecimateTargets = (Option<PermId>, Option<PermId>, Option<PermId>, Vec<(PlayerId, PermId)>);
 
 fn decimate_targets(g: &Game, p: PlayerId) -> DecimateTargets {
     let a = best_opp_nonland(g, p, |g, m| of_type(g, m, Types::ARTIFACT));
@@ -673,17 +673,17 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let lands = g.player(p).lands.clone();
     let mut keys = vec![];
     for &l in &lands {
-        let d = g.db.get(g.land(l).cd);
+        let d = g.db.get(g.perm(l).card());
         // --- Tiers 1/2 (windgrace): Dark Depths and Thespian's Stage stay too
         let keep = matches!(&*d.name, "Gaea's Cradle" | "Ancient Tomb" | "Dark Depths" | "Thespian's Stage");
-        let k = (keep, !g.land(l).tapped, d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), g.rng.random());
+        let k = (keep, !g.perm(l).tapped, d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), g.rng.random());
         keys.push(k);
     }
     let i = first_min(&(0..lands.len()).collect::<Vec<_>>(), |i| keys[i]).unwrap();
     let sac = lands[i];
     let (target, _) = crop_target(g, p);
     crate::engine::turn::remove_land(g, p, sac);
-    let cd = g.land(sac).cd;
+    let cd = g.perm(sac).card();
     g.player_mut(p).gy.push(cd);
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;

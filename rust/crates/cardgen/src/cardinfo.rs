@@ -1,6 +1,6 @@
-//! What the engine reads from a card's Scryfall record besides its tags: Phyrexian mana colours, a land's enters
-//! effects and the condition it enters untapped under, its basic land types (Python's `engine.phyrexian`,
-//! `engine.land_etb_fx`, `ais.enters_rule`, `ais.land_types`).
+//! What the engine reads from a card's Scryfall record besides its tags: Phyrexian mana colours, the condition a
+//! land enters untapped under, its basic land types (Python's `engine.phyrexian`, `ais.enters_rule`,
+//! `ais.land_types`). A land's enters effects are its compiled abilities (Phase 3).
 
 use crate::cd::Cd;
 use crate::json::J;
@@ -24,19 +24,6 @@ pub fn phyrexian(cache: &Cache, cd: &Cd) -> String {
     } else {
         String::new()
     }
-}
-
-/// a land's "when this land enters" effects: ("scry", n) / ("gain", n)
-pub fn land_etb_fx(cache: &Cache, cd: &Cd) -> Vec<(String, i64)> {
-    let txt = rec(cache, &cd.name).and_then(|r| r.s("oracle_text")).unwrap_or("").to_lowercase();
-    let mut fx = vec![];
-    if let Some(m) = search(r"when this land enters, scry (\d+)", &txt) {
-        fx.push(("scry".to_string(), m.gs(1).parse().unwrap()));
-    }
-    if let Some(m) = search(r"when this land enters, you gain (\d+) life", &txt) {
-        fx.push(("gain".to_string(), m.gs(1).parse().unwrap()));
-    }
-    fx
 }
 
 /// (basic land types, is basic) from the type line ('Land — Island Swamp')

@@ -59,7 +59,7 @@ use crate::engine::values::{epow, etgh, has_type, ptypes, pval, untargetable};
 use crate::engine::zones::{bounce, exile_perm, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::partials::{at_once, eot_kw};
 use crate::state::{DataKey, Game, Val};
@@ -213,8 +213,8 @@ fn alarm_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 // ================================================================== Mana Breach
 /// the land q returns to hand: a tapped one first, then the one making the fewest colours
-fn breach_land(g: &Game, q: PlayerId) -> Option<LandId> {
-    min_by(&g.player(q).lands, |l| (!g.land(l).tapped) as i32 as f64 * 10.0 + land_colors_now(g, q, l).count() as f64)
+fn breach_land(g: &Game, q: PlayerId) -> Option<PermId> {
+    min_by(&g.player(q).lands, |l| (!g.perm(l).tapped) as i32 as f64 * 10.0 + land_colors_now(g, q, l).count() as f64)
 }
 
 /// Whenever a player casts a spell, that player returns a land they control to its owner's hand.
@@ -228,7 +228,7 @@ fn breach_cast(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
     }
     let Some(l) = breach_land(g, caster) else { return Ok(()) };
     crate::engine::turn::remove_land(g, caster, l);
-    let cd = g.land(l).cd;
+    let cd = g.perm(l).card();
     g.player_mut(caster).hand.push(cd);
     crate::glog!(g, "    {} returns {} to hand (Mana Breach)", pname(g, caster), cname(g, cd));
     Ok(())
@@ -237,8 +237,8 @@ fn breach_cast(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
 // ================================================================== Barkchannel Pathway
 /// the face p would choose for its Pathway now: the colour its other lands make less, then the colour its hand needs
 /// more (blue on a tie)
-fn pathway_pick(g: &Game, p: PlayerId, l: LandId) -> char {
-    let others: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&x| x != l).collect();
+fn pathway_pick(g: &Game, p: PlayerId, l: PermId) -> char {
+    let others: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&x| x != l).collect();
     let src = |c: char| others.iter().filter(|&&x| land_colors_now(g, p, x).has(c)).count() as i32;
     let need = |c: char| g.player(p).hand.iter().map(|&x| g.db.get(x).pips.chars().filter(|&y| y == c).count()).sum();
     let (u, gr): (i32, i32) = (src('U'), src('G'));
@@ -250,9 +250,9 @@ fn pathway_pick(g: &Game, p: PlayerId, l: LandId) -> char {
 }
 
 /// As it is played, the face is chosen: Barkchannel Pathway taps for {G}, Tidechannel Pathway for {U}.
-fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn pathway_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let c = pathway_pick(g, p, l);
-    g.land_mut(l).data.set(DataKey::ChosenColor, Val::Str(if c == 'U' { "U" } else { "G" }));
+    g.perm_mut(l).data.set(DataKey::ChosenColor, Val::Str(if c == 'U' { "U" } else { "G" }));
     crate::glog!(
         g,
         "    {} plays it as {}",
@@ -262,12 +262,12 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     Ok(())
 }
 
-fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    match g.land(l).data.get(DataKey::ChosenColor) {
+fn pathway_cols(g: &Game, _p: PlayerId, l: PermId) -> Colors {
+    match g.perm(l).data.get(DataKey::ChosenColor) {
         Some(Val::Str(s)) => Colors::from_letters(s),
         // put onto the battlefield some other way: its front face (not worked out again: a pick looped through an
         // opponent's Exotic Orchard and Pathway)
-        _ => Colors::from_letters(crate::impls::t45_prosper::pathway_front(&g.db.get(g.land(l).cd).name)),
+        _ => Colors::from_letters(crate::impls::t45_prosper::pathway_front(&g.db.get(g.perm(l).card()).name)),
     }
 }
 

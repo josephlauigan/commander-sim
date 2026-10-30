@@ -36,7 +36,7 @@ pub fn held_names(g: &Game, p: PlayerId) -> Vec<String> {
             .filter_map(|&m| g.perm(m).cd)
             .map(|c| g.db.get(c).name.to_string()),
     );
-    v.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| g.db.get(g.land(l).cd).name.to_string()));
+    v.extend(pl.lands.iter().filter(|&&l| g.perm(l).on_bf).map(|&l| g.db.get(g.perm(l).card()).name.to_string()));
     v.extend(pl.cmds_in_zone().map(|c| g.db.get(c).name.to_string()));
     v
 }

@@ -25,7 +25,7 @@ use crate::engine::values::{card_name, commander_out, epow, etgh, has_type, pval
 use crate::engine::zones::{Tokens, die, draw, enter_token_copy, exile_perm, make_tokens, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{WalkerAb, walker};
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
@@ -1072,8 +1072,8 @@ fn loyalty_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 // ================================================================== Windbrisk Heights
-fn hidden(g: &Game, l: LandId) -> Option<CardId> {
-    match g.land(l).data.get(DataKey::Hidden) {
+fn hidden(g: &Game, l: PermId) -> Option<CardId> {
+    match g.perm(l).data.get(DataKey::Hidden) {
         Some(Val::Card(c)) => Some(*c),
         _ => None,
     }
@@ -1081,7 +1081,7 @@ fn hidden(g: &Game, l: LandId) -> Option<CardId> {
 
 /// Hideaway 4: look at the top four cards, exile one face down, the rest go to the bottom in a random order. The AI
 /// keeps the most expensive nonland card (it is cast for free).
-fn windbrisk_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn windbrisk_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let n = 4.min(g.player(p).library.len());
     let mut top: Vec<CardId> = (0..n).filter_map(|_| g.player_mut(p).library.pop()).collect();
     if top.is_empty() {
@@ -1100,16 +1100,16 @@ fn windbrisk_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     remove_first(&mut top, best);
     g.rng.shuffle(&mut top);
     g.player_mut(p).library.splice(0..0, top);
-    g.land_mut(l).data.set(DataKey::Hidden, Val::Card(best));
+    g.perm_mut(l).data.set(DataKey::Hidden, Val::Card(best));
     crate::glog!(g, "    Windbrisk Heights hides a card");
     Ok(())
 }
 
 /// {W},{T}: play the exiled card without paying its mana cost if you attacked with three or more creatures this turn
-fn windbrisk_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn windbrisk_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let Some(c) = hidden(g, l) else { return Ok(vec![]) };
     let pl = g.player(p);
-    if post.is_none() || g.land(l).tapped || pl.atk_count.0 != Some(g.turn_stamp()) || pl.atk_count.1 < 3 {
+    if post.is_none() || g.perm(l).tapped || pl.atk_count.0 != Some(g.turn_stamp()) || pl.atk_count.1 < 3 {
         return Ok(vec![]);
     }
     if !crate::impls::lands::can_pay_without(g, p, l, 0, "W") {
@@ -1123,19 +1123,19 @@ fn windbrisk_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -
 }
 
 fn windbrisk_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    let l = PermId(arg as u32);
     let Some(c) = hidden(g, l) else { return Ok(false) };
     let pl = g.player(p);
-    if !pl.lands.contains(&l) || g.land(l).tapped || pl.atk_count.0 != Some(g.turn_stamp()) || pl.atk_count.1 < 3 {
+    if !pl.lands.contains(&l) || g.perm(l).tapped || pl.atk_count.0 != Some(g.turn_stamp()) || pl.atk_count.1 < 3 {
         return Ok(false);
     }
     if !crate::impls::lands::pay_without(g, p, l, 0, "W")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    g.land_mut(l).data.set(DataKey::Hidden, Val::None);
+    g.perm_mut(l).tapped = true;
+    g.perm_mut(l).data.set(DataKey::Hidden, Val::None);
     let what = format!("play {}", g.db.get(c).name);
-    if !ability_window_card(g, p, g.land(l).cd, &what, None, None)? {
+    if !ability_window_card(g, p, g.perm(l).card(), &what, None, None)? {
         return Ok(true);
     }
     if g.db.get(c).land {
@@ -1256,14 +1256,15 @@ pub const FILTER_LANDS: [&str; 5] = ["Fetid Heath", "Cascade Bluffs", "Twilight 
 /// each of the land's two colours. A filter land: it makes coloured mana only when an *untapped* land of the player can
 /// make one of its colours to pay for it (no such source: colourless only). A filter can be paid by another filter
 /// that is itself paid for, but two filters with no real source between them make nothing
-fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
-    let name_of = |x: crate::ids::LandId| &*g.db.get(g.land(x).cd).name;
-    let mine_of = |x: crate::ids::LandId| Colors::from_letters(g.db.get(g.land(x).cd).tags.str(Tag::C).unwrap_or("C"));
+fn heath_cols(g: &Game, p: PlayerId, l: crate::ids::PermId) -> Colors {
+    let name_of = |x: crate::ids::PermId| &*g.db.get(g.perm(x).card()).name;
+    let mine_of =
+        |x: crate::ids::PermId| Colors::from_letters(g.db.get(g.perm(x).card()).tags.str(Tag::C).unwrap_or("C"));
     let mine = mine_of(l);
     let mut avail = Colors::NONE; // colours the untapped non-filter lands make
     let mut filters = vec![];
     for &x in &g.player(p).lands {
-        if x == l || g.land(x).tapped {
+        if x == l || g.perm(x).tapped {
             continue;
         }
         if FILTER_LANDS.contains(&name_of(x)) {

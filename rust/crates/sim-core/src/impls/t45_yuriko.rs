@@ -54,7 +54,7 @@ use crate::engine::values::{epow, has_type, pval, threat, untargetable};
 use crate::engine::zones::{Enter, draw, enter, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{WalkerAb, walker};
 use crate::impls::partials::{at_once, eot_kw};
 use crate::state::{Ctx, DataKey, Game, StackKind, Val};
@@ -332,8 +332,8 @@ fn cover_fear(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 }
 
 // ======================================================== Shizo, Death's Storehouse
-fn land_ready(g: &Game, l: LandId, p: PlayerId) -> bool {
-    g.player(p).lands.contains(&l) && !g.land(l).tapped
+fn land_ready(g: &Game, l: PermId, p: PlayerId) -> bool {
+    g.player(p).lands.contains(&l) && !g.perm(l).tapped
 }
 
 /// an opponent has an untapped creature that could block m now and that fear would stop
@@ -350,7 +350,7 @@ fn fear_helps(g: &Game, p: PlayerId, m: PermId) -> bool {
     })
 }
 
-fn shizo_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn shizo_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post != Some(false) || g.active != Some(p) || !land_ready(g, l, p) {
         return Ok(vec![]);
     }
@@ -385,13 +385,13 @@ fn shizo_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
 }
 
 fn shizo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId((arg & 0xFFFF_FFFF) as u32);
+    let l = PermId((arg & 0xFFFF_FFFF) as u32);
     let m = PermId((arg >> 32) as u32);
     if !land_ready(g, l, p) || !live(g, m) || !crate::impls::lands::pay_without(g, p, l, 0, "B")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).cd, "gains fear", None, Some(m))? && live(g, m) {
+    g.perm_mut(l).tapped = true;
+    if ability_window_card(g, p, g.perm(l).card(), "gains fear", None, Some(m))? && live(g, m) {
         eot_kw(g, m, "fear");
         crate::glog!(g, "    {} gains fear until end of turn (Shizo)", g.perm(m).name);
     }
@@ -574,8 +574,8 @@ const SEA_GATE: &str = "Sea Gate Restoration // Sea Gate, Reborn";
 /// Hydroelectric Specimen // Hydroelectric Laboratory (t6_counters::STACK_RESPONSES)
 pub const SPECIMEN: &str = "Hydroelectric Specimen // Hydroelectric Laboratory";
 
-fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    Colors::from_letters(if cname(g, g.land(l).cd) == AGADEEM { "B" } else { "U" })
+fn mdfc_cols(g: &Game, _p: PlayerId, l: PermId) -> Colors {
+    Colors::from_letters(if cname(g, g.perm(l).card()) == AGADEEM { "B" } else { "U" })
 }
 
 /// the land face, when the land drop has no other use (t6_lands' rule)
@@ -710,7 +710,7 @@ pub fn specimen_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
 const PATHWAY: &str = "Clearwater Pathway // Murkwater Pathway";
 
 /// the face p plays: the colour (U or B) its other lands make less of; the hand's pips break a tie
-fn pathway_face(g: &Game, p: PlayerId, l: LandId) -> &'static str {
+fn pathway_face(g: &Game, p: PlayerId, l: PermId) -> &'static str {
     let pl = g.player(p);
     let src = |ch: char| {
         pl.lands.iter().filter(|&&x| x != l && crate::engine::mana::land_colors_now(g, p, x).has(ch)).count() as i32
@@ -721,10 +721,10 @@ fn pathway_face(g: &Game, p: PlayerId, l: LandId) -> &'static str {
     if b < u { "B" } else { "U" }
 }
 
-fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn pathway_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     crate::impls::t6_lands::traitors_check(g, p, l)?;
     let face = pathway_face(g, p, l);
-    g.land_mut(l).data.set(DataKey::ChosenColor, Val::Str(face));
+    g.perm_mut(l).data.set(DataKey::ChosenColor, Val::Str(face));
     crate::glog!(
         g,
         "    {} plays {}",
@@ -734,8 +734,8 @@ fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
     Ok(())
 }
 
-fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    match g.land(l).data.get(DataKey::ChosenColor) {
+fn pathway_cols(g: &Game, _p: PlayerId, l: PermId) -> Colors {
+    match g.perm(l).data.get(DataKey::ChosenColor) {
         Some(Val::Str(s)) => Colors::from_letters(s),
         _ => Colors::from_letters("U"),
     }

@@ -107,7 +107,7 @@ fn titania_returns_a_basic_untapped_when_there_is_no_fetch_land() {
     let t = hand(&mut g, P0, &["Titania, Protector of Argoth"])[0];
     zones::enter(&mut g, P0, t, zones::Enter { sick: false, ..Default::default() }).unwrap();
     assert_eq!(g.player(P0).lands.len(), 1);
-    assert!(!g.land(g.player(P0).lands[0]).tapped, "the land returns untapped");
+    assert!(!g.perm(g.player(P0).lands[0]).tapped, "the land returns untapped");
 }
 
 #[test]
@@ -467,8 +467,8 @@ fn primeval_titan_enters_and_attacks_for_two_lands_each_fetch_lands_first() {
     zones::enter(&mut g, P0, t, zones::Enter { sick: false, ..Default::default() }).unwrap();
     let lands: Vec<_> = g.player(P0).lands.clone();
     assert_eq!(lands.len(), before + 2, "two lands");
-    let names: Vec<String> = lands.iter().map(|&l| g.db.get(g.land(l).cd).name.to_string()).collect();
-    assert!(lands.iter().all(|&l| g.land(l).tapped), "all enter tapped: {names:?}");
+    let names: Vec<String> = lands.iter().map(|&l| g.db.get(g.perm(l).card()).name.to_string()).collect();
+    assert!(lands.iter().all(|&l| g.perm(l).tapped), "all enter tapped: {names:?}");
     let fetches = ["Evolving Wilds", "Terramorphic Expanse", "Fabled Passage"];
     assert!(names.iter().all(|n| fetches.contains(&n.as_str())), "fetch lands first: {names:?}");
     // tapped, they cannot be cracked yet: no Elemental, and the AI offers no crack
@@ -476,7 +476,7 @@ fn primeval_titan_enters_and_attacks_for_two_lands_each_fetch_lands_first() {
     assert!(!options(&mut g, P0, false).iter().any(|o| o.label.contains("crack the fetch")));
     // they untap next turn: now the crack is offered and makes two 5/3s
     for l in lands {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     g.active = Some(P0);
     let o = options(&mut g, P0, false);

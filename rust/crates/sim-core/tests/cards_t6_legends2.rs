@@ -206,8 +206,8 @@ fn teferi_plus_untaps_ours_taps_theirs_and_gains_two() {
     walker_eff(&mut g, t, P0, 0);
     assert!(!g.perm(rock).tapped, "our artifact untapped");
     assert!(!g.perm(mine).tapped, "our creature untapped");
-    assert!(!g.land(l0).tapped, "our land untapped");
-    assert!(!g.land(l1[0]).tapped, "(only one land is chosen, ours)");
+    assert!(!g.perm(l0).tapped, "our land untapped");
+    assert!(!g.perm(l1[0]).tapped, "(only one land is chosen, ours)");
     assert_eq!(g.player(P0).life, life + 2);
     let _ = l1;
 }
@@ -220,7 +220,7 @@ fn teferi_plus_taps_their_untapped_when_ours_are_untapped() {
     let l1 = lands(&mut g, P1, "Mountain", 1, false)[0];
     walker_eff(&mut g, t, P0, 0);
     assert!(g.perm(theirs).tapped);
-    assert!(g.land(l1).tapped, "their land tapped");
+    assert!(g.perm(l1).tapped, "their land tapped");
 }
 
 #[test]

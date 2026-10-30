@@ -25,7 +25,7 @@ use crate::engine::{self, cast, turn};
 use crate::flow::Res;
 use crate::flow::Stop;
 use crate::hooks::{Action, Event};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game, StackItem, StackKind, Step};
 use crate::sym::intern;
 use crate::tag::Tag;
@@ -243,7 +243,7 @@ fn can_act_abilities(g: &mut Game, q: PlayerId) -> Res<bool> {
     }
     for l in g.player(q).lands.clone() {
         let labels: Vec<String> = abilities::land_abilities(g, q, l).into_iter().map(|a| a.label).collect();
-        if usable(g.land(l).tapped, labels) {
+        if usable(g.perm(l).tapped, labels) {
             return Ok(true);
         }
     }
@@ -613,9 +613,9 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
 }
 
 /// an activated ability of land L (beyond tapping for mana)
-pub fn use_land(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<String>> {
+pub fn use_land(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<String>> {
     let abil = abilities::land_abilities(g, p, l);
-    let lname = card_name(g, g.land(l).cd);
+    let lname = card_name(g, g.perm(l).card());
     let alts = super::alt::land_alts(g, p, l)?; // the land code's own abilities (the AI's hook)
     if abil.is_empty() && alts.is_empty() {
         return Ok(Some(format!("{lname} has no ability to activate beyond mana (tap it for mana with tap).")));
@@ -627,7 +627,7 @@ pub fn use_land(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<String>> {
         return Ok(None);
     };
     if k >= abil.len() {
-        let cd = g.land(l).cd;
+        let cd = g.perm(l).card();
         return super::alt::run(g, p, cd, &alts[k - abil.len()].1);
     }
     (abil[k].act)(g, p, l)

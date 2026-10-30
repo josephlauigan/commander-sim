@@ -25,7 +25,7 @@ fn fingerprint(g: &Game) -> Fingerprint {
                 p.hand.iter().map(|c| c.0).collect(),
                 p.library.iter().map(|c| c.0).collect(),
                 p.perms.iter().map(|&m| g.perm(m).name.to_string()).collect(),
-                p.lands.iter().map(|&l| (g.land(l).cd.0, g.land(l).tapped)).collect(),
+                p.lands.iter().map(|&l| (g.perm(l).card().0, g.perm(l).tapped)).collect(),
                 p.treasures,
             )
         })

@@ -1,4 +1,4 @@
-//! The game state: `Game`, `Player`, `Perm` (nonland permanents and tokens), `Land`, and the stack.
+//! The game state: `Game`, `Player`, `Perm` (every permanent and token, land or not), and the stack.
 //!
 //! Layout rules (documents/archive/rust-design.md):
 //! - Everything is plain data. Objects refer to each other by id (`ids.rs`), never by reference, so
@@ -15,7 +15,7 @@
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::control::{Humans, Link};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::rng::Rng;
 use crate::settings::Settings;
 use crate::sym::Sym;
@@ -225,7 +225,7 @@ pub enum Val {
     Int(i64),
     Card(CardId),
     Perm(PermId),
-    Land(LandId),
+    Land(PermId),
     Player(PlayerId),
     Str(Sym),
     Stamp(TurnStamp),
@@ -381,7 +381,8 @@ pub struct CopyOf {
     pub exc: CopyExc,
 }
 
-/// A nonland permanent or a token (Python's `Perm`, every slot kept).
+/// A permanent or a token, land or not (Python's `Perm`, every slot kept, and its `Land`). A land is put in by
+/// `Game::add_land` and listed in `Player::lands`; every other permanent in `Player::perms`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Perm {
     pub id: PermId,
@@ -439,15 +440,11 @@ pub struct Perm {
     pub exc: CopyExc,
 }
 
-/// A land on the battlefield (Python's `Land`).
-#[derive(Debug, Clone, PartialEq)]
-pub struct Land {
-    pub id: LandId,
-    pub cd: CardId,
-    pub owner: PlayerId,
-    pub tapped: bool,
-    pub data: PermData,
-    pub on_bf: bool,
+impl Perm {
+    /// the card this permanent is (a land always has one); panics on a token
+    pub fn card(&self) -> CardId {
+        self.cd.expect("a permanent with a card")
+    }
 }
 
 // ------------------------------------------------------------------ players
@@ -468,7 +465,7 @@ pub struct Player {
     pub hand: Vec<CardId>,
     pub gy: Vec<CardId>,
     pub exile: Vec<CardId>,
-    pub lands: Vec<LandId>,
+    pub lands: Vec<PermId>,
     pub perms: Vec<PermId>,
     pub life: i32,
     pub alive: bool,
@@ -692,7 +689,7 @@ pub struct Player {
     /// controller) (Python's `locked_name`)
     pub locked_name: Option<(Sym, u32, PlayerId)>,
     /// Urza's Sagas on the battlefield and their lore counters (Python's `p.sagas`)
-    pub sagas: Vec<(LandId, u32)>,
+    pub sagas: Vec<(PermId, u32)>,
     /// Hunter's Insight: (the turn, the creature): its combat damage to a player draws that many
     pub insight: Option<(TurnStamp, PermId)>,
     /// Conduit of Worlds: no more spells this turn
@@ -1088,8 +1085,8 @@ pub struct Game {
     /// the card code (hooks.rs)
     pub registry: Arc<crate::hooks::Registry>,
     pub players: Vec<Player>,
+    /// the one permanent arena: every permanent and token, land or not, by its `PermId`
     pub perms: Vec<Perm>,
-    pub lands: Vec<Land>,
     /// play decisions (Python's `g.rng`, seeded `play:{seed}`)
     pub rng: Rng,
     pub round: u32,
@@ -1315,7 +1312,7 @@ pub struct Game {
     pub search_work: u64,
     /// creature lands animated until the start of the next turn: (controller, the creature, the land)
     /// (lands.animate, revert_animated)
-    pub animated: Vec<(PlayerId, PermId, LandId)>,
+    pub animated: Vec<(PlayerId, PermId, PermId)>,
     /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
     pub combo_spell: bool,
     /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
@@ -1373,7 +1370,6 @@ impl Game {
             registry,
             players,
             perms: vec![],
-            lands: vec![],
             rng,
             round: 0,
             active: None,
@@ -1528,14 +1524,6 @@ impl Game {
         &mut self.perms[m.index()]
     }
 
-    pub fn land(&self, l: LandId) -> &Land {
-        &self.lands[l.index()]
-    }
-
-    pub fn land_mut(&mut self, l: LandId) -> &mut Land {
-        &mut self.lands[l.index()]
-    }
-
     /// Python's `g.opps(p)`: the other living players, in seat order
     pub fn opps(&self, p: PlayerId) -> impl Iterator<Item = PlayerId> + '_ {
         self.players.iter().filter(move |q| q.alive && q.id != p).map(|q| q.id)
@@ -1655,15 +1643,22 @@ impl Game {
     }
 
     /// A land put onto p's battlefield, without its enter effects (the engine's land play adds those).
-    pub fn add_land_entering(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
+    pub fn add_land_entering(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> PermId {
         self.add_land(p, cd, tapped)
     }
 
-    pub fn add_land(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> LandId {
+    pub fn add_land(&mut self, p: PlayerId, cd: CardId, tapped: bool) -> PermId {
         // --- Tiers 1/2 (windgrace): Spelunking, "lands you control enter untapped"
         let tapped = tapped && !crate::impls::t12_windgrace::lands_enter_untapped(self, p);
-        let id = LandId(self.lands.len() as u32);
-        self.lands.push(Land { id, cd, owner: p, tapped, data: PermData::default(), on_bf: true });
+        // a land is a permanent in the one arena, on the battlefield at once; it is listed in `Player::lands`
+        let id = self.new_perm(p, Some(cd), crate::sym::intern(""), 0, 0);
+        let x = self.perm_mut(id);
+        x.tapped = tapped;
+        x.sick = false;
+        x.on_bf = true;
+        if !self.dsl_on && crate::dsl::land_live(self.db.get(cd)) {
+            self.dsl_on = true; // its compiled abilities run (Phase 3), as zones::enter does for other permanents
+        }
         self.player_mut(p).lands.push(id);
         id
     }

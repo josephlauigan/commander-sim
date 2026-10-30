@@ -52,7 +52,7 @@ use crate::engine::values::{epow, etgh, indestructible, no_damage, pval, threat}
 use crate::engine::zones::{Tokens, add_treasure, die, draw, make_tokens};
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src, TrigAct, Trigger};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::partials::at_once;
 use crate::state::{Ctx, DataKey, Game, Step, Val};
@@ -312,8 +312,8 @@ pub fn uba_draw(g: &mut Game, p: PlayerId) -> Res<bool> {
 
 // ================================================================== Pathways
 /// the colour a Pathway's face gives: the one p's hand needs more, against the sources p already has
-fn pathway_pick(g: &Game, p: PlayerId, l: LandId) -> char {
-    let d = g.db.get(g.land(l).cd);
+fn pathway_pick(g: &Game, p: PlayerId, l: PermId) -> char {
+    let d = g.db.get(g.perm(l).card());
     let cols: Vec<char> = d.tags.str(Tag::C).unwrap_or("").chars().collect();
     let need = |col: char| -> i32 {
         let pips: i32 = g
@@ -336,11 +336,11 @@ fn pathway_pick(g: &Game, p: PlayerId, l: LandId) -> char {
 }
 
 /// played as a land: the face is chosen (`pathway_pick`) and kept
-fn pathway_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn pathway_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let col = pathway_pick(g, p, l);
     let s = intern(&col.to_string());
-    g.land_mut(l).data.set(DataKey::ChosenColor, Val::Str(s));
-    crate::glog!(g, "    {} plays {} as the {{{col}}} face", pname(g, p), cname(g, g.land(l).cd));
+    g.perm_mut(l).data.set(DataKey::ChosenColor, Val::Str(s));
+    crate::glog!(g, "    {} plays {} as the {{{col}}} face", pname(g, p), cname(g, g.perm(l).card()));
     Ok(())
 }
 
@@ -358,10 +358,10 @@ pub(crate) fn pathway_front(name: &str) -> &'static str {
 
 /// the face it was played as, else its front face (never worked out again here: a pick reads the other lands'
 /// colours, and an Exotic Orchard reads an opponent's Pathway, which looped without end)
-fn pathway_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
-    match g.land(l).data.get(DataKey::ChosenColor) {
+fn pathway_cols(g: &Game, _p: PlayerId, l: PermId) -> Colors {
+    match g.perm(l).data.get(DataKey::ChosenColor) {
         Some(Val::Str(s)) => Colors::from_letters(s),
-        _ => Colors::from_letters(pathway_front(&g.db.get(g.land(l).cd).name)),
+        _ => Colors::from_letters(pathway_front(&g.db.get(g.perm(l).card()).name)),
     }
 }
 

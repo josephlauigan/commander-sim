@@ -238,13 +238,6 @@ impl EnterRule {
     }
 }
 
-/// A land's "when this land enters" effect (Python's `land_etb_fx`)
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LandEtb {
-    Scry(i32),
-    Gain(i32),
-}
-
 #[derive(Debug, Clone)]
 pub struct CardDef {
     pub id: CardId,
@@ -283,8 +276,6 @@ pub struct CardDef {
     pub source: Box<str>,
     /// the colours of its Phyrexian mana symbols, in cost order ("BB" for {B/P}{B/P})
     pub phyrexian: Box<str>,
-    /// a land's "when this land enters" effects
-    pub land_etb_fx: Box<[LandEtb]>,
     /// the condition a land enters untapped under, if its text has one
     pub enters_rule: Option<EnterRule>,
     /// a land's basic land types, as colours (Plains W ... Forest G)
@@ -359,15 +350,6 @@ impl CardDef {
             game_changer: r.game_changer == Some(true),
             source: r.source.as_str().into(),
             phyrexian: r.phyrexian.as_str().into(),
-            land_etb_fx: r
-                .land_etb_fx
-                .iter()
-                .map(|(k, n)| match k.as_str() {
-                    "scry" => Ok(LandEtb::Scry(*n)),
-                    "gain" => Ok(LandEtb::Gain(*n)),
-                    _ => Err(at(format!("land enters effect {k:?}"))),
-                })
-                .collect::<Result<_, _>>()?,
             enters_rule: match &r.enters_rule {
                 Some(v) => Some(EnterRule::from_json(v).map_err(at)?),
                 None => None,
@@ -415,7 +397,6 @@ pub fn engine_made() -> Vec<RawCard> {
             perm: false,
         },
         phyrexian: String::new(),
-        land_etb_fx: vec![],
         enters_rule: None,
         land_types: vec![],
         basic: false,

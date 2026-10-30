@@ -52,7 +52,7 @@ fn a_land_taps_into_the_pool() {
     let id = src(&g, P0, "Swamp");
     assert_eq!(mana::tap(&mut g, P0, id, None).unwrap(), None);
     assert_eq!(pool_text(&g, P0), "{B}");
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 1);
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 1);
     assert_eq!(mana::sources(&g, P0).len(), 1);
 }
 
@@ -64,7 +64,7 @@ fn wrong_colour_is_refused() {
     let why = mana::tap(&mut g, P0, id, Some('U')).unwrap().unwrap();
     assert!(why.contains("can't make blue"), "{why}");
     let l = g.player(P0).lands[0];
-    assert!(!g.land(l).tapped);
+    assert!(!g.perm(l).tapped);
 }
 
 #[test]

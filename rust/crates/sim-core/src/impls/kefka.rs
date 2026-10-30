@@ -1408,9 +1408,9 @@ fn devourer_leaves(g: &mut Game, _src: Src, m: PermId) -> Res {
 // ------------------------------------------------------------------ Gemstone Mine
 /// **Gemstone Mine**: enters with three mining counters; {T}, remove a mining counter: add one mana of any color; if
 /// there are no counters on it, sacrifice it. The counters are kept as the taps made (`Used`).
-fn mine_tap(g: &mut Game, p: PlayerId, l: crate::ids::LandId, _n: u32) -> Res {
-    let used = g.land(l).data.int(DataKey::Used) + 1;
-    g.land_mut(l).data.set(DataKey::Used, Val::Int(used));
+fn mine_tap(g: &mut Game, p: PlayerId, l: crate::ids::PermId, _n: u32) -> Res {
+    let used = g.perm(l).data.int(DataKey::Used) + 1;
+    g.perm_mut(l).data.set(DataKey::Used, Val::Int(used));
     if used >= 3 {
         crate::glog!(g, "    Gemstone Mine has no mining counters left: sacrificed");
         sac_land(g, p, l)?;

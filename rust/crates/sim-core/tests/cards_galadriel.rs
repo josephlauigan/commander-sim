@@ -231,7 +231,7 @@ fn secluded_courtyard_colours_only_for_the_type() {
     let mut g = table(&["galadriel", "veyran", "sauron"]);
     let cd = card(&g, "Secluded Courtyard");
     let l = g.add_land(P0, cd, false);
-    g.land_mut(l).data.set(DataKey::Ctype, Val::Str("elf"));
+    g.perm_mut(l).data.set(DataKey::Ctype, Val::Str("elf"));
     g.pay_for = Some(card(&g, "Llanowar Elves"));
     assert!(mana::land_colors_now(&g, P0, l).has('G'));
     g.pay_for = Some(card(&g, "Counterspell"));
@@ -480,8 +480,8 @@ fn planar_genesis_puts_a_land_onto_the_battlefield_tapped() {
     let lib = g.player(P0).library.len();
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(&*g.db.get(g.land(l).cd).name, "Forest", "the first land of the top four");
-    assert!(g.land(l).tapped);
+    assert_eq!(&*g.db.get(g.perm(l).card()).name, "Forest", "the first land of the top four");
+    assert!(g.perm(l).tapped);
     assert_eq!(g.player(P0).library.len(), lib - 1);
 }
 

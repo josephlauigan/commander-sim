@@ -39,7 +39,7 @@ fn ioreth_untaps_a_tapped_land() {
     assert_eq!(o.len(), 1, "one tapped land to untap");
     assert!(run(&mut g, P0, &o[0]));
     assert!(g.perm(i).tapped, "{{T}} is the cost");
-    assert_eq!(ls.iter().filter(|&&l| !g.land(l).tapped).count(), 1, "exactly one land untaps");
+    assert_eq!(ls.iter().filter(|&&l| !g.perm(l).tapped).count(), 1, "exactly one land untaps");
     assert!(options(&mut g, i, P0, Some(true)).is_empty(), "Ioreth is tapped");
 }
 

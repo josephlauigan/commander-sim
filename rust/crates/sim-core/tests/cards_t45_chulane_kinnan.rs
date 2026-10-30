@@ -32,7 +32,7 @@ fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
 }
 
 fn untapped_lands(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 fn serpent(g: &mut Game, p: PlayerId) -> PermId {
@@ -80,7 +80,7 @@ fn intruder_alarm_untaps_all_creatures_and_holds_them_in_the_untap_step() {
     let l = lands(&mut g, P0, "Forest", 1, true)[0];
     sim_core::engine::turn::step_start(&mut g, P0).unwrap();
     assert!(g.perm(a).tapped, "creatures don't untap during their controller's untap step");
-    assert!(!g.land(l).tapped, "lands still do");
+    assert!(!g.perm(l).tapped, "lands still do");
 }
 
 // ------------------------------------------------------------------ Mana Breach
@@ -94,7 +94,7 @@ fn mana_breach_returns_a_land_of_the_caster() {
     cast_event(&mut g, P1, c);
     assert_eq!(g.player(P1).lands.len(), 2);
     assert!(!g.player(P1).lands.contains(&t), "the tapped land goes back first");
-    assert!(g.player(P1).hand.contains(&g.land(t).cd));
+    assert!(g.player(P1).hand.contains(&g.perm(t).card()));
     let n0 = g.player(P0).lands.len();
     let c = card(&g, "Counterspell");
     cast_event(&mut g, P2, c);
@@ -130,10 +130,10 @@ fn azorius_chancery_returns_a_land_and_taps_for_two() {
     let plains = lands(&mut g, P0, "Plains", 1, false)[0];
     let c = take(&mut g, P0, "Azorius Chancery");
     sim_core::engine::turn::play_land_card(&mut g, P0, c, "plays").unwrap();
-    assert!(!g.player(P0).lands.contains(&plains) && g.player(P0).hand.contains(&g.land(plains).cd));
+    assert!(!g.player(P0).lands.contains(&plains) && g.player(P0).hand.contains(&g.perm(plains).card()));
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(l).tapped, "enters tapped");
-    g.land_mut(l).tapped = false;
+    assert!(g.perm(l).tapped, "enters tapped");
+    g.perm_mut(l).tapped = false;
     let u = mana_units(&g, P0, false);
     assert!(u.iter().any(|w| w.amt == 2 && w.cols.has('W') && w.cols.has('U')), "{{T}}: add {{W}}{{U}}");
 }
