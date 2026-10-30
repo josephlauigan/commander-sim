@@ -374,7 +374,8 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
     for (op, c) in [(">=", Cmp::Ge), ("<=", Cmp::Le), (">", Cmp::Gt), ("<", Cmp::Lt), ("=", Cmp::Eq)] {
         if let Some((k, v)) = s.split_once(op) {
             let k = k.trim();
-            let set_ix = |set: &str| sets.iter().position(|x| *x == set).ok_or_else(|| format!("no set {set:?} in {s:?}"));
+            let set_ix =
+                |set: &str| sets.iter().position(|x| *x == set).ok_or_else(|| format!("no set {set:?} in {s:?}"));
             let q = if let Some(set) = k.strip_prefix("hand:") {
                 Q::Hand(set_ix(set)?)
             } else if let Some(set) = k.strip_prefix("bf:") {
@@ -467,10 +468,10 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
         Q::Mana => mana().eff + rituals(g, p, cx),
         Q::Eff => mana().eff,
         Q::Makers => mana().n_mana as f64,
-        Q::OppBlueUp => g
-            .opps(p)
-            .filter(|&q| super::brain::open_mana(g, q, Some('U')) >= 2 && !g.player(q).hand.is_empty())
-            .count() as f64,
+        Q::OppBlueUp => {
+            g.opps(p).filter(|&q| super::brain::open_mana(g, q, Some('U')) >= 2 && !g.player(q).hand.is_empty()).count()
+                as f64
+        }
         Q::Hand(i) => cx.plan.map_or(0, |l| hand_count(g, p, &l.sets[i])) as f64,
         Q::Bf(i) => cx.plan.map_or(0, |l| {
             let set = &l.sets[i];
@@ -633,7 +634,8 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         if r.combos.is_empty() {
             return Err(err(format!("go_now rule {}: no combos", i + 1)));
         }
-        if let Some(c) = r.combos.iter().find(|c| !crate::impls::combos::all().iter().any(|x| x.name.starts_with(&***c)))
+        if let Some(c) =
+            r.combos.iter().find(|c| !crate::impls::combos::all().iter().any(|x| x.name.starts_with(&***c)))
         {
             return Err(err(format!("go_now rule {}: no catalogue combo starts with {c:?}", i + 1)));
         }

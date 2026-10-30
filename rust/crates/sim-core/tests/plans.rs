@@ -264,5 +264,8 @@ fn the_extensions_are_validated() {
     assert!(bad("deck = \"x\"\n[[go_now]]\ncombos = [\"No such\"]").contains("no catalogue combo starts with"));
     assert!(bad("deck = \"x\"\n[[wish]]\ncards = []\nscore = 1.0").contains("no cards"));
     assert!(bad("deck = \"x\"\n[mulligan]\n[[mulligan.rule]]\nwhen = []\nkeep = true").contains("no when"));
-    assert!(plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"mana<one-lander\"]\nvalue = 1").is_ok());
+    assert!(
+        plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"mana<one-lander\"]\nvalue = 1")
+            .is_ok()
+    );
 }
