@@ -193,6 +193,12 @@ fn effects_into(pr: &mut Profile, effects: &[Effect], rep: bool) {
                 }
             }
             "extra_land" | "put_land" => pr.mana += 0.7,
+            // a land of your own sacrificed (Roiling Regrowth): a land less
+            "sacrifice"
+                if e.who.as_deref() == Some("you") && e.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") =>
+            {
+                pr.mana -= n
+            }
             "destroy" | "exile" | "bounce" | "tuck" | "sacrifice" if e.who.as_deref() != Some("you") => {
                 if all() {
                     pr.sweep = true
@@ -484,6 +490,7 @@ fn from_abilities(g: &Game, c: CardId) -> Profile {
                 _ => pr.engine += 0.5,
             },
             Ability::Replacement { .. } => pr.engine += 0.5, // a doubler: worth what the deck feeds it
+            Ability::AdditionalCost { text } if text.contains("sacrifice a land") => pr.mana -= 1.0, // Harrow
             Ability::AdditionalCost { .. } => {}
         }
     }
@@ -616,7 +623,9 @@ pub fn worth_parts(g: &Game, p: PlayerId, c: CardId, held: bool) -> [f64; 8] {
     if crate::cardcode::is_combo_piece(g, c) {
         role = role.max(1.0);
     }
-    let misc = if pr.tutor { TUTOR_W } else { 0.0 } + if pr.protect && (held || d.perm) { PROTECT_W } else { 0.0 };
+    // protection on a permanent (boots, Greaves) needs a creature to protect
+    let protects = pr.protect && (held || (d.perm && (d.creature || creatures > 0.0)));
+    let misc = if pr.tutor { TUTOR_W } else { 0.0 } + if protects { PROTECT_W } else { 0.0 };
     // fit: the mana it is short of next turn, a colour of its cost with no source
     let mut fit = 0.0;
     if !d.land {

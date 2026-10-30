@@ -48,49 +48,55 @@ Each card gets a **profile** of what it does, once per card (no state):
   `lock`: card code or statics that tax or lock (cost, can't cast, attack tax).
 - `tutor`, `protect`: a search; protection (`prot`, `boots`, `cloak`, hexproof / indestructible grants).
 
-The **worth now** (`worth(g, p, c)`, card-equivalents, about 0-10) reads the profile at the current state:
+The **worth now** (`worth(g, p, c)`, card-equivalents, clamped to 0-10) reads the profile at the current state (as
+implemented after the diagnostic's fixes, below):
 
 ```
 early    = turn <= 4: 1.0 | turn 5-6: 0.55 | later: 0.25             (mana matters while the deck develops)
 reps     = clamp(12 - round, 3, 8) / 2.5                              (turns an engine will run, in card units)
-mana     = 2.2 x mana x early x (1 + 0.5 x [no land in hand]) + 0.5 x burst
-cards    = 1.0 x cards x hand_need + 1.0 x cards_rep x reps            hand_need = 1.3 with <= 2 cards in hand, else 1
-removal  = single: 1.5 + 0.35 x best opposing target's pval (0 targets: 1.0); sweep: 1.0 + 0.25 x (their board - 1.2 x mine)
-damage   = 0.45 x damage x opponents + 0.45 x damage_rep x opponents x reps
+mana     = 4.0 x mana x early x (1.25 with no land in hand, else 1) + 0.5 x burst
+cards    = cards x hand_need + cards_rep x reps                        hand_need = 1.3 with <= 2 cards in hand, else 1
+removal  = single (a permanent's, or any when held): 2.5 + 0.35 x best opposing target's pval by p (none: 1.5)
+           sweep: max(0.5, 1.5 + 0.25 x (their board / opponents - 1.2 x mine)); a counter (held): 4.0
+damage   = 0.45 x opponents x (damage + damage_rep x reps)
 board    = 0.5 x power + 0.2 x toughness + 0.4 x evasion + 0.3 x haste + 0.25 x other keywords + 0.6 x tokens
-           + 0.6 x tokens_rep x reps + 0.5 x team x (my creatures + 1)
-engine   = 0.6 x engine + 1.5 x lock
-role     = combo_imp (9: completes a catalogued combo, 7: one short) x 0.8; a plan line's missing piece: +2
-fit      = -0.4 x the mana it is short of next turn (cost against lands + rocks + next land drop), -1.5 when a colour
-           of its cost has no source
-worth    = mana + cards + removal + damage + board + engine + role + fit + 0.4 x tutor + 0.3 x protect
+           + 0.35 x tokens_rep x reps + 0.5 x team x (my creatures + 1)
+engine   = an engine the profile reads (cards, damage or tokens a turn): 0.3 x engine; else 0.9 x reps x min(engine, 2)
+           + 1.5 x lock
+role     = 0.8 x combo_imp (9: completes a catalogued combo, 7: one short); at least 1 for any catalogued piece
+misc     = 3.5 for a tutor, 2.5 for protection (a permanent's only with a creature to protect)
+fit      = -0.4 x the mana it is short of next turn (its cost now against lands + rocks + a land in hand), -1.5 when
+           a colour of its cost has no land source (with two lands or more)
+worth    = mana + cards + removal + damage + board + engine + role + misc + fit
 ```
 
 The **derived cast priority** (what replaces the table in `generic_prio`, same 0-90 scale so the consumers are
-unchanged): `prio = clamp(30 + 6 x worth_cast, 1, 90)`, where `worth_cast` is `worth` without the held parts (a
-counter, a removal or wipe spell, a protection spell keep 0: the response logic casts them, as before). The
-state-dependent card rules that are code, not table rows, stay in front of it: key cards, plan rules, card code
-`prio`, the commander rule, combo pieces (`50 + 4 x combo_imp`), Chrome Mox / Mox Diamond / Grim Monolith's
-preconditions, the tutors' own value (`tutor_prio`, now fed by derived values), Smothering Tithe, Necropotence,
-Rhystic Study, the Ad Nauseam / Citadel / Jeska / Braids / Agent timing functions, X spells, an Aura without a host.
+unchanged): `prio = clamp(20 + 8 x worth, 1, 90)` with the held parts left out (a counter, a removal or wipe spell, a
+protection spell keep 0: the response logic casts them, as before), 0 when the worth is 0 (the interpreter's value
+then decides, as before). The state-dependent card rules that are code, not table rows, stay in front of it: key
+cards, plan rules, card code `prio`, the commander rule, combo pieces (`50 + 4 x combo_imp`, and 48 for a catalogued
+piece, as floors), Chrome Mox / Mox Diamond / Grim Monolith's preconditions, the tutors' own value (`tutor_prio`,
+fed by derived values), Smothering Tithe, Necropotence, Rhystic Study, the Ad Nauseam / Citadel / Jeska / Braids /
+Agent timing functions, X spells, the gates that return 0 (Stampede under six creatures, Loam, Rishkar, a Tokx spell
+under five mana, an Aura without a host), and the plan knobs `aura_prio` and `hooked_prio`.
 
 **Derived bomb** (`threat(g, c)`, 0-10, static per card: how much the card does on the board if left alone, the scale
-the old `bomb=` tags use): for a permanent, `0.9 x power + 0.8 x evasion + 0.5 x haste/lifelink/deathtouch +
-0.5 x toughness over power + 1.6 x engine + 2.5 x lock + 1.2 x cards_rep + 1.0 x tokens_rep + 0.8 x team +
-1.0 x mana (a rock or dork is a small threat)`, a commander +1; capped at 10. It replaces `bomb` at reads 3-9 for a
-deck on the derived arm (the reader decides: a sacrifice by its controller, a counter or removal target by the one
-choosing it).
+the old `bomb=` tags use): for a permanent, `0.9 x power + 0.8 x evasion + 0.5 x (haste + min(other keywords, 2)) +
+0.5 x min(toughness over power, 3) + 1.6 x min(engine, 2) + 2.5 x lock + 1.2 x cards_rep + 0.6 x min(tokens_rep +
+damage_rep, 4) + 0.8 x team + min(mana, 3)`, capped at 10; 0 for a spell; the override table wins. It replaces
+`bomb` at reads 3-9 for a deck on the derived arm, read as "a bomb" from 5 up (cardgen's old line: power 5); the
+reader decides (a sacrifice by its controller, a removal target by the caster).
 
-`card_worth` on the derived arm: `10 x worth` (held interaction included: a counter is worth `1.5 +
-0.4 x opponents' best spell ...`, i.e. its removal/counter component), so discard, piles and late tutors read the
-same number. `tutor_value` drops the `10 x bomb` floor for `10 x worth + 4 x threat`. `bottom_pick` and the generic
-`discard_worst` drop the card with the lowest worth (lands by the old land rule).
+`card_worth` on the derived arm: `10 x worth` with the held parts, where the deck's own priority is 0, so discard,
+piles and late tutors read the same number. `tutor_value` keeps its floor, read as `10 x threat` for a derived bomb.
+`bottom_pick` and the generic `discard_worst` drop the spell with the lowest worth (lands by the old land rule).
 
 ## Win-line role
 
 `cardcode::combo_imp` (the catalogue and Spellbook combos the deck plays, at the current board: 9 completes, 7 one
-short) is the role term; the plan file's derived wish list (`plan_data::derived_wish`, PR 1) adds the missing-piece
-term for decks with plan lines. Tutors still take the wish list first, the derived value only orders what is left.
+short) is the role term in worth. A plan's lines act through its derived wish list (`plan_data::derived_wish`, PR 1),
+which tutors take first and the cleanup discard keeps, ahead of any value: the derived value only orders what is
+left, and plan `[[prio]]` rules and key cards still win the cast order.
 
 ## Override table
 
@@ -123,4 +129,48 @@ of deck keys puts only those on it (the paired test of half a tier). JD's decks 
 
 ## Diagnostic findings (Stage A)
 
-(filled in from the diagnostic)
+`examples/values_diag.rs` (state: round and turn 3, three of each deck's lands out, empty hand; cards that key cards,
+plan rules or card code decide are left out). Spearman rank correlation of old and derived values, per tier:
+
+| tier | cards | cast priority | card worth | bomb (permanents) | old bombs (>= 5) | derived (>= 5) | both |
+|---|---|---|---|---|---|---|---|
+| t1 | 299 | 0.71 | 0.58 | 0.33 | 12 | 45 | 10 |
+| t2 | 273 | 0.67 | 0.57 | 0.37 | 13 | 28 | 12 |
+| t3 | 287 | 0.67 | 0.57 | 0.39 | 16 | 43 | 15 |
+| t4 | 289 | 0.74 | 0.50 | 0.32 | 8 | 30 | 8 |
+| t5 | 299 | 0.79 | 0.59 | 0.52 | 24 | 37 | 23 |
+
+(First pass: cast priority 0.60-0.79; the general fixes below raised t1-t4.) The bomb correlation is low because the
+old tag is 0 for most permanents (ties): the derived threat calls more creatures bombs (Hero of Bladehold 7.8,
+Aurelia 10, Pearl-Ear 7.8, Hellrider 6.8, Reflector Mage 6.4: repeatable token, damage or removal triggers the tags
+never rated); it misses four old bombs, two of them in the override table (below).
+
+Worst disagreements and their cause (fixed for a general reason unless said):
+
+- **Card code with no tags scored 0** (Exploration, Coat of Arms, Impact Tremors, Birthing Pod, planeswalkers,
+  old 55 "hooked"): the engine-event list was narrower than `card_threat_value`'s; now the same 17 events, any live
+  card code on a permanent, and a planeswalker's loyalty count as an engine; an engine the profile can't read is
+  worth `ENGINE_W` (0.9) a turn while it runs.
+- **`equip_cost`'s mana read as mana made** (Swords at 12, Reaver Cleaver at 19): Equipment statics now read as
+  power on the equipped creature, evasion and protection; `equip_cost` is nothing.
+- **Mana from a trigger or a sacrifice read as a tap** (Reaver Cleaver's Treasure, Skirk Prospector): only a tap
+  ability with no other cost makes `mana`; the rest is one-shot `burst`. Attack and combat-damage triggers count
+  half (a creature must attack or connect).
+- **Cost statics read as engines** (the Medallions, old 68/52): a cost reduction for you is mana (0.8 a pip), a tax
+  on the table is a lock.
+- **Land-search ramp** (Harrow, Kodama's Reach, Rampant Growth; old 0, the interpreter's 30): a search for a land
+  to the battlefield is mana (one a land; to hand half), a land sacrificed by the spell or its additional cost takes
+  one back; worth is capped at 10.
+- **Replacement doublers** (Doubling Season at 9.5): half an engine (worth what the deck feeds it).
+- **Repeatable tokens** weighted down (Sigil of the Empty Throne at 8.6 -> 0.35 a power a turn).
+- Left as derived (the derivation is the better reading): Grave Pact and Dictate of Erebos (66 vs 44: an edict engine
+  is removal a turn), Vito and Fiend Artisan (combo role), Lightning Greaves (old 25 without creatures: derived
+  protection only counts with a creature out), the colour-fit penalty (Mavren Fein, Charismatic Conqueror at 24 vs 62
+  in the diagnostic's state with a colour missing), Shadow of Mortality (its life discount isn't in `cost_of`: it
+  reads as a 15-drop until the life total drops).
+- Overrides (real one-offs, `data/values_overrides.toml`): Archon of Cruelty (threat 9) and Sheoldred, the
+  Apocalypse (threat 7): their triggers are engine code under their own tags (`archon`, `sheoA`), which no profile
+  field can read. Iroas (old 7, derived 2.9) is not overridden: a God without devotion is no creature.
+- `spell_importance` (how much the table wants to counter a spell) stays on the tag: it is computed once per spell on
+  the stack and read by every seat, so no reader is known there; a derived reading would change how the other decks
+  treat the half's spells, not the half's own decisions.
