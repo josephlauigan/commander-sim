@@ -97,6 +97,7 @@ fn karn_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
         } else {
             let pl = g.player_mut(p);
             pl.exile.push(c);
+            pl.exile.last_mut().unwrap().silver = true;
             pl.silver.push(c);
             crate::glog!(g, "    Karn: {} is exiled with a silver counter", g.db.get(c).name);
         }

@@ -1420,10 +1420,17 @@ fn dsphere(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             leave(g, x)?;
         } else {
             let (cd, q) = (g.perm(x).cd.unwrap(), g.perm(x).owner);
-            if let Some(Val::List(h)) = g.perm_mut(src).data.get_mut(DataKey::Held) {
-                h.push(Val::List(vec![Val::Card(cd), Val::Player(q)]));
-            }
+            let n0 = g.player(q).exile.len();
             exile_perm(g, x)?;
+            // linked when it reached exile (a commander may go to the command zone instead)
+            let e = if g.player(q).exile.len() > n0 {
+                super::common::link_exiled(g, q, cd, src)
+            } else {
+                Val::List(vec![Val::Card(cd), Val::Player(q)])
+            };
+            if let Some(Val::List(h)) = g.perm_mut(src).data.get_mut(DataKey::Held) {
+                h.push(e);
+            }
         }
     }
     crate::glog!(g, "    Detention Sphere exiles every {name}");
@@ -1436,12 +1443,11 @@ fn dsphere_back(g: &mut Game, _src: Src, m: PermId) -> Res {
         _ => vec![],
     };
     for v in held {
-        if let Val::List(x) = v
-            && let [Val::Card(cd), Val::Player(q)] = x.as_slice()
-            && g.player(*q).alive
-            && g.player_mut(*q).exile.take(*cd)
+        if let Some((cd, q, i)) = super::common::linked(g, &v)
+            && g.player(q).alive
         {
-            enter(g, *q, *cd, Enter::default())?;
+            g.player_mut(q).exile.remove(i);
+            enter(g, q, cd, Enter::default())?;
         }
     }
     Ok(())

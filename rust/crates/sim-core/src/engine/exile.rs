@@ -24,6 +24,8 @@ pub struct ExileObj {
     pub id: ExileId,
     /// exiled "until ~ leaves the battlefield" by this permanent (the O-Ring family, `common::oring_exile`)
     pub until: Option<PermId>,
+    /// a silver counter on it (Karn, Scion of Urza: `impls/karn_engines.rs`)
+    pub silver: bool,
 }
 
 /// A player's exile: the cards, oldest first, and their objects (same order, same length).
@@ -44,7 +46,7 @@ impl Deref for ExileZone {
 impl PartialEq for ExileZone {
     /// two exiles are equal when they hold the same cards with the same links (ids are a numbering, not state)
     fn eq(&self, o: &Self) -> bool {
-        self.cards == o.cards && self.objs.iter().zip(&o.objs).all(|(a, b)| a.until == b.until)
+        self.cards == o.cards && self.objs.iter().zip(&o.objs).all(|(a, b)| (a.until, a.silver) == (b.until, b.silver))
     }
 }
 
@@ -98,7 +100,7 @@ impl ExileZone {
     pub fn add(&mut self, c: CardId, until: Option<PermId>) -> ExileId {
         let id = self.fresh();
         self.cards.push(c);
-        self.objs.push(ExileObj { id, until });
+        self.objs.push(ExileObj { id, until, silver: false });
         id
     }
 
@@ -166,6 +168,11 @@ impl ExileZone {
     /// the object at `i`
     pub fn obj(&self, i: usize) -> &ExileObj {
         &self.objs[i]
+    }
+
+    /// the newest object, to set its links as it is exiled
+    pub fn last_mut(&mut self) -> Option<&mut ExileObj> {
+        self.objs.last_mut()
     }
 
     /// the object at `i`, to change its links

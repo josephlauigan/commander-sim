@@ -623,7 +623,8 @@ fn serenity(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         apply_removal(g, Some(o), x, "exile", src_cd)?;
         let y = g.perm(x);
         if !on(g, xo, x) && !y.token && y.cd.is_some_and(|cd| g.player(y.orig).exile.contains(&cd)) {
-            let entry = Val::List(vec![Val::Card(y.cd.unwrap()), Val::Player(y.orig)]);
+            let (cd, q) = (y.cd.unwrap(), y.orig);
+            let entry = super::common::link_exiled(g, q, cd, src);
             let data = &mut g.perm_mut(src).data;
             match data.get_mut(DataKey::Serenity) {
                 Some(Val::List(v)) => v.push(entry),
@@ -637,11 +638,9 @@ fn serenity(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn serenity_leave(g: &mut Game, src: Src, _m: PermId) -> Res {
     let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Serenity).cloned() else { return Ok(()) };
     for e in v {
-        let Val::List(pair) = e else { continue };
-        let (Val::Card(cd), Val::Player(q)) = (&pair[0], &pair[1]) else { continue };
-        let (cd, q) = (*cd, *q);
-        let pl = g.player_mut(q);
-        if pl.exile.take(cd) {
+        if let Some((cd, q, i)) = super::common::linked(g, &e) {
+            let pl = g.player_mut(q);
+            pl.exile.remove(i);
             pl.hand.push(cd);
         }
     }

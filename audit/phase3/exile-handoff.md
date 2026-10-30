@@ -17,7 +17,11 @@ Base = `phase3-mana` head (cc71b6cc): build 0 warnings; 3663 passed / 0 failed /
       `exile.take(c)`; `cast.rs` copy removal and `human.rs` reanimation destination rewritten. Checks: 0 warnings;
       3663 passed / 0 failed / 3 ignored (223 binaries), as base; practice 104; cardgen clean; clone_cost 2.92-3.01 µs
       (base 2.91-2.94: noise); mana_cost and repl_cost as base.
-- [ ] Stage B (call sites, identical): `oring_exile` records `until` + the `ExileId`; Karn records `silver`.
+- [x] Stage B (call sites, identical): `common::link_exiled` / `linked` (the entry `[card, owner, exile id]`, the
+      object's `until`), used by `oring_exile` / `oring_return` (the O-Ring family, Calix), Angel of Serenity (`t2.rs`,
+      `DataKey::Serenity`) and Detention Sphere (`rules2.rs`, `DataKey::Held`); `linked` still finds the card by
+      `CardId`. Karn, Scion of Urza sets the object's `silver`. Checks: 0 warnings; 3663 / 0 / 3 (223); practice 104;
+      cardgen clean; clone_cost 3.02-3.05 µs (Stage A 2.92-3.01, base 2.91-2.94); mana_cost as base.
 - [ ] Stage C (behaviour, tests): `oring_return` by id; silver from the objects; impulse expires at the end of the turn.
 
 ## Census so far (starting points, not complete)

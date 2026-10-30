@@ -597,8 +597,9 @@ pub fn oring_exile(
         let x = g.perm(m);
         if !on(g, m, o) && !x.token {
             let cd = x.phys.or(x.cd).unwrap();
-            if !g.player(o).is_commander(cd) && g.player(x.orig).exile.contains(&cd) {
-                exiled.push(Val::List(vec![Val::Card(cd), Val::Player(x.orig)]));
+            let orig = x.orig;
+            if !g.player(o).is_commander(cd) && g.player(orig).exile.contains(&cd) {
+                exiled.push(link_exiled(g, orig, cd, src));
             }
         }
     }
@@ -611,17 +612,34 @@ pub fn oring_exile(
     Ok(())
 }
 
+/// src has just exiled the card `cd` owned by q (rule 400.7: the newest object of `cd` in q's exile is the one): the
+/// object is linked to src ("until src leaves the battlefield"), and the entry `[card, owner, exile id]` src keeps in
+/// its data names it (`linked` finds it again)
+pub fn link_exiled(g: &mut Game, q: PlayerId, cd: CardId, src: PermId) -> Val {
+    let ex = &mut g.player_mut(q).exile;
+    let mut v = vec![Val::Card(cd), Val::Player(q)];
+    if let Some(i) = ex.iter().rposition(|&y| y == cd) {
+        ex.obj_mut(i).until = Some(src);
+        v.push(Val::Int(ex.obj(i).id.0 as i64));
+    }
+    Val::List(v)
+}
+
+/// an entry `link_exiled` made: the card, its owner and where it is in the owner's exile, if it is still there
+pub fn linked(g: &Game, e: &Val) -> Option<(CardId, PlayerId, usize)> {
+    let Val::List(v) = e else { return None };
+    let (Some(Val::Card(cd)), Some(Val::Player(q))) = (v.first(), v.get(1)) else { return None };
+    let i = g.player(*q).exile.iter().position(|&x| x == *cd)?;
+    Some((*cd, *q, i))
+}
+
 /// common.oring_return: src left the battlefield: what it exiled returns (an effect ending, not a trigger)
 pub fn oring_return(g: &mut Game, src: PermId) -> Res {
     let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Oring).cloned() else { return Ok(()) };
     for e in v {
-        let Val::List(pair) = e else { continue };
-        let (Val::Card(cd), Val::Player(o)) = (&pair[0], &pair[1]) else { continue };
-        let (cd, o) = (*cd, *o);
-        if g.player(o).exile.contains(&cd) && g.player(o).alive {
-            let ex = &mut g.player_mut(o).exile;
-            let i = ex.iter().position(|&x| x == cd).unwrap();
-            ex.remove(i);
+        let Some((cd, o, i)) = linked(g, &e) else { continue };
+        if g.player(o).alive {
+            g.player_mut(o).exile.remove(i);
             enter(g, o, cd, Enter::default())?;
             crate::glog!(g, "    {} returns to the battlefield", g.db.get(cd).name);
         }
