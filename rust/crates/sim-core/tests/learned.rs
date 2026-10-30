@@ -58,6 +58,12 @@ fn bad_model_files_are_refused() {
         (bad(&first_sd, &format!("sd = [0.0,{}", &first_sd[first_sd.find(',').expect("comma") + 1..])), "positive"),
         (ok.replace("\nb = ", "\nb = -"), "slope"),
         (bad("[map]", "[mapping]"), "model file"),
+        (
+            format!(
+                "{ok}\n[[tree]]\nfeat = [99, 0, 0, 0, 0, 0, 0]\ncut = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]\nleaf = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]\n"
+            ),
+            "tree",
+        ),
     ];
     for (text, why) in cases {
         let e = learned::parse_model(&text).expect_err(why);
