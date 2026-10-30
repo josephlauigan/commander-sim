@@ -123,6 +123,7 @@ tags = "pow=1 unc"
 dsl = []
 status = "Full"
 note = "can't be countered; your green spells can't be countered; Elves become 5/5 Dinosaurs"
+paths_ok = "the unc tag is \"this spell can't be countered\" (on the stack); the card code's uncounterable slot is \"green spells you control can't be countered\" (on the battlefield)"
 
 ["Alseid of Life's Bounty"]
 status = "Full"
@@ -2176,11 +2177,15 @@ note = "prowess; Shaman and Wizard triggers trigger an additional time"
 tags = "pow=0 tgh=4 fly"
 
 ["Heartless Act"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, destroy any creature (no counters condition, no second mode), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "destroys a creature with no counters, or removes up to three counters (and kills it if that is lethal)"
 
 ["Heliod's Pilgrim"]
 tags = "human pow=1 tgh=2"
+# the Aura search is hand-written (impls/t1.rs); the compiled enter trigger searched for any card (filter {}), so it
+# found two cards (until Phase 2 a load-time fix in sim-core's cards.rs dropped it)
+dsl = []
 status = "Full"
 note = ""
 
@@ -2565,6 +2570,7 @@ status = "Full"
 note = "{T}: {C}, or a coloured mana for 1 damage"
 
 ["Kaya's Wrath"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the wipe only (no life gain), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "destroys all creatures; gain life for each of yours destroyed"
 
@@ -2673,6 +2679,9 @@ note = "split second read as uncounterable"
 
 ["Laelia, the Blade Reforged"]
 tags = "leg warrior pow=2 haste"
+# the attack trigger is hand-written (impls/t1.rs: the top card, playable this turn, and the +1/+1 counter); the
+# compiled one read "exile the top card ... you may play it" as a plain draw, so each attack drew twice
+dsl = []
 status = "Full"
 note = "haste; attacking exiles the top card, castable this turn; grows on exile"
 
@@ -2788,6 +2797,7 @@ status = "Full"
 note = ""
 
 ["Liliana's Triumph"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the sacrifice only (no discard with a Liliana), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "each opponent sacrifices a creature; with a Liliana out, each discards too"
 
@@ -2946,6 +2956,7 @@ status = "Full"
 note = "dethrone, and other creatures you control have dethrone; a creature you control with a +1/+1 counter that dies (a stolen one too, and those dying in the same wipe as Marchesa) returns under your control at the beginning of the next end step; she returns herself from the command zone the same way"
 
 ["Mardu Charm"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, two modes, its first strike given to all your creatures (no discard mode), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "4 damage to a creature (removal), two first-strike Warriors at end of turn, or a noncreature card discarded"
 
@@ -3258,6 +3269,7 @@ status = "Full"
 note = "random discard each upkeep; Elf Warrior (deathtouch) whenever an opponent discards"
 
 ["Natural Order"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, any creature card (not green; the sacrifice is a note), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "sacrifices a spare green creature for the best green creature (Craterhoof on a wide board)"
 
@@ -3343,6 +3355,9 @@ status = "Full"
 note = "{2},{T}: mana equal to devotion"
 
 ["Oath of Teferi"]
+# the enter trigger is hand-written (impls/partials.rs: exile until the next end step, then back); the compiled one
+# exiled another permanent of yours for good, on top of the blink
+dsl = []
 status = "Full"
 note = "blinks a permanent with an ETB or a used planeswalker until the end step; planeswalkers activate twice each turn"
 
@@ -3820,6 +3835,7 @@ status = "Full"
 note = "fetches a creature card with mana value 1 or less (the parsed ability had lost the limit and fetched Thassa's Oracle); sacrificed before a combo to stop noncreature spells"
 
 ["Rapid Hybridization"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the destroy only (no Frog Lizard), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "destroys a creature; its controller gets a 3/3 Frog Lizard"
 
@@ -4392,7 +4408,7 @@ note = "a +1/+1 counter and hexproof until end of turn"
 
 ["Snap"]
 status = "Full"
-note = "bounces a creature and untaps two lands"
+note = "compiled: bounces the target creature and untaps the two tapped lands that make the most (its hand-written resolve went in Phase 2)"
 
 ["Snuff Out"]
 types = "I"
@@ -4554,6 +4570,7 @@ note = ""
 
 ["Starfield Mystic"]
 status = "Full"
+paths_ok = "the enchantment discount is compiled; the +1/+1 counter when an enchantment of yours goes to the graveyard is card code (impls/partials.rs)"
 note = "enchantments cost {1} less; +1/+1 counter when one of your enchantments goes to the graveyard"
 
 ["Starfield of Nyx"]
@@ -4565,6 +4582,7 @@ note = "returns an enchantment each upkeep; with five enchantments the other non
 
 ["Static Net"]
 status = "Full"
+paths_ok = "two enter triggers: the compiled one exiles the opponent's permanent, the card code (impls/common.rs) gains 2 life and makes the tapped Powerstone"
 note = "exiles an opponent's nonland permanent until it leaves; you gain 2 life and get a tapped Powerstone (mana for artifacts only)"
 
 ["Static Prison"]
@@ -4655,6 +4673,7 @@ status = "Full"
 note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
 
 ["Sunfall"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the exile only (no Incubator), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "exiles all creatures; an Incubator with that many counters ({2}: an X/X artifact creature)"
 
@@ -6549,6 +6568,7 @@ note = "an X/X green Elemental, X the greatest power among your creatures; plot 
 ["Venomous Brutalizer"]
 status = "Full"
 note = "toxic 3 (three poison counters with the combat damage); enters: pay {1}{G} to proliferate"
+paths_ok = "toxic 3 is compiled (tymna_cards::toxic_hit); the enter trigger (pay {1}{G}: proliferate) is card code (impls/green_cards.rs)"
 
 ["Wildgrowth Archaic"]
 cost = "GG"
@@ -6624,6 +6644,7 @@ note = "-1/-1 until end of turn (a lethal one kills); the AI casts it at an oppo
 ["Ribskiff"]
 status = "Full"
 note = "draws a card entering; crew 3 (with creatures that would not attack, never Sheoldred) before combat makes it a 4/4 artifact creature; toxic 2 gives two poison counters with combat damage to a player"
+paths_ok = "toxic 2 is compiled (tymna_cards::toxic_hit); the enter draw and crew are card code (impls/sheoldred.rs)"
 
 ["Tome of Legends"]
 status = "Full"
@@ -7095,6 +7116,7 @@ status = "Full"
 note = "returns the best creature card (Cloud first) from the graveyard, then up to two Equipment and own-creature Auras from the graveyard attached to it"
 
 ["Vona's Hunger"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, one sacrifice only (no ascend), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "ascend: with ten or more permanents as it resolves (the only ascend card in these lists), each opponent sacrifices half their creatures rounded up; otherwise one each"
 
@@ -7316,6 +7338,7 @@ note = "flash, flying, trample; increment: a +1/+1 counter whenever you cast a s
 
 ["Elemental Mascot"]
 status = "Full"
+paths_ok = "opus: the compiled cast trigger gives +1/+0, the card code (tymna_cards.rs) exiles the top card when five or more mana was spent"
 note = "flying, vigilance; opus: +1/+0 until end of turn per instant or sorcery you cast (compiled); with a mana value of 5 or more the top card of the library is exiled and playable until the end of your next turn"
 
 ["Falcon and Redwing"]
@@ -7676,6 +7699,7 @@ status = "Full"
 note = "X is the smallest that reaches the best instant and the best sorcery in the graveyard it can afford; casts them free, exiled afterwards; X of 10 or more: two copies of each"
 
 ["Finale of Revelation"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, draw X only (no X of 10 or more, not exiled), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "X chosen by the AI; draws X, exiled afterwards; X of 10 or more: graveyard shuffled in, draw X, untap up to five lands, no maximum hand size for the rest of the game"
 
@@ -8411,6 +8435,7 @@ status = "Full"
 note = "a token copy of the best creature (any controller's, not a hexproof one, no legend it already has) with haste, exiled at the end step; the copy's enters effects happen; cast in main phase when the enters effect and one attack are worth at least 2.5"
 
 ["Molten Duplication"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, haste for your creatures only (no token copy), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "a hasty token copy of your best artifact or creature, sacrificed at the end step; it is an artifact in addition to its other types (enters effects happen)"
 
@@ -8473,6 +8498,7 @@ status = "Full"
 note = "adds RRR (floating red mana); the AI casts it only through a deck plan; splice onto Arcane left out (no other Arcane spell shares a deck with it)"
 
 ["Rite of Flame"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, {R}{R} only (no extra {R} per Rite of Flame in graveyards), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "adds RR plus R for each other Rite of Flame in any graveyard (floating red mana); the AI casts it only through a deck plan"
 
@@ -8541,6 +8567,7 @@ status = "Full"
 note = "4 damage divided as lethal damage among the opposing creatures worth the most (the chosen target first, none of your own); cast for {4}{R}{R} or by exiling a red card from hand (alternative-cost slot); the AI pitches when it can't pay the mana (main phase and as an answer to an attack), valuing the kill 1.5 lower per card given up"
 
 ["Scout's Warning"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the draw only (no flash for the next creature), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "draws a card and lets the next creature card this turn be cast as though it had flash (cast::grants_flash; spent in on_cast; t6_redirects, tested)"
 
@@ -8559,6 +8586,7 @@ status = "Partial"
 note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"
 
 ["Erode"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the destroy only (no basic land for its controller), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "destroys the targeted opposing creature or planeswalker; its controller then fetches a basic land onto the battlefield tapped and shuffles (always, the 'may' is taken)"
 
@@ -8567,6 +8595,7 @@ status = "Partial"
 note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"
 
 ["Calamity's Wake"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the graveyard exile only (no noncreature-spell lock, not exiled itself), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "exiles all graveyards and itself, and puts the engine cast lock (LockKind::Noncreature) on every player for the turn (castable, cast_card)"
 
@@ -8690,6 +8719,7 @@ note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox,
 
 ["Hexing Squelcher"]
 status = "Partial"
+paths_ok = "the compiled uncounterable (the unc tag) is \"this spell can't be countered\" (on the stack); the card code's uncounterable slot is \"spells you control can't be countered\" (on the battlefield)"
 note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
 
 ["Blood Moon"]
@@ -8757,6 +8787,7 @@ note = "whenever an opponent casts their first noncreature spell each turn (per 
 
 ["Tataru Taru"]
 status = "Full"
+paths_ok = "the enter trigger has two parts: you draw (the draw tag), the opponent may draw (the card code's etb, t6_legends2.rs)"
 note = "enters: you draw (the draw tag) and the least-threatening opponent with a card draws (t6_legends2.rs); Scions' Secretary: an opponent's draw off their own turn makes a tapped Treasure for you, once each turn (tapped_treasures: no mana from it until your untap step; it can still be sacrificed)"
 
 ["Teferi, Who Slows the Sunset"]
@@ -8942,6 +8973,7 @@ note = "{T}: exile a creature card from an opponent's graveyard, +1/+1 counter o
 status = "Partial"
 note = "5/3; upkeep: lose 3 life (compiled); {3}, sacrifice: each other player draws (AI uses it at 6 life or less); missing: the as-enters text box exchange with another creature (t6_legends1.rs)"
 ["Borne Upon a Wind"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the draw only (no flash for the turn), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "draws a card and lets the caster cast spells this turn as though they had flash (cast::grants_flash: human timing and the AI end-of-turn window; tested)"
 
@@ -8950,10 +8982,12 @@ status = "Partial"
 note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); missing: cards left uncast should return to their owners' graveyards at the next end step, but the end-step clean-up exiles them (engine need: delayed end-step return)"
 
 ["Timetwister"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, you draw seven only (no shuffle, the others draw nothing), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "each player shuffles hand and graveyard into the library and draws seven (cards held from an opponent go to their owner's library); Timetwister then goes to the graveyard (t6_blue.rs, tested)"
 
 ["Demonic Counsel"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, a search for any card (no Demon search, no delirium rule), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "searches for the Demon with the most worth, or any card (the deck's tutor pick) with delirium (4+ card types in the graveyard), then shuffles (t6_blue.rs, tested)"
 
@@ -9396,6 +9430,7 @@ pool_remove_tags = ["tokx"]
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
 ["Contaminant Grafter"]
 dsl = [{ type = "static", static = "toxic", amount = 1 }] # only toxic: the compiler dropped the corrupted condition and the draw, so its land drop ran every end step (the end step and proliferate are hand-written)
+paths_ok = "toxic 1 is compiled (tymna_cards::toxic_hit); the card code's combat_damage slot is the proliferate trigger, its end_step the corrupted draw"
 
 # --- Tiers 4/5 (yuriko): hand-written in rust/crates/sim-core/src/impls/t45_yuriko.rs
 ["Kaito, Bane of Nightmares"]
@@ -9676,3 +9711,18 @@ dsl = [] # the compiled exile never returned the card: the enter trigger is hand
 # read as 1/1 under the compiled count)
 ["Psychosis Crawler"]
 tags = "pow=0 tgh=0"
+
+# --- Phase 2 (doubles): cards where the compiled abilities and the card code met on one event (cardgen audit --paths)
+["Liliana, Waker of the Dead"]
+# the walker framework runs all three loyalty abilities (impls/t3_korvold.rs); the compiled +1 (each player discards,
+# without the 3 life from an opponent who can't) was a second, weaker +1 the AI could pick instead
+dsl = []
+
+["Twilight Diviner"]
+paths_ok = "two enter triggers: the compiled one is its own (surveil 2), the card code's etb (t12_brago_meren.rs) is the token copy when other creatures enter from a graveyard"
+
+["Daxos, Blessed by the Sun"]
+paths_ok = "the compiled triggers gain 1 life when another creature of yours enters or dies; the card code's etb only switches on its devotion toughness (self_pt)"
+
+["Open the Armory"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, a search for any card (not an Aura or Equipment), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"

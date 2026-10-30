@@ -365,18 +365,22 @@ fn mind_stone_is_not_offered_on_its_own_mana() {
 #[test]
 fn aura_discounts() {
     let mut g = table(&[LP, TEYSA]);
-    let aura = card(&g, "Hyena Umbra");
-    let other = card(&g, "Rest in Peace");
-    let white = card(&g, "Esper Sentinel");
+    let aura = card(&g, "Armored Ascension"); // {3}{W}
+    let other = card(&g, "Oblivion Ring"); // {2}{W}
+    let white = card(&g, "Wrath of God"); // {2}{W}{W}
+    // Danitha's discount is a cost hook; Starfield Mystic's and Pearl Medallion's are compiled (static:cost), so the
+    // whole cost is what tells
+    let (aura0, other0, white0) =
+        (mana::cost_of(&g, P0, aura).0, mana::cost_of(&g, P0, other).0, mana::cost_of(&g, P0, white).0);
     assert_eq!(hooks::total_cost(&g, P0, aura), 0);
     perm(&mut g, P0, "Danitha Capashen, Paragon");
     perm(&mut g, P0, "Starfield Mystic");
-    assert_eq!(hooks::total_cost(&g, P0, aura), -2); // an Aura and an enchantment
-    assert_eq!(hooks::total_cost(&g, P0, other), -1);
-    assert_eq!(hooks::total_cost(&g, P1, aura), 0); // only yours
+    assert_eq!(hooks::total_cost(&g, P0, aura), -1); // Danitha (an Aura)
+    assert_eq!(mana::cost_of(&g, P0, aura).0, aura0.saturating_sub(2)); // an Aura and an enchantment
+    assert_eq!(mana::cost_of(&g, P0, other).0, other0.saturating_sub(1));
+    assert_eq!(mana::cost_of(&g, P1, aura).0, aura0); // only yours
     perm(&mut g, P0, "Pearl Medallion");
-    assert_eq!(hooks::total_cost(&g, P0, white), -1);
-    let _ = mana::cost_of(&g, P0, aura);
+    assert_eq!(mana::cost_of(&g, P0, white).0, white0.saturating_sub(1));
 }
 
 #[test]

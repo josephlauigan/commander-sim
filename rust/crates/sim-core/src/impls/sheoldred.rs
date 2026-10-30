@@ -1203,16 +1203,6 @@ pub fn sheoldred_card(g: &Game, m: PermId) -> bool {
     g.perm(m).cd.is_some_and(|c| name_of(g, c) == SHEOLDRED)
 }
 
-/// toxic 2: two poison counters with the combat damage to a player
-fn ribskiff_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
-    if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 2); // Vorinclex
-        g.player_mut(d).poison += k as u32;
-        crate::glog!(g, "    {} gets 2 poison counters (toxic)", g.player(d).name);
-    }
-    Ok(())
-}
-
 // ------------------------------------------------------------------ Tome of Legends and Diary of Dreams
 fn pages(g: &Game, m: PermId) -> i32 {
     g.perm(m).data.int(DataKey::Counters) as i32
@@ -1746,7 +1736,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(ribskiff_etb);
     c.crew = Some(ribskiff_crew);
     super::partials::at_once(c, Event::Crew, true);
-    c.combat_damage = Some(ribskiff_damage);
     let c = r.card(db, "Tome of Legends")?;
     c.etb = Some(tome_etb);
     c.attack = Some(tome_attack);

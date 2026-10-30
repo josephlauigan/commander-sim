@@ -706,15 +706,6 @@ fn hero_of_iroas(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
     if caster == owner(g, src) && g.db.get(c).has_subtype("aura") { -1 } else { 0 }
 }
 
-/// Partial: enchantment discount; +1/+1 counters not modeled
-fn starfield(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
-    if caster == owner(g, src) && g.db.get(c).types.has(Types::ENCHANTMENT) { -1 } else { 0 }
-}
-
-fn pearl(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
-    if caster == owner(g, src) && g.db.get(c).pips.contains('W') { -1 } else { 0 }
-}
-
 // ======================================================== sacrifice outlets and death payoffs (aristocrats)
 /// a sacrifice outlet's effect when used: (g, p, the outlet, what was sacrificed)
 type SacFx = fn(&mut Game, PlayerId, PermId, PermId) -> Res;
@@ -3505,8 +3496,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     // cost reducers
     r.card(db, "Danitha Capashen, Paragon")?.cost = Some(danitha);
     r.card(db, "Hero of Iroas")?.cost = Some(hero_of_iroas);
-    r.card(db, "Starfield Mystic")?.cost = Some(starfield);
-    r.card(db, "Pearl Medallion")?.cost = Some(pearl);
     // death triggers
     r.card(db, "Cruel Celebrant")?.dies = Some(celebrant);
     r.card(db, "Grim Haruspex")?.dies = Some(haruspex);

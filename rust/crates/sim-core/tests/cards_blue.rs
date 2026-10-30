@@ -428,7 +428,7 @@ fn dune_mover_is_toxic_and_puts_a_basic_land_on_top() {
     let top_before = g.player(P0).library.len();
     let d = perm(&mut g, P0, "Dune Mover");
     assert_eq!(g.player(P0).library.len(), top_before, "a card stays in the library, on top");
-    hooks::fire_trigger(&mut g, Event::CombatDamage, Call::CombatDamage { p: P0, a: d, d: P1, dmg: 2 }).unwrap();
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, d, P1); // the compiled toxic 1, with the combat damage
     assert_eq!(g.player(P1).poison, 1);
 }
 

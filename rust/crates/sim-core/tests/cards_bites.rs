@@ -248,10 +248,10 @@ fn paladin_of_predation_poisons_and_dodges_small_blockers() {
     let big = token(&mut g, P1, 3);
     assert!(!combat::can_block(&g, small, pal), "power 2 or less can't block it");
     assert!(combat::can_block(&g, big, pal));
-    let f = g.registry.get(card(&g, "Paladin of Predation")).unwrap().combat_damage.unwrap();
-    f(&mut g, pal, P0, pal, P1, 6).unwrap();
+    // the compiled toxic 6, with each combat damage to a player
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, pal, P1);
     assert_eq!(g.player(P1).poison, 6);
-    f(&mut g, pal, P0, pal, P1, 6).unwrap();
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, pal, P1);
     assert_eq!(g.player(P1).poison, 12);
 }
 

@@ -12,7 +12,7 @@
 //!   before combat when it makes the attack lethal through the blockers).
 //! - **Boughside Wanderers**, **Cactarantula** (draws when an opponent's spell or ability targets it; it costs {1} less
 //!   with a Desert, and the decks that play it have no Desert), **Carnivorous Canopy** (artifact, enchantment or flier; proliferate at
-//!   mana value 3 or less), **Ghalta**, **Silhana Ledgewalker**, **Venomous Brutalizer** (toxic 3, pay {1}{G} to
+//!   mana value 3 or less), **Ghalta**, **Silhana Ledgewalker**, **Venomous Brutalizer** (DSL toxic 3, pay {1}{G} to
 //!   proliferate), **Wildgrowth Archaic** (converge: in a mono-green deck, the colors spent are one when any mana is
 //!   spent), **Royal Treatment** (a real Royal Role: +1/+1 and ward {1}, not a counter).
 //! - Plot (**Freestrider Commando**, **Tumbleweed Rising**), foretell (**Lifestream's Blessing**), disguise (**Greenbelt
@@ -241,16 +241,6 @@ fn ghalta_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// Silhana Ledgewalker can't be blocked except by creatures with flying (`rules::evasion_blocked`)
 pub fn unblockable_by(g: &Game, b: PermId, a: PermId) -> bool {
     card_name(g, a) == Some(SILHANA) && !(g.perm(b).fly || crate::dsl::has_kw(g, b, "flying"))
-}
-
-/// Venomous Brutalizer: toxic 3 (three poison counters with the combat damage)
-fn brutalizer_damage(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
-    if a == src && dmg > 0 && !crate::engine::values::melira(g, d) {
-        let k = crate::cardcode::vorinclex(g, g.perm(a).owner, 3); // Vorinclex
-        g.player_mut(d).poison += k as u32;
-        crate::glog!(g, "    {} gets 3 poison counters (toxic)", g.player(d).name);
-    }
-    Ok(())
 }
 
 /// Venomous Brutalizer: when it enters, you may pay {1}{G}; if you do, proliferate
@@ -922,7 +912,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Boughside Wanderers")?.etb = Some(wanderers_etb);
     r.card(db, "Ghalta the Unstoppable")?.self_cost = Some(ghalta_cost);
     let c = r.card(db, "Venomous Brutalizer")?;
-    c.combat_damage = Some(brutalizer_damage);
     c.etb = Some(brutalizer_etb);
     r.card(db, "Carnivorous Canopy")?.resolve = Some(canopy_resolve);
     r.card(db, "Crushing Canopy")?.resolve = Some(crushing_resolve);

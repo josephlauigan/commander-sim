@@ -198,7 +198,7 @@ fn venomous_brutalizer_gives_three_poison_and_proliferates_for_a_price() {
     lands(&mut g, P0, "Forest", 2, false);
     let b = perm(&mut g, P0, "Venomous Brutalizer");
     assert_eq!(g.perm(bill).plus, 3, "paid {{1}}{{G}}: proliferate");
-    hooks::fire_trigger(&mut g, Event::CombatDamage, Call::CombatDamage { p: P0, a: b, d: P1, dmg: 4 }).unwrap();
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, b, P1); // the compiled toxic 3, with the combat damage
     assert_eq!(g.player(P1).poison, 3, "toxic 3");
 }
 

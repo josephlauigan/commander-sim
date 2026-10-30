@@ -652,11 +652,6 @@ fn warchief_cost(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
     if caster == owner(g, src) && g.db.get(c).has_subtype("goblin") { -1 } else { 0 }
 }
 
-/// common._reducer for Ruby Medallion: red spells cost {1} less
-fn ruby_cost(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
-    if caster == owner(g, src) && g.db.get(c).pips.contains('R') { -1 } else { 0 }
-}
-
 /// t4._etb_goblins: n Goblins as it enters
 fn etb_goblins(g: &mut Game, src: Src, m: PermId, n: u32) -> Res {
     let o = owner(g, src);
@@ -1479,7 +1474,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.grant_kw = Some(warchief_haste);
     c.cost = Some(warchief_cost);
     r.card(db, "Goblin Chieftain")?.grant_kw = Some(chieftain_haste);
-    r.card(db, "Ruby Medallion")?.cost = Some(ruby_cost);
     r.card(db, "Beetleback Chief")?.etb = Some(beetleback);
     r.card(db, "Siege-Gang Commander")?.etb = Some(siege_gang);
     r.card(db, "Goblin Instigator")?.etb = Some(instigator);

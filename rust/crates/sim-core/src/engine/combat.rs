@@ -810,7 +810,7 @@ fn resolve_combat_inner(
                     lose_life(g, d, dmg, Some(p), "combat", None)?;
                     conn.push(a);
                     *tot += dmg;
-                    crate::impls::tymna_cards::toxic_hit(g, a, d); // Skrelv, Mite tokens, toxic granted by Skrelv
+                    crate::impls::tymna_cards::toxic_hit(g, a, d); // toxic: compiled, Mite tokens, granted by Skrelv
                     if g.dsl_on {
                         let fired = crate::dsl::Fired {
                             attacker: Some(a),

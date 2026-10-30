@@ -1,5 +1,6 @@
-//! `cardgen audit --paths` on the committed data: the known doubles show, a declared split is not a double, and a
-//! card with only AI code has none.
+//! `cardgen audit --paths` on the committed data: no hard double is left undeclared, the doubles Phase 2 removed stay
+//! gone, a declared split is not a double (and without its `paths_ok` it is one again), and a card with only AI code
+//! has none.
 
 use cardgen::audit::{Audit, engine_db};
 use cardgen::data::Project;
@@ -12,8 +13,8 @@ use std::sync::OnceLock;
 
 struct Fixture {
     all: BTreeMap<String, CardPaths>,
-    /// the same, with a `paths_ok` added in memory for Ruby Medallion
-    declared: BTreeMap<String, CardPaths>,
+    /// the same, with Hexing Squelcher's `paths_ok` taken out in memory
+    undeclared: BTreeMap<String, CardPaths>,
     /// cards whose only code is AI slots, and exactly `prio`
     prio_only: Vec<String>,
 }
@@ -29,14 +30,14 @@ fn fixture() -> &'static Fixture {
         let ok = paths_ok(&inp);
         let all = all_paths(&db, &reg, &au, &inp, &ok);
         let mut ok2 = ok.clone();
-        ok2.insert("Ruby Medallion".into(), "a test: declared on purpose".into());
-        let declared = all_paths(&db, &reg, &au, &inp, &ok2);
+        ok2.remove("Hexing Squelcher");
+        let undeclared = all_paths(&db, &reg, &au, &inp, &ok2);
         let prio_only = db
             .iter()
             .filter(|d| reg.get(d.id).is_some_and(|i| i.slots() == ["prio"] && i.slots_of(SlotClass::Rule).is_empty()))
             .map(|d| d.name.to_string())
             .collect();
-        Fixture { all, declared, prio_only }
+        Fixture { all, undeclared, prio_only }
     })
 }
 
@@ -49,34 +50,45 @@ fn has_double(c: &CardPaths, class: Class, what: &str) -> bool {
 }
 
 #[test]
-fn medallions_and_starfield_mystic_are_hard_cost_doubles() {
-    for n in ["Ruby Medallion", "Jet Medallion", "Pearl Medallion", "Starfield Mystic"] {
-        let c = card(n);
-        assert_eq!(c.class, Some(Class::Hard), "{n}: {c:?}");
-        assert!(has_double(c, Class::Hard, "cost:"), "{n}: {:?}", c.doubles);
-    }
+fn no_hard_double_is_left_undeclared() {
+    let hard: Vec<&String> =
+        fixture().all.iter().filter(|(_, c)| c.class == Some(Class::Hard)).map(|(n, _)| n).collect();
+    assert!(hard.is_empty(), "hard doubles without paths_ok: {hard:?}");
 }
 
 #[test]
-fn laelia_is_a_hard_trigger_double() {
+fn the_cost_reducers_run_on_the_compiled_static_alone() {
+    for n in ["Ruby Medallion", "Jet Medallion", "Pearl Medallion", "Foundry Inspector", "Etherium Sculptor"] {
+        let c = card(n);
+        assert!(c.rule.is_empty() && c.class.is_none(), "{n}: {c:?}");
+        assert!(c.dsl.iter().any(|l| l == "static:cost"), "{n}: {:?}", c.dsl);
+    }
+    // Starfield Mystic: the discount compiled, its +1/+1 counter card code (a declared split)
+    let c = card("Starfield Mystic");
+    assert!(!c.rule.contains(&"cost"), "{c:?}");
+    assert_eq!(c.class, Some(Class::SplitOk), "{c:?}");
+}
+
+#[test]
+fn laelia_runs_on_card_code_alone() {
     let c = card("Laelia, the Blade Reforged");
-    assert_eq!(c.class, Some(Class::Hard), "{c:?}");
-    assert!(has_double(c, Class::Hard, "trigger: triggered:attack + attack"), "{:?}", c.doubles);
+    assert!(c.dsl.is_empty() && c.doubles.is_empty() && c.class.is_none(), "{c:?}");
 }
 
 #[test]
 fn hexing_squelcher_is_uncounterable_twice() {
-    let c = card("Hexing Squelcher");
+    let c = &fixture().undeclared["Hexing Squelcher"];
+    assert_eq!(c.class, Some(Class::Hard), "{c:?}");
     assert!(has_double(c, Class::Hard, "uncounterable:"), "{:?}", c.doubles);
 }
 
 #[test]
 fn paths_ok_makes_a_double_a_declared_split() {
-    let c = &fixture().declared["Ruby Medallion"];
+    let c = card("Hexing Squelcher");
     assert_eq!(c.class, Some(Class::SplitOk), "{c:?}");
     assert!(c.paths_ok.is_some());
     // the double is still listed, only its class changes
-    assert!(has_double(c, Class::Hard, "cost:"));
+    assert!(has_double(c, Class::Hard, "uncounterable:"));
 }
 
 #[test]

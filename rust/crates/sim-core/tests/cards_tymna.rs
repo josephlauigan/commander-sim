@@ -1262,7 +1262,7 @@ fn skrelv_toxic_adds_to_the_poison_of_a_creature_with_toxic() {
     let d = perm(&mut g, P0, "Dune Mover");
     g.perm_mut(d).eot_kw.push("toxic");
     sim_core::impls::tymna_cards::toxic_hit(&mut g, d, P1);
-    assert_eq!(g.player(P1).poison, 1, "the hook for Dune Mover's own toxic is separate");
+    assert_eq!(g.player(P1).poison, 2, "Skrelv's toxic and Dune Mover's own compiled toxic 1");
 }
 
 #[test]

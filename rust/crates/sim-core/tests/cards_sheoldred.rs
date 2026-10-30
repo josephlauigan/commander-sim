@@ -426,13 +426,8 @@ fn ribskiff_draws_crews_with_idle_creatures_and_gives_toxic() {
     assert!(g.is_creature(m), "crewed: an artifact creature");
     assert!(g.perm(crew).tapped);
     assert_eq!((values::epow(&g, m), values::etgh(&g, m)), (4, 4));
-    // toxic 2
-    sim_core::engine::hooks::fire_trigger(
-        &mut g,
-        Event::CombatDamage,
-        Call::CombatDamage { p: P0, a: m, d: P1, dmg: 4 },
-    )
-    .unwrap();
+    // toxic 2 (compiled), with the combat damage
+    sim_core::impls::tymna_cards::toxic_hit(&mut g, m, P1);
     assert_eq!(g.player(P1).poison, 2);
 }
 

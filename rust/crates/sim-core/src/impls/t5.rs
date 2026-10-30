@@ -275,16 +275,6 @@ fn sai(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     Ok(())
 }
 
-/// common._reducer for Foundry Inspector and Etherium Sculptor: your artifact spells cost {1} less
-fn art_reducer(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
-    if caster == owner(g, src) && is_art_card(g, c) { -1 } else { 0 }
-}
-
-/// common._reducer for Jet Medallion: your black spells cost {1} less
-fn jet(g: &Game, src: Src, caster: PlayerId, c: CardId) -> i32 {
-    if caster == owner(g, src) && g.db.get(c).pips.contains('B') { -1 } else { 0 }
-}
-
 /// common._tutor_etb for Trophy Mage and Tribute Mage: on entry, search for an artifact of the right mana value
 fn mage_tutor(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = owner(g, src);
@@ -922,10 +912,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     super::common::walker(r, db, "Tezzeret the Seeker", &TEZZERET_ABS)?;
     r.card(db, "Kappa Cannoneer")?.etb = Some(kappa);
     r.card(db, "Sai, Master Thopterist")?.cast = Some(sai);
-    for name in ["Foundry Inspector", "Etherium Sculptor"] {
-        r.card(db, name)?.cost = Some(art_reducer);
-    }
-    r.card(db, "Jet Medallion")?.cost = Some(jet);
     // common._tutor_etb (t1.rs's tutor_pred has their TUTOR_PRED entries)
     r.card(db, "Trophy Mage")?.etb = Some(mage_tutor);
     r.card(db, "Tribute Mage")?.etb = Some(mage_tutor);
