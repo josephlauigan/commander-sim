@@ -1,0 +1,1091 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "yshtola",
+  "commanders": [
+    "Y'shtola, Night's Blessed"
+  ],
+  "request_sha256": "998b18795ba444aad6bc704599e751fe8e2aaf9758881042afd1d0c778a99e67",
+  "identity": "WUB",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "690-3966",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 151187,
+      "missing": [
+        "Exquisite Blood"
+      ]
+    },
+    {
+      "id": "690-6191",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 80326,
+      "missing": [
+        "Bloodthirsty Conqueror"
+      ]
+    },
+    {
+      "id": "110-3966",
+      "cards": [
+        {
+          "name": "Marauding Blight-Priest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 61508,
+      "missing": [
+        "Exquisite Blood"
+      ]
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 55147,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "110-6191",
+      "cards": [
+        {
+          "name": "Marauding Blight-Priest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 49816,
+      "missing": [
+        "Bloodthirsty Conqueror"
+      ]
+    },
+    {
+      "id": "1561-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Near-infinite card draw for target opponent",
+        "Near-infinite damage",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size which is larger than or equal to their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 46618,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "553-2856",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 25629,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "690-4996",
+      "cards": [
+        {
+          "name": "Beacon of Immortality",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have an equal or higher life total than an opponent.",
+      "mana": "{5}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17737,
+      "missing": [
+        "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "690-4624",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revival // Revenge",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for up to two target opponents"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 13500,
+      "missing": [
+        "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "1090-4200",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9616,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "1025-4682",
+      "cards": [
+        {
+          "name": "Stasis",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8374,
+      "missing": [
+        "Stasis"
+      ]
+    },
+    {
+      "id": "335-5141",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8025,
+      "missing": [
+        "Ad Nauseam"
+      ]
+    },
+    {
+      "id": "2022-3283",
+      "cards": [
+        {
+          "name": "Wedding Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Consecrated Sphinx",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite card draw for opponents that control a Wedding Ring"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a Wedding Ring.\nYou have a way to draw a card.\nIt is your turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7838,
+      "missing": [
+        "Wedding Ring"
+      ]
+    },
+    {
+      "id": "690-1612",
+      "cards": [
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7502,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "2286-3221",
+      "cards": [
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Puzzle Box",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6020,
+      "missing": [
+        "Teferi's Puzzle Box"
+      ]
+    },
+    {
+      "id": "553-5273",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Diabolic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{14}{W}{W}{B}{B}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 3997,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "553-3591",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W} each turn",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2629,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "249-5141",
+      "cards": [
+        {
+          "name": "Zethi, Arcane Blademaster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2139,
+      "missing": [
+        "Zethi, Arcane Blademaster"
+      ]
+    },
+    {
+      "id": "3862-6804",
+      "cards": [
+        {
+          "name": "Requiem Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Near-infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls an indestructible creature, or you have a way to give an opponent's creature indestructible.\nYou have a way to deal damage to the indestructible creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1821,
+      "missing": [
+        "Requiem Monolith"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1414,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "690-1162",
+      "cards": [
+        {
+          "name": "Enduring Angel // Angelic Enforcer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "\nAngelic Enforcer does not have summoning sickness.\nYour life total is higher than or equal to an opponent's.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1239,
+      "missing": [
+        "Enduring Angel // Angelic Enforcer"
+      ]
+    },
+    {
+      "id": "1624-3591",
+      "cards": [
+        {
+          "name": "Near-Death Experience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 978,
+      "missing": [
+        "Near-Death Experience"
+      ]
+    },
+    {
+      "id": "2677-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flumph",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on certain creatures",
+        "Near-infinite card draw for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Flumph indestructible.\nYou have a way to deal damage to Flumph.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 773,
+      "missing": [
+        "Flumph"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 751,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "2057-3591",
+      "cards": [
+        {
+          "name": "Ashiok, Wicked Manipulator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 726,
+      "missing": [
+        "Ashiok, Wicked Manipulator"
+      ]
+    },
+    {
+      "id": "2022-3221",
+      "cards": [
+        {
+          "name": "Wedding Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a copy of Wedding Ring.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 545,
+      "missing": [
+        "Wedding Ring"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "372-1090-4142",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Hostage Taker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Restoration Angel exiled by Hostage Taker",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 163,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "1090-4875",
+      "cards": [
+        {
+          "name": "Conspiracy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Any creature type besides \"Angel\" chosen with Conspiracy.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 140,
+      "missing": [
+        "Conspiracy"
+      ]
+    },
+    {
+      "id": "1077-3221-3283",
+      "cards": [
+        {
+          "name": "Consecrated Sphinx",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wrong Turn",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 77,
+      "missing": [
+        "Wrong Turn"
+      ]
+    },
+    {
+      "id": "2770-3221-3283",
+      "cards": [
+        {
+          "name": "Consecrated Sphinx",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Donate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 24,
+      "missing": [
+        "Donate"
+      ]
+    },
+    {
+      "id": "1844-3221-3283",
+      "cards": [
+        {
+          "name": "Consecrated Sphinx",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fateful Handoff",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your deck size is at least four.",
+      "mana": "{2}{U}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "Fateful Handoff"
+      ]
+    }
+  ]
+}

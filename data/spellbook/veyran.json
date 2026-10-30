@@ -1,0 +1,1499 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "veyran",
+  "commanders": [
+    "Veyran, Voice of Duality"
+  ],
+  "request_sha256": "a033cedb30b70b945fa69a6e5bbb53e83746c64dfbb2df92181825a5791d5e81",
+  "identity": "UR",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1089-2353",
+      "cards": [
+        {
+          "name": "Curiosity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Curiosity attached to Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 69097,
+      "missing": [
+        "Curiosity"
+      ]
+    },
+    {
+      "id": "2353-6092",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Visionary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 49898,
+      "missing": [
+        "Niv-Mizzet, Visionary"
+      ]
+    },
+    {
+      "id": "2484-4083",
+      "cards": [
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Repercussion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 39801,
+      "missing": [
+        "Repercussion"
+      ]
+    },
+    {
+      "id": "2353-2396",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ophidian Eye",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Ophidian Eye attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38957,
+      "missing": [
+        "Ophidian Eye"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "406-2353",
+      "cards": [
+        {
+          "name": "Tandem Lookout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Tandem Lookout paired with Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 34296,
+      "missing": [
+        "Tandem Lookout"
+      ]
+    },
+    {
+      "id": "3940-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haze of Rage",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinitely powerful creatures you control until end of turn",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast at least three spells this turn.",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27594,
+      "missing": [
+        "Haze of Rage"
+      ]
+    },
+    {
+      "id": "1775-2484",
+      "cards": [
+        {
+          "name": "Toralf, God of Fury // Toralf's Hammer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22348,
+      "missing": [
+        "Toralf, God of Fury // Toralf's Hammer"
+      ]
+    },
+    {
+      "id": "11-3584-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset's Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite copies of instant and sorcery spells on the stack",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have another instant and/or sorcery card in hand that can be cast using X or less colored mana, where X is equal to four plus twice the number of instants and sorceries you've cast this turn.\nYou have enough mana to cast the additional instant or sorcery, plus an additional",
+      "mana": "{U} if you have not cast an instant or sorcery this turn",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21086,
+      "missing": [
+        "Narset's Reversal"
+      ]
+    },
+    {
+      "id": "1823-2484",
+      "cards": [
+        {
+          "name": "Fall of Cair Andros",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature with toughness less than 13.",
+      "mana": "{7}{R} (at most)",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 14316,
+      "missing": [
+        "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "3368-3584",
+      "cards": [
+        {
+          "name": "Thousand-Year Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least one other instant or sorcery card in hand that can be cast this turn.",
+      "mana": "{1}{R}{R} plus enough mana to cast the additional instant or sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 11005,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "4740-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9957,
+      "missing": [
+        "Karn, the Great Creator"
+      ]
+    },
+    {
+      "id": "2655-5195",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9600,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "2734-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cyberdrive Awakener",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 50 minus your storm count.",
+      "mana": "{5}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7432,
+      "missing": [
+        "Cyberdrive Awakener"
+      ]
+    },
+    {
+      "id": "5940-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Return the Favor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{1}{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6730,
+      "missing": [
+        "Return the Favor"
+      ]
+    },
+    {
+      "id": "700-2353",
+      "cards": [
+        {
+          "name": "Body of Knowledge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6454,
+      "missing": [
+        "Body of Knowledge"
+      ]
+    },
+    {
+      "id": "2484-7502",
+      "cards": [
+        {
+          "name": "Expedited Inheritance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each player may exile a portion of their library with the ability to play the exiled cards until the end of their next turn"
+      ],
+      "requires": [],
+      "prerequisites": "There's a creature on the battlefield.",
+      "mana": "{7}{R} at most",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5103,
+      "missing": [
+        "Expedited Inheritance"
+      ]
+    },
+    {
+      "id": "1170-7494",
+      "cards": [
+        {
+          "name": "Blazing Firesinger // Seething Song",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4278,
+      "missing": [
+        "Displacer Kitten"
+      ]
+    },
+    {
+      "id": "610-2655",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archmage Emeritus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4237,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "60-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Expansion // Explosion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{U/R}{U/R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3991,
+      "missing": [
+        "Expansion // Explosion"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "220-4740",
+      "cards": [
+        {
+          "name": "Brash Taunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Brash Taunter lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3772,
+      "missing": [
+        "Brash Taunter"
+      ]
+    },
+    {
+      "id": "5026-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reverberate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3515,
+      "missing": [
+        "Reverberate"
+      ]
+    },
+    {
+      "id": "4285-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Increasing Vengeance",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2667,
+      "missing": [
+        "Increasing Vengeance"
+      ]
+    },
+    {
+      "id": "5938-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{1}{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2550,
+      "missing": [
+        "Flare of Duplication"
+      ]
+    },
+    {
+      "id": "2655-5005",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ral, Storm Conduit",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2374,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "3368-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{1}{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1949,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "3301-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tezzeret, Betrayer of Flesh",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nTezzeret has at least two loyalty counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1663,
+      "missing": [
+        "Tezzeret, Betrayer of Flesh"
+      ]
+    },
+    {
+      "id": "1534-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Twincast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{U}{U} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1508,
+      "missing": [
+        "Twincast"
+      ]
+    },
+    {
+      "id": "132-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Myr Welder lifelink.\nYour life total is at least 51.\nMyr Welder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1128,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "966-3584-5195",
+      "cards": [
+        {
+          "name": "Thousand-Year Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unsubstantiate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one other instant or sorcery card in hand.",
+      "mana": "{1}{U} plus enough mana to cast the other instant or sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1088,
+      "missing": [
+        "Unsubstantiate"
+      ]
+    },
+    {
+      "id": "4241-4740",
+      "cards": [
+        {
+          "name": "Karn, Silver Golem",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 960,
+      "missing": [
+        "Karn, Silver Golem"
+      ]
+    },
+    {
+      "id": "5941-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wild Ricochet",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{2}{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 936,
+      "missing": [
+        "Wild Ricochet"
+      ]
+    },
+    {
+      "id": "1858-4280-5195",
+      "cards": [
+        {
+          "name": "Veyran, Voice of Duality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "View from Above",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a white permanent.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 552,
+      "missing": [
+        "View from Above"
+      ]
+    },
+    {
+      "id": "469-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Insidious Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{2}{U}{U} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 489,
+      "missing": [
+        "Insidious Will"
+      ]
+    },
+    {
+      "id": "109-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fork",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 475,
+      "missing": [
+        "Fork"
+      ]
+    },
+    {
+      "id": "4694-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "March of the Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nAetherflux Reservoir does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 431,
+      "missing": [
+        "March of the Machines"
+      ]
+    },
+    {
+      "id": "3488-4740",
+      "cards": [
+        {
+          "name": "Katsumasa, the Animator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "{2}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 372,
+      "missing": [
+        "Katsumasa, the Animator"
+      ]
+    },
+    {
+      "id": "46-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Refuse // Cooperate",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{2}{U} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 369,
+      "missing": [
+        "Refuse // Cooperate"
+      ]
+    },
+    {
+      "id": "3007-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Toymaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nYou have at least one card in hand.\nToymaker does not have summoning sickness.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 231,
+      "missing": [
+        "Toymaker"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "1858-4705-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Harmonic Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "View from Above",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a white permanent.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 201,
+      "missing": [
+        "View from Above"
+      ]
+    },
+    {
+      "id": "706-3584",
+      "cards": [
+        {
+          "name": "Thousand-Year Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spelljack",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant card in hand.",
+      "mana": "{3}{U}{U}{U} plus enough mana to cast the additional instant card",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 134,
+      "missing": [
+        "Spelljack"
+      ]
+    },
+    {
+      "id": "4740-4916",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Animate Artifact",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nAnimate Artifact attached to Aetherflux Reservoir.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 97,
+      "missing": [
+        "Animate Artifact"
+      ]
+    },
+    {
+      "id": "1418-4280-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Virtue of Knowledge // Vantress Visions",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Veyran, Voice of Duality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of opponents",
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to put an activated and/or a triggered ability onto the stack.\nYou have not cast an instant spell this turn.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 86,
+      "missing": [
+        "Virtue of Knowledge // Vantress Visions"
+      ]
+    },
+    {
+      "id": "172-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skilled Animator",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 50 minus your storm count.",
+      "mana": "{2}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 45,
+      "missing": [
+        "Skilled Animator"
+      ]
+    },
+    {
+      "id": "1310-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn's Touch",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Karn's Touch"
+      ]
+    },
+    {
+      "id": "4740-5160",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yotia Declares War",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nYotia Declares War has exactly two lore counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 25,
+      "missing": [
+        "Yotia Declares War"
+      ]
+    }
+  ]
+}

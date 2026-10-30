@@ -1,0 +1,2599 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "kinnan-bonder-mana-combo",
+  "commanders": [
+    "Kinnan, Bonder Prodigy"
+  ],
+  "request_sha256": "d09a38f0f3cf9b5eaedbdee4bd37317571b3c4508071708ed147d819bc7a31d2",
+  "identity": "GU",
+  "included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272
+    },
+    {
+      "id": "513-2364--47",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}{C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 78094
+    },
+    {
+      "id": "513-3682",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a legendary creature that has a color that matches the mana symbol in the other permanent's mana cost.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 67063
+    },
+    {
+      "id": "129-4131",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 46905
+    },
+    {
+      "id": "513--62",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Permanent castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "4821-5261",
+      "cards": [
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Isochron Scepter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 107075,
+      "missing": [
+        "Isochron Scepter"
+      ]
+    },
+    {
+      "id": "4131-4547",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66280,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "4131-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 53795,
+      "missing": [
+        "Rings of Brighthearth"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1792-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29978,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "1792-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29557,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "4131-5390",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 26462,
+      "missing": [
+        "Forensic Gadgeteer"
+      ]
+    },
+    {
+      "id": "1792-2364-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22471,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "129-4222--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Freed from the Real is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19066,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "1458-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16819,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "1458-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16555,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "3430-4131",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nyxbloom Ancient",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 15170,
+      "missing": [
+        "Nyxbloom Ancient"
+      ]
+    },
+    {
+      "id": "542-2364",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}{C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13995,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "542-3682",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one colored legendary creature or planeswalker.\nYou control a nontoken permanent that can be cast using one mana that can be generated by Mox Amber.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12743,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1458-2364-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12663,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "513-1636",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a nonland creature card in hand.\nYou control another nontoken nonland reature.\nOther creatures you control can tap to produce enough mana to cast both creatures mentioned above after being tapped twice.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12599,
+      "missing": [
+        "Intruder Alarm"
+      ]
+    },
+    {
+      "id": "542-4009",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Opal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least three artifacts.\nYou control a nontoken permanent that can be cast using one colored mana.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12104,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "129-3525--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Pemmin's Aura is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12075,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "4131-5149",
+      "cards": [
+        {
+          "name": "Power Artifact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Power Artifact attached to Basalt Monolith.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10936,
+      "missing": [
+        "Power Artifact"
+      ]
+    },
+    {
+      "id": "1792-2585-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{2}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 10827,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "4131-4684",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10060,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "2585-5149",
+      "cards": [
+        {
+          "name": "Power Artifact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Power Artifact attached to Grim Monolith.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9966,
+      "missing": [
+        "Power Artifact"
+      ]
+    },
+    {
+      "id": "1999-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Master Transmuter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9771,
+      "missing": [
+        "Master Transmuter"
+      ]
+    },
+    {
+      "id": "129-4222-5814",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast legendary spells"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 9513,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "542-2585",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{2}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8876,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "2585-3430",
+      "cards": [
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nyxbloom Ancient",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8687,
+      "missing": [
+        "Nyxbloom Ancient"
+      ]
+    },
+    {
+      "id": "1792-4131-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{3}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8624,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "4821-5803",
+      "cards": [
+        {
+          "name": "Kitsa, Otterball Elite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Kitsa does not have summoning sickness.\nKitsa has power 2 or greater.\nNonland permanents you control can tap to produce at least {2}.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8233,
+      "missing": [
+        "Kitsa, Otterball Elite"
+      ]
+    },
+    {
+      "id": "3363-4067",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Infinite looting",
+        "Near-infinite untap of permanents you control",
+        "Near-infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7066,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "1458-2585-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{2}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6712,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "129-3525-5814",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast legendary spells"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5883,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "1458-4131-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5248,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "3094-4821",
+      "cards": [
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lithoform Engine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite untap of nonland permanents you control",
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland mana sources that can tap for at least {4} on the battlefield.",
+      "mana": "{4}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 4881,
+      "missing": [
+        "Lithoform Engine"
+      ]
+    },
+    {
+      "id": "2539-4821",
+      "cards": [
+        {
+          "name": "Twinning Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {4}.",
+      "mana": "{8}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4282,
+      "missing": [
+        "Twinning Staff"
+      ]
+    },
+    {
+      "id": "579-4131",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Reflection",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 3429,
+      "missing": [
+        "Mana Reflection"
+      ]
+    },
+    {
+      "id": "3363-4331",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3290,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "74-4131",
+      "cards": [
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2576,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "3236-4821",
+      "cards": [
+        {
+          "name": "Sigil Tracer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control nonland permanents that can produce {1}{U}.\nYou control an additional Wizard.",
+      "mana": "{2}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2335,
+      "missing": [
+        "Sigil Tracer"
+      ]
+    },
+    {
+      "id": "129-1247-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1845,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "4131-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1528,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "129-1247-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1436,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "2825-4821",
+      "cards": [
+        {
+          "name": "Elite Arcanist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Elite Arcanist does not have summoning sickness.Nonland permanents you control can tap for at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1216,
+      "missing": [
+        "Elite Arcanist"
+      ]
+    },
+    {
+      "id": "1623-2293",
+      "cards": [
+        {
+          "name": "Guile",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flusterstorm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant or sorcery card in hand.",
+      "mana": "{U} plus enough mana to cast the instant or sorcery card",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1027,
+      "missing": [
+        "Guile"
+      ]
+    },
+    {
+      "id": "579-2585",
+      "cards": [
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Reflection",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 932,
+      "missing": [
+        "Mana Reflection"
+      ]
+    },
+    {
+      "id": "129-3995-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 822,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "74-2585",
+      "cards": [
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 774,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "129-3995-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 768,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "129-2585-2719",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakashima of a Thousand Faces",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Sakashima is a copy of Kinnan.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 581,
+      "missing": [
+        "Sakashima of a Thousand Faces"
+      ]
+    },
+    {
+      "id": "129-2585-3908",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Spark Double is a copy of Kinnan.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 515,
+      "missing": [
+        "Spark Double"
+      ]
+    },
+    {
+      "id": "2529-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vedalken Mastermind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Vedalken Mastermind does not have summoning sickness.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 352,
+      "missing": [
+        "Vedalken Mastermind"
+      ]
+    },
+    {
+      "id": "3363-5302",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Keeper of the Nine Gales",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Keeper of the Nine Gales does not have summoning sickness.\nYou control at least two other untapped Birds.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 306,
+      "missing": [
+        "Keeper of the Nine Gales"
+      ]
+    },
+    {
+      "id": "378-4821",
+      "cards": [
+        {
+          "name": "Meletis Charlatan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control nonland permanents that can produce {3}{U}.\nMeletis Charlatan does not have summoning sickness.",
+      "mana": "{3}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 290,
+      "missing": [
+        "Meletis Charlatan"
+      ]
+    },
+    {
+      "id": "2084-2500",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirage Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 285,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 275,
+      "missing": [
+        "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 270,
+      "missing": [
+        "Blood Clock"
+      ]
+    },
+    {
+      "id": "129-824-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Leech Bonder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Leech Bonder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 264,
+      "missing": [
+        "Leech Bonder"
+      ]
+    },
+    {
+      "id": "513-5034-5282",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wormfang Newt",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a land that enters untapped and that can be tapped to produce at least {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 255,
+      "missing": [
+        "Wormfang Newt"
+      ]
+    },
+    {
+      "id": "712-4131",
+      "cards": [
+        {
+          "name": "Wake Thrasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Wake Thrasher"
+      ]
+    },
+    {
+      "id": "2084-4753",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Clever Impersonator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Clever Impersonator is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 219,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "3363-4782",
+      "cards": [
+        {
+          "name": "Heidar, Rimewind Master",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Heidar does not have summoning sickness.\nYou control at least four snow permanents.",
+      "mana": "{6} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 115,
+      "missing": [
+        "Heidar, Rimewind Master"
+      ]
+    },
+    {
+      "id": "2084-3668",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Flesh Duplicate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Flesh Duplicate is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 108,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "129-3812-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 97,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "1363-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tradewind Rider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tradewind Rider does not have summoning sickness.\nYou control at least two other untapped creatures.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 96,
+      "missing": [
+        "Tradewind Rider"
+      ]
+    },
+    {
+      "id": "129-3812-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 88,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "1111-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Adept",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Temporal Adept does not have summoning sickness.",
+      "mana": "{4}{U}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 87,
+      "missing": [
+        "Temporal Adept"
+      ]
+    },
+    {
+      "id": "3363-8186",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Esperzoa",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 86,
+      "missing": [
+        "Esperzoa"
+      ]
+    },
+    {
+      "id": "129-4289-5137",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "129-5137-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 54,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "129-4289-4824",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Soliton"
+      ]
+    },
+    {
+      "id": "129-4824-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Soliton"
+      ]
+    },
+    {
+      "id": "3363-4780",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolarian Sentinel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tolarian Sentinel does not have summoning sickness.\nYou have at least one card in hand.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 35,
+      "missing": [
+        "Tolarian Sentinel"
+      ]
+    },
+    {
+      "id": "3363-3823",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Elemental",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Time Elemental does not have summoning sickness.\nThe One Ring does not have an Aura attached.",
+      "mana": "{6}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Time Elemental"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "306-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cache Raiders",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Cache Raiders"
+      ]
+    },
+    {
+      "id": "3363-8189",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shi'ar Soldier",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Shi'ar Soldier doesn't have summoning sickness.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Shi'ar Soldier"
+      ]
+    },
+    {
+      "id": "3363-8188",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Salvage Scuttler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Salvage Scuttler doesn't have summoning sickness and cannot be blocked and killed by an opponent.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Salvage Scuttler"
+      ]
+    },
+    {
+      "id": "513-1306--47",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}{C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Mana Crypt"
+      ]
+    },
+    {
+      "id": "5864-6006-7109",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trusty Boomerang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four in any combination of Birds, Frogs, Otters and Rats that don't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Trusty Boomerang"
+      ]
+    },
+    {
+      "id": "4289-5864-7109",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trusty Boomerang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four in any combination of Birds, Frogs, Otters and Rats that don't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Trusty Boomerang"
+      ]
+    }
+  ]
+}

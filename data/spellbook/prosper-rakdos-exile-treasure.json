@@ -1,0 +1,2536 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "prosper-rakdos-exile-treasure",
+  "commanders": [
+    "Prosper, Tome-Bound"
+  ],
+  "request_sha256": "848021cba7d83253431b046e5f86da2222d1cb04494804764b76f2569fe13ca4",
+  "identity": "BR",
+  "included": [
+    {
+      "id": "2173-4740-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 51939
+    },
+    {
+      "id": "392-967-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 7886
+    },
+    {
+      "id": "967-2257-4166-5078",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Reckless Fireweaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4732
+    },
+    {
+      "id": "967-2815-5078-5184",
+      "cards": [
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Professional Face-Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Xorn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Treasure token.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4484
+    },
+    {
+      "id": "967-1678-4166-5078",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mayhem Devil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Treasure token.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4388
+    },
+    {
+      "id": "967-4166-5078-6847",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Weftstalker Ardent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1458
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1368-1878-2706",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six additional cards in your graveyard, plus an additional six cards between your hand and/or graveyard.\nAn opponent has at least six cards in hand.",
+      "mana": "{2}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 90700,
+      "missing": [
+        "Wheel of Fortune"
+      ]
+    },
+    {
+      "id": "3966-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 51 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57007,
+      "missing": [
+        "Exquisite Blood"
+      ]
+    },
+    {
+      "id": "2484-4083",
+      "cards": [
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Repercussion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 39801,
+      "missing": [
+        "Repercussion"
+      ]
+    },
+    {
+      "id": "1878-3368",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Exile your library with the ability to play the exiled cards until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has six or more cards in their hand.",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 38295,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "4740-6191",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 51 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38082,
+      "missing": [
+        "Bloodthirsty Conqueror"
+      ]
+    },
+    {
+      "id": "3940-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haze of Rage",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinitely powerful creatures you control until end of turn",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast at least three spells this turn.",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27594,
+      "missing": [
+        "Haze of Rage"
+      ]
+    },
+    {
+      "id": "2173-2498-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 26169,
+      "missing": [
+        "Sheoldred, the Apocalypse"
+      ]
+    },
+    {
+      "id": "1775-2484",
+      "cards": [
+        {
+          "name": "Toralf, God of Fury // Toralf's Hammer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22348,
+      "missing": [
+        "Toralf, God of Fury // Toralf's Hammer"
+      ]
+    },
+    {
+      "id": "2552-3263",
+      "cards": [
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vandalblast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 22036,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "2429-5211",
+      "cards": [
+        {
+          "name": "Brass's Bounty",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Revel in Riches",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least ten lands.",
+      "mana": "{6}{R}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 15265,
+      "missing": [
+        "Brass's Bounty"
+      ]
+    },
+    {
+      "id": "1823-2484",
+      "cards": [
+        {
+          "name": "Fall of Cair Andros",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature with toughness less than 13.",
+      "mana": "{7}{R} (at most)",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 14316,
+      "missing": [
+        "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "1486-3750",
+      "cards": [
+        {
+          "name": "Magda, Brazen Outlaw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least 5 Dwarfs who do not have summoning sickness.\nOpponents can not block.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10725,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "4740-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9957,
+      "missing": [
+        "Karn, the Great Creator"
+      ]
+    },
+    {
+      "id": "2655-5195",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9600,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "2390-4166",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "All Will Be One",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause an opponent to lose exactly 1 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8932,
+      "missing": [
+        "All Will Be One"
+      ]
+    },
+    {
+      "id": "1678-7839",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mayhem Devil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Treasure.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8863,
+      "missing": [
+        "Smaug the Impenetrable"
+      ]
+    },
+    {
+      "id": "1211-4603",
+      "cards": [
+        {
+          "name": "Maralen of the Mornsong",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Opposition Agent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8054,
+      "missing": [
+        "Maralen of the Mornsong"
+      ]
+    },
+    {
+      "id": "392-411",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinning Ignus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7738,
+      "missing": [
+        "Grinning Ignus"
+      ]
+    },
+    {
+      "id": "392-985-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6285,
+      "missing": [
+        "Mystic Forge"
+      ]
+    },
+    {
+      "id": "2612-5035",
+      "cards": [
+        {
+          "name": "Mirkwood Bats",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Plague of Vermin",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Near-infinite creature tokens",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have the highest life total.",
+      "mana": "{6}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 6217,
+      "missing": [
+        "Plague of Vermin"
+      ]
+    },
+    {
+      "id": "4740-5078-6900",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gwenom, Remorseless",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2. Gwenom has attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6122,
+      "missing": [
+        "Gwenom, Remorseless"
+      ]
+    },
+    {
+      "id": "693-1368",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Path of the Pyromancer",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5542,
+      "missing": [
+        "Path of the Pyromancer"
+      ]
+    },
+    {
+      "id": "326-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chain of Smog",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5526,
+      "missing": [
+        "Chain of Smog"
+      ]
+    },
+    {
+      "id": "974-2612-4231",
+      "cards": [
+        {
+          "name": "Academy Manufactor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirkwood Bats",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "There and Back Again",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to kill a creature.\nThere and Back Again has exactly two lore counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5496,
+      "missing": [
+        "There and Back Again"
+      ]
+    },
+    {
+      "id": "392-1594-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "Horn of Bounty.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5270,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "2484-7502",
+      "cards": [
+        {
+          "name": "Expedited Inheritance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each player may exile a portion of their library with the ability to play the exiled cards until the end of their next turn"
+      ],
+      "requires": [],
+      "prerequisites": "There's a creature on the battlefield.",
+      "mana": "{7}{R} at most",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5103,
+      "missing": [
+        "Expedited Inheritance"
+      ]
+    },
+    {
+      "id": "392-5078-5901",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Artist's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "Artist's Talent is at least level 2.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5047,
+      "missing": [
+        "Artist's Talent"
+      ]
+    },
+    {
+      "id": "392-1368-2172",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Burning Inquiry",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4924,
+      "missing": [
+        "Burning Inquiry"
+      ]
+    },
+    {
+      "id": "1211-7271",
+      "cards": [
+        {
+          "name": "Mornsong Aria",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Opposition Agent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4789,
+      "missing": [
+        "Mornsong Aria"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "220-4740",
+      "cards": [
+        {
+          "name": "Brash Taunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Brash Taunter lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3772,
+      "missing": [
+        "Brash Taunter"
+      ]
+    },
+    {
+      "id": "392-777-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3766,
+      "missing": [
+        "Foundry Inspector"
+      ]
+    },
+    {
+      "id": "1368-2172-5195",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Burning Inquiry",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.",
+      "mana": "{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 3621,
+      "missing": [
+        "Burning Inquiry"
+      ]
+    },
+    {
+      "id": "392-2146-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3493,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "392-5078-5705",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3210,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "4166-7362",
+      "cards": [
+        {
+          "name": "Casey Jones, Back Alley Brute",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Exile your library with the ability to play the exiled cards until end of turn",
+        "Infinite +1/+1 counters on a creature",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2973,
+      "missing": [
+        "Casey Jones, Back Alley Brute"
+      ]
+    },
+    {
+      "id": "2581-5065",
+      "cards": [
+        {
+          "name": "Helm of Obedience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dauthi Voidwalker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Exile target opponent's library"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2847,
+      "missing": [
+        "Helm of Obedience"
+      ]
+    },
+    {
+      "id": "392-5078-7356",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Longshot, Rebel Bowman",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2306,
+      "missing": [
+        "Longshot, Rebel Bowman"
+      ]
+    },
+    {
+      "id": "1678-4767",
+      "cards": [
+        {
+          "name": "Silverclad Ferocidons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mayhem Devil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Silverclad Ferocidons indestructible.\nYou have a way to deal damage to Silverclad Ferocidons.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1884,
+      "missing": [
+        "Silverclad Ferocidons"
+      ]
+    },
+    {
+      "id": "392-4985-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1803,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "392-2510-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "There is an artifact card exiled with Semblance Anvil.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1584,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "3918-4740",
+      "cards": [
+        {
+          "name": "Trazyn the Infinite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Trazyn the Infinite lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1432,
+      "missing": [
+        "Trazyn the Infinite"
+      ]
+    },
+    {
+      "id": "132-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Myr Welder lifelink.\nYour life total is at least 51.\nMyr Welder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1128,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "4241-4740",
+      "cards": [
+        {
+          "name": "Karn, Silver Golem",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 960,
+      "missing": [
+        "Karn, Silver Golem"
+      ]
+    },
+    {
+      "id": "5104-6215",
+      "cards": [
+        {
+          "name": "Tombstone Stairwell",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nadier's Nightblade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 879,
+      "missing": [
+        "Tombstone Stairwell"
+      ]
+    },
+    {
+      "id": "1645-3809",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crown of Flames",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 760,
+      "missing": [
+        "Crown of Flames"
+      ]
+    },
+    {
+      "id": "967-3670-4166-5078",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ingenious Artillerist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 749,
+      "missing": [
+        "Ingenious Artillerist"
+      ]
+    },
+    {
+      "id": "392-4316-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Experimental Frenzy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 748,
+      "missing": [
+        "Experimental Frenzy"
+      ]
+    },
+    {
+      "id": "1527-1678",
+      "cards": [
+        {
+          "name": "Magmatic Galleon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mayhem Devil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls an indestructible creature, or you have a way to give an opponent's creature indestructible.\nYou control a number of Treasure tokens greater than the indestructible creature's toughness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 729,
+      "missing": [
+        "Magmatic Galleon"
+      ]
+    },
+    {
+      "id": "2257-4166-5078-5705",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Reckless Fireweaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Near-infinite card draw",
+        "Near-infinite +1/+1 counters on a creature",
+        "Exile a portion of your library with the ability to play the exiled cards until your end step"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 666,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "392-5078-7729",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Vision and Scarlet Witch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 665,
+      "missing": [
+        "The Vision and Scarlet Witch"
+      ]
+    },
+    {
+      "id": "375-967-4166-5078",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Hedron Detonator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 523,
+      "missing": [
+        "Hedron Detonator"
+      ]
+    },
+    {
+      "id": "392-2604-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 397,
+      "missing": [
+        "Ugin, the Ineffable"
+      ]
+    },
+    {
+      "id": "2173-5078-5796",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Starving Revenant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least eight permanent cards in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 302,
+      "missing": [
+        "Starving Revenant"
+      ]
+    },
+    {
+      "id": "655-2173-5078",
+      "cards": [
+        {
+          "name": "Golem's Heart",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or greater.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 301,
+      "missing": [
+        "Golem's Heart"
+      ]
+    },
+    {
+      "id": "330-2429-5346",
+      "cards": [
+        {
+          "name": "Crime Novelist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revel in Riches",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Street Urchin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact. Your commander is on the battlefield as a creature and has deathtouch.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 243,
+      "missing": [
+        "Street Urchin"
+      ]
+    },
+    {
+      "id": "4166-5078-5705-6847",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Weftstalker Ardent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Near-infinite card draw",
+        "Near-infinite +1/+1 counters on a creature",
+        "Exile a portion of your library with the ability to play the exiled cards until your end step"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 236,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "3007-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Toymaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nYou have at least one card in hand.\nToymaker does not have summoning sickness.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 231,
+      "missing": [
+        "Toymaker"
+      ]
+    },
+    {
+      "id": "2871-3809-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Seething Anger",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 199,
+      "missing": [
+        "Seething Anger"
+      ]
+    },
+    {
+      "id": "392-3375-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 134,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "392-5078-7444",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Advanced Reconstruction",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 119,
+      "missing": [
+        "Advanced Reconstruction"
+      ]
+    },
+    {
+      "id": "392-5078-5642",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Echoes of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 113,
+      "missing": [
+        "Echoes of Eternity"
+      ]
+    },
+    {
+      "id": "2429-3193-3809",
+      "cards": [
+        {
+          "name": "Olivia Voldaren",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revel in Riches",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have a way to give Olivia deathtouch.",
+      "mana": "{1}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 90,
+      "missing": [
+        "Olivia Voldaren"
+      ]
+    },
+    {
+      "id": "2429-3193-5184",
+      "cards": [
+        {
+          "name": "Olivia Voldaren",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revel in Riches",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Xorn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have a way to give Olivia deathtouch.",
+      "mana": "{1}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 89,
+      "missing": [
+        "Olivia Voldaren"
+      ]
+    },
+    {
+      "id": "3088-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Xenic Poltergeist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nXenic Poltergeist does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 66,
+      "missing": [
+        "Xenic Poltergeist"
+      ]
+    },
+    {
+      "id": "4740-5160",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yotia Declares War",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.\nYotia Declares War has exactly two lore counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 25,
+      "missing": [
+        "Yotia Declares War"
+      ]
+    },
+    {
+      "id": "392-2350-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 25,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "967-4166-5078-7746",
+      "cards": [
+        {
+          "name": "Ob Nixilis, Captive Kingpin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosper, Tome-Bound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "HYDRA Assault Robot",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "HYDRA Assault Robot"
+      ]
+    },
+    {
+      "id": "392-3536-5078",
+      "cards": [
+        {
+          "name": "Birgi, God of Storytelling // Harnfel, Horn of Bounty",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cheering Fanatic",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 7,
+      "missing": [
+        "Cheering Fanatic"
+      ]
+    },
+    {
+      "id": "914-2429",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Revel in Riches",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least ten artifacts and/or enchantments.",
+      "mana": "{1}{R}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Dockside Extortionist"
+      ]
+    }
+  ]
+}

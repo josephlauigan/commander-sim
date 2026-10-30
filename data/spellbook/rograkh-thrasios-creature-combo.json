@@ -1,0 +1,4492 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "rograkh-thrasios-creature-combo",
+  "commanders": [
+    "Rograkh, Son of Rohgahh",
+    "Thrasios, Triton Hero"
+  ],
+  "request_sha256": "36aefc848d7a01964abec21f013fc24ea8c6cdcd20a459e26069853e7286b50a",
+  "identity": "GUR",
+  "included": [
+    {
+      "id": "802-864-2404",
+      "cards": [
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Snap",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control a mana-producing land that can tap to produce at least {U}. You control at least [#] creatures.\nYou control four or more creatures.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22918
+    },
+    {
+      "id": "1174-2404-6678",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Talon Gates of Madara",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 18350
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "3875-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 94242,
+      "missing": [
+        "Tireless Provisioner"
+      ]
+    },
+    {
+      "id": "3470-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 90762,
+      "missing": [
+        "Lotus Cobra"
+      ]
+    },
+    {
+      "id": "513-2364--47",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}{C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 78094,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "513-3682",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a legendary creature that has a color that matches the mana symbol in the other permanent's mana cost.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 67063,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "129-4131",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 46905,
+      "missing": [
+        "Basalt Monolith"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "2653-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Nissa, Resurgent Animist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 33272,
+      "missing": [
+        "Nissa, Resurgent Animist"
+      ]
+    },
+    {
+      "id": "1792-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29978,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "1792-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29557,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "4772-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.\nYou control a land that doesn't have summoning sickness and that can tap to produce at least {G}.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23970,
+      "missing": [
+        "Doubling Season"
+      ]
+    },
+    {
+      "id": "1792-2364-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22471,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "1409-1741",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator is paired with Cloud of Faeries.\nYou control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19201,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "2557-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Parallel Lives",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.\nYou control a land that doesn't have summoning sickness and that can tap to produce at least {G}.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19138,
+      "missing": [
+        "Parallel Lives"
+      ]
+    },
+    {
+      "id": "129-4222--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Freed from the Real is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19066,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "1458-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16819,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "1458-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16555,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "542-2364",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}{C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13995,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "542-3682",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one colored legendary creature or planeswalker.\nYou control a nontoken permanent that can be cast using one mana that can be generated by Mox Amber.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12743,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1458-2364-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12663,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "864-5352",
+      "cards": [
+        {
+          "name": "Doppelgang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of all permanents",
+        "Infinite creature tokens",
+        "Infinite mana permanents you control can produce",
+        "Infinite casts of instants and sorceries in your hand and graveyard"
+      ],
+      "requires": [],
+      "prerequisites": "There are four permanents on the battlefield that can collectively tap to produce at least {2}{G}{U}.",
+      "mana": "{15}{G}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12619,
+      "missing": [
+        "Doppelgang"
+      ]
+    },
+    {
+      "id": "129-3525--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Pemmin's Aura is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12075,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "4178-5702",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Nissa, Who Shakes the World",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped Forest tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.\nYou control a Forest that does not have summoning sickness and that enters the battlefield untapped.",
+      "mana": "{1}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11922,
+      "missing": [
+        "Nissa, Who Shakes the World"
+      ]
+    },
+    {
+      "id": "802-864-1170-1414--52",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Snap",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [
+        "Creature Castable for One Colored Mana"
+      ],
+      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9635,
+      "missing": [
+        "Displacer Kitten"
+      ]
+    },
+    {
+      "id": "129-4222-5814",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast legendary spells"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 9513,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "515-2757",
+      "cards": [
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Squirrel Nest",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Squirrel Nest is attached to a basic land you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8530,
+      "missing": [
+        "Squirrel Nest"
+      ]
+    },
+    {
+      "id": "3129-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Primal Vigor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.\nYou control a land that doesn't have summoning sickness and that can tap to produce at least {G}.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6993,
+      "missing": [
+        "Primal Vigor"
+      ]
+    },
+    {
+      "id": "802-864-1170-1414-1741",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Snap",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6233,
+      "missing": [
+        "Displacer Kitten"
+      ]
+    },
+    {
+      "id": "11-5938",
+      "cards": [
+        {
+          "name": "Narset's Reversal",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant or sorcery card in hand with valid targets as applicable.",
+      "mana": "{1}{U}{U}{R}{R} plus enough mana to cast the additional instant or sorcery at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6040,
+      "missing": [
+        "Narset's Reversal"
+      ]
+    },
+    {
+      "id": "129-3525-5814",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast legendary spells"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5883,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "851-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Adrix and Nev, Twincasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.\nYou control a land that doesn't have summoning sickness and that can tap to produce at least {G}.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5487,
+      "missing": [
+        "Adrix and Nev, Twincasters"
+      ]
+    },
+    {
+      "id": "5938-6790",
+      "cards": [
+        {
+          "name": "Pyromancer's Goggles",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant or sorcery card in hand with the mana to cast it.\nYou control a nontoken red creature or have an additional {1}{R} available.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5128,
+      "missing": [
+        "Pyromancer's Goggles"
+      ]
+    },
+    {
+      "id": "3750-6006",
+      "cards": [
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4893,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "4222-7008",
+      "cards": [
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an untapped land that can tap to produce at least {U}.",
+      "mana": "{3}{G}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4570,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "2757-7686",
+      "cards": [
+        {
+          "name": "The Unbeatable Squirrel Girl",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana basic lands you control can produce",
+        "Infinite untap of basic lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control a basic Forest. You control four or more Squirrels.",
+      "mana": "{1}{G}{G}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4440,
+      "missing": [
+        "The Unbeatable Squirrel Girl"
+      ]
+    },
+    {
+      "id": "2821-6657--199",
+      "cards": [
+        {
+          "name": "Gogo, Master of Mimicry",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Minamo, School at Water's Edge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of abilities you control on the stack",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [
+        "Activated or triggered abillity that untaps at least five lands"
+      ],
+      "prerequisites": "You control additional lands that tap to add at least {2}{U}.\nGogo does not have summoning sickness.",
+      "mana": "{2} plus enough mana to activate or trigger the untap ability",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4385,
+      "missing": [
+        "Gogo, Master of Mimicry"
+      ]
+    },
+    {
+      "id": "3750-4289",
+      "cards": [
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4116,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "624-3542",
+      "cards": [
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phantasmal Image",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to seven lands that can tap to produce at least {4}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3538,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "225-5702--143",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Stone-Seeder Hierophant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped land tokens"
+      ],
+      "requires": [
+        "Card that Earthbends"
+      ],
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn.\nYou control a land that can tap to produce at least {G} or the land card in hand can tap to produce at least {G}.",
+      "mana": "{2}{G} plus enough mana to animate the land",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3098,
+      "missing": [
+        "Stone-Seeder Hierophant"
+      ]
+    },
+    {
+      "id": "3525-7008",
+      "cards": [
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an untapped land that can tap to produce at least {U}.",
+      "mana": "{2}{G}{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2913,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "5938-5959",
+      "cards": [
+        {
+          "name": "Alania, Divergent Storm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have not cast an instant or sorcery spell this turn.\nYou have a sorcery card in hand.",
+      "mana": "{1}{R}{R} plus enough mana to cast the additional sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2550,
+      "missing": [
+        "Alania, Divergent Storm"
+      ]
+    },
+    {
+      "id": "751-2757",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a basic Island.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2309,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "129-1247-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1845,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "5938-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{1}{R}{R} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1662,
+      "missing": [
+        "Prismari, the Inspiration"
+      ]
+    },
+    {
+      "id": "5702-5724--130",
+      "cards": [
+        {
+          "name": "Sage of the Maze",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Gate That Enters Untapped"
+      ],
+      "prerequisites": "You are able to play a land this turn.\nYou have a land card in hand.",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1644,
+      "missing": [
+        "Sage of the Maze"
+      ]
+    },
+    {
+      "id": "1247-6006-7008",
+      "cards": [
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1468,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "129-1247-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1436,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "1741-2404-5900",
+      "cards": [
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional mana-producing land that can tap to produce at least {U}.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1226,
+      "missing": [
+        "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "1247-4289-7008",
+      "cards": [
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1069,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "1623-2293",
+      "cards": [
+        {
+          "name": "Guile",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flusterstorm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant or sorcery card in hand.",
+      "mana": "{U} plus enough mana to cast the instant or sorcery card",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1027,
+      "missing": [
+        "Guile"
+      ]
+    },
+    {
+      "id": "618-1741-2821",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Minamo, School at Water's Edge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional land that can produce {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 965,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
+      "id": "1247-1912-4289",
+      "cards": [
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Pili-Pala does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 857,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "129-3995-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 822,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "1174-1479-5702",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.\nYou control two lands that can tap to produce at least {2}, one of which must enter the battlefield untapped.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 814,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1247-4289-4893",
+      "cards": [
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Pili-Pala does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 792,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "129-3995-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 768,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "223-5938",
+      "cards": [
+        {
+          "name": "Kalamax, the Stormsire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have an additional castable sorcery.",
+      "mana": "{1}{R}{R} plus the cost of the additional sorcery",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 538,
+      "missing": [
+        "Kalamax, the Stormsire"
+      ]
+    },
+    {
+      "id": "5938-6452",
+      "cards": [
+        {
+          "name": "Adaptive Training Post",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an instant or sorcery card in hand with enough mana to cast it.\nYou have enough mana to cast Flare of Duplication",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 481,
+      "missing": [
+        "Adaptive Training Post"
+      ]
+    },
+    {
+      "id": "1348-2404-4657",
+      "cards": [
+        {
+          "name": "Magus of the Candelabra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maze of Ith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite green mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Magus of the Candelabra does not have summoning sickness.\nYou control at least three creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 455,
+      "missing": [
+        "Maze of Ith"
+      ]
+    },
+    {
+      "id": "5702-8097",
+      "cards": [
+        {
+          "name": "Avatar of Growth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand. At least half of the basic land cards in your library are Forests.",
+      "mana": "{1}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 424,
+      "missing": [
+        "Avatar of Growth"
+      ]
+    },
+    {
+      "id": "2084-3734",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Metamorph",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Phyrexian Metamorph is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 410,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "4915-4954",
+      "cards": [
+        {
+          "name": "Silvanus's Invoker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Cradle of the Sun.\nYou control at least nine creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 406,
+      "missing": [
+        "Silvanus's Invoker"
+      ]
+    },
+    {
+      "id": "3995-6006-7008",
+      "cards": [
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Horseshoe Crab doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 376,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "2404-4954",
+      "cards": [
+        {
+          "name": "Silvanus's Invoker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite green mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least nine creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 368,
+      "missing": [
+        "Silvanus's Invoker"
+      ]
+    },
+    {
+      "id": "192-2404",
+      "cards": [
+        {
+          "name": "Wakeroot Elemental",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 352,
+      "missing": [
+        "Wakeroot Elemental"
+      ]
+    },
+    {
+      "id": "1741-4893-5900",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {G}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 350,
+      "missing": [
+        "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "1399-2404-4657-7775",
+      "cards": [
+        {
+          "name": "Formidable Speaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wirewood Lodge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Candelabra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 346,
+      "missing": [
+        "Wirewood Lodge"
+      ]
+    },
+    {
+      "id": "1741-1912-5900",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {G}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 346,
+      "missing": [
+        "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "3995-4289-7008",
+      "cards": [
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Horseshoe Crab doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 329,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "3682-4331-4893",
+      "cards": [
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least three artifacts.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 311,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "1174-2404-3869",
+      "cards": [
+        {
+          "name": "Gretchen Titchwillow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You control a land that enters the battlefield untapped and can tap to produce at least {U}. You control at least five creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 310,
+      "missing": [
+        "Gretchen Titchwillow"
+      ]
+    },
+    {
+      "id": "539-1912-4657",
+      "cards": [
+        {
+          "name": "Ashaya, Soul of the Wild",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Candelabra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite mana nontoken creatures you control can produce",
+        "Infinite untap of nontoken creatures you control",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control two creatures excluding Magus of the Candelabra that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 296,
+      "missing": [
+        "Ashaya, Soul of the Wild"
+      ]
+    },
+    {
+      "id": "539-4657-4893",
+      "cards": [
+        {
+          "name": "Ashaya, Soul of the Wild",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Candelabra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite mana nontoken creatures you control can produce",
+        "Infinite untap of nontoken creatures you control",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control two creatures excluding Magus of the Candelabra that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 291,
+      "missing": [
+        "Ashaya, Soul of the Wild"
+      ]
+    },
+    {
+      "id": "192-4915",
+      "cards": [
+        {
+          "name": "Wakeroot Elemental",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Cradle of the Sun.\nYou control at least six creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 287,
+      "missing": [
+        "Wakeroot Elemental"
+      ]
+    },
+    {
+      "id": "624-2084",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Phantasmal Image",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Phantasmal Image is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 270,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "943-2404-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deserted Temple",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite green mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 269,
+      "missing": [
+        "Rings of Brighthearth"
+      ]
+    },
+    {
+      "id": "1348-4657-4915",
+      "cards": [
+        {
+          "name": "Magus of the Candelabra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maze of Ith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Magus of the Candelabra does not have summoning sickness.Cradle of the Sun.\nYou control at least three creatures.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 264,
+      "missing": [
+        "Maze of Ith"
+      ]
+    },
+    {
+      "id": "129-824-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Leech Bonder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Leech Bonder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 264,
+      "missing": [
+        "Leech Bonder"
+      ]
+    },
+    {
+      "id": "2723-3734",
+      "cards": [
+        {
+          "name": "Blazing Sunsteel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Metamorph",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Blazing Sunsteel and Phyrexian Metamorph attached to an indestructible creature you control.\nYou have a way to deal damage to the indestructible creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 232,
+      "missing": [
+        "Blazing Sunsteel"
+      ]
+    },
+    {
+      "id": "2084-4753",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Clever Impersonator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Clever Impersonator is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 219,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "2143-4893",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "2366-2557-2757-5702",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dryad Arbor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Parallel Lives",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite Forest tokens",
+        "Infinite mana basic lands you control can produce",
+        "Infinite untap of basic lands you control",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Springheart Nantuko attached to Dryad Arbor. You have at least one land card in hand.\nYou are able to play a land this turn.\nYou control at least one basic Forest, or the land card in your hand is a basic Forest.",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 148,
+      "missing": [
+        "Parallel Lives"
+      ]
+    },
+    {
+      "id": "2723-4753",
+      "cards": [
+        {
+          "name": "Blazing Sunsteel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clever Impersonator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Blazing Sunsteel and Clever Impersonator attached to an indestructible creature you control.\nYou have a way to deal damage to the indestructible creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 114,
+      "missing": [
+        "Blazing Sunsteel"
+      ]
+    },
+    {
+      "id": "2366-2757-4772-5702",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dryad Arbor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite Forest tokens",
+        "Infinite mana basic lands you control can produce",
+        "Infinite untap of basic lands you control",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Springheart Nantuko attached to Dryad Arbor. You have at least one land card in hand.\nYou are able to play a land this turn.\nYou control at least one basic Forest, or the land card in your hand is a basic Forest.",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 111,
+      "missing": [
+        "Doubling Season"
+      ]
+    },
+    {
+      "id": "411-2757",
+      "cards": [
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinning Ignus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a mountain.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 111,
+      "missing": [
+        "Grinning Ignus"
+      ]
+    },
+    {
+      "id": "2084-3668",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Flesh Duplicate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Flesh Duplicate is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 108,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "129-3812-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 97,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "129-3812-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 88,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "1912-2143",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 82,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "1247-1912-2757",
+      "cards": [
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite untap of basic lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one basic land.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 80,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "1247-2757-4893",
+      "cards": [
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite untap of basic lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one basic land.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 77,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "1776-2757",
+      "cards": [
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spawning Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Spawning Grounds is attached to a basic land you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 70,
+      "missing": [
+        "Spawning Grounds"
+      ]
+    },
+    {
+      "id": "74-943-2404",
+      "cards": [
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deserted Temple",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite green mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least two creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 68,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "478-1399-2404-7775",
+      "cards": [
+        {
+          "name": "Formidable Speaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wirewood Lodge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Candelabra of Tawnos",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 61,
+      "missing": [
+        "Wirewood Lodge"
+      ]
+    },
+    {
+      "id": "880-2757-5702",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "129-4289-5137",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "129-5137-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 54,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "129-4289-4824",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Soliton"
+      ]
+    },
+    {
+      "id": "129-4824-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Soliton"
+      ]
+    },
+    {
+      "id": "1912-4289-4687",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "4289-4687-4893",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "4289-4449-4893",
+      "cards": [
+        {
+          "name": "Hateflayer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Hateflayer does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Hateflayer"
+      ]
+    },
+    {
+      "id": "965-4289",
+      "cards": [
+        {
+          "name": "Crackleburr",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least two other blue creatures that do not have summoning sickness.\nCrackleburr does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 48,
+      "missing": [
+        "Crackleburr"
+      ]
+    },
+    {
+      "id": "3812-6006-7008",
+      "cards": [
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Simic Ragworm doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 44,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "2143-2757",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "At least one of those sources should be a basic land.",
+      "mana": "{4} from various sources",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 42,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "2457-2597-2757",
+      "cards": [
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ant Queen",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wild Growth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 37,
+      "missing": [
+        "Ant Queen"
+      ]
+    },
+    {
+      "id": "4038-6006-7008",
+      "cards": [
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Farmstead Gleaner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Farmstead Gleaner"
+      ]
+    },
+    {
+      "id": "2366-2757-3129-5702",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dryad Arbor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Primal Vigor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite Forest tokens",
+        "Infinite mana basic lands you control can produce",
+        "Infinite untap of basic lands you control",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Springheart Nantuko attached to Dryad Arbor. You have at least one land card in hand.\nYou are able to play a land this turn.\nYou control at least one basic Forest, or the land card in your hand is a basic Forest.",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Primal Vigor"
+      ]
+    },
+    {
+      "id": "1912-4687-6006",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 27,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "1174-1460-6678",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Talon Gates of Madara",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm the Vault // Vault of Catlacan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five artifacts.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 27,
+      "missing": [
+        "Storm the Vault // Vault of Catlacan"
+      ]
+    },
+    {
+      "id": "4687-4893-6006",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 25,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "1174-6071-6678",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Talon Gates of Madara",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Matzalantli, the Great Door // The Core",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five permanent cards in your graveyard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23,
+      "missing": [
+        "Matzalantli, the Great Door // The Core"
+      ]
+    },
+    {
+      "id": "851-2366-2757-5702",
+      "cards": [
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dryad Arbor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Adrix and Nev, Twincasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite Forest tokens",
+        "Infinite mana basic lands you control can produce",
+        "Infinite untap of basic lands you control",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Springheart Nantuko attached to Dryad Arbor. You have at least one land card in hand.\nYou are able to play a land this turn.\nYou control at least one basic Forest, or the land card in your hand is a basic Forest.",
+      "mana": "{1}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "Adrix and Nev, Twincasters"
+      ]
+    },
+    {
+      "id": "4038-4289-7008",
+      "cards": [
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Farmstead Gleaner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20,
+      "missing": [
+        "Farmstead Gleaner"
+      ]
+    },
+    {
+      "id": "5137-6006-7008",
+      "cards": [
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Morphling doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "4824-6006-7008",
+      "cards": [
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Soliton doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Soliton"
+      ]
+    },
+    {
+      "id": "1912-3682-4331",
+      "cards": [
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least three artifacts.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "2757-4687-4893",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.\nYou control a basic Forest or Island.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "1912-2757-4687",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.\nYou control a basic Forest or Island.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "1912-2757-5685",
+      "cards": [
+        {
+          "name": "Propagator Drone",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one basic Forest.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Propagator Drone"
+      ]
+    },
+    {
+      "id": "2757-4893-5685",
+      "cards": [
+        {
+          "name": "Propagator Drone",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one basic Forest.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Propagator Drone"
+      ]
+    },
+    {
+      "id": "1261-5720",
+      "cards": [
+        {
+          "name": "Shifting Woodland",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Vault",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four card types among cards in your graveyard.",
+      "mana": "{2}{G}{G} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "1174-3573-6678",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Talon Gates of Madara",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolarian Academy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five artifacts.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Tolarian Academy"
+      ]
+    },
+    {
+      "id": "513--62",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Permanent castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "184-3883-4893",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hullbreacher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two opponents.",
+      "mana": "{1}{U}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Hullbreacher"
+      ]
+    },
+    {
+      "id": "5534--28",
+      "cards": [
+        {
+          "name": "Stella Lee, Wild Card",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of one instant or sorcery"
+      ],
+      "requires": [
+        "Instant or Sorcery that untaps a Creature"
+      ],
+      "prerequisites": "You have cast at least two spells this turn.\nStella Lee does not have summoning sickness.\nYou have enough mana to cast the instant or sorcery card.\nYou have additional legal target(s) for the instant or sorcery card, if applicable.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Stella Lee, Wild Card"
+      ]
+    },
+    {
+      "id": "3360-6006-7008",
+      "cards": [
+        {
+          "name": "Torchling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Badgermole Cub",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Torchling doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Torchling"
+      ]
+    },
+    {
+      "id": "2757-5864-7109",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trusty Boomerang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colored mana",
+        "Infinite untap of basic lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control a basic land. You control at least four in any combination of Birds, Frogs, Otters and Rats - one of which doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Trusty Boomerang"
+      ]
+    },
+    {
+      "id": "5864-6006-7109",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trusty Boomerang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four in any combination of Birds, Frogs, Otters and Rats that don't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Trusty Boomerang"
+      ]
+    },
+    {
+      "id": "4289-5864-7109",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trusty Boomerang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four in any combination of Birds, Frogs, Otters and Rats that don't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Trusty Boomerang"
+      ]
+    },
+    {
+      "id": "184-1912-3883",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hullbreacher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two opponents.",
+      "mana": "{1}{U}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Hullbreacher"
+      ]
+    },
+    {
+      "id": "129-3360-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Torchling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Torchling doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Torchling"
+      ]
+    }
+  ]
+}

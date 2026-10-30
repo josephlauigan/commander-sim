@@ -1,0 +1,612 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "isshin-mardu-attack-triggers",
+  "commanders": [
+    "Isshin, Two Heavens as One"
+  ],
+  "request_sha256": "24984c0c0d8e9f2f00d8f6ef5561d6c6699148e2dca20638948ff5ae1c409c54",
+  "identity": "RWB",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "2484-4083",
+      "cards": [
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Repercussion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 39801,
+      "missing": [
+        "Repercussion"
+      ]
+    },
+    {
+      "id": "1692-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Helm attached to Aurelia.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 32520,
+      "missing": [
+        "Helm of the Host"
+      ]
+    },
+    {
+      "id": "1775-2484",
+      "cards": [
+        {
+          "name": "Toralf, God of Fury // Toralf's Hammer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22348,
+      "missing": [
+        "Toralf, God of Fury // Toralf's Hammer"
+      ]
+    },
+    {
+      "id": "1823-2484",
+      "cards": [
+        {
+          "name": "Fall of Cair Andros",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature with toughness less than 13.",
+      "mana": "{7}{R} (at most)",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 14316,
+      "missing": [
+        "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "3422-3587",
+      "cards": [
+        {
+          "name": "Boros Reckoner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Boros Charm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Boros Reckoner lifelink.\nYou have a way to deal damage to Boros Reckoner.",
+      "mana": "{R}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14238,
+      "missing": [
+        "Boros Reckoner"
+      ]
+    },
+    {
+      "id": "1550-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any other creature you control.\nThe creature with Sword of Hearth and Home attached can attack this turn.\nAn opponent cannot block and kill the creature with Sword of Hearth and Home attached and Aurelia.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12597,
+      "missing": [
+        "Sword of Hearth and Home"
+      ]
+    },
+    {
+      "id": "2484-7502",
+      "cards": [
+        {
+          "name": "Expedited Inheritance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each player may exile a portion of their library with the ability to play the exiled cards until the end of their next turn"
+      ],
+      "requires": [],
+      "prerequisites": "There's a creature on the battlefield.",
+      "mana": "{7}{R} at most",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5103,
+      "missing": [
+        "Expedited Inheritance"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1879-3259--95",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rising of the Day",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce",
+        "Infinite combat damage"
+      ],
+      "requires": [
+        "Creature with Mobilize"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3125,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "2801-3259",
+      "cards": [
+        {
+          "name": "Caesar, Legion's Emperor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Breath of Fury attached to another creature you control that does not have summoning sickness.\nAn opponent cannot block creatures you control.\nYou control at least one additional creature excluding the creature that has Breath of Fury attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2387,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "1908-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rionya, Fire Dancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent is unable to block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1671,
+      "missing": [
+        "Rionya, Fire Dancer"
+      ]
+    },
+    {
+      "id": "847-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gilraen, Dúnedain Protector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Creatues you control can tap to produce at least {2}.\nGilraen does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1066,
+      "missing": [
+        "Gilraen, Dúnedain Protector"
+      ]
+    },
+    {
+      "id": "4364-7334",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Neutrinos",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1020,
+      "missing": [
+        "The Neutrinos"
+      ]
+    },
+    {
+      "id": "178-1879-3259",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Adeline, Resplendent Cathar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rising of the Day",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite creature tokens with haste",
+        "Infinitely powerful creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 649,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "2440-8159",
+      "cards": [
+        {
+          "name": "Ingris Stingerquill",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens with haste",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control three in any combination of Wizards and/or Soldiers.",
+      "mana": "{4}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 440,
+      "missing": [
+        "Mana Echoes"
+      ]
+    },
+    {
+      "id": "4364-6426",
+      "cards": [
+        {
+          "name": "Sandstorm Crasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sandstorm Crasher does not have summoning sickness. An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 289,
+      "missing": [
+        "Sandstorm Crasher"
+      ]
+    },
+    {
+      "id": "1879-2769-3259",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rising of the Day",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hanweir Garrison",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 199,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "5035-8159",
+      "cards": [
+        {
+          "name": "Ingris Stingerquill",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Plague of Vermin",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens with haste",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "{10}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 158,
+      "missing": [
+        "Plague of Vermin"
+      ]
+    },
+    {
+      "id": "1879-3259-4689",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Otharri, Suns' Glory",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rising of the Day",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 152,
+      "missing": [
+        "Breath of Fury"
+      ]
+    }
+  ]
+}

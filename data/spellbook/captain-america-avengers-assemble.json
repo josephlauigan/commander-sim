@@ -1,0 +1,221 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "captain-america-avengers-assemble",
+  "commanders": [
+    "Captain America, Team Leader"
+  ],
+  "request_sha256": "2b7f6a300d55fcc563c8e07621c76eba62000e4ec2fcf5a434a4f9909e30519c",
+  "identity": "URW",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1339-4052",
+      "cards": [
+        {
+          "name": "The Locust God",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kindred Discovery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "\"Insect\" chosen with Kindred Discovery.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4356,
+      "missing": [
+        "The Locust God"
+      ]
+    },
+    {
+      "id": "7414-7811",
+      "cards": [
+        {
+          "name": "Pensive Professor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Iron Man, Armored Avenger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1849,
+      "missing": [
+        "Pensive Professor"
+      ]
+    },
+    {
+      "id": "2351-4052",
+      "cards": [
+        {
+          "name": "The Watcher in the Water",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kindred Discovery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card during an opponent's turn.\n\"Tentacle\" chosen with Kindred Discovery.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1745,
+      "missing": [
+        "The Watcher in the Water"
+      ]
+    },
+    {
+      "id": "2047-7748",
+      "cards": [
+        {
+          "name": "Ant-Man, Elusive Avenger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mechanized Production",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "Ant-Man's power is at least 8 minus the number of Treasures you control, minus an additional 1 if Mechanized Production is attached to a Treasure. An opponent cannot block Ant-Man.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 375,
+      "missing": [
+        "Mechanized Production"
+      ]
+    },
+    {
+      "id": "3055-3118",
+      "cards": [
+        {
+          "name": "Bearer of the Heavens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gift of Immortality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Gift of Immortality attached to Bearer of the Heavens.\nYou have a way to cause Bearer of the Heavens to die.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 261,
+      "missing": [
+        "Bearer of the Heavens"
+      ]
+    }
+  ]
+}

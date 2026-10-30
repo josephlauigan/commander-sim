@@ -1,0 +1,1751 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "kaalia-mardu-creature-cheat",
+  "commanders": [
+    "Kaalia of the Vast"
+  ],
+  "request_sha256": "921bf4e15073f051da7cc2b937c204f2485252eda03a83ab5ac6a51ab0e0c864",
+  "identity": "RWB",
+  "included": [
+    {
+      "id": "29-137",
+      "cards": [
+        {
+          "name": "Kaalia of the Vast",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Master of Cruelties",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Kaalia of the Vast does not have summoning sickness.\nAn opponent cannot block and kill Kaalia of the Vast.\nThat opponent cannot block Master of Cruelties.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 24183
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "2484-4083",
+      "cards": [
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Repercussion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 39801,
+      "missing": [
+        "Repercussion"
+      ]
+    },
+    {
+      "id": "1692-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Helm attached to Aurelia.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 32520,
+      "missing": [
+        "Helm of the Host"
+      ]
+    },
+    {
+      "id": "778-3750",
+      "cards": [
+        {
+          "name": "Ancient Copper Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite combat damage",
+        "Near-infinite Treasure tokens",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Ancient Copper Dragon cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 31278,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "2855-5982",
+      "cards": [
+        {
+          "name": "Dragon Tempest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ancient Gold Dragon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Ancient Gold Dragon does not have summoning sickness and cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 28565,
+      "missing": [
+        "Ancient Gold Dragon"
+      ]
+    },
+    {
+      "id": "1775-2484",
+      "cards": [
+        {
+          "name": "Toralf, God of Fury // Toralf's Hammer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22348,
+      "missing": [
+        "Toralf, God of Fury // Toralf's Hammer"
+      ]
+    },
+    {
+      "id": "1110-2136",
+      "cards": [
+        {
+          "name": "Orthion, Hero of Lavabrink",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 15750,
+      "missing": [
+        "Orthion, Hero of Lavabrink"
+      ]
+    },
+    {
+      "id": "1823-2484",
+      "cards": [
+        {
+          "name": "Fall of Cair Andros",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature with toughness less than 13.",
+      "mana": "{7}{R} (at most)",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 14316,
+      "missing": [
+        "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "3422-3587",
+      "cards": [
+        {
+          "name": "Boros Reckoner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Boros Charm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Boros Reckoner lifelink.\nYou have a way to deal damage to Boros Reckoner.",
+      "mana": "{R}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14238,
+      "missing": [
+        "Boros Reckoner"
+      ]
+    },
+    {
+      "id": "1550-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any other creature you control.\nThe creature with Sword of Hearth and Home attached can attack this turn.\nAn opponent cannot block and kill the creature with Sword of Hearth and Home attached and Aurelia.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12597,
+      "missing": [
+        "Sword of Hearth and Home"
+      ]
+    },
+    {
+      "id": "523-3263",
+      "cards": [
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hellkite Tyrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Gain control of all permanents an opponent controls during each of your turns",
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Hellkite Tyrant.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11833,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "3011-6093",
+      "cards": [
+        {
+          "name": "Heartless Hidetsugu",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Twinflame Tyrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Each opponent with an even life total loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "At least one opponent has an even life total.\nHeartless Hidetsugu does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11769,
+      "missing": [
+        "Heartless Hidetsugu"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9642,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1110-1908",
+      "cards": [
+        {
+          "name": "Rionya, Fire Dancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8507,
+      "missing": [
+        "Rionya, Fire Dancer"
+      ]
+    },
+    {
+      "id": "335-5141",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8025,
+      "missing": [
+        "Ad Nauseam"
+      ]
+    },
+    {
+      "id": "1110-6785",
+      "cards": [
+        {
+          "name": "Devastating Onslaught",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}{R}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 7440,
+      "missing": [
+        "Devastating Onslaught"
+      ]
+    },
+    {
+      "id": "2484-7502",
+      "cards": [
+        {
+          "name": "Expedited Inheritance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each player may exile a portion of their library with the ability to play the exiled cards until the end of their next turn"
+      ],
+      "requires": [],
+      "prerequisites": "There's a creature on the battlefield.",
+      "mana": "{7}{R} at most",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5103,
+      "missing": [
+        "Expedited Inheritance"
+      ]
+    },
+    {
+      "id": "3149-3981",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Worldslayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Worldslayer attached to Avacyn.\nAn opponent is unable to block Avacyn.\nAvacyn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4611,
+      "missing": [
+        "Worldslayer"
+      ]
+    },
+    {
+      "id": "1050-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nevinyrral's Disk",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Nevinyrral's Disk untapped.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4581,
+      "missing": [
+        "Nevinyrral's Disk"
+      ]
+    },
+    {
+      "id": "1694-3011",
+      "cards": [
+        {
+          "name": "Gisela, Blade of Goldnight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heartless Hidetsugu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent with an even life total loses the game",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Heartless Hidetsugu does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4547,
+      "missing": [
+        "Heartless Hidetsugu"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "2607-5944",
+      "cards": [
+        {
+          "name": "Unstoppable Slasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Unstoppable Slasher cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3837,
+      "missing": [
+        "Unstoppable Slasher"
+      ]
+    },
+    {
+      "id": "2607-3011",
+      "cards": [
+        {
+          "name": "Heartless Hidetsugu",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent with an even life total loses the game",
+        "Near-infinite damage to all players",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Heartless Hidetsugu does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2885,
+      "missing": [
+        "Heartless Hidetsugu"
+      ]
+    },
+    {
+      "id": "29-645",
+      "cards": [
+        {
+          "name": "Alesha, Who Smiles at Death",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Master of Cruelties",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent is unable to block and kill creatures you control.",
+      "mana": "{W/B}{W/B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2819,
+      "missing": [
+        "Alesha, Who Smiles at Death"
+      ]
+    },
+    {
+      "id": "2607-6004",
+      "cards": [
+        {
+          "name": "Grievous Wound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Grievous Wound attached to an opponent. You have a way to deal damage to the opponent that has Grievous Wound attached to them.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2458,
+      "missing": [
+        "Grievous Wound"
+      ]
+    },
+    {
+      "id": "156-2607",
+      "cards": [
+        {
+          "name": "Scourge of the Skyclaves",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "{5} {B}",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2388,
+      "missing": [
+        "Scourge of the Skyclaves"
+      ]
+    },
+    {
+      "id": "2548-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2336,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "2607-2615",
+      "cards": [
+        {
+          "name": "Tree of Perdition",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a higher life total than Tree of Perdition's toughness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2258,
+      "missing": [
+        "Tree of Perdition"
+      ]
+    },
+    {
+      "id": "1612-2607",
+      "cards": [
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2217,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "3765-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Worldfire",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent's life total becomes 1",
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2101,
+      "missing": [
+        "Worldfire"
+      ]
+    },
+    {
+      "id": "810-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Disk",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Magus of the Disk without summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1823,
+      "missing": [
+        "Magus of the Disk"
+      ]
+    },
+    {
+      "id": "2607-3485",
+      "cards": [
+        {
+          "name": "Havoc Festival",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1718,
+      "missing": [
+        "Havoc Festival"
+      ]
+    },
+    {
+      "id": "2607-5136",
+      "cards": [
+        {
+          "name": "Quietus Spike",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Quietus Spike attached to a creature that does not have summoning sickness.\nAn opponent is unable to block and kill the creature with Quietus Spike attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1690,
+      "missing": [
+        "Quietus Spike"
+      ]
+    },
+    {
+      "id": "1908-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rionya, Fire Dancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent is unable to block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1671,
+      "missing": [
+        "Rionya, Fire Dancer"
+      ]
+    },
+    {
+      "id": "2548-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{R}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1575,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "3149-3587",
+      "cards": [
+        {
+          "name": "Boros Reckoner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Boros Reckoner lifelink.\nYou have a way to deal damage to Boros Reckoner.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1432,
+      "missing": [
+        "Boros Reckoner"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1414,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "2607-4794",
+      "cards": [
+        {
+          "name": "Fraying Omnipotence",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "{3}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1383,
+      "missing": [
+        "Fraying Omnipotence"
+      ]
+    },
+    {
+      "id": "2607-4843",
+      "cards": [
+        {
+          "name": "Virtus the Veiled",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Virtus does not have summoning sickness.\nAn opponent is unable to block and kill Virtus.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1276,
+      "missing": [
+        "Virtus the Veiled"
+      ]
+    },
+    {
+      "id": "847-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gilraen, Dúnedain Protector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Creatues you control can tap to produce at least {2}.\nGilraen does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1066,
+      "missing": [
+        "Gilraen, Dúnedain Protector"
+      ]
+    },
+    {
+      "id": "2607-7319",
+      "cards": [
+        {
+          "name": "Shredder, Shadow Master",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents cannot block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1036,
+      "missing": [
+        "Shredder, Shadow Master"
+      ]
+    },
+    {
+      "id": "4364-7334",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Neutrinos",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1020,
+      "missing": [
+        "The Neutrinos"
+      ]
+    },
+    {
+      "id": "3965-4691",
+      "cards": [
+        {
+          "name": "Vilis, Broker of Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Curse of Fool's Wisdom",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 3 or greater.",
+      "mana": "{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 961,
+      "missing": [
+        "Curse of Fool's Wisdom"
+      ]
+    },
+    {
+      "id": "782-2580-5141",
+      "cards": [
+        {
+          "name": "Lethal Vapors",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grand Abolisher",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Skip all your future turns, causing your opponents to eventually draw from an empty library and lose the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 942,
+      "missing": [
+        "Lethal Vapors"
+      ]
+    },
+    {
+      "id": "2607-6765",
+      "cards": [
+        {
+          "name": "Alpharael, Stonechosen",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "A nonland permanent has left the battlefield this turn, or a spell has been warped this turn.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 851,
+      "missing": [
+        "Alpharael, Stonechosen"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 751,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "2129-2607",
+      "cards": [
+        {
+          "name": "Scytheclaw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Scytheclaw attached to a creature that does not have summoning sickness.\nAn opponent is unable to block and kill the creature with Scytheclaw attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 728,
+      "missing": [
+        "Scytheclaw"
+      ]
+    },
+    {
+      "id": "2607-7450",
+      "cards": [
+        {
+          "name": "Pox Plague",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}{B}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 659,
+      "missing": [
+        "Pox Plague"
+      ]
+    },
+    {
+      "id": "4274-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Apocalypse",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 619,
+      "missing": [
+        "Apocalypse"
+      ]
+    },
+    {
+      "id": "2607-5605",
+      "cards": [
+        {
+          "name": "Torgaar, Famine Incarnate",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a life total of 40 or higher.",
+      "mana": "{6}{B}{B} at most plus enough mana to pay for commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 600,
+      "missing": [
+        "Torgaar, Famine Incarnate"
+      ]
+    },
+    {
+      "id": "2607-3354",
+      "cards": [
+        {
+          "name": "Raving Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Raving Dead does not have summoning sickness.\nOpponents have even life totals.\nOpponents are unable to block and kill Raving Dead.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 566,
+      "missing": [
+        "Raving Dead"
+      ]
+    },
+    {
+      "id": "4364-6426",
+      "cards": [
+        {
+          "name": "Sandstorm Crasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sandstorm Crasher does not have summoning sickness. An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 289,
+      "missing": [
+        "Sandstorm Crasher"
+      ]
+    },
+    {
+      "id": "1110-1694-3059",
+      "cards": [
+        {
+          "name": "Gisela, Blade of Goldnight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Malignus",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 285,
+      "missing": [
+        "Malignus"
+      ]
+    },
+    {
+      "id": "2607-7276",
+      "cards": [
+        {
+          "name": "Dark Leo & Shredder",
+          "zones": [
+            "H",
+            "B",
+            "C"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Dark Leo & Shredder if it's on the battlefield, or another creature you control otherwise.\nDark Leo & Shredder doesn't have summoning sickness if it's on the battlefield.\nYou control at least four Ninjas.",
+      "mana": "{W}{B} plus commander tax if applicable if Dark Leo & Shredder isn't on the battlefield",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 282,
+      "missing": [
+        "Dark Leo & Shredder"
+      ]
+    },
+    {
+      "id": "2580-3149",
+      "cards": [
+        {
+          "name": "Lethal Vapors",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 223,
+      "missing": [
+        "Lethal Vapors"
+      ]
+    },
+    {
+      "id": "1110-2067",
+      "cards": [
+        {
+          "name": "Storm Herd",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 214,
+      "missing": [
+        "Storm Herd"
+      ]
+    },
+    {
+      "id": "1041-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Worms of the Earth",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 49,
+      "missing": [
+        "Worms of the Earth"
+      ]
+    },
+    {
+      "id": "1035-2607",
+      "cards": [
+        {
+          "name": "Blessed Wind",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archfiend of Despair",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has at least forty life.",
+      "mana": "{7}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7,
+      "missing": [
+        "Blessed Wind"
+      ]
+    },
+    {
+      "id": "1110-1344",
+      "cards": [
+        {
+          "name": "Nested Ghoul",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Nested Ghoul indestructible.\nYou have a way to deal damage to Nested Ghoul.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6,
+      "missing": [
+        "Nested Ghoul"
+      ]
+    }
+  ]
+}

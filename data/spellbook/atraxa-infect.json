@@ -1,0 +1,1014 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "atraxa-infect",
+  "commanders": [
+    "Atraxa, Praetors' Voice"
+  ],
+  "request_sha256": "4cdc513ca630b8e977e0f249348f27a3585b3b4328e1d70cc86f61224b478994",
+  "identity": "GWUB",
+  "included": [
+    {
+      "id": "1529-1887",
+      "cards": [
+        {
+          "name": "Vraska, Betrayal's Sting",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vorinclex, Monstrous Raider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has eight or fewer poison counters.",
+      "mana": "{4}{B}{B/P}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30794
+    },
+    {
+      "id": "1529-5902",
+      "cards": [
+        {
+          "name": "Vraska, Betrayal's Sting",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Innkeeper's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Innkeeper's Talent is level 3.\nAn opponent has eight or fewer poison counters.",
+      "mana": "{4}{B}{B/P}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15525
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "4222-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23778,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "2645-5168",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14502,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "3525-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14432,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11993,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "1177-2286",
+      "cards": [
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Puzzle Box",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8390,
+      "missing": [
+        "Teferi's Puzzle Box"
+      ]
+    },
+    {
+      "id": "1131-7873",
+      "cards": [
+        {
+          "name": "Prologue to Phyresis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Expansion Algorithm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your library isn't empty.",
+      "mana": "{10}{U}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4932,
+      "missing": [
+        "Expansion Algorithm"
+      ]
+    },
+    {
+      "id": "2003-3609-4868",
+      "cards": [
+        {
+          "name": "Tekuthal, Inquiry Dominus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magistrate's Scepter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Contagion Engine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Magistate's Scepter has at least one charge counter on it.",
+      "mana": "{4} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4005,
+      "missing": [
+        "Magistrate's Scepter"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1883-4772",
+      "cards": [
+        {
+          "name": "Replication Technique",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to create a creature token.",
+      "mana": "{4}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3794,
+      "missing": [
+        "Replication Technique"
+      ]
+    },
+    {
+      "id": "1437-2431",
+      "cards": [
+        {
+          "name": "Myojin of Cryptic Dreams",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deepglow Skate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite proliferate",
+        "Infinite copies of permanent spells you control"
+      ],
+      "requires": [],
+      "prerequisites": "Myojin of Cryptic Dreams has at least two indestructible counters on it.",
+      "mana": "{4}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2379,
+      "missing": [
+        "Myojin of Cryptic Dreams"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "2003-3609-4353",
+      "cards": [
+        {
+          "name": "Atraxa, Praetors' Voice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magistrate's Scepter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Contagion Engine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Magistrate's Scepter has at least one charge counter on it.",
+      "mana": "{4} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1766,
+      "missing": [
+        "Magistrate's Scepter"
+      ]
+    },
+    {
+      "id": "600-4772",
+      "cards": [
+        {
+          "name": "Jace, Cunning Castaway",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of a specific planeswalker",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1539,
+      "missing": [
+        "Jace, Cunning Castaway"
+      ]
+    },
+    {
+      "id": "5168-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1516,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "1887-2003-3609",
+      "cards": [
+        {
+          "name": "Vorinclex, Monstrous Raider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magistrate's Scepter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Contagion Engine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Magistrate's Scepter has at least one charge counter on it.",
+      "mana": "{4} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1399,
+      "missing": [
+        "Magistrate's Scepter"
+      ]
+    },
+    {
+      "id": "2544-2593",
+      "cards": [
+        {
+          "name": "Filigree Sages",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Cornucopia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1276,
+      "missing": [
+        "Filigree Sages"
+      ]
+    },
+    {
+      "id": "2003-3609-4772",
+      "cards": [
+        {
+          "name": "Magistrate's Scepter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Contagion Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Magistrate's Scepter has at least one charge counter on it.",
+      "mana": "{4} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1148,
+      "missing": [
+        "Magistrate's Scepter"
+      ]
+    },
+    {
+      "id": "4019-5168",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nBloom Tender has at least one +1/+1 counter on it.\nYou control a white, black and/or red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1108,
+      "missing": [
+        "Vigean Graftmage"
+      ]
+    },
+    {
+      "id": "2143-4772",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1098,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "4896-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Alert",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite green mana",
+        "Infinite black mana",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nYou control a black and a red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1086,
+      "missing": [
+        "High Alert"
+      ]
+    },
+    {
+      "id": "876-5168-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 971,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "600-1887",
+      "cards": [
+        {
+          "name": "Jace, Cunning Castaway",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vorinclex, Monstrous Raider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite copies of a specific planeswalker"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 965,
+      "missing": [
+        "Jace, Cunning Castaway"
+      ]
+    },
+    {
+      "id": "1437-6962",
+      "cards": [
+        {
+          "name": "Myojin of Cryptic Dreams",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glistening Sphere",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite proliferate",
+        "Infinite copies of permanent spells you control"
+      ],
+      "requires": [],
+      "prerequisites": "Myojin of Cryptic Dreams has at least two indestructible counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 804,
+      "missing": [
+        "Myojin of Cryptic Dreams"
+      ]
+    },
+    {
+      "id": "195-5168",
+      "cards": [
+        {
+          "name": "Chain Stasis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nThere are at least three colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 567,
+      "missing": [
+        "Chain Stasis"
+      ]
+    },
+    {
+      "id": "600-5902",
+      "cards": [
+        {
+          "name": "Jace, Cunning Castaway",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Innkeeper's Talent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite copies of a specific planeswalker"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 520,
+      "missing": [
+        "Jace, Cunning Castaway"
+      ]
+    },
+    {
+      "id": "1995-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Bloom Tender.\nBloom Tender does not have summoning sickness.\nThere are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 242,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "1887-4772-5115",
+      "cards": [
+        {
+          "name": "Vorinclex, Monstrous Raider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gemstone Array",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 210,
+      "missing": [
+        "Gemstone Array"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "513--62",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Permanent castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    }
+  ]
+}

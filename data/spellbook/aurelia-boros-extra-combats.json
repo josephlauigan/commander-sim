@@ -1,0 +1,2580 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "aurelia-boros-extra-combats",
+  "commanders": [
+    "Aurelia, the Warleader"
+  ],
+  "request_sha256": "8ae7c8f6d05e69b3f2c0a25cf16ec18ea3683ba53725703ac2b5763e9f796ea4",
+  "identity": "RW",
+  "included": [
+    {
+      "id": "900-3750",
+      "cards": [
+        {
+          "name": "Sword of Feast and Famine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Feast and Famine attached to a creature that can attack this turn.\nAn opponent is unable to block and kill the creature with Sword of Feast and Famine attached.\nLands you control can tap to produce at least {3}{R}{R}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37223
+    },
+    {
+      "id": "1692-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Helm attached to Aurelia.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 32520
+    },
+    {
+      "id": "1692-2105",
+      "cards": [
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Combat Celebrant.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 26443
+    },
+    {
+      "id": "1550-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any other creature you control.\nThe creature with Sword of Hearth and Home attached can attack this turn.\nAn opponent cannot block and kill the creature with Sword of Hearth and Home attached and Aurelia.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12597
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "3750-5039",
+      "cards": [
+        {
+          "name": "The Reaver Cleaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "The Reaver Cleaver attached to a creature with power five or greater that can attack this turn.\nAn opponent is unable to block the creature with The Reaver Cleaver attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 47846,
+      "missing": [
+        "The Reaver Cleaver"
+      ]
+    },
+    {
+      "id": "2484-4083",
+      "cards": [
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Repercussion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 39801,
+      "missing": [
+        "Repercussion"
+      ]
+    },
+    {
+      "id": "778-3750",
+      "cards": [
+        {
+          "name": "Ancient Copper Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite combat damage",
+        "Near-infinite Treasure tokens",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Ancient Copper Dragon cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 31278,
+      "missing": [
+        "Ancient Copper Dragon"
+      ]
+    },
+    {
+      "id": "1692-4251",
+      "cards": [
+        {
+          "name": "Godo, Bandit Warlord",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Put all Equipment cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Godo.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 25869,
+      "missing": [
+        "Godo, Bandit Warlord"
+      ]
+    },
+    {
+      "id": "3750-4945",
+      "cards": [
+        {
+          "name": "Neheb, the Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents have lost at least five life this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23774,
+      "missing": [
+        "Neheb, the Eternal"
+      ]
+    },
+    {
+      "id": "1775-2484",
+      "cards": [
+        {
+          "name": "Toralf, God of Fury // Toralf's Hammer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22348,
+      "missing": [
+        "Toralf, God of Fury // Toralf's Hammer"
+      ]
+    },
+    {
+      "id": "2552-3263",
+      "cards": [
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vandalblast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 22036,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "618-2105",
+      "cards": [
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 18918,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
+      "id": "618-1692",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15668,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
+      "id": "1908-2105",
+      "cards": [
+        {
+          "name": "Rionya, Fire Dancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 14385,
+      "missing": [
+        "Rionya, Fire Dancer"
+      ]
+    },
+    {
+      "id": "1823-2484",
+      "cards": [
+        {
+          "name": "Fall of Cair Andros",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature with toughness less than 13.",
+      "mana": "{7}{R} (at most)",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 14316,
+      "missing": [
+        "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "3422-3587",
+      "cards": [
+        {
+          "name": "Boros Reckoner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Boros Charm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Boros Reckoner lifelink.\nYou have a way to deal damage to Boros Reckoner.",
+      "mana": "{R}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14238,
+      "missing": [
+        "Boros Reckoner"
+      ]
+    },
+    {
+      "id": "3750-5988",
+      "cards": [
+        {
+          "name": "Cavern-Hoard Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game",
+        "Infinite combat damage to one opponent"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls five or more artifacts.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12978,
+      "missing": [
+        "Cavern-Hoard Dragon"
+      ]
+    },
+    {
+      "id": "1486-3750",
+      "cards": [
+        {
+          "name": "Magda, Brazen Outlaw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least 5 Dwarfs who do not have summoning sickness.\nOpponents can not block.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10725,
+      "missing": [
+        "Magda, Brazen Outlaw"
+      ]
+    },
+    {
+      "id": "1548-1692",
+      "cards": [
+        {
+          "name": "Port Razer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite damage",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Port Razer.\nAn opponent is unable to block Port Razer.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9495,
+      "missing": [
+        "Port Razer"
+      ]
+    },
+    {
+      "id": "1405-1692",
+      "cards": [
+        {
+          "name": "Scourge of the Throne",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at most five.\nYou have the lowest life total or are tied for the lowest life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7465,
+      "missing": [
+        "Scourge of the Throne"
+      ]
+    },
+    {
+      "id": "2105-3337--140",
+      "cards": [
+        {
+          "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Reflection of Kiki-Jiki does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6740,
+      "missing": [
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
+      ]
+    },
+    {
+      "id": "1692-4367",
+      "cards": [
+        {
+          "name": "Akki Battle Squad",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite untap of modified creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control another modified creature that can attack this turn, and that cannot be blocked and killed by an opponent.\nHelm of the Host attached to Akki Battle Squad.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6275,
+      "missing": [
+        "Akki Battle Squad"
+      ]
+    },
+    {
+      "id": "1697-3750",
+      "cards": [
+        {
+          "name": "Neheb, Dreadhorde Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite combat damage",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nAn opponent cannot block Neheb.\nNeheb does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5846,
+      "missing": [
+        "Neheb, Dreadhorde Champion"
+      ]
+    },
+    {
+      "id": "2484-7502",
+      "cards": [
+        {
+          "name": "Expedited Inheritance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each player may exile a portion of their library with the ability to play the exiled cards until the end of their next turn"
+      ],
+      "requires": [],
+      "prerequisites": "There's a creature on the battlefield.",
+      "mana": "{7}{R} at most",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5103,
+      "missing": [
+        "Expedited Inheritance"
+      ]
+    },
+    {
+      "id": "3149-3981",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Worldslayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Worldslayer attached to Avacyn.\nAn opponent is unable to block Avacyn.\nAvacyn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4611,
+      "missing": [
+        "Worldslayer"
+      ]
+    },
+    {
+      "id": "1050-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nevinyrral's Disk",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Nevinyrral's Disk untapped.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4581,
+      "missing": [
+        "Nevinyrral's Disk"
+      ]
+    },
+    {
+      "id": "1694-3011",
+      "cards": [
+        {
+          "name": "Gisela, Blade of Goldnight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heartless Hidetsugu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent with an even life total loses the game",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Heartless Hidetsugu does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4547,
+      "missing": [
+        "Heartless Hidetsugu"
+      ]
+    },
+    {
+      "id": "2105-4702",
+      "cards": [
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Splinter Twin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Splinter Twin attached to Combat Celebrant.\nCombat Celebrant does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4412,
+      "missing": [
+        "Splinter Twin"
+      ]
+    },
+    {
+      "id": "1378-2105",
+      "cards": [
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirage Phalanx",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Mirage Phalanx is paired with Combat Celebrant.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4315,
+      "missing": [
+        "Mirage Phalanx"
+      ]
+    },
+    {
+      "id": "900-3398",
+      "cards": [
+        {
+          "name": "Hellkite Charger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Feast and Famine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite damage",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Feast and Famine attached to Hellkite Charger.\nYou control lands that can produce at least {5}{R}{R}.\nOpponents cannot block Hellkite Charger.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3921,
+      "missing": [
+        "Hellkite Charger"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1692-6188",
+      "cards": [
+        {
+          "name": "Fear of Missing Out",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite combat phases",
+        "Near-infinite mana creatures you control can produce",
+        "Near-infinite tapped creature tokens",
+        "Near-infinite untap of creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are four or more card types among cards in your graveyard",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 3836,
+      "missing": [
+        "Fear of Missing Out"
+      ]
+    },
+    {
+      "id": "3750-6410",
+      "cards": [
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have max speed.\nYou control five or more Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3789,
+      "missing": [
+        "Howlsquad Heavy"
+      ]
+    },
+    {
+      "id": "2105-2815-3337",
+      "cards": [
+        {
+          "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Professional Face-Breaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Reflection of Kiki-Jiki does not have summoning sickness. An opponent cannot block at least one creature you control.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3463,
+      "missing": [
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
+      ]
+    },
+    {
+      "id": "1550-4367",
+      "cards": [
+        {
+          "name": "Akki Battle Squad",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite untap of modified creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to another creature without summoning sickness.\nAn opponent cannot block the creature with Sword of Hearth and Home attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3282,
+      "missing": [
+        "Akki Battle Squad"
+      ]
+    },
+    {
+      "id": "1692-3259",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Breath of Fury attached to any other creature you control that can attack this turn and that cannot be blocked by an opponent.\nHelm of the Host attached to any creature except the creature that has Breath of Fury attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3081,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "2548-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2336,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "451-3750",
+      "cards": [
+        {
+          "name": "Hoard Hauler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Hoard Hauler is a creature and does not have summoning sickness.\nAn opponent cannot block Hoard Hauler and controls at least five artifacts.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2145,
+      "missing": [
+        "Hoard Hauler"
+      ]
+    },
+    {
+      "id": "3765-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Worldfire",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent's life total becomes 1",
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2101,
+      "missing": [
+        "Worldfire"
+      ]
+    },
+    {
+      "id": "810-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Disk",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Magus of the Disk without summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1823,
+      "missing": [
+        "Magus of the Disk"
+      ]
+    },
+    {
+      "id": "1908-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rionya, Fire Dancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent is unable to block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1671,
+      "missing": [
+        "Rionya, Fire Dancer"
+      ]
+    },
+    {
+      "id": "2067-5905",
+      "cards": [
+        {
+          "name": "Storm Herd",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Warleader's Call",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1631,
+      "missing": [
+        "Storm Herd"
+      ]
+    },
+    {
+      "id": "2548-3149",
+      "cards": [
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{R}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1575,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "3750-4747",
+      "cards": [
+        {
+          "name": "Alena, Kessig Trapper",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature with power 5 or greater that entered the battlefield this turn.\nAlena does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1555,
+      "missing": [
+        "Alena, Kessig Trapper"
+      ]
+    },
+    {
+      "id": "3149-3587",
+      "cards": [
+        {
+          "name": "Boros Reckoner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Avacyn, Angel of Hope",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Boros Reckoner lifelink.\nYou have a way to deal damage to Boros Reckoner.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1432,
+      "missing": [
+        "Boros Reckoner"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1414,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "1550-1879-2105",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rising of the Day",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1399,
+      "missing": [
+        "Rising of the Day"
+      ]
+    },
+    {
+      "id": "2105-6426",
+      "cards": [
+        {
+          "name": "Sandstorm Crasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Sandstorm Crasher does not have summoning sickness. An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1340,
+      "missing": [
+        "Sandstorm Crasher"
+      ]
+    },
+    {
+      "id": "1069-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Puresteel Paladin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control an Equipment.\nYou control at least three artifacts.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1314,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "3750-6894",
+      "cards": [
+        {
+          "name": "J. Jonah Jameson",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures that have menace and that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1301,
+      "missing": [
+        "J. Jonah Jameson"
+      ]
+    },
+    {
+      "id": "847-4364",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gilraen, Dúnedain Protector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Creatues you control can tap to produce at least {2}.\nGilraen does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1066,
+      "missing": [
+        "Gilraen, Dúnedain Protector"
+      ]
+    },
+    {
+      "id": "3750-7903",
+      "cards": [
+        {
+          "name": "Thorin, Company's Leader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite Treasure tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite artifact tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three Dwarves that don't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1034,
+      "missing": [
+        "Thorin, Company's Leader"
+      ]
+    },
+    {
+      "id": "4364-7334",
+      "cards": [
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Neutrinos",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1020,
+      "missing": [
+        "The Neutrinos"
+      ]
+    },
+    {
+      "id": "1550-2105-6233--78",
+      "cards": [
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ardenn, Intrepid Archaeologist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite combat damage"
+      ],
+      "requires": [
+        "Equipment That Gives Haste to a Creature"
+      ],
+      "prerequisites": "Combat Celebrant cannot be blocked by an opponent.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 814,
+      "missing": [
+        "Ardenn, Intrepid Archaeologist"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 751,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "3750-5340",
+      "cards": [
+        {
+          "name": "Poetic Ingenuity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five Dinosaurs that do not have summoning sickness.\nAn opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 722,
+      "missing": [
+        "Poetic Ingenuity"
+      ]
+    },
+    {
+      "id": "3750-6307",
+      "cards": [
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luxurious Locomotive",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures with total power 1 or greater.\nAn opponent cannot block and kill Luxurious Locomotive.\nLuxurious Locomotive does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 662,
+      "missing": [
+        "Luxurious Locomotive"
+      ]
+    },
+    {
+      "id": "4274-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Apocalypse",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 619,
+      "missing": [
+        "Apocalypse"
+      ]
+    },
+    {
+      "id": "1692-2972-3750",
+      "cards": [
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Ganax.",
+      "mana": "{6}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 618,
+      "missing": [
+        "Ganax, Astral Hunter"
+      ]
+    },
+    {
+      "id": "1550-2105-6633",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Fire Crystal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 613,
+      "missing": [
+        "The Fire Crystal"
+      ]
+    },
+    {
+      "id": "1550-2105-4068",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anger",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Mountain.\nSword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 607,
+      "missing": [
+        "Anger"
+      ]
+    },
+    {
+      "id": "647-1550-2105",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urabrask the Hidden",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 440,
+      "missing": [
+        "Urabrask the Hidden"
+      ]
+    },
+    {
+      "id": "4364-6426",
+      "cards": [
+        {
+          "name": "Sandstorm Crasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aurelia, the Warleader",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sandstorm Crasher does not have summoning sickness. An opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 289,
+      "missing": [
+        "Sandstorm Crasher"
+      ]
+    },
+    {
+      "id": "1550-2105-6968",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kratos, God of War",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 248,
+      "missing": [
+        "Kratos, God of War"
+      ]
+    },
+    {
+      "id": "1550-2105-7296",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gimli's Reckless Might",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 229,
+      "missing": [
+        "Gimli's Reckless Might"
+      ]
+    },
+    {
+      "id": "969-1550-2105",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fervor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 210,
+      "missing": [
+        "Fervor"
+      ]
+    },
+    {
+      "id": "1550-1849-2105",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mass Hysteria",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 164,
+      "missing": [
+        "Mass Hysteria"
+      ]
+    },
+    {
+      "id": "1550-2105-3499",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 113,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "1550-2105-3480",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Purphoros, Bronze-Blooded",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 111,
+      "missing": [
+        "Purphoros, Bronze-Blooded"
+      ]
+    },
+    {
+      "id": "1115-1550-2105",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hammer of Purphoros",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 111,
+      "missing": [
+        "Hammer of Purphoros"
+      ]
+    },
+    {
+      "id": "1550-2105-4742",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nahiri's Resolve",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 105,
+      "missing": [
+        "Nahiri's Resolve"
+      ]
+    },
+    {
+      "id": "1550-2105-6791",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tannuk, Steadfast Second",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 97,
+      "missing": [
+        "Tannuk, Steadfast Second"
+      ]
+    },
+    {
+      "id": "1550-2105-7297",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Barbarian Class",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 53,
+      "missing": [
+        "Barbarian Class"
+      ]
+    },
+    {
+      "id": "1550-2105-7060",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smellerbee, Rebel Fighter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Smellerbee, Rebel Fighter"
+      ]
+    },
+    {
+      "id": "1550-2105-7175",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lavaleaper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 43,
+      "missing": [
+        "Lavaleaper"
+      ]
+    },
+    {
+      "id": "1550-2105-4885",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tuktuk Rubblefort",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 32,
+      "missing": [
+        "Tuktuk Rubblefort"
+      ]
+    },
+    {
+      "id": "1550-2105-4460",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cyclops of Eternal Fury",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Hearth and Home attached to any creature you control except Combat Celebrant.\nAn opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3,
+      "missing": [
+        "Cyclops of Eternal Fury"
+      ]
+    },
+    {
+      "id": "1550-2105-6800",
+      "cards": [
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Keldon Strike Team",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent is unable to block Combat Celebrant or the creature with Sword of Hearth and Home attached.\nYou have not exerted Combat Celebrant this turn.",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Keldon Strike Team"
+      ]
+    },
+    {
+      "id": "914-1692-3750",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Dockside Extortionist.\nOpponents control at least five artifacts and/or enchantments.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Dockside Extortionist"
+      ]
+    },
+    {
+      "id": "914-1550-3750",
+      "cards": [
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of Hearth and Home",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least six artifacts and/or enchantments.\nSword of Hearth and Home attached to another creature you control that can attack this turn, and that cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Dockside Extortionist"
+      ]
+    }
+  ]
+}

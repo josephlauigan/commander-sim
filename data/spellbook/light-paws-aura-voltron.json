@@ -1,0 +1,271 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "light-paws-aura-voltron",
+  "commanders": [
+    "Light-Paws, Emperor's Voice"
+  ],
+  "request_sha256": "d78131f63f302fd64eb8badd29eb3f89075bf02afb8782481095db84ce6dd59f",
+  "identity": "W",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "4090-6843",
+      "cards": [
+        {
+          "name": "Anti-Venom, Horrifying Healer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15905,
+      "missing": [
+        "Anti-Venom, Horrifying Healer"
+      ]
+    },
+    {
+      "id": "3799-4090",
+      "cards": [
+        {
+          "name": "Stuffy Doll",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to deal damage to Stuffy Doll if it has summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14331,
+      "missing": [
+        "Stuffy Doll"
+      ]
+    },
+    {
+      "id": "3560-6023",
+      "cards": [
+        {
+          "name": "Secret Arcade // Dusty Parlor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archon of Sun's Grace",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12286,
+      "missing": [
+        "Secret Arcade // Dusty Parlor"
+      ]
+    },
+    {
+      "id": "4090-5739",
+      "cards": [
+        {
+          "name": "Caduceus, Staff of Hermes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Caduceus and Pariah are attached to the same creature. Your life total is 30 or higher.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4164,
+      "missing": [
+        "Caduceus, Staff of Hermes"
+      ]
+    },
+    {
+      "id": "338-3693",
+      "cards": [
+        {
+          "name": "Light of Promise",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Light of Promise attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2420,
+      "missing": [
+        "Walking Ballista"
+      ]
+    },
+    {
+      "id": "816-4090",
+      "cards": [
+        {
+          "name": "Rune-Tail, Kitsune Ascendant // Rune-Tail's Essence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2406,
+      "missing": [
+        "Rune-Tail, Kitsune Ascendant // Rune-Tail's Essence"
+      ]
+    },
+    {
+      "id": "4090-7637",
+      "cards": [
+        {
+          "name": "Cho-Manno, Revolutionary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1015,
+      "missing": [
+        "Cho-Manno, Revolutionary"
+      ]
+    },
+    {
+      "id": "338-1495",
+      "cards": [
+        {
+          "name": "Light of Promise",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Light of Promise attached to Triskelion.\nTriskelion has at least one +1/+1 counter on it.\nYou have a way to give Triskelion lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 912,
+      "missing": [
+        "Triskelion"
+      ]
+    },
+    {
+      "id": "4090-7407",
+      "cards": [
+        {
+          "name": "Inviolability",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Inviolability and Pariah are attached to the same creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 842,
+      "missing": [
+        "Inviolability"
+      ]
+    }
+  ]
+}
