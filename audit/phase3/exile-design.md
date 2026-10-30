@@ -12,7 +12,7 @@ in step with them, one object per card:
 |---------------------|---------|------|
 | `id: ExileId` | a fresh number on every card put into exile, never reused in that owner's zone; (owner, id) names the object for the whole game | 400.7 |
 | `until: Option<PermId>` | exiled "until ~ leaves the battlefield" by this permanent (the O-Ring family) | 610.3 |
-| `silver: bool` | the card has a silver counter (Karn, Scion of Urza; Karn, the Great Creator's wish pile is not this) | 122.1 |
+| `silver: bool` | the card has a silver counter (Karn, Scion of Urza) | 122.1 |
 
 A card that leaves exile and is exiled again is a new object (`push` always makes a new id): an effect that remembers
 "the card exiled with ~" remembers the object, so a card with the same `CardId` exiled later by something else is not

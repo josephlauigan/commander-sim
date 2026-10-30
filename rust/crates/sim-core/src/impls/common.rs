@@ -614,7 +614,7 @@ pub fn oring_exile(
 
 /// src has just exiled the card `cd` owned by q (rule 400.7: the newest object of `cd` in q's exile is the one): the
 /// object is linked to src ("until src leaves the battlefield"), and the entry `[card, owner, exile id]` src keeps in
-/// its data names it (`linked` finds it again)
+/// its data names it (`linked` finds it again: the object, while it is still in exile)
 pub fn link_exiled(g: &mut Game, q: PlayerId, cd: CardId, src: PermId) -> Val {
     let ex = &mut g.player_mut(q).exile;
     let mut v = vec![Val::Card(cd), Val::Player(q)];
@@ -629,7 +629,9 @@ pub fn link_exiled(g: &mut Game, q: PlayerId, cd: CardId, src: PermId) -> Val {
 pub fn linked(g: &Game, e: &Val) -> Option<(CardId, PlayerId, usize)> {
     let Val::List(v) = e else { return None };
     let (Some(Val::Card(cd)), Some(Val::Player(q))) = (v.first(), v.get(1)) else { return None };
-    let i = g.player(*q).exile.iter().position(|&x| x == *cd)?;
+    // the object by its id (rule 400.7): a card with the same `CardId` exiled since by something else isn't it
+    let Some(Val::Int(id)) = v.get(2) else { return None };
+    let i = g.player(*q).exile.find(crate::engine::exile::ExileId(*id as u32))?;
     Some((*cd, *q, i))
 }
 

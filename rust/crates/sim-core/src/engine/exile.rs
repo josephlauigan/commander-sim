@@ -160,6 +160,11 @@ impl ExileZone {
         self.cards.iter().copied().zip(&self.objs)
     }
 
+    /// the cards with a silver counter, oldest first (Karn, Scion of Urza)
+    pub fn silver(&self) -> Vec<CardId> {
+        self.entries().filter(|(_, o)| o.silver).map(|(c, _)| c).collect()
+    }
+
     /// where the object `id` is, if it is still in exile
     pub fn find(&self, id: ExileId) -> Option<usize> {
         self.objs.iter().position(|o| o.id == id)

@@ -64,8 +64,8 @@ fn karn_plus_gives_one_card_and_exiles_the_other_with_a_silver_counter() {
     assert!(go(&mut g, plus));
     assert_eq!(g.perm(k).loyalty, Some(6));
     assert_eq!(g.player(P0).hand.len(), hand0 + 1, "one card to the hand");
-    assert_eq!(g.player(P0).silver.len(), 1, "the other has a silver counter");
-    let silver = g.player(P0).silver[0];
+    assert_eq!(g.player(P0).exile.silver().len(), 1, "the other has a silver counter");
+    let silver = g.player(P0).exile.silver()[0];
     assert!(g.player(P0).exile.contains(&silver));
     let got = *g.player(P0).hand.last().unwrap();
     assert_ne!(got, silver);
@@ -87,7 +87,7 @@ fn karn_minus_one_returns_the_silver_card_and_minus_two_makes_a_construct() {
     assert!(go(&mut g, &m1));
     assert_eq!(g.player(P0).hand.len(), hand0 + 1);
     assert_eq!(name(&g, *g.player(P0).hand.last().unwrap()), "Wurmcoil Engine");
-    assert!(g.player(P0).silver.is_empty());
+    assert!(g.player(P0).exile.silver().is_empty());
     assert!(opts(&mut g, k, Some(false)).iter().all(|o| !o.label.contains("-1")), "nothing left to return");
 
     perm(&mut g, P0, "Sol Ring");

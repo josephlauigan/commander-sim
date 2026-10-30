@@ -22,7 +22,23 @@ Base = `phase3-mana` head (cc71b6cc): build 0 warnings; 3663 passed / 0 failed /
       `DataKey::Serenity`) and Detention Sphere (`rules2.rs`, `DataKey::Held`); `linked` still finds the card by
       `CardId`. Karn, Scion of Urza sets the object's `silver`. Checks: 0 warnings; 3663 / 0 / 3 (223); practice 104;
       cardgen clean; clone_cost 3.02-3.05 µs (Stage A 2.92-3.01, base 2.91-2.94); mana_cost as base.
-- [ ] Stage C (behaviour, tests): `oring_return` by id; silver from the objects; impulse expires at the end of the turn.
+- [x] Stage C (behaviour, tests `tests/exile_objects.rs`, 6): `common::linked` finds the object by its `ExileId`, so
+      "until ~ leaves" (O-Ring family, Calix, Static Net, Palace Jailer, Angel of Serenity, Detention Sphere ...)
+      returns only the object it exiled (the `oring_return` bug); `Player::silver` deleted: Karn, Scion of Urza's
+      counters are on the objects (`ExileZone::silver`; a card that left exile has none; the -1 takes the object with
+      the counter); impulse draw ("this turn", `Player::impulse`) ends at every turn's end step for every player, not
+      only at the holder's own end step. Checks: 0 warnings; 3669 / 0 / 3 (224 binaries); practice 104 (no UI change);
+      cardgen clean; clone_cost 2.95-3.05 µs; mana_cost as base.
+      Touched for the recalibration: JD decks karn (Karn, Scion of Urza; t4-t5) and yshtola (Static Net; t5);
+      opponents anikthea, giada (t0), light-paws (t1), kaalia, sythis (t2), zur (t5), dack (t6); impulse: any seat
+      given "play it this turn" on another player's turn (Grenzo, Mnemonic Betrayal, the ability language's
+      `impulse` on triggers).
+
+## Follow-ups (not done)
+- The per-card lists in the design's "follow-up" rows (`oath_return`, `valakut_cards`, `neriv`, `necro_wait`,
+  `suspended`, `rebound`, `zur_due`, `eot_returns`, `t12_*`, Hostage Taker's `Hostage`) still name cards by `CardId`;
+  each can take a `link_exiled` entry when one needs it. Impulse cards are still "held in hand", not in exile with a
+  play permission; no face-down objects (foretell, Necropotence in practice) yet.
 
 ## Census so far (starting points, not complete)
 - `Player::exile: Vec<CardId>`: 207 uses of `.exile` in `sim-core/src` (most in `impls/mine.rs` 19, `common.rs` 11,

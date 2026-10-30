@@ -98,7 +98,6 @@ fn karn_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
             let pl = g.player_mut(p);
             pl.exile.push(c);
             pl.exile.last_mut().unwrap().silver = true;
-            pl.silver.push(c);
             crate::glog!(g, "    Karn: {} is exiled with a silver counter", g.db.get(c).name);
         }
     }
@@ -106,7 +105,8 @@ fn karn_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 }
 
 fn best_silver(g: &Game, p: PlayerId) -> Option<CardId> {
-    let cs: Vec<CardId> = g.player(p).silver.iter().copied().filter(|c| g.player(p).exile.contains(c)).collect();
+    // the counter is on the exiled object: a card that left exile and came back has none (rule 400.7)
+    let cs = g.player(p).exile.silver();
     max_by(&cs, |c| worth(g, p, c))
 }
 
@@ -123,8 +123,9 @@ fn karn_minus_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
 fn karn_minus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     if let Some(c) = best_silver(g, p) {
         let pl = g.player_mut(p);
-        pl.silver.retain(|&x| x != c);
-        if let Some(i) = pl.exile.iter().position(|&x| x == c) {
+        // the object with the counter (not an older copy of the same card)
+        let at = pl.exile.entries().position(|(x, o)| x == c && o.silver);
+        if let Some(i) = at {
             pl.exile.remove(i);
         }
         pl.hand.push(c);
