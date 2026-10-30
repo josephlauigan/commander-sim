@@ -54,9 +54,9 @@ implemented after the diagnostic's fixes, below):
 ```
 early    = turn <= 4: 1.0 | turn 5-6: 0.55 | later: 0.25             (mana matters while the deck develops)
 reps     = clamp(12 - round, 3, 8) / 2.5                              (turns an engine will run, in card units)
-mana     = 4.0 x mana x early x (1.25 with no land in hand, else 1) + 0.5 x burst
+mana     = 5.5 x mana x early x (1.25 with no land in hand, else 1) + 0.5 x burst
 cards    = cards x hand_need + cards_rep x reps                        hand_need = 1.3 with <= 2 cards in hand, else 1
-removal  = single (a permanent's, or any when held): 2.5 + 0.35 x best opposing target's pval by p (none: 1.5)
+removal  = single (a permanent's, or any when held): 2.5 + 0.35 x best opposing target's pval by p (none: 1.5 held, 0 to cast)
            sweep: max(0.5, 1.5 + 0.25 x (their board / opponents - 1.2 x mine)); a counter (held): 4.0
 damage   = 0.45 x opponents x (damage + damage_rep x reps)
 board    = 0.5 x power + 0.2 x toughness + 0.4 x evasion + 0.3 x haste + 0.25 x other keywords + 0.6 x tokens
@@ -134,13 +134,13 @@ plan rules or card code decide are left out). Spearman rank correlation of old a
 
 | tier | cards | cast priority | card worth | bomb (permanents) | old bombs (>= 5) | derived (>= 5) | both |
 |---|---|---|---|---|---|---|---|
-| t1 | 299 | 0.71 | 0.58 | 0.33 | 12 | 45 | 10 |
-| t2 | 273 | 0.67 | 0.57 | 0.37 | 13 | 28 | 12 |
-| t3 | 287 | 0.67 | 0.57 | 0.39 | 16 | 43 | 15 |
-| t4 | 289 | 0.74 | 0.50 | 0.32 | 8 | 30 | 8 |
-| t5 | 299 | 0.79 | 0.59 | 0.52 | 24 | 37 | 23 |
+| t1 | 299 | 0.74 | 0.61 | 0.33 | 12 | 45 | 10 |
+| t2 | 273 | 0.73 | 0.61 | 0.37 | 13 | 28 | 12 |
+| t3 | 287 | 0.75 | 0.63 | 0.39 | 16 | 43 | 15 |
+| t4 | 289 | 0.78 | 0.54 | 0.32 | 8 | 30 | 8 |
+| t5 | 299 | 0.85 | 0.65 | 0.52 | 24 | 37 | 23 |
 
-(First pass: cast priority 0.60-0.79; the general fixes below raised t1-t4.) The bomb correlation is low because the
+(First pass: cast priority 0.60-0.79; the general fixes below raised every tier.) The bomb correlation is low because the
 old tag is 0 for most permanents (ties): the derived threat calls more creatures bombs (Hero of Bladehold 7.8,
 Aurelia 10, Pearl-Ear 7.8, Hellrider 6.8, Reflector Mage 6.4: repeatable token, damage or removal triggers the tags
 never rated); it misses four old bombs, two of them in the override table (below).
@@ -161,6 +161,10 @@ Worst disagreements and their cause (fixed for a general reason unless said):
 - **Land-search ramp** (Harrow, Kodama's Reach, Rampant Growth; old 0, the interpreter's 30): a search for a land
   to the battlefield is mana (one a land; to hand half), a land sacrificed by the spell or its additional cost takes
   one back; worth is capped at 10.
+- **Found in the first Stage B run (t1, t2), fixed, derived arms rerun**: a removal permanent with no target scored
+  1.5 and was cast at nothing (Seal of Cleansing, Song of the Dryads at 32-42 with no target); now 0 to cast (1.5 held).
+  Mana sources sat below development creatures (a one-mana rock 60 against the old 85; Sythis, a ramp-first deck,
+  -6.0 [-9.4, -2.6] on t2): `MANA_W` 4.0 -> 5.5 (a one-mana source on turn 3: 75, Sol Ring 90, turn 5+: 44 and less).
 - **Replacement doublers** (Doubling Season at 9.5): half an engine (worth what the deck feeds it).
 - **Repeatable tokens** weighted down (Sigil of the Empty Throne at 8.6 -> 0.35 a power a turn).
 - Left as derived (the derivation is the better reading): Grave Pact and Dictate of Erebos (66 vs 44: an edict engine

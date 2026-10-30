@@ -559,7 +559,8 @@ fn early(turn: u32) -> f64 {
     }
 }
 
-pub const MANA_W: f64 = 4.0;
+/// a mana source early: it pays for a spell every turn after (a one-mana rock on turn 3 ranks with the old table's 85)
+pub const MANA_W: f64 = 5.5;
 pub const TUTOR_W: f64 = 3.5;
 pub const PROTECT_W: f64 = 2.5;
 pub const COUNTER_W: f64 = 4.0;
@@ -595,7 +596,8 @@ pub fn worth_parts(g: &Game, p: PlayerId, c: CardId, held: bool) -> [f64; 8] {
     let mut removal = 0.0;
     if pr.removal && (held || d.perm) {
         let b = best_target(g, p, c);
-        removal += if b > 0.0 { 2.5 + 0.35 * b } else { 1.5 };
+        // no target now: worth keeping (held), nothing to cast it at (Seal of Cleansing with no artifact out)
+        removal += if b > 0.0 { 2.5 + 0.35 * b } else if held { 1.5 } else { 0.0 };
     }
     if pr.sweep && (held || !held_spell) {
         let theirs: f64 = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).map(|m| pval_for(g, p, m)).sum();
