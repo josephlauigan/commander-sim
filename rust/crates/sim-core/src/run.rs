@@ -58,8 +58,10 @@ impl Engine {
     /// ais.play_pool_game: a game with this seat order, from seed: setup, mulligans and up to max_rounds rounds
     pub fn play(&self, seed: u64, seats: &[Seat], settings: Settings, max_rounds: u32, trace: bool) -> Game {
         crate::ai::evdiag::set_seed(seed); // --- ai-eval: the diagnostic names the game
+        crate::ai::learned::game_start(); // --- phase4-eval
         let mut g = setup_game(self.db.clone(), self.registry.clone(), Arc::new(settings), seed, seats, trace);
         run_rounds(&mut g, max_rounds);
+        crate::ai::learned::game_end(&g, seed); // --- phase4-eval: the recorder labels the game
         g
     }
 }

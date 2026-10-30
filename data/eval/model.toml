@@ -1,0 +1,25 @@
+# placeholder (no fit yet): replaced by examples/eval_train.rs
+bias = 0.0
+features = ["me_life", "me_board", "me_power", "me_hand", "me_lands", "me_treasures", "me_combo", "me_threat", "me_hand_worth", "me_poison", "me_cmd_taken", "me_distance", "me_creatures", "top_life", "top_board", "top_power", "top_hand", "top_lands", "top_treasures", "top_combo", "top_threat", "top_hand_worth", "top_poison", "top_cmd_taken", "top_distance", "top_creatures", "mean_life", "mean_board", "mean_power", "mean_hand", "mean_threat", "live_opps", "str_minus_top", "str_minus_mean", "life_minus_low", "cmd_dealt", "low_life", "turns", "turns_x_board", "turns_x_hand", "turns_x_combo", "seat1", "seat2", "seat3", "old_raw"]
+mean = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+sd = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+weight = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+[meta]
+commit = "none"
+data_hash = "none"
+games = 0
+positions = 0
+lambda = 0.0
+heldout_games = 0
+heldout_logloss = 0.0
+heldout_brier = 0.0
+heldout_auc = 0.0
+baseline_logloss = 0.0
+baseline_brier = 0.0
+baseline_auc = 0.0
+note = "placeholder"
+
+[map]
+a = 0.0
+b = 1.0
