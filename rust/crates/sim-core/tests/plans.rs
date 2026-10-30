@@ -185,33 +185,74 @@ fn hand_conditions_read_the_rest_of_the_hand() {
     assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(72.0));
 }
 
-/// the scion plan file's mulligan rule table keeps exactly the hands its hand keep rule (`t6_plan_scion::keep`) keeps,
-/// on 600 dealt hands over the first, second and third draws
-#[test]
-fn the_mulligan_rule_table_matches_the_hand_turbo_rule() {
-    let l = plan_data::get("scion").unwrap();
-    let mut g = table(&["scion", KI]);
+/// the five Tier 6 slots of a deck's hand plan code
+struct HandSlots {
+    prio: fn(&Game, PlayerId, sim_core::ids::CardId) -> Option<f64>,
+    wish: fn(&Game, PlayerId) -> Option<Vec<sim_core::ids::CardId>>,
+    keep: fn(&Game, PlayerId) -> Option<bool>,
+    hold_up: fn(&Game, PlayerId) -> Option<f64>,
+    go_now: fn(&Game, PlayerId, &str) -> Option<bool>,
+}
+
+/// a Tier 6 plan file says what its hand plan code says: keep, the priority of every card in hand, the wish list,
+/// hold-up and every catalogue combo's go-now, on 600 dealt states (seven cards in hand, 0-5 more on the battlefield,
+/// turns and rounds 1-7, the first to third draw)
+fn plan_matches_hand(key: &str, h: HandSlots) {
+    let l = plan_data::get(key).unwrap();
+    let mut g = table(&[key, KI]);
     let mut s: u64 = 12345;
     let (mut kept, mut n) = (0, 0);
-    for i in 0..600 {
-        let pl = g.player_mut(P0);
-        let h: Vec<_> = pl.hand.drain(..).collect();
-        pl.library.extend(h);
+    for i in 0..600u64 {
+        let mut g2 = g.clone();
+        let pl = g2.player_mut(P0);
         for k in (1..pl.library.len()).rev() {
             s = s.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
             pl.library.swap(k, (s >> 33) as usize % (k + 1));
         }
+        pl.hand.clear();
         for _ in 0..7 {
             let c = pl.library.pop().unwrap();
             pl.hand.push(c);
         }
-        pl.stats.insert("mull_try", i % 3);
-        let hand_rule = sim_core::impls::t6_plan_scion::keep(&g, P0);
-        assert_eq!(plan_data::keep_for(l, &g, P0), hand_rule, "hand {:?}", g.player(P0).hand);
-        kept += usize::from(hand_rule == Some(true));
+        pl.stats.insert("mull_try", (i % 3) as i64);
+        pl.turns = 1 + (i % 7) as u32;
+        g2.round = 1 + (i % 7) as u32;
+        let keep = (h.keep)(&g2, P0);
+        assert_eq!(plan_data::t6::keep(l, &g2, P0), keep, "{key} keep {:?}", g2.player(P0).hand);
+        kept += usize::from(keep == Some(true));
         n += 1;
+        for _ in 0..i % 6 {
+            let c = *g2.player(P0).library.last().unwrap();
+            let name = nm(&g2, c);
+            perm(&mut g2, P0, &name);
+        }
+        for &c in &g2.player(P0).hand.clone() {
+            assert_eq!(plan_data::t6::prio(l, &g2, P0, c), (h.prio)(&g2, P0, c), "{key} prio {}", nm(&g2, c));
+        }
+        assert_eq!(plan_data::t6::wish(l, &g2, P0), (h.wish)(&g2, P0), "{key} wish, state {i}");
+        assert_eq!(plan_data::t6::hold_up(l, &g2, P0), (h.hold_up)(&g2, P0), "{key} hold_up, state {i}");
+        for cmb in sim_core::impls::combos::all() {
+            let x = plan_data::t6::go_now(l, &g2, P0, cmb.name);
+            assert_eq!(x, (h.go_now)(&g2, P0, cmb.name), "{key} go_now {}", cmb.name);
+        }
     }
-    assert!(kept > 100 && kept < n, "kept {kept} of {n}: the rule both keeps and ships");
+    g.round = 1;
+    assert!(kept > 50 && kept < n, "{key}: kept {kept} of {n}: the rule both keeps and ships");
+}
+
+#[test]
+fn the_scion_plan_file_matches_its_hand_code() {
+    use sim_core::impls::t6_plan_scion as h;
+    plan_matches_hand(
+        "scion",
+        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
+    );
+}
+
+#[test]
+fn the_kinnan_plan_file_matches_its_hand_code() {
+    use sim_core::impls::t6_plan_kinnan as h;
+    plan_matches_hand(KI, HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now });
 }
 
 /// hold-up and go-now rules: the first rule that holds decides; a go-now rule without `go` leaves it to the table

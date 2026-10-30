@@ -295,13 +295,20 @@ enum Q {
     Makers,
     /// opponents with two or more open blue mana and a card in hand
     OppBlueUp,
+    /// the hand's counterspells (tag `ctr`)
+    Counters,
+    /// p's nonland permanents of mana value 3 or less that make mana (tags rock, dork, fastmana, lr; Lotus Petal,
+    /// Mana Vault, Mox Amber, Mox Opal)
+    ManaPerms,
     /// cards of this plan set (`[sets]`, by index) in hand
     Hand(usize),
     /// p's permanents of this plan set on the battlefield
     Bf(usize),
 }
 
-const NUMS: [(&str, Q); 16] = [
+const NUMS: [(&str, Q); 18] = [
+    ("counters", Q::Counters),
+    ("mana-perms", Q::ManaPerms),
     ("creatures", Q::Creatures),
     ("lands", Q::Lands),
     ("tax", Q::Tax),
@@ -472,6 +479,23 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
             g.opps(p).filter(|&q| super::brain::open_mana(g, q, Some('U')) >= 2 && !g.player(q).hand.is_empty()).count()
                 as f64
         }
+        Q::Counters => hand.iter().filter(|&&c| g.db.get(c).tag(Tag::Ctr)).count() as f64,
+        Q::ManaPerms => pl
+            .perms
+            .iter()
+            .filter(|&&m| {
+                g.perm(m).cd.is_some_and(|c| {
+                    let d = g.db.get(c);
+                    !d.land
+                        && d.cmc <= 3
+                        && (d.tag(Tag::Rock)
+                            || d.tag(Tag::Dork)
+                            || d.tag(Tag::Fastmana)
+                            || d.tag(Tag::Lr)
+                            || matches!(&*d.name, "Lotus Petal" | "Mana Vault" | "Mox Amber" | "Mox Opal"))
+                })
+            })
+            .count() as f64,
         Q::Hand(i) => cx.plan.map_or(0, |l| hand_count(g, p, &l.sets[i])) as f64,
         Q::Bf(i) => cx.plan.map_or(0, |l| {
             let set = &l.sets[i];
