@@ -53,7 +53,7 @@ const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {
 }
 
 /// pool_decks.CONFIG
-const CONFIG: [(&str, DeckConfig); 7] = [
+const CONFIG: [(&str, DeckConfig); 5] = [
     (
         "yuriko-dimir-ninjas",
         DeckConfig {
@@ -65,10 +65,6 @@ const CONFIG: [(&str, DeckConfig); 7] = [
             style: style(1.0, 0.8, 0.5),
             ..NONE
         },
-    ),
-    (
-        "chulane-bant-value-combo",
-        DeckConfig { prio_fn: Some(chulane_prio), wish: Some(chulane_wish), style: style(1.0, 0.5, 0.7), ..NONE },
     ),
     ("yawgmoth-mono-black-aristocrats", DeckConfig { wish: Some(yawg_wish), prio_fn: Some(yawg_prio), ..NONE }),
     (
@@ -84,17 +80,6 @@ const CONFIG: [(&str, DeckConfig); 7] = [
         DeckConfig {
             prio_fn: Some(crate::cardcode::kaalia_prio),
             cmd_prio: Some(88),
-            style: style(1.0, 0.8, 0.4),
-            ..NONE
-        },
-    ),
-    (
-        "light-paws-aura-voltron",
-        DeckConfig {
-            aura_host: Some("commander"),
-            aura_prio: Some(70),
-            cmd_prio: Some(88),
-            cmd_turn: Some(1),
             style: style(1.0, 0.8, 0.4),
             ..NONE
         },
@@ -173,10 +158,6 @@ pub fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
     })
 }
 
-fn board(g: &Game, p: PlayerId) -> usize {
-    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count()
-}
-
 /// combos.DRAIN_PAYOFFS
 pub const DRAIN_PAYOFFS: [&str; 13] = [
     "Blood Artist",
@@ -205,45 +186,6 @@ pub fn drain_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
             .copied()
             .find(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Bartist) || g.db.get(c).tag(Tag::Drain)))
     })
-}
-
-// ------------------------------------------------------------------ Chulane, Teller of Tales
-const BOUNCERS: [&str; 4] = ["Whitemane Lion", "Shrieking Drake", "Kor Skyfisher", "Man-o'-War"];
-
-/// deck_plans.chulane_prio: with Chulane out every creature spell draws and ramps: creatures first, cheap
-/// self-bouncers recast; the finishers once the board or the land count can end the game
-fn chulane_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let pl = g.player(p);
-    let d = g.db.get(c);
-    let chulane = pl.perms.iter().any(|&m| g.perm(m).is_cmd);
-    match &*d.name {
-        "Craterhoof Behemoth" => return Some(if board(g, p) >= 6 { 80 } else { 20 }),
-        "Avenger of Zendikar" => return Some(if pl.lands.len() >= 7 { 78 } else { 45 }),
-        _ => {}
-    }
-    if chulane && d.creature {
-        if BOUNCERS.contains(&&*d.name) {
-            return Some(76);
-        }
-        return Some(70 + (d.cmc as i32).min(8));
-    }
-    if &*d.name == "Aluren" {
-        return Some(if chulane || pl.cmd_in_zone { 75 } else { 40 });
-    }
-    None
-}
-
-fn chulane_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let miss = crate::cardcode::missing_pieces(g, p);
-    if board(g, p) >= 6 {
-        let mut v = ids(g, &["Craterhoof Behemoth"]);
-        v.extend(miss);
-        return v;
-    }
-    if !miss.is_empty() {
-        return miss;
-    }
-    ids(g, &["Avenger of Zendikar", "Consecrated Sphinx", "Craterhoof Behemoth"])
 }
 
 // ------------------------------------------------------------------ Grand Arbiter Augustin IV (stax)

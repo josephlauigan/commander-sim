@@ -13,6 +13,9 @@ Scratch (sim outputs): `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc
 
 | deck | tier | hand share (95% CI) | plan share (95% CI) | verdict | hand code |
 |---|---|---|---|---|---|
+| light-paws-aura-voltron | t1 | - | - | knobs only, identical (Stage A) | CONFIG entry deleted, default plan |
+| chulane-bant-value-combo | t4 | 13.2% [11.6, 14.8] n=1622 | 15.7% [13.9, 17.5] n=1622 | plan better, +2.5 [+0.1, +4.9] | chulane_prio / chulane_wish deleted, default plan |
+| yuriko-dimir-ninjas | t4 | 20.9% [18.9, 22.9] n=1599 | 18.1% [16.2, 20.0] n=1599 | plan worse, -2.8 [-5.5, -0.1] | kept (t4::yuriko_wish / yuriko_prio), default hand |
 
 - gaa-azorius-stax-control and heliod-mono-white-stax are retired from the pool (test seats only): no paired test is
   possible; their plan files carry the knobs, their hand code stays.

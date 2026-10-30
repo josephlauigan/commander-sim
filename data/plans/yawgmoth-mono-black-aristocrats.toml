@@ -1,3 +1,31 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
 deck = "yawgmoth-mono-black-aristocrats"
 default = "hand"
+
+# Win lines (was ai/plans.rs yawg_wish: Yawgmoth, then the undying loop, then a death payoff, then other combos)
+[[line]]
+name = "Yawgmoth + undying loop + a death payoff"
+kind = "drain"
+combo = "Yawgmoth + undying loop + a death payoff"
+
+[[line]]
+name = "Gravecrawler + Phyrexian Altar + a Zombie + a death payoff"
+combo = "Gravecrawler + Phyrexian Altar + a Zombie + a death payoff"
+
+[[line]]
+name = "Reassembling Skeleton / Gravecrawler + Pitiless Plunderer + an altar + a death payoff"
+combo = "Reassembling Skeleton / Gravecrawler + Pitiless Plunderer + an altar + a death payoff"
+
+[[line]]
+name = "Phyrexian Altar + Reassembling Skeleton + Pawn of Ulamog / Sifter of Skulls + a death payoff"
+combo = "Phyrexian Altar + Reassembling Skeleton + Pawn of Ulamog / Sifter of Skulls + a death payoff"
+
+# Cast priorities (was yawg_prio): Yawgmoth as soon as it can be cast; with Yawgmoth out, the next piece of the loop
+[[prio]]
+commander = true
+value = 86
+
+[[prio]]
+next_of = "Yawgmoth + undying loop + a death payoff"
+when = ["out:Yawgmoth, Thran Physician"]
+value = 80

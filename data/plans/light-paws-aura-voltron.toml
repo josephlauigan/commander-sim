@@ -1,6 +1,7 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Static knobs only; its hand entry in ai/plans.rs CONFIG is deleted (results identical, Stage A).
 deck = "light-paws-aura-voltron"
-default = "hand"
+default = "plan"
 
 [style]
 temp = 1.0
