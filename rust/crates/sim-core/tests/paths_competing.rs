@@ -376,12 +376,12 @@ fn springheart_nantuko_makes_its_insect_on_landfall_only() {
 fn battle_angels_of_tyr_makes_a_treasure_only_on_combat_damage() {
     let mut g = tbl("aurelia-boros-extra-combats");
     let m = perm(&mut g, P0, "Battle Angels of Tyr");
-    assert!(tokens(&g, P0).is_empty(), "no Treasure as it enters (the Scryfall treas tag is gone)");
+    assert_eq!(g.player(P0).treasures, 0, "no Treasure as it enters (the Scryfall treas tag is gone)");
     lands(&mut g, P1, "Plains", 3, false);
     let f = g.registry.get(card(&g, "Battle Angels of Tyr")).and_then(|i| i.combat_damage).expect("combat_damage");
     f(&mut g, m, P0, m, P1, 4).unwrap();
     stack::flush_triggers(&mut g).unwrap();
-    assert_eq!(tokens(&g, P0).len(), 1, "one Treasure: that player has the most lands");
+    assert_eq!(g.player(P0).treasures, 1, "one Treasure: that player has the most lands");
 }
 
 #[test]
