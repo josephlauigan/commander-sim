@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Karn, Kefka, Sauron, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
+JD's decks: Cloud, Karn, Kefka, Sauron, Seph/Atraxa, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -724,3 +724,11 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 - **2026-10-27.** Out: Assassin's Trophy (the proxy). In: Kindred Dominance. JD's choice, not simulated: the deck's first board wipe (name Dragon; one-sided with Maskwood Nexus out). The real Assassin's Trophy from Seph/Atraxa goes to Tymna/Thrasios.
 - **2026-10-25.** Out: Arcane Sanctum, Arcane Signet, Battlefield Forge, Cinder Glade, Counterspell, Dragonskull Summit, Exotic Orchard, Fabled Passage, Gamble, Game Trail, Heroic Intervention, Jetmir's Garden, Karplusan Forest, Ketria Triome, Lightning Bolt, Mountain, Plains, Rootbound Crag, Spara's Headquarters, Ziatora's Proving Ground. In: Badlands, Bayou, Flooded Strand, Force of Negation, Godless Shrine, Grand Abolisher, Grim Monolith, Hallowed Fountain, Imperial Seal, Mana Drain, Marsh Flats, Plateau, Polluted Delta, Scrubland, Taiga, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave. Proxy upgrades (JD, 10/25): 9 original duals, 4 fetch lands and 3 shock lands for the Triomes, tapped and painland duals, Fabled Passage, Exotic Orchard and three basics; Mana Drain for Counterspell, Grand Abolisher for Heroic Intervention, Grim Monolith for Arcane Signet, Imperial Seal for Gamble, Force of Negation for Lightning Bolt.
 - **2026-10-25.** New deck (JD, 10/25): five-colour Godo + Helm of the Host combo with Equipment and Dragons; Gilgamesh, Master-at-Arms in the 99.
+
+## Thanos, the Mad Titan — Five-Colour cEDH Turbo
+
+`decklists/JD/thanos-five-colour-turbo.md`. Not in the simulator yet.
+
+### Changes
+
+- **2026-10-30.** New deck (JD, 10/30): the Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as commander. Out: Scion of the Ur-Dragon, Ancient Copper Dragon, Korvold, Fae-Cursed King, Prismari, the Inspiration (copy targets for Scion, dead without him). In: Fierce Guardianship, Deflecting Swat, Deadly Rollick (free while you control your commander). Not simulated; the Scion deck stays as the baseline.
