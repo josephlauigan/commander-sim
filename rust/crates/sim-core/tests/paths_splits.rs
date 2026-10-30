@@ -20,7 +20,7 @@ fn land_enters(g: &mut sim_core::state::Game, p: PlayerId, name: &str) {
 
 #[test]
 fn a_gain_land_gains_its_life_once() {
-    // compiled "when it enters, gain N life" and the engine's land_etb_fx: only the second runs for a land
+    // the compiled "when it enters, gain N life" is the one path (Phase 3: the engine's land_etb_fx is gone)
     for (name, n) in [("Jungle Hollow", 1), ("Scoured Barrens", 1), ("Thornwood Falls", 1), ("Radiant Fountain", 2)] {
         let mut g = game();
         let life = g.player(P0).life;
@@ -30,16 +30,21 @@ fn a_gain_land_gains_its_life_once() {
 }
 
 #[test]
-fn a_lands_compiled_ability_is_never_offered() {
-    // a land is no permanent in the sim: its compiled activated ability doesn't compete with the engine's handling
+fn a_lands_compiled_ability_is_offered_unless_another_path_runs_it() {
+    // Phase 3: a land's compiled activated ability is offered as a permanent's is, except a fetch land's (the f tag
+    // cracks it: turn::crack_fetch) and a channel ability (used from the hand by card code: Boseiju's hand_options);
+    // Treasure Vault has none (dsl = []: the ability language has no {X} activation cost)
     let mut g = game();
     for name in ["Flooded Strand", "Boseiju, Who Endures", "Castle Ardenvale", "Treasure Vault"] {
         let c = take(&mut g, P0, name);
         g.add_land(P0, c, false);
     }
     lands(&mut g, P0, "Forest", 4, false);
+    lands(&mut g, P0, "Plains", 2, false);
     let opts = sim_core::dsl::ability_options(&mut g, P0, true).unwrap();
-    assert!(opts.is_empty(), "{:?}", opts.iter().map(|o| &o.label).collect::<Vec<_>>());
+    let mut labels: Vec<&str> = opts.iter().map(|o| o.label.as_str()).collect();
+    labels.sort();
+    assert_eq!(labels, ["Castle Ardenvale ability"]);
 }
 
 #[test]

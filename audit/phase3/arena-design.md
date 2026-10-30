@@ -36,17 +36,23 @@ plan is to keep both lists (a land never sits in `player.perms`) and make the ab
 `t6_scion::copy_revert` and `alela::mirror_revert` (look for a nonland data key), `t45_edgar::groom_as_enters`
 (looks for a permanent with the Groom's card). None can match a land, so lands in the arena change none of them.
 
-**Special paths onto it (Stage C).** One path per effect, as in Phase 2:
-| Land effect | Today | After |
+**Special paths onto it (Stage C, as built).** One path per effect, as in Phase 2. The ability language's sources
+are `player.perms` then `dsl::land_sources` (the player's lands with a compiled ability other than a note, not a
+plain Mountain under Blood Moon), in `dsl::fire`, `dsl::statics`, `dsl::pt` and `dsl::ability_options`. A land with
+such an ability turns the ability language on as it enters (`Game::add_land`, as `zones::enter` does).
+| Land effect | Before | After |
 |---|---|---|
-| Activated abilities (Boseiju, Castle Ardenvale, Treasure Vault ...) | never offered | `dsl::ability_options` walks `player.lands` |
-| Statics and triggers in the ability language | never run on lands | `dsl::statics` / `dsl::fire` walk `player.lands` |
-| Temples scry, gain lands gain | `land_etb_fx` (`zones::lands_entered`) | kept where no compiled ability covers it, else the compiled one; never both |
-| Surveil lands (4) | nothing | surveil 1 as they enter |
-| Fetches | `f` tag, `turn::crack_fetch` | kept (the compiled ability must not also be offered) |
-| Reliquary Tower | `nomax` tag | kept |
-| Card-code `land_options`, `t6_lands.rs` | card code | kept, unless the compiled ability now offers the same thing |
-| Manlands / Nissa | stand-in token `Perm` | kept for now (one path); the land itself animating is a later PR |
+| Activated abilities (Castle Ardenvale, High Market, Maelstrom, Skemfar, Hanweir, Room of Refuge, Sinister Hideout, Urza's Factory) | never offered | offered by `dsl::ability_options`; a {T} cost is paid with other sources (`lands::pay_without`), "sacrifice it" goes through `lands::sac_land` |
+| Channel (Boseiju, Otawara, Takenuma: discard cost, no {T}) | never offered | still never from the battlefield (`dsl::channel`); Boseiju and Otawara channel from the hand (card code `hand_options`) |
+| Treasure Vault | never offered | `dsl = []`: the compiled ability had lost its {X}{X} (the language has no {X} activation cost) and would make 3 Treasures free |
+| Temples scry, gain lands gain | `land_etb_fx` (`zones::lands_entered`) | the compiled enter trigger, fired by `zones::lands_entered` through `dsl::fire` (on the stack); `land_etb_fx` deleted (engine, `cards.json`, cardgen) |
+| Surveil lands (4) | nothing | the compiled surveil 1 enter trigger, as above |
+| Seraph Sanctuary's "an Angel you control enters" | nothing | runs (`dsl::fire` walks lands) |
+| Fetches (the `f` tag, incl. Krosan Verge, Myriad Landscape, Blighted Woodland) | `turn::crack_fetch` | kept; their compiled fetch is not offered |
+| Reliquary Tower | `nomax` tag | kept (nothing reads the compiled `no_max_hand` static) |
+| Card-code `land_options` lands | card code | kept; a land with `land_options` is not offered its compiled abilities too |
+| Manlands / Nissa | stand-in token `Perm` | kept (one path); the land itself animating is a later PR |
+| Targets of compiled effects (`dsl::select`) | permanents only | unchanged: lands as targets still go through their own code |
 
 ## Risks
 - **Iteration order**: guarded by keeping both player lists and every push / retain where it is.

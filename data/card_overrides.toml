@@ -537,7 +537,7 @@ status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
 ["Boseiju, Who Endures"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}); card code: hand_options channels it from the hand; the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 status = "Full"
 note = "channel {1}{G} from hand: destroys a valuable artifact or enchantment"
 
@@ -3478,7 +3478,7 @@ status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
 ["Otawara, Soaring City"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}); card code: hand_options channels it from the hand; the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 status = "Full"
 note = "land; channelled from hand to bounce a real threat"
 
@@ -3947,7 +3947,7 @@ status = "Full"
 note = ""
 
 ["Reliquary Tower"]
-paths_ok = "compiled: no maximum hand size, a static read from permanents only (the nomax tag does it); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: no maximum hand size, a static nothing reads (the nomax tag does it: turn.rs discard to hand size); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 types = "L"
 tags = "c=C nomax"
 status = "Full"
@@ -8342,7 +8342,7 @@ status = "Full"
 note = "soulbond (DataKey::Soulbond, bulk_white::paladin_etb): pairs on either entry, ends when either leaves or changes control; both have double strike"
 
 ["Hidden Grotto"]
-paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the surveil 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 tags = "c=C"
 status = "Full"
 note = "{T}: {C}. The {1},{T}: any colour mode converts one mana into another (net zero), so it is left out (it made a free coloured mana)"
@@ -9275,7 +9275,7 @@ status = "Approximate"
 note = "artifact land ({T}: {C}) that counts for Karn's artifacts; indestructible is not modeled"
 
 ["Urza's Factory"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 dsl = [
   { type = "activated", cost = { mana = "7", tap = true }, effects = [{ do = "token", n = 1, pow = 2, tgh = 2, keywords = [], attacking = false, warrior = false, types = ["artifact", "assembly-worker"] }], sorcery = false, once = false },
 ]
@@ -9897,124 +9897,126 @@ pool_remove_tags = ["treas"] # the Scryfall treas tag made a Treasure as it ente
 # Phase 2 (PR 5b, 2026-10-29): declared splits for cards that had no entry. Only paths_ok, read by cardgen audit --paths.
 
 ["Arid Mesa"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Bloodstained Mire"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Flooded Strand"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Marsh Flats"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Misty Rainforest"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Polluted Delta"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Prismatic Vista"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Scalding Tarn"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Verdant Catacombs"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Windswept Heath"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Wooded Foothills"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Blighted Woodland"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Krosan Verge"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Myriad Landscape"]
-paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the fetch ability, not offered for a land with the f tag (dsl::ability_options); the engine's f tag cracks it once (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Castle Ardenvale"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["High Market"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Maelstrom of the Spirit Dragon"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Skemfar Elderhall"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Takenuma, Abandoned Mire"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}), and no card code channels it from the hand (not modeled); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Treasure Vault"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+dsl = []
+status = "Partial"
+note = "{T}: {C}. Its {X}{X}, {T}, sacrifice: X Treasures is not used by the AI: the ability language has no {X} activation cost (the compiled ability lost the {X}{X} and made 3 for free); practice mode has it (human/karn.rs)"
 
 ["Hanweir Battlements"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Room of Refuge"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Sinister Hideout"]
-paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Enlightenment"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Malady"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Mystery"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Plenty"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Silence"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Triumph"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Deceit"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Temple of Malice"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Zhalfirin Void"]
-paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the scry 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Jungle Hollow"]
-paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the enter life gain, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Scoured Barrens"]
-paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the enter life gain, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Thornwood Falls"]
-paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the enter life gain, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Radiant Fountain"]
-paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the enter life gain, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Seraph Sanctuary"]
-paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the enter life gain, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3, land_etb_fx is gone); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Commercial District"]
-paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the surveil 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Undercity Sewers"]
-paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the surveil 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Underground Mortuary"]
-paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+paths_ok = "compiled: the surveil 1 enter trigger, the one path (zones::lands_entered fires a land's enter trigger through dsl::fire; Phase 3); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Alesha, Who Laughs at Fate"]
 paths_ok = "compiled: the +1/+1 counter when she attacks; card code: the raid end-step return from the graveyard (t12_isshin.rs)"

@@ -83,6 +83,28 @@ fn abilities(g: &Game, c: CardId) -> Arc<[Ability]> {
     g.db.get(c).abilities.clone()
 }
 
+/// Phase 3 (one arena): q's lands whose compiled abilities work, as ability sources after q's other permanents
+/// (`player.perms` first, so everything that ran before keeps its order). Blood Moon: a nonbasic land that is a plain
+/// Mountain has no abilities of its own.
+pub fn land_sources(g: &Game, q: PlayerId) -> impl Iterator<Item = PermId> + '_ {
+    g.player(q).lands.iter().copied().filter(move |&l| {
+        let d = g.db.get(g.perm(l).card());
+        land_live(d) && g.perm(l).on_bf && !crate::engine::mana::moon_land(g, l)
+    })
+}
+
+/// Does land card c have a compiled ability that does something (not only a note)? Such a land turns the ability
+/// language on as it enters (`Game::add_land`), as a permanent with abilities does (`zones::enter`).
+pub fn land_live(d: &crate::cards::CardDef) -> bool {
+    d.abilities.iter().any(|a| !matches!(a, Ability::Static { kind, .. } if kind == "note"))
+}
+
+/// A channel ability ("discard this card"), compiled as an activated ability with a discard cost and no {T}: it is
+/// used from the hand (card code `hand_options`: Boseiju, Otawara), never from the battlefield.
+fn channel(cost: &model::Cost) -> bool {
+    cost.discard.is_some() && cost.tap != Some(true)
+}
+
 // ------------------------------------------------------------------ numbers, filters, players
 pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<PermId>) -> i32 {
     let name = match n {
@@ -1330,6 +1352,7 @@ fn fire_inner(g: &mut Game, event: &str, kw: &Fired) -> Res {
             continue;
         }
         let mut srcs = g.player(q).perms.clone();
+        srcs.extend(land_sources(g, q)); // Phase 3: lands' compiled triggers, after the other permanents'
         if let Some(x) = kw.dying
             && g.perm(x).owner == q
             && !srcs.contains(&x)
@@ -1549,7 +1572,9 @@ fn statics<'a>(g: &'a Game, kind: &'a str) -> impl Iterator<Item = (PlayerId, Pe
     g.players.iter().filter(|q| q.alive).flat_map(move |q| {
         q.perms
             .iter()
-            .filter_map(move |&src| {
+            .copied()
+            .chain(land_sources(g, q.id)) // Phase 3: lands' statics, after the other permanents'
+            .filter_map(move |src| {
                 let x = g.perm(src);
                 let cd = x.cd?;
                 if x.phased || x.owner != q.id {
@@ -1585,7 +1610,7 @@ pub fn pt(g: &Game, m: PermId) -> (i32, i32) {
     // bma_anthem); the sums do not depend on the order
     let owner = x.owner;
     for q in g.players.iter().filter(|q| q.alive) {
-        for &src in &q.perms {
+        for src in q.perms.iter().copied().chain(land_sources(g, q.id)) {
             let s = g.perm(src);
             let Some(cd) = s.cd else { continue };
             if s.phased || s.owner != q.id {
@@ -2080,13 +2105,25 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     if cost.other.is_some() || cost.tap_other.is_some() || cost.energy.is_some() {
         return Ok(false);
     }
-    if !can_pay(g, p, gn, &pips, false) {
+    // Phase 3: a land whose ability costs {T} can't also tap for the mana that pays it
+    let land = g.player(p).lands.contains(&src);
+    let land_tap = land && cost.tap == Some(true);
+    let payable = if land_tap {
+        crate::impls::lands::can_pay_without(g, p, src, gn, &pips)
+    } else {
+        can_pay(g, p, gn, &pips, false)
+    };
+    if !payable {
         return Ok(false);
     }
     if dry {
         return Ok(true);
     }
-    pay(g, p, gn, &pips, false)?;
+    if land_tap {
+        crate::impls::lands::pay_without(g, p, src, gn, &pips)?;
+    } else {
+        pay(g, p, gn, &pips, false)?;
+    }
     if cost.tap == Some(true) {
         g.perm_mut(src).tapped = true;
         crate::impls::t0_captain::became_tapped(g, src); // Captain America, Living Legend
@@ -2112,7 +2149,11 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         zones::die(g, f, "sac")?;
     }
     if cost.sac.as_deref() == Some("self") {
-        zones::die(g, src, "sac")?;
+        if land {
+            crate::impls::lands::sac_land(g, p, src)?; // Phase 3: a land with "sacrifice it" goes as lands do
+        } else {
+            zones::die(g, src, "sac")?;
+        }
     }
     Ok(true)
 }
@@ -2133,7 +2174,17 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
         out.extend(equip_options(g, p));
     }
     let stamp = round_stamp(g, p);
-    for src in g.player(p).perms.clone() {
+    // Phase 3: p's lands after p's other permanents, but not those whose abilities run through another path: a
+    // fetch land (the f tag: turn::crack_fetch) and a land whose card code offers its plays (land_options)
+    let lands: Vec<PermId> = land_sources(g, p)
+        .filter(|&l| {
+            let c = g.perm(l).card();
+            !g.db.get(c).tag(Tag::F) && g.registry.get(c).is_none_or(|i| i.land_options.is_none())
+        })
+        .collect();
+    let mut srcs = g.player(p).perms.clone();
+    srcs.extend(lands);
+    for src in srcs {
         let x = g.perm(src);
         let Some(cd) = x.cd else { continue };
         if x.phased || !g.db.get(cd).has_dsl() || crate::engine::values::stopped(g, &g.db.get(cd).name) {
@@ -2144,11 +2195,12 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
         }
         let name = g.db.get(cd).name.to_string();
         let held = crate::impls::karn::hold_ability(g, p, &name); // the karn deck keeps its Baubles
+        let land = g.db.get(cd).land;
         for (i, a) in abilities(g, cd).iter().enumerate() {
             match a {
                 Ability::Activated { cost, effects, sorcery, once, ai_min } => {
-                    if held {
-                        continue;
+                    if held || (land && channel(cost)) {
+                        continue; // a land's channel ability is used from the hand
                     }
                     if *sorcery == Some(true) && !sorcery_ok {
                         continue;

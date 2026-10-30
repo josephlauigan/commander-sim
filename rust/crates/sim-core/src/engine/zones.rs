@@ -3,7 +3,7 @@
 
 use crate::ai;
 use crate::cardcode;
-use crate::cards::{Colors, LandEtb};
+use crate::cards::Colors;
 use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::stack::{queue_triggers, trigger_window};
@@ -1652,32 +1652,23 @@ pub fn land_ramp(g: &mut Game, p: PlayerId, n: u32, tapped: bool) -> Res {
     Ok(())
 }
 
-/// the lands that just entered under p's control: their enter triggers (a Temple's scry, a gain land's life)
+/// the lands that just entered under p's control: their compiled enter triggers (a Temple's scry, a gain land's life,
+/// a surveil land's surveil) go on the stack through the ability language (Phase 3: one path; the engine's own
+/// `land_etb_fx` is gone)
 pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
     for l in g.player(p).lands.clone() {
         if g.perm(l).data.truthy(DataKey::In) {
             continue;
         }
         g.perm_mut(l).data.set(DataKey::In, Val::Bool(true));
-        let cd = g.perm(l).card();
         if crate::engine::mana::moon_land(g, l) {
             continue; // Blood Moon: a plain Mountain has no enters trigger
         }
-        for fx in g.db.get(cd).land_etb_fx.clone() {
-            let name = match fx {
-                LandEtb::Scry(n) => format!("scry {n}"),
-                LandEtb::Gain(n) => format!("gain {n} life"),
-            };
-            if g.over || !crate::engine::stack::trigger_window_card(g, p, cd, &name)? {
-                continue;
-            }
-            match fx {
-                LandEtb::Scry(n) => cardcode::scry(g, p, n, false)?,
-                LandEtb::Gain(n) => {
-                    gain(g, p, n)?;
-                    crate::glog!(g, "    {} gains {} life ({})", g.player(p).name, n, g.db.get(cd).name);
-                }
-            }
+        let etb = g.db.get(g.perm(l).card()).abilities.iter().any(|a| {
+            matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == "etb")
+        });
+        if etb && !g.over {
+            crate::dsl::fire(g, "etb", crate::dsl::Fired { perm: Some(l), owner: Some(p), ..Default::default() })?;
         }
     }
     Ok(())

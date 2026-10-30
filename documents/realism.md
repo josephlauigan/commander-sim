@@ -260,6 +260,18 @@ doubles, `data/paths_known.txt` is empty, and every card on two paths has a `pat
   cards first); a `--deck` run's opponent tiers get one summed line each. `--quiet` keeps it. It is read from the card
   data once per run and plays no game, so results are unchanged (`rust/crates/sim-cli/src/coverage.rs`).
 
+**Phase 3, engine structures, PR 1: one permanent arena** (2026-10-29, branch `phase3-arena`; gate changed by JD to
+"the test suite passes", no sims until Phase 4). Every permanent, land or not, is a `Perm` in `Game::perms` with one
+id type (`PermId`): the `Land` type, `Game::lands` and `LandId` are gone. `Player::lands` and `Player::perms` stay two
+lists in the same order as before. The ability language now reads lands (after the other permanents): their compiled
+triggers, statics and activated abilities run, so the engine's `land_etb_fx` is deleted (temples and gain lands use
+their compiled enter trigger; the four surveil lands now surveil), eight lands' activated abilities are offered
+(Castle Ardenvale, High Market, Maelstrom of the Spirit Dragon, Skemfar Elderhall, Hanweir Battlements, Room of
+Refuge, Sinister Hideout, Urza's Factory), and Seraph Sanctuary's Angel trigger runs. Fetches keep the `f` tag's
+`crack_fetch`, channel lands channel from the hand only, Treasure Vault lost its compiled ability (`dsl = []`: the
+language has no {X} activation cost). Design and the decks touched: `audit/phase3/arena-design.md`,
+`audit/phase3/arena-handoff.md`.
+
 ## What's next
 
 1. Finish Phase 0: put the Tier 3 targets on `main` and let the nightly run score them. The same method (Playgroup's

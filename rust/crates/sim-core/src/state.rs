@@ -1656,6 +1656,9 @@ impl Game {
         x.tapped = tapped;
         x.sick = false;
         x.on_bf = true;
+        if !self.dsl_on && crate::dsl::land_live(self.db.get(cd)) {
+            self.dsl_on = true; // its compiled abilities run (Phase 3), as zones::enter does for other permanents
+        }
         self.player_mut(p).lands.push(id);
         id
     }
