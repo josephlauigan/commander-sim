@@ -467,17 +467,6 @@ fn kaalia(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> 
     Ok(vec![m])
 }
 
-/// t2.kaalia_prio: hold Angels, Demons and Dragons for Kaalia when she's ready to attack
-pub fn kaalia_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let pl = g.player(p);
-    let kaalia = pl.perms.iter().any(|&m| g.perm(m).is_cmd);
-    let d = g.db.get(c);
-    if d.creature && ADD.iter().any(|t| d.has_subtype(t)) && d.cmc >= 5 && (kaalia || pl.cmd_in_zone && pl.tax <= 2) {
-        return Some(0);
-    }
-    None
-}
-
 /// damage equal to power when another creature enters; the targeting life tax is ignored
 fn terror(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = owner(g, src);

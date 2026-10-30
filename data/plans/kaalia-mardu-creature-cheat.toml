@@ -1,6 +1,8 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Paired test 2026-10-30 (t2, 2000 games): byte-identical output with the hand t2::kaalia_prio (26.8% both ways): the
+# hand code is deleted.
 deck = "kaalia-mardu-creature-cheat"
-default = "hand"
+default = "plan"
 
 [style]
 temp = 1.0

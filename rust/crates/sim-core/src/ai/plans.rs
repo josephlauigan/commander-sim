@@ -53,7 +53,7 @@ const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {
 }
 
 /// pool_decks.CONFIG
-const CONFIG: [(&str, DeckConfig); 4] = [
+const CONFIG: [(&str, DeckConfig); 3] = [
     (
         "yuriko-dimir-ninjas",
         DeckConfig {
@@ -73,15 +73,6 @@ const CONFIG: [(&str, DeckConfig); 4] = [
     (
         "heliod-mono-white-stax",
         DeckConfig { prio_fn: Some(heliod_prio), wish: Some(heliod_wish), style: style(1.0, 0.5, 0.8), ..NONE },
-    ),
-    (
-        "kaalia-mardu-creature-cheat",
-        DeckConfig {
-            prio_fn: Some(crate::cardcode::kaalia_prio),
-            cmd_prio: Some(88),
-            style: style(1.0, 0.8, 0.4),
-            ..NONE
-        },
     ),
 ];
 

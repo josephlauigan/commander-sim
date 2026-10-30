@@ -17,6 +17,7 @@ Scratch (sim outputs): `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc
 | chulane-bant-value-combo | t4 | 13.2% [11.6, 14.8] n=1622 | 15.7% [13.9, 17.5] n=1622 | plan better, +2.5 [+0.1, +4.9] | chulane_prio / chulane_wish deleted, default plan |
 | yuriko-dimir-ninjas | t4 | 20.9% [18.9, 22.9] n=1599 | 18.1% [16.2, 20.0] n=1599 | plan worse, -2.8 [-5.5, -0.1] | kept (t4::yuriko_wish / yuriko_prio), default hand |
 | yawgmoth-mono-black-aristocrats | t5 | 17.6% [15.7, 19.5] n=1585 | 15.7% [13.9, 17.5] n=1584 | level, -1.9 [-4.5, +0.7] (point estimate lower) | yawg_prio / yawg_wish deleted, default plan |
+| kaalia-mardu-creature-cheat | t2 | 26.8% [24.6, 29.0] n=1556 | 26.8% [24.6, 29.0] n=1556 | level: byte-identical output | t2::kaalia_prio deleted, default plan |
 
 - gaa-azorius-stax-control and heliod-mono-white-stax are retired from the pool (test seats only): no paired test is
   possible; their plan files carry the knobs, their hand code stays.
