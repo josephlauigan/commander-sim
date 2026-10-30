@@ -1332,9 +1332,13 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
                 continue;
             }
         }
+        // --- phase4-search: inside a playout of an ISMCTS decision, the decider's own choices follow the tree
         if opts.len() >= 2
-            && search::enabled(g, p)
-            && let Some(i) = search::choose(g, p, post, &opts)
+            && let Some(i) = if search::enabled(g, p) {
+                search::choose(g, p, post, &opts)
+            } else {
+                super::ismcts::tree_pick(g, p, &opts)
+            }
         {
             let o = &opts[i];
             let lbl = format!("{} [search]", o.label);
