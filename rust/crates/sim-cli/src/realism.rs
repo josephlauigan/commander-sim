@@ -290,6 +290,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     let targets = load_targets(&root, tier)?;
     let ctx = Ctx { sim, verbose: !a.brief };
     let keys = sim.pool_keys(tier);
+    crate::coverage::print(&crate::coverage::tier_blocks(sim, &[tier]));
     let (n, seed0) = (a.games, a.seed);
     {
         let mut pr = sim.prog.lock().unwrap();

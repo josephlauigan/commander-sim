@@ -5,7 +5,7 @@
 use cardgen::audit::{Audit, engine_db};
 use cardgen::data::Project;
 use cardgen::export::Inputs;
-use cardgen::paths::{CardPaths, Class, all_paths, paths_ok};
+use cardgen::paths::{CardPaths, Class, all_paths, check, load_known, paths_ok, refusal};
 use sim_core::hooks::SlotClass;
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -17,6 +17,8 @@ struct Fixture {
     undeclared: BTreeMap<String, CardPaths>,
     /// cards whose only code is AI slots, and exactly `prio`
     prio_only: Vec<String>,
+    /// data/paths_known.txt
+    known: BTreeMap<String, Class>,
 }
 
 fn fixture() -> &'static Fixture {
@@ -37,7 +39,8 @@ fn fixture() -> &'static Fixture {
             .filter(|d| reg.get(d.id).is_some_and(|i| i.slots() == ["prio"] && i.slots_of(SlotClass::Rule).is_empty()))
             .map(|d| d.name.to_string())
             .collect();
-        Fixture { all, undeclared, prio_only }
+        let known = load_known(&p).unwrap();
+        Fixture { all, undeclared, prio_only, known }
     })
 }
 
@@ -108,4 +111,41 @@ fn string_literals_skip_comments_and_char_literals() {
     let src =
         "let a = \"Sol Ring\"; // \"not this\"\nlet c = '\"'; fn f<'a>(x: &'a str) {} /* \"nor\" */ g(\"x\\\"y\");";
     assert_eq!(cardgen::paths::string_literals(src), ["Sol Ring", "x\\\"y"]);
+}
+
+/// `cardgen export`'s guard on the committed data (so `cargo test` fails on a double even if nobody re-exports): no
+/// card runs through two paths unless declared (`paths_ok`) or a known double of the same class, and no known-list
+/// line is stale
+#[test]
+fn the_export_guard_passes_the_committed_data() {
+    let f = fixture();
+    let (new, stale) = check(&f.all, &f.known);
+    assert!(new.is_empty(), "{}", refusal(&new));
+    assert!(stale.is_empty(), "data/paths_known.txt only shrinks: delete the line of each card that is no longer that double (or no longer exists): {stale:?}");
+    // the known list holds no hard double and no declared split
+    assert!(f.known.values().all(|c| matches!(c, Class::Shadowed | Class::Competing | Class::Split)));
+}
+
+#[test]
+fn the_export_guard_refuses_an_undeclared_double() {
+    let f = fixture();
+    // Hexing Squelcher without its paths_ok: a hard double the guard names, with its paths and the fixes
+    let (new, _) = check(&f.undeclared, &f.known);
+    let names: Vec<&str> = new.iter().map(|c| c.name.as_str()).collect();
+    assert_eq!(names, ["Hexing Squelcher"]);
+    let msg = refusal(&new);
+    for want in ["Hexing Squelcher [hard]: uncounterable:", "rule: ", "paths_ok = \"why\"", "dsl = []", "nothing was written"] {
+        assert!(msg.contains(want), "missing {want:?}:\n{msg}");
+    }
+    // a hard double is refused even when the known list names the card
+    let mut known = f.known.clone();
+    known.insert("Hexing Squelcher".into(), Class::Hard);
+    assert_eq!(check(&f.undeclared, &known).0.len(), 1);
+    // a known double that changes class is a new double
+    let name = f.known.iter().find(|(_, c)| **c == Class::Split).map(|(n, _)| n).expect("a known split");
+    let mut known = f.known.clone();
+    known.insert(name.clone(), Class::Competing);
+    let (new, stale) = check(&f.all, &known);
+    assert_eq!(new.iter().map(|c| c.name.as_str()).collect::<Vec<_>>(), [name.as_str()]);
+    assert_eq!(stale.len(), 1);
 }

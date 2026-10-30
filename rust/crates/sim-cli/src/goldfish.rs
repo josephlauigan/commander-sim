@@ -385,6 +385,11 @@ pub fn main(sim: &Sim, a: &Args) -> Result<(), String> {
         }
         return Ok(());
     }
+    let lists: Vec<crate::coverage::Entry> = keys
+        .iter()
+        .map(|k| list_of(sim, k).map(|l| crate::coverage::Entry::Deck(crate::coverage::deck_list(sim, k, &l, None))))
+        .collect::<Result<_, _>>()?;
+    crate::coverage::print(&lists);
     sim.prog.lock().unwrap().on = !a.quiet;
     {
         let mut pr = sim.prog.lock().unwrap();
