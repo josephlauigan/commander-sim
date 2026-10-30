@@ -58,7 +58,7 @@ use crate::engine::values::{epow, etgh, has_type, indestructible, pval, threat, 
 use crate::engine::zones::{Enter, Tokens, die, draw, enter, make_tokens, max_by, min_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::common::{WalkerAb, walker};
 use crate::impls::lands::{can_pay_without, pay_without};
@@ -829,11 +829,11 @@ fn paying_vampire(g: &Game) -> bool {
 }
 
 /// {C}, or (paying 1 life) any colour, spent only on a Vampire spell
-fn estate_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+fn estate_cols(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if paying_vampire(g) { g.player(p).ident } else { Colors::NONE }
 }
 
-fn estate_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+fn estate_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
     if paying_vampire(g) {
         lose_life(g, p, 1, Some(p), "life", Some(false))?;
     }
@@ -846,9 +846,9 @@ fn estate_cost(g: &Game, p: PlayerId) -> u32 {
 
 /// {5},{T}, {1} less per Vampire: a Blood token (at the end of the turn before yours, with the mana spare); a Blood's
 /// rummage
-fn estate_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn estate_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut out = vec![];
-    let ok = g.land(l).on_bf && g.player(p).lands.contains(&l) && !g.land(l).tapped;
+    let ok = g.perm(l).on_bf && g.player(p).lands.contains(&l) && !g.perm(l).tapped;
     let cost = estate_cost(g, p);
     if ok && post.is_none() && cost <= 3 && can_pay_without(g, p, l, cost, "") {
         let label = format!("Voldaren Estate: a Blood token ({{{cost}}})");
@@ -870,12 +870,12 @@ fn estate_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> R
 }
 
 fn estate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    let l = PermId(arg as u32);
     let cost = estate_cost(g, p);
-    if !g.land(l).on_bf || g.land(l).tapped || !pay_without(g, p, l, cost, "")? {
+    if !g.perm(l).on_bf || g.perm(l).tapped || !pay_without(g, p, l, cost, "")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::impls::sheoldred::make_blood(g, p, 1)?;
     crate::glog!(g, "  {} makes a Blood token (Voldaren Estate)", g.player(p).name);
     Ok(true)

@@ -331,7 +331,7 @@ fn avengers_tower_digs_for_a_hero() {
     let dig = o.iter().find(|o| o.label.contains("Tower")).expect("offered at the end of turn");
     perform(&mut g, P0, dig.act.as_ref().unwrap()).unwrap();
     assert!(g.player(P0).hand.contains(&hero));
-    assert!(g.land(tower).tapped);
+    assert!(g.perm(tower).tapped);
 }
 
 // ------------------------------------------------------------------ Dismantling Wave

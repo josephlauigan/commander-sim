@@ -18,27 +18,26 @@ use crate::engine::zones::{Tokens, die, make_tokens, min_by};
 use crate::flow::Res;
 use crate::hooks::Registry;
 use crate::hooks::{Action, Opt};
-use crate::ids::{CardId, PermId};
-use crate::ids::{LandId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
-fn name_of(g: &Game, l: LandId) -> &str {
-    &g.db.get(g.land(l).card()).name
+fn name_of(g: &Game, l: PermId) -> &str {
+    &g.db.get(g.perm(l).card()).name
 }
 
 // ================================================================== City of Brass
 /// **City of Brass**: {T}: any colour (tag c=A); whenever it becomes tapped it deals 1 damage to you.
-fn brass_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+fn brass_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
     lose_life(g, p, 1, Some(p), "other", Some(true))
 }
 
 // ================================================================== City of Traitors
 /// **City of Traitors**: {T}: {C}{C} (tag amt=2). When you play another land, sacrifice it. The engine calls
 /// `land_etb` for the land just played, so every land without code of its own gets this check (`traitors_check`).
-pub(crate) fn traitors_check(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    let mine: Vec<LandId> =
+pub(crate) fn traitors_check(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    let mine: Vec<PermId> =
         g.player(p).lands.iter().copied().filter(|&x| x != l && name_of(g, x) == "City of Traitors").collect();
     for c in mine {
         if g.player(p).lands.contains(&c) {
@@ -53,8 +52,8 @@ pub(crate) fn traitors_check(g: &mut Game, p: PlayerId, l: LandId) -> Res {
 /// **Gemstone Caverns**: {T}: Add {C}; with a luck counter on it, one mana of any colour instead. The opening-hand
 /// clause (begin the game with it on the battlefield with a luck counter, exiling a card) needs the engine: see
 /// engine-needs-lands.md. The luck counter is `DataKey::Counters` (an Int) on the land.
-fn caverns_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
-    if g.land(l).data.int(DataKey::Counters) > 0 { g.player(p).ident } else { Colors::NONE }
+fn caverns_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
+    if g.perm(l).data.int(DataKey::Counters) > 0 { g.player(p).ident } else { Colors::NONE }
 }
 
 // ================================================================== the "{1},{T}: any colour" lands
@@ -64,8 +63,8 @@ fn caverns_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
 /// mana and the land its own colourless mana). With nothing else to pay, colourless only
 const ANY_FILTER: [&str; 3] = ["The Mycosynth Gardens", "Talon Gates of Madara", "Abstergo Entertainment"];
 
-fn any_filter_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
-    let payer = g.player(p).lands.iter().any(|&x| x != l && !g.land(x).tapped && !ANY_FILTER.contains(&name_of(g, x)));
+fn any_filter_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
+    let payer = g.player(p).lands.iter().any(|&x| x != l && !g.perm(x).tapped && !ANY_FILTER.contains(&name_of(g, x)));
     if payer { g.player(p).ident } else { Colors::NONE }
 }
 
@@ -83,8 +82,8 @@ fn abstergo_target(g: &Game, p: PlayerId) -> Option<CardId> {
     max_by(&cs, |c| card_worth(g, p, c, false)).filter(|&c| card_worth(g, p, c, false) >= 30.0)
 }
 
-fn abstergo(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post == Some(false) || g.land(l).tapped || !can_pay_without(g, p, l, 3, "") {
+fn abstergo(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false) || g.perm(l).tapped || !can_pay_without(g, p, l, 3, "") {
         return Ok(vec![]);
     }
     let Some(t) = abstergo_target(g, p) else { return Ok(vec![]) };
@@ -97,11 +96,11 @@ fn abstergo(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec
 }
 
 pub(crate) fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 3, "")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     crate::engine::turn::remove_land(g, p, l); // {T} and exile it as costs
     g.player_mut(p).exile.push(cd);
     crate::glog!(g, "  {} exiles Abstergo Entertainment", g.player(p).name);
@@ -206,11 +205,11 @@ fn eiganjo_blocks(
 
 // ================================================================== Deserted Temple
 /// What untapping this (tapped) land adds to p's mana: total mana with it untapped minus now
-fn land_untap_gain(g: &mut Game, p: PlayerId, t: LandId) -> i32 {
+fn land_untap_gain(g: &mut Game, p: PlayerId, t: PermId) -> i32 {
     let before = total_mana(g, p, false) as i32;
-    g.land_mut(t).tapped = false;
+    g.perm_mut(t).tapped = false;
     let after = total_mana(g, p, false) as i32;
-    g.land_mut(t).tapped = true;
+    g.perm_mut(t).tapped = true;
     after - before
 }
 
@@ -225,13 +224,13 @@ fn perm_untap_gain(g: &mut Game, p: PlayerId, m: PermId) -> i32 {
 
 /// **Deserted Temple**: {T}: Add {C}. {1},{T}: untap target land. A mana engine: the AI untaps a tapped land when that
 /// gives at least 3 more mana (the {1} and the Temple's own mana are the cost), e.g. Gaea's Cradle or City of Traitors
-fn temple(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || !can_pay_without(g, p, l, 1, "") {
+fn temple(g: &mut Game, l: PermId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped || !can_pay_without(g, p, l, 1, "") {
         return Ok(vec![]);
     }
-    let mut best: Option<(LandId, i32)> = None;
+    let mut best: Option<(PermId, i32)> = None;
     for t in g.player(p).lands.clone() {
-        if t == l || !g.land(t).tapped {
+        if t == l || !g.perm(t).tapped {
             continue;
         }
         let d = land_untap_gain(g, p, t);
@@ -257,17 +256,17 @@ fn unpack(arg: i64) -> (u32, u32) {
 
 fn temple_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (l, t) = unpack(arg);
-    let (l, t) = (LandId(l), LandId(t));
-    if !g.player(p).lands.contains(&l) || !g.player(p).lands.contains(&t) || g.land(l).tapped || !g.land(t).tapped {
+    let (l, t) = (PermId(l), PermId(t));
+    if !g.player(p).lands.contains(&l) || !g.player(p).lands.contains(&t) || g.perm(l).tapped || !g.perm(t).tapped {
         return Ok(false);
     }
     if !pay_without(g, p, l, 1, "")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Deserted Temple: untaps {}", g.player(p).name, name_of(g, t));
-    if ability_window_card(g, p, g.land(l).card(), "untap a land", None, None)? && g.player(p).lands.contains(&t) {
-        g.land_mut(t).tapped = false;
+    if ability_window_card(g, p, g.perm(l).card(), "untap a land", None, None)? && g.player(p).lands.contains(&t) {
+        g.perm_mut(t).tapped = false;
     }
     Ok(true)
 }
@@ -277,13 +276,13 @@ fn temple_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// permanent). The AI untaps a tapped legendary land or permanent when that gives at least 3 more mana (the {U} and
 /// Minamo's own mana are the cost): Gaea's Cradle, a legendary mana creature. Arg: Minamo's land id, then the
 /// target's kind (1 land, 2 permanent) and id packed above it
-fn minamo(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || !can_pay_without(g, p, l, 0, "U") {
+fn minamo(g: &mut Game, l: PermId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped || !can_pay_without(g, p, l, 0, "U") {
         return Ok(vec![]);
     }
     let mut best: Option<(i64, i32, String)> = None; // (arg, gain, label)
     for t in g.player(p).lands.clone() {
-        if t != l && g.land(t).tapped && g.db.get(g.land(t).card()).tag(Tag::Leg) {
+        if t != l && g.perm(t).tapped && g.db.get(g.perm(t).card()).tag(Tag::Leg) {
             let d = land_untap_gain(g, p, t);
             if d >= 3 && best.as_ref().is_none_or(|b| d > b.1) {
                 best = Some((pack(l.0, t.0), d, name_of(g, t).to_string()));
@@ -309,23 +308,23 @@ fn minamo(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<
 
 fn minamo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (l, t) = unpack(arg);
-    let l = LandId(l);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 0, "U")? {
+    let l = PermId(l);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 0, "U")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     let perm = t & (1 << 31) != 0;
     let t = t & !(1 << 31);
     crate::glog!(g, "  {} uses Minamo: untaps a legendary permanent", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).card(), "untap a legendary permanent", None, None)? {
+    if ability_window_card(g, p, g.perm(l).card(), "untap a legendary permanent", None, None)? {
         if perm {
             let m = PermId(t);
             if g.perm(m).on_bf && g.perm(m).owner == p {
                 g.perm_mut(m).tapped = false;
                 g.bf_ver += 1;
             }
-        } else if g.player(p).lands.contains(&LandId(t)) {
-            g.land_mut(LandId(t)).tapped = false;
+        } else if g.player(p).lands.contains(&PermId(t)) {
+            g.perm_mut(PermId(t)).tapped = false;
         }
     }
     Ok(true)
@@ -341,8 +340,8 @@ const EMERGENCE_LIVE: bool = true;
 
 /// **Emergence Zone**: {T}: Add {C}. {1},{T}, sacrifice it: you may cast spells this turn as though they had flash.
 /// The AI uses it at the end of an opponent's turn when it holds a creature spell it can pay for after the cost
-fn emergence(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if !EMERGENCE_LIVE || post.is_some() || g.active == Some(p) || g.land(l).tapped || !can_pay_without(g, p, l, 1, "")
+fn emergence(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !EMERGENCE_LIVE || post.is_some() || g.active == Some(p) || g.perm(l).tapped || !can_pay_without(g, p, l, 1, "")
     {
         return Ok(vec![]);
     }
@@ -365,11 +364,11 @@ fn emergence(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Ve
 }
 
 pub fn emergence_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 1, "")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 1, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     super::lands::sac_land(g, p, l)?; // {T} and sacrifice are costs
     crate::glog!(g, "  {} sacrifices Emergence Zone: spells can be cast as though they had flash", g.player(p).name);
     if ability_window_card(g, p, cd, "cast spells as though they had flash", None, None)? {
@@ -382,7 +381,7 @@ pub fn emergence_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 // ================================================================== Forbidden Orchard
 /// **Forbidden Orchard**: {T}: one mana of any colour (tag c=A). Whenever you tap it for mana, target opponent creates a
 /// 1/1 colorless Spirit creature token: the AI gives it to the opponent who threatens it least
-fn orchard_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+fn orchard_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive).collect();
     let Some(q) = min_by(&opps, |q| threat(g, p, q)) else { return Ok(()) };
     crate::glog!(g, "    Forbidden Orchard: {} creates a 1/1 Spirit", g.player(q).name);
@@ -396,12 +395,12 @@ fn orchard_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
 /// an opponent's that has the most activated abilities of its own (a land with card code in its `land_options`, or a
 /// utility land), most copies first. The chosen card is kept on the Hamlet (`DataKey::Imprint`, a `Val::Card`).
 /// Nothing yet stops the named lands' abilities, or gives them {T}: Add {C}: engine-needs-lands.md
-fn hamlet_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn hamlet_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     traitors_check(g, p, l)?;
     let mut seen: Vec<(CardId, u32)> = vec![];
     for q in g.opps(p).collect::<Vec<_>>() {
         for &x in &g.player(q).lands {
-            let cd = g.land(x).card();
+            let cd = g.perm(x).card();
             if g.registry
                 .get(cd)
                 .is_some_and(|i| i.land_options.is_some() || i.land_defend.is_some() || i.land_upkeep.is_some())
@@ -414,7 +413,7 @@ fn hamlet_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         }
     }
     let Some(c) = max_by(&seen, |s| s.1 as f64).map(|s| s.0) else { return Ok(()) };
-    g.land_mut(l).data.set(DataKey::Imprint, Val::Card(c));
+    g.perm_mut(l).data.set(DataKey::Imprint, Val::Card(c));
     crate::glog!(g, "    Petrified Hamlet names {}", g.db.get(c).name);
     Ok(())
 }
@@ -429,7 +428,7 @@ pub fn hamlet_names(g: &Game) -> Vec<CardId> {
         }
         for &l in &pl.lands {
             if name_of(g, l) == "Petrified Hamlet"
-                && let Some(Val::Card(c)) = g.land(l).data.get(DataKey::Imprint)
+                && let Some(Val::Card(c)) = g.perm(l).data.get(DataKey::Imprint)
             {
                 v.push(*c);
             }
@@ -457,8 +456,8 @@ fn artifacts(g: &Game, p: PlayerId) -> u32 {
 /// **Fomori Vault**: {T}: Add {C}. {3},{T}, discard a card: look at the top X cards, X the number of artifacts you
 /// control; put one into your hand and the rest on the bottom in a random order. The AI does it with 3 spare mana at
 /// the end of the turn or after combat, when X is at least 3 (or 2 with a land in hand to throw away)
-fn vault_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post == Some(false) || g.land(l).tapped || !can_pay_without(g, p, l, 3, "") || g.player(p).hand.is_empty() {
+fn vault_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false) || g.perm(l).tapped || !can_pay_without(g, p, l, 3, "") || g.player(p).hand.is_empty() {
         return Ok(vec![]);
     }
     let x = artifacts(g, p);
@@ -474,18 +473,18 @@ fn vault_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
 }
 
 fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    let l = PermId(arg as u32);
     if !g.player(p).lands.contains(&l)
-        || g.land(l).tapped
+        || g.perm(l).tapped
         || g.player(p).hand.is_empty()
         || !pay_without(g, p, l, 3, "")?
     {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     discard_worst(g, p, 1)?; // the cost
     crate::glog!(g, "  {} uses Fomori Vault", g.player(p).name);
-    if !ability_window_card(g, p, g.land(l).card(), "look at the top cards, one to hand", None, None)? {
+    if !ability_window_card(g, p, g.perm(l).card(), "look at the top cards, one to hand", None, None)? {
         return Ok(true);
     }
     let n = (artifacts(g, p) as usize).min(g.player(p).library.len());
@@ -507,11 +506,11 @@ fn vault_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// {5}{B}{R},{T}, sacrifice it and a legendary artifact: choose up to two creatures, destroy the rest (sorcery speed;
 /// the AI keeps its own two best creatures and does it when that kills at least 8 more worth of opposing creatures
 /// than it loses, after the artifact)
-fn mount_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn mount_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     (g.player(p).life > 1) as u32
 }
 
-fn mount_tap(g: &mut Game, p: PlayerId, _l: LandId, _n: u32) -> Res {
+fn mount_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {
     lose_life(g, p, 1, Some(p), "other", None)
 }
 
@@ -546,9 +545,9 @@ fn mount_wipe_plan(g: &Game, p: PlayerId, art: PermId) -> (Vec<PermId>, f64) {
     (keep, killed - lost - pval(g, art))
 }
 
-fn mount_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn mount_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let mut out = vec![];
-    if g.land(l).tapped {
+    if g.perm(l).tapped {
         return Ok(out);
     }
     if g.active == Some(p)
@@ -577,13 +576,13 @@ fn mount_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
 }
 
 fn mount_ping_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 1, "BR")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 1, "BR")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Mount Doom: 1 damage to each opponent", g.player(p).name);
-    if ability_window_card(g, p, g.land(l).card(), "1 damage to each opponent", None, None)? {
+    if ability_window_card(g, p, g.perm(l).card(), "1 damage to each opponent", None, None)? {
         for q in g.opps(p).filter(|&q| g.player(q).alive).collect::<Vec<_>>() {
             lose_life(g, q, 1, Some(p), "burn", None)?;
         }
@@ -592,13 +591,13 @@ fn mount_ping_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    let l = PermId(arg as u32);
     let Some(art) = mount_artifact(g, p) else { return Ok(false) };
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 5, "BR")? {
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 5, "BR")? {
         return Ok(false);
     }
     let (keep, _) = mount_wipe_plan(g, p, art);
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     super::lands::sac_land(g, p, l)?; // {T} and sacrifice are costs
     crate::glog!(g, "  {} sacrifices Mount Doom and {}", g.player(p).name, g.perm(art).name);
     die(g, art, "sac")?;
@@ -632,7 +631,7 @@ fn mount_wipe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 const SHATTERSKULL: [&str; 2] = ["Shatterskull Smashing", "Shatterskull Smashing // Shatterskull, the Hammer Pass"];
 const RAZORGRASS: &str = "Razorgrass Ambush // Razorgrass Field";
 
-pub(crate) fn mdfc_cols(g: &Game, _p: PlayerId, l: LandId) -> Colors {
+pub(crate) fn mdfc_cols(g: &Game, _p: PlayerId, l: PermId) -> Colors {
     Colors::from_letters(if name_of(g, l) == RAZORGRASS { "W" } else { "R" })
 }
 
@@ -666,9 +665,9 @@ pub(crate) fn mdfc_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         lose_life(g, p, 3, Some(p), "other", None)?;
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
-    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.land(l).card() == c) {
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.perm(l).card() == c) {
         if !paid {
-            g.land_mut(l).tapped = true;
+            g.perm_mut(l).tapped = true;
         }
         traitors_check(g, p, l)?;
     }
@@ -864,9 +863,9 @@ fn smash_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// {1},{T}: any colour (`any_filter_cols`). {4}: put it from your hand onto the battlefield (instant speed): the AI
 /// does it in its own main phase when the land drop is spent (to phase out a creature before combat), and as the
 /// defender against an attacker worth at least 5 (phasing it out of the attack)
-fn gates_phase(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<PermId>> {
+fn gates_phase(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<PermId>> {
     let Some(t) = super::common::best_opp_creature(g, p, |m| pval(g, m) >= 3.0) else { return Ok(None) };
-    if ability_window_card(g, p, g.land(l).card(), "target creature phases out", None, Some(t))? && g.perm(t).on_bf {
+    if ability_window_card(g, p, g.perm(l).card(), "target creature phases out", None, Some(t))? && g.perm(t).on_bf {
         g.perm_mut(t).phased = true;
         g.bf_ver += 1;
         crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(t).name);
@@ -876,7 +875,7 @@ fn gates_phase(g: &mut Game, p: PlayerId, l: LandId) -> Res<Option<PermId>> {
 }
 
 /// played from hand (the land drop): the City of Traitors check and the enter trigger
-fn gates_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn gates_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     traitors_check(g, p, l)?;
     gates_phase(g, p, l)?;
     Ok(())

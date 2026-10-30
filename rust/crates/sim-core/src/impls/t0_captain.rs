@@ -26,7 +26,7 @@ use crate::engine::values::{card_name, epow, etgh, has_type, once_per_turn, pval
 use crate::engine::zones::{Enter, bounce, die, draw, enter, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec};
 use crate::state::{Ctx, DataKey, Game, Step, TurnStamp, Val};
 use crate::sym::{Sym, intern};
@@ -868,25 +868,25 @@ fn wave_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ------------------------------------------------------------------ Avengers Tower
 /// {T}: {C}, or one mana of any colour spent only on a Hero spell (or an ability of a Hero source)
-fn tower_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+fn tower_cols(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if g.pay_for.is_some_and(|c| hero_card(g, c)) { g.player(p).ident } else { Colors::NONE }
 }
 
 /// {4},{T}: look at the top three cards; a Hero card may go to your hand, the rest to the bottom
-fn tower_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || g.player(p).library.len() < 3 || !super::lands::can_pay_without(g, p, l, 4, "") {
+fn tower_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped || g.player(p).library.len() < 3 || !super::lands::can_pay_without(g, p, l, 4, "") {
         return Ok(vec![]);
     }
     Ok(vec![opt(if post.is_none() { 1.1 } else { 0.5 }, "Avengers Tower digs for a Hero".into(), tower_go, l.0 as i64)])
 }
 
 fn tower_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !super::lands::pay_without(g, p, l, 4, "")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !super::lands::pay_without(g, p, l, 4, "")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).card(), "look at the top three cards", Some(3.0), None)? {
+    g.perm_mut(l).tapped = true;
+    if ability_window_card(g, p, g.perm(l).card(), "look at the top three cards", Some(3.0), None)? {
         let mut top = pop_top(g, p, 3);
         let heroes: Vec<CardId> = top.iter().copied().filter(|&c| hero_card(g, c)).collect();
         if let Some(c) = max_by(&heroes, |c| hero_worth(g, c)) {

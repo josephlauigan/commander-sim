@@ -76,19 +76,19 @@ fn emiel_pays_for_a_counter_on_an_entering_creature() {
     let mut g = tbl();
     perm(&mut g, P0, "Emiel the Blessed");
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = true;
+        g.perm_mut(l).tapped = true;
     }
     lands(&mut g, P0, "Plains", 1, false);
     let c = perm(&mut g, P0, "Bloom Tender");
     assert_eq!(g.perm(c).plus, 1, "pay W: +1/+1 counter");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "the Plains paid");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "the Plains paid");
 }
 
 #[test]
 fn emiel_puts_two_counters_on_a_unicorn_and_none_without_mana() {
     let mut g = tbl();
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = true;
+        g.perm_mut(l).tapped = true;
     }
     perm(&mut g, P0, "Emiel the Blessed");
     let none = perm(&mut g, P0, "Baneslayer Angel");

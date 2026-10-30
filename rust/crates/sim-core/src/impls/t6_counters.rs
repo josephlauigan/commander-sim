@@ -22,7 +22,7 @@ use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::zones::{Tokens, die, draw, make_tokens, max_by, min_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game, StackKind};
 use crate::sym::Sym;
 
@@ -56,13 +56,13 @@ pub fn blue_pitch(g: &Game, p: PlayerId, card: CardId) -> Vec<CardId> {
 }
 
 /// the Islands p controls (Daze)
-pub fn islands(g: &Game, p: PlayerId) -> Vec<LandId> {
+pub fn islands(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p)
         .lands
         .iter()
         .copied()
         .filter(|&l| {
-            let d = g.db.get(g.land(l).card());
+            let d = g.db.get(g.perm(l).card());
             &*d.name == "Island" || d.has_subtype("island")
         })
         .collect()
@@ -128,8 +128,8 @@ pub fn pay_alt_cost(g: &mut Game, p: PlayerId, card: CardId, spell: Option<CardI
         "Daze" => {
             // return an Island you control to its owner's hand: an untapped one is kept for mana if there is a choice
             let is = islands(g, p);
-            let l = min_by(&is, |l| if g.land(l).tapped { 0.0 } else { 1.0 }).unwrap();
-            let cd = g.land(l).card();
+            let l = min_by(&is, |l| if g.perm(l).tapped { 0.0 } else { 1.0 }).unwrap();
+            let cd = g.perm(l).card();
             crate::engine::turn::remove_land(g, p, l);
             g.player_mut(p).hand.push(cd);
         }

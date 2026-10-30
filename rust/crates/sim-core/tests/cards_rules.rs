@@ -62,7 +62,7 @@ fn deathrite_exiles_and_gains() {
     lands(&mut g, k, "Forest", 1, false);
     let a = option_with(&mut g, d, k, Some(false), "exile");
     assert!(perform(&mut g, k, &a).unwrap());
-    assert!(g.perm(d).tapped && g.land(g.player(k).lands[0]).tapped);
+    assert!(g.perm(d).tapped && g.perm(g.player(k).lands[0]).tapped);
     assert_eq!(g.player(s).exile, [titan]);
     assert_eq!(g.player(k).life, 42);
 }
@@ -233,7 +233,7 @@ fn ezuri_regenerates_a_valuable_elf() {
     assert!(values::pval(&g, elf) >= 3.0);
     zones::die(&mut g, elf, "destroy").unwrap();
     assert!(g.perm(elf).on_bf && g.perm(elf).tapped);
-    assert!(g.land(g.player(P0).lands[0]).tapped);
+    assert!(g.perm(g.player(P0).lands[0]).tapped);
     let cheap = token(&mut g, P0, 1); // a token isn't an Elf: no regeneration
     zones::die(&mut g, cheap, "destroy").unwrap();
     assert!(!g.perm(cheap).on_bf);
@@ -338,7 +338,7 @@ fn mystic_remora_is_kept_three_turns() {
     let up = g.registry.get(card(&g, "Mystic Remora")).unwrap().upkeep.unwrap();
     for age in 1..=3 {
         for l in g.player(P0).lands.clone() {
-            g.land_mut(l).tapped = false;
+            g.perm_mut(l).tapped = false;
         }
         up(&mut g, r, P0).unwrap();
         assert!(g.perm(r).on_bf);

@@ -203,7 +203,7 @@ fn explorer_s_scope_doubles_on_cloud_and_puts_lands_in_play() {
     let n = g.player(P0).lands.len();
     attack_triggers(&mut g, P0, &[cl], P1);
     assert_eq!(g.player(P0).lands.len(), n + 2, "two looks, two lands");
-    assert!(g.player(P0).lands.iter().rev().take(2).all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().rev().take(2).all(|&l| g.perm(l).tapped));
 }
 
 #[test]
@@ -360,7 +360,7 @@ fn the_equip_option_uses_the_changed_cost_and_picks_cloud() {
     let eq = o.iter().find(|x| x.label == "equip Wrecking Ball Arm").expect("equip {3} for a legend is affordable");
     assert!(run(&mut g, P0, eq));
     assert_eq!(g.perm(wba).attached, Some(cl));
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "paid {{3}}");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "paid {{3}}");
 }
 
 // ------------------------------------------------------------------ the sizing and evasion Equipment

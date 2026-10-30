@@ -15,7 +15,7 @@ use crate::engine::turn::remove_land;
 use crate::engine::zones::min_by;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
 
@@ -36,14 +36,14 @@ fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, a
 }
 
 /// the mana land l makes when tapped now (Gaea's Cradle counts creatures; Talon Gates of Madara makes {C})
-fn land_yield(g: &Game, p: PlayerId, l: LandId) -> u32 {
+fn land_yield(g: &Game, p: PlayerId, l: PermId) -> u32 {
     let base = crate::cardcode::dyn_mana_land(g, p, l)
-        .map_or_else(|| g.db.get(g.land(l).card()).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
+        .map_or_else(|| g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1).max(0) as u32, |n| n);
     (base as i32 + eh::total_land_mana(g, p, l)).max(0) as u32
 }
 
-fn land_on(g: &Game, p: PlayerId, l: LandId) -> bool {
-    g.land(l).on_bf && g.player(p).lands.contains(&l)
+fn land_on(g: &Game, p: PlayerId, l: PermId) -> bool {
+    g.perm(l).on_bf && g.player(p).lands.contains(&l)
 }
 
 /// {2} less per Training Grounds / Biomancer's Familiar p controls (each: "activated abilities of creatures you
@@ -67,13 +67,13 @@ pub fn creature_ability_cost(g: &Game, p: PlayerId, cost: u32) -> u32 {
 // ================================================================== Oboro Breezecaller
 /// the best tapped land to untap and the land to return for it (cheapest to lose: a tapped one costs nothing, an
 /// untapped one costs the mana it would make); None when the untap does not pay for its cost
-fn oboro_plan(g: &Game, p: PlayerId, cost: u32) -> Option<(LandId, LandId)> {
+fn oboro_plan(g: &Game, p: PlayerId, cost: u32) -> Option<(PermId, PermId)> {
     let lands = g.player(p).lands.clone();
-    let tapped: Vec<LandId> = lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
+    let tapped: Vec<PermId> = lands.iter().copied().filter(|&l| g.perm(l).tapped).collect();
     let t = crate::engine::zones::max_by(&tapped, |l| land_yield(g, p, l) as f64)?;
-    let others: Vec<LandId> = lands.iter().copied().filter(|&l| l != t).collect();
-    let b = min_by(&others, |l| if g.land(l).tapped { 0.0 } else { land_yield(g, p, l) as f64 })?;
-    let lost = if g.land(b).tapped { 0 } else { land_yield(g, p, b) };
+    let others: Vec<PermId> = lands.iter().copied().filter(|&l| l != t).collect();
+    let b = min_by(&others, |l| if g.perm(l).tapped { 0.0 } else { land_yield(g, p, l) as f64 })?;
+    let lost = if g.perm(b).tapped { 0 } else { land_yield(g, p, b) };
     // the gain: the untapped land's mana, less the ability's cost and the mana the returned land would have made
     (land_yield(g, p, t) as i32 - cost as i32 - lost as i32 >= 2).then_some((t, b))
 }
@@ -103,7 +103,7 @@ fn oboro_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 
 fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (t, b) = unpack(arg);
-    let (t, b) = (LandId(t), LandId(b));
+    let (t, b) = (PermId(t), PermId(b));
     let cost = creature_ability_cost(g, p, 2);
     if !live(g, src) || owner(g, src) != p || !land_on(g, p, t) || !land_on(g, p, b) || t == b {
         return Ok(false);
@@ -116,20 +116,20 @@ fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !land_on(g, p, b) {
         return Ok(true);
     }
-    let cd = g.land(b).card();
+    let cd = g.perm(b).card();
     remove_land(g, p, b);
     g.player_mut(p).hand.push(cd);
     if !ability_window(g, p, Some(src), "untap target land", None, None)? {
         return Ok(true);
     }
     if land_on(g, p, t) {
-        g.land_mut(t).tapped = false;
+        g.perm_mut(t).tapped = false;
         crate::glog!(
             g,
             "    {} returns {} and untaps {} (Oboro Breezecaller)",
             g.player(p).name,
             g.db.get(cd).name,
-            g.db.get(g.land(t).card()).name
+            g.db.get(g.perm(t).card()).name
         );
     }
     Ok(true)
@@ -150,8 +150,8 @@ fn cub_tapped(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
 }
 
 // ================================================================== Earthcraft
-fn is_basic_land(g: &Game, l: LandId) -> bool {
-    crate::engine::mana::BASIC_NAMES.contains(&&*g.db.get(g.land(l).card()).name)
+fn is_basic_land(g: &Game, l: PermId) -> bool {
+    crate::engine::mana::BASIC_NAMES.contains(&&*g.db.get(g.perm(l).card()).name)
 }
 
 /// the creature the AI taps for Earthcraft: one that has nothing better to do (summoning sick, or can't attack, or
@@ -184,7 +184,7 @@ fn earthcraft_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -
     if !live(g, src) || owner(g, src) != p || !has_sink(g, p) {
         return Ok(vec![]);
     }
-    let Some(l) = g.player(p).lands.iter().copied().find(|&l| g.land(l).tapped && is_basic_land(g, l)) else {
+    let Some(l) = g.player(p).lands.iter().copied().find(|&l| g.perm(l).tapped && is_basic_land(g, l)) else {
         return Ok(vec![]);
     };
     let Some(c) = earthcraft_creature(g, p, src, post) else { return Ok(vec![]) };
@@ -193,7 +193,7 @@ fn earthcraft_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -
 
 fn earthcraft_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, l) = unpack(arg);
-    let (c, l) = (PermId(c), LandId(l));
+    let (c, l) = (PermId(c), PermId(l));
     if !live(g, src) || owner(g, src) != p || !live(g, c) || g.perm(c).tapped || !land_on(g, p, l) {
         return Ok(false);
     }
@@ -202,8 +202,8 @@ fn earthcraft_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
         return Ok(true);
     }
     if land_on(g, p, l) && is_basic_land(g, l) {
-        g.land_mut(l).tapped = false;
-        crate::glog!(g, "    Earthcraft: {} taps to untap {}", g.perm(c).name, g.db.get(g.land(l).card()).name);
+        g.perm_mut(l).tapped = false;
+        crate::glog!(g, "    Earthcraft: {} taps to untap {}", g.perm(c).name, g.db.get(g.perm(l).card()).name);
     }
     Ok(true)
 }
@@ -218,9 +218,9 @@ fn can_tap(g: &Game, m: PermId) -> bool {
 /// the tapped lands to untap for "{X},{T}: untap X target lands": the X best ones, and X, chosen to maximise the mana
 /// they make less the ability's cost; None unless that nets at least {2} and p can pay it. `creature`: the cost is
 /// reduced by Training Grounds / Biomancer's Familiar (Magus), `false` for the artifact.
-fn candelabra_plan(g: &Game, p: PlayerId, creature: bool) -> Option<Vec<LandId>> {
-    let mut tapped: Vec<(u32, LandId)> =
-        g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).map(|l| (land_yield(g, p, l), l)).collect();
+fn candelabra_plan(g: &Game, p: PlayerId, creature: bool) -> Option<Vec<PermId>> {
+    let mut tapped: Vec<(u32, PermId)> =
+        g.player(p).lands.iter().copied().filter(|&l| g.perm(l).tapped).map(|l| (land_yield(g, p, l), l)).collect();
     tapped.sort_by_key(|x| std::cmp::Reverse(x.0));
     let (mut best, mut sum) = (None, 0i64);
     for (i, &(y, _)) in tapped.iter().enumerate() {
@@ -261,7 +261,7 @@ fn candelabra_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
     }
     for l in ls {
         if land_on(g, p, l) {
-            g.land_mut(l).tapped = false;
+            g.perm_mut(l).tapped = false;
         }
     }
     crate::glog!(g, "    {} untaps {} lands ({})", g.player(p).name, arg, g.perm(src).name);
@@ -292,7 +292,7 @@ fn speaker_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
-/// untap permanent m (a creature or artifact; lands go through `LandId`): clears `tapped`, so a tapped {T} ability
+/// untap permanent m (a creature or artifact; lands go through `PermId`): clears `tapped`, so a tapped {T} ability
 /// (Candelabra, Magus, a mana rock or dork) can be used again. False when it is not a live tapped permanent.
 pub fn untap_perm(g: &mut Game, m: PermId) -> bool {
     if !live(g, m) || !g.perm(m).tapped {
@@ -338,7 +338,7 @@ fn speaker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
     // chain onto a tapped Candelabra / Magus / mana rock when that nets more than the best land
     let perms: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| m != src).collect();
     let best_perm = perms.iter().map(|&m| (untap_value(g, p, m), m)).max_by_key(|x| x.0);
-    let tapped: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
+    let tapped: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&l| g.perm(l).tapped).collect();
     let best_land = crate::engine::zones::max_by(&tapped, |l| land_yield(g, p, l) as f64);
     let land_net = best_land.map_or(0, |t| land_yield(g, p, t) as i64);
     if let Some((_, m)) = best_perm.filter(|&(v, _)| v - cost as i64 >= 2 && v > land_net) {
@@ -367,7 +367,7 @@ fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let target = if arg < 0 { Some(PermId((-arg - 1) as u32)) } else { None };
     match target {
         Some(m) if m == src || !live(g, m) || g.perm(m).owner != p || !g.perm(m).tapped => return Ok(false),
-        None if !land_on(g, p, LandId(arg as _)) => return Ok(false),
+        None if !land_on(g, p, PermId(arg as _)) => return Ok(false),
         _ => {}
     }
     pay(g, p, cost, "", false)?;
@@ -380,10 +380,10 @@ fn speaker_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
             crate::glog!(g, "    Formidable Speaker untaps {}", g.perm(m).name);
         }
     } else {
-        let l = LandId(arg as _);
+        let l = PermId(arg as _);
         if land_on(g, p, l) {
-            g.land_mut(l).tapped = false;
-            crate::glog!(g, "    Formidable Speaker untaps {}", g.db.get(g.land(l).card()).name);
+            g.perm_mut(l).tapped = false;
+            crate::glog!(g, "    Formidable Speaker untaps {}", g.db.get(g.perm(l).card()).name);
         }
     }
     Ok(true)
@@ -425,7 +425,7 @@ fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn vibrance_land_wanted(g: &Game, p: PlayerId) -> bool {
     let held = |name: &str| {
         g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
-            || g.player(p).lands.iter().any(|&l| &*g.db.get(g.land(l).card()).name == name)
+            || g.player(p).lands.iter().any(|&l| &*g.db.get(g.perm(l).card()).name == name)
     };
     g.player(p)
         .library

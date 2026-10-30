@@ -459,7 +459,7 @@ fn lname(g: &Game, c: CardId) -> &str {
 pub fn land_want(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let pl = g.player(p);
     let held: Vec<&str> =
-        pl.lands.iter().map(|&l| lname(g, g.land(l).card())).chain(pl.hand.iter().map(|&h| lname(g, h))).collect();
+        pl.lands.iter().map(|&l| lname(g, g.perm(l).card())).chain(pl.hand.iter().map(|&h| lname(g, h))).collect();
     let name = lname(g, c);
     let n = |x: &str| held.iter().filter(|&&h| h == x).count();
     if TRON.contains(&name) {
@@ -528,16 +528,16 @@ fn best_land_in_library(g: &Game, p: PlayerId) -> f64 {
     cands.into_iter().filter(|&c| g.db.get(c).land).map(|c| land_want(g, p, c)).fold(0.0, f64::max)
 }
 
-fn land_ok(g: &Game, l: crate::ids::LandId, p: PlayerId) -> bool {
-    g.land(l).on_bf
+fn land_ok(g: &Game, l: crate::ids::PermId, p: PlayerId) -> bool {
+    g.perm(l).on_bf
         && g.player(p).lands.contains(&l)
-        && !g.land(l).tapped
-        && !crate::impls::t6_stax::needle_stops(g, lname(g, g.land(l).card()))
+        && !g.perm(l).tapped
+        && !crate::impls::t6_stax::needle_stops(g, lname(g, g.perm(l).card()))
 }
 
 /// {3}, {T}, sacrifice Urza's Cave: a land card onto the battlefield tapped. The AI does it for a Tron piece, Mishra's
 /// Workshop or Ancient Tomb (a want of 6 or more): trading the Cave for a land that is better than a Cave.
-fn cave_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn cave_options(g: &mut Game, l: crate::ids::PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none() || !land_ok(g, l, p) || !crate::impls::lands::can_pay_without(g, p, l, 3, "") {
         return Ok(vec![]);
     }
@@ -553,11 +553,11 @@ fn cave_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Option<b
 }
 
 fn cave_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = crate::ids::LandId(arg as u32);
+    let l = crate::ids::PermId(arg as u32);
     if !land_ok(g, l, p) || !crate::impls::lands::pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     if ability_window_card(g, p, cd, "search for a land", None, None)? {
         fetch_land(g, p, false, true)?;
@@ -595,15 +595,15 @@ fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Inventors' Fair
 pub(crate) fn artifact_total(g: &Game, p: PlayerId) -> i32 {
     artifacts(g, p)
-        + g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).card()).types.has(Types::ARTIFACT)).count() as i32
+        + g.player(p).lands.iter().filter(|&&l| g.db.get(g.perm(l).card()).types.has(Types::ARTIFACT)).count() as i32
 }
 
 /// At the beginning of your upkeep, if you control three or more artifacts, you gain 1 life.
-fn fair_upkeep(g: &mut Game, l: crate::ids::LandId, p: PlayerId) -> Res {
-    if g.land(l).owner != p || artifact_total(g, p) < 3 {
+fn fair_upkeep(g: &mut Game, l: crate::ids::PermId, p: PlayerId) -> Res {
+    if g.perm(l).owner != p || artifact_total(g, p) < 3 {
         return Ok(());
     }
-    if crate::engine::stack::trigger_window_card(g, p, g.land(l).card(), "gain 1 life")? {
+    if crate::engine::stack::trigger_window_card(g, p, g.perm(l).card(), "gain 1 life")? {
         gain(g, p, 1)?;
     }
     Ok(())
@@ -611,7 +611,7 @@ fn fair_upkeep(g: &mut Game, l: crate::ids::LandId, p: PlayerId) -> Res {
 
 /// {4}, {T}, sacrifice Inventors' Fair: search for an artifact card (to the hand). Only with three or more artifacts.
 /// The AI cracks it with spare mana (a second land of use is not needed), for the best artifact left (`tutor_named`).
-fn fair_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn fair_options(g: &mut Game, l: crate::ids::PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none()
         || !land_ok(g, l, p)
         || artifact_total(g, p) < 3
@@ -631,11 +631,11 @@ fn fair_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Option<b
 }
 
 pub(crate) fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = crate::ids::LandId(arg as u32);
+    let l = crate::ids::PermId(arg as u32);
     if !land_ok(g, l, p) || artifact_total(g, p) < 3 || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     if ability_window_card(g, p, cd, "search for an artifact", None, None)? {
         crate::impls::t1::tutor_named(g, p, &|g, c| art_card(g, c), 1, "hand")?;
@@ -647,7 +647,7 @@ pub(crate) fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// {4}, {T}: target creature can't be blocked this turn. The AI uses it in the first main phase on its biggest ready
 /// attacker (power 4 or more) when an opponent has an untapped creature to block with (combat.rs reads `DataKey::Unbl`,
 /// as for a person using it).
-fn passage_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn passage_options(g: &mut Game, l: crate::ids::PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post != Some(false) || !land_ok(g, l, p) || !crate::impls::lands::can_pay_without(g, p, l, 4, "") {
         return Ok(vec![]);
     }
@@ -676,13 +676,13 @@ fn passage_options(g: &mut Game, l: crate::ids::LandId, p: PlayerId, post: Optio
 }
 
 fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = crate::ids::LandId((arg & 0xFFFF_FFFF) as u32);
+    let l = crate::ids::PermId((arg & 0xFFFF_FFFF) as u32);
     let m = PermId((arg >> 32) as u32);
     if !land_ok(g, l, p) || !live(g, m) || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).card(), "can't be blocked", None, Some(m))? && live(g, m) {
+    g.perm_mut(l).tapped = true;
+    if ability_window_card(g, p, g.perm(l).card(), "can't be blocked", None, Some(m))? && live(g, m) {
         let st = g.turn_stamp();
         g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
         crate::glog!(g, "    {} can't be blocked this turn (Rogue's Passage)", g.perm(m).name);
@@ -693,7 +693,7 @@ fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 // ================================================================== Endless Atlas
 /// {2}, {T}: draw a card. Activate only if you control three or more lands with the same name.
 pub(crate) fn atlas_ready(g: &Game, p: PlayerId) -> bool {
-    let names: Vec<&str> = g.player(p).lands.iter().map(|&l| lname(g, g.land(l).card())).collect();
+    let names: Vec<&str> = g.player(p).lands.iter().map(|&l| lname(g, g.perm(l).card())).collect();
     names.iter().any(|n| names.iter().filter(|&m| m == n).count() >= 3)
 }
 

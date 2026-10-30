@@ -241,7 +241,7 @@ fn sisay_fetches_mount_doom_as_a_land_and_the_ddr_line_wins() {
     // seed 500012, game 12: a fetched Mount Doom entered as a permanent, not a land, and the line stopped
     let mut g = tbl(SISAY);
     ddr_board(&mut g);
-    let doom = g.player(P0).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).card()).name == "Mount Doom").unwrap();
+    let doom = g.player(P0).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == "Mount Doom").unwrap();
     sim_core::engine::turn::remove_land(&mut g, P0, doom);
     perm(&mut g, P0, "Sisay, Weatherlight Captain");
     perm(&mut g, P0, "Tyvar, Jubilant Brawler");

@@ -23,7 +23,7 @@ fn out(g: &Game, p: PlayerId, name: &str) -> bool {
     pl.perms.iter().any(|&m| {
         let x = g.perm(m);
         !x.phased && x.cd.is_some_and(|c| nm(g, c) == name)
-    }) || pl.lands.iter().any(|&l| g.land(l).on_bf && nm(g, g.land(l).card()) == name)
+    }) || pl.lands.iter().any(|&l| g.perm(l).on_bf && nm(g, g.perm(l).card()) == name)
 }
 
 fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {

@@ -17,15 +17,6 @@ pub struct PlayerId(pub u8);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PermId(pub u32);
 
-/// Phase 3 (one arena), during the move: a land is a `Perm`, named by a `PermId`.
-pub type LandId = PermId;
-
-/// Phase 3, during the move: `LandId(n)` as it was written before lands joined the arena.
-#[allow(non_snake_case)]
-pub fn LandId(n: u32) -> PermId {
-    PermId(n)
-}
-
 impl PlayerId {
     pub fn index(self) -> usize {
         self.0 as usize

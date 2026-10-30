@@ -15,7 +15,7 @@ use crate::engine::values::{epow, pval};
 use crate::engine::zones::{die, draw, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::lands::{can_pay_without, pay_without};
 
 use crate::impls::t5::is_artifact;
@@ -390,8 +390,8 @@ fn historic(g: &Game, c: CardId) -> bool {
 /// {2}{W}{W}, {T}: look at the top five cards of your library, you may reveal a historic card from among them and
 /// put it into your hand, the rest go to the bottom in a random order. The AI uses it in the second main phase or
 /// the end-of-turn window with the mana to spare, when a historic card is on top (it looks at the real top five).
-fn henge_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post == Some(false) || g.land(l).tapped || g.player(p).library.len() < 5 {
+fn henge_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post == Some(false) || g.perm(l).tapped || g.player(p).library.len() < 5 {
         return Ok(vec![]);
     }
     if !can_pay_without(g, p, l, 2, "WW") {
@@ -409,13 +409,13 @@ fn henge_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Re
 }
 
 fn henge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !pay_without(g, p, l, 2, "WW")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 2, "WW")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Monumental Henge", g.player(p).name);
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     if !ability_window_card(g, p, cd, "look at the top five cards", None, None)? {
         return Ok(true);
     }

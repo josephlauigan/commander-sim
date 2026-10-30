@@ -3,13 +3,13 @@
 //! uses them through its own plans). For the human seat they are abilities like any other: listed on the permanent or
 //! land, checked for timing, tapping and mana, then carried out. Each effect returns None or the reason it can't.
 //!
-//! Python lists `(label, fn)`; here an `Ability<T>` (T is the `PermId` or `LandId` the ability belongs to). `act`
+//! Python lists `(label, fn)`; here an `Ability<T>` (T is the `PermId` or `PermId` the ability belongs to). `act`
 //! returns `Ok(None)` when it was carried out (or the person cancelled) and `Ok(Some(why))` when it can't be done.
 
 use super::{Target, choices, legal, mana};
 use crate::engine::{self, stack, zones};
 use crate::flow::Res;
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Step, Val};
 use crate::tag::Tag;
 
@@ -24,7 +24,7 @@ pub struct Ability<T> {
 }
 
 pub type PermAbility = Ability<PermId>;
-pub type LandAbility = Ability<LandId>;
+pub type LandAbility = Ability<PermId>;
 
 pub fn ability<T>(label: impl Into<String>, f: impl Fn(&mut Game, PlayerId, T) -> Res<Why> + 'static) -> Ability<T> {
     Ability { label: label.into(), act: Box::new(f) }
@@ -45,8 +45,8 @@ fn tap_ok(g: &Game, m: PermId, creature: bool) -> Why {
     None
 }
 
-fn land_tap_ok(g: &Game, l: LandId) -> Why {
-    if g.land(l).tapped { Some(format!("{} is tapped.", name(g, g.land(l).card()))) } else { None }
+fn land_tap_ok(g: &Game, l: PermId) -> Why {
+    if g.perm(l).tapped { Some(format!("{} is tapped.", name(g, g.perm(l).card()))) } else { None }
 }
 
 fn pay(g: &mut Game, p: PlayerId, gn: u32, pips: &str, what: &str) -> Why {
@@ -200,7 +200,7 @@ pub fn permanent_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility>
 
 // ------------------------------------------------------------------ lands
 /// abilities.passage: Rogue's Passage: {4}, {T}: target creature can't be blocked this turn
-fn passage(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn passage(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
@@ -233,10 +233,10 @@ fn passage(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
         return Ok(None);
     };
     mana::pay_from_pool(g, p, 4, "");
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     let m = cre[k];
     crate::glog!(g, "  {} activates Rogue's Passage: {} can't be blocked this turn", g.player(p).name, g.perm(m).name);
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     if stack::ability_window_card(g, p, cd, &format!("{} can't be blocked", g.perm(m).name), None, Some(m))?
         && g.perm(m).on_bf
     {
@@ -247,22 +247,22 @@ fn passage(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
 }
 
 /// abilities.grounds: Scavenger Grounds: {2}, {T}, sacrifice a Desert: exile all graveyards
-fn grounds(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
+fn grounds(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if let Some(why) = land_tap_ok(g, l) {
         return Ok(Some(why));
     }
-    let deserts: Vec<LandId> =
-        g.player(p).lands.iter().copied().filter(|&x| g.db.get(g.land(x).card()).tag(Tag::Desert)).collect();
+    let deserts: Vec<PermId> =
+        g.player(p).lands.iter().copied().filter(|&x| g.db.get(g.perm(x).card()).tag(Tag::Desert)).collect();
     if let Some(why) = pay(g, p, 2, "", "Scavenger Grounds") {
         return Ok(Some(why));
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     let d = if deserts.contains(&l) { l } else { deserts[0] }; // it is a Desert itself: sacrifice it (the usual choice)
     engine::turn::remove_land(g, p, d);
-    let dcd = g.land(d).card();
+    let dcd = g.perm(d).card();
     g.player_mut(p).gy.push(dcd);
     crate::glog!(g, "  {} activates Scavenger Grounds", g.player(p).name);
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     if !stack::ability_window_card(g, p, cd, "exile all graveyards", Some(9.0), None)? {
         return Ok(None);
     }
@@ -275,10 +275,10 @@ fn grounds(g: &mut Game, p: PlayerId, l: LandId) -> Res<Why> {
 }
 
 /// abilities.land_abilities: the abilities of land l (cards.py's first, then the Passage / Scavenger Grounds ones)
-pub fn land_abilities(g: &Game, p: PlayerId, l: LandId) -> Vec<LandAbility> {
+pub fn land_abilities(g: &Game, p: PlayerId, l: PermId) -> Vec<LandAbility> {
     let mut out = super::cards::land_abilities(g, p, l);
     out.extend(super::karn::land_abilities(g, p, l));
-    let d = g.db.get(g.land(l).card());
+    let d = g.db.get(g.perm(l).card());
     if d.tag(Tag::Passage) {
         out.push(ability("{4}, {T}: target creature can't be blocked this turn", passage));
     }

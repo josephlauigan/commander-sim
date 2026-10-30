@@ -49,5 +49,5 @@ fn the_tax_is_charged_for_each_attacker() {
     let ls = lands(&mut g, P1, "Plains", 2, false);
     let out = attack_limits(&mut g, P1, P0, atk).unwrap();
     assert_eq!(out.len(), 2, "only two attackers can be paid for with two lands");
-    assert!(ls.iter().all(|&l| g.land(l).tapped), "{{1}} paid per attacker");
+    assert!(ls.iter().all(|&l| g.perm(l).tapped), "{{1}} paid per attacker");
 }

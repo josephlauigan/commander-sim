@@ -59,7 +59,7 @@ use crate::engine::values::{epow, etgh, has_type, pval};
 use crate::engine::zones::{Enter, Tokens, agent_for, agent_take, die, enter, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, QUIET, Ready};
 use crate::impls::partials::at_once;
 use crate::impls::t5::is_artifact;
@@ -157,7 +157,7 @@ pub struct UntapLock {
     winter: bool,
     stat: bool,
     b2b: bool,
-    lands: Vec<LandId>,
+    lands: Vec<PermId>,
     perms: Vec<PermId>,
     treasures: u32,
 }
@@ -183,15 +183,15 @@ pub fn untap_lock(g: &Game, p: PlayerId) -> Option<UntapLock> {
         return None;
     }
     let pl = g.player(p);
-    let lands = pl.lands.iter().copied().filter(|&l| g.land(l).tapped).collect();
+    let lands = pl.lands.iter().copied().filter(|&l| g.perm(l).tapped).collect();
     let perms = pl.perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).tapped).collect();
     Some(UntapLock { winter, stat, b2b, lands, perms, treasures: pl.tapped_treasures })
 }
 
 /// how much p wants land l untapped: one mana, a little more for each colour it makes
-fn land_value(g: &Game, p: PlayerId, l: LandId) -> f64 {
+fn land_value(g: &Game, p: PlayerId, l: PermId) -> f64 {
     let cols = crate::engine::mana::land_colors_now(g, p, l);
-    1.0 + 0.05 * cols.count() as f64 + if g.db.get(g.land(l).card()).basic { 0.01 } else { 0.0 }
+    1.0 + 0.05 * cols.count() as f64 + if g.db.get(g.perm(l).card()).basic { 0.01 } else { 0.0 }
 }
 
 /// how much p wants permanent m untapped (Static Orb): mana rocks and dorks first, then creatures
@@ -218,19 +218,19 @@ pub fn untap_step(g: &mut Game, p: PlayerId, lock: Option<UntapLock>) {
 
 #[derive(Clone, Copy)]
 enum Thing {
-    Land(LandId),
+    Land(PermId),
     Perm(PermId),
     Treasure,
 }
 
 fn apply_lock(g: &mut Game, p: PlayerId, k: UntapLock) {
-    let mut lands: Vec<LandId> = k.lands.into_iter().filter(|&l| g.land(l).on_bf && !g.land(l).tapped).collect();
+    let mut lands: Vec<PermId> = k.lands.into_iter().filter(|&l| g.perm(l).on_bf && !g.perm(l).tapped).collect();
     let before = lands.len();
     if k.b2b {
         lands.retain(|&l| {
-            let basic = g.db.get(g.land(l).card()).basic;
+            let basic = g.db.get(g.perm(l).card()).basic;
             if !basic {
-                g.land_mut(l).tapped = true;
+                g.perm_mut(l).tapped = true;
             }
             basic
         });
@@ -238,7 +238,7 @@ fn apply_lock(g: &mut Game, p: PlayerId, k: UntapLock) {
     lands.sort_by(|&a, &b| land_value(g, p, b).total_cmp(&land_value(g, p, a)));
     if k.winter {
         for &l in lands.iter().skip(1) {
-            g.land_mut(l).tapped = true;
+            g.perm_mut(l).tapped = true;
         }
         lands.truncate(1);
     }
@@ -255,7 +255,7 @@ fn apply_lock(g: &mut Game, p: PlayerId, k: UntapLock) {
         kept_treasures = 0;
         for (i, &(_, t)) in all.iter().enumerate() {
             match t {
-                Thing::Land(l) if i >= 2 => g.land_mut(l).tapped = true,
+                Thing::Land(l) if i >= 2 => g.perm_mut(l).tapped = true,
                 Thing::Perm(m) if i >= 2 => g.perm_mut(m).tapped = true,
                 Thing::Treasure if i < 2 => kept_treasures += 1,
                 _ => {}
@@ -263,7 +263,7 @@ fn apply_lock(g: &mut Game, p: PlayerId, k: UntapLock) {
         }
         g.player_mut(p).tapped_treasures = k.treasures - kept_treasures;
     }
-    let after = g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count();
+    let after = g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
     crate::glog!(
         g,
         "    untap step under {}: {} of {} tapped lands untap{}",
@@ -293,8 +293,8 @@ fn unwinding_clock(g: &mut Game, p: PlayerId) {
             }
         }
         for l in g.player(q).lands.clone() {
-            if g.land(l).tapped && g.db.get(g.land(l).card()).types.has(Types::ARTIFACT) {
-                g.land_mut(l).tapped = false;
+            if g.perm(l).tapped && g.db.get(g.perm(l).card()).types.has(Types::ARTIFACT) {
+                g.perm_mut(l).tapped = false;
             }
         }
         g.player_mut(q).tapped_treasures = 0;
@@ -459,19 +459,19 @@ fn affinity(g: &Game, p: PlayerId, c: CardId) -> i32 {
 }
 
 // ================================================================== Uthros, Titanic Godcore
-fn charge(g: &Game, l: LandId) -> i64 {
-    g.land(l).data.int(DataKey::Charge)
+fn charge(g: &Game, l: PermId) -> i64 {
+    g.perm(l).data.int(DataKey::Charge)
 }
 
 fn artifacts_of(g: &Game, p: PlayerId) -> u32 {
     let pl = g.player(p);
     let perms = pl.perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count() as u32;
-    let lands = pl.lands.iter().filter(|&&l| g.db.get(g.land(l).card()).types.has(Types::ARTIFACT)).count() as u32;
+    let lands = pl.lands.iter().filter(|&&l| g.db.get(g.perm(l).card()).types.has(Types::ARTIFACT)).count() as u32;
     perms + lands + pl.treasures
 }
 
 /// 12+: {U},{T}: {U} for each artifact you control (net: one less, for the {U} it costs); else {T}: {U}
-fn uthros_mana(g: &Game, p: PlayerId, l: LandId) -> u32 {
+fn uthros_mana(g: &Game, p: PlayerId, l: PermId) -> u32 {
     if charge(g, l) >= 12 { artifacts_of(g, p).saturating_sub(1).max(1) } else { 1 }
 }
 
@@ -491,8 +491,8 @@ fn station_pick(g: &Game, p: PlayerId) -> Option<PermId> {
     max_by(&cs, |m| epow(g, m) as f64 - 0.1 * pval(g, m))
 }
 
-fn uthros_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).owner != p || post.is_none() || !sorcery_time(g, p) || charge(g, l) >= 12 {
+fn uthros_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).owner != p || post.is_none() || !sorcery_time(g, p) || charge(g, l) >= 12 {
         return Ok(vec![]);
     }
     let Some(m) = station_pick(g, p) else { return Ok(vec![]) };
@@ -501,13 +501,13 @@ fn uthros_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> R
 }
 
 fn station_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (l, m) = (LandId((arg & 0xffff_ffff) as u32), PermId((arg >> 32) as u32));
-    if !g.land(l).on_bf || !live(g, m) || g.perm(m).tapped || owner(g, m) != p {
+    let (l, m) = (PermId((arg & 0xffff_ffff) as u32), PermId((arg >> 32) as u32));
+    if !g.perm(l).on_bf || !live(g, m) || g.perm(m).tapped || owner(g, m) != p {
         return Ok(false);
     }
     g.perm_mut(m).tapped = true;
     let n = charge(g, l) + epow(g, m).max(0) as i64;
-    g.land_mut(l).data.set(DataKey::Charge, Val::Int(n));
+    g.perm_mut(l).data.set(DataKey::Charge, Val::Int(n));
     crate::glog!(g, "  {} stations Uthros with {}: {} charge counters", pname(g, p), g.perm(m).name, n);
     Ok(true)
 }

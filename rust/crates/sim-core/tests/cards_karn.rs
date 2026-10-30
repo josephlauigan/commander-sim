@@ -76,7 +76,7 @@ fn karns_mana_pays_artifact_spells_and_abilities_not_other_spells() {
     g.pay_for = Some(wurmcoil);
     assert!(pay(&mut g, P0, 2, "", false).unwrap());
     assert_eq!(g.player(P0).floating.art, 0);
-    assert!(g.player(P0).lands.iter().all(|&l| !g.land(l).tapped), "Karn's mana paid, not the lands");
+    assert!(g.player(P0).lands.iter().all(|&l| !g.perm(l).tapped), "Karn's mana paid, not the lands");
 }
 
 #[test]

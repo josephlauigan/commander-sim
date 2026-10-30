@@ -268,7 +268,7 @@ fn drift_of_phantasms_transmutes_for_a_card_of_the_same_mana_value() {
     assert!(g.player(P0).hand.contains(&three), "found the mana value 3 card");
     assert!(!g.player(P0).hand.contains(&two));
     assert_eq!(g.player(P0).hand.len(), n, "one out, one in");
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 0, "{{1}}{{U}}{{U}} paid");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 0, "{{1}}{{U}}{{U}} paid");
 }
 
 #[test]
@@ -359,7 +359,7 @@ fn hidden_strings_untaps_two_tapped_mana_sources() {
     let rock = perm(&mut g, P0, "Sol Ring");
     g.perm_mut(rock).tapped = true;
     cast_free(&mut g, P0, "Hidden Strings");
-    let untapped = |g: &Game| ls.iter().filter(|&&l| !g.land(l).tapped).count() + usize::from(!g.perm(rock).tapped);
+    let untapped = |g: &Game| ls.iter().filter(|&&l| !g.perm(l).tapped).count() + usize::from(!g.perm(rock).tapped);
     assert_eq!(untapped(&g), 2, "two targets, tapped or untapped as chosen");
     assert!(!g.perm(rock).tapped, "the rock first");
     assert!(in_gy(&g, P0, "Hidden Strings"));

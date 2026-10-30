@@ -672,7 +672,7 @@ pub fn flute_pick(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
             add(cd, v);
         }
         for &l in &ql.lands {
-            let d = g.db.get(g.land(l).card());
+            let d = g.db.get(g.perm(l).card());
             if d.tag(Tag::Passage) && army_of(g, q).is_some() {
                 add(d.id, 3.0);
             }
@@ -1396,17 +1396,17 @@ pub fn sauron_grounds_response(g: &mut Game, seph: PlayerId, value: f64) -> Res<
             continue;
         }
         let gl = g.player(q).lands.iter().copied().find(|&l| {
-            let d = g.db.get(g.land(l).card());
-            d.tag(Tag::Desert) && !g.land(l).tapped && !stopped(g, &d.name)
+            let d = g.db.get(g.perm(l).card());
+            d.tag(Tag::Desert) && !g.perm(l).tapped && !stopped(g, &d.name)
         });
         let Some(l) = gl else { continue };
-        g.land_mut(l).tapped = true;
+        g.perm_mut(l).tapped = true;
         if !can_pay(g, q, 2, "", false) || g.rng.random() > 0.9 {
-            g.land_mut(l).tapped = false;
+            g.perm_mut(l).tapped = false;
             continue;
         }
         pay(g, q, 2, "", false)?;
-        let cd = g.land(l).card();
+        let cd = g.perm(l).card();
         crate::engine::turn::remove_land(g, q, l);
         g.player_mut(q).gy.push(cd);
         g.player_mut(q).stat("grounds_used", 1);
@@ -1481,7 +1481,7 @@ pub fn necro_deliver(g: &mut Game, p: PlayerId) -> Res {
 pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     enum X {
         Perm(PermId),
-        Land(crate::ids::LandId),
+        Land(crate::ids::PermId),
     }
     let mut opts: Vec<(f64, X)> = vec![];
     for &m in &g.player(p).perms {
@@ -1510,7 +1510,7 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     let Some(b) = best else { return Ok(()) };
     match opts.swap_remove(b).1 {
         X::Land(l) => {
-            let cd = g.land(l).card();
+            let cd = g.perm(l).card();
             crate::engine::turn::remove_land(g, p, l);
             g.player_mut(p).gy.push(cd);
             crate::engine::zones::tergrid_steal(g, p, cd, p)?;

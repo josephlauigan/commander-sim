@@ -288,7 +288,7 @@ fn jeweled_amulet_stores_a_mana_of_the_noted_type_for_later() {
     // next turn: everything untaps, and the Amulet makes {W}
     g.perm_mut(am).tapped = false;
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert_eq!(total_mana(&g, P0, false), 3, "two Plains and the Amulet");
     assert!(pay(&mut g, P0, 2, "", false).unwrap(), "the lands pay first");
@@ -357,12 +357,12 @@ fn monumental_henge_digs_five_for_a_historic_card() {
     lib_top(&mut g, P0, &["Mountain", "Forest", "Sol Ring", "Island", "Swamp"]);
     let size = g.player(P0).library.len();
     let hand0 = g.player(P0).hand.len();
-    let f = g.registry.get(g.land(ls[0]).card()).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.perm(ls[0]).card()).unwrap().land_options.unwrap();
     assert!(f(&mut g, ls[0], P0, Some(false)).unwrap().is_empty(), "not before combat");
     let o = f(&mut g, ls[0], P0, None).unwrap();
     assert_eq!(o.len(), 1);
     assert!(run(&mut g, P0, &o[0]));
-    assert!(g.land(ls[0]).tapped, "{{T}} is part of the cost");
+    assert!(g.perm(ls[0]).tapped, "{{T}} is part of the cost");
     assert_eq!(g.player(P0).hand.len(), hand0 + 1);
     assert!(g.player(P0).hand.contains(&card(&g, "Sol Ring")), "the artifact is historic");
     assert_eq!(g.player(P0).library.len(), size - 1);
@@ -380,7 +380,7 @@ fn monumental_henge_is_not_offered_without_a_historic_card_on_top() {
     let ls = lands(&mut g, P0, "Monumental Henge", 1, false);
     lands(&mut g, P0, "Plains", 4, false);
     lib_top(&mut g, P0, &["Mountain", "Forest", "Island", "Swamp", "Mountain"]);
-    let f = g.registry.get(g.land(ls[0]).card()).unwrap().land_options.unwrap();
+    let f = g.registry.get(g.perm(ls[0]).card()).unwrap().land_options.unwrap();
     assert!(f(&mut g, ls[0], P0, None).unwrap().is_empty());
     // a legendary creature counts as historic too
     g.player_mut(P0).library.pop();

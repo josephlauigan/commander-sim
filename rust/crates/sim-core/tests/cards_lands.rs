@@ -23,8 +23,8 @@ fn go(g: &mut Game, p: PlayerId, o: &Opt) -> bool {
     perform(g, p, o.act.as_ref().unwrap()).unwrap()
 }
 
-fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<sim_core::ids::LandId> {
-    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.land(l).card()).name == name)
+fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<sim_core::ids::PermId> {
+    g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == name)
 }
 
 // ------------------------------------------------------------------ creature lands
@@ -42,7 +42,7 @@ fn mutavault_animates_into_an_open_attack_and_reverts_next_turn() {
     let m = *g.player(P0).perms.last().unwrap();
     assert_eq!((&*g.perm(m).name, g.perm(m).pow, g.perm(m).tgh), ("Mutavault", 2, 2));
     assert!(g.is_creature(m) && !g.perm(m).sick);
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 1); // {1} from a Forest
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 1); // {1} from a Forest
     il::revert_animated(&mut g).unwrap();
     assert!(!g.perm(m).on_bf);
     assert!(land_named(&g, P0, "Mutavault").is_some());
@@ -81,7 +81,7 @@ fn kor_haven_stops_the_biggest_unblocked_attacker() {
     let mut assign = vec![];
     cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut assign).unwrap();
     assert_eq!(atk, [small]);
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped)); // the land and {1}{W}
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped)); // the land and {1}{W}
 }
 
 #[test]
@@ -93,7 +93,7 @@ fn kor_haven_waits_for_four_power() {
     let mut atk = vec![a];
     cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut vec![]).unwrap();
     assert_eq!(atk, [a]);
-    assert!(g.player(P0).lands.iter().all(|&l| !g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| !g.perm(l).tapped));
 }
 
 // ------------------------------------------------------------------ value lands
@@ -108,10 +108,10 @@ fn war_room_draws_at_the_end_of_a_turn_for_life() {
     assert!(go(&mut g, P0, &o[0]));
     assert_eq!(g.player(P0).hand.len(), 1);
     assert_eq!(g.player(P0).life, 39); // one colour in Light-Paws's identity
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
     g.player_mut(P0).life = 12;
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert!(cardcode::land_options(&mut g, P0, None).unwrap().is_empty()); // life too low
 }
@@ -217,7 +217,7 @@ fn mosswort_bridge_hides_a_spell_and_casts_it_with_ten_power() {
     assert_eq!(g.player(P0).library.len(), n - 1);
     assert!(!g.player(P0).library.contains(&card(&g, "Grave Titan")));
     assert_eq!(g.player(P0).library.last(), Some(&top[0])); // the fifth card is the new top
-    g.land_mut(l).tapped = false;
+    g.perm_mut(l).tapped = false;
     lands(&mut g, P0, "Forest", 1, false);
     assert!(cardcode::land_options(&mut g, P0, Some(false)).unwrap().is_empty()); // no power on board
     token(&mut g, P0, 10);

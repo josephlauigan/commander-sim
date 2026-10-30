@@ -348,7 +348,7 @@ fn any_hand(g: &Game, p: PlayerId, names: &[&str]) -> Option<CardId> {
 
 fn has_piece(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
     // --- Tiers 1/2 (windgrace): a land piece on the battlefield (Dark Depths, Thespian's Stage)
-    let land = |n: &str| g.player(p).lands.iter().any(|&l| name_of(g, g.land(l).card()) == n);
+    let land = |n: &str| g.player(p).lands.iter().any(|&l| name_of(g, g.perm(l).card()) == n);
     grp.iter().any(|n| on_bf(g, p, n).is_some() || in_hand(g, p, n).is_some() || land(n))
 }
 
@@ -993,7 +993,7 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
         have.push(name_of(g, c));
     }
     if t6 {
-        have.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).card())));
+        have.extend(pl.lands.iter().filter(|&&l| g.perm(l).on_bf).map(|&l| name_of(g, g.perm(l).card())));
     }
     let mut best = 0.0f64; // --- t6 quiet progress: (was -inf) every line skipped is 0, not inf
     for i in cmbs {
@@ -1671,7 +1671,7 @@ pub fn line_keepers(g: &Game, p: PlayerId) -> Vec<(CardId, f64)> {
     let pl = g.player(p);
     let mut out_names: std::collections::HashSet<&str> =
         pl.perms.iter().filter(|&&m| !g.perm(m).phased).filter_map(|&m| g.perm(m).cd).map(|c| name_of(g, c)).collect();
-    out_names.extend(pl.lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| name_of(g, g.land(l).card())));
+    out_names.extend(pl.lands.iter().filter(|&&l| g.perm(l).on_bf).map(|&l| name_of(g, g.perm(l).card())));
     out_names.extend(pl.cmds_in_zone().map(|c| name_of(g, c)));
     let in_hand = |grp: &[&str]| -> Option<CardId> {
         pl.hand.iter().copied().filter(|&c| grp.contains(&name_of(g, c))).min_by_key(|&c| g.db.get(c).cmc)
@@ -1700,7 +1700,7 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     // --- t6 rograkh-thrasios: the real groups (a quiet line's `QUIET` marker is never held, so no quiet line was
     // ever one tutor away), and a land piece on the battlefield is held (lands are not on `perms`: Gaea's Cradle)
     let land_out = |grp: &[&str]| {
-        pl.lands.iter().any(|&l| g.land(l).on_bf && grp.contains(&name_of(g, g.land(l).card())))
+        pl.lands.iter().any(|&l| g.perm(l).on_bf && grp.contains(&name_of(g, g.perm(l).card())))
     };
     let miss: Vec<&[&str]> = real_groups(cmb)
         .iter()
@@ -1772,7 +1772,7 @@ pub fn group_held(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
 /// is a card of this piece group on p's battlefield (a permanent, or a land)
 pub fn group_out(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
     grp.iter().any(|n| on_bf(g, p, n).is_some())
-        || g.player(p).lands.iter().any(|&l| g.land(l).on_bf && grp.contains(&name_of(g, g.land(l).card())))
+        || g.player(p).lands.iter().any(|&l| g.perm(l).on_bf && grp.contains(&name_of(g, g.perm(l).card())))
 }
 
 /// the mana cards a tutor should fetch for a line complete but for its mana (`mana_for_lines`)

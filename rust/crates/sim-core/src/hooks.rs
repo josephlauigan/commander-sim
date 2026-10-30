@@ -283,9 +283,9 @@ pub type SbaFn = fn(&mut Game, Src) -> Res;
 /// over the hooked permanents (Python's `CI.total`)
 pub type PlayerCountFn = fn(&Game, Src, PlayerId) -> i32;
 /// land_mana(g, src, p, land): extra mana a land of p's makes
-pub type LandManaFn = fn(&Game, Src, PlayerId, crate::ids::LandId) -> i32;
+pub type LandManaFn = fn(&Game, Src, PlayerId, crate::ids::PermId) -> i32;
 /// land_colorless(g, src, p, land, n): a land of p tapped for n mana makes one {C} instead (Damping Sphere)
-pub type LandColorlessFn = fn(&Game, Src, PlayerId, crate::ids::LandId, u32) -> bool;
+pub type LandColorlessFn = fn(&Game, Src, PlayerId, crate::ids::PermId, u32) -> bool;
 /// extra_mana(g, src, p, units): mana sources a card adds (Urza, Kinnan)
 pub type ExtraManaFn = fn(&Game, Src, PlayerId, &[crate::engine::mana::Unit]) -> Vec<crate::engine::mana::Unit>;
 /// steal_draw(g, src, p): Notion Thief takes p's extra draw
@@ -317,11 +317,11 @@ pub type BlocksFn = fn(&mut Game, Src, PlayerId, &[PermId], PlayerId, &mut Assig
 pub type HandDefendFn = fn(&mut Game, CardId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
 /// land_defend(g, land, d, p, atk, assign): a land of defender d's answers p's attack (Kor Haven: an attacker taken
 /// out of `atk` deals no combat damage)
-pub type LandDefendFn = fn(&mut Game, crate::ids::LandId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
+pub type LandDefendFn = fn(&mut Game, crate::ids::PermId, PlayerId, PlayerId, &mut Vec<PermId>, &mut Assign) -> Res;
 /// land_options(g, land, p, post): a land's activated abilities the AI may use (post: None at the end-of-turn window)
-pub type LandOptionsFn = fn(&mut Game, crate::ids::LandId, PlayerId, Option<bool>) -> Res<Vec<Opt>>;
+pub type LandOptionsFn = fn(&mut Game, crate::ids::PermId, PlayerId, Option<bool>) -> Res<Vec<Opt>>;
 /// land_upkeep(g, land, p): p's upkeep, for a land of p's (Emeria, the Sky Ruin)
-pub type LandUpkeepFn = fn(&mut Game, crate::ids::LandId, PlayerId) -> Res;
+pub type LandUpkeepFn = fn(&mut Game, crate::ids::PermId, PlayerId) -> Res;
 /// gy_dies(g, c, owner, m): card c in owner's graveyard sees owner's creature m die (Nether Traitor)
 pub type GyDiesFn = fn(&mut Game, CardId, PlayerId, PermId) -> Res;
 /// gy_landfall(g, c, p): card c in p's graveyard sees a land enter under p's control
@@ -344,16 +344,16 @@ pub type AsEntersFn = fn(&mut Game, PlayerId, PermId) -> Res;
 /// SELF_REGEN(g, m): true if m regenerates instead of being destroyed
 pub type SelfRegenFn = fn(&mut Game, PermId) -> Res<bool>;
 /// ON_TAP for a land / a permanent (g, p, source, n): after it's tapped for n mana (Vivid lands, Heritage Druid)
-pub type OnTapLandFn = fn(&mut Game, PlayerId, crate::ids::LandId, u32) -> Res;
+pub type OnTapLandFn = fn(&mut Game, PlayerId, crate::ids::PermId, u32) -> Res;
 pub type OnTapPermFn = fn(&mut Game, PlayerId, PermId, u32) -> Res;
 /// DYN_MANA for a land / a permanent (g, p, source): the mana its tap ability makes now (Gaea's Cradle, Priest of
 /// Titania)
-pub type DynManaLandFn = fn(&Game, PlayerId, crate::ids::LandId) -> u32;
+pub type DynManaLandFn = fn(&Game, PlayerId, crate::ids::PermId) -> u32;
 pub type DynManaPermFn = fn(&Game, PlayerId, PermId) -> u32;
 /// LAND_ETB(g, p, land): a land played as a land drop enters (Bojuka Bog)
-pub type LandEtbFn = fn(&mut Game, PlayerId, crate::ids::LandId) -> Res;
+pub type LandEtbFn = fn(&mut Game, PlayerId, crate::ids::PermId) -> Res;
 /// LAND_COLS(g, p, land): the colours a land can make now (Vivid lands, Gemstone Mine)
-pub type LandColsFn = fn(&Game, PlayerId, crate::ids::LandId) -> crate::cards::Colors;
+pub type LandColsFn = fn(&Game, PlayerId, crate::ids::PermId) -> crate::cards::Colors;
 /// SELF_PT(g, p, m): a creature's own power/toughness rule (Kor Spiritdancer: +2/+2 per Aura on it): Python's
 /// `common.SELF_PT`
 pub type SelfPtFn = fn(&Game, PlayerId, PermId) -> (i32, i32);

@@ -35,7 +35,7 @@ use crate::engine::values::{epow, etgh, has_type, once_per_turn, pval, untargeta
 use crate::engine::zones::{Enter, Tokens, enter, enter_token_copy, landfall, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::state::{Ctx, DataKey, Game, Step, Val};
 use crate::sym::{Sym, intern};
@@ -570,8 +570,8 @@ fn kick_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 // ================================================================== lands: Three Tree City, Wirewood Lodge, Yavimaya
 /// the creature type Three Tree City named (as it entered as a land drop; else the most common type among p's
 /// creatures)
-fn city_type(g: &Game, p: PlayerId, l: LandId) -> Option<Sym> {
-    if let Some(Val::Str(s)) = g.land(l).data.get(DataKey::Ctype) {
+fn city_type(g: &Game, p: PlayerId, l: PermId) -> Option<Sym> {
+    if let Some(Val::Str(s)) = g.perm(l).data.get(DataKey::Ctype) {
         return Some(*s);
     }
     let mut counts: Vec<(Sym, u32)> = vec![];
@@ -591,26 +591,26 @@ fn city_type(g: &Game, p: PlayerId, l: LandId) -> Option<Sym> {
 
 /// {2},{T}: mana of one colour equal to the creatures of the named type you control: net of the {2} (as Nykthos);
 /// {C} when that is no more
-fn city_amount(g: &Game, p: PlayerId, l: LandId) -> u32 {
+fn city_amount(g: &Game, p: PlayerId, l: PermId) -> u32 {
     let Some(t) = city_type(g, p, l) else { return 1 };
     let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased && has_type(g, m, t)).count();
     (n as u32).saturating_sub(2).max(1)
 }
 
-fn city_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
+fn city_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
     if city_amount(g, p, l) > 1 { g.player(p).ident } else { Colors::NONE }
 }
 
-fn city_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn city_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let t = crate::impls::galadriel::choose_type(g, p, THREE_TREE)?;
-    g.land_mut(l).data.set(DataKey::Ctype, Val::Str(t));
+    g.perm_mut(l).data.set(DataKey::Ctype, Val::Str(t));
     crate::glog!(g, "    Three Tree City names {t}");
     Ok(())
 }
 
 /// {G},{T}: untap target Elf: with an Elf mana creature already tapped that makes 3 or more, the Lodge taps for that
 /// Elf's mana less the {G} (the Elf taps again); else {C}
-fn lodge_amount(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn lodge_amount(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     let best = g
         .player(p)
         .perms
@@ -623,20 +623,20 @@ fn lodge_amount(g: &Game, p: PlayerId, _l: LandId) -> u32 {
     if best >= 3 { best - 1 } else { 1 }
 }
 
-fn lodge_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
+fn lodge_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
     if lodge_amount(g, p, l) > 1 { Colors::from_letters("G") } else { Colors::NONE }
 }
 
 /// Yavimaya, Cradle of Growth on any battlefield (and not a plain Mountain under Blood Moon): every land is a Forest
 pub fn yavimaya_out(g: &Game) -> bool {
     g.players.iter().filter(|q| q.alive).any(|q| {
-        q.lands.iter().any(|&l| &*g.db.get(g.land(l).card()).name == YAVIMAYA && !crate::engine::mana::moon_land(g, l))
+        q.lands.iter().any(|&l| &*g.db.get(g.perm(l).card()).name == YAVIMAYA && !crate::engine::mana::moon_land(g, l))
     })
 }
 
 /// is land l a Forest (by name, by type, or by Yavimaya)?
-pub fn is_forest(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).card());
+pub fn is_forest(g: &Game, l: PermId) -> bool {
+    let d = g.db.get(g.perm(l).card());
     &*d.name == "Forest" || d.has_subtype("forest") || yavimaya_out(g)
 }
 

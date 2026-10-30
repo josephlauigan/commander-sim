@@ -289,7 +289,7 @@ fn finale_of_revelation_x_ten_shuffles_untaps_and_removes_the_hand_limit() {
     cast_spell(&mut g, P0, "Finale of Revelation", Ctx { x: 10, ..Ctx::default() });
     assert_eq!(g.player(P0).hand.len(), 10);
     assert!(!in_gy(&g, P0, "Opt") || g.player(P0).gy.len() <= 1, "the graveyard went into the library");
-    assert_eq!(ls.iter().filter(|&&l| !g.land(l).tapped).count(), 5, "up to five lands untapped");
+    assert_eq!(ls.iter().filter(|&&l| !g.perm(l).tapped).count(), 5, "up to five lands untapped");
     assert!(g.player(P0).t0s.nomax);
 }
 

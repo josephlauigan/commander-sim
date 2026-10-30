@@ -54,7 +54,7 @@ fn chatterstorm_alone_makes_one_squirrel() {
 
 // ======================================================== Cloud of Faeries
 fn untapped(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 #[test]
@@ -367,9 +367,8 @@ fn merchant_foods_untap_at_its_controllers_upkeep() {
 }
 
 // ======================================================== Shifting Woodland
-use sim_core::ids::LandId;
 
-fn woodland(g: &mut Game, p: PlayerId) -> LandId {
+fn woodland(g: &mut Game, p: PlayerId) -> PermId {
     let c = card(g, "Shifting Woodland");
     g.add_land(p, c, false)
 }
@@ -407,13 +406,13 @@ fn woodland_becomes_a_copy_of_oboro_with_delirium() {
     let l = woodland(&mut g, P0);
     lands(&mut g, P0, "Forest", 4, false);
     fill_gy(&mut g, P0, &["Oboro Breezecaller", "Opt", "Sol Ring", "Forest"]);
-    let f = g.registry.get(g.land(l).card()).and_then(|i| i.land_options).expect("land option");
+    let f = g.registry.get(g.perm(l).card()).and_then(|i| i.land_options).expect("land option");
     let opts = f(&mut g, l, P0, Some(false)).unwrap();
     assert_eq!(opts.len(), 1);
     assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
     let copy = on_bf(&g, P0, "Oboro Breezecaller").expect("a copy of Oboro");
     assert!(g.perm(copy).temp && !g.perm(copy).sick, "until end of turn, and not summoning sick");
-    assert!(g.land(l).tapped, "the land is the creature: no mana from it as a land");
+    assert!(g.perm(l).tapped, "the land is the creature: no mana from it as a land");
     assert!(in_gy(&g, P0, "Oboro Breezecaller"), "the card stays in the graveyard");
 }
 
@@ -423,7 +422,7 @@ fn woodland_does_nothing_without_delirium() {
     let l = woodland(&mut g, P0);
     lands(&mut g, P0, "Forest", 4, false);
     fill_gy(&mut g, P0, &["Oboro Breezecaller", "Opt"]);
-    let f = g.registry.get(g.land(l).card()).and_then(|i| i.land_options).unwrap();
+    let f = g.registry.get(g.perm(l).card()).and_then(|i| i.land_options).unwrap();
     assert!(f(&mut g, l, P0, Some(false)).unwrap().is_empty());
 }
 

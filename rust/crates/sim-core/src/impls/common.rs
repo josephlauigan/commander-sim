@@ -24,7 +24,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::human::{cards, choices, human_of};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, TurnStamp, Val};
 use crate::sym::{Sym, intern};
@@ -2356,7 +2356,7 @@ fn worst_gy(g: &Game, p: PlayerId) -> Option<PlayerId> {
 }
 
 /// Bojuka Bog (Full): enters tapped; exiles the most dangerous graveyard
-fn bog(g: &mut Game, p: PlayerId, _l: LandId) -> Res {
+fn bog(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
     if crate::human::is_human(g, p) {
         // "exile target player's graveyard": the person picks whose (or none)
         let ps: Vec<PlayerId> = g.players.iter().filter(|q| q.alive && !q.gy.is_empty()).map(|q| q.id).collect();
@@ -2691,7 +2691,7 @@ static ELSPETH: [WalkerAb; 3] = [
 pub fn teferi_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     draw(g, p, 1, false)?;
     for l in g.player(p).lands.iter().copied().take(2).collect::<Vec<_>>() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     Ok(())
 }
@@ -2867,14 +2867,14 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         }
         // the fix: the other counters the engine keeps for permanents (lands, the Incubator, The Ozolith)
         for l in g.player(p).lands.clone() {
-            let d = &g.land(l).data;
+            let d = &g.perm(l).data;
             let charge = d.get(DataKey::Charge).map(Val::int);
             let kept = d.int(DataKey::Counters);
-            if VIVID.contains(&&*g.db.get(g.land(l).card()).name) && charge.unwrap_or(2) > 0 {
-                g.land_mut(l).data.set(DataKey::Charge, Val::Int(charge.unwrap_or(2) + dbl as i64));
+            if VIVID.contains(&&*g.db.get(g.perm(l).card()).name) && charge.unwrap_or(2) > 0 {
+                g.perm_mut(l).data.set(DataKey::Charge, Val::Int(charge.unwrap_or(2) + dbl as i64));
             }
             if kept > 0 {
-                g.land_mut(l).data.set(DataKey::Counters, Val::Int(kept + dbl as i64));
+                g.perm_mut(l).data.set(DataKey::Counters, Val::Int(kept + dbl as i64));
             }
         }
         let pl = g.player_mut(p);
@@ -2941,12 +2941,12 @@ fn creature_count(g: &Game, p: PlayerId) -> u32 {
 }
 
 /// Gaea's Cradle (Full): G for each creature you control
-fn cradle(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn cradle(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     creature_count(g, p)
 }
 
 /// Nykthos, Shrine to Nyx (Approximate): taps for devotion minus the {2} activation
-fn nykthos(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn nykthos(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     let best = "WUBRG".chars().map(|c| devotion(g, p, c) as i32).max().unwrap();
     (best - 2).max(1) as u32
 }
@@ -2962,16 +2962,16 @@ fn urborg(g: &Game) -> bool {
     g.players
         .iter()
         .filter(|q| q.alive)
-        .any(|q| q.lands.iter().any(|&l| &*g.db.get(g.land(l).card()).name == "Urborg, Tomb of Yawgmoth"))
+        .any(|q| q.lands.iter().any(|&l| &*g.db.get(g.perm(l).card()).name == "Urborg, Tomb of Yawgmoth"))
 }
 
-fn is_swamp(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).card());
+fn is_swamp(g: &Game, l: PermId) -> bool {
+    let d = g.db.get(g.perm(l).card());
     d.has_subtype("swamp") || &*d.name == "Swamp" || urborg(g)
 }
 
 /// Cabal Coffers (Approximate): B per Swamp minus the {2} activation (Urborg makes every land a Swamp)
-fn coffers(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn coffers(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     let n = g.player(p).lands.iter().filter(|&&l| is_swamp(g, l)).count() as i32;
     (n - 2).max(1) as u32
 }
@@ -2982,7 +2982,7 @@ fn marwyn(g: &Game, _p: PlayerId, m: PermId) -> u32 {
 }
 
 /// Crypt Ghast (Partial: extort is partials'): Swamps tap for an extra B
-fn ghast(g: &Game, src: Src, p: PlayerId, l: LandId) -> i32 {
+fn ghast(g: &Game, src: Src, p: PlayerId, l: PermId) -> i32 {
     (p == owner(g, src) && is_swamp(g, l)) as i32
 }
 
@@ -3238,7 +3238,7 @@ fn ajani_chosen(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 // ======================================================== Urza's Saga (land)
 /// LAND_ETB: lore counter I
-fn saga_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn saga_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     g.player_mut(p).sagas.push((l, 1));
     Ok(())
 }
@@ -3246,13 +3246,13 @@ fn saga_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
 /// common._saga_construct: {2}, {T}: a 0/0 Construct that gets +1/+1 for each artifact you control. The {2} comes
 /// from other sources (the Saga taps as part of the cost). Made when it would be at least a 3/3, or when the mana
 /// would go unused anyway (nothing castable in hand needs it)
-fn saga_construct(g: &mut Game, p: PlayerId, l: LandId) -> Res {
-    if g.land(l).tapped || !g.player(p).lands.contains(&l) {
+fn saga_construct(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    if g.perm(l).tapped || !g.player(p).lands.contains(&l) {
         return Ok(());
     }
-    g.land_mut(l).tapped = true; // the Saga taps as part of the cost: it can't pay its own {2}
+    g.perm_mut(l).tapped = true; // the Saga taps as part of the cost: it can't pay its own {2}
     if !can_pay(g, p, 2, "", false) {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
         return Ok(());
     }
     let arts = g
@@ -3273,7 +3273,7 @@ fn saga_construct(g: &mut Game, p: PlayerId, l: LandId) -> Res {
         .max()
         .unwrap_or(0);
     if arts + 1 < 3 && avail - 2 < need {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
         return Ok(());
     }
     pay(g, p, 2, "", false)?;
@@ -3329,7 +3329,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
                 );
             }
             crate::engine::turn::remove_land(g, p, l);
-            let cd = g.land(l).card();
+            let cd = g.perm(l).card();
             g.player_mut(p).gy.push(cd);
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);

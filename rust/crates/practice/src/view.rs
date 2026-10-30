@@ -85,7 +85,7 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         .iter()
         .enumerate()
         .map(|(i, &l)| {
-            let land = g.land(l);
+            let land = g.perm(l);
             let mut d = json!({"name": &*g.db.get(land.card()).name, "tapped": land.tapped, "i": i});
             if you && seam::land_has_ability(g, p, l) {
                 d["ability"] = true.into();
@@ -143,7 +143,7 @@ pub mod seam {
     use super::*;
     use sim_core::human::legal::{GyKind, check_land_gy, gy_mode};
     use sim_core::human::mana::sources;
-    use sim_core::ids::{CardId, LandId};
+    use sim_core::ids::{CardId, PermId};
 
     /// the human's mana pool as text ("WWU"); `mana.pool_of(p).text()`
     pub fn mana_pool_text(g: &Game, p: PlayerId) -> String {
@@ -197,7 +197,7 @@ pub mod seam {
         false
     }
     /// `abilities.land_abilities(g, p, L)` is not empty
-    pub fn land_has_ability(g: &Game, p: PlayerId, l: LandId) -> bool {
+    pub fn land_has_ability(g: &Game, p: PlayerId, l: PermId) -> bool {
         !sim_core::human::abilities::land_abilities(g, p, l).is_empty() || sim_core::human::alt::land_hook(g, l)
     }
     /// the mana the person has in the pool, counted as any colour for a copy of the game (`mana.pool_of(p).total()`)

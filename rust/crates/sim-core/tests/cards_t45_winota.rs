@@ -425,7 +425,7 @@ fn sundering_eruption_destroys_a_land_and_grounds_blockers() {
     cast::resolve(&mut g, P0, c, &Ctx::default(), "hand").unwrap();
     assert!(!g.player(P1).lands.contains(&tower), "the nonbasic is destroyed");
     assert_eq!(g.player(P1).lands.len(), n1, "its controller fetched a basic");
-    assert!(g.land(*g.player(P1).lands.last().unwrap()).tapped, "tapped");
+    assert!(g.perm(*g.player(P1).lands.last().unwrap()).tapped, "tapped");
     let wall = token(&mut g, P1, 2);
     let bird = perm(&mut g, P1, "Ornithopter");
     let a = token(&mut g, P0, 2);

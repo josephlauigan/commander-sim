@@ -20,7 +20,7 @@ fn partner_table() -> sim_core::state::Game {
 
 fn untap(g: &mut sim_core::state::Game, p: PlayerId) {
     for l in g.player(p).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
 }
 

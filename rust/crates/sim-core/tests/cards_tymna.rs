@@ -47,7 +47,7 @@ fn on(g: &Game, m: PermId) -> bool {
 }
 
 fn untapped_lands(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 // ======================================================== Thrasios, Triton Hero
@@ -731,13 +731,13 @@ fn spectacle_summit_surveils_at_the_end_of_an_opponents_turn() {
     let l = lands(&mut g, P0, "Spectacle Summit", 1, false)[0];
     lands(&mut g, P0, "Island", 2, false);
     lands(&mut g, P0, "Mountain", 2, false);
-    let c = g.land(l).card();
+    let c = g.perm(l).card();
     assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c));
     let f = g.registry.get(c).unwrap().land_options.unwrap();
     let o = f(&mut g, l, P0, None).unwrap();
     assert_eq!(o.len(), 1, "{{2}}{{U}}{{R}} and {{T}}");
     assert!(run(&mut g, P0, &o[0]));
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
     g.active = Some(P0);
     assert!(f(&mut g, l, P0, None).unwrap().is_empty(), "not on my own turn");
 }
@@ -747,7 +747,7 @@ fn boiling_rock_prison_is_sacrificed_for_a_card_when_flooded() {
     let mut g = tbl();
     let l = lands(&mut g, P0, "Boiling Rock Prison", 1, false)[0];
     lands(&mut g, P0, "Swamp", 4, false);
-    let c = g.land(l).card();
+    let c = g.perm(l).card();
     let f = g.registry.get(c).unwrap().land_options.unwrap();
     assert!(f(&mut g, l, P0, None).unwrap().is_empty(), "five lands: not flooded");
     lands(&mut g, P0, "Swamp", 1, false);

@@ -240,11 +240,11 @@ fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym>
     draw(g, p, 2, false)?;
     let pl = g.player(p);
     let lands_in_hand = pl.hand.iter().filter(|&&x| g.db.get(x).land).count();
-    let tapped = pl.lands.iter().copied().find(|&l| g.land(l).tapped);
+    let tapped = pl.lands.iter().copied().find(|&l| g.perm(l).tapped);
     let spare = pl.lands.len() >= 6 || lands_in_hand == 0;
     match tapped {
         Some(l) if spare && pl.lands_played < 1 => {
-            let cd = g.land(l).card();
+            let cd = g.perm(l).card();
             crate::engine::turn::remove_land(g, p, l);
             g.player_mut(p).hand.push(cd);
             crate::glog!(g, "    {} returns {} (Tragic Lesson)", g.player(p).name, g.db.get(cd).name);

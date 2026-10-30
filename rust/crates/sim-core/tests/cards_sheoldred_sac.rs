@@ -80,7 +80,7 @@ fn the_tower_sacrifices_for_bb_when_a_death_payoff_is_out() {
     assert!(!g.perm(t).on_bf);
     assert_eq!(g.player(P0).floating.b, 2);
     assert_eq!(g.player(P1).life, before - 2, "Sephiroth and Blood Artist each drain 1");
-    assert!(g.land(g.player(P0).lands[0]).tapped);
+    assert!(g.perm(g.player(P0).lands[0]).tapped);
     assert_eq!(sacrificed(&g, P0), 1);
 }
 

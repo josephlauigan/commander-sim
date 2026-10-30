@@ -19,7 +19,7 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::StackKind;
 use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
@@ -254,11 +254,11 @@ fn rock_worth(g: &Game, m: PermId) -> f64 {
 }
 
 /// the three choices of +1 (an artifact, a creature, a land) with what each is worth to the AI
-fn teferi_aims(g: &Game, p: PlayerId) -> (Option<(Aim, f64)>, Option<(Aim, f64)>, Option<(LandId, bool)>) {
+fn teferi_aims(g: &Game, p: PlayerId) -> (Option<(Aim, f64)>, Option<(Aim, f64)>, Option<(PermId, bool)>) {
     let art = aim_perm(g, p, |g, m| is_artifact(g, m), rock_worth);
     let cre = aim_perm(g, p, |g, m| g.is_creature(m), |g, m| pval(g, m) / 3.0);
-    let own = g.player(p).lands.iter().copied().find(|&l| g.land(l).on_bf && g.land(l).tapped);
-    let opp = g.opps(p).flat_map(|q| g.player(q).lands.clone()).find(|&l| g.land(l).on_bf && !g.land(l).tapped);
+    let own = g.player(p).lands.iter().copied().find(|&l| g.perm(l).on_bf && g.perm(l).tapped);
+    let opp = g.opps(p).flat_map(|q| g.player(q).lands.clone()).find(|&l| g.perm(l).on_bf && !g.perm(l).tapped);
     let land = own.map(|l| (l, true)).or(opp.map(|l| (l, false)));
     (art, cre, land)
 }
@@ -279,7 +279,7 @@ fn teferi_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
         }
     }
     if let Some((l, own)) = l {
-        g.land_mut(l).tapped = !own;
+        g.perm_mut(l).tapped = !own;
     }
     gain(g, p, 2)
 }

@@ -26,7 +26,7 @@ use crate::engine::zones::{
 use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::sac_food;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
@@ -60,9 +60,9 @@ fn cloud_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src || !trigger_window(g, o, Some(src), "untap up to two lands", Some(3.0))? {
         return Ok(());
     }
-    let tapped: Vec<_> = g.player(o).lands.iter().copied().filter(|&l| g.land(l).tapped).take(2).collect();
+    let tapped: Vec<_> = g.player(o).lands.iter().copied().filter(|&l| g.perm(l).tapped).take(2).collect();
     for l in &tapped {
-        g.land_mut(*l).tapped = false;
+        g.perm_mut(*l).tapped = false;
     }
     crate::glog!(g, "    {} untaps {} land(s) (Cloud of Faeries)", pname(g, o), tapped.len());
     Ok(())
@@ -186,7 +186,7 @@ pub fn mycospawn_kicked(g: &mut Game, p: PlayerId) -> Res {
     if !trigger_window(g, p, None, "Sowing Mycospawn: exile target land", Some(4.0))? {
         return Ok(());
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     crate::engine::turn::remove_land(g, q, l);
     g.player_mut(q).exile.push(cd);
     crate::glog!(g, "    {} is exiled (Sowing Mycospawn, kicked)", cname(g, cd));
@@ -455,8 +455,8 @@ pub fn woodland_pick(g: &Game, p: PlayerId) -> Option<CardId> {
 
 /// Delirium {2}{G}{G}: this land becomes a copy of target permanent card in your graveyard until end of turn. The AI
 /// does it in its first main phase when the delirium is there, the mana is spare and a creature card is worth copying.
-fn woodland_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || g.active != Some(p) || !g.player(p).lands.contains(&l) || g.land(l).tapped {
+fn woodland_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false) || g.active != Some(p) || !g.player(p).lands.contains(&l) || g.perm(l).tapped {
         return Ok(vec![]);
     }
     if !delirium(g, p) || !can_pay(g, p, 2, "GG", false) {
@@ -474,7 +474,7 @@ fn woodland_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) ->
 }
 
 fn woodland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (l, t) = (LandId((arg >> 32) as u32), CardId((arg & 0xffff_ffff) as u16));
+    let (l, t) = (PermId((arg >> 32) as u32), CardId((arg & 0xffff_ffff) as u16));
     if !g.player(p).lands.contains(&l)
         || !g.player(p).gy.contains(&t)
         || !delirium(g, p)
@@ -490,7 +490,7 @@ fn woodland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     // the land is the creature now: it makes no mana as a land; it has been under its controller's control all along
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} Shifting Woodland becomes a copy of {}", pname(g, p), cname(g, t));
     if let Some(m) = enter_token_copy(g, p, t)?
         && g.perm(m).on_bf
@@ -610,11 +610,11 @@ fn rites_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
 }
 
 /// Itlimoc: {G}, or {G} for each creature you control (the larger)
-fn itlimoc_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn itlimoc_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     creatures_of_count(g, p).max(1)
 }
 
-fn itlimoc_cols(_g: &Game, _p: PlayerId, _l: LandId) -> Colors {
+fn itlimoc_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("G")
 }
 

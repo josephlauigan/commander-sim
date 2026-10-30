@@ -10,7 +10,7 @@
 use super::{choices, legal};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, PlanFn};
-use crate::ids::{CardId, LandId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 
 pub type Why = Option<String>;
@@ -70,14 +70,14 @@ pub fn gy_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>> 
 }
 
 /// The hook options of land l.
-pub fn land_alts(g: &mut Game, p: PlayerId, l: LandId) -> Res<Vec<(String, Opt)>> {
+pub fn land_alts(g: &mut Game, p: PlayerId, l: PermId) -> Res<Vec<(String, Opt)>> {
     if super::karn::owns_land(g, l) {
         return Ok(vec![]); // the Karn deck's lands list every ability themselves (karn.rs)
     }
-    if crate::engine::mana::moon_land(g, l) || g.land(l).tapped {
+    if crate::engine::mana::moon_land(g, l) || g.perm(l).tapped {
         return Ok(vec![]);
     }
-    let Some(f) = g.registry.get(g.land(l).card()).and_then(|i| i.land_options) else { return Ok(vec![]) };
+    let Some(f) = g.registry.get(g.perm(l).card()).and_then(|i| i.land_options) else { return Ok(vec![]) };
     let mut out: Vec<(String, Opt)> =
         f(g, l, p, Some(false))?.into_iter().filter(|o| o.act.is_some()).map(|o| (o.label.clone(), o)).collect();
     if out.is_empty() {
@@ -93,8 +93,8 @@ pub fn hand_hook(g: &Game, c: CardId) -> bool {
 pub fn gy_hook(g: &Game, c: CardId) -> bool {
     g.registry.get(c).is_some_and(|i| i.gy_options.is_some())
 }
-pub fn land_hook(g: &Game, l: LandId) -> bool {
-    g.registry.get(g.land(l).card()).is_some_and(|i| i.land_options.is_some())
+pub fn land_hook(g: &Game, l: PermId) -> bool {
+    g.registry.get(g.perm(l).card()).is_some_and(|i| i.land_options.is_some())
 }
 
 /// Run one hook option for the person. Ok(None) when it was done (or the person backed out); else why not.
@@ -164,10 +164,10 @@ fn forced_gy(g: &Game, c: CardId) -> Option<(String, Opt)> {
     })
 }
 
-fn forced_land(g: &Game, l: LandId) -> Option<(String, Opt)> {
+fn forced_land(g: &Game, l: PermId) -> Option<(String, Opt)> {
     use crate::impls::{lands, legends, sheoldred, t6_lands};
     let n = l.0 as i64;
-    Some(match &*g.db.get(g.land(l).card()).name {
+    Some(match &*g.db.get(g.perm(l).card()).name {
         "Command Beacon" => forced("{T}, sacrifice: put your commander into your hand", legends::beacon_go, n),
         "Karn's Bastion" => forced("{4}, {T}: proliferate", lands::bastion_go, n),
         "Geier Reach Sanitarium" => {

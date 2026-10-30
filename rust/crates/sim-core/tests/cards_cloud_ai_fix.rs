@@ -49,10 +49,10 @@ fn helm_and_feast_and_famine_equip_and_work() {
         let o =
             opts.iter().find(|o| o.label == format!("equip {n} to {CLOUD}")).unwrap_or_else(|| panic!("{n}: no equip"));
         assert_eq!(opts.iter().filter(|o| o.label.starts_with(&format!("equip {n}"))).count(), 1, "no double options");
-        let free = g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count();
+        let free = g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
         assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
         assert_eq!(g.perm(e).attached, Some(cl));
-        let used = free - g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count();
+        let used = free - g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
         assert_eq!(used, cost, "{n} equip cost");
         assert_eq!(sim_core::engine::values::epow(&g, cl), before + 2);
         // not offered again once worn

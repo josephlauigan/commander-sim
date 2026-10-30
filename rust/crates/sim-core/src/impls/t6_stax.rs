@@ -200,7 +200,7 @@ fn first_sphere(g: &Game, src: Src) -> bool {
 /// amount; each spell a player casts costs {1} more for each other spell that player has cast this turn.
 /// This is the land half: the engine asks `land_colorless` for a land making two or more mana (after every bonus
 /// to it), and that land makes one {C}.
-fn sphere_land(g: &Game, src: Src, _p: PlayerId, _l: crate::ids::LandId, _n: u32) -> bool {
+fn sphere_land(g: &Game, src: Src, _p: PlayerId, _l: crate::ids::PermId, _n: u32) -> bool {
     g.perm(src).on_bf && first_sphere(g, src)
 }
 

@@ -294,7 +294,7 @@ fn opposition_taps_their_mana_in_their_upkeep() {
     lands(&mut g, P1, "Island", 3, false);
     g.active = Some(P1);
     upkeep(&mut g, P1);
-    assert_eq!(g.player(P1).lands.iter().filter(|&&l| g.land(l).tapped).count(), 2);
+    assert_eq!(g.player(P1).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 2);
 }
 
 #[test]
@@ -346,7 +346,7 @@ fn aether_hub_colour_costs_energy() {
     assert_eq!(mana::land_colors_now(&g, P0, l), g.player(P0).ident);
     mana::pay(&mut g, P0, 0, "W", false).unwrap();
     assert_eq!(g.player(P0).energy, 0);
-    g.land_mut(l).tapped = false;
+    g.perm_mut(l).tapped = false;
     assert!(mana::land_colors_now(&g, P0, l).is_empty());
 }
 

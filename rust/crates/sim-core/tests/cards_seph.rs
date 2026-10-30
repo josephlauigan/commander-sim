@@ -781,7 +781,7 @@ fn nim_deathmantle_leaves_marchesa_returns_alone() {
     let rat = perm(&mut g, P0, "Burglar Rat");
     g.perm_mut(rat).plus = 1;
     zones::die(&mut g, rat, "destroy").unwrap();
-    assert!(!g.player(P0).lands.iter().any(|&l| g.land(l).tapped));
+    assert!(!g.player(P0).lands.iter().any(|&l| g.perm(l).tapped));
 }
 
 #[test]
@@ -813,7 +813,7 @@ fn nim_deathmantle_returns_a_bomb_and_equips_it() {
     zones::die(&mut g, archon, "destroy").unwrap();
     let back = named(&g, P0, "Archon of Cruelty").expect("returned");
     assert_eq!(g.perm(nim).attached, Some(back));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 4);
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 4);
     // a 1/1 without an enter effect isn't worth {4}
     let mut g = table(&["seph", "veyran"]);
     lands(&mut g, P0, "Swamp", 4, false);
@@ -862,7 +862,7 @@ fn muldrotha_the_ai_plays_a_land_from_the_graveyard() {
     let tower = take(&mut g, P0, "Command Tower");
     g.player_mut(P0).gy.push(tower);
     turn::play_land(&mut g, P0).unwrap();
-    assert!(g.player(P0).lands.iter().any(|&l| g.land(l).card() == tower));
+    assert!(g.player(P0).lands.iter().any(|&l| g.perm(l).card() == tower));
     assert!(mine::muld_used(&g, P0).contains(&"L"));
 }
 

@@ -25,7 +25,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::human::{choices, human_of};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{CopyExc, Ctx, DataKey, Game, PermData, TurnStamp, Val};
 use crate::sym::{Sym, intern};
@@ -187,11 +187,11 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
         die(g, m, "sac")?;
         return Ok(Some(Sacrificed::Perm(m)));
     }
-    let colours = |l: LandId| g.db.get(g.land(l).card()).tags.str(crate::tag::Tag::C).map_or(0, |s| s.len());
-    if let Some(l) = first_max(&lands, |l| (g.land(l).tapped, std::cmp::Reverse(colours(l)))) {
+    let colours = |l: PermId| g.db.get(g.perm(l).card()).tags.str(crate::tag::Tag::C).map_or(0, |s| s.len());
+    if let Some(l) = first_max(&lands, |l| (g.perm(l).tapped, std::cmp::Reverse(colours(l)))) {
         // Python: min(p.lands, key=lambda L: (not L.tapped, len(L.cd.tags.get('c', ''))))
         crate::engine::turn::remove_land(g, p, l);
-        let cd = g.land(l).card();
+        let cd = g.perm(l).card();
         g.player_mut(p).gy.push(cd);
         if !g.hooks.is_empty() {
             fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Card(cd) })?;
@@ -787,7 +787,7 @@ static FREYALISE: [WalkerAb; 3] = [
 ];
 
 /// Forests tap for an extra G
-fn nissa_wstw(g: &Game, src: Src, p: PlayerId, l: LandId) -> i32 {
+fn nissa_wstw(g: &Game, src: Src, p: PlayerId, l: PermId) -> i32 {
     (p == g.perm(src).owner && crate::impls::t3_marwyn::is_forest(g, l)) as i32 // Yavimaya: every land
 }
 
@@ -1128,7 +1128,7 @@ fn ttr_lock(g: &Game, src: Src, caster: PlayerId, _c: CardId, _zone: Sym) -> boo
 
 fn garruk_untap(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     for l in g.player(p).lands.iter().take(2).copied().collect::<Vec<_>>() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     Ok(())
 }

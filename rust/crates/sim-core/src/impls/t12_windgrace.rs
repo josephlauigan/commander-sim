@@ -54,7 +54,7 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready, Step, StepKind, done, no_src};
 use crate::impls::common::{WalkerAb, walker};
 use crate::impls::lands::{animate, can_pay_without, open_attack, pay_without, sac_land};
@@ -87,12 +87,12 @@ fn cname(g: &Game, c: CardId) -> &str {
     &g.db.get(c).name
 }
 
-fn lname(g: &Game, l: LandId) -> &str {
-    cname(g, g.land(l).card())
+fn lname(g: &Game, l: PermId) -> &str {
+    cname(g, g.perm(l).card())
 }
 
 /// p's land of this name on the battlefield
-fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<LandId> {
+fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
     g.player(p).lands.iter().copied().find(|&l| lname(g, l) == name)
 }
 
@@ -139,24 +139,24 @@ pub fn lands_enter_untapped(g: &Game, p: PlayerId) -> bool {
 /// --- casual speed: the land-drop choice (turn::land_score): Lotus Field with fewer than two other lands sacrifices
 /// itself (and the one other land), a lost land drop, so any other land goes first
 pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    let out = g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).count();
+    let out = g.player(p).lands.iter().filter(|&&l| g.perm(l).on_bf).count();
     if cname(g, c) == LOTUS && out < 2 { -20.0 } else { 0.0 }
 }
 
 /// a land p keeps: the Dark Depths line, Field of the Dead, lands that make two or more mana
-fn key_land(g: &Game, l: LandId) -> bool {
-    let d = g.db.get(g.land(l).card());
+fn key_land(g: &Game, l: PermId) -> bool {
+    let d = g.db.get(g.perm(l).card());
     matches!(&*d.name, DEPTHS | STAGE | FIELD | "Gaea's Cradle" | "Urborg, Tomb of Yawgmoth")
         || d.tags.int(Tag::Amt).unwrap_or(1) >= 2
 }
 
 /// p's least useful land (not `except`): not a key land, tapped first, the fewest colours, a basic first
-fn worst_land(g: &Game, p: PlayerId, except: Option<LandId>) -> Option<LandId> {
-    let ls: Vec<LandId> = g.player(p).lands.iter().copied().filter(|&l| Some(l) != except).collect();
+fn worst_land(g: &Game, p: PlayerId, except: Option<PermId>) -> Option<PermId> {
+    let ls: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&l| Some(l) != except).collect();
     min_by(&ls, |l| {
-        let d = g.db.get(g.land(l).card());
+        let d = g.db.get(g.perm(l).card());
         100.0 * key_land(g, l) as i32 as f64
-            + 10.0 * !g.land(l).tapped as i32 as f64
+            + 10.0 * !g.perm(l).tapped as i32 as f64
             + land_colors_now(g, p, l).count() as f64
             + 0.5 * !d.basic as i32 as f64
     })
@@ -248,12 +248,12 @@ fn lages(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 // ================================================================== Dark Depths
 /// ice counters left on Dark Depths: it enters with ten (the land keeps the number removed)
-pub fn ice(g: &Game, l: LandId) -> i64 {
-    (10 - g.land(l).data.int(DataKey::IceRemoved)).max(0)
+pub fn ice(g: &Game, l: PermId) -> i64 {
+    (10 - g.perm(l).data.int(DataKey::IceRemoved)).max(0)
 }
 
 /// {3}: remove an ice counter, with mana to spare: at the end of an opponent's turn, or in the second main phase
-fn depths_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn depths_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if !g.player(p).lands.contains(&l) || ice(g, l) == 0 || !can_pay_without(g, p, l, 3, "") {
         return Ok(vec![]);
     }
@@ -270,16 +270,16 @@ fn depths_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> R
 }
 
 fn depths_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    let l = PermId(arg as u32);
     if !g.player(p).lands.contains(&l) || ice(g, l) == 0 || !pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     if !ability_window_card(g, p, cd, "remove an ice counter", None, None)? || !g.player(p).lands.contains(&l) {
         return Ok(true);
     }
-    let n = g.land(l).data.int(DataKey::IceRemoved) + 1;
-    g.land_mut(l).data.set(DataKey::IceRemoved, Val::Int(n));
+    let n = g.perm(l).data.int(DataKey::IceRemoved) + 1;
+    g.perm_mut(l).data.set(DataKey::IceRemoved, Val::Int(n));
     crate::glog!(g, "    {} removes an ice counter from Dark Depths ({} left)", pname(g, p), ice(g, l));
     if ice(g, l) == 0 {
         // "When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage"
@@ -295,7 +295,7 @@ fn stage_ready(g: &Game, p: PlayerId) -> Ready {
     let (Some(_), Some(s)) = (land_named(g, p, DEPTHS), land_named(g, p, STAGE)) else {
         return (false, vec![], vec![]);
     };
-    if g.land(s).tapped || total_mana(g, p, false) < 3 {
+    if g.perm(s).tapped || total_mana(g, p, false) < 3 {
         return (false, vec![], vec![]);
     }
     (true, vec![], vec![])
@@ -305,11 +305,11 @@ fn stage_ready(g: &Game, p: PlayerId) -> Ready {
 /// graveyard, the copy's trigger sacrifices it for Marit Lage
 fn stage_copy(g: &mut Game, p: PlayerId) -> Res<bool> {
     let (Some(d), Some(s)) = (land_named(g, p, DEPTHS), land_named(g, p, STAGE)) else { return Ok(false) };
-    if g.land(s).tapped || !pay_without(g, p, s, 2, "")? {
+    if g.perm(s).tapped || !pay_without(g, p, s, 2, "")? {
         return Ok(false);
     }
-    g.land_mut(s).tapped = true;
-    let cd = g.land(s).card();
+    g.perm_mut(s).tapped = true;
+    let cd = g.perm(s).card();
     crate::glog!(g, "  {} activates Thespian's Stage: a copy of Dark Depths", pname(g, p));
     if !ability_window_card(g, p, cd, "becomes a copy of Dark Depths", Some(8.0), None)? {
         return Ok(false);
@@ -349,7 +349,7 @@ pub static COMBOS: [Combo; 1] = [Combo {
 
 // ================================================================== Lotus Field
 /// When it enters, sacrifice two lands: the least useful others, itself when there aren't two
-fn lotus_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn lotus_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     for _ in 0..2 {
         let x = worst_land(g, p, Some(l)).unwrap_or(l);
         if !g.player(p).lands.contains(&x) {
@@ -467,12 +467,12 @@ fn mina_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     // a tapped land first (it comes back untapped), a fetch land or bounce land before a basic
     let ls = g.player(p).lands.clone();
     let Some(l) = max_by(&ls, |l| {
-        let d = g.db.get(g.land(l).card());
-        10.0 * g.land(l).tapped as i32 as f64 + 3.0 * d.tag(Tag::F) as i32 as f64 - 20.0 * key_land(g, l) as i32 as f64
+        let d = g.db.get(g.perm(l).card());
+        10.0 * g.perm(l).tapped as i32 as f64 + 3.0 * d.tag(Tag::F) as i32 as f64 - 20.0 * key_land(g, l) as i32 as f64
     }) else {
         return Ok(false);
     };
-    let c = g.land(l).card();
+    let c = g.perm(l).card();
     crate::engine::turn::remove_land(g, p, l);
     g.player_mut(p).hand.push(c);
     crate::glog!(g, "  {} activates Mina and Denn, returning {}", pname(g, p), cname(g, c));
@@ -673,12 +673,12 @@ fn nissa_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
 fn nissa_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let ls = g.player(p).lands.clone();
     let Some(l) = max_by(&ls, |l| {
-        let d = g.db.get(g.land(l).card());
-        10.0 * g.land(l).tapped as i32 as f64 + d.tags.int(Tag::Amt).unwrap_or(1) as f64
+        let d = g.db.get(g.perm(l).card());
+        10.0 * g.perm(l).tapped as i32 as f64 + d.tags.int(Tag::Amt).unwrap_or(1) as f64
     }) else {
         return Ok(());
     };
-    g.land_mut(l).tapped = false;
+    g.perm_mut(l).tapped = false;
     let precombat = g.active == Some(p) && matches!(g.step, TurnStep::Start | TurnStep::Main1);
     if precombat && open_attack(g, p, 3, true) && !matches!(lname(g, l), DEPTHS | STAGE) {
         animate(g, p, l, 3, 3, &["haste", "menace"], false);

@@ -27,7 +27,7 @@ use crate::engine::values::{card_name, epow, etgh, pval};
 use crate::engine::zones::{Tokens, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -70,13 +70,13 @@ fn is_fetch(g: &Game, c: CardId) -> bool {
 }
 
 /// the fetch lands p has on the battlefield (not cracked yet)
-fn fetch_lands(g: &Game, p: PlayerId) -> Vec<LandId> {
+fn fetch_lands(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p)
         .lands
         .iter()
         .copied()
         .filter(|&l| {
-            let x = g.land(l);
+            let x = g.perm(l);
             // a fetch land Primeval Titan put in tapped can not pay its {T} until it untaps
             x.on_bf && is_fetch(g, x.card()) && !(x.tapped && x.data.truthy(DataKey::TitanTapped))
         })
@@ -175,7 +175,7 @@ fn crack_held(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     let mut any = false;
     for l in fetch_lands(g, p) {
-        if g.over || !g.land(l).on_bf {
+        if g.over || !g.perm(l).on_bf {
             continue;
         }
         crate::engine::turn::crack_fetch(g, p, l)?;
@@ -209,7 +209,7 @@ fn titania_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     // her trigger is on the battlefield now: the fetch lands held back make their 5/3s
     for l in fetch_lands(g, o) {
-        if g.over || !g.land(l).on_bf {
+        if g.over || !g.perm(l).on_bf {
             continue;
         }
         crate::engine::turn::crack_fetch(g, o, l)?;
@@ -609,7 +609,7 @@ pub fn titania_protect(
 
 fn crack_before_death(g: &mut Game, p: PlayerId) -> Res {
     for l in fetch_lands(g, p) {
-        if g.over || !g.land(l).on_bf {
+        if g.over || !g.perm(l).on_bf {
             continue;
         }
         crate::engine::turn::crack_fetch(g, p, l)?;
@@ -826,7 +826,7 @@ fn titan_search(g: &mut Game, p: PlayerId) -> Res {
         }
         let l = g.add_land_entering(p, c, true);
         if is_fetch(g, c) {
-            g.land_mut(l).data.set(DataKey::TitanTapped, Val::Bool(true));
+            g.perm_mut(l).data.set(DataKey::TitanTapped, Val::Bool(true));
         }
         crate::glog!(g, "    {} puts {} onto the battlefield tapped", g.player(p).name, g.db.get(c).name);
         crate::engine::zones::landfall(g, p)?;

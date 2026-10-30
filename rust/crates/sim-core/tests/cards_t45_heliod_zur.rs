@@ -9,7 +9,7 @@ use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::values::{epow, etgh, melira, untargetable};
 use sim_core::engine::{cast, life, tutors};
 use sim_core::hooks::{Action, Call, Event, Opt};
-use sim_core::ids::{CardId, LandId, PermId, PlayerId};
+use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::state::{Game, Step};
 use sim_core::testkit::*;
 
@@ -35,8 +35,8 @@ fn opts(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> 
     f(g, src, p, post).unwrap()
 }
 
-fn land_opts(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
-    let f = g.registry.get(g.land(l).card()).unwrap().land_options.unwrap();
+fn land_opts(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let f = g.registry.get(g.perm(l).card()).unwrap().land_options.unwrap();
     f(g, l, p, post).unwrap()
 }
 
@@ -137,7 +137,7 @@ fn well_of_lost_dreams_pays_x_to_draw_x() {
     let hand0 = g.player(P0).hand.len();
     life::gain(&mut g, P0, 3).unwrap();
     assert_eq!(g.player(P0).hand.len(), hand0 + 3, "X = 3, the life gained");
-    let untapped = g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count();
+    let untapped = g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
     assert_eq!(untapped, 2);
 }
 
@@ -420,5 +420,5 @@ fn imprisoned_in_the_moon_makes_a_creature_a_wastes() {
     assert!(!g.perm(t).on_bf);
     assert_eq!(g.player(P1).lands.len(), lands0 + 1);
     let l = *g.player(P1).lands.last().unwrap();
-    assert_eq!(&*g.db.get(g.land(l).card()).name, "Wastes");
+    assert_eq!(&*g.db.get(g.perm(l).card()).name, "Wastes");
 }

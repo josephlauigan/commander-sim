@@ -309,7 +309,7 @@ fn haven_of_the_harvest_enters_tapped_for_g_or_w() {
     assert_eq!(o.len(), 1, "no other land in hand: the land face");
     assert!(run(&mut g, &o[0], P0));
     let l = *g.player(P0).lands.last().unwrap();
-    assert!(g.land(l).tapped, "enters tapped");
+    assert!(g.perm(l).tapped, "enters tapped");
     let cols = mana::land_colors_now(&g, P0, l);
     assert!(cols.has('G') && cols.has('W'));
 }
@@ -377,7 +377,7 @@ fn return_all_land_cards_returns_every_land_tapped() {
     let c = take(&mut g, P0, "Splendid Reclamation");
     cast::resolve(&mut g, P0, c, &Ctx::default(), "hand").unwrap();
     assert_eq!(g.player(P0).lands.len(), before + 3, "every land card");
-    assert!(g.player(P0).lands[before..].iter().all(|&l| g.land(l).tapped), "tapped");
+    assert!(g.player(P0).lands[before..].iter().all(|&l| g.perm(l).tapped), "tapped");
     assert!(g.player(P0).gy.contains(&card(&g, "Ghostly Prison")), "lands only");
 }
 

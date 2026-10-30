@@ -497,8 +497,8 @@ fn emerald_charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
         apply_removal(g, Some(p), t, "destroy", Some(c))?;
         return Ok("gy");
     }
-    if let Some(l) = g.player(p).lands.iter().copied().find(|&l| g.land(l).tapped) {
-        g.land_mut(l).tapped = false;
+    if let Some(l) = g.player(p).lands.iter().copied().find(|&l| g.perm(l).tapped) {
+        g.perm_mut(l).tapped = false;
         crate::glog!(g, "    {} untaps a land (Emerald Charm)", pname(g, p));
         return Ok("gy");
     }

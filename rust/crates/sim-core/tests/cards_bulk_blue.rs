@@ -226,7 +226,7 @@ fn phantom_interference_with_five_mana_adds_the_spirit() {
 }
 
 fn mana_left(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 #[test]

@@ -27,7 +27,7 @@ use crate::engine::values::{colors_of, epow, etgh, pval, untargetable};
 use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 
 pub const KARN: &str = "Karn, Legacy Reforged";
@@ -42,8 +42,8 @@ fn live(g: &Game, m: PermId) -> bool {
     x.on_bf && !x.phased
 }
 
-fn land_name(g: &Game, l: LandId) -> &str {
-    &g.db.get(g.land(l).card()).name
+fn land_name(g: &Game, l: PermId) -> &str {
+    &g.db.get(g.perm(l).card()).name
 }
 
 fn is_art_card(g: &Game, c: CardId) -> bool {
@@ -58,7 +58,7 @@ pub fn karn_of(g: &Game, p: PlayerId) -> Option<PermId> {
 /// the artifacts p controls: artifact permanents (cards and artifact tokens), Treasure / Food / Clue / Blood tokens,
 /// artifact lands (Treasure Vault, Darksteel Citadel); an animated Mishra's Factory is one of the permanents
 pub fn artifacts(g: &Game, p: PlayerId) -> u32 {
-    let lands = g.player(p).lands.iter().filter(|&&l| is_art_card(g, g.land(l).card())).count() as u32;
+    let lands = g.player(p).lands.iter().filter(|&&l| is_art_card(g, g.perm(l).card())).count() as u32;
     crate::impls::sheoldred::artifact_count(g, p) as u32 + lands
 }
 
@@ -174,24 +174,24 @@ pub fn tron_on(g: &Game, p: PlayerId) -> bool {
 }
 
 /// Urza's Mine: {C}; {C}{C} instead with a Power-Plant and a Tower
-fn mine_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn mine_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     if has_land(g, p, "Urza's Power Plant") && has_land(g, p, "Urza's Tower") { 2 } else { 1 }
 }
 
 /// Urza's Power-Plant: {C}; {C}{C} instead with a Mine and a Tower
-fn plant_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn plant_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     if has_land(g, p, "Urza's Mine") && has_land(g, p, "Urza's Tower") { 2 } else { 1 }
 }
 
 /// Urza's Tower: {C}; {C}{C}{C} instead with a Mine and a Power-Plant
-fn tower_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn tower_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     if has_land(g, p, "Urza's Mine") && has_land(g, p, "Urza's Power Plant") { 3 } else { 1 }
 }
 
 /// Urza's Workshop: {C}, or with three or more artifacts {C} for each Urza's land you control
-fn workshop_mana(g: &Game, p: PlayerId, _l: LandId) -> u32 {
+fn workshop_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     if artifacts(g, p) >= 3 {
-        let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.land(l).card()).has_subtype("urza's")).count();
+        let n = g.player(p).lands.iter().filter(|&&l| g.db.get(g.perm(l).card()).has_subtype("urza's")).count();
         (n as u32).max(1)
     } else {
         1
@@ -246,7 +246,7 @@ pub fn search_pick(g: &Game, p: PlayerId, cands: &[CardId]) -> Option<CardId> {
 /// (name, the cost to animate)
 const MANLANDS: [(&str, u32); 2] = [("Mishra's Factory", 1), ("Mishra's Foundry", 2)];
 
-pub(crate) fn cost_of_land(g: &Game, l: LandId) -> u32 {
+pub(crate) fn cost_of_land(g: &Game, l: PermId) -> u32 {
     MANLANDS.iter().find(|m| m.0 == land_name(g, l)).map_or(1, |m| m.1)
 }
 
@@ -255,7 +255,7 @@ fn opt(utility: f64, label: String, f: crate::hooks::PlanFn, arg: i64) -> Opt {
 }
 
 /// the land becomes a 2/2 Assembly-Worker artifact creature (a token standing in for the land, see `lands::animate`)
-pub(crate) fn animate(g: &mut Game, p: PlayerId, l: LandId) -> PermId {
+pub(crate) fn animate(g: &mut Game, p: PlayerId, l: PermId) -> PermId {
     let m = super::lands::animate(g, p, l, 2, 2, &[], false);
     let x = g.perm_mut(m);
     x.ttypes.push("artifact");
@@ -264,9 +264,9 @@ pub(crate) fn animate(g: &mut Game, p: PlayerId, l: LandId) -> PermId {
 }
 
 /// {1} / {2}: animate to attack when the way is open and mana is to spare (before combat)
-fn manland_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn manland_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let cost = cost_of_land(g, l);
-    if post != Some(false) || g.land(l).tapped || !super::lands::can_pay_without(g, p, l, cost, "") {
+    if post != Some(false) || g.perm(l).tapped || !super::lands::can_pay_without(g, p, l, cost, "") {
         return Ok(vec![]);
     }
     let pl = g.player(p);
@@ -282,12 +282,12 @@ fn manland_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> 
 }
 
 fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
+    let l = PermId(arg as u32);
     let cost = cost_of_land(g, l);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !super::lands::pay_without(g, p, l, cost, "")? {
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !super::lands::pay_without(g, p, l, cost, "")? {
         return Ok(false);
     }
-    if !crate::engine::stack::ability_window_card(g, p, g.land(l).card(), "becomes a creature", None, None)? {
+    if !crate::engine::stack::ability_window_card(g, p, g.perm(l).card(), "becomes a creature", None, None)? {
         return Ok(true);
     }
     animate(g, p, l);
@@ -312,7 +312,7 @@ pub fn block_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) ->
         if blockers >= atk.len() {
             break;
         }
-        if !MANLANDS.iter().any(|m| m.0 == land_name(g, l)) || g.land(l).tapped {
+        if !MANLANDS.iter().any(|m| m.0 == land_name(g, l)) || g.perm(l).tapped {
             continue;
         }
         let cost = cost_of_land(g, l);

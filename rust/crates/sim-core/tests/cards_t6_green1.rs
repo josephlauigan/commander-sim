@@ -44,8 +44,8 @@ fn oboro_returns_a_land_and_untaps_cradle() {
     let before = untapped(&g, P0);
     let hand_before = g.player(P0).hand.len();
     assert!(run(&mut g, P0, &opts[0]));
-    assert!(!g.land(cr).tapped, "Cradle untapped");
-    assert!(!g.land(spare).on_bf, "the tapped spare Forest was returned");
+    assert!(!g.perm(cr).tapped, "Cradle untapped");
+    assert!(!g.perm(spare).on_bf, "the tapped spare Forest was returned");
     assert_eq!(g.player(P0).hand.len(), hand_before + 1, "to its owner's hand");
     // {2} paid from the untapped Forests, Cradle (7 creatures with Oboro) now untapped
     assert_eq!(untapped(&g, P0), before - 2 + 7);
@@ -78,7 +78,7 @@ fn oboro_costs_less_with_training_grounds_but_never_under_one() {
     assert_eq!(opts.len(), 1, "only {{1}} needed: the one untapped Forest pays");
     let before = untapped(&g, P0);
     assert!(run(&mut g, P0, &opts[0]));
-    assert!(!g.land(cr).tapped);
+    assert!(!g.perm(cr).tapped);
     assert_eq!(untapped(&g, P0), before - 1 + 4);
 }
 
@@ -163,7 +163,7 @@ fn earthcraft_taps_a_creature_to_untap_a_basic_land() {
     assert_eq!(o.len(), 1);
     assert!(run(&mut g, P0, &o[0]));
     assert!(g.perm(t).tapped, "the creature is tapped as the cost");
-    assert!(!g.land(f).tapped, "the Forest is untapped");
+    assert!(!g.perm(f).tapped, "the Forest is untapped");
     assert!(options(&mut g, e, P0, Some(true)).is_empty(), "no tapped basic left, no untapped creature left");
 }
 
@@ -198,8 +198,8 @@ fn candelabra_untaps_x_lands_for_x() {
     let before = untapped(&g, P0);
     assert!(run(&mut g, P0, &o[0]));
     assert!(g.perm(c).tapped, "{{T}} is a cost");
-    assert!(!g.land(cr).tapped);
-    assert!(g.land(fo).tapped, "X=1: only Cradle (a Forest for {{1}} nets under 2)");
+    assert!(!g.perm(cr).tapped);
+    assert!(g.perm(fo).tapped, "X=1: only Cradle (a Forest for {{1}} nets under 2)");
     assert_eq!(untapped(&g, P0), before - 1 + 5);
     assert!(options(&mut g, c, P0, Some(false)).is_empty(), "tapped now");
 }
@@ -234,7 +234,7 @@ fn magus_is_summoning_sick_and_gets_the_discount() {
     assert_eq!(o.len(), 1);
     let before = untapped(&g, P0);
     assert!(run(&mut g, P0, &o[0]));
-    assert!(!g.land(cr).tapped && fs.iter().all(|&l| !g.land(l).tapped));
+    assert!(!g.perm(cr).tapped && fs.iter().all(|&l| !g.perm(l).tapped));
     assert_eq!(untapped(&g, P0), before - 1 + 6 + 2);
 }
 
@@ -269,7 +269,7 @@ fn speaker_untaps_cradle_for_one() {
     let o = options(&mut g, s, P0, Some(false));
     assert_eq!(o.len(), 1);
     assert!(run(&mut g, P0, &o[0]));
-    assert!(!g.land(cr).tapped && g.perm(s).tapped);
+    assert!(!g.perm(cr).tapped && g.perm(s).tapped);
 }
 
 // ======================================================== Vibrance

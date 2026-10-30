@@ -676,7 +676,7 @@ fn khalni_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 /// **Mirari's Wake**: whenever you tap a land for mana, add one mana of any type that land produced: every land of
 /// the controller makes one more of its own mana (the +1/+1 for creatures is the compiled anthem)
-fn wake_mana(g: &Game, src: Src, p: PlayerId, _l: crate::ids::LandId) -> i32 {
+fn wake_mana(g: &Game, src: Src, p: PlayerId, _l: crate::ids::PermId) -> i32 {
     if p == owner(g, src) && on_bf(g, src) { 1 } else { 0 }
 }
 
@@ -1399,15 +1399,15 @@ pub fn register_calix(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 // ================================================================== Tainted Field, Tainted Wood
 /// **Tainted Field / Tainted Wood**: {T}: Add {C}. {T}: Add {W}/{B} (or {B}/{G}). Activate only if you control a Swamp:
 /// without a Swamp (a land with the Swamp type) it taps for colourless only
-fn tainted_cols(g: &Game, p: PlayerId, l: crate::ids::LandId) -> Colors {
+fn tainted_cols(g: &Game, p: PlayerId, l: crate::ids::PermId) -> Colors {
     let swamp = g.player(p).lands.iter().any(|&x| {
-        let d = g.db.get(g.land(x).card());
+        let d = g.db.get(g.perm(x).card());
         d.has_subtype("swamp") || &*d.name == "Swamp"
     });
     if !swamp {
         return Colors::NONE;
     }
-    let d = g.db.get(g.land(l).card());
+    let d = g.db.get(g.perm(l).card());
     Colors::from_letters(d.tags.str(crate::tag::Tag::C).unwrap_or("C"))
 }
 

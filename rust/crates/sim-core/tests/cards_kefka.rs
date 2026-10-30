@@ -189,7 +189,7 @@ fn ichor_slick_madness_casts_it_when_discarded() {
     zones::discard_cards(&mut g, P0, &[slick]).unwrap();
     assert!(!g.perm(bear).on_bf, "madness {{3}}{{B}} killed the Bears");
     assert!(gy_has(&g, P0, "Ichor Slick"));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 0);
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 0);
 }
 
 #[test]
@@ -203,7 +203,7 @@ fn ichor_slick_madness_is_not_cast_without_mana_or_a_target() {
     kill(&mut g, bear);
     let slick = hand(&mut g, P0, &["Ichor Slick"])[0];
     zones::discard_cards(&mut g, P0, &[slick]).unwrap(); // no target
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 4);
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 4);
 }
 
 fn kill(g: &mut Game, m: PermId) {
@@ -606,7 +606,7 @@ fn susurian_voidborn_warp_is_cast_for_b_exiled_at_the_end_step_and_recast_later(
     g.round += 1;
     lands(&mut g, P0, "Swamp", 0, false);
     for &l in &g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert!(has_opt(&mut g, P0, "Susurian Voidborn (from exile)"));
 }
@@ -650,12 +650,12 @@ fn gemstone_mine_has_three_uses() {
     let mut g = table2();
     let ls = lands(&mut g, P0, "Gemstone Mine", 1, false);
     for i in 0..3 {
-        assert!(g.land(ls[0]).on_bf, "use {i}");
+        assert!(g.perm(ls[0]).on_bf, "use {i}");
         let ok = sim_core::engine::mana::pay(&mut g, P0, 1, "", false).unwrap();
         assert!(ok);
-        g.land_mut(ls[0]).tapped = false;
+        g.perm_mut(ls[0]).tapped = false;
     }
-    assert!(!g.land(ls[0]).on_bf);
+    assert!(!g.perm(ls[0]).on_bf);
     assert!(gy_has(&g, P0, "Gemstone Mine"));
 }
 

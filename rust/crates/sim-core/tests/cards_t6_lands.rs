@@ -18,7 +18,7 @@ fn play_land(g: &mut Game, p: PlayerId, name: &str) {
 }
 
 fn names(g: &Game, p: PlayerId) -> Vec<String> {
-    g.player(p).lands.iter().map(|&l| g.db.get(g.land(l).card()).name.to_string()).collect()
+    g.player(p).lands.iter().map(|&l| g.db.get(g.perm(l).card()).name.to_string()).collect()
 }
 
 // ------------------------------------------------------------------ City of Brass
@@ -29,7 +29,7 @@ fn city_of_brass_deals_one_damage_each_time_it_is_tapped() {
     let life = g.player(P0).life;
     assert!(mana::pay(&mut g, P0, 1, "", false).unwrap());
     assert_eq!(g.player(P0).life, life - 1, "1 damage when it becomes tapped");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
 }
 
 // ------------------------------------------------------------------ City of Traitors
@@ -56,7 +56,7 @@ fn gemstone_caverns_makes_colourless_unless_it_has_a_luck_counter() {
     let u = mana::mana_units(&g, P0, false);
     assert_eq!(u.len(), 1);
     assert!(u[0].cols.is_empty(), "{{T}}: Add {{C}}");
-    g.land_mut(l).data.set(DataKey::Counters, Val::Int(1)); // a luck counter
+    g.perm_mut(l).data.set(DataKey::Counters, Val::Int(1)); // a luck counter
     let u = mana::mana_units(&g, P0, false);
     assert_eq!(u[0].cols, g.player(P0).ident, "with a luck counter: one mana of any colour");
     assert_eq!(u[0].amt, 1);
@@ -94,7 +94,7 @@ fn abstergo_exiles_itself_returns_a_historic_card_and_exiles_all_graveyards() {
     assert!(g.player(P0).hand.contains(&sol), "the historic card returns");
     assert!(g.player(P0).gy.is_empty() && g.player(P1).gy.is_empty(), "all graveyards exiled");
     assert!(g.player(P0).exile.contains(&bear) && g.player(P1).exile.contains(&junk));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "{{3}} paid");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 3, "{{3}} paid");
 }
 
 // ------------------------------------------------------------------ Eiganjo, Seat of the Empire
@@ -115,7 +115,7 @@ fn eiganjo_channel_deals_four_to_an_attacker_and_costs_one_less_per_legendary_cr
     assert!(g.perm(a).on_bf && g.perm(b).on_bf, "too big / too small to be worth 4 damage");
     assert!(!g.perm(big).on_bf && !atk.contains(&big), "Kaalia is killed and leaves the attack");
     assert!(!g.player(P0).hand.contains(&e) && g.player(P0).gy.contains(&e), "discarded as the cost");
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "{{2}}{{W}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 3, "{{2}}{{W}}");
 }
 
 #[test]
@@ -160,9 +160,9 @@ fn deserted_temple_untaps_a_land_that_makes_enough_mana_to_pay_for_it() {
     assert_eq!(o.len(), 1);
     assert_eq!(o[0].label, "Deserted Temple untaps Gaea's Cradle");
     assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
-    assert!(!g.land(cradle).tapped, "the Cradle is untapped");
-    assert!(g.land(t).tapped, "{{T}}");
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3, "Temple + the {{1}} + the City");
+    assert!(!g.perm(cradle).tapped, "the Cradle is untapped");
+    assert!(g.perm(t).tapped, "{{T}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 3, "Temple + the {{1}} + the City");
 }
 
 // ------------------------------------------------------------------ Minamo, School at Water's Edge
@@ -179,9 +179,9 @@ fn minamo_untaps_a_legendary_land_for_u_and_its_own_tap() {
     assert_eq!(o.len(), 1);
     assert_eq!(o[0].label, "Minamo untaps Gaea's Cradle");
     assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
-    assert!(!g.land(cradle).tapped && g.land(m).tapped);
+    assert!(!g.perm(cradle).tapped && g.perm(m).tapped);
     assert_eq!(
-        g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(),
+        g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(),
         2,
         "Minamo and the Island that paid {{U}}"
     );
@@ -206,7 +206,7 @@ fn emergence_zone_sacrifices_itself_and_marks_the_turn_for_flash() {
     assert!(t6::emergence_go(&mut g, P0, z.0 as i64).unwrap());
     assert!(!g.player(P0).lands.contains(&z), "sacrificed");
     assert!(g.player(P0).gy.contains(&card(&g, "Emergence Zone")));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 1, "the {{1}} came from the Forest");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 1, "the {{1}} came from the Forest");
     let flag = sim_core::sym::intern(t6::FLASH_FLAG);
     assert_eq!(g.player(P0).flag_turn.get(&flag), Some(&g.turn_stamp()), "flash this turn");
 }
@@ -293,7 +293,7 @@ fn fomori_vault_discards_a_card_and_takes_the_best_of_the_top_x_cards() {
     assert!(top[1..].contains(&got), "one of the top 3 (X = 3 artifacts)");
     assert_eq!(pl.library.len(), before - 1, "the other two went to the bottom");
     assert!(pl.library.last() == Some(&top[0]), "the 4th card is still on top");
-    assert!(g.land(g.player(P0).lands[0]).tapped, "{{T}}: the Vault is tapped");
+    assert!(g.perm(g.player(P0).lands[0]).tapped, "{{T}}: the Vault is tapped");
 }
 
 #[test]
@@ -385,7 +385,7 @@ fn razorgrass_ambush_deals_three_to_an_attacker_worth_killing() {
     sim_core::cardcode::defend_hooks(&mut g, P1, &mut atk, P0, &mut assign).unwrap();
     assert!(g.perm(big).on_bf && !g.perm(kaalia).on_bf && !atk.contains(&kaalia));
     assert!(g.player(P0).gy.contains(&c) && !g.player(P0).hand.contains(&c), "an instant: to the graveyard");
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 2, "{{1}}{{W}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 2, "{{1}}{{W}}");
 }
 
 #[test]
@@ -411,12 +411,12 @@ fn razorgrass_field_is_played_as_a_land_that_taps_for_w_and_enters_tapped_unless
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     assert!(!g.player(P0).hand.contains(&c));
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(g.land(l).card(), c);
+    assert_eq!(g.perm(l).card(), c);
     assert_eq!(g.player(P0).lands_played, 1, "it was the land drop");
     // few lands on the battlefield and a comfortable life: the AI pays 3 life only when that makes mana it can use
-    assert_eq!(g.land(l).tapped, g.player(P0).life == life, "tapped exactly when no life was paid");
+    assert_eq!(g.perm(l).tapped, g.player(P0).life == life, "tapped exactly when no life was paid");
     assert!(g.player(P0).life == life || g.player(P0).life == life - 3);
-    g.land_mut(l).tapped = false;
+    g.perm_mut(l).tapped = false;
     let u = mana::mana_units(&g, P0, false);
     assert!(u.iter().any(|x| x.cols.has('W') && x.src == mana::Source::Land(l)), "{{T}}: Add {{W}}");
     // no second land drop
@@ -457,7 +457,7 @@ fn shatterskull_smashing_divides_x_damage_between_two_creatures() {
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     assert!(!g.perm(kaalia).on_bf && !g.perm(sheo).on_bf, "the damage is divided as lethal to each");
     assert!(g.player(P0).gy.contains(&c));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 8, "{{6}}{{R}}{{R}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 8, "{{6}}{{R}}{{R}}");
 }
 
 #[test]
@@ -486,8 +486,8 @@ fn shatterskull_the_hammer_pass_is_played_as_a_land_that_taps_for_r() {
     let o = o.iter().find(|x| x.label.contains("as a land")).expect("land option");
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     let l = *g.player(P0).lands.last().unwrap();
-    assert_eq!(g.land(l).card(), c);
-    g.land_mut(l).tapped = false;
+    assert_eq!(g.perm(l).card(), c);
+    g.perm_mut(l).tapped = false;
     assert!(mana::mana_units(&g, P0, false).iter().any(|x| x.src == mana::Source::Land(l) && x.cols.has('R')));
 }
 
@@ -516,7 +516,7 @@ fn talon_gates_put_onto_the_battlefield_for_four_costs_no_land_drop() {
     assert_eq!(o.len(), 1);
     assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
     assert!(!g.player(P0).hand.contains(&c) && g.player(P0).lands.len() == 5);
-    assert!(g.player(P0).lands.iter().take(4).all(|&l| g.land(l).tapped), "{{4}} paid");
+    assert!(g.player(P0).lands.iter().take(4).all(|&l| g.perm(l).tapped), "{{4}} paid");
     assert!(g.perm(k).phased);
     assert_eq!(g.player(P0).lands_played, 1, "not a land play");
 }

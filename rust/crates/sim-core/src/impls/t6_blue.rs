@@ -466,7 +466,7 @@ fn silas_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ================================================================== Hidden Strings
 /// p's tapped mana sources, the best first: a rock (more mana first), a dork, then lands
-fn tapped_mana_sources(g: &Game, p: PlayerId) -> Vec<(Option<PermId>, Option<crate::ids::LandId>)> {
+fn tapped_mana_sources(g: &Game, p: PlayerId) -> Vec<(Option<PermId>, Option<crate::ids::PermId>)> {
     let mut out = vec![];
     for &m in &g.player(p).perms {
         let x = g.perm(m);
@@ -477,7 +477,7 @@ fn tapped_mana_sources(g: &Game, p: PlayerId) -> Vec<(Option<PermId>, Option<cra
         }
     }
     for &l in &g.player(p).lands {
-        if g.land(l).tapped {
+        if g.perm(l).tapped {
             out.push((None, Some(l)));
         }
     }
@@ -501,8 +501,8 @@ fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
                 crate::glog!(g, "    Hidden Strings untaps {}", g.perm(m).name);
             }
             if let Some(l) = l {
-                g.land_mut(l).tapped = false;
-                crate::glog!(g, "    Hidden Strings untaps {}", g.db.get(g.land(l).card()).name);
+                g.perm_mut(l).tapped = false;
+                crate::glog!(g, "    Hidden Strings untaps {}", g.db.get(g.perm(l).card()).name);
             }
         }
         g.bf_ver += 1;

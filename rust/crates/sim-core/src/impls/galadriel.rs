@@ -39,7 +39,7 @@ use crate::engine::zones::{
 use crate::flow::Res;
 use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Step, Val};
 use crate::sym::{Sym, intern};
@@ -287,8 +287,8 @@ fn vanquisher(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 }
 
 /// Secluded Courtyard: any colour only for creature spells of the named type (and abilities of those creatures)
-fn courtyard_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
-    let t = match g.land(l).data.get(DataKey::Ctype) {
+fn courtyard_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
+    let t = match g.perm(l).data.get(DataKey::Ctype) {
         Some(Val::Str(s)) => Some(*s),
         _ => None,
     };
@@ -302,9 +302,9 @@ fn courtyard_cols(g: &Game, p: PlayerId, l: LandId) -> Colors {
 }
 
 /// Secluded Courtyard names a creature type as it enters
-fn courtyard_etb(g: &mut Game, p: PlayerId, l: LandId) -> Res {
+fn courtyard_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let t = choose_type(g, p, "Secluded Courtyard")?;
-    g.land_mut(l).data.set(DataKey::Ctype, Val::Str(t));
+    g.perm_mut(l).data.set(DataKey::Ctype, Val::Str(t));
     crate::glog!(g, "    Secluded Courtyard names {}", title(t));
     Ok(())
 }

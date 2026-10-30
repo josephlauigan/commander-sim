@@ -6,7 +6,7 @@ use play_common::*;
 use sim_core::engine::zones::{self, Enter, Tokens};
 use sim_core::human::human::human_main;
 use sim_core::human::{Target, legal};
-use sim_core::ids::{LandId, PermId};
+use sim_core::ids::{PermId};
 use sim_core::state::{DataKey, Val};
 
 /// an answer that picks the choice describing x
@@ -30,7 +30,7 @@ fn use_perm(g: &mut Game, m: PermId, word: &'static str, mut rest: Vec<F>) -> st
     h
 }
 
-fn use_land(g: &mut Game, l: LandId, word: &'static str, mut rest: Vec<F>) -> std::sync::Arc<ScriptHuman> {
+fn use_land(g: &mut Game, l: PermId, word: &'static str, mut rest: Vec<F>) -> std::sync::Arc<ScriptHuman> {
     let i = g.player(P0).lands.iter().position(|&x| x == l).unwrap();
     let mut a = vec![act(json!({"do": "use", "land": i})), by_text(word)];
     a.append(&mut rest);
@@ -314,7 +314,7 @@ fn bonders_enclave_needs_a_power_four_creature() {
     let n = g.player(P0).hand.len();
     use_land(&mut g, l, "draw", vec![]);
     assert_eq!(g.player(P0).hand.len(), n + 1);
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }
 
 #[test]
@@ -357,7 +357,7 @@ fn war_room_draws_for_three() {
     use_land(&mut g, l, "draw", vec![]);
     assert_eq!(g.player(P0).hand.len(), n + 1);
     assert_eq!(g.player(P0).life, 38, "two colours: 2 life");
-    assert!(g.land(l).tapped);
+    assert!(g.perm(l).tapped);
 }
 
 #[test]
@@ -380,7 +380,7 @@ fn urzas_factory_makes_an_assembly_worker() {
     let w = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).token).expect("a token");
     assert!(g.is_creature(w) && g.perm(w).ttypes.contains(&"assembly-worker"));
     assert!(sim_core::impls::karn_cards::is_art(&g, w));
-    assert!(g.land(l).tapped && pool_total(&g, P0) == 0);
+    assert!(g.perm(l).tapped && pool_total(&g, P0) == 0);
 }
 
 #[test]
@@ -415,7 +415,7 @@ fn mishras_factory_land_pumps_another_worker_and_a_new_land_is_sick() {
     let pt = pick_target(&g, P0, Target::Perm(m));
     use_land(&mut g, l2, "+1/+1", vec![pt]);
     assert_eq!(g.perm(m).eot_pt, (1, 1));
-    assert!(g.land(l2).tapped);
+    assert!(g.perm(l2).tapped);
 }
 
 #[test]

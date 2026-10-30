@@ -318,16 +318,16 @@ fn freestrider_plots_then_enters_free_with_counters() {
     lands(&mut g, P0, "Forest", 4, false);
     hand(&mut g, P0, &[FREESTRIDER]);
     assert!(take_option(&mut g, P0, true, "plot Freestrider Commando"));
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "plot cost {{3}}{{G}}");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "plot cost {{3}}{{G}}");
     assert!(!has_option(&mut g, true, "Freestrider Commando (plotted"), "not on the turn it was plotted");
     g.player_mut(P0).turns += 1;
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert!(take_option(&mut g, P0, false, "Freestrider Commando (plotted, free)"));
     let f = on_bf(&g, P0, "Freestrider Commando").unwrap();
     assert_eq!(g.perm(f).plus, 2);
-    assert!(g.player(P0).lands.iter().all(|&l| !g.land(l).tapped), "cast for free");
+    assert!(g.player(P0).lands.iter().all(|&l| !g.perm(l).tapped), "cast for free");
 }
 
 const FREESTRIDER: &str = "Freestrider Commando";
@@ -389,16 +389,16 @@ fn lifestream_foretells_and_is_cast_from_exile_for_five() {
     lands(&mut g, P0, "Forest", 5, false);
     hand(&mut g, P0, &[LIFESTREAM]);
     assert!(take_option(&mut g, P0, true, "foretell Lifestream's Blessing"));
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 3, "foretell costs {{2}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 3, "foretell costs {{2}}");
     g.player_mut(P0).turns += 1;
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     let (h, life) = (g.player(P0).hand.len(), g.player(P0).life);
     assert!(take_option(&mut g, P0, false, "Lifestream's Blessing (foretold)"));
     assert_eq!(g.player(P0).hand.len(), h - 1 + 4);
     assert_eq!(g.player(P0).life, life + 8, "twice X");
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.land(l).tapped).count(), 0, "{{4}}{{G}}");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 0, "{{4}}{{G}}");
 }
 
 // ------------------------------------------------------------------ Sample Collector
@@ -480,7 +480,7 @@ fn greenbelt_radical_is_cast_face_down_and_turned_up_for_seven() {
     // seven lands: turn it up (a +1/+1 counter on each creature you control, and trample)
     lands(&mut g, P0, "Forest", 4, false);
     for l in g.player(P0).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     assert!(take_option(&mut g, P0, false, "Greenbelt Radical (turn face up)"));
     assert_eq!((epow(&g, r), etgh(&g, r)), (4 + 1, 4 + 1), "a 4/4 with its own counter");
@@ -499,7 +499,7 @@ fn first_year_casts_a_prepared_rampant_growth_once() {
     let n = g.player(P0).lands.len();
     assert!(take_option(&mut g, P0, false, "Rampant Growth (Studious First-Year"));
     assert_eq!(g.player(P0).lands.len(), n + 1);
-    assert!(g.player(P0).lands.last().is_some_and(|&l| g.land(l).tapped), "tapped");
+    assert!(g.player(P0).lands.last().is_some_and(|&l| g.perm(l).tapped), "tapped");
     assert_eq!(g.perm(bill).plus + g.perm(fy).plus, 1, "landfall");
     assert!(!has_option(&mut g, false, "Rampant Growth (Studious First-Year"), "unprepared");
 }
@@ -568,7 +568,7 @@ fn cast_harrow(g: &mut Game) {
     g.player_mut(P0).hand.retain(|&x| x != c);
     let l = g.player(P0).lands[0];
     sim_core::engine::turn::remove_land(g, P0, l);
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     g.player_mut(P0).gy.push(cd);
     g.player_mut(P0).hand.push(c);
     cast::cast_card(g, P0, c, "hand", Ctx::default()).unwrap();
@@ -584,7 +584,7 @@ fn a_fetch_land_is_two_landfall_triggers() {
     sim_core::engine::turn::play_land(&mut g, P0).unwrap();
     assert_eq!(g.perm(bill).plus, 2, "the Wilds, and the Forest it finds");
     assert_eq!(g.player(P0).lands.len(), before + 1);
-    assert!(g.player(P0).lands.iter().all(|&l| &*g.db.get(g.land(l).card()).name != "Evolving Wilds"));
+    assert!(g.player(P0).lands.iter().all(|&l| &*g.db.get(g.perm(l).card()).name != "Evolving Wilds"));
 }
 
 #[test]
@@ -620,7 +620,7 @@ fn wild_hypothesis_makes_an_x_fractal_for_the_spare_mana() {
     let t = tokens_named(&g, P0, "fractal");
     assert_eq!(t.len(), 1);
     assert_eq!(g.perm(t[0]).plus, 4 + 1);
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
 }
 
 #[test]

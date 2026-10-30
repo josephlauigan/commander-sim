@@ -21,7 +21,7 @@ use crate::engine::values::{colors_of, epow, etgh, once_per_turn, pval, silenced
 use crate::engine::zones::{Enter, Tokens, die, draw, enter, landfall, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -624,7 +624,7 @@ fn dakkon_pt(g: &Game, p: PlayerId, _m: PermId) -> (i32, i32) {
 pub fn star_compass_cols(g: &Game, p: PlayerId) -> Colors {
     let mut s = Colors::NONE;
     for &l in &g.player(p).lands {
-        let letter = match &*g.db.get(g.land(l).card()).name {
+        let letter = match &*g.db.get(g.perm(l).card()).name {
             "Plains" | "Snow-Covered Plains" => "W",
             "Island" | "Snow-Covered Island" => "U",
             "Swamp" | "Snow-Covered Swamp" => "B",
@@ -1099,8 +1099,8 @@ fn godo_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId
 /// **Boiling Rock Prison** (enters tapped, {T}: {B} or {R} are in the card data): {4}, {T}, sacrifice it: draw a card.
 /// The AI does it in the end-of-turn window (so the mana would go unused), with six or more lands in play and no land
 /// to play from the hand.
-fn prison_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.land(l).tapped || !crate::impls::lands::can_pay_without(g, p, l, 4, "") {
+fn prison_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_some() || g.perm(l).tapped || !crate::impls::lands::can_pay_without(g, p, l, 4, "") {
         return Ok(vec![]);
     }
     let pl = g.player(p);
@@ -1115,11 +1115,11 @@ fn prison_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> R
 }
 
 fn prison_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.player(p).lands.contains(&l) || g.land(l).tapped || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !crate::impls::lands::pay_without(g, p, l, 4, "")? {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Boiling Rock Prison: draws a card", g.player(p).name);
     if crate::engine::stack::ability_window_card(g, p, cd, "draw a card", None, None)? {
@@ -1167,7 +1167,7 @@ fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
     g.opps(p)
         .filter(|&q| g.player(q).alive)
         .filter(|&q| {
-            let nonbasic = g.player(q).lands.iter().any(|&l| g.land(l).on_bf && !g.db.get(g.land(l).card()).basic);
+            let nonbasic = g.player(q).lands.iter().any(|&l| g.perm(l).on_bf && !g.db.get(g.perm(l).card()).basic);
             g.player(q).perms.iter().any(|&b| {
                 let y = g.perm(b);
                 if !y.on_bf || y.phased || y.tapped || !g.is_creature(b) || !crate::engine::combat::can_block(g, b, m) {
@@ -1286,7 +1286,7 @@ fn flail_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 fn land_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
     let cols = |c: CardId| -> String { g.db.get(c).tags.str(Tag::C).unwrap_or("").to_string() };
     let have: String =
-        g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).map(|&l| cols(g.land(l).card())).collect();
+        g.player(p).lands.iter().filter(|&&l| g.perm(l).on_bf).map(|&l| cols(g.perm(l).card())).collect();
     let lands: Vec<CardId> = okn.iter().copied().filter(|&c| g.db.get(c).land).collect();
     max_by(&lands, |c| {
         let cs = cols(c);

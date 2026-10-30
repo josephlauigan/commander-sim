@@ -202,7 +202,7 @@ fn removal_is_not_pitched_when_the_mana_is_there() {
     let o = opts.iter().find(|o| o.label.starts_with("Pyrokinesis")).expect("offered");
     assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     assert!(in_hand(&g, P0, "Lightning Bolt"), "paid {{4}}{{R}}{{R}}, nothing exiled");
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped), "all six Mountains paid the mana cost");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "all six Mountains paid the mana cost");
 }
 
 #[test]
@@ -240,7 +240,7 @@ fn defense_grid_taxes_alternative_cost_casts() {
     assert!(stack::cast_counter_spell(&mut g, P0, daze, id).unwrap());
     assert!(countered(&g, id));
     assert!(in_hand(&g, P0, "Island"));
-    let tapped = g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count();
+    let tapped = g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count();
     assert_eq!(tapped, 3, "the three Swamps paid the Defense Grid tax");
 }
 
@@ -255,7 +255,7 @@ fn defense_grid_taxes_a_force_of_will_pitch() {
     assert_eq!(stack::pick_counter(&g, P0, spell), Some(fow));
     assert!(stack::pay_counter(&mut g, P0, fow, Some(spell)).unwrap());
     assert!(in_exile(&g, P0, "Counterspell"));
-    assert!(g.player(P0).lands.iter().all(|&l| g.land(l).tapped));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
 }
 
 #[test]

@@ -395,7 +395,7 @@ fn signature(g: &Game, p: PlayerId) -> u64 {
         pl.perms.iter().filter_map(|&m| g.perm(m).cd.map(|c| (c.0, g.perm(m).tapped))).collect();
     perms.sort_unstable();
     perms.hash(&mut h);
-    let mut lands: Vec<(u16, bool)> = pl.lands.iter().map(|&l| (g.land(l).card().0, g.land(l).tapped)).collect();
+    let mut lands: Vec<(u16, bool)> = pl.lands.iter().map(|&l| (g.perm(l).card().0, g.perm(l).tapped)).collect();
     lands.sort_unstable();
     lands.hash(&mut h);
     let f = pl.floating;
@@ -435,7 +435,7 @@ pub fn next_turn(g: &mut Game, p: PlayerId) -> Res<Option<CardId>> {
     pl.yawg = false;
     pl.tapped_treasures = 0;
     for l in g.player(p).lands.clone() {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
     }
     for m in g.player(p).perms.clone() {
         let keep = card_tag(g, m, Tag::Nountap);
@@ -786,7 +786,7 @@ fn line_colours(g: &Game, p: PlayerId) -> usize {
         .player(p)
         .lands
         .iter()
-        .filter(|&&l| g.land(l).on_bf)
+        .filter(|&&l| g.perm(l).on_bf)
         .map(|&l| crate::engine::mana::land_colors_now(g, p, l))
         .collect();
     // the scarcest colour first, each pip from a land that makes the fewest colours

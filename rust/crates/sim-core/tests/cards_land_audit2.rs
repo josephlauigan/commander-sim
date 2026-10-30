@@ -2,7 +2,7 @@
 //! Industry, Exotic Orchard, Cavern of Souls, Hall of the Bandit Lord, Spectator Seating, Sulfur Falls, Fabled Passage).
 
 use sim_core::engine::mana::{self, Source, land_colors_now, mana_units};
-use sim_core::ids::{LandId, PlayerId};
+use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::Game;
 use sim_core::tag::Tag;
 use sim_core::testkit::*;
@@ -10,11 +10,11 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
-fn amt(g: &Game, l: LandId) -> u32 {
+fn amt(g: &Game, l: PermId) -> u32 {
     mana_units(g, P0, false).iter().find(|u| u.src == Source::Land(l)).unwrap().amt
 }
 
-fn cols(g: &Game, l: LandId) -> String {
+fn cols(g: &Game, l: PermId) -> String {
     let c = land_colors_now(g, P0, l);
     "WUBRG".chars().filter(|&ch| c.has(ch)).collect()
 }
@@ -28,7 +28,7 @@ fn every_filter_land_needs_an_untapped_land_that_makes_one_of_its_colours() {
     assert_eq!(cols(&g, mire), "", "a Plains makes neither {{B}} nor {{G}}");
     let swamp = lands(&mut g, P0, "Swamp", 1, true)[0];
     assert_eq!(cols(&g, mire), "", "a tapped Swamp cannot pay");
-    g.land_mut(swamp).tapped = false;
+    g.perm_mut(swamp).tapped = false;
     assert_eq!(cols(&g, mire), "BG", "an untapped Swamp pays the {{B/G}}");
 }
 
@@ -54,7 +54,7 @@ fn sungrass_prairie_and_ferrous_lake_need_another_untapped_land_and_net_one_mana
     assert_eq!(amt(&g, sp), 0, "nothing to pay the {{1}}");
     let f = lands(&mut g, P0, "Forest", 1, true)[0];
     assert_eq!(amt(&g, sp), 0, "a tapped Forest cannot pay");
-    g.land_mut(f).tapped = false;
+    g.perm_mut(f).tapped = false;
     assert_eq!(amt(&g, sp), 1);
     let mut g = table(&["thrasios", "veyran"]);
     let fl = lands(&mut g, P0, "Ferrous Lake", 1, false)[0];
@@ -70,7 +70,7 @@ fn spire_of_industry_needs_an_artifact_and_costs_a_life() {
     assert_eq!(cols(&g, spire), "", "no artifact: colourless only");
     perm(&mut g, P0, "Arcane Signet");
     assert!(land_colors_now(&g, P0, spire).count() > 1, "with an artifact, any colour of the identity");
-    assert!(g.db.get(g.land(spire).card()).tag(Tag::Pain), "coloured mana costs 1 life (the pain tag)");
+    assert!(g.db.get(g.perm(spire).card()).tag(Tag::Pain), "coloured mana costs 1 life (the pain tag)");
 }
 
 #[test]
@@ -91,7 +91,7 @@ fn hall_of_the_bandit_lord_costs_three_life_per_mana() {
     assert_eq!(amt(&g, hall), 1);
     assert!(mana::pay(&mut g, P0, 1, "", false).unwrap());
     assert_eq!(g.player(P0).life, 37, "paid 3 life");
-    g.land_mut(hall).tapped = false;
+    g.perm_mut(hall).tapped = false;
     g.player_mut(P0).life = 3;
     assert_eq!(amt(&g, hall), 0, "not at 3 life");
 }
@@ -127,9 +127,9 @@ fn spectator_seating_makes_red_or_white_and_sulfur_falls_deals_no_damage() {
     let mut g = table(&["thrasios", "veyran"]);
     let ss = lands(&mut g, P0, "Spectator Seating", 1, false)[0];
     assert_eq!(cols(&g, ss), "WR");
-    assert!(!g.db.get(g.land(ss).card()).tag(Tag::Pain));
+    assert!(!g.db.get(g.perm(ss).card()).tag(Tag::Pain));
     let sf = lands(&mut g, P0, "Sulfur Falls", 1, false)[0];
-    assert!(!g.db.get(g.land(sf).card()).tag(Tag::Pain), "a check land, not a painland");
+    assert!(!g.db.get(g.perm(sf).card()).tag(Tag::Pain), "a check land, not a painland");
 }
 
 #[test]
@@ -151,7 +151,7 @@ fn fabled_passage_untaps_the_land_with_three_other_lands() {
         sim_core::engine::turn::crack_fetch(&mut g, P0, fp).unwrap();
         assert_eq!(g.player(P0).lands.len(), before + 1, "the Passage is replaced by a basic");
         let new = *g.player(P0).lands.last().unwrap();
-        assert_eq!(g.land(new).tapped, tapped, "{others} other lands");
+        assert_eq!(g.perm(new).tapped, tapped, "{others} other lands");
     }
 }
 

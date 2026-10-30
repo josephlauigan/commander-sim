@@ -61,7 +61,7 @@ use crate::engine::zones::{
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src, TrigAct, Trigger};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
 use crate::impls::common::{AURA, AuraSpec, aura};
 use crate::impls::t2::{blink, blink_value};
@@ -761,7 +761,7 @@ fn can_return(g: &Game, p: PlayerId) -> bool {
     pl.hand.iter().any(|&c| REANIMATION.contains(&cname(g, c)))
         || RETURNERS.iter().any(|n| mine(g, p, n).is_some())
         || pl.commanders().any(|c| cname(g, c) == RETURNERS[0] && pl.cmd_zone_of(c))
-        || pl.lands.iter().any(|&l| cname(g, g.land(l).card()) == JOURNEY)
+        || pl.lands.iter().any(|&l| cname(g, g.perm(l).card()) == JOURNEY)
 }
 
 fn buried_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -842,7 +842,7 @@ static JOURNEY_SPEC: AuraSpec =
     AuraSpec { target: "own", host_pick: Some(journey_host), host_dies: Some(journey_dies), ..AURA };
 
 /// Atzal: {T}: Add one mana of any color.
-fn atzal_cols(g: &Game, p: PlayerId, _l: LandId) -> Colors {
+fn atzal_cols(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     g.player(p).ident
 }
 
@@ -853,8 +853,8 @@ fn atzal_pick(g: &Game, p: PlayerId) -> Option<CardId> {
 }
 
 /// {3}{B}{G}, {T}: Return target creature card from your graveyard to the battlefield.
-fn atzal_options(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.land(l).tapped || g.land(l).owner != p || crate::human::is_human(g, p) {
+fn atzal_options(g: &mut Game, l: PermId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(l).tapped || g.perm(l).owner != p || crate::human::is_human(g, p) {
         return Ok(vec![]);
     }
     if !can_pay(g, p, 4, "BG", false) {
@@ -869,16 +869,16 @@ fn atzal_options(g: &mut Game, l: LandId, p: PlayerId, _post: Option<bool>) -> R
 }
 
 fn atzal_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let l = LandId(arg as u32);
-    if !g.land(l).on_bf || g.land(l).tapped || g.land(l).owner != p {
+    let l = PermId(arg as u32);
+    if !g.perm(l).on_bf || g.perm(l).tapped || g.perm(l).owner != p {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
+    g.perm_mut(l).tapped = true;
     if !can_pay(g, p, 3, "BG", false) || !pay(g, p, 3, "BG", false)? {
-        g.land_mut(l).tapped = false;
+        g.perm_mut(l).tapped = false;
         return Ok(false);
     }
-    let jc = g.land(l).card();
+    let jc = g.perm(l).card();
     if !ability_window_card(g, p, jc, "return a creature card from your graveyard", None, None)? {
         return Ok(true);
     }

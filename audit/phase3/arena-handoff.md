@@ -16,7 +16,10 @@ clone_cost 2.83 / 2.69 µs per copy (60 permanents, 32 lands).
       `Land` and `Game::lands` gone; `g.land(l)` / `land_mut` return the `Perm`; `.cd` on a land is `.card()`.
       Checks: build 0 warnings; 3616 passed / 0 failed / 3 ignored (same as base); practice 104 passed;
       clone_cost 3.05 / 2.99 µs (base 2.83 / 2.69: about 10% more per copy, a `Perm` is bigger than a `Land`).
-- [ ] Stage B: call sites onto the `Perm` API (`land(` -> `perm(`, `LandId` -> `PermId`), alias and accessors gone.
+- [x] Stage B (committed): call sites onto the `Perm` API (`g.land(` -> `g.perm(`, `land_mut` -> `perm_mut`,
+      `LandId` -> `PermId`); the alias, the `LandId(n)` fn and `Game::land` / `land_mut` are gone. Checks: build 0
+      warnings; 3616 passed / 0 failed / 3 ignored; practice 104; `cardgen export --offline` (data unchanged) and
+      `validate` pass; clone_cost 3.07 / 2.94 µs.
 - [ ] Stage C: the ability language reads lands; special paths deleted where compiled abilities cover them; tests.
 
 ## Notes for whoever continues

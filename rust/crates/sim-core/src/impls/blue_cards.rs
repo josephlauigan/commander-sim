@@ -425,11 +425,11 @@ fn fear_cost(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     // a tapped land first (its mana is already spent), then the cheapest permanent
     let lands = g.player(p).lands.clone();
     let pick = max_by(&lands, |l| {
-        let x = g.land(l);
+        let x = g.perm(l);
         (x.tapped as i32 * 4) as f64 - g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()) as f64
     });
     if let Some(l) = pick {
-        let cd = g.land(l).card();
+        let cd = g.perm(l).card();
         crate::engine::turn::remove_land(g, p, l);
         g.player_mut(p).hand.push(cd);
         crate::glog!(g, "    {} returns {} (Fear of Isolation)", g.player(p).name, g.db.get(cd).name);

@@ -63,7 +63,7 @@ fn fix_druid_class_levels_up_from_one_to_three() {
     assert!(perform(&mut g, P0, &a).unwrap());
     assert_eq!(g.perm(d).data.get(DataKey::Level), Some(&Val::Int(2)));
     assert_eq!(cardcode::extra_lands(&g, P0), 1); // level 2: an extra land each turn
-    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.land(l).tapped).count(), 3); // {2}{G}
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 3); // {2}{G}
     // level 2 offers level 3 (seven lands, {4}{G} left)
     let opts = options(&mut g, d, P0, Some(false));
     assert!(opts.iter().all(|o| !o.label.contains("level 2")));
@@ -156,7 +156,7 @@ fn fix_proliferate_adds_the_counters_the_engine_keeps() {
     common::proliferate(&mut g, P0, 1).unwrap();
     assert_eq!(g.perm(m).plus, 2);
     assert_eq!(g.perm(w).loyalty, Some(6));
-    assert_eq!(g.land(v).data.get(DataKey::Charge), Some(&Val::Int(3)));
+    assert_eq!(g.perm(v).data.get(DataKey::Charge), Some(&Val::Int(3)));
     assert_eq!(g.player(P0).incubator, 3);
     assert_eq!(g.player(P1).poison, 4);
     assert_eq!(g.perm(o).plus, -2);
@@ -368,8 +368,8 @@ fn urza_s_saga_makes_a_construct_and_fetches_an_artifact() {
     assert_eq!(g.player(P0).sagas, [(saga, 1)]);
     common::saga_step(&mut g, P0).unwrap(); // lore 2: a Construct ({2} from the rocks)
     assert_eq!(g.player(P0).sagas, [(saga, 2)]);
-    assert!(g.land(saga).tapped);
-    g.land_mut(saga).tapped = false;
+    assert!(g.perm(saga).tapped);
+    g.perm_mut(saga).tapped = false;
     for m in g.player(P0).perms.clone() {
         g.perm_mut(m).tapped = false;
     }

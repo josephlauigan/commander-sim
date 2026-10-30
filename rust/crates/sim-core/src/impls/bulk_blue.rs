@@ -57,7 +57,7 @@ fn islands(g: &Game, p: PlayerId) -> i32 {
         .lands
         .iter()
         .filter(|&&l| {
-            let d = g.db.get(g.land(l).card());
+            let d = g.db.get(g.perm(l).card());
             &*d.name == "Island" || d.has_subtype("island")
         })
         .count() as i32
@@ -391,7 +391,7 @@ fn relm_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
         _ => {
             let ls: Vec<_> = g.player(p).lands.clone();
             if let Some(&l) = ls.last() {
-                let cd = g.land(l).card();
+                let cd = g.perm(l).card();
                 crate::glog!(g, "    {} creates a token copy of {}", pname(g, p), g.db.get(cd).name);
                 g.add_land(p, cd, false);
             }

@@ -31,7 +31,7 @@ use crate::engine::values::{epow, etgh, has_type, indestructible, once_per_turn,
 use crate::engine::zones::{Enter, draw, enter, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Opt, Registry, Src};
-use crate::ids::{CardId, LandId, PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -567,16 +567,16 @@ pub fn iroas_shield(g: &Game, m: PermId) -> bool {
 }
 
 // ================================================================== Slayers' Stronghold / Sunhome
-fn land_ready(g: &Game, l: LandId, p: PlayerId) -> bool {
-    g.land(l).on_bf && g.player(p).lands.contains(&l) && !g.land(l).tapped
+fn land_ready(g: &Game, l: PermId, p: PlayerId) -> bool {
+    g.perm(l).on_bf && g.player(p).lands.contains(&l) && !g.perm(l).tapped
 }
 
-fn pack(l: LandId, m: PermId) -> i64 {
+fn pack(l: PermId, m: PermId) -> i64 {
     l.0 as i64 | (m.0 as i64) << 32
 }
 
-fn unpack(arg: i64) -> (LandId, PermId) {
-    (LandId((arg & 0xFFFF_FFFF) as u32), PermId((arg >> 32) as u32))
+fn unpack(arg: i64) -> (PermId, PermId) {
+    (PermId((arg & 0xFFFF_FFFF) as u32), PermId((arg >> 32) as u32))
 }
 
 fn can_attack_now(g: &Game, m: PermId) -> bool {
@@ -586,7 +586,7 @@ fn can_attack_now(g: &Game, m: PermId) -> bool {
 
 /// {R}{W}, {T}: target creature gets +2/+0 and gains vigilance and haste until end of turn. The AI uses it in its
 /// first main phase to give haste to its biggest creature that came in this turn (power 3 or more)
-fn stronghold_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn stronghold_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post != Some(false) || g.active != Some(p) || !land_ready(g, l, p) {
         return Ok(vec![]);
     }
@@ -610,8 +610,8 @@ fn stronghold_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !land_ready(g, l, p) || !live(g, m) || !crate::impls::lands::pay_without(g, p, l, 0, "RW")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).card(), "+2/+0, vigilance and haste", None, Some(m))? && live(g, m) {
+    g.perm_mut(l).tapped = true;
+    if ability_window_card(g, p, g.perm(l).card(), "+2/+0, vigilance and haste", None, Some(m))? && live(g, m) {
         let x = g.perm_mut(m);
         x.eot_pt = (x.eot_pt.0 + 2, x.eot_pt.1);
         grant(g, m, "vigilance");
@@ -624,7 +624,7 @@ fn stronghold_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// {2}{R}{W}, {T}: target creature gains double strike until end of turn. The AI uses it in its first main phase on
 /// its best ready attacker of power 3 or more that would get through: a flyer when no opponent has a flyer or reach
 /// creature untapped, or one no opponent has an untapped creature for
-fn sunhome_options(g: &mut Game, l: LandId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+fn sunhome_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post != Some(false) || g.active != Some(p) || !land_ready(g, l, p) {
         return Ok(vec![]);
     }
@@ -657,8 +657,8 @@ fn sunhome_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !land_ready(g, l, p) || !live(g, m) || !crate::impls::lands::pay_without(g, p, l, 2, "RW")? {
         return Ok(false);
     }
-    g.land_mut(l).tapped = true;
-    if ability_window_card(g, p, g.land(l).card(), "double strike", None, Some(m))? && live(g, m) {
+    g.perm_mut(l).tapped = true;
+    if ability_window_card(g, p, g.perm(l).card(), "double strike", None, Some(m))? && live(g, m) {
         grant(g, m, "double strike");
         crate::glog!(g, "    {} gains double strike (Sunhome)", g.perm(m).name);
     }

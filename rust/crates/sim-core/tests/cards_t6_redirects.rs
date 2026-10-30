@@ -29,7 +29,7 @@ fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
 }
 
 fn untapped(g: &Game, p: PlayerId) -> usize {
-    g.player(p).lands.iter().filter(|&&l| !g.land(l).tapped).count()
+    g.player(p).lands.iter().filter(|&&l| !g.perm(l).tapped).count()
 }
 
 // ======================================================== Redirect Lightning
@@ -330,7 +330,7 @@ fn erode_destroys_the_creature_and_ramps_its_controller_tapped() {
     assert!(!g.perm(t).on_bf);
     assert_eq!(g.player(P1).lands.len(), theirs + 1, "the creature's controller fetched a basic");
     let l = *g.player(P1).lands.last().unwrap();
-    assert!(g.land(l).tapped, "it enters tapped");
+    assert!(g.perm(l).tapped, "it enters tapped");
     assert_eq!(g.player(P0).lands.len(), mine, "the caster gets nothing");
     assert!(in_gy(&g, P0, "Erode"));
 }
@@ -400,7 +400,7 @@ fn emerald_charm_untaps_a_land_when_there_is_no_enchantment() {
     g.active = Some(P0);
     let ls = lands(&mut g, P0, "Forest", 2, true);
     cast_free(&mut g, P0, "Emerald Charm", sim_core::state::Ctx::default());
-    let up = ls.iter().filter(|&&l| !g.land(l).tapped).count();
+    let up = ls.iter().filter(|&&l| !g.perm(l).tapped).count();
     assert_eq!(up, 1);
 }
 

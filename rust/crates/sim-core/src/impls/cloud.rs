@@ -252,7 +252,7 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
             // nonbasic landwalk: unblockable while the defending player controls a nonbasic land
             "Trailblazer's Boots" => {
                 let d = owner(g, b);
-                if d != p && g.player(d).lands.iter().any(|&l| g.land(l).on_bf && !g.db.get(g.land(l).card()).basic) {
+                if d != p && g.player(d).lands.iter().any(|&l| g.perm(l).on_bf && !g.db.get(g.perm(l).card()).basic) {
                     return true;
                 }
             }
@@ -345,7 +345,7 @@ fn cloud_pick(g: &Game, p: PlayerId) -> Option<CardId> {
         .iter()
         .filter(|&&m| live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(crate::tag::Tag::Rock)))
         .count();
-    let mana = g.player(p).lands.iter().filter(|&&l| g.land(l).on_bf).count() as u32 + 1 + rocks as u32;
+    let mana = g.player(p).lands.iter().filter(|&&l| g.perm(l).on_bf).count() as u32 + 1 + rocks as u32;
     let (free_equips, shapers) = equip_engine(g, p);
     // cast + equip cost of a card (Cid is in the cast cost; free-equip engines and Steelshapers lower the equip cost)
     let total = |c: CardId| -> u32 {
@@ -1413,7 +1413,7 @@ fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
         return Ok(false);
     }
     let Some(l) = g.player(p).lands.iter().copied().find(|&l| {
-        let x = g.land(l);
+        let x = g.perm(l);
         x.on_bf && !x.tapped && *g.db.get(x.card()).name == *PLAZA
     }) else {
         return Ok(false);
@@ -1421,11 +1421,11 @@ fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
     if !crate::impls::lands::can_pay_without(g, p, l, 3, "") {
         return Ok(false);
     }
-    let cd = g.land(l).card();
+    let cd = g.perm(l).card();
     crate::engine::turn::remove_land(g, p, l); // tapped and exiled as the cost: the other lands pay the {3}
     if !pay(g, p, 3, "", false)? {
         g.player_mut(p).lands.push(l);
-        g.land_mut(l).on_bf = true;
+        g.perm_mut(l).on_bf = true;
         return Ok(false);
     }
     g.player_mut(p).exile.push(cd);
@@ -1783,7 +1783,7 @@ fn protection_follows(g: &Game, p: PlayerId, left: u32) -> bool {
         return true;
     }
     let plaza =
-        pl.lands.iter().any(|&l| g.land(l).on_bf && !g.land(l).tapped && *g.db.get(g.land(l).card()).name == *PLAZA);
+        pl.lands.iter().any(|&l| g.perm(l).on_bf && !g.perm(l).tapped && *g.db.get(g.perm(l).card()).name == *PLAZA);
     if plaza && left >= 3 {
         return true;
     }

@@ -30,7 +30,7 @@ fn plains_in_library(g: &Game, p: PlayerId) -> usize {
 /// p controls n lands (Swamps for the opponents, so Plains in the library are the deck's own)
 fn set_lands(g: &mut Game, p: PlayerId, n: usize) {
     for l in std::mem::take(&mut g.player_mut(p).lands) {
-        g.land_mut(l).on_bf = false;
+        g.perm_mut(l).on_bf = false;
     }
     lands(g, p, if p == P0 { "Plains" } else { "Swamp" }, n, false);
 }
@@ -59,7 +59,7 @@ fn warhound_fetches_a_tapped_plains_only_when_an_opponent_has_more_lands() {
     assert!(lib > 2);
     perm(&mut g, P0, "Loyal Warhound");
     assert_eq!(bf_lands(&g, P0), 3, "one Plains onto the battlefield");
-    assert!(g.land(*g.player(P0).lands.last().unwrap()).tapped, "tapped");
+    assert!(g.perm(*g.player(P0).lands.last().unwrap()).tapped, "tapped");
     assert_eq!(plains_in_library(&g, P0), lib - 1);
     // level on lands: nothing
     let mut g = game();
@@ -158,7 +158,7 @@ fn keeper_of_the_accord_fetches_a_tapped_plains_when_an_opponent_has_more_lands(
     perm(&mut g, P0, "Keeper of the Accord");
     end_step(&mut g, P1);
     assert_eq!(bf_lands(&g, P0), 4);
-    assert!(g.land(*g.player(P0).lands.last().unwrap()).tapped);
+    assert!(g.perm(*g.player(P0).lands.last().unwrap()).tapped);
     assert!(g.player(P0).perms.iter().all(|&m| !g.perm(m).token), "creatures: 1 against 0 or equal, no Soldier");
     end_step(&mut g, P1); // level now
     assert_eq!(bf_lands(&g, P0), 4);
@@ -184,7 +184,7 @@ fn archaeomancer_s_map_puts_a_land_onto_the_battlefield_when_an_opponent_ahead_p
     zones::landfall(&mut g, P1).unwrap();
     assert_eq!(bf_lands(&g, P0), 3, "a land from the hand onto the battlefield");
     assert_eq!(count_in_hand(&g, P0, "Plains"), before - 1);
-    assert!(!g.land(*g.player(P0).lands.last().unwrap()).tapped, "untapped");
+    assert!(!g.perm(*g.player(P0).lands.last().unwrap()).tapped, "untapped");
     // level now (3 against 3): the next land of an opponent that is not ahead does nothing
     zones::landfall(&mut g, P1).unwrap();
     assert_eq!(bf_lands(&g, P0), 3);

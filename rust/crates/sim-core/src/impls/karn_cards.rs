@@ -46,7 +46,7 @@ pub fn is_art(g: &Game, m: PermId) -> bool {
     ptypes(g, m).has(Types::ARTIFACT) || g.perm(m).ttypes.contains(&"artifact")
 }
 
-/// every live permanent, with its controller (lands are not permanents here: they are `Land`s)
+/// every live nonland permanent, with its controller (lands are listed apart, in `Player::lands`)
 fn all_perms(g: &Game) -> Vec<(PlayerId, PermId)> {
     g.players
         .iter()
