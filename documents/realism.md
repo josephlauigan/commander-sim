@@ -237,9 +237,15 @@ cards" is **not passed yet**: hard doubles are 0, and the rest are frozen.
   `the_export_guard_passes_the_committed_data` (`rust/crates/cardgen/tests/paths.rs`) runs it on the committed data,
   so `cargo test` fails on a double even without a re-export.
 - The doubles already in the data are listed in `data/paths_known.txt`, one "class | card" line each, and accepted
-  only with that class: **21 competing, 25 shadowed, 161 undeclared splits** (207 cards). A hard double is never
-  accepted from it. The list only shrinks: the test fails on a line whose card is no longer that double. That list is
-  what is left to clear for the gate.
+  only with that class: it started at **21 competing, 25 shadowed, 161 undeclared splits** (207 cards). A hard double
+  is never accepted from it. The list only shrinks: the test fails on a line whose card is no longer that double. That
+  list is what is left to clear for the gate.
+- PR 5a cleared the competing and shadowed lines: the list is now **0 competing, 0 shadowed, 161 undeclared splits**
+  (161 cards), and 57 splits are declared with `paths_ok`. The 15 competing lands, Dragon's Hoard, Weathered Wayfarer
+  and Desperate Ritual lost a compiled ability that never ran or was wrong (`dsl = []`; lands aren't permanents, so
+  `dsl::ability_options` never offered a land's compiled activation). Demon of Fate's Design, Gingerbrute, both
+  Staffs, Damn and 23 shadowed spells are declared splits: two abilities with one path each, or a hand-written resolve
+  whose partial compiled spell stays as the AI's value of the card until the AI phase.
 - Every `commander-sim` run that plays decks (`--deck`, `--pool`, `--all-decks`, `--calibrate`, `--realism`,
   `--goldfish`) prints the model coverage first: for each deck, its 99 + commander by `cardgen audit` status (Full,
   Full-auto, Approximate, Partial, Unmodeled) and up to five of its Unmodeled and Partial cards (commander and engine
