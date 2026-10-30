@@ -195,13 +195,15 @@ pub struct WishRule {
 }
 
 /// --- phase4-cedh: the extra utility of passing with mana up in the main phase (Tier 6 `hold_up`): the first rule
-/// whose `when` holds gives its value; none: no opinion
+/// whose `when` holds gives its value (none given: no opinion); no rule holds: no opinion
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct HoldUp {
     #[serde(default)]
     pub when: Vec<String>,
-    pub value: f64,
+    /// absent: no opinion (and the search stops)
+    #[serde(default)]
+    pub value: Option<f64>,
 }
 
 /// --- phase4-cedh: a go-now gate (Tier 6 `go_now`) for the catalogue combos whose name starts with one of `combos`:
@@ -301,6 +303,20 @@ enum Q {
     Makers,
     /// opponents with two or more open blue mana and a card in hand
     OppBlueUp,
+    /// --- phase4-cedh: the table: the highest chance an opponent stops a spell (`t6_table::stop_chance`)
+    OppStopMax,
+    /// opponents whose stop chance is 0.5 or more
+    OppStoppers,
+    /// the most open mana an opponent has
+    OppOpenMax,
+    /// the highest archenemy score at the table (`t6_table::archenemy_score`)
+    ArchenemyMax,
+    /// opponents with a card in hand and open mana
+    OppCardsUp,
+    /// opponents who can cast a second spell (one cast this turn and a card, or two cards and two mana)
+    OppSecondSpell,
+    /// the hand's blue cards
+    HandBlue,
     /// the hand's counterspells (tag `ctr`)
     Counters,
     /// p's nonland permanents of mana value 3 or less that make mana (tags rock, dork, fastmana, lr; Lotus Petal,
@@ -312,7 +328,14 @@ enum Q {
     Bf(usize),
 }
 
-const NUMS: [(&str, Q); 18] = [
+const NUMS: [(&str, Q); 25] = [
+    ("opp-stop-max", Q::OppStopMax),
+    ("opp-stoppers", Q::OppStoppers),
+    ("opp-open-max", Q::OppOpenMax),
+    ("archenemy-max", Q::ArchenemyMax),
+    ("opp-cards-up", Q::OppCardsUp),
+    ("opp-second-spell", Q::OppSecondSpell),
+    ("hand-blue", Q::HandBlue),
     ("counters", Q::Counters),
     ("mana-perms", Q::ManaPerms),
     ("creatures", Q::Creatures),
@@ -358,18 +381,52 @@ enum Atom {
     OppOut(String),
     /// --- phase4-cedh: p holds this card on the battlefield or in hand
     Have(String),
-    Num(Q, Cmp, Rhs),
+    /// --- phase4-cedh: a line of p's catalogue combos is ready to go (`combos::line_progress`)
+    LineReady,
+    /// a sum of quantities compared with a number
+    Num(Vec<Q>, Cmp, Rhs),
     Not(Box<Atom>),
+    /// --- phase4-cedh: a parenthesised condition: any of the alternatives, each all of its atoms
+    Any(Vec<Vec<Atom>>),
 }
 
-/// a condition: any of the alternatives, each `a & b & ...`
+/// a condition: any of the alternatives, each `a & b & ...`; `|` and parentheses nest
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Cond(Vec<Vec<Atom>>);
+
+/// split at `ch` outside parentheses
+fn split_top(s: &str, ch: char) -> Vec<&str> {
+    let (mut depth, mut start, mut out) = (0i32, 0, vec![]);
+    for (i, c) in s.char_indices() {
+        match c {
+            '(' => depth += 1,
+            ')' => depth -= 1,
+            _ if c == ch && depth == 0 => {
+                out.push(&s[start..i]);
+                start = i + c.len_utf8();
+            }
+            _ => {}
+        }
+    }
+    out.push(&s[start..]);
+    out
+}
+
+/// `a & b | c & (d | e)`: alternatives of conjunctions
+fn alts(s: &str, sets: &[&str]) -> Result<Vec<Vec<Atom>>, String> {
+    split_top(s, '|').into_iter().map(|a| split_top(a, '&').into_iter().map(|x| atom(x, sets)).collect()).collect()
+}
 
 fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
     let s = s.trim();
     if let Some(r) = s.strip_prefix("not ") {
         return Ok(Atom::Not(Box::new(atom(r, sets)?)));
+    }
+    if let Some(r) = s.strip_prefix('(').and_then(|r| r.strip_suffix(')')) {
+        return Ok(Atom::Any(alts(r, sets)?));
+    }
+    if s.contains('(') || s.contains(')') {
+        return Err(format!("unbalanced parentheses in {s:?}"));
     }
     for (pre, f) in [("out:", Atom::Out as fn(String) -> Atom), ("opp-out:", Atom::OppOut), ("have:", Atom::Have)] {
         if let Some(r) = s.strip_prefix(pre) {
@@ -382,25 +439,28 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
         "ninjutsu-window" => return Ok(Atom::NinjutsuWindow),
         "drain-payoff" => return Ok(Atom::DrainPayoff),
         "to-top" => return Ok(Atom::ToTop),
+        "line-ready" => return Ok(Atom::LineReady),
         _ => {}
     }
     for (op, c) in [(">=", Cmp::Ge), ("<=", Cmp::Le), (">", Cmp::Gt), ("<", Cmp::Lt), ("=", Cmp::Eq)] {
         if let Some((k, v)) = s.split_once(op) {
-            let k = k.trim();
             let set_ix =
                 |set: &str| sets.iter().position(|x| *x == set).ok_or_else(|| format!("no set {set:?} in {s:?}"));
-            let q = if let Some(set) = k.strip_prefix("hand:") {
-                Q::Hand(set_ix(set)?)
-            } else if let Some(set) = k.strip_prefix("bf:") {
-                Q::Bf(set_ix(set)?)
-            } else {
-                NUMS.iter().find(|n| n.0 == k).ok_or_else(|| format!("unknown quantity {k:?} in {s:?}"))?.1
-            };
+            let mut qs = vec![];
+            for k in k.split('+').map(str::trim) {
+                qs.push(if let Some(set) = k.strip_prefix("hand:") {
+                    Q::Hand(set_ix(set)?)
+                } else if let Some(set) = k.strip_prefix("bf:") {
+                    Q::Bf(set_ix(set)?)
+                } else {
+                    NUMS.iter().find(|n| n.0 == k).ok_or_else(|| format!("unknown quantity {k:?} in {s:?}"))?.1
+                });
+            }
             let v = match v.trim() {
                 "one-lander" => Rhs::OneLander,
                 x => Rhs::N(x.parse().map_err(|_| format!("bad number in {s:?}"))?),
             };
-            return Ok(Atom::Num(q, c, v));
+            return Ok(Atom::Num(qs, c, v));
         }
     }
     Err(format!("unknown condition {s:?}"))
@@ -419,8 +479,12 @@ impl Cond {
         Cond::parse_with(alts, &[])
     }
 
-    pub fn parse_with(alts: &[String], sets: &[&str]) -> Result<Cond, String> {
-        alts.iter().map(|a| a.split('&').map(|x| atom(x, sets)).collect()).collect::<Result<_, _>>().map(Cond)
+    pub fn parse_with(list: &[String], sets: &[&str]) -> Result<Cond, String> {
+        let mut out = vec![];
+        for a in list {
+            out.extend(alts(a, sets)?);
+        }
+        Ok(Cond(out))
     }
 
     /// no alternatives: always true
@@ -433,14 +497,17 @@ impl Cond {
     }
 
     fn names(&self) -> impl Iterator<Item = &str> {
-        fn walk(a: &Atom) -> Option<&str> {
+        fn walk<'a>(a: &'a Atom, out: &mut Vec<&'a str>) {
             match a {
-                Atom::Out(n) | Atom::Have(n) => Some(n),
-                Atom::Not(b) => walk(b),
-                _ => None,
+                Atom::Out(n) | Atom::Have(n) => out.push(n),
+                Atom::Not(b) => walk(b, out),
+                Atom::Any(alts) => alts.iter().flatten().for_each(|x| walk(x, out)),
+                _ => {}
             }
         }
-        self.0.iter().flatten().filter_map(walk)
+        let mut out = vec![];
+        self.0.iter().flatten().for_each(|a| walk(a, &mut out));
+        out.into_iter()
     }
 }
 
@@ -485,6 +552,22 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
             g.opps(p).filter(|&q| super::brain::open_mana(g, q, Some('U')) >= 2 && !g.player(q).hand.is_empty()).count()
                 as f64
         }
+        Q::OppStopMax => g.opps(p).map(|q| super::t6_table::stop_chance(g, q)).fold(0.0, f64::max),
+        Q::OppStoppers => g.opps(p).filter(|&q| super::t6_table::stop_chance(g, q) >= 0.5).count() as f64,
+        Q::OppOpenMax => g.opps(p).map(|q| super::brain::open_mana(g, q, None)).max().unwrap_or(0) as f64,
+        Q::ArchenemyMax => g.opps(p).map(|q| super::t6_table::archenemy_score(g, q)).fold(0.0, f64::max),
+        Q::OppCardsUp => {
+            g.opps(p).filter(|&q| !g.player(q).hand.is_empty() && super::brain::open_mana(g, q, None) >= 1).count()
+                as f64
+        }
+        Q::OppSecondSpell => g
+            .opps(p)
+            .filter(|&q| {
+                let (cards, mana) = (g.player(q).hand.len(), super::brain::open_mana(g, q, None));
+                (crate::engine::cast::casts_this_turn(g, q) >= 1 && cards >= 1) || (cards >= 2 && mana >= 2)
+            })
+            .count() as f64,
+        Q::HandBlue => hand.iter().filter(|&&c| g.db.get(c).colors.has('U')).count() as f64,
         Q::Counters => hand.iter().filter(|&&c| g.db.get(c).tag(Tag::Ctr)).count() as f64,
         Q::ManaPerms => pl
             .perms
@@ -521,12 +604,14 @@ fn eval(g: &Game, p: PlayerId, a: &Atom, cx: Cx) -> bool {
         Atom::NinjutsuWindow => super::pool::combat_reserve(g, p).is_some(),
         Atom::DrainPayoff => super::plans::drain_payoff(g, p).is_some(),
         Atom::ToTop => pl.to_top,
+        Atom::LineReady => crate::impls::combos::line_progress(g, p).1,
+        Atom::Any(alts) => alts.iter().any(|all| all.iter().all(|a| eval(g, p, a, cx))),
         Atom::Out(n) => super::plans::on_bf(g, p, n).is_some(),
         Atom::OppOut(n) => g.opps(p).any(|q| super::plans::on_bf(g, q, n).is_some()),
         Atom::Have(n) => super::plans::on_bf(g, p, n).is_some() || pl.hand.iter().any(|&c| *g.db.get(c).name == **n),
         Atom::Not(b) => !eval(g, p, b, cx),
         Atom::Num(q, c, v) => {
-            let x = quantity(g, p, *q, cx);
+            let x: f64 = q.iter().map(|q| quantity(g, p, *q, cx)).sum();
             let v = match v {
                 Rhs::N(v) => *v,
                 Rhs::OneLander => crate::impls::t6_keep::mana(g, p).need_one_lander(),
@@ -1026,7 +1111,7 @@ pub fn keeps_hand(g: &Game, p: PlayerId) -> Option<bool> {
 /// --- phase4-cedh: the hold-up utility of the plan (first rule that holds), None: no opinion
 pub fn hold_up_for(l: &Loaded, g: &Game, p: PlayerId) -> Option<f64> {
     let cx = Cx { plan: Some(l), card: None };
-    l.plan.hold_up.iter().zip(&l.hold_up_when).find(|(_, w)| w.holds_cx(g, p, cx)).map(|x| x.0.value)
+    l.plan.hold_up.iter().zip(&l.hold_up_when).find(|(_, w)| w.holds_cx(g, p, cx)).and_then(|x| x.0.value)
 }
 
 /// --- phase4-cedh: the plan's go-now gate for this catalogue combo, None: the shared table check decides

@@ -335,3 +335,31 @@ fn the_rograkh_silas_plan_file_matches_its_hand_code() {
         HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
     );
 }
+
+#[test]
+fn the_kraum_plan_file_matches_its_hand_code() {
+    use sim_core::impls::t6_plan_kraum as h;
+    plan_matches_hand(
+        "kraum-tymna-blue-breach-midrange",
+        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
+    );
+}
+
+#[test]
+fn conditions_nest_and_sum() {
+    let t = "deck = \"x\"\n[sets]\na = [\"Brainstorm\"]\nb = [\"Ponder\"]\n[[prio]]\ncards = [\"Brainstorm\"]\n\
+             when = [\"hand:a+hand:b>=2 & (turn<=1 | turn>=9)\"]\nvalue = 72\nelse = 45";
+    let l = plan_data::load("x", t).unwrap();
+    let mut g = table(&[YU, KI]);
+    g.player_mut(P0).hand.clear();
+    let bs = hand(&mut g, P0, &["Brainstorm"])[0];
+    g.player_mut(P0).turns = 1;
+    assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(45.0), "one card of a+b");
+    hand(&mut g, P0, &["Ponder"]);
+    assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(72.0));
+    g.player_mut(P0).turns = 5;
+    assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(45.0), "neither turn");
+    assert!(
+        plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"(turn<=1\"]\nvalue = 1").is_err()
+    );
+}
