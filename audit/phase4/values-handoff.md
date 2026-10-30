@@ -49,3 +49,6 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
   derived arm rerun from t1 with `bin/commander-sim-B2`. The `AI_VALUES=0` arms (t1-old, t2-old, t3-old) are kept:
   the fixes are behind the switch (checked: B2 with `AI_VALUES=0` on t1, 300 games, = the Stage A head byte for
   byte). `chain2.sh` runs that check and then `stageB.sh`.
+  Gotcha: `cargo build -p sim-cli -p sim-core --example X --test Y` builds only the named example and test, not the
+  `commander-sim` binary; the first B2 copy was the old binary (its t1 arms repeated the first run byte for byte, so
+  they were discarded). Build `-p sim-cli` on its own and `cmp` the copy against the previous one.
