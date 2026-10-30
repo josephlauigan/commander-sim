@@ -222,16 +222,27 @@ pub fn evaluate(g: &Game, p: PlayerId) -> f64 {
     if !g.player(p).alive {
         return -100.0;
     }
-    let opps: Vec<PlayerId> = g.opps(p).collect();
-    if opps.is_empty() {
+    if g.opps(p).next().is_none() {
         return win_score(g, p);
     }
+    if super::learned::on(g, p) {
+        return super::learned::value(g, p); // --- phase4-eval: the learned evaluation (`AI_EVAL`)
+    }
+    95.0 * (raw_term(g, p) / 100.0).tanh()
+}
+
+/// `evaluate`'s term before the tanh, for a position short of a win or a loss: p's strength against the strongest
+/// opponents (and the mean of them all), plus 12 for each opponent dead
+pub fn raw_term(g: &Game, p: PlayerId) -> f64 {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
     let dead = g.players.iter().filter(|q| q.id != p && !q.alive).count() as f64;
     let s = strength(g, p);
+    if opps.is_empty() {
+        return s + 12.0 * dead;
+    }
     let mut so: Vec<f64> = opps.iter().map(|&q| strength(g, q)).collect();
     so.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
-    let raw = s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead;
-    95.0 * (raw / 100.0).tanh()
+    s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead
 }
 
 // --- ai-fix: E
@@ -333,7 +344,7 @@ pub fn output_value(g: &Game, m: crate::ids::PermId) -> f64 {
 
 /// a permanent's value in `strength`: its `pval` plus its output (the larger of the two when `pval` already prices
 /// the output)
-fn board_value(g: &Game, m: crate::ids::PermId) -> f64 {
+pub(crate) fn board_value(g: &Game, m: crate::ids::PermId) -> f64 {
     use crate::engine::values::pval;
     let v = pval(g, m);
     if !g.settings.search.output {

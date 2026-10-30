@@ -1322,6 +1322,7 @@ pub fn run_rounds(g: &mut Game, max_rounds: u32) {
                     }
                     if g.player(p).alive && !g.over {
                         play_turn(g, p)?;
+                        ai::learned::turn_end(g, p); // --- phase4-eval: the recorder (AI_EVAL_RECORD)
                     }
                 }
             }
