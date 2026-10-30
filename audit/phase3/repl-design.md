@@ -186,10 +186,10 @@ Trigger: `hooks::total_trigger_copies` (12 callers: Panharmonicon, Teysa, Isshin
   prevented" everywhere. One pass over the battlefield per counters ask (`gather`), the doublers' product kept on
   the card at load (`CardDef::counters_mult`). 3655 passed.
 
-Speed after Stage C (`repl_cost`, ns per ask, empty / doublers; the counters rows ask the step): +1/+1 74-107 /
-76-81 (base 328-334 / 342-346), -1/-1 47-74 / 68-70 (112-115 / 115-116), poison 46-56 (one run 108) / 51-52 (112-115 / 115-116), tokens
-173-179 / 225-233 (186-196 / 228-245), damage 1.4, life gain 354-356 / 376-377 (358-368 / 373-374): faster or the
-same. `clone_cost` 2.89-3.03 µs (base 2.95-3.13).
+Speed after Stage C (`repl_cost`, ns per ask, empty / doublers; the counters rows ask the step; base in brackets):
++1/+1 74-107 / 76-81 (328-334 / 342-346), -1/-1 47-74 / 68-70 (112-115 / 115-116), poison 46-56 (one run 108) /
+51-52 (112-115 / 115-116), tokens 173-181 / 225-233 (186-196 / 228-245), damage 1.4, life gain 354-367 / 366-377
+(358-368 / 373-374): faster or the same. `clone_cost` 2.89-3.03 µs (base 2.95-3.13).
 
 ## Decks that play a card whose behaviour changed in Stage C (for the recalibration after Phase 4; no sims run)
 
