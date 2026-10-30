@@ -1,0 +1,3658 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "dack-fayden-white-stax",
+  "commanders": [
+    "Dack Fayden, Helping Hand"
+  ],
+  "request_sha256": "ec6046e45822ddd18deb64e56a396c56f6f26c6e8650894bfcb9c243c4fb9524",
+  "identity": "W",
+  "included": [
+    {
+      "id": "2781-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Ephemerate.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20943
+    },
+    {
+      "id": "372-2781-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16628
+    },
+    {
+      "id": "2781-3603-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Cloudshift.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16366
+    },
+    {
+      "id": "372-2781-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15068
+    },
+    {
+      "id": "372-1734-2781",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Felidar Guardian exiled by Fiend Hunter",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6339
+    },
+    {
+      "id": "372-2781-5887",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Werefox Bodyguard",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Felidar Guardian exiled by Werefox Bodyguard",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2703
+    },
+    {
+      "id": "372-1734-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2627
+    },
+    {
+      "id": "372-1734-3603-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2337
+    },
+    {
+      "id": "372-2781-6966",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "All-Fates Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2128
+    },
+    {
+      "id": "372-2781-5694",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Confluence",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{C}{C}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 277
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "4131-4547",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66280,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 55147,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "4131-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 53795,
+      "missing": [
+        "Rings of Brighthearth"
+      ]
+    },
+    {
+      "id": "3263-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 22922,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "553-1891",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Reprieve",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{W}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 22060,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "372-1090-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17305,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "372-1090-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16389,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "4131-4684",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10060,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "4740-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9957,
+      "missing": [
+        "Aetherflux Reservoir"
+      ]
+    },
+    {
+      "id": "553-1271",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scroll Rack",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least eight cards in hand.",
+      "mana": "{13}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9941,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "2781-4200",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8982,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "372-2781-3563",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flicker of Fate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 7976,
+      "missing": [
+        "Flicker of Fate"
+      ]
+    },
+    {
+      "id": "2781-4605-4681",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Karmic Guide",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}{W}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 7571,
+      "missing": [
+        "Karmic Guide"
+      ]
+    },
+    {
+      "id": "2781-3563-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flicker of Fate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Flicker of Fate.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7057,
+      "missing": [
+        "Flicker of Fate"
+      ]
+    },
+    {
+      "id": "372-1090-1734",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Restoration Angel exiled by Fiend Hunter",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6778,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "1308-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6681,
+      "missing": [
+        "Anointed Procession"
+      ]
+    },
+    {
+      "id": "2055-3518",
+      "cards": [
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Auriok Salvagers",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Return some artifact cards from your graveyard to your hand"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6668,
+      "missing": [
+        "Auriok Salvagers"
+      ]
+    },
+    {
+      "id": "4365-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mondrak, Glory Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6087,
+      "missing": [
+        "Mondrak, Glory Dominus"
+      ]
+    },
+    {
+      "id": "372-4013",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Displacer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanent card(s) you own that can produce at least {3}{C} exiled by Abdel Adrian.",
+      "mana": "{2}{C}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5789,
+      "missing": [
+        "Eldrazi Displacer"
+      ]
+    },
+    {
+      "id": "4682-6441-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elspeth, Storm Slayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5539,
+      "missing": [
+        "Elspeth, Storm Slayer"
+      ]
+    },
+    {
+      "id": "2781-4605-5530",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Another Round",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Another Round.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5038,
+      "missing": [
+        "Another Round"
+      ]
+    },
+    {
+      "id": "1938-2781-3603",
+      "cards": [
+        {
+          "name": "Glorious Protector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4764,
+      "missing": [
+        "Glorious Protector"
+      ]
+    },
+    {
+      "id": "372-1938-2781",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Glorious Protector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Felidar Guardian exiled by Glorious Protector",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4222,
+      "missing": [
+        "Glorious Protector"
+      ]
+    },
+    {
+      "id": "1621-2781",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4215,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "4682-6753-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exalted Sunborn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4209,
+      "missing": [
+        "Exalted Sunborn"
+      ]
+    },
+    {
+      "id": "1734-1998-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Charming Prince",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3856,
+      "missing": [
+        "Charming Prince"
+      ]
+    },
+    {
+      "id": "1917-4608",
+      "cards": [
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield of Nyx",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least four enchantments.",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3333,
+      "missing": [
+        "Starfield of Nyx"
+      ]
+    },
+    {
+      "id": "786-1734-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flickerwisp",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3307,
+      "missing": [
+        "Flickerwisp"
+      ]
+    },
+    {
+      "id": "1978-4131-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2989,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "3903-5151",
+      "cards": [
+        {
+          "name": "Deafening Silence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2935,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "372-2781-2955",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Justiciar's Portal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2929,
+      "missing": [
+        "Justiciar's Portal"
+      ]
+    },
+    {
+      "id": "372-2072-2781",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Scrollshift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2837,
+      "missing": [
+        "Scrollshift"
+      ]
+    },
+    {
+      "id": "372-1090-5887",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Werefox Bodyguard",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Restoration Angel exiled by Werefox Bodyguard",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2816,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "372-2781-3306",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Slip On the Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2702,
+      "missing": [
+        "Slip On the Ring"
+      ]
+    },
+    {
+      "id": "553-7910",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Bilbo's Gambit",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2616,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "372-1090-6966",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "All-Fates Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2341,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "168-372-1734",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Oblivion Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2336,
+      "missing": [
+        "Oblivion Ring"
+      ]
+    },
+    {
+      "id": "2072-2781-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scrollshift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Scrollshift.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2187,
+      "missing": [
+        "Scrollshift"
+      ]
+    },
+    {
+      "id": "359-372-2781",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Acrobatic Maneuver",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2178,
+      "missing": [
+        "Acrobatic Maneuver"
+      ]
+    },
+    {
+      "id": "372-1917-5276",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Leonin Relic-Warder",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2150,
+      "missing": [
+        "Leonin Relic-Warder"
+      ]
+    },
+    {
+      "id": "372-1917-1938",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glorious Protector",
+          "zones": [
+            "H",
+            "E"
+          ]
+        },
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}, plus an additional {W} if Glorious Protector was not foretold",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2149,
+      "missing": [
+        "Glorious Protector"
+      ]
+    },
+    {
+      "id": "3903-6614",
+      "cards": [
+        {
+          "name": "Vexing Bauble",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2127,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "168-372-1917",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Oblivion Ring",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2012,
+      "missing": [
+        "Oblivion Ring"
+      ]
+    },
+    {
+      "id": "2781-3306-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Slip On the Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Slip On the Ring.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1947,
+      "missing": [
+        "Slip On the Ring"
+      ]
+    },
+    {
+      "id": "1978-2364-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1849,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "2517-2781",
+      "cards": [
+        {
+          "name": "Parallax Wave",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "At least one fade counter on Parallax Wave.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1816,
+      "missing": [
+        "Parallax Wave"
+      ]
+    },
+    {
+      "id": "359-2781-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Acrobatic Maneuver",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Acrobatic Maneuver.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1727,
+      "missing": [
+        "Acrobatic Maneuver"
+      ]
+    },
+    {
+      "id": "2781-2955-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Justiciar's Portal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Justiciar's Portal.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1715,
+      "missing": [
+        "Justiciar's Portal"
+      ]
+    },
+    {
+      "id": "2781-4344-5144",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1547,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "4131-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1528,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "2781-4605-7431",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Daydream",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1490,
+      "missing": [
+        "Daydream"
+      ]
+    },
+    {
+      "id": "1621-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Ephemerate.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1470,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "372-1734-4200",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Icewind Stalwart exiled by Abdel Adrian.\nYou have enough mana to cast Fiend Hunter",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1424,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "2781-3603-4344",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1402,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "1725-6614",
+      "cards": [
+        {
+          "name": "Vexing Bauble",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1376,
+      "missing": [
+        "Omen Machine"
+      ]
+    },
+    {
+      "id": "1978-2585-5089",
+      "cards": [
+        {
+          "name": "Voltaic Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1371,
+      "missing": [
+        "Voltaic Construct"
+      ]
+    },
+    {
+      "id": "2781-4605-5987",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Angel of Indemnity",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1250,
+      "missing": [
+        "Angel of Indemnity"
+      ]
+    },
+    {
+      "id": "1621-3603-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Cloudshift.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1229,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "372-2781-2885",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pegasus Guardian // Rescue the Foal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1225,
+      "missing": [
+        "Pegasus Guardian // Rescue the Foal"
+      ]
+    },
+    {
+      "id": "372-1621-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1199,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "1984-3473",
+      "cards": [
+        {
+          "name": "Transcendence",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Angel's Grace",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 20 or higher.",
+      "mana": "{3}{W}{W}{W}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1158,
+      "missing": [
+        "Transcendence"
+      ]
+    },
+    {
+      "id": "372-1621-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1149,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "1350-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Meticulous Excavation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1076,
+      "missing": [
+        "Meticulous Excavation"
+      ]
+    },
+    {
+      "id": "2781-3556-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flicker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Flicker.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1055,
+      "missing": [
+        "Flicker"
+      ]
+    },
+    {
+      "id": "372-1621-1734",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Wispweaver Angel exiled by Fiend Hunter",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1007,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "186-4131-5089",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heartstone",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Basalt Monolith does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 909,
+      "missing": [
+        "Heartstone"
+      ]
+    },
+    {
+      "id": "372-4200-5887",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Werefox Bodyguard",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Icewind Stalwart exiled by Abdel Adrian.\nYou have enough mana to cast Werefox Bodyguard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 865,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "372-1917-4344",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 686,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "3741-3903",
+      "cards": [
+        {
+          "name": "Void Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 683,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "372-4200-6966",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "All-Fates Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 667,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "961-2781-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Against All Odds",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Against All Odds.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 656,
+      "missing": [
+        "Against All Odds"
+      ]
+    },
+    {
+      "id": "372-1621-5887",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Werefox Bodyguard",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Wispweaver Angel exiled by Werefox Bodyguard",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 602,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "1734-2034-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 563,
+      "missing": [
+        "Ashnod's Altar"
+      ]
+    },
+    {
+      "id": "2781-2885-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pegasus Guardian // Rescue the Foal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Rescue the Foal.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 519,
+      "missing": [
+        "Pegasus Guardian // Rescue the Foal"
+      ]
+    },
+    {
+      "id": "1734-2034-3603-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 498,
+      "missing": [
+        "Ashnod's Altar"
+      ]
+    },
+    {
+      "id": "1917-5299",
+      "cards": [
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Opalescence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 497,
+      "missing": [
+        "Opalescence"
+      ]
+    },
+    {
+      "id": "1725-3741",
+      "cards": [
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Void Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 468,
+      "missing": [
+        "Omen Machine"
+      ]
+    },
+    {
+      "id": "413-1734-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 424,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "372-1621-6966",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "All-Fates Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 410,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "1734-4344-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 399,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "413-1734-3603-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 363,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "1734-3603-4344-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 353,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "1734-4050-4605-5144",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 351,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "1734-3603-4050-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 321,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "3363-8187",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Essence Reliquary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 307,
+      "missing": [
+        "Essence Reliquary"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 275,
+      "missing": [
+        "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 270,
+      "missing": [
+        "Blood Clock"
+      ]
+    },
+    {
+      "id": "980-1734-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glimmerpoint Stag",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 250,
+      "missing": [
+        "Glimmerpoint Stag"
+      ]
+    },
+    {
+      "id": "695-2781-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Settle Beyond Reality",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Settle Beyond Reality.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 212,
+      "missing": [
+        "Settle Beyond Reality"
+      ]
+    },
+    {
+      "id": "372-1090-5694",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Confluence",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{C}{C}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 196,
+      "missing": [
+        "Restoration Angel"
+      ]
+    },
+    {
+      "id": "372-1734-2885-4605",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pegasus Guardian // Rescue the Foal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 196,
+      "missing": [
+        "Pegasus Guardian // Rescue the Foal"
+      ]
+    },
+    {
+      "id": "1260-2781",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Portcullis",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Any two additional creatures on the battlefield under the control of any player or players.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 147,
+      "missing": [
+        "Portcullis"
+      ]
+    },
+    {
+      "id": "372-1621-5694",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Confluence",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{C}{C}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 102,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
+      "id": "2781-4605-6767",
+      "cards": [
+        {
+          "name": "Preston, the Vanisher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Rescue Skiff",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 49,
+      "missing": [
+        "Rescue Skiff"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "1261-6717",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tezzeret, Cruel Captain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "1261-4993",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Manifold Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "617-1261",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    }
+  ]
+}

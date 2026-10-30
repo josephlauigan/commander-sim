@@ -10178,8 +10178,7 @@
    "pips": "WW",
    "tags": {
     "pow": "4",
-    "fly": true,
-    "treas": "1"
+    "fly": true
    },
    "pow": 4,
    "tgh": 4,
@@ -67616,9 +67615,7 @@
    "generic": 4,
    "pips": "",
    "tags": {
-    "leg": true,
-    "tok": "1",
-    "tokp": "0"
+    "leg": true
    },
    "pow": 0,
    "tgh": 0,
@@ -67633,7 +67630,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -91248,9 +91245,7 @@
    "pips": "BB",
    "tags": {
     "shaman": true,
-    "pow": "2",
-    "tok": "1",
-    "tokp": "0"
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -101335,10 +101330,7 @@
    "tags": {
     "pow": "5",
     "bomb": "5",
-    "fly": true,
-    "tok": "1",
-    "tokp": "1",
-    "tokfly": true
+    "fly": true
    },
    "pow": 5,
    "tgh": 5,
@@ -105023,8 +105015,6 @@
    "generic": 1,
    "pips": "G",
    "tags": {
-    "lr": "1",
-    "lrt": true,
     "noatk": true
    },
    "pow": 0,
@@ -112011,9 +112001,7 @@
    "pips": "B",
    "tags": {
     "pow": "4",
-    "tgh": "3",
-    "tok": "1",
-    "tokp": "1"
+    "tgh": "3"
    },
    "pow": 4,
    "tgh": 3,
@@ -116714,8 +116702,7 @@
    "generic": 3,
    "pips": "G",
    "tags": {
-    "pow": "3",
-    "lr": "1"
+    "pow": "3"
    },
    "pow": 3,
    "tgh": 3,
@@ -118500,9 +118487,7 @@
    "generic": 1,
    "pips": "G",
    "tags": {
-    "pow": "1",
-    "tok": "1",
-    "tokp": "1"
+    "pow": "1"
    },
    "pow": 1,
    "tgh": 1,

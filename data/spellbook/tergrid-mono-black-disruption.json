@@ -1,0 +1,44 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "tergrid-mono-black-disruption",
+  "commanders": [
+    "Tergrid, God of Fright // Tergrid's Lantern"
+  ],
+  "request_sha256": "0e8eb8a8eff22952eab5420533914abf219b5d5c168b34bfa3244cc5705d6433",
+  "identity": "B",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    }
+  ]
+}

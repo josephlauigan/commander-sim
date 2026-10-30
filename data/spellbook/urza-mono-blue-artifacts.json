@@ -1,0 +1,9188 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "urza-mono-blue-artifacts",
+  "commanders": [
+    "Urza, Lord High Artificer"
+  ],
+  "request_sha256": "0bc66c1c2c6e54c2a29f7a50b2cafc26c745f04e40cfe0c5839d6a3ec77575d9",
+  "identity": "U",
+  "included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272
+    },
+    {
+      "id": "4821-5261",
+      "cards": [
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Isochron Scepter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 107075
+    },
+    {
+      "id": "513-2364--47",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}{C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 78094
+    },
+    {
+      "id": "777-985-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 59313
+    },
+    {
+      "id": "4131-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 53795
+    },
+    {
+      "id": "985-1976-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 41111
+    },
+    {
+      "id": "1976-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 28488
+    },
+    {
+      "id": "4131-5390",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 26462
+    },
+    {
+      "id": "777-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 22468
+    },
+    {
+      "id": "457-1976-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15983
+    },
+    {
+      "id": "457-777-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12294
+    },
+    {
+      "id": "1170-5078-5243--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "The Reality Chip attached to a creature you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9879
+    },
+    {
+      "id": "985-1170-5078--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9832
+    },
+    {
+      "id": "1170-1976-3363-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6233
+    },
+    {
+      "id": "777-1170-3363-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4006
+    },
+    {
+      "id": "876-1170-1329-1414",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2711
+    },
+    {
+      "id": "876-1170-1329-2478",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2545
+    },
+    {
+      "id": "1170-1177-1976-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1881
+    },
+    {
+      "id": "876-1170-1329-4211",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1612
+    },
+    {
+      "id": "777-1170-1177-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1300
+    },
+    {
+      "id": "876-1170-1329-1492",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1181
+    },
+    {
+      "id": "513--62",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Permanent castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-3682",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Amber",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a legendary creature that has a color that matches the mana symbol in the other permanent's mana cost.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 67063,
+      "missing": [
+        "Mox Amber"
+      ]
+    },
+    {
+      "id": "4131-4547",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66280,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "985-2146-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38074,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "985-5078-5705",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 26425,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "985-4985-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 25329,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "985-2604-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23336,
+      "missing": [
+        "Ugin, the Ineffable"
+      ]
+    },
+    {
+      "id": "1976-5078-5741",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crystal Skull, Isu Spyglass",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16976,
+      "missing": [
+        "Crystal Skull, Isu Spyglass"
+      ]
+    },
+    {
+      "id": "2146-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14598,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "542-2364",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}{C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13995,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "777-5078-5741",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crystal Skull, Isu Spyglass",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 13974,
+      "missing": [
+        "Crystal Skull, Isu Spyglass"
+      ]
+    },
+    {
+      "id": "985-2510-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 13813,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "513-1636",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a nonland creature card in hand.\nYou control another nontoken nonland reature.\nOther creatures you control can tap to produce enough mana to cast both creatures mentioned above after being tapped twice.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12599,
+      "missing": [
+        "Intruder Alarm"
+      ]
+    },
+    {
+      "id": "542-4009",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Opal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least three artifacts.\nYou control a nontoken permanent that can be cast using one colored mana.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12104,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "617-4235-4563",
+      "cards": [
+        {
+          "name": "Voltaic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Everflowing Chalice has 4 or more charge counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 11967,
+      "missing": [
+        "Voltaic Key"
+      ]
+    },
+    {
+      "id": "4131-5149",
+      "cards": [
+        {
+          "name": "Power Artifact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Power Artifact attached to Basalt Monolith.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10936,
+      "missing": [
+        "Power Artifact"
+      ]
+    },
+    {
+      "id": "777-5078-5642",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Echoes of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10160,
+      "missing": [
+        "Echoes of Eternity"
+      ]
+    },
+    {
+      "id": "4131-4684",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10060,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "1999-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Master Transmuter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9771,
+      "missing": [
+        "Master Transmuter"
+      ]
+    },
+    {
+      "id": "985-1594-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9243,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "4985-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8456,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "1177-2286",
+      "cards": [
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Puzzle Box",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8390,
+      "missing": [
+        "Teferi's Puzzle Box"
+      ]
+    },
+    {
+      "id": "4821-5803",
+      "cards": [
+        {
+          "name": "Kitsa, Otterball Elite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Kitsa does not have summoning sickness.\nKitsa has power 2 or greater.\nNonland permanents you control can tap to produce at least {2}.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8233,
+      "missing": [
+        "Kitsa, Otterball Elite"
+      ]
+    },
+    {
+      "id": "5078-5849",
+      "cards": [
+        {
+          "name": "Fortune Teller's Talent",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7755,
+      "missing": [
+        "Fortune Teller's Talent"
+      ]
+    },
+    {
+      "id": "1367-2856-5261",
+      "cards": [
+        {
+          "name": "Nexus of Fate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Isochron Scepter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{U}{U} every turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7525,
+      "missing": [
+        "Nexus of Fate"
+      ]
+    },
+    {
+      "id": "1167-1384",
+      "cards": [
+        {
+          "name": "Mindslaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Academy Ruins",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "You control one opponent on each of their turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{11}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7369,
+      "missing": [
+        "Mindslaver"
+      ]
+    },
+    {
+      "id": "457-2146-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "\"Artifact\" chosen with Cloud Key.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7279,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "1976-5078-6766",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mm'menon, the Right Hand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7233,
+      "missing": [
+        "Mm'menon, the Right Hand"
+      ]
+    },
+    {
+      "id": "3363-4067",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Infinite looting",
+        "Near-infinite untap of permanents you control",
+        "Near-infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7066,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "1167-1329",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mindslaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "You control one opponent on each of their turns"
+      ],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6976,
+      "missing": [
+        "Mindslaver"
+      ]
+    },
+    {
+      "id": "1329-2478-3338",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirran Spy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6824,
+      "missing": [
+        "Mirran Spy"
+      ]
+    },
+    {
+      "id": "1329-3363-4659",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krark-Clan Ironworks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{2} during each of your turns",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6394,
+      "missing": [
+        "Krark-Clan Ironworks"
+      ]
+    },
+    {
+      "id": "777-5078-6766",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mm'menon, the Right Hand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6150,
+      "missing": [
+        "Mm'menon, the Right Hand"
+      ]
+    },
+    {
+      "id": "1329-1414-3338",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirran Spy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5279,
+      "missing": [
+        "Mirran Spy"
+      ]
+    },
+    {
+      "id": "457-4331-4947--44",
+      "cards": [
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sai, Master Thopterist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [
+        "Artifact Castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5143,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "985-3375-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5138,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "3094-4821",
+      "cards": [
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lithoform Engine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite untap of nonland permanents you control",
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland mana sources that can tap for at least {4} on the battlefield.",
+      "mana": "{4}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 4881,
+      "missing": [
+        "Lithoform Engine"
+      ]
+    },
+    {
+      "id": "513-1778-3652",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Memnite",
+          "zones": [
+            "H",
+            "B"
+          ]
+        },
+        {
+          "name": "Ornithopter",
+          "zones": [
+            "H",
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "One of the creatures with mana cost {0} must be in your hand with the other being on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4866,
+      "missing": [
+        "Memnite"
+      ]
+    },
+    {
+      "id": "1594-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4808,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "513-1003-3652",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Walker",
+          "zones": [
+            "H",
+            "B"
+          ]
+        },
+        {
+          "name": "Ornithopter",
+          "zones": [
+            "H",
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "One of the creatures with mana cost {0} must be in your hand with the other being on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4642,
+      "missing": [
+        "Phyrexian Walker"
+      ]
+    },
+    {
+      "id": "5078-5243-5705",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4306,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "2539-4821",
+      "cards": [
+        {
+          "name": "Twinning Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {4}.",
+      "mana": "{8}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4282,
+      "missing": [
+        "Twinning Staff"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1329-3338-4211",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirran Spy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3881,
+      "missing": [
+        "Mirran Spy"
+      ]
+    },
+    {
+      "id": "2510-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3809,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "457-4985-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3760,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "1329-2478-3152",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3436,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "3363-4331",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3290,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "985-5078-7692",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shuri, Wakandan Inventor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3276,
+      "missing": [
+        "Shuri, Wakandan Inventor"
+      ]
+    },
+    {
+      "id": "1170-1393-2364-5034",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Channeler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2845,
+      "missing": [
+        "Aether Channeler"
+      ]
+    },
+    {
+      "id": "1329-3363-3698",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinding Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{4} during each of your turns",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2794,
+      "missing": [
+        "Grinding Station"
+      ]
+    },
+    {
+      "id": "513-3652-3661",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ornithopter",
+          "zones": [
+            "H",
+            "B"
+          ]
+        },
+        {
+          "name": "Shield Sphere",
+          "zones": [
+            "H",
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "One of the creatures with mana cost {0} must be in your hand with the other being on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2778,
+      "missing": [
+        "Shield Sphere"
+      ]
+    },
+    {
+      "id": "1329-1492-3338",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirran Spy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2725,
+      "missing": [
+        "Mirran Spy"
+      ]
+    },
+    {
+      "id": "1329-1414-3152",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2698,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "1170-2146-3363-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "\"Artifact\" chosen with Cloud Key.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2651,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "74-4131",
+      "cards": [
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2576,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "3236-4821",
+      "cards": [
+        {
+          "name": "Sigil Tracer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control nonland permanents that can produce {1}{U}.\nYou control an additional Wizard.",
+      "mana": "{2}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2335,
+      "missing": [
+        "Sigil Tracer"
+      ]
+    },
+    {
+      "id": "1976-5078-7902",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fateful Discovery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2294,
+      "missing": [
+        "Fateful Discovery"
+      ]
+    },
+    {
+      "id": "457-5078-5390-5705",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2289,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "457-4231-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H",
+            "L"
+          ]
+        },
+        {
+          "name": "Academy Manufactor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colored mana",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2247,
+      "missing": [
+        "Academy Manufactor"
+      ]
+    },
+    {
+      "id": "1329-3152-4211",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2210,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "1987-4423-5034-5243",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H",
+            "L"
+          ]
+        },
+        {
+          "name": "Mystic Sanctuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control three additional Islands.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2196,
+      "missing": [
+        "Ghostly Flicker"
+      ]
+    },
+    {
+      "id": "5078-5243-7692",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shuri, Wakandan Inventor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2119,
+      "missing": [
+        "Shuri, Wakandan Inventor"
+      ]
+    },
+    {
+      "id": "1976-5078-6666",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rook Turret",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1957,
+      "missing": [
+        "Rook Turret"
+      ]
+    },
+    {
+      "id": "457-1329-1976-3338-7112",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirran Spy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Spellbomb",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1903,
+      "missing": [
+        "Mirran Spy"
+      ]
+    },
+    {
+      "id": "777-5078-6666",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rook Turret",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1835,
+      "missing": [
+        "Rook Turret"
+      ]
+    },
+    {
+      "id": "457-1247-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Cast all spells in your library",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Pili-Pala does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1818,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "777-5078-7902",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fateful Discovery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1745,
+      "missing": [
+        "Fateful Discovery"
+      ]
+    },
+    {
+      "id": "1170-1594-3363-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1745,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "1170-1414-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1725,
+      "missing": [
+        "Venser, Shaper Savant"
+      ]
+    },
+    {
+      "id": "1329-1414-4222",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1673,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "1170-1456-5078--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "One with the Multiverse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1573,
+      "missing": [
+        "One with the Multiverse"
+      ]
+    },
+    {
+      "id": "1170-3634-4966",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chrome Mox",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1538,
+      "missing": [
+        "Venser, Shaper Savant"
+      ]
+    },
+    {
+      "id": "4131-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1528,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "457-777-1329-3338-7112",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirran Spy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Spellbomb",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1505,
+      "missing": [
+        "Mirran Spy"
+      ]
+    },
+    {
+      "id": "1329-1414-3152-4947",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sai, Master Thopterist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1485,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "2604-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1467,
+      "missing": [
+        "Ugin, the Ineffable"
+      ]
+    },
+    {
+      "id": "457-2510-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There is an artifact card exiled with Semblance Anvil",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1458,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "985-5078-8176",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Geist of Saint Thalia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1455,
+      "missing": [
+        "Geist of Saint Thalia"
+      ]
+    },
+    {
+      "id": "1329-1492-3152",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1436,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "1170-2566-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pact of Negation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1409,
+      "missing": [
+        "Venser, Shaper Savant"
+      ]
+    },
+    {
+      "id": "1170-5078-6766--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mm'menon, the Right Hand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1377,
+      "missing": [
+        "Mm'menon, the Right Hand"
+      ]
+    },
+    {
+      "id": "2856-3258-5261",
+      "cards": [
+        {
+          "name": "Beacon of Tomorrows",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Isochron Scepter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U} every turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1374,
+      "missing": [
+        "Beacon of Tomorrows"
+      ]
+    },
+    {
+      "id": "457-1594-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1291,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "876-1170-1329-3200",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urza's Bauble",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1268,
+      "missing": [
+        "Urza's Bauble"
+      ]
+    },
+    {
+      "id": "457-5078-5390-7692",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shuri, Wakandan Inventor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1267,
+      "missing": [
+        "Shuri, Wakandan Inventor"
+      ]
+    },
+    {
+      "id": "1976-4311-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Future Sight",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1224,
+      "missing": [
+        "Future Sight"
+      ]
+    },
+    {
+      "id": "457-1170-4331-5034",
+      "cards": [
+        {
+          "name": "Drafna, Founder of Lat-Nam",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1222,
+      "missing": [
+        "Drafna, Founder of Lat-Nam"
+      ]
+    },
+    {
+      "id": "2825-4821",
+      "cards": [
+        {
+          "name": "Elite Arcanist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Elite Arcanist does not have summoning sickness.Nonland permanents you control can tap for at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1216,
+      "missing": [
+        "Elite Arcanist"
+      ]
+    },
+    {
+      "id": "4659-5078-5202-5390",
+      "cards": [
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Efficient Construction",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Krark-Clan Ironworks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1152,
+      "missing": [
+        "Krark-Clan Ironworks"
+      ]
+    },
+    {
+      "id": "2364-2495-3094",
+      "cards": [
+        {
+          "name": "Lithoform Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tezzeret the Seeker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana artifacts you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1105,
+      "missing": [
+        "Lithoform Engine"
+      ]
+    },
+    {
+      "id": "1329-1636-3693",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1084,
+      "missing": [
+        "Intruder Alarm"
+      ]
+    },
+    {
+      "id": "3835-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sage of the Beyond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1076,
+      "missing": [
+        "Sage of the Beyond"
+      ]
+    },
+    {
+      "id": "1329-1414-3525",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1071,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "5078-5243-7650",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bilbo, Thief in the Night",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1069,
+      "missing": [
+        "Bilbo, Thief in the Night"
+      ]
+    },
+    {
+      "id": "5078-5243-8176",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Geist of Saint Thalia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1053,
+      "missing": [
+        "Geist of Saint Thalia"
+      ]
+    },
+    {
+      "id": "777-4311-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Future Sight",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 942,
+      "missing": [
+        "Future Sight"
+      ]
+    },
+    {
+      "id": "275-1976-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Transplant Theorist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 919,
+      "missing": [
+        "Transplant Theorist"
+      ]
+    },
+    {
+      "id": "2341-2495-5034",
+      "cards": [
+        {
+          "name": "Tezzeret the Seeker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Peregrine Dynamo",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 897,
+      "missing": [
+        "The Peregrine Dynamo"
+      ]
+    },
+    {
+      "id": "3375-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 875,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "1170-3363-4985-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 863,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "1329-2829-3363",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arcbound Ravager",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{4} during each of your turns",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 849,
+      "missing": [
+        "Arcbound Ravager"
+      ]
+    },
+    {
+      "id": "985-5078-7650",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bilbo, Thief in the Night",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 829,
+      "missing": [
+        "Bilbo, Thief in the Night"
+      ]
+    },
+    {
+      "id": "1170-1177-2146-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloud Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 822,
+      "missing": [
+        "Cloud Key"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-5295",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 795,
+      "missing": [
+        "Thousand-Year Elixir"
+      ]
+    },
+    {
+      "id": "275-777-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Transplant Theorist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 794,
+      "missing": [
+        "Transplant Theorist"
+      ]
+    },
+    {
+      "id": "2034-5078-5202-5390",
+      "cards": [
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Efficient Construction",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 755,
+      "missing": [
+        "Ashnod's Altar"
+      ]
+    },
+    {
+      "id": "1170-1414-4211-5089",
+      "cards": [
+        {
+          "name": "Karn, the Great Creator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least three loyalty counters on Karn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 701,
+      "missing": [
+        "Karn, the Great Creator"
+      ]
+    },
+    {
+      "id": "985-4067-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "You control a mana-producing permanent.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 687,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "1170-2510-3363-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There is an artifact card exiled with Semblance Anvil.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 687,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "1170-1329-2478-5295",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 653,
+      "missing": [
+        "Thousand-Year Elixir"
+      ]
+    },
+    {
+      "id": "1456-1976-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "One with the Multiverse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 638,
+      "missing": [
+        "One with the Multiverse"
+      ]
+    },
+    {
+      "id": "4067-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "You control a mana-producing permanent.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 633,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "1170-3634-4563",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 620,
+      "missing": [
+        "Venser, Shaper Savant"
+      ]
+    },
+    {
+      "id": "457-2604-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 591,
+      "missing": [
+        "Ugin, the Ineffable"
+      ]
+    },
+    {
+      "id": "1329-1414-3152-5202",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Efficient Construction",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 589,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "1170-4311-5078--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Future Sight",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 528,
+      "missing": [
+        "Future Sight"
+      ]
+    },
+    {
+      "id": "1170-1177-1594-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 513,
+      "missing": [
+        "Helm of Awakening"
+      ]
+    },
+    {
+      "id": "777-1456-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "One with the Multiverse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 497,
+      "missing": [
+        "One with the Multiverse"
+      ]
+    },
+    {
+      "id": "1976-5078-5642",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Echoes of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 491,
+      "missing": [
+        "Echoes of Eternity"
+      ]
+    },
+    {
+      "id": "876-1170-1329-3518",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 477,
+      "missing": [
+        "Lion's Eye Diamond"
+      ]
+    },
+    {
+      "id": "1170-3363-5078-7692",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shuri, Wakandan Inventor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 428,
+      "missing": [
+        "Shuri, Wakandan Inventor"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-4404",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Corridor Monitor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 412,
+      "missing": [
+        "Corridor Monitor"
+      ]
+    },
+    {
+      "id": "1976-5078-6650",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Lunar Whale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "The Lunar Whale has attacked this turn.\n",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 411,
+      "missing": [
+        "The Lunar Whale"
+      ]
+    },
+    {
+      "id": "2084-3734",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Metamorph",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Phyrexian Metamorph is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 410,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "1170-1329-2478-4404",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Corridor Monitor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 371,
+      "missing": [
+        "Corridor Monitor"
+      ]
+    },
+    {
+      "id": "1170-6513",
+      "cards": [
+        {
+          "name": "Chancellor of the Spires",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent has an instant or sorcery in their graveyard.\nYou have a noncreature spell in hand with the mana to cast it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 363,
+      "missing": [
+        "Chancellor of the Spires"
+      ]
+    },
+    {
+      "id": "1170-3363-5078-8176",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Geist of Saint Thalia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 361,
+      "missing": [
+        "Geist of Saint Thalia"
+      ]
+    },
+    {
+      "id": "777-5078-6650",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Lunar Whale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "The Lunar Whale has attacked this turn.\n",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 356,
+      "missing": [
+        "The Lunar Whale"
+      ]
+    },
+    {
+      "id": "2529-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vedalken Mastermind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Vedalken Mastermind does not have summoning sickness.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 352,
+      "missing": [
+        "Vedalken Mastermind"
+      ]
+    },
+    {
+      "id": "1661-1976-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Future",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 326,
+      "missing": [
+        "Magus of the Future"
+      ]
+    },
+    {
+      "id": "1170-1329-4211-5295",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 322,
+      "missing": [
+        "Thousand-Year Elixir"
+      ]
+    },
+    {
+      "id": "1987-4131-4423-5243",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H",
+            "L"
+          ]
+        },
+        {
+          "name": "Mystic Sanctuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite blue mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control three additional Islands.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 322,
+      "missing": [
+        "Ghostly Flicker"
+      ]
+    },
+    {
+      "id": "3363-5302",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Keeper of the Nine Gales",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Keeper of the Nine Gales does not have summoning sickness.\nYou control at least two other untapped Birds.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 306,
+      "missing": [
+        "Keeper of the Nine Gales"
+      ]
+    },
+    {
+      "id": "985-2350-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 295,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "457-3375-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 291,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "378-4821",
+      "cards": [
+        {
+          "name": "Meletis Charlatan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dramatic Reversal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control nonland permanents that can produce {3}{U}.\nMeletis Charlatan does not have summoning sickness.",
+      "mana": "{3}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 290,
+      "missing": [
+        "Meletis Charlatan"
+      ]
+    },
+    {
+      "id": "1170-1177-4985-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jhoira's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 281,
+      "missing": [
+        "Jhoira's Familiar"
+      ]
+    },
+    {
+      "id": "1987-2364-4423-5243",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H",
+            "L"
+          ]
+        },
+        {
+          "name": "Mystic Sanctuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite blue mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control three additional Islands.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 280,
+      "missing": [
+        "Ghostly Flicker"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 275,
+      "missing": [
+        "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 270,
+      "missing": [
+        "Blood Clock"
+      ]
+    },
+    {
+      "id": "1170-1177-5078-5705",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glaring Fleshraker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 266,
+      "missing": [
+        "Glaring Fleshraker"
+      ]
+    },
+    {
+      "id": "513-5034-5282",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wormfang Newt",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a land that enters untapped and that can be tapped to produce at least {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 255,
+      "missing": [
+        "Wormfang Newt"
+      ]
+    },
+    {
+      "id": "1093-1329-3363",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexia's Core",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{5} during each of your turns",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 254,
+      "missing": [
+        "Phyrexia's Core"
+      ]
+    },
+    {
+      "id": "777-1661-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Future",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 249,
+      "missing": [
+        "Magus of the Future"
+      ]
+    },
+    {
+      "id": "712-4131",
+      "cards": [
+        {
+          "name": "Wake Thrasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Wake Thrasher"
+      ]
+    },
+    {
+      "id": "2341-2495-4563",
+      "cards": [
+        {
+          "name": "Tezzeret the Seeker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Peregrine Dynamo",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 239,
+      "missing": [
+        "The Peregrine Dynamo"
+      ]
+    },
+    {
+      "id": "1329-2178-3693",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Emry. Emry does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 203,
+      "missing": [
+        "Thornbite Staff"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "985-3835-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sage of the Beyond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 193,
+      "missing": [
+        "Sage of the Beyond"
+      ]
+    },
+    {
+      "id": "1170-3363-3375-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 186,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "1170-1329-4211-4404",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Corridor Monitor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 167,
+      "missing": [
+        "Corridor Monitor"
+      ]
+    },
+    {
+      "id": "2-1170-2364-5034",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ancestral Statue",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 167,
+      "missing": [
+        "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "2341-2364-2495",
+      "cards": [
+        {
+          "name": "Tezzeret the Seeker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Peregrine Dynamo",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 161,
+      "missing": [
+        "The Peregrine Dynamo"
+      ]
+    },
+    {
+      "id": "457-2538-5034-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Words of Wind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Return all permanents opponents control to their owner's hand",
+        "Infinite colorless mana",
+        "Cast all spells in your library"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 160,
+      "missing": [
+        "Words of Wind"
+      ]
+    },
+    {
+      "id": "3911-4235-4563",
+      "cards": [
+        {
+          "name": "Galvanic Key",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "At least six charge counters on Everflowing Chalice.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 159,
+      "missing": [
+        "Galvanic Key"
+      ]
+    },
+    {
+      "id": "943-4235-6745",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deserted Temple",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Uthros, Titanic Godcore",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five artifacts. Uthros has twelve or more charge counters on it",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 157,
+      "missing": [
+        "Deserted Temple"
+      ]
+    },
+    {
+      "id": "5078-5243-6709",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ballad of the Black Flag",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Ballad of the Black Flag's fourth chapter ability has triggered this turn",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 152,
+      "missing": [
+        "Ballad of the Black Flag"
+      ]
+    },
+    {
+      "id": "985-5078-6709",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ballad of the Black Flag",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Ballad of the Black Flag's fourth chapter ability has triggered this turn\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 150,
+      "missing": [
+        "Ballad of the Black Flag"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-5295",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 148,
+      "missing": [
+        "Thousand-Year Elixir"
+      ]
+    },
+    {
+      "id": "5078-5243-7753",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Valeria Richards, Precocious",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 144,
+      "missing": [
+        "Valeria Richards, Precocious"
+      ]
+    },
+    {
+      "id": "5078-5243-7010",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gran-Gran",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least three Lesson cards in your graveyard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 144,
+      "missing": [
+        "Gran-Gran"
+      ]
+    },
+    {
+      "id": "1170-1177-2604-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ugin, the Ineffable",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 138,
+      "missing": [
+        "Ugin, the Ineffable"
+      ]
+    },
+    {
+      "id": "1170-1177-2510-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There is an artifact card exiled with Semblance Anvil.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 134,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "2341-2495-4131",
+      "cards": [
+        {
+          "name": "Tezzeret the Seeker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Peregrine Dynamo",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 131,
+      "missing": [
+        "The Peregrine Dynamo"
+      ]
+    },
+    {
+      "id": "985-5078-7753",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Valeria Richards, Precocious",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 124,
+      "missing": [
+        "Valeria Richards, Precocious"
+      ]
+    },
+    {
+      "id": "1170-1177-5078-8176",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Geist of Saint Thalia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 122,
+      "missing": [
+        "Geist of Saint Thalia"
+      ]
+    },
+    {
+      "id": "3363-4782",
+      "cards": [
+        {
+          "name": "Heidar, Rimewind Master",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Heidar does not have summoning sickness.\nYou control at least four snow permanents.",
+      "mana": "{6} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 115,
+      "missing": [
+        "Heidar, Rimewind Master"
+      ]
+    },
+    {
+      "id": "1170-1661-5078--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Future",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 110,
+      "missing": [
+        "Magus of the Future"
+      ]
+    },
+    {
+      "id": "1170-1177-3375-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Immortal Sun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 107,
+      "missing": [
+        "The Immortal Sun"
+      ]
+    },
+    {
+      "id": "1976-5078-6089",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skyswimmer Koi",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 106,
+      "missing": [
+        "Skyswimmer Koi"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-3499",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 103,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "777-5078-6089",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skyswimmer Koi",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 101,
+      "missing": [
+        "Skyswimmer Koi"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-4404",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Corridor Monitor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 98,
+      "missing": [
+        "Corridor Monitor"
+      ]
+    },
+    {
+      "id": "1363-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tradewind Rider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tradewind Rider does not have summoning sickness.\nYou control at least two other untapped creatures.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 96,
+      "missing": [
+        "Tradewind Rider"
+      ]
+    },
+    {
+      "id": "985-5078-7010",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mystic Forge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gran-Gran",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least three Lesson cards in your graveyard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 92,
+      "missing": [
+        "Gran-Gran"
+      ]
+    },
+    {
+      "id": "1111-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Adept",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Temporal Adept does not have summoning sickness.",
+      "mana": "{4}{U}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 87,
+      "missing": [
+        "Temporal Adept"
+      ]
+    },
+    {
+      "id": "3363-8186",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Esperzoa",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 86,
+      "missing": [
+        "Esperzoa"
+      ]
+    },
+    {
+      "id": "1170-5078-6650--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Lunar Whale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "The Lunar Whale has attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 85,
+      "missing": [
+        "The Lunar Whale"
+      ]
+    },
+    {
+      "id": "457-2538-4009-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Words of Wind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mox Opal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Return all permanents opponents control to their owner's hand"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three artifacts.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 84,
+      "missing": [
+        "Words of Wind"
+      ]
+    },
+    {
+      "id": "1170-1329-2478-3499",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 80,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "457-2364-2538-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Words of Wind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Return all permanents opponents control to their owner's hand",
+        "Infinite colorless mana",
+        "Cast all spells in your library"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 74,
+      "missing": [
+        "Words of Wind"
+      ]
+    },
+    {
+      "id": "2350-5078-5243",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Reality Chip",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 69,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "1170-1177-5078-7692",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shuri, Wakandan Inventor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 65,
+      "missing": [
+        "Shuri, Wakandan Inventor"
+      ]
+    },
+    {
+      "id": "1170-3363-4622",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jace, the Living Guildpact",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 62,
+      "missing": [
+        "Jace, the Living Guildpact"
+      ]
+    },
+    {
+      "id": "1170-1329-3499-4211",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "1976-5078-6918",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Etherium Sculptor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Madame Web, Clairvoyant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Madame Web, Clairvoyant"
+      ]
+    },
+    {
+      "id": "457-5078-5390-6709",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ballad of the Black Flag",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Ballad of the Black Flag's fourth chapter ability has triggered this turn",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 48,
+      "missing": [
+        "Ballad of the Black Flag"
+      ]
+    },
+    {
+      "id": "777-5078-6918",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Foundry Inspector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Madame Web, Clairvoyant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 46,
+      "missing": [
+        "Madame Web, Clairvoyant"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-3499",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 44,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "876-1170-1329-4708",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dark Sphere",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 43,
+      "missing": [
+        "Dark Sphere"
+      ]
+    },
+    {
+      "id": "457-4038-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Farmstead Gleaner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 37,
+      "missing": [
+        "Farmstead Gleaner"
+      ]
+    },
+    {
+      "id": "3363-4780",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolarian Sentinel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tolarian Sentinel does not have summoning sickness.\nYou have at least one card in hand.",
+      "mana": "{4}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 35,
+      "missing": [
+        "Tolarian Sentinel"
+      ]
+    },
+    {
+      "id": "1329-1477-3363",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Extruder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{4} during each of your turns",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 35,
+      "missing": [
+        "Extruder"
+      ]
+    },
+    {
+      "id": "1170-3363-5078-7753",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Valeria Richards, Precocious",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 33,
+      "missing": [
+        "Valeria Richards, Precocious"
+      ]
+    },
+    {
+      "id": "1170-3363-5078-7010",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Gran-Gran",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least three Lesson cards in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 33,
+      "missing": [
+        "Gran-Gran"
+      ]
+    },
+    {
+      "id": "3363-3823",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Elemental",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Time Elemental does not have summoning sickness.\nThe One Ring does not have an Aura attached.",
+      "mana": "{6}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Time Elemental"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "1170-1319-2364-5034",
+      "cards": [
+        {
+          "name": "Brinelin, the Moon Kraken",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 26,
+      "missing": [
+        "Brinelin, the Moon Kraken"
+      ]
+    },
+    {
+      "id": "874-876-1170-1329",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delif's Cone",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20,
+      "missing": [
+        "Delif's Cone"
+      ]
+    },
+    {
+      "id": "1170-1177-5078-7010",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gran-Gran",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least three Lesson cards in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 18,
+      "missing": [
+        "Gran-Gran"
+      ]
+    },
+    {
+      "id": "1170-3363-5078-6709",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ballad of the Black Flag",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Ballad of the Black Flag's fourth chapter ability has triggered this turn\n",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 15,
+      "missing": [
+        "Ballad of the Black Flag"
+      ]
+    },
+    {
+      "id": "457-2350-5078-5390",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "1083-1170-1414-1492",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15,
+      "missing": [
+        "Archaeomender"
+      ]
+    },
+    {
+      "id": "306-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cache Raiders",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Cache Raiders"
+      ]
+    },
+    {
+      "id": "3363-8189",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shi'ar Soldier",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Shi'ar Soldier doesn't have summoning sickness.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Shi'ar Soldier"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-2905",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pestermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Pestermite"
+      ]
+    },
+    {
+      "id": "1170-5078-6918--30",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Madame Web, Clairvoyant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [
+        "Artifact / Creature with \"{T}: Add Mana\" that can tap upon ETB (Mana Rock)"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Madame Web, Clairvoyant"
+      ]
+    },
+    {
+      "id": "3363-8188",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Salvage Scuttler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Salvage Scuttler doesn't have summoning sickness and cannot be blocked and killed by an opponent.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Salvage Scuttler"
+      ]
+    },
+    {
+      "id": "1170-1177-5078-7753",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Valeria Richards, Precocious",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Valeria Richards, Precocious"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-2198",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Deceiver Exarch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6,
+      "missing": [
+        "Deceiver Exarch"
+      ]
+    },
+    {
+      "id": "1170-1177-5078-6709",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ballad of the Black Flag",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Ballad of the Black Flag's fourth chapter ability has triggered this turn",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5,
+      "missing": [
+        "Ballad of the Black Flag"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-7220",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Glamermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Glamermite"
+      ]
+    },
+    {
+      "id": "1170-1329-2478-2905",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pestermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Pestermite"
+      ]
+    },
+    {
+      "id": "1170-2350-3363-5078",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "1170-1329-2905-4211",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pestermite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3,
+      "missing": [
+        "Pestermite"
+      ]
+    },
+    {
+      "id": "1170-1329-2478-7220",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Glamermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Glamermite"
+      ]
+    },
+    {
+      "id": "1170-1177-2350-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone Calendar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Stone Calendar"
+      ]
+    },
+    {
+      "id": "1170-1329-2198-2478",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Deceiver Exarch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Deceiver Exarch"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-2905",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pestermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Pestermite"
+      ]
+    },
+    {
+      "id": "1170-1329-2198-4211",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deceiver Exarch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Deceiver Exarch"
+      ]
+    },
+    {
+      "id": "1170-1329-1414-4894",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Breaching Hippocamp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Breaching Hippocamp"
+      ]
+    },
+    {
+      "id": "1170-1329-4211-4894",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Breaching Hippocamp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Breaching Hippocamp"
+      ]
+    },
+    {
+      "id": "1170-1329-2478-4894",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Breaching Hippocamp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw at the beginning of the next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Breaching Hippocamp"
+      ]
+    },
+    {
+      "id": "1261-4993",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Manifold Key",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "43-5261",
+      "cards": [
+        {
+          "name": "Paradox Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Isochron Scepter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of cards exiled with Isochron Scepter",
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have an instant card exiled by Isochron Scepter.\nNonland permanents you control can tap to produce at least {2}.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Paradox Engine"
+      ]
+    },
+    {
+      "id": "1261-2495",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tezzeret the Seeker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "513-1306--47",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}{C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Mana Crypt"
+      ]
+    },
+    {
+      "id": "1170-1329-4211-7220",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod's Crypt",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Glamermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Glamermite"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-7220",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Glamermite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Glamermite"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-2198",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Deceiver Exarch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Deceiver Exarch"
+      ]
+    },
+    {
+      "id": "1170-1329-1492-4894",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Welding Jar",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Breaching Hippocamp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one additional artifact on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Breaching Hippocamp"
+      ]
+    },
+    {
+      "id": "876-1170-1329-1482",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jeweled Lotus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast your commander"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Jeweled Lotus"
+      ]
+    },
+    {
+      "id": "43-1329-2478-5034",
+      "cards": [
+        {
+          "name": "Paradox Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mishra's Bauble",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Paradox Engine"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6740 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "chulane-bant-value-combo",
+  "commanders": [
+    "Chulane, Teller of Tales"
+  ],
+  "request_sha256": "3c15595ba62ea6d6ae31422b873d2e9f14c4330142e5f7d9af159e02f478ed44",
+  "identity": "GWU",
+  "included": [
+    {
+      "id": "1636-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite mana creatures you control can produce",
+        "Near-infinite untap of all creatures",
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Chulane does not have summoning sickness.\nYou have at least one creature card in hand.\nCreatures you control can tap to produce at least {3} plus enough mana to cast the creature card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10419
+    },
+    {
+      "id": "751-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6638
+    },
+    {
+      "id": "2232-4191",
+      "cards": [
+        {
+          "name": "Aluren",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a nontoken nonartifact creature with mana value 3 or less.\nYou have a nonartifact creature card with mana value 3 or less in your hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3955
+    },
+    {
+      "id": "1636-4770",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {1}{W}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2921
+    },
+    {
+      "id": "751-3314-4093",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Land you control that can produce {U}.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2066
+    },
+    {
+      "id": "751-1671-3314-3470",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1912
+    },
+    {
+      "id": "751-907-3314-3470",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1736
+    },
+    {
+      "id": "751-1671-3314-3875",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1686
+    },
+    {
+      "id": "751-3147-3314-3470",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1679
+    },
+    {
+      "id": "751-907-3314-3875",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1558
+    },
+    {
+      "id": "751-3147-3314-3875",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1488
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1409-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator is paired with Peregrine Drake.\nYou control up to five lands that can tap to produce {2}{U}.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 48005,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "129-4131",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 46905,
+      "missing": [
+        "Basalt Monolith"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1376-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Priest of Titania does not have summoning sickness. There are at least five Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37567,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "4222-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23778,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "1376-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Priest of Titania. Priest of Titania does not have summoning sickness. There are at least three Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 22390,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "1479-1671-2907",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20448,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1479-1671-3875",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19421,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "129-4222--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Freed from the Real is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19066,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "864-1987-3821",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15164,
+      "missing": [
+        "Ghostly Flicker"
+      ]
+    },
+    {
+      "id": "2645-5168",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14502,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "3525-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14432,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "953-1295",
+      "cards": [
+        {
+          "name": "Enter the Infinite",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H",
+            "L"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12668,
+      "missing": [
+        "Enter the Infinite"
+      ]
+    },
+    {
+      "id": "864-5352",
+      "cards": [
+        {
+          "name": "Doppelgang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of all permanents",
+        "Infinite creature tokens",
+        "Infinite mana permanents you control can produce",
+        "Infinite casts of instants and sorceries in your hand and graveyard"
+      ],
+      "requires": [],
+      "prerequisites": "There are four permanents on the battlefield that can collectively tap to produce at least {2}{G}{U}.",
+      "mana": "{15}{G}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12619,
+      "missing": [
+        "Doppelgang"
+      ]
+    },
+    {
+      "id": "513-1636",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a nonland creature card in hand.\nYou control another nontoken nonland reature.\nOther creatures you control can tap to produce enough mana to cast both creatures mentioned above after being tapped twice.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12599,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "129-3525--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Pemmin's Aura is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12075,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11993,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "1295-4400",
+      "cards": [
+        {
+          "name": "Hermit Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Hermit Druid does not have summoning sickness.\nYou have no basic lands in library.",
+      "mana": "{G}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10398,
+      "missing": [
+        "Hermit Druid"
+      ]
+    },
+    {
+      "id": "570-4222",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10155,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "3821-4499",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9828,
+      "missing": [
+        "Emiel the Blessed"
+      ]
+    },
+    {
+      "id": "129-4222-5814",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast legendary spells"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 9513,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "1068-1295",
+      "cards": [
+        {
+          "name": "Leveler",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9289,
+      "missing": [
+        "Leveler"
+      ]
+    },
+    {
+      "id": "1068-2836",
+      "cards": [
+        {
+          "name": "Leveler",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "on the battlefield.You have a way to draw a card.",
+      "mana": "{5}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9101,
+      "missing": [
+        "Leveler"
+      ]
+    },
+    {
+      "id": "907-1479-2907",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8088,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "907-1479-3875",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7428,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "3821-5900",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {1}{G}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7349,
+      "missing": [
+        "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "2836-4400",
+      "cards": [
+        {
+          "name": "Hermit Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Hermit Druid does not have summoning sickness.\nYou have no basic lands in library.",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7302,
+      "missing": [
+        "Hermit Druid"
+      ]
+    },
+    {
+      "id": "467-1636",
+      "cards": [
+        {
+          "name": "Shorikai, Genesis Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens",
+        "Near-infinite card draw",
+        "Near-infinite untap of all creatures",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause Shorikai to become a creature this turn. You control a creature that can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7079,
+      "missing": [
+        "Shorikai, Genesis Engine"
+      ]
+    },
+    {
+      "id": "3821-4013",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Displacer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{C}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6767,
+      "missing": [
+        "Eldrazi Displacer"
+      ]
+    },
+    {
+      "id": "864-3647-3821",
+      "cards": [
+        {
+          "name": "Displace",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6328,
+      "missing": [
+        "Displace"
+      ]
+    },
+    {
+      "id": "3031-3903",
+      "cards": [
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6119,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "129-3525-5814",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast legendary spells"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5883,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "1376-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Priest of Titania does not have summoning sickness. There are at least four Elves on the battlefield.\nSword of the Paruns attached to Priest of Titania",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5496,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "1409-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator paired with another creature.\nCreatures you control can tap for at least enough mana to activate your blink effect.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5462,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "1636-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5410,
+      "missing": [
+        "Venser, Shaper Savant"
+      ]
+    },
+    {
+      "id": "570-3525",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5153,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "880-2907-3470",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4426,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "431-1636",
+      "cards": [
+        {
+          "name": "Lullmage Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least seven Merfolk.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4304,
+      "missing": [
+        "Lullmage Mentor"
+      ]
+    },
+    {
+      "id": "1295-2853",
+      "cards": [
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thought Lash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4262,
+      "missing": [
+        "Thought Lash"
+      ]
+    },
+    {
+      "id": "880-2907-3875",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4224,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "570-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3971,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "2836-2853",
+      "cards": [
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thought Lash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "It is the endstep before your turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3862,
+      "missing": [
+        "Thought Lash"
+      ]
+    },
+    {
+      "id": "1636-2205",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Imperious Perfect",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Imperious Perfect does not have summoning sickness.",
+      "mana": "{G} from creature sources",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3799,
+      "missing": [
+        "Imperious Perfect"
+      ]
+    },
+    {
+      "id": "751-2397-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3718,
+      "missing": [
+        "Panharmonicon"
+      ]
+    },
+    {
+      "id": "1295-3367",
+      "cards": [
+        {
+          "name": "Paradigm Shift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "The number of cards in your graveyard is less than two plus your devotion to blue.",
+      "mana": "{1}{U}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3694,
+      "missing": [
+        "Paradigm Shift"
+      ]
+    },
+    {
+      "id": "1636-5900",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap for at least enough mana to activate your blink effect.",
+      "mana": "{1}{G}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3506,
+      "missing": [
+        "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "2836-3367",
+      "cards": [
+        {
+          "name": "Paradigm Shift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have no cards in your graveyard.\nYou have a way to draw a card.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2990,
+      "missing": [
+        "Paradigm Shift"
+      ]
+    },
+    {
+      "id": "1479-2907-3147",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2811,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1479-3147-3875",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2669,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1636-4499",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap for at least enough mana to activate your blink effect.",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2622,
+      "missing": [
+        "Emiel the Blessed"
+      ]
+    },
+    {
+      "id": "3031-5201",
+      "cards": [
+        {
+          "name": "Uba Mask",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2568,
+      "missing": [
+        "Uba Mask"
+      ]
+    },
+    {
+      "id": "1725-3031",
+      "cards": [
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2403,
+      "missing": [
+        "Omen Machine"
+      ]
+    },
+    {
+      "id": "570-876-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2325,
+      "missing": [
+        "Emiel the Blessed"
+      ]
+    },
+    {
+      "id": "751-2757",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a basic Island.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2309,
+      "missing": [
+        "Earthcraft"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "1424-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Presence of Gond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Presence of Gond attached to a creature without summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2124,
+      "missing": [
+        "Presence of Gond"
+      ]
+    },
+    {
+      "id": "774-1671-3470",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2070,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "1479-2232-3875",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a nonartifact land in hand.\nYou control a nontoken nonartifact land.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2030,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "751-3821-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2017,
+      "missing": [
+        "Starfield Vocalist"
+      ]
+    },
+    {
+      "id": "1136-1636",
+      "cards": [
+        {
+          "name": "Phelddagrif",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that can tap to produce at least {G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1848,
+      "missing": [
+        "Phelddagrif"
+      ]
+    },
+    {
+      "id": "1636-7426",
+      "cards": [
+        {
+          "name": "Berta, Wise Extrapolator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Berta doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1845,
+      "missing": [
+        "Berta, Wise Extrapolator"
+      ]
+    },
+    {
+      "id": "129-1247-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1845,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "864-3115-3557",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cyclonic Rift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Return all nonland permanents opponents control to their hand on each of your turns"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Brago.",
+      "mana": "{6}{U} every turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1781,
+      "missing": [
+        "Brago, King Eternal"
+      ]
+    },
+    {
+      "id": "2-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ancestral Statue",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {5}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1575,
+      "missing": [
+        "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "5168-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1516,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "1636-1792",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a creature card in hand.\nCreatures you control can tap to produce enough mana to cast the creature card.\nYou control at least one additional non-mana producing creature that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1489,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "1636-2908",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dream Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1459,
+      "missing": [
+        "Dream Stalker"
+      ]
+    },
+    {
+      "id": "476-1636",
+      "cards": [
+        {
+          "name": "Questing Phelddagrif",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that can tap to produce at least {G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1410,
+      "missing": [
+        "Questing Phelddagrif"
+      ]
+    },
+    {
+      "id": "864-3378-3821",
+      "cards": [
+        {
+          "name": "Illusionist's Stratagem",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite mana lands you control can produce",
+        "Near-infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1343,
+      "missing": [
+        "Illusionist's Stratagem"
+      ]
+    },
+    {
+      "id": "1164-1295",
+      "cards": [
+        {
+          "name": "Mirror of Fate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1241,
+      "missing": [
+        "Mirror of Fate"
+      ]
+    },
+    {
+      "id": "774-1671-3875",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1161,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "751-1418-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Virtue of Knowledge // Vantress Visions",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1160,
+      "missing": [
+        "Virtue of Knowledge // Vantress Visions"
+      ]
+    },
+    {
+      "id": "4019-5168",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nBloom Tender has at least one +1/+1 counter on it.\nYou control a white, black and/or red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1108,
+      "missing": [
+        "Vigean Graftmage"
+      ]
+    },
+    {
+      "id": "4896-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Alert",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite green mana",
+        "Infinite black mana",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nYou control a black and a red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1086,
+      "missing": [
+        "High Alert"
+      ]
+    },
+    {
+      "id": "570-4896",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Alert",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite green mana",
+        "Infinite black mana",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nYou control a black and a red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1076,
+      "missing": [
+        "High Alert"
+      ]
+    },
+    {
+      "id": "1636-4995",
+      "cards": [
+        {
+          "name": "Belisarius Cawl",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Belisarius Cawl does not have summoning sickness.\nYou control at least two other untapped artifact creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1015,
+      "missing": [
+        "Belisarius Cawl"
+      ]
+    },
+    {
+      "id": "1636-2703",
+      "cards": [
+        {
+          "name": "Myr Propagator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1010,
+      "missing": [
+        "Myr Propagator"
+      ]
+    },
+    {
+      "id": "751-3095-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Overburden",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a basic Island in hand.",
+      "mana": "{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1003,
+      "missing": [
+        "Overburden"
+      ]
+    },
+    {
+      "id": "291-1636",
+      "cards": [
+        {
+          "name": "Myr Matrix",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {6}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1000,
+      "missing": [
+        "Myr Matrix"
+      ]
+    },
+    {
+      "id": "1458-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a creature card in hand.\nCreatures you control can tap to produce enough mana to cast the creature card.\nYou control at least one additional non-mana producing creature that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 975,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "876-5168-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 971,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "2397-3821-4770",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 877,
+      "missing": [
+        "Panharmonicon"
+      ]
+    },
+    {
+      "id": "570-4019",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nFaeburrow Elder has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 868,
+      "missing": [
+        "Vigean Graftmage"
+      ]
+    },
+    {
+      "id": "1127-1636",
+      "cards": [
+        {
+          "name": "Blinking Spirit",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {3}{W}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 843,
+      "missing": [
+        "Blinking Spirit"
+      ]
+    },
+    {
+      "id": "129-3995-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 822,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "751-1362-3314-3470",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Oboro, Palace in the Clouds",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 732,
+      "missing": [
+        "Oboro, Palace in the Clouds"
+      ]
+    },
+    {
+      "id": "1636-4518",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kor Skyfisher",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {1}{W}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 720,
+      "missing": [
+        "Kor Skyfisher"
+      ]
+    },
+    {
+      "id": "751-2757-3314",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You control a basic Island.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 664,
+      "missing": [
+        "Earthcraft"
+      ]
+    },
+    {
+      "id": "770-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Man-o'-War",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 639,
+      "missing": [
+        "Man-o'-War"
+      ]
+    },
+    {
+      "id": "2059-2836-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Village Bell-Ringer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "H",
+            "B",
+            "L"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite mana creatures you control can produce",
+        "Win the game",
+        "Near-infinite untap of creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control creatures that can produce at least {5}{W}.\nChulane does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 614,
+      "missing": [
+        "Village Bell-Ringer"
+      ]
+    },
+    {
+      "id": "1295-4899",
+      "cards": [
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 611,
+      "missing": [
+        "Phyrexian Devourer"
+      ]
+    },
+    {
+      "id": "1636-4013",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Displacer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap for at least enough mana to activate your blink effect.",
+      "mana": "{2}{C}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 578,
+      "missing": [
+        "Eldrazi Displacer"
+      ]
+    },
+    {
+      "id": "195-5168",
+      "cards": [
+        {
+          "name": "Chain Stasis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nThere are at least three colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 567,
+      "missing": [
+        "Chain Stasis"
+      ]
+    },
+    {
+      "id": "2232-2929",
+      "cards": [
+        {
+          "name": "Composer of Spring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control six or more enchantments.\nYou control a nontoken enchantment creature.\nYou have an enchantment creature card in hand.\nYou have enough mana available to cast the enchantment creature in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 537,
+      "missing": [
+        "Composer of Spring"
+      ]
+    },
+    {
+      "id": "570-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 532,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "570-876-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 526,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "1636-5698",
+      "cards": [
+        {
+          "name": "Ulamog's Dreadsire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Ulamog's Dreadshire does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 521,
+      "missing": [
+        "Ulamog's Dreadsire"
+      ]
+    },
+    {
+      "id": "751-1362-3314-3875",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Oboro, Palace in the Clouds",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 495,
+      "missing": [
+        "Oboro, Palace in the Clouds"
+      ]
+    },
+    {
+      "id": "195-570",
+      "cards": [
+        {
+          "name": "Chain Stasis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.There are at least four colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 489,
+      "missing": [
+        "Chain Stasis"
+      ]
+    },
+    {
+      "id": "1636-3987",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Torpor Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 477,
+      "missing": [
+        "Torpor Orb"
+      ]
+    },
+    {
+      "id": "751-5554",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Oltec Matterweaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a Treasure token or a Gold token.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 460,
+      "missing": [
+        "Oltec Matterweaver"
+      ]
+    },
+    {
+      "id": "2836-4899",
+      "cards": [
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 446,
+      "missing": [
+        "Phyrexian Devourer"
+      ]
+    },
+    {
+      "id": "751-3821-5542",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 440,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "1636-4000",
+      "cards": [
+        {
+          "name": "Rhys the Redeemed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Rhys does not have summoning sickness.\nCreatures you control can tap to produce at least {3}{G/W}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 425,
+      "missing": [
+        "Rhys the Redeemed"
+      ]
+    },
+    {
+      "id": "485-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wall of Kelp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Wall of Kelp does not have summoning sickness.",
+      "mana": "{U}{U} from creature sources",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 411,
+      "missing": [
+        "Wall of Kelp"
+      ]
+    },
+    {
+      "id": "1636-3692",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aethersnipe",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control creatures that can tap to produce at least {2}{U}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 401,
+      "missing": [
+        "Aethersnipe"
+      ]
+    },
+    {
+      "id": "1636-4602",
+      "cards": [
+        {
+          "name": "Xerex Strobe-Knight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Xerex Strobe-Knight does not have summoning sickness.\nYou have a storm count of at least two.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 399,
+      "missing": [
+        "Xerex Strobe-Knight"
+      ]
+    },
+    {
+      "id": "751-1770-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 397,
+      "missing": [
+        "Elesh Norn, Mother of Machines"
+      ]
+    },
+    {
+      "id": "751-3821-5334",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Roaming Throne",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "\"Drake\" chosen with Roaming Throne. You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 395,
+      "missing": [
+        "Roaming Throne"
+      ]
+    },
+    {
+      "id": "570-1995",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.\nThere are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 394,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "751-1322-6006",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Concordant Crossroads",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 392,
+      "missing": [
+        "Concordant Crossroads"
+      ]
+    },
+    {
+      "id": "751-3152",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Chakram Retriever",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 390,
+      "missing": [
+        "Chakram Retriever"
+      ]
+    },
+    {
+      "id": "1300-1636",
+      "cards": [
+        {
+          "name": "Weaver of Harmony",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a creature card in hand.\nCreatures you control can tap to produce at least {1}{G}.\nWeaver of Harmony does not have summoning sickness.\nYou are able to cast the creature card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 384,
+      "missing": [
+        "Weaver of Harmony"
+      ]
+    },
+    {
+      "id": "1413-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thraben Doomsayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Thraben Doomsayer does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 355,
+      "missing": [
+        "Thraben Doomsayer"
+      ]
+    },
+    {
+      "id": "3031-4398",
+      "cards": [
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eye of the Storm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 349,
+      "missing": [
+        "Eye of the Storm"
+      ]
+    },
+    {
+      "id": "1636-3209",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sprout Swarm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five untapped creatures, one of which must be green.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 348,
+      "missing": [
+        "Sprout Swarm"
+      ]
+    },
+    {
+      "id": "2521-2836",
+      "cards": [
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oath of Druids",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No creatures in library.You control fewer creatures than target player.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 329,
+      "missing": [
+        "Oath of Druids"
+      ]
+    },
+    {
+      "id": "751-1671-2653-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Nissa, Resurgent Animist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 329,
+      "missing": [
+        "Nissa, Resurgent Animist"
+      ]
+    },
+    {
+      "id": "3821-4770-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 298,
+      "missing": [
+        "Starfield Vocalist"
+      ]
+    },
+    {
+      "id": "1636-4006",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hushbringer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 297,
+      "missing": [
+        "Hushbringer"
+      ]
+    },
+    {
+      "id": "3821-4770-5542",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 293,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "774-907-3470",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 292,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "1770-3821-4770",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 290,
+      "missing": [
+        "Elesh Norn, Mother of Machines"
+      ]
+    },
+    {
+      "id": "751-907-2653-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Nissa, Resurgent Animist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 284,
+      "missing": [
+        "Nissa, Resurgent Animist"
+      ]
+    },
+    {
+      "id": "774-907-3875",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 282,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "751-6006-7730",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shang-Chi, Master of Kung Fu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 268,
+      "missing": [
+        "Shang-Chi, Master of Kung Fu"
+      ]
+    },
+    {
+      "id": "751-2653-3147-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Nissa, Resurgent Animist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 267,
+      "missing": [
+        "Nissa, Resurgent Animist"
+      ]
+    },
+    {
+      "id": "774-3147-3470",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 250,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "774-3147-3875",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 248,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "864-3821-6485",
+      "cards": [
+        {
+          "name": "Rally the Galadhrim",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{G}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 244,
+      "missing": [
+        "Rally the Galadhrim"
+      ]
+    },
+    {
+      "id": "1995-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Bloom Tender.\nBloom Tender does not have summoning sickness.\nThere are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 242,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "1636-4415",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stonecloaker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 230,
+      "missing": [
+        "Stonecloaker"
+      ]
+    },
+    {
+      "id": "751-5295-6006",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 220,
+      "missing": [
+        "Thousand-Year Elixir"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "1418-3821-4770",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Virtue of Knowledge // Vantress Visions",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Virtue of Knowledge // Vantress Visions"
+      ]
+    },
+    {
+      "id": "845-3031",
+      "cards": [
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shared Fate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 201,
+      "missing": [
+        "Shared Fate"
+      ]
+    },
+    {
+      "id": "1636-2232-5651",
+      "cards": [
+        {
+          "name": "Eladamri, Korvecdal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Eladamri does not have summoning sickness.\nYou control a creature that can tap to produce at least {G}.\nYou control at least two additional untapped creatures, one of which must be a nontoken, nonartifact creature.\nYou have a nonartifact creature card in hand or a nonartifact creature card on top of your library.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 194,
+      "missing": [
+        "Eladamri, Korvecdal"
+      ]
+    },
+    {
+      "id": "1295-2679",
+      "cards": [
+        {
+          "name": "Sacred Guide",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "There are no white cards in library.",
+      "mana": "{1}{W}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 189,
+      "missing": [
+        "Sacred Guide"
+      ]
+    },
+    {
+      "id": "1636-2982",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biogenic Ooze",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control creatures that can produce at least {1}{G}{G}{G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 162,
+      "missing": [
+        "Biogenic Ooze"
+      ]
+    },
+    {
+      "id": "2907-3080",
+      "cards": [
+        {
+          "name": "Exchange of Words",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause a land to become a creature.\nYou have a land card in hand.\nYou control at least five lands.",
+      "mana": "{1}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 148,
+      "missing": [
+        "Exchange of Words"
+      ]
+    },
+    {
+      "id": "1636-2529",
+      "cards": [
+        {
+          "name": "Vedalken Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You have a creature card in hand. Creatures you control can tap to produce at least {U} plus enough mana to cast the creature card in your hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 147,
+      "missing": [
+        "Vedalken Mastermind"
+      ]
+    },
+    {
+      "id": "751-765-3314-3470",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Guildless Commons",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 147,
+      "missing": [
+        "Guildless Commons"
+      ]
+    },
+    {
+      "id": "1636-1716",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kazandu Tuskcaller",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Kazandu Tuskcaller does not have summoning sickness.\nThere are at least 2 level counters on Kazandu Tuskcaller.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 142,
+      "missing": [
+        "Kazandu Tuskcaller"
+      ]
+    },
+    {
+      "id": "751-3821-5921",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mirror Room // Fractured Realm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Fractured Realm is unlocked.\nYou control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 140,
+      "missing": [
+        "Mirror Room // Fractured Realm"
+      ]
+    },
+    {
+      "id": "2679-2836",
+      "cards": [
+        {
+          "name": "Sacred Guide",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "There are no white cards in library.\nYou have a way to draw a card available.",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 133,
+      "missing": [
+        "Sacred Guide"
+      ]
+    },
+    {
+      "id": "1636-6006-7208",
+      "cards": [
+        {
+          "name": "Pestered Wellguard",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 132,
+      "missing": [
+        "Pestered Wellguard"
+      ]
+    },
+    {
+      "id": "751-765-3314-3875",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Guildless Commons",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 132,
+      "missing": [
+        "Guildless Commons"
+      ]
+    },
+    {
+      "id": "1636-3324",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Steward of Solidarity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Steward of Solidarity does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 119,
+      "missing": [
+        "Steward of Solidarity"
+      ]
+    },
+    {
+      "id": "1636-2157",
+      "cards": [
+        {
+          "name": "Romana II",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "There is a creature token on the battlefield that entered this turn.\nYou control at least one mana-producing creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 92,
+      "missing": [
+        "Romana II"
+      ]
+    },
+    {
+      "id": "2232-3821-4252",
+      "cards": [
+        {
+          "name": "Donal, Herald of Wings",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{U}{U}.\nYou have not copied a spell with Donal this turn.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 89,
+      "missing": [
+        "Donal, Herald of Wings"
+      ]
+    },
+    {
+      "id": "129-3812-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 88,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "751-1636-6406",
+      "cards": [
+        {
+          "name": "Dazzling Theater // Prop Room",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control enough creatures such that you can cast Shrieking Drake between mana produced by those creatures and its convoke ability.\nCreatures you control can tap to produce at least {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 82,
+      "missing": [
+        "Dazzling Theater // Prop Room"
+      ]
+    },
+    {
+      "id": "1636-1952",
+      "cards": [
+        {
+          "name": "Livio, Oathsworn Sentinel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Livio does not have summoning sickness.\nAnother nontoken creature on the battlefield.",
+      "mana": "{4}{W}{W} from creature sources",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 79,
+      "missing": [
+        "Livio, Oathsworn Sentinel"
+      ]
+    },
+    {
+      "id": "1232-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nemata, Grove Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite untap of creatures",
+        "Infinite mana creatures you control can produce",
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control creatures that can produce at least {2}{G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 76,
+      "missing": [
+        "Nemata, Grove Guardian"
+      ]
+    },
+    {
+      "id": "1376-7500",
+      "cards": [
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ringing Strike Mastery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least six Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 75,
+      "missing": [
+        "Ringing Strike Mastery"
+      ]
+    },
+    {
+      "id": "1256-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jade Mage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control creatures that can produce at least {2}{G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 73,
+      "missing": [
+        "Jade Mage"
+      ]
+    },
+    {
+      "id": "1636-3194",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hushwing Gryff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 72,
+      "missing": [
+        "Hushwing Gryff"
+      ]
+    },
+    {
+      "id": "1636-1798",
+      "cards": [
+        {
+          "name": "Voice of the Woods",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five untapped Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 71,
+      "missing": [
+        "Voice of the Woods"
+      ]
+    },
+    {
+      "id": "1636-1951",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Speaker of the Heavens",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Speaker of the Heavens does not have summoning sickness.\nYour life total is at least seven greater than your starting life total.\nIt is your turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 68,
+      "missing": [
+        "Speaker of the Heavens"
+      ]
+    },
+    {
+      "id": "225-751-1671-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone-Seeder Hierophant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Stone-Seeder Hierophant does not have summoning sickness.\nYou control a land that can tap to add {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 65,
+      "missing": [
+        "Stone-Seeder Hierophant"
+      ]
+    },
+    {
+      "id": "225-751-907-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone-Seeder Hierophant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Stone-Seeder Hierophant does not have summoning sickness.\nYou control a land that can tap to add {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 64,
+      "missing": [
+        "Stone-Seeder Hierophant"
+      ]
+    },
+    {
+      "id": "751-3314-3470-5621",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arid Archway",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 62,
+      "missing": [
+        "Arid Archway"
+      ]
+    },
+    {
+      "id": "225-751-3147-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone-Seeder Hierophant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Azorius Chancery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Stone-Seeder Hierophant does not have summoning sickness.\nYou control a land that can tap to add {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 62,
+      "missing": [
+        "Stone-Seeder Hierophant"
+      ]
+    },
+    {
+      "id": "515-1636-2050",
+      "cards": [
+        {
+          "name": "Squirrel Nest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arbor Elf",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Squirrel Nest"
+      ]
+    },
+    {
+      "id": "751-3314-3875-5621",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arid Archway",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Arid Archway"
+      ]
+    },
+    {
+      "id": "1636-4770-6406",
+      "cards": [
+        {
+          "name": "Dazzling Theater // Prop Room",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control enough creatures such that you can cast Whitemane Lion between mana produced by those creatures and its convoke ability.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 58,
+      "missing": [
+        "Dazzling Theater // Prop Room"
+      ]
+    },
+    {
+      "id": "5-1636",
+      "cards": [
+        {
+          "name": "Oviya Pashiri, Sage Lifecrafter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Oviya does not have summoning sickness.\nCreatures you control can tap to produce at least {2}{G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Oviya Pashiri, Sage Lifecrafter"
+      ]
+    },
+    {
+      "id": "1295-3832-6006",
+      "cards": [
+        {
+          "name": "Puresight Merrow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Puresight Merrow"
+      ]
+    },
+    {
+      "id": "129-5137-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 54,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "307-2232-3821",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one other creature that can attack this turn.\nYou control up to five lands that can tap to produce at least {3}{U}{U}.\nPeregrine Drake does not have summoning sickness.\nAn opponent is unable to block and kill creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Thousand-Faced Shadow"
+      ]
+    },
+    {
+      "id": "129-4824-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Soliton"
+      ]
+    },
+    {
+      "id": "1636-3217",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tocatli Honor Guard",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Tocatli Honor Guard"
+      ]
+    },
+    {
+      "id": "1636-3155",
+      "cards": [
+        {
+          "name": "Kianne, Dean of Substance // Imbraham, Dean of Theory",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {5}{G}.\nYou have at least one card in exile with a study counter on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Kianne, Dean of Substance // Imbraham, Dean of Theory"
+      ]
+    },
+    {
+      "id": "515-1636-5524",
+      "cards": [
+        {
+          "name": "Squirrel Nest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Destiny Spinner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 32,
+      "missing": [
+        "Squirrel Nest"
+      ]
+    },
+    {
+      "id": "1337-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolsimir Wolfblood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Tolsimir does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Tolsimir Wolfblood"
+      ]
+    },
+    {
+      "id": "707-1636",
+      "cards": [
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Evangel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Selesnya Evangel does not have summoning sickness.\nAn additional untapped creature.",
+      "mana": "{1} from creature sources",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Selesnya Evangel"
+      ]
+    },
+    {
+      "id": "751-1622-3821",
+      "cards": [
+        {
+          "name": "Minion Reflector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U} from lands",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 28,
+      "missing": [
+        "Minion Reflector"
+      ]
+    },
+    {
+      "id": "751-3314-5033",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm Cauldron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You control a basic Island.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 28,
+      "missing": [
+        "Storm Cauldron"
+      ]
+    },
+    {
+      "id": "3821-4770-5921",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mirror Room // Fractured Realm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}. Fractured Realm is unlocked.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 26,
+      "missing": [
+        "Mirror Room // Fractured Realm"
+      ]
+    },
+    {
+      "id": "1636-3641-3821",
+      "cards": [
+        {
+          "name": "Distinguished Conjurer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite untap of creatures",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Distinguished Conjurer does not have summoning sickness.",
+      "mana": "{4}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 25,
+      "missing": [
+        "Distinguished Conjurer"
+      ]
+    },
+    {
+      "id": "1363-1636-3821",
+      "cards": [
+        {
+          "name": "Tradewind Rider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature, You control up to five lands that can tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Tradewind Rider"
+      ]
+    },
+    {
+      "id": "570-751-1029-3314",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tolarian Kraken",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite green mana",
+        "Near-infinite white mana",
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 13,
+      "missing": [
+        "Tolarian Kraken"
+      ]
+    },
+    {
+      "id": "751-3499-6006",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "876-1376-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least two Elves on the battlefield.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "2836-3832-6006",
+      "cards": [
+        {
+          "name": "Puresight Merrow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Puresight Merrow"
+      ]
+    },
+    {
+      "id": "1636-1776-2050",
+      "cards": [
+        {
+          "name": "Spawning Grounds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arbor Elf",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Spawning Grounds attached to any Forest you control.\nArbor Elf does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5,
+      "missing": [
+        "Spawning Grounds"
+      ]
+    },
+    {
+      "id": "570-1376-3314-3562-5168",
+      "cards": [
+        {
+          "name": "Chulane, Teller of Tales",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sky Hussar",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite mana creatures you control can produce",
+        "Near-infinite untap of creatures you control",
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Chulane, Faeburrow Elder, Bloom Tender and Priest of Titania do not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Sky Hussar"
+      ]
+    },
+    {
+      "id": "43-4770",
+      "cards": [
+        {
+          "name": "Paradox Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {1}{W}.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Paradox Engine"
+      ]
+    },
+    {
+      "id": "43-751",
+      "cards": [
+        {
+          "name": "Paradox Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {U}.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Paradox Engine"
+      ]
+    },
+    {
+      "id": "876-2907-6246",
+      "cards": [
+        {
+          "name": "Nadu, Winged Wisdom",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens",
+        "Near-infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Nadu, Winged Wisdom"
+      ]
+    },
+    {
+      "id": "1636-5524-5996",
+      "cards": [
+        {
+          "name": "Tarmogoyf Nest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Destiny Spinner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Tarmogoyf Nest does not have summoning sickness. Creatures you control can tap to produce at least {1}{G}.",
+      "mana": "{3}{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Tarmogoyf Nest"
+      ]
+    },
+    {
+      "id": "751-6006-7165",
+      "cards": [
+        {
+          "name": "Pristine Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Pristine Angel"
+      ]
+    }
+  ]
+}

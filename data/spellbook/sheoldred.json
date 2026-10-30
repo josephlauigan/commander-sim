@@ -1,0 +1,765 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "sheoldred",
+  "commanders": [
+    "Sheoldred, the Apocalypse"
+  ],
+  "request_sha256": "3608f5c1470827df9d43888a6bca85bba6f08475576aeb0d2ae5c3277757b4f5",
+  "identity": "B",
+  "included": [
+    {
+      "id": "1561-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw for target opponent",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size that is at least half their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 51722
+    },
+    {
+      "id": "1561-2720",
+      "cards": [
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Underworld Dreams",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has cards in their library greater than their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 36361
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1561-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Near-infinite card draw for target opponent",
+        "Near-infinite damage",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size which is larger than or equal to their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 46618,
+      "missing": [
+        "Orcish Bowmasters"
+      ]
+    },
+    {
+      "id": "1561-2384",
+      "cards": [
+        {
+          "name": "Psychosis Crawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 31281,
+      "missing": [
+        "Psychosis Crawler"
+      ]
+    },
+    {
+      "id": "2173-2498-5078",
+      "cards": [
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 26169,
+      "missing": [
+        "Sensei's Divining Top"
+      ]
+    },
+    {
+      "id": "1561-5165",
+      "cards": [
+        {
+          "name": "Ob Nixilis, the Hate-Twisted",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target player loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Target player has cards in library equal to or greater than their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 17019,
+      "missing": [
+        "Ob Nixilis, the Hate-Twisted"
+      ]
+    },
+    {
+      "id": "1561-5342",
+      "cards": [
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 16195,
+      "missing": [
+        "Bloodletter of Aclazotz"
+      ]
+    },
+    {
+      "id": "1561-4435",
+      "cards": [
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Alhammarret's Archive",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYour deck size is even.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 11351,
+      "missing": [
+        "Alhammarret's Archive"
+      ]
+    },
+    {
+      "id": "2842-6215",
+      "cards": [
+        {
+          "name": "Tombstone Stairwell",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6638,
+      "missing": [
+        "Tombstone Stairwell"
+      ]
+    },
+    {
+      "id": "6562-6648",
+      "cards": [
+        {
+          "name": "Overkill",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jaws of Defeat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause a creature to enter the battlefield under your control.",
+      "mana": "{2}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6357,
+      "missing": [
+        "Jaws of Defeat"
+      ]
+    },
+    {
+      "id": "679-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich's Mastery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5662,
+      "missing": [
+        "Lich's Mastery"
+      ]
+    },
+    {
+      "id": "1561-1742-3245",
+      "cards": [
+        {
+          "name": "Skirge Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Exsanguinate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 2 life.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4888,
+      "missing": [
+        "Skirge Familiar"
+      ]
+    },
+    {
+      "id": "335-4591",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Platinum Angel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2160,
+      "missing": [
+        "Platinum Angel"
+      ]
+    },
+    {
+      "id": "1452-1561",
+      "cards": [
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Black Vise",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game at the beginning of their next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "The opponent chosen with Black Vise has at least four cards in their hand.\nThe opponent chosen with Black Vise has a library size which is larger than their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1944,
+      "missing": [
+        "Black Vise"
+      ]
+    },
+    {
+      "id": "602-1561",
+      "cards": [
+        {
+          "name": "Feast of Sanity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1763,
+      "missing": [
+        "Feast of Sanity"
+      ]
+    },
+    {
+      "id": "1561-5008",
+      "cards": [
+        {
+          "name": "Blitzwing, Cruel Tormentor // Blitzwing, Adaptive Assailant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw for target opponent",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1268,
+      "missing": [
+        "Blitzwing, Cruel Tormentor // Blitzwing, Adaptive Assailant"
+      ]
+    },
+    {
+      "id": "202-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 426,
+      "missing": [
+        "Lich"
+      ]
+    },
+    {
+      "id": "202-335",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 413,
+      "missing": [
+        "Lich"
+      ]
+    },
+    {
+      "id": "2498-4126",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nefarious Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 351,
+      "missing": [
+        "Nefarious Lich"
+      ]
+    },
+    {
+      "id": "335-3333",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Platinum Emperion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 341,
+      "missing": [
+        "Platinum Emperion"
+      ]
+    },
+    {
+      "id": "131-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Umbilicus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 275,
+      "missing": [
+        "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-4933",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Blood Clock",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 270,
+      "missing": [
+        "Blood Clock"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "2498-7844",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yawgmoth's Bargain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Yawgmoth's Bargain"
+      ]
+    },
+    {
+      "id": "2498-4322",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Griselbrand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 8.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Griselbrand"
+      ]
+    }
+  ]
+}

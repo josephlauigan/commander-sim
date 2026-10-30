@@ -5,7 +5,8 @@
 //! Stronghold and Sunhome: cards_t3_aurelia.rs; Vault of the Archangel and Silent Clearing: cards_lands.rs; Karn's
 //! Bastion: cards_common2.rs; Buried Ruin: cards_t45_heliod_zur.rs; Mount Doom: cards_t6_lands.rs; Dragon's Hoard:
 //! cards_t45_urdragon.rs; Staff of Compleation's destroy: cards_t6_dack.rs; Demon's cast for life:
-//! cards_t0_anikthea.rs; Damn's target mode: cards_t45_edgar.rs) still run the card code they test.
+//! cards_t0_anikthea.rs; Damn's target mode: cards_t45_edgar.rs) still run the card code they test. The last section is
+//! the nine split lines PR 5b found to be doubles (an enters tag beside card code; Doubling Season's loyalty).
 
 use sim_core::ai::act::perform;
 use sim_core::cardcode;

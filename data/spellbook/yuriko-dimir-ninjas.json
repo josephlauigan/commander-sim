@@ -1,0 +1,1163 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "yuriko-dimir-ninjas",
+  "commanders": [
+    "Yuriko, the Tiger's Shadow"
+  ],
+  "request_sha256": "eacde625bea154a5f299c31141a37de5339ae5b1af3bce6b471ecbc353bad02a",
+  "identity": "UB",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "5078-5849",
+      "cards": [
+        {
+          "name": "Fortune Teller's Talent",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sensei's Divining Top",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7755,
+      "missing": [
+        "Fortune Teller's Talent"
+      ]
+    },
+    {
+      "id": "307-3821-4520",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Silver-Fur Master",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite combat damage"
+      ],
+      "requires": [],
+      "prerequisites": "Silver-Fur Master and Peregrine Drake do not have summoning sickness.\nAn opponent cannot block Silver-Fur Master or Peregrine Drake.\nYou control up to five lands that can tap to produce at least {1}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3798,
+      "missing": [
+        "Peregrine Drake"
+      ]
+    },
+    {
+      "id": "2581-5065",
+      "cards": [
+        {
+          "name": "Helm of Obedience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dauthi Voidwalker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Exile target opponent's library"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2847,
+      "missing": [
+        "Helm of Obedience"
+      ]
+    },
+    {
+      "id": "307-2327-3821",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Moon-Circuit Hacker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Moon-Circuit Hacker and Peregrine Drake do not have summoning sickness.\nAn opponent cannot block Moon-Circuit Hacker or Peregrine Drake.\nYou control up to five lands that can tap to produce at least {2}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2516,
+      "missing": [
+        "Peregrine Drake"
+      ]
+    },
+    {
+      "id": "86-307-3821",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mistblade Shinobi",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Mistblade Shinobi and Peregrine Drake do not have summoning sickness.\nAn opponent cannot block Mistblade Shinobi or Peregrine Drake.\nYou control up to five lands that can tap to produce at least {2}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2283,
+      "missing": [
+        "Peregrine Drake"
+      ]
+    },
+    {
+      "id": "307-2792-4520",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Silver-Fur Master",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Silver-Fur Master and Great Whale do not have summoning sickness.\nAn opponent cannot block Silver-Fur Master or Great Whale.\nYou control up to seven lands that can tap to produce at least {1}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1339,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-1741-4520-5241",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakashima's Student",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H",
+            "B"
+          ]
+        },
+        {
+          "name": "Silver-Fur Master",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite combat damage to one opponent",
+        "Infinite tapped creature tokens that are attacking",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Silver-Fur Master and Cloud of Faeries do not have summoning sickness.\nYou control an additional creature that does not have summoning sickness.\nAn opponent cannot block Silver-Fur Master, Cloud of Faeries or the additional creature.\nYou control up to two lands that can tap to produce at least {U}{U}.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 992,
+      "missing": [
+        "Cloud of Faeries"
+      ]
+    },
+    {
+      "id": "307-344-3821",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skullsnatcher",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Skullsnatcher and Peregrine Drake do not have summoning sickness.\nAn opponent cannot block Skullsnatcher or Peregrine Drake.\nYou control up to five lands that can tap to produce at least {2}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 941,
+      "missing": [
+        "Peregrine Drake"
+      ]
+    },
+    {
+      "id": "2468-2575",
+      "cards": [
+        {
+          "name": "Panoptic Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Mastery",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 813,
+      "missing": [
+        "Panoptic Mirror"
+      ]
+    },
+    {
+      "id": "307-2792-4307",
+      "cards": [
+        {
+          "name": "Yuriko, the Tiger's Shadow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Yuriko and Great Whale do not have summoning sickness.\nAn opponent cannot block Yuriko or Great Whale.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 786,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-3542-4520",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Silver-Fur Master",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Silver-Fur Master and Palinchron do not have summoning sickness.\nAn opponent cannot block Silver-Fur Master or Palinchron.\nYou control up to seven lands that can tap to produce at least {1}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 755,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "307-2327-2792",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Moon-Circuit Hacker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Moon-Circuit Hacker and Great Whale do not have summoning sickness.\nAn opponent cannot block Moon-Circuit Hacker or Great Whale.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 723,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "86-307-2792",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mistblade Shinobi",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Mistblade Shinobi and Great Whale do not have summoning sickness.\nAn opponent cannot block Mistblade Shinobi or Great Whale.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 636,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-2306-2792",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosperous Thief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Prosperous Thief and Great Whale do not have summoning sickness.\nAn opponent cannot block Prosperous Thief or Great Whale.\nYou control up to seven lands that can tap to produce at least {3}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 620,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-2792-3403",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ingenious Infiltrator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Ingenious Infiltrator and Great Whale do not have summoning sickness.\nAn opponent cannot block Ingenious Infiltrator or Great Whale.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 592,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-3542-4307",
+      "cards": [
+        {
+          "name": "Yuriko, the Tiger's Shadow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Yuriko and Palinchron do not have summoning sickness.\nAn opponent cannot block Yuriko or Palinchron.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 481,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "32-2468",
+      "cards": [
+        {
+          "name": "Panoptic Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Trespass",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 432,
+      "missing": [
+        "Panoptic Mirror"
+      ]
+    },
+    {
+      "id": "1271-2575-3212",
+      "cards": [
+        {
+          "name": "God-Eternal Kefnet",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scroll Rack",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Mastery",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 432,
+      "missing": [
+        "God-Eternal Kefnet"
+      ]
+    },
+    {
+      "id": "307-1655-2792",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ninja of the Deep Hours",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Ninja of the Deep Hours and Great Whale do not have summoning sickness.\nAn opponent cannot block Ninja of the Deep Hours or Great Whale.\nYou control up to seven lands that can tap to produce at least {3}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 431,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-2327-3542",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Moon-Circuit Hacker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Moon-Circuit Hacker and Palinchron do not have summoning sickness.\nAn opponent cannot block Moon-Circuit Hacker or Palinchron.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 404,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "307-2306-3542",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prosperous Thief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Prosperous Thief and Palinchron do not have summoning sickness.\nAn opponent cannot block Prosperous Thief or Palinchron.\nYou control up to seven lands that can tap to produce at least {3}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 393,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "307-3403-3542",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ingenious Infiltrator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Ingenious Infiltrator and Palinchron do not have summoning sickness.\nAn opponent cannot block Ingenious Infiltrator or Palinchron.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 384,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "307-344-2792",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skullsnatcher",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Skullsnatcher and Great Whale do not have summoning sickness.\nAn opponent cannot block Skullsnatcher or Great Whale.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 342,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "86-307-3542",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mistblade Shinobi",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Mistblade Shinobi and Palinchron do not have summoning sickness.\nAn opponent cannot block Mistblade Shinobi or Palinchron.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 329,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "307-1655-3542",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ninja of the Deep Hours",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Ninja of the Deep Hours and Palinchron do not have summoning sickness.\nAn opponent cannot block Ninja of the Deep Hours or Palinchron.\nYou control up to seven lands that can tap to produce at least {3}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 284,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "307-2792-4623",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mist-Syndicate Naga",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Mist-Syndicate Naga and Great Whale do not have summoning sickness.\nAn opponent cannot block Mist-Syndicate Naga or Great Whale.\nYou control up to seven lands that can tap to produce at least {4}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 218,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "307-344-3542",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skullsnatcher",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Skullsnatcher and Palinchron do not have summoning sickness.\nAn opponent cannot block Skullsnatcher or Palinchron.\nYou control up to seven lands that can tap to produce at least {2}{U}{U}{B}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 165,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "32-1271-3212",
+      "cards": [
+        {
+          "name": "God-Eternal Kefnet",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scroll Rack",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Trespass",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{U}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 160,
+      "missing": [
+        "God-Eternal Kefnet"
+      ]
+    },
+    {
+      "id": "307-3542-4623",
+      "cards": [
+        {
+          "name": "Thousand-Faced Shadow",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mist-Syndicate Naga",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage to one opponent",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Mist-Syndicate Naga and Palinchron do not have summoning sickness.\nAn opponent cannot block Mist-Syndicate Naga or Palinchron.\nYou control up to seven lands that can tap to produce at least {4}{U}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 142,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "2084-5241",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
+          ]
+        },
+        {
+          "name": "Sakashima's Student",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Sakashima's Student is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 39,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,663 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "stella-lee-quick-draw",
+  "commanders": [
+    "Stella Lee, Wild Card"
+  ],
+  "request_sha256": "30892e1d764edacf85018f53c5030d6d3b7df62fc804b87970afa1e1e1a1c427",
+  "identity": "UR",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1089-2353",
+      "cards": [
+        {
+          "name": "Curiosity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Curiosity attached to Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 69097,
+      "missing": [
+        "Curiosity"
+      ]
+    },
+    {
+      "id": "2353-6092",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Visionary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 49898,
+      "missing": [
+        "Niv-Mizzet, Visionary"
+      ]
+    },
+    {
+      "id": "2353-2396",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ophidian Eye",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Ophidian Eye attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38957,
+      "missing": [
+        "Ophidian Eye"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "406-2353",
+      "cards": [
+        {
+          "name": "Tandem Lookout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Tandem Lookout paired with Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 34296,
+      "missing": [
+        "Tandem Lookout"
+      ]
+    },
+    {
+      "id": "3940-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haze of Rage",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinitely powerful creatures you control until end of turn",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast at least three spells this turn.",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27594,
+      "missing": [
+        "Haze of Rage"
+      ]
+    },
+    {
+      "id": "2552-3263",
+      "cards": [
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vandalblast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 22036,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "703-5291",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of noncreature permanents you control",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Cursed Mirror cannot be copying a creature.",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 11073,
+      "missing": [
+        "Astral Dragon"
+      ]
+    },
+    {
+      "id": "1397-1618",
+      "cards": [
+        {
+          "name": "The Tenth Doctor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rousing Refrain",
+          "zones": [
+            "H",
+            "E"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent has at least seven cards in hand.",
+      "mana": "{3}{R}{R} if Rousing Refrain is in your hand, or {7} available otherwise",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9663,
+      "missing": [
+        "The Tenth Doctor"
+      ]
+    },
+    {
+      "id": "2655-5195",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9600,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "700-2353",
+      "cards": [
+        {
+          "name": "Body of Knowledge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6454,
+      "missing": [
+        "Body of Knowledge"
+      ]
+    },
+    {
+      "id": "1397-4015",
+      "cards": [
+        {
+          "name": "Rousing Refrain",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Rift Elemental",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Rousing Refrain in exile with three time counters on it.\nAn opponent has at least seven cards in hand.",
+      "mana": "{3}{R}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5264,
+      "missing": [
+        "Rift Elemental"
+      ]
+    },
+    {
+      "id": "610-2655",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archmage Emeritus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4237,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "147-2234",
+      "cards": [
+        {
+          "name": "Baral's Expertise",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Dualcaster Mage",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U}{U}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3164,
+      "missing": [
+        "Dualcaster Mage"
+      ]
+    },
+    {
+      "id": "1397-3368",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Rousing Refrain",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has six or more cards in their hand.",
+      "mana": "{7}{R}{R}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2583,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "141-2234",
+      "cards": [
+        {
+          "name": "Baral's Expertise",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}{U}{U}{U} plus commander tax if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1029,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "2234-4217",
+      "cards": [
+        {
+          "name": "Baral's Expertise",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lutri, the Spellchaser",
+          "zones": [
+            "H",
+            "C"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U}{U}{U/R}{U/R} plus commander tax if applicable",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 585,
+      "missing": [
+        "Lutri, the Spellchaser"
+      ]
+    },
+    {
+      "id": "1858-4280-5195",
+      "cards": [
+        {
+          "name": "Veyran, Voice of Duality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "View from Above",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a white permanent.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 552,
+      "missing": [
+        "View from Above"
+      ]
+    },
+    {
+      "id": "1636-5534--27",
+      "cards": [
+        {
+          "name": "Stella Lee, Wild Card",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of one instant or sorcery",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [
+        "Instant or Sorcery that creates one or more Creature Tokens"
+      ],
+      "prerequisites": "You have cast at least two spells this turn.\nYou have enough mana to cast the instant or sorcery.\nStella Lee does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 235,
+      "missing": [
+        "Intruder Alarm"
+      ]
+    },
+    {
+      "id": "2084-5291",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 67,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "5534--28",
+      "cards": [
+        {
+          "name": "Stella Lee, Wild Card",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of one instant or sorcery"
+      ],
+      "requires": [
+        "Instant or Sorcery that untaps a Creature"
+      ],
+      "prerequisites": "You have cast at least two spells this turn.\nStella Lee does not have summoning sickness.\nYou have enough mana to cast the instant or sorcery card.\nYou have additional legal target(s) for the instant or sorcery card, if applicable.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 0,
+      "missing": []
+    }
+  ]
+}

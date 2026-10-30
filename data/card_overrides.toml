@@ -104,6 +104,7 @@ status = "Full"
 note = "your first instant and first sorcery each turn: for each trigger (Veyran and Harmonic Prodigy add one each) you may have the least threatening opponent draw a card to copy the spell (not a counterspell); copies pick new targets and keep X. The Otter clause is not modeled (no Otters in your decks)"
 
 ["Alela, Artful Provocateur"]
+paths_ok = "compiled: the +1/+0 for your other fliers; card code: the Faerie token when you cast an artifact or enchantment spell (alela.rs)"
 tags = "leg pow=2 tgh=3 fly dt lifelink"
 dsl = [
   { type = "static", static = "anthem", pow = 1, tgh = 0, filter = { type = "creature", controller = "you", other = true, keyword = "flying" } },
@@ -158,6 +159,7 @@ status = "Full"
 note = "lands from the graveyard; landfall triggers twice"
 
 ["Andúril, Flame of the West"]
+paths_ok = "compiled: +3/+1 and equip {2}; card code: the two Spirit tokens when the equipped creature attacks (mine.rs)"
 types = "A"
 tags = "leg"
 dsl = [
@@ -225,6 +227,7 @@ status = "Full"
 note = ""
 
 ["Archfiend of Sorrows"]
+paths_ok = "compiled: the -2/-2 enter trigger; card code: unearth from the graveyard and its end-step exile (partials.rs)"
 tags = "pow=4 tgh=5 fly"
 dsl = [
   { type = "triggered", event = "etb", source = "self", effects = [{ do = "pump", pow = -2, tgh = -2, what = { sel = "all", filter = { type = "creature", controller = "opp" } } }] },
@@ -245,6 +248,7 @@ status = "Full"
 note = "constellation: 2/2 flying lifelink Pegasus"
 
 ["Arrest"]
+paths_ok = "rem tag (arrest): attaches the lock as it enters (removal::etb_removal, zur::apply_lock); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=arrest tgt=c etb"
 dsl = []
@@ -411,6 +415,7 @@ status = "Full"
 note = "{T}: {C}, or a coloured mana for 1 damage"
 
 ["Beastmaster Ascension"]
+paths_ok = "compiled: the +5/+5 at seven quest counters; card code: the quest counters when your creatures attack (t1.rs)"
 types = "E"
 tags = ""
 dsl = [
@@ -532,10 +537,12 @@ status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
 ["Boseiju, Who Endures"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 status = "Full"
 note = "channel {1}{G} from hand: destroys a valuable artifact or enchantment"
 
 ["Bound in Silence"]
+paths_ok = "rem tag (pacify): attaches the lock as it enters (removal::etb_removal, zur::apply_lock); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=pacify tgt=c etb"
 dsl = []
@@ -641,6 +648,7 @@ status = "Full"
 note = "upkeep: the Ring tempts you (the four Ring abilities in order); choosing a Ring-bearer pays 2 life for a card; cast as a value enchantment (prio 50 in impls/sephfs.rs); the upkeep tempt is the engine's ring_tempt"
 
 ["Canopy Tactician"]
+paths_ok = "compiled: the +1/+1 for your other Elves; dork tag: its {T} mana unit; card code: dyn_mana_perm, that unit's amount (three; mana.rs reads it in place of 1, no extra unit)"
 tags = "pow=3 warrior dork=G"
 dsl = [
   { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
@@ -1212,6 +1220,7 @@ status = "Full"
 note = "+0/+3 and hexproof: Veyran's AI casts it in response to targeted removal on a key creature"
 
 ["Docent of Perfection // Final Iteration"]
+paths_ok = "compiled: the Wizard token on instant and sorcery casts (both faces); card code: the transform, and Final Iteration's +2/+1 and flying for Wizards (mine.rs)"
 status = "Full"
 note = "a 1/1 Human Wizard per instant or sorcery you cast; with three Wizards it transforms into Final Iteration: Wizards you control get +2/+1 and have flying"
 
@@ -1256,6 +1265,7 @@ status = "Full"
 note = ""
 
 ["Dragonlord Dromoka"]
+paths_ok = "unc tag: this spell can't be countered; card code: can_cast, opponents can't cast spells during your turn (legends.rs)"
 tags = "leg pow=5 tgh=7 fly lifelink unc"
 dsl = []
 status = "Full"
@@ -1373,6 +1383,7 @@ status = "Full"
 note = "{T}: {B}, 1 damage to you"
 
 ["Elvish Archdruid"]
+paths_ok = "compiled: the +1/+1 for your other Elves; dork tag: its {T} mana unit; card code: dyn_mana_perm, that unit's amount (one per Elf; mana.rs reads it in place of 1); its etb only marks it live (galadriel.rs)"
 tags = "pow=2 dork=G noatk"
 dsl = [
   { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
@@ -1381,6 +1392,7 @@ status = "Full"
 note = "other Elves you control get +1/+1; {T}: {G} for each Elf you control"
 
 ["Elvish Champion"]
+paths_ok = "compiled: the +1/+1 for other Elves; card code: their forestwalk (fixes.rs)"
 tags = "pow=2"
 dsl = [
   { type = "static", static = "anthem", filter = { type = "creature", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
@@ -1434,6 +1446,7 @@ status = "Full"
 note = "Elf Warrior once a turn when Elves enter; pump before combat with a wide board"
 
 ["Embercleave"]
+paths_ok = "compiled: +1/+1, double strike, trample and equip {3}; card code: the attach on entering (t3.rs), the flash in during combat (rules2.rs); its cost reduction is cardcode::self_cost"
 types = "A"
 tags = "leg flash"
 dsl = [
@@ -1455,6 +1468,7 @@ status = "Full"
 note = "first strike; prepared by your third spell each turn: a Lightning Bolt copy for {R} (lethal, or the best X/3 creature)"
 
 ["Emeritus of Ideation // Ancestral Recall"]
+paths_ok = "prepare tag: it enters prepared (zones::etb_static); card code: the attack trigger that prepares it again (mine.rs); casting the copy is an AI option"
 ward = 2
 status = "Full"
 note = "5/5 flying, ward {2}; enters prepared ({U}: draw three); attacking exiles eight graveyard cards to prepare it again"
@@ -1473,6 +1487,7 @@ status = "Full"
 note = "affinity for artifacts; mill four on entry; {T}: cast an artifact card from your graveyard"
 
 ["Encrust"]
+paths_ok = "rem tag (encrust): attaches the lock as it enters (removal::etb_removal, zur::apply_lock); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=encrust tgt=ac etb"
 dsl = []
@@ -1934,6 +1949,7 @@ status = "Full"
 note = ""
 
 ["Goblin Chieftain"]
+paths_ok = "compiled: the +1/+1 for your other Goblins; card code: their haste (t4.rs)"
 tags = "pow=2 haste"
 dsl = [
   { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "goblin" }, pow = 1, tgh = 1 },
@@ -2215,6 +2231,7 @@ status = "Full"
 note = "haste; 1 damage to the defending player per attacking creature"
 
 ["Helm of Kaldra"]
+paths_ok = "compiled: first strike, trample, haste and equip {2}; card code: indestructible with the Shield (self_regen, legends.rs); assembling Kaldra is an AI option"
 types = "A"
 tags = "leg"
 dsl = [
@@ -2227,6 +2244,7 @@ status = "Full"
 note = "first strike, trample and haste; equip {2}; {1}: with all three Kaldra pieces, create Kaldra (legendary 4/4) wearing them"
 
 ["Helm of the Host"]
+paths_ok = "compiled: equip {5}; card code: the token copy at the beginning of combat (t3.rs)"
 types = "A"
 tags = "leg"
 dsl = [
@@ -2312,6 +2330,7 @@ status = "Full"
 note = "destroys all nonland permanents when that swings the board"
 
 ["Hullbreaker Horror"]
+paths_ok = "unc tag: this spell can't be countered; card code: the bounce whenever you cast a spell (t4.rs)"
 tags = "pow=7 tgh=8 flash unc bomb=7"
 dsl = []
 status = "Full"
@@ -2732,6 +2751,7 @@ status = "Full"
 note = "amass Zombies 1; you and your permanents gain hexproof until end of turn"
 
 ["Leaf-Crowned Visionary"]
+paths_ok = "compiled: the +1/+1 for your other Elves; card code: the pay-{G} draw on Elf casts (t1.rs)"
 tags = "pow=1"
 dsl = [
   { type = "static", static = "anthem", filter = { type = "creature", controller = "you", other = true, subtype = "elf" }, pow = 1, tgh = 1 },
@@ -2753,6 +2773,7 @@ status = "Full"
 note = "a hasty Goblin each combat that must attack; mentor"
 
 ["Legion's Landing // Adanto, the First Fort"]
+paths_ok = "tok tag: the 1/1 lifelink Vampire on entering (zones::etb_once); card code: the transform when you attack with three or more (t1.rs)"
 status = "Full"
 note = "a 1/1 lifelink token; flips with three attackers into a land that taps for W or makes more tokens"
 
@@ -2876,6 +2897,7 @@ status = "Full"
 note = "Thopter at the beginning of combat while you control your commander"
 
 ["Luminous Bonds"]
+paths_ok = "rem tag (pacify): attaches the lock as it enters (removal::etb_removal, zur::apply_lock); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=pacify tgt=c etb"
 dsl = []
@@ -2896,6 +2918,7 @@ status = "Full"
 note = "the first spell you cast each turn has cascade"
 
 ["Maelstrom Wanderer"]
+paths_ok = "compiled: haste for your creatures; card code: the double cascade on cast (legends.rs)"
 status = "Full"
 note = "creatures you control have haste; cascade, cascade"
 
@@ -3087,6 +3110,7 @@ status = "Full"
 note = "flying; each token you create or sacrifice drains each opponent 1"
 
 ["Mirri, Weatherlight Duelist"]
+paths_ok = "compiled: first strike; card code: the one-blocker and one-attacker caps (legends.rs)"
 tags = "leg pow=3 tgh=2 fs"
 dsl = [
   { type = "static", static = "self_keyword", keyword = "first strike" },
@@ -3117,6 +3141,7 @@ status = "Full"
 note = "ninjutsu 0U"
 
 ["Mithril Coat"]
+paths_ok = "compiled: indestructible (its own and the equipped creature's) and equip {3}; card code: the attach on entering (legends.rs)"
 types = "A"
 tags = "leg flash prot=coat"
 dsl = [
@@ -3453,6 +3478,7 @@ status = "Full"
 note = "{1},{T}: two mana of its colours (net one coloured mana)"
 
 ["Otawara, Soaring City"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 status = "Full"
 note = "land; channelled from hand to bounce a real threat"
 
@@ -3691,6 +3717,7 @@ status = "Full"
 note = "the best of its three modes: ping one or two X/1s (or a player at 1), bounce an opposing commander or token, or surveil 2 and draw"
 
 ["Prison Sentence"]
+paths_ok = "rem tag (arrest): attaches the lock as it enters and scries 2 (removal::etb_removal, zur::lock_attach); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=arrest tgt=c etb"
 dsl = []
@@ -3920,6 +3947,7 @@ status = "Full"
 note = ""
 
 ["Reliquary Tower"]
+paths_ok = "compiled: no maximum hand size, a static read from permanents only (the nomax tag does it); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 types = "L"
 tags = "c=C nomax"
 status = "Full"
@@ -4248,6 +4276,7 @@ status = "Full"
 note = "swampwalk; your upkeep reanimation, opponents' upkeep edict"
 
 ["Shield of Kaldra"]
+paths_ok = "compiled: indestructible for the equipped creature and equip {4}; card code: indestructible for the Kaldra Equipment (self_regen, legends.rs)"
 types = "A"
 tags = "leg"
 dsl = [
@@ -4390,6 +4419,7 @@ status = "Full"
 note = "equip {1} onto 1-toughness creatures to draw two, up to twice a turn"
 
 ["Skyclave Apparition"]
+paths_ok = "rem tag: the exile on entering (zones::etb_once); card code: the Illusion token when it leaves (partials.rs)"
 status = "Full"
 note = "exiles a permanent with MV 4 or less; its owner gets an X/X Illusion when the Apparition leaves"
 
@@ -4723,6 +4753,7 @@ status = "Full"
 note = "equipped creature +2/+2, protection from red and green; on combat damage to a player: the top two cards are exiled, playable this turn (the ones not played are exiled at the end step), and an additional land drop this turn (the AI plays the land at once, during combat); equip {2}"
 
 ["Sword of Kaldra"]
+paths_ok = "compiled: +5/+5 and equip {4}; card code: indestructible with the Shield (self_regen, legends.rs)"
 types = "A"
 tags = "leg"
 dsl = [
@@ -5045,6 +5076,7 @@ status = "Full"
 note = ""
 
 ["Thornbite Staff"]
+paths_ok = "compiled: equip {4}; card code: the attach to Krenko on entering (t4.rs)"
 types = "A"
 tags = ""
 dsl = [
@@ -5860,6 +5892,7 @@ status = "Full"
 note = "enters: each opponent exiles their least useful card from hand until it leaves; you may play those cards (held in your hand, mana of any type); if it leaves, uncast cards go back to their owners' hands"
 
 ["Postmortem Professor"]
+paths_ok = "compiled: can't block; card code: the attack drain (kefka.rs); the return from the graveyard is an AI option"
 tags = "pow=2"
 dsl = [
   { type = "static", static = "cant_block" },
@@ -6500,6 +6533,7 @@ status = "Full"
 note = "beginning of combat on your turn: a 2/1 red Elemental with trample and haste, sacrificed at the next end step; {T}: tutor any card, only when five or more creatures died this turn (counted from the start of the turn)"
 
 ["Hero's Heirloom"]
+paths_ok = "compiled: +2/+1 and equip {2}; card code: trample and haste on a legendary creature (tymna_cards.rs)"
 status = "Full"
 note = "equip {2}, +2/+1 (compiled); trample and haste while the equipped creature is legendary (impls/tymna_cards.rs heirloom_kw)"
 
@@ -6528,6 +6562,7 @@ status = "Full"
 note = "landfall: a +1/+1 counter on target creature (compiled; the bill deck puts it on Silhana, then the biggest stack, then increment and mana creatures); {3}{G}{G}: double the counters on each creature you control, at instant speed (the end of the turn before yours with the mana free, or before combat when it makes the attack lethal; with 4 or more counters)"
 
 ["Boughside Wanderers"]
+paths_ok = "compiled: the landfall +2/+2; card code: the look at the top four on entering (green_cards.rs)"
 status = "Full"
 note = "enters: look at the top four, a permanent card to hand, the rest to the bottom at random; landfall +2/+2 until end of turn (compiled)"
 
@@ -6546,6 +6581,7 @@ status = "Full"
 note = "plot {3}{G} (kept in hand, marked; cast free on a later turn); enters with two +1/+1 counters if it wasn't cast or was cast free from the plot"
 
 ["Ghalta the Unstoppable"]
+paths_ok = "compiled: trample for your other creatures; card code: self_cost, less by your greatest power (green_cards.rs)"
 status = "Full"
 note = "costs {X} less (X the greatest power among your creatures, never below {G}); trample, and other creatures you control have trample (compiled)"
 
@@ -6674,6 +6710,7 @@ status = "Full"
 note = "the first time each turn you gain life it becomes prepared; at sorcery speed the AI pays {B} to cast a copy of Bloodletting (each opponent loses 2 life), which unprepares it"
 
 ["Moseo, Vein's New Dean"]
+paths_ok = "tok tag: the Pest token on entering (zones::etb_once); card code: the infusion end-step return from the graveyard (sheoldred.rs)"
 status = "Full"
 note = "flying; a Pest token entering; at your end step, if you gained life this turn, returns the best creature card with mana value at most the life gained from your graveyard"
 
@@ -6807,6 +6844,7 @@ status = "Full"
 note = "the best opposing nonland permanent goes on its owner's choice of the top or bottom of their library (tokens cease to exist, a commander goes to the command zone); then we surveil 1"
 
 ["Kasmina's Transmutation"]
+paths_ok = "rem tag (kasmina): attaches the lock as it enters (removal::etb_removal, zur::apply_lock, bulk_blue::kasmina_attach); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=kasmina tgt=c etb"
 dsl = []
@@ -6874,6 +6912,7 @@ status = "Full"
 note = "flying, ward {2}; when it enters, creatures your opponents control get -3/-0 until your next turn (DataKey::Weaken, read by values::epow; creatures that enter later are not affected)"
 
 ["Orysa, Tide Choreographer"]
+paths_ok = "compiled: the draw two on entering; card code: self_cost, {3} less with total toughness 10 (blue_cards.rs)"
 status = "Full"
 note = "costs {3} less if creatures you control have total toughness 10 or greater (self_cost); when it enters, draw two cards (compiled)"
 
@@ -6894,6 +6933,7 @@ status = "Full"
 note = "flying, hexproof (opponents' spells and abilities cannot target it)"
 
 ["Starbreach Whale"]
+paths_ok = "compiled: the surveil 2 on entering; card code: warp, its end-step exile (blue_cards.rs); the warp cast is an AI option"
 status = "Full"
 note = "flying; surveil 2 when it enters (compiled); warp {1}{U}: cast from hand for the warp cost, exiled at the beginning of the next end step, cast from exile for its mana cost on a later turn"
 
@@ -6902,6 +6942,7 @@ status = "Full"
 note = "whenever a creature you control deals combat damage to a player, you may draw that many cards (the AI does, keeping a few cards in the library); warp {2}{U}{U} as Starbreach Whale"
 
 ["Textbook Tabulator"]
+paths_ok = "compiled: the surveil 2 on entering; card code: increment on casts (blue_cards.rs)"
 status = "Full"
 note = "increment: a +1/+1 counter when the mana spent on a spell you cast is greater than its power or toughness; surveil 2 when it enters (compiled)"
 
@@ -7037,6 +7078,7 @@ status = "Full"
 note = "enter trigger: searches for the Equipment the deck needs (cloud_pick); while equipped, a trigger of Cloud or of an Equipment attached to him is queued twice (stack::queue_triggers)"
 
 ["Hero's Blade"]
+paths_ok = "compiled: +3/+2 and equip {4}; card code: the attach when a legendary creature enters (cloud.rs)"
 status = "Full"
 note = "+3/+2, equip {4}; when a legendary creature you control enters, attaches to it if loose or the new legend is the better wearer"
 
@@ -7053,14 +7095,17 @@ status = "Full"
 note = "draws when an Equipment you control enters; with three artifacts, equip costs {0} (cloud::equip_cost)"
 
 ["Magitek Scythe"]
+paths_ok = "compiled: +2/+1 and equip {2}; card code: the attach, first strike and must be blocked on entering (cloud.rs)"
 status = "Full"
 note = "enters: attaches to the best wearer, which gets first strike and must be blocked this turn if able (the AI's blocks are topped up by cloud::force_blocks); +2/+1, equip {2}"
 
 ["Squire's Lightblade"]
+paths_ok = "compiled: +1/+0 and equip {3}; card code: the attach and first strike on entering (cloud.rs)"
 status = "Full"
 note = "flash; enters: attaches to the best wearer, which gains first strike until end of turn; +1/+0, equip {3}"
 
 ["White Mage's Staff"]
+paths_ok = "compiled: +1/+1, the attack life gain and equip {3}; card code: job select's Hero on entering (cloud::staff_etb)"
 dsl = [
   { type = "static", static = "equip_bonus", pow = 1, tgh = 1 },
   { type = "triggered", event = "attack", source = "equipped", effects = [{ do = "gain_life", n = 1, who = "you" }] },
@@ -7099,10 +7144,12 @@ status = "Full"
 note = "wearer has base power and toughness 7/7 (cloud::base_pt) and can't be blocked by creatures with power 2 or less (cloud::evasion_blocked); equip legendary creature {3}, equip {7}"
 
 ["Conformer Shuriken"]
+paths_ok = "compiled: equip {2}; card code: the tap and the counters when the equipped creature attacks (cloud.rs)"
 status = "Full"
 note = "when the wearer attacks, taps the best defending creature and puts +1/+1 counters on the wearer equal to the power it has over it; equip {2}"
 
 ["Explorer's Scope"]
+paths_ok = "compiled: equip {1}; card code: the land off the top when the equipped creature attacks (cloud.rs)"
 status = "Full"
 note = "when the wearer attacks, looks at the top card and puts a land onto the battlefield tapped; equip {1}"
 
@@ -7170,6 +7217,7 @@ status = "Full"
 note = "sorcery wipe (impls/sweepers.rs): the caster's highest-power creature deals damage equal to its power to each other creature (the caster's own included) and each opponent; damage that does not kill a creature is not tracked"
 
 ["Inferno Titan"]
+paths_ok = "compiled: the {R} +1/+0; card code: the 3 damage on entering and attacking (sweepers.rs)"
 status = "Full"
 note = "firebreathing is the DSL ability; when it enters or attacks, 3 damage divided among up to three targets (impls/sweepers.rs): all at a player when that is lethal, else the best set of opposing creatures and planeswalkers it can kill, the rest to a planeswalker or the weakest opponent"
 
@@ -7199,6 +7247,7 @@ status = "Full"
 note = "flash 2/2; enters: copy target instant or sorcery spell (the AI flashes it in over a spell worth copying: an X drain or Torment of Hailfire at X >= 3, burn, draw; the copy keeps X); no combo detection (JD: no infinite combos in Sauron); with nothing worth copying the AI casts it as a plain 2/2 late"
 
 ["Dreadhorde Invasion"]
+paths_ok = "compiled: the upkeep life loss and amass; card code: lifelink for attacking Zombie tokens with power 6 or more (threats.rs)"
 status = "Full"
 note = "upkeep: lose 1 life and amass Zombies 1; a Zombie token you control with power 6 or greater gains lifelink as it attacks (the Army counts as a Zombie while Invasion is out)"
 
@@ -7411,6 +7460,7 @@ status = "Full"
 note = "draw three, then a land card from the hand onto the battlefield tapped (the AI always does)"
 
 ["Elenda, the Dusk Rose"]
+paths_ok = "compiled: the counter when another creature dies; card code: the Vampire tokens when she dies (tymna_cards.rs)"
 tags = "leg pow=1 lifelink"
 dsl = [
   { type = "triggered", effects = [{ do = "counters", n = 1, what = { sel = "self" } }], event = "dies", source = "any_creature", other = true },
@@ -7431,6 +7481,7 @@ status = "Full"
 note = "instant, three modes chosen by the AI each time it looks for a play: two +1/+1 counters on its best creature, exile their best creature with power 2 or less, or drain 3 (opponents lose 3 each, we gain 3 once)"
 
 ["Coerced to Kill"]
+paths_ok = "rem tag (coerce): attaches it as it enters (removal::etb_removal, zur::apply_lock, garland_cards::coerce_attach); card code: the aura slot is the lock Aura's spec (no bonus, no enter hook of its own; zur.rs LOCK_AURA)"
 types = "E"
 tags = "rem=coerce tgt=c etb"
 dsl = []
@@ -7954,6 +8005,7 @@ status = "Full"
 note = "landfall: a quest counter; with three, the AI removes them, sacrifices it and fetches two basic lands tapped (a card option, any main phase)"
 
 ["Mirari's Wake"]
+paths_ok = "compiled: the +1/+1 for your creatures; card code: the extra mana from your lands (t0_anikthea.rs)"
 status = "Full"
 note = "+1/+1 for your creatures is the compiled anthem; every land of yours makes one more mana of its own colours (land_mana +1; a dual makes one extra of either colour)"
 
@@ -7974,6 +8026,7 @@ status = "Full"
 note = "an enchantment entering under your control gets a token copy, once each turn (not Auras or legendary permanents)"
 
 ["Heliod, God of the Sun"]
+paths_ok = "compiled: vigilance for your other creatures and the {2}{W}{W} Cleric; card code: the devotion check and its own indestructible (t0_anikthea.rs)"
 types = "E"
 status = "Full"
 note = "indestructible; a 5/6 creature only with devotion to white 5+ (updated as permanents enter and on state checks); other creatures have vigilance and the {2}{W}{W} Cleric token are the compiled abilities"
@@ -7999,10 +8052,12 @@ status = "Full"
 note = "reach; upkeep mill two is the compiled trigger; {1}{B}{G}, exile it: return the best card in your graveyard to your hand (end of turn or main phase 2)"
 
 ["Nyxborn Behemoth"]
+paths_ok = "compiled: the indestructible ability; card code: self_cost, less by your noncreature enchantments (t0_anikthea.rs)"
 status = "Full"
 note = "costs {X} less (X: total mana value of your noncreature enchantments, at most 10; self_cost); trample; the {1}{G} sacrifice-an-enchantment indestructible ability is the compiled activation"
 
 ["Sandwurm Convergence"]
+paths_ok = "compiled: the end-step Wurm; card code: an empty attack_cap hook that marks it live for the flyer rule (t0_anikthea.rs flyer_barred)"
 status = "Full"
 note = "the 5/5 Wurm at your end step is the compiled trigger; creatures with flying can't attack you (combat::attack_limits calls flyer_barred; attacks are at players, so planeswalkers are covered)"
 
@@ -8066,6 +8121,7 @@ status = "Full"
 note = "attacking with it and/or your commander makes a tapped and attacking 1/1 red Goblin for each opponent, attacking that player; sacrifice: creature tokens gain indestructible (the AI's protector table, against a wipe or targeted removal on a token)"
 
 ["Angel of Invention"]
+paths_ok = "compiled: the +1/+1 for your other creatures; card code: fabricate 2 on entering (t0_zurgo.rs)"
 status = "Full"
 note = "flying, vigilance, lifelink; Fabricate 2 (two Servos, or counters on a lone Angel); other creatures get +1/+1"
 
@@ -8099,10 +8155,12 @@ status = "Full"
 note = "whenever an opponent is dealt combat damage by a Warrior, draw a card and lose 1 life, once for each combat"
 
 ["Myr Battlesphere"]
+paths_ok = "compiled: the four Myr on entering; card code: the tap-X-Myr attack trigger (t0_zurgo.rs)"
 status = "Full"
 note = "enters: four Myr; attacks: taps every untapped Myr, +X/+0 and X damage to the player it attacks"
 
 ["Neriv, Crackling Vanguard"]
+paths_ok = "compiled: the two Goblins on entering; card code: the attack exile (t0_zurgo.rs)"
 status = "Full"
 note = "flying, deathtouch; enters: two Goblins; attacks: exile cards equal to the differently named tokens we control (token types, Treasure, Food, Clue); they come to the hand for any turn a commander attacked, and go back to exile at its end (a land stays in hand)"
 
@@ -8245,6 +8303,7 @@ status = "Full"
 note = "{3}, {T}, sacrifice: every enchantment card in the graveyard returns to hand; the Alela AI waits for two or more"
 
 ["Dragoon's Lance"]
+paths_ok = "compiled: +1/+0 and equip {4}; card code: job select's Hero on entering (cloud::staff_etb) and flying during your turn (tymna_cards.rs)"
 dsl = [
   { type = "static", static = "equip_bonus", pow = 1, tgh = 0 },
   { type = "static", static = "equip_cost", mana = 4 },
@@ -8253,6 +8312,7 @@ status = "Full"
 note = "job select: enters with a 1/1 colorless Hero token wearing it; +1/+0, flying during its controller's turn (impls/tymna_cards.rs grant_kw), Gae Bolg equip {4}. (The wearer also becomes a Knight: nothing in the game cares)"
 
 ["Samurai's Katana"]
+paths_ok = "compiled: +2/+2, trample, haste and equip {5}; card code: job select's Hero on entering (cloud::staff_etb)"
 dsl = [
   { type = "static", static = "equip_bonus", pow = 2, tgh = 2 },
   { type = "static", static = "equip_keyword", keyword = "trample" },
@@ -8282,6 +8342,7 @@ status = "Full"
 note = "soulbond (DataKey::Soulbond, bulk_white::paladin_etb): pairs on either entry, ends when either leaves or changes control; both have double strike"
 
 ["Hidden Grotto"]
+paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 tags = "c=C"
 status = "Full"
 note = "{T}: {C}. The {1},{T}: any colour mode converts one mana into another (net zero), so it is left out (it made a free coloured mana)"
@@ -8386,10 +8447,12 @@ status = "Full"
 note = "draws a card and puts the engine cast lock (LockKind::InstSorcAbilities) on the opposing player with the most cards in hand: this turn they can't cast instants or sorceries (castable, cast_card) or activate non-mana abilities (rules::ability_locked, dsl::activate); the AI casts it at priority 0 unless its deck plan wants it"
 
 ["Daze"]
+paths_ok = "compiled: the counter, a no-op in the ability language (the engine counters through its response window by the ctr tag); card code: the alt_cost, returning an Island (t6_counters.rs)"
 status = "Full"
 note = "counter target spell unless its controller pays {1}; cast for {1}{U}, or by returning an Island you control to hand (alternative-cost slot, engine/altcost.rs); the AI pays the alternative cost when it can't pay the mana, as a Force of Will pitch (a threshold bump for the Island replayed)"
 
 ["Flare of Denial"]
+paths_ok = "compiled: the counter, a no-op in the ability language (the engine counters through its response window by the ctr tag); card code: the alt_cost, sacrificing a nontoken blue creature (t6_counters.rs)"
 status = "Full"
 note = "counter target spell; cast for {1}{U}{U}, or by sacrificing a nontoken blue creature (alternative-cost slot); the AI sacrifices the least valuable one when it can't pay the mana, at a 1.5 threshold bump per card"
 
@@ -8401,6 +8464,7 @@ status = "Full"
 note = "counter target spell if its mana value is X; cast for {X}{U}{U} or by exiling a blue card with mana value X (alternative-cost slot, counter kind ctr=mvx); the AI always chooses X equal to the spell's mana value"
 
 ["Snapback"]
+paths_ok = "compiled: the bounce; card code: the alt_cost, exiling a blue card from hand (t6_counters.rs)"
 status = "Full"
 note = "bounces the best opposing creature; cast for its mana cost, or by exiling a blue card from hand (alternative-cost slot); the AI pitches when it can't pay the mana, valuing the removal 1.5 lower per card given up"
 
@@ -8559,6 +8623,7 @@ status = "Full"
 note = "{1},{T}: a charge counter noting the colour of the mana spent (when it has none); {T}, remove it: one mana of that type later; the AI charges it in the second main phase or the end-of-turn window; no longer a free colourless rock"
 
 ["Grinding Station"]
+paths_ok = "compiled: the {T}, sacrifice an artifact mill; card code: the untap when an artifact enters (t6_mana.rs)"
 status = "Full"
 note = "{T}, sacrifice an artifact: target player mills three; whenever any artifact enters, untaps it (always taken)"
 
@@ -8631,6 +8696,7 @@ status = "Partial"
 note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"
 
 ["Sunscour"]
+paths_ok = "compiled: destroy all creatures; card code: the alt_cost, exiling two white cards from hand (t6_redirects.rs)"
 status = "Full"
 note = "destroys all creatures (the wipe=destroy tag); cast for {5}{W}{W} or by exiling two white cards from hand (alternative-cost slot); the AI pitches when it can't pay the mana, valuing the wipe 3 lower"
 
@@ -8712,6 +8778,7 @@ status = "Full"
 note = "enters: search for an Equipment and put it onto the battlefield (Helm first, Hammer first when a copier is out or in hand); first attack each turn: untap Godo and the Samurai, one additional combat; the combat loop is capped only at 200 phases a turn, so Helm's hasty tokens run the loop until the table is dead"
 
 ["Hammer of Nazahn"]
+paths_ok = "compiled: +2/+0, indestructible and equip {4}; card code: the attach when it or another Equipment enters (t6_godo.rs)"
 status = "Full"
 note = "whenever it or another Equipment you control enters, attaches that Equipment (the AI always does) to the best creature you control (Godo first, then the strongest able to attack); +2/+0, indestructible, equip {4} from the compiled abilities"
 
@@ -8720,6 +8787,7 @@ status = "Full"
 note = "attach target Equipment to target creature, free: the AI moves one of its own loose Equipment (Helm of the Host first, or Helm off another creature) onto its best creature (Godo first) and casts it only when there is such a move; it does not target opposing Equipment or creatures"
 
 ["Sting, the Glinting Dagger"]
+paths_ok = "compiled: +1/+1, haste and equip {2}; card code: the untap at each combat (t6_godo.rs)"
 status = "Partial"
 note = "+1/+1 and haste, equip {2} (compiled); untaps the equipped creature at the beginning of every player's combat (before attackers, also when nobody attacks); missing: first strike while blocking or blocked by a Goblin or Orc (rust/agents/engine-needs-godo.md)"
 
@@ -8742,6 +8810,7 @@ status = "Partial"
 note = "first main phase: the AI discards a spare card (a second land or a spell of mana value 7+), exiles the top two, may play the better one this turn (the other stays exiled); missing: convoke for noncreature spells cast from exile (rust/agents/engine-needs-godo.md)"
 
 ["Vexing Bauble"]
+paths_ok = "compiled: the {1},{T}, sacrifice draw; card code: the counter of spells cast with no mana (t6_godo.rs)"
 status = "Full"
 note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox, a free alternative cost, either player's) is countered as it is cast: it counts as cast and goes to its owner's graveyard"
 
@@ -8767,6 +8836,7 @@ status = "Full"
 note = "same as Final Fortune (sorcery): extra turn queued, loss at its end step, AI casts it only when the extra turn wins"
 
 ["Chatterstorm"]
+paths_ok = "compiled: the Squirrel token (the spell); card code: storm, the copies on cast (t0_stella::storm_copies; each copy resolves the compiled spell once)"
 status = "Full"
 note = "creates a 1/1 Squirrel; storm: when cast, a copy for each spell cast before it this turn (t6_green2 via t0_stella::storm_copies)"
 
@@ -8879,6 +8949,7 @@ status = "Partial"
 note = "+1 stops the opposing creature's combat damage until your next turn (Dovin's lock); 0: 4/4 indestructible creature until end of turn (damage to him is not prevented); 0: emblem is recorded but the can't-lose rule is not read by the engine"
 
 ["Paladin Class"]
+paths_ok = "compiled: the level 2 anthem (on at every level: no level gate yet); card code: the tax, the level-ups and the level 3 attack trigger (t6_dack.rs)"
 status = "Partial"
 note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries; level 3 pumps your best attacker +1/+1 per other attacker and gives double strike; the level 2 +1/+1 for your creatures is not applied"
 
@@ -8991,6 +9062,7 @@ status = "Full"
 note = "{G},{T}: X mana of any colours (X = greatest power among your creatures) is a dork making X-1 (the {G} netted off); whenever another creature enters its controller draws if its power is greater than every other creature's (t6_legends1.rs)"
 
 ["Emiel the Blessed"]
+paths_ok = "compiled: the {3} blink; card code: the paid +1/+1 counter when another creature enters (t6_legends1.rs)"
 status = "Full"
 note = "{3}: blink another creature you control (compiled); whenever another creature you control enters, pay {G/W} (W, else G) for a +1/+1 counter, two on a Unicorn (t6_legends1.rs)"
 
@@ -9071,6 +9143,7 @@ note = "2/2 flash; whenever you cast a noncreature spell your Birds, Frogs, Otte
 status = "Full"
 note = "instant {U}: additional cost sacrifice a legendary creature or pay {2}; counter target activated ability, triggered ability or noncreature spell. Spells: the ctr=nc tag, the engine pays {2} extra (stack::counter_cost). Abilities: the AI casts it against an important ability or trigger (cardcode::answer_ability -> t6_counters::louisoix_answer), paying {2}, or sacrificing its least valuable legendary creature when it cannot pay and that is worth less than the ability"
 ["Smaug the Magnificent"]
+paths_ok = "compiled: the upkeep Treasure; card code: the attack damage (smaug.rs)"
 status = "Full"
 note = "upkeep Treasure is the compiled upkeep ability; attacks: damage equal to your Treasures (counted as the trigger resolves) to a player it kills, else the most valuable creature or planeswalker it kills (opposing fliers and reach creatures count extra), else the opponent with the least life (impls/smaug.rs)"
 
@@ -9101,6 +9174,7 @@ status = "Full"
 note = "whenever a player casts a spell, that player discards a card (the caster chooses; Kefka's own spells too, so madness, mayhem and graveyard fuel profit). Cast when the table holds more cards than Kefka can spare, never with a combo turn in hand"
 
 ["Andúril, Narsil Reforged"]
+paths_ok = "compiled: equip {3}; card code: the +1/+1 counters on each creature when the equipped creature attacks (cloud.rs)"
 types = "A"
 tags = "leg"
 dsl = [
@@ -9201,6 +9275,7 @@ status = "Approximate"
 note = "artifact land ({T}: {C}) that counts for Karn's artifacts; indestructible is not modeled"
 
 ["Urza's Factory"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 dsl = [
   { type = "activated", cost = { mana = "7", tap = true }, effects = [{ do = "token", n = 1, pow = 2, tgh = 2, keywords = [], attacking = false, warrior = false, types = ["artifact", "assembly-worker"] }], sorcery = false, once = false },
 ]
@@ -9237,6 +9312,7 @@ status = "Approximate"
 note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), and {T}, 1 life exiles the top card (used to dig past a land it does not need). Missing: removal, wipes, X spells and counterspells on top are left alone (their targets are chosen by the hand options); a land on top is never played (the Forge does not allow it). impls/karn_engines.rs"
 
 ["Urza's Blueprints"]
+paths_ok = "compiled: the {T} draw; card code: echo at upkeep (karn_engines.rs)"
 status = "Full"
 note = "{T}: draw a card (compiled). Echo {6}: at the first upkeep the AI pays when the mana is there and spare (nine or more, or two cards or fewer in hand), otherwise it sacrifices the Blueprints (it still drew the turn it was cast). impls/karn_engines.rs"
 
@@ -9266,6 +9342,7 @@ status = "Full"
 note = "{T}: add {C}{C} and 2 damage to you (the engine's tomb tag); the AI does not tap it at 2 life or less"
 
 ["Batterskull"]
+paths_ok = "compiled: +4/+4, vigilance, lifelink and equip {5}; card code: living weapon's Germ on entering and the {3} return to hand (karn_engines.rs)"
 status = "Full"
 note = "living weapon: a 0/0 black Phyrexian Germ token enters and Batterskull attaches to it (the Germ is made with 1 toughness and set to 0/0 once attached); equipped creature gets +4/+4, vigilance and lifelink (compiled); equip {5} (compiled); {3}: return it to its owner's hand (the AI does it only when no creature carries it and it has eight mana to cast it again, not in response to removal). impls/karn_engines.rs"
 
@@ -9274,6 +9351,7 @@ status = "Full"
 note = "{3}, sacrifice: two basic lands onto the battlefield tapped (compiled). Wastes are basic: the search found none before (engine/zones.rs BASIC_LANDS), so in a colourless deck it fetched nothing"
 
 ["Hangarback Walker"]
+paths_ok = "compiled: the {1},{T} counter; card code: X in its cost and the Thopters when it dies (karn_engines.rs)"
 status = "Full"
 note = "{X}{X}: the AI casts it for X = a third of its mana (one to four; two mana per counter; not castable below two mana). It enters with X +1/+1 counters (green_cards::enters_with, before the 0/0 check; Hardened Scales applies); {1}, {T}: a +1/+1 counter (compiled); when it dies, a 1/1 flying Thopter artifact token per counter. The earlier engine cast it for nothing and it died as a 0/0. impls/karn_engines.rs"
 
@@ -9443,6 +9521,7 @@ types = "L"
 tags = "amt=2 c=WR t bounceland"
 
 ["Iroas, God of Victory"]
+paths_ok = "compiled: menace for your creatures; card code: the devotion check and its own indestructible (t3_aurelia.rs)"
 types = "E"
 
 ["Wear // Tear"]
@@ -9513,6 +9592,7 @@ tags = "leg"
 dsl = [] # the walker framework runs its three abilities (the autotagger's token tag made a token as it entered)
 
 ["Cleric Class"]
+paths_ok = "compiled: level 1, gain that much life plus 1; card code: level 2's counter when you gain life and the level-ups (t45_heliod_zur.rs)"
 dsl = [{ type = "static", static = "lifegain_plus", amount = 1 }] # level 1 only: levels 2 and 3 are hand-written
 
 ["Diplomatic Immunity"]
@@ -9701,6 +9781,7 @@ status = "Full"
 note = "hand-written: +2/+2 with three or more land cards in your graveyard; {2},{T}, sacrifice a land (a tapped one, never a key land): a land onto the battlefield tapped (the missing half of Depths and Stage, Field of the Dead, a colour)"
 
 ["Lumra, Bellow of the Woods"]
+paths_ok = "compiled: power and toughness equal to your lands; card code: the mill four and the lands back on entering (t12_windgrace.rs)"
 types = "C"
 tags = "leg reach vig pow=0 tgh=0" # */*: no printed base, the compiled count is all of it
 dsl = [{ type = "static", static = "self_scaling", pow = 1, per = "lands_you_control", base0 = true }] # its enter trigger is hand-written
@@ -9813,3 +9894,217 @@ paths_ok = "the hand-written resolve does the card; the compiled spell, each opp
 
 ["Battle Angels of Tyr"]
 pool_remove_tags = ["treas"] # the Scryfall treas tag made a Treasure as it entered; the card's Treasure is the combat-damage trigger (impls/t3_aurelia.rs), when that player has more lands (Phase 2)
+# Phase 2 (PR 5b, 2026-10-29): declared splits for cards that had no entry. Only paths_ok, read by cardgen audit --paths.
+
+["Arid Mesa"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Bloodstained Mire"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Flooded Strand"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Marsh Flats"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Misty Rainforest"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Polluted Delta"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Prismatic Vista"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Scalding Tarn"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Verdant Catacombs"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Windswept Heath"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Wooded Foothills"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Blighted Woodland"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Krosan Verge"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Myriad Landscape"]
+paths_ok = "compiled: the fetch ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); the engine's f tag cracks it (turn.rs crack_fetch); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Castle Ardenvale"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["High Market"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Maelstrom of the Spirit Dragon"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Skemfar Elderhall"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Takenuma, Abandoned Mire"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Treasure Vault"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Hanweir Battlements"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Room of Refuge"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Sinister Hideout"]
+paths_ok = "compiled: the activated ability, which never runs (a land is no permanent in the sim: dsl::ability_options reads permanents only); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Enlightenment"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Malady"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Mystery"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Plenty"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Silence"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Triumph"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Deceit"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Temple of Malice"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Zhalfirin Void"]
+paths_ok = "compiled: the scry 1 enter trigger, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx scries once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Jungle Hollow"]
+paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Scoured Barrens"]
+paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Thornwood Falls"]
+paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Radiant Fountain"]
+paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Seraph Sanctuary"]
+paths_ok = "compiled: the enter life gain, which never runs for a land (dsl::fire reads permanents only); the engine's land_etb_fx gains the life once (zones::lands_entered); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Commercial District"]
+paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Undercity Sewers"]
+paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Underground Mortuary"]
+paths_ok = "compiled: the surveil 1 enter trigger, which never runs for a land (dsl::fire reads permanents only) (no land_etb_fx either: the surveil is missing); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
+
+["Alesha, Who Laughs at Fate"]
+paths_ok = "compiled: the +1/+1 counter when she attacks; card code: the raid end-step return from the graveyard (t12_isshin.rs)"
+
+["Blade of the Bloodchief"]
+paths_ok = "compiled: equip {1}; card code: the counters on the equipped creature when a creature dies (t45_edgar.rs)"
+
+["Bonny Pall, Clearcutter"]
+paths_ok = "compiled: the draw and land drop whenever you attack; card code: the Beau token on entering (t12_tatyova_teysa.rs)"
+
+["Boromir, Warden of the Tower"]
+paths_ok = "compiled: the sacrifice ability (indestructible, the Ring tempts you); card code: the counter of opponents' spells cast with no mana (t45_winota.rs)"
+
+["Call the Spirit Dragons"]
+paths_ok = "compiled: indestructible for your Dragons; card code: the upkeep counters and the five-Dragon win (t45_urdragon.rs)"
+
+["Captain Lannery Storm"]
+paths_ok = "compiled: the Treasure when she attacks; card code: the +1/+0 when you sacrifice a Treasure (t12_isshin.rs)"
+
+["Champions of the Perfect"]
+paths_ok = "compiled: the draw when you cast a creature spell; card code: the beheld card back to hand when it leaves (t12_lathril.rs)"
+
+["Contagion Engine"]
+paths_ok = "compiled: the {4},{T} proliferate twice; card code: the -1/-1 counters on entering (t3_atraxa.rs)"
+
+["Cryogen Relic"]
+paths_ok = "draw tag: the draw as it enters (zones::etb_once); card code: the draw as it leaves (t12_brago_meren.rs); the stun sacrifice is an AI option"
+
+["Dour Port-Mage"]
+paths_ok = "compiled: the {1}{U},{T} bounce; card code: the draw when other creatures leave without dying (t12_brago_meren.rs)"
+
+["Ezuri, Stalker of Spheres"]
+paths_ok = "compiled: the draw whenever you proliferate; card code: the pay-{3} proliferate twice on entering (t3_atraxa.rs)"
+
+["Firebender Ascension"]
+paths_ok = "tok tag: the 2/2 Soldier on entering (zones::etb_once); card code: the quest counters and the copied attack triggers (t12_isshin.rs)"
+
+["Goblin King"]
+paths_ok = "compiled: the +1/+1 for other Goblins; card code: their mountainwalk (t45_krenko.rs)"
+
+["Icetill Explorer"]
+paths_ok = "compiled: the landfall mill; card code: the extra land and lands from the graveyard (t12_windgrace.rs)"
+
+["Knight of the Ebon Legion"]
+paths_ok = "compiled: the {2}{B} pump; card code: the end-step counter (t45_edgar.rs)"
+
+["Koma, Cosmos Serpent"]
+paths_ok = "compiled: can't be countered (the unc tag is the same check) and the upkeep Serpent tokens; card code: the sacrifice-a-Serpent tap and indestructible (t45_chulane_kinnan.rs)"
+
+["Mossborn Hydra"]
+paths_ok = "compiled: the landfall counter doubling; card code: the +1/+1 counter it enters with (t12_tatyova_teysa.rs)"
+
+["Myrel, Shield of Argive"]
+paths_ok = "compiled: the Soldier tokens when it attacks; card code: the cast lock during your turn (t45_winota.rs)"
+
+["Rain of Riches"]
+paths_ok = "compiled: the two Treasures on entering; card code: the cascade on a spell paid with Treasure mana (t45_prosper.rs)"
+
+["Rhys the Exiled"]
+paths_ok = "compiled: the attack life gain; card code: the sacrifice-an-Elf regeneration (t12_lathril.rs)"
+
+["Sangromancer"]
+paths_ok = "compiled: the life when an opponent's creature dies; card code: the life when an opponent discards (t3_korvold.rs)"
+
+["Soul of Windgrace"]
+paths_ok = "compiled: the three discard-a-land abilities; card code: the land from a graveyard on entering and attacking (t12_windgrace.rs)"
+
+["Tainted Observer"]
+paths_ok = "compiled: toxic 1; card code: the pay-{2} proliferate when another creature enters (t3_atraxa.rs)"
+
+["The Meathook Massacre"]
+paths_ok = "compiled: the two dies triggers; card code: the -X/-X on entering (t45_urza_yawgmoth.rs)"
+
+["The Raven Man"]
+paths_ok = "compiled: the {3}{B},{T} discard; card code: the end-step Bird (t3_korvold.rs)"
+
+["Thoughtcast"]
+paths_ok = "compiled: draw two; card code: self_cost, affinity for artifacts (t45_urza_yawgmoth.rs)"
+
+["Thought Monitor"]
+paths_ok = "compiled: the draw two on entering; card code: self_cost, affinity for artifacts (t45_urza_yawgmoth.rs)"
+
+["Thran Power Suit"]
+paths_ok = "compiled: equip {2}; card code: the +1/+1 per Aura and Equipment (creature_pt, t12_lightpaws.rs)"
+
+["Vito, Thorn of the Dusk Rose"]
+paths_ok = "compiled: the {3}{B}{B} lifelink; card code: the life loss when you gain life (t45_edgar.rs)"
+
+["Voice of the Blessed"]
+paths_ok = "compiled: the counter when you gain life; card code: flying, vigilance and indestructible by its counters (t45_heliod_zur.rs)"
+
+["Weaver of Harmony"]
+paths_ok = "compiled: the +1/+1 for other enchantment creatures; card code: the copied draw trigger (t12_kaalia_sythis.rs)"

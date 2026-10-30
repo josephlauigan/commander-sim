@@ -1,0 +1,2253 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "zur-esper-enchantment-control",
+  "commanders": [
+    "Zur the Enchanter"
+  ],
+  "request_sha256": "a574478f70541c1c96c870e9cd47f5dc65afd10cded379726b45a2d0d4751abe",
+  "identity": "WUB",
+  "included": [
+    {
+      "id": "1274-3693",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 52877
+    },
+    {
+      "id": "4053-4551",
+      "cards": [
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "You can't lose the game due to having 0 or less life"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10660
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "742-1295",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 149999,
+      "missing": [
+        "Demonic Consultation"
+      ]
+    },
+    {
+      "id": "1295-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 131950,
+      "missing": [
+        "Tainted Pact"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "553-2856",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 25629,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "184-2210-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirrormade",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Mirrormade on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 17147,
+      "missing": [
+        "Faerie Mastermind"
+      ]
+    },
+    {
+      "id": "1295-3189",
+      "cards": [
+        {
+          "name": "Doomsday",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou have at least three devotion to blue.",
+      "mana": "{U}{U}{B}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14610,
+      "missing": [
+        "Doomsday"
+      ]
+    },
+    {
+      "id": "184-736-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Copy Enchantment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Copy Enchantment on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12727,
+      "missing": [
+        "Faerie Mastermind"
+      ]
+    },
+    {
+      "id": "953-1295",
+      "cards": [
+        {
+          "name": "Enter the Infinite",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H",
+            "L"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12668,
+      "missing": [
+        "Enter the Infinite"
+      ]
+    },
+    {
+      "id": "2919-3693",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12571,
+      "missing": [
+        "Archangel of Thune"
+      ]
+    },
+    {
+      "id": "628-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Walking Ballista on the battlefield with a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12092,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9642,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "104-3693",
+      "cards": [
+        {
+          "name": "Cleric Class",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Cleric Class is at least level two.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9555,
+      "missing": [
+        "Cleric Class"
+      ]
+    },
+    {
+      "id": "1068-1295",
+      "cards": [
+        {
+          "name": "Leveler",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9289,
+      "missing": [
+        "Leveler"
+      ]
+    },
+    {
+      "id": "1177-2286",
+      "cards": [
+        {
+          "name": "Narset, Parter of Veils",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Puzzle Box",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8390,
+      "missing": [
+        "Teferi's Puzzle Box"
+      ]
+    },
+    {
+      "id": "1025-4682",
+      "cards": [
+        {
+          "name": "Stasis",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8374,
+      "missing": [
+        "Stasis"
+      ]
+    },
+    {
+      "id": "1211-4603",
+      "cards": [
+        {
+          "name": "Maralen of the Mornsong",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Opposition Agent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8054,
+      "missing": [
+        "Maralen of the Mornsong"
+      ]
+    },
+    {
+      "id": "553-1827",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vampiric Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7437,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1274-1495",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6308,
+      "missing": [
+        "Triskelion"
+      ]
+    },
+    {
+      "id": "3031-3903",
+      "cards": [
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6119,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "389-4053",
+      "cards": [
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nine Lives",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5917,
+      "missing": [
+        "Nine Lives"
+      ]
+    },
+    {
+      "id": "1871-4053",
+      "cards": [
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Decree of Silence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4963,
+      "missing": [
+        "Decree of Silence"
+      ]
+    },
+    {
+      "id": "1211-7271",
+      "cards": [
+        {
+          "name": "Mornsong Aria",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Opposition Agent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4789,
+      "missing": [
+        "Mornsong Aria"
+      ]
+    },
+    {
+      "id": "2656-3591--84",
+      "cards": [
+        {
+          "name": "Repay in Kind",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Near-infinite lifeloss for all players",
+        "Near-infinite looting"
+      ],
+      "requires": [
+        "Permanent with \"You don't lose the game due to having 0 or less life\""
+      ],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4338,
+      "missing": [
+        "Repay in Kind"
+      ]
+    },
+    {
+      "id": "3002-5065",
+      "cards": [
+        {
+          "name": "Helm of Obedience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rest in Peace",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Exile target opponent's library"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4264,
+      "missing": [
+        "Helm of Obedience"
+      ]
+    },
+    {
+      "id": "1295-2853",
+      "cards": [
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thought Lash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4262,
+      "missing": [
+        "Thought Lash"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "2568-3002",
+      "cards": [
+        {
+          "name": "Energy Field",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rest in Peace",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3871,
+      "missing": [
+        "Energy Field"
+      ]
+    },
+    {
+      "id": "1295-3367",
+      "cards": [
+        {
+          "name": "Paradigm Shift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "The number of cards in your graveyard is less than two plus your devotion to blue.",
+      "mana": "{1}{U}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3694,
+      "missing": [
+        "Paradigm Shift"
+      ]
+    },
+    {
+      "id": "125-3903",
+      "cards": [
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rule of Law",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3465,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "553-3591",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W} each turn",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2629,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "3031-5201",
+      "cards": [
+        {
+          "name": "Uba Mask",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2568,
+      "missing": [
+        "Uba Mask"
+      ]
+    },
+    {
+      "id": "335-4551",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2421,
+      "missing": [
+        "Ad Nauseam"
+      ]
+    },
+    {
+      "id": "338-3693",
+      "cards": [
+        {
+          "name": "Light of Promise",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Light of Promise attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2420,
+      "missing": [
+        "Light of Promise"
+      ]
+    },
+    {
+      "id": "1725-3031",
+      "cards": [
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2403,
+      "missing": [
+        "Omen Machine"
+      ]
+    },
+    {
+      "id": "3946-4053",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2345,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "1761-4053",
+      "cards": [
+        {
+          "name": "Delaying Shield",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2293,
+      "missing": [
+        "Delaying Shield"
+      ]
+    },
+    {
+      "id": "3002-3935",
+      "cards": [
+        {
+          "name": "Web of Inertia",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rest in Peace",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2279,
+      "missing": [
+        "Web of Inertia"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "672-3903",
+      "cards": [
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eidolon of Rhetoric",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2193,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
+      "id": "1295-4267",
+      "cards": [
+        {
+          "name": "Divining Witch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "another card in hand.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2035,
+      "missing": [
+        "Divining Witch"
+      ]
+    },
+    {
+      "id": "1761-4551",
+      "cards": [
+        {
+          "name": "Delaying Shield",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "You are unable to lose the game due to damage or lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1813,
+      "missing": [
+        "Delaying Shield"
+      ]
+    },
+    {
+      "id": "184-4682-4948",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Estrid's Invocation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Estrid's Invocation on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1459,
+      "missing": [
+        "Faerie Mastermind"
+      ]
+    },
+    {
+      "id": "3693-6996",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Destined White Mage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1300,
+      "missing": [
+        "The Destined White Mage"
+      ]
+    },
+    {
+      "id": "1164-1295",
+      "cards": [
+        {
+          "name": "Mirror of Fate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1241,
+      "missing": [
+        "Mirror of Fate"
+      ]
+    },
+    {
+      "id": "3693-4017",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sunbond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Sunbond attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1091,
+      "missing": [
+        "Sunbond"
+      ]
+    },
+    {
+      "id": "3591-4551-8089",
+      "cards": [
+        {
+          "name": "Mister Negative",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1012,
+      "missing": [
+        "Mister Negative"
+      ]
+    },
+    {
+      "id": "1295-5909",
+      "cards": [
+        {
+          "name": "Doomsday Excruciator",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your devotion to blue is at least 4.",
+      "mana": "{U}{U} and six {B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 979,
+      "missing": [
+        "Doomsday Excruciator"
+      ]
+    },
+    {
+      "id": "1624-3591",
+      "cards": [
+        {
+          "name": "Near-Death Experience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 978,
+      "missing": [
+        "Near-Death Experience"
+      ]
+    },
+    {
+      "id": "3350-3591-4551",
+      "cards": [
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Axis of Mortality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target player loses the game on each of your turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 895,
+      "missing": [
+        "Axis of Mortality"
+      ]
+    },
+    {
+      "id": "3693-6824",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man, Peter Parker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 764,
+      "missing": [
+        "Spider-Man, Peter Parker"
+      ]
+    },
+    {
+      "id": "2057-3591",
+      "cards": [
+        {
+          "name": "Ashiok, Wicked Manipulator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 726,
+      "missing": [
+        "Ashiok, Wicked Manipulator"
+      ]
+    },
+    {
+      "id": "2210-4112",
+      "cards": [
+        {
+          "name": "Sharuum the Hegemon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirrormade",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 711,
+      "missing": [
+        "Sharuum the Hegemon"
+      ]
+    },
+    {
+      "id": "1530-3208",
+      "cards": [
+        {
+          "name": "Second Chance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hall of Heliod's Generosity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have 5 or less life.",
+      "mana": "{3}{U}{W} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 680,
+      "missing": [
+        "Second Chance"
+      ]
+    },
+    {
+      "id": "678-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 650,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "1295-4899",
+      "cards": [
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 611,
+      "missing": [
+        "Phyrexian Devourer"
+      ]
+    },
+    {
+      "id": "2210-3790",
+      "cards": [
+        {
+          "name": "Mystic Barrier",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirrormade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least two opponents.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 488,
+      "missing": [
+        "Mystic Barrier"
+      ]
+    },
+    {
+      "id": "253-3591-4551",
+      "cards": [
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soul Conduit",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target player loses the game on each of your turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 480,
+      "missing": [
+        "Soul Conduit"
+      ]
+    },
+    {
+      "id": "4053-4437",
+      "cards": [
+        {
+          "name": "Celestial Convergence",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "You have the highest life total.",
+      "mana": "{2}{W}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 476,
+      "missing": [
+        "Celestial Convergence"
+      ]
+    },
+    {
+      "id": "3790-4948",
+      "cards": [
+        {
+          "name": "Mystic Barrier",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Estrid's Invocation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least two opponents.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 435,
+      "missing": [
+        "Mystic Barrier"
+      ]
+    },
+    {
+      "id": "736-3790",
+      "cards": [
+        {
+          "name": "Mystic Barrier",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Copy Enchantment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least two opponents.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 430,
+      "missing": [
+        "Mystic Barrier"
+      ]
+    },
+    {
+      "id": "937-3591-4551",
+      "cards": [
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target player loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 428,
+      "missing": [
+        "Magus of the Mirror"
+      ]
+    },
+    {
+      "id": "3031-4398",
+      "cards": [
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eye of the Storm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 349,
+      "missing": [
+        "Eye of the Storm"
+      ]
+    },
+    {
+      "id": "1530-3175",
+      "cards": [
+        {
+          "name": "Second Chance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have 5 or less life.\nOpponents can not kill Sun Titan when you attack.\nSun Titan does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 262,
+      "missing": [
+        "Second Chance"
+      ]
+    },
+    {
+      "id": "2018-3693-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Luminous Broodmoth"
+      ]
+    },
+    {
+      "id": "1530-2210-4948",
+      "cards": [
+        {
+          "name": "Second Chance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirrormade",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Estrid's Invocation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "mana to cast it.\n5 or less life.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 243,
+      "missing": [
+        "Second Chance"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "845-3031",
+      "cards": [
+        {
+          "name": "Drannith Magistrate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shared Fate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 201,
+      "missing": [
+        "Shared Fate"
+      ]
+    },
+    {
+      "id": "1295-2679",
+      "cards": [
+        {
+          "name": "Sacred Guide",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "There are no white cards in library.",
+      "mana": "{1}{W}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 189,
+      "missing": [
+        "Sacred Guide"
+      ]
+    },
+    {
+      "id": "1617-3693",
+      "cards": [
+        {
+          "name": "Bellowing Aegisaur",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on most creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters.\nYou have a way to give Bellowing Aegisaur indestructible.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 186,
+      "missing": [
+        "Bellowing Aegisaur"
+      ]
+    },
+    {
+      "id": "3005-3693",
+      "cards": [
+        {
+          "name": "Mephidross Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 108,
+      "missing": [
+        "Mephidross Vampire"
+      ]
+    },
+    {
+      "id": "1295-1720-4551",
+      "cards": [
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Phyrexian Unlife",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spoils of the Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 97,
+      "missing": [
+        "Spoils of the Vault"
+      ]
+    },
+    {
+      "id": "125-2145",
+      "cards": [
+        {
+          "name": "Erayo, Soratami Ascendant // Erayo's Essence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rule of Law",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Erayo, Soratami Ascendant flipped.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Erayo, Soratami Ascendant // Erayo's Essence"
+      ]
+    },
+    {
+      "id": "672-2145",
+      "cards": [
+        {
+          "name": "Erayo, Soratami Ascendant // Erayo's Essence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eidolon of Rhetoric",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Erayo, Soratami Ascendant flipped.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Erayo, Soratami Ascendant // Erayo's Essence"
+      ]
+    }
+  ]
+}

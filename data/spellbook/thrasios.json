@@ -1,0 +1,1472 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "thrasios",
+  "commanders": [
+    "Tymna the Weaver",
+    "Thrasios, Triton Hero"
+  ],
+  "request_sha256": "28fdb9179fbf0ec29e87e17690352068c2f9a311c4f4830d752590886d70ff82",
+  "identity": "GWUB",
+  "included": [
+    {
+      "id": "4131-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 53795
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "4131-4547",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66280,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 55147,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "1274-3693",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 52877,
+      "missing": [
+        "Heliod, Sun-Crowned"
+      ]
+    },
+    {
+      "id": "129-4131",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 46905,
+      "missing": [
+        "Kinnan, Bonder Prodigy"
+      ]
+    },
+    {
+      "id": "4131-5390",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 26462,
+      "missing": [
+        "Forensic Gadgeteer"
+      ]
+    },
+    {
+      "id": "3430-4131",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nyxbloom Ancient",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 15170,
+      "missing": [
+        "Nyxbloom Ancient"
+      ]
+    },
+    {
+      "id": "2919-3693",
+      "cards": [
+        {
+          "name": "Archangel of Thune",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12571,
+      "missing": [
+        "Archangel of Thune"
+      ]
+    },
+    {
+      "id": "628-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Walking Ballista on the battlefield with a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12092,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11993,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "4131-5149",
+      "cards": [
+        {
+          "name": "Power Artifact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Power Artifact attached to Basalt Monolith.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10936,
+      "missing": [
+        "Power Artifact"
+      ]
+    },
+    {
+      "id": "570-4222",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10155,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "4131-4684",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10060,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "1090-4200",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9616,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "104-3693",
+      "cards": [
+        {
+          "name": "Cleric Class",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Cleric Class is at least level two.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9555,
+      "missing": [
+        "Cleric Class"
+      ]
+    },
+    {
+      "id": "570-3525",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5153,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "553-5273",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Diabolic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{14}{W}{W}{B}{B}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 3997,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "570-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3971,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "579-4131",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Reflection",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 3429,
+      "missing": [
+        "Mana Reflection"
+      ]
+    },
+    {
+      "id": "2581-5065",
+      "cards": [
+        {
+          "name": "Helm of Obedience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dauthi Voidwalker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Exile target opponent's library"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2847,
+      "missing": [
+        "Helm of Obedience"
+      ]
+    },
+    {
+      "id": "74-4131",
+      "cards": [
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2576,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "338-3693",
+      "cards": [
+        {
+          "name": "Light of Promise",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Light of Promise attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2420,
+      "missing": [
+        "Light of Promise"
+      ]
+    },
+    {
+      "id": "570-876-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2325,
+      "missing": [
+        "Emiel the Blessed"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "4131-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1528,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "3693-6996",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Destined White Mage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1300,
+      "missing": [
+        "The Destined White Mage"
+      ]
+    },
+    {
+      "id": "3693-4017",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sunbond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Sunbond attached to Walking Ballista.\nWalking Ballista has at least two +1/+1 counters on it.\nYou have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1091,
+      "missing": [
+        "Sunbond"
+      ]
+    },
+    {
+      "id": "570-4896",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Alert",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite green mana",
+        "Infinite black mana",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nYou control a black and a red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1076,
+      "missing": [
+        "High Alert"
+      ]
+    },
+    {
+      "id": "570-4019",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nFaeburrow Elder has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 868,
+      "missing": [
+        "Vigean Graftmage"
+      ]
+    },
+    {
+      "id": "3693-6824",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man, Peter Parker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 764,
+      "missing": [
+        "Spider-Man, Peter Parker"
+      ]
+    },
+    {
+      "id": "678-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 650,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "570-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 532,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "570-876-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 526,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "3693-5017",
+      "cards": [
+        {
+          "name": "Urban Daggertooth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite proliferate"
+      ],
+      "requires": [],
+      "prerequisites": "Urban Daggertooth has at least one +1/+1 counter.\nWalking Ballista has at least two +1/+1 counters.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 521,
+      "missing": [
+        "Urban Daggertooth"
+      ]
+    },
+    {
+      "id": "195-570",
+      "cards": [
+        {
+          "name": "Chain Stasis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.There are at least four colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 489,
+      "missing": [
+        "Chain Stasis"
+      ]
+    },
+    {
+      "id": "3693-7743",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heroic Feast",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 443,
+      "missing": [
+        "Heroic Feast"
+      ]
+    },
+    {
+      "id": "570-1995",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.\nThere are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 394,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "1530-3175",
+      "cards": [
+        {
+          "name": "Second Chance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have 5 or less life.\nOpponents can not kill Sun Titan when you attack.\nSun Titan does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 262,
+      "missing": [
+        "Second Chance"
+      ]
+    },
+    {
+      "id": "712-4131",
+      "cards": [
+        {
+          "name": "Wake Thrasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Wake Thrasher"
+      ]
+    },
+    {
+      "id": "3778-7299",
+      "cards": [
+        {
+          "name": "Biorhythm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Austere Command",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}{G}{G}{W}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 234,
+      "missing": [
+        "Biorhythm"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "1617-3693",
+      "cards": [
+        {
+          "name": "Bellowing Aegisaur",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on most creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters.\nYou have a way to give Bellowing Aegisaur indestructible.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 186,
+      "missing": [
+        "Bellowing Aegisaur"
+      ]
+    },
+    {
+      "id": "1090-4875",
+      "cards": [
+        {
+          "name": "Conspiracy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Any creature type besides \"Angel\" chosen with Conspiracy.",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 140,
+      "missing": [
+        "Conspiracy"
+      ]
+    },
+    {
+      "id": "2190-3693",
+      "cards": [
+        {
+          "name": "Vraska, Swarm's Eminence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters.\nYou have a way to give Walking Ballista deathtouch.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 113,
+      "missing": [
+        "Vraska, Swarm's Eminence"
+      ]
+    },
+    {
+      "id": "3005-3693",
+      "cards": [
+        {
+          "name": "Mephidross Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 108,
+      "missing": [
+        "Mephidross Vampire"
+      ]
+    },
+    {
+      "id": "8169-8170",
+      "cards": [
+        {
+          "name": "Spell Queller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flickering Hound",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have two creature cards in hand with mana value 4 or less and the mana to cast both of them.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Spell Queller"
+      ]
+    },
+    {
+      "id": "876-2581-2882",
+      "cards": [
+        {
+          "name": "Dauthi Voidwalker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Infinite Reflection",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Infinite Reflection attached to Dauthi Voidwalker.\nYou control at least one additional nontoken creature.\nAn opponent has a creature card in exile with a void counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 28,
+      "missing": [
+        "Infinite Reflection"
+      ]
+    },
+    {
+      "id": "3693-5006-8170",
+      "cards": [
+        {
+          "name": "Lurrus of the Dream-Den",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flickering Hound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "H",
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You haven't cast a spell using Lurrus this turn if Walking Ballista is in your graveyard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5,
+      "missing": [
+        "Lurrus of the Dream-Den"
+      ]
+    }
+  ]
+}

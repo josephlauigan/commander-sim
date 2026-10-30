@@ -1,0 +1,3171 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "scion",
+  "commanders": [
+    "Scion of the Ur-Dragon"
+  ],
+  "request_sha256": "db02ac7337b4c7008a831c77f7b3422e1b9b6e9b2e11ce8de22a01b8f465894b",
+  "identity": "WUBRG",
+  "included": [
+    {
+      "id": "742-1295",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 149999
+    },
+    {
+      "id": "1295-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 131950
+    },
+    {
+      "id": "1368-1414-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H",
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in your graveyard, plus an additional four cards if Brain Freeze is in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 118447
+    },
+    {
+      "id": "1368-3518-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in hand and/or graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 96133
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1368-2706-3518",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in hand and/or graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 88410,
+      "missing": [
+        "Wheel of Fortune"
+      ]
+    },
+    {
+      "id": "513-2364--47",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}{C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 78094,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1561-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Near-infinite card draw for target opponent",
+        "Near-infinite damage",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size which is larger than or equal to their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 46618,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "1368-3698--44",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinding Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mana among colors of legendary creatures and planeswalkers you control"
+      ],
+      "requires": [
+        "Artifact Castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 41064,
+      "missing": [
+        "Grinding Station"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "778-3750",
+      "cards": [
+        {
+          "name": "Ancient Copper Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite combat damage",
+        "Near-infinite Treasure tokens",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Ancient Copper Dragon cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 31278,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "1792-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29978,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "1792-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29557,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "3940-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haze of Rage",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinitely powerful creatures you control until end of turn",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast at least three spells this turn.",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27594,
+      "missing": [
+        "Haze of Rage"
+      ]
+    },
+    {
+      "id": "1368-2706-4682",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "At least one opponent is unable to pay for Smothering Tithe's trigger.\nYou have at least three other cards in your graveyard, plus an additional three cards between your graveyard and/or hand.",
+      "mana": "{2}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 26030,
+      "missing": [
+        "Wheel of Fortune"
+      ]
+    },
+    {
+      "id": "553-2856",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 25629,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1792-2364-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22471,
+      "missing": [
+        "Retraction Helix"
+      ]
+    },
+    {
+      "id": "184-2210-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirrormade",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Mirrormade on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 17147,
+      "missing": [
+        "Mirrormade"
+      ]
+    },
+    {
+      "id": "1458-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16819,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "1458-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16555,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "742-2836",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14645,
+      "missing": [
+        "Laboratory Maniac"
+      ]
+    },
+    {
+      "id": "1295-3189",
+      "cards": [
+        {
+          "name": "Doomsday",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou have at least three devotion to blue.",
+      "mana": "{U}{U}{B}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14610,
+      "missing": [
+        "Doomsday"
+      ]
+    },
+    {
+      "id": "542-2364",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}{C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13995,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "129-184-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 13572,
+      "missing": [
+        "Kinnan, Bonder Prodigy"
+      ]
+    },
+    {
+      "id": "184-736-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Copy Enchantment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Copy Enchantment on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12727,
+      "missing": [
+        "Copy Enchantment"
+      ]
+    },
+    {
+      "id": "953-1295",
+      "cards": [
+        {
+          "name": "Enter the Infinite",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H",
+            "L"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12668,
+      "missing": [
+        "Enter the Infinite"
+      ]
+    },
+    {
+      "id": "1458-2364-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12663,
+      "missing": [
+        "Banishing Knack"
+      ]
+    },
+    {
+      "id": "1295-4400",
+      "cards": [
+        {
+          "name": "Hermit Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Hermit Druid does not have summoning sickness.\nYou have no basic lands in library.",
+      "mana": "{G}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10398,
+      "missing": [
+        "Hermit Druid"
+      ]
+    },
+    {
+      "id": "184-4682-4753",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Clever Impersonator",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Clever Impersonator on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9986,
+      "missing": [
+        "Clever Impersonator"
+      ]
+    },
+    {
+      "id": "2836-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name. You have a way to draw a card.",
+      "mana": "{1}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9645,
+      "missing": [
+        "Laboratory Maniac"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9642,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "2655-5195",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9600,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "742-3096",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jace, Wielder of Mysteries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 9511,
+      "missing": [
+        "Jace, Wielder of Mysteries"
+      ]
+    },
+    {
+      "id": "1068-1295",
+      "cards": [
+        {
+          "name": "Leveler",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9289,
+      "missing": [
+        "Leveler"
+      ]
+    },
+    {
+      "id": "184-4682-4893",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite colored mana",
+        "Near-infinite colorless mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 8724,
+      "missing": [
+        "Training Grounds"
+      ]
+    },
+    {
+      "id": "790-1368-4682",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Windfall",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "A player has at least three cards in hand.\nThere are at least three additional cards in your graveyard.\nAt least one opponent is unable to pay for Smothering Tithe's trigger.",
+      "mana": "{2}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 8427,
+      "missing": [
+        "Windfall"
+      ]
+    },
+    {
+      "id": "1025-4682",
+      "cards": [
+        {
+          "name": "Stasis",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8374,
+      "missing": [
+        "Stasis"
+      ]
+    },
+    {
+      "id": "5940-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Return the Favor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{1}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7746,
+      "missing": [
+        "Return the Favor"
+      ]
+    },
+    {
+      "id": "553-1827",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vampiric Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7437,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "3093-3096",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jace, Wielder of Mysteries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7050,
+      "missing": [
+        "Jace, Wielder of Mysteries"
+      ]
+    },
+    {
+      "id": "2055-3518",
+      "cards": [
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Auriok Salvagers",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Return some artifact cards from your graveyard to your hand"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6668,
+      "missing": [
+        "Auriok Salvagers"
+      ]
+    },
+    {
+      "id": "184-1912-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite colored mana",
+        "Near-infinite colorless mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5903,
+      "missing": [
+        "Biomancer's Familiar"
+      ]
+    },
+    {
+      "id": "693-1368",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Path of the Pyromancer",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5542,
+      "missing": [
+        "Path of the Pyromancer"
+      ]
+    },
+    {
+      "id": "326-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chain of Smog",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5526,
+      "missing": [
+        "Chain of Smog"
+      ]
+    },
+    {
+      "id": "1295-2853",
+      "cards": [
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thought Lash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4262,
+      "missing": [
+        "Thought Lash"
+      ]
+    },
+    {
+      "id": "1295-3367",
+      "cards": [
+        {
+          "name": "Paradigm Shift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "The number of cards in your graveyard is less than two plus your devotion to blue.",
+      "mana": "{1}{U}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3694,
+      "missing": [
+        "Paradigm Shift"
+      ]
+    },
+    {
+      "id": "1368-2172-5195",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Burning Inquiry",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.",
+      "mana": "{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 3621,
+      "missing": [
+        "Burning Inquiry"
+      ]
+    },
+    {
+      "id": "3368-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{1}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3147,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "5026-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reverberate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2883,
+      "missing": [
+        "Reverberate"
+      ]
+    },
+    {
+      "id": "553-3591",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{W} each turn",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2629,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "60-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Expansion // Explosion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{U/R}{U/R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2361,
+      "missing": [
+        "Expansion // Explosion"
+      ]
+    },
+    {
+      "id": "553-742",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your deck size is at least seven.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2039,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1295-4267",
+      "cards": [
+        {
+          "name": "Divining Witch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "another card in hand.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2035,
+      "missing": [
+        "Divining Witch"
+      ]
+    },
+    {
+      "id": "184-3809-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite colored mana",
+        "Near-infinite colorless mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1984,
+      "missing": [
+        "Goldspan Dragon"
+      ]
+    },
+    {
+      "id": "184-2713-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zirda, the Dawnwaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite colored mana",
+        "Near-infinite colorless mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{1}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1947,
+      "missing": [
+        "Zirda, the Dawnwaker"
+      ]
+    },
+    {
+      "id": "4285-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Increasing Vengeance",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1928,
+      "missing": [
+        "Increasing Vengeance"
+      ]
+    },
+    {
+      "id": "3862-6804",
+      "cards": [
+        {
+          "name": "Requiem Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Near-infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls an indestructible creature, or you have a way to give an opponent's creature indestructible.\nYou have a way to deal damage to the indestructible creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1821,
+      "missing": [
+        "Requiem Monolith"
+      ]
+    },
+    {
+      "id": "5938-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flare of Duplication",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{1}{R}{R} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1662,
+      "missing": [
+        "Flare of Duplication"
+      ]
+    },
+    {
+      "id": "184-4682-4948",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Estrid's Invocation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "Estrid's Invocation on the battlefield as a copy of Smothering Tithe\nYou have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1459,
+      "missing": [
+        "Estrid's Invocation"
+      ]
+    },
+    {
+      "id": "553-3093",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "NOTE: This combo fails if two of the top six cards of your library share a name.",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1287,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1164-1295",
+      "cards": [
+        {
+          "name": "Mirror of Fate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1241,
+      "missing": [
+        "Mirror of Fate"
+      ]
+    },
+    {
+      "id": "184-1469-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Court of Vantress",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1100,
+      "missing": [
+        "Court of Vantress"
+      ]
+    },
+    {
+      "id": "1623-2293",
+      "cards": [
+        {
+          "name": "Guile",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flusterstorm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant or sorcery card in hand.",
+      "mana": "{U} plus enough mana to cast the instant or sorcery card",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1027,
+      "missing": [
+        "Guile"
+      ]
+    },
+    {
+      "id": "1295-5909",
+      "cards": [
+        {
+          "name": "Doomsday Excruciator",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your devotion to blue is at least 4.",
+      "mana": "{U}{U} and six {B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 979,
+      "missing": [
+        "Doomsday Excruciator"
+      ]
+    },
+    {
+      "id": "1624-3591",
+      "cards": [
+        {
+          "name": "Near-Death Experience",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game at the beginning of your next upkeep"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 978,
+      "missing": [
+        "Near-Death Experience"
+      ]
+    },
+    {
+      "id": "1534-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Twincast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 909,
+      "missing": [
+        "Twincast"
+      ]
+    },
+    {
+      "id": "1368-4682-4950",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reforge the Soul",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "At least one opponent is unable to pay for Smothering Tithe's trigger.\nYou have at least three other cards in your graveyard, plus an additional three cards between your graveyard and/or hand.",
+      "mana": "{3}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 885,
+      "missing": [
+        "Reforge the Soul"
+      ]
+    },
+    {
+      "id": "184-4659-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krark-Clan Ironworks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 780,
+      "missing": [
+        "Krark-Clan Ironworks"
+      ]
+    },
+    {
+      "id": "2677-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flumph",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on certain creatures",
+        "Near-infinite card draw for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Flumph indestructible.\nYou have a way to deal damage to Flumph.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 773,
+      "missing": [
+        "Flumph"
+      ]
+    },
+    {
+      "id": "3591-7792",
+      "cards": [
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cool but Rude",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 767,
+      "missing": [
+        "Cool but Rude"
+      ]
+    },
+    {
+      "id": "2057-3591",
+      "cards": [
+        {
+          "name": "Ashiok, Wicked Manipulator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 726,
+      "missing": [
+        "Ashiok, Wicked Manipulator"
+      ]
+    },
+    {
+      "id": "742-1061",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Timestream Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have six or more cards in your library. You have the city's blessing",
+      "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 672,
+      "missing": [
+        "Timestream Navigator"
+      ]
+    },
+    {
+      "id": "1295-4899",
+      "cards": [
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 611,
+      "missing": [
+        "Phyrexian Devourer"
+      ]
+    },
+    {
+      "id": "184-2500-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirage Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens",
+        "Infinite card draw for all players"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two opponents which are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{5}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 579,
+      "missing": [
+        "Mirage Mirror"
+      ]
+    },
+    {
+      "id": "184-3430-4682",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nyxbloom Ancient",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two opponents who are unable to pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 513,
+      "missing": [
+        "Nyxbloom Ancient"
+      ]
+    },
+    {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 510,
+      "missing": [
+        "Fblthp, Impossibly Lost"
+      ]
+    },
+    {
+      "id": "184-4682-5921",
+      "cards": [
+        {
+          "name": "Faerie Mastermind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirror Room // Fractured Realm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for all players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least two opponents which are unable to pay for Smothering Tithe's trigger.\nFractured Realm is unlocked.",
+      "mana": "{3}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 480,
+      "missing": [
+        "Mirror Room // Fractured Realm"
+      ]
+    },
+    {
+      "id": "966-5195-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unsubstantiate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite Treasure tokens",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have another nonland card in hand with the mana to cast it and applicable targets if needed.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 438,
+      "missing": [
+        "Unsubstantiate"
+      ]
+    },
+    {
+      "id": "1295-4059",
+      "cards": [
+        {
+          "name": "Dance with Calamity",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{U}{U}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 428,
+      "missing": [
+        "Dance with Calamity"
+      ]
+    },
+    {
+      "id": "1368-1414-3075-4856",
+      "cards": [
+        {
+          "name": "Mizzix of the Izmagnus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one experience counter.\nYou have a storm count of at least one.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 413,
+      "missing": [
+        "Mizzix of the Izmagnus"
+      ]
+    },
+    {
+      "id": "3491-5195-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Remand",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite card draw",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have another nonland card in hand with the mana to cast it and applicable targets if needed.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 402,
+      "missing": [
+        "Remand"
+      ]
+    },
+    {
+      "id": "109-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fork",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 375,
+      "missing": [
+        "Fork"
+      ]
+    },
+    {
+      "id": "5941-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wild Ricochet",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{2}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 311,
+      "missing": [
+        "Wild Ricochet"
+      ]
+    },
+    {
+      "id": "1368-5195-6321",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Malevolent Rumble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.",
+      "mana": "{1}{G}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 231,
+      "missing": [
+        "Malevolent Rumble"
+      ]
+    },
+    {
+      "id": "1295-2679",
+      "cards": [
+        {
+          "name": "Sacred Guide",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "There are no white cards in library.",
+      "mana": "{1}{W}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 189,
+      "missing": [
+        "Sacred Guide"
+      ]
+    },
+    {
+      "id": "469-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Insidious Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{2}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 165,
+      "missing": [
+        "Insidious Will"
+      ]
+    },
+    {
+      "id": "3718-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chain of Acid",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control an indestructible non-creature permanent.",
+      "mana": "{3}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 150,
+      "missing": [
+        "Chain of Acid"
+      ]
+    },
+    {
+      "id": "46-7683",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Refuse // Cooperate",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
+      "mana": "{2}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 113,
+      "missing": [
+        "Refuse // Cooperate"
+      ]
+    },
+    {
+      "id": "1368-1396-4682",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whispering Madness",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "A player has at least four cards in hand.\nThere are at least three additional cards in your graveyard.\nAt least one opponent is unable to pay for Smothering Tithe's trigger.",
+      "mana": "{2}{U}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 100,
+      "missing": [
+        "Whispering Madness"
+      ]
+    },
+    {
+      "id": "1366-1368-1414",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glimpse the Unthinkable",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three additional cards in your graveyard.",
+      "mana": "{U/B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 93,
+      "missing": [
+        "Glimpse the Unthinkable"
+      ]
+    },
+    {
+      "id": "1366-1368-3518",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glimpse the Unthinkable",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three additional cards between your graveyard and/or hand.",
+      "mana": "{U/B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 49,
+      "missing": [
+        "Glimpse the Unthinkable"
+      ]
+    },
+    {
+      "id": "5195-7683-7910",
+      "cards": [
+        {
+          "name": "Prismari, the Inspiration",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bilbo's Gambit",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite Treasure tokens",
+        "Infinite artifact tokens",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have another nonland card in hand with the mana to cast it and applicable targets if needed.",
+      "mana": "{1}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 42,
+      "missing": [
+        "Bilbo's Gambit"
+      ]
+    },
+    {
+      "id": "160-1368-3518",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "False Memories",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three additional cards between your graveyard and/or hand.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 29,
+      "missing": [
+        "False Memories"
+      ]
+    },
+    {
+      "id": "1368-3518-4530",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ambassador Laquatus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 18,
+      "missing": [
+        "Ambassador Laquatus"
+      ]
+    },
+    {
+      "id": "1368-3518-5260",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Breaking // Entering",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three additional cards between your graveyard and/or hand.",
+      "mana": "{U/B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Breaking // Entering"
+      ]
+    },
+    {
+      "id": "1368-4530-4923",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cabal Ritual",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Ambassador Laquatus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least ten other cards in your graveyard.",
+      "mana": "{1}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9,
+      "missing": [
+        "Ambassador Laquatus"
+      ]
+    },
+    {
+      "id": "1261-5720",
+      "cards": [
+        {
+          "name": "Shifting Woodland",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Vault",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four card types among cards in your graveyard.",
+      "mana": "{2}{G}{G} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "513--62",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Permanent castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1368-4808-4856",
+      "cards": [
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Black Lotus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You've cast a spell this turn.\nYou have three or more other cards in your graveyard.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Black Lotus"
+      ]
+    }
+  ]
+}

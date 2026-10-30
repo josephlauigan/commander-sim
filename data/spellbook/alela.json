@@ -1,0 +1,359 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "alela",
+  "commanders": [
+    "Alela, Artful Provocateur"
+  ],
+  "request_sha256": "6a0f2dfcd67692d703a758277d561aa4a92523f326878390a16f51ffe23bfc28",
+  "identity": "WUB",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "876-7070--141",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Creature with Affinity"
+      ],
+      "prerequisites": "You are able to reduce the affinity creature's cost by {2} or more.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8948,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "1167-1329",
+      "cards": [
+        {
+          "name": "Emry, Lurker of the Loch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mindslaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "You control one opponent on each of their turns"
+      ],
+      "requires": [],
+      "prerequisites": "Emry does not have summoning sickness.",
+      "mana": "{10} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6976,
+      "missing": [
+        "Mindslaver"
+      ]
+    },
+    {
+      "id": "2286-3221",
+      "cards": [
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Puzzle Box",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6020,
+      "missing": [
+        "Teferi's Puzzle Box"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "2022-3221",
+      "cards": [
+        {
+          "name": "Wedding Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Notion Thief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a copy of Wedding Ring.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 545,
+      "missing": [
+        "Wedding Ring"
+      ]
+    },
+    {
+      "id": "2084-2500",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirage Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 285,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "141-7431",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Daydream",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Daydream.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 145,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "2145-4722",
+      "cards": [
+        {
+          "name": "Erayo, Soratami Ascendant // Erayo's Essence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ethersworn Canonist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Erayo, Soratami Ascendant flipped.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Erayo, Soratami Ascendant // Erayo's Essence"
+      ]
+    }
+  ]
+}

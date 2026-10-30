@@ -1,0 +1,2960 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "edgar-markov-mardu-vampires",
+  "commanders": [
+    "Edgar Markov"
+  ],
+  "request_sha256": "74a8ee0cb4cc5b7e88a5c91ed959ec8c995e222ba64aa1f5d5b7194e77655e46",
+  "identity": "RWB",
+  "included": [
+    {
+      "id": "690-3966",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 151187
+    },
+    {
+      "id": "314-3966",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 126816
+    },
+    {
+      "id": "314-6191",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 95701
+    },
+    {
+      "id": "690-6191",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 80326
+    },
+    {
+      "id": "110-3966",
+      "cards": [
+        {
+          "name": "Marauding Blight-Priest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 61508
+    },
+    {
+      "id": "110-6191",
+      "cards": [
+        {
+          "name": "Marauding Blight-Priest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 49816
+    }
+  ],
+  "included_by_changing_commanders": [
+    {
+      "id": "1988-2876-4050",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blade of the Bloodchief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite commander casts",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Elenda's power is at least 4 plus its commander tax.",
+      "mana": "{3}{W/B} plus commander tax if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1657
+    }
+  ],
+  "almost_included": [
+    {
+      "id": "2577-4050",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 78898,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "3966-5755",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Tenacity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 76347,
+      "missing": [
+        "Enduring Tenacity"
+      ]
+    },
+    {
+      "id": "5755-6191",
+      "cards": [
+        {
+          "name": "Enduring Tenacity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 64278,
+      "missing": [
+        "Enduring Tenacity"
+      ]
+    },
+    {
+      "id": "3966-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 51 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57007,
+      "missing": [
+        "Aetherflux Reservoir"
+      ]
+    },
+    {
+      "id": "4740-6191",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 51 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38082,
+      "missing": [
+        "Aetherflux Reservoir"
+      ]
+    },
+    {
+      "id": "3966-5867",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Starscape Cleric",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 28577,
+      "missing": [
+        "Starscape Cleric"
+      ]
+    },
+    {
+      "id": "5867-6191",
+      "cards": [
+        {
+          "name": "Starscape Cleric",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23440,
+      "missing": [
+        "Starscape Cleric"
+      ]
+    },
+    {
+      "id": "2842-4050-5544",
+      "cards": [
+        {
+          "name": "Forsaken Miner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21497,
+      "missing": [
+        "Forsaken Miner"
+      ]
+    },
+    {
+      "id": "314-4996",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Beacon of Immortality",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 17992,
+      "missing": [
+        "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "690-4996",
+      "cards": [
+        {
+          "name": "Beacon of Immortality",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have an equal or higher life total than an opponent.",
+      "mana": "{5}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17737,
+      "missing": [
+        "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "314-4141",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Tribute",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 17179,
+      "missing": [
+        "Blood Tribute"
+      ]
+    },
+    {
+      "id": "1561-5342",
+      "cards": [
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 16195,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "5342-5944",
+      "cards": [
+        {
+          "name": "Unstoppable Slasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Unstoppable Slasher cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14964,
+      "missing": [
+        "Unstoppable Slasher"
+      ]
+    },
+    {
+      "id": "3966-4789",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cliffhaven Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14933,
+      "missing": [
+        "Cliffhaven Vampire"
+      ]
+    },
+    {
+      "id": "3422-3587",
+      "cards": [
+        {
+          "name": "Boros Reckoner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Boros Charm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Boros Reckoner lifelink.\nYou have a way to deal damage to Boros Reckoner.",
+      "mana": "{R}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14238,
+      "missing": [
+        "Boros Reckoner"
+      ]
+    },
+    {
+      "id": "314-4624",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revival // Revenge",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for up to two target opponents"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 13788,
+      "missing": [
+        "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "690-4624",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revival // Revenge",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for up to two target opponents"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 13500,
+      "missing": [
+        "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "92-3966",
+      "cards": [
+        {
+          "name": "Vizkopa Guildmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "{1}{W}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12434,
+      "missing": [
+        "Vizkopa Guildmage"
+      ]
+    },
+    {
+      "id": "2939-3966",
+      "cards": [
+        {
+          "name": "Defiant Bloodlord",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11729,
+      "missing": [
+        "Defiant Bloodlord"
+      ]
+    },
+    {
+      "id": "4141-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Tribute",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10625,
+      "missing": [
+        "Blood Tribute"
+      ]
+    },
+    {
+      "id": "2615-5342",
+      "cards": [
+        {
+          "name": "Tree of Perdition",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a higher life total than Tree of Perdition's toughness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10374,
+      "missing": [
+        "Tree of Perdition"
+      ]
+    },
+    {
+      "id": "4789-6191",
+      "cards": [
+        {
+          "name": "Cliffhaven Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10182,
+      "missing": [
+        "Cliffhaven Vampire"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9642,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "2939-6191",
+      "cards": [
+        {
+          "name": "Defiant Bloodlord",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8694,
+      "missing": [
+        "Defiant Bloodlord"
+      ]
+    },
+    {
+      "id": "5342-6004",
+      "cards": [
+        {
+          "name": "Grievous Wound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Grievous Wound attached to an opponent. You have a way to deal damage to the opponent that has Grievous Wound attached to them.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8558,
+      "missing": [
+        "Grievous Wound"
+      ]
+    },
+    {
+      "id": "3966-4912",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Epicure of Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8417,
+      "missing": [
+        "Epicure of Blood"
+      ]
+    },
+    {
+      "id": "335-5141",
+      "cards": [
+        {
+          "name": "Ad Nauseam",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8025,
+      "missing": [
+        "Ad Nauseam"
+      ]
+    },
+    {
+      "id": "314-1612",
+      "cards": [
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7893,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "92-6191",
+      "cards": [
+        {
+          "name": "Vizkopa Guildmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "{1}{W}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7807,
+      "missing": [
+        "Vizkopa Guildmage"
+      ]
+    },
+    {
+      "id": "690-1612",
+      "cards": [
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7502,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "553-1827",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vampiric Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7437,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1308-4682-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6681,
+      "missing": [
+        "Gleaming Splendor"
+      ]
+    },
+    {
+      "id": "5342-5460",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rush of Dread",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6678,
+      "missing": [
+        "Rush of Dread"
+      ]
+    },
+    {
+      "id": "2842-6215",
+      "cards": [
+        {
+          "name": "Tombstone Stairwell",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6638,
+      "missing": [
+        "Tombstone Stairwell"
+      ]
+    },
+    {
+      "id": "4050-5544-6094",
+      "cards": [
+        {
+          "name": "Forsaken Miner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vengeful Bloodwitch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6378,
+      "missing": [
+        "Forsaken Miner"
+      ]
+    },
+    {
+      "id": "1612-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shard of the Nightbringer",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 6332,
+      "missing": [
+        "Shard of the Nightbringer"
+      ]
+    },
+    {
+      "id": "4912-6191",
+      "cards": [
+        {
+          "name": "Epicure of Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5928,
+      "missing": [
+        "Epicure of Blood"
+      ]
+    },
+    {
+      "id": "598-4050",
+      "cards": [
+        {
+          "name": "Liliana, Untouched by Death",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a nontoken Zombie or a nontoken creature with changeling with mana value one or less.\nLiliana has at least three loyalty counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5587,
+      "missing": [
+        "Liliana, Untouched by Death"
+      ]
+    },
+    {
+      "id": "3966-7286",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "South Wind Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5125,
+      "missing": [
+        "South Wind Avatar"
+      ]
+    },
+    {
+      "id": "3054-3416-4050",
+      "cards": [
+        {
+          "name": "Edgar Markov",
+          "zones": [
+            "B",
+            "C"
+          ]
+        },
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have gained life this turn.",
+      "mana": "{1}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5000,
+      "missing": [
+        "Oathsworn Vampire"
+      ]
+    },
+    {
+      "id": "5136-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Quietus Spike",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Quietus Spike attached to a creature you control that can attack this turn and that cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4989,
+      "missing": [
+        "Quietus Spike"
+      ]
+    },
+    {
+      "id": "4624-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Revival // Revenge",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4519,
+      "missing": [
+        "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "6191-7286",
+      "cards": [
+        {
+          "name": "Bloodthirsty Conqueror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "South Wind Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4351,
+      "missing": [
+        "South Wind Avatar"
+      ]
+    },
+    {
+      "id": "4794-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fraying Omnipotence",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "{3}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3404,
+      "missing": [
+        "Fraying Omnipotence"
+      ]
+    },
+    {
+      "id": "5342-7319",
+      "cards": [
+        {
+          "name": "Shredder, Shadow Master",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents cannot block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3266,
+      "missing": [
+        "Shredder, Shadow Master"
+      ]
+    },
+    {
+      "id": "156-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scourge of the Skyclaves",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "{5}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3215,
+      "missing": [
+        "Scourge of the Skyclaves"
+      ]
+    },
+    {
+      "id": "4843-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Virtus the Veiled",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Virtus the Veiled does not have summoning sickness and cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3006,
+      "missing": [
+        "Virtus the Veiled"
+      ]
+    },
+    {
+      "id": "5342-7450",
+      "cards": [
+        {
+          "name": "Pox Plague",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}{B}{B}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2572,
+      "missing": [
+        "Pox Plague"
+      ]
+    },
+    {
+      "id": "690-1738-3779",
+      "cards": [
+        {
+          "name": "Serra Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2446,
+      "missing": [
+        "Serra Avatar"
+      ]
+    },
+    {
+      "id": "2548-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2336,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "3765-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Worldfire",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent's life total becomes 1",
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2101,
+      "missing": [
+        "Worldfire"
+      ]
+    },
+    {
+      "id": "314-1738-3779",
+      "cards": [
+        {
+          "name": "Serra Avatar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2040,
+      "missing": [
+        "Serra Avatar"
+      ]
+    },
+    {
+      "id": "5342-6765",
+      "cards": [
+        {
+          "name": "Alpharael, Stonechosen",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "A nonland permanent has left the battlefield this turn, or a spell has been warped this turn.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1859,
+      "missing": [
+        "Alpharael, Stonechosen"
+      ]
+    },
+    {
+      "id": "5342-7276",
+      "cards": [
+        {
+          "name": "Dark Leo & Shredder",
+          "zones": [
+            "H",
+            "B",
+            "C"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Dark Leo & Shredder if it's on the battlefield, or another creature you control otherwise.\nDark Leo & Shredder doesn't have summoning sickness if it's on the battlefield.\nYou control at least four Ninjas.",
+      "mana": "{W}{B} plus commander tax if applicable if Dark Leo & Shredder isn't on the battlefield",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1591,
+      "missing": [
+        "Dark Leo & Shredder"
+      ]
+    },
+    {
+      "id": "5344-5869",
+      "cards": [
+        {
+          "name": "Charismatic Conqueror",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Silverquill Lecturer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1451,
+      "missing": [
+        "Silverquill Lecturer"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1414,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "2129-5342",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scytheclaw",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Scytheclaw attached to a creature you control that can attack this turn and that cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1351,
+      "missing": [
+        "Scytheclaw"
+      ]
+    },
+    {
+      "id": "1988-3490-4050",
+      "cards": [
+        {
+          "name": "Blade of the Bloodchief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Animation Module",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "Blade of the Bloodchief attached to any creature you control.\nYou control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1281,
+      "missing": [
+        "Animation Module"
+      ]
+    },
+    {
+      "id": "690-1162",
+      "cards": [
+        {
+          "name": "Enduring Angel // Angelic Enforcer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "\nAngelic Enforcer does not have summoning sickness.\nYour life total is higher than or equal to an opponent's.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1239,
+      "missing": [
+        "Enduring Angel // Angelic Enforcer"
+      ]
+    },
+    {
+      "id": "314-1162",
+      "cards": [
+        {
+          "name": "Enduring Angel // Angelic Enforcer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "\nAngelic Enforcer does not have summoning sickness.\nYour life total is higher than or equal to an opponent's.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1200,
+      "missing": [
+        "Enduring Angel // Angelic Enforcer"
+      ]
+    },
+    {
+      "id": "2876-4050-5003",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Nim Deathmantle attached to Elenda.\nElenda has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1086,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "678-4050",
+      "cards": [
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a nontoken creature that can be cast using one colored mana.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1014,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "1308-2143",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 925,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "1308-3996-4050",
+      "cards": [
+        {
+          "name": "Twilight Drover",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 922,
+      "missing": [
+        "Twilight Drover"
+      ]
+    },
+    {
+      "id": "2232-3416-4050",
+      "cards": [
+        {
+          "name": "Edgar Markov",
+          "zones": [
+            "B",
+            "C"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a nontoken, nonartifact Vampire that can be cast using one colored mana.\nYou have a nonartifact Vampire card in hand that can be cast using one colored mana.\nYou have enough mana to cast the Vampire in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 883,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    },
+    {
+      "id": "2173-2292-2842-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 844,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "5342-5605",
+      "cards": [
+        {
+          "name": "Torgaar, Famine Incarnate",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a life total of 40 or higher.",
+      "mana": "{6}{B}{B} at most plus enough mana to pay for commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 769,
+      "missing": [
+        "Torgaar, Famine Incarnate"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 751,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "4274-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Apocalypse",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 619,
+      "missing": [
+        "Apocalypse"
+      ]
+    },
+    {
+      "id": "754-1374-4050",
+      "cards": [
+        {
+          "name": "Haakon, Stromgald Scourge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knight of the Ebon Legion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 568,
+      "missing": [
+        "Haakon, Stromgald Scourge"
+      ]
+    },
+    {
+      "id": "690-3779-4658",
+      "cards": [
+        {
+          "name": "Soul of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game",
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 523,
+      "missing": [
+        "Soul of Eternity"
+      ]
+    },
+    {
+      "id": "314-3779-4658",
+      "cards": [
+        {
+          "name": "Soul of Eternity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is higher than or equal to an opponent's.",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 479,
+      "missing": [
+        "Soul of Eternity"
+      ]
+    },
+    {
+      "id": "1245-1308",
+      "cards": [
+        {
+          "name": "Tooth and Claw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least two creatures.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 390,
+      "missing": [
+        "Tooth and Claw"
+      ]
+    },
+    {
+      "id": "5342-5377",
+      "cards": [
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ebonblade Reaper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Ebonblade Reaper does not have summoning sickness and cannot be blocked by an opponent.\nYour life total is at least 2.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 277,
+      "missing": [
+        "Ebonblade Reaper"
+      ]
+    },
+    {
+      "id": "1374-2876-4050",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haakon, Stromgald Scourge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Elenda has a power of three or greater.",
+      "mana": "{2}{W/B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 179,
+      "missing": [
+        "Haakon, Stromgald Scourge"
+      ]
+    },
+    {
+      "id": "2173-2292-5220-6094",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vengeful Bloodwitch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 116,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "314-5109",
+      "cards": [
+        {
+          "name": "Volcano Hellion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{R}{R}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 116,
+      "missing": [
+        "Volcano Hellion"
+      ]
+    },
+    {
+      "id": "1183-1988-4050",
+      "cards": [
+        {
+          "name": "Blade of the Bloodchief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pentavus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Blade of the Bloodchief attached to Pentavus.\nYou control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 48,
+      "missing": [
+        "Pentavus"
+      ]
+    },
+    {
+      "id": "483-2173-2292-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cruel Celebrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 45,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "2178-2380-4050",
+      "cards": [
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodline Keeper // Lord of Lineage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Bloodline Keeper // Lord of Lineage doesn't have summoning sickness.\nThornbite Staff is attached to Bloodline Keeper // Lord of Lineage.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 35,
+      "missing": [
+        "Thornbite Staff"
+      ]
+    },
+    {
+      "id": "1988-2762-4050",
+      "cards": [
+        {
+          "name": "Blade of the Bloodchief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thopter Squadron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Blade of the Bloodchief attached to Thopter Squadron.\nYou control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29,
+      "missing": [
+        "Thopter Squadron"
+      ]
+    },
+    {
+      "id": "2178-2292-2380",
+      "cards": [
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodline Keeper // Lord of Lineage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Bloodline Keeper // Lord of Lineage doesn't have summoning sickness.\nThornbite Staff is attached to Bloodline Keeper // Lord of Lineage.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29,
+      "missing": [
+        "Thornbite Staff"
+      ]
+    },
+    {
+      "id": "1988-4050-5086",
+      "cards": [
+        {
+          "name": "Blade of the Bloodchief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelavus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Blade of the Bloodchief attached to Triskelavus.\nYou control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "Triskelavus"
+      ]
+    },
+    {
+      "id": "2178-2380-3967",
+      "cards": [
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodline Keeper // Lord of Lineage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Bloodline Keeper // Lord of Lineage doesn't have summoning sickness.\nThornbite Staff is attached to Bloodline Keeper // Lord of Lineage.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20,
+      "missing": [
+        "Thornbite Staff"
+      ]
+    },
+    {
+      "id": "1308-2316-4050",
+      "cards": [
+        {
+          "name": "Goblin Warrens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least two Goblins.",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15,
+      "missing": [
+        "Goblin Warrens"
+      ]
+    },
+    {
+      "id": "1308-1923-4050",
+      "cards": [
+        {
+          "name": "Summon the School",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Summon the School"
+      ]
+    },
+    {
+      "id": "2876-4050-4790",
+      "cards": [
+        {
+          "name": "Dino DNA",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Dino DNA"
+      ]
+    }
+  ]
+}

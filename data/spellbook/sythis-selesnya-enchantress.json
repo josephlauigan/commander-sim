@@ -1,0 +1,502 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "sythis-selesnya-enchantress",
+  "commanders": [
+    "Sythis, Harvest's Hand"
+  ],
+  "request_sha256": "a26f261e6a0641bd36a583931bab85a706e856204fa4c9f520584508dbe6db79",
+  "identity": "GW",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1274-3693",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Walking Ballista has at least two +1/+1 counters on it.",
+      "mana": "{1}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 52877,
+      "missing": [
+        "Walking Ballista"
+      ]
+    },
+    {
+      "id": "3560-6023",
+      "cards": [
+        {
+          "name": "Secret Arcade // Dusty Parlor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archon of Sun's Grace",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12286,
+      "missing": [
+        "Secret Arcade // Dusty Parlor"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11993,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "1274-1495",
+      "cards": [
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6308,
+      "missing": [
+        "Triskelion"
+      ]
+    },
+    {
+      "id": "1274-2290",
+      "cards": [
+        {
+          "name": "Spike Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heliod, Sun-Crowned",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Spike feeder has at least two +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5829,
+      "missing": [
+        "Spike Feeder"
+      ]
+    },
+    {
+      "id": "1355-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sanctum Weaver does not have summoning sickness. You control at least five enchantments.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3045,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "1355-1995",
+      "cards": [
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Sanctum Weaver.\nYou control at least two other enchantments.\nSanctum Weaver does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2898,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "1355-2024",
+      "cards": [
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Seedcradle Witch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creatures you control until end of turn",
+        "Infinite colored mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sanctum Weaver does not have summoning sickness.\nYou control at least five enchantments.",
+      "mana": "{G/W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1779,
+      "missing": [
+        "Seedcradle Witch"
+      ]
+    },
+    {
+      "id": "1355-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Sanctum Weaver. Sanctum Weaver does not have summoning sickness. You control at least three enchantments.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1168,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "1300-5855",
+      "cards": [
+        {
+          "name": "Weaver of Harmony",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Virtue of Loyalty // Ardenvale Fealty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {G}.\nWeaver of Harmony does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 789,
+      "missing": [
+        "Virtue of Loyalty // Ardenvale Fealty"
+      ]
+    },
+    {
+      "id": "2232-2929",
+      "cards": [
+        {
+          "name": "Composer of Spring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control six or more enchantments.\nYou control a nontoken enchantment creature.\nYou have an enchantment creature card in hand.\nYou have enough mana available to cast the enchantment creature in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 537,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    },
+    {
+      "id": "1355-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sanctum Weaver does not have summoning sickness. You control at least four enchantments.\nSword of the Paruns attached to Sanctum Weaver",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 399,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "806-1300",
+      "cards": [
+        {
+          "name": "Weaver of Harmony",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Curse of Bounty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Weaver of Harmony does not have summoning sickness.\nYou control at least two mana-producing nonland permanents, one of which must be able to produce at least {G}.\nYou control another creature that can attack this turn.\nCurse of Bounty attached to any opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 324,
+      "missing": [
+        "Curse of Bounty"
+      ]
+    },
+    {
+      "id": "3778-7299",
+      "cards": [
+        {
+          "name": "Biorhythm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Austere Command",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}{G}{G}{W}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 234,
+      "missing": [
+        "Biorhythm"
+      ]
+    },
+    {
+      "id": "1300-3906",
+      "cards": [
+        {
+          "name": "Weaver of Harmony",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Awakening",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of all lands"
+      ],
+      "requires": [],
+      "prerequisites": "Weaver of Harmony does not have summoning sickness.\nYou control at least two mana-producing lands and/or creatures, one of which must be able to produce at least {G}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 162,
+      "missing": [
+        "Awakening"
+      ]
+    },
+    {
+      "id": "3018-3560-4050",
+      "cards": [
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rancor",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archon of Sun's Grace",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    }
+  ]
+}

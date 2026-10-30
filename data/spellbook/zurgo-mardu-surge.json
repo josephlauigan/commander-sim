@@ -1,0 +1,1175 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "zurgo-mardu-surge",
+  "commanders": [
+    "Zurgo Stormrender"
+  ],
+  "request_sha256": "bd79301812772587e5b0f392d99a1076c7b68ccea778cc87aa13a3cae73b4b53",
+  "identity": "RWB",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "33-3259",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Loyal Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8261,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "1476-3259",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Legion Warboss",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4653,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "1571-3851",
+      "cards": [
+        {
+          "name": "Blightsteel Colossus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blade of Selves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Blade of Selves attached to Blightsteel Colossus.\nBlightsteel Colossus does not have summoning sickness.\nOpponents are unable to block and kill your creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4583,
+      "missing": [
+        "Blightsteel Colossus"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "3851-3951",
+      "cards": [
+        {
+          "name": "Éomer, Marshal of Rohan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blade of Selves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Blade of Selves attached to Éomer.\nÉomer cannot be blocked and killed by an opponent.\nYou have at least three opponents.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2748,
+      "missing": [
+        "Éomer, Marshal of Rohan"
+      ]
+    },
+    {
+      "id": "1734-2292-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1883,
+      "missing": [
+        "Fiend Hunter"
+      ]
+    },
+    {
+      "id": "2292-2730-3175",
+      "cards": [
+        {
+          "name": "Kaya's Ghostform",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1842,
+      "missing": [
+        "Kaya's Ghostform"
+      ]
+    },
+    {
+      "id": "2292-2820-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Angelic Renewal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 915,
+      "missing": [
+        "Angelic Renewal"
+      ]
+    },
+    {
+      "id": "3951-4711",
+      "cards": [
+        {
+          "name": "Éomer, Marshal of Rohan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Legion Loyalty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Éomer cannot be blocked and killed by an opponent.\nYou have at least three opponents.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 904,
+      "missing": [
+        "Éomer, Marshal of Rohan"
+      ]
+    },
+    {
+      "id": "176-2292-4509",
+      "cards": [
+        {
+          "name": "Divine Visitation",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Requiem Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional non-Spirit creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 887,
+      "missing": [
+        "Requiem Angel"
+      ]
+    },
+    {
+      "id": "2292-3055-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gift of Immortality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 810,
+      "missing": [
+        "Gift of Immortality"
+      ]
+    },
+    {
+      "id": "1734-3175-3967",
+      "cards": [
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 570,
+      "missing": [
+        "Fiend Hunter"
+      ]
+    },
+    {
+      "id": "1571-4711",
+      "cards": [
+        {
+          "name": "Blightsteel Colossus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Legion Loyalty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Blightsteel Colossus does not have summoning sickness.\nOpponents are unable to block and kill your creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 538,
+      "missing": [
+        "Blightsteel Colossus"
+      ]
+    },
+    {
+      "id": "2730-3175-3967",
+      "cards": [
+        {
+          "name": "Kaya's Ghostform",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 410,
+      "missing": [
+        "Kaya's Ghostform"
+      ]
+    },
+    {
+      "id": "3996-4050-4094",
+      "cards": [
+        {
+          "name": "Twilight Drover",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kaya, Geist Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 343,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "3055-3175-3967",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gift of Immortality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 280,
+      "missing": [
+        "Gift of Immortality"
+      ]
+    },
+    {
+      "id": "2292-3175-5617",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fungal Fortitude",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 273,
+      "missing": [
+        "Fungal Fortitude"
+      ]
+    },
+    {
+      "id": "2292-3175-4775",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necrogen Communion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 195,
+      "missing": [
+        "Necrogen Communion"
+      ]
+    },
+    {
+      "id": "1052-2292-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Minion's Return",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 180,
+      "missing": [
+        "Minion's Return"
+      ]
+    },
+    {
+      "id": "2292-3175-7424",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Changing Loyalty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 150,
+      "missing": [
+        "Changing Loyalty"
+      ]
+    },
+    {
+      "id": "2820-3175-3967",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Angelic Renewal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 137,
+      "missing": [
+        "Angelic Renewal"
+      ]
+    },
+    {
+      "id": "2292-4302-4509",
+      "cards": [
+        {
+          "name": "Bishop of Wings",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Divine Visitation",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Angel.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 103,
+      "missing": [
+        "Bishop of Wings"
+      ]
+    },
+    {
+      "id": "4169-5109",
+      "cards": [
+        {
+          "name": "Volcano Hellion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vault of the Archangel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 93,
+      "missing": [
+        "Volcano Hellion"
+      ]
+    },
+    {
+      "id": "1245-4094",
+      "cards": [
+        {
+          "name": "Tooth and Claw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kaya, Geist Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Kaya has at least two loyalty counters on it.\nYou control at least two additional creatures",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 60,
+      "missing": [
+        "Tooth and Claw"
+      ]
+    },
+    {
+      "id": "2292-2843-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unholy Indenture",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 57,
+      "missing": [
+        "Unholy Indenture"
+      ]
+    },
+    {
+      "id": "650-2292-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unhallowed Pact",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 57,
+      "missing": [
+        "Unhallowed Pact"
+      ]
+    },
+    {
+      "id": "3175-3967-5617",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fungal Fortitude",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 47,
+      "missing": [
+        "Fungal Fortitude"
+      ]
+    },
+    {
+      "id": "1052-3175-3967",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Minion's Return",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 42,
+      "missing": [
+        "Minion's Return"
+      ]
+    },
+    {
+      "id": "2143-4094",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kaya, Geist Hunter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Kaya has at least two loyalty counters on it.",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "3967-4302-4509",
+      "cards": [
+        {
+          "name": "Bishop of Wings",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Divine Visitation",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Angel.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Bishop of Wings"
+      ]
+    },
+    {
+      "id": "3175-3967-4775",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necrogen Communion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Necrogen Communion"
+      ]
+    },
+    {
+      "id": "772-2292-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shade's Form",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 34,
+      "missing": [
+        "Shade's Form"
+      ]
+    },
+    {
+      "id": "3175-3967-7424",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Changing Loyalty",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 24,
+      "missing": [
+        "Changing Loyalty"
+      ]
+    },
+    {
+      "id": "2843-3175-3967",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unholy Indenture",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "Unholy Indenture"
+      ]
+    },
+    {
+      "id": "772-3175-3967",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shade's Form",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Shade's Form"
+      ]
+    },
+    {
+      "id": "650-3175-3967",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unhallowed Pact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16,
+      "missing": [
+        "Unhallowed Pact"
+      ]
+    }
+  ]
+}

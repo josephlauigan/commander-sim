@@ -1,0 +1,1128 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "sauron",
+  "commanders": [
+    "Sauron, the Dark Lord"
+  ],
+  "request_sha256": "d9f73f0ba93e6973692138c4a2ef4507cede716da1266626cbc34246602dc8cb",
+  "identity": "UBR",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1561-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw for target opponent",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size that is at least half their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 51722,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "3750-5039",
+      "cards": [
+        {
+          "name": "The Reaver Cleaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "The Reaver Cleaver attached to a creature with power five or greater that can attack this turn.\nAn opponent is unable to block the creature with The Reaver Cleaver attached.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 47846,
+      "missing": [
+        "The Reaver Cleaver"
+      ]
+    },
+    {
+      "id": "1561-3862",
+      "cards": [
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Near-infinite card draw for target opponent",
+        "Near-infinite damage",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size which is larger than or equal to their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 46618,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "900-3750",
+      "cards": [
+        {
+          "name": "Sword of Feast and Famine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of Feast and Famine attached to a creature that can attack this turn.\nAn opponent is unable to block and kill the creature with Sword of Feast and Famine attached.\nLands you control can tap to produce at least {3}{R}{R}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37223,
+      "missing": [
+        "Sword of Feast and Famine"
+      ]
+    },
+    {
+      "id": "778-3750",
+      "cards": [
+        {
+          "name": "Ancient Copper Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite colored mana",
+        "Near-infinite combat damage",
+        "Near-infinite Treasure tokens",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Ancient Copper Dragon cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 31278,
+      "missing": [
+        "Ancient Copper Dragon"
+      ]
+    },
+    {
+      "id": "3750-4945",
+      "cards": [
+        {
+          "name": "Neheb, the Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Your opponents have lost at least five life this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23774,
+      "missing": [
+        "Neheb, the Eternal"
+      ]
+    },
+    {
+      "id": "2552-3263",
+      "cards": [
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vandalblast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 22036,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "3750-5988",
+      "cards": [
+        {
+          "name": "Cavern-Hoard Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game",
+        "Infinite combat damage to one opponent"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls five or more artifacts.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12978,
+      "missing": [
+        "Cavern-Hoard Dragon"
+      ]
+    },
+    {
+      "id": "1486-3750",
+      "cards": [
+        {
+          "name": "Magda, Brazen Outlaw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least 5 Dwarfs who do not have summoning sickness.\nOpponents can not block.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10725,
+      "missing": [
+        "Magda, Brazen Outlaw"
+      ]
+    },
+    {
+      "id": "1571-2560",
+      "cards": [
+        {
+          "name": "Blightsteel Colossus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chandra's Ignition",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6432,
+      "missing": [
+        "Blightsteel Colossus"
+      ]
+    },
+    {
+      "id": "1697-3750",
+      "cards": [
+        {
+          "name": "Neheb, Dreadhorde Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite combat damage",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nAn opponent cannot block Neheb.\nNeheb does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5846,
+      "missing": [
+        "Neheb, Dreadhorde Champion"
+      ]
+    },
+    {
+      "id": "679-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich's Mastery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5662,
+      "missing": [
+        "Lich's Mastery"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "3750-6410",
+      "cards": [
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have max speed.\nYou control five or more Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3789,
+      "missing": [
+        "Howlsquad Heavy"
+      ]
+    },
+    {
+      "id": "3141-4067",
+      "cards": [
+        {
+          "name": "Jace's Archivist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging for all players",
+        "Near-infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Jace's Archivist does not have summoning sickness.\nYou control a permanent that can tap to produce at least {U}.\nA player has at least three cards in hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2501,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "451-3750",
+      "cards": [
+        {
+          "name": "Hoard Hauler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Hoard Hauler is a creature and does not have summoning sickness.\nAn opponent cannot block Hoard Hauler and controls at least five artifacts.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2145,
+      "missing": [
+        "Hoard Hauler"
+      ]
+    },
+    {
+      "id": "2498-6033",
+      "cards": [
+        {
+          "name": "Marina Vendrell's Grimoire",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1885,
+      "missing": [
+        "Marina Vendrell's Grimoire"
+      ]
+    },
+    {
+      "id": "7414-7811",
+      "cards": [
+        {
+          "name": "Pensive Professor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Iron Man, Armored Avenger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1849,
+      "missing": [
+        "Pensive Professor"
+      ]
+    },
+    {
+      "id": "3862-6804",
+      "cards": [
+        {
+          "name": "Requiem Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Orcish Bowmasters",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for target opponent",
+        "Near-infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls an indestructible creature, or you have a way to give an opponent's creature indestructible.\nYou have a way to deal damage to the indestructible creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1821,
+      "missing": [
+        "Requiem Monolith"
+      ]
+    },
+    {
+      "id": "3750-4747",
+      "cards": [
+        {
+          "name": "Alena, Kessig Trapper",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature with power 5 or greater that entered the battlefield this turn.\nAlena does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1555,
+      "missing": [
+        "Alena, Kessig Trapper"
+      ]
+    },
+    {
+      "id": "3750-6894",
+      "cards": [
+        {
+          "name": "J. Jonah Jameson",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures that have menace and that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1301,
+      "missing": [
+        "J. Jonah Jameson"
+      ]
+    },
+    {
+      "id": "3153-3750",
+      "cards": [
+        {
+          "name": "Sphinx of the Second Sun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures and lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Lands you control can tap to produce at least {6}{R}{R}{R}{R}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1126,
+      "missing": [
+        "Sphinx of the Second Sun"
+      ]
+    },
+    {
+      "id": "3750-7903",
+      "cards": [
+        {
+          "name": "Thorin, Company's Leader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite Treasure tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite artifact tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three Dwarves that don't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1034,
+      "missing": [
+        "Thorin, Company's Leader"
+      ]
+    },
+    {
+      "id": "3750-6190",
+      "cards": [
+        {
+          "name": "Shadow of the Second Sun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures and lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Lands you control can tap to produce at least {6}{R}{R}{R}{R}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 797,
+      "missing": [
+        "Shadow of the Second Sun"
+      ]
+    },
+    {
+      "id": "3750-5340",
+      "cards": [
+        {
+          "name": "Poetic Ingenuity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five Dinosaurs that do not have summoning sickness.\nAn opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 722,
+      "missing": [
+        "Poetic Ingenuity"
+      ]
+    },
+    {
+      "id": "3750-6307",
+      "cards": [
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luxurious Locomotive",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures with total power 1 or greater.\nAn opponent cannot block and kill Luxurious Locomotive.\nLuxurious Locomotive does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 662,
+      "missing": [
+        "Luxurious Locomotive"
+      ]
+    },
+    {
+      "id": "202-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 426,
+      "missing": [
+        "Lich"
+      ]
+    },
+    {
+      "id": "2498-4126",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nefarious Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 351,
+      "missing": [
+        "Nefarious Lich"
+      ]
+    },
+    {
+      "id": "2560-3531",
+      "cards": [
+        {
+          "name": "Hidetsugu Consumes All // Vessel of the All-Consuming",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chandra's Ignition",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Vessel of the All-Consuming has a power of at least ten.",
+      "mana": "{3}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 211,
+      "missing": [
+        "Hidetsugu Consumes All // Vessel of the All-Consuming"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "3750-3898",
+      "cards": [
+        {
+          "name": "Cyclonus, the Saboteur // Cyclonus, Cybertronian Fighter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite +1/+1 counters on a creature",
+        "Near-infinite combat damage",
+        "Near-infinite combat phases",
+        "Near-infinite untap of permanents you control",
+        "Near-infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Cyclonus has power 5 or greater and does not have summoning sickness.\nPermanents you control can tap to produce at least {6}{R}{R}{R}{R}.\nAn opponent cannot block Cyclonus.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 116,
+      "missing": [
+        "Cyclonus, the Saboteur // Cyclonus, Cybertronian Fighter"
+      ]
+    },
+    {
+      "id": "2498-7844",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yawgmoth's Bargain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Yawgmoth's Bargain"
+      ]
+    },
+    {
+      "id": "2498-4322",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Griselbrand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 8.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Griselbrand"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,635 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "anikthea-enduring-enchantments",
+  "commanders": [
+    "Anikthea, Hand of Erebos"
+  ],
+  "request_sha256": "35d6c52aa5690824b418c43d4824e61082da084c43f70e90e17f643fbe5dd846",
+  "identity": "WBG",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "3729-6023",
+      "cards": [
+        {
+          "name": "Ondu Spiritdancer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Secret Arcade // Dusty Parlor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Secret Arcade is unlocked.",
+      "mana": "{4}{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 21400,
+      "missing": [
+        "Secret Arcade // Dusty Parlor"
+      ]
+    },
+    {
+      "id": "1525-3819",
+      "cards": [
+        {
+          "name": "Cultivator Colossus",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Arrange your library in any order",
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand.",
+      "mana": "{4}{G}{G}{G}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 17053,
+      "missing": [
+        "Cultivator Colossus"
+      ]
+    },
+    {
+      "id": "3560-6023",
+      "cards": [
+        {
+          "name": "Secret Arcade // Dusty Parlor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archon of Sun's Grace",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12286,
+      "missing": [
+        "Secret Arcade // Dusty Parlor"
+      ]
+    },
+    {
+      "id": "907-1479-2692",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selesnya Sanctuary",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Retreat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7231,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1758-2144-3729",
+      "cards": [
+        {
+          "name": "Myrkul, Lord of Bones",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ondu Spiritdancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eidolon of Blossoms",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite copies of a specific creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to kill Ondu Spiritdancer.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3516,
+      "missing": [
+        "Myrkul, Lord of Bones"
+      ]
+    },
+    {
+      "id": "1917-4608",
+      "cards": [
+        {
+          "name": "Touch the Spirit Realm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield of Nyx",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least four enchantments.",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3333,
+      "missing": [
+        "Touch the Spirit Realm"
+      ]
+    },
+    {
+      "id": "263-2144-3729",
+      "cards": [
+        {
+          "name": "Myrkul, Lord of Bones",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ondu Spiritdancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Setessan Champion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite +1/+1 counters on a creature",
+        "Infinite copies of a specific creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to kill Ondu Spiritdancer.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3097,
+      "missing": [
+        "Myrkul, Lord of Bones"
+      ]
+    },
+    {
+      "id": "1355-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sanctum Weaver does not have summoning sickness. You control at least five enchantments.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3045,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "1355-1995",
+      "cards": [
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Sanctum Weaver.\nYou control at least two other enchantments.\nSanctum Weaver does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2898,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "2144-3560-3729",
+      "cards": [
+        {
+          "name": "Myrkul, Lord of Bones",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ondu Spiritdancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archon of Sun's Grace",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite copies of a specific creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to kill Ondu Spiritdancer.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2820,
+      "missing": [
+        "Myrkul, Lord of Bones"
+      ]
+    },
+    {
+      "id": "280-1479-2692",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Golgari Rot Farm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Felidar Retreat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2073,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1355-2024",
+      "cards": [
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Seedcradle Witch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creatures you control until end of turn",
+        "Infinite colored mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sanctum Weaver does not have summoning sickness.\nYou control at least five enchantments.",
+      "mana": "{G/W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1779,
+      "missing": [
+        "Seedcradle Witch"
+      ]
+    },
+    {
+      "id": "2517-4608",
+      "cards": [
+        {
+          "name": "Starfield of Nyx",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Parallax Wave",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least five enchantments.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1631,
+      "missing": [
+        "Parallax Wave"
+      ]
+    },
+    {
+      "id": "1479-2692-3861",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Retreat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Orzhov Basilica",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1403,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1355-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Sanctum Weaver. Sanctum Weaver does not have summoning sickness. You control at least three enchantments.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1168,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "2232-2929",
+      "cards": [
+        {
+          "name": "Composer of Spring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control six or more enchantments.\nYou control a nontoken enchantment creature.\nYou have an enchantment creature card in hand.\nYou have enough mana available to cast the enchantment creature in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 537,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    },
+    {
+      "id": "1355-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sanctum Weaver",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sanctum Weaver does not have summoning sickness. You control at least four enchantments.\nSword of the Paruns attached to Sanctum Weaver",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 399,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "2027-5339",
+      "cards": [
+        {
+          "name": "Magus of the Moat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sandwurm Convergence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 209,
+      "missing": [
+        "Magus of the Moat"
+      ]
+    },
+    {
+      "id": "992-5339",
+      "cards": [
+        {
+          "name": "Moat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sandwurm Convergence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 154,
+      "missing": [
+        "Moat"
+      ]
+    },
+    {
+      "id": "4221-4670",
+      "cards": [
+        {
+          "name": "Living Plane",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doomwake Giant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 147,
+      "missing": [
+        "Living Plane"
+      ]
+    }
+  ]
+}

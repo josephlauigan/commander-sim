@@ -1,0 +1,44 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "giada-calling-all-angels",
+  "commanders": [
+    "Giada, Font of Hope"
+  ],
+  "request_sha256": "f426228c56344ebc1797a500ab00bb2b8d9cdb07c8d3a58cee5315dd43f898ab",
+  "identity": "W",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "3473-6124",
+      "cards": [
+        {
+          "name": "Transcendence",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Herald of Eternal Dawn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 20 or higher.",
+      "mana": "{3}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 397,
+      "missing": [
+        "Transcendence"
+      ]
+    }
+  ]
+}
