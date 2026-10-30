@@ -126,6 +126,9 @@ of deck keys puts only those on it (the paired test of half a tier). JD's decks 
 - B: per tier t1-t5, halves A and B of the tier's decks (handoff), `AI_VALUES=0` against `AI_VALUES=<half>`, 2000
   games per arm, seeds 500000-501999; the half's summed share and its CI.
 - C: default derived where level or better; delete the replaced tables there.
+- Results: Stage A byte-identical on t1, t2, t4, t5; Stage B level in both halves of every tier t1-t5
+  (`values-handoff.md`); Stage C: derived is the default for every generic-policy deck. The old tables stay: JD's
+  decks and Tier 6 fall back to `generic_prio` and share the `bomb` reads.
 
 ## Diagnostic findings (Stage A)
 

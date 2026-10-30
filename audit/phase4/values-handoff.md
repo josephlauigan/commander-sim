@@ -35,10 +35,10 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
       `bin/commander-sim-headA` (a92b02a2), outputs `A/base-tN.txt`, `A/head-tN.txt` (`stageA.sh`).
 - [x] Diagnostic, fixes (design, "Diagnostic findings"; 21861ab2). Overrides: Archon of Cruelty, Sheoldred, the
       Apocalypse.
-- [ ] Stage B pairs: `stageB.sh` (binary `bin/commander-sim-B`, outputs `B/tN-old.txt`, `B/tN-A.txt`,
+- [x] Stage B pairs: `stageB.sh` (binary `bin/commander-sim-B`, outputs `B/tN-old.txt`, `B/tN-A.txt`,
       `B/tN-B.txt`; it skips arms already done with rc=0, so rerun it to resume). Read a pair with
       `half.sh B/tN-old.txt B/tN-A.txt "Name;Name;Name"` (the display names on the share line).
-- [ ] Stage C.
+- [x] Stage C (below).
 
 ## Stage B log
 
@@ -87,3 +87,17 @@ old tables are **not deleted**: JD's decks (`kefka`, `sheoldred`, `cloud`, `karn
 `sephfs`, `titania`, `tymna_partners`) and every Tier 6 deck call `pool::generic_prio` as their fallback, and
 `card_worth`, `tutor_value`, `pval` and the other `bomb` reads serve them too; they go when those decks move (later
 Phase 4 points). `AI_VALUES=0` keeps the old reading for the generic decks (a measurement arm).
+
+## Final checks (head)
+
+- `cargo build --release --all-targets -j 22`: 0 warnings. `cargo test --release --no-fail-fast -j 22`: 3685 passed,
+  0 failed. `cardgen validate`: all decks passed. `all_decks adaptive 3` and `lookahead 1`: rc=0.
+- Defaults (no env, 300 games) = the derived arm (B2, `AI_VALUES=1`) byte for byte on t1, t2, t3, t4, t5, all rc=0
+  (`F/head-tN.txt` vs `F/arm-tN.txt`).
+- Diagnostic (`AI_VALUES=0`): cast-priority rank correlation 0.74 / 0.73 / 0.75 / 0.78 / 0.85 (t1-t5).
+
+## Next (not in this PR)
+
+- Sythis (-4.9 on t2): a commander-synergy term from the commander's own triggers.
+- Move JD's decks and Tier 6 off `generic_prio`'s table, then delete the table, the held-interaction constants in
+  `card_worth`, and the `bomb` reads (`spell_importance` needs a per-reader counter decision first).
