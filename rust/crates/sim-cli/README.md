@@ -43,9 +43,11 @@ and is used only when JD asks (CLAUDE.md). The loose interaction profile is the 
 | `--profile p` / `--profiles a,b` | the AI interaction profile (default loose) |
 | `--analyze`, `--trace GAME`, `--cards`, `--brief` | the deep report, one game's log, the card list, no per-axis table |
 | `--ai lookahead\|adaptive` | the look-ahead search (default) or the heuristic AI alone (about 60 times faster) |
-| `--temp T`, `--jobs N`, `--quiet` | the heuristic AI's randomness multiplier, worker threads (default every core), no progress bar |
+| `--temp T`, `--jobs N`, `--quiet` | the heuristic AI's randomness multiplier, worker threads (default every core), no progress bar (the model coverage block still prints) |
 
 Games are seeded, so the same command gives the same numbers. The progress bar goes to stderr, the report to stdout.
+Every run that plays decks starts its report with the model coverage of each deck (its 99 + commander by
+`cardgen audit` status, and its first Unmodeled and Partial cards; `src/coverage.rs`).
 
 ## Experiment tools
 

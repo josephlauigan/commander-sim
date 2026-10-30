@@ -157,7 +157,7 @@ const OPTS: [Opt; 32] = [
          about 60x faster)",
     ),
     opt("--temp", false, &[], "T", "adaptive AI randomness multiplier (lower = sharper play; default 1.0)"),
-    opt("--quiet", true, &[], "", "no progress bar"),
+    opt("--quiet", true, &[], "", "no progress bar (the model coverage block still prints: it is part of the result)"),
     opt("--jobs", false, &[], "N", "parallel worker threads (default: every CPU core)"),
     opt("--engine", false, &["rust"], "", "accepted for old command lines; the games are always played in Rust"),
     opt("--dsl-all", true, &[], "", "not available: it needs the Python card compiler (see the README)"),
@@ -190,6 +190,11 @@ pub fn help() -> String {
             s += &format!("  {left}\n  {:20}  {}\n", "", o.help);
         }
     }
+    s += "\nModel coverage: every run that plays decks (--deck, --pool, --all-decks, --calibrate, --realism, --goldfish) \
+          first prints, for each deck, its 99 + commander by cardgen audit status (Full, Full-auto, Approximate, \
+          Partial, Unmodeled) and up to 5 of its Unmodeled and Partial cards, commander and engine cards first; \
+          the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
+          and plays no game.\n";
     s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck seph \
           --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish scion,t6 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s

@@ -225,6 +225,27 @@ table takes `scored = false` for that.
 - **Still open** in the plan document: start logging pod games now (by hand or from practice mode)? Which engine work
   first (the permanent arena or the characteristics pass)? Pause new card work during the card-model move?
 
+**Phase 2, one card model** (2026-10-29; the Commander Spellbook part is a separate PR). The gate "no double-modeled
+cards" is **not passed yet**: hard doubles are 0, and the rest are frozen.
+
+- `cardgen audit --paths` (PR #153) lists every path a card reaches the sim by (compiled abilities, executing tags,
+  card-code rule and AI slots) and classes the doubles. PR #161 removed every hard double (21 -> 0) and declared 29
+  deliberate splits with `paths_ok = "why"` in `data/card_overrides.toml`.
+- `cardgen export` now refuses a new double and writes nothing: a hard, shadowed or competing double, or an
+  undeclared split, with no `paths_ok`. The message names each card, its class and its paths, and the three fixes
+  (delete one path, a `dsl` override, or `paths_ok`). The check is `cardgen::paths::guard`; the test
+  `the_export_guard_passes_the_committed_data` (`rust/crates/cardgen/tests/paths.rs`) runs it on the committed data,
+  so `cargo test` fails on a double even without a re-export.
+- The doubles already in the data are listed in `data/paths_known.txt`, one "class | card" line each, and accepted
+  only with that class: **21 competing, 25 shadowed, 161 undeclared splits** (207 cards). A hard double is never
+  accepted from it. The list only shrinks: the test fails on a line whose card is no longer that double. That list is
+  what is left to clear for the gate.
+- Every `commander-sim` run that plays decks (`--deck`, `--pool`, `--all-decks`, `--calibrate`, `--realism`,
+  `--goldfish`) prints the model coverage first: for each deck, its 99 + commander by `cardgen audit` status (Full,
+  Full-auto, Approximate, Partial, Unmodeled) and up to five of its Unmodeled and Partial cards (commander and engine
+  cards first); a `--deck` run's opponent tiers get one summed line each. `--quiet` keeps it. It is read from the card
+  data once per run and plays no game, so results are unchanged (`rust/crates/sim-cli/src/coverage.rs`).
+
 ## What's next
 
 1. Finish Phase 0: put the Tier 3 targets on `main` and let the nightly run score them. The same method (Playgroup's

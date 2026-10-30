@@ -121,7 +121,7 @@ fn the_export_guard_passes_the_committed_data() {
     let f = fixture();
     let (new, stale) = check(&f.all, &f.known);
     assert!(new.is_empty(), "{}", refusal(&new));
-    assert!(stale.is_empty(), "data/paths_known.txt lines to delete (no longer that double): {stale:?}");
+    assert!(stale.is_empty(), "data/paths_known.txt only shrinks: delete the line of each card that is no longer that double (or no longer exists): {stale:?}");
     // the known list holds no hard double and no declared split
     assert!(f.known.values().all(|c| matches!(c, Class::Shadowed | Class::Competing | Class::Split)));
 }

@@ -11,6 +11,7 @@
 
 mod args;
 mod cardinfo;
+mod coverage;
 mod decks;
 mod explain;
 mod fit;
@@ -211,6 +212,8 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
     if a.trace.is_some() {
         return poolmode::trace(sim, &a, if swaps.is_empty() { &base } else { &var }).map(|()| 0);
     }
+    // the model coverage of every deck the run plays, before anything is played (Phase 2)
+    coverage::print(&coverage::pool_run(sim, &a, &swaps, &base, &var)?);
     if preflight::wanted(&a, &swaps) {
         if let preflight::Outcome::Stop(code) = preflight::run(sim, &a, &swaps, &var)? {
             return Ok(code);
