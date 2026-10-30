@@ -2,7 +2,9 @@
 # Paired test 2026-10-30 (t4, 2000 games): plan 18.1% vs hand 20.9% (-2.8, 95% CI -5.5..-0.1): worse, the hand
 # t4::yuriko_wish / yuriko_prio stay the default. What this file cannot say yet: a group held only on the
 # battlefield (Scroll Rack or Top in hand is not a putback), engines ahead of a line's pieces (Rhystic Study first),
-# and a cantrip's value from the rest of the hand (Brainstorm 45 without a big card to put back).
+# and a cantrip's value from the rest of the hand (Brainstorm 45 without a big card to put back). Diagnostic: the
+# derived wish with the hand yuriko_prio is as bad (17.5%, -3.4, CI -6.1..-0.7): the loss is the wish list (tutors
+# fetch Brainstorm or Dig Through Time where the hand list fetches Rhystic Study), not the priority rules.
 deck = "yuriko-dimir-ninjas"
 default = "hand"
 # card engines tutors want once the reveal line wants nothing (was the tail of t4::yuriko_wish)
