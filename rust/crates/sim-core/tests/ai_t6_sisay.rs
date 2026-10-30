@@ -1,7 +1,7 @@
 //! Sisay (legends toolbox) plan slots: mulligan, Sisay's fetch, tutor wish list (audit/t6/sisay-legends-toolbox/SPEC.md).
 
 use sim_core::ids::PlayerId;
-use sim_core::impls::{legends, t6_plan_sisay as plan, t6_plans};
+use sim_core::impls::{legends, t6_plans as plan, t6_plans}; // --- phase4-cedh: the slots read the plan file
 use sim_core::state::Game;
 use sim_core::testkit::*;
 

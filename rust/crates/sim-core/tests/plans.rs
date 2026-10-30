@@ -256,15 +256,6 @@ fn the_scion_plan_file_matches_its_hand_code() {
     );
 }
 
-#[test]
-fn the_kinnan_plan_file_matches_its_hand_code() {
-    use sim_core::impls::t6_plan_kinnan as h;
-    plan_matches_hand(
-        KI,
-        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
-    );
-}
-
 /// hold-up and go-now rules: the first rule that holds decides; a go-now rule without `go` leaves it to the table
 #[test]
 fn hold_up_and_go_now_rules() {
@@ -318,24 +309,6 @@ fn the_extensions_are_validated() {
     assert!(
         plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"mana<one-lander\"]\nvalue = 1")
             .is_ok()
-    );
-}
-
-#[test]
-fn the_sisay_plan_file_matches_its_hand_code() {
-    use sim_core::impls::t6_plan_sisay as h;
-    plan_matches_hand(
-        "sisay-legends-toolbox",
-        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
-    );
-}
-
-#[test]
-fn the_rograkh_silas_plan_file_matches_its_hand_code() {
-    use sim_core::impls::t6_plan_rograkh_silas as h;
-    plan_matches_hand(
-        "rograkh-silas-turbo-breach",
-        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
     );
 }
 

@@ -1,4 +1,5 @@
-//! Rograkh/Silas turbo plan (impls/t6_plan_rograkh_silas.rs): the spec's mulligan and decision scenarios.
+//! Rograkh/Silas turbo plan (data/plans/rograkh-silas-turbo-breach.toml; was impls/t6_plan_rograkh_silas.rs): the
+//! spec's mulligan and decision scenarios.
 
 use sim_core::ids::PlayerId;
 use sim_core::impls::t6_plans;

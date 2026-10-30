@@ -2,7 +2,7 @@
 //! (audit/t6/kinnan-bonder-mana-combo/SPEC.md decision scenarios 3, 11, 12, 14).
 
 use sim_core::ids::PlayerId;
-use sim_core::impls::{t6_plan_kinnan as plan, t6_plans};
+use sim_core::impls::{t6_plans as plan, t6_plans}; // --- phase4-cedh: the slots read data/plans/kinnan-bonder-mana-combo.toml
 use sim_core::state::Game;
 use sim_core::testkit::*;
 

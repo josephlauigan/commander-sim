@@ -5,8 +5,10 @@
 # or the Breach pieces, the free counters held for the turn of the attempt. Silas is "mostly there for the colours".
 # Cast priority, hold-up and go-now: no opinion (a turbo-development priority and a develop-first hold-up measured
 # worse in 300-game A/Bs); the shared Tier 6 rules decide.
+# Paired test (t6, 2000 games): plan 18.3% vs hand 18.6% (-0.3, 95% CI -3.3..+2.7): level: t6_plan_rograkh_silas.rs
+# deleted. (Where the hand list named only cards outside the library, the plan has no opinion: the shared pieces.)
 deck = "rograkh-silas-turbo-breach"
-default = "hand"
+default = "plan"
 
 [sets]
 tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Demonic Counsel", "Wishclaw Talisman", "Demonic Consultation", "Tainted Pact"]

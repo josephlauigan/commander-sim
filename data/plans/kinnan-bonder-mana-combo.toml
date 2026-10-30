@@ -3,8 +3,9 @@
 # The deck (primer: "thrives on patience and timing"): fast mana and dorks, Kinnan on turn 2 before the rocks, a draw
 # engine (Rhystic Study, Mystic Remora, The One Ring) while it waits, then Kinnan + Basalt Monolith (or Hullbreaker
 # Horror + two rocks) once it holds the cover for the loop.
+# Paired test (t6, 2000 games): byte-identical to the hand code (Kinnan 24.6% both arms): t6_plan_kinnan.rs deleted.
 deck = "kinnan-bonder-mana-combo"
-default = "hand"
+default = "plan"
 
 [sets]
 # the primer's first mulligan item: a draw engine

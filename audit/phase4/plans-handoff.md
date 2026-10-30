@@ -15,9 +15,9 @@ Paired tests: 2000 games per arm, same seeds, `AI_PLAN_DATA=0` vs `=<deck>` (t6 
 | yuriko-dimir-ninjas | t4 | 18.8% [16.9, 20.7] n=1599 | 18.1% [16.2, 20.0] n=1598 | -0.7 [-3.4, +2.0] | level | t4::yuriko_wish / yuriko_prio deleted, default plan |
 | yawgmoth-mono-black-aristocrats | t5 | 17.6% [15.7, 19.5] n=1585 (PR 1 hand arm) | 17.6% [15.7, 19.5] n=1587 | +0.0 [-2.7, +2.7] (PR 1 plan: +1.9 over it) | the -1.9 closes (`counts`, `bf:<set>`) | deleted in PR 1, default plan |
 | scion | t6 | pending | | | | |
-| kinnan-bonder-mana-combo | t6 | pending | | | | |
-| sisay-legends-toolbox | t6 | pending | | | | `fetch` stays code (legends::sisay_pick) |
-| rograkh-silas-turbo-breach | t6 | pending | | | | |
+| kinnan-bonder-mana-combo | t6 | 24.6% [22.3, 26.9] n=1307 | 24.6% [22.3, 26.9] n=1306 | +0.0 [-3.3, +3.3] | level: byte-identical output | t6_plan_kinnan.rs deleted, default plan |
+| sisay-legends-toolbox | t6 | 31.1% [28.6, 33.6] n=1335 | 31.1% [28.6, 33.6] n=1335 | +0.0 [-3.5, +3.5] | level: byte-identical output | five slots deleted, default plan; `fetch` stays code (legends::sisay_pick) |
+| rograkh-silas-turbo-breach | t6 | 18.6% [16.5, 20.7] n=1320 | 18.3% [16.2, 20.4] n=1319 | -0.3 [-3.3, +2.7] | level | t6_plan_rograkh_silas.rs deleted, default plan |
 | kraum-tymna-blue-breach-midrange | t6 | pending | | | | |
 | rograkh-thrasios-creature-combo | t6 | pending | | | | |
 | dack-fayden-white-stax | t6 | - | - | - | no plan file | kept: see below |

@@ -3,8 +3,9 @@
 # The deck ramps hard, lands Sisay on turns 2-4, then uses her {W}{U}{B}{R}{G} ability to put the line's legends onto
 # the battlefield. Which legend Sisay fetches stays card code (`t6_plan_sisay::fetch`, called by legends::sisay_pick):
 # it is a card's choice, not a plan slot.
+# Paired test (t6, 2000 games): byte-identical to the hand code (Sisay 31.1% both arms): the five slots are deleted.
 deck = "sisay-legends-toolbox"
-default = "hand"
+default = "plan"
 
 # The lines (they score the wish list's line bonus: the fewer groups a started line lacks, the more each piece is
 # worth)

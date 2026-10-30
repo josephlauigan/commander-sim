@@ -1,8 +1,9 @@
-//! Tier 6 plan slot for `sisay-legends-toolbox` (audit/t6/sisay-legends-toolbox/SPEC.md). Contract: see `t6_plans.rs`.
+//! Sisay's legend choice for `sisay-legends-toolbox` (audit/t6/sisay-legends-toolbox/SPEC.md): `fetch`, which
+//! `legends::sisay_pick` asks which legend Sisay's ability puts onto the battlefield. The five plan slots moved to
+//! `data/plans/sisay-legends-toolbox.toml` (Phase 4 PR 2, paired t6 test byte-identical).
 //!
 //! The deck ramps hard, lands Sisay on turns 2-4, then uses her {W}{U}{B}{R}{G} ability to put the line's legends onto
 //! the battlefield (Derevi + Emiel + Cradle / Bloom Tender, Marvin + Ioreth + a mana legend, Mount Doom to finish).
-//! `fetch` is the one hook outside this file: `legends::sisay_pick` asks it which legend Sisay fetches.
 
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
@@ -102,91 +103,6 @@ pub fn fetch(g: &Game, p: PlayerId, power: i32) -> Option<CardId> {
         }
     }
     best.map(|b| b.1)
-}
-
-/// cast priority of `c` (0-100 scale like `deck_prio`; 0 or less keeps it in hand); None = no opinion
-pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
-    let pl = g.player(p);
-    let d = g.db.get(c);
-    if pl.is_commander(c) {
-        // Sisay on turn 2-3 as soon as the mana is there; she is the tutor
-        return Some(if pl.turns >= 2 { 92.0 } else { 0.0 });
-    }
-    match &*d.name {
-        // the cheap tutors find the line's pieces: before the value spells
-        "Demonic Tutor" | "Vampiric Tutor" | "Worldly Tutor" | "Enlightened Tutor" | "Eladamri's Call"
-        | "Green Sun's Zenith" | "Chord of Calling" => Some(76.0),
-        // the draw/tax engines come out early, while they are cheap
-        "Rhystic Study" | "Smothering Tithe" | "Mystic Remora" => Some(if pl.turns <= 4 { 72.0 } else { 55.0 }),
-        // protection and answers are held, not cast into an empty board
-        "Silence" | "Deafening Silence" => Some(0.0),
-        _ => None,
-    }
-}
-
-/// tutor wish list, best first: the line's missing pieces that are in the library
-pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
-    let lib = &g.player(p).library;
-    let mut v: Vec<(f64, CardId)> = vec![];
-    for &c in lib {
-        let name = nm(g, c);
-        let mut s = want(g, p, name);
-        if name == TENDER && !have(g, p, TENDER) {
-            // the rainbow dork: ramp, and the Unicorn engine without Cradle
-            s = if out(g, p, SISAY) { 6.0 } else { 8.5 };
-        }
-        if s > 0.0 {
-            s += completes(g, p, name);
-        }
-        if s > 1.0 {
-            v.push((s, c));
-        }
-    }
-    if v.is_empty() {
-        return None;
-    }
-    v.sort_by(|a, b| b.0.total_cmp(&a.0));
-    Some(v.into_iter().map(|x| x.1).collect())
-}
-
-/// Mulligan (spec: "if it makes a mana it is probably good enough"): keep a hand with 1-5 lands and two or more mana
-/// makers, or a land, a mana maker and a tutor/Sisay-line piece; ship hands of lands only, no mana, or five lands with
-/// nothing else.
-pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
-    let hand = &g.player(p).hand;
-    // mana by turn 2 from this hand: Mox Diamond needs a second land, Chrome Mox a spare card, Sol Ring a land,
-    // a dork is summoning sick
-    let m = crate::impls::t6_keep::mana(g, p);
-    if m.settle() {
-        return Some(true);
-    }
-    let lands = m.lands;
-    let makers = m.n_mana;
-    let tutors = hand.iter().filter(|&&c| g.db.get(c).tag(Tag::Tut)).count();
-    let spells = hand.len() - lands;
-    let ok = if lands == 0 {
-        false
-    } else if lands >= 5 {
-        spells >= 3 && makers >= 1
-    } else if lands == 1 {
-        m.eff >= m.need_one_lander() && spells >= 3
-    } else {
-        (m.eff >= 3.0 && spells >= 2) || (m.eff >= 2.0 && (makers >= 1 || tutors >= 1) && spells >= 2)
-    };
-    Some(ok)
-}
-
-/// extra value of passing with mana up this turn: the early turns are for developing
-pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
-    (g.player(p).turns <= 3).then_some(-2.0)
-}
-
-/// go for the combo named `combo` now: no opinion, the shared table check decides
-pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
-    // No opinion (A/B at 600 games: "go whenever the line needs no spell" changed neither tries nor wins; the shared
-    // table check stays in charge). `t6_combos_t6::line_needs_cast` is there for a later rule.
-    let _ = (g, p, combo);
-    None
 }
 
 /// the cards still missing from a line (a group counts as done when any of its cards is out or in hand)
