@@ -39,3 +39,13 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
       `B/tN-B.txt`; it skips arms already done with rc=0, so rerun it to resume). Read a pair with
       `half.sh B/tN-old.txt B/tN-A.txt "Name;Name;Name"` (the display names on the share line).
 - [ ] Stage C.
+
+## Stage B log
+
+- First run (binary `bin/commander-sim-B`, 21861ab2; derived arms kept in `B1/`): t1 half A -0.4 [-5.7, +4.9], half
+  B +0.9 [-2.8, +4.6]; t2 half A -3.8 [-9.0, +1.4] (Sythis -6.0 [-9.4, -2.6], Meren +2.8), half B -3.0 [-7.0, +1.0]
+  (Kaalia -3.1). Level by the CI, but the t2 point estimates were negative and Sythis' loss showed two general faults
+  (removal with no target cast at nothing; mana sources under development creatures): fixed in 18b443f9, every
+  derived arm rerun from t1 with `bin/commander-sim-B2`. The `AI_VALUES=0` arms (t1-old, t2-old, t3-old) are kept:
+  the fixes are behind the switch (checked: B2 with `AI_VALUES=0` on t1, 300 games, = the Stage A head byte for
+  byte). `chain2.sh` runs that check and then `stageB.sh`.
