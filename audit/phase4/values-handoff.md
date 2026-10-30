@@ -31,7 +31,11 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
 ## State
 
 - [x] Design (2bfa0390).
-- [ ] Stage A: identical with AI_VALUES unset on t1, t2, t4, t5 (300 games).
-- [ ] Diagnostic, fixes.
-- [ ] Stage B pairs.
+- [x] Stage A: byte-identical with AI_VALUES unset on t1, t2, t4, t5 (300 games, all rc=0): base `bin/commander-sim-base` vs
+      `bin/commander-sim-headA` (a92b02a2), outputs `A/base-tN.txt`, `A/head-tN.txt` (`stageA.sh`).
+- [x] Diagnostic, fixes (design, "Diagnostic findings"; 21861ab2). Overrides: Archon of Cruelty, Sheoldred, the
+      Apocalypse.
+- [ ] Stage B pairs: `stageB.sh` (binary `bin/commander-sim-B`, outputs `B/tN-old.txt`, `B/tN-A.txt`,
+      `B/tN-B.txt`; it skips arms already done with rc=0, so rerun it to resume). Read a pair with
+      `half.sh B/tN-old.txt B/tN-A.txt "Name;Name;Name"` (the display names on the share line).
 - [ ] Stage C.
