@@ -1706,19 +1706,7 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// token doublers
 pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
-    let kaya = crate::impls::t0_zurgo::kaya_mult(g, p); // Kaya, Geist Hunter -2: twice as many this turn
-    if !active(g) {
-        return kaya;
-    }
-    let mut k = kaya;
-    for (q, _, ab, i) in statics(g, "tokens") {
-        if let Ability::Replacement { multiplier, .. } = &ab[i]
-            && q == p
-        {
-            k *= multiplier.unwrap_or(2).max(1) as u32;
-        }
-    }
-    k
+    crate::engine::repl::token_mult(g, p)
 }
 
 /// m's own toxic N (compiled from "toxic N" on its keyword line): poison counters to a player it deals combat
@@ -1738,15 +1726,7 @@ pub fn toxic_amount(g: &Game, m: PermId) -> i32 {
 
 /// counter doublers
 pub fn counter_mult(g: &Game, p: PlayerId) -> i32 {
-    let mut k = 1;
-    for (q, _, ab, i) in statics(g, "counters") {
-        if let Ability::Replacement { multiplier, .. } = &ab[i]
-            && q == p
-        {
-            k *= multiplier.unwrap_or(2);
-        }
-    }
-    k
+    crate::engine::repl::counter_mult(g, p)
 }
 
 /// "players can't gain life" statics of other players
@@ -2409,25 +2389,7 @@ fn color_letter(w: &str) -> Option<char> {
 /// life instead" (The Wind Crystal, Boon Reflection): the player orders the replacements, and adding before doubling
 /// gains the most
 pub fn lifegain_mod(g: &Game, p: PlayerId, n: i32) -> i32 {
-    if n <= 0 || !active(g) {
-        return n;
-    }
-    let mut n = n;
-    for (q, _, ab, i) in statics(g, "lifegain_plus") {
-        if let Ability::Static { amount, .. } = &ab[i]
-            && q == p
-        {
-            n += amount.unwrap_or(1);
-        }
-    }
-    for (q, _, ab, i) in statics(g, "lifegain") {
-        if let Ability::Replacement { multiplier, .. } = &ab[i]
-            && q == p
-        {
-            n *= multiplier.unwrap_or(2).max(1);
-        }
-    }
-    n
+    crate::engine::repl::lifegain_mod(g, p, n)
 }
 
 /// "creatures your opponents control enter tapped" (Authority of the Consuls): does m, entering under p's control,

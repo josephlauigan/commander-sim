@@ -107,8 +107,7 @@ pub fn has_type(g: &Game, m: PermId, t: &str) -> bool {
 // ------------------------------------------------------------------ protection and targeting
 /// all damage that would be dealt to m is prevented (Cho-Manno, Revolutionary)
 pub fn no_damage(g: &Game, m: PermId) -> bool {
-    ((card_tag(g, m, Tag::Nodmg) && !g.perm(m).neutered) || crate::impls::t3_aurelia::iroas_shield(g, m)) // Iroas
-        && !g.unpreventable()
+    crate::engine::repl::no_damage(g, m)
 }
 
 /// Shadowspear's activation this turn, against a permanent of a player other than the active one
@@ -280,8 +279,7 @@ pub fn add_cmd_dmg(g: &mut Game, d: PlayerId, p: PlayerId, a: PermId, dmg: i32) 
 
 /// Melira, Sylvok Outcast: p can't get poison counters, and p's creatures can't have -1/-1 counters put on them
 pub fn melira(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| card_tag(g, m, Tag::Melira) && !g.perm(m).phased)
-        || crate::impls::t45_heliod_zur::solemnity(g) // --- Tiers 4/5 (heliod-zur): Solemnity, for every player
+    crate::engine::repl::melira(g, p)
 }
 
 /// Glacial Chasm

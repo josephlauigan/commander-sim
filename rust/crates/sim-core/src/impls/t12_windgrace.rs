@@ -130,10 +130,7 @@ fn land_gy_payoffs(g: &Game, p: PlayerId) -> i32 {
 
 /// Spelunking: "Lands you control enter untapped." (Game::add_land and turn::land_enters_tapped ask)
 pub fn lands_enter_untapped(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| {
-        let x = g.perm(m);
-        x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| cname(g, c) == SPELUNKING)
-    })
+    crate::engine::repl::spelunking(g, p)
 }
 
 /// --- casual speed: the land-drop choice (turn::land_score): Lotus Field with fewer than two other lands sacrifices

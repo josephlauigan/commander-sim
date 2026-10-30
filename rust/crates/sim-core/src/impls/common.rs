@@ -2841,7 +2841,7 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         hooked(g, Event::ProliferateExtra).iter().map(|(src, imp)| (imp.proliferate_extra.unwrap())(g, *src, p)).sum()
     };
     let times = times as i32 * (1 + extra); // Tekuthal
-    let dbl = if g.player(p).perms.iter().any(|&m| card_name(g, m) == "Doubling Season") { 2 } else { 1 };
+    let dbl = if crate::engine::repl::doubling_season_any(g, p) { 2 } else { 1 };
     for _ in 0..times.max(0) {
         let mut sagas = vec![];
         for m in g.player(p).perms.clone() {

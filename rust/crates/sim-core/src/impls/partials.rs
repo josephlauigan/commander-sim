@@ -162,8 +162,7 @@ fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
 
 /// partials.tajic_protects: Tajic prevents noncombat damage to its controller's other creatures
 pub fn tajic_protects(g: &Game, m: PermId) -> bool {
-    let o = g.perm(m).owner;
-    g.player(o).perms.iter().any(|&x| x != m && !g.perm(x).phased && name_of(g, x) == "Tajic, Legion's Edge")
+    crate::engine::repl::tajic(g, m)
 }
 
 // ======================================================== Brutal Hordechief: you choose how they block

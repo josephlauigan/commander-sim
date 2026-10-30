@@ -61,7 +61,6 @@ use crate::sym::{Sym, intern};
 /// the commander starting life total
 const START_LIFE: i32 = 40;
 const ARCHIVIST: &str = "Archivist of Oghma";
-const SOLEMNITY: &str = "Solemnity";
 const DELNEY: &str = "Delney, Streetwise Lookout";
 const INTERVENTION: &str = "Heliod's Intervention";
 const CLERIC: &str = "Cleric Class";
@@ -86,11 +85,6 @@ fn cname(g: &Game, c: CardId) -> &str {
 
 fn name_is(g: &Game, m: PermId, name: &str) -> bool {
     g.perm(m).cd.is_some_and(|c| cname(g, c) == name)
-}
-
-/// any live, unneutered permanent of this name (any player's)
-fn anyone_has(g: &Game, name: &str) -> bool {
-    g.players.iter().any(|q| q.perms.iter().any(|&m| live(g, m) && !g.perm(m).neutered && name_is(g, m, name)))
 }
 
 /// p's live, unneutered permanents of this name
@@ -132,7 +126,7 @@ fn is_my_main(g: &Game, p: PlayerId) -> bool {
 /// with counters, proliferate) and poison counters are given (values::melira). Loyalty counters (planeswalkers) still
 /// go on. Left out: lore, charge, oil and other kept counters.
 pub fn solemnity(g: &Game) -> bool {
-    anyone_has(g, SOLEMNITY)
+    crate::engine::repl::solemnity(g)
 }
 
 // ================================================================== Altar of the Pantheon

@@ -65,11 +65,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             }
         }
         if g.player(p).library.is_empty() {
-            let labman = g
-                .player(p)
-                .perms
-                .iter()
-                .any(|&m| !g.perm(m).phased && card_name(g, m).is_some_and(|n| LABMEN.contains(&n)));
+            let labman = crate::engine::repl::labman(g, p);
             if labman {
                 return ai::win(g, p, "Laboratory Maniac", None);
             }
@@ -698,10 +694,7 @@ pub fn last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
 // ------------------------------------------------------------------ dying
 /// Hushbringer: creatures entering or dying don't cause abilities to trigger
 pub fn hushed(g: &Game) -> bool {
-    g.players.iter().filter(|q| q.alive).flat_map(|q| q.perms.iter()).any(|&m| {
-        let x = g.perm(m);
-        !x.phased && !x.neutered && card_name(g, m) == Some("Hushbringer")
-    })
+    crate::engine::repl::hushed(g)
 }
 
 /// m dies (cause: 'destroy', 'sac', 'sba', 'combat' ...). Python's `die`.
@@ -1080,7 +1073,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     // Doubling Season: a planeswalker of p's enters with twice its loyalty. This is the card's only loyalty path (its
     // tokens and counters are its compiled replacements; the old `etb` hook in impls/t3.rs doubled it again)
-    let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
+    let doubling = crate::engine::repl::doubling_season(g, p);
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
     let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
@@ -1760,8 +1753,7 @@ pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32,
         return Ok(());
     }
     let n = n.saturating_mul(crate::dsl::token_mult(g, p) as i32);
-    let manufactor =
-        g.player(p).perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some("Academy Manufactor"));
+    let manufactor = crate::engine::repl::manufactor(g, p);
     let kinds: Vec<Sym> = if manufactor { vec!["Treasure", "Food", "Clue"] } else { vec![kind] };
     let tap_all = hooks::enters_tapped(g, p, None);
     for &k in &kinds {

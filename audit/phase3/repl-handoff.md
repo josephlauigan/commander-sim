@@ -12,7 +12,14 @@ life gain 358-368 / 373-374.
 
 ## Status
 - [x] Design (`repl-design.md`) and `examples/repl_cost`
-- [ ] Stage A: `engine/repl.rs`, `repl::NAMED`, `CardDef::repl`; helpers read through it; tests/repl.rs
+- [x] Stage A (committed): `engine/repl.rs` (event kinds, `NAMED` + `TAGGED`, `CardDef::repl`, the counters step with a
+      `Path` per old site, `Mods`, tokens, damage, life gain, graveyard, draw, trigger, enter readers); the old helpers
+      (`cardcode::scales/vorinclex/put_plus/add_counters`, `values::melira/no_damage`, `solemnity`, `dsl::token_mult/
+      counter_mult/lifegain_mod`, `zones::hushed`, `cardcode::damage_prevented`, `partials::tajic_protects`, Spelunking,
+      the Doubling Season / Manufactor / Lab Man name checks, `life::gain`) read through it. `tests/repl.rs` (9).
+      Checks: 0 warnings; 3649 passed / 0 failed / 3 ignored (222 binaries); practice 104; cardgen clean; clone_cost
+      2.93 / 3.01; repl_cost +1/+1 350 / 344, -1/-1 112 / 115, poison 112 / 115, tokens 180-185 / 235-237, damage 1.2,
+      life gain 358-360 / 373-381 (same as base, within noise).
 - [ ] Stage B: call sites call the step; old helpers gone
 - [ ] Stage C: coverage and order fixes, tests, decks touched
 

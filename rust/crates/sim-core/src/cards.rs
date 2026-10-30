@@ -242,6 +242,9 @@ impl EnterRule {
 pub struct CardDef {
     /// its effect from the table of named characteristic effects (`engine::chars::NAMED`), looked up once at load
     pub named: Option<crate::engine::chars::NamedFx>,
+    /// its replacement effect from the table of named replacement effects (`engine::repl::NAMED`, `TAGGED`), looked up
+    /// once at load
+    pub repl: Option<crate::engine::repl::ReplFx>,
     pub id: CardId,
     pub name: Box<str>,
     pub types: Types,
@@ -322,10 +325,12 @@ impl CardDef {
             None => None,
             Some(s) => Some(s.parse::<i32>().map_err(|_| at(format!("starting loyalty {s:?}")))?),
         };
+        let tags = Tags::from_raw(&r.tags).map_err(at)?;
         Ok(CardDef {
             id,
             name: r.name.as_str().into(),
             named: crate::engine::chars::named_fx(&r.name),
+            repl: crate::engine::repl::fx_of(&r.name, &tags),
             types,
             generic: r.generic,
             pips: r.pips.as_str().into(),
@@ -335,7 +340,7 @@ impl CardDef {
             instant: d.instant,
             sorcery: d.sorcery,
             perm: d.perm,
-            tags: Tags::from_raw(&r.tags).map_err(at)?,
+            tags,
             pow: r.pow,
             tgh: r.tgh,
             bomb: r.bomb,

@@ -125,49 +125,25 @@ pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
     }
 }
 
-/// Hardened Scales: how many extra +1/+1 counters each placement on one of p's creatures gets (one per Scales; they
-/// stack). The places that put counters on creatures call this (`add_counters`, the ability language's counters and
-/// proliferate, enters-with-counters).
+/// Hardened Scales: how many extra +1/+1 counters each placement on one of p's creatures gets: `repl::scales`
 pub fn scales(g: &Game, p: PlayerId) -> i32 {
-    let named = |y: &PermId| crate::engine::values::card_name(g, *y) == Some("Hardened Scales");
-    g.player(p).perms.iter().filter(|y| g.perm(**y).on_bf && !g.perm(**y).phased && named(y)).count() as i32
+    crate::engine::repl::scales(g, p)
 }
 
-/// Vorinclex, Monstrous Raider: `n` counters (negative: -1/-1 counters) that `actor` would put on a permanent or
-/// player. Each Vorinclex its controller runs doubles them; each one an opponent runs halves them, rounded down.
+/// Vorinclex, Monstrous Raider: `n` counters (negative: -1/-1 counters) that `actor` would put: `repl::vorinclex`
 pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
-    let mut k = n.abs();
-    for pl in &g.players {
-        for &y in &pl.perms {
-            let x = g.perm(y);
-            if x.on_bf && !x.phased && crate::engine::values::card_name(g, y) == Some("Vorinclex, Monstrous Raider") {
-                k = if pl.id == actor { k * 2 } else { k / 2 };
-            }
-        }
-    }
-    k * n.signum()
+    crate::engine::repl::vorinclex(g, actor, n)
 }
 
-/// put `n` +1/+1 counters (negative: -1/-1) on m, as its owner would (Vorinclex)
+/// put `n` +1/+1 counters (negative: -1/-1) on m, as its owner would (Solemnity, Vorinclex): `repl::put_plus`
 pub fn put_plus(g: &mut Game, m: PermId, n: i32) {
-    if crate::impls::t45_heliod_zur::solemnity(g) {
-        return; // --- Tiers 4/5 (heliod-zur): Solemnity
-    }
-    let n = vorinclex(g, g.perm(m).owner, n);
-    g.perm_mut(m).plus += n;
-    crate::impls::t0_captain::counters_put(g, m, n); // Captain Marvel copies counters
+    crate::engine::repl::put_plus(g, m, n)
 }
 
 /// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales:
-/// one more on a creature you control
+/// one more on a creature you control: `repl::add_counters`
 pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
-    use crate::engine::values::{card_tag, has_type};
-    let x = g.perm(m);
-    let orcish = x.army || (x.cd.is_some() && (has_type(g, m, "orc") || has_type(g, m, "goblin")));
-    let mauhur = g.player(x.owner).perms.iter().any(|&y| card_tag(g, y, crate::tag::Tag::Mauhur) && !g.perm(y).phased);
-    let n = if n > 0 && orcish && mauhur { n + 1 } else { n };
-    let n = if n > 0 && g.is_creature(m) { n + scales(g, g.perm(m).owner) } else { n };
-    put_plus(g, m, n);
+    crate::engine::repl::add_counters(g, m, n)
 }
 
 /// rules.revolt: a permanent of p's left the battlefield this turn
@@ -559,10 +535,7 @@ pub fn ring_blocked(g: &Game, p: PlayerId, a: PermId, b: PermId) -> bool {
 
 /// mine.damage_prevented (Old Fat Spider's chapter II)
 pub fn damage_prevented(g: &Game, m: PermId) -> bool {
-    !g.unpreventable()
-        && (crate::impls::mine::damage_prevented(g, m)
-            || crate::impls::titania::spider_fog(g, m)
-            || crate::impls::t3_marwyn::elf_fog(g, m)) // --- Tier 3 (marwyn): Galadhrim Ambush
+    crate::engine::repl::source_prevented(g, m)
 }
 
 /// rules.dovin_blocked: Dovin's -1: damage to and from m is prevented
