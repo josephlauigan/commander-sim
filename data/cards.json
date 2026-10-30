@@ -10178,8 +10178,7 @@
    "pips": "WW",
    "tags": {
     "pow": "4",
-    "fly": true,
-    "treas": "1"
+    "fly": true
    },
    "pow": 4,
    "tgh": 4,
@@ -14102,30 +14101,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "4",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -14133,7 +14109,7 @@
    "ward": 0,
    "identity": "BR",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -16995,27 +16971,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "regrow",
-       "filter": {
-        "type": "artifact"
-       },
-       "from": "yours"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -17023,7 +16979,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -19772,36 +19728,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped unless you control a mountain"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1RR",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 1,
-       "tgh": 0,
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -19809,7 +19736,7 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -19897,29 +19824,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters tapped unless you control a swamp"
-    },
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1BB",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -19927,7 +19832,7 @@
    "ward": 0,
    "identity": "B",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -31651,17 +31556,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "spell",
-     "effects": [
-      {
-       "do": "add_mana",
-       "n": 3
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "splice"
@@ -31673,7 +31568,7 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -34374,24 +34269,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true,
-      "other": "remove a gold counter from ~"
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -34399,10 +34277,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a Dragon you control enters, put a gold counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -50160,29 +50036,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "land"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -50190,7 +50044,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -60441,25 +60295,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -60467,7 +60303,7 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -67703,22 +67539,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "4",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "proliferate"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [
     "proliferate"
@@ -67728,7 +67549,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -67794,9 +67615,7 @@
    "generic": 4,
    "pips": "",
    "tags": {
-    "leg": true,
-    "tok": "1",
-    "tokp": "0"
+    "leg": true
    },
    "pow": 0,
    "tgh": 0,
@@ -67811,7 +67630,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 4,
@@ -83385,27 +83204,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1BR",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "damage",
-       "n": 1,
-       "to": {
-        "sel": "player",
-        "who": "each_opponent"
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -83413,7 +83212,7 @@
    "ward": 0,
    "identity": "BR",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -91446,9 +91245,7 @@
    "pips": "BB",
    "tags": {
     "shaman": true,
-    "pow": "2",
-    "tok": "1",
-    "tokp": "0"
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -101533,10 +101330,7 @@
    "tags": {
     "pow": "5",
     "bomb": "5",
-    "fly": true,
-    "tok": "1",
-    "tokp": "1",
-    "tokfly": true
+    "fly": true
    },
    "pow": 5,
    "tgh": 5,
@@ -105221,8 +105015,6 @@
    "generic": 1,
    "pips": "G",
    "tags": {
-    "lr": "1",
-    "lrt": true,
     "noatk": true
    },
    "pow": 0,
@@ -112209,9 +112001,7 @@
    "pips": "B",
    "tags": {
     "pow": "4",
-    "tgh": "3",
-    "tok": "1",
-    "tokp": "1"
+    "tgh": "3"
    },
    "pow": 4,
    "tgh": 3,
@@ -112703,25 +112493,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -112729,7 +112501,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -114861,53 +114633,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "RW",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 2,
-       "tgh": 0,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "haste",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "vigilance",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -114915,7 +114641,7 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -116976,8 +116702,7 @@
    "generic": 3,
    "pips": "G",
    "tags": {
-    "pow": "3",
-    "lr": "1"
+    "pow": "3"
    },
    "pow": 3,
    "tgh": 3,
@@ -118762,9 +118487,7 @@
    "generic": 1,
    "pips": "G",
    "tags": {
-    "pow": "1",
-    "tok": "1",
-    "tokp": "1"
+    "pow": "1"
    },
    "pow": 1,
    "tgh": 1,
@@ -122018,25 +121741,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -122044,7 +121749,7 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -122450,30 +122155,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2RW",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "double strike",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -122481,7 +122163,7 @@
    "ward": 0,
    "identity": "RW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -126286,30 +125968,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "destroy",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "land"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -126317,7 +125976,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -139096,41 +138755,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "2WB",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "lifelink",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "deathtouch",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -139138,7 +138763,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -142603,25 +142228,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "1",
-      "tap": true,
-      "sac": "self"
-     },
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -142629,7 +142236,7 @@
    "ward": 0,
    "identity": "GU",
    "game_changer": false,
-   "source": "scryfall+dsl",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -143019,29 +142626,7 @@
    "pow": 1,
    "tgh": 1,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "activated",
-     "cost": {
-      "mana": "W",
-      "tap": true
-     },
-     "effects": [
-      {
-       "do": "search",
-       "filter": {
-        "type": "land",
-        "basic": false
-       },
-       "to": "hand",
-       "n": 1,
-       "tapped": false
-      }
-     ],
-     "sorcery": false,
-     "once": false
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [

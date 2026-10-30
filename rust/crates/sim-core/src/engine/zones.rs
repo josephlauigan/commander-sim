@@ -1078,6 +1078,8 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.enter_no += 1;
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
+    // Doubling Season: a planeswalker of p's enters with twice its loyalty. This is the card's only loyalty path (its
+    // tokens and counters are its compiled replacements; the old `etb` hook in impls/t3.rs doubled it again)
     let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic

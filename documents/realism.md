@@ -226,7 +226,8 @@ table takes `scored = false` for that.
   first (the permanent arena or the characteristics pass)? Pause new card work during the card-model move?
 
 **Phase 2, one card model** (2026-10-29; the Commander Spellbook part is a separate PR). The gate "no double-modeled
-cards" is **not passed yet**: hard doubles are 0, and the rest are frozen.
+cards" **passes** (PR 5a, 2026-10-29): `cardgen audit --paths` finds 0 hard, shadowed, competing or undeclared split
+doubles, `data/paths_known.txt` is empty, and every card on two paths has a `paths_ok` reason (209 cards).
 
 - `cardgen audit --paths` (PR #153) lists every path a card reaches the sim by (compiled abilities, executing tags,
   card-code rule and AI slots) and classes the doubles. PR #161 removed every hard double (21 -> 0) and declared 29
@@ -237,18 +238,22 @@ cards" is **not passed yet**: hard doubles are 0, and the rest are frozen.
   `the_export_guard_passes_the_committed_data` (`rust/crates/cardgen/tests/paths.rs`) runs it on the committed data,
   so `cargo test` fails on a double even without a re-export.
 - The doubles already in the data are listed in `data/paths_known.txt`, one "class | card" line each, and accepted
-  only with that class: **21 competing, 25 shadowed, 161 undeclared splits** (207 cards). A hard double is never
-  accepted from it. The list only shrinks: the test fails on a line whose card is no longer that double. That list is
-  what is left to clear for the gate.
+  only with that class: it started at **21 competing, 25 shadowed, 161 undeclared splits** (207 cards). A hard double
+  is never accepted from it. The list only shrinks: the test fails on a line whose card is no longer that double.
 - PR 5b judged the 161 undeclared splits: 152 are real splits (two paths for different parts of the card) and got
   `paths_ok`; the 45 lands among them are compiled abilities that never run for a land (a land is no permanent in
-  the sim) next to City of Traitors' `land_etb` check, which is set on every land. The list now holds **21 competing,
-  25 shadowed, 9 undeclared splits** (55 cards). The 9 are real doubles, left for a follow-up PR with measured runs:
-  a tag's enters effect that isn't on the card next to card code for the same effect (Battle Angels of Tyr's
-  Treasure; the tok tag's token on Karn, Scion of Urza, Pawn of Ulamog, Requiem Angel, Sifter of Skulls and
-  Springheart Nantuko), the lr tag's land on resolve next to the card code's land (Sakura-Tribe Elder, Sowing
-  Mycospawn), and Doubling Season's loyalty doubled twice (the engine's enter and the card's etb: 4x).
+  the sim) next to City of Traitors' `land_etb` check, which is set on every land. 9 were real doubles.
   `sim-core/tests/paths_splits.rs` checks the splits that act on the same event happen once.
+- PR 5a cleared the rest, and **the list is now empty** (0 competing, 0 shadowed, 0 undeclared splits).
+  - The 15 competing lands, Dragon's Hoard, Weathered Wayfarer and Desperate Ritual lost a compiled ability that
+    never ran or was wrong (`dsl = []`; `dsl::ability_options` never offered a land's compiled activation).
+  - Demon of Fate's Design, Gingerbrute, both Staffs, Damn and 23 shadowed spells are declared splits: two abilities
+    with one path each, or a hand-written resolve whose partial compiled spell stays as the AI's value of the card
+    until the AI phase.
+  - The 9 doubles from PR 5b keep their card code: the enters tag is gone (Battle Angels of Tyr's `treas`; `tok` on
+    Karn, Scion of Urza, Pawn of Ulamog, Requiem Angel, Sifter of Skulls and Springheart Nantuko; `lr` on
+    Sakura-Tribe Elder and Sowing Mycospawn), and Doubling Season's `etb` hook is deleted (the engine's enter
+    doubles a planeswalker's loyalty once). `sim-core/tests/paths_competing.rs` checks each effect happens once.
 - Every `commander-sim` run that plays decks (`--deck`, `--pool`, `--all-decks`, `--calibrate`, `--realism`,
   `--goldfish`) prints the model coverage first: for each deck, its 99 + commander by `cardgen audit` status (Full,
   Full-auto, Approximate, Partial, Unmodeled) and up to five of its Unmodeled and Partial cards (commander and engine

@@ -68,7 +68,7 @@ Persist|S|1B|rean=persist
 Phyrexian Arena|E|1BB|eng=1
 Phyrexian Metamorph|AC|3U|pow=0 clone
 Reanimate|S|B|rean=reanimate
-Sakura-Tribe Elder|C|1G|lr=1 lrt noatk
+Sakura-Tribe Elder|C|1G|noatk
 Satyr Wayfinder|C|3G|fill=wayfinder pow=1 noatk
 Sephiroth, Planet's Heir|C|4UB|bomb=5 pow=4 vig leg heir
 Sheoldred, the Apocalypse|C|2BB|bomb=7 pow=4 tgh=5 dt leg sheoA

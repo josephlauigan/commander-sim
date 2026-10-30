@@ -121,7 +121,10 @@ fn the_export_guard_passes_the_committed_data() {
     let f = fixture();
     let (new, stale) = check(&f.all, &f.known);
     assert!(new.is_empty(), "{}", refusal(&new));
-    assert!(stale.is_empty(), "data/paths_known.txt only shrinks: delete the line of each card that is no longer that double (or no longer exists): {stale:?}");
+    assert!(
+        stale.is_empty(),
+        "data/paths_known.txt only shrinks: delete the line of each card that is no longer that double (or no longer exists): {stale:?}"
+    );
     // the known list holds no hard double and no declared split
     assert!(f.known.values().all(|c| matches!(c, Class::Shadowed | Class::Competing | Class::Split)));
 }
@@ -134,18 +137,30 @@ fn the_export_guard_refuses_an_undeclared_double() {
     let names: Vec<&str> = new.iter().map(|c| c.name.as_str()).collect();
     assert_eq!(names, ["Hexing Squelcher"]);
     let msg = refusal(&new);
-    for want in ["Hexing Squelcher [hard]: uncounterable:", "rule: ", "paths_ok = \"why\"", "dsl = []", "nothing was written"] {
+    for want in
+        ["Hexing Squelcher [hard]: uncounterable:", "rule: ", "paths_ok = \"why\"", "dsl = []", "nothing was written"]
+    {
         assert!(msg.contains(want), "missing {want:?}:\n{msg}");
     }
     // a hard double is refused even when the known list names the card
     let mut known = f.known.clone();
     known.insert("Hexing Squelcher".into(), Class::Hard);
     assert_eq!(check(&f.undeclared, &known).0.len(), 1);
-    // a known double that changes class is a new double
-    let name = f.known.iter().find(|(_, c)| **c == Class::Split).map(|(n, _)| n).expect("a known split");
+    // a known double that changes class is a new double. data/paths_known.txt is empty since Phase 2 PR 5a, so the
+    // test makes one: a declared split with its paths_ok taken away, listed as a split
+    let mut all = f.all.clone();
+    let c = all
+        .values_mut()
+        .find(|c| c.class == Some(Class::SplitOk) && c.doubles.iter().all(|d| d.0 == Class::Split))
+        .expect("a declared split");
+    let name = c.name.clone();
+    (c.class, c.paths_ok) = (c.doubles.iter().map(|d| d.0).min(), None);
+    assert_eq!(c.class, Some(Class::Split), "{name}: a split once undeclared");
     let mut known = f.known.clone();
+    known.insert(name.clone(), Class::Split);
+    assert!(check(&all, &known).0.is_empty(), "listed with its class: accepted");
     known.insert(name.clone(), Class::Competing);
-    let (new, stale) = check(&f.all, &known);
+    let (new, stale) = check(&all, &known);
     assert_eq!(new.iter().map(|c| c.name.as_str()).collect::<Vec<_>>(), [name.as_str()]);
     assert_eq!(stale.len(), 1);
 }
