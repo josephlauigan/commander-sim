@@ -3,8 +3,11 @@
 # audit/t6/rograkh-thrasios-creature-combo/SPEC.md). Creature combo: Gaea's Cradle (found by Crop Rotation, Gamble,
 # Sylvan Scrying) into Talon Gates + Oboro Breezecaller, or Eternal Witness + Snap; Thrasios is the engine. Names the
 # hand code listed that the list doesn't play (Misdirection, Commandeer, Allosaurus Shepherd) are left out.
+# Paired test (t6, 2000 games): plan 20.8% vs hand 21.1% (-0.3, 95% CI -3.4..+2.8): level:
+# t6_plan_rograkh_thrasios.rs deleted. (Where the hand list named only cards outside the library, the plan has no
+# opinion: the shared pieces.)
 deck = "rograkh-thrasios-creature-combo"
-default = "hand"
+default = "plan"
 
 [sets]
 cradle = ["Gaea's Cradle"]

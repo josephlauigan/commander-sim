@@ -18,8 +18,8 @@ Paired tests: 2000 games per arm, same seeds, `AI_PLAN_DATA=0` vs `=<deck>` (t6 
 | kinnan-bonder-mana-combo | t6 | 24.6% [22.3, 26.9] n=1307 | 24.6% [22.3, 26.9] n=1306 | +0.0 [-3.3, +3.3] | level: byte-identical output | t6_plan_kinnan.rs deleted, default plan |
 | sisay-legends-toolbox | t6 | 31.1% [28.6, 33.6] n=1335 | 31.1% [28.6, 33.6] n=1335 | +0.0 [-3.5, +3.5] | level: byte-identical output | five slots deleted, default plan; `fetch` stays code (legends::sisay_pick) |
 | rograkh-silas-turbo-breach | t6 | 18.6% [16.5, 20.7] n=1320 | 18.3% [16.2, 20.4] n=1319 | -0.3 [-3.3, +2.7] | level | t6_plan_rograkh_silas.rs deleted, default plan |
-| kraum-tymna-blue-breach-midrange | t6 | pending | | | | |
-| rograkh-thrasios-creature-combo | t6 | pending | | | | |
+| kraum-tymna-blue-breach-midrange | t6 | 29.8% [27.3, 32.3] n=1292 | 29.8% [27.3, 32.3] n=1292 | +0.0 | level: byte-identical output | t6_plan_kraum.rs deleted, default plan |
+| rograkh-thrasios-creature-combo | t6 | 21.1% [18.9, 23.3] n=1325 | 20.8% [18.6, 23.0] n=1326 | -0.3 [-3.4, +2.8] | level | t6_plan_rograkh_thrasios.rs deleted, default plan |
 | dack-fayden-white-stax | t6 | - | - | - | no plan file | kept: see below |
 | godo | - | - | - | - | skipped (not seated) | kept |
 

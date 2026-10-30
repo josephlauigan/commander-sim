@@ -21,10 +21,7 @@
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 
-use super::{
-    t6_plan_dack as dack, t6_plan_godo as godo, t6_plan_kraum as kraum,
-    t6_plan_rograkh_thrasios as rthras, t6_plan_scion as scion,
-};
+use super::{t6_plan_dack as dack, t6_plan_godo as godo, t6_plan_scion as scion};
 
 /// the eight Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/`, Godo (retired 2026-10-25, a test seat)
 /// and JD's Scion
@@ -53,8 +50,6 @@ macro_rules! dispatch {
     ($g:expr, $p:expr, $f:ident($($a:expr),*)) => {
         match $g.player($p).key {
             "dack-fayden-white-stax" => dack::$f($g, $p $(, $a)*),
-            "kraum-tymna-blue-breach-midrange" => kraum::$f($g, $p $(, $a)*),
-            "rograkh-thrasios-creature-combo" => rthras::$f($g, $p $(, $a)*),
             "godo" => godo::$f($g, $p $(, $a)*),
             "scion" => scion::$f($g, $p $(, $a)*), // --- scion
             _ => None,
@@ -63,9 +58,9 @@ macro_rules! dispatch {
 }
 /// --- phase4-cedh: the Tier 6 decks that still have a hand plan file here (`AI_PLAN_DATA` picks between it and the
 /// deck's `data/plans/<key>.toml`); a deck whose hand file is deleted always plays from its plan file. Deleted after a
-/// level paired test: kinnan, rograkh-silas, and sisay's five slots (its `fetch` stays in `t6_plan_sisay.rs`).
-pub const HAND: [&str; 5] =
-    ["dack-fayden-white-stax", "kraum-tymna-blue-breach-midrange", "rograkh-thrasios-creature-combo", "godo", "scion"];
+/// level paired test: kinnan, kraum, rograkh-silas, rograkh-thrasios, and sisay's five slots (its `fetch` stays
+/// in `t6_plan_sisay.rs`).
+pub const HAND: [&str; 3] = ["dack-fayden-white-stax", "godo", "scion"];
 
 pub fn has_hand(key: &str) -> bool {
     HAND.contains(&key)

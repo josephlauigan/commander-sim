@@ -3,8 +3,10 @@
 # audit/t6/kraum-tymna-blue-breach-midrange/SPEC.md). Blue midrange: fast mana and the tax engines early, Tymna and
 # Kraum draw, Thassa's Oracle + Demonic Consultation / Tainted Pact with cover, Breach and Ad Nauseam as backups.
 # "Cover" below is a counterspell or Silence / Orim's Chant in hand.
+# Paired test (t6, 2000 games): byte-identical to the hand code (Kraum/Tymna 29.8% both arms): t6_plan_kraum.rs
+# deleted.
 deck = "kraum-tymna-blue-breach-midrange"
-default = "hand"
+default = "plan"
 
 [sets]
 silences = ["Silence", "Orim's Chant"]

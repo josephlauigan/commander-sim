@@ -78,8 +78,6 @@ pub mod t6_plans;
 pub mod t6_keep;
 pub mod t6_plan_dack;
 pub mod t6_plan_godo;
-pub mod t6_plan_kraum;
-pub mod t6_plan_rograkh_thrasios;
 pub mod t6_plan_sisay;
 pub mod t6_plan_scion; // --- scion
 pub mod t6_scion; // --- scion

@@ -313,15 +313,6 @@ fn the_extensions_are_validated() {
 }
 
 #[test]
-fn the_kraum_plan_file_matches_its_hand_code() {
-    use sim_core::impls::t6_plan_kraum as h;
-    plan_matches_hand(
-        "kraum-tymna-blue-breach-midrange",
-        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
-    );
-}
-
-#[test]
 fn conditions_nest_and_sum() {
     let t = "deck = \"x\"\n[sets]\na = [\"Brainstorm\"]\nb = [\"Ponder\"]\n[[prio]]\ncards = [\"Brainstorm\"]\n\
              when = [\"hand:a+hand:b>=2 & (turn<=1 | turn>=9)\"]\nvalue = 72\nelse = 45";
@@ -340,11 +331,3 @@ fn conditions_nest_and_sum() {
     );
 }
 
-#[test]
-fn the_rograkh_thrasios_plan_file_matches_its_hand_code() {
-    use sim_core::impls::t6_plan_rograkh_thrasios as h;
-    plan_matches_hand(
-        "rograkh-thrasios-creature-combo",
-        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
-    );
-}
