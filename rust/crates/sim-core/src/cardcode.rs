@@ -1135,11 +1135,6 @@ pub fn yuriko_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     crate::impls::t4::yuriko_prio(g, p, c)
 }
 
-/// t2.kaalia_prio
-pub fn kaalia_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    crate::impls::t2::kaalia_prio(g, p, c)
-}
-
 /// mine.flicker_worth (what flickering Sephiroth's creature m is worth); t2.flicker_worth calls it for Sephiroth's deck
 pub fn seph_flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
     crate::impls::mine::flicker_worth(g, p, m)

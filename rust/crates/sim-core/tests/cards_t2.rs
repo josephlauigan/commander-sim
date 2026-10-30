@@ -146,8 +146,9 @@ fn kaalia_puts_the_best_angel_demon_or_dragon_in_attacking() {
     assert_eq!(g.new_attackers, vec![b]);
     assert_eq!(names(&g, &g.player(P0).hand.clone()), ["Glorybringer", "Sign in Blood"]);
     let drak = card(&g, "Drakuseth, Maw of Flames");
-    assert_eq!(t2::kaalia_prio(&g, P0, drak), Some(0), "held for Kaalia");
-    assert_eq!(t2::kaalia_prio(&g, P0, card(&g, "Sign in Blood")), None);
+    // --- phase4-plans: the hold is the plan file's prio rule (data/plans/kaalia-mardu-creature-cheat.toml)
+    assert_eq!(sim_core::ai::plan_data::rule_prio(&g, P0, drak), Some(0), "held for Kaalia");
+    assert_eq!(sim_core::ai::plan_data::rule_prio(&g, P0, card(&g, "Sign in Blood")), None);
 }
 
 // ------------------------------------------------------------------ Angel of Serenity

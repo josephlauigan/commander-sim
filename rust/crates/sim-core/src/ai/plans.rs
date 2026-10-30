@@ -53,7 +53,7 @@ const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {
 }
 
 /// pool_decks.CONFIG
-const CONFIG: [(&str, DeckConfig); 7] = [
+const CONFIG: [(&str, DeckConfig); 3] = [
     (
         "yuriko-dimir-ninjas",
         DeckConfig {
@@ -67,11 +67,6 @@ const CONFIG: [(&str, DeckConfig); 7] = [
         },
     ),
     (
-        "chulane-bant-value-combo",
-        DeckConfig { prio_fn: Some(chulane_prio), wish: Some(chulane_wish), style: style(1.0, 0.5, 0.7), ..NONE },
-    ),
-    ("yawgmoth-mono-black-aristocrats", DeckConfig { wish: Some(yawg_wish), prio_fn: Some(yawg_prio), ..NONE }),
-    (
         "gaa-azorius-stax-control",
         DeckConfig { prio_fn: Some(gaa_prio), wish: Some(gaa_wish), style: style(1.0, 0.35, 0.9), ..NONE },
     ),
@@ -79,31 +74,46 @@ const CONFIG: [(&str, DeckConfig); 7] = [
         "heliod-mono-white-stax",
         DeckConfig { prio_fn: Some(heliod_prio), wish: Some(heliod_wish), style: style(1.0, 0.5, 0.8), ..NONE },
     ),
-    (
-        "kaalia-mardu-creature-cheat",
-        DeckConfig {
-            prio_fn: Some(crate::cardcode::kaalia_prio),
-            cmd_prio: Some(88),
-            style: style(1.0, 0.8, 0.4),
-            ..NONE
-        },
-    ),
-    (
-        "light-paws-aura-voltron",
-        DeckConfig {
-            aura_host: Some("commander"),
-            aura_prio: Some(70),
-            cmd_prio: Some(88),
-            cmd_turn: Some(1),
-            style: style(1.0, 0.8, 0.4),
-            ..NONE
-        },
-    ),
 ];
 
-/// the deck's configuration (an empty one for a deck without an entry)
+fn hand_config(key: &str) -> Option<&'static DeckConfig> {
+    CONFIG.iter().find(|x| x.0 == key).map(|x| &x.1)
+}
+
+/// --- phase4-plans: the configuration each deck with a plan file (`data/plans/<key>.toml`) plays from when the plan
+/// is on (`plan_data::plan_on`: env AI_PLAN_DATA, else the file's `default`): its static knobs, its derived wish list
+/// and priority rules, and the hand wish / priority functions where the file has none yet
+fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
+    static E: std::sync::LazyLock<std::collections::HashMap<&'static str, DeckConfig>> =
+        std::sync::LazyLock::new(|| {
+            super::plan_data::all()
+                .iter()
+                .filter(|(k, _)| super::plan_data::plan_on(k, hand_config(k).is_some()))
+                .map(|(k, l)| {
+                    let mut c = l.cfg;
+                    if let Some(h) = hand_config(k) {
+                        c.wish = c.wish.or(h.wish);
+                        c.prio_fn = c.prio_fn.or(h.prio_fn);
+                    }
+                    (*k, c)
+                })
+                .collect()
+        });
+    &E
+}
+
+/// --- phase4-plans: the deck plays from its plan file
+pub fn plays_plan(key: &str) -> bool {
+    effective().contains_key(key)
+}
+
+/// the deck's configuration (an empty one for a deck without an entry): from its plan file when that is on, else
+/// its hand entry
 pub fn config(key: &str) -> &'static DeckConfig {
-    CONFIG.iter().find(|x| x.0 == key).map_or(&NONE, |x| &x.1)
+    if let Some(c) = effective().get(key) {
+        return c;
+    }
+    hand_config(key).unwrap_or(&NONE)
 }
 
 /// what this deck's tutors want: its configured list, else the pieces of its closest combo
@@ -138,10 +148,6 @@ pub fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
     })
 }
 
-fn board(g: &Game, p: PlayerId) -> usize {
-    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count()
-}
-
 /// combos.DRAIN_PAYOFFS
 pub const DRAIN_PAYOFFS: [&str; 13] = [
     "Blood Artist",
@@ -170,45 +176,6 @@ pub fn drain_payoff(g: &Game, p: PlayerId) -> Option<PermId> {
             .copied()
             .find(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Bartist) || g.db.get(c).tag(Tag::Drain)))
     })
-}
-
-// ------------------------------------------------------------------ Chulane, Teller of Tales
-const BOUNCERS: [&str; 4] = ["Whitemane Lion", "Shrieking Drake", "Kor Skyfisher", "Man-o'-War"];
-
-/// deck_plans.chulane_prio: with Chulane out every creature spell draws and ramps: creatures first, cheap
-/// self-bouncers recast; the finishers once the board or the land count can end the game
-fn chulane_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let pl = g.player(p);
-    let d = g.db.get(c);
-    let chulane = pl.perms.iter().any(|&m| g.perm(m).is_cmd);
-    match &*d.name {
-        "Craterhoof Behemoth" => return Some(if board(g, p) >= 6 { 80 } else { 20 }),
-        "Avenger of Zendikar" => return Some(if pl.lands.len() >= 7 { 78 } else { 45 }),
-        _ => {}
-    }
-    if chulane && d.creature {
-        if BOUNCERS.contains(&&*d.name) {
-            return Some(76);
-        }
-        return Some(70 + (d.cmc as i32).min(8));
-    }
-    if &*d.name == "Aluren" {
-        return Some(if chulane || pl.cmd_in_zone { 75 } else { 40 });
-    }
-    None
-}
-
-fn chulane_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let miss = crate::cardcode::missing_pieces(g, p);
-    if board(g, p) >= 6 {
-        let mut v = ids(g, &["Craterhoof Behemoth"]);
-        v.extend(miss);
-        return v;
-    }
-    if !miss.is_empty() {
-        return miss;
-    }
-    ids(g, &["Avenger of Zendikar", "Consecrated Sphinx", "Craterhoof Behemoth"])
 }
 
 // ------------------------------------------------------------------ Grand Arbiter Augustin IV (stax)
@@ -306,62 +273,6 @@ fn heliod_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
         return miss;
     }
     ids(g, &["Rule of Law", "Smothering Tithe", "Drannith Magistrate", "Thalia, Guardian of Thraben"])
-}
-
-// ------------------------------------------------------------------ Yawgmoth, Thran Physician
-const UNDYING: [&str; 4] = ["Geralf's Messenger", "Butcher Ghoul", "Young Wolf", "Nether Traitor"];
-
-fn undying_count(g: &Game, p: PlayerId) -> usize {
-    g.player(p)
-        .perms
-        .iter()
-        .filter(|&&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("undying")))
-        .count()
-}
-
-/// deck_plans.yawg_prio: with Yawgmoth out, the loop comes first: Mikaeus (or undying creatures), then a death
-/// payoff once the loop is there; Yawgmoth itself as soon as it can be cast
-fn yawg_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let d = g.db.get(c);
-    if c == g.player(p).cmd {
-        return Some(86);
-    }
-    on_bf(g, p, "Yawgmoth, Thran Physician")?;
-    let und = undying_count(g, p);
-    let mik = on_bf(g, p, "Mikaeus, the Unhallowed").is_some();
-    let lp = und >= 2 || mik;
-    if &*d.name == "Mikaeus, the Unhallowed" && !mik {
-        return Some(82);
-    }
-    if UNDYING.contains(&&*d.name) && !lp {
-        return Some(if und == 1 { 78 } else { 72 });
-    }
-    if lp && DRAIN_PAYOFFS.contains(&&*d.name) && drain_payoff(g, p).is_none() {
-        return Some(80);
-    }
-    None
-}
-
-/// deck_plans.yawg_wish: the loop needs Yawgmoth plus two undying creatures (or Mikaeus and fodder), then a drain
-/// payoff
-fn yawg_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let pl = g.player(p);
-    let und = undying_count(g, p);
-    let mik = on_bf(g, p, "Mikaeus, the Unhallowed").is_some()
-        || pl.hand.iter().any(|&c| &*g.db.get(c).name == "Mikaeus, the Unhallowed");
-    let mut out = vec![];
-    if on_bf(g, p, "Yawgmoth, Thran Physician").is_none() && !pl.cmd_in_zone {
-        out.extend(ids(g, &["Yawgmoth, Thran Physician"]));
-    }
-    if !mik && und < 2 {
-        out.extend(ids(g, &["Mikaeus, the Unhallowed"]));
-        out.extend(ids(g, &UNDYING));
-    }
-    if drain_payoff(g, p).is_none() {
-        out.extend(ids(g, &DRAIN_PAYOFFS));
-    }
-    out.extend(crate::cardcode::missing_pieces(g, p));
-    out
 }
 
 // ------------------------------------------------------------------ gc_prio: Game Changers from the game

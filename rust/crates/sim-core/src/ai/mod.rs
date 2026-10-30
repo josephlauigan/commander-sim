@@ -19,6 +19,7 @@ pub mod act;
 pub mod brain;
 pub mod decks;
 pub mod evdiag; // --- ai-eval
+pub mod plan_data; // --- phase4-plans
 pub mod plans;
 pub mod planner; // --- ai-planner
 pub mod pool;

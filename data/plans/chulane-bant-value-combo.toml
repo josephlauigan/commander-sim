@@ -1,0 +1,53 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Paired test 2026-10-30 (t4, 2000 games): plan 15.7% vs hand 13.2% (+2.5, 95% CI +0.1..+4.9): the hand code is deleted.
+deck = "chulane-bant-value-combo"
+default = "plan"
+
+[style]
+temp = 1.0
+aggression = 0.5
+caution = 0.7
+
+# Win lines (was ai/plans.rs chulane_wish: Craterhoof first with six creatures out, else the closest combo's pieces)
+[[line]]
+name = "Craterhoof alpha strike"
+kind = "combat"
+pieces = [["Craterhoof Behemoth"]]
+when = ["creatures>=6"]
+
+[[line]]
+name = "Aluren + Chulane + a bouncing creature"
+combo = "Aluren + Chulane + a bouncing creature"
+
+[[line]]
+name = "Intruder Alarm + Shrieking Drake / Whitemane Lion + a mana creature + Chulane"
+combo = "Intruder Alarm + Shrieking Drake / Whitemane Lion + a mana creature + Chulane"
+
+[[line]]
+name = "Aluren + Cloudstone Curio + Chulane + two cheap creatures"
+combo = "Aluren + Cloudstone Curio + Chulane + two cheap creatures"
+
+# Cast priorities (was chulane_prio): with Chulane out every creature spell draws and ramps: creatures first, the
+# cheap self-bouncers recast; Craterhoof once the board can end the game
+[[prio]]
+cards = ["Craterhoof Behemoth"]
+when = ["creatures>=6"]
+value = 80
+else = 20
+
+[[prio]]
+cards = ["Shrieking Drake", "Whitemane Lion"]
+when = ["commander-out"]
+value = 76
+
+[[prio]]
+creature = true
+when = ["commander-out"]
+value = 70
+plus_mv = 8
+
+[[prio]]
+cards = ["Aluren"]
+when = ["commander-out", "commander-zone"]
+value = 75
+else = 40

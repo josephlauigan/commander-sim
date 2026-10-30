@@ -969,7 +969,13 @@ fn protector(name: &str) -> Option<usize> {
 fn worth_protecting(g: &Game, p: PlayerId, m: PermId) -> bool {
     let x = g.perm(m);
     let kc = plans::config(g.player(p).key).key_cards;
-    pval(g, m) >= 4.0 || x.is_cmd || x.cd.is_some_and(|c| kc.iter().any(|k| *k.0 == *g.db.get(c).name))
+    pval(g, m) >= 4.0
+        || x.is_cmd
+        // --- phase4-plans: a plan file's holds name what they protect
+        || x.cd.is_some_and(|c| {
+            let n = &g.db.get(c).name;
+            kc.iter().any(|k| *k.0 == **n) || super::plan_data::protects(g, p, n)
+        })
 }
 
 /// pool_ai._saves

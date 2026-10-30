@@ -1,0 +1,10 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Retired from the pool (a test seat only): no paired test is possible, its hand code stays.
+deck = "gaa-azorius-stax-control"
+retired = true
+default = "hand"
+
+[style]
+temp = 1.0
+aggression = 0.35
+caution = 0.9

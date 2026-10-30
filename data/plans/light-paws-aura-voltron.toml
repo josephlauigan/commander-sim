@@ -1,0 +1,17 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Static knobs only; its hand entry in ai/plans.rs CONFIG is deleted (results identical, Stage A).
+deck = "light-paws-aura-voltron"
+default = "plan"
+
+[style]
+temp = 1.0
+aggression = 0.8
+caution = 0.4
+
+[commander]
+prio = 88
+turn = 1
+
+[knobs]
+aura_host = "commander"
+aura_prio = 70

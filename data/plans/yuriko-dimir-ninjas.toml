@@ -1,0 +1,54 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Paired test 2026-10-30 (t4, 2000 games): plan 18.1% vs hand 20.9% (-2.8, 95% CI -5.5..-0.1): worse, the hand
+# t4::yuriko_wish / yuriko_prio stay the default. What this file cannot say yet: a group held only on the
+# battlefield (Scroll Rack or Top in hand is not a putback), engines ahead of a line's pieces (Rhystic Study first),
+# and a cantrip's value from the rest of the hand (Brainstorm 45 without a big card to put back). Diagnostic: the
+# derived wish with the hand yuriko_prio is as bad (17.5%, -3.4, CI -6.1..-0.7): the loss is the wish list (tutors
+# fetch Brainstorm or Dig Through Time where the hand list fetches Rhystic Study), not the priority rules.
+deck = "yuriko-dimir-ninjas"
+default = "hand"
+# card engines tutors want once the reveal line wants nothing (was the tail of t4::yuriko_wish)
+engines = ["Rhystic Study", "Mystic Remora"]
+
+[style]
+temp = 1.0
+aggression = 0.8
+caution = 0.5
+
+[commander]
+prio = 15
+turn = 6
+
+[knobs]
+top_pref = "mv"
+
+# Win line (was t4::yuriko_wish): Yuriko's reveal wants a way to put a card back on top first, then the big mana
+# values to put there; card engines after
+[[line]]
+name = "Yuriko reveal"
+kind = "commander-damage"
+ordered = true
+pieces = [["Scroll Rack", "Sensei's Divining Top", "Brainstorm"], ["Dig Through Time", "Treasure Cruise"]]
+when = ["commander-out", "commander-zone"]
+
+
+# Cast priorities (was t4::yuriko_prio): cantrips before a ninjutsu combat stack the reveal; evasive one- and
+# two-drops carry Yuriko in
+[[prio]]
+cards = ["Brainstorm", "Ponder"]
+when = ["ninjutsu-window"]
+value = 72
+
+[[prio]]
+cards = ["Ornithopter", "Changeling Outcast", "Slither Blade", "Faerie Seer", "Spectral Sailor", "Triton Shorestalker", "Moon-Circuit Hacker", "Ingenious Infiltrator"]
+when = ["creatures<2"]
+value = 80
+else = 58
+
+[[prio]]
+creature = true
+flying = true
+max_mv = 2
+when = ["creatures<2"]
+value = 80
+else = 58

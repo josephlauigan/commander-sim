@@ -1,0 +1,22 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Paired test 2026-10-30 (t2, 2000 games): byte-identical output with the hand t2::kaalia_prio (26.8% both ways): the
+# hand code is deleted.
+deck = "kaalia-mardu-creature-cheat"
+default = "plan"
+
+[style]
+temp = 1.0
+aggression = 0.8
+caution = 0.4
+
+[commander]
+prio = 88
+
+# Kaalia puts Angels, Demons and Dragons onto the battlefield attacking: don't hard-cast the big ones while she is
+# out or castable cheaply (was t2::kaalia_prio)
+[[prio]]
+creature = true
+subtypes = ["angel", "demon", "dragon"]
+min_mv = 5
+when = ["commander-out", "commander-zone & tax<=2"]
+value = 0
