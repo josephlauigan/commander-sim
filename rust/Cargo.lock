@@ -619,6 +619,7 @@ dependencies = [
  "indexmap",
  "serde",
  "serde_json",
+ "toml",
 ]
 
 [[package]]

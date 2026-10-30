@@ -1,0 +1,15 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+deck = "yuriko-dimir-ninjas"
+default = "hand"
+
+[style]
+temp = 1.0
+aggression = 0.8
+caution = 0.5
+
+[commander]
+prio = 15
+turn = 6
+
+[knobs]
+top_pref = "mv"

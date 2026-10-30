@@ -1,0 +1,8 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+deck = "chulane-bant-value-combo"
+default = "hand"
+
+[style]
+temp = 1.0
+aggression = 0.5
+caution = 0.7

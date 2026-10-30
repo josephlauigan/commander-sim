@@ -101,9 +101,44 @@ const CONFIG: [(&str, DeckConfig); 7] = [
     ),
 ];
 
-/// the deck's configuration (an empty one for a deck without an entry)
+fn hand_config(key: &str) -> Option<&'static DeckConfig> {
+    CONFIG.iter().find(|x| x.0 == key).map(|x| &x.1)
+}
+
+/// --- phase4-plans: the configuration each deck with a plan file (`data/plans/<key>.toml`) plays from when the plan
+/// is on (`plan_data::plan_on`: env AI_PLAN_DATA, else the file's `default`): its static knobs, its derived wish list
+/// and priority rules, and the hand wish / priority functions where the file has none yet
+fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
+    static E: std::sync::LazyLock<std::collections::HashMap<&'static str, DeckConfig>> =
+        std::sync::LazyLock::new(|| {
+            super::plan_data::all()
+                .iter()
+                .filter(|(k, _)| super::plan_data::plan_on(k, hand_config(k).is_some()))
+                .map(|(k, l)| {
+                    let mut c = l.cfg;
+                    if let Some(h) = hand_config(k) {
+                        c.wish = c.wish.or(h.wish);
+                        c.prio_fn = c.prio_fn.or(h.prio_fn);
+                    }
+                    (*k, c)
+                })
+                .collect()
+        });
+    &E
+}
+
+/// --- phase4-plans: the deck plays from its plan file
+pub fn plays_plan(key: &str) -> bool {
+    effective().contains_key(key)
+}
+
+/// the deck's configuration (an empty one for a deck without an entry): from its plan file when that is on, else
+/// its hand entry
 pub fn config(key: &str) -> &'static DeckConfig {
-    CONFIG.iter().find(|x| x.0 == key).map_or(&NONE, |x| &x.1)
+    if let Some(c) = effective().get(key) {
+        return c;
+    }
+    hand_config(key).unwrap_or(&NONE)
 }
 
 /// what this deck's tutors want: its configured list, else the pieces of its closest combo

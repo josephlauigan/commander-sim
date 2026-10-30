@@ -1,0 +1,3 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+deck = "yawgmoth-mono-black-aristocrats"
+default = "hand"

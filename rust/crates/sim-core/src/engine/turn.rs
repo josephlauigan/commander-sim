@@ -1145,6 +1145,9 @@ pub fn keeps_hand(g: &Game, p: PlayerId) -> bool {
     if let Some(k) = crate::impls::t6_plans::keep(g, p) {
         return k; // a Tier 6 deck's own keep rule
     }
+    if let Some(k) = crate::ai::plan_data::keeps_hand(g, p) {
+        return k; // --- phase4-plans: the plan file's mulligan rule
+    }
     (2..=5).contains(&n)
 }
 

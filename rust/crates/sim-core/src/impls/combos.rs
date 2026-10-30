@@ -842,7 +842,7 @@ pub fn missing_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
 /// rock cast from the open mana, or a land while p's land drop is still to come. Then, when p's mana next turn
 /// (`next_turn_mana`) falls short of the line, the cards that close the gap by then: a land if it holds none, a rock
 /// that makes more than it costs. Empty when no line waits for mana, or no card helps.
-fn mana_for_lines(g: &Game, p: PlayerId) -> Vec<CardId> {
+pub(crate) fn mana_for_lines(g: &Game, p: PlayerId) -> Vec<CardId> {
     use crate::engine::mana::{
         land_card_unit, mana_units, next_turn_mana, ritual_out, units_after_cast, units_pay_with_rituals,
     };
