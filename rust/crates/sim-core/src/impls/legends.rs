@@ -12,6 +12,7 @@
 //! engine._land_cols calls by name) are here too.
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
+use crate::engine::pool::Kind;
 use super::lands::{can_pay_without, sac_land};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
 use crate::engine::repl;
@@ -1104,7 +1105,7 @@ fn spark_mana_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
 }
 
 fn spark_mana(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    g.player_mut(p).floating.any += 10;
+    g.player_mut(p).mana.add(Kind::Any, 10);
     Ok(())
 }
 

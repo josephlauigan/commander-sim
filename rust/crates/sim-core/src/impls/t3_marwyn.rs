@@ -26,6 +26,7 @@
 //!   mana and infinite overruns win before combat. Its plain +2/+2 pump outside the loop is not used.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable};
@@ -213,7 +214,7 @@ fn legolas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         // tap it for mana at once: the mana floats, the damage trigger kills
         let n = dork_mana(g, p, m);
         g.perm_mut(m).tapped = true;
-        g.player_mut(p).floating.g += n;
+        g.player_mut(p).mana.add(Kind::G, n);
         crate::glog!(g, "    {} taps for {n} mana (it floats)", g.perm(m).name);
         on_tapped(g, m)?;
     }

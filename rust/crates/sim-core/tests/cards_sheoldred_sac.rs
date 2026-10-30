@@ -3,6 +3,7 @@
 //! sheoldred deck, seat 1 the seph deck.
 
 use sim_core::ai::decks;
+use sim_core::engine::pool::Kind;
 use sim_core::cardcode;
 use sim_core::dsl;
 use sim_core::engine::mana;
@@ -78,7 +79,7 @@ fn the_tower_sacrifices_for_bb_when_a_death_payoff_is_out() {
     let before = g.player(P1).life;
     assert!(run(&mut g, P0, &o[0]));
     assert!(!g.perm(t).on_bf);
-    assert_eq!(g.player(P0).floating.b, 2);
+    assert_eq!(g.player(P0).mana.get(Kind::B), 2);
     assert_eq!(g.player(P1).life, before - 2, "Sephiroth and Blood Artist each drain 1");
     assert!(g.perm(g.player(P0).lands[0]).tapped);
     assert_eq!(sacrificed(&g, P0), 1);
@@ -130,7 +131,7 @@ fn phyrexian_altar_sacrifices_spare_fodder_for_mana_and_the_drain() {
     let before = g.player(P1).life;
     assert!(run(&mut g, P0, &o[0]));
     assert!(!g.perm(t).on_bf);
-    assert_eq!(g.player(P0).floating.any, 1);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 1);
     assert_eq!(g.player(P1).life, before - 1, "Sephiroth drains");
 }
 

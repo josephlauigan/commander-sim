@@ -338,21 +338,6 @@ pub enum Step {
     End,
 }
 
-/// Mana that floats until a step or turn ends (Python's `floatR`, `floatA` ...).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct Floating {
-    pub w: u32,
-    pub u: u32,
-    pub b: u32,
-    pub r: u32,
-    pub g: u32,
-    pub c: u32,
-    /// any colour (rituals, the ability language)
-    pub any: u32,
-    /// colourless that can't be spent to cast a nonartifact spell (Karn, Legacy Reforged; Mightstone), kept all turn
-    pub art: u32,
-}
-
 // ------------------------------------------------------------------ permanents and lands
 /// What a copy is "except": the exceptions of a clone, a token copy or Preston's Illusions. Stored on the copy
 /// (`Perm::exc`) so that the type queries (`values::subtypes`, `values::ptypes`, `colors_of`, `is_legendary`) see them.
@@ -487,7 +472,8 @@ pub struct Player {
     pub bloods: u32,
     pub foods: u32,
     pub poison: u32,
-    pub floating: Floating,
+    /// the mana pool: mana made and not spent yet (`engine::pool`; Python's `floatR`, `floatA` ...)
+    pub mana: crate::engine::pool::Pool,
     /// practice mode: the mana a person has made and not spent (Python's `p.pool`; inert for AI seats)
     pub pool: crate::human::mana::ManaPool,
     pub extra_combats: u32,
@@ -778,7 +764,7 @@ impl Player {
             bloods: 0,
             foods: 0,
             poison: 0,
-            floating: Floating::default(),
+            mana: Default::default(),
             pool: Default::default(),
             extra_combats: 0,
             combat_no: 0,

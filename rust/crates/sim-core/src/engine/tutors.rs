@@ -1,6 +1,7 @@
 //! Tutors and the Game Changer mechanics (engine.py: tutor, atraxa_reveal ... ad_nauseam).
 
 use crate::ai;
+use crate::engine::pool::Kind;
 use crate::engine::life::lose_life;
 use crate::engine::mana::total_mana;
 use crate::engine::values::{commander_out, threat};
@@ -327,7 +328,7 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
             - total_mana(g, p, false) as i64;
     let mana = both || g.jeska_mana || (most >= 4 && need >= 3); // (the Breach line: always mana)
     if mana {
-        g.player_mut(p).floating.r += most;
+        g.player_mut(p).mana.add(Kind::R, most);
         crate::glog!(g, "    Jeska's Will adds {} red mana", most);
     }
     if both || !mana {

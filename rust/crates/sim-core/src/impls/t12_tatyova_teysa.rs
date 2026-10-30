@@ -28,6 +28,7 @@
 //!   dies: a 1/1 white Spirit with flying.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
@@ -397,7 +398,7 @@ fn market_main(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     if trigger_window(g, p, Some(src), &format!("add {{B}} x{n}"), None)? {
-        g.player_mut(p).floating.b += n as u32;
+        g.player_mut(p).mana.add(Kind::B, n as u32);
         crate::glog!(g, "    {} adds {} black mana (Black Market)", pname(g, p), n);
     }
     Ok(())

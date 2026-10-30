@@ -5,6 +5,7 @@
 //! Bolas's Citadel), which every deck reaches.
 
 use super::lands::{can_pay_without, pay_without};
+use crate::engine::pool::Kind;
 use super::partials::at_once;
 use crate::engine::repl;
 use crate::ai::brain::{Situation, card_utility};
@@ -1050,7 +1051,7 @@ fn perm_named(g: &Game, p: PlayerId, name: &str, live: bool) -> Option<PermId> {
 }
 
 fn line_state(g: &Game, p: PlayerId) -> LineState {
-    let real: Vec<_> = mana_units(g, p, false).into_iter().filter(|u| u.src != Source::FloatAny).collect();
+    let real: Vec<_> = mana_units(g, p, false).into_iter().filter(|u| u.src != Source::float(Kind::Any)).collect();
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let bf = g.db.id(BRAIN_FREEZE).unwrap();
     let gy_ok = !g.cast_checks() || castable(g, p, bf, "gy"); // a lock on casting from graveyards stops escapes
@@ -1090,7 +1091,7 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
     }
     LineState {
         land: real.iter().map(|u| u.amt).sum(),
-        float: pl.floating.any,
+        float: pl.mana.get(Kind::Any),
         u: colour('U'),
         b: colour('B'),
         r: colour('R'),
@@ -1281,14 +1282,14 @@ fn line_step(st: &LineState) -> Option<LineAct> {
 /// mine._pay_line: pay for a spell of the line: the pip from a real source ({B} may use ritual mana), generic from
 /// ritual mana first
 fn pay_line(g: &mut Game, p: PlayerId, gn: u32, col: &str) -> Res<bool> {
-    if col == "B" && g.player(p).floating.any > 0 {
-        g.player_mut(p).floating.any -= 1;
+    if col == "B" && g.player(p).mana.get(Kind::Any) > 0 {
+        g.player_mut(p).mana.take_kind(Kind::Any, 1);
     } else if !pay(g, p, 0, col, false)? {
         return Ok(false);
     }
-    let fl = &mut g.player_mut(p).floating;
-    let k = fl.any.min(gn);
-    fl.any -= k;
+    let fl = &mut g.player_mut(p).mana;
+    let k = fl.get(Kind::Any).min(gn);
+    fl.take_kind(Kind::Any, k);
     Ok(gn - k == 0 || pay(g, p, gn - k, "", false)?)
 }
 
@@ -1347,7 +1348,7 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     let pl = g.player(p);
     let mut key = vec![
         total_mana(g, p, false),
-        pl.floating.any,
+        pl.mana.get(Kind::Any),
         pl.gy.len() as u32,
         pl.hand.len() as u32,
         pl.library.len() as u32,
@@ -1518,15 +1519,15 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                     // sacrifice it at once, so it can be escaped again
                     leave(g, m)?;
                     to_zone_card(g, m, Zone::Gy);
-                    let fl = &mut g.player_mut(p).floating;
+                    let fl = &mut g.player_mut(p).mana;
                     if st.labman && st.mylib == 0 {
-                        fl.any += 1; // any colour, for the winning draw
+                        fl.add(Kind::Any, 1); // any colour, for the winning draw
                     } else if st.u == 0 {
-                        fl.u += 1;
+                        fl.add(Kind::U, 1);
                     } else if st.r == 0 {
-                        fl.r += 1;
+                        fl.add(Kind::R, 1);
                     } else {
-                        fl.any += 1;
+                        fl.add(Kind::Any, 1);
                     }
                 }
             }
@@ -1559,9 +1560,9 @@ fn line_led(g: &mut Game, p: PlayerId, st: &LineState) -> Res<bool> {
     let col = if st.r == 0 && st.w(GRAPESHOT).is_some() && st.w(BRAIN_FREEZE).is_none() { 'R' } else { 'U' };
     let pl = g.player_mut(p);
     if col == 'U' {
-        pl.floating.u += 3;
+        pl.mana.add(Kind::U, 3);
     } else {
-        pl.floating.r += 3;
+        pl.mana.add(Kind::R, 3);
     }
     pl.stat("led_used", 1);
     crate::glog!(g, "    Lion's Eye Diamond: {} discards the hand for {}", g.player(p).name, col.to_string().repeat(3));
@@ -1821,9 +1822,9 @@ fn led_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let pl = g.player_mut(p);
     pl.gy.push(cd);
     if blue {
-        pl.floating.u += 3;
+        pl.mana.add(Kind::U, 3);
     } else {
-        pl.floating.r += 3;
+        pl.mana.add(Kind::R, 3);
     }
     crate::glog!(g, "  {} cracks Lion's Eye Diamond for {}", g.player(p).name, if blue { "UUU" } else { "RRR" });
     g.player_mut(p).stat("led_used", 1);
@@ -2871,7 +2872,7 @@ const PAYOFF_TAGS: [Tag; 7] =
 pub fn prepared_effect(g: &mut Game, p: PlayerId, effect: u8) -> Res {
     match effect {
         0 | 4 => {
-            g.player_mut(p).floating.r += 5;
+            g.player_mut(p).mana.add(Kind::R, 5);
             Ok(())
         }
         1 => draw(g, p, 3, false),
@@ -4001,7 +4002,7 @@ fn manamorphose(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if human_of(g, p).is_some() {
         g.player_mut(p).pool.add('A', 2);
     } else {
-        g.player_mut(p).floating.any += 2;
+        g.player_mut(p).mana.add(Kind::Any, 2);
     }
     draw(g, p, 1, false)?;
     Ok("gy")
@@ -4171,13 +4172,13 @@ pub fn run_loop(g: &mut Game, p: PlayerId, i: usize, keys: &[PermId], kills: boo
         crate::glog!(g, "    {} gains 1000 life (as good as infinite)", g.player(p).name);
     } else if name.ends_with("Priest of Gix") {
         // infinite black mana (BBB back each loop, net one more than it cost), no Zombies
-        g.player_mut(p).floating.b += 20;
+        g.player_mut(p).mana.add(Kind::B, 20);
         crate::glog!(g, "    {} floats 20 black mana", g.player(p).name);
     } else {
         // infinite colourless mana, a Zombie kept each loop
         let spec = Tokens { color: Some(crate::cards::Colors::from_letters("B")), ..Tokens::new(20, 2) };
         make_tokens(g, p, spec)?;
-        g.player_mut(p).floating.c += 20;
+        g.player_mut(p).mana.add(Kind::C, 20);
         crate::glog!(g, "    {} keeps 20 Zombies and floats 20 colourless mana", g.player(p).name);
     }
     Ok(true)

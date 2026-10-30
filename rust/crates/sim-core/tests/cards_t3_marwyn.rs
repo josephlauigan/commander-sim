@@ -2,6 +2,7 @@
 //! language): each card on a small position, its Oracle text as the expectation.
 
 use sim_core::ai::act;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::mana::{cost_of, total_mana};
 use sim_core::engine::values::{epow, etgh};
 use sim_core::hooks::Opt;
@@ -282,7 +283,7 @@ fn legolas_untaps_a_mana_elf_that_then_kills_a_creature() {
     assert!(!g.perm(t).on_bf, "4 damage kills the Archdruid");
     assert!(g.perm(big).on_bf);
     assert!(g.perm(m).tapped, "tapped again for mana");
-    assert_eq!(g.player(P0).floating.g, 4, "the mana floats");
+    assert_eq!(g.player(P0).mana.get(Kind::G), 4, "the mana floats");
 }
 
 // ======================================================== Yavimaya, Yeva

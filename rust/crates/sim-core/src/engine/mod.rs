@@ -23,6 +23,7 @@ pub mod dungeon;
 pub mod hooks;
 pub mod life;
 pub mod mana;
+pub mod pool;
 pub mod removal;
 pub mod repl;
 pub mod stack;

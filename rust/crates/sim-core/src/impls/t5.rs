@@ -2,6 +2,7 @@
 //! are `combos.rs`.
 
 use super::common::{WalkerAb, best_opp_nonland, death_value};
+use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, first_min, on, remove_card};
 use super::t2::{blink, blink_value};
 use crate::engine::repl;
@@ -890,7 +891,7 @@ fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// adds BBB (BBBBB with threshold) when mana is short
 fn cabal(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = if g.player(p).gy.len() >= 7 { 5 } else { 3 };
-    g.player_mut(p).floating.any += n;
+    g.player_mut(p).mana.add(Kind::Any, n);
     Ok("gy")
 }
 

@@ -9,6 +9,7 @@ use crate::cardcode;
 use crate::cards::Colors;
 use crate::engine::hooks;
 use crate::engine::life::lose_life;
+use crate::engine::pool::{Key, Kind, Restr};
 use crate::engine::values::has;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
@@ -23,15 +24,8 @@ pub enum Source {
     Perm(PermId),
     /// a Treasure token ('T')
     Treasure,
-    /// floating mana: red (Birgi), any colour (rituals), blue, colourless, green, black
-    FloatR,
-    FloatAny,
-    FloatU,
-    FloatC,
-    FloatG,
-    FloatB,
-    /// colourless mana that can't be spent on nonartifact spells (Karn, Legacy Reforged): `floating.art`
-    FloatArt,
+    /// mana in the pool (`engine::pool`): the entry it is taken from
+    Pool(Key),
     /// an Eldrazi Scion or Spawn: sacrifice for {C} ('SC')
     Scion(PermId),
     /// a card in hand that makes mana when exiled (Elvish Spirit Guide: 'H')
@@ -40,6 +34,13 @@ pub enum Source {
     Quirion(PermId, PermId),
     /// Wirewood Symbiote (the first) returns an Elf (the third) to hand to untap mana creature `dork` (the second): 'WS'
     Symbiote(PermId, PermId, PermId),
+}
+
+impl Source {
+    /// unrestricted floating mana of `kind` that empties as the step ends (a ritual's, a source's leftover)
+    pub const fn float(kind: Kind) -> Source {
+        Source::Pool(Key::plain(kind))
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -240,17 +241,13 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     } else {
         u.extend(cardcode::hand_mana(g, p)); // Spirit Guides need no hooked permanent
     }
-    let f = pl.floating;
-    // floating mana, at most 1000 of each kind (the same doubling boards float billions)
-    let float = |n: u32, src: Source, cols: Colors| (0..n.min(1000)).map(move |_| Unit { src, cols, amt: 1 });
-    u.extend(float(f.r, Source::FloatR, Colors::from_letters("R")));
-    u.extend(float(f.any, Source::FloatAny, ident));
-    u.extend(float(f.u, Source::FloatU, Colors::from_letters("U")));
-    u.extend(float(f.c, Source::FloatC, Colors::NONE));
-    u.extend(float(f.g, Source::FloatG, Colors::from_letters("G")));
-    u.extend(float(f.b, Source::FloatB, Colors::from_letters("B")));
-    if f.art > 0 && art_mana_ok(g) {
-        u.extend(float(f.art, Source::FloatArt, Colors::NONE));
+    // floating mana, at most 1000 of each entry (the same doubling boards float billions); white floating mana is
+    // never offered (the old pool had no white unit), restricted mana only where it may be spent
+    for m in pl.mana.iter() {
+        if m.key.kind != Kind::W && restr_ok(g, m.key.restr) {
+            let cols = m.key.kind.cols(ident);
+            u.extend((0..m.amt.min(1000)).map(|_| Unit { src: Source::Pool(m.key), cols, amt: 1 }));
+        }
     }
     if convoke {
         // each untapped creature pays for {1} or one coloured pip
@@ -267,6 +264,14 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         u.retain(|w| !matches!(w.src, Source::Perm(m) | Source::Scion(m) if g.keep_untapped.contains(&m)));
     }
     u
+}
+
+/// may mana with restriction `r` pay for what is being paid for now (rule 106.6)
+pub fn restr_ok(g: &Game, r: Restr) -> bool {
+    match r {
+        Restr::None => true,
+        Restr::NotNonartifact => art_mana_ok(g),
+    }
 }
 
 /// may mana that can't be spent to cast a nonartifact spell pay for what is being paid for now: yes for an artifact
@@ -309,6 +314,11 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
     }
     u.extend(cardcode::hand_mana(g, p)); // Spirit Guides (also added in `units` when nothing is hooked)
     u
+}
+
+/// restricted mana in the pool (Karn's): the planner spends it first, while it may
+fn restricted_float(src: Source) -> bool {
+    matches!(src, Source::Pool(k) if k.restr != Restr::None)
 }
 
 fn is_pain(g: &Game, src: Source) -> bool {
@@ -361,7 +371,7 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             }
             let waste = if used[i] > 0 { 0 } else { rem[i].saturating_sub(need) };
             let scarce = avail.iter().filter(|(c, _)| w.cols.has(*c)).map(|x| x.1).min().unwrap_or(0);
-            let k = (w.src != Source::FloatArt, w.src == Source::Treasure, is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
+            let k = (!restricted_float(w.src), w.src == Source::Treasure, is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
             if best.is_none_or(|b| k < b.1) {
                 best = Some((i, k));
             }
@@ -421,15 +431,7 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 /// affordable stopped after its first step. It empties with the turn's other floating mana. One colour floats as
 /// that colour (white as any: no white floating unit is spent), none as {C}, several as any.
 fn float_leftover(g: &mut Game, p: PlayerId, cols: Colors, n: u32) {
-    let f = &mut g.player_mut(p).floating;
-    match cols.count() {
-        0 => f.c += n,
-        1 if cols.has('U') => f.u += n,
-        1 if cols.has('B') => f.b += n,
-        1 if cols.has('R') => f.r += n,
-        1 if cols.has('G') => f.g += n,
-        _ => f.any += n,
-    }
+    g.player_mut(p).mana.add(Kind::of_leftover(cols), n);
 }
 
 /// Use unit w for n mana; col: the coloured pips it paid for (painlands hurt only then). Taps or sacrifices the
@@ -455,13 +457,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
                 )?;
             }
         }
-        Source::FloatR => g.player_mut(p).floating.r = g.player(p).floating.r.saturating_sub(1),
-        Source::FloatAny => g.player_mut(p).floating.any = g.player(p).floating.any.saturating_sub(1),
-        Source::FloatU => g.player_mut(p).floating.u = g.player(p).floating.u.saturating_sub(1),
-        Source::FloatC => g.player_mut(p).floating.c = g.player(p).floating.c.saturating_sub(1),
-        Source::FloatG => g.player_mut(p).floating.g = g.player(p).floating.g.saturating_sub(1),
-        Source::FloatB => g.player_mut(p).floating.b = g.player(p).floating.b.saturating_sub(1),
-        Source::FloatArt => g.player_mut(p).floating.art = g.player(p).floating.art.saturating_sub(1),
+        Source::Pool(k) => g.player_mut(p).mana.take(k, n),
         Source::Scion(_) | Source::HandCard(_) | Source::Quirion(..) | Source::Symbiote(..) => {
             cardcode::special_unit_paid(g, p, w)?
         }
@@ -688,7 +684,7 @@ pub fn units_after_ritual(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Optio
     let (used, _) = plan_pay(g, u, gn, &pips)?;
     let mut v: Vec<Unit> =
         u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
-    let src = if cols == Colors::from_letters("R") { Source::FloatR } else { Source::FloatAny };
+    let src = Source::float(if cols == Colors::from_letters("R") { Kind::R } else { Kind::Any });
     v.extend((0..out).map(|_| Unit { src, cols, amt: 1 }));
     Some(v)
 }
@@ -746,7 +742,7 @@ pub fn units_after_cast(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<
     {
         let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
         let amt: u32 = a.parse().unwrap_or(1);
-        v.push(Unit { src: Source::FloatAny, cols: tag_colors(col, g.player(p).ident), amt });
+        v.push(Unit { src: Source::float(Kind::Any), cols: tag_colors(col, g.player(p).ident), amt });
     }
     Some(v)
 }
@@ -774,7 +770,7 @@ pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, p
 pub fn land_card_unit(g: &Game, p: PlayerId, c: CardId) -> Unit {
     let t = &g.db.get(c).tags;
     let amt = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
-    Unit { src: Source::FloatAny, cols: tag_colors(t.str(Tag::C).unwrap_or("C"), g.player(p).ident), amt }
+    Unit { src: Source::float(Kind::Any), cols: tag_colors(t.str(Tag::C).unwrap_or("C"), g.player(p).ident), amt }
 }
 
 // --- ai-fix: B

@@ -2,6 +2,7 @@
 //! expectation.
 
 use sim_core::ai::act;
+use sim_core::engine::pool::Kind;
 use sim_core::hooks::Opt;
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::Game;
@@ -88,9 +89,9 @@ fn cub_adds_an_additional_g_when_a_creature_is_tapped_for_mana() {
     let mut g = tbl();
     perm(&mut g, P0, "Badgermole Cub");
     perm(&mut g, P0, "Birds of Paradise");
-    assert_eq!(g.player(P0).floating.g, 0);
+    assert_eq!(g.player(P0).mana.get(Kind::G), 0);
     assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "", false).unwrap(), "Birds pays {{1}}");
-    assert_eq!(g.player(P0).floating.g, 1, "the additional {{G}}");
+    assert_eq!(g.player(P0).mana.get(Kind::G), 1, "the additional {{G}}");
 }
 
 #[test]
@@ -99,13 +100,13 @@ fn cub_ignores_lands_and_two_cubs_add_two() {
     perm(&mut g, P0, "Badgermole Cub");
     lands(&mut g, P0, "Forest", 1, false);
     assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "", false).unwrap());
-    assert_eq!(g.player(P0).floating.g, 0, "a land is not a creature");
+    assert_eq!(g.player(P0).mana.get(Kind::G), 0, "a land is not a creature");
     let mut g = tbl();
     perm(&mut g, P0, "Badgermole Cub");
     perm(&mut g, P0, "Badgermole Cub");
     perm(&mut g, P0, "Birds of Paradise");
     assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "", false).unwrap());
-    assert_eq!(g.player(P0).floating.g, 2, "each Cub adds one");
+    assert_eq!(g.player(P0).mana.get(Kind::G), 2, "each Cub adds one");
 }
 
 // ======================================================== Biomancer's Familiar

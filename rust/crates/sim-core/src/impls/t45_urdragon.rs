@@ -45,6 +45,7 @@
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
@@ -578,7 +579,7 @@ fn klauth_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
         return Ok(vec![]);
     }
     let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).sum();
-    g.player_mut(p).floating.any += x as u32;
+    g.player_mut(p).mana.add(Kind::Any, x as u32);
     crate::glog!(g, "    Klauth adds {x} mana");
     Ok(vec![])
 }

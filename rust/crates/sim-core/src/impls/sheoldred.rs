@@ -6,6 +6,7 @@
 //! their `Full` verdicts stayed in the overrides; they are modeled here again, keyed by card name.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
@@ -2507,7 +2508,7 @@ fn tower_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} sacrifices {} to Phyrexian Tower", pname(g, p), g.perm(m).name);
     crate::engine::zones::die(g, m, "sac")?;
-    g.player_mut(p).floating.b += 2;
+    g.player_mut(p).mana.add(Kind::B, 2);
     Ok(true)
 }
 

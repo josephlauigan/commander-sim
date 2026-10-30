@@ -21,6 +21,7 @@
 //! of this file.
 
 use super::partials::at_once;
+use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::ai::decks::{pay_card, protect_response};
 use crate::cards::{CardDb, Colors, Types};
@@ -433,7 +434,7 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     crate::glog!(g, "    Galadriel (Alliance): {}", mode_text(mode));
     match mode {
         "mana" if hum => g.player_mut(o).pool.add('G', 3),
-        "mana" => g.player_mut(o).floating.g += 3,
+        "mana" => g.player_mut(o).mana.add(Kind::G, 3),
         "counters" => {
             for x in g.player(o).perms.clone() {
                 if g.is_creature(x) && !g.perm(x).phased {

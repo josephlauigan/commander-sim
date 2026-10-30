@@ -11,6 +11,7 @@
 pub mod model;
 
 use crate::cards::{Colors, Types};
+use crate::engine::pool::Kind;
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
@@ -907,7 +908,7 @@ fn run(
         }
         "add_mana" => {
             let k = n(g, ctx);
-            g.player_mut(p).floating.any += k.max(0) as u32;
+            g.player_mut(p).mana.add(Kind::Any, k.max(0) as u32);
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
         "ring_tempt" => crate::cardcode::ring_tempt(g, p)?, // --- Tiers 4/5 (winota): "the Ring tempts you"

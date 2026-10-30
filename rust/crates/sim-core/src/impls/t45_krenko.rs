@@ -36,6 +36,7 @@
 //! Mana Echoes (unbounded Goblins and mana; it wins through a payoff or hasty Goblins before combat).
 
 use crate::cards::{CardDb, Colors, Types};
+use crate::engine::pool::Kind;
 use crate::engine::combat::has_haste;
 use crate::engine::control::{Duration, gain_control};
 use crate::engine::life::lose_life;
@@ -158,7 +159,7 @@ fn echoes_add(g: &mut Game, src: Src, ms: &[PermId]) -> Res {
     }
     let n: u32 = ms.iter().map(|&m| sharing(g, o, m)).sum();
     if n > 0 {
-        g.player_mut(o).floating.c += n;
+        g.player_mut(o).mana.add(Kind::C, n);
         crate::glog!(g, "    Mana Echoes adds {} colourless", n);
     }
     Ok(())

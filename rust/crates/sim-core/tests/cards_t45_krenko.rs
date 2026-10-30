@@ -2,6 +2,7 @@
 //! `// --- Tiers 4/5 (krenko)`) on hand-built positions. Each expectation follows the card's Oracle text.
 
 use sim_core::cardcode;
+use sim_core::engine::pool::Kind;
 use sim_core::dsl::{Fired, fire, has_kw};
 use sim_core::engine::{cast, combat, life, removal, values::epow, zones};
 use sim_core::hooks::{Action, Opt};
@@ -69,10 +70,10 @@ fn brightstone_ritual_adds_mana_per_goblin_on_the_battlefield() {
     let mut g = krenko();
     t4::goblins(&mut g, P0, 2).unwrap();
     t4::goblins(&mut g, P1, 1).unwrap();
-    let before = g.player(P0).floating;
+    let before = g.player(P0).mana.get(Kind::Any) + g.player(P0).mana.get(Kind::R);
     resolve(&mut g, P0, "Brightstone Ritual");
-    let f = g.player(P0).floating;
-    assert_eq!(f.any + f.r - before.any - before.r, 3, "every player's Goblins");
+    let f = &g.player(P0).mana;
+    assert_eq!(f.get(Kind::Any) + f.get(Kind::R) - before, 3, "every player's Goblins");
 }
 
 #[test]
@@ -155,12 +156,12 @@ fn mana_echoes_adds_colourless_per_creature_sharing_a_type() {
     let mut g = krenko();
     perm(&mut g, P0, "Mana Echoes");
     perm(&mut g, P0, "Goblin Lackey");
-    let c0 = g.player(P0).floating.c;
+    let c0 = g.player(P0).mana.get(Kind::C);
     t4::goblins(&mut g, P0, 3).unwrap();
-    assert_eq!(g.player(P0).floating.c - c0, 3 * 4, "each of three Goblins: four Goblins share a type");
-    let c1 = g.player(P0).floating.c;
+    assert_eq!(g.player(P0).mana.get(Kind::C) - c0, 3 * 4, "each of three Goblins: four Goblins share a type");
+    let c1 = g.player(P0).mana.get(Kind::C);
     token(&mut g, P1, 2); // an opponent's typeless token: shares nothing
-    assert_eq!(g.player(P0).floating.c, c1);
+    assert_eq!(g.player(P0).mana.get(Kind::C), c1);
 }
 
 #[test]

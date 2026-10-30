@@ -2,6 +2,7 @@
 //! seat 1 the seph deck.
 
 use sim_core::ai::act;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::{cast, mana, values};
 use sim_core::hooks::{Call, Event, Opt};
@@ -301,12 +302,12 @@ fn rousing_refrain_adds_red_mana_and_suspends_itself() {
         g.player_mut(P1).hand.push(c);
     }
     let c = cast_spell(&mut g, P0, "Rousing Refrain", Ctx::default());
-    assert_eq!(g.player(P0).floating.r, 3);
+    assert_eq!(g.player(P0).mana.get(Kind::R), 3);
     assert!(g.player(P0).exile.contains(&c) && g.player(P0).suspended.contains(&(c, 3)));
     for _ in 0..3 {
         sim_core::cardcode::suspend_upkeep(&mut g, P0).unwrap();
     }
-    assert!(g.player(P0).floating.r >= 6, "cast free from suspend: more mana");
+    assert!(g.player(P0).mana.get(Kind::R) >= 6, "cast free from suspend: more mana");
 }
 
 #[test]

@@ -1,6 +1,7 @@
 //! Python's `cards/impl/t1.py`: the Tier 1 pool decks (Isshin, Lathril, Light-Paws, Tatyova, Teysa).
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{bolt_something, cast_card, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
@@ -1557,7 +1558,7 @@ fn nissa_ra(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if g.perm(src).owner != p || !trigger_window(g, p, Some(src), "add one mana", None)? {
         return Ok(());
     }
-    g.player_mut(p).floating.any += 1;
+    g.player_mut(p).mana.add(Kind::Any, 1);
     let (k1, k2) = (intern(&format!("nissa{}", src.0)), intern(&format!("nissa{}_2", src.0)));
     let st = g.turn_stamp();
     let pl = g.player_mut(p);

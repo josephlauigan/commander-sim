@@ -13,6 +13,7 @@
 //! has, and board wipes.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, casts_this_turn, copy_spell, is_casts, spell_targets};
 use crate::engine::life::check_state;
@@ -882,7 +883,7 @@ const REFRAIN: &str = "Rousing Refrain";
 fn refrain_resolve(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0) as u32;
     crate::glog!(g, "    Rousing Refrain adds {n} red mana");
-    g.player_mut(p).floating.r += n;
+    g.player_mut(p).mana.add(Kind::R, n);
     let pl = g.player_mut(p);
     pl.exile.push(c);
     pl.suspended.push((c, 3));

@@ -5,6 +5,7 @@
 //! `engine::mana::spend_unit`, so pain lands, Treasures and on-tap triggers behave exactly as they do for the AI.
 
 use crate::engine::mana::{Source, Unit, mana_units, spend_unit};
+use crate::engine::pool::Kind;
 use crate::engine::values::has_type;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
@@ -230,10 +231,10 @@ impl ManaPool {
 fn gathered(g: &Game, p: PlayerId) -> ManaPool {
     let pl = g.player(p);
     let mut pool = pl.pool.clone();
-    let f = pl.floating;
-    pool.art += f.art;
-    for (n, c) in [(f.r, 'R'), (f.u, 'U'), (f.c, 'C'), (f.any, 'A'), (f.g, 'G'), (f.b, 'B')] {
-        pool.add(c, n);
+    let f = &pl.mana;
+    pool.art += f.art();
+    for c in ['R', 'U', 'C', 'A', 'G', 'B'] {
+        pool.add(c, f.get(Kind::of_letter(c)));
     }
     pool
 }
@@ -242,9 +243,9 @@ pub fn gather_floating(g: &mut Game, p: PlayerId) {
     let pool = gathered(g, p);
     let pl = g.player_mut(p);
     pl.pool = pool;
-    let w = pl.floating.w; // Python has no floatW: white floating mana stays where it is
-    pl.floating = Default::default();
-    pl.floating.w = w;
+    let w = pl.mana.get(Kind::W); // Python has no floatW: white floating mana stays where it is
+    pl.mana.clear();
+    pl.mana.add(Kind::W, w);
 }
 
 pub fn pool_can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str) -> bool {
@@ -316,7 +317,7 @@ pub struct SourceInfo {
 
 /// engine units that are already floating mana, not sources to tap (Python's FLOATS: it leaves out the black one)
 fn is_float(s: Source) -> bool {
-    matches!(s, Source::FloatR | Source::FloatAny | Source::FloatU | Source::FloatC | Source::FloatG | Source::FloatArt)
+    matches!(s, Source::Pool(k) if !(k.kind == Kind::B && k.restr == crate::engine::pool::Restr::None))
 }
 
 /// the colours unit u can make; painlands and Talismans can also make colourless, without the pain
@@ -373,7 +374,7 @@ pub fn sources(g: &Game, p: PlayerId) -> Vec<SourceInfo> {
         }
         let name = match u.src {
             Source::Treasure => "Treasure".to_string(),
-            Source::FloatB => "FB".to_string(),
+            Source::Pool(_) => "FB".to_string(), // black floating mana (the others are left out above)
             s => source_name(g, s),
         };
         let mut d = SourceInfo {

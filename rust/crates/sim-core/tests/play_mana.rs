@@ -3,6 +3,7 @@
 
 mod play_common;
 use play_common::*;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::turn::continue_turn;
 use sim_core::human::{legal, mana};
 use sim_core::state::Step;
@@ -110,9 +111,9 @@ fn paying_from_the_pool_and_the_reason_when_short() {
 #[test]
 fn ritual_mana_joins_the_pool() {
     let mut g = table(&["sauron", "veyran"]);
-    g.player_mut(P0).floating.any = 3; // Dark Ritual's mana, as the engine adds it
+    g.player_mut(P0).mana.set(Kind::Any, 3); // Dark Ritual's mana, as the engine adds it
     assert_eq!(mana::pay_from_pool(&mut g, P0, 2, "B"), None);
-    assert_eq!(g.player(P0).floating.any, 0);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 0);
 }
 
 #[test]

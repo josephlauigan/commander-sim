@@ -3,6 +3,7 @@
 //! The engine calls these exactly where the Python does; each delegates to the ported card code (`impls/*`, `ai/*`).
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::engine::hooks;
 use crate::flow::Res;
 use crate::hooks::{CardImpl, Event, Opt};
@@ -913,7 +914,7 @@ pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::rules2::uncrew(g, p);
     crate::impls::t0_captain::turn_start(g, p);
     let drain = std::mem::take(&mut g.player_mut(p).drain_mana);
-    g.player_mut(p).floating.c += drain; // Mana Drain: the countered spell's mana value, colourless
+    g.player_mut(p).mana.add(Kind::C, drain); // Mana Drain: the countered spell's mana value, colourless
     for q in 0..g.players.len() {
         let q = PlayerId(q as u8);
         let n = g.player(q).delayed_draws;

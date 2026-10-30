@@ -43,6 +43,7 @@
 //! - Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir: the combo (`COMBOS`).
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::{gain, lose_life};
@@ -411,7 +412,7 @@ fn novelist_sac(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
         return Ok(());
     }
     repl::put_plus(g, src, 1);
-    g.player_mut(p).floating.r += 1;
+    g.player_mut(p).mana.add(Kind::R, 1);
     Ok(())
 }
 

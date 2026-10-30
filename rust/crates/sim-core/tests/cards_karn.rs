@@ -32,11 +32,11 @@ fn karn_adds_one_colourless_per_artifact_at_upkeep() {
     }
     assert_eq!(karn::artifacts(&g, P0), 4);
     upkeep(&mut g, P0);
-    assert_eq!(g.player(P0).floating.art, 4);
+    assert_eq!(g.player(P0).mana.art(), 4);
     // the opponent's upkeep adds nothing for Karn
-    let before = g.player(P0).floating.art;
+    let before = g.player(P0).mana.art();
     upkeep(&mut g, P1);
-    assert_eq!(g.player(P0).floating.art, before);
+    assert_eq!(g.player(P0).mana.art(), before);
     assert_eq!(g.player(P0).milestone.get("karn").copied(), Some(g.player(P0).turns));
 }
 
@@ -57,7 +57,7 @@ fn karn_is_as_big_as_his_biggest_artifact() {
 #[test]
 fn karns_mana_pays_artifact_spells_and_abilities_not_other_spells() {
     let mut g = game();
-    g.player_mut(P0).floating.art = 6;
+    g.player_mut(P0).mana.set_art(6);
     let wurmcoil = card(&g, "Wurmcoil Engine");
     let ugin = card(&g, "Ugin, the Spirit Dragon");
     let dust = card(&g, "All Is Dust");
@@ -70,12 +70,12 @@ fn karns_mana_pays_artifact_spells_and_abilities_not_other_spells() {
     g.pay_for = None;
     assert!(can_pay(&g, P0, 4, "", false), "an ability cost");
     assert!(pay(&mut g, P0, 4, "", false).unwrap());
-    assert_eq!(g.player(P0).floating.art, 2);
+    assert_eq!(g.player(P0).mana.art(), 2);
     // it is used before any land
     lands(&mut g, P0, "Wastes", 2, false);
     g.pay_for = Some(wurmcoil);
     assert!(pay(&mut g, P0, 2, "", false).unwrap());
-    assert_eq!(g.player(P0).floating.art, 0);
+    assert_eq!(g.player(P0).mana.art(), 0);
     assert!(g.player(P0).lands.iter().all(|&l| !g.perm(l).tapped), "Karn's mana paid, not the lands");
 }
 
@@ -84,13 +84,13 @@ fn karns_mana_lasts_the_turn_and_is_gone_when_the_next_begins() {
     let mut g = game();
     perm(&mut g, P0, "Karn, Legacy Reforged");
     upkeep(&mut g, P0);
-    assert_eq!(g.player(P0).floating.art, 1);
+    assert_eq!(g.player(P0).mana.art(), 1);
     // steps and phases do not empty it (the engine empties floating mana only when a turn starts)
     sim_core::human::mana::empty_pools(&mut g);
-    assert_eq!(g.player(P0).floating.art, 1);
+    assert_eq!(g.player(P0).mana.art(), 1);
     // the next turn begins (the opponent's): gone
     step_start(&mut g, P1).unwrap();
-    assert_eq!(g.player(P0).floating.art, 0);
+    assert_eq!(g.player(P0).mana.art(), 0);
 }
 
 #[test]

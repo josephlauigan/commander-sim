@@ -113,8 +113,7 @@ fn targets(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 /// the mana in the pool (and floating), the most an X can be paid with
 fn mana_in_pool(g: &Game, p: PlayerId) -> u32 {
-    let f = g.player(p).floating;
-    g.player(p).pool.total() + f.u + f.b + f.r + f.g + f.c + f.any
+    g.player(p).pool.total() + g.player(p).mana.plain_but_white()
 }
 
 fn pick_n(g: &Game, p: PlayerId, what: &str, lo: u32, hi: u32) -> Res<Option<u32>> {

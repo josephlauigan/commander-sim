@@ -2,6 +2,7 @@
 //! lands, upkeep, the end step, the five steps of a turn, mulligans, and a whole game.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::{EnterRule, Types};
@@ -901,13 +902,11 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::t6_scion::copy_revert(g); // --- scion: Scion of the Ur-Dragon's copy ends with the turn (cleanup)
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
-        q.floating.any = 0;
-        q.floating.r = 0; // floating mana empties between turns
-        q.floating.u = 0;
-        q.floating.c = 0;
-        q.floating.g = 0;
-        q.floating.b = 0;
-        q.floating.art = 0; // Karn's mana lasts the turn, not longer
+        // floating mana empties between turns (Karn's too: it lasts the turn, not longer); white floating mana
+        // stays, as it always has (Stage A: results identical; nothing spends it)
+        let w = q.mana.get(Kind::W);
+        q.mana.clear();
+        q.mana.add(Kind::W, w);
         q.pool.art = 0;
     }
     let pl = g.player_mut(p);

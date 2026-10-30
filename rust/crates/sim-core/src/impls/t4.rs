@@ -6,6 +6,7 @@
 //! Dancer's combat_start, Valakut Exploration's landfall and end_step, and Purphoros, God of the Forge's etb.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, discard_worst};
 use crate::engine::hooks::hooked;
@@ -877,7 +878,7 @@ fn kingpin(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) ->
 /// Battle Hymn (Approximate: adds R per creature; used only with a big hand)
 fn hymn(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count() as u32;
-    g.player_mut(p).floating.any += n;
+    g.player_mut(p).mana.add(Kind::Any, n);
     Ok("gy")
 }
 
@@ -910,7 +911,7 @@ fn chandra_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 }
 
 fn chandra_rr(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    g.player_mut(p).floating.r += 2;
+    g.player_mut(p).mana.add(Kind::R, 2);
     Ok(())
 }
 

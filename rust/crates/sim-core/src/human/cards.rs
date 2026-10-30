@@ -1961,8 +1961,7 @@ fn gal_pay(g: &mut Game, p: PlayerId, m: PermId, gn: u32, pips: &str, what: &str
 
 /// cards._pick_x: X for an ability, up to the mana in your pool
 fn pick_x(g: &Game, p: PlayerId, what: &str, lo: u32) -> Res<Option<u32>> {
-    let f = g.player(p).floating;
-    let n = g.player(p).pool.total() + f.u + f.b + f.r + f.g + f.c + f.any;
+    let n = g.player(p).pool.total() + g.player(p).mana.plain_but_white();
     if n < lo {
         return Ok(None);
     }

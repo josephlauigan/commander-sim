@@ -3,6 +3,7 @@
 //! (Bloodchief's Thirst's kicker, Legion's Landing's Adanto).
 
 use sim_core::ai::act::perform;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, stack, zones};
 use sim_core::hooks::{Action, Opt, Sacrificed};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -379,7 +380,7 @@ fn waste_not_rewards_each_kind_of_discard() {
         zones::discard_index(&mut g, P1, i).unwrap();
         stack::settle_stack(&mut g).unwrap();
     }
-    assert_eq!(g.player(P0).floating.any, 2);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 2);
     assert_eq!(tokens_of(&g, P0).len(), 1);
     assert_eq!(g.player(P0).hand.len(), hand0 + 1);
 }

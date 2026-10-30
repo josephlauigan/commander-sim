@@ -3,6 +3,7 @@
 //! it too), evoke and the monarch's Palace Jailer.
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, n_ench, oring_exile, oring_return};
+use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
 use super::t1::count_type;
 use crate::engine::repl;
@@ -1397,7 +1398,7 @@ fn carpet(g: &mut Game, src: Src, p: PlayerId) -> Res {
         .max()
         .unwrap_or(0) as u32;
     if x != 0 && trigger_window(g, p, Some(src), &format!("add {x} mana"), Some(2.0))? {
-        g.player_mut(p).floating.any += x;
+        g.player_mut(p).mana.add(Kind::Any, x);
     }
     Ok(())
 }

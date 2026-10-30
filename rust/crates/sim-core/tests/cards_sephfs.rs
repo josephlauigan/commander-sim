@@ -3,6 +3,7 @@
 //! plays sephfs, seat 1 sauron. Each expectation comes from the card's Oracle text.
 
 use sim_core::ai::{act, brain};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, turn, zones};
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::{Ctx, DataKey, Game};
@@ -323,7 +324,7 @@ fn phyrexian_altar_and_tower_turn_a_sacrifice_into_mana() {
     perm(&mut g, P0, "Phyrexian Altar");
     let t = token(&mut g, P0, 1);
     assert!(sim_core::cardcode::sac_in_response(&mut g, P0, t, "exile").unwrap());
-    assert_eq!(g.player(P0).floating.any, 1, "the Altar adds one mana of any colour");
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 1, "the Altar adds one mana of any colour");
     let mut g = game();
     g.active = Some(P0);
     perm(&mut g, P0, "Blood Artist"); // payoffs make the Tower worth using
@@ -338,7 +339,7 @@ fn phyrexian_altar_and_tower_turn_a_sacrifice_into_mana() {
         .expect("the Tower is offered");
     assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
     assert!(!alive(&g, t));
-    assert_eq!(g.player(P0).floating.b, 2, "the Tower adds {{B}}{{B}}");
+    assert_eq!(g.player(P0).mana.get(Kind::B), 2, "the Tower adds {{B}}{{B}}");
 }
 
 #[test]

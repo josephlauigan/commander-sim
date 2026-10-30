@@ -12,6 +12,7 @@
 //! recorded without a score.
 
 use crate::view::{seam::pool_total, step_name};
+use sim_core::engine::pool::Kind;
 use serde_json::{Value, json};
 use sim_core::ai::{brain, search};
 use sim_core::control::{Answer, Request};
@@ -225,7 +226,7 @@ fn snapshot(g: &Game, p: PlayerId) -> Game {
     g2.resolving = 0;
     g2.trig_probe = false;
     g2.trig_current = None;
-    g2.player_mut(p).floating.any += pool_total(g, p);
+    g2.player_mut(p).mana.add(Kind::Any, pool_total(g, p));
     g2.player_mut(p).pool = Default::default();
     g2.search_n = 0;
     g2

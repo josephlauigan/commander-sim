@@ -7,6 +7,7 @@
 //! an untap effect only when the land it untaps makes clearly more mana than the effect costs.
 
 use super::partials::{pack, unpack};
+use crate::engine::pool::Kind;
 use crate::cards::CardDb;
 use crate::engine::hooks as eh;
 use crate::engine::mana::{can_pay, pay};
@@ -143,7 +144,7 @@ fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// returns tapped when it dies or is exiled), which needs lands that are creatures (engine-needs-green1.md).
 fn cub_tapped(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
     if live(g, src) && owner(g, src) == p && g.is_creature(m) {
-        g.player_mut(p).floating.g += 1;
+        g.player_mut(p).mana.add(Kind::G, 1);
         crate::glog!(g, "    Badgermole Cub adds an additional {{G}}");
     }
     Ok(())

@@ -3,6 +3,7 @@
 //! Oracle text.
 
 use sim_core::dsl::{Fired, fire, has_kw};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::cast;
 use sim_core::engine::repl::trigger_copies as total_trigger_copies;
 use sim_core::engine::values::{colors_of, epow, etgh, indestructible};
@@ -218,7 +219,7 @@ fn black_market_counts_deaths_and_makes_black_mana() {
     zones::die(&mut g, a, "sac").unwrap();
     zones::die(&mut g, b, "destroy").unwrap();
     assert_eq!(g.perm(bm).data.get(DataKey::Charge), Some(&Val::Int(2)), "any creature");
-    let before = g.player(P0).floating.b;
+    let before = g.player(P0).mana.get(Kind::B);
     sim_core::engine::hooks::fire_trigger(
         &mut g,
         sim_core::hooks::Event::Main1,
@@ -226,7 +227,7 @@ fn black_market_counts_deaths_and_makes_black_mana() {
     )
     .unwrap();
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
-    assert_eq!(g.player(P0).floating.b, before + 2);
+    assert_eq!(g.player(P0).mana.get(Kind::B), before + 2);
 }
 
 // ------------------------------------------------------------------ Drivnod, Carnage Dominus

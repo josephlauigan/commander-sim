@@ -99,7 +99,7 @@ fn karn_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     {
         return Ok(());
     }
-    g.player_mut(p).floating.art += n;
+    g.player_mut(p).mana.add_art(n);
     let turns = g.player(p).turns;
     g.player_mut(p).milestone.entry("karn").or_insert(turns); // the plan report: Karn's first mana
     crate::glog!(g, "  {} adds {} for Karn (artifacts only)", g.player(p).name, "{C}".repeat(n as usize));
