@@ -232,6 +232,9 @@ fn plan_matches_hand(key: &str, h: HandSlots) {
         // a hand list may name cards outside the library (the tutors skip them): compare what a tutor can find
         let lib = g2.player(P0).library.clone();
         let hw = (h.wish)(&g2, P0).map(|v| v.into_iter().filter(|c| lib.contains(c)).collect::<Vec<_>>());
+        // and may repeat a card (a tutor and `bottom_pick` read its first place)
+        let hw =
+            hw.map(|v| v.iter().enumerate().filter(|(i, c)| !v[..*i].contains(c)).map(|x| *x.1).collect::<Vec<_>>());
         let hw = hw.filter(|v| !v.is_empty());
         assert_eq!(plan_data::t6::wish(l, &g2, P0), hw, "{key} wish, state {i}");
         assert_eq!(plan_data::t6::hold_up(l, &g2, P0), (h.hold_up)(&g2, P0), "{key} hold_up, state {i}");
@@ -309,7 +312,7 @@ fn the_extensions_are_validated() {
     assert!(bad("deck = \"x\"\n[[line]]\nname = \"a\"\npieces = [[\"?to-top\"]]").contains("no card"));
     assert!(bad("deck = \"x\"\n[[line]]\nname = \"a\"\npieces = [[\"A\", \"?moon\"]]").contains("unknown condition"));
     assert!(bad("deck = \"x\"\n[[hold_up]]\nwhen = [\"hand:free>=1\"]\nvalue = 1.0").contains("no set \"free\""));
-    assert!(bad("deck = \"x\"\n[[go_now]]\ncombos = [\"No such\"]").contains("no catalogue combo starts with"));
+    assert!(bad("deck = \"x\"\n[[go_now]]\ncombos = [\"No such\"]").contains("no catalogue combo matches"));
     assert!(bad("deck = \"x\"\n[[wish]]\ncards = []\nscore = 1.0").contains("no cards"));
     assert!(bad("deck = \"x\"\n[mulligan]\n[[mulligan.rule]]\nwhen = []\nkeep = true").contains("no when"));
     assert!(
@@ -361,5 +364,14 @@ fn conditions_nest_and_sum() {
     assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(45.0), "neither turn");
     assert!(
         plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"(turn<=1\"]\nvalue = 1").is_err()
+    );
+}
+
+#[test]
+fn the_rograkh_thrasios_plan_file_matches_its_hand_code() {
+    use sim_core::impls::t6_plan_rograkh_thrasios as h;
+    plan_matches_hand(
+        "rograkh-thrasios-creature-combo",
+        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
     );
 }

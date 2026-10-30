@@ -165,17 +165,20 @@ fn satoru_digs_three_deep_on_ninjutsu() {
 
 #[test]
 fn yuriko_s_tutor_wishes_and_cast_priorities() {
+    // --- phase4-cedh: the hand t4::yuriko_wish / yuriko_prio are deleted: the plan file decides
+    // (data/plans/yuriko-dimir-ninjas.toml)
+    use sim_core::ai::plan_data;
+    let l = plan_data::get(YURIKO).unwrap();
     let mut g = table(&[YURIKO, "seph"]);
-    let wish: Vec<String> = cardcode::yuriko_wish(&g, P0).iter().map(|&c| g.db.get(c).name.to_string()).collect();
-    assert_eq!(wish[0], "Rhystic Study", "no way to put a card back: card advantage");
+    g.player_mut(P0).hand.clear();
+    let first = |g: &Game| g.db.get(plan_data::wish_for(l, g, P0)[0]).name.to_string();
+    assert_eq!(first(&g), "Rhystic Study", "no way to put a card back: card advantage");
     hand(&mut g, P0, &["Brainstorm"]);
-    let wish = cardcode::yuriko_wish(&g, P0);
-    assert_eq!(&*g.db.get(wish[0]).name, "Draco", "Yuriko in the command zone and Brainstorm in hand");
+    assert_eq!(first(&g), "Dig Through Time", "Yuriko in the command zone and Brainstorm in hand");
     let c = card(&g, "Changeling Outcast");
-    assert_eq!(cardcode::yuriko_prio(&g, P0, c), Some(80));
-    assert_eq!(cardcode::yuriko_prio(&g, P0, card(&g, "Rhystic Study")), None);
+    assert_eq!(plan_data::prio_for(l, &g, P0, c), Some(80.0));
+    assert_eq!(plan_data::prio_for(l, &g, P0, card(&g, "Rhystic Study")), None);
 }
-
 // ------------------------------------------------------------------ Krenko and the Goblins
 #[test]
 fn krenko_makes_a_goblin_per_goblin() {

@@ -1125,16 +1125,6 @@ pub fn tithe_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     (35.0 + 4.0 * treasures * need).clamp(15.0, 75.0) as i32
 }
 
-/// t4.yuriko_wish
-pub fn yuriko_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
-    crate::impls::t4::yuriko_wish(g, p)
-}
-
-/// t4.yuriko_prio
-pub fn yuriko_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    crate::impls::t4::yuriko_prio(g, p, c)
-}
-
 /// mine.flicker_worth (what flickering Sephiroth's creature m is worth); t2.flicker_worth calls it for Sephiroth's deck
 pub fn seph_flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
     crate::impls::mine::flicker_worth(g, p, m)

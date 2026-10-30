@@ -53,19 +53,7 @@ const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {
 }
 
 /// pool_decks.CONFIG
-const CONFIG: [(&str, DeckConfig); 3] = [
-    (
-        "yuriko-dimir-ninjas",
-        DeckConfig {
-            cmd_prio: Some(15),
-            cmd_turn: Some(6),
-            top_pref: Some("mv"),
-            wish: Some(crate::cardcode::yuriko_wish),
-            prio_fn: Some(crate::cardcode::yuriko_prio),
-            style: style(1.0, 0.8, 0.5),
-            ..NONE
-        },
-    ),
+const CONFIG: [(&str, DeckConfig); 2] = [
     (
         "gaa-azorius-stax-control",
         DeckConfig { prio_fn: Some(gaa_prio), wish: Some(gaa_wish), style: style(1.0, 0.35, 0.9), ..NONE },

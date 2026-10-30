@@ -213,10 +213,19 @@ pub struct HoldUp {
 #[serde(deny_unknown_fields)]
 pub struct GoNow {
     pub combos: Vec<String>,
+    /// match combos whose name contains one of `combos` (default: starts with)
+    #[serde(default)]
+    pub contains: bool,
     #[serde(default)]
     pub when: Vec<String>,
     #[serde(default)]
     pub go: Option<bool>,
+}
+
+impl GoNow {
+    fn matches(&self, combo: &str) -> bool {
+        self.combos.iter().any(|c| if self.contains { combo.contains(&**c) } else { combo.starts_with(&**c) })
+    }
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -326,9 +335,23 @@ enum Q {
     Hand(usize),
     /// p's permanents of this plan set on the battlefield
     Bf(usize),
+    /// cards of this plan set in p's graveyard
+    Gy(usize),
+    /// opponents with open mana likely (0.4 or more) to hold instant removal (`brain::prob_holding`)
+    OppRemovalUp,
+    /// the commander tax of the card being rated
+    CardTax,
+    /// p's permanents tagged rock
+    Rocks,
+    /// the cards in hand
+    HandSize,
 }
 
-const NUMS: [(&str, Q); 25] = [
+const NUMS: [(&str, Q); 29] = [
+    ("opp-removal-up", Q::OppRemovalUp),
+    ("card-tax", Q::CardTax),
+    ("rocks", Q::Rocks),
+    ("hand-size", Q::HandSize),
     ("opp-stop-max", Q::OppStopMax),
     ("opp-stoppers", Q::OppStoppers),
     ("opp-open-max", Q::OppOpenMax),
@@ -381,10 +404,16 @@ enum Atom {
     OppOut(String),
     /// --- phase4-cedh: p holds this card on the battlefield or in hand
     Have(String),
+    /// --- phase4-cedh: p's permanent or land of this name on the battlefield
+    InPlay(String),
+    /// --- phase4-cedh: p's land of this name on the battlefield (a flipped Growing Rites)
+    Land(String),
+    /// --- phase4-cedh: a card of this name in p's library
+    Lib(String),
     /// --- phase4-cedh: a line of p's catalogue combos is ready to go (`combos::line_progress`)
     LineReady,
     /// a sum of quantities compared with a number
-    Num(Vec<Q>, Cmp, Rhs),
+    Num(Vec<(f64, Q)>, Cmp, Rhs),
     Not(Box<Atom>),
     /// --- phase4-cedh: a parenthesised condition: any of the alternatives, each all of its atoms
     Any(Vec<Vec<Atom>>),
@@ -428,7 +457,14 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
     if s.contains('(') || s.contains(')') {
         return Err(format!("unbalanced parentheses in {s:?}"));
     }
-    for (pre, f) in [("out:", Atom::Out as fn(String) -> Atom), ("opp-out:", Atom::OppOut), ("have:", Atom::Have)] {
+    for (pre, f) in [
+        ("out:", Atom::Out as fn(String) -> Atom),
+        ("opp-out:", Atom::OppOut),
+        ("have:", Atom::Have),
+        ("in-play:", Atom::InPlay),
+        ("land:", Atom::Land),
+        ("lib:", Atom::Lib),
+    ] {
         if let Some(r) = s.strip_prefix(pre) {
             return Ok(f(r.trim().to_string()));
         }
@@ -446,15 +482,23 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
         if let Some((k, v)) = s.split_once(op) {
             let set_ix =
                 |set: &str| sets.iter().position(|x| *x == set).ok_or_else(|| format!("no set {set:?} in {s:?}"));
+            // a sum: `a+b`, and ` - ` (spaced: quantity names have hyphens) subtracts
             let mut qs = vec![];
-            for k in k.split('+').map(str::trim) {
-                qs.push(if let Some(set) = k.strip_prefix("hand:") {
+            for k in k.replace(" - ", "+-").split('+').map(str::trim) {
+                let (sign, k) = match k.strip_prefix('-') {
+                    Some(r) => (-1.0, r.trim()),
+                    None => (1.0, k),
+                };
+                let q = if let Some(set) = k.strip_prefix("hand:") {
                     Q::Hand(set_ix(set)?)
                 } else if let Some(set) = k.strip_prefix("bf:") {
                     Q::Bf(set_ix(set)?)
+                } else if let Some(set) = k.strip_prefix("gy:") {
+                    Q::Gy(set_ix(set)?)
                 } else {
                     NUMS.iter().find(|n| n.0 == k).ok_or_else(|| format!("unknown quantity {k:?} in {s:?}"))?.1
-                });
+                };
+                qs.push((sign, q));
             }
             let v = match v.trim() {
                 "one-lander" => Rhs::OneLander,
@@ -499,7 +543,7 @@ impl Cond {
     fn names(&self) -> impl Iterator<Item = &str> {
         fn walk<'a>(a: &'a Atom, out: &mut Vec<&'a str>) {
             match a {
-                Atom::Out(n) | Atom::Have(n) => out.push(n),
+                Atom::Out(n) | Atom::Have(n) | Atom::InPlay(n) | Atom::Land(n) | Atom::Lib(n) => out.push(n),
                 Atom::Not(b) => walk(b, out),
                 Atom::Any(alts) => alts.iter().flatten().for_each(|x| walk(x, out)),
                 _ => {}
@@ -568,6 +612,24 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
             })
             .count() as f64,
         Q::HandBlue => hand.iter().filter(|&&c| g.db.get(c).colors.has('U')).count() as f64,
+        Q::OppRemovalUp => g
+            .opps(p)
+            .filter(|&q| {
+                super::brain::open_mana(g, q, None) >= 1
+                    && super::brain::prob_holding(g, q, |c| {
+                        let d = g.db.get(c);
+                        d.instant && d.tag(Tag::Rem)
+                    }) >= 0.4
+            })
+            .count() as f64,
+        Q::CardTax => cx.card.map_or(0, |c| pl.tax_of(c)) as f64,
+        Q::Rocks => {
+            pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count() as f64
+        }
+        Q::HandSize => hand.len() as f64,
+        Q::Gy(i) => {
+            cx.plan.map_or(0, |l| pl.gy.iter().filter(|&&c| l.sets[i].iter().any(|n| *n == *name(g, c))).count()) as f64
+        }
         Q::Counters => hand.iter().filter(|&&c| g.db.get(c).tag(Tag::Ctr)).count() as f64,
         Q::ManaPerms => pl
             .perms
@@ -609,9 +671,15 @@ fn eval(g: &Game, p: PlayerId, a: &Atom, cx: Cx) -> bool {
         Atom::Out(n) => super::plans::on_bf(g, p, n).is_some(),
         Atom::OppOut(n) => g.opps(p).any(|q| super::plans::on_bf(g, q, n).is_some()),
         Atom::Have(n) => super::plans::on_bf(g, p, n).is_some() || pl.hand.iter().any(|&c| *g.db.get(c).name == **n),
+        Atom::InPlay(n) => {
+            super::plans::on_bf(g, p, n).is_some()
+                || pl.lands.iter().any(|&x| g.perm(x).on_bf && name(g, g.perm(x).card()) == n)
+        }
+        Atom::Lib(n) => pl.library.iter().any(|&c| name(g, c) == n),
+        Atom::Land(n) => pl.lands.iter().any(|&x| g.perm(x).on_bf && name(g, g.perm(x).card()) == n),
         Atom::Not(b) => !eval(g, p, b, cx),
         Atom::Num(q, c, v) => {
-            let x: f64 = q.iter().map(|q| quantity(g, p, *q, cx)).sum();
+            let x: f64 = q.iter().map(|(s, q)| s * quantity(g, p, *q, cx)).sum();
             let v = match v {
                 Rhs::N(v) => *v,
                 Rhs::OneLander => crate::impls::t6_keep::mana(g, p).need_one_lander(),
@@ -749,10 +817,12 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         if r.combos.is_empty() {
             return Err(err(format!("go_now rule {}: no combos", i + 1)));
         }
-        if let Some(c) =
-            r.combos.iter().find(|c| !crate::impls::combos::all().iter().any(|x| x.name.starts_with(&***c)))
-        {
-            return Err(err(format!("go_now rule {}: no catalogue combo starts with {c:?}", i + 1)));
+        if let Some(c) = r.combos.iter().find(|c| {
+            !crate::impls::combos::all()
+                .iter()
+                .any(|x| GoNow { combos: vec![c.to_string()], ..r.clone() }.matches(x.name))
+        }) {
+            return Err(err(format!("go_now rule {}: no catalogue combo matches {c:?}", i + 1)));
         }
         go_now_when.push(cond(&r.when, format!("go_now rule {}", i + 1))?);
     }
@@ -1121,7 +1191,7 @@ pub fn go_now_for(l: &Loaded, g: &Game, p: PlayerId, combo: &str) -> Option<bool
         .go_now
         .iter()
         .zip(&l.go_now_when)
-        .find(|(r, w)| r.combos.iter().any(|c| combo.starts_with(&**c)) && w.holds_cx(g, p, cx))
+        .find(|(r, w)| r.matches(combo) && w.holds_cx(g, p, cx))
         .and_then(|x| x.0.go)
 }
 

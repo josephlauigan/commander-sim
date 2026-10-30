@@ -4,9 +4,10 @@
 # Study). PR 2 (phase4-cedh) rewrites it with the schema extensions: Scroll Rack and Top put a card back only from
 # the battlefield (`bf:`), a tutor that puts its card on top is a put-back itself (`?to-top`), Rhystic Study goes
 # ahead of the line while the line is two or more steps away (`engines_ahead`), and Brainstorm's value reads the
-# rest of the hand (`hand-max-mv`).
+# rest of the hand (`hand-max-mv`). Paired test (t4, 2000 games): plan 18.1% vs hand 18.8% (-0.7, 95% CI -3.4..+2.0):
+# level: t4::yuriko_wish / yuriko_prio are deleted, the plan is the default.
 deck = "yuriko-dimir-ninjas"
-default = "hand"
+default = "plan"
 # card engines: Rhystic Study ahead of a far line, Mystic Remora once no line wants a card (was t4::yuriko_wish's
 # list without a put-back: Rhystic Study, Scroll Rack, Top, Mystic Remora)
 engines_ahead = ["Rhystic Study"]

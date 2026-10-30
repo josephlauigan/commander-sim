@@ -1,0 +1,263 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
+# Tier 6 plan slots (impls/t6_plans.rs); was impls/t6_plan_rograkh_thrasios.rs (SPEC:
+# audit/t6/rograkh-thrasios-creature-combo/SPEC.md). Creature combo: Gaea's Cradle (found by Crop Rotation, Gamble,
+# Sylvan Scrying) into Talon Gates + Oboro Breezecaller, or Eternal Witness + Snap; Thrasios is the engine. Names the
+# hand code listed that the list doesn't play (Misdirection, Commandeer, Allosaurus Shepherd) are left out.
+deck = "rograkh-thrasios-creature-combo"
+default = "hand"
+
+[sets]
+cradle = ["Gaea's Cradle"]
+gates = ["Talon Gates of Madara"]
+snap = ["Snap"]
+gsz = ["Green Sun's Zenith"]
+tomb = ["Ancient Tomb"]
+engine = ["Crop Rotation", "Gamble", "Chord of Calling", "Spellseeker", "Formidable Speaker", "Rhystic Study", "Mystic Remora", "Gaea's Cradle", "Wan Shi Tong, Librarian"]
+finders = ["Gaea's Cradle", "Talon Gates of Madara", "Crop Rotation", "Gamble", "Expedition Map", "Sylvan Scrying", "Sowing Mycospawn", "Vibrance", "Chord of Calling", "Spellseeker"]
+reactive = ["Force of Will", "Force of Negation", "Pact of Negation", "Swan Song", "Flusterstorm", "Mental Misstep", "Mindbreak Trap", "Flare of Denial", "Fierce Guardianship", "Deflecting Swat", "Louisoix's Sacrifice", "Veil of Summer", "Chain of Vapor", "Flare of Duplication"]
+# what Eternal Witness brings back worth its cast
+witness_value = ["Force of Will", "Force of Negation", "Pact of Negation", "Swan Song", "Flusterstorm", "Mental Misstep", "Mindbreak Trap", "Flare of Denial", "Fierce Guardianship", "Deflecting Swat", "Louisoix's Sacrifice", "Veil of Summer", "Chain of Vapor", "Flare of Duplication", "Crop Rotation", "Noxious Revival"]
+shield = ["Force of Will", "Fierce Guardianship", "Pact of Negation", "Veil of Summer", "Deflecting Swat"]
+
+# Cast priority. "Cradle out" is Gaea's Cradle or the flipped Growing Rites on the battlefield.
+# Rograkh ({0}) on turn 1: it turns on Fierce Guardianship, Swat and Mox Amber (40 once taxed 4)
+[[prio]]
+cards = ["Rograkh, Son of Rohgahh"]
+when = ["card-tax>=4"]
+value = 40
+else = 97
+
+# the engine, and a creature for Cradle (60 after two casts with instant removal likely up)
+[[prio]]
+cards = ["Thrasios, Triton Hero"]
+when = ["card-tax>=2 & opp-removal-up>=1"]
+value = 60
+else = 93
+
+# the combo pieces and copies are held
+[[prio]]
+cards = ["Oboro Breezecaller", "Finale of Devastation", "Green Sun's Zenith", "Snap", "Mockingbird", "Phantasmal Image", "Flesh Duplicate", "Clever Impersonator"]
+value = 0
+
+[[prio]]
+cards = ["Eternal Witness"]
+when = ["gy:witness_value>=1 & not (in-play:Gaea's Cradle | land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun)"]
+value = 55
+else = 0
+
+[[prio]]
+cards = ["Faerie Mastermind"]
+when = ["hand:gsz>=1"]
+value = 0
+else = 60
+
+[[prio]]
+cards = ["Chatterstorm", "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", "Springheart Nantuko", "Gene Pollinator", "The Cabbage Merchant", "Biomancer's Familiar", "Cloud of Faeries", "Valley Floodcaller"]
+value = 82
+
+# Gamble and Crop Rotation find Cradle (88), or Talon Gates once Cradle is out (86); held when Cradle is in hand or
+# out (Crop Rotation also without two lands or with Cradle out of the library)
+[[prio]]
+cards = ["Gamble"]
+when = ["(in-play:Gaea's Cradle | land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun) & lib:Talon Gates of Madara & not in-play:Talon Gates of Madara & hand:gates=0"]
+value = 86
+
+[[prio]]
+cards = ["Gamble"]
+when = ["in-play:Gaea's Cradle", "land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", "hand:cradle>=1"]
+value = 0
+
+[[prio]]
+cards = ["Gamble"]
+when = ["lib:Gaea's Cradle"]
+value = 88
+
+[[prio]]
+cards = ["Crop Rotation"]
+when = ["(in-play:Gaea's Cradle | land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun) & lib:Talon Gates of Madara & not in-play:Talon Gates of Madara & hand:gates=0 & lands>=2"]
+value = 86
+
+[[prio]]
+cards = ["Crop Rotation"]
+when = ["in-play:Gaea's Cradle", "land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", "hand:cradle>=1", "not lib:Gaea's Cradle", "lands<2"]
+value = 0
+
+[[prio]]
+cards = ["Crop Rotation"]
+when = ["lib:Gaea's Cradle"]
+value = 88
+
+[[prio]]
+cards = ["Sylvan Scrying"]
+when = ["not (in-play:Gaea's Cradle | land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun) & hand:cradle=0 & lib:Gaea's Cradle"]
+value = 88
+
+[[prio]]
+cards = ["Sylvan Scrying"]
+when = ["(in-play:Gaea's Cradle | land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun) & not in-play:Talon Gates of Madara & hand:gates=0 & lib:Talon Gates of Madara"]
+value = 86
+
+[[prio]]
+cards = ["Sylvan Scrying"]
+value = 0
+
+[[prio]]
+cards = ["Formidable Speaker"]
+value = 78
+
+# Tutor targets in the hand list's order (scores only rank): Cradle; fast mana while the mana is two or less; the
+# Witness + Snap line when it is closer than Gates + Oboro; Gates; Oboro; the copies; the rest of the toolbox
+[[wish]]
+cards = ["Gaea's Cradle"]
+when = ["not (in-play:Gaea's Cradle | land:Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun) & hand:cradle=0"]
+score = 30.0
+
+[[wish]]
+cards = ["Sol Ring"]
+when = ["lands+rocks<=2"]
+score = 29.0
+
+[[wish]]
+cards = ["Mana Vault"]
+when = ["lands+rocks<=2"]
+score = 28.9
+
+[[wish]]
+cards = ["Mox Diamond"]
+when = ["lands+rocks<=2"]
+score = 28.8
+
+[[wish]]
+cards = ["Chrome Mox"]
+when = ["lands+rocks<=2"]
+score = 28.7
+
+# Witness + Snap is closer (one piece missing) than Gates + Oboro (both missing)
+[[wish]]
+cards = ["Eternal Witness"]
+when = ["not have:Eternal Witness & (hand:snap>=1 | gy:snap>=1) & not in-play:Talon Gates of Madara & hand:gates=0 & not have:Oboro Breezecaller"]
+score = 27.0
+
+[[wish]]
+cards = ["Snap"]
+when = ["have:Eternal Witness & hand:snap=0 & gy:snap=0 & not in-play:Talon Gates of Madara & hand:gates=0 & not have:Oboro Breezecaller"]
+score = 26.9
+
+[[wish]]
+cards = ["Talon Gates of Madara"]
+when = ["not in-play:Talon Gates of Madara & hand:gates=0"]
+score = 26.0
+
+[[wish]]
+cards = ["Oboro Breezecaller"]
+when = ["not have:Oboro Breezecaller"]
+score = 25.9
+
+[[wish]]
+cards = ["Badgermole Cub"]
+score = 25.0
+
+[[wish]]
+cards = ["Mockingbird"]
+score = 24.9
+
+[[wish]]
+cards = ["Phantasmal Image"]
+score = 24.8
+
+[[wish]]
+cards = ["Eternal Witness"]
+score = 24.0
+
+[[wish]]
+cards = ["Snap"]
+score = 23.9
+
+[[wish]]
+cards = ["Finale of Devastation"]
+score = 23.8
+
+[[wish]]
+cards = ["Spellseeker"]
+score = 23.7
+
+[[wish]]
+cards = ["Faerie Mastermind"]
+score = 23.6
+
+[[wish]]
+cards = ["Green Sun's Zenith"]
+score = 23.5
+
+[[wish]]
+cards = ["Flesh Duplicate"]
+score = 23.4
+
+[[wish]]
+cards = ["Clever Impersonator"]
+score = 23.3
+
+[[wish]]
+cards = ["Veil of Summer"]
+score = 23.2
+
+[[wish]]
+cards = ["Sol Ring"]
+score = 23.1
+
+[[wish]]
+cards = ["Mana Vault"]
+score = 23.0
+
+# Mulligan: a finder with 2-5 lands; two lands and acceleration ("at least two lands and a piece of acceleration");
+# a one-lander with the mana, few reactive cards and two other cards; `other` = the hand less its lands,
+# acceleration (mana pieces, Ancient Tomb) and reactive cards
+[mulligan]
+fast_mana = true
+otherwise = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=2 & hand-lands<=5 & hand:finders>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands>=6"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=2 & makers+hand:tomb>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & eff>=one-lander & hand:reactive<2 & hand-size - hand-lands - makers - hand:tomb - hand:reactive>=2"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=2 & hand:reactive<2 & (hand:engine>=1 | hand-size - hand-lands - makers - hand:tomb - hand:reactive>=3)"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands>=3 & hand:reactive<3"]
+keep = true
+
+# Go-now: the Oboro line with a shield (or from round 3), the Witness line with a shield (or from round 4); else the
+# shared table check
+[[go_now]]
+combos = ["Oboro"]
+contains = true
+when = ["hand:shield>=1", "out:Hexing Squelcher", "round>=3"]
+go = true
+
+[[go_now]]
+combos = ["Oboro"]
+contains = true
+
+[[go_now]]
+combos = ["Eternal Witness"]
+contains = true
+when = ["hand:shield>=1", "out:Hexing Squelcher", "round>=4"]
+go = true

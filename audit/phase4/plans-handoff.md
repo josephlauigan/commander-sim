@@ -1,4 +1,34 @@
-# Handoff: Phase 4 PR 1, deck plans as data
+# Handoff: Phase 4 PR 1 and PR 2, deck plans as data
+
+## PR 2 (branch phase4-cedh, brief rust/agents/phase4-cedh.md)
+
+Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase4-cedh/` (sim
+outputs `<name>.txt` + `.rc`; `sim.sh BIN POOL GAMES OUT ENV`, `sim2.sh BIN OUT ENV ARGS...`, `pair.sh`). Schema
+extensions: `audit/phase4/plans-design.md`, "PR 2". Each Tier 6 plan file is a translation of its hand plan file,
+checked slot by slot on 600 dealt states by `tests/plans.rs::plan_matches_hand` (keep, every hand card's priority,
+the wish list a tutor can use, hold-up, every catalogue combo's go-now); a mutation of one score fails it.
+
+Paired tests: 2000 games per arm, same seeds, `AI_PLAN_DATA=0` vs `=<deck>` (t6 decks: one shared hand arm).
+
+| deck | tier | hand share (95% CI) | plan share (95% CI) | plan - hand (95% CI) | verdict | hand code |
+|---|---|---|---|---|---|---|
+| yuriko-dimir-ninjas | t4 | 18.8% [16.9, 20.7] n=1599 | 18.1% [16.2, 20.0] n=1598 | -0.7 [-3.4, +2.0] | level | DELETE (t4::yuriko_wish / yuriko_prio) |
+| yawgmoth-mono-black-aristocrats | t5 | (PR 1) 17.6% n=1585 | pending | | | already deleted (PR 1) |
+| scion | t6 | pending | | | | |
+| kinnan-bonder-mana-combo | t6 | pending | | | | |
+| sisay-legends-toolbox | t6 | pending | | | | `fetch` stays code (legends::sisay_pick) |
+| rograkh-silas-turbo-breach | t6 | pending | | | | |
+| kraum-tymna-blue-breach-midrange | t6 | pending | | | | |
+| rograkh-thrasios-creature-combo | t6 | pending | | | | |
+| dack-fayden-white-stax | t6 | - | - | - | no plan file | kept: see below |
+| godo | - | - | - | - | skipped (not seated) | kept |
+
+Dack is not expressible as plan data: its slots read its own commander's cost and tax against total mana
+(`pre_cast`), a per-round risk bar over the table's stop chances (`dack_bar`, `table_risk`), Chalice's net over the
+opponents' hands and libraries (`chalice_net`), the opponents' deck creature share (`creature_table`), spell locks
+(`protected`) and counter likelihood products. Moving those would be code under quantity names.
+
+## PR 1
 
 Brief: `rust/agents/phase4-plans.md`. Design: `audit/phase4/plans-design.md`. Branch `phase4-plans` (on `phase3-exile`).
 Scratch (sim outputs): `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase4-plans/`.
