@@ -4,7 +4,8 @@
 //! tags compile from Oracle text): mana, cards, removal, damage, board presence, engines. Its **worth** reads the
 //! profile at the current state (turn, hand, the opponents' boards, combo role); its **threat** (the derived `bomb`)
 //! is what it does on the board if left alone. The generic policy reads these in place of the 0-90 priority table and
-//! the `bomb=` tags when `AI_VALUES` puts the deck on them (`on`).
+//! the `bomb=` tags for every generic-policy deck (`on`; `AI_VALUES=0` reads the old ones, a list of keys puts only
+//! those decks on derived values).
 
 use crate::dsl::model::{Ability, Effect, Num, To};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -20,16 +21,13 @@ enum Mode {
     Keys(Vec<String>),
 }
 
-/// the decks on derived values when `AI_VALUES` is unset (Stage C: the tiers where the paired test was level or
-/// better)
-pub const DEFAULT: &[&str] = &[];
-
 fn mode() -> &'static Mode {
     static M: OnceLock<Mode> = OnceLock::new();
     M.get_or_init(|| match std::env::var("AI_VALUES").ok().as_deref().map(str::trim) {
-        None | Some("") => Mode::Keys(DEFAULT.iter().map(|s| s.to_string()).collect()),
+        // Stage C: every generic-policy deck on derived values by default (the paired tests were level on t1-t5,
+        // `audit/phase4/values-handoff.md`); `0` reads the old tables, which JD's decks and Tier 6 still fall back to
+        None | Some("") | Some("1") => Mode::All,
         Some("0") => Mode::Keys(vec![]),
-        Some("1") => Mode::All,
         Some(list) => Mode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()),
     })
 }

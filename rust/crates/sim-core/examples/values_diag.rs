@@ -1,6 +1,6 @@
 //! --- phase4-values: the old card values beside the derived ones (`ai/values.rs`) for every card of every pool deck
 //! (tiers t1-t5), with the Spearman rank correlation per tier, and the worst disagreements.
-//!     cargo run --release -p sim-core --example values_diag [all]   (all: print every card, not only the worst)
+//!     AI_VALUES=0 cargo run --release -p sim-core --example values_diag [all]   (all: every card, not only the worst)
 //!
 //! State: each tier's decks seated four at a time (two tables cover all five), round and turn 3, three of each deck's
 //! own lands on the battlefield, an empty hand. Cards a plan's key cards, prio rules or card code's own priority
@@ -69,8 +69,8 @@ fn same_both_arms(g: &Game, p: PlayerId, c: CardId) -> bool {
 
 fn main() {
     assert!(
-        std::env::var_os("AI_VALUES").is_none(),
-        "run with AI_VALUES unset: the old values are read as the default"
+        std::env::var("AI_VALUES").as_deref() == Ok("0"),
+        "run with AI_VALUES=0: `generic_prio` then gives the old table, `derived_prio` the derived value"
     );
     let all = std::env::args().nth(1).as_deref() == Some("all");
     let mut rows: Vec<Row> = vec![];

@@ -16,7 +16,7 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
   (counter-risk bomb), `brain::rem_fodder`, `brain::removal_options` / `cast_removal` / `spare_creature` (pval by the
   caster), `engine::values::pval` (bomb via `values::pval_bomb`), `cast::sac_fodder`, `zones::edict`,
   `cast::discard_worst`, `turn::bottom_pick`.
-- Diagnostic: `cargo run --release -p sim-core --example values_diag [all]`. Tests: `tests/values.rs`.
+- Diagnostic: `AI_VALUES=0 cargo run --release -p sim-core --example values_diag [all]`. Tests: `tests/values.rs`.
 
 ## Halves (fixed before any Stage B run: alternate decks in file order)
 
