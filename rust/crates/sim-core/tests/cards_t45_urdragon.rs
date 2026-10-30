@@ -3,6 +3,7 @@
 //! expectation follows the card's Oracle text.
 
 use sim_core::engine::mana::cost_of;
+use sim_core::engine::pool::Kind;
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::impls::t45_urdragon as u;
@@ -321,9 +322,9 @@ fn klauth_adds_mana_equal_to_the_attackers_power() {
     let gold = perm(&mut g, P0, "Goldspan Dragon");
     let f = imp(&g, "Klauth, Unrivaled Ancient").attack.unwrap();
     f(&mut g, k, P0, &[gold], P1).unwrap();
-    assert_eq!(g.player(P0).floating.any, 0, "Klauth itself must attack");
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 0, "Klauth itself must attack");
     f(&mut g, k, P0, &[k, gold], P1).unwrap();
-    assert_eq!(g.player(P0).floating.any, 4 + 4);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 4 + 4);
 }
 
 // ------------------------------------------------------------------ Rith, Twinflame Tyrant, Scion of Draco

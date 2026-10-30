@@ -8,6 +8,7 @@
 //! (rules), Finale of Devastation (rules2), Embercleave's cast priority (rules2: 0).
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, outlets, sac_food, walker};
+use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, name_of, remove_card};
 use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
@@ -1381,7 +1382,7 @@ fn opp_discard(g: &mut Game, src: Src, q: PlayerId, c: CardId) -> Res {
             if d.creature {
                 tokens(g, o, 1, 2, 2, "B", &["zombie"]).map(|_| ())
             } else if d.land {
-                g.player_mut(o).floating.any += 2;
+                g.player_mut(o).mana.add(Kind::Any, 2);
                 Ok(())
             } else {
                 draw(g, o, 1, false)

@@ -637,7 +637,7 @@ pub fn teferis_protection(g: &mut Game, p: PlayerId) {
     let pl = g.player_mut(p);
     pl.life_locked = true;
     pl.ring_prot = true;
-    pl.floating = Default::default();
+    pl.mana.clear();
     let (perms, lands) = (pl.perms.clone(), pl.lands.clone());
     for m in perms {
         g.perm_mut(m).phased = true;

@@ -8,6 +8,7 @@
 //! checked here through their effects (`mirror`, `enter_face_down`, `turn_face_up`) instead.
 
 use sim_core::ai::{act, brain, decks};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, mana, removal, turn, values, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{PermId, PlayerId};
@@ -94,7 +95,7 @@ fn alliance_takes_mana_in_your_main_phase_for_a_spell_within_reach() {
     g.step = Step::Main1;
     perm(&mut g, P0, "Llanowar Elves");
     assert_eq!(gal::chosen(&g, gl), vec!["mana"]);
-    assert_eq!(g.player(P0).floating.g, 3);
+    assert_eq!(g.player(P0).mana.get(Kind::G), 3);
 }
 
 // ======================================================== Rebels

@@ -6,6 +6,7 @@
 //! trigger is t5.py / zur.py); `cargo test -- --ignored` runs them.
 
 use sim_core::ai::{self, act, brain, decks};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, hooks, life, mana, removal, turn, values, zones};
 use sim_core::hooks::{Action, Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -430,7 +431,7 @@ fn dark_petition_spell_mastery() {
     let n = g.player(P0).hand.len();
     cast(&mut g, P0, "Dark Petition");
     assert_eq!(g.player(P0).hand.len(), n + 1);
-    assert_eq!(g.player(P0).floating.b, 0); // no instants or sorceries in the graveyard yet
+    assert_eq!(g.player(P0).mana.get(Kind::B), 0); // no instants or sorceries in the graveyard yet
     let (nw, rtb) = (take(&mut g, P0, "Night's Whisper"), take(&mut g, P0, "Read the Bones"));
     g.player_mut(P0).gy.extend([nw, rtb]);
     cast(&mut g, P0, "Diabolic Tutor"); // (a plain tutor, for comparison)
@@ -440,7 +441,7 @@ fn dark_petition_spell_mastery() {
     let i = pl.gy.iter().position(|&c| c == dp).unwrap();
     pl.gy.remove(i);
     cast::cast_card(&mut g, P0, dp, "hand", Ctx::default()).unwrap();
-    assert_eq!(g.player(P0).floating.b, 3);
+    assert_eq!(g.player(P0).mana.get(Kind::B), 3);
 }
 
 #[test]

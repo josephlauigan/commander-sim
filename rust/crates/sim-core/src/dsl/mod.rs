@@ -11,6 +11,7 @@
 pub mod model;
 
 use crate::cards::{Colors, Types};
+use crate::engine::pool::Kind;
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
@@ -906,8 +907,10 @@ fn run(
             }
         }
         "add_mana" => {
-            let k = n(g, ctx);
-            g.player_mut(p).floating.any += k.max(0) as u32;
+            let k = n(g, ctx).max(0) as u32;
+            // Savage Ventmaw: "until end of turn, you don't lose this mana as steps and phases end" (the parser drops it)
+            let kept = src.and_then(|m| g.perm(m).cd).is_some_and(|c| &*g.db.get(c).name == "Savage Ventmaw");
+            if kept { g.player_mut(p).mana.add_kept(Kind::Any, k) } else { g.player_mut(p).mana.add(Kind::Any, k) }
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
         "ring_tempt" => crate::cardcode::ring_tempt(g, p)?, // --- Tiers 4/5 (winota): "the Ring tempts you"

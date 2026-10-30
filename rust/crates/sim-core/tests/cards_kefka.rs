@@ -2,6 +2,7 @@
 //! Psychosis Crawler loop and the deck's AI choices.
 
 use sim_core::ai::{act, brain, decks};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::life::lose_life;
 use sim_core::engine::{cast, hooks, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
@@ -111,7 +112,7 @@ fn inner_fire_adds_red_for_each_card_in_hand() {
     let mut g = table2();
     hand(&mut g, P0, &["Forest", "Island", "Swamp"]);
     cast_free(&mut g, P0, "Inner Fire", Ctx::default());
-    assert_eq!(g.player(P0).floating.r, 3); // the three left in hand (Inner Fire itself is on the stack)
+    assert_eq!(g.player(P0).mana.get(Kind::R), 3); // the three left in hand (Inner Fire itself is on the stack)
 }
 
 #[test]

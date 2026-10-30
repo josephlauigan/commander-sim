@@ -3,11 +3,11 @@
 //!
 //! - **Karn, Legacy Reforged** (Full): power and toughness each equal the greatest mana value among the artifacts you
 //!   control (`karn_pt`, a bonus on top of the printed 1/1); at the beginning of your upkeep, {C} for each artifact you
-//!   control goes into `Floating::art` (artifact spells and abilities only; the engine keeps floating mana all turn
-//!   and empties it when the next turn starts, `engine::turn`).
-//! - **Restricted mana** is one mechanism: `Floating::art` / `Source::FloatArt` (the AI engine, `engine::mana`) and
+//!   control goes into the pool as `pool::Key::ART` (artifact spells and abilities only; kept all turn as steps end,
+//!   emptied when the next turn starts, `engine::turn`).
+//! - **Restricted mana** is one mechanism: `Restr::NotNonartifact` in the pool (the AI engine, `engine::pool`) and
 //!   `ManaPool::art` (practice mode, `human::mana`). It pays artifact spells and anything that isn't a spell (abilities,
-//!   taxes); a nonartifact spell never sees it (`engine::mana::art_mana_ok`, the spell being paid for is `Game::pay_for`).
+//!   taxes); a nonartifact spell never sees it (`engine::mana::restr_ok`, the spell being paid for is `Game::pay_for`).
 //!   The Mightstone and Weakstone's {C}{C} and the Powerstone token's {C} use the same test (tag `pstone`). Mishra's
 //!   Workshop is stricter (artifact spells only), as printed.
 //! - **Tron** (Urza's Mine / Power-Plant / Tower: 2 / 2 / 3 with all three, else 1) and Urza's Workshop (metalcraft:
@@ -99,7 +99,7 @@ fn karn_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     {
         return Ok(());
     }
-    g.player_mut(p).floating.art += n;
+    g.player_mut(p).mana.add_art(n);
     let turns = g.player(p).turns;
     g.player_mut(p).milestone.entry("karn").or_insert(turns); // the plan report: Karn's first mana
     crate::glog!(g, "  {} adds {} for Karn (artifacts only)", g.player(p).name, "{C}".repeat(n as usize));

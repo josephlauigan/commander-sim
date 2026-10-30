@@ -6,7 +6,7 @@
 //! - Boggart Shenanigans: another Goblin of yours dies (tokens too): 1 damage to an opponent (a lethal one first, else
 //!   the biggest threat). Left out: planeswalkers as targets.
 //! - Mana Echoes: a creature enters (anyone's; Krenko's tokens as one batch): {C} equal to your creatures that share
-//!   a creature type with it, into the pool (it lasts the turn here).
+//!   a creature type with it, into the pool (it empties as the step ends).
 //! - Goblin Chirurgeon: a nontoken creature of yours worth keeping would be destroyed: sacrifice a Goblin (a token
 //!   first) to regenerate it (tapped). Left out: regenerating tokens.
 //! - Goblin King: other Goblins (every player's) have mountainwalk: unblockable while the defender controls a Mountain
@@ -36,6 +36,7 @@
 //! Mana Echoes (unbounded Goblins and mana; it wins through a payoff or hasty Goblins before combat).
 
 use crate::cards::{CardDb, Colors, Types};
+use crate::engine::pool::Kind;
 use crate::engine::combat::has_haste;
 use crate::engine::control::{Duration, gain_control};
 use crate::engine::life::lose_life;
@@ -158,7 +159,7 @@ fn echoes_add(g: &mut Game, src: Src, ms: &[PermId]) -> Res {
     }
     let n: u32 = ms.iter().map(|&m| sharing(g, o, m)).sum();
     if n > 0 {
-        g.player_mut(o).floating.c += n;
+        g.player_mut(o).mana.add(Kind::C, n);
         crate::glog!(g, "    Mana Echoes adds {} colourless", n);
     }
     Ok(())

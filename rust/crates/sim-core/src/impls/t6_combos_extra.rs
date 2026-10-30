@@ -15,6 +15,7 @@
 //!   a token copy spell), and Basalt Monolith with a copied opposing Kinnan.
 
 use super::combos::{self, Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
+use crate::engine::pool::Kind;
 use super::t6_combos_godo as gd;
 use super::t6_combos_godo::{Cost, affordable, bf, cost, in_hand, in_lib, nm, ok_ready};
 use super::t6_godo::welder_go;
@@ -657,7 +658,7 @@ fn copied_kinnan_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 /// tap Basalt for {C}{C}{C}, Kinnan's copy adds {C}{C}{C}, pay {3} to untap: unlimited colourless mana
 fn infinite_colourless(g: &mut Game, p: PlayerId) -> Res<bool> {
-    g.player_mut(p).floating.any += 60;
+    g.player_mut(p).mana.add(Kind::Any, 60);
     crate::glog!(g, "    Basalt Monolith + Kinnan: unlimited mana");
     Ok(true)
 }

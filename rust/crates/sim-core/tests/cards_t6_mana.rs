@@ -2,6 +2,7 @@
 //! expectation.
 
 use sim_core::ai::act;
+use sim_core::engine::pool::Kind;
 use sim_core::hooks::Opt;
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::Game;
@@ -44,7 +45,7 @@ fn chromatic_star_is_not_a_free_rock_and_cracks_for_a_card() {
     assert!(!on(&g, P0, s), "sacrificed");
     assert!(g.player(P0).gy.contains(&card(&g, "Chromatic Star")));
     assert_eq!(g.player(P0).hand.len(), before + 1, "drew a card");
-    assert_eq!(g.player(P0).floating.any, 1, "one mana of any colour");
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 1, "one mana of any colour");
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2 - 1 + 1, "paid {{1}}, got one mana back");
 }
 
@@ -66,7 +67,7 @@ fn desperate_ritual_adds_rrr_for_two_mana() {
     let c = hand(&mut g, P0, &["Desperate Ritual"])[0];
     assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "R", false).unwrap(), "{{1}}{{R}}");
     assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Default::default()).unwrap());
-    assert_eq!(g.player(P0).floating.r, 3, "RRR");
+    assert_eq!(g.player(P0).mana.get(Kind::R), 3, "RRR");
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 3, "both Mountains were tapped for the cost");
     assert!(g.player(P0).gy.contains(&c), "an instant goes to the graveyard");
     assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "RRR", false));
@@ -80,19 +81,19 @@ fn rite_of_flame_adds_rr_and_one_more_per_copy_in_a_graveyard() {
     let c = hand(&mut g, P0, &["Rite of Flame"])[0];
     assert!(sim_core::engine::mana::pay(&mut g, P0, 0, "R", false).unwrap());
     assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Default::default()).unwrap());
-    assert_eq!(g.player(P0).floating.r, 2, "RR with no other copy");
+    assert_eq!(g.player(P0).mana.get(Kind::R), 2, "RR with no other copy");
     // two more copies (other players' graveyards count too) make RRRR
     let again = card(&g, "Rite of Flame");
     g.player_mut(P1).gy.push(again);
     g.player_mut(P0).gy.push(again);
-    g.player_mut(P0).floating.r = 0;
+    g.player_mut(P0).mana.set(Kind::R, 0);
     let c2 = card(&g, "Rite of Flame");
     let mut ctx = sim_core::state::Ctx::default();
     ctx.owner = None;
     let f = g.registry.get(c2).unwrap().resolve.unwrap();
     let dest = f(&mut g, P0, c2, &ctx).unwrap();
     assert_eq!(&*dest, "gy");
-    assert_eq!(g.player(P0).floating.r, 2 + 3, "the copy cast first plus two more in graveyards");
+    assert_eq!(g.player(P0).mana.get(Kind::R), 2 + 3, "the copy cast first plus two more in graveyards");
 }
 
 // ======================================================== Manifold Key
@@ -245,10 +246,10 @@ fn treasonous_ogre_has_no_proactive_floating_mana_ability() {
 #[test]
 fn blank_goblin_adds_red_when_it_enters() {
     let mut g = tbl();
-    assert_eq!(g.player(P0).floating.r, 0);
+    assert_eq!(g.player(P0).mana.get(Kind::R), 0);
     perm(&mut g, P0, "_____ Goblin");
-    assert_eq!(g.player(P0).floating.r, 4, "four unique vowels on the sticker");
-    assert_eq!(g.player(P1).floating.r, 0);
+    assert_eq!(g.player(P0).mana.get(Kind::R), 4, "four unique vowels on the sticker");
+    assert_eq!(g.player(P1).mana.get(Kind::R), 0);
 }
 
 // ======================================================== Ignoble Hierarch
@@ -450,6 +451,6 @@ fn a_land_tapped_for_more_than_the_payment_uses_floats_the_rest() {
     sim_core::testkit::lands(&mut g, p, "Plains", 1, false);
     assert_eq!(sim_core::engine::mana::total_mana(&g, p, false), 5);
     assert!(sim_core::engine::mana::pay(&mut g, p, 0, "WG", false).unwrap());
-    assert_eq!(g.player(p).floating.g, 3, "Cradle made four green, one was spent");
+    assert_eq!(g.player(p).mana.get(Kind::G), 3, "Cradle made four green, one was spent");
     assert!(sim_core::engine::mana::can_pay(&g, p, 0, "GGG", false), "the three float for the next payment");
 }

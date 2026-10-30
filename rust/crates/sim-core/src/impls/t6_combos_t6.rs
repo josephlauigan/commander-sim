@@ -21,6 +21,7 @@
 //! Deadpool + Forbidden Orchard and the Mana Vault starter, Rograkh's Badgermole, Springheart/Vibrance lines.
 
 use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
+use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
@@ -864,11 +865,12 @@ fn cast_thrasios(g: &mut Game, p: PlayerId) -> Res<bool> {
     }
     let Some(c) = thrasios_card(g, p) else { return Ok(false) };
     let (gn, pips) = cost_of(g, p, c);
-    let before = g.player(p).floating.any;
-    g.player_mut(p).floating.any += gn + pips.chars().count() as u32;
+    let before = g.player(p).mana.get(Kind::Any);
+    g.player_mut(p).mana.add(Kind::Any, gn + pips.chars().count() as u32);
     crate::ai::brain::do_cast(g, p, c, None)?;
-    let f = &mut g.player_mut(p).floating;
-    f.any = f.any.min(before);
+    let f = &mut g.player_mut(p).mana;
+    let left = f.get(Kind::Any).min(before);
+    f.set(Kind::Any, left);
     Ok(bf(g, p, THRASIOS).is_some())
 }
 

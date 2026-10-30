@@ -2,6 +2,7 @@
 //! card through the stack, and resolving it (engine.py's "casting" section, cast_card, resolve).
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
@@ -467,7 +468,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if has(g, p, Tag::Birgi) {
         // Birgi: add R whenever you cast a spell; an instant/sorcery trigger is doubled by Veyran
         let extra = if has(g, p, Tag::Veyran) && instant_or_sorcery { 1 } else { 0 };
-        g.player_mut(p).floating.r += 1 + extra;
+        g.player_mut(p).mana.add_kept(Kind::R, 1 + extra); // "you don't lose this mana as steps and phases end"
     }
     if !creature && let Some(a) = army_of(g, p) {
         for x in find(g, p, Tag::Prolif) {

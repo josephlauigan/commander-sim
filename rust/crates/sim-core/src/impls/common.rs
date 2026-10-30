@@ -9,6 +9,7 @@
 //! graveyard hate, proliferate, the dynamic mana cards ...), registered by `register_phase6`.
 
 use crate::cards::{CardDb, CardDef, Colors, Types};
+use crate::engine::pool::Kind;
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::hooks::{fire_trigger, hooked};
 use crate::engine::life::{check_state, gain, lose_life};
@@ -730,13 +731,13 @@ fn feeder(g: &mut Game, _p: PlayerId, src: PermId, _m: PermId) -> Res {
 }
 
 fn ashnod(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
-    g.player_mut(p).floating.c += 2;
+    g.player_mut(p).mana.add(Kind::C, 2);
     Ok(())
 }
 
 /// Phyrexian Altar (and t4's Skirk Prospector): one mana of any colour
 fn altar(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
-    g.player_mut(p).floating.any += 1;
+    g.player_mut(p).mana.add(Kind::Any, 1);
     Ok(())
 }
 
@@ -1236,7 +1237,7 @@ fn priest_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         lose_life(g, q, 2, Some(p), "drain", None)?;
         edict(g, q, false)?;
     }
-    g.player_mut(p).floating.any += 2;
+    g.player_mut(p).mana.add(Kind::Any, 2);
     draw(g, p, 1, false)?;
     check_state(g)?;
     Ok(true)

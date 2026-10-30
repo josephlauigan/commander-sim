@@ -18,7 +18,7 @@
 //!
 //! Teysa:
 //! - Black Market: a charge counter whenever a creature dies; {B} per counter at the beginning of your first main
-//!   phase. Left out: the mana stays until the end of the turn, not the phase (floating mana here lasts the turn).
+//!   phase (it empties as main 1 ends).
 //! - Drivnod, Carnage Dominus: your death-caused triggers trigger once more (as Teysa Karlov); {B/P}{B/P}, exile three
 //!   creature cards from your graveyard: an indestructible counter.
 //! - Indebted Spirit: bestow {2}{W} on your best creature (+1/+1 and afterlife 1; it becomes a creature when the host
@@ -28,6 +28,7 @@
 //!   dies: a 1/1 white Spirit with flying.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
@@ -397,7 +398,7 @@ fn market_main(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     if trigger_window(g, p, Some(src), &format!("add {{B}} x{n}"), None)? {
-        g.player_mut(p).floating.b += n as u32;
+        g.player_mut(p).mana.add(Kind::B, n as u32);
         crate::glog!(g, "    {} adds {} black mana (Black Market)", pname(g, p), n);
     }
     Ok(())

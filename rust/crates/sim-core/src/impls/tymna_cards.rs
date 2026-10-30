@@ -11,6 +11,7 @@
 //! - Tymna the Weaver herself is in `legends.rs`.
 
 use super::partials::eot_kw;
+use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn};
@@ -313,18 +314,12 @@ fn photon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
     }
     let best = (0..5).max_by_key(|&i| (want[i], std::cmp::Reverse(i))).unwrap_or(0);
     let n = dmg as u32;
-    let f = &mut g.player_mut(p).floating;
-    if want[best] == 0 {
-        f.c += n; // nothing coloured to cast: colourless is as good
+    let kind = if want[best] == 0 {
+        Kind::C // nothing coloured to cast: colourless is as good
     } else {
-        match best {
-            0 => f.w += n,
-            1 => f.u += n,
-            2 => f.b += n,
-            3 => f.r += n,
-            _ => f.g += n,
-        }
-    }
+        [Kind::W, Kind::U, Kind::B, Kind::R, Kind::G][best]
+    };
+    g.player_mut(p).mana.add_kept(kind, n); // kept until the end of the turn
     crate::glog!(g, "    Photon adds {n} mana");
     Ok(())
 }

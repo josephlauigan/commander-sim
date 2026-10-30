@@ -2,6 +2,7 @@
 //! expectation. Tymna the Weaver herself is tested in cards_legends.rs.
 
 use sim_core::ai::{act, decks};
+use sim_core::engine::pool::Kind;
 use sim_core::cards::Colors;
 use sim_core::engine::{cast, combat, removal, values, zones};
 use sim_core::hooks::Opt;
@@ -214,7 +215,7 @@ fn photon_adds_that_much_mana_of_the_colour_the_hand_wants() {
     let p = perm(&mut g, P0, "Photon, Mighty Marvel");
     hand(&mut g, P0, &["Lightning Bolt"]);
     combat::resolve_combat(&mut g, P0, &[p], P1, &[]).unwrap();
-    assert_eq!(g.player(P0).floating.r, 2, "2 damage: RR");
+    assert_eq!(g.player(P0).mana.get(Kind::R), 2, "2 damage: RR");
     assert!(mana_total(&g) >= 2);
     fn mana_total(g: &Game) -> u32 {
         sim_core::engine::mana::total_mana(g, P0, false)

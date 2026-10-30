@@ -3,6 +3,7 @@
 //! suite has no tests of these cards; each expectation comes from the card's Oracle text as the Python models it.
 
 use sim_core::cardcode;
+use sim_core::engine::pool::Kind;
 use sim_core::dsl;
 use sim_core::engine::{cast, hooks, mana, removal, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
@@ -263,7 +264,7 @@ fn a_creature_about_to_be_exiled_is_sacrificed_instead() {
     assert!(cardcode::sac_in_response(&mut g, P0, c, "exile").unwrap());
     assert!(!g.perm(c).on_bf);
     assert!(in_gy(&g, P0, "Cruel Celebrant"));
-    assert_eq!(g.player(P0).floating.any, 1); // the Altar's mana
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 1); // the Altar's mana
     let d = perm(&mut g, P0, "Vindictive Vampire");
     assert!(!cardcode::sac_in_response(&mut g, P0, d, "destroy").unwrap()); // it dies anyway
 }

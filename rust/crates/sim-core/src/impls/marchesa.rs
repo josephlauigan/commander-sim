@@ -4,6 +4,7 @@
 //! card_etb_value). Deep Analysis, Last Gasp and Tezzeret's Gambit are tags only (data/cards.json).
 
 use super::partials::{at_once, remove_card};
+use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
@@ -211,7 +212,7 @@ fn relic_release(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p == g.perm(src).owner && k != 0 && trigger_window(g, p, Some(src), &format!("{k} mana of any colour"), None)? {
         let k = g.perm(src).data.int(DataKey::Charge);
         g.perm_mut(src).data.set(DataKey::Charge, Val::Int(0));
-        g.player_mut(p).floating.any += k.max(0) as u32;
+        g.player_mut(p).mana.add(Kind::Any, k.max(0) as u32);
     }
     Ok(())
 }

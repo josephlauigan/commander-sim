@@ -9,6 +9,7 @@
 //! proliferate (lands.rs, common.rs), and Marchesa (marchesa.rs).
 
 use sim_core::ai::{self, act, brain, decks, seph};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, hooks, life, removal, turn, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -1148,11 +1149,11 @@ fn mind_stone_harness_and_end_step_blink() {
 #[test]
 fn priest_of_gix_adds_three_mana_each_time_it_enters() {
     let mut g = table(&["seph", "veyran", "sauron"]);
-    let before = g.player(P0).floating.any;
+    let before = g.player(P0).mana.get(Kind::Any);
     let m = perm(&mut g, P0, "Priest of Gix");
-    assert_eq!(g.player(P0).floating.any, before + 3);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), before + 3);
     mine::t2_blink(&mut g, P0, m).unwrap(); // re-entering (Deathmantle, a flicker) adds three more
-    assert_eq!(g.player(P0).floating.any, before + 6);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), before + 6);
 }
 
 #[test]
@@ -1171,10 +1172,10 @@ fn priest_loop_kills_with_a_drain_and_is_infinite_mana_without() {
 fn priest_loop_without_a_payoff_floats_black_mana_and_no_zombies() {
     let (mut g, _) = loops_with(&["Nim Deathmantle", "Ashnod's Altar", "Priest of Gix"], &[]);
     let (i, keys, kills) = mine::seph_loops(&g, P0)[0].clone();
-    let b = g.player(P0).floating.b;
+    let b = g.player(P0).mana.get(Kind::B);
     mine::run_loop(&mut g, P0, i, &keys, kills).unwrap();
     assert!(!g.over);
-    assert_eq!(g.player(P0).floating.b, b + 20);
+    assert_eq!(g.player(P0).mana.get(Kind::B), b + 20);
     assert_eq!(tokens(&g, P0), 0);
 }
 

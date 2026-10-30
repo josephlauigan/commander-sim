@@ -2,6 +2,7 @@
 //! `// --- Tiers 4/5 (prosper)`) on hand-built positions. Each expectation follows the card's Oracle text.
 
 use sim_core::engine::cast;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::life::lose_life;
 use sim_core::engine::zones;
@@ -161,7 +162,7 @@ fn crime_novelist_grows_and_adds_red_when_you_sacrifice_an_artifact() {
     let n = perm(&mut g, P0, "Crime Novelist");
     g.player_mut(P0).treasures = 1;
     sac_treasure(&mut g, P0);
-    assert_eq!((g.perm(n).plus, g.player(P0).floating.r), (1, 1));
+    assert_eq!((g.perm(n).plus, g.player(P0).mana.get(Kind::R)), (1, 1));
     g.player_mut(P1).treasures = 1;
     sac_treasure(&mut g, P1);
     assert_eq!(g.perm(n).plus, 1, "not an opponent's sacrifice");

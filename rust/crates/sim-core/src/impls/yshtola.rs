@@ -22,6 +22,7 @@
 //! this file.
 
 use crate::engine::repl;
+use crate::engine::pool::Kind;
 use crate::ai::decks::{helm_equip, helm_target, necro_prio, pay_card, sphinx_prio};
 use crate::ai::plans::{citadel_prio, one_ring_prio, wish_list};
 use crate::ai::pool::generic_prio;
@@ -894,7 +895,7 @@ fn petition(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         if human_of(g, p).is_some() {
             g.player_mut(p).pool.add('B', 3);
         } else {
-            g.player_mut(p).floating.b += 3;
+            g.player_mut(p).mana.add(Kind::B, 3);
         }
         crate::glog!(g, "    spell mastery: Dark Petition adds {{B}}{{B}}{{B}}");
     }

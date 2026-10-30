@@ -11,6 +11,7 @@
 //! (`L.data['ctype']`), which the Rust works out each time instead.
 
 use sim_core::ai::{act, brain};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, hooks, life, mana, removal, turn, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -867,7 +868,7 @@ fn coalition_relic_charge() {
     fire(&mut g, Event::EndStep, P0);
     assert!(g.perm(relic).tapped);
     g.perm_mut(relic).tapped = false;
-    g.player_mut(P0).floating.any = 0;
+    g.player_mut(P0).mana.set(Kind::Any, 0);
     fire(&mut g, Event::Upkeep, P0);
     assert_eq!(mana::total_mana(&g, P0, false), 2); // the charge counter plus its tap
 }

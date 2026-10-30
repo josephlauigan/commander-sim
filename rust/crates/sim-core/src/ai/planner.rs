@@ -398,8 +398,10 @@ fn signature(g: &Game, p: PlayerId) -> u64 {
     let mut lands: Vec<(u16, bool)> = pl.lands.iter().map(|&l| (g.perm(l).card().0, g.perm(l).tapped)).collect();
     lands.sort_unstable();
     lands.hash(&mut h);
-    let f = pl.floating;
-    (f.w, f.u, f.b, f.r, f.g, f.c, f.any, f.art).hash(&mut h);
+    use crate::engine::pool::Kind;
+    let f = |k| pl.mana.get(k);
+    let fl = [Kind::W, Kind::U, Kind::B, Kind::R, Kind::G, Kind::C, Kind::Any].map(f);
+    (fl[0], fl[1], fl[2], fl[3], fl[4], fl[5], fl[6], pl.mana.art()).hash(&mut h);
     known_top(g, p).iter().map(|c| c.0).collect::<Vec<_>>().hash(&mut h);
     (pl.life, pl.gy.len(), pl.library.len(), pl.treasures, pl.land_turn).hash(&mut h);
     h.finish()
@@ -423,7 +425,7 @@ fn reached(g: &Game, p: PlayerId, known: &[CardId], table: bool) -> Option<usize
 pub fn next_turn(g: &mut Game, p: PlayerId) -> Res<Option<CardId>> {
     use crate::engine::values::card_tag;
     for q in &mut g.players {
-        q.floating = Default::default();
+        q.mana.clear();
     }
     g.active = Some(p);
     g.step = TurnStep::Main1;

@@ -45,6 +45,9 @@
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
 use crate::engine::repl;
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
+use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
@@ -478,10 +481,15 @@ fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Haven of the Spirit Dragon
 /// {C}, or one mana of any colour for a Dragon creature spell
 fn haven_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
-    match g.pay_for {
-        Some(c) if dragon_creature_card(g, c) => g.player(p).ident,
-        _ => Colors::NONE,
-    }
+    if restr_ok(g, p, Restr::DragonCreature) { g.player(p).ident } else { Colors::NONE }
+}
+
+// ================================================================== Maelstrom of the Spirit Dragon
+const MAELSTROM: &str = "Maelstrom of the Spirit Dragon";
+
+/// {C}, or one mana of any colour for a Dragon spell (or an Omen spell: none is modeled)
+fn maelstrom_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
+    if restr_ok(g, p, Restr::Subtype("dragon")) { g.player(p).ident } else { Colors::NONE }
 }
 
 fn best_gy_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
@@ -578,7 +586,7 @@ fn klauth_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
         return Ok(vec![]);
     }
     let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).sum();
-    g.player_mut(p).floating.any += x as u32;
+    g.player_mut(p).mana.add_kept(Kind::Any, x as u32); // kept until the end of the turn
     crate::glog!(g, "    Klauth adds {x} mana");
     Ok(vec![])
 }
@@ -679,10 +687,7 @@ fn rith_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 // ================================================================== Rivaz of the Claw
-/// mana restricted to Dragon creature spells (mana.rs, as Giada's to Angels)
-pub fn dragon_only_mana(g: &Game, name: &str) -> bool {
-    name == RIVAZ && !g.pay_for.is_some_and(|c| dragon_creature_card(g, c))
-}
+// its mana is for Dragon creature spells only: `CardDef::mana_restr` (engine::mana::restr_of)
 
 /// Once during each of your turns, cast a Dragon creature spell from your graveyard (the best one you can pay for)
 fn rivaz_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -929,6 +934,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, HAVEN)?;
         c.land_cols = Some(haven_colors);
         c.land_options = Some(haven_options);
+    }
+    if has(MAELSTROM) {
+        r.card(db, MAELSTROM)?.land_cols = Some(maelstrom_colors);
     }
     if has(COURSER) {
         r.card(db, COURSER)?.etb = Some(courser_etb);

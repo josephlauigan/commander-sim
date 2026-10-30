@@ -8,6 +8,8 @@
 //! `KAITO_ULT`, `TEZZ_ULT` and `JWOM_ULT` once those modules are ported.
 
 use super::common::WalkerAb;
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
 use super::partials::{
     at_once, best_opp_creature, best_opp_nonland, eot_kw, first_max, first_min, name_of, of_type, on, pack,
     remove_card, unpack,
@@ -71,8 +73,7 @@ fn petal_sac(g: &mut Game, p: PlayerId, m: PermId, _used: u32) -> Res {
 
 /// rules.halfling_colors: Delighted Halfling's coloured mana only pays for legendary spells (None: colourless)
 pub fn halfling_colors(g: &Game, p: PlayerId) -> Option<Colors> {
-    let c = g.pay_for?;
-    g.db.get(c).tag(Tag::Leg).then(|| g.player(p).ident).filter(|x| !x.is_empty())
+    restr_ok(g, p, Restr::Legendary).then(|| g.player(p).ident).filter(|x| !x.is_empty())
 }
 
 /// rules.dryad_colors: Dryad of the Ilysian Grove: p's lands tap for any colour in its identity

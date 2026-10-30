@@ -4,6 +4,7 @@
 //! rust/agents/engine-needs-mana.md).
 
 use super::partials::at_once;
+use crate::engine::pool::Kind;
 use crate::ai::brain::do_cast;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::lose_life;
@@ -61,7 +62,7 @@ fn star_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     crate::glog!(g, "  {} cracks Chromatic Star", g.player(p).name);
     die(g, src, "sac")?;
-    g.player_mut(p).floating.any += 1;
+    g.player_mut(p).mana.add(Kind::Any, 1);
     Ok(true)
 }
 
@@ -286,7 +287,7 @@ fn goblin_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = owner(g, src);
     if trigger_window(g, o, Some(src), "put a name sticker on it, add R for each unique vowel", None)? {
-        g.player_mut(o).floating.r += GOBLIN_VOWELS;
+        g.player_mut(o).mana.add(Kind::R, GOBLIN_VOWELS);
         crate::glog!(g, "    {} adds {} red (_____ Goblin's name sticker)", g.player(o).name, GOBLIN_VOWELS);
     }
     Ok(())
@@ -535,7 +536,7 @@ fn remove_first(v: &mut Vec<CardId>, c: CardId) {
 /// modeled: no other Arcane spell is played alongside it in any deck (Godo is the only deck that plays it). Like
 /// Cabal Ritual, the AI casts it only through a deck plan (priority 0).
 fn desperate_ritual(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    g.player_mut(p).floating.r += 3;
+    g.player_mut(p).mana.add(Kind::R, 3);
     crate::glog!(g, "    {} adds RRR (Desperate Ritual)", g.player(p).name);
     Ok("gy")
 }
@@ -545,7 +546,7 @@ fn desperate_ritual(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
 /// copies already there: this one is still on the stack). Floating red mana; the AI casts it only through a deck plan.
 fn rite_of_flame(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let copies = g.players.iter().flat_map(|q| q.gy.iter()).filter(|&&x| &*g.db.get(x).name == "Rite of Flame").count();
-    g.player_mut(p).floating.r += 2 + copies as u32;
+    g.player_mut(p).mana.add(Kind::R, 2 + copies as u32);
     crate::glog!(g, "    {} adds {} red (Rite of Flame)", g.player(p).name, 2 + copies);
     Ok("gy")
 }

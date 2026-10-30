@@ -7,6 +7,7 @@
 //! 6).
 
 use sim_core::ai::{act, brain, decks};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, removal, stack, turn, values, zones};
 use sim_core::hooks::Opt;
 use sim_core::ids::{PermId, PlayerId};
@@ -440,7 +441,7 @@ fn birgi_pays_for_each_brain_freeze() {
     hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Lotus Petal"]);
     mine::breach_line(&mut g, P0, true).unwrap();
     assert_eq!(opp_libraries(&g), [0, 0, 0]);
-    assert!(g.player(P0).floating.r >= 5); // Birgi's spare red
+    assert!(g.player(P0).mana.get(Kind::R) >= 5); // Birgi's spare red
     let mut g = board(1, 2, 60);
     hand(&mut g, P0, &[BIRGI, "Underworld Breach", "Brain Freeze", "Lotus Petal"]);
     assert!(mine::breach_line(&mut g, P0, false).unwrap());

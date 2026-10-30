@@ -97,8 +97,7 @@ fn cast_before(g: &mut Game, p: PlayerId, n: usize) {
 }
 
 fn floating(g: &Game, p: PlayerId) -> u32 {
-    let f = &g.player(p).floating;
-    f.w + f.u + f.b + f.r + f.g + f.c + f.any
+    g.player(p).mana.get(sim_core::engine::pool::Kind::W) + g.player(p).mana.plain_but_white()
 }
 
 fn ritual(prismari: bool) -> u32 {
