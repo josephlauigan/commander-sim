@@ -20,7 +20,13 @@ search cost line and diagnostics on `OUT.err`; `half.sh OLD NEW "Name;Name"`; `p
   machine). The output does not depend on `--jobs`: base and ISMCTS t1 300 games at 12 = at 22 byte for byte
   (`A/t1-base-j12.txt`, `A/t1-onB-j12.txt`), so the 22-job identity checks above stand. Every Stage B arm uses 12, so
   games/s compare like with like (they are not comparable with the 22-job numbers in the design's cost table).
-- [ ] Stage B running (`stageB.sh`, binary `bin/commander-sim-B` = cfbd9ec3, 12 jobs, `stageB.log`).
+- [~] Stage B, first run (binary B = cfbd9ec3; arms moved to `B1/`): t1 half A -3.2 [-8.5, +2.1], half B -3.6
+  [-7.2, +0.0], steps a game 229k -> 181k / 172k. Both lean down, so the queue was stopped after t2-old (the
+  `AI_SEARCH=0` arms are config-free: `B/t1-old`, `B/t2-old` are reused). Suspect: the clear-leader stop and the pick
+  could overrule the top play on 2 shared copies (a 1-df t-test). Fix 3868adee (binary C): 6 shared copies against
+  the top (`AI_SEARCH_PAIRS`). Ablations on t1 half B with C (`abl.sh`, `X/`): pairs 6; + gate off; + depth 1.
+- The machine is shared (another agent's sims): games/s are noisy across arms; `OUT.cpu` (user+sys CPU seconds, from
+  t2-old on) and the steps a game are the steadier cost numbers.
 - [ ] Stage C.
 - [ ] Part (b): blocks, protection, wipe responses (not started).
 
