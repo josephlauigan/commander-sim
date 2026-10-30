@@ -1,0 +1,18 @@
+# Overrides of the derived card values (rust/crates/sim-core/src/ai/values.rs, audit/phase4/values-design.md).
+# Only for real one-offs: a value that is wrong for a general reason is a fix to the formula. Each row:
+#
+#   [[card]]
+#   name = "<card name as in data/cards.json>"
+#   worth = 9.0      # optional: the worth now in card-equivalents (replaces the formula's)
+#   threat = 3.0     # optional: the derived bomb (0-10)
+#   reason = "<why the formula is wrong for this card>"
+
+[[card]]
+name = "Archon of Cruelty"
+threat = 9.0
+reason = "its enters/attack trigger (edict, discard, drain 3, draw) is engine code under the `archon` tag: the profile reads only a 6/6 flier"
+
+[[card]]
+name = "Sheoldred, the Apocalypse"
+threat = 7.0
+reason = "its draw triggers (you gain 2, each opponent loses 2 per draw) are engine code under the `sheoA` tag: the profile reads only a 4/5 deathtouch"

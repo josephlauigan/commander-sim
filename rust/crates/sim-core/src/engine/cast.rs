@@ -52,8 +52,10 @@ pub fn sac_fodder(g: &Game, p: PlayerId, what: &str, exclude: Option<PermId>) ->
     if what.contains("green") {
         cands.retain(|&m| colors_of(g, m).has('G'));
     }
-    let best = min_by(&cands, |m| sac_worth(g, m));
-    if art && g.player(p).treasures > 0 && best.is_none_or(|b| sac_worth(g, b) > 0.6) {
+    // --- phase4-values: by the sacrificing player's reading
+    let best = crate::ai::values::read_as(g, p, || min_by(&cands, |m| sac_worth(g, m)));
+    let worth = |b: PermId| crate::ai::values::read_as(g, p, || sac_worth(g, b));
+    if art && g.player(p).treasures > 0 && best.is_none_or(|b| worth(b) > 0.6) {
         return Some(Fodder::Treasure);
     }
     best.map(Fodder::Perm)
@@ -643,7 +645,13 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
                 continue;
             }
         }
-        let x = if lands.len() > 2 || nonl.is_empty() { lands[0] } else { max_by(&nonl, cmc).unwrap() };
+        let x = if lands.len() > 2 || nonl.is_empty() {
+            lands[0]
+        } else if ai::values::on(g, p) {
+            min_by(&nonl, |x| ai::values::worth(g, p, x, true)).unwrap() // --- phase4-values: the least worth
+        } else {
+            max_by(&nonl, cmc).unwrap()
+        };
         discard_cards(g, p, &[x])?;
     }
     Ok(())

@@ -297,7 +297,7 @@ pub fn pval(g: &Game, m: PermId) -> f64 {
     let Some(c) = x.cd else { return 0.3 + epow(g, m) as f64 * 0.25 };
     let cd = g.db.get(c);
     let t = &cd.tags;
-    let mut v = cd.bomb as f64;
+    let mut v = crate::ai::values::pval_bomb(g, c); // --- phase4-values: the tag, or a derived-arm reader's threat
     if cd.creature && v == 0.0 {
         v = 1.0 + epow(g, m) as f64 * 0.5;
     }

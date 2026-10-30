@@ -801,7 +801,11 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let late = g.player(p).turns > 4; // past the early turns: impact, not cast priority (no Sol Ring on turn 10)
     for c in cands {
         let d = g.db.get(c);
-        let key = if late { (tutor_value(g, p, c), d.cmc as f64, 0.0) } else { (prio(c), d.bomb as f64, d.cmc as f64) };
+        let key = if late {
+            (tutor_value(g, p, c), d.cmc as f64, 0.0)
+        } else {
+            (prio(c), super::values::bomb_of(g, p, c), d.cmc as f64) // --- phase4-values: the reader's bomb
+        };
         if best.as_ref().is_none_or(|b| key > b.1) {
             best = Some((c, key));
         }
@@ -819,7 +823,13 @@ pub fn tutor_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
     if g.player(p).turns > 4 && MANA_TAGS.iter().any(|&k| d.tag(k)) {
         v *= 0.3;
     }
-    if d.bomb != 0 {
+    if super::values::on(g, p) {
+        // --- phase4-values: the derived threat, from a bomb up
+        let b = super::values::threat(g, c);
+        if b >= super::values::BOMB {
+            v = v.max(10.0 * b);
+        }
+    } else if d.bomb != 0 {
         v = v.max(10.0 * d.bomb as f64);
     }
     v
@@ -842,12 +852,15 @@ pub fn rean_options(g: &Game, p: PlayerId) -> Vec<(CardId, Sym, u32, String)> {
         match r {
             "rites" => out.push((c, "fb", 3, "W".into())),
             "dread" => {
+                // --- phase4-values: fodder is no bomb by the reader's reading
+                let fodder_max = if super::values::on(g, p) { super::values::BOMB } else { f64::MIN_POSITIVE };
                 let fod = pl
                     .perms
                     .iter()
                     .filter(|&&m| {
                         let x = g.perm(m);
-                        g.is_creature(m) && (x.token || x.cd.is_none_or(|cd| g.db.get(cd).bomb == 0))
+                        g.is_creature(m)
+                            && (x.token || x.cd.is_none_or(|cd| super::values::bomb_of(g, p, cd) < fodder_max))
                     })
                     .count();
                 if fod >= 3 {
@@ -916,7 +929,12 @@ pub fn gy_worth(g: &Game, q: PlayerId, c: CardId) -> f64 {
                 !x.phased && x.cd.is_some_and(|cd| GY_ENGINES.contains(&&*g.db.get(cd).name))
             }))
     {
-        let b = if d.bomb != 0 { d.bomb as f64 } else { 1.0 + 0.3 * d.pow as f64 };
+        let bomb = if super::values::on(g, q) {
+            Some(super::values::threat(g, c)).filter(|&b| b >= super::values::BOMB) // --- phase4-values
+        } else {
+            Some(d.bomb as f64).filter(|&b| b != 0.0)
+        };
+        let b = bomb.unwrap_or(1.0 + 0.3 * d.pow as f64);
         v = v.max(0.6 * b);
     }
     v
