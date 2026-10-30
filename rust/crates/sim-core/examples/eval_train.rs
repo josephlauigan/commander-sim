@@ -380,18 +380,11 @@ fn main() {
     let ev = |i: usize| 95.0 * (d.old[i] / 100.0).tanh();
     let one = |ix: &[usize], f: &dyn Fn(usize) -> f64| ix.iter().map(|&i| vec![1.0, f(i)]).collect::<Vec<_>>();
     let be = fit_logistic(&one(&tr, &ev), &ytr, &wtr, 0.0);
-    let br = fit_logistic(&one(&tr, &|i| d.old[i]), &ytr, &wtr, 0.0);
     let pb: Vec<f64> = te.iter().map(|&i| sigmoid(be[0] + be[1] * ev(i))).collect();
-    let pbr: Vec<f64> = te.iter().map(|&i| sigmoid(br[0] + br[1] * d.old[i])).collect();
     let sb = scores(&pb, &yte, &wte);
-    let sbr = scores(&pbr, &yte, &wte);
     println!(
         "baseline evaluate: a {:.4} b {:.5}  held-out logloss {:.4} brier {:.4} auc {:.4}",
         be[0], be[1], sb.0, sb.1, sb.2
-    );
-    println!(
-        "baseline raw term: a {:.4} b {:.5}  held-out logloss {:.4} brier {:.4} auc {:.4}",
-        br[0], br[1], sbr.0, sbr.1, sbr.2
     );
 
     // the penalty, picked on the validation games (seed % 5 == 1) of a fit on the others
@@ -465,10 +458,10 @@ fn main() {
         let xb_fit: Vec<Vec<u8>> = fit_ix.iter().map(|&i| bin(i)).collect();
         let xb_val: Vec<Vec<u8>> = val_ix.iter().map(|&i| bin(i)).collect();
         let start = wlogloss(&f_val, &yv, &wv);
-        let (_, curve) = gbt(&xb_fit, &mut f_fit, &yf, &wf, 300, 0.05, &xb_val, &mut f_val, (&yv, &wv));
+        let (_, curve) = gbt(&xb_fit, &mut f_fit, &yf, &wf, 600, 0.05, &xb_val, &mut f_val, (&yv, &wv));
         let (r_best, l_best) =
             curve.iter().enumerate().fold((0, start), |b, (k, &l)| if l < b.1 { (k + 1, l) } else { b });
-        println!("trees on the logistic: validation logloss {start:.5} -> {l_best:.5} at {r_best} rounds (of 300)");
+        println!("trees on the logistic: validation logloss {start:.5} -> {l_best:.5} at {r_best} rounds (of 600)");
         if r_best > 0 {
             let xbt: Vec<Vec<u8>> = tr.iter().map(|&i| bin(i)).collect();
             let xbe: Vec<Vec<u8>> = te.iter().map(|&i| bin(i)).collect();
