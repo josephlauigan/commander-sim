@@ -9,7 +9,7 @@ use crate::cardcode;
 use crate::cards::Colors;
 use crate::engine::hooks;
 use crate::engine::life::lose_life;
-use crate::engine::pool::{Key, Kind, Restr};
+use crate::engine::pool::{Keep, Key, Kind, Restr, Rider};
 use crate::engine::values::has;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
@@ -234,10 +234,10 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     } else {
         u.extend(cardcode::hand_mana(g, p)); // Spirit Guides need no hooked permanent
     }
-    // floating mana, at most 1000 of each entry (the same doubling boards float billions); white floating mana is
-    // never offered (the old pool had no white unit), restricted mana only where it may be spent
+    // floating mana, at most 1000 of each entry (the same doubling boards float billions); restricted mana only where
+    // it may be spent
     for m in pl.mana.iter() {
-        if m.key.kind != Kind::W && restr_ok(g, p, m.key.restr) {
+        if restr_ok(g, p, m.key.restr) {
             let cols = m.key.kind.cols(ident);
             u.extend((0..m.amt.min(1000)).map(|_| Unit { src: Source::Pool(m.key), cols, amt: 1 }));
         }
@@ -284,6 +284,14 @@ pub fn restr_ok(g: &Game, p: PlayerId, r: Restr) -> bool {
 /// The restriction on the mana a card's own mana ability makes (`CardDef::mana_restr`, looked up once at load): its
 /// tags (Mishra's Workshop, the Powerstones) or its name. Lands that make {C} or restricted coloured mana (Plaza of
 /// Heroes, Unclaimed Territory ...) choose their colours by `restr_ok` in their colour code instead.
+/// the rider on the mana a card's own mana ability makes (`CardDef::mana_rider`, at load)
+pub fn rider_of(name: &str) -> Rider {
+    match name {
+        "Cavern of Souls" | "Delighted Halfling" => Rider::Uncounterable,
+        _ => Rider::None,
+    }
+}
+
 pub fn restr_of(name: &str, tags: &crate::cards::Tags) -> Restr {
     if tags.has(Tag::Workshop) {
         return Restr::ArtifactSpell;
@@ -438,7 +446,7 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
             spend_unit(g, p, *w, used[i], &col[i])?;
             let on_demand = matches!(w.src, Source::Perm(m) if crate::impls::t6_mana::mana_on_demand(g, m));
             if used[i] < w.amt && matches!(w.src, Source::Land(_) | Source::Perm(_)) && !on_demand {
-                float_leftover(g, p, w.cols, w.amt - used[i]);
+                float_leftover(g, p, w.src, w.cols, w.amt - used[i]);
             }
         }
     }
@@ -447,10 +455,39 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 
 /// The mana a land or permanent made beyond what the payment used stays in the pool, as in the rules: Gaea's Cradle
 /// tapped for four paid one {G} of Sisay's {W}{U}{B}{R}{G} and the other three were lost, so a line that was
-/// affordable stopped after its first step. It empties with the turn's other floating mana. One colour floats as
-/// that colour (white as any: no white floating unit is spent), none as {C}, several as any.
-fn float_leftover(g: &mut Game, p: PlayerId, cols: Colors, n: u32) {
-    g.player_mut(p).mana.add(Kind::of_leftover(cols), n);
+/// affordable stopped after its first step. It empties as the step ends (rule 500.4). One colour floats as that
+/// colour, none as {C}, several as any; mana of a restricted source keeps its restriction (Mishra's Workshop's
+/// {C}{C} after a one-mana artifact still pays only for artifact spells).
+fn float_leftover(g: &mut Game, p: PlayerId, src: Source, cols: Colors, n: u32) {
+    let restr = source_restr(g, src);
+    g.player_mut(p).mana.add_key(Key { restr, kind: Kind::of_leftover(cols), keep: Keep::Step }, n);
+}
+
+/// the restriction on the mana a land or permanent makes by its own ability (none for a land under Blood Moon: a
+/// plain Mountain)
+fn source_restr(g: &Game, src: Source) -> Restr {
+    match src {
+        Source::Land(l) if !moon_land(g, l) => g.db.get(g.perm(l).card()).mana_restr,
+        Source::Perm(m) => g.perm(m).cd.map_or(Restr::None, |c| g.db.get(c).mana_restr),
+        _ => Restr::None,
+    }
+}
+
+/// Cavern of Souls' and Delighted Halfling's rider: their coloured mana (made only for the spell it may pay for)
+/// makes that spell uncounterable (`Game::unc_cast`, read by `stack::counterable`)
+fn mana_rider(g: &mut Game, src: Source, w: Unit) {
+    let cd = match src {
+        Source::Land(l) if !moon_land(g, l) => Some(g.perm(l).card()),
+        Source::Perm(m) => g.perm(m).cd,
+        _ => None,
+    };
+    if let Some(cd) = cd
+        && g.db.get(cd).mana_rider == Rider::Uncounterable
+        && !w.cols.is_empty()
+        && let Some(c) = g.pay_for
+    {
+        g.unc_cast = Some((c, g.turn_stamp()));
+    }
 }
 
 /// Use unit w for n mana; col: the coloured pips it paid for (painlands hurt only then). Taps or sacrifices the
@@ -481,6 +518,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
             cardcode::special_unit_paid(g, p, w)?
         }
         Source::Land(l) => {
+            mana_rider(g, w.src, w);
             g.perm_mut(l).tapped = true;
             g.tap_cols = Colors::from_letters(col);
             if !moon_land(g, l) {
@@ -497,6 +535,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
             }
         }
         Source::Perm(m) => {
+            mana_rider(g, w.src, w);
             g.perm_mut(m).tapped = true;
             crate::impls::t0_captain::became_tapped(g, m); // Captain America, Living Legend
             crate::impls::t3_marwyn::on_tapped(g, m)?; // --- Tier 3 (marwyn): Dionus, Legolas

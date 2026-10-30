@@ -319,7 +319,7 @@ fn photon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
     } else {
         [Kind::W, Kind::U, Kind::B, Kind::R, Kind::G][best]
     };
-    g.player_mut(p).mana.add(kind, n);
+    g.player_mut(p).mana.add_kept(kind, n); // kept until the end of the turn
     crate::glog!(g, "    Photon adds {n} mana");
     Ok(())
 }

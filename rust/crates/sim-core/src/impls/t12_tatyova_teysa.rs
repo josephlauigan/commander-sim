@@ -18,7 +18,7 @@
 //!
 //! Teysa:
 //! - Black Market: a charge counter whenever a creature dies; {B} per counter at the beginning of your first main
-//!   phase. Left out: the mana stays until the end of the turn, not the phase (floating mana here lasts the turn).
+//!   phase (it empties as main 1 ends).
 //! - Drivnod, Carnage Dominus: your death-caused triggers trigger once more (as Teysa Karlov); {B/P}{B/P}, exile three
 //!   creature cards from your graveyard: an indestructible counter.
 //! - Indebted Spirit: bestow {2}{W} on your best creature (+1/+1 and afterlife 1; it becomes a creature when the host

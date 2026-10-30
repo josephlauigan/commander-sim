@@ -1,7 +1,7 @@
 //! Tier 5 pool deck `miirym-temur-dragons` (EDHREC's bracket-4 average list): the cards the ability language doesn't
 //! cover (rust/agents/t45-miirym.md). Miirym herself and the Dragon cards the deck shares with The Ur-Dragon's old
 //! list are in `impls/t45_urdragon.rs`. Savage Ventmaw's "you don't lose this mana" is compiled (dsl_parse.rs,
-//! `// --- Tiers 4/5 (miirym)`): floating mana already lasts the whole turn here.
+//! `// --- Tiers 4/5 (miirym)`): its mana is kept all turn by `dsl` add_mana (`Pool::add_kept`).
 //!
 //! - Astral Dragon: Project Image, when it enters: two token copies of the best noncreature, nonland, nonlegendary
 //!   permanent on the battlefield (yours or a targetable one of an opponent's), each a 3/3 flying Dragon creature in

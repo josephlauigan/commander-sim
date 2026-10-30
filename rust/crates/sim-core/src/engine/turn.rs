@@ -877,11 +877,23 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
             Step::Main2 => step_main2(g, p)?,
             Step::End => step_end(g, p)?,
         }
+        if st != Step::Start {
+            end_step_pools(g); // rule 500.4 (the start step empties its pools itself, before main 1's triggers)
+        }
         if g.over || !g.player(p).alive {
             return Ok(());
         }
     }
     Ok(())
+}
+
+/// A step or phase ends (rule 500.4): every player's mana pool empties, but for the mana kept until the end of the
+/// turn (Karn, Legacy Reforged; Birgi ...). The engine's start step is the untap, upkeep and draw steps, emptied
+/// before main 1's beginning triggers; the other steps are emptied as `continue_turn` leaves them.
+pub fn end_step_pools(g: &mut Game) {
+    for q in &mut g.players {
+        q.mana.end_step();
+    }
 }
 
 /// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
@@ -902,11 +914,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::t6_scion::copy_revert(g); // --- scion: Scion of the Ur-Dragon's copy ends with the turn (cleanup)
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
-        // floating mana empties between turns (Karn's too: it lasts the turn, not longer); white floating mana
-        // stays, as it always has (Stage A: results identical; nothing spends it)
-        let w = q.mana.get(Kind::W);
-        q.mana.clear();
-        q.mana.add(Kind::W, w);
+        q.mana.clear(); // the pools empty between turns (mana kept "until end of turn" too)
         q.pool.art = 0;
     }
     let pl = g.player_mut(p);
@@ -1025,6 +1033,9 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     if g.over || !g.player(p).alive {
         return Ok(());
     }
+    end_step_pools(g); // the draw step ends (rule 500.4): the upkeep's and draw step's mana is gone
+    let drain = std::mem::take(&mut g.player_mut(p).drain_mana);
+    g.player_mut(p).mana.add(Kind::C, drain); // Mana Drain: at the beginning of your next main phase
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::Main1, Call::Player { p })?; // at the beginning of your precombat main phase (Sagas)
     }

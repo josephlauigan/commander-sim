@@ -1667,7 +1667,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.cast = Some(haunting);
     c.grant_kw = Some(haunting_kw);
     r.card(db, "Starfield of Nyx")?.upkeep = Some(starfield);
-    r.card(db, "Carpet of Flowers")?.upkeep = Some(carpet);
+    r.card(db, "Carpet of Flowers")?.main1 = Some(carpet); // "at the beginning of each of your main phases"
     // Charming Prince: rules2's enters hook replaces t2's (prince)
     // value blinks: Ephemerate's hand option is mine.py's (it replaces t2's value_blink)
     let c = r.card(db, "Restoration Angel")?;

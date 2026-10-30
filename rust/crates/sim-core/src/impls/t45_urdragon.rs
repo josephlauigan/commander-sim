@@ -484,6 +484,14 @@ fn haven_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if restr_ok(g, p, Restr::DragonCreature) { g.player(p).ident } else { Colors::NONE }
 }
 
+// ================================================================== Maelstrom of the Spirit Dragon
+const MAELSTROM: &str = "Maelstrom of the Spirit Dragon";
+
+/// {C}, or one mana of any colour for a Dragon spell (or an Omen spell: none is modeled)
+fn maelstrom_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
+    if restr_ok(g, p, Restr::Subtype("dragon")) { g.player(p).ident } else { Colors::NONE }
+}
+
 fn best_gy_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
     let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| dragon_creature_card(g, c)).collect();
     crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
@@ -578,7 +586,7 @@ fn klauth_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
         return Ok(vec![]);
     }
     let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).sum();
-    g.player_mut(p).mana.add(Kind::Any, x as u32);
+    g.player_mut(p).mana.add_kept(Kind::Any, x as u32); // kept until the end of the turn
     crate::glog!(g, "    Klauth adds {x} mana");
     Ok(vec![])
 }
@@ -926,6 +934,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         let c = r.card(db, HAVEN)?;
         c.land_cols = Some(haven_colors);
         c.land_options = Some(haven_options);
+    }
+    if has(MAELSTROM) {
+        r.card(db, MAELSTROM)?.land_cols = Some(maelstrom_colors);
     }
     if has(COURSER) {
         r.card(db, COURSER)?.etb = Some(courser_etb);

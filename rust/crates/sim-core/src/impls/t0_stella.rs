@@ -878,12 +878,12 @@ fn revelation_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<S
 // ================================================================== Rousing Refrain (suspend)
 const REFRAIN: &str = "Rousing Refrain";
 
-/// Add {R} for each card in target opponent's hand (kept through the turn: floating mana empties only between turns
-/// here). Exile it with three time counters; the suspend upkeep casts it free when the last is removed.
+/// Add {R} for each card in target opponent's hand (kept until the end of the turn, as
+/// steps and phases end). Exile it with three time counters; the suspend upkeep casts it free when the last is removed.
 fn refrain_resolve(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0) as u32;
     crate::glog!(g, "    Rousing Refrain adds {n} red mana");
-    g.player_mut(p).mana.add(Kind::R, n);
+    g.player_mut(p).mana.add_kept(Kind::R, n);
     let pl = g.player_mut(p);
     pl.exile.push(c);
     pl.suspended.push((c, 3));

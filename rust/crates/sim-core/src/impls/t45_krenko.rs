@@ -6,7 +6,7 @@
 //! - Boggart Shenanigans: another Goblin of yours dies (tokens too): 1 damage to an opponent (a lethal one first, else
 //!   the biggest threat). Left out: planeswalkers as targets.
 //! - Mana Echoes: a creature enters (anyone's; Krenko's tokens as one batch): {C} equal to your creatures that share
-//!   a creature type with it, into the pool (it lasts the turn here).
+//!   a creature type with it, into the pool (it empties as the step ends).
 //! - Goblin Chirurgeon: a nontoken creature of yours worth keeping would be destroyed: sacrifice a Goblin (a token
 //!   first) to regenerate it (tapped). Left out: regenerating tokens.
 //! - Goblin King: other Goblins (every player's) have mountainwalk: unblockable while the defender controls a Mountain

@@ -233,7 +233,7 @@ fn gathered(g: &Game, p: PlayerId) -> ManaPool {
     let mut pool = pl.pool.clone();
     let f = &pl.mana;
     pool.art += f.art();
-    for c in ['R', 'U', 'C', 'A', 'G', 'B'] {
+    for c in ['R', 'U', 'C', 'A', 'G', 'B', 'W'] {
         pool.add(c, f.get(Kind::of_letter(c)));
     }
     pool
@@ -243,9 +243,7 @@ pub fn gather_floating(g: &mut Game, p: PlayerId) {
     let pool = gathered(g, p);
     let pl = g.player_mut(p);
     pl.pool = pool;
-    let w = pl.mana.get(Kind::W); // Python has no floatW: white floating mana stays where it is
-    pl.mana.clear();
-    pl.mana.add(Kind::W, w);
+    pl.mana.clear(); // all of it is in the person's pool now (a person never floats a restricted leftover)
 }
 
 pub fn pool_can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str) -> bool {
@@ -315,9 +313,10 @@ pub struct SourceInfo {
     pub perm: Option<usize>,
 }
 
-/// engine units that are already floating mana, not sources to tap (Python's FLOATS: it leaves out the black one)
+/// engine units that are already floating mana, not sources to tap (Python's FLOATS left out the black one, which
+/// was then offered as a source "FB")
 fn is_float(s: Source) -> bool {
-    matches!(s, Source::Pool(k) if !(k.kind == Kind::B && k.restr == crate::engine::pool::Restr::None))
+    matches!(s, Source::Pool(_))
 }
 
 /// the colours unit u can make; painlands and Talismans can also make colourless, without the pain
@@ -374,7 +373,6 @@ pub fn sources(g: &Game, p: PlayerId) -> Vec<SourceInfo> {
         }
         let name = match u.src {
             Source::Treasure => "Treasure".to_string(),
-            Source::Pool(_) => "FB".to_string(), // black floating mana (the others are left out above)
             s => source_name(g, s),
         };
         let mut d = SourceInfo {

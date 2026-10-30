@@ -63,8 +63,7 @@ impl Kind {
     }
 
     /// The kind that keeps what a source that can make `cols` made beyond what a payment used: one colour floats as
-    /// that colour (white as any: the old pool had no white floating mana the planner read), none as {C}, several as
-    /// any.
+    /// that colour, none as {C}, several as any.
     pub fn of_leftover(cols: Colors) -> Kind {
         match cols.count() {
             0 => Kind::C,
@@ -72,9 +71,20 @@ impl Kind {
             1 if cols.has('B') => Kind::B,
             1 if cols.has('R') => Kind::R,
             1 if cols.has('G') => Kind::G,
+            1 if cols.has('W') => Kind::W,
             _ => Kind::Any,
         }
     }
+}
+
+/// Something the mana does when it is spent (106.6): Cavern of Souls' and Delighted Halfling's coloured mana makes the
+/// spell it pays for uncounterable. Read from the source as its unit is spent (`mana::spend_unit`): that mana never
+/// floats (one mana, spent at once), so the pool's keys carry no rider.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum Rider {
+    #[default]
+    None,
+    Uncounterable,
 }
 
 /// What a mana object may be spent on (rule 106.6). `None`: anything.
@@ -217,6 +227,17 @@ impl Pool {
     pub fn set_art(&mut self, n: u32) {
         self.take(Key::ART, u32::MAX);
         self.add_art(n);
+    }
+
+    /// add `n` unrestricted mana of `kind` that stays until the turn ends ("until end of turn, you don't lose this
+    /// mana as steps and phases end": Birgi, Klauth, Savage Ventmaw, Photon, Rousing Refrain)
+    pub fn add_kept(&mut self, kind: Kind, n: u32) {
+        self.add_key(Key { restr: Restr::None, kind, keep: Keep::Turn }, n);
+    }
+
+    /// a step or phase ends (rule 500.4): the mana not kept all turn empties
+    pub fn end_step(&mut self) {
+        self.v.retain(|m| m.key.keep == Keep::Turn);
     }
 
     /// the pool empties (a new turn; Teferi's Protection)

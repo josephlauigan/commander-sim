@@ -251,6 +251,8 @@ pub struct CardDef {
     pub counters_mult: i32,
     /// what the mana its own mana ability makes may be spent on (`engine::mana::restr_of`, looked up once at load)
     pub mana_restr: crate::engine::pool::Restr,
+    /// what that mana does as it is spent (`engine::mana::rider_of`: Cavern of Souls)
+    pub mana_rider: crate::engine::pool::Rider,
     pub id: CardId,
     pub name: Box<str>,
     pub types: Types,
@@ -342,6 +344,7 @@ impl CardDef {
             named: crate::engine::chars::named_fx(&r.name),
             repl: repl::fx_of(&r.name, &tags),
             mana_restr: crate::engine::mana::restr_of(&r.name, &tags),
+            mana_rider: crate::engine::mana::rider_of(&r.name),
             types,
             generic: r.generic,
             pips: r.pips.as_str().into(),

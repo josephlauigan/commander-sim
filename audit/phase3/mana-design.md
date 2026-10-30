@@ -111,3 +111,50 @@ taken off), with an empty pool and with floating mana. Measured at the base and 
 - Shang-Chi's "only to activate abilities of creature sources", Castle Garenbrig's six {G}, Master of Dark Rites:
   the payment doesn't say whose ability it pays for, and those abilities are not modeled.
 - Secluded Courtyard's and Avengers Tower's "or an ability of a ... source": abilities are not told apart.
+
+## Done (Stages A-C)
+
+- Stage A (b4de6614): `engine/pool.rs`; `Player::mana` replaces `Player::floating`; every add, read and spend goes
+  through the pool; `Source::Pool(key)` replaces the seven `Float*` sources. Results identical.
+- Stage B (2d562035): `Restr` values for every source restriction, `CardDef::mana_restr` at load, one test
+  (`mana::restr_ok(g, p, r)`); the land colour callbacks ask it; `art_mana_ok`, `dragon_only_mana` and the name
+  checks in `mana_units` are gone. Giada and Avengers Tower now count changelings and Territory / Cavern see Maskwood
+  Nexus (one predicate per restriction); no deck plays both, so results are identical.
+- Stage C: bugs 1-5 above fixed, with tests (`tests/mana_pool.rs`, 8):
+  1. The pools empty as each step ends (`turn::end_step_pools`, `Pool::end_step`): after main 1, combat, main 2 and
+     the end step, and in the start step after the draw (before main 1's beginning triggers, which belong to main 1).
+     The whole pool empties as the turn starts (white too). Kept all turn (`Pool::add_kept`, `Keep::Turn`): Karn,
+     Birgi, Klauth, Savage Ventmaw (the ability language's `add_mana` from it), Photon, Rousing Refrain. Mana Drain's
+     mana comes at the beginning of the next main phase (it came in the upkeep); Carpet of Flowers triggers at the
+     beginning of main 1 (it was the upkeep: its mana would now be gone). Black Market's mana now empties after main 1
+     (its "Left out" is fixed).
+  2. A source's leftover keeps the source's restriction (`float_leftover`, `source_restr`): Mishra's Workshop, The
+     Mightstone and Weakstone, Powerstones, Giada, Rivaz, Hydro-Channeler.
+  3. White floating mana is offered to the planner (Photon's white), and a single-white source's leftover floats as
+     white.
+  4. Cavern of Souls' and Delighted Halfling's coloured mana makes the spell it pays for uncounterable
+     (`CardDef::mana_rider`, `Rider::Uncounterable`, through `Game::unc_cast`).
+  5. Maelstrom of the Spirit Dragon: {C}, or any colour for a Dragon spell (`t45_urdragon::maelstrom_colors`).
+- Practice mode: `gather_floating` moves all the engine's floating mana into the person's pool (white was left
+  behind); black floating mana is no longer listed as a source to tap ("FB").
+
+## Decks that play a card whose behaviour changed in Stage C (for the recalibration after Phase 4; no sims run)
+
+- Emptying between steps: every deck at every tier (any ritual or big source whose leftover was spent in a later
+  step: Gaea's Cradle, Ancient Tomb / Sol Ring overflow, the rituals, Treasure-free mana floated in main 1). All of
+  JD's decks.
+- Kept mana: Birgi (prosper t4, rograkh-silas t6), Klauth, Savage Ventmaw, Maelstrom, Mana Drain (miirym t5; Mana
+  Drain also kinnan, urza, zur t5), Photon (captain-america t0), Rousing Refrain (stella t0), Black Market (teysa t1),
+  Karn (JD's karn: unchanged).
+- Restricted leftovers: Mishra's Workshop (JD's karn, dack t6), The Mightstone and Weakstone (JD's karn), Giada
+  (giada t0, aurelia t3).
+- Riders: Cavern of Souls (marwyn t3, edgar t4, krenko t4, miirym t5, dack t6, kraum-tymna t6), Delighted Halfling
+  (chulane t4, kinnan t5, kinnan-bonder t6, rograkh-thrasios t6, sisay t6).
+- Tiers touched: all (t0-t6); JD's decks: all through emptying, karn directly (Workshop, Mightstone).
+
+## What doesn't fit (yet), after Stage C
+
+- Practice mode keeps its own pool (`human::mana::ManaPool`, emptied between steps): the engine's floating mana is
+  moved into it when the person pays, so mana kept "until end of turn" (Birgi for a person) empties with the step
+  there. Merging the two pools is the next step (the person's Secluded Courtyard mana is the only other restriction).
+- Riders don't float: Cavern / Halfling make one mana, spent at once.

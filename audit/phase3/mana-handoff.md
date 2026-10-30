@@ -24,8 +24,18 @@ validate pass, 0 doubles, paths_known empty; clone_cost 3.03 / 3.03 µs; mana_co
       predicate per restriction; no deck plays both, so results are identical). Checks: 0 warnings; 3655 passed;
       practice 104; cardgen clean; clone_cost 2.93-2.94; mana_cost (ns) empty units 160-162, can_pay 359-399 /
       509-514, pay 620-628; float units 135-136, can_pay 618-620 / 748-760, pay 962-998.
-- [ ] Stage C: emptying (500.4), leftovers keep their restriction, Photon's white, Cavern / Halfling riders,
-      Maelstrom; tests
+- [x] Stage C: the pools empty as each step ends (`turn::end_step_pools`; kept all turn: Karn, Birgi, Klauth,
+      Ventmaw, Photon, Rousing Refrain; Mana Drain at main 1; Carpet of Flowers at main 1); leftovers keep their
+      source's restriction; white floating mana is spent; Cavern / Halfling make the spell uncounterable; Maelstrom's
+      colours only for Dragons; practice: white is gathered, black floating mana is no longer a "source". Tests:
+      `tests/mana_pool.rs` (8). Checks: 0 warnings; 3663 passed / 0 failed / 3 ignored (223 binaries); practice 104;
+      cardgen clean (0 doubles, paths_known empty, no data change); clone_cost 2.91-2.94; mana_cost (ns) empty units
+      155-165, can_pay 367-409 / 512-513, pay 603-604; float units 135-136, can_pay 629-633 / 771-774, pay 937-1033:
+      the same as base within noise (empty units about 5% slower: the restriction test on rocks and dorks).
+      Decks touched: `mana-design.md`, last sections.
+
+## Next (follow-ups, not in this PR)
+Merge practice mode's pool (`human::mana::ManaPool`) into `Player::mana` (see "What doesn't fit" in the design).
 
 ## Notes
 - Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase3-mana/`
