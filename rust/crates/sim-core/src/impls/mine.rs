@@ -6,6 +6,7 @@
 
 use super::lands::{can_pay_without, pay_without};
 use super::partials::at_once;
+use crate::engine::repl;
 use crate::ai::brain::{Situation, card_utility};
 use crate::ai::decks::{breach_candidates, wipe_eval};
 use crate::cards::{CardDb, Types};
@@ -22,7 +23,7 @@ use crate::engine::stack::{
 };
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{
-    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, melira, pval,
+    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, pval,
     stopped, threat, untargetable,
 };
 use crate::engine::zones::{
@@ -378,7 +379,7 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if caster != o && (target == Some(src) || g.db.get(c).tag(Tag::Wipe)) {
         g.perm_mut(src).phased = true;
     } else {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -538,7 +539,7 @@ fn vraska_minus9(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
     if !card_ability_window(g, p, cd, "-9", Some(10.0), None)? {
         return Ok(true);
     }
-    if !melira(g, q) {
+    if repl::poison_ok(g, q) {
         let pl = g.player_mut(q);
         pl.poison = pl.poison.max(9);
     }
@@ -554,21 +555,23 @@ pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
             continue;
         }
         if g.perm(m).plus > 0 {
-            crate::cardcode::add_counters(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
         let walker = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));
         if walker && let Some(l) = g.perm(m).loyalty {
-            g.perm_mut(m).loyalty = Some(l + 1);
+            let k = repl::counters(g, p, repl::On::Perm(m), repl::Ctr::Loyalty, 1, repl::Path::ALL);
+            g.perm_mut(m).loyalty = Some(l + k);
         }
     }
     for q in g.opps(p).collect::<Vec<_>>() {
-        if g.player(q).poison > 0 && !melira(g, q) {
-            let k = crate::cardcode::vorinclex(g, p, 1); // Vorinclex
-            g.player_mut(q).poison += k as u32;
+        if g.player(q).poison > 0 {
+            repl::give_poison(g, p, q, 1, repl::Path::POISON); // Melira, Vorinclex
         }
         for m in g.player(q).perms.clone() {
             if g.is_creature(m) && g.perm(m).plus < 0 {
-                g.perm_mut(m).plus -= 1;
+                if repl::put_counters(g, p, m, -1) == 0 {
+                    continue; // Melira, Solemnity
+                }
                 if etgh(g, m) <= 0 {
                     die(g, m, "sba")?;
                 }
@@ -1098,7 +1101,7 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
         breach: has(g, p, Tag::Breach),
         breach_hand: pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Breach)),
         led_bf: perm_named(g, p, LED, true).is_some(),
-        labman: pl.perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m).is_some_and(|n| LABMEN.contains(&n))),
+        labman: repl::labman(g, pl.id),
         setup_hand,
         draws,
         lib: opps.iter().map(|&q| (q, g.player(q).library.len())).collect(),
@@ -2205,7 +2208,7 @@ fn nim_equip_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// enters with three +1/+1 counters
 fn trisk_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src {
-        crate::cardcode::put_plus(g, src, 3);
+        repl::put_plus(g, src, 3);
     }
     Ok(())
 }
@@ -3447,7 +3450,7 @@ pub fn helm_hexproof(g: &Game, m: PermId) -> bool {
 /// names Orc: each other Orc (and every new Orc Army) enters with an additional +1/+1 counter
 fn mimic(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src && g.perm(m).owner == g.perm(src).owner && g.is_creature(m) && orcish(g, m) {
-        crate::cardcode::add_counters(g, m, 1);
+        repl::put_plus(g, m, 1);
     }
     Ok(())
 }
@@ -4092,8 +4095,8 @@ fn loop_kills(name: &str, names: &[&str]) -> bool {
 
 /// mine.loops_blocked: graveyard hate or Hushbringer: nothing that dies comes back, or its triggers don't happen
 pub(crate) fn loops_blocked(g: &Game, p: PlayerId) -> bool {
-    (!g.hooks.is_empty() && crate::engine::hooks::total_player(g, Event::NoGraveyard, p) != 0)
-        || crate::engine::zones::hushed(g)
+    repl::no_graveyard(g, p)
+        || repl::hushed(g)
 }
 
 /// mine.seph_loops: the loops p can run now: (loop index, key permanents, kills)

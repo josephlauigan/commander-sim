@@ -4,9 +4,9 @@
 //!
 //! What is modeled here, card by card (the cards the compiled abilities already play are named where this file
 //! adds to them):
-//! - **Hardened Scales**: `cardcode::scales`, applied wherever the engine puts +1/+1 counters on a creature
-//!   (`cardcode::add_counters`, the ability language's counters / proliferate / doubling, `common::proliferate`,
-//!   enters-with-counters). Two Scales stack.
+//! - **Hardened Scales**: an entry of the replacement step (`engine::repl`), applied wherever the engine puts +1/+1
+//!   counters on a creature (`repl::put_plus`, the ability language's counters / proliferate / doubling,
+//!   `common::proliferate`, enters-with-counters). Two Scales stack.
 //! - **Bristly Bill**: the landfall counter is the compiled ability (the engine picks the target); the {3}{G}{G}
 //!   doubling is `bill_options` (an instant-speed ability: the end of the turn before yours with the mana free, or
 //!   before combat when it makes the attack lethal through the blockers).
@@ -25,6 +25,7 @@ use crate::engine::mana::can_pay;
 use crate::engine::mana::cost_of;
 use crate::engine::mana::pay;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::stack::{counter_window, may_window, trigger_window};
 use crate::engine::values::{card_name, epow, etgh, pval};
 use crate::engine::zones::{discard_cards, land_to_hand};
@@ -107,7 +108,7 @@ fn double_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     for m in creatures(g, p) {
         let k = g.perm(m).plus;
         if k > 0 && g.perm(m).on_bf {
-            crate::cardcode::add_counters(g, m, k);
+            repl::put_plus(g, m, k);
         }
     }
     Ok(true)
@@ -116,7 +117,7 @@ fn double_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// +1/+1 counters on p's creatures, and what doubling them would add (each creature with counters gets as many again,
 /// plus one per Hardened Scales)
 fn doubling_gain(g: &Game, p: PlayerId) -> (i32, i32) {
-    let sc = crate::cardcode::scales(g, p);
+    let sc = repl::scales(g, p); // an estimate: Hardened Scales on each placement
     let mut total = 0;
     let mut add = 0;
     for m in creatures(g, p) {
@@ -134,7 +135,7 @@ fn doubling_gain(g: &Game, p: PlayerId) -> (i32, i32) {
 /// blocker's toughness. `doubled`: after the doubling (each creature with counters gets as many again, plus Scales).
 fn damage_through(g: &Game, p: PlayerId, q: PlayerId, doubled: bool) -> i32 {
     use crate::engine::combat::{can_block, kw};
-    let sc = crate::cardcode::scales(g, p);
+    let sc = repl::scales(g, p); // an estimate: Hardened Scales on each placement
     let mut atk: Vec<(PermId, i32)> = vec![];
     for m in creatures(g, p) {
         let x = g.perm(m);
@@ -494,7 +495,7 @@ fn freestrider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     if flag_set(g, p, "green_plot_free") || !g.last_cast_etb {
         crate::glog!(g, "    Freestrider Commando enters with two +1/+1 counters");
-        crate::cardcode::add_counters(g, m, 2);
+        repl::put_plus(g, m, 2);
     }
     Ok(())
 }
@@ -625,7 +626,7 @@ fn collector_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
         crate::glog!(g, "    {} collects evidence 3", pname(g, p));
         let mine = creatures(g, p);
         if let Some(t) = counter_target(g, &mine) {
-            crate::cardcode::add_counters(g, t, 1);
+            repl::put_plus(g, t, 1);
         }
     }
     Ok(vec![])
@@ -699,7 +700,7 @@ fn radical_up(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     super::galadriel::turn_face_up(g, p, m);
     g.perm_mut(m).neutered = false;
     for x in creatures(g, p) {
-        crate::cardcode::add_counters(g, x, 1);
+        repl::put_plus(g, x, 1);
         super::partials::eot_kw(g, x, "trample");
     }
     Ok(true)
@@ -829,12 +830,13 @@ fn make_fractal(g: &mut Game, p: PlayerId, n: i32) -> Res {
         tgh: Some(1),
         ..crate::engine::zones::Tokens::new(1, 1)
     };
-    let scales = if n > 0 { crate::cardcode::scales(g, p) } else { 0 };
+    use crate::engine::repl::counters;
     for t in crate::engine::zones::make_tokens(g, p, spec)? {
+        let k = counters(g, p, On::Perm(t), Ctr::Plus, n, Path::ALL); // the counters step (Hardened Scales ...)
         let x = g.perm_mut(t);
         x.pow = 0;
         x.tgh = 0;
-        x.plus = n + scales;
+        x.plus = k;
     }
     Ok(())
 }
@@ -858,7 +860,7 @@ fn evolution_combat(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let mine = creatures(g, p);
     let Some(t) = counter_target(g, &mine) else { return Ok(()) };
     if trigger_window(g, p, Some(src), &format!("a +1/+1 counter on {}", g.perm(t).name), None)? && live(g, t) {
-        crate::cardcode::add_counters(g, t, 1);
+        repl::put_plus(g, t, 1);
         super::partials::eot_kw(g, t, "vigilance");
     }
     Ok(())
@@ -947,10 +949,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 }
 
 // ================================================================== Topiary Lecturer and Vinelasher Adept
-/// +1/+1 counters on m, after doubling effects
+/// +1/+1 counters on m, through the counters step (doublers, Hardened Scales, in the controller's order)
 fn put_counters(g: &mut Game, p: PlayerId, m: PermId, n: i32) {
-    let k = n * crate::dsl::counter_mult(g, p);
-    crate::cardcode::add_counters(g, m, k);
+    repl::put_counters(g, p, m, n);
 }
 
 /// mana spent on the spell being cast now (a flashback cost, or what the card costs now; a free cast spent none)

@@ -5,6 +5,7 @@
 //! Several cards here came with the retired candidate decks (glissa, gix, yawgmoth), whose card code was deleted while
 //! their `Full` verdicts stayed in the overrides; they are modeled here again, keyed by card name.
 
+use crate::engine::repl;
 use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
@@ -70,7 +71,7 @@ fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 }
 
 fn plus_counter(g: &mut Game, m: PermId, n: i32) {
-    crate::cardcode::add_counters(g, m, n);
+    repl::put_plus(g, m, n);
 }
 
 fn flipped(g: &Game, m: PermId) -> bool {
@@ -670,7 +671,7 @@ fn seeker_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// n Blood tokens (a count on the player, like Clues)
 pub fn make_blood(g: &mut Game, p: PlayerId, n: i32) -> Res {
-    let n = n * crate::dsl::token_mult(g, p) as i32;
+    let n = n * repl::token_mult(g, p) as i32;
     if n <= 0 {
         return Ok(());
     }
@@ -925,7 +926,7 @@ pub fn returns_when_dies(g: &mut Game, x: &Perm, _cause: Sym) -> Res<bool> {
     if (!tapped && !susp) || x.token || x.is_cmd || !returns_left(g, cd) {
         return Ok(false);
     }
-    if !g.hooks.is_empty() && crate::engine::hooks::total_player(g, Event::NoGraveyard, x.orig) != 0 {
+    if repl::no_graveyard(g, x.orig) {
         return Ok(false);
     }
     let n = enter(g, x.orig, cd, Enter::default())?;

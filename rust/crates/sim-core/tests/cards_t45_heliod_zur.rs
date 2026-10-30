@@ -2,11 +2,11 @@
 //! compiled patterns under `// --- Tiers 4/5 (heliod-zur)`) on hand-built positions. Each expectation follows the
 //! card's Oracle text.
 
-use sim_core::cardcode;
 use sim_core::dsl::has_kw;
 use sim_core::engine::combat::can_block;
 use sim_core::engine::hooks::fire_trigger;
-use sim_core::engine::values::{epow, etgh, melira, untargetable};
+use sim_core::engine::repl::melira;
+use sim_core::engine::values::{epow, etgh, untargetable};
 use sim_core::engine::{cast, life, tutors};
 use sim_core::hooks::{Action, Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -355,7 +355,7 @@ fn solemnity_stops_counters_and_poison() {
     let mut g = zur();
     let pm = perm(&mut g, P0, "Walking Ballista");
     perm(&mut g, P0, "Solemnity");
-    cardcode::put_plus(&mut g, pm, 2);
+    sim_core::engine::repl::put_plus(&mut g, pm, 2);
     assert_eq!(g.perm(pm).plus, 0);
     assert!(melira(&g, P0) && melira(&g, P1), "no player gets poison counters");
 }

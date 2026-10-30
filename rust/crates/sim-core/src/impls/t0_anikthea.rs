@@ -6,6 +6,7 @@
 
 use super::common::{oring_exile, oring_return};
 use super::partials::remove_card;
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::discard_worst;
 use crate::engine::life::{gain, lose_life};
@@ -302,7 +303,7 @@ fn chapter(g: &mut Game, p: PlayerId, src: PermId, n: i64) -> Res {
             let mut cs = creatures(g, p);
             cs.sort_by(|&a, &b| pval(g, b).partial_cmp(&pval(g, a)).unwrap_or(std::cmp::Ordering::Equal));
             for m in cs.into_iter().take(2) {
-                crate::cardcode::put_plus(g, m, 1);
+                repl::put_plus(g, m, 1);
             }
             Ok(())
         }

@@ -14,6 +14,7 @@
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
 use super::lands::{can_pay_without, sac_land};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, copy_spell, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
@@ -480,7 +481,7 @@ fn shalai_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     for m in g.player(p).perms.clone() {
         if g.is_creature(m) && !g.perm(m).phased {
-            crate::cardcode::put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
     }
     stat(g, p, "jr_shalai_counters", 1);
@@ -593,8 +594,8 @@ fn blessing(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     let turns = g.player(p).turns as i64;
+    repl::put_plus(g, t, 1); // the counters step (Stage C: was a direct write)
     let x = g.perm_mut(t);
-    x.plus += 1;
     x.data.set(DataKey::IndestrUntil, Val::List(vec![Val::Player(p), Val::Int(turns)])); // engine.indestructible
     crate::glog!(
         g,
@@ -1085,7 +1086,7 @@ fn spark_attach(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     });
     if let Some(t) = t {
         g.perm_mut(src).attached = Some(t);
-        crate::cardcode::put_plus(g, t, 1);
+        repl::put_plus(g, t, 1);
     }
     Ok(())
 }
@@ -1317,7 +1318,7 @@ fn hydra_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         shuffle_library(g, o);
     }
     if on(g, o, src) {
-        crate::cardcode::add_counters(g, src, x); // Hardened Scales applies
+        repl::put_plus(g, src, x); // Hardened Scales applies
         if etgh(g, src) <= 0 {
             die(g, src, "sba")?;
         }
@@ -1479,7 +1480,7 @@ fn darien_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), "a counter and a Soldier", None, None)? {
         return Ok(true);
     }
-    crate::cardcode::put_plus(g, src, 1);
+    repl::put_plus(g, src, 1);
     let spec =
         Tokens { tgh: Some(1), color: Some(Colors::from_letters("W")), types: vec!["soldier"], ..Tokens::new(1, 1) };
     make_tokens(g, p, spec)?;

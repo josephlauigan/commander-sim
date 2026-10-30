@@ -35,6 +35,7 @@
 //! - The Raven Man: each end step, if a player discarded this turn, a 1/1 flying Bird that can't block (its {3}{B}
 //!   activation is compiled).
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::combat::has_haste;
@@ -216,7 +217,7 @@ fn rhythm_riot(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         eot_kw(g, m, "haste");
         crate::glog!(g, "    {} has riot: haste", g.perm(m).name);
     } else {
-        crate::cardcode::put_plus(g, m, 1);
+        repl::put_plus(g, m, 1);
         crate::glog!(g, "    {} has riot: a +1/+1 counter", g.perm(m).name);
     }
     Ok(())
@@ -275,7 +276,7 @@ fn juri_sac(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
         return Ok(());
     }
     if trigger_window(g, p, Some(src), "a +1/+1 counter", Some(1.0))? && g.perm(src).on_bf {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -342,7 +343,7 @@ fn mazirek_sac(g: &mut Game, src: Src, _p: PlayerId, what: Sacrificed) -> Res {
     let o = owner(g, src);
     if trigger_window(g, o, Some(src), "a +1/+1 counter on each creature you control", Some(2.0))? {
         for m in creatures_of(g, o) {
-            crate::cardcode::put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
     }
     Ok(())

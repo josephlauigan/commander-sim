@@ -14,10 +14,11 @@
 //! games reads the creature type of a creature that has already been returned.
 
 use super::common::{AURA, AuraSpec};
+use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::values::{etgh, indestructible, no_damage, pval};
+use crate::engine::values::{etgh, indestructible, pval};
 use crate::engine::zones::{Enter, Zone, die, draw, enter, exile_perm, leave, to_zone_card};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -384,7 +385,7 @@ pub fn ghostform_return(g: &mut Game, m: PermId, p: PlayerId) -> Res<bool> {
 // ================================================================== Pestilence
 /// the damage-proof or indestructible creatures Pestilence cannot kill
 fn pest_kills(g: &Game, m: PermId, i: i32) -> bool {
-    g.is_creature(m) && live(g, m) && etgh(g, m) <= i && !no_damage(g, m) && !indestructible(g, m)
+    g.is_creature(m) && live(g, m) && etgh(g, m) <= i && !repl::no_damage(g, m) && !indestructible(g, m)
 }
 
 /// what n activations of Pestilence are worth to p: (value, kills an opponent)

@@ -4,6 +4,7 @@
 //! The choices the heuristic AI makes here (which player to attack, which creatures stay home, chump blocks) are
 //! `ai.rs`'s; the look-ahead's attack plan comes in M4.
 
+use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
@@ -347,7 +348,7 @@ pub fn attack_triggers(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) -
             pl.attackers.push(m);
         }
     }
-    let copies = 1 + hooks::total_trigger_copies(g, p, "attack", None); // Isshin
+    let copies = 1 + repl::trigger_copies(g, p, "attack", None); // Isshin
     let mut new = vec![];
     for _ in 0..copies {
         new.extend(attack_triggers_once(g, p, atk, d)?);
@@ -644,7 +645,7 @@ fn resolve_combat_inner(
                 continue;
             }
             let mut ap = epow(g, a) * if double_strike(g, a) { 2 } else { 1 };
-            if cardcode::damage_prevented(g, a) || cardcode::dovin_blocked(g, a) {
+            if repl::source_prevented(g, a) || repl::dovin(g, a) {
                 ap = 0; // Old Fat Spider's chapter II, Dovin's lock
             }
             let fs = crate::impls::kuja::flare_star(g, Some(a)); // Trance Kuja: a Wizard's damage is doubled
@@ -662,14 +663,14 @@ fn resolve_combat_inner(
                     let gs = crate::impls::t3_aurelia::gisela_scale; // Gisela, Blade of Goldnight
                     let mut a_dies = (gs(g, p, epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p)) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
-                        && !no_damage(g, a)
+                        && !repl::no_damage(g, a)
                         && !t0(g, a);
-                    if cardcode::damage_prevented(g, b) {
+                    if repl::source_prevented(g, b) {
                         a_dies = false;
                     }
                     let mut b_dies = (gs(g, d, ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d)) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
-                        && !no_damage(g, b)
+                        && !repl::no_damage(g, b)
                         && !t0(g, b);
                     if cardcode::prot_vs(g, a, b) {
                         a_dies = false; // protection from creatures / Demons and Dragons
@@ -696,24 +697,24 @@ fn resolve_combat_inner(
                     if epow(g, b) > 0 && g.perm(a).on_bf && cardcode::kaldra_exile(g, b, a)? {
                         a_dies = false;
                     }
-                    if ap > 0 && !no_damage(g, b) {
+                    if ap > 0 && !repl::no_damage(g, b) {
                         crate::impls::newcards_b::cecil_deals(g, a, ap)?; // Cecil, Dark Knight: Darkness
                     }
-                    if epow(g, b) > 0 && !no_damage(g, a) {
+                    if epow(g, b) > 0 && !repl::no_damage(g, a) {
                         crate::impls::newcards_b::cecil_deals(g, b, epow(g, b))?;
                     }
-                    if ap > 0 && !no_damage(g, b) && !t0(g, b) && !cardcode::damage_prevented(g, b) {
+                    if ap > 0 && !repl::no_damage(g, b) && !t0(g, b) && !repl::source_prevented(g, b) {
                         crate::impls::t0_giada::damaged(g, b, ap)?; // Metropolis Reformer
                     }
-                    if epow(g, b) > 0 && !no_damage(g, a) && !t0(g, a) && !cardcode::damage_prevented(g, a) {
+                    if epow(g, b) > 0 && !repl::no_damage(g, a) && !t0(g, a) && !repl::source_prevented(g, a) {
                         crate::impls::t0_giada::damaged(g, a, epow(g, b))?;
                     }
                     // --- Tiers 4/5 (urza-yawgmoth): wither: the damage is -1/-1 counters, on a creature it kills too
                     // (Necroskitter sees them); a first striker that kills its foe takes none
                     let bp = epow(g, b);
                     for (src, to, k, hits) in [(a, b, ap, !(fb && !fa && a_dies)), (b, a, bp, !(fa && !fb && b_dies))] {
-                        if hits && k > 0 && kw(g, src, "wither") && !kw(g, src, "infect") && !no_damage(g, to) {
-                            crate::cardcode::put_plus(g, to, -k);
+                        if hits && k > 0 && kw(g, src, "wither") && !kw(g, src, "infect") && !repl::no_damage(g, to) {
+                            repl::put_plus(g, to, -k);
                         }
                     }
                     crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
@@ -727,8 +728,8 @@ fn resolve_combat_inner(
                     }
                     // infect: damage to a creature is -1/-1 counters, which stay on a creature that survives it
                     for (src, to, k) in [(a, b, ap), (b, a, epow(g, b))] {
-                        if k > 0 && kw(g, src, "infect") && g.perm(to).on_bf && !no_damage(g, to) {
-                            crate::cardcode::put_plus(g, to, -k);
+                        if k > 0 && kw(g, src, "infect") && g.perm(to).on_bf && !repl::no_damage(g, to) {
+                            repl::put_plus(g, to, -k);
                             if etgh(g, to) <= 0 {
                                 die(g, to, "sba")?;
                             }
@@ -786,7 +787,7 @@ fn resolve_combat_inner(
             }
             if dmg > 0 && card_name(g, a) == Some("Szadek, Lord of Secrets") {
                 // instead: +1/+1 counters, and they mill that many
-                crate::cardcode::put_plus(g, a, dmg);
+                repl::put_plus(g, a, dmg);
                 mill(g, d, dmg as usize)?;
                 conn.push(a);
                 crate::glog!(g, "    Szadek: {} +1/+1 counters, {} mills {}", dmg, g.player(d).name, dmg);
@@ -978,7 +979,7 @@ pub fn ozolith_move(g: &mut Game, p: PlayerId) {
     }
     let tgt = army_of(g, p)
         .unwrap_or_else(|| max_by(&cr, |m| if g.perm(m).noatk { 0.0 } else { 1000.0 } + epow(g, m) as f64).unwrap());
-    crate::cardcode::put_plus(g, tgt, k);
+    repl::put_plus(g, tgt, k);
     g.player_mut(p).ozolith_counters = 0;
     g.player_mut(p).stat("ozolith_moves", 1);
     crate::glog!(g, "  The Ozolith moves {} counters onto {}", k, g.perm(tgt).name);

@@ -349,7 +349,7 @@ fn necroskitter_takes_opposing_creatures_dying_with_minus_counters() {
     let mut g = yawg();
     perm(&mut g, P0, "Necroskitter");
     let a = perm(&mut g, P1, "Blood Artist");
-    cardcode::put_plus(&mut g, a, -1);
+    sim_core::engine::repl::put_plus(&mut g, a, -1);
     zones::die(&mut g, a, "sba").unwrap();
     assert!(on_bf(&g, P0, "Blood Artist").is_some(), "it returns under my control");
     let b = perm(&mut g, P1, "Zulaport Cutthroat");

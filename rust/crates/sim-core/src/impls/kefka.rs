@@ -14,6 +14,7 @@ use super::common::{AURA, AuraSpec, aura};
 use super::lands::sac_land;
 use super::partials::remove_card;
 use super::yshtola::take_card;
+use crate::engine::repl;
 use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, copy_spell};
@@ -943,7 +944,7 @@ fn spider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if crate::human::is_human(g, o) {
         crate::human::choices::discard(g, o, 1, "Scarlet Spider, Kaine: discard a card (it gets a +1/+1 counter)")?;
         if g.perm(src).on_bf {
-            crate::cardcode::put_plus(g, src, 1);
+            repl::put_plus(g, src, 1);
         }
         return Ok(());
     }
@@ -957,7 +958,7 @@ fn spider_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     discard_cards(g, o, &[d])?;
     if g.perm(src).on_bf {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }

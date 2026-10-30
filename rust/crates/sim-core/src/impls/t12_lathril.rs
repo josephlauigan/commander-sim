@@ -33,6 +33,7 @@
 //!   until end of turn; 0 a 1/1 Elf Warrior; -6 the emblem (an Elf spell you cast: draw two, and it has haste that
 //!   turn: engine/combat.rs `has_haste`).
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, pay, total_mana};
@@ -678,7 +679,7 @@ fn tyvar_plus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
 
 fn tyvar_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let Some(t) = tyvar_target(g, p) else { return Ok(()) };
-    crate::cardcode::add_counters(g, t, 1);
+    repl::put_plus(g, t, 1);
     let x = g.perm_mut(t);
     x.tapped = false;
     if !x.eot_kw.contains(&"deathtouch") {

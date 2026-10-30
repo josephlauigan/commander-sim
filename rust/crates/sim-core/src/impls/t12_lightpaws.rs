@@ -44,6 +44,7 @@
 //! The deck's answers to removal (`protect`) and wipes (`wipe_response`) are called for every outside deck from
 //! ai/decks.rs; they also cast Shardmage's Rescue (bulk_white::white_protect), which the pool path never used.
 
+use crate::engine::repl;
 use crate::ai::decks::{WipeRule, pay_card, wipe_loss};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::add_cast_lock;
@@ -243,7 +244,7 @@ fn promise_gain(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
         return Ok(());
     }
     if trigger_window(g, p, Some(src), &format!("{n} +1/+1 counters"), None)? && live(g, host) {
-        crate::cardcode::put_plus(g, host, n);
+        repl::put_plus(g, host, n);
     }
     Ok(())
 }

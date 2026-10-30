@@ -197,7 +197,7 @@ fn breena_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerI
         draw(g, p, 1, false)?;
         let mine = creatures_of(g, o);
         if let Some(m) = max_by(&mine, |m| pval(g, m)) {
-            g.perm_mut(m).plus += 2;
+            crate::engine::repl::put_plus(g, m, 2); // the counters step (Stage C: was a direct write)
         }
     }
     Ok(vec![])

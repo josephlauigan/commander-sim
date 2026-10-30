@@ -21,6 +21,7 @@
 //! lock_worth, zur_protect, zur_wipe_response) come from `impls/zur.rs`, through the small `zur` module at the end of
 //! this file.
 
+use crate::engine::repl;
 use crate::ai::decks::{helm_equip, helm_target, necro_prio, pay_card, sphinx_prio};
 use crate::ai::plans::{citadel_prio, one_ring_prio, wish_list};
 use crate::ai::pool::generic_prio;
@@ -988,7 +989,7 @@ fn shield_resolve(g: &mut Game, _p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym>
 
 /// yshtola.shield: a +1/+1 counter, lifelink and indestructible until end of turn
 pub fn shield(g: &mut Game, m: PermId) {
-    crate::cardcode::add_counters(g, m, 1);
+    repl::put_plus(g, m, 1);
     add_eot_kw(g, m, "indestructible");
     add_eot_kw(g, m, "lifelink");
     crate::glog!(g, "    Take Up the Shield: {} gets a +1/+1 counter, lifelink and indestructible", g.perm(m).name);

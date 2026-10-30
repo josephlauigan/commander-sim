@@ -21,6 +21,7 @@
 //! - **Exsanguinate** is yshtola.rs's X drain (its option now also runs for the Sauron seat); Talisman of
 //!   Indulgence, Rakdos Signet and Fellwar Stone are modeled elsewhere (mine.rs, the rock tags, mana.rs).
 
+use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::lose_life;
@@ -28,7 +29,7 @@ use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{army_of, epow, etgh, no_damage, pval, untargetable};
+use crate::engine::values::{army_of, epow, etgh, pval, untargetable};
 use crate::engine::zones::{amass, die, discard_cards, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -333,7 +334,7 @@ fn comet_score(g: &Game, p: PlayerId, t: Tgt, x: i32) -> (f64, bool) {
         }
         Tgt::Perm(m) => {
             let pm = g.perm(m);
-            if !pm.on_bf || pm.phased || untargetable(g, m) || (g.is_creature(m) && no_damage(g, m)) {
+            if !pm.on_bf || pm.phased || untargetable(g, m) || (g.is_creature(m) && repl::no_damage(g, m)) {
                 return (0.0, false);
             }
             let dies = match pm.loyalty {

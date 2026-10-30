@@ -9,6 +9,7 @@ use super::partials::{
     first_min, name_of, on, pack, remove_card, unpack,
 };
 use super::t3::{ability, card_is, plan};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::{gain, lose_life};
@@ -883,7 +884,7 @@ fn adapt_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     pay(g, p, 3, "GG", false)?;
     crate::glog!(g, "  {} adapts Incubation Druid", pname(g, p));
     if ability_window(g, p, Some(src), "adapt 3", None, None)? && on(g, p, src) && g.perm(src).plus <= 0 {
-        crate::cardcode::put_plus(g, src, 3);
+        repl::put_plus(g, src, 3);
     }
     Ok(true)
 }

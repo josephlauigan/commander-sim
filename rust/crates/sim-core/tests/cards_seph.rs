@@ -323,7 +323,7 @@ fn melira_keeps_persist_going() {
         assert_eq!(g.perm(finks).plus, 0);
     }
     assert!(!zones::minus_counter(&mut g, finks, 1)); // no -1/-1 counters on your creatures
-    assert!(values::melira(&g, P0));
+    assert!(sim_core::engine::repl::melira(&g, P0));
 }
 
 #[test]

@@ -7,6 +7,7 @@
 //! player's lands while animated and comes back at the start of the next turn; if the creature died, the land goes
 //! to the graveyard.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::lose_life;
@@ -776,7 +777,7 @@ fn oran_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if ability_window_card(g, p, g.perm(l).card(), "+1/+1 counters", None, None)? {
         for m in new {
             if g.perm(m).on_bf && g.perm(m).owner == p {
-                crate::cardcode::put_plus(g, m, 1);
+                repl::put_plus(g, m, 1);
             }
         }
     }

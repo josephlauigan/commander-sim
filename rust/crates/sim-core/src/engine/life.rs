@@ -1,13 +1,13 @@
 //! Life, damage to players, state-based checks and elimination (engine.py: lose_life ... eliminate).
 
+use crate::engine::repl;
 use crate::engine::hooks;
-use crate::engine::values::{chasm, has};
+use crate::engine::values::chasm;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
 use crate::ids::PlayerId;
 use crate::state::Game;
 use crate::sym::{Sym, intern};
-use crate::tag::Tag;
 
 /// lose_life kinds that are damage (prevented by protection); 'drain' and 'other' are life loss. 'triggers' is mostly
 /// damage (Orcish Bowmasters, Kaervek, the ability language's damage); Undermine passes damage = Some(false).
@@ -115,14 +115,8 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
     if !pl.alive || pl.life_locked {
         return Ok(());
     }
-    if g.opps(p).any(|q| has(g, q, Tag::Erebos)) {
-        return Ok(()); // Erebos: opponents can't gain life
-    }
-    if crate::dsl::no_lifegain(g, p) || (!g.hooks.is_empty() && hooks::any_no_lifegain(g, p)) {
-        return Ok(());
-    }
-    let n = n + crate::impls::t0_giada::gain_bonus(g, p, n); // Angel of Vitality: plus 1
-    let n = crate::dsl::lifegain_mod(g, p, n); // --- Tiers 4/5 (heliod-zur): Cleric Class, The Wind Crystal
+    // the life gain step: Erebos and the "can't gain life" statics, Angel of Vitality, Cleric Class, The Wind Crystal
+    let Some(n) = repl::life_gain(g, p, n) else { return Ok(()) };
     g.player_mut(p).life += n;
     // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
     if n > 0 {

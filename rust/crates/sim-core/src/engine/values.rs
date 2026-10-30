@@ -105,12 +105,6 @@ pub fn has_type(g: &Game, m: PermId, t: &str) -> bool {
 }
 
 // ------------------------------------------------------------------ protection and targeting
-/// all damage that would be dealt to m is prevented (Cho-Manno, Revolutionary)
-pub fn no_damage(g: &Game, m: PermId) -> bool {
-    ((card_tag(g, m, Tag::Nodmg) && !g.perm(m).neutered) || crate::impls::t3_aurelia::iroas_shield(g, m)) // Iroas
-        && !g.unpreventable()
-}
-
 /// Shadowspear's activation this turn, against a permanent of a player other than the active one
 fn spear_on(g: &Game, m: PermId) -> bool {
     g.spear == Some(g.turn_stamp()) && g.active != Some(g.perm(m).owner)
@@ -276,12 +270,6 @@ pub fn add_cmd_dmg(g: &mut Game, d: PlayerId, p: PlayerId, a: PermId, dmg: i32) 
     let second = is_second_cmd(g, p, a);
     let pl = g.player_mut(d);
     if second { pl.cmd2_dmg[p.index()] += dmg } else { pl.cmd_dmg[p.index()] += dmg }
-}
-
-/// Melira, Sylvok Outcast: p can't get poison counters, and p's creatures can't have -1/-1 counters put on them
-pub fn melira(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| card_tag(g, m, Tag::Melira) && !g.perm(m).phased)
-        || crate::impls::t45_heliod_zur::solemnity(g) // --- Tiers 4/5 (heliod-zur): Solemnity, for every player
 }
 
 /// Glacial Chasm

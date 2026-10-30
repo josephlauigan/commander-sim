@@ -29,6 +29,7 @@ pub mod tape;
 pub mod topdeck;
 pub mod veyran;
 
+use crate::engine::repl;
 use crate::engine::values::epow;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
@@ -539,7 +540,7 @@ pub fn seph_rean_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
         crate::engine::zones::minus_counter(g, m, 1);
     }
     if kind == "evil" {
-        crate::cardcode::put_plus(g, m, 2);
+        repl::put_plus(g, m, 2);
     }
     g.player_mut(p).stat("rean_resolved", 1);
     note_bomb(g, p, cd, was_removed);

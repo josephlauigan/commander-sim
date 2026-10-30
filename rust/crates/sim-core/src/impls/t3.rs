@@ -9,6 +9,7 @@
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, outlets, sac_food, walker};
 use super::partials::{at_once, eot_kw, first_max, name_of, remove_card};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{discard_worst, on_cast};
 use crate::engine::hooks::fire_trigger;
@@ -224,7 +225,7 @@ fn korvold_sac(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
         if !trigger_window(g, p, Some(src), "a +1/+1 counter and draw a card", None)? {
             return Ok(());
         }
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
         if g.player(p).library.len() > 10 {
             draw(g, p, 1, false)?;
         }
@@ -566,7 +567,7 @@ fn marwyn(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && has_type(g, m, "elf")
         && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(1.0))?
     {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }

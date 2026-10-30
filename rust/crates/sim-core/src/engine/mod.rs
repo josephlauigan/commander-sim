@@ -24,6 +24,7 @@ pub mod hooks;
 pub mod life;
 pub mod mana;
 pub mod removal;
+pub mod repl;
 pub mod stack;
 pub mod turn;
 pub mod tutors;

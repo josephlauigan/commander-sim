@@ -47,6 +47,7 @@
 //! Combo: Rionya, Fire Dancer + Combat Celebrant (a hasty Celebrant copy each combat exerts for another combat:
 //! infinite combats), `COMBOS`, chained in combos::all.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn, on_cast};
 use crate::engine::control::{Duration, GoadFor, gain_control, goad};
@@ -387,7 +388,7 @@ fn alexios_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     g.perm_mut(src).tapped = false;
-    crate::cardcode::put_plus(g, src, 1);
+    repl::put_plus(g, src, 1);
     eot_kw(g, src, "haste");
     let now = Val::Stamp(g.turn_stamp());
     g.perm_mut(src).data.set(DataKey::MustAttack, now);

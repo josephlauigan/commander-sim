@@ -8,6 +8,7 @@
 //! combo decks get tutor wish lists for their missing pieces. search.deck_combos and search.combo_progress (the
 //! look-ahead's reading of a combo in the making) are here too.
 
+use crate::engine::repl;
 use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
@@ -1394,7 +1395,7 @@ fn karn(g: &Game, p: PlayerId) -> Ready {
 
 /// Heliod gives the Ballista lifelink ({1}{W}); each ping gains life, which adds a counter: unlimited pings
 fn heliod(g: &Game, p: PlayerId) -> Ready {
-    if crate::impls::t45_heliod_zur::solemnity(g) {
+    if repl::solemnity(g) {
         return NOT_READY(); // --- Tiers 4/5 (heliod-zur): Solemnity: the Ballista gets no counters
     }
     let Some(h) = on_bf(g, p, "Heliod, Sun-Crowned") else { return NOT_READY() };

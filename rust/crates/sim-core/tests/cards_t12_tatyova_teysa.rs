@@ -4,7 +4,7 @@
 
 use sim_core::dsl::{Fired, fire, has_kw};
 use sim_core::engine::cast;
-use sim_core::engine::hooks::total_trigger_copies;
+use sim_core::engine::repl::trigger_copies as total_trigger_copies;
 use sim_core::engine::values::{colors_of, epow, etgh, indestructible};
 use sim_core::engine::zones;
 use sim_core::hooks::{Action, Opt};

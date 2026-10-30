@@ -39,6 +39,7 @@
 //!   enchantment spell while you control Enchantress's Presence, Sythis or Eidolon of Blossoms, a card more. Left out:
 //!   copies of other triggered and activated abilities.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, casts_this_turn};
 use crate::engine::life::{check_state, lose_life};
@@ -597,7 +598,7 @@ fn calix_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let cr: Vec<PermId> = g.player(o).perms.iter().copied().filter(|&x| live(g, x) && g.is_creature(x)).collect();
     let Some(t) = max_by(&cr, |x| pval(g, x) + if g.perm(x).fly { 2.0 } else { 0.0 }) else { return Ok(()) };
     if trigger_window(g, o, Some(src), "a +1/+1 counter on target creature", Some(1.5))? && live(g, t) {
-        crate::cardcode::put_plus(g, t, 1);
+        repl::put_plus(g, t, 1);
     }
     Ok(())
 }

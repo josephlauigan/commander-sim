@@ -46,6 +46,7 @@
 //! Combos: a life-gain drain (Sanguine Bond, Vito, Marauding Blight-Priest) with a life-loss gain (Exquisite Blood,
 //! Bloodthirsty Conqueror): an unbounded drain. Sanguine Bond + Exquisite Blood is combos.rs's own entry.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::control::{Duration, gain_control};
@@ -319,7 +320,7 @@ fn blade_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
     }
     if let Some(t) = g.perm(src).attached.filter(|&t| live(g, t) && g.is_creature(t)) {
         let k = if vampire(g, t) { 2 } else { 1 };
-        crate::cardcode::add_counters(g, t, k);
+        repl::put_plus(g, t, k);
     }
     Ok(())
 }
@@ -551,7 +552,7 @@ fn knight_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let st = g.turn_stamp();
     let lost = g.players.iter().any(|q| q.lost_turn.is_some_and(|x| x.0 == st && x.1 >= 4));
     if p == owner(g, src) && live(g, src) && lost && trigger_window(g, p, Some(src), "a +1/+1 counter", None)? {
-        crate::cardcode::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -666,7 +667,7 @@ fn sorin_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     eot_kw(g, t, "deathtouch");
     eot_kw(g, t, "lifelink");
     if vampire(g, t) {
-        crate::cardcode::add_counters(g, t, 1);
+        repl::put_plus(g, t, 1);
     }
     Ok(())
 }
@@ -801,11 +802,11 @@ fn socialite_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     }
     if m == src {
         for v in vampires(g, o).into_iter().filter(|&v| v != src) {
-            crate::cardcode::add_counters(g, v, 1);
+            repl::put_plus(g, v, 1);
         }
         crate::glog!(g, "    Vampire Socialite: +1/+1 counters on the other Vampires");
     } else if vampire(g, m) && g.perm(m).on_bf {
-        crate::cardcode::add_counters(g, m, 1); // enters with an additional +1/+1 counter
+        repl::put_plus(g, m, 1); // enters with an additional +1/+1 counter
     }
     Ok(())
 }
@@ -817,7 +818,7 @@ fn socialite_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res
     }
     for &t in toks {
         if g.perm(t).on_bf && vampire(g, t) {
-            crate::cardcode::add_counters(g, t, 1);
+            repl::put_plus(g, t, 1);
         }
     }
     Ok(())

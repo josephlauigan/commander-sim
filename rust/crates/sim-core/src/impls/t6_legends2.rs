@@ -5,6 +5,7 @@
 use super::common::{WalkerAb, walker};
 use super::partials::{at_once, best_opp_creature, best_opp_nonland, eot_kw, first_max, on};
 use super::t5::is_artifact;
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
@@ -593,7 +594,7 @@ pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let m = enter(g, p, c, Enter { was_cast: true, sick: false, ..Enter::default() })?;
-    crate::cardcode::put_plus(g, m, x);
+    repl::put_plus(g, m, x);
     draw(g, p, (x / 2) as u32, false)?;
     Ok(true)
 }
@@ -609,7 +610,7 @@ pub fn wan_shi_tong_searched(g: &mut Game, searcher: PlayerId) -> Res {
     for m in tongs {
         let o = owner(g, m);
         if live(g, m) && trigger_window(g, o, Some(m), "+1/+1 counter and draw a card", None)? {
-            crate::cardcode::put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
             draw(g, o, 1, false)?;
         }
     }

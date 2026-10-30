@@ -2,6 +2,7 @@
 //! implementation (the Tier 1 and Sauron cards and Deathrite Shaman for M5, the rest in phase 6: `register_phase6`).
 
 use super::partials::{at_once, best_opp_nonland, first_max, first_min, of_type, on, pack, remove_card, unpack};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::{fire_trigger, hooked};
@@ -602,7 +603,7 @@ fn rishkar(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     // Python sorts by (x is src, -pval) with reverse=True: Rishkar first, then the least valuable (stable)
     cs.sort_by(|a, b| (b.0, b.1).partial_cmp(&(a.0, a.1)).unwrap_or(std::cmp::Ordering::Equal));
     for &(_, _, x) in cs.iter().take(2) {
-        crate::cardcode::put_plus(g, x, 1);
+        repl::put_plus(g, x, 1);
     }
     Ok(())
 }

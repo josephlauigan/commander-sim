@@ -16,6 +16,7 @@
 //!   **Recruitment Officer**, **Repel the Darkness**.
 
 use super::common::{AURA, AuraSpec, aura};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::gain;
@@ -316,7 +317,7 @@ pub(crate) fn face_up_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
                 && live(g, m)
             {
                 bounce(g, t)?;
-                crate::cardcode::add_counters(g, m, 1);
+                repl::put_plus(g, m, 1);
             }
         }
         GATEKEEPER => {
@@ -471,7 +472,7 @@ fn ennis_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
         && exiled_this_turn(g)
         && trigger_window(g, p, Some(src), "a +1/+1 counter", Some(1.0))?
     {
-        crate::cardcode::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }

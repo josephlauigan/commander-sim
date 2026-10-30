@@ -1,6 +1,7 @@
 //! Removal and wipes (engine.py's "removal" section): legal targets, removing a permanent (with protection, ward and
 //! taxes), enters-the-battlefield removal and Auras that lock their target, board wipes.
 
+use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::{Colors, Types};
@@ -117,7 +118,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 continue;
             }
             if let Some(n) = dmg_amount(kind, "dmg")
-                && (!is_c || etgh(g, m) > crate::impls::t3_aurelia::gisela_scale(g, q, n) || no_damage(g, m))
+                && (!is_c || etgh(g, m) > crate::impls::t3_aurelia::gisela_scale(g, q, n) || repl::no_damage(g, m))
             {
                 continue; // (Gisela, Blade of Goldnight changes the damage)
             }
@@ -254,11 +255,11 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     {
         return Ok(());
     }
-    if kind.starts_with("dmg") && no_damage(g, m) {
+    if kind.starts_with("dmg") && repl::no_damage(g, m) {
         crate::glog!(g, "    the damage to {} is prevented", g.perm(m).name);
         return Ok(());
     }
-    if kind.starts_with("dmg") && cardcode::tajic_protects(g, m) {
+    if kind.starts_with("dmg") && repl::tajic_prevents(g, m) {
         crate::glog!(g, "    damage to {} is prevented (Tajic)", g.perm(m).name);
         return Ok(());
     }
@@ -531,7 +532,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
                 "destroy" | "minus" => die(g, m, "destroy")?,
                 "exile" => exile_perm(g, m)?,
                 "dmg13" => {
-                    if etgh(g, m) <= 13 && !no_damage(g, m) {
+                    if etgh(g, m) <= 13 && !repl::no_damage(g, m) {
                         die(g, m, "destroy")?;
                     }
                 }
@@ -540,7 +541,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
                         die(g, m, "destroy")?;
                     }
                 }
-                "nib" if Some(m) != biggest && etgh(g, m) <= x_dmg && !no_damage(g, m) => die(g, m, "destroy")?,
+                "nib" if Some(m) != biggest && etgh(g, m) <= x_dmg && !repl::no_damage(g, m) => die(g, m, "destroy")?,
                 _ => {}
             }
             if !g.perm(m).on_bf && !g.perm(m).phased {

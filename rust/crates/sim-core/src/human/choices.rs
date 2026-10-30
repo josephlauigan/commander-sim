@@ -6,10 +6,11 @@
 //! `Err(Stop::Cancelled)`, which unwinds the whole game through the engine's `?`.
 
 use super::{Target, human_of, legal};
+use crate::engine::repl;
 use crate::cards::Types;
 use crate::control::{Answer, Request};
 use crate::dsl::model::{Effect, Num, To};
-use crate::engine::values::{etgh, no_damage, protected_from, untargetable};
+use crate::engine::values::{etgh, protected_from, untargetable};
 use crate::engine::zones::{self, Zone};
 use crate::engine::{self};
 use crate::flow::{Res, Stop};
@@ -450,7 +451,7 @@ pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, 
         Target::Perm(m) => m,
     };
     let name = g.perm(m).name;
-    if g.is_creature(m) && no_damage(g, m) {
+    if g.is_creature(m) && repl::no_damage(g, m) {
         crate::glog!(g, "    the damage to {} is prevented", name);
     } else if g.is_creature(m) && etgh(g, m) <= n {
         engine::removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;

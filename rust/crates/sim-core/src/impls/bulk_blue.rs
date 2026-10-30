@@ -13,6 +13,7 @@
 
 use super::common::{AURA, AuraSpec, WalkerAb, aura, eot, walker};
 use super::galadriel::blink_value;
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, cast_spell_copy, castable, discard_worst, on_cast};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
@@ -643,7 +644,7 @@ fn retrieve_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym
     };
     for t in make_tokens(g, p, spec)? {
         if ctx.from_gy {
-            crate::cardcode::put_plus(g, t, 2);
+            repl::put_plus(g, t, 2);
         }
     }
     Ok("gy")

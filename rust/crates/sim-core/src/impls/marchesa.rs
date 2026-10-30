@@ -4,9 +4,9 @@
 //! card_etb_value). Deep Analysis, Last Gasp and Tezzeret's Gambit are tags only (data/cards.json).
 
 use super::partials::{at_once, remove_card};
+use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
-use crate::engine::hooks::total_player;
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::legal_targets;
@@ -99,7 +99,7 @@ fn returns(g: &Game, m: PermId) -> bool {
     if x.token || x.plus <= 0 || !(marchesa_out(g, p) || x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Marchesa))) {
         return false;
     }
-    !(!g.hooks.is_empty() && total_player(g, Event::NoGraveyard, p) != 0)
+    !repl::no_graveyard(g, p)
 }
 
 /// marchesa.marchesa_sac_worth: a creature Marchesa will return costs little to sacrifice, and re-buys what it does

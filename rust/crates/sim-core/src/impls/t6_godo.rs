@@ -3,6 +3,7 @@
 //! card's doc comment says how it is modeled and what is left out; what needs the shared engine is in
 //! rust/agents/engine-needs-godo.md). Helm of the Host itself is already modeled (`t3::helm`, `combat_start`).
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::cast::discard_worst;
@@ -443,7 +444,7 @@ fn tez_zero(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let Some((t, _)) = tez_untap_target(g, p, src) else { return Ok(()) };
     g.perm_mut(t).tapped = false;
     if is_artifact(g, t) && g.is_creature(t) {
-        crate::cardcode::add_counters(g, t, 1);
+        repl::put_plus(g, t, 1);
     }
     crate::glog!(g, "    Tezzeret untaps {}", g.perm(t).name);
     Ok(())

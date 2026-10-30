@@ -12,6 +12,7 @@
 //! mana" blindly), free casts take the spells worth the most and skip counterspells, spells that need a target nobody
 //! has, and board wipes.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, casts_this_turn, copy_spell, is_casts, spell_targets};
 use crate::engine::life::check_state;
@@ -1025,7 +1026,7 @@ fn adversary_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     pay(g, p, 2 * k, &"R".repeat(k as usize), false)?;
-    crate::cardcode::add_counters(g, m, k as i32);
+    repl::put_plus(g, m, k as i32);
     for (_, x) in cands.into_iter().take(k as usize) {
         if g.over || !g.player(p).alive || !remove_card(&mut g.player_mut(p).gy, x) {
             continue;
@@ -1335,7 +1336,7 @@ fn pteramander_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool
     }
     pay(g, p, gn, "U", false)?;
     if ability_window(g, p, Some(src), "adapt 4", None, None)? && g.perm(src).on_bf && g.perm(src).plus == 0 {
-        crate::cardcode::add_counters(g, src, 4);
+        repl::put_plus(g, src, 4);
     }
     Ok(true)
 }

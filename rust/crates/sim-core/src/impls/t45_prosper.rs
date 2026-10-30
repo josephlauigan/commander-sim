@@ -42,13 +42,14 @@
 //!   before the Sorcerer arrived still counts as the first.
 //! - Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir: the combo (`COMBOS`).
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, land_colors_now, pay};
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{epow, etgh, indestructible, no_damage, pval, threat};
+use crate::engine::values::{epow, etgh, indestructible, pval, threat};
 use crate::engine::zones::{Tokens, add_treasure, die, draw, make_tokens};
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src, TrigAct, Trigger};
@@ -183,7 +184,7 @@ fn fireball_value(g: &Game, p: PlayerId, n: i32) -> f64 {
             v += 20.0;
         }
         for &m in &g.player(q).perms {
-            if live(g, m) && g.is_creature(m) && etgh(g, m) <= n && !indestructible(g, m) && !no_damage(g, m) {
+            if live(g, m) && g.is_creature(m) && etgh(g, m) <= n && !indestructible(g, m) && !repl::no_damage(g, m) {
                 v += pval(g, m).max(0.5);
             }
         }
@@ -219,7 +220,7 @@ fn fireball_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
     crate::glog!(g, "    {FIREBALL}: {n} damage to each opponent and each creature they control");
     for q in opps(g, p) {
         for m in g.player(q).perms.clone() {
-            if live(g, m) && g.is_creature(m) && etgh(g, m) <= n && !indestructible(g, m) && !no_damage(g, m) {
+            if live(g, m) && g.is_creature(m) && etgh(g, m) <= n && !indestructible(g, m) && !repl::no_damage(g, m) {
                 die(g, m, "destroy")?;
             }
         }
@@ -409,7 +410,7 @@ fn novelist_sac(g: &mut Game, src: Src, p: PlayerId, what: Sacrificed) -> Res {
     if p != owner(g, src) || !live(g, src) || !artifact_sacrificed(g, what) {
         return Ok(());
     }
-    crate::cardcode::put_plus(g, src, 1);
+    repl::put_plus(g, src, 1);
     g.player_mut(p).floating.r += 1;
     Ok(())
 }
@@ -590,7 +591,7 @@ fn master_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         + pl.foods
         + pl.perms.iter().filter(|&&x| x != src && live(g, x) && is_artifact(g, x)).count() as u32;
     if fodder >= 2 {
-        crate::cardcode::put_plus(g, src, 3);
+        repl::put_plus(g, src, 3);
         crate::glog!(g, "    fabricate 3: three +1/+1 counters");
     } else {
         let spec = Tokens { color: Some(Colors::NONE), types: vec!["servo", "artifact"], ..Tokens::new(3, 1) };
@@ -706,7 +707,7 @@ fn ob_resolve(g: &mut Game, src: Src) -> Res {
     {
         return Ok(());
     }
-    crate::cardcode::put_plus(g, src, 1);
+    repl::put_plus(g, src, 1);
     if let Some(c) = g.player_mut(o).library.pop() {
         let pl = g.player(o);
         let until = if g.active == Some(o) && g.step != Step::End { pl.turns } else { pl.turns + 1 };

@@ -11,6 +11,7 @@
 //! - Tymna the Weaver herself is in `legends.rs`.
 
 use super::partials::eot_kw;
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn};
 use crate::engine::mana::{Source, Unit, can_pay, pay};
@@ -165,7 +166,7 @@ fn widow_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     let key = intern(&format!("widow{}{}", src.0, g.player(p).key));
     if once_per_turn(g, o, key) {
-        crate::cardcode::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
         draw(g, o, 1, false)?;
     }
     Ok(())
@@ -227,7 +228,7 @@ fn abigale_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     super::mine::cast_copy_with(g, p, None, None, false, 2.0, &mut |g| {
         if g.perm(t).on_bf {
             crate::glog!(g, "    Heroic Stanza: a +1/+1 counter on {}", g.perm(t).name);
-            crate::cardcode::add_counters(g, t, 1);
+            repl::put_plus(g, t, 1);
         }
         Ok(())
     })?;
@@ -243,7 +244,7 @@ fn colony_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     }
     let spent = g.db.get(c).cmc as i32;
     if spent > epow(g, src).min(etgh(g, src)) && trigger_window(g, caster, Some(src), "increment", None)? {
-        crate::cardcode::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -288,7 +289,7 @@ fn falcon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
         ..Tokens::new(dmg as u32, 1)
     };
     make_tokens(g, p, spec)?;
-    crate::cardcode::add_counters(g, src, 1);
+    repl::put_plus(g, src, 1);
     Ok(())
 }
 
@@ -428,7 +429,7 @@ fn fates_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) 
     }
     for m in g.player(p).perms.clone() {
         if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
-            crate::cardcode::add_counters(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
     }
     Ok("gy")
@@ -771,7 +772,7 @@ fn charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) 
         best.map_or((3, None), |(_, m, t)| (m, t))
     };
     match (mode, target) {
-        (1, Some(t)) if g.perm(t).on_bf => crate::cardcode::add_counters(g, t, 2),
+        (1, Some(t)) if g.perm(t).on_bf => repl::put_plus(g, t, 2),
         (2, Some(t)) if g.perm(t).on_bf && g.is_creature(t) && epow(g, t) <= 2 => {
             apply_removal(g, Some(p), t, "exile", Some(c))?;
         }
@@ -1636,11 +1637,10 @@ pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
         // Predation, Ribskiff, Venomous Brutalizer): every card's toxic is given here
         Some(_) => k += crate::dsl::toxic_amount(g, a),
     }
-    if k == 0 || crate::engine::values::melira(g, d) {
+    if k == 0 || !repl::poison_ok(g, d) {
         return;
     }
-    let k = crate::cardcode::vorinclex(g, g.perm(a).owner, k);
-    g.player_mut(d).poison += k as u32;
+    let k = repl::give_poison(g, g.perm(a).owner, d, k, repl::Path::VORINCLEX);
     crate::glog!(g, "    {} gets {} poison counter(s) (toxic)", g.player(d).name, k);
 }
 
@@ -1900,8 +1900,8 @@ pub fn unlife_infect(g: &mut Game, p: PlayerId, n: i32) -> bool {
     if g.player(p).life > 0 || !unlife(g, p) {
         return false;
     }
-    if !crate::engine::values::melira(g, p) {
-        g.player_mut(p).poison += n as u32;
+    if repl::poison_ok(g, p) {
+        repl::give_poison(g, p, p, n, repl::Path::POISON); // Unlife's controller puts them: Vorinclex
         crate::glog!(g, "    {} gets {} poison counters (Phyrexian Unlife)", g.player(p).name, n);
     }
     true

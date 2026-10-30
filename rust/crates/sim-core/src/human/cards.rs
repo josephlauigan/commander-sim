@@ -4,6 +4,7 @@
 
 use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, choices, legal};
+use crate::engine::repl;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
@@ -452,7 +453,7 @@ fn vraska_minus9(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
         return Ok(Ready::Cancel);
     };
     go(move |g| {
-        if !crate::engine::values::melira(g, q) {
+        if repl::poison_ok(g, q) {
             let pl = g.player_mut(q);
             pl.poison = pl.poison.max(9);
         }
@@ -716,7 +717,7 @@ fn outlet(text: &'static str, effect: OutletEffect) -> Vec<PermAbility> {
 
 fn feeder(g: &mut Game, p: PlayerId, m: PermId, _pw: i32) -> Res {
     if g.player(p).perms.contains(&m) {
-        crate::cardcode::put_plus(g, m, 1);
+        repl::put_plus(g, m, 1);
     }
     Ok(())
 }
@@ -2149,7 +2150,7 @@ fn ballista(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if crate::engine::stack::ability_window(g, p, Some(m), &format!("{x} damage to {tn}"), None, Some(t))?
         && g.player(g.perm(t).owner).perms.contains(&t)
     {
-        if crate::engine::values::no_damage(g, t) {
+        if repl::no_damage(g, t) {
             crate::glog!(g, "    the damage to {} is prevented", tn);
         } else if crate::engine::values::etgh(g, t) <= x as i32 {
             crate::engine::removal::apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;

@@ -1,6 +1,7 @@
 //! Zones: drawing, milling, tokens, permanents entering, leaving and dying, lands, discards
 //! (engine.py's "zones" section, and enter / do_etb / etb_once / lands / discards from later in the file).
 
+use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::Colors;
@@ -65,11 +66,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             }
         }
         if g.player(p).library.is_empty() {
-            let labman = g
-                .player(p)
-                .perms
-                .iter()
-                .any(|&m| !g.perm(m).phased && card_name(g, m).is_some_and(|n| LABMEN.contains(&n)));
+            let labman = repl::labman(g, p);
             if labman {
                 return ai::win(g, p, "Laboratory Maniac", None);
             }
@@ -107,7 +104,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         if has(g, p, Tag::Ironman)
             && let Some(a) = army_of(g, p)
         {
-            cardcode::add_counters(g, a, 1);
+            repl::put_plus(g, a, 1);
         }
         if g.dsl_on {
             crate::dsl::fire(g, "draw", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
@@ -171,7 +168,6 @@ pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
 
 /// amass n: put +1/+1 counters on p's Army, making a 0/0 Orc Army first if there is none
 pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
-    let bonus = if has(g, p, Tag::Mauhur) { 1 } else { 0 };
     let a = match army_of(g, p) {
         Some(a) => a,
         None => {
@@ -190,7 +186,7 @@ pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
             a
         }
     };
-    crate::cardcode::put_plus(g, a, n + bonus);
+    repl::put_plus(g, a, n); // the counters step: Mauhúr's one more, Hardened Scales, doublers
     Ok(())
 }
 
@@ -246,7 +242,7 @@ impl Tokens {
 /// p creates tokens; returns the ones that stayed on the battlefield. Python's `make_tokens`.
 pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermId>> {
     let mut out = vec![];
-    let mut n = spec.n * crate::dsl::token_mult(g, p);
+    let mut n = repl::tokens(g, p, spec.n); // the tokens step: doublers
     let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
     n = n.min(TOKEN_CAP.saturating_sub(have) as u32); // runaway token growth is already lethal
     if n == 0 {
@@ -290,7 +286,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
             x.tapped = true;
         }
         g.player_mut(p).perms.push(m);
-        if hooks::enters_tapped(g, p, Some(m)) {
+        if repl::enters_tapped(g, p, Some(m)) {
             g.perm_mut(m).tapped = true; // before the tokens' enter triggers
         }
         if etgh(g, m) <= 0 {
@@ -307,7 +303,7 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
     }
     if k > 0 && !blank {
         if has(g, p, Tag::Crusade) {
-            let copies = 1 + hooks::total_trigger_copies(g, p, "etb", Some(out[0]));
+            let copies = 1 + repl::trigger_copies(g, p, "etb", Some(out[0]));
             let n = k * find(g, p, Tag::Crusade).len() as i32 * copies;
             for m in g.player(p).perms.clone() {
                 if g.is_creature(m) {
@@ -448,7 +444,7 @@ pub fn creature_entered(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if !opp_has(g, p, Tag::Mother) {
         if has(g, p, Tag::Crusade) {
-            let n = find(g, p, Tag::Crusade).len() as i32 * (1 + hooks::total_trigger_copies(g, p, "etb", Some(m)));
+            let n = find(g, p, Tag::Crusade).len() as i32 * (1 + repl::trigger_copies(g, p, "etb", Some(m)));
             for x in g.player(p).perms.clone() {
                 if g.is_creature(x) {
                     let y = g.perm_mut(x);
@@ -612,8 +608,8 @@ pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
 
 /// put n -1/-1 counters on creature m (none under Melira); true if they were put
 pub fn minus_counter(g: &mut Game, m: PermId, n: i32) -> bool {
-    if melira(g, g.perm(m).owner) {
-        return false;
+    if !repl::minus_ok(g, m) {
+        return false; // Melira, Solemnity
     }
     g.perm_mut(m).plus -= n;
     true
@@ -696,14 +692,6 @@ pub fn last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ dying
-/// Hushbringer: creatures entering or dying don't cause abilities to trigger
-pub fn hushed(g: &Game) -> bool {
-    g.players.iter().filter(|q| q.alive).flat_map(|q| q.perms.iter()).any(|&m| {
-        let x = g.perm(m);
-        !x.phased && !x.neutered && card_name(g, m) == Some("Hushbringer")
-    })
-}
-
 /// m dies (cause: 'destroy', 'sac', 'sba', 'combat' ...). Python's `die`.
 pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
     let p = g.perm(m).owner;
@@ -745,7 +733,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         return Ok(());
     }
     let selfdies = g.perm(m).cd.and_then(|c| g.registry.get(c).copied()).filter(|i| i.self_dies.is_some());
-    if !g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0 {
+    if repl::no_graveyard(g, p) {
         leave(g, m)?; // Rest in Peace: exiled, so it never dies
         if !token {
             to_zone_card(g, m, Zone::Exile);
@@ -759,7 +747,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
         let st = g.turn_stamp();
         g.died_count = if g.died_count.0 == Some(st) { (Some(st), g.died_count.1 + 1) } else { (Some(st), 1) }; // Lagomos
     }
-    if creature && hushed(g) {
+    if creature && repl::hushed(g) {
         // still a death (Python doesn't record it here): common.aura_fall returns Angelic Destiny for it
         let prev = g.dying.replace(m);
         let r = leave(g, m);
@@ -806,7 +794,7 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         }
     }
     if selfdies {
-        let n = 1 + hooks::total_trigger_copies(g, p, "dies", Some(m));
+        let n = 1 + repl::trigger_copies(g, p, "dies", Some(m));
         let imp = g.registry.get(g.perm(m).cd.unwrap()).copied().unwrap();
         for _ in 0..n {
             if imp.runs_at_once(Event::SelfDies) {
@@ -831,7 +819,7 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         if !g.player(q).alive {
             continue;
         }
-        for _ in 0..1 + hooks::total_trigger_copies(g, q, "dies", Some(m)) {
+        for _ in 0..1 + repl::trigger_copies(g, q, "dies", Some(m)) {
             hand_tag_death(g, q, p, m, creature)?;
         }
     }
@@ -882,7 +870,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
                 }
             }
             for h in find(g, q, Tag::Heir) {
-                crate::cardcode::put_plus(g, h, 1); // Sephiroth, Planet's Heir
+                repl::put_plus(g, h, 1); // Sephiroth, Planet's Heir
             }
         }
     }
@@ -926,7 +914,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     if (undying || persist)
         && x.orig == p
         && !is_cmd_card
-        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && !repl::no_graveyard(g, p)
         && returns_left(g, cd)
     {
         if undying && x.plus <= 0 && trigger_window(g, p, Some(m), "undying", None)? {
@@ -936,7 +924,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
         }
         if persist && x.plus >= 0 && trigger_window(g, p, Some(m), "persist", None)? {
             // back with a -1/-1 counter (none under Melira)
-            let plus = if melira(g, p) { 0 } else { -1 };
+            let plus = if repl::melira(g, p) { 0 } else { -1 };
             enter(g, p, cd, Enter { plus, ..Enter::default() })?;
             g.player_mut(p).stat("persist", 1);
             return Ok(());
@@ -944,14 +932,14 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     }
     if let Some(Val::Player(q)) = x.data.get(DataKey::Ghostform).cloned()
         && returns_left(g, cd)
-        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && !repl::no_graveyard(g, p)
         && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
     {
         return Ok(()); // Kaya's Ghostform: it returns to the battlefield under its Aura's controller
     }
     if x.data.truthy(DataKey::Ferocity)
         && returns_left(g, cd)
-        && !(!g.hooks.is_empty() && hooks::total_player(g, Event::NoGraveyard, p) != 0)
+        && !repl::no_graveyard(g, p)
         && trigger_window(g, p, Some(m), "Ferocity of the Hunt: return it to the battlefield tapped", None)?
     {
         let n = enter(g, x.orig, cd, Enter::default())?;
@@ -1078,19 +1066,11 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.enter_no += 1;
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
-    // Doubling Season: a planeswalker of p's enters with twice its loyalty. This is the card's only loyalty path (its
-    // tokens and counters are its compiled replacements; the old `etb` hook in impls/t3.rs doubled it again)
-    let doubling = g.player(p).perms.iter().any(|&x| !g.perm(x).phased && card_name(g, x) == Some("Doubling Season"));
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
-    let scales = if plus > 0 { crate::cardcode::scales(g, p) } else { 0 }; // Hardened Scales
-    let (v_loy, v_undying, v_plus) = { // Vorinclex
-        let v = |n: i32| crate::cardcode::vorinclex(g, p, n);
-        (v(loyalty.map_or(0, |l| if doubling { l * 2 } else { l })), v(1), v(plus + scales))
-    };
-    // --- Tiers 4/5 (heliod-zur): Solemnity: no +1/+1 or -1/-1 counters as it enters
-    let solemn = crate::impls::t45_heliod_zur::solemnity(g);
-    let (v_undying, v_plus) = if solemn { (0, 0) } else { (v_undying, v_plus) };
+    // the enter step's counters (614.1c): Doubling Season doubles a planeswalker's loyalty (once: the old `etb` hook
+    // in impls/t3.rs doubled it again), undying's counter and the counters it enters with; Scales, Vorinclex, Solemnity
+    let (v_loy, v_undying, v_plus) = repl::enter_counters(g, p, m, loyalty, plus);
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
     x.sick = how.sick && !haste;
@@ -1130,7 +1110,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         g.hooks.push(m);
     }
     // a replacement effect: it is already tapped as it enters, before any enters trigger sees it
-    if hooks::enters_tapped(g, p, Some(m)) {
+    if repl::enters_tapped(g, p, Some(m)) {
         g.perm_mut(m).tapped = true;
     }
     cardcode::as_enters(g, p, m)?; // naming a creature type
@@ -1139,7 +1119,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     g.entered.push((st, m));
     crate::impls::t45_krenko::note_entered(g, p, &[m]); // --- Tiers 4/5 (krenko): Hobgoblin Bandit Lord
     let creature = g.db.get(cd).creature;
-    let quiet = g.skip_etb || (creature && (hushed(g) || cardcode::tidebinder_response(g, p, m)?));
+    let quiet = g.skip_etb || (creature && (repl::hushed(g) || cardcode::tidebinder_response(g, p, m)?));
     if quiet {
         // an enchantment's own enters hook still runs (it sets itself up)
         let d = g.db.get(cd);
@@ -1243,7 +1223,7 @@ pub fn do_etb(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     let (name, imp) = etb_text(g, cd);
     if !g.hooks.is_empty() {
-        reps += hooks::total_trigger_copies(g, p, "etb", Some(m)); // Panharmonicon
+        reps += repl::trigger_copies(g, p, "etb", Some(m)); // Panharmonicon
     }
     for _ in 0..reps {
         if g.over {
@@ -1359,7 +1339,7 @@ pub fn etb_static(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         for &x in &toks {
             die(g, x, "sac")?;
         }
-        crate::cardcode::put_plus(g, m, 2 * toks.len() as i32);
+        repl::put_plus(g, m, 2 * toks.len() as i32);
     }
     if t.has(Tag::Endraze) {
         let pl = g.player_mut(p);
@@ -1676,7 +1656,7 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
 
 pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
     lands_entered(g, p)?;
-    let copies = 1 + hooks::total_trigger_copies(g, p, "landfall", None); // Ancient Greenwarden
+    let copies = 1 + repl::trigger_copies(g, p, "landfall", None); // Ancient Greenwarden
     for _ in 0..copies {
         landfall_once(g, p)?;
     }
@@ -1759,11 +1739,10 @@ pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32,
     if n <= 0 {
         return Ok(());
     }
-    let n = n.saturating_mul(crate::dsl::token_mult(g, p) as i32);
-    let manufactor =
-        g.player(p).perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some("Academy Manufactor"));
+    let n = n.saturating_mul(repl::token_mult(g, p) as i32);
+    let manufactor = repl::manufactor(g, p);
     let kinds: Vec<Sym> = if manufactor { vec!["Treasure", "Food", "Clue"] } else { vec![kind] };
-    let tap_all = hooks::enters_tapped(g, p, None);
+    let tap_all = repl::enters_tapped(g, p, None);
     for &k in &kinds {
         let pl = g.player_mut(p);
         match k {

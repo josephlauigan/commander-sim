@@ -2,6 +2,7 @@
 //! Marvin, Shang-Chi, Tyvar, Loki's Scepter). Cards only: no shared engine code is changed here (what the engine
 //! must still learn is in rust/agents/engine-needs-legends1.md). Each card's doc comment says how it is modeled.
 
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::mana::{can_pay, pay};
@@ -143,7 +144,7 @@ fn emiel_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let n = if crate::engine::values::has_type(g, m, "unicorn") { 2 } else { 1 };
-    crate::cardcode::put_plus(g, m, n);
+    repl::put_plus(g, m, n);
     crate::glog!(g, "    Emiel puts {} +1/+1 counter(s) on {}", n, g.perm(m).name);
     Ok(())
 }
@@ -222,7 +223,7 @@ fn cauldron_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     g.perm_mut(src).tapped = true;
     g.player_mut(q).gy.retain(|&x| x != c);
     g.player_mut(q).exile.push(c);
-    crate::cardcode::add_counters(g, t, 1);
+    repl::put_plus(g, t, 1);
     crate::glog!(g, "  Agatha's Soul Cauldron exiles {}, +1/+1 counter on {}", g.db.get(c).name, g.perm(t).name);
     Ok(true)
 }
