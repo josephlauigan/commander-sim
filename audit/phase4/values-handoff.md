@@ -52,3 +52,6 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
   Gotcha: `cargo build -p sim-cli -p sim-core --example X --test Y` builds only the named example and test, not the
   `commander-sim` binary; the first B2 copy was the old binary (its t1 arms repeated the first run byte for byte, so
   they were discarded). Build `-p sim-cli` on its own and `cmp` the copy against the previous one.
+- Second run (B2, 18b443f9; identity check passed): t1 A -1.7 [-7.0, +3.6], B +0.3 [-3.4, +4.0]; t2 A -1.9
+  [-7.1, +3.3] (Sythis -4.9 [-8.4, -1.4]), B -2.9 [-6.9, +1.1] (Kaalia -2.8 [-5.9, +0.3]); t3 A -1.4 [-6.6, +3.8],
+  B +1.9 [-2.2, +6.0]. (Table below when all tiers are in.)
