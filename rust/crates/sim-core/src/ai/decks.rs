@@ -1707,12 +1707,13 @@ fn sauron_tutor(g: &Game, p: PlayerId, first: &dyn Fn(&[&str]) -> Option<CardId>
         line.push("Jace's Archivist"); // the wheel is the payoff
     }
     if connecting && sources >= 7 {
-        line.extend(["Exsanguinate", "Comet Storm"]); // close the game
+        line.extend(["Exsanguinate", "Comet Storm", "Torment of Hailfire"]); // close the game
     }
     if apow >= 7 && !evasion {
         line.extend(["Whispersilk Cloak", "Rogue's Passage"]); // a huge Army that cannot get through
-    } else if apow >= 7 && !have("Aggravated Assault") && sources >= 6 {
-        line.push("Aggravated Assault"); // evasion in hand: now the extra combat
+    }
+    if sources >= 8 {
+        line.push("Torment of Hailfire"); // no combat needed: a big X closes a table the Army can't reach
     }
     if (apow >= 7 || sauron_out) && !have("Not of This World") {
         line.push("Not of This World"); // protection for the swing (free with a 7-power creature)

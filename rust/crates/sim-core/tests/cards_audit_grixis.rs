@@ -37,8 +37,8 @@ fn sauron_tutor_never_takes_the_old_list_or_a_lone_assault() {
 }
 
 #[test]
-fn sauron_tutor_gets_evasion_for_a_huge_army_then_moves_on() {
-    // Aggravated Assault left the list on 10/30, so with evasion out the tutor no longer has an extra combat to fetch
+fn sauron_tutor_gets_evasion_for_a_huge_army_then_the_combat_free_finisher() {
+    // Aggravated Assault left the list on 10/30: with evasion out and 8 lands, the tutor goes to Torment of Hailfire
     let mut g = sauron_table();
     perm(&mut g, P0, "The Ozolith");
     perm(&mut g, P0, "Not of This World");
@@ -47,7 +47,7 @@ fn sauron_tutor_gets_evasion_for_a_huge_army_then_moves_on() {
     assert_eq!(&*g.db.get(pk).name, "Whispersilk Cloak");
     perm(&mut g, P0, "Whispersilk Cloak");
     let pk = decks::tutor_pick(&g, P0, "any").unwrap();
-    assert_ne!(&*g.db.get(pk).name, "Whispersilk Cloak");
+    assert_eq!(&*g.db.get(pk).name, "Torment of Hailfire");
 }
 
 #[test]
