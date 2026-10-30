@@ -1,6 +1,9 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs.
+# Paired test 2026-10-30 (t5, 2000 games): plan 15.7% vs hand 17.6% (-1.9, 95% CI -4.5..+0.7): level (inside the
+# CI, but the point estimate is lower): the hand yawg_prio / yawg_wish are deleted. Hand code counted two undying
+# creatures or Mikaeus as the loop and ranked Mikaeus 82 over undying 78/72; a group here is one card of the group.
 deck = "yawgmoth-mono-black-aristocrats"
-default = "hand"
+default = "plan"
 
 # Win lines (was ai/plans.rs yawg_wish: Yawgmoth, then the undying loop, then a death payoff, then other combos)
 [[line]]

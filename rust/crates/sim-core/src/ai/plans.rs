@@ -53,7 +53,7 @@ const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {
 }
 
 /// pool_decks.CONFIG
-const CONFIG: [(&str, DeckConfig); 5] = [
+const CONFIG: [(&str, DeckConfig); 4] = [
     (
         "yuriko-dimir-ninjas",
         DeckConfig {
@@ -66,7 +66,6 @@ const CONFIG: [(&str, DeckConfig); 5] = [
             ..NONE
         },
     ),
-    ("yawgmoth-mono-black-aristocrats", DeckConfig { wish: Some(yawg_wish), prio_fn: Some(yawg_prio), ..NONE }),
     (
         "gaa-azorius-stax-control",
         DeckConfig { prio_fn: Some(gaa_prio), wish: Some(gaa_wish), style: style(1.0, 0.35, 0.9), ..NONE },
@@ -283,62 +282,6 @@ fn heliod_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
         return miss;
     }
     ids(g, &["Rule of Law", "Smothering Tithe", "Drannith Magistrate", "Thalia, Guardian of Thraben"])
-}
-
-// ------------------------------------------------------------------ Yawgmoth, Thran Physician
-const UNDYING: [&str; 4] = ["Geralf's Messenger", "Butcher Ghoul", "Young Wolf", "Nether Traitor"];
-
-fn undying_count(g: &Game, p: PlayerId) -> usize {
-    g.player(p)
-        .perms
-        .iter()
-        .filter(|&&m| g.is_creature(m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).has_kw("undying")))
-        .count()
-}
-
-/// deck_plans.yawg_prio: with Yawgmoth out, the loop comes first: Mikaeus (or undying creatures), then a death
-/// payoff once the loop is there; Yawgmoth itself as soon as it can be cast
-fn yawg_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let d = g.db.get(c);
-    if c == g.player(p).cmd {
-        return Some(86);
-    }
-    on_bf(g, p, "Yawgmoth, Thran Physician")?;
-    let und = undying_count(g, p);
-    let mik = on_bf(g, p, "Mikaeus, the Unhallowed").is_some();
-    let lp = und >= 2 || mik;
-    if &*d.name == "Mikaeus, the Unhallowed" && !mik {
-        return Some(82);
-    }
-    if UNDYING.contains(&&*d.name) && !lp {
-        return Some(if und == 1 { 78 } else { 72 });
-    }
-    if lp && DRAIN_PAYOFFS.contains(&&*d.name) && drain_payoff(g, p).is_none() {
-        return Some(80);
-    }
-    None
-}
-
-/// deck_plans.yawg_wish: the loop needs Yawgmoth plus two undying creatures (or Mikaeus and fodder), then a drain
-/// payoff
-fn yawg_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let pl = g.player(p);
-    let und = undying_count(g, p);
-    let mik = on_bf(g, p, "Mikaeus, the Unhallowed").is_some()
-        || pl.hand.iter().any(|&c| &*g.db.get(c).name == "Mikaeus, the Unhallowed");
-    let mut out = vec![];
-    if on_bf(g, p, "Yawgmoth, Thran Physician").is_none() && !pl.cmd_in_zone {
-        out.extend(ids(g, &["Yawgmoth, Thran Physician"]));
-    }
-    if !mik && und < 2 {
-        out.extend(ids(g, &["Mikaeus, the Unhallowed"]));
-        out.extend(ids(g, &UNDYING));
-    }
-    if drain_payoff(g, p).is_none() {
-        out.extend(ids(g, &DRAIN_PAYOFFS));
-    }
-    out.extend(crate::cardcode::missing_pieces(g, p));
-    out
 }
 
 // ------------------------------------------------------------------ gc_prio: Game Changers from the game
