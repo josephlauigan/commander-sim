@@ -1,0 +1,191 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
+# Tier 6 plan slots (impls/t6_plans.rs); was impls/t6_plan_kraum.rs (SPEC:
+# audit/t6/kraum-tymna-blue-breach-midrange/SPEC.md). Blue midrange: fast mana and the tax engines early, Tymna and
+# Kraum draw, Thassa's Oracle + Demonic Consultation / Tainted Pact with cover, Breach and Ad Nauseam as backups.
+# "Cover" below is a counterspell or Silence / Orim's Chant in hand.
+# Paired test (t6, 2000 games): byte-identical to the hand code (Kraum/Tymna 29.8% both arms): t6_plan_kraum.rs
+# deleted.
+deck = "kraum-tymna-blue-breach-midrange"
+default = "plan"
+
+[sets]
+silences = ["Silence", "Orim's Chant"]
+exilers = ["Demonic Consultation", "Tainted Pact"]
+engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Smothering Tithe", "Orcish Bowmasters", "Ragavan, Nimble Pilferer", "Necropotence"]
+tutors_payoffs = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Intuition", "Beseech the Mirror", "Wishclaw Talisman", "Thassa's Oracle", "Demonic Consultation", "Tainted Pact", "Ad Nauseam", "Underworld Breach", "Brain Freeze"]
+action = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Smothering Tithe", "Orcish Bowmasters", "Ragavan, Nimble Pilferer", "Necropotence", "Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Intuition", "Beseech the Mirror", "Wishclaw Talisman", "Thassa's Oracle", "Demonic Consultation", "Tainted Pact", "Ad Nauseam", "Underworld Breach", "Brain Freeze"]
+free = ["Force of Will", "Fierce Guardianship", "Pact of Negation", "Force of Negation", "Mental Misstep", "Deflecting Swat", "Misdirection", "Mindbreak Trap"]
+# cover that stops a creature's answer too (Force of Will with another blue card to pitch)
+creature_cover = ["Pact of Negation", "Silence", "Orim's Chant"]
+fow = ["Force of Will"]
+
+# Cast priority: Tymna draws (86, -3 per cast); Kraum only with spare cover or an empty-handed table; fast mana
+# first; the tax engines early; the combo pieces, Silence and the counters are held
+[[prio]]
+commander = true
+cards = ["Tymna the Weaver"]
+value = 86
+per_tax = -3
+
+[[prio]]
+commander = true
+when = ["counters>=1 | hand:silences>=1 | opp-open-max=0"]
+value = 72
+else = 20
+
+[[prio]]
+cards = ["Sol Ring", "Mana Vault", "Mox Amber", "Mox Diamond", "Mox Opal", "Chrome Mox", "Lotus Petal", "Simian Spirit Guide", "Arcane Signet", "Fellwar Stone"]
+value = 95
+
+[[prio]]
+cards = ["Esper Sentinel"]
+value = 90
+
+[[prio]]
+cards = ["Rhystic Study"]
+when = ["turn<=4"]
+value = 88
+else = 60
+
+[[prio]]
+cards = ["Mystic Remora"]
+when = ["turn<=4"]
+value = 84
+else = 45
+
+[[prio]]
+cards = ["Smothering Tithe"]
+value = 70
+
+[[prio]]
+cards = ["Thassa's Oracle", "Demonic Consultation", "Tainted Pact", "Brain Freeze", "Final Fortune", "Silence", "Orim's Chant", "Rain of Filth", "Force of Will", "Fierce Guardianship", "Pact of Negation", "Force of Negation", "Mental Misstep", "Deflecting Swat", "Misdirection", "Mindbreak Trap", "Snapback", "Dispel", "Flusterstorm", "Swan Song", "An Offer You Can't Refuse", "Red Elemental Blast", "Chain of Vapor", "Into the Flood Maw", "Commandeer"]
+value = 0
+
+# Tutor targets: cover once the Oracle line is in hand without it; then the Oracle line; cover; the engines early;
+# the backups and fast mana
+[[wish]]
+cards = ["Force of Will", "Pact of Negation", "Silence"]
+when = ["have:Thassa's Oracle & hand:exilers>=1 & counters=0 & hand:silences=0"]
+score = 9.5
+
+[[wish]]
+cards = ["Thassa's Oracle"]
+when = ["not have:Thassa's Oracle"]
+score = 9.0
+
+[[wish]]
+cards = ["Tainted Pact"]
+when = ["hand:exilers=0"]
+score = 8.8
+
+# as a tutor-free piece only; never cast to tutor
+[[wish]]
+cards = ["Demonic Consultation"]
+when = ["hand:exilers=0"]
+score = 8.4
+
+[[wish]]
+cards = ["Force of Will", "Pact of Negation"]
+when = ["counters=0 & hand:silences=0"]
+score = 7.0
+
+[[wish]]
+cards = ["Rhystic Study", "Esper Sentinel", "Mystic Remora"]
+when = ["not out:Rhystic Study & not out:Mystic Remora & not out:Esper Sentinel & turn<=4"]
+score = 8.0
+
+[[wish]]
+cards = ["Silence", "Orim's Chant", "Fierce Guardianship"]
+when = ["counters=0 & hand:silences=0"]
+score = 6.0
+
+[[wish]]
+cards = ["Ad Nauseam"]
+score = 5.0
+
+[[wish]]
+cards = ["Underworld Breach", "Lion's Eye Diamond"]
+score = 4.0
+
+[[wish]]
+cards = ["Mana Vault", "Sol Ring", "Mox Diamond", "Chrome Mox"]
+score = 3.0
+
+# Mulligan: `makers` and `eff` are the hand's mana by turn 2 (t6_keep::mana); a settled hand (2-4 lands after a
+# mulligan) is kept
+[mulligan]
+fast_mana = true
+otherwise = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & eff>=one-lander & hand:action>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=2 & (makers+hand:action>=2 | makers+hand:action>=1 & hand:free>=1 | hand:free>=3)"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=2"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=3 & hand-lands<=4 & (makers+hand:tutors_payoffs>=1 | hand:engines>=2 | hand:engines>=1 & hand:free>=1 | hand:free>=2)"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands>=3 & hand-lands<=4"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=5 & makers+hand:action>=1 & makers+hand:action+hand:free>=2"]
+keep = true
+
+# Hold-up: develop on turns 1-2; no bonus without cover or with a line ready; with cover, pass when an opponent is
+# close to winning (2.5), or once an engine is out or from turn 4 (1.0)
+[[hold_up]]
+when = ["turn<=2"]
+value = -2.0
+
+[[hold_up]]
+when = ["counters=0 & hand:silences=0", "line-ready"]
+
+[[hold_up]]
+when = ["archenemy-max>=5"]
+value = 2.5
+
+[[hold_up]]
+when = ["out:Rhystic Study", "out:Mystic Remora", "out:Esper Sentinel", "turn>=4"]
+value = 1.0
+
+# Go-now for the Oracle line: not into Esper Sentinel with an opponent's cards up, nor into Kraum's draw with an
+# opponent able to cast a second spell; without cover that stops a creature's answer, against an opponent who can stop
+# it (or blue mana up), unless the table is tapped low or one cover faces only weak answers, wait (late, with an
+# opponent close to winning, the shared rule decides)
+[[go_now]]
+combos = ["Thassa's Oracle"]
+when = ["out:Esper Sentinel & opp-cards-up>=1", "out:Kraum, Ludevic's Opus & opp-second-spell>=1"]
+go = false
+
+[[go_now]]
+combos = ["Thassa's Oracle"]
+when = ["(opp-stoppers>=1 | opp-blue-up>=1) & hand:creature_cover=0 & (hand:fow=0 | hand-blue<2) & (opp-stop-max>=0.2 | opp-open-max>2) & (counters=0 & hand:silences=0 | opp-stop-max>=0.5) & archenemy-max>=6 & round>=5"]
+
+[[go_now]]
+combos = ["Thassa's Oracle"]
+when = ["(opp-stoppers>=1 | opp-blue-up>=1) & hand:creature_cover=0 & (hand:fow=0 | hand-blue<2) & (opp-stop-max>=0.2 | opp-open-max>2) & (counters=0 & hand:silences=0 | opp-stop-max>=0.5)"]
+go = false
+
+# Ad Nauseam needs the life
+[[go_now]]
+combos = ["Ad Nauseam"]
+when = ["life<26"]
+go = false

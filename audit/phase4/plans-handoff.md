@@ -1,4 +1,56 @@
-# Handoff: Phase 4 PR 1, deck plans as data
+# Handoff: Phase 4 PR 1 and PR 2, deck plans as data
+
+## PR 2 (branch phase4-cedh, brief rust/agents/phase4-cedh.md)
+
+Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase4-cedh/` (sim
+outputs `<name>.txt` + `.rc`; `sim.sh BIN POOL GAMES OUT ENV`, `sim2.sh BIN OUT ENV ARGS...`, `pair.sh`). Schema
+extensions: `audit/phase4/plans-design.md`, "PR 2". Each Tier 6 plan file is a translation of its hand plan file,
+checked slot by slot on 600 dealt states by `tests/plans.rs::plan_matches_hand` (keep, every hand card's priority, the
+wish list a tutor can use, hold-up, every catalogue combo's go-now; a mutation of one score fails it); the harness was
+removed with the hand code it compared against (it is in commit 1cfc168d).
+
+Paired tests: 2000 games per arm, same seeds, `AI_PLAN_DATA=0` vs `=<deck>` (t6 decks: one shared hand arm).
+
+| deck | tier | hand share (95% CI) | plan share (95% CI) | plan - hand (95% CI) | verdict | hand code |
+|---|---|---|---|---|---|---|
+| yuriko-dimir-ninjas | t4 | 18.8% [16.9, 20.7] n=1599 | 18.1% [16.2, 20.0] n=1598 | -0.7 [-3.4, +2.0] | level | t4::yuriko_wish / yuriko_prio deleted, default plan |
+| yawgmoth-mono-black-aristocrats | t5 | 17.6% [15.7, 19.5] n=1585 (PR 1 hand arm) | 17.6% [15.7, 19.5] n=1587 | +0.0 [-2.7, +2.7] (PR 1 plan: +1.9 over it) | the -1.9 closes (`counts`, `bf:<set>`) | deleted in PR 1, default plan |
+| scion | t6 (`--deck scion`) | 30.1% [28.1, 32.1] (2000 games) | 30.1% [28.1, 32.1] | +0.0 | level: byte-identical output | t6_plan_scion.rs deleted, default plan |
+| kinnan-bonder-mana-combo | t6 | 24.6% [22.3, 26.9] n=1307 | 24.6% [22.3, 26.9] n=1306 | +0.0 [-3.3, +3.3] | level: byte-identical output | t6_plan_kinnan.rs deleted, default plan |
+| sisay-legends-toolbox | t6 | 31.1% [28.6, 33.6] n=1335 | 31.1% [28.6, 33.6] n=1335 | +0.0 [-3.5, +3.5] | level: byte-identical output | five slots deleted, default plan; `fetch` stays code (legends::sisay_pick) |
+| rograkh-silas-turbo-breach | t6 | 18.6% [16.5, 20.7] n=1320 | 18.3% [16.2, 20.4] n=1319 | -0.3 [-3.3, +2.7] | level | t6_plan_rograkh_silas.rs deleted, default plan |
+| kraum-tymna-blue-breach-midrange | t6 | 29.8% [27.3, 32.3] n=1292 | 29.8% [27.3, 32.3] n=1292 | +0.0 | level: byte-identical output | t6_plan_kraum.rs deleted, default plan |
+| rograkh-thrasios-creature-combo | t6 | 21.1% [18.9, 23.3] n=1325 | 20.8% [18.6, 23.0] n=1326 | -0.3 [-3.4, +2.8] | level | t6_plan_rograkh_thrasios.rs deleted, default plan |
+| dack-fayden-white-stax | t6 | - | - | - | no plan file | kept: see below |
+| godo | - | - | - | - | skipped (not seated) | kept |
+
+Dack is not expressible as plan data: its slots read its own commander's cost and tax against total mana
+(`pre_cast`), a per-round risk bar over the table's stop chances (`dack_bar`, `table_risk`), Chalice's net over the
+opponents' hands and libraries (`chalice_net`), the opponents' deck creature share (`creature_table`), spell locks
+(`protected`) and counter likelihood products. Moving those would be code under quantity names.
+
+Bug found and fixed (5aa32540): the Tier 6 slots first read `plan_data::active` for any deck, so pool decks with a
+plan file (Kaalia, Chulane, Yawgmoth, Yuriko's plan arm) were answered by them (priority bypassing key cards, wish
+without its mana step). The final t2 check against PR 1's binary showed it; the slots now answer Tier 6 players only
+(`tests/plans.rs::the_tier_6_slots_ignore_pool_decks_with_plan_files`). The Yuriko pair was rerun on a build of
+ca8386bf plus the fix (hand code present): same numbers (-0.7, CI -3.4..+2.0); Yawgmoth rerun on the fixed head:
+same (+0.0). The t6 pairs could not be affected (only Tier 6 decks sit there).
+
+What the schema still can't express (left as code): Dack Fayden's slots (above); Sisay's `fetch` (a card's choice
+for its ability, not a plan slot); "N of a group" is now there, but a line's value from the opponents' boards
+(Kraum's second spell, Dack's risk bar) is only reachable through named table quantities.
+
+## Final checks (PR 2 head)
+
+- `cargo build --release --all-targets -j 22`: 0 warnings. `cargo test --release --no-fail-fast -j 22`: all pass
+  3678 passed, 0 failed; `cardgen validate`: all decks passed; `all_decks adaptive 3` and
+  `lookahead 1`: rc=0.
+- Defaults (no env, 300 games) reproduce each deck's chosen arm byte for byte, all rc=0: t4 = the yuriko plan arm
+  (fixed build with hand code), t5 = the yawgmoth arm, t6 and `--deck scion` = every moved deck from its plan with the
+  hand-code binary, t1 and t2 = PR 1's final binary. (One `--deck scion` run printed two tied counts in the other
+  order in a diagnostic line; the rerun matched exactly.)
+
+## PR 1
 
 Brief: `rust/agents/phase4-plans.md`. Design: `audit/phase4/plans-design.md`. Branch `phase4-plans` (on `phase3-exile`).
 Scratch (sim outputs): `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase4-plans/`.
@@ -21,7 +73,7 @@ Scratch (sim outputs): `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc
 
 - gaa-azorius-stax-control and heliod-mono-white-stax are retired from the pool (test seats only): no paired test is
   possible; their plan files carry the knobs, their hand code stays.
-- [ ] Not started: the 8 cEDH plans (`impls/t6_plan_*.rs`), one at a time on t6. Their slots (`keep`, `hold_up`,
+- [x] (Done in PR 2, above.) The 8 cEDH plans (`impls/t6_plan_*.rs`), one at a time on t6. Their slots (`keep`, `hold_up`,
       `go_now`, f64 `prio`) need schema the files lack: a mana-aware keep rule (`t6_keep::mana`), hold-up utility,
       per-combo go-now gates. Start with scion (only `keep`) once `[mulligan]` can count fast mana and rituals.
 

@@ -53,19 +53,7 @@ const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {
 }
 
 /// pool_decks.CONFIG
-const CONFIG: [(&str, DeckConfig); 3] = [
-    (
-        "yuriko-dimir-ninjas",
-        DeckConfig {
-            cmd_prio: Some(15),
-            cmd_turn: Some(6),
-            top_pref: Some("mv"),
-            wish: Some(crate::cardcode::yuriko_wish),
-            prio_fn: Some(crate::cardcode::yuriko_prio),
-            style: style(1.0, 0.8, 0.5),
-            ..NONE
-        },
-    ),
+const CONFIG: [(&str, DeckConfig); 2] = [
     (
         "gaa-azorius-stax-control",
         DeckConfig { prio_fn: Some(gaa_prio), wish: Some(gaa_wish), style: style(1.0, 0.35, 0.9), ..NONE },
@@ -88,12 +76,20 @@ fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
         std::sync::LazyLock::new(|| {
             super::plan_data::all()
                 .iter()
-                .filter(|(k, _)| super::plan_data::plan_on(k, hand_config(k).is_some()))
+                .filter(|(k, _)| {
+                    super::plan_data::plan_on(k, hand_config(k).is_some() || crate::impls::t6_plans::has_hand(k))
+                })
                 .map(|(k, l)| {
                     let mut c = l.cfg;
                     if let Some(h) = hand_config(k) {
                         c.wish = c.wish.or(h.wish);
                         c.prio_fn = c.prio_fn.or(h.prio_fn);
+                    }
+                    if crate::impls::t6_plans::is_t6_key(k) {
+                        // --- phase4-cedh: a Tier 6 plan is read through the five plan slots (`t6_plans.rs`); the
+                        // shared fallbacks (closest combo's pieces, generic priority) stay as they were
+                        c.wish = None;
+                        c.prio_fn = None;
                     }
                     (*k, c)
                 })

@@ -2,7 +2,7 @@
 //! (audit/t6/kraum-tymna-blue-breach-midrange/SPEC.md scenarios 1, 2, 4-6, 13, 17).
 
 use sim_core::ids::PlayerId;
-use sim_core::impls::{t6_plan_kraum as plan, t6_plans};
+use sim_core::impls::{t6_plans as plan, t6_plans}; // --- phase4-cedh: the slots read the plan file
 use sim_core::state::Game;
 use sim_core::testkit::*;
 

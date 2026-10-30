@@ -1,4 +1,5 @@
-//! Rograkh & Thrasios plan slots (impls/t6_plan_rograkh_thrasios.rs), from the SPEC.md decision scenarios 10, 11, 12.
+//! Rograkh & Thrasios plan slots (data/plans/rograkh-thrasios-creature-combo.toml), from the SPEC.md decision
+//! scenarios 10, 11, 12.
 
 use sim_core::ai::decks::deck_prio_f;
 use sim_core::ids::PlayerId;

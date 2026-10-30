@@ -1,9 +1,10 @@
 //! Tier 6 table support: who is a Tier 6 player, and the plan slots the deck agents fill.
 //!
-//! SLOT CONTRACT. Each of the eight Tier 6 decks (the six pool keys, `godo` and `scion`) has one file
-//! `impls/t6_plan_<name>.rs` with five functions. The shared AI calls them through the dispatch below (the only
-//! `match` on the deck key); a deck agent edits ONLY its own plan file. Each returns `None` for "no opinion", and
-//! then the shared Tier 6 table rules (`ai/t6_table.rs`) and the generic AI decide, exactly as before.
+//! SLOT CONTRACT. Each Tier 6 deck answers five slots. Since Phase 4 PR 2 they come from its plan file
+//! (`data/plans/<key>.toml`, read by `ai::plan_data::t6`); the decks still in `HAND` (Dack Fayden, which the plan schema
+//! cannot express, and the unseated `godo`) keep a hand file `impls/t6_plan_<name>.rs`, called through the dispatch
+//! below (the only `match` on the deck key), and `AI_PLAN_DATA` picks between the two. Each returns `None` for "no
+//! opinion", and then the shared Tier 6 table rules (`ai/t6_table.rs`) and the generic AI decide, exactly as before.
 //!
 //! - `prio(g, p, c) -> Option<f64>`: cast priority of card `c` on `deck_prio`'s 0-100 scale; `Some(0.0)` or less
 //!   keeps the card in hand. Replaces the deck's generic priority in `card_utility`.
@@ -21,10 +22,7 @@
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 
-use super::{
-    t6_plan_dack as dack, t6_plan_godo as godo, t6_plan_kinnan as kinnan, t6_plan_kraum as kraum,
-    t6_plan_rograkh_silas as rsilas, t6_plan_rograkh_thrasios as rthras, t6_plan_scion as scion, t6_plan_sisay as sisay,
-};
+use super::{t6_plan_dack as dack, t6_plan_godo as godo};
 
 /// the eight Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/`, Godo (retired 2026-10-25, a test seat)
 /// and JD's Scion
@@ -53,30 +51,57 @@ macro_rules! dispatch {
     ($g:expr, $p:expr, $f:ident($($a:expr),*)) => {
         match $g.player($p).key {
             "dack-fayden-white-stax" => dack::$f($g, $p $(, $a)*),
-            "kinnan-bonder-mana-combo" => kinnan::$f($g, $p $(, $a)*),
-            "kraum-tymna-blue-breach-midrange" => kraum::$f($g, $p $(, $a)*),
-            "rograkh-silas-turbo-breach" => rsilas::$f($g, $p $(, $a)*),
-            "rograkh-thrasios-creature-combo" => rthras::$f($g, $p $(, $a)*),
-            "sisay-legends-toolbox" => sisay::$f($g, $p $(, $a)*),
             "godo" => godo::$f($g, $p $(, $a)*),
-            "scion" => scion::$f($g, $p $(, $a)*), // --- scion
             _ => None,
         }
     };
 }
+/// --- phase4-cedh: the Tier 6 decks that still have a hand plan file here (`AI_PLAN_DATA` picks between it and the
+/// deck's `data/plans/<key>.toml`); a deck whose hand file is deleted always plays from its plan file. Deleted after a
+/// level paired test: kinnan, kraum, rograkh-silas, rograkh-thrasios, scion, and sisay's five slots (its `fetch` stays
+/// in `t6_plan_sisay.rs`).
+pub const HAND: [&str; 2] = ["dack-fayden-white-stax", "godo"];
+
+pub fn has_hand(key: &str) -> bool {
+    HAND.contains(&key)
+}
+
+/// --- phase4-cedh: the plan file a Tier 6 player plays from (`ai::plan_data`), when it does. Only Tier 6 decks: a
+/// pool deck's plan file is read by the generic policy (`plans::config`), never through these slots.
+fn plan(g: &Game, p: PlayerId) -> Option<&'static crate::ai::plan_data::Loaded> {
+    if !is_t6(g, p) {
+        return None;
+    }
+    crate::ai::plan_data::active(g, p)
+}
 
 pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::prio(l, g, p, c);
+    }
     dispatch!(g, p, prio(c))
 }
 pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::wish(l, g, p);
+    }
     dispatch!(g, p, wish())
 }
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::keep(l, g, p);
+    }
     dispatch!(g, p, keep())
 }
 pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::hold_up(l, g, p);
+    }
     dispatch!(g, p, hold_up())
 }
 pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::go_now(l, g, p, combo);
+    }
     dispatch!(g, p, go_now(combo))
 }

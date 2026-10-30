@@ -1,0 +1,186 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
+# Tier 6 plan slots (impls/t6_plans.rs); was impls/t6_plan_sisay.rs (SPEC: audit/t6/sisay-legends-toolbox/SPEC.md).
+# The deck ramps hard, lands Sisay on turns 2-4, then uses her {W}{U}{B}{R}{G} ability to put the line's legends onto
+# the battlefield. Which legend Sisay fetches stays card code (`t6_plan_sisay::fetch`, called by legends::sisay_pick):
+# it is a card's choice, not a plan slot.
+# Paired test (t6, 2000 games): byte-identical to the hand code (Sisay 31.1% both arms): the five slots are deleted.
+deck = "sisay-legends-toolbox"
+default = "plan"
+
+# The lines (they score the wish list's line bonus: the fewer groups a started line lacks, the more each piece is
+# worth)
+[[line]]
+name = "Derevi + Emiel + Cradle / Bloom Tender + Mount Doom (Flash Unicorn)"
+pieces = [["Derevi, Empyrial Tactician"], ["Emiel the Blessed"], ["Gaea's Cradle", "Bloom Tender"], ["Mount Doom"]]
+
+[[line]]
+name = "Ioreth + Marvin + a legend that taps for mana + Mount Doom (DDR)"
+pieces = [["Ioreth of the Healing House"], ["Marvin, Murderous Mimic"], ["Selvala, Heart of the Wilds", "Shang-Chi, Master of Kung Fu"], ["Mount Doom"]]
+
+# Cast priority: Sisay on turn 2-3 as soon as the mana is there (she is the tutor); the cheap tutors find the line's
+# pieces before the value spells; the draw/tax engines early, while they are cheap; protection held
+[[prio]]
+commander = true
+when = ["turn>=2"]
+value = 92
+else = 0
+
+[[prio]]
+cards = ["Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Enlightened Tutor", "Eladamri's Call", "Green Sun's Zenith", "Chord of Calling"]
+value = 76
+
+[[prio]]
+cards = ["Rhystic Study", "Smothering Tithe", "Mystic Remora"]
+when = ["turn<=4"]
+value = 72
+else = 55
+
+[[prio]]
+cards = ["Silence", "Deafening Silence"]
+value = 0
+
+# Tutor targets (was t6_plan_sisay::want + completes): each piece's worth, plus 6 / the groups its started line
+# still lacks; only targets above 1.0
+[[wish]]
+cards = ["Derevi, Empyrial Tactician"]
+score = 9.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Emiel the Blessed"]
+score = 8.5
+plus_line = 6.0
+min_score = 1.0
+
+# the rainbow dork: ramp, and the Unicorn engine without Cradle
+[[wish]]
+cards = ["Bloom Tender"]
+when = ["out:Sisay, Weatherlight Captain"]
+score = 6.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Bloom Tender"]
+score = 8.5
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Mount Doom"]
+score = 8.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Gaea's Cradle"]
+when = ["creatures>=3 & out:Derevi, Empyrial Tactician", "creatures>=3 & out:Emiel the Blessed"]
+score = 8.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Gaea's Cradle"]
+score = 2.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Marvin, Murderous Mimic"]
+when = ["out:Ioreth of the Healing House"]
+score = 7.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Ioreth of the Healing House"]
+when = ["out:Marvin, Murderous Mimic"]
+score = 7.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Marvin, Murderous Mimic", "Ioreth of the Healing House"]
+score = 6.0
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Selvala, Heart of the Wilds"]
+score = 5.5
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Kinnan, Bonder Prodigy"]
+score = 5.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Shang-Chi, Master of Kung Fu"]
+score = 4.5
+plus_line = 6.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Teferi, Time Raveler"]
+score = 4.0
+min_score = 1.0
+
+[[wish]]
+cards = ["Tyvar, Jubilant Brawler"]
+score = 3.5
+min_score = 1.0
+
+[[wish]]
+cards = ["Lavinia, Azorius Renegade", "Esper Sentinel", "Agatha's Soul Cauldron"]
+score = 3.0
+min_score = 1.0
+
+# (the hand code also named "Tataru Taru, The Cabbage Merchant" at 2.5; the list plays "Tataru Taru", so it never
+# scored: left out to keep the behaviour)
+[[wish]]
+cards = ["Lotho, Corrupt Shirriff", "Ragavan, Nimble Pilferer"]
+score = 2.5
+min_score = 1.0
+
+[[wish]]
+cards = ["Ertai Resurrected", "Deadpool, Trading Card"]
+score = 2.0
+min_score = 1.0
+
+# Mulligan (spec: "if it makes a mana it is probably good enough"): `makers` and `eff` are the hand's mana by turn 2
+# (t6_keep::mana); a settled hand (2-4 lands after a mulligan) is kept
+[mulligan]
+fast_mana = true
+otherwise = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=5 & nonland>=3 & makers>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands>=5"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & eff>=one-lander & nonland>=3"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["eff>=3 & nonland>=2", "eff>=2 & makers>=1 & nonland>=2", "eff>=2 & tutors>=1 & nonland>=2"]
+keep = true
+
+# Hold-up: the early turns are for developing
+[[hold_up]]
+when = ["turn<=3"]
+value = -2.0

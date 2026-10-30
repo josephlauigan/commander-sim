@@ -1,0 +1,65 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
+# Tier 6 plan slots (impls/t6_plans.rs); was impls/t6_plan_rograkh_silas.rs (SPEC:
+# audit/t6/rograkh-silas-turbo-breach/SPEC.md). The deck is TURBO: Rograkh ({0}) on the table on turn 1, the mana from
+# Moxen, Petal, Sol Ring and Vault, the tutors find Thassa's Oracle + Demonic Consultation / Tainted Pact (main line)
+# or the Breach pieces, the free counters held for the turn of the attempt. Silas is "mostly there for the colours".
+# Cast priority, hold-up and go-now: no opinion (a turbo-development priority and a develop-first hold-up measured
+# worse in 300-game A/Bs); the shared Tier 6 rules decide.
+# Paired test (t6, 2000 games): plan 18.3% vs hand 18.6% (-0.3, 95% CI -3.3..+2.7): level: t6_plan_rograkh_silas.rs
+# deleted. (Where the hand list named only cards outside the library, the plan has no opinion: the shared pieces.)
+deck = "rograkh-silas-turbo-breach"
+default = "plan"
+
+[sets]
+tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Demonic Counsel", "Wishclaw Talisman", "Demonic Consultation", "Tainted Pact"]
+payoffs = ["Ad Nauseam", "Necropotence", "Wheel of Fortune", "Windfall", "Timetwister", "Yawgmoth's Will", "Underworld Breach"]
+# Rhystic Study and Mystic Remora alone do not win: they count as action only with fast mana
+engines = ["Rhystic Study", "Mystic Remora"]
+action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Demonic Counsel", "Wishclaw Talisman", "Demonic Consultation", "Tainted Pact", "Ad Nauseam", "Necropotence", "Wheel of Fortune", "Windfall", "Timetwister", "Yawgmoth's Will", "Underworld Breach", "Thassa's Oracle"]
+exilers = ["Demonic Consultation", "Tainted Pact"]
+
+# Tutor targets: Thassa's Oracle + an exiler, the piece the hand lacks (both in hand: no opinion)
+[[wish]]
+cards = ["Thassa's Oracle"]
+score = 3.0
+
+[[wish]]
+cards = ["Demonic Consultation"]
+when = ["hand:exilers=0"]
+score = 2.0
+
+[[wish]]
+cards = ["Tainted Pact"]
+when = ["hand:exilers=0"]
+score = 1.0
+
+# Mulligan: fast mana and a plan beat land count (23 lands in 99, 18 fast-mana pieces); `fast` and `mana` as in the
+# scion file (t6_keep::mana plus the rituals); a settled hand (2-4 lands after a mulligan) is kept
+[mulligan]
+fast_mana = true
+# one-shot mana for the payoff turn (spec scenario 11: Chrome Mox + Culling the Weak)
+rituals = ["Dark Ritual", "Cabal Ritual", "Culling the Weak", "Rite of Flame", "Jeska's Will", "Infernal Plunge", "Simian Spirit Guide"]
+
+[[mulligan.rule]]
+when = ["hand-lands>=6"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0 & fast>=3 & hand:tutors>=1", "hand-lands=0 & fast>=3 & hand:payoffs>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & mana<one-lander", "hand-lands=1 & hand:action=0 & hand:engines=0", "hand-lands=1 & hand:action=0 & fast<1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["mana<2", "hand:action=0 & hand:engines=0 & fast<2", "hand:action=0 & fast<1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=5 & fast=0 & hand:action<2"]
+keep = false

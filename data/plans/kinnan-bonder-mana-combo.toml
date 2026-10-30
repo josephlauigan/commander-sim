@@ -1,0 +1,174 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
+# Tier 6 plan slots (impls/t6_plans.rs); was impls/t6_plan_kinnan.rs (SPEC: audit/t6/kinnan-bonder-mana-combo/SPEC.md).
+# The deck (primer: "thrives on patience and timing"): fast mana and dorks, Kinnan on turn 2 before the rocks, a draw
+# engine (Rhystic Study, Mystic Remora, The One Ring) while it waits, then Kinnan + Basalt Monolith (or Hullbreaker
+# Horror + two rocks) once it holds the cover for the loop.
+# Paired test (t6, 2000 games): byte-identical to the hand code (Kinnan 24.6% both arms): t6_plan_kinnan.rs deleted.
+deck = "kinnan-bonder-mana-combo"
+default = "plan"
+
+[sets]
+# the primer's first mulligan item: a draw engine
+engines = ["Rhystic Study", "Mystic Remora", "The One Ring", "Consecrated Sphinx", "Sylvan Library"]
+cheap_engines = ["Mystic Remora", "Sylvan Library"]
+# the primer's second item: an early win attempt
+wins = ["Basalt Monolith", "Transmute Artifact", "Hullbreaker Horror", "Trophy Mage", "Thrasios, Triton Hero"]
+# a counter that costs no mana (or is paid by pitching a card)
+free = ["Force of Will", "Fierce Guardianship", "Pact of Negation", "Misdirection", "Mental Misstep", "Disrupting Shoal", "Force of Negation", "Snapback", "Mindbreak Trap"]
+engines_wins = ["Rhystic Study", "Mystic Remora", "The One Ring", "Consecrated Sphinx", "Sylvan Library", "Basalt Monolith", "Transmute Artifact", "Hullbreaker Horror", "Trophy Mage", "Thrasios, Triton Hero"]
+engines_wins_free = ["Rhystic Study", "Mystic Remora", "The One Ring", "Consecrated Sphinx", "Sylvan Library", "Basalt Monolith", "Transmute Artifact", "Hullbreaker Horror", "Trophy Mage", "Thrasios, Triton Hero", "Force of Will", "Fierce Guardianship", "Pact of Negation", "Misdirection", "Mental Misstep", "Disrupting Shoal", "Force of Negation", "Snapback", "Mindbreak Trap"]
+
+# Cast priority: Kinnan before the rocks (each taps for double), the draw engines while they are cheap; the counters
+# and bounce are held, never cast into an empty table
+[[prio]]
+commander = true
+value = 92
+per_tax = -3
+
+[[prio]]
+cards = ["Rhystic Study", "Mystic Remora"]
+when = ["turn<=4"]
+value = 84
+else = 55
+
+[[prio]]
+cards = ["The One Ring"]
+when = ["turn<=6"]
+value = 66
+else = 55
+
+[[prio]]
+cards = ["Consecrated Sphinx"]
+value = 70
+
+[[prio]]
+cards = ["Sylvan Library"]
+value = 60
+
+[[prio]]
+cards = ["Force of Will", "Fierce Guardianship", "Force of Negation", "Pact of Negation", "Mental Misstep", "Misdirection", "Disrupting Shoal", "Mindbreak Trap", "Snapback", "Chain of Vapor", "Dispel", "Flusterstorm", "Swan Song", "An Offer You Can't Refuse"]
+value = 0
+
+# Tutor targets, best first: the win line's missing pieces (Monolith, then an outlet, then the Horror line), then the
+# draw engines and the cover
+[[wish]]
+cards = ["Basalt Monolith"]
+when = ["not have:Basalt Monolith"]
+score = 9.0
+
+[[wish]]
+cards = ["Transmute Artifact"]
+when = ["not have:Basalt Monolith"]
+score = 8.5
+
+[[wish]]
+cards = ["Thrasios, Triton Hero"]
+when = ["not have:Thrasios, Triton Hero & not have:Mirage Mirror"]
+score = 8.0
+
+[[wish]]
+cards = ["Mirage Mirror"]
+when = ["not have:Thrasios, Triton Hero & not have:Mirage Mirror"]
+score = 7.0
+
+[[wish]]
+cards = ["Hullbreaker Horror"]
+when = ["out:Kinnan, Bonder Prodigy & mana-perms>=2"]
+score = 7.5
+
+[[wish]]
+cards = ["Rhystic Study", "Mystic Remora"]
+when = ["turn<=5"]
+score = 6.5
+
+[[wish]]
+cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation"]
+when = ["have:Basalt Monolith"]
+score = 7.2
+
+[[wish]]
+cards = ["Faerie Mastermind", "Endurance", "Chain of Vapor"]
+score = 4.0
+
+[[wish]]
+cards = ["Consecrated Sphinx", "The One Ring"]
+score = 5.5
+
+[[wish]]
+cards = ["Force of Will", "Fierce Guardianship", "Pact of Negation"]
+score = 4.5
+
+[[wish]]
+cards = ["Finale of Devastation"]
+score = 3.5
+
+# Mulligan (primer: draw engine, then an early win attempt, then mana; ship one-land hands without free mana, keep
+# fast mana with Kinnan): ship no land, six or more lands, and hands with nothing to do. `makers` and `eff` are the
+# hand's mana by turn 2 (t6_keep::mana); a settled hand (2-4 lands after a mulligan) is kept.
+[mulligan]
+fast_mana = true
+otherwise = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & eff>=one-lander & hand:engines_wins_free>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=2 & makers>=1", "hand-lands=2 & hand:cheap_engines>=1", "hand-lands=2 & hand:engines_wins>=1", "hand-lands=2 & hand:free>=2"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=2"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=3 & hand-lands<=4 & makers>=1", "hand-lands>=3 & hand-lands<=4 & hand:engines_wins_free>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands>=3 & hand-lands<=4"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=5 & makers>=2", "hand-lands=5 & hand:engines_wins>=2", "hand-lands=5 & makers>=1 & hand:engines_wins>=1"]
+keep = true
+
+# Hold-up: develop on turns 1-2, then hold the cover while the draw engines work
+[[hold_up]]
+when = ["turn<=2"]
+value = -2.0
+
+[[hold_up]]
+when = ["hand:free>=1 & out:Kinnan, Bonder Prodigy"]
+value = 1.0
+
+# Go for Kinnan's loops only with cover: a free counter or a paid one for the open blue mana, and no stax (Null Rod,
+# Stony Silence, Collector Ouphe, Cursed Totem) on the table. Late games (round 6) fall to the shared rule.
+[[go_now]]
+combos = ["Kinnan + Basalt Monolith", "Hullbreaker Horror + Kinnan"]
+when = ["round>=6"]
+
+[[go_now]]
+combos = ["Kinnan + Basalt Monolith", "Hullbreaker Horror + Kinnan"]
+when = ["opp-out:Null Rod", "opp-out:Stony Silence", "opp-out:Collector Ouphe", "opp-out:Cursed Totem"]
+go = false
+
+# bait first or wait: no cover and an opponent can counter
+[[go_now]]
+combos = ["Kinnan + Basalt Monolith", "Hullbreaker Horror + Kinnan"]
+when = ["hand:free=0 & counters=0 & opp-blue-up>=1"]
+go = false
+
+# spec: "an outlet in play or in hand" before Monolith; the early turns are for the draw engines
+[[go_now]]
+combos = ["Kinnan + Basalt Monolith"]
+when = ["not have:Thrasios, Triton Hero & not have:Mirage Mirror & not have:Finale of Devastation & not have:Wan Shi Tong, Librarian & round<4 & hand:free=0"]
+go = false

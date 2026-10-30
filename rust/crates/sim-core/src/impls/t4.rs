@@ -320,57 +320,6 @@ fn yuriko(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i3
     Ok(())
 }
 
-/// t4.YURIKO_BIG: the cards worth stacking on top for Yuriko's reveal
-const YURIKO_BIG: [&str; 4] = ["Draco", "Enter the Infinite", "Dig Through Time", "Treasure Cruise"];
-/// t4.EVASIVE_ONE: the evasive one-drops that carry Yuriko in on turn two
-const EVASIVE_ONE: [&str; 11] = [
-    "Ornithopter",
-    "Changeling Outcast",
-    "Gudul Lurker",
-    "Slither Blade",
-    "Faerie Seer",
-    "Spectral Sailor",
-    "Triton Shorestalker",
-    "Siren Stormtamer",
-    "Hope of Ghirapur",
-    "Moon-Circuit Hacker",
-    "Ingenious Infiltrator",
-];
-
-/// t4.yuriko_wish: tutors: a big card for the reveal only when it ends up on top (Vampiric Tutor, or a way to put it
-/// back); otherwise card advantage and Yuriko's enablers
-pub fn yuriko_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let pl = g.player(p);
-    let yuri = pl.perms.iter().any(|&m| g.perm(m).is_cmd) || pl.cmd_in_zone;
-    let putback = pl.to_top
-        || pl.hand.iter().any(|&c| name(g, c) == "Brainstorm")
-        || pl.perms.iter().any(|&m| matches!(card_name(g, m), "Scroll Rack" | "Sensei's Divining Top"));
-    let names: &[&str] = if yuri && putback {
-        &YURIKO_BIG
-    } else {
-        &["Rhystic Study", "Scroll Rack", "Sensei's Divining Top", "Mystic Remora"]
-    };
-    names.iter().filter_map(|n| g.db.id(n)).collect()
-}
-
-/// t4.yuriko_prio: evasive one-drops first: they carry Yuriko in on turn two; with a ninjutsu window open, cantrips
-/// before combat stack the biggest cards for the reveal
-pub fn yuriko_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let d = g.db.get(c);
-    let n = &*d.name;
-    if matches!(n, "Brainstorm" | "Ponder" | "Preordain") && crate::ai::pool::combat_reserve(g, p).is_some() {
-        let hand = &g.player(p).hand;
-        let me = hand.iter().position(|&x| x == c); // `x is not c`: this copy only
-        let big = hand.iter().enumerate().any(|(i, &x)| Some(i) != me && g.db.get(x).cmc >= 5) || n != "Brainstorm";
-        return Some(if big { 72 } else { 45 });
-    }
-    if EVASIVE_ONE.contains(&n) || (d.creature && d.cmc <= 2 && (d.tag(Tag::Fly) || matches!(n, "Invisible Stalker"))) {
-        let have = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count();
-        return Some(if have < 2 { 80 } else { 58 });
-    }
-    None
-}
-
 /// ninjutsu {0}{U}{B}: a Ninja you control deals combat damage: draw a card
 fn infiltrator(g: &mut Game, src: Src, _p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
     let o = owner(g, src);

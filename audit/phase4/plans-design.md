@@ -119,3 +119,38 @@ plan.
 - B: lines, engines and prio rules replace the hand `wish` and `prio_fn`, deck by deck, each with a paired test
   (`--realism --pool <tier> --games 2000`, `AI_PLAN_DATA=0` against `AI_PLAN_DATA=<deck>`, same seeds). Results
   and what was deleted: `audit/phase4/plans-handoff.md`.
+
+## PR 2 (phase4-cedh): schema extensions
+
+Each is loader-validated (a bad file is refused with its name and reason) and unit-tested in `tests/plans.rs`.
+
+- **Groups held only on the battlefield**: a group entry `"bf:<card>"` (Yuriko: `bf:Scroll Rack`; Rack in hand puts
+  nothing back).
+- **Condition entries in a group**: `"?<condition>"` holds the group while the condition holds (Yuriko: `?to-top`, the
+  tutor itself puts its card on top). A group needs at least one card.
+- **N cards of a group**: `counts = [1, 2, 1]` on a line (one entry per group, each >= 1). Distance counts the cards
+  still needed; `next_of` steps past a group once `count` of it is on the battlefield.
+- **Engines ahead of a line**: `engines_ahead = [...]`: tutors want these before the first line two or more steps
+  away (Yuriko's Rhystic Study while the reveal lacks its put-back), after any line one step away.
+- **Named sets**: `[sets] name = [cards]`; conditions count them: `hand:<set>` (in hand), `bf:<set>` (on the
+  battlefield).
+- **Conditions**: `|` and parentheses nest inside an alternative (`a & (b | c)`); a comparison's left side may sum
+  quantities (`makers+hand:action>=2`); the right side is a number or `one-lander` (the mana a one-land hand needs on
+  this draw). New atoms: `to-top`, `have:<card>` (battlefield or hand), `opp-out:<card>`, `line-ready`
+  (`combos::line_progress`). New quantities: `round`, `hand-max-mv` (the other cards in hand: the card being rated is
+  left out), `hand-lands`, `nonland`, `tutors`, `counters` (tag ctr in hand), `hand-blue`, `fast` / `mana` / `eff` /
+  `makers` (`t6_keep::mana` plus the mulligan's rituals), `mana-perms` (mana rocks and dorks out), `opp-blue-up`,
+  `opp-open-max`, `opp-stop-max`, `opp-stoppers` (stop chance >= 0.5), `archenemy-max`, `opp-cards-up`,
+  `opp-second-spell`.
+- **Priority rules**: values are f64 (whole numbers still parse); `per_tax` adds k x the card's commander tax.
+- **Wish rules** (`[[wish]] cards, when, score, plus_line, min_score`): scored library cards, best first, ahead of
+  the lines' pieces; the first rule selecting a card whose `when` holds scores it; `plus_line` adds k / the groups
+  still missing of a started line holding the card; a card is a target above `min_score` (default 0).
+- **Mulligan rule table**: `[mulligan] fast_mana = true` (keep a settled hand first, `t6_keep::Mana::settle`),
+  `rituals = [...]`, `[[mulligan.rule]] when, keep` (the first row that holds decides), `otherwise` (default keep).
+- **Hold-up** (`[[hold_up]] when, value`) and **go-now** (`[[go_now]] combos, when, go`): the first rule that holds
+  decides; no `value` / no `go` means "no opinion" and stops the search. `combos` are name prefixes, each must start
+  a catalogue combo.
+- **Tier 6 decks**: the five plan slots (`t6_plans.rs`) read the plan file when it is on (`plan_data::t6`); the
+  file's wish/prio do not also feed the generic `DeckConfig` path (the shared fallbacks stay). `t6_plans::HAND` lists
+  the decks that still have a hand plan file.
