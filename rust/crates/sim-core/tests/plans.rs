@@ -229,7 +229,11 @@ fn plan_matches_hand(key: &str, h: HandSlots) {
         for &c in &g2.player(P0).hand.clone() {
             assert_eq!(plan_data::t6::prio(l, &g2, P0, c), (h.prio)(&g2, P0, c), "{key} prio {}", nm(&g2, c));
         }
-        assert_eq!(plan_data::t6::wish(l, &g2, P0), (h.wish)(&g2, P0), "{key} wish, state {i}");
+        // a hand list may name cards outside the library (the tutors skip them): compare what a tutor can find
+        let lib = g2.player(P0).library.clone();
+        let hw = (h.wish)(&g2, P0).map(|v| v.into_iter().filter(|c| lib.contains(c)).collect::<Vec<_>>());
+        let hw = hw.filter(|v| !v.is_empty());
+        assert_eq!(plan_data::t6::wish(l, &g2, P0), hw, "{key} wish, state {i}");
         assert_eq!(plan_data::t6::hold_up(l, &g2, P0), (h.hold_up)(&g2, P0), "{key} hold_up, state {i}");
         for cmb in sim_core::impls::combos::all() {
             let x = plan_data::t6::go_now(l, &g2, P0, cmb.name);
@@ -252,7 +256,10 @@ fn the_scion_plan_file_matches_its_hand_code() {
 #[test]
 fn the_kinnan_plan_file_matches_its_hand_code() {
     use sim_core::impls::t6_plan_kinnan as h;
-    plan_matches_hand(KI, HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now });
+    plan_matches_hand(
+        KI,
+        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
+    );
 }
 
 /// hold-up and go-now rules: the first rule that holds decides; a go-now rule without `go` leaves it to the table
@@ -308,5 +315,23 @@ fn the_extensions_are_validated() {
     assert!(
         plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"mana<one-lander\"]\nvalue = 1")
             .is_ok()
+    );
+}
+
+#[test]
+fn the_sisay_plan_file_matches_its_hand_code() {
+    use sim_core::impls::t6_plan_sisay as h;
+    plan_matches_hand(
+        "sisay-legends-toolbox",
+        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
+    );
+}
+
+#[test]
+fn the_rograkh_silas_plan_file_matches_its_hand_code() {
+    use sim_core::impls::t6_plan_rograkh_silas as h;
+    plan_matches_hand(
+        "rograkh-silas-turbo-breach",
+        HandSlots { prio: h::prio, wish: h::wish, keep: h::keep, hold_up: h::hold_up, go_now: h::go_now },
     );
 }

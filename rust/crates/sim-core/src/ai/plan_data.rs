@@ -186,6 +186,12 @@ pub struct WishRule {
     #[serde(default)]
     pub when: Vec<String>,
     pub score: f64,
+    /// a card that brings a started line closer is worth more: + plus_line / the line's groups still missing
+    #[serde(default)]
+    pub plus_line: Option<f64>,
+    /// the card is a target only above this score (default 0)
+    #[serde(default)]
+    pub min_score: Option<f64>,
 }
 
 /// --- phase4-cedh: the extra utility of passing with mana up in the main phase (Tier 6 `hold_up`): the first rule
@@ -840,19 +846,45 @@ fn line_wants(l: &Loaded, g: &Game, p: PlayerId) -> Vec<(usize, usize, Vec<CardI
     ranked
 }
 
-/// the wish rules' library cards, best score first (ties in library order)
+/// the bonus a wish rule's `plus_line` gives a card: `plus_line` / the groups still missing of the closest line holding
+/// the card that is started (a group held) and not complete; groups are held as `group_held` counts them, without the
+/// library top
+fn line_bonus(l: &Loaded, g: &Game, p: PlayerId, n: &str, k: f64) -> f64 {
+    let mut best = 0.0f64;
+    for groups in &l.groups {
+        if !groups.iter().any(|grp| grp.cards.iter().any(|x| x.0 == n)) {
+            continue;
+        }
+        let held: Vec<usize> = groups.iter().map(|grp| group_held(g, p, grp, &[], l)).collect();
+        let miss = groups.iter().zip(&held).filter(|(grp, h)| **h < grp.need).count();
+        if miss > 0 && held.iter().any(|h| *h > 0) {
+            best = best.max(k / miss as f64);
+        }
+    }
+    best
+}
+
+/// the wish rules' library cards, best score first (ties in library order); a card's score is the first rule
+/// selecting it whose `when` holds, plus its line bonus, and counts above `min_score` (default 0)
 fn rule_wants(l: &Loaded, g: &Game, p: PlayerId) -> Vec<CardId> {
     let mut v: Vec<(f64, CardId)> = vec![];
     for &c in &g.player(p).library {
         let n = name(g, c);
-        let s = l
+        let r = l
             .plan
             .wish
             .iter()
             .zip(&l.wish_when)
             .find(|(r, w)| r.cards.iter().any(|x| x == n) && w.holds_cx(g, p, Cx { plan: Some(l), card: Some(c) }))
-            .map(|x| x.0.score);
-        if let Some(s) = s.filter(|s| *s > 0.0) {
+            .map(|x| x.0);
+        let Some(r) = r else { continue };
+        let mut s = r.score;
+        if s > 0.0
+            && let Some(k) = r.plus_line
+        {
+            s += line_bonus(l, g, p, n, k);
+        }
+        if s > r.min_score.unwrap_or(0.0) {
             v.push((s, c));
         }
     }
