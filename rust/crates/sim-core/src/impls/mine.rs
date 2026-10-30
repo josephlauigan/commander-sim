@@ -5,6 +5,8 @@
 //! Bolas's Citadel), which every deck reaches.
 
 use super::lands::{can_pay_without, pay_without};
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
 use crate::engine::pool::Kind;
 use super::partials::at_once;
 use crate::engine::repl;
@@ -3596,7 +3598,7 @@ fn ralz_minus7(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 // ------------------------------------------------------------------ lands: Plaza of Heroes, Unclaimed Territory
 /// mine.plaza_colors: {C}; any colour for legendary spells; colours among your legendary permanents
 fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> crate::cards::Colors {
-    if g.pay_for.is_some_and(|c| g.db.get(c).tag(Tag::Leg)) {
+    if restr_ok(g, p, Restr::Legendary) {
         return g.player(p).ident; // a legendary spell: any colour
     }
     let mut cols = crate::cards::Colors::NONE;
@@ -3638,13 +3640,14 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
 
 /// mine.territory_colors: {C}, or any colour for a creature spell of the named type (a changeling is every type)
 fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> crate::cards::Colors {
-    let Some(pf) = g.pay_for.filter(|&c| g.db.get(c).creature) else { return crate::cards::Colors::NONE };
+    if !g.pay_for.is_some_and(|c| g.db.get(c).creature) {
+        return crate::cards::Colors::NONE; // the type is worked out only for a creature spell
+    }
     let t = match g.perm(l).data.get(DataKey::Ctype) {
         Some(Val::Str(s)) => *s,
         _ => territory_type(g, p),
     };
-    let d = g.db.get(pf);
-    if d.has_subtype(t) || d.has_kw("changeling") { g.player(p).ident } else { crate::cards::Colors::NONE }
+    if restr_ok(g, p, Restr::CreatureType(t)) { g.player(p).ident } else { crate::cards::Colors::NONE }
 }
 
 // ------------------------------------------------------------------ Andúril, Flame of the West

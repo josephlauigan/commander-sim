@@ -47,6 +47,8 @@
 //! Bloodthirsty Conqueror): an unbounded drain. Sanguine Bond + Exquisite Blood is combos.rs's own entry.
 
 use crate::engine::repl;
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::control::{Duration, gain_control};
@@ -831,7 +833,7 @@ fn paying_vampire(g: &Game) -> bool {
 
 /// {C}, or (paying 1 life) any colour, spent only on a Vampire spell
 fn estate_cols(g: &Game, p: PlayerId, _l: PermId) -> Colors {
-    if paying_vampire(g) { g.player(p).ident } else { Colors::NONE }
+    if restr_ok(g, p, Restr::Subtype("vampire")) { g.player(p).ident } else { Colors::NONE }
 }
 
 fn estate_tap(g: &mut Game, p: PlayerId, _l: PermId, _n: u32) -> Res {

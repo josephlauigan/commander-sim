@@ -18,6 +18,8 @@
 //! - **Dismantling Wave** (hard cycling), **Raise the Palisade**, **Heroic Sacrifice**, **Avengers Tower**.
 
 use crate::engine::repl;
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay};
@@ -870,7 +872,7 @@ fn wave_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 // ------------------------------------------------------------------ Avengers Tower
 /// {T}: {C}, or one mana of any colour spent only on a Hero spell (or an ability of a Hero source)
 fn tower_cols(g: &Game, p: PlayerId, _l: PermId) -> Colors {
-    if g.pay_for.is_some_and(|c| hero_card(g, c)) { g.player(p).ident } else { Colors::NONE }
+    if restr_ok(g, p, Restr::Subtype("hero")) { g.player(p).ident } else { Colors::NONE }
 }
 
 /// {4},{T}: look at the top three cards; a Hero card may go to your hand, the rest to the bottom

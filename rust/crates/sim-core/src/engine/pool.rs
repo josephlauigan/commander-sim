@@ -11,6 +11,7 @@
 //! Design: `audit/phase3/mana-design.md`.
 
 use crate::cards::Colors;
+use crate::sym::Sym;
 
 /// What colour a mana object is. `Any` is mana of any of the player's colours, chosen as it is spent (the engine's
 /// rituals and the ability language's "add one mana of any colour").
@@ -84,6 +85,20 @@ pub enum Restr {
     /// can't be spent to cast nonartifact spells: artifact spells, abilities and other costs (Karn, Legacy Reforged;
     /// Powerstone tokens; The Mightstone and Weakstone)
     NotNonartifact,
+    /// only to cast artifact spells (Mishra's Workshop)
+    ArtifactSpell,
+    /// only to cast instant and sorcery spells (Hydro-Channeler)
+    InstantSorcery,
+    /// only to cast legendary spells (Plaza of Heroes, Delighted Halfling)
+    Legendary,
+    /// only to cast Dragon creature spells (Rivaz of the Claw, Haven of the Spirit Dragon)
+    DragonCreature,
+    /// only to cast a spell of this subtype, a changeling too (Giada: Angels; Voldaren Estate: Vampires; Avengers
+    /// Tower: Heroes)
+    Subtype(Sym),
+    /// only to cast a creature spell of this creature type: a changeling, or any creature under Maskwood Nexus
+    /// (Unclaimed Territory, Cavern of Souls, Secluded Courtyard: the type each chose as it entered)
+    CreatureType(Sym),
 }
 
 /// How long a mana object stays in the pool.

@@ -116,7 +116,6 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     let mut u = vec![];
     let anyc = has(g, p, Tag::Lantern)
         || (pl.lands.iter().any(|&l| g.db.get(g.perm(l).card()).tag(Tag::Worldtree)) && pl.lands.len() >= 6);
-    let art = g.pay_for.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT));
     let hooked = !g.hooks.is_empty();
     let moon = hooked && cardcode::blood_moon(g);
     let dryad = hooked && cardcode::dryad_colors(g, p);
@@ -128,7 +127,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         let t = &g.db.get(land.card()).tags;
         // Blood Moon: a plain Mountain with no abilities of its own (the board-wide check was made above)
         let plain = moon && !BASIC_NAMES.contains(&&*g.db.get(land.card()).name);
-        if !plain && t.has(Tag::Workshop) && !art {
+        if !plain && !restr_ok(g, p, g.db.get(land.card()).mana_restr) {
             continue; // Mishra's Workshop: artifact spells only
         }
         if !plain && t.has(Tag::Tomb) && pl.life <= 2 {
@@ -183,7 +182,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if no_art_mana && d.types.has(crate::cards::Types::ARTIFACT) {
                 continue;
             }
-            if t.has(Tag::Pstone) && !art_mana_ok(g) {
+            if !restr_ok(g, p, d.mana_restr) {
                 continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells
             }
             let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
@@ -207,14 +206,8 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
         } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick || ahaste()) {
-            if &*d.name == "Giada, Font of Hope" && !g.pay_for.is_some_and(|c| g.db.get(c).has_subtype("angel")) {
-                continue; // spend this mana only to cast an Angel spell
-            }
-            if &*d.name == "Hydro-Channeler" && !g.pay_for.is_some_and(|c| g.db.get(c).instant || g.db.get(c).sorcery) {
-                continue;
-            }
-            if crate::impls::t45_urdragon::dragon_only_mana(g, &d.name) {
-                continue; // --- Tiers 4/5 (urdragon): Rivaz of the Claw: only for Dragon creature spells
+            if !restr_ok(g, p, d.mana_restr) {
+                continue; // Giada (Angel spells), Hydro-Channeler (instants and sorceries), Rivaz (Dragon creatures)
             }
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or(1);
             let cols = if &*d.name == "Delighted Halfling" {
@@ -244,7 +237,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     // floating mana, at most 1000 of each entry (the same doubling boards float billions); white floating mana is
     // never offered (the old pool had no white unit), restricted mana only where it may be spent
     for m in pl.mana.iter() {
-        if m.key.kind != Kind::W && restr_ok(g, m.key.restr) {
+        if m.key.kind != Kind::W && restr_ok(g, p, m.key.restr) {
             let cols = m.key.kind.cols(ident);
             u.extend((0..m.amt.min(1000)).map(|_| Unit { src: Source::Pool(m.key), cols, amt: 1 }));
         }
@@ -266,18 +259,44 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     u
 }
 
-/// may mana with restriction `r` pay for what is being paid for now (rule 106.6)
-pub fn restr_ok(g: &Game, r: Restr) -> bool {
+/// May mana with restriction `r` pay for what p is paying for now (rule 106.6)? `Game::pay_for` is the spell being
+/// cast; `None` is an ability or another cost (a tax, a ward payment), which only `None` and `NotNonartifact` mana
+/// may pay.
+#[inline]
+pub fn restr_ok(g: &Game, p: PlayerId, r: Restr) -> bool {
+    let spell = || g.pay_for.map(|c| g.db.get(c));
     match r {
         Restr::None => true,
-        Restr::NotNonartifact => art_mana_ok(g),
+        Restr::NotNonartifact => spell().is_none_or(|d| d.types.has(crate::cards::Types::ARTIFACT)),
+        Restr::ArtifactSpell => spell().is_some_and(|d| d.types.has(crate::cards::Types::ARTIFACT)),
+        Restr::InstantSorcery => spell().is_some_and(|d| d.instant || d.sorcery),
+        Restr::Legendary => spell().is_some_and(|d| d.tag(Tag::Leg)),
+        Restr::DragonCreature => {
+            spell().is_some_and(|d| d.creature && (d.has_subtype("dragon") || d.has_kw("changeling")))
+        }
+        Restr::Subtype(t) => spell().is_some_and(|d| d.has_subtype(t) || d.has_kw("changeling")),
+        Restr::CreatureType(t) => {
+            g.pay_for.is_some_and(|c| g.db.get(c).creature && crate::impls::galadriel::card_is(g, p, c, t))
+        }
     }
 }
 
-/// may mana that can't be spent to cast a nonartifact spell pay for what is being paid for now: yes for an artifact
-/// spell and for anything that isn't a spell (an ability, a tax); `pay_for` is the spell being cast, if any
-pub fn art_mana_ok(g: &Game) -> bool {
-    g.pay_for.is_none_or(|c| g.db.get(c).types.has(crate::cards::Types::ARTIFACT))
+/// The restriction on the mana a card's own mana ability makes (`CardDef::mana_restr`, looked up once at load): its
+/// tags (Mishra's Workshop, the Powerstones) or its name. Lands that make {C} or restricted coloured mana (Plaza of
+/// Heroes, Unclaimed Territory ...) choose their colours by `restr_ok` in their colour code instead.
+pub fn restr_of(name: &str, tags: &crate::cards::Tags) -> Restr {
+    if tags.has(Tag::Workshop) {
+        return Restr::ArtifactSpell;
+    }
+    if tags.has(Tag::Pstone) {
+        return Restr::NotNonartifact;
+    }
+    match name {
+        "Giada, Font of Hope" => Restr::Subtype("angel"),
+        "Hydro-Channeler" => Restr::InstantSorcery,
+        "Rivaz of the Claw" => Restr::DragonCreature,
+        _ => Restr::None,
+    }
 }
 
 /// mana locks and bonuses from card code (Karn + Lattice, Collector Ouphe, Cursed Totem, Kinnan, Urza), and

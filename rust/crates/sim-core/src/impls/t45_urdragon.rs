@@ -45,6 +45,8 @@
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
 use crate::engine::repl;
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
 use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
@@ -479,10 +481,7 @@ fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Haven of the Spirit Dragon
 /// {C}, or one mana of any colour for a Dragon creature spell
 fn haven_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
-    match g.pay_for {
-        Some(c) if dragon_creature_card(g, c) => g.player(p).ident,
-        _ => Colors::NONE,
-    }
+    if restr_ok(g, p, Restr::DragonCreature) { g.player(p).ident } else { Colors::NONE }
 }
 
 fn best_gy_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
@@ -680,10 +679,7 @@ fn rith_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 // ================================================================== Rivaz of the Claw
-/// mana restricted to Dragon creature spells (mana.rs, as Giada's to Angels)
-pub fn dragon_only_mana(g: &Game, name: &str) -> bool {
-    name == RIVAZ && !g.pay_for.is_some_and(|c| dragon_creature_card(g, c))
-}
+// its mana is for Dragon creature spells only: `CardDef::mana_restr` (engine::mana::restr_of)
 
 /// Once during each of your turns, cast a Dragon creature spell from your graveyard (the best one you can pay for)
 fn rivaz_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {

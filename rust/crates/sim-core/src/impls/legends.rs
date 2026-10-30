@@ -12,6 +12,8 @@
 //! engine._land_cols calls by name) are here too.
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
+use crate::engine::mana::restr_ok;
+use crate::engine::pool::Restr;
 use crate::engine::pool::Kind;
 use super::lands::{can_pay_without, sac_land};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
@@ -1856,7 +1858,7 @@ fn elder_mana(_g: &Game, _p: PlayerId, _m: PermId) -> u32 {
 /// mine.plaza_colors: Plaza of Heroes: any colour for a legendary spell; otherwise the colours among your legendary
 /// permanents (its {C} is the empty set)
 fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
-    if g.pay_for.is_some_and(|c| g.db.get(c).tag(Tag::Leg)) {
+    if restr_ok(g, p, Restr::Legendary) {
         return g.player(p).ident;
     }
     let mut cols = Colors::NONE;
@@ -1903,12 +1905,14 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
 /// mine.territory_colors: Unclaimed Territory: {C}, or any colour for a creature spell of the named type (a
 /// changeling is every type)
 fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> Colors {
-    let Some(pf) = g.pay_for.map(|c| g.db.get(c)).filter(|d| d.creature) else { return Colors::NONE };
+    if !g.pay_for.is_some_and(|c| g.db.get(c).creature) {
+        return Colors::NONE; // the type is worked out only for a creature spell
+    }
     let t = match g.perm(l).data.get(DataKey::Ctype) {
         Some(Val::Str(s)) => *s,
         _ => territory_type(g, p),
     };
-    if pf.has_subtype(t) || pf.has_kw("changeling") { g.player(p).ident } else { Colors::NONE }
+    if restr_ok(g, p, Restr::CreatureType(t)) { g.player(p).ident } else { Colors::NONE }
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
