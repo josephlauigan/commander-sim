@@ -8,8 +8,9 @@ Brief: `rust/agents/phase4-eval.md`. Design: `audit/phase4/eval-design.md`. Bran
 ## State
 
 - [x] Design.
-- [ ] Recorder (`AI_EVAL_RECORD`), identity check t1 + t5.
-- [ ] Recording t1-t5.
+- [x] Code: `ai/learned.rs` (features, model, switch `AI_EVAL`, recorder), hook in `search::evaluate` (`raw_term`), `run_rounds`, `Engine::play`; trainer `examples/eval_train.rs`; tests `tests/learned.rs` (need the fitted model).
+- [x] Identity (binary `bin/commander-sim-headA`, e40505bf): AI_EVAL unset = base byte for byte on t1, t2, t4, t5 and recorder on = off on t1, t5 (300 games, all rc=0; `stageA-head.sh`, outputs `A/`). Recorder: 2.5 MB per 300 games.
+- [ ] Recording t1-t5: `record.sh` (5000 games a tier, seeds 1,000,000 + 100,000 per tier; data `rec/data/tN/`; resumable).
 - [ ] Training (`examples/eval_train.rs`), `data/eval/model.toml`.
 - [ ] Stage A (t1, t2, t4, t5, 300 games, AI_EVAL unset = base).
 - [ ] Stage B.
@@ -18,3 +19,7 @@ Brief: `rust/agents/phase4-eval.md`. Design: `audit/phase4/eval-design.md`. Bran
 ## Gotchas
 
 - `cargo build -p sim-cli --example X` builds only the example: build `-p sim-cli` alone for the binary and `cmp` it.
+- The trainer: `target/release/examples/eval_train DATA_DIR OUT.toml COMMIT --gbt` (DATA_DIR has `t1`..`t5`). A trial on
+  the 600 check games (`rec/checkdata`): raw features lost to the baseline (heavy tails); log-scale features fixed it
+  (0.490 vs 0.500).
+- `pgrep -f X` inside an `until` loop matches the loop's own command line: wait on output text instead.
