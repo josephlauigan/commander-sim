@@ -23,3 +23,9 @@ Brief: `rust/agents/phase4-eval.md`. Design: `audit/phase4/eval-design.md`. Bran
   the 600 check games (`rec/checkdata`): raw features lost to the baseline (heavy tails); log-scale features fixed it
   (0.490 vs 0.500).
 - `pgrep -f X` inside an `until` loop matches the loop's own command line: wait on output text instead.
+
+## Stage B log (binary B; `half.sh B/tN-old.txt B/tN-X.txt "Names"`)
+
+- t1 A (Isshin, Light-Paws, Teysa Karlov) +0.5 [-4.8, +5.8]; B (Lathril, Tatyova) +1.2 [-2.6, +5.0]. g/s old 3.26, A 3.23, B 3.79.
+- t2 A (Brago, Lord Windgrace, Sythis) +3.3 [-1.9, +8.5]; B (Kaalia of the Vast, Meren of Clan Nel Toth) -0.6 [-4.7, +3.5].
+  g/s old 1.79, A 1.98, B 1.86.
