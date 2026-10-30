@@ -1282,7 +1282,7 @@ pub fn eot_returns(g: &mut Game) -> Res {
             continue;
         }
         if g.player(p).exile.contains(&cd) {
-            remove_first(&mut g.player_mut(p).exile, cd);
+            g.player_mut(p).exile.take(cd);
         } else if g.player(p).gy.contains(&cd) {
             remove_first(&mut g.player_mut(p).gy, cd);
         } else {

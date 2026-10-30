@@ -1439,7 +1439,7 @@ fn dsphere_back(g: &mut Game, _src: Src, m: PermId) -> Res {
         if let Val::List(x) = v
             && let [Val::Card(cd), Val::Player(q)] = x.as_slice()
             && g.player(*q).alive
-            && remove_card(&mut g.player_mut(*q).exile, *cd)
+            && g.player_mut(*q).exile.take(*cd)
         {
             enter(g, *q, *cd, Enter::default())?;
         }

@@ -176,7 +176,7 @@ fn karn_lattice(g: &Game, src: Src, p: PlayerId) -> i32 {
 fn karn_minus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     if let Some(c) = g.player(p).exile.iter().copied().find(|&c| is_art_card(g, c)) {
         let pl = g.player_mut(p);
-        remove_card(&mut pl.exile, c);
+        pl.exile.take(c);
         pl.hand.push(c);
     }
     Ok(())

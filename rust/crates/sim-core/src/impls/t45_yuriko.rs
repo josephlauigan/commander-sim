@@ -265,7 +265,7 @@ fn nashi(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32
         return Ok(());
     }
     let mv = g.db.get(c).cmc as i32;
-    remove_first(&mut g.player_mut(q).exile, c);
+    g.player_mut(q).exile.take(c);
     lose_life(g, p, mv, Some(p), "other", None)?;
     crate::glog!(g, "    {} casts {} with Nashi for {} life", pname(g, p), cname(g, c), mv);
     g.player_mut(p).hand.push(c);

@@ -2306,7 +2306,7 @@ fn ephemerate_rebound(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         .collect();
     let Some(t) = max_by(&cands, |m| blink_worth(g, p, m)) else { return Ok(()) };
     let pl = g.player_mut(p);
-    remove_first(&mut pl.exile, c);
+    pl.exile.take(c);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
     pl.cast_names.insert(c);
@@ -2441,7 +2441,7 @@ fn dauthi_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !ability_window_card(g, p, cd, &label, Some(5.0), None)? || !g.player(q).exile.contains(&c) {
         return Ok(true);
     }
-    remove_first(&mut g.player_mut(q).exile, c);
+    g.player_mut(q).exile.take(c);
     crate::glog!(g, "  Dauthi Voidwalker: {} plays {} free", player_name(g, p), g.db.get(c).name);
     if g.db.get(c).perm {
         enter(g, p, c, Enter { orig: Some(q), ..Enter::default() })?;

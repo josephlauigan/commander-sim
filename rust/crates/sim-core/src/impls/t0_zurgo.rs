@@ -394,7 +394,7 @@ fn neriv_release(g: &mut Game, p: PlayerId) {
     for c in g.player(p).neriv.clone() {
         let land = g.db.get(c).land;
         let pl = g.player_mut(p);
-        if remove_first(&mut pl.exile, c) {
+        if pl.exile.take(c) {
             pl.hand.push(c);
             if land {
                 remove_first(&mut pl.neriv, c);

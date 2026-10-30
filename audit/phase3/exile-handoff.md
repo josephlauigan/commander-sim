@@ -1,8 +1,7 @@
 # Handoff: Phase 3, PR 5, identity for exiled cards (branch `phase3-exile`)
 
 Brief: `rust/agents/phase3-mana-exile.md` (PR 5). Stacked on `phase3-mana` (PR 4, done: `audit/phase3/mana-handoff.md`).
-Not started beyond this census: the PR 4 agent stopped after PR 4 (the brief allows it). Design file to write:
-`audit/phase3/exile-design.md`.
+Design: `audit/phase3/exile-design.md`. The PR 4 agent stopped after PR 4; a second agent does PR 5.
 
 **JD: no simulation runs of any kind until Phase 4.** Checks: release test suite, 0 warnings, practice tests,
 cardgen export/validate/audit, microbenchmarks only (`examples/clone_cost`; add an exile one if the zone changes
@@ -12,7 +11,14 @@ Base = `phase3-mana` head (cc71b6cc): build 0 warnings; 3663 passed / 0 failed /
 104; cardgen clean; clone_cost 2.91-2.94 µs.
 
 ## Status
-- [ ] Design (`exile-design.md`), Stage A (results identical), Stage B (call sites), Stage C (behaviour, tests)
+- [x] Design (`exile-design.md`).
+- [x] Stage A: `engine/exile.rs` (`ExileZone`: cards + one `ExileObj { id, until }` each, a fresh `ExileId` per push;
+      reads through `Deref<Target = [CardId]>`); `Player::exile` is one; the `remove_card(&mut ..exile, c)` sites use
+      `exile.take(c)`; `cast.rs` copy removal and `human.rs` reanimation destination rewritten. Checks: 0 warnings;
+      3663 passed / 0 failed / 3 ignored (223 binaries), as base; practice 104; cardgen clean; clone_cost 2.92-3.01 µs
+      (base 2.91-2.94: noise); mana_cost and repl_cost as base.
+- [ ] Stage B (call sites, identical): `oring_exile` records `until` + the `ExileId`; Karn records `silver`.
+- [ ] Stage C (behaviour, tests): `oring_return` by id; silver from the objects; impulse expires at the end of the turn.
 
 ## Census so far (starting points, not complete)
 - `Player::exile: Vec<CardId>`: 207 uses of `.exile` in `sim-core/src` (most in `impls/mine.rs` 19, `common.rs` 11,

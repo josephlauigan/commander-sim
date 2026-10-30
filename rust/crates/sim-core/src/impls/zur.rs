@@ -519,7 +519,7 @@ pub fn zur_end_step(g: &mut Game, p: PlayerId) -> Res {
             continue;
         }
         if g.player(o).exile.contains(&cd) && g.player(o).alive {
-            remove_first(&mut g.player_mut(o).exile, cd);
+            g.player_mut(o).exile.take(cd);
             enter(g, o, cd, Enter::default())?;
             crate::glog!(g, "    {} returns to the battlefield (The Eternal Wanderer)", g.db.get(cd).name);
         }

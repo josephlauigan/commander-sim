@@ -20,6 +20,7 @@ pub mod chars;
 pub mod combat;
 pub mod control;
 pub mod dungeon;
+pub mod exile;
 pub mod hooks;
 pub mod life;
 pub mod mana;

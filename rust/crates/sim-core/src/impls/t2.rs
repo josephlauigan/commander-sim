@@ -641,7 +641,7 @@ fn serenity_leave(g: &mut Game, src: Src, _m: PermId) -> Res {
         let (Val::Card(cd), Val::Player(q)) = (&pair[0], &pair[1]) else { continue };
         let (cd, q) = (*cd, *q);
         let pl = g.player_mut(q);
-        if remove_card(&mut pl.exile, cd) {
+        if pl.exile.take(cd) {
             pl.hand.push(cd);
         }
     }

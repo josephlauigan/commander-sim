@@ -1421,13 +1421,11 @@ pub fn cast_spell_copy(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>) 
     let (n_gy, n_ex) = (g.player(p).gy.len(), g.player(p).exile.len());
     resolve(g, p, c, &ctx, "hand")?;
     // the copy ceases to exist instead of going to a zone
-    for exile in [false, true] {
-        let pl = g.player_mut(p);
-        let (zone, n0) = if exile { (&mut pl.exile, n_ex) } else { (&mut pl.gy, n_gy) };
-        if let Some(i) = (n0..zone.len()).rev().find(|&i| zone[i] == c) {
-            zone.remove(i);
-            break;
-        }
+    let pl = g.player_mut(p);
+    if let Some(i) = (n_gy..pl.gy.len()).rev().find(|&i| pl.gy[i] == c) {
+        pl.gy.remove(i);
+    } else if let Some(i) = (n_ex..pl.exile.len()).rev().find(|&i| pl.exile[i] == c) {
+        pl.exile.remove(i);
     }
     check_state(g)?;
     Ok(true)
