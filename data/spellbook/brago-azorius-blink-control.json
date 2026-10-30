@@ -1,0 +1,5383 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "brago-azorius-blink-control",
+  "commanders": [
+    "Brago, King Eternal"
+  ],
+  "request_sha256": "d7df3d648539c07309b18d523f83f439ac030791caa8f89471aa1ccb32807937",
+  "identity": "WU",
+  "included": [
+    {
+      "id": "1987-2493-3821",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38230
+    },
+    {
+      "id": "2397-3634-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H",
+            "C"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.\nYou have enough mana to pay for commander tax minus {1} if applicable.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 18015
+    },
+    {
+      "id": "2751-3557",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Strionic Resonator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control artifacts that can tap to add at least {2}.\nBrago does not have summoning sickness.\nOpponents cannot block and kill Brago.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12507
+    },
+    {
+      "id": "3634-3821-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.\nYou have enough mana to pay for commander tax minus {1} if applicable.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9165
+    },
+    {
+      "id": "1741-1987-2397-2493",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite casts of any instants and/or sorcery cards in your hand or graveyard",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7811
+    },
+    {
+      "id": "1770-3634-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6837
+    },
+    {
+      "id": "1741-1770-1987-2493",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite casts of any instants and/or sorcery cards in your hand or graveyard",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2558
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "4131-4547",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forsaken Monument",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66280,
+      "missing": [
+        "Forsaken Monument"
+      ]
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 55147,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "4131-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 53795,
+      "missing": [
+        "Rings of Brighthearth"
+      ]
+    },
+    {
+      "id": "1409-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator is paired with Peregrine Drake.\nYou control up to five lands that can tap to produce {2}{U}.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 48005,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "1170-4761-5034",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 46202,
+      "missing": [
+        "Teferi, Time Raveler"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "4131-5390",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forensic Gadgeteer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 26462,
+      "missing": [
+        "Forensic Gadgeteer"
+      ]
+    },
+    {
+      "id": "1409-1741",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator is paired with Cloud of Faeries.\nYou control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19201,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "372-1090-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17305,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "372-1090-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16389,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "2493-3647-3821",
+      "cards": [
+        {
+          "name": "Displace",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14511,
+      "missing": [
+        "Displace"
+      ]
+    },
+    {
+      "id": "141-1987",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ghostly Flicker.",
+      "mana": "{4}{U}{U}{U} plus commander tax if applicable",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 13994,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "4131-5149",
+      "cards": [
+        {
+          "name": "Power Artifact",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Power Artifact attached to Basalt Monolith.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10936,
+      "missing": [
+        "Power Artifact"
+      ]
+    },
+    {
+      "id": "513-1741-3821",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10080,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "4131-4684",
+      "cards": [
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 10060,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "1090-4200",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9616,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "1418-3634-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Virtue of Knowledge // Vantress Visions",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H",
+            "C"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.\nYou have enough mana to pay for commander tax minus {1} if applicable.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7157,
+      "missing": [
+        "Virtue of Knowledge // Vantress Visions"
+      ]
+    },
+    {
+      "id": "1987-2493-5116",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gilded Lotus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6835,
+      "missing": [
+        "Gilded Lotus"
+      ]
+    },
+    {
+      "id": "3821-4013",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eldrazi Displacer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{C}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6767,
+      "missing": [
+        "Eldrazi Displacer"
+      ]
+    },
+    {
+      "id": "1170-4131-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6152,
+      "missing": [
+        "Teferi, Time Raveler"
+      ]
+    },
+    {
+      "id": "372-2493-3603",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have any number of other nonland permanents that enter the battlefield untapped, and that can collectively tap to produce enough mana to cast Cloudshift exiled by Abdel Adrian.\nArchaeomancer exiled by Abdel Adrian.\nYou have enough mana to cast Cloudshift.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6074,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "372-1987-2493",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have any number of other nonland permanents that enter the battlefield untapped, and that can collectively tap to produce enough mana to cast Ghostly Flicker exiled by Abdel Adrian.\nArchaeomancer exiled by Abdel Adrian.\nYou have enough mana to cast Ghostly Flicker.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5501,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "372-1567-2493",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Momentary Blink",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have any number of other nonland permanents that enter the battlefield untapped, and that can collectively tap to produce enough mana to cast Momentary Blink exiled by Abdel Adrian.\nArchaeomancer exiled by Abdel Adrian.\nYou have enough mana to cast Momentary Blink.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5458,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "2493-3115-3557",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cyclonic Rift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Return all nonland permanents opponents control to their hand on each of your turns"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Brago.",
+      "mana": "{6}{U} every turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5437,
+      "missing": [
+        "Cyclonic Rift"
+      ]
+    },
+    {
+      "id": "1636-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite untap of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "Creatures you control can tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5410,
+      "missing": [
+        "Intruder Alarm"
+      ]
+    },
+    {
+      "id": "1987-3821-4125",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shipwreck Dowser",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5372,
+      "missing": [
+        "Shipwreck Dowser"
+      ]
+    },
+    {
+      "id": "372-1090-1567",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Momentary Blink",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5260,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "372-1090-1987",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{W} plus enough mana to pay commander tax, if applicable",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 4982,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "1987-2493-3941",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Coveted Jewel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4780,
+      "missing": [
+        "Coveted Jewel"
+      ]
+    },
+    {
+      "id": "1987-2556-3821",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mnemonic Wall",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4550,
+      "missing": [
+        "Mnemonic Wall"
+      ]
+    },
+    {
+      "id": "770-2397-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Man-o'-War",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite untap of lands you control",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {3}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4542,
+      "missing": [
+        "Man-o'-War"
+      ]
+    },
+    {
+      "id": "553-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{14}{W}{W}{U}{U}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 4180,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "751-2397-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3718,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "2493-3378-3821",
+      "cards": [
+        {
+          "name": "Illusionist's Stratagem",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite mana lands you control can produce",
+        "Near-infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3683,
+      "missing": [
+        "Illusionist's Stratagem"
+      ]
+    },
+    {
+      "id": "1846-1987-2397-2493",
+      "cards": [
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Tide",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least 1 island.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3546,
+      "missing": [
+        "High Tide"
+      ]
+    },
+    {
+      "id": "3094-3557-5034",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lithoform Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana artifacts you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control artifacts that can tap to add at least {2}.\nBrago does not have summoning sickness.\nOpponents cannot block and kill Brago.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3210,
+      "missing": [
+        "Lithoform Engine"
+      ]
+    },
+    {
+      "id": "2397-3542",
+      "cards": [
+        {
+          "name": "Palinchron",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six mana-producing lands, two of which can produce at least {U}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2943,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "1170-1393-2364-5034",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Channeler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 2845,
+      "missing": [
+        "Mana Vault"
+      ]
+    },
+    {
+      "id": "2751-6286",
+      "cards": [
+        {
+          "name": "Unstoppable Plan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Strionic Resonator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2836,
+      "missing": [
+        "Unstoppable Plan"
+      ]
+    },
+    {
+      "id": "74-4131",
+      "cards": [
+        {
+          "name": "The Enigma Jewel // Locus of Enlightenment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2576,
+      "missing": [
+        "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "751-1741-2397",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "Two lands that can produce at least {1}{U}.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2350,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "3557-6924",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peter Parker's Camera",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Brago.\nYou control any number of nonland permanents that can tap to produce at least {2}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2322,
+      "missing": [
+        "Peter Parker's Camera"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "141-5144",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2077,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "751-3821-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2017,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "2493-4872-5144",
+      "cards": [
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Warp",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1958,
+      "missing": [
+        "Time Warp"
+      ]
+    },
+    {
+      "id": "3634-3821-5542",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1915,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "1987-2493-3542",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to seven lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1894,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "813-1987-3821",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scholar of the Ages",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1834,
+      "missing": [
+        "Scholar of the Ages"
+      ]
+    },
+    {
+      "id": "141-3603",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Cloudshift.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1797,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "1309-1987-3821",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Salvager of Secrets",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1784,
+      "missing": [
+        "Salvager of Secrets"
+      ]
+    },
+    {
+      "id": "2493-4872-6122",
+      "cards": [
+        {
+          "name": "Dour Port-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Time Warp",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "{1}{U} available plus enough mana to cast Time Warp and Archaeomancer each turn.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1734,
+      "missing": [
+        "Time Warp"
+      ]
+    },
+    {
+      "id": "1668-4067",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Loran of the Third Path",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite card draw for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1734,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "1170-1414-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1725,
+      "missing": [
+        "Lotus Petal"
+      ]
+    },
+    {
+      "id": "2334-2493-4872",
+      "cards": [
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Warp",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1700,
+      "missing": [
+        "Time Warp"
+      ]
+    },
+    {
+      "id": "1090-4344-5144",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1699,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "751-1741-6751",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1665,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "1090-3603-4344",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Cloudshift",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1603,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "2493-3557-4872",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Warp",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Brago does not have summoning sickness.\nBrago can not be blocked.",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1592,
+      "missing": [
+        "Time Warp"
+      ]
+    },
+    {
+      "id": "1170-3634-4966",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chrome Mox",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1538,
+      "missing": [
+        "Chrome Mox"
+      ]
+    },
+    {
+      "id": "4131-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1528,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "141-1567",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Momentary Blink",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Momentary Blink.",
+      "mana": "{3}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1461,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "205-2334",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1442,
+      "missing": [
+        "Azor, the Lawbringer"
+      ]
+    },
+    {
+      "id": "1987-2493-3120",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mindsplice Apparatus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Mindsplice Apparatus has at least two oil counters on it.\nYou control a permanent that enters the battlefield untapped and can tap to produce at least {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1436,
+      "missing": [
+        "Mindsplice Apparatus"
+      ]
+    },
+    {
+      "id": "1170-2566-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pact of Negation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1409,
+      "missing": [
+        "Pact of Negation"
+      ]
+    },
+    {
+      "id": "1770-3542",
+      "cards": [
+        {
+          "name": "Palinchron",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six mana-producing lands, two of which can produce at least {U}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1245,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "2493-2963-4872",
+      "cards": [
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Warp",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1165,
+      "missing": [
+        "Time Warp"
+      ]
+    },
+    {
+      "id": "2104-2493-6122",
+      "cards": [
+        {
+          "name": "Dour Port-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Manipulation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "{1}{U} available plus enough mana to cast Temporal Manipulation and Archaeomancer each turn.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1072,
+      "missing": [
+        "Temporal Manipulation"
+      ]
+    },
+    {
+      "id": "205-2963",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1004,
+      "missing": [
+        "Azor, the Lawbringer"
+      ]
+    },
+    {
+      "id": "2104-2493-5144",
+      "cards": [
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Temporal Manipulation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 943,
+      "missing": [
+        "Temporal Manipulation"
+      ]
+    },
+    {
+      "id": "1987-2493-2792",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Great Whale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to seven lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 883,
+      "missing": [
+        "Great Whale"
+      ]
+    },
+    {
+      "id": "2397-3821-4770",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 877,
+      "missing": [
+        "Whitemane Lion"
+      ]
+    },
+    {
+      "id": "1283-1987-2493",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chromatic Orrery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 842,
+      "missing": [
+        "Chromatic Orrery"
+      ]
+    },
+    {
+      "id": "1987-3094-4131",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lithoform Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 820,
+      "missing": [
+        "Lithoform Engine"
+      ]
+    },
+    {
+      "id": "2104-2334-2493",
+      "cards": [
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Manipulation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 788,
+      "missing": [
+        "Temporal Manipulation"
+      ]
+    },
+    {
+      "id": "2104-2493-3557",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Manipulation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Brago does not have summoning sickness.\nBrago can not be blocked.",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 752,
+      "missing": [
+        "Temporal Manipulation"
+      ]
+    },
+    {
+      "id": "2397-2908-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dream Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 737,
+      "missing": [
+        "Dream Stalker"
+      ]
+    },
+    {
+      "id": "3634-3821-5921",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Mirror Room // Fractured Realm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.\nYou have enough mana to pay for commander tax minus {1} if applicable.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 710,
+      "missing": [
+        "Mirror Room // Fractured Realm"
+      ]
+    },
+    {
+      "id": "1170-3634-4563",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everflowing Chalice",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 620,
+      "missing": [
+        "Everflowing Chalice"
+      ]
+    },
+    {
+      "id": "2104-2493-2963",
+      "cards": [
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Manipulation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 509,
+      "missing": [
+        "Temporal Manipulation"
+      ]
+    },
+    {
+      "id": "1090-1987-4344",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 489,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "751-1770-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {2}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 397,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "2103-2493-6122",
+      "cards": [
+        {
+          "name": "Dour Port-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Capture of Jingzhou",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "{1}{U} available plus enough mana to cast Capture of Jingzhou and Archaeomancer each turn.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 379,
+      "missing": [
+        "Capture of Jingzhou"
+      ]
+    },
+    {
+      "id": "2908-3821-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Dream Stalker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 376,
+      "missing": [
+        "Dream Stalker"
+      ]
+    },
+    {
+      "id": "1170-6513",
+      "cards": [
+        {
+          "name": "Chancellor of the Spires",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent has an instant or sorcery in their graveyard.\nYou have a noncreature spell in hand with the mana to cast it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 363,
+      "missing": [
+        "Chancellor of the Spires"
+      ]
+    },
+    {
+      "id": "2-3821-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ancestral Statue",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 360,
+      "missing": [
+        "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "1987-3227-3821",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scrivener",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 346,
+      "missing": [
+        "Scrivener"
+      ]
+    },
+    {
+      "id": "2103-2493-5144",
+      "cards": [
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Capture of Jingzhou",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 329,
+      "missing": [
+        "Capture of Jingzhou"
+      ]
+    },
+    {
+      "id": "1987-2493-7907",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glamdring, Foe-hammer // Gleam of Death",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact, creature or land that can enter and tap to produce at least {U}",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 302,
+      "missing": [
+        "Glamdring, Foe-hammer // Gleam of Death"
+      ]
+    },
+    {
+      "id": "3821-4770-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 298,
+      "missing": [
+        "Whitemane Lion"
+      ]
+    },
+    {
+      "id": "1770-3821-4770",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 290,
+      "missing": [
+        "Whitemane Lion"
+      ]
+    },
+    {
+      "id": "1987-2493-2510",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Semblance Anvil",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Any instant exiled by Semblance Anvil.You control an artifact or land that enters the battlefield untapped and can produce {U}.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 280,
+      "missing": [
+        "Semblance Anvil"
+      ]
+    },
+    {
+      "id": "2493-3557-4377",
+      "cards": [
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Brago does not have summoning sickness.\nBrago can not be blocked.",
+      "mana": "{4}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 275,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "2493-4377-6122",
+      "cards": [
+        {
+          "name": "Dour Port-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "{1}{U} available plus enough mana to cast Walk the Aeons and Archaeomancer each turn.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 269,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "2334-2493-4377",
+      "cards": [
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 266,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "2-2397-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ancestral Statue",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 263,
+      "missing": [
+        "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "1530-3175",
+      "cards": [
+        {
+          "name": "Second Chance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have 5 or less life.\nOpponents can not kill Sun Titan when you attack.\nSun Titan does not have summoning sickness.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 262,
+      "missing": [
+        "Second Chance"
+      ]
+    },
+    {
+      "id": "1987-2493-4668",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heliod, the Radiant Dawn // Heliod, the Warped Eclipse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact, creature or land that taps to produce at least {U} Opponents have drawn at least two cards this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 256,
+      "missing": [
+        "Heliod, the Radiant Dawn // Heliod, the Warped Eclipse"
+      ]
+    },
+    {
+      "id": "2493-4377-5144",
+      "cards": [
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 255,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "712-4131",
+      "cards": [
+        {
+          "name": "Wake Thrasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Wake Thrasher"
+      ]
+    },
+    {
+      "id": "2103-2334-2493",
+      "cards": [
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Capture of Jingzhou",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Capture of Jingzhou"
+      ]
+    },
+    {
+      "id": "364-1987-2493",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Arcane Melee",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact or land that enters the battlefield untapped and can produce {U}.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 241,
+      "missing": [
+        "Arcane Melee"
+      ]
+    },
+    {
+      "id": "2397-3821-4415",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stonecloaker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 223,
+      "missing": [
+        "Stonecloaker"
+      ]
+    },
+    {
+      "id": "751-1741-1770",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 220,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "1987-3821-6991",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Donnie & April, Adorkable Duo",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 214,
+      "missing": [
+        "Donnie & April, Adorkable Duo"
+      ]
+    },
+    {
+      "id": "2751-3737",
+      "cards": [
+        {
+          "name": "Strionic Resonator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sands of Time",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of permanents you control",
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Permanents you control can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 204,
+      "missing": [
+        "Sands of Time"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "2397-3821-4518",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kor Skyfisher",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 186,
+      "missing": [
+        "Kor Skyfisher"
+      ]
+    },
+    {
+      "id": "2103-2493-2963",
+      "cards": [
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Capture of Jingzhou",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 175,
+      "missing": [
+        "Capture of Jingzhou"
+      ]
+    },
+    {
+      "id": "957-2334-2493",
+      "cards": [
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Stretch",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U} every other turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 137,
+      "missing": [
+        "Time Stretch"
+      ]
+    },
+    {
+      "id": "1987-2493-6573",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Font of Magic",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact, creature or land that can enter and tap to produce at least {U} You've cast a commander from the command zone two or more times this game.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 121,
+      "missing": [
+        "Font of Magic"
+      ]
+    },
+    {
+      "id": "1770-1825-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Treachery",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 120,
+      "missing": [
+        "Treachery"
+      ]
+    },
+    {
+      "id": "2493-2963-4377",
+      "cards": [
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 114,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "957-2493-2963",
+      "cards": [
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Stretch",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U} every other turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 105,
+      "missing": [
+        "Time Stretch"
+      ]
+    },
+    {
+      "id": "1518-1987-2493",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Will Kenrith",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Will Kenrith has at least two loyalty counters.\nYou control an artifact and/or land that enters the battlefield untapped and can tap to produce at least {U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 94,
+      "missing": [
+        "Will Kenrith"
+      ]
+    },
+    {
+      "id": "1770-2908-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dream Stalker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 74,
+      "missing": [
+        "Dream Stalker"
+      ]
+    },
+    {
+      "id": "1770-3821-4415",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stonecloaker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 69,
+      "missing": [
+        "Stonecloaker"
+      ]
+    },
+    {
+      "id": "1350-2397-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Meticulous Excavation",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{W}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 67,
+      "missing": [
+        "Meticulous Excavation"
+      ]
+    },
+    {
+      "id": "2-1770-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ancestral Statue",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 58,
+      "missing": [
+        "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "1770-3821-4518",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kor Skyfisher",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57,
+      "missing": [
+        "Kor Skyfisher"
+      ]
+    },
+    {
+      "id": "3821-4518-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Kor Skyfisher",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 46,
+      "missing": [
+        "Kor Skyfisher"
+      ]
+    },
+    {
+      "id": "1170-3389-3821",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flickering Ward",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {W}{W}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 45,
+      "missing": [
+        "Flickering Ward"
+      ]
+    },
+    {
+      "id": "3821-6751-6844",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man 2099, Miguel O'Hara",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Spider-Man 2099, Miguel O'Hara"
+      ]
+    },
+    {
+      "id": "1170-2733-3821",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shimmering Wings",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 39,
+      "missing": [
+        "Shimmering Wings"
+      ]
+    },
+    {
+      "id": "3821-4415-6751",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Stonecloaker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
+      "mana": "{1} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 39,
+      "missing": [
+        "Stonecloaker"
+      ]
+    },
+    {
+      "id": "2397-3821-6844",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man 2099, Miguel O'Hara",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 33,
+      "missing": [
+        "Spider-Man 2099, Miguel O'Hara"
+      ]
+    },
+    {
+      "id": "1350-1770-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Meticulous Excavation",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{W}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29,
+      "missing": [
+        "Meticulous Excavation"
+      ]
+    },
+    {
+      "id": "2493-5733-6122",
+      "cards": [
+        {
+          "name": "Dour Port-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Notorious Throng",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Rogue that does not have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{8}{U}{U}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 27,
+      "missing": [
+        "Notorious Throng"
+      ]
+    },
+    {
+      "id": "1987-2468-2751-5034",
+      "cards": [
+        {
+          "name": "Panoptic Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Strionic Resonator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 26,
+      "missing": [
+        "Panoptic Mirror"
+      ]
+    },
+    {
+      "id": "1987-2427-2493",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Matrix",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact or land that enters the battlefield untapped and can produce {U}.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 18,
+      "missing": [
+        "Mana Matrix"
+      ]
+    },
+    {
+      "id": "1987-2493-3110",
+      "cards": [
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Council of the Absolute",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact, creature or land that can enter and tap to produce at least {U}",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Council of the Absolute"
+      ]
+    },
+    {
+      "id": "1770-3821-6844",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man 2099, Miguel O'Hara",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Spider-Man 2099, Miguel O'Hara"
+      ]
+    },
+    {
+      "id": "1170-3821-6062",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shackles",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{W}{W}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9,
+      "missing": [
+        "Shackles"
+      ]
+    },
+    {
+      "id": "1170-3821-6058",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Conviction",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {1}{W}{W}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9,
+      "missing": [
+        "Conviction"
+      ]
+    },
+    {
+      "id": "1987-2468-2751-4131",
+      "cards": [
+        {
+          "name": "Panoptic Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Strionic Resonator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghostly Flicker",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana permanents you control that enter the battlefield untapped can produce",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Panoptic Mirror"
+      ]
+    },
+    {
+      "id": "1170-3821-6057",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cage of Hands",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{W}{W}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3,
+      "missing": [
+        "Cage of Hands"
+      ]
+    },
+    {
+      "id": "1170-3821-6063",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscerid Armor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Viscerid Armor"
+      ]
+    },
+    {
+      "id": "1170-3821-6056",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Agoraphobia",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Agoraphobia"
+      ]
+    },
+    {
+      "id": "1170-3821-6061",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Field of Reality",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{U}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Field of Reality"
+      ]
+    },
+    {
+      "id": "1170-3821-6065",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skyblade's Boon",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{W}{W}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Skyblade's Boon"
+      ]
+    },
+    {
+      "id": "2493-3617-6122",
+      "cards": [
+        {
+          "name": "Dour Port-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Time Walk",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "{1}{U} available plus enough mana to cast Time Walk and Archaeomancer each turn.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Walk"
+      ]
+    },
+    {
+      "id": "1170-1482-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jeweled Lotus",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Jeweled Lotus"
+      ]
+    },
+    {
+      "id": "1170-1306-3634",
+      "cards": [
+        {
+          "name": "Venser, Shaper Savant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Mana Crypt"
+      ]
+    },
+    {
+      "id": "1170-1393-1482-5034",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Channeler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jeweled Lotus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Jeweled Lotus"
+      ]
+    },
+    {
+      "id": "1170-1306-1393-5034",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Channeler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Mana Crypt"
+      ]
+    },
+    {
+      "id": "2493-3617-5144",
+      "cards": [
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Walk",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}{U} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Walk"
+      ]
+    },
+    {
+      "id": "1170-3821-6060",
+      "cards": [
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Forced Worship",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can tap to produce at least {3}{W}{W}",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Forced Worship"
+      ]
+    },
+    {
+      "id": "2493-2963-3617",
+      "cards": [
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Walk",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{U} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Walk"
+      ]
+    },
+    {
+      "id": "2334-2493-3617",
+      "cards": [
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Time Walk",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{U} each turn",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Walk"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9670 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "teysa-orzhov-aristocrats",
+  "commanders": [
+    "Teysa Karlov"
+  ],
+  "request_sha256": "0a647b8eae5fce1444551223528622d9621c333223b9ead9e876acf17f6e73d6",
+  "identity": "WB",
+  "included": [
+    {
+      "id": "1580-2034-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 65685
+    },
+    {
+      "id": "1580-4050-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 42515
+    },
+    {
+      "id": "1580-4050-4314",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23752
+    },
+    {
+      "id": "1580-2292-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16844
+    },
+    {
+      "id": "1580-2292-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14802
+    },
+    {
+      "id": "1580-2438-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12282
+    },
+    {
+      "id": "1580-2438-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10237
+    },
+    {
+      "id": "1580-2921-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9133
+    },
+    {
+      "id": "1580-2393-4050",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8548
+    },
+    {
+      "id": "1580-2018-2292-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8506
+    },
+    {
+      "id": "1580-4050-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6842
+    },
+    {
+      "id": "1580-3967-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6650
+    },
+    {
+      "id": "1580-2018-2438-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6244
+    },
+    {
+      "id": "1580-3967-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6133
+    },
+    {
+      "id": "1580-2018-4050",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5948
+    },
+    {
+      "id": "1580-2018-2921-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5362
+    },
+    {
+      "id": "1580-2018-3967-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4316
+    },
+    {
+      "id": "1580-2921-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4282
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "2577-4050",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 78898,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "2034-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 40600,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "1580-2842-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38311,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "1385-1580-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 36984,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "2292-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 36881,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "2438-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 33325,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "2018-2034--73",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Creature with Persist or Undying"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 32224,
+      "missing": []
+    },
+    {
+      "id": "2018-2292--73",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Creature with Persist or Undying"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 27083,
+      "missing": []
+    },
+    {
+      "id": "1580-3025-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 26649,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "2842-4050-5544",
+      "cards": [
+        {
+          "name": "Forsaken Miner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21497,
+      "missing": [
+        "Forsaken Miner"
+      ]
+    },
+    {
+      "id": "2018-4050--73",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [
+        "Creature with Persist or Undying"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 18514,
+      "missing": []
+    },
+    {
+      "id": "2018-2438--73",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [
+        "Creature with Persist or Undying"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16978,
+      "missing": []
+    },
+    {
+      "id": "2018-2921--73",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [
+        "Creature with Persist or Undying"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 16269,
+      "missing": []
+    },
+    {
+      "id": "3240-4050-4314",
+      "cards": [
+        {
+          "name": "Nether Traitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12885,
+      "missing": [
+        "Nether Traitor"
+      ]
+    },
+    {
+      "id": "2018-3967--73",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Creature with Persist or Undying"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 11509,
+      "missing": []
+    },
+    {
+      "id": "1580-2292-4871-6663",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Masamune",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8888,
+      "missing": [
+        "The Masamune"
+      ]
+    },
+    {
+      "id": "1263-2034-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8437,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "483-1580-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cruel Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8398,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "2034-5003-6199",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7079,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "2577-3967-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6662,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "2842-6215",
+      "cards": [
+        {
+          "name": "Tombstone Stairwell",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6638,
+      "missing": [
+        "Tombstone Stairwell"
+      ]
+    },
+    {
+      "id": "2612-5035",
+      "cards": [
+        {
+          "name": "Mirkwood Bats",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Plague of Vermin",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Near-infinite creature tokens",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have the highest life total.",
+      "mana": "{6}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 6217,
+      "missing": [
+        "Plague of Vermin"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-6663",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Masamune",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6208,
+      "missing": [
+        "The Masamune"
+      ]
+    },
+    {
+      "id": "598-4050",
+      "cards": [
+        {
+          "name": "Liliana, Untouched by Death",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a nontoken Zombie or a nontoken creature with changeling with mana value one or less.\nLiliana has at least three loyalty counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5587,
+      "missing": [
+        "Liliana, Untouched by Death"
+      ]
+    },
+    {
+      "id": "1263-4050-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5531,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "1580-2292-4556-4871",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blight Mound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5082,
+      "missing": [
+        "Blight Mound"
+      ]
+    },
+    {
+      "id": "2393-3240-4050",
+      "cards": [
+        {
+          "name": "Nether Traitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4724,
+      "missing": [
+        "Nether Traitor"
+      ]
+    },
+    {
+      "id": "2034-2946-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4717,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-5075",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ogre Slumlord",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4559,
+      "missing": [
+        "Ogre Slumlord"
+      ]
+    },
+    {
+      "id": "1580-4050-4556",
+      "cards": [
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blight Mound",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4463,
+      "missing": [
+        "Blight Mound"
+      ]
+    },
+    {
+      "id": "2034-4871-6291",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stridehangar Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4319,
+      "missing": [
+        "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "997-1580-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4290,
+      "missing": [
+        "Woe Strider"
+      ]
+    },
+    {
+      "id": "997-1580-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4189,
+      "missing": [
+        "Woe Strider"
+      ]
+    },
+    {
+      "id": "3240-3967-4314-4871",
+      "cards": [
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nether Traitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4169,
+      "missing": [
+        "Nether Traitor"
+      ]
+    },
+    {
+      "id": "1580-4871-5111-6798",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Collar Zealot",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite surveil"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3695,
+      "missing": [
+        "Umbral Collar Zealot"
+      ]
+    },
+    {
+      "id": "1263-4050-4314",
+      "cards": [
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You attacked with a creature this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3625,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "628-2018-2034",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature that is not a Human and does not have flying.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3571,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "1580-4647-4871-6798",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Collar Zealot",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite surveil"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3375,
+      "missing": [
+        "Umbral Collar Zealot"
+      ]
+    },
+    {
+      "id": "1580-2438-4556-4871",
+      "cards": [
+        {
+          "name": "Blight Mound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3348,
+      "missing": [
+        "Blight Mound"
+      ]
+    },
+    {
+      "id": "628-2018-2292",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3144,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "2946-4050-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3014,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "1580-4647-4871-5256",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mill",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2968,
+      "missing": [
+        "Altar of Dementia"
+      ]
+    },
+    {
+      "id": "2018-2292-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature with base toughness 2 or greater that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2950,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "2018-2034-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature with base toughness 2 or greater that does not have flying.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2905,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "2034-4871-6115",
+      "cards": [
+        {
+          "name": "Ozox, the Clattering King",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2875,
+      "missing": [
+        "Ozox, the Clattering King"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-5075",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ogre Slumlord",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2844,
+      "missing": [
+        "Ogre Slumlord"
+      ]
+    },
+    {
+      "id": "628-2018-4050",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature that is not a Human and does not have flying.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2819,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-4976",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Open the Graves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2778,
+      "missing": [
+        "Open the Graves"
+      ]
+    },
+    {
+      "id": "1400-2292-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Darkest Hour",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2696,
+      "missing": [
+        "Darkest Hour"
+      ]
+    },
+    {
+      "id": "2577-2921-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2660,
+      "missing": [
+        "Gravecrawler"
+      ]
+    },
+    {
+      "id": "2034-2842-3054-4871",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2649,
+      "missing": [
+        "Oathsworn Vampire"
+      ]
+    },
+    {
+      "id": "3054-4050-4871",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have gained life this turn.\nYou have gained life this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2642,
+      "missing": [
+        "Oathsworn Vampire"
+      ]
+    },
+    {
+      "id": "2438-3490-4871",
+      "cards": [
+        {
+          "name": "Animation Module",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2526,
+      "missing": [
+        "Animation Module"
+      ]
+    },
+    {
+      "id": "2292-6199-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2472,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1580-1829-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vindictive Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2447,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "1580-4871-5111-5256",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mill",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2434,
+      "missing": [
+        "Altar of Dementia"
+      ]
+    },
+    {
+      "id": "1400-2034-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Darkest Hour",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2402,
+      "missing": [
+        "Darkest Hour"
+      ]
+    },
+    {
+      "id": "997-1580-2018-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2394,
+      "missing": [
+        "Woe Strider"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-6663",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Masamune",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2369,
+      "missing": [
+        "The Masamune"
+      ]
+    },
+    {
+      "id": "4050-4871-6291",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stridehangar Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2333,
+      "missing": [
+        "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "3240-4050-4619",
+      "cards": [
+        {
+          "name": "Nether Traitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2223,
+      "missing": [
+        "Nether Traitor"
+      ]
+    },
+    {
+      "id": "2034-4050-6115",
+      "cards": [
+        {
+          "name": "Ozox, the Clattering King",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2174,
+      "missing": [
+        "Ozox, the Clattering King"
+      ]
+    },
+    {
+      "id": "628-2018-2438",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2174,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "2292-4871-6291",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stridehangar Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2146,
+      "missing": [
+        "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "2034-6199-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2131,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1385-2034-3054-4871",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2117,
+      "missing": [
+        "Oathsworn Vampire"
+      ]
+    },
+    {
+      "id": "2018-2438-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature with base toughness 2 or greater that does not have flying.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2050,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1400-4050-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Darkest Hour",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2029,
+      "missing": [
+        "Darkest Hour"
+      ]
+    },
+    {
+      "id": "2018-4050-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature with base toughness 2 or greater that does not have flying.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2027,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1957-2842-4050--204",
+      "cards": [
+        {
+          "name": "Veinwitch Coven",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [
+        "One-drop creature with a second body"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2024,
+      "missing": [
+        "Veinwitch Coven"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-6112",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fumulus, the Infestation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2016,
+      "missing": [
+        "Fumulus, the Infestation"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-4976",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Open the Graves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1976,
+      "missing": [
+        "Open the Graves"
+      ]
+    },
+    {
+      "id": "1580-2267-4050",
+      "cards": [
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tormod, the Desecrator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1956,
+      "missing": [
+        "Tormod, the Desecrator"
+      ]
+    },
+    {
+      "id": "1580-2018-4871-6798",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Collar Zealot",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite surveil"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1946,
+      "missing": [
+        "Umbral Collar Zealot"
+      ]
+    },
+    {
+      "id": "2018-2034-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional nontoken creature that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1913,
+      "missing": [
+        "Solemnity"
+      ]
+    },
+    {
+      "id": "4050-4871-6115",
+      "cards": [
+        {
+          "name": "Ozox, the Clattering King",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1909,
+      "missing": [
+        "Ozox, the Clattering King"
+      ]
+    },
+    {
+      "id": "1580-3967-4556-4871",
+      "cards": [
+        {
+          "name": "Blight Mound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1899,
+      "missing": [
+        "Blight Mound"
+      ]
+    },
+    {
+      "id": "2018-2921-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature with base toughness 2 or greater that does not have flying.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1849,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "2034-2876-5003",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1819,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "2438-6199-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1794,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-5075",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ogre Slumlord",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1786,
+      "missing": [
+        "Ogre Slumlord"
+      ]
+    },
+    {
+      "id": "394-1580-4050",
+      "cards": [
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Desecrated Tomb",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1756,
+      "missing": [
+        "Desecrated Tomb"
+      ]
+    },
+    {
+      "id": "1580-2018-4871-5256",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mill",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1741,
+      "missing": [
+        "Altar of Dementia"
+      ]
+    },
+    {
+      "id": "1263-2393-4050",
+      "cards": [
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You attacked with a creature this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1734,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "3054-4050-4314",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have gained life this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1731,
+      "missing": [
+        "Oathsworn Vampire"
+      ]
+    },
+    {
+      "id": "628-2018-2921",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature that is not a Human and does not have flying.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1725,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "1400-2438-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Darkest Hour",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1709,
+      "missing": [
+        "Darkest Hour"
+      ]
+    },
+    {
+      "id": "2034-2738-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1644,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2018-2292-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional nontoken creature that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1602,
+      "missing": [
+        "Solemnity"
+      ]
+    },
+    {
+      "id": "4050-6199-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1546,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "678-2034",
+      "cards": [
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken creature that can be cast using {C}{C}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1513,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "2018-4050-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional nontoken creature that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1512,
+      "missing": [
+        "Solemnity"
+      ]
+    },
+    {
+      "id": "2921-6199-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1507,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1385-1957-4050--204",
+      "cards": [
+        {
+          "name": "Veinwitch Coven",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [
+        "One-drop creature with a second body"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1435,
+      "missing": [
+        "Veinwitch Coven"
+      ]
+    },
+    {
+      "id": "2302-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Painter's Servant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least three additional creatures.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1422,
+      "missing": [
+        "Painter's Servant"
+      ]
+    },
+    {
+      "id": "598-2438-4871",
+      "cards": [
+        {
+          "name": "Liliana, Untouched by Death",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Liliana has at least three loyalty counters.",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1370,
+      "missing": [
+        "Liliana, Untouched by Death"
+      ]
+    },
+    {
+      "id": "2034-2143",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1304,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "2034-2876-3490",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Animation Module",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one other creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1242,
+      "missing": [
+        "Animation Module"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-6026",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Field of Souls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1232,
+      "missing": [
+        "Field of Souls"
+      ]
+    },
+    {
+      "id": "1400-2921-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Darkest Hour",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1195,
+      "missing": [
+        "Darkest Hour"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-4976",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Open the Graves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1189,
+      "missing": [
+        "Open the Graves"
+      ]
+    },
+    {
+      "id": "2034-4871-6116",
+      "cards": [
+        {
+          "name": "Haunt of the Dead Marshes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a legendary creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1157,
+      "missing": [
+        "Haunt of the Dead Marshes"
+      ]
+    },
+    {
+      "id": "2018-2438-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional nontoken creature that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1142,
+      "missing": [
+        "Solemnity"
+      ]
+    },
+    {
+      "id": "628-2018-3967",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature that is not a Human and does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1138,
+      "missing": [
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-6112",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fumulus, the Infestation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1095,
+      "missing": [
+        "Fumulus, the Infestation"
+      ]
+    },
+    {
+      "id": "1580-4050-5631",
+      "cards": [
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skeleton Crew",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1094,
+      "missing": [
+        "Skeleton Crew"
+      ]
+    },
+    {
+      "id": "2876-4050-5003",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Nim Deathmantle attached to Elenda.\nElenda has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1086,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-5542",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1082,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "2738-4050-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1057,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2034-4733-5038",
+      "cards": [
+        {
+          "name": "Overseer of the Damned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dictate of Erebos",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1021,
+      "missing": [
+        "Overseer of the Damned"
+      ]
+    },
+    {
+      "id": "678-4050",
+      "cards": [
+        {
+          "name": "Enduring Renewal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a nontoken creature that can be cast using one colored mana.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1014,
+      "missing": [
+        "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "4050-4314-6115",
+      "cards": [
+        {
+          "name": "Ozox, the Clattering King",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 984,
+      "missing": [
+        "Ozox, the Clattering King"
+      ]
+    },
+    {
+      "id": "2018-3967-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another nontoken creature with base toughness 2 or greater that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 940,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "1580-2034-3537",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bog Initiate",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 930,
+      "missing": [
+        "Bog Initiate"
+      ]
+    },
+    {
+      "id": "2034-3996-4050",
+      "cards": [
+        {
+          "name": "Twilight Drover",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "Twilight Drover has at least one +1/+1 counter on it.",
+      "mana": "{2}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 911,
+      "missing": [
+        "Twilight Drover"
+      ]
+    },
+    {
+      "id": "1957-3025-4050--204",
+      "cards": [
+        {
+          "name": "Veinwitch Coven",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [
+        "One-drop creature with a second body"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 877,
+      "missing": [
+        "Veinwitch Coven"
+      ]
+    },
+    {
+      "id": "413-1580-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 866,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-6026",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Field of Souls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 861,
+      "missing": [
+        "Field of Souls"
+      ]
+    },
+    {
+      "id": "2438-4871-6291",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stridehangar Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 831,
+      "missing": [
+        "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "2034-4871-6564",
+      "cards": [
+        {
+          "name": "Hildibrand Manderville // Gentleman's Rise",
+          "zones": [
+            "H",
+            "C",
+            "E"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W} plus commander tax if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 825,
+      "missing": [
+        "Hildibrand Manderville // Gentleman's Rise"
+      ]
+    },
+    {
+      "id": "2292-2738-4314-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 807,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2018-2921-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional nontoken creature that does not have flying.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 803,
+      "missing": [
+        "Solemnity"
+      ]
+    },
+    {
+      "id": "1580-2034-2530-2842",
+      "cards": [
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 798,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "1385-1580-2034-2530",
+      "cards": [
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 794,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "1580-2530-2842-4050",
+      "cards": [
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 794,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-6026",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Field of Souls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 773,
+      "missing": [
+        "Field of Souls"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-5542",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 767,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-6026",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Field of Souls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 760,
+      "missing": [
+        "Field of Souls"
+      ]
+    },
+    {
+      "id": "1385-1580-2530-4050",
+      "cards": [
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent loses the game",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 749,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "2921-3490-4871",
+      "cards": [
+        {
+          "name": "Animation Module",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 733,
+      "missing": [
+        "Animation Module"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-4976",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Open the Graves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 732,
+      "missing": [
+        "Open the Graves"
+      ]
+    },
+    {
+      "id": "2738-4050-4314",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 681,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "4050-4733-5038",
+      "cards": [
+        {
+          "name": "Overseer of the Damned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dictate of Erebos",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 680,
+      "missing": [
+        "Overseer of the Damned"
+      ]
+    },
+    {
+      "id": "2034-3764-4871",
+      "cards": [
+        {
+          "name": "Summoning Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 664,
+      "missing": [
+        "Summoning Station"
+      ]
+    },
+    {
+      "id": "1263-2018-2292-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 655,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "631-2034-4871-5010",
+      "cards": [
+        {
+          "name": "Golgari Thug",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Haruspex",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 646,
+      "missing": [
+        "Golgari Thug"
+      ]
+    },
+    {
+      "id": "1400-3967-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Darkest Hour",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 599,
+      "missing": [
+        "Darkest Hour"
+      ]
+    },
+    {
+      "id": "2438-2738-4314-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 598,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "483-1957-4050--204",
+      "cards": [
+        {
+          "name": "Veinwitch Coven",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cruel Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [
+        "One-drop creature with a second body"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 592,
+      "missing": [
+        "Veinwitch Coven"
+      ]
+    },
+    {
+      "id": "1263-4050-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 591,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "3967-6199-6972",
+      "cards": [
+        {
+          "name": "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marionette Apprentice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 578,
+      "missing": [
+        "Eirdu, Carrier of Dawn // Isilu, Carrier of Twilight"
+      ]
+    },
+    {
+      "id": "2292-4733-5038",
+      "cards": [
+        {
+          "name": "Overseer of the Damned",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dictate of Erebos",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 568,
+      "missing": [
+        "Overseer of the Damned"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-6255",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zahur, Glory's Past",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have max speed.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 563,
+      "missing": [
+        "Zahur, Glory's Past"
+      ]
+    },
+    {
+      "id": "2034-3959-5003",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doomed Traveler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 557,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-5334",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Roaming Throne",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 540,
+      "missing": [
+        "Roaming Throne"
+      ]
+    },
+    {
+      "id": "1580-2921-4556-4871",
+      "cards": [
+        {
+          "name": "Blight Mound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 523,
+      "missing": [
+        "Blight Mound"
+      ]
+    },
+    {
+      "id": "1263-2018-2438-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 488,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-5075",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ogre Slumlord",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 482,
+      "missing": [
+        "Ogre Slumlord"
+      ]
+    },
+    {
+      "id": "2393-3054-4050",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have gained life this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 477,
+      "missing": [
+        "Oathsworn Vampire"
+      ]
+    },
+    {
+      "id": "4050-4871-6429",
+      "cards": [
+        {
+          "name": "Razorlash Transmogrant",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent controls four or more nonbasic lands.",
+      "mana": "{B}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 477,
+      "missing": [
+        "Razorlash Transmogrant"
+      ]
+    },
+    {
+      "id": "2393-4050-6115",
+      "cards": [
+        {
+          "name": "Ozox, the Clattering King",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 473,
+      "missing": [
+        "Ozox, the Clattering King"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-5542",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 471,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "1263-2018-4050",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 468,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "2034-2599-5003",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ministrant of Obligation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 465,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-6112",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fumulus, the Infestation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 463,
+      "missing": [
+        "Fumulus, the Infestation"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-6663",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Masamune",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 433,
+      "missing": [
+        "The Masamune"
+      ]
+    },
+    {
+      "id": "2034-4351-5003",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hallowed Spiritkeeper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There is at least one creature card in your graveyard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 430,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "2292-2393-2738-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 417,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2292-3764-4871",
+      "cards": [
+        {
+          "name": "Summoning Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 415,
+      "missing": [
+        "Summoning Station"
+      ]
+    },
+    {
+      "id": "1263-2018-2921-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 412,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-6255",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zahur, Glory's Past",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have max speed.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 410,
+      "missing": [
+        "Zahur, Glory's Past"
+      ]
+    },
+    {
+      "id": "413-1580-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 392,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "2143-4871",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 391,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "2921-4871-6291",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stridehangar Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 388,
+      "missing": [
+        "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "1429-2018-2921",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lesser Masticore",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 379,
+      "missing": [
+        "Lesser Masticore"
+      ]
+    },
+    {
+      "id": "3764-4050-4871",
+      "cards": [
+        {
+          "name": "Summoning Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 366,
+      "missing": [
+        "Summoning Station"
+      ]
+    },
+    {
+      "id": "2393-2738-4050",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "413-1580-2018-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 361,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "2018-3967-4053",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Solemnity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional nontoken creature that does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 336,
+      "missing": [
+        "Solemnity"
+      ]
+    },
+    {
+      "id": "237-2034-5003",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Orzhov Enforcer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 333,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "308-1580-4050",
+      "cards": [
+        {
+          "name": "Embalmer's Tools",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 333,
+      "missing": [
+        "Embalmer's Tools"
+      ]
+    },
+    {
+      "id": "3967-4871-6291",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stridehangar Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 332,
+      "missing": [
+        "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "2018-2292-2946-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 325,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-6255",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zahur, Glory's Past",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have max speed.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 324,
+      "missing": [
+        "Zahur, Glory's Past"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-5334",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Roaming Throne",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 319,
+      "missing": [
+        "Roaming Throne"
+      ]
+    },
+    {
+      "id": "1263-2018-3967-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have attacked this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 310,
+      "missing": [
+        "Bloodsoaked Champion"
+      ]
+    },
+    {
+      "id": "2946-4050-4619",
+      "cards": [
+        {
+          "name": "Teysa, Orzhov Scion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 306,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-5542",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delney, Streetwise Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 302,
+      "missing": [
+        "Delney, Streetwise Lookout"
+      ]
+    },
+    {
+      "id": "2393-2438-2738-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 301,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "1580-2034-2948",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Initiates of the Ebon Hand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 288,
+      "missing": [
+        "Initiates of the Ebon Hand"
+      ]
+    },
+    {
+      "id": "1580-2292-4871-7316",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rat King, Pale Piper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 278,
+      "missing": [
+        "Rat King, Pale Piper"
+      ]
+    },
+    {
+      "id": "2438-3764-4871",
+      "cards": [
+        {
+          "name": "Summoning Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 254,
+      "missing": [
+        "Summoning Station"
+      ]
+    },
+    {
+      "id": "2034-4640",
+      "cards": [
+        {
+          "name": "Oathkeeper, Takeno's Daisho",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You conrtol a nontoken Samurai and/or a nontoken creature with changeling.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 251,
+      "missing": [
+        "Oathkeeper, Takeno's Daisho"
+      ]
+    },
+    {
+      "id": "1940-2034-4871-5010",
+      "cards": [
+        {
+          "name": "Golgari Thug",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Liliana, Dreadhorde General",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 245,
+      "missing": [
+        "Golgari Thug"
+      ]
+    },
+    {
+      "id": "2018-2946-4050",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 245,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "4050-4351-5003",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hallowed Spiritkeeper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least four creature cards in your graveyard.",
+      "mana": "{3}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 244,
+      "missing": [
+        "Nim Deathmantle"
+      ]
+    },
+    {
+      "id": "2018-2438-2946-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 240,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "2738-3967-4314-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 218,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2018-2921-2946-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 215,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-6255",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zahur, Glory's Past",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have max speed.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 195,
+      "missing": [
+        "Zahur, Glory's Past"
+      ]
+    },
+    {
+      "id": "1580-2511-4647-4871",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodflow Connoisseur",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 192,
+      "missing": [
+        "Bloodflow Connoisseur"
+      ]
+    },
+    {
+      "id": "1580-2511-4871-5111",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodflow Connoisseur",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 191,
+      "missing": [
+        "Bloodflow Connoisseur"
+      ]
+    },
+    {
+      "id": "1829-1957-4050--204",
+      "cards": [
+        {
+          "name": "Veinwitch Coven",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vindictive Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite damage"
+      ],
+      "requires": [
+        "One-drop creature with a second body"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 185,
+      "missing": [
+        "Veinwitch Coven"
+      ]
+    },
+    {
+      "id": "1580-4050-6277",
+      "cards": [
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "On Wings of Gold",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 184,
+      "missing": [
+        "On Wings of Gold"
+      ]
+    },
+    {
+      "id": "1283-1580-2034",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chromatic Orrery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 182,
+      "missing": [
+        "Chromatic Orrery"
+      ]
+    },
+    {
+      "id": "1374-2876-4050",
+      "cards": [
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haakon, Stromgald Scourge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Elenda has a power of three or greater.",
+      "mana": "{2}{W/B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 179,
+      "missing": [
+        "Haakon, Stromgald Scourge"
+      ]
+    },
+    {
+      "id": "1580-2034-3263",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 173,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "1580-2438-4871-7316",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rat King, Pale Piper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 162,
+      "missing": [
+        "Rat King, Pale Piper"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-5334",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Roaming Throne",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 155,
+      "missing": [
+        "Roaming Throne"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-5334",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Roaming Throne",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 150,
+      "missing": [
+        "Roaming Throne"
+      ]
+    },
+    {
+      "id": "2393-2738-3967-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 133,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "483-1580-2034-2530",
+      "cards": [
+        {
+          "name": "Cruel Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 132,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "483-1580-2530-4050",
+      "cards": [
+        {
+          "name": "Cruel Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 127,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "2018-2946-3967-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cult Conscript",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "A non-Skeleton creature has died under your control this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 126,
+      "missing": [
+        "Cult Conscript"
+      ]
+    },
+    {
+      "id": "2018-2111-2921",
+      "cards": [
+        {
+          "name": "Wingrattle Scarecrow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You do not control a blue creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 110,
+      "missing": [
+        "Wingrattle Scarecrow"
+      ]
+    },
+    {
+      "id": "1580-4871-5111-6797",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phantom Train",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 103,
+      "missing": [
+        "Phantom Train"
+      ]
+    },
+    {
+      "id": "1580-4647-4871-5686",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shilgengar, Sire of Famine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 95,
+      "missing": [
+        "Shilgengar, Sire of Famine"
+      ]
+    },
+    {
+      "id": "2018-2034-6288",
+      "cards": [
+        {
+          "name": "Infernal Vessel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 92,
+      "missing": [
+        "Infernal Vessel"
+      ]
+    },
+    {
+      "id": "1417-1580-2292-4871",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bridge from Below",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Bridge from Below"
+      ]
+    },
+    {
+      "id": "2018-2921-6288",
+      "cards": [
+        {
+          "name": "Infernal Vessel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Infernal Vessel"
+      ]
+    },
+    {
+      "id": "2018-2292-6288",
+      "cards": [
+        {
+          "name": "Infernal Vessel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Infernal Vessel"
+      ]
+    },
+    {
+      "id": "1580-2018-2511-4871",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodflow Connoisseur",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Bloodflow Connoisseur"
+      ]
+    },
+    {
+      "id": "2738-2921-4314-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 81,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "1940-2034-2124",
+      "cards": [
+        {
+          "name": "Chivalric Alliance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Liliana, Dreadhorde General",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one card in hand.",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 80,
+      "missing": [
+        "Chivalric Alliance"
+      ]
+    },
+    {
+      "id": "1580-4647-4871-6797",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phantom Train",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 72,
+      "missing": [
+        "Phantom Train"
+      ]
+    },
+    {
+      "id": "443-1580-2292-4871",
+      "cards": [
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Magus of the Bridge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 65,
+      "missing": [
+        "Magus of the Bridge"
+      ]
+    },
+    {
+      "id": "1580-3967-4871-7316",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rat King, Pale Piper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 63,
+      "missing": [
+        "Rat King, Pale Piper"
+      ]
+    },
+    {
+      "id": "2018-2438-6288",
+      "cards": [
+        {
+          "name": "Infernal Vessel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 61,
+      "missing": [
+        "Infernal Vessel"
+      ]
+    },
+    {
+      "id": "1580-2018-4871-5686",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shilgengar, Sire of Famine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 61,
+      "missing": [
+        "Shilgengar, Sire of Famine"
+      ]
+    },
+    {
+      "id": "3764-3967-4871",
+      "cards": [
+        {
+          "name": "Summoning Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Summoning Station"
+      ]
+    },
+    {
+      "id": "1417-1580-2438-4871",
+      "cards": [
+        {
+          "name": "Bridge from Below",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 59,
+      "missing": [
+        "Bridge from Below"
+      ]
+    },
+    {
+      "id": "2018-2034-3216",
+      "cards": [
+        {
+          "name": "Suncleanser",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Suncleanser does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 58,
+      "missing": [
+        "Suncleanser"
+      ]
+    },
+    {
+      "id": "2018-4050-6288",
+      "cards": [
+        {
+          "name": "Infernal Vessel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 54,
+      "missing": [
+        "Infernal Vessel"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-6112",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fumulus, the Infestation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 47,
+      "missing": [
+        "Fumulus, the Infestation"
+      ]
+    },
+    {
+      "id": "2018-3967-6288",
+      "cards": [
+        {
+          "name": "Infernal Vessel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 44,
+      "missing": [
+        "Infernal Vessel"
+      ]
+    },
+    {
+      "id": "443-1580-2438-4871",
+      "cards": [
+        {
+          "name": "Magus of the Bridge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 41,
+      "missing": [
+        "Magus of the Bridge"
+      ]
+    },
+    {
+      "id": "1580-4871-5111-5686",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shilgengar, Sire of Famine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Shilgengar, Sire of Famine"
+      ]
+    },
+    {
+      "id": "2393-2738-2921-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sifter of Skulls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2018-2292-3216",
+      "cards": [
+        {
+          "name": "Suncleanser",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Suncleanser does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 34,
+      "missing": [
+        "Suncleanser"
+      ]
+    },
+    {
+      "id": "4647-4871-6074",
+      "cards": [
+        {
+          "name": "Teysa Karlov",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nim Devourer",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 34,
+      "missing": [
+        "Nim Devourer"
+      ]
+    },
+    {
+      "id": "1580-2018-4871-6797",
+      "cards": [
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phantom Train",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 33,
+      "missing": [
+        "Phantom Train"
+      ]
+    },
+    {
+      "id": "4871-5111-6074",
+      "cards": [
+        {
+          "name": "Drivnod, Carnage Dominus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nim Devourer",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29,
+      "missing": [
+        "Nim Devourer"
+      ]
+    },
+    {
+      "id": "2018-3216-4050",
+      "cards": [
+        {
+          "name": "Suncleanser",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Suncleanser does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 27,
+      "missing": [
+        "Suncleanser"
+      ]
+    },
+    {
+      "id": "2921-3764-4871",
+      "cards": [
+        {
+          "name": "Summoning Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23,
+      "missing": [
+        "Summoning Station"
+      ]
+    },
+    {
+      "id": "2018-2438-3216",
+      "cards": [
+        {
+          "name": "Suncleanser",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "Suncleanser does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "Suncleanser"
+      ]
+    },
+    {
+      "id": "2034-2876-4790",
+      "cards": [
+        {
+          "name": "Dino DNA",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "Dino DNA"
+      ]
+    },
+    {
+      "id": "1580-2921-4871-7316",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rat King, Pale Piper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "Rat King, Pale Piper"
+      ]
+    },
+    {
+      "id": "443-1580-3967-4871",
+      "cards": [
+        {
+          "name": "Magus of the Bridge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Magus of the Bridge"
+      ]
+    },
+    {
+      "id": "2018-2921-3216",
+      "cards": [
+        {
+          "name": "Suncleanser",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "Suncleanser does not have flying.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Suncleanser"
+      ]
+    },
+    {
+      "id": "2876-4050-4790",
+      "cards": [
+        {
+          "name": "Dino DNA",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elenda, the Dusk Rose",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on a creature token"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Dino DNA"
+      ]
+    },
+    {
+      "id": "1236-2018-2921",
+      "cards": [
+        {
+          "name": "Rattleblaze Scarecrow",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control a black creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Rattleblaze Scarecrow"
+      ]
+    },
+    {
+      "id": "1417-1580-3967-4871",
+      "cards": [
+        {
+          "name": "Bridge from Below",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Bridge from Below"
+      ]
+    },
+    {
+      "id": "2018-3216-3967",
+      "cards": [
+        {
+          "name": "Suncleanser",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Luminous Broodmoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Suncleanser does not have flying.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10,
+      "missing": [
+        "Suncleanser"
+      ]
+    },
+    {
+      "id": "443-1580-2921-4871",
+      "cards": [
+        {
+          "name": "Magus of the Bridge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7,
+      "missing": [
+        "Magus of the Bridge"
+      ]
+    },
+    {
+      "id": "744-1940-2034",
+      "cards": [
+        {
+          "name": "Pegasus Refuge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Liliana, Dreadhorde General",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one card in hand.",
+      "mana": "{2}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Pegasus Refuge"
+      ]
+    },
+    {
+      "id": "1417-1580-2921-4871",
+      "cards": [
+        {
+          "name": "Bridge from Below",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Bartolomé del Presidio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2,
+      "missing": [
+        "Bridge from Below"
+      ]
+    }
+  ]
+}

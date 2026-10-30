@@ -1,0 +1,5429 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "krenko-mono-red-goblins",
+  "commanders": [
+    "Krenko, Mob Boss"
+  ],
+  "request_sha256": "4d3fa703c35cb0ba2ea3d07a67e7b8c893df4088bc7242afee819911e42d3807",
+  "identity": "R",
+  "included": [
+    {
+      "id": "38-659-1288",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Warchief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 35938
+    },
+    {
+      "id": "38-659-3954",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Chieftain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 31882
+    },
+    {
+      "id": "618-2240-2943",
+      "cards": [
+        {
+          "name": "Conspicuous Snoop",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "L"
+          ]
+        },
+        {
+          "name": "Goblin Recruiter",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Conspicuous Snoop does not have summoning sickness.",
+      "mana": "{1}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 20973
+    },
+    {
+      "id": "38-659-6410",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17541
+    },
+    {
+      "id": "38-659-5295",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13941
+    },
+    {
+      "id": "38-659-2178",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite damage",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 13583
+    },
+    {
+      "id": "659-2178-5147",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12669
+    },
+    {
+      "id": "38-659-2645",
+      "cards": [
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko does not have summoning sickness. You control at least X Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12522
+    },
+    {
+      "id": "659-2178-2813",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Trashmaster",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9937
+    },
+    {
+      "id": "38-659-2816",
+      "cards": [
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce",
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Krenko.\nKrenko does not have summoning sickness. You control at least three Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9266
+    },
+    {
+      "id": "618-2178-5147",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control at least one nonlegendary creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9216
+    },
+    {
+      "id": "38-618-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9088
+    },
+    {
+      "id": "38-659-969",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fervor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8935
+    },
+    {
+      "id": "38-2440-2967",
+      "cards": [
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7767
+    },
+    {
+      "id": "659-2034-2178",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6818
+    },
+    {
+      "id": "2645-6410",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite red mana",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Howlsquad Heavy does not have summoning sickness. You have max speed. You control at least five Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6692
+    },
+    {
+      "id": "659-2034-2645",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness. You control at least two Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6347
+    },
+    {
+      "id": "618-2034-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control at least one nonlegendary creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5881
+    },
+    {
+      "id": "618-1228-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nGoblin Sharpshooter does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5483
+    },
+    {
+      "id": "659-2034-2816",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness.\nUmbral Mantle attached to Krenko. You control at least two Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5256
+    },
+    {
+      "id": "2816-6410",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Howlsquad Heavy. You have max speed. You control at least three Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4771
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "2484-4083",
+      "cards": [
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Repercussion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 39801,
+      "missing": [
+        "Repercussion"
+      ]
+    },
+    {
+      "id": "1878-3368",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Exile your library with the ability to play the exiled cards until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has six or more cards in their hand.",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 38295,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "618-1537",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zealous Conscripts",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 28018,
+      "missing": [
+        "Zealous Conscripts"
+      ]
+    },
+    {
+      "id": "1775-2484",
+      "cards": [
+        {
+          "name": "Toralf, God of Fury // Toralf's Hammer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 22348,
+      "missing": [
+        "Toralf, God of Fury // Toralf's Hammer"
+      ]
+    },
+    {
+      "id": "2552-3263",
+      "cards": [
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vandalblast",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 22036,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "618-2105",
+      "cards": [
+        {
+          "name": "Combat Celebrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 18918,
+      "missing": [
+        "Combat Celebrant"
+      ]
+    },
+    {
+      "id": "1228-3500",
+      "cards": [
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basilisk Collar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Basilisk Collar attached to Goblin Sharpshooter.\nGoblin Sharpshooter does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 16119,
+      "missing": [
+        "Basilisk Collar"
+      ]
+    },
+    {
+      "id": "618-1692",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Host",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Host attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15668,
+      "missing": [
+        "Helm of the Host"
+      ]
+    },
+    {
+      "id": "1823-2484",
+      "cards": [
+        {
+          "name": "Fall of Cair Andros",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature with toughness less than 13.",
+      "mana": "{7}{R} (at most)",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 14316,
+      "missing": [
+        "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "578-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metalworker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Metalworker does not have summoning sickness. You have at least three artifact cards in hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11796,
+      "missing": [
+        "Metalworker"
+      ]
+    },
+    {
+      "id": "38-659-1879",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rising of the Day",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10321,
+      "missing": [
+        "Rising of the Day"
+      ]
+    },
+    {
+      "id": "282-618",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delina, Wild Mage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Delina does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9753,
+      "missing": [
+        "Delina, Wild Mage"
+      ]
+    },
+    {
+      "id": "38-659-1849",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mass Hysteria",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7296,
+      "missing": [
+        "Mass Hysteria"
+      ]
+    },
+    {
+      "id": "659-1288-4050",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Warchief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite commander casts",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6260,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "38-659-3750",
+      "cards": [
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko does not have summoning sickness. You control at least five Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6019,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "659-3954-4050",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Chieftain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite commander casts",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5896,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "618-2534",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Coercive Recruiter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5852,
+      "missing": [
+        "Coercive Recruiter"
+      ]
+    },
+    {
+      "id": "618-1548",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Port Razer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite damage",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent is unable to block Port Razer.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5648,
+      "missing": [
+        "Port Razer"
+      ]
+    },
+    {
+      "id": "618-6188",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fear of Missing Out",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite creature tokens with haste",
+        "Near-infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "There are four or more card types among cards in your graveyard.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5276,
+      "missing": [
+        "Fear of Missing Out"
+      ]
+    },
+    {
+      "id": "132-2645-5034",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5118,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "2484-7502",
+      "cards": [
+        {
+          "name": "Expedited Inheritance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasphemous Act",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each player may exile a portion of their library with the ability to play the exiled cards until the end of their next turn"
+      ],
+      "requires": [],
+      "prerequisites": "There's a creature on the battlefield.",
+      "mana": "{7}{R} at most",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5103,
+      "missing": [
+        "Expedited Inheritance"
+      ]
+    },
+    {
+      "id": "1228-3523",
+      "cards": [
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gorgon's Head",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Gorgon's Head attached to Goblin Sharpshooter.\nGoblin Sharpshooter does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5078,
+      "missing": [
+        "Gorgon's Head"
+      ]
+    },
+    {
+      "id": "659-2178-4050",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5028,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "38-659-6633",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Fire Crystal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4881,
+      "missing": [
+        "The Fire Crystal"
+      ]
+    },
+    {
+      "id": "38-659-5200",
+      "cards": [
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of the Paruns attached to Krenko.\nKrenko does not have summoning sickness. You control at least three Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4719,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "38-618-3580",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Crafter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4675,
+      "missing": [
+        "Lightning Crafter"
+      ]
+    },
+    {
+      "id": "1476-3259",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Legion Warboss",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4653,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "618-2178-4050",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control at least one nonlegendary creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4388,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "659-2645-4050",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness. You control at least four Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4385,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "3368-4739",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Battle Hymn",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control six or more creatures.",
+      "mana": "{5}{R}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4337,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "2178-4096",
+      "cards": [
+        {
+          "name": "Goblin Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Goblin Welder.\nGoblin Welder does not have summoning sickness.\nYou control at least one nontoken artifact creature.\nYou have at least one artifact creature in your graveyard.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4318,
+      "missing": [
+        "Goblin Welder"
+      ]
+    },
+    {
+      "id": "38-659-1115",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hammer of Purphoros",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4201,
+      "missing": [
+        "Hammer of Purphoros"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "659-2816-4050",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness.\nUmbral Mantle attached to Krenko. You control at least three Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3839,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "618-3580-5147",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Crafter",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3794,
+      "missing": [
+        "Lightning Crafter"
+      ]
+    },
+    {
+      "id": "3750-6410",
+      "cards": [
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have max speed.\nYou control five or more Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3789,
+      "missing": [
+        "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "659-4050-6410",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3574,
+      "missing": [
+        "Phyrexian Altar"
+      ]
+    },
+    {
+      "id": "618-3259",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Breath of Fury attached to another creature you control that can attack this turn.\nYou control at least one nonlegendary creature.\nAn opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3196,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "38-659-4068",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Anger",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Mountain.\nYou control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3077,
+      "missing": [
+        "Anger"
+      ]
+    },
+    {
+      "id": "618-1053-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Torch Courier",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2677,
+      "missing": [
+        "Torch Courier"
+      ]
+    },
+    {
+      "id": "1228-4227",
+      "cards": [
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gorgon Flail",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Gorgon Flail attached to Goblin Sharpshooter.\nGoblin Sharpshooter does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2368,
+      "missing": [
+        "Gorgon Flail"
+      ]
+    },
+    {
+      "id": "5200-6410",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Howlsquad Heavy does not have summoning sickness.\nSword of the Paruns attached to Howlsquad Heavy. You have max speed. You control at least four Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2040,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "618-821-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mogg Fanatic",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2037,
+      "missing": [
+        "Mogg Fanatic"
+      ]
+    },
+    {
+      "id": "618-2034-3580",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Crafter",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1965,
+      "missing": [
+        "Lightning Crafter"
+      ]
+    },
+    {
+      "id": "659-2034-5200",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness. Sword of Paruns attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1872,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "1228-5136",
+      "cards": [
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Quietus Spike",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Quietus Spike attached to Goblin Sharpshooter.\nGoblin Sharpshooter does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1839,
+      "missing": [
+        "Quietus Spike"
+      ]
+    },
+    {
+      "id": "618-4846",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Worldgorger Dragon",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}{R}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1812,
+      "missing": [
+        "Worldgorger Dragon"
+      ]
+    },
+    {
+      "id": "1228-4702",
+      "cards": [
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Splinter Twin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Splinter Twin attached to Goblin Sharpshooter.\nGoblin Sharpshooter does not have summoning sickness.\nYou have a way to cause a non-Goblin Sharpshooter creature to die (for an additional result).",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1538,
+      "missing": [
+        "Splinter Twin"
+      ]
+    },
+    {
+      "id": "38-659-4885",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tuktuk Rubblefort",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1532,
+      "missing": [
+        "Tuktuk Rubblefort"
+      ]
+    },
+    {
+      "id": "618-2440-3337",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1477,
+      "missing": [
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
+      ]
+    },
+    {
+      "id": "578-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metalworker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Metalworker. Metalworker does not have summoning sickness. You have at least two artifact cards in hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1475,
+      "missing": [
+        "Metalworker"
+      ]
+    },
+    {
+      "id": "2178-4702",
+      "cards": [
+        {
+          "name": "Splinter Twin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff and Splinter Twin attached to the same legendary creature that does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1437,
+      "missing": [
+        "Splinter Twin"
+      ]
+    },
+    {
+      "id": "2034-2143",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1304,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "659-2440-5200",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Sword of the Paruns attached to Krenko.\nYou control at least one additional Goblin.\nKrenko does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1234,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "3298-3368",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Brightstone Ritual",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six Goblins.",
+      "mana": "{4}{R}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1223,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "2034-2178-3337",
+      "cards": [
+        {
+          "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Reflection of Kiki-Jiki does not have summoning sickness.\nThornbite Staff attached to Reflection of Kiki-Jiki.\nYou control another nonlegendary creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1111,
+      "missing": [
+        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
+      ]
+    },
+    {
+      "id": "659-1288-5231",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Warchief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1107,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "618-4367",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akki Battle Squad",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite creature tokens with haste",
+        "Infinite untap of modified creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Kiki-Jiki is modified.\nYou control another modified creature that can attack this turn, and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1036,
+      "missing": [
+        "Akki Battle Squad"
+      ]
+    },
+    {
+      "id": "38-659-4412",
+      "cards": [
+        {
+          "name": "Hellraiser Goblin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 990,
+      "missing": [
+        "Hellraiser Goblin"
+      ]
+    },
+    {
+      "id": "4702-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Splinter Twin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Marvin does not have summoning sickness.\nSplinter Twin attached to a creature you control not named Marvin, Murderous Mimic.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 923,
+      "missing": [
+        "Splinter Twin"
+      ]
+    },
+    {
+      "id": "618-2178-5256",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mill",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control at least one nonlegendary creature with power 1 or greater.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 913,
+      "missing": [
+        "Altar of Dementia"
+      ]
+    },
+    {
+      "id": "659-3954-5231",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Chieftain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 877,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "659-2178-5256",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite mill",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 790,
+      "missing": [
+        "Altar of Dementia"
+      ]
+    },
+    {
+      "id": "618-1110-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nOptionally, you have a way to kill a creature, or you have a creature card in hand with the mana to cast it that has base power equal to or greater than half its toughness, rounded up.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 762,
+      "missing": [
+        "Terror of the Peaks"
+      ]
+    },
+    {
+      "id": "618-2178-2773",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Warstorm Surge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control a nonlegendary creature whose base power is equal to or greater than its toughness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 750,
+      "missing": [
+        "Warstorm Surge"
+      ]
+    },
+    {
+      "id": "2645-4747",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Alena, Kessig Trapper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Alena does not have summoning sickness.\nA creature with power five or greater has entered the battlefield this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 714,
+      "missing": [
+        "Alena, Kessig Trapper"
+      ]
+    },
+    {
+      "id": "291-2440",
+      "cards": [
+        {
+          "name": "Myr Matrix",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four Myrs.",
+      "mana": "{5}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 707,
+      "missing": [
+        "Myr Matrix"
+      ]
+    },
+    {
+      "id": "38-647-659",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urabrask the Hidden",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 695,
+      "missing": [
+        "Urabrask the Hidden"
+      ]
+    },
+    {
+      "id": "659-2645-5231",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite red mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness. You control at least four Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 633,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "38-1967-2440",
+      "cards": [
+        {
+          "name": "Ardoz, Cobbler of War",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four Goblins.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 632,
+      "missing": [
+        "Ardoz, Cobbler of War"
+      ]
+    },
+    {
+      "id": "1288-3259-6096",
+      "cards": [
+        {
+          "name": "General Kreat, the Boltbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Warchief",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite combat damage",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Goblin.\nAn opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 620,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "38-2316-2440",
+      "cards": [
+        {
+          "name": "Goblin Warrens",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least two Goblins.",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 597,
+      "missing": [
+        "Goblin Warrens"
+      ]
+    },
+    {
+      "id": "659-2178-5231",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 595,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "2178-4100",
+      "cards": [
+        {
+          "name": "Endbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Endbringer.\nEndbringer does not have summoning sickness.\nYou have a way to give Endbringer deathtouch.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 580,
+      "missing": [
+        "Endbringer"
+      ]
+    },
+    {
+      "id": "3259-3954-6096",
+      "cards": [
+        {
+          "name": "General Kreat, the Boltbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Chieftain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite combat damage",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Goblin.\nAn opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 580,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "659-2816-5231",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite red mana",
+        "Infinite mana creatures you control can produce",
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "Krenko, Mob Boss does not have summoning sickness.\nUmbral Mantle attached to Krenko. You control at least three Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 574,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "2816-4747",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Alena, Kessig Trapper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Alena. Alena does not have summoning sickness. You had a creature with power 3 or greater enter the battlefield this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 502,
+      "missing": [
+        "Alena, Kessig Trapper"
+      ]
+    },
+    {
+      "id": "413-618-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control at least one nonlegendary creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 466,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "659-5231-6410",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 443,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "618-2178-5231",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 423,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "411-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grinning Ignus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 417,
+      "missing": [
+        "Grinning Ignus"
+      ]
+    },
+    {
+      "id": "618-1228-4613",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Agatha's Soul Cauldron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Sharpshooter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Goblin Sharpshooter has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 405,
+      "missing": [
+        "Agatha's Soul Cauldron"
+      ]
+    },
+    {
+      "id": "38-659-3499",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Akroma's Memorial",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 369,
+      "missing": [
+        "Akroma's Memorial"
+      ]
+    },
+    {
+      "id": "2816-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 365,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "618-4394",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Everquill Phoenix",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 321,
+      "missing": [
+        "Everquill Phoenix"
+      ]
+    },
+    {
+      "id": "413-659-2178",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Krenko.\nKrenko does not have summoning sickness.\nYou control at least one additional Goblin.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 299,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "38-659-3480",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Purphoros, Bronze-Blooded",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 294,
+      "missing": [
+        "Purphoros, Bronze-Blooded"
+      ]
+    },
+    {
+      "id": "5147-5191",
+      "cards": [
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Raptor Hatchling",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYou have a way to give Raptor Hatchling indestructible.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 268,
+      "missing": [
+        "Raptor Hatchling"
+      ]
+    },
+    {
+      "id": "2034-2178-5698",
+      "cards": [
+        {
+          "name": "Ulamog's Dreadsire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Ulamog's Dreadsire.\nUlamog's Dreadsire does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 264,
+      "missing": [
+        "Ulamog's Dreadsire"
+      ]
+    },
+    {
+      "id": "2034-4640",
+      "cards": [
+        {
+          "name": "Oathkeeper, Takeno's Daisho",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You conrtol a nontoken Samurai and/or a nontoken creature with changeling.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 251,
+      "missing": [
+        "Oathkeeper, Takeno's Daisho"
+      ]
+    },
+    {
+      "id": "618-2514",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudpiercer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 244,
+      "missing": [
+        "Cloudpiercer"
+      ]
+    },
+    {
+      "id": "618-5062",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Porcuparrot",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 230,
+      "missing": [
+        "Porcuparrot"
+      ]
+    },
+    {
+      "id": "2440-4790",
+      "cards": [
+        {
+          "name": "Dino DNA",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite copies of cards exiled with Dino DNA",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one creature card exiled with Dino DNA.\nYou control at least five Dinosaurs.",
+      "mana": "{6}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 226,
+      "missing": [
+        "Dino DNA"
+      ]
+    },
+    {
+      "id": "38-659-7175",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lavaleaper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 191,
+      "missing": [
+        "Lavaleaper"
+      ]
+    },
+    {
+      "id": "618-2178-5296",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Workhorse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 186,
+      "missing": [
+        "Workhorse"
+      ]
+    },
+    {
+      "id": "969-3259-6096",
+      "cards": [
+        {
+          "name": "Breath of Fury",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fervor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "General Kreat, the Boltbringer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce",
+        "Infinite combat damage",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 185,
+      "missing": [
+        "Breath of Fury"
+      ]
+    },
+    {
+      "id": "2143-2440",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 131,
+      "missing": [
+        "Spawnsire of Ulamog"
+      ]
+    },
+    {
+      "id": "2440-2797",
+      "cards": [
+        {
+          "name": "Retrofitter Foundry",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2} plus up to {10} additional depending on the number of Servos you control",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 126,
+      "missing": [
+        "Retrofitter Foundry"
+      ]
+    },
+    {
+      "id": "38-659-6791",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tannuk, Steadfast Second",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 126,
+      "missing": [
+        "Tannuk, Steadfast Second"
+      ]
+    },
+    {
+      "id": "618-2178-5697",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mogg Mob",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 121,
+      "missing": [
+        "Mogg Mob"
+      ]
+    },
+    {
+      "id": "38-659-7060",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smellerbee, Rebel Fighter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 120,
+      "missing": [
+        "Smellerbee, Rebel Fighter"
+      ]
+    },
+    {
+      "id": "2440-2967-4613",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Agatha's Soul Cauldron",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite damage",
+        "Infinite creature tokens",
+        "Infinite colored mana that can only be spent to activate abilities of creatures"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 110,
+      "missing": [
+        "Agatha's Soul Cauldron"
+      ]
+    },
+    {
+      "id": "2178-5147-5698",
+      "cards": [
+        {
+          "name": "Ulamog's Dreadsire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Ulamog's Dreadsire.\nUlamog's Dreadsire does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 103,
+      "missing": [
+        "Ulamog's Dreadsire"
+      ]
+    },
+    {
+      "id": "618-2062-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marauding Raptor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control a nonlegendary creature whose base toughness is 2 or less.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 101,
+      "missing": [
+        "Marauding Raptor"
+      ]
+    },
+    {
+      "id": "618-2178-3385",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aether Flash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control a nonlegendary creature whose base toughness is 2 or less.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 99,
+      "missing": [
+        "Aether Flash"
+      ]
+    },
+    {
+      "id": "618-2846",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dominating Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four Vampires.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 85,
+      "missing": [
+        "Dominating Vampire"
+      ]
+    },
+    {
+      "id": "618-2178-2584",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pandemonium",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nYou control a nonlegendary creature whose base power is equal to or greater than its toughness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 85,
+      "missing": [
+        "Pandemonium"
+      ]
+    },
+    {
+      "id": "38-659-7296",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gimli's Reckless Might",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 83,
+      "missing": [
+        "Gimli's Reckless Might"
+      ]
+    },
+    {
+      "id": "1183-2440",
+      "cards": [
+        {
+          "name": "Pentavus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Pentavus has at least 4 counters.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 68,
+      "missing": [
+        "Pentavus"
+      ]
+    },
+    {
+      "id": "38-659-6968",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kratos, God of War",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens with haste",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57,
+      "missing": [
+        "Kratos, God of War"
+      ]
+    },
+    {
+      "id": "2-2440",
+      "cards": [
+        {
+          "name": "Ancestral Statue",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three Golems.",
+      "mana": "{4}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "262-2178-5147",
+      "cards": [
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elemental Mastery",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Elemental Mastery and Thornbite Staff attached to the same creature with power 1 or greater that does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Elemental Mastery"
+      ]
+    },
+    {
+      "id": "1283-2440-2967",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chromatic Orrery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 56,
+      "missing": [
+        "Chromatic Orrery"
+      ]
+    },
+    {
+      "id": "2440-2967-3263",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 55,
+      "missing": [
+        "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "262-2034-2178",
+      "cards": [
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elemental Mastery",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Elemental Mastery and Thornbite Staff attached to the same creature with power 1 or greater that does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 53,
+      "missing": [
+        "Elemental Mastery"
+      ]
+    },
+    {
+      "id": "2440-2703-5295",
+      "cards": [
+        {
+          "name": "Myr Propagator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Elixir",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 52,
+      "missing": [
+        "Myr Propagator"
+      ]
+    },
+    {
+      "id": "82-618-3057",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthirster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sting, the Glinting Dagger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Sting attached to Kiki-Jiki.\nAn opponent cannot block creatures you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 45,
+      "missing": [
+        "Bloodthirster"
+      ]
+    },
+    {
+      "id": "2440-8167",
+      "cards": [
+        {
+          "name": "Kiora of Fire and Ashes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control seven or more Dragons.",
+      "mana": "{8}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Kiora of Fire and Ashes"
+      ]
+    },
+    {
+      "id": "618-2178-5019",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tar Pitcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 38,
+      "missing": [
+        "Tar Pitcher"
+      ]
+    },
+    {
+      "id": "618-2178-2448",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Firestarter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.\nIt is your precombat main phase.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 37,
+      "missing": [
+        "Goblin Firestarter"
+      ]
+    },
+    {
+      "id": "2440-7282",
+      "cards": [
+        {
+          "name": "Chrome Dome",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite copies of artifacts you control with haste",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "You control another nonlegendary artifact creature.",
+      "mana": "{10} at most",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "Chrome Dome"
+      ]
+    },
+    {
+      "id": "38-659-7297",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Barbarian Class",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 35,
+      "missing": [
+        "Barbarian Class"
+      ]
+    },
+    {
+      "id": "2440-6873",
+      "cards": [
+        {
+          "name": "Fire Nation Archers",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite damage",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 32,
+      "missing": [
+        "Fire Nation Archers"
+      ]
+    },
+    {
+      "id": "38-659-7103",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Mauler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite creature tokens",
+        "Infinite commander casts"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Lightning Mauler"
+      ]
+    },
+    {
+      "id": "152-2440",
+      "cards": [
+        {
+          "name": "Cogwork Assembler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite copies of artifacts you control",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Twenty-one generic mana available.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Cogwork Assembler"
+      ]
+    },
+    {
+      "id": "38-659-4460",
+      "cards": [
+        {
+          "name": "Krenko, Mob Boss",
+          "zones": [
+            "B"
+          ],
+          "commander": true
+        },
+        {
+          "name": "Skirk Prospector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cyclops of Eternal Fury",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite commander casts",
+        "Infinite creature tokens with haste",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a number of Goblins that is equal to or greater than six plus Krenko's commander tax.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27,
+      "missing": [
+        "Cyclops of Eternal Fury"
+      ]
+    },
+    {
+      "id": "2440-2967-4055",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Energy Refractor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "Energy Refractor"
+      ]
+    },
+    {
+      "id": "1247-5963-6410",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Marvin, Murderous Mimic does not have summoning sickness. You have max speed. You control at least two Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "2440-2967-5115",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gemstone Array",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16,
+      "missing": [
+        "Gemstone Array"
+      ]
+    },
+    {
+      "id": "618-2122-2178",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mindless Automaton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9,
+      "missing": [
+        "Mindless Automaton"
+      ]
+    },
+    {
+      "id": "1812-2440-2967",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prismite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9,
+      "missing": [
+        "Prismite"
+      ]
+    },
+    {
+      "id": "969-2440-2703",
+      "cards": [
+        {
+          "name": "Myr Propagator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fervor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4} at most",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8,
+      "missing": [
+        "Myr Propagator"
+      ]
+    },
+    {
+      "id": "618-2816-4813",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Famished Foragers",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste",
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has lost life this turn.\nUmbral Mantle attached to Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7,
+      "missing": [
+        "Famished Foragers"
+      ]
+    },
+    {
+      "id": "2440-2967-4720",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stonework Packbeast",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Stonework Packbeast"
+      ]
+    },
+    {
+      "id": "913-2440-2967",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Signpost Scarecrow",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Signpost Scarecrow"
+      ]
+    },
+    {
+      "id": "4038-5963-6410",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Farmstead Gleaner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You have max speed. You control at least two Goblins.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Farmstead Gleaner"
+      ]
+    },
+    {
+      "id": "2440-2967-4758",
+      "cards": [
+        {
+          "name": "Pashalik Mons",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crossroads Candleguide",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Goblin.",
+      "mana": "{3}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Crossroads Candleguide"
+      ]
+    },
+    {
+      "id": "618-914-2645",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite copies of most creatures you control with haste",
+        "Infinite creature tokens with haste",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Opponents control at least five artifacts and/or enchantments.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Dockside Extortionist"
+      ]
+    },
+    {
+      "id": "618-914-2816",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dockside Extortionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite creature tokens with haste",
+        "Infinitely large creature until end of turn",
+        "Infinite Treasure tokens",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Kiki-Jiki.\nYour opponents control at least four artifacts and/or enchantments.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Dockside Extortionist"
+      ]
+    }
+  ]
+}

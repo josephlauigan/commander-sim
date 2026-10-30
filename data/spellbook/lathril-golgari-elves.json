@@ -1,0 +1,509 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "lathril-golgari-elves",
+  "commanders": [
+    "Lathril, Blade of the Elves"
+  ],
+  "request_sha256": "f841d6605111fbe853ca68e3eb6a4c4a84671806fd32788e3e02106f608366de",
+  "identity": "BG",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1376-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Priest of Titania does not have summoning sickness. There are at least five Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37567,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "2645-3151",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Elvish Archdruid does not have summoning sickness. You control at least five Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 34068,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "2436-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marwyn, the Nurturer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Marwyn does not have summoning sickness, and has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 32730,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "1376-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Priest of Titania. Priest of Titania does not have summoning sickness. There are at least three Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 22390,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "1084-7151",
+      "cards": [
+        {
+          "name": "High Perfect Morcant",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Flourishing Defenses",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens",
+        "Near-infinite proliferate"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent controls a creature.",
+      "mana": "{2}{B}{G} plus commander tax if applicable",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 20589,
+      "missing": [
+        "Flourishing Defenses"
+      ]
+    },
+    {
+      "id": "2816-3151",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Elvish Archdruid. Elvish Archdruid does not have summoning sickness. You control at least three Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19489,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "2436-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marwyn, the Nurturer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Marwyn. Marwyn does not have summoning sickness.",
+      "mana": "{2} at most",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19303,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "1902-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wirewood Channeler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Wirewood Channeler does not have summoning sickness. There are at least five Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15091,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "1902-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wirewood Channeler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Wirewood Channeler. Wirewood Channeler does not have summoning sickness. There are at least three Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9184,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "305-2816",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Tribe",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Llanowar Tribe. Llanowar Tribe does not have summoning sickness.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 6511,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "1376-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Priest of Titania does not have summoning sickness. There are at least four Elves on the battlefield.\nSword of the Paruns attached to Priest of Titania",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5496,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "3151-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Elvish Archdruid does not have summoning sickness. You control at least four Elves.\nSword of the Paruns attached to Elvish Archdruid",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5107,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "2436-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marwyn, the Nurturer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Marwyn does not have summoning sickness, and has power 4 or greater.\nSword of the Paruns attached to Marwyn",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4675,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1902-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wirewood Channeler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Wirewood Channeler does not have summoning sickness. There are at least four Elves on the battlefield.\nSword of the Paruns attached to Wirewood Channeler.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2865,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "6215-6216",
+      "cards": [
+        {
+          "name": "Tombstone Stairwell",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Poison-Tip Archer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 486,
+      "missing": [
+        "Tombstone Stairwell"
+      ]
+    }
+  ]
+}

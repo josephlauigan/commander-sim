@@ -1,0 +1,1042 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "kefka",
+  "commanders": [
+    "Kefka, Court Mage // Kefka, Ruler of Ruin"
+  ],
+  "request_sha256": "44408552ae3e8c81f6c82b6acef250707f8399d4c7e8675ea5ac7a25bb5f38d9",
+  "identity": "UBR",
+  "included": [
+    {
+      "id": "1368-1414-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H",
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in your graveyard, plus an additional four cards if Brain Freeze is in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 118447
+    },
+    {
+      "id": "2384-6574",
+      "cards": [
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Psychosis Crawler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 14936
+    },
+    {
+      "id": "4971-6574",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4346
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1368-3518-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in hand and/or graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 96133,
+      "missing": [
+        "Lion's Eye Diamond"
+      ]
+    },
+    {
+      "id": "1368-1878-2706",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six additional cards in your graveyard, plus an additional six cards between your hand and/or graveyard.\nAn opponent has at least six cards in hand.",
+      "mana": "{2}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 90700,
+      "missing": [
+        "Wheel of Fortune"
+      ]
+    },
+    {
+      "id": "1368-3698--44",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinding Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mana among colors of legendary creatures and planeswalkers you control"
+      ],
+      "requires": [
+        "Artifact Castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 41064,
+      "missing": [
+        "Grinding Station"
+      ]
+    },
+    {
+      "id": "1878-3368",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Exile your library with the ability to play the exiled cards until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has six or more cards in their hand.",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 38295,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "1561-2384",
+      "cards": [
+        {
+          "name": "Psychosis Crawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 31281,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "1089-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Curiosity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Curiosity attached to Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 26476,
+      "missing": [
+        "Curiosity"
+      ]
+    },
+    {
+      "id": "1432-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ioreth of the Healing House",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of legendary creatures you control",
+        "Infinite mana legendary creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "There is at least one other legendary creature on the battlefield.\nMarvin and Ioreth do not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 24766,
+      "missing": [
+        "Ioreth of the Healing House"
+      ]
+    },
+    {
+      "id": "4971-6092",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Visionary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23220,
+      "missing": [
+        "Niv-Mizzet, Visionary"
+      ]
+    },
+    {
+      "id": "2396-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ophidian Eye",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Ophidian Eye attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13726,
+      "missing": [
+        "Ophidian Eye"
+      ]
+    },
+    {
+      "id": "406-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tandem Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Tandem Lookout is paired with Niv-Mizzet.\nNiv-Mizzet does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11930,
+      "missing": [
+        "Tandem Lookout"
+      ]
+    },
+    {
+      "id": "2353-6574",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11246,
+      "missing": [
+        "Niv-Mizzet, Parun"
+      ]
+    },
+    {
+      "id": "953-2384",
+      "cards": [
+        {
+          "name": "Enter the Infinite",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Psychosis Crawler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 9560,
+      "missing": [
+        "Enter the Infinite"
+      ]
+    },
+    {
+      "id": "6428-6574",
+      "cards": [
+        {
+          "name": "Magmakin Artillerist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite rummaging"
+      ],
+      "requires": [],
+      "prerequisites": "You have a number of cards in your hand that is greater than your maximum hand size.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6446,
+      "missing": [
+        "Magmakin Artillerist"
+      ]
+    },
+    {
+      "id": "4869-6574",
+      "cards": [
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glint-Horn Buccaneer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite rummaging"
+      ],
+      "requires": [],
+      "prerequisites": "You have a number of cards in your hand that is greater than your maximum hand size.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5981,
+      "missing": [
+        "Glint-Horn Buccaneer"
+      ]
+    },
+    {
+      "id": "693-1368",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Path of the Pyromancer",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5542,
+      "missing": [
+        "Path of the Pyromancer"
+      ]
+    },
+    {
+      "id": "700-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Body of Knowledge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5197,
+      "missing": [
+        "Body of Knowledge"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3918,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2271,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "602-6574",
+      "cards": [
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Feast of Sanity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers",
+        "Infinite rummaging"
+      ],
+      "requires": [],
+      "prerequisites": "You have a number of cards in your hand that is greater than your maximum hand size.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1657,
+      "missing": [
+        "Feast of Sanity"
+      ]
+    },
+    {
+      "id": "5796-6574",
+      "cards": [
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Starving Revenant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card. There are eight or more permanent cards in your graveyard.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1137,
+      "missing": [
+        "Starving Revenant"
+      ]
+    },
+    {
+      "id": "4702-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Splinter Twin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Marvin does not have summoning sickness.\nSplinter Twin attached to a creature you control not named Marvin, Murderous Mimic.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 923,
+      "missing": [
+        "Splinter Twin"
+      ]
+    },
+    {
+      "id": "384-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Helm of the Ghastlord",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Helm of the Ghastlord attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 520,
+      "missing": [
+        "Helm of the Ghastlord"
+      ]
+    },
+    {
+      "id": "4067-4971",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 445,
+      "missing": [
+        "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "411-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grinning Ignus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 417,
+      "missing": [
+        "Grinning Ignus"
+      ]
+    },
+    {
+      "id": "1368-1414-3075-4856",
+      "cards": [
+        {
+          "name": "Mizzix of the Izmagnus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one experience counter.\nYou have a storm count of at least one.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 413,
+      "missing": [
+        "Mizzix of the Izmagnus"
+      ]
+    },
+    {
+      "id": "2178-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Niv-Mizzet.\nNiv-Mizzet does not have summoning sickness. You have a way to give Niv-Mizzet deathtouch.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 232,
+      "missing": [
+        "Thornbite Staff"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 202,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "1366-1368-1414",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Glimpse the Unthinkable",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three additional cards in your graveyard.",
+      "mana": "{U/B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 93,
+      "missing": [
+        "Glimpse the Unthinkable"
+      ]
+    },
+    {
+      "id": "6574-7863--165",
+      "cards": [
+        {
+          "name": "Human Torch, Johnny Storm",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G",
+            "L"
+          ]
+        },
+        {
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [
+        "Hero Creature"
+      ],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Human Torch, Johnny Storm"
+      ]
+    },
+    {
+      "id": "1368-4808-4856",
+      "cards": [
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Black Lotus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You've cast a spell this turn.\nYou have three or more other cards in your graveyard.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Black Lotus"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2817 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "tatyova-simic-landfall",
+  "commanders": [
+    "Tatyova, Benthic Druid"
+  ],
+  "request_sha256": "59f84c249675aec9a34dc1001f1c198ed5299aca71a486b3a7801837c27be25a",
+  "identity": "GU",
+  "included": [
+    {
+      "id": "224-1671-3177",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12169
+    },
+    {
+      "id": "224-433-1671",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8161
+    },
+    {
+      "id": "224-872-1671",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4950
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "3946-4011-4426",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Azusa, Lost but Seeking",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23523,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "3946-4426-5155",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exploration",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 20811,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "1479-1671-2907",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20448,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "1479-1671-3875",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19421,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "3946-4426-4572",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dryad of the Ilysian Grove",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 18137,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "3946-4426-5449",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oracle of Mul Daya",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17480,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "1479-1671-4488",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Rampaging Baloths",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15864,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "864-5352",
+      "cards": [
+        {
+          "name": "Doppelgang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Eternal Witness",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of all permanents",
+        "Infinite creature tokens",
+        "Infinite mana permanents you control can produce",
+        "Infinite casts of instants and sorceries in your hand and graveyard"
+      ],
+      "requires": [],
+      "prerequisites": "There are four permanents on the battlefield that can collectively tap to produce at least {2}{G}{U}.",
+      "mana": "{15}{G}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12619,
+      "missing": [
+        "Doppelgang"
+      ]
+    },
+    {
+      "id": "3510-3703",
+      "cards": [
+        {
+          "name": "Sporemound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Life and Limb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "A Forest card in hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9509,
+      "missing": [
+        "Life and Limb"
+      ]
+    },
+    {
+      "id": "1479-1671-4677",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Zendikar's Roil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6694,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "224-1257-1671",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Walking Atlas",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5101,
+      "missing": [
+        "Walking Atlas"
+      ]
+    },
+    {
+      "id": "224-3177-4300",
+      "cards": [
+        {
+          "name": "Meloku the Clouded Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4819,
+      "missing": [
+        "Meloku the Clouded Mirror"
+      ]
+    },
+    {
+      "id": "224-1671-2248",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Skyshroud Ranger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4743,
+      "missing": [
+        "Skyshroud Ranger"
+      ]
+    },
+    {
+      "id": "1637-3946-4426",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aesi, Tyrant of Gyre Strait",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4585,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "880-2907-3470",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4426,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "880-2907-3875",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4224,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "4011-4377-4426",
+      "cards": [
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Azusa, Lost but Seeking",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three Islands between your hand, battlefield, and graveyard.",
+      "mana": "{4}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4182,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "880-3875-4488",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rampaging Baloths",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3358,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "224-1362-3177",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oboro, Palace in the Clouds",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3351,
+      "missing": [
+        "Oboro, Palace in the Clouds"
+      ]
+    },
+    {
+      "id": "880-3470-4488",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rampaging Baloths",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3314,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "4011-4377-4482",
+      "cards": [
+        {
+          "name": "Walk the Aeons",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Azusa, Lost but Seeking",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ancient Greenwarden",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three Islands between your hand, battlefield, and graveyard.",
+      "mana": "{4}{U}{U} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 3202,
+      "missing": [
+        "Walk the Aeons"
+      ]
+    },
+    {
+      "id": "224-765-3177",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Guildless Commons",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3190,
+      "missing": [
+        "Guildless Commons"
+      ]
+    },
+    {
+      "id": "3946-4426-5448",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ramunap Excavator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Druid Class",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3172,
+      "missing": [
+        "Glacial Chasm"
+      ]
+    },
+    {
+      "id": "224-1671-6628",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "PuPu UFO",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3085,
+      "missing": [
+        "PuPu UFO"
+      ]
+    },
+    {
+      "id": "224-433-4300",
+      "cards": [
+        {
+          "name": "Meloku the Clouded Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2924,
+      "missing": [
+        "Meloku the Clouded Mirror"
+      ]
+    },
+    {
+      "id": "224-3177-4270",
+      "cards": [
+        {
+          "name": "Trade Routes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a land that enters the battlefield untapped and can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2689,
+      "missing": [
+        "Trade Routes"
+      ]
+    },
+    {
+      "id": "224-433-765",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Guildless Commons",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2240,
+      "missing": [
+        "Guildless Commons"
+      ]
+    },
+    {
+      "id": "774-1671-3470",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2070,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "880-3470-4677",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zendikar's Roil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2053,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "880-3875-4677",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zendikar's Roil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2031,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "224-1671-1772-3875",
+      "cards": [
+        {
+          "name": "Zimone, Quandrix Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1898,
+      "missing": [
+        "Zimone, Quandrix Prodigy"
+      ]
+    },
+    {
+      "id": "224-1671-1993",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Budoka Gardener // Dokai, Weaver of Life",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control fewer than nine lands.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1875,
+      "missing": [
+        "Budoka Gardener // Dokai, Weaver of Life"
+      ]
+    },
+    {
+      "id": "224-2841-3177",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghost Town",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana during each opponent's turn"
+      ],
+      "requires": [],
+      "prerequisites": "It is not your turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1870,
+      "missing": [
+        "Ghost Town"
+      ]
+    },
+    {
+      "id": "224-872-4300",
+      "cards": [
+        {
+          "name": "Meloku the Clouded Mirror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1862,
+      "missing": [
+        "Meloku the Clouded Mirror"
+      ]
+    },
+    {
+      "id": "224-1525-1644-3177",
+      "cards": [
+        {
+          "name": "Tatyova, Benthic Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1675,
+      "missing": [
+        "Abundance"
+      ]
+    },
+    {
+      "id": "224-765-872",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Guildless Commons",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1612,
+      "missing": [
+        "Guildless Commons"
+      ]
+    },
+    {
+      "id": "224-1671-1772-3470",
+      "cards": [
+        {
+          "name": "Zimone, Quandrix Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1568,
+      "missing": [
+        "Zimone, Quandrix Prodigy"
+      ]
+    },
+    {
+      "id": "224-433-4270",
+      "cards": [
+        {
+          "name": "Trade Routes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a land that enters the battlefield untapped and can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1515,
+      "missing": [
+        "Trade Routes"
+      ]
+    },
+    {
+      "id": "224-3177-5621",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arid Archway",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1403,
+      "missing": [
+        "Arid Archway"
+      ]
+    },
+    {
+      "id": "224-1174-3177",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and can tap to produce at least {1}.\nYou control a mana-producing land. Sakura-Tribe Scout does not have summoning sickness.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1342,
+      "missing": [
+        "Oboro Breezecaller"
+      ]
+    },
+    {
+      "id": "224-433-1525-1644",
+      "cards": [
+        {
+          "name": "Tatyova, Benthic Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1300,
+      "missing": [
+        "Abundance"
+      ]
+    },
+    {
+      "id": "1479-1671-3703",
+      "cards": [
+        {
+          "name": "Kodama of the East Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sporemound",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You are able to play a land this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1287,
+      "missing": [
+        "Kodama of the East Tree"
+      ]
+    },
+    {
+      "id": "224-1525-1637-3177",
+      "cards": [
+        {
+          "name": "Aesi, Tyrant of Gyre Strait",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Sakura-Tribe Scout does not have summoning sickness.\nYou have a land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1261,
+      "missing": [
+        "Abundance"
+      ]
+    },
+    {
+      "id": "224-433-1362",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oboro, Palace in the Clouds",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1198,
+      "missing": [
+        "Oboro, Palace in the Clouds"
+      ]
+    },
+    {
+      "id": "774-1671-3875",
+      "cards": [
+        {
+          "name": "Patron of the Moon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1161,
+      "missing": [
+        "Patron of the Moon"
+      ]
+    },
+    {
+      "id": "224-433-2841",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghost Town",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana during each opponent's turn"
+      ],
+      "requires": [],
+      "prerequisites": "It is not your turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1081,
+      "missing": [
+        "Ghost Town"
+      ]
+    },
+    {
+      "id": "224-433-5621",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arid Archway",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1075,
+      "missing": [
+        "Arid Archway"
+      ]
+    },
+    {
+      "id": "224-2137-3177",
+      "cards": [
+        {
+          "name": "Uyo, Silent Prophet",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of instant and sorcery spells on the stack"
+      ],
+      "requires": [],
+      "prerequisites": "You control two lands that enter the battlefield untapped and can tap to produce mana. You have an instant or sorcery card in hand for which legal target(s) exist, if applicable.",
+      "mana": "{2} plus enough mana to cast the instant or sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1039,
+      "missing": [
+        "Uyo, Silent Prophet"
+      ]
+    },
+    {
+      "id": "433-1671-7857",
+      "cards": [
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elven Raft-Steerer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 952,
+      "missing": [
+        "Elven Raft-Steerer"
+      ]
+    },
+    {
+      "id": "224-3177-3886",
+      "cards": [
+        {
+          "name": "Soratami Mirror-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to three lands that enter the battlefield untapped and can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 879,
+      "missing": [
+        "Soratami Mirror-Mage"
+      ]
+    },
+    {
+      "id": "224-872-1525-1644",
+      "cards": [
+        {
+          "name": "Tatyova, Benthic Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 870,
+      "missing": [
+        "Abundance"
+      ]
+    },
+    {
+      "id": "224-872-5621",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arid Archway",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 852,
+      "missing": [
+        "Arid Archway"
+      ]
+    },
+    {
+      "id": "224-872-4270",
+      "cards": [
+        {
+          "name": "Trade Routes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a land that enters the battlefield untapped and can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 848,
+      "missing": [
+        "Trade Routes"
+      ]
+    },
+    {
+      "id": "224-433-1525-1637",
+      "cards": [
+        {
+          "name": "Aesi, Tyrant of Gyre Strait",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Llanowar Scout does not have summoning sickness.\nYou have a land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 766,
+      "missing": [
+        "Abundance"
+      ]
+    },
+    {
+      "id": "1671-3177-7857",
+      "cards": [
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elven Raft-Steerer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 733,
+      "missing": [
+        "Elven Raft-Steerer"
+      ]
+    },
+    {
+      "id": "224-872-1362",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Oboro, Palace in the Clouds",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 667,
+      "missing": [
+        "Oboro, Palace in the Clouds"
+      ]
+    },
+    {
+      "id": "880-3703-3875",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sporemound",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tireless Provisioner",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 573,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "224-872-2841",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ghost Town",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana during each opponent's turn"
+      ],
+      "requires": [],
+      "prerequisites": "It is not your turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 530,
+      "missing": [
+        "Ghost Town"
+      ]
+    },
+    {
+      "id": "224-872-1525-1637",
+      "cards": [
+        {
+          "name": "Aesi, Tyrant of Gyre Strait",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Abundance",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all lands from your hand and library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Scaled Herbalist does not have summoning sickness.\nYou have a land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 498,
+      "missing": [
+        "Abundance"
+      ]
+    },
+    {
+      "id": "224-433-1174",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and can tap to produce at least {1}.\nYou control a mana-producing land. Llanowar Scout does not have summoning sickness.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 478,
+      "missing": [
+        "Oboro Breezecaller"
+      ]
+    },
+    {
+      "id": "224-3177-4543",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trench Behemoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a land.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 441,
+      "missing": [
+        "Trench Behemoth"
+      ]
+    },
+    {
+      "id": "224-433-4543",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trench Behemoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a land.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 432,
+      "missing": [
+        "Trench Behemoth"
+      ]
+    },
+    {
+      "id": "880-3470-3703",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Cobra",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sporemound",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 428,
+      "missing": [
+        "Perilous Forays"
+      ]
+    },
+    {
+      "id": "872-1671-7857",
+      "cards": [
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Growth Chamber",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elven Raft-Steerer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 394,
+      "missing": [
+        "Elven Raft-Steerer"
+      ]
+    },
+    {
+      "id": "224-3177-5033",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm Cauldron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and that can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 354,
+      "missing": [
+        "Storm Cauldron"
+      ]
+    },
+    {
+      "id": "224-433-2137",
+      "cards": [
+        {
+          "name": "Uyo, Silent Prophet",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of instant and sorcery spells on the stack"
+      ],
+      "requires": [],
+      "prerequisites": "You control two lands that enter the battlefield untapped and can tap to produce mana. You have an instant or sorcery card in hand for which legal target(s) exist, if applicable.",
+      "mana": "{2} plus enough mana to cast the instant or sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 308,
+      "missing": [
+        "Uyo, Silent Prophet"
+      ]
+    },
+    {
+      "id": "224-872-1174",
+      "cards": [
+        {
+          "name": "Oboro Breezecaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and can tap to produce at least {1}.\nYou control a mana-producing land. Scaled Herbalist does not have summoning sickness.\n",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 303,
+      "missing": [
+        "Oboro Breezecaller"
+      ]
+    },
+    {
+      "id": "224-2232-3177",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nonartifact land. You have a nonartifact land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 293,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    },
+    {
+      "id": "224-872-4543",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trench Behemoth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a land.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 246,
+      "missing": [
+        "Trench Behemoth"
+      ]
+    },
+    {
+      "id": "224-433-5033",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm Cauldron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and that can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 214,
+      "missing": [
+        "Storm Cauldron"
+      ]
+    },
+    {
+      "id": "224-872-2137",
+      "cards": [
+        {
+          "name": "Uyo, Silent Prophet",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of instant and sorcery spells on the stack"
+      ],
+      "requires": [],
+      "prerequisites": "You control two lands that enter the battlefield untapped and can tap to produce mana. You have an instant or sorcery card in hand for which legal target(s) exist, if applicable.",
+      "mana": "{2} plus enough mana to cast the instant or sorcery",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 208,
+      "missing": [
+        "Uyo, Silent Prophet"
+      ]
+    },
+    {
+      "id": "224-433-3886",
+      "cards": [
+        {
+          "name": "Soratami Mirror-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to three lands that enter the battlefield untapped and can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 177,
+      "missing": [
+        "Soratami Mirror-Mage"
+      ]
+    },
+    {
+      "id": "224-433-2232",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Llanowar Scout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nonartifact land. You have a nonartifact land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 173,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    },
+    {
+      "id": "2907-3080",
+      "cards": [
+        {
+          "name": "Exchange of Words",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scute Swarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause a land to become a creature.\nYou have a land card in hand.\nYou control at least five lands.",
+      "mana": "{1}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 148,
+      "missing": [
+        "Exchange of Words"
+      ]
+    },
+    {
+      "id": "224-872-3886",
+      "cards": [
+        {
+          "name": "Soratami Mirror-Mage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to three lands that enter the battlefield untapped and can tap to produce at least {3}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 140,
+      "missing": [
+        "Soratami Mirror-Mage"
+      ]
+    },
+    {
+      "id": "224-872-5033",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm Cauldron",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You have a land card in hand that enters the battlefield untapped and that can tap to produce at least {1}.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 116,
+      "missing": [
+        "Storm Cauldron"
+      ]
+    },
+    {
+      "id": "224-872-2232",
+      "cards": [
+        {
+          "name": "Retreat to Coralhelm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cloudstone Curio",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scaled Herbalist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control that enter the battlefield untapped can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nonartifact land. You have a nonartifact land card in hand.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 94,
+      "missing": [
+        "Cloudstone Curio"
+      ]
+    }
+  ]
+}

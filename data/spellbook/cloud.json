@@ -1,0 +1,44 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "cloud",
+  "commanders": [
+    "Cloud, Midgar Mercenary"
+  ],
+  "request_sha256": "802e2ae72d3abc3232007eff3821cb78404126794e452470b2acffa896203d14",
+  "identity": "W",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1069-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Puresteel Paladin",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control an Equipment.\nYou control at least three artifacts.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 1314,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    }
+  ]
+}

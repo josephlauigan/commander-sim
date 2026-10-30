@@ -1,0 +1,782 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-10-30",
+  "deck": "galadriel",
+  "commanders": [
+    "Galadriel, Light of Valinor"
+  ],
+  "request_sha256": "8643fc104a8a7f2a77d1ab1beb03e96b9c7cca333bf5465a8472fe4ec7e303c3",
+  "identity": "GWU",
+  "included": [],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 364272,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37844,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "2645-3151",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Elvish Archdruid does not have summoning sickness. You control at least five Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 34068,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "2816-3151",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinitely large creature until end of turn",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Elvish Archdruid. Elvish Archdruid does not have summoning sickness. You control at least three Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19489,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 11993,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "2744-5641",
+      "cards": [
+        {
+          "name": "Basking Broodscale",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "Basking Broodscale does not have a +1/+1 counter on it.",
+      "mana": "{1}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11948,
+      "missing": [
+        "Basking Broodscale"
+      ]
+    },
+    {
+      "id": "2744-4186",
+      "cards": [
+        {
+          "name": "Scurry Oak",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 9623,
+      "missing": [
+        "Scurry Oak"
+      ]
+    },
+    {
+      "id": "1478-3293",
+      "cards": [
+        {
+          "name": "Emeria Shepherd",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sakura-Tribe Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7549,
+      "missing": [
+        "Emeria Shepherd"
+      ]
+    },
+    {
+      "id": "643-3850",
+      "cards": [
+        {
+          "name": "Realmbreaker, the Invasion Tree",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put all creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "\"Praetor\" chosen with Rukarumel.",
+      "mana": "{10}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6458,
+      "missing": [
+        "Realmbreaker, the Invasion Tree"
+      ]
+    },
+    {
+      "id": "2744-3197",
+      "cards": [
+        {
+          "name": "Herd Baloth",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5935,
+      "missing": [
+        "Herd Baloth"
+      ]
+    },
+    {
+      "id": "2067-2744",
+      "cards": [
+        {
+          "name": "Storm Herd",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite +1/+1 counters",
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{W}{W}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 5766,
+      "missing": [
+        "Storm Herd"
+      ]
+    },
+    {
+      "id": "3151-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Elvish Archdruid does not have summoning sickness. You control at least four Elves.\nSword of the Paruns attached to Elvish Archdruid",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5107,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "2397-3542",
+      "cards": [
+        {
+          "name": "Palinchron",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six mana-producing lands, two of which can produce at least {U}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2943,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "643-3638",
+      "cards": [
+        {
+          "name": "Turntimber Ranger",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinitely large creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2572,
+      "missing": [
+        "Turntimber Ranger"
+      ]
+    },
+    {
+      "id": "643-1909",
+      "cards": [
+        {
+          "name": "Wirewood Symbiote",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control a creature that can tap to produce at least {G}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2069,
+      "missing": [
+        "Wirewood Symbiote"
+      ]
+    },
+    {
+      "id": "2351-4052",
+      "cards": [
+        {
+          "name": "The Watcher in the Water",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kindred Discovery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card during an opponent's turn.\n\"Tentacle\" chosen with Kindred Discovery.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1745,
+      "missing": [
+        "The Watcher in the Water"
+      ]
+    },
+    {
+      "id": "1909-3151-4486",
+      "cards": [
+        {
+          "name": "Wirewood Symbiote",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirror Entity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana",
+        "Infinitely large creatures you control until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "Elvish Archdruid does not have summoning sickness.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1393,
+      "missing": [
+        "Wirewood Symbiote"
+      ]
+    },
+    {
+      "id": "4090-7637",
+      "cards": [
+        {
+          "name": "Cho-Manno, Revolutionary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1015,
+      "missing": [
+        "Pariah"
+      ]
+    },
+    {
+      "id": "1640-7637",
+      "cards": [
+        {
+          "name": "Cho-Manno, Revolutionary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pariah's Shield",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 587,
+      "missing": [
+        "Pariah's Shield"
+      ]
+    },
+    {
+      "id": "643-2120",
+      "cards": [
+        {
+          "name": "Wanderwine Prophets",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "Wanderwine Prophet does not have summoning sickness.\nWanderwine Prophets cannot be blocked and killed by an opponent.",
+      "mana": "{3} each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 332,
+      "missing": [
+        "Wanderwine Prophets"
+      ]
+    },
+    {
+      "id": "4486-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirror Entity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 252,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "3778-7299",
+      "cards": [
+        {
+          "name": "Biorhythm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Austere Command",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}{G}{G}{W}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 234,
+      "missing": [
+        "Biorhythm"
+      ]
+    },
+    {
+      "id": "6899-7637",
+      "cards": [
+        {
+          "name": "Cho-Manno, Revolutionary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "With Great Power . . .",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 230,
+      "missing": [
+        "With Great Power . . ."
+      ]
+    },
+    {
+      "id": "2744-3575",
+      "cards": [
+        {
+          "name": "Cathars' Crusade",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aerie Ouphes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on most creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "An additional creature with flying and indestructible on the battlefield.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 145,
+      "missing": [
+        "Aerie Ouphes"
+      ]
+    },
+    {
+      "id": "3151-7500",
+      "cards": [
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ringing Strike Mastery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 98,
+      "missing": [
+        "Ringing Strike Mastery"
+      ]
+    },
+    {
+      "id": "141-3556",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Flicker",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Flicker.",
+      "mana": "{3}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    }
+  ]
+}
