@@ -16,5 +16,6 @@ Brief: `rust/agents/phase2-coverage.md`. Base: origin/main 2bdfead0.
   `--trace`, `--cards` print none.
 - Docs: `documents/realism.md` Phase 2 status, `--help`, sim-cli README.
 
-## Checks
-See `rust/agents/report-phase2-coverage.md` (or the agent's reply).
+## Checks (2026-10-29)
+All pass: tests 3589/0/2, 0 warnings, export no change, validate OK, t3 realism byte-identical apart from the
+coverage block, 12 deck runs rc=0. Details: the agent's report (the harness refused the report file). Nothing left to do.
