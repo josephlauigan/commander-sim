@@ -260,3 +260,20 @@ fn conditions_nest_and_sum() {
     );
 }
 
+
+/// a pool deck's plan file is read by the generic policy only: the Tier 6 slots have no opinion for it (they once
+/// answered for Kaalia, Chulane and Yawgmoth too, bypassing their key cards and their wish list's mana step)
+#[test]
+fn the_tier_6_slots_ignore_pool_decks_with_plan_files() {
+    use sim_core::impls::t6_plans;
+    for key in ["kaalia-mardu-creature-cheat", YA, YU] {
+        let g = table(&[key, KI]);
+        assert!(plan_data::get(key).is_some());
+        for &c in &g.player(P0).library {
+            assert_eq!(t6_plans::prio(&g, P0, c), None, "{key}");
+        }
+        assert_eq!(t6_plans::wish(&g, P0), None, "{key}");
+        assert_eq!(t6_plans::keep(&g, P0), None, "{key}");
+        assert_eq!(t6_plans::hold_up(&g, P0), None, "{key}");
+    }
+}

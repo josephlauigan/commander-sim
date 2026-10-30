@@ -66,8 +66,12 @@ pub fn has_hand(key: &str) -> bool {
     HAND.contains(&key)
 }
 
-/// --- phase4-cedh: the plan file p plays from (`ai::plan_data`), when it does
+/// --- phase4-cedh: the plan file a Tier 6 player plays from (`ai::plan_data`), when it does. Only Tier 6 decks: a
+/// pool deck's plan file is read by the generic policy (`plans::config`), never through these slots.
 fn plan(g: &Game, p: PlayerId) -> Option<&'static crate::ai::plan_data::Loaded> {
+    if !is_t6(g, p) {
+        return None;
+    }
     crate::ai::plan_data::active(g, p)
 }
 
