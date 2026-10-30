@@ -22,3 +22,12 @@
 ## Gotchas
 - Another agent runs sims: --jobs 12 / -j 12, one sim at a time.
 - Phase 4 files untouched (ai/search.rs, learned.rs, values.rs, data/eval, audit/phase4, values_overrides.toml).
+
+## Rebase (2026-10-30, coordinator's request)
+- Rebased onto origin/main after PR #176 (JD's swaps for Sauron, Veyran, Tymna/Thrasios, Kefka). Conflict only in
+  data/scryfall_cache.json: took main's data/scryfall_cache.json, cards.json, decks.json and the fixture, then reran
+  `cardgen export` (refetched Thanos and Kindred Dominance) and rebuilt the fixture's thanos/urdragon entries (checked
+  equal to decks.json for every key; the cardgen equivalence test checks it too). #176's three test edits kept as is.
+- Pre-rebase sims (thanos t6 29.6%, urdragon t5 20.1% with 3 panics) are superseded: rerun on the rebased binary.
+- Overflow fix: Thrakkus the Butcher doubling each Dragon per Thrakkus copy (Miirym's tokens) passed i32 in three
+  urdragon t5 games (seeds 501632, 501721, 501904): saturating adds in common::eot, chars.rs power sum, life.rs.
