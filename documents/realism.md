@@ -240,6 +240,15 @@ cards" is **not passed yet**: hard doubles are 0, and the rest are frozen.
   only with that class: **21 competing, 25 shadowed, 161 undeclared splits** (207 cards). A hard double is never
   accepted from it. The list only shrinks: the test fails on a line whose card is no longer that double. That list is
   what is left to clear for the gate.
+- PR 5b judged the 161 undeclared splits: 152 are real splits (two paths for different parts of the card) and got
+  `paths_ok`; the 45 lands among them are compiled abilities that never run for a land (a land is no permanent in
+  the sim) next to City of Traitors' `land_etb` check, which is set on every land. The list now holds **21 competing,
+  25 shadowed, 9 undeclared splits** (55 cards). The 9 are real doubles, left for a follow-up PR with measured runs:
+  a tag's enters effect that isn't on the card next to card code for the same effect (Battle Angels of Tyr's
+  Treasure; the tok tag's token on Karn, Scion of Urza, Pawn of Ulamog, Requiem Angel, Sifter of Skulls and
+  Springheart Nantuko), the lr tag's land on resolve next to the card code's land (Sakura-Tribe Elder, Sowing
+  Mycospawn), and Doubling Season's loyalty doubled twice (the engine's enter and the card's etb: 4x).
+  `sim-core/tests/paths_splits.rs` checks the splits that act on the same event happen once.
 - Every `commander-sim` run that plays decks (`--deck`, `--pool`, `--all-decks`, `--calibrate`, `--realism`,
   `--goldfish`) prints the model coverage first: for each deck, its 99 + commander by `cardgen audit` status (Full,
   Full-auto, Approximate, Partial, Unmodeled) and up to five of its Unmodeled and Partial cards (commander and engine
