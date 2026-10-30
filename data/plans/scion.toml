@@ -1,0 +1,53 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
+# Tier 6 plan slots (impls/t6_plans.rs). JD's Scion of the Ur-Dragon turbo deck: fast mana, rituals and dorks into
+# Thassa's Oracle + Demonic Consultation / Tainted Pact or Underworld Breach + Lion's Eye Diamond + Brain Freeze.
+# Scion's Dragon choice is card code (t6_scion.rs), not this plan.
+#
+# Only the keep rule has an opinion (was impls/t6_plan_scion.rs keep, the Rograkh/Silas turbo rule with this list's
+# rituals, tutors, payoffs and engines; PROVISIONAL until JD decides the mulligans, D11). Cast priority, wish list,
+# hold-up and go-now leave every decision to the shared Tier 6 table rules and the generic AI.
+deck = "scion"
+default = "hand"
+
+[sets]
+tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Crop Rotation"]
+payoffs = ["Necropotence", "Underworld Breach", "Brain Freeze", "Final Fortune"]
+# an engine alone does not win: it counts as action only with fast mana
+engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Smothering Tithe", "Tataru Taru"]
+# a tutor, a payoff or the Oracle
+action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Crop Rotation", "Necropotence", "Underworld Breach", "Brain Freeze", "Final Fortune", "Thassa's Oracle"]
+
+# Fast mana and a plan beat land count: `fast` = the hand's mana pieces that count by turn 2 plus its rituals, `mana`
+# = what the hand makes by turn 2 plus its rituals (t6_keep::mana). A settled hand (2-4 lands after a mulligan) is kept.
+[mulligan]
+fast_mana = true
+# one-shot mana: rituals and spirit guides (Tinder Wall is a dork the mana count already sees)
+rituals = ["Dark Ritual", "Cabal Ritual", "Rite of Flame", "Manamorphose", "Elvish Spirit Guide", "Simian Spirit Guide"]
+
+# ship all-land hands
+[[mulligan.rule]]
+when = ["hand-lands>=6"]
+keep = false
+
+# no colours from lands: only with three fast mana pieces and a tutor or payoff to cast
+[[mulligan.rule]]
+when = ["hand-lands=0 & fast>=3 & hand:tutors>=1", "hand-lands=0 & fast>=3 & hand:payoffs>=1"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+# a 1-lander needs the mana (rituals count) and a payoff or tutor to spend it on
+[[mulligan.rule]]
+when = ["hand-lands=1 & mana<one-lander", "hand-lands=1 & hand:action=0 & hand:engines=0", "hand-lands=1 & hand:action=0 & fast<1"]
+keep = false
+
+# lands-and-spells hands with no payoff or tutor, or no mana to cast it
+[[mulligan.rule]]
+when = ["mana<2", "hand:action=0 & hand:engines=0 & fast<2", "hand:action=0 & fast<1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands>=5 & fast=0 & hand:action<2"]
+keep = false

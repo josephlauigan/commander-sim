@@ -65,18 +65,46 @@ macro_rules! dispatch {
     };
 }
 
+/// --- phase4-cedh: the Tier 6 decks that still have a hand plan file here (`AI_PLAN_DATA` picks between it and the
+/// deck's `data/plans/<key>.toml`); a deck whose hand file is deleted always plays from its plan file
+pub const HAND: [&str; 8] = T6_KEYS;
+
+pub fn has_hand(key: &str) -> bool {
+    HAND.contains(&key)
+}
+
+/// --- phase4-cedh: the plan file p plays from (`ai::plan_data`), when it does
+fn plan(g: &Game, p: PlayerId) -> Option<&'static crate::ai::plan_data::Loaded> {
+    crate::ai::plan_data::active(g, p)
+}
+
 pub fn prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::prio(l, g, p, c);
+    }
     dispatch!(g, p, prio(c))
 }
 pub fn wish(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::wish(l, g, p);
+    }
     dispatch!(g, p, wish())
 }
 pub fn keep(g: &Game, p: PlayerId) -> Option<bool> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::keep(l, g, p);
+    }
     dispatch!(g, p, keep())
 }
 pub fn hold_up(g: &Game, p: PlayerId) -> Option<f64> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::hold_up(l, g, p);
+    }
     dispatch!(g, p, hold_up())
 }
 pub fn go_now(g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
+    if let Some(l) = plan(g, p) {
+        return crate::ai::plan_data::t6::go_now(l, g, p, combo);
+    }
     dispatch!(g, p, go_now(combo))
 }

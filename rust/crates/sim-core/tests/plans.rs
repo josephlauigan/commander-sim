@@ -116,3 +116,153 @@ fn catalogue_lines_report() {
         }
     }
 }
+
+// ------------------------------------------------------------------ phase4-cedh: the schema extensions
+use sim_core::ids::PlayerId;
+use sim_core::state::Game;
+use sim_core::testkit::{card, hand, perm, table};
+
+const P0: PlayerId = PlayerId(0);
+const P1: PlayerId = PlayerId(1);
+const YU: &str = "yuriko-dimir-ninjas";
+const YA: &str = "yawgmoth-mono-black-aristocrats";
+const KI: &str = "kinnan-bonder-mana-combo";
+
+fn nm(g: &Game, c: sim_core::ids::CardId) -> String {
+    g.db.get(c).name.to_string()
+}
+
+/// Yuriko: Scroll Rack counts as a put-back only on the battlefield (`bf:`), a tutor that puts its card on top is a
+/// put-back (`?to-top`), and Rhystic Study goes ahead of the line while it is two or more steps away (`engines_ahead`)
+#[test]
+fn battlefield_only_groups_conditions_and_engines_ahead() {
+    let l = plan_data::get(YU).unwrap();
+    let mut g = table(&[YU, KI]);
+    g.player_mut(P0).hand.clear();
+    let first = |g: &Game| nm(g, plan_data::wish_for(l, g, P0)[0]);
+    assert_eq!(first(&g), "Rhystic Study", "two steps away: the engine ahead first");
+    hand(&mut g, P0, &["Scroll Rack"]);
+    assert_eq!(first(&g), "Rhystic Study", "Scroll Rack in hand puts nothing back");
+    g.player_mut(P0).hand.clear();
+    perm(&mut g, P0, "Scroll Rack");
+    assert_eq!(first(&g), "Dig Through Time", "Scroll Rack out: the big card next");
+    let mut g = table(&[YU, KI]);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P0).to_top = true;
+    assert_eq!(first(&g), "Dig Through Time", "a tutor to the top is the put-back");
+}
+
+/// Yawgmoth: the undying line needs two undying creatures (`counts`), so one undying creature out leaves it as far as
+/// the Mikaeus line (Mikaeus first, in file order), and two bring the payoff first; `bf:<set>` reads the count
+#[test]
+fn n_cards_of_a_group_and_battlefield_sets() {
+    let l = plan_data::get(YA).unwrap();
+    let mut g = table(&[YA, KI]);
+    g.player_mut(P0).hand.clear();
+    perm(&mut g, P0, "Yawgmoth, Thran Physician");
+    perm(&mut g, P0, "Geralf's Messenger");
+    assert_eq!(nm(&g, plan_data::wish_for(l, &g, P0)[0]), "Mikaeus, the Unhallowed");
+    let bg = card(&g, "Butcher Ghoul");
+    assert_eq!(plan_data::prio_for(l, &g, P0, bg), Some(78.0), "one undying out: the second at 78");
+    perm(&mut g, P0, "Butcher Ghoul");
+    let w = plan_data::wish_for(l, &g, P0);
+    let payoffs = l.sets[1].clone();
+    assert!(payoffs.contains(&nm(&g, w[0])), "the loop is out: a payoff first, got {}", nm(&g, w[0]));
+    assert_eq!(plan_data::prio_for(l, &g, P0, card(&g, "Blood Artist")), Some(80.0));
+    assert_eq!(plan_data::prio_for(l, &g, P0, card(&g, "Nether Traitor")), None, "the loop is there");
+}
+
+/// a card's value from the rest of the hand: `hand-max-mv` leaves the rated card out
+#[test]
+fn hand_conditions_read_the_rest_of_the_hand() {
+    let t = "deck = \"x\"\n[[prio]]\ncards = [\"Brainstorm\"]\nwhen = [\"hand-max-mv>=5\"]\nvalue = 72\nelse = 45";
+    let l = plan_data::load("x", t).unwrap();
+    let mut g = table(&[YU, KI]);
+    g.player_mut(P0).hand.clear();
+    let bs = hand(&mut g, P0, &["Brainstorm", "Ponder"])[0];
+    assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(45.0));
+    hand(&mut g, P0, &["Dig Through Time"]);
+    assert_eq!(plan_data::prio_for(&l, &g, P0, bs), Some(72.0));
+}
+
+/// the scion plan file's mulligan rule table keeps exactly the hands its hand keep rule (`t6_plan_scion::keep`) keeps,
+/// on 600 dealt hands over the first, second and third draws
+#[test]
+fn the_mulligan_rule_table_matches_the_hand_turbo_rule() {
+    let l = plan_data::get("scion").unwrap();
+    let mut g = table(&["scion", KI]);
+    let mut s: u64 = 12345;
+    let (mut kept, mut n) = (0, 0);
+    for i in 0..600 {
+        let pl = g.player_mut(P0);
+        let h: Vec<_> = pl.hand.drain(..).collect();
+        pl.library.extend(h);
+        for k in (1..pl.library.len()).rev() {
+            s = s.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            pl.library.swap(k, (s >> 33) as usize % (k + 1));
+        }
+        for _ in 0..7 {
+            let c = pl.library.pop().unwrap();
+            pl.hand.push(c);
+        }
+        pl.stats.insert("mull_try", i % 3);
+        let hand_rule = sim_core::impls::t6_plan_scion::keep(&g, P0);
+        assert_eq!(plan_data::keep_for(l, &g, P0), hand_rule, "hand {:?}", g.player(P0).hand);
+        kept += usize::from(hand_rule == Some(true));
+        n += 1;
+    }
+    assert!(kept > 100 && kept < n, "kept {kept} of {n}: the rule both keeps and ships");
+}
+
+/// hold-up and go-now rules: the first rule that holds decides; a go-now rule without `go` leaves it to the table
+#[test]
+fn hold_up_and_go_now_rules() {
+    let t = r#"deck = "x"
+[sets]
+free = ["Force of Will"]
+[[hold_up]]
+when = ["turn<=2"]
+value = -2.0
+[[hold_up]]
+when = ["hand:free>=1"]
+value = 1.0
+[[go_now]]
+combos = ["Kinnan + Basalt Monolith"]
+when = ["round>=6"]
+[[go_now]]
+combos = ["Kinnan + Basalt Monolith"]
+when = ["opp-out:Sol Ring"]
+go = false
+"#;
+    let l = plan_data::load("x", t).unwrap();
+    let mut g = table(&[KI, "dack-fayden-white-stax"]);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P0).turns = 1;
+    assert_eq!(plan_data::hold_up_for(&l, &g, P0), Some(-2.0));
+    g.player_mut(P0).turns = 4;
+    assert_eq!(plan_data::hold_up_for(&l, &g, P0), None);
+    hand(&mut g, P0, &["Force of Will"]);
+    assert_eq!(plan_data::hold_up_for(&l, &g, P0), Some(1.0));
+    let k = "Kinnan + Basalt Monolith";
+    assert_eq!(plan_data::go_now_for(&l, &g, P0, k), None);
+    perm(&mut g, P1, "Sol Ring");
+    assert_eq!(plan_data::go_now_for(&l, &g, P0, k), Some(false));
+    assert_eq!(plan_data::go_now_for(&l, &g, P0, "Kinnan + Freed from the Real / Pemmin's Aura"), None);
+    g.round = 6;
+    assert_eq!(plan_data::go_now_for(&l, &g, P0, k), None, "late: the shared rule");
+}
+
+#[test]
+fn the_extensions_are_validated() {
+    let bad = |t: &str| plan_data::load("x", t).err().unwrap();
+    let line = "deck = \"x\"\n[[line]]\nname = \"a\"\npieces = [[\"A\"], [\"B\"]]\n";
+    assert!(bad(&format!("{line}counts = [1]")).contains("1 counts for 2 groups"));
+    assert!(bad(&format!("{line}counts = [1, 0]")).contains("a count of 0"));
+    assert!(bad("deck = \"x\"\n[[line]]\nname = \"a\"\npieces = [[\"?to-top\"]]").contains("no card"));
+    assert!(bad("deck = \"x\"\n[[line]]\nname = \"a\"\npieces = [[\"A\", \"?moon\"]]").contains("unknown condition"));
+    assert!(bad("deck = \"x\"\n[[hold_up]]\nwhen = [\"hand:free>=1\"]\nvalue = 1.0").contains("no set \"free\""));
+    assert!(bad("deck = \"x\"\n[[go_now]]\ncombos = [\"No such\"]").contains("no catalogue combo starts with"));
+    assert!(bad("deck = \"x\"\n[[wish]]\ncards = []\nscore = 1.0").contains("no cards"));
+    assert!(bad("deck = \"x\"\n[mulligan]\n[[mulligan.rule]]\nwhen = []\nkeep = true").contains("no when"));
+    assert!(plan_data::load("x", "deck = \"x\"\n[[prio]]\ncommander = true\nwhen = [\"mana<one-lander\"]\nvalue = 1").is_ok());
+}

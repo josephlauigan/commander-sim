@@ -88,12 +88,20 @@ fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
         std::sync::LazyLock::new(|| {
             super::plan_data::all()
                 .iter()
-                .filter(|(k, _)| super::plan_data::plan_on(k, hand_config(k).is_some()))
+                .filter(|(k, _)| {
+                    super::plan_data::plan_on(k, hand_config(k).is_some() || crate::impls::t6_plans::has_hand(k))
+                })
                 .map(|(k, l)| {
                     let mut c = l.cfg;
                     if let Some(h) = hand_config(k) {
                         c.wish = c.wish.or(h.wish);
                         c.prio_fn = c.prio_fn.or(h.prio_fn);
+                    }
+                    if crate::impls::t6_plans::is_t6_key(k) {
+                        // --- phase4-cedh: a Tier 6 plan is read through the five plan slots (`t6_plans.rs`); the
+                        // shared fallbacks (closest combo's pieces, generic priority) stay as they were
+                        c.wish = None;
+                        c.prio_fn = None;
                     }
                     (*k, c)
                 })
