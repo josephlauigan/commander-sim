@@ -64,15 +64,14 @@ three opponents redrawing five cards each lose 10 life apiece to Sheoldred on to
 own draws (Iron Man, Night's Whisper, Fact or Fiction) pay you back.
 
 ### Multiply it
-**Inexorable Tide** proliferates the Army upward with every spell you cast, and so does Vraska, Betrayal's Sting's 0
-ability (draw a card, lose 1 life, proliferate). **Mauhúr, Uruk-hai Captain** is a Hardened Scales for your Army:
+**Inexorable Tide** proliferates the Army upward with every spell you cast. **Mauhúr, Uruk-hai Captain** is a Hardened Scales for your Army:
 every counter placement on an Army, Orc, or Goblin you control gets one more. **Cost of Brilliance** ({2}{B}: target
 player draws two and loses 2 life, and a +1/+1 counter on up to one creature) is a card-draw spell that also grows
 the Army.
 
 ### Fliers and bodies
 **Talrand, Sky Summoner** makes a 2/2 flying Drake whenever you cast an instant or sorcery. The deck runs
-twenty-five of them, so Talrand turns counterspells, removal and draw spells into a second army of fliers: blockers
+twenty-seven of them, so Talrand turns counterspells, removal and draw spells into a second army of fliers: blockers
 against the creature decks that cause most losses, and attackers that don't depend on the Orc Army. **Iron Man**
 ({3}{U}, flying) also gives other attacking modified creatures (a creature with a +1/+1 counter, so your Army)
 flying, and **War Machine** gives modified attackers double strike. **Vision, Synthezoid Avenger** is a colourless
@@ -95,8 +94,7 @@ Whispersilk Cloak (can't be blocked, shroud) and Rogue's Passage ({4}, {T}: targ
 Army through. Shroud also stops your own targeted abilities, so equip the Cloak when you do not need The Ozolith or
 Iron Man to target it that turn. **Lightning Greaves** gives haste and shroud for free, which lets a freshly cast
 Grave Titan or Inferno Titan attack and protects a key creature from spot removal (with the same caveat).
-**Aggravated Assault** is the closer: an extra combat each time you pay {3}{R}{R}, untapping your creatures for
-another swing. Every connection tempts the Ring: **Call of the Ring** tempts you every upkeep, and **Ringsight**
+Every connection tempts the Ring: **Call of the Ring** tempts you every upkeep, and **Ringsight**
 tempts on the way to a tutor, so with Sauron out each can mean discarding your hand for four new cards.
 
 ### Clear the table, keep the Army
@@ -112,15 +110,16 @@ that matters. **Nibelheim Aflame** ({2}{R}{R}) does the same to creatures only a
 any target and to one more for each kick: removal at instant speed or a spread-out finisher. **Cyclonic Rift** bounces
 one nonland permanent, or, overloaded for {6}{U}, every nonland permanent you don't control, at instant
 speed. **Vandalblast** ({R}) destroys an artifact you don't control, or each of them for {4}{R}.
-**Noxious Gearhulk** destroys another creature on entering and gains you life equal to its toughness. **Vraska,
-Betrayal's Sting** turns a creature into a Treasure with her −2.
+**Noxious Gearhulk** destroys another creature on entering and gains you life equal to its toughness. **Baleful
+Mastery** ({3}{B}, instant) exiles a creature or planeswalker; pay {1}{B} instead and an opponent draws a card, which
+Orcish Bowmasters pings and grows the Army for and Sheoldred charges 2 life for.
 
 ### Finishers
 **Exsanguinate** ({X}{B}{B} sorcery) makes each opponent lose X life and you gain that much: with Sauron's mana and
-rocks, it finishes a table that the Army has already thinned or that is racing you. **Urabrask, Heretic Praetor** is a
-top-end threat: a hasty 4/4 that turns your upkeep into an extra card and turns each opponent's draw step into "exile
-the top card, play it this turn or lose it." It strips their ability to sandbag, and every card they rush out is still
-a cast that feeds Sauron and Kaervek.
+rocks, it finishes a table that the Army has already thinned or that is racing you. **Torment of Hailfire**
+({X}{B}{B}) repeats X times: each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card. A
+big X either kills or strips their boards and hands, and it needs no combat, so it wins when the Army is walled or
+answered.
 
 **Two punishers on the same trigger.** Sauron amasses and **Kaervek the Merciless** throws a burn or removal bolt
 equal to the spell's mana value: both fire off the same event, an opponent casting a spell.
@@ -134,13 +133,16 @@ him attack and still guard Sauron.
 Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an opponent's turn for two of the five
 cards), **Night's Whisper**, **Bloodsoaked Insight // Sanguine Morass** (an exile-and-play spell that is cheaper for
 each life your opponents have lost this turn, or a land that taps for {B} or {R}), Cost of Brilliance and Iron Man.
+**Faerie Mastermind** ({1}{U}, flash flier) draws you a card whenever an opponent draws their second card in a turn:
+the Archivist wheel, Bowmasters' forced draws and Baleful Mastery's cheap mode all trigger it.
 Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet, Relic of Legends,
 Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. **Urza, Lord High Artificer** brings a
 Construct that grows with every artifact you control and taps your non-mana artifacts (The Ozolith, Lightning Greaves,
 Whispersilk Cloak, the Construct itself) for {U}; the rocks already make mana, so he adds little there. Late, {5}
 exiles the top card of your library, which you may play free this turn. Spot removal: **Bitter Triumph**,
-**Bloodchief's Thirst**, **Go for the Throat**, **Infernal Grasp**, **Terminate** and **Chaos
-Warp**. Counters: **Counterspell**, **Arcane Denial**, **Undermine** (the countered spell's controller loses 3 life),
+**Bloodchief's Thirst**, **Baleful Mastery**, **Infernal Grasp**, **Terminate** and **Chaos
+Warp**. Counters: **Mana Drain** (the countered spell's mana value comes back as {C} on your next main phase: put it
+toward Sauron, a Titan or a big X spell), **Counterspell**, **Arcane Denial**, **Undermine** (the countered spell's controller loses 3 life),
 **Disdainful Stroke** (mana value 4 or more) and **Force of
 Will** (counter anything: exile a blue card from hand and pay 1 life, or pay {3}{U}{U}; the deck has plenty of blue cards
 to pitch, but it costs two cards, so keep it for a spell that would end the game or wreck the Army).
@@ -150,7 +152,7 @@ when it protects a creature of yours with power 7 or more (a grown Army or Sauro
 ### How it wins
 The Army wins by size, by getting through, and by the X-spell finishers; the deck has no combo. A big Army that
 connects tempts the Ring, which refills your hand while the table keeps feeding it. Sheoldred and the Archivist wheel
-drain the table, Aggravated Assault adds combats, Exsanguinate and Comet Storm finish a table that is low, and Massacre
+drain the table, Exsanguinate, Comet Storm and Torment of Hailfire finish a table that is low, and Massacre
 Wurm, Ral or Inferno Titan clear blockers first.
 
 ### Weak spots and how to play around them
@@ -167,7 +169,7 @@ Wurm, Ral or Inferno Titan clear blockers first.
 
 ## Key lines
 
-**Aggravated Assault is extra combats, not a loop.** Make the Army unblockable (Whispersilk Cloak or Rogue's Passage) and attack; each extra combat costs {3}{R}{R} again, so it is a mana sink, not an infinite. Every hit still tempts the Ring.
+**Torment of Hailfire is the combat-free finish.** When the Army is walled or answered, cast it for a big X: each repeat makes every opponent lose 3 life, sacrifice a nonland permanent or discard. With Sauron's mana and the rocks, X of 8 or more usually kills a table the Army has softened, or leaves it with no board or hand.
 
 **Archivist wheel with Bowmasters** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each take about 5 pings apiece from Bowmasters, and the Army grows by about 15. Hold it for the turn it kills or the counters matter.
 
@@ -190,20 +192,20 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 Dual lands: the shocklands Blood Crypt and Steam Vents; the check lands Drowned Catacomb and Sulfur Falls; Shivan Reef (a painland); Frostboil Snarl and Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Crumbling Necropolis (all three colours), Izzet Boilerworks (bounces a land), Treno, Dark City and Path of Ancestry.
 
-**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Go for the Throat, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk and Vraska; five counters (Counterspell, Arcane Denial, Undermine, Force of Will and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
+**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Baleful Mastery, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk; six counters (Mana Drain, Counterspell, Arcane Denial, Undermine, Force of Will and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
 
 ## Tutor targets by board state
 
-Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any card to hand for {1}{B}, plus a creature sacrificed as a cost), and **Ringsight** (a card that shares a colour with a legendary creature you control, tempting the Ring on the way: with Sauron out that is any blue, black or red card). Ringsight reaches Massacre Wurm, Inferno Titan, Exsanguinate, Comet Storm, Aggravated Assault and most of the rest of the deck; the colourless pieces (The Ozolith, Not of This World, the rocks) need a Diabolic. Diabolic Intent only wants spare bodies: a Zombie from Grave Titan, a Lazotep Reaver that has already amassed, a creature about to die anyway. Never feed it the Army. If every creature you have is working, hold it.
+Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any card to hand for {1}{B}, plus a creature sacrificed as a cost), and **Ringsight** (a card that shares a colour with a legendary creature you control, tempting the Ring on the way: with Sauron out that is any blue, black or red card). Ringsight reaches Massacre Wurm, Inferno Titan, Exsanguinate, Comet Storm, Torment of Hailfire and most of the rest of the deck; the colourless pieces (The Ozolith, Not of This World, the rocks) need a Diabolic. Diabolic Intent only wants spare bodies: a Zombie from Grave Titan, a Lazotep Reaver that has already amassed, a creature about to die anyway. Never feed it the Army. If every creature you have is working, hold it.
 
 - **Army is huge, need to break through → the unblockable enabler.** Diabolic Tutor for Whispersilk Cloak or Rogue's Passage. If you already have evasion, Ringsight → Exsanguinate or Comet Storm for the kill.
-- **Need an extra combat for the swing → Ringsight for Aggravated Assault.**
+- **Army walled or answered, table low → Ringsight for Torment of Hailfire.**
 - **Opponents holding removal for the Army → Diabolic Tutor for The Ozolith** before you commit.
 - **Bowmasters on board, hand running dry → Ringsight for Jace's Archivist**, then wheel the table.
 - **Need to close the game → Ringsight for Exsanguinate or Comet Storm** once the Army is connecting.
 - **Need protection for the swing → Diabolic Tutor for Not of This World** (it needs a colourless-capable tutor; Ringsight can't find it).
 - **One problem creature → Ringsight for Infernal Grasp** (or Terminate for {B}{R} when the target is a creature and Grasp is not in hand).
-- **Pod is casting into you → Ringsight for Kaervek** or Urabrask.
+- **Pod is casting into you → Ringsight for Kaervek**.
 - **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**, or Ral and the Implicit Maze when you can wait a turn for the Army to stay safe; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
 - **Slow start, no mana → Diabolic Tutor for Sol Ring.**
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
@@ -214,14 +216,13 @@ Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic
 
 Bracket 3 by Game Changers, with **three**, the cap for the bracket: **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will**. No other card in the deck is on the list.
 
-**The deck has no two-card combo.** Aggravated Assault gives extra combats at {3}{R}{R} each, but no infinite loop. Exsanguinate and Comet Storm are X-spell finishers, not combos.
+**The deck has no two-card combo.** Exsanguinate, Comet Storm and Torment of Hailfire are X-spell finishers, not combos.
 
 Disclose before the game:
 
 - **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will** (the three Game Changers).
 - **Sauron amasses off every spell an opponent casts**, and **Kaervek** punishes the same trigger.
 - **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters out it hurts for every card they draw.
-- **Urabrask** replaces each opponent's draw-step draw with an exile-and-play-it-now card.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -229,15 +230,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (19).** Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urabrask Heretic Praetor, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (19).** Faerie Mastermind, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
-**Planeswalkers (1).** Vraska Betrayal's Sting
-
-**Enchantments (5).** Aggravated Assault, Call of the Ring, Dreadhorde Invasion, Inexorable Tide, Ral and the Implicit Maze
+**Enchantments (4).** Call of the Ring, Dreadhorde Invasion, Inexorable Tide, Ral and the Implicit Maze
 
 **Artifacts (14).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Relic of Legends, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (25).** Arcane Denial, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Force of Will, Go for the Throat, Infernal Grasp, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Terminate, Undermine, Vandalblast
+**Instants and sorceries (27).** Arcane Denial, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Terminate, Torment of Hailfire, Undermine, Vandalblast
 
 **Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
 
@@ -246,9 +245,9 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 ## Import list (100)
 
 ```
-1 Aggravated Assault
 1 Arcane Denial
 1 Arcane Signet
+1 Baleful Mastery
 1 Barad-dûr
 1 Bitter Triumph
 1 Blood Crypt
@@ -273,11 +272,11 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Exotic Orchard
 1 Exsanguinate
 1 Fact or Fiction
+1 Faerie Mastermind
 1 Fellwar Stone
 1 Force of Will
 1 Foreboding Ruins
 1 Frostboil Snarl
-1 Go for the Throat
 1 Grave Titan
 1 Haunted Ridge
 1 Inexorable Tide
@@ -289,6 +288,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Kaervek the Merciless
 1 Lazotep Reaver
 1 Lightning Greaves
+1 Mana Drain
 1 Massacre Wurm
 1 Mauhúr, Uruk-hai Captain
 1 Mind Stone
@@ -319,13 +319,12 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Talrand, Sky Summoner
 1 Terminate
 1 The Ozolith
+1 Torment of Hailfire
 1 Treno, Dark City
 1 Undermine
-1 Urabrask, Heretic Praetor
 1 Urza, Lord High Artificer
 1 Vandalblast
 1 Vision, Synthezoid Avenger
-1 Vraska, Betrayal's Sting
 1 War Machine, Avenging Arsenal
 1 Whispersilk Cloak
 5 Island

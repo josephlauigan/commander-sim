@@ -79,6 +79,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Rank Rat. In: Price of Progress. JD's swap (10/30), not simulated: Rank Rat -> Price of Progress (with Kefka flipped, each opponent's life loss on your turn draws you that many cards). Price of Progress is unmodeled.
 - **2026-10-27.** Out: Rhystic Study. In: Stinkweed Imp. JD's choice (2026-10-27), not simulated: Rhystic Study goes to Seph/Atraxa; Stinkweed Imp (binder) takes the slot: discard fodder that dredges back. Two Game Changers, still Bracket 4 (the two-card win).
 - **2026-10-19.** Out: Hallway Heckler. In: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied. Out: Hallway Heckler. In: Kuja, Genome Sorcerer. JD approved 10/19: +2.2 at T3 (30.2% -> 32.5%, ±2.4; 2,000 paired games, look-ahead, loose; audit/kefka/2026-10-19-kuja/). Kuja's Wizard tokens double the deck's burn damage (2.7 -> 5.7 per game).
 - **2026-10-18.** Out: Feed the Swarm. In: Marvin, Murderous Mimic. Feed the Swarm -> Marvin, Murderous Mimic: +0.2 at T3 in the coarse pass (copies Niv-Mizzet's draw, Fangtail, Blightspeaker, Rummaging Goblin).
@@ -114,6 +115,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Aggravated Assault, Go for the Throat, Urabrask, Heretic Praetor, Vraska, Betrayal's Sting. In: Baleful Mastery, Faerie Mastermind, Mana Drain, Torment of Hailfire. JD's swaps (10/30), not simulated: Aggravated Assault -> Torment of Hailfire, Go for the Throat -> Baleful Mastery, Urabrask, Heretic Praetor -> Faerie Mastermind, Vraska, Betrayal's Sting -> Mana Drain.
 - **2026-10-18.** Out: Spell Pierce. In: Urza, Lord High Artificer. Matched to the physical deck (JD's list, 2026-10-18): Urza, Lord High Artificer in for Spell Pierce (tested +0.5, noise, on branch adnaus).
 - **2026-10-18.** Out: Slaughter Pact. In: Force of Will. Band calibration 10/18 (JD approved): Slaughter Pact=>Force of Will
 - **2026-10-13 (package C).** Out: Bedevil. In: Sheoldred, the Apocalypse. JD's package C: Bedevil out (to bulk), Sheoldred, the Apocalypse in (JD's own spare copy): every opponent draw from Jace's Archivist's wheel costs 2 life. Measured +2.7 over all tiers (T1 +5.0, T2 +4.8, T3 +0.6, T4 +2.8, T5 +0.2; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Not a Game Changer: still two, Bracket 3.
@@ -454,6 +456,7 @@ Deck key `veyran`, `decklists/JD/veyran-izzet-spellslinger.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Aetherflux Reservoir, Talrand, Sky Summoner, Visions of Beyond. In: Birgi, God of Storytelling, Firebrand Archer, Frantic Search. JD's swaps (10/30), not simulated: Aetherflux Reservoir -> Firebrand Archer, Talrand, Sky Summoner -> Birgi, God of Storytelling, Visions of Beyond -> Frantic Search.
 - **2026-10-18.** Out: Evacuation, Venser, Shaper Savant. In: Consecrated Sphinx, Mystical Tutor. Band calibration 10/18 (JD approved): Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
 - **2026-10-13.** Out: Jeska's Will. In: Flux Channeler. JD's choice: Jeska's Will moves to Kefka; Flux Channeler (from Sauron) takes the slot. Measured -2.1 over all tiers (T1 -3.9, T2 -4.5, T3 -0.4, T4 -0.9, T5 -0.8; look-ahead, loose, 1,000 paired games per tier; `audit/sauron/2026-10-12-weakness/sofi-veyran/`). No Game Changers left. The deck lost some big-turn fuel (Jeska's Will gave four to seven mana and three more spells for one card) and gained a cheap Wizard body with a proliferate trigger.
 - **2026-10-12.** Out: Return the Favor (to bulk). In: Triple Triad (new). JD's choice: each upkeep, every player exiles their top card; you may play yours and every cheaper one free, and free instants and sorceries still trigger Veyran. A partial test (Tiers 1-3, 1,000 paired games each: +0.5, +0.9, -2.1, all within noise) was stopped early.
@@ -710,6 +713,7 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Assassin's Trophy, Shield of Kaldra. In: Disenchant, Smothering Tithe. JD's swaps (10/30), not simulated: Assassin's Trophy -> Disenchant, Shield of Kaldra -> Smothering Tithe (2 Game Changers, still Bracket 3).
 - **2026-10-27.** Out: Disenchant. In: Assassin's Trophy. JD's choice (2026-10-27), not simulated: Assassin's Trophy (from Seph/Atraxa) for Disenchant.
 - **2026-10-24.** Out: Avenge. In: Flickering Hound. Avenge -> Flickering Hound (JD's choice, 2026-10-24; the Hound moves over from Seph/Atraxa). Avenge was stuck in hand in 75% of the games it was drawn (10/19 analysis, T5) and a wipe that hits the deck's own 30 creatures; Austere Command stays as the reset. The Hound flickers a creature on every creature cast: Sunblast Angel, Grave Titan, Sun Titan, Coiling Oracle. Not simulated.
 

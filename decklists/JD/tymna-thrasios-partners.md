@@ -12,7 +12,7 @@ turn, to fast combo, and to falling behind on mana.
 | | |
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
-| **Bracket** | 3 (1 Game Changer: Worldly Tutor); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
+| **Bracket** | 3 (2 Game Changers: Worldly Tutor, Smothering Tithe); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
 | **Simulator** | deck key `thrasios`, matched tier T5; built from the retired Tymna/Kraum deck |
 
 ## Strategy
@@ -92,8 +92,7 @@ mana for removal: an opponent who destroys Rings or the Monolith in response end
   blocker never comes.
 - **Diabolic Tutor** ({2}{B}{B}) fetches any card. Fetch Elspeth when behind, a Titan or Dromoka to close, or a piece of
   the combo.
-- **Shield of Kaldra** (equip {4}) makes a creature indestructible, **Helm of Kaldra** (equip {2}) gives first strike,
-  trample and haste, and **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells
+- **Helm of Kaldra** (equip {2}) gives first strike, trample and haste, and **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells
   on your turn.
 
 ### Tymna's attackers
@@ -111,8 +110,7 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
 **Skyclave Apparition**, **Witherbloom Charm** (destroy a nonland permanent with mana value 2 or less, or sacrifice a
 permanent to draw two, or gain 5), **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Assassin's Trophy** ({B}{G}, instant: destroy any permanent an opponent controls; they get a basic
-land); **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
+**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
 reuses an enters effect (a Titan, Skyclave Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible), **Blossoming
 Defense** ({G}: +2/+2 and hexproof) and **Lightning Greaves** protect Tymna.
@@ -120,9 +118,10 @@ Defense** ({G}: +2/+2 and hexproof) and **Lightning Greaves** protect Tymna.
 ### Ramp and card advantage beyond the commanders
 
 **Avacyn's Pilgrim** and **Faeburrow Elder** (taps for one mana of each colour among your permanents) ramp and fix;
-**Coiling Oracle** and **Paradox Surveyor** find lands or cards when they enter; **Fact or Fiction** digs. **Worldly
-Tutor** is the deck's one Game Changer: a creature on top of the library, such as the Ballista when the combo is out,
-Dromoka or a Titan.
+**Coiling Oracle** and **Paradox Surveyor** find lands or cards when they enter; **Fact or Fiction** digs.
+**Smothering Tithe** (a Game Changer) makes a Treasure whenever an opponent draws unless they pay {2}: steady mana for
+Thrasios's {4} activations and the six-drop finishers. **Worldly Tutor** (the other Game Changer) puts a creature on
+top of the library, such as the Ballista when the combo is out, Dromoka or a Titan.
 
 ### How it wins
 
@@ -171,7 +170,7 @@ Unity**, **Avacyn's Pilgrim**, **Faeburrow Elder**.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with one Game Changer, **Worldly Tutor**. No mass land destruction and no extra turns. **Basalt Monolith +
+**Bracket 3,** with two Game Changers, **Worldly Tutor** and **Smothering Tithe**. No mass land destruction and no extra turns. **Basalt Monolith +
 Rings of Brighthearth** makes unlimited colourless mana; with Walking Ballista it wins the game, which is a two-card
 infinite mana loop that Bracket 3 normally leaves out: tell the table about it, and about the attack taxes (Ghostly
 Prison, Propaganda, Crawlspace, Windborn Muse, Archon of Absolution, Baird), Aven Mindcensor, Dragonlord Dromoka and
@@ -185,11 +184,11 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
-**Artifacts (12).** Arcane Signet, Basalt Monolith, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Orzhov Signet, Rings of Brighthearth, Shield of Kaldra, Talisman of Curiosity, Talisman of Unity
+**Artifacts (11).** Arcane Signet, Basalt Monolith, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Orzhov Signet, Rings of Brighthearth, Talisman of Curiosity, Talisman of Unity
 
-**Enchantments (4).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda
+**Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Smothering Tithe
 
-**Instants (10).** Arcane Denial, Assassin's Trophy, Bite Down, Blossoming Defense, Dark Endurance, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
+**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
 
 **Sorceries (2).** Austere Command, Diabolic Tutor
 
@@ -202,7 +201,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Arcane Denial
 1 Arcane Signet
 1 Archon of Absolution
-1 Assassin's Trophy
 1 Austere Command
 1 Avacyn's Pilgrim
 1 Aven Mindcensor
@@ -225,6 +223,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Dauthi Voidwalker
 1 Deathcap Glade
 1 Diabolic Tutor
+1 Disenchant
 1 Dragonlord Dromoka
 1 Drowned Catacomb
 1 Elenda, the Dusk Rose
@@ -255,8 +254,8 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Resplendent Angel
 1 Restoration Angel
 1 Rings of Brighthearth
-1 Shield of Kaldra
 1 Skyclave Apparition
+1 Smothering Tithe
 1 Sphinx of New Prahv
 1 Sun Titan
 1 Sunblast Angel
