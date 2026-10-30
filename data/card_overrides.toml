@@ -703,10 +703,12 @@ status = "Full"
 note = "cycling not modeled"
 
 ["Castle Embereth"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled pump never ran (dsl::ability_options reads perms only); impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "{1}{R}{R},{T}: creatures +1/+0 before an attack with four or more"
 
 ["Castle Locthwain"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled draw (without the life loss) never ran; impls/lands.rs's land_options does the draw and the life loss (Phase 2)
 status = "Full"
 note = "enters tapped without another land early; draws at end of turn when life allows"
 
@@ -1862,6 +1864,7 @@ status = "Full"
 note = ""
 
 ["Ghost Quarter"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled destroy (no basic for the victim, and DSL targets are permanents, never lands) never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "T, sacrifice: destroys a key opposing land (its controller fetches a basic)"
 
@@ -2284,6 +2287,7 @@ status = "Full"
 note = ""
 
 ["Horizon Canopy"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled {1},{T}, sacrifice: draw never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
 
@@ -2555,6 +2559,7 @@ status = "Full"
 note = "+4 exile a card from a hand, -3 exile a permanent, -14 restart the game with Karn's exiled cards (read as a win)"
 
 ["Karn's Bastion"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled proliferate never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "{4},{T}: proliferate (at end of turn, when it helps; in your main phase for a lore counter on Summon: Bahamut)"
 
@@ -4314,6 +4319,7 @@ status = "Full"
 note = "no more than one creature can attack or block each combat"
 
 ["Silent Clearing"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled {1},{T}, sacrifice: draw never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
 
@@ -4669,6 +4675,7 @@ status = "Full"
 note = "Saga: a lore counter as it enters (cast, reanimated or blinked: a new object at chapter I) and after your draw step; I, II destroy the most threatening opposing nonland permanent; III draw two; IV Mega Flare (the total mana value of your other permanents to each opponent), then it is sacrificed. Flying 9/9. Proliferate adds a lore counter (that chapter triggers) toward II or III, or to IV when Mega Flare kills or deals 10 or more"
 
 ["Sunbaked Canyon"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled {1},{T}, sacrifice: draw never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
 
@@ -4883,6 +4890,7 @@ status = "Full"
 note = ""
 
 ["Tectonic Edge"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled destroy (any land, no four-lands condition) never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "{1}, T, sacrifice: destroys a key nonbasic land of an opponent with four or more lands"
 
@@ -5331,6 +5339,7 @@ status = "Full"
 note = "names a creature type as it enters: those creatures get +1/+1, and you draw a card for each creature spell of that type you cast"
 
 ["Vault of the Archangel"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled deathtouch and lifelink never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "deathtouch and lifelink for the team before an attack with three or more"
 
@@ -5477,10 +5486,12 @@ status = "Full"
 note = ""
 
 ["Waterlogged Grove"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled {1},{T}, sacrifice: draw never ran; impls/lands.rs's land_options does it (Phase 2)
 status = "Full"
 note = "mana costs 1 life; {1}, T, sacrifice: draw (used when flooded)"
 
 ["Weathered Wayfarer"]
+dsl = [] # the compiled search had no "only if an opponent controls more lands" (the ability language has no activation condition) and found any land as the card code does; impls/t1.rs's options entry does it with the condition (Phase 2)
 tags = "human pow=1"
 status = "Full"
 note = ""
@@ -7687,6 +7698,7 @@ status = "Full"
 note = "X chosen by the AI: exiles up to X of the opponents' creatures worth 3+, a 2/2 green Boar for each controller"
 
 ["Elemental Eruption"]
+paths_ok = "the hand-written resolve does the card (storm is the self_cast code); the compiled spell, a 4/4 flier without prowess, never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "a 4/4 red flying Dragon Elemental with prowess; storm (a copy for each earlier spell this turn)"
 
@@ -7717,6 +7729,7 @@ status = "Full"
 note = "{1},{T}: mill a card, an instant or sorcery milled goes to hand; tap an untapped legendary creature: untap it (up to three uses, when the creature is not needed)"
 
 ["Lock and Load"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, draw one plus X (not one per other instant and sorcery this turn), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "draws one, plus one for each other instant or sorcery cast this turn; plot {3}{U} (after combat, free on a later turn when it draws 3+)"
 
@@ -7733,6 +7746,7 @@ status = "Full"
 note = "flying; {7}{U}: adapt 4, {1} less for each instant and sorcery in the graveyard"
 
 ["Pyretic Charge"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, draw four (no discard, no +1/+0 per card), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "discard the hand, draw four, creatures get +1/+0 per card discarded; plot {3}{R}; cast hard only with 0-1 other spells in hand"
 
@@ -7844,6 +7858,7 @@ status = "Full"
 note = "attacks: a +1/+1 counter and indestructible until end of turn; the first time each turn he is dealt combat damage and survives, that many +1/+1 counters (non-combat damage doesn't exist for creatures here) (card code in impls/t0_captain.rs)"
 
 ["Heroic Return"]
+paths_ok = "the hand-written resolve does the card (the cost cut is self_cost); the compiled spell, the reanimation only (no counters on a Hero), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Full"
 note = "{2} less if a creature is attacking you; returns the best creature card from your graveyard to the battlefield, a Hero with two extra +1/+1 counters (card code in impls/t0_captain.rs)"
 
@@ -8004,6 +8019,7 @@ status = "Full"
 note = "loyalty 4; +1 look at four, take an enchantment, rest on the bottom at random; -3 exile the best opposing creature/enchantment (oring_exile) until a linked enchantment you control leaves (every deck enchantment returns it through a leaves hook on the shared Oring data); -7 return all enchantment cards from the graveyard (an Aura with no host stays in the graveyard)"
 
 ["Demon of Fate's Design"]
+paths_ok = "two abilities, one path each: the options entry is the once-a-turn cast of an enchantment for life (a static the ability language doesn't read); the compiled activation is the {2}{B} sacrifice-another-enchantment +X/+0"
 status = "Full"
 note = "flying, trample; once a turn cast an enchantment from hand for life equal to its mana value (options entry, only above 12 life after paying); the {2}{B} sacrifice-another-enchantment +X/+0 is the compiled activation"
 
@@ -8248,6 +8264,7 @@ status = "Full"
 note = "enters or attacks: look at the top six, every Equipment among them goes onto the battlefield (job select Equipment bring their Hero), the rest to the bottom in a random order, then the best Equipment is attached to a Samurai you control (Gilgamesh, or a creature wearing Samurai's Katana). A person is only asked yes/no for the whole trigger (impls/tymna_cards.rs)"
 
 ["Boiling Rock Prison"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled {4},{T}, sacrifice: draw never ran (dsl::ability_options reads perms only); impls/tymna_cards.rs's land_options does it (Phase 2)
 status = "Full"
 note = "enters tapped; {T}: {B} or {R}; {4},{T}, sacrifice: draw a card, used by the AI at the end of a turn with six or more lands in play and spare mana (impls/tymna_cards.rs)"
 
@@ -8494,6 +8511,7 @@ status = "Full"
 note = "{1},{T}, sacrifice: one mana of any colour (floating, from the AI's end-of-turn / second-main window); drawing a card when it goes to a graveyard from the battlefield (sacrificed or destroyed); no longer a free mana rock"
 
 ["Desperate Ritual"]
+dsl = [] # the compiled spell added three mana of any colour, not {R}{R}{R}; the hand-written resolve (impls/t6_mana.rs) adds RRR, ritual_out names it and its prio is hand-written (Phase 2)
 status = "Full"
 note = "adds RRR (floating red mana); the AI casts it only through a deck plan; splice onto Arcane left out (no other Arcane spell shares a deck with it)"
 
@@ -8558,6 +8576,7 @@ status = "Full"
 note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it) and aims it at the caster's best permanent, paying {R} if an opponent cast a blue spell this turn (read from the turn's cast list) else {3}{R}"
 
 ["Untimely Malfunction"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, destroy an artifact only (no redirect, no can't-block mode), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Partial"
 note = "destroys the targeted opposing artifact, else up to two of the opponents' best untapped creatures can't block this turn; the redirect mode ({1}{R}) answers removal aimed at the owner's key permanent in the removal-response hook; missing: the AI only casts it at an artifact (it never picks the can't-block mode), and it cannot re-aim an ability"
 
@@ -8572,16 +8591,19 @@ status = "Full"
 note = "draws a card and lets the next creature card this turn be cast as though it had flash (cast::grants_flash; spent in on_cast; t6_redirects, tested)"
 
 ["Kozilek's Command"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, two of draw / exile a creature (no Spawn, scry, X limit or graveyard exile), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 tags = "tokx rem=exile tgt=c draw=1"
 status = "Full"
 note = "X = all spare mana; takes the best two of four modes: exile the best opposing creature with mana value X or less, scry X then draw, X 0/1 Eldrazi Spawn, exile up to X creature cards from opposing graveyards (the {C}{C} in the cost is paid as any two mana, as the card data has no colourless pips)"
 
 ["Eldrazi Confluence"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, one exile mode only (no return, no +3/-3, no Scion), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 tags = "rem=shrink3 tgt=c"
 status = "Full"
 note = "three choices: +3/-3 on the opposing creatures worth the most per choice (two or three choices for a bigger creature, toughness 0 dies), then each left over exiles and returns tapped a different own permanent with an enters effect worth 3 or more, else makes a 1/1 Eldrazi Scion; cast when an opposing creature of toughness 3 or less can be killed (the {C}{C} in the cost is paid as any two mana)"
 
 ["Get Lost"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, destroy target creature only (no enchantment or planeswalker, no Maps), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Partial"
 note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"
 
@@ -8591,6 +8613,7 @@ status = "Full"
 note = "destroys the targeted opposing creature or planeswalker; its controller then fetches a basic land onto the battlefield tapped and shuffles (always, the 'may' is taken)"
 
 ["Soul Partition"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the exile only (its owner never gets to play it), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Partial"
 note = "exiles the targeted nonland permanent, then its owner's card goes back to the owner's hand (a token is gone), standing in for 'its owner may play it from exile'; missing: playing it from exile and the {2} extra an opponent pays (engine needs)"
 
@@ -8600,6 +8623,7 @@ status = "Full"
 note = "exiles all graveyards and itself, and puts the engine cast lock (LockKind::Noncreature) on every player for the turn (castable, cast_card)"
 
 ["Emerald Charm"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, untap or destroy an enchantment (Auras too, no loses-flying mode), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Partial"
 note = "destroys the best opposing non-Aura enchantment (the chosen target first), else untaps one of your tapped lands or your best tapped permanent; missing: the third mode (a creature loses flying until end of turn; no way to remove a keyword for a turn) and the AI aims it with the old nonland-target tag"
 
@@ -8660,6 +8684,7 @@ status = "Full"
 note = "{T}: {C}; {3},{T}, discard a card: look at the top X (X = artifacts you control), best to hand, the rest to the bottom in random order; used when X is 3+ (2 with a spare land), t6_lands.rs"
 
 ["Mount Doom"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled ping never ran; impls/t6_lands.rs's land_options does the ping and the sacrifice wipe (Phase 2)
 status = "Full"
 note = "{T}, pay 1 life: {B} or {R} (not at 1 life); {1}{B}{R},{T}: 1 damage to each opponent (end of turn); {5}{B}{R},{T}, sacrifice it and a legendary artifact: keeps its two best creatures, destroys the rest when that nets 8+ worth (sorcery speed); t6_lands.rs. Infinite-untap loops are the combo code's"
 
@@ -8978,6 +9003,7 @@ status = "Full"
 note = "draws a card and lets the caster cast spells this turn as though they had flash (cast::grants_flash: human timing and the AI end-of-turn window; tested)"
 
 ["Mnemonic Betrayal"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, exile every graveyard (not only opponents', no casting them, no return), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 status = "Partial"
 note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); missing: cards left uncast should return to their owners' graveyards at the next end step, but the end-step clean-up exiles them (engine need: delayed end-step return)"
 
@@ -9093,6 +9119,7 @@ status = "Partial"
 note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first; also has Ioreth's two untap abilities while its controller has an Ioreth (the Tier 6 DDR loop). Other creatures' activated abilities are not copied"
 
 ["Staff of Compleation"]
+paths_ok = "two sets of abilities, one path each: the options entry is {T}, pay 1 life: destroy target permanent you own (the override dropped the compiled misreading); the compiled activations are the proliferate, the draw and the untap"
 dsl = [
   { type = "activated", cost = { tap = true, life = 3 }, effects = [{ do = "proliferate" }], sorcery = false, once = false },
   { type = "activated", cost = { tap = true, life = 4 }, effects = [{ do = "draw", n = 1, who = "you" }], sorcery = false, once = false },
@@ -9277,6 +9304,7 @@ status = "Full"
 note = "enters: search for a basic land onto the battlefield tapped; dies: draw a card (compiled). Wastes are found now (engine/zones.rs BASIC_LANDS)"
 
 ["Staff of Domination"]
+paths_ok = "the compiled activations are the five abilities, one activation each; the options entry is only the infinite-mana shortcut (Basalt Monolith and Rings of Brighthearth: the untap and draw looped until a Walking Ballista is found, karn_engines::staff_draw_down), which no single activation can express"
 status = "Full"
 note = "{1}: untap; {2},{T}: gain 1 life; {3},{T}: untap a creature; {4},{T}: tap a creature; {5},{T}: draw a card (compiled). With Basalt Monolith and Rings of Brighthearth (infinite colourless mana) the AI draws with the Staff until a Walking Ballista is in hand or play, or only three cards are left in the library (karn_engines::staff_draw_down, SAFE_LIBRARY), so it never decks itself. impls/karn_engines.rs"
 
@@ -9425,6 +9453,7 @@ pool_add_tags = ["rock=1:G"]
 pool_add_tags = ["xtutor"]
 
 ["Galadhrim Ambush"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the Elf Warriors only (no damage prevention), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 pool_remove_tags = ["tokx"]
 
 # --- Tier 3 (atraxa): hand-written in rust/crates/sim-core/src/impls/t3_atraxa.rs
@@ -9468,6 +9497,7 @@ tags = "leg human pow=3" # no tok/tokp: one Soldier per nontoken creature, the e
 # pool_remove_tags edit, so it holds whether or not a pool deck plays Lena)
 
 ["Sundering Eruption // Volcanic Fissure"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, destroy a land only (no basic for its controller, no can't-block), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
 tags = "" # no rem/tgt: it destroys a land, not a nonland permanent, cast by its own priority (the tags hold whether or
 # not a pool deck plays it)
 
@@ -9508,6 +9538,7 @@ dsl = [] # the walker framework runs its three abilities (the compiled +1 would 
 dsl = [] # the compiled enter search found any card; the Vampire search and the +1/+1 trigger are hand-written
 
 ["Damn"]
+paths_ok = "not a double: damn_resolve runs the compiled spell (the targeted destroy, through dsl::resolve_spell) unless the spell was overloaded; the card code is only the overload (destroy each creature, no regeneration)"
 add_tags = ["noregen"] # "a creature destroyed this way can't be regenerated" (the overload is hand-written)
 
 # --- Tiers 4/5 (urdragon): hand-written in impls/t45_urdragon.rs
@@ -9726,3 +9757,50 @@ paths_ok = "the compiled triggers gain 1 life when another creature of yours ent
 
 ["Open the Armory"]
 paths_ok = "the hand-written resolve does the card; the compiled spell, a search for any card (not an Aura or Equipment), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+# --- Phase 2, PR 5a (competing and shadowed doubles): the cards that had no table yet
+
+["Buried Ruin"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled regrowth never ran (dsl::ability_options reads perms only); impls/t45_heliod_zur.rs's land_options does it (Phase 2)
+
+["Slayers' Stronghold"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled pump never ran; impls/t3_aurelia.rs's land_options does it (Phase 2)
+
+["Ignite the Future"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, draw three (not exile and play until your next turn, free from the graveyard), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Gingerbrute"]
+paths_ok = "two abilities, one path each: the options entry is {1}: can't be blocked except by creatures with haste (not compiled); the compiled activation is {2}, {T}, sacrifice: gain 3 life"
+
+["Infectious Bite"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the poison counter only (no bite), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Time Wipe"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, destroy all creatures only (no return of one of yours first), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Sunhome, Fortress of the Legion"]
+dsl = [] # a land isn't a permanent in `perms`, so its compiled double strike never ran; impls/t3_aurelia.rs's land_options does it (Phase 2)
+
+["Return Upon the Tide"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the reanimation only (no Elf Warriors for an Elf), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Malakir Rebirth // Malakir Mire"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the 2 life only (no return when the creature dies), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Drown in Ichor"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the proliferate only (no -4/-4), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Pox"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, one creature and one land from each player (not a third of life, hand, creatures and lands), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Entish Restoration"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, sacrifice a land for two basics (never three with a power-4 creature), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Phyresis Outbreak"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, the poison counter only (no -1/-1 per poison counter), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Dragon's Hoard"]
+dsl = [] # "remove a gold counter" is a cost the interpreter can't pay (pay_ability_cost refuses `other` costs), so the compiled draw never ran; impls/t45_urdragon.rs does the counters and the draw (Phase 2)
+
+["Flare of Malice"]
+paths_ok = "the hand-written resolve does the card; the compiled spell, each opponent sacrifices a creature or planeswalker (not the greatest mana value), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
