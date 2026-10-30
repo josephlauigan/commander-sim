@@ -55,3 +55,35 @@ Brief: `rust/agents/phase4-values.md`. Design: `audit/phase4/values-design.md`. 
 - Second run (B2, 18b443f9; identity check passed): t1 A -1.7 [-7.0, +3.6], B +0.3 [-3.4, +4.0]; t2 A -1.9
   [-7.1, +3.3] (Sythis -4.9 [-8.4, -1.4]), B -2.9 [-6.9, +1.1] (Kaalia -2.8 [-5.9, +0.3]); t3 A -1.4 [-6.6, +3.8],
   B +1.9 [-2.2, +6.0]. (Table below when all tiers are in.)
+
+## Stage B results (binary B2 = 18b443f9; 2000 games per arm, seeds 500000-501999, loose; all 15 arms rc=0)
+
+The half's summed share of the decisive games its decks sat in, `AI_VALUES=0` against `AI_VALUES=<half>` (one shared
+old arm per tier); Wald 95% CIs, the decks' variances summed (conservative). Level = the CI includes 0.
+
+| tier | half | old (95% CI) | derived (95% CI) | derived - old (95% CI) | verdict |
+|---|---|---|---|---|---|
+| t1 | A (Isshin, Light-Paws, Teysa) | 90.6% [86.8, 94.4] | 88.9% [85.2, 92.6] | -1.7 [-7.0, +3.6] | level |
+| t1 | B (Lathril, Tatyova) | 34.5% [31.9, 37.1] | 34.8% [32.2, 37.4] | +0.3 [-3.4, +4.0] | level |
+| t2 | A (Brago, Lord Windgrace, Sythis) | 82.7% [79.0, 86.4] | 80.8% [77.1, 84.5] | -1.9 [-7.1, +3.3] | level |
+| t2 | B (Kaalia, Meren) | 42.3% [39.5, 45.1] | 39.4% [36.6, 42.2] | -2.9 [-6.9, +1.1] | level |
+| t3 | A (Atraxa, Korvold, Tergrid) | 79.3% [75.6, 83.0] | 77.9% [74.2, 81.6] | -1.4 [-6.6, +3.8] | level |
+| t3 | B (Aurelia, Marwyn) | 45.6% [42.7, 48.5] | 47.5% [44.5, 50.5] | +1.9 [-2.2, +6.0] | level |
+| t4 | A (Chulane, Krenko, Yuriko) | 62.0% [58.6, 65.4] | 64.0% [60.6, 67.4] | +2.0 [-2.8, +6.8] | level |
+| t4 | B (Edgar Markov, Prosper) | 63.3% [60.3, 66.3] | 60.4% [57.4, 63.4] | -2.9 [-7.2, +1.4] | level |
+| t5 | A (Kinnan, Urza, Zur) | 76.7% [73.0, 80.4] | 76.6% [73.0, 80.2] | -0.1 [-5.3, +5.1] | level |
+| t5 | B (Miirym, Yawgmoth) | 48.2% [45.3, 51.1] | 51.5% [48.5, 54.5] | +3.3 [-0.9, +7.5] | level |
+
+Deck level (`pair.sh`): one deck's own CI excludes 0, Sythis on t2 (half A) -4.9 [-8.4, -1.4]; Kaalia (t2 B) -2.8
+[-5.9, +0.3] and Edgar Markov (t4 B) -2.9 [-6.4, +0.6] lean down. Sythis' worth comes from her own trigger (a card
+for each enchantment cast): the derived value reads each cheap enchantment alone (an unread engine, 29-43, against the
+old 55 "hooked"), so the deck casts fewer of them early. What would close it: a commander-synergy term (the cards the
+commander's own triggers key on: enchantment, creature type, spell kind), read from the commander's abilities.
+
+## Stage C
+
+All five tiers level in both halves: derived values are the default for every generic-policy deck (8adc9209). The
+old tables are **not deleted**: JD's decks (`kefka`, `sheoldred`, `cloud`, `karn`, `yshtola`, `alela`, `garland`,
+`sephfs`, `titania`, `tymna_partners`) and every Tier 6 deck call `pool::generic_prio` as their fallback, and
+`card_worth`, `tutor_value`, `pval` and the other `bomb` reads serve them too; they go when those decks move (later
+Phase 4 points). `AI_VALUES=0` keeps the old reading for the generic decks (a measurement arm).
