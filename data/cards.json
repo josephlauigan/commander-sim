@@ -65867,6 +65867,32 @@
    "dsl": [
     {
      "type": "static",
+     "static": "equip_bonus",
+     "pow": 5,
+     "tgh": 5
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "first strike"
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "trample"
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "indestructible"
+    },
+    {
+     "type": "static",
+     "static": "equip_keyword",
+     "keyword": "haste"
+    },
+    {
+     "type": "static",
      "static": "equip_cost",
      "mana": 7
     }
@@ -65884,11 +65910,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Living weapon",
-    "Equipped creature gets +5/+5 and has first strike, trample, indestructible, haste, and \"Whenever ~ deals combat damage to a creature, exile that creature.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 7,
     "land": false,
@@ -67238,6 +67261,42 @@
     "attack",
     "etb"
    ],
+   "spell_prio": false
+  },
+  {
+   "name": "Kindred Dominance",
+   "types": "S",
+   "generic": 5,
+   "pips": "BB",
+   "tags": {
+    "wipe": "dominance"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 7,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
    "spell_prio": false
   },
   {
@@ -84301,6 +84360,65 @@
     "cmc": 5,
     "land": false,
     "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Nicol Bolas, the Ravager",
+   "types": "C",
+   "generic": 1,
+   "pips": "UBR",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "fly": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "discard",
+       "n": 1,
+       "who": "each_opponent"
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "transform"
+   ],
+   "subtypes": [
+    "dragon",
+    "elder"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BRU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "{4}{U}{B}{R}: Exile ~, then return him to the battlefield transformed under his owner's control. Activate only as a sorcery."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -121464,7 +121582,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -125565,6 +125683,53 @@
    "unparsed": [],
    "derived": {
     "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Thanos, the Mad Titan",
+   "types": "C",
+   "generic": 0,
+   "pips": "RWB",
+   "tags": {
+    "leg": true,
+    "pow": "4",
+    "tgh": "4",
+    "dt": true,
+    "lifelink": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "deathtouch",
+    "lifelink",
+    "power-up"
+   ],
+   "subtypes": [
+    "eternal",
+    "villain"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": true,
     "instant": false,

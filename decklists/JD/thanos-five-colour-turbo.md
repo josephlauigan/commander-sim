@@ -1,6 +1,6 @@
 # Thanos, the Mad Titan — Five-Colour cEDH Turbo
 
-The Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as the commander. The 96
+The Scion v1 cEDH list (`decklists/pool/retired/scion-ur-dragon-turbo.md`, retired 10/30) with Thanos, the Mad Titan as the commander. The 96
 cards that don't depend on the commander are unchanged: the fast mana and rituals, the tutors, the free counters and
 both win lines. The three Dragons that were there only for Scion to copy are out, and three spells that are free while
 you control your commander are in. JD's choice (10/30), not simulated; the Scion deck stays as the baseline.
@@ -8,7 +8,7 @@ you control your commander are in. JD's choice (10/30), not simulated; the Scion
 - **Commander:** Thanos, the Mad Titan
 - **Color identity:** White, Blue, Black, Red, Green (his power-up cost has all five colours)
 - **Game Changers (21):** Ancient Tomb, Chrome Mox, Crop Rotation, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gamble, Imperial Seal, Intuition, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Thassa's Oracle, Underworld Breach, Vampiric Tutor
-- **Simulator:** not wired in yet. Thanos's power-up needs a model and the deck needs a key; the three free spells are already in `data/cards.json`.
+- **Simulator:** deck key `thanos`, Tier 6 (Scion's seat, 10/30). The power-up is card code (`impls/t6_thanos.rs`), the plan is `data/plans/thanos.toml`; results in `audit/thanos/FINDINGS.md`.
 
 ## Strategy
 

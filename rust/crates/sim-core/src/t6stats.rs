@@ -16,8 +16,9 @@ use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 use crate::sym::intern;
 
-/// the deck keys of the Tier 6 pool, Godo (retired 2026-10-25, a test seat) and JD's Scion
-pub const T6_KEYS: [&str; 8] = [
+/// the deck keys of the Tier 6 pool, Godo (retired 2026-10-25, a test seat), JD's Thanos, and Scion (retired
+/// 2026-10-30, a test seat)
+pub const T6_KEYS: [&str; 9] = [
     "dack-fayden-white-stax",
     "kinnan-bonder-mana-combo",
     "kraum-tymna-blue-breach-midrange",
@@ -25,7 +26,8 @@ pub const T6_KEYS: [&str; 8] = [
     "rograkh-thrasios-creature-combo",
     "sisay-legends-toolbox",
     "godo",
-    "scion", // --- scion: JD's Scion of the Ur-Dragon turbo deck
+    "thanos", // --- thanos: JD's Thanos, the Mad Titan turbo deck (Scion's seat, 2026-10-30)
+    "scion",  // --- scion: JD's Scion of the Ur-Dragon deck (retired 2026-10-30, a test seat of its card code)
 ];
 
 /// is this deck key a Tier 6 deck (pool or Godo)? The one place the AI and the counters ask.

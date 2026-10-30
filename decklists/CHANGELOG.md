@@ -719,10 +719,11 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ## The Ur-Dragon — Five-Colour Dragons and Equipment
 
-`decklists/JD/ur-dragon-equipment.md`. Not in the simulator yet.
+Deck key `urdragon`, `decklists/JD/ur-dragon-equipment.md`. Simulated against Tier 5 (band 1).
 
 ### Changes
 
+- **2026-10-30.** Into the simulator (JD, 10/30): deck key `urdragon`, tier t5, played from its plan file (`data/plans/urdragon.toml`: the Godo + Helm of the Host lines, Combat Celebrant + Helm, Dualcaster Mage + Twinflame). Kindred Dominance and Kaldra Compleat's living weapon modeled. No list change.
 - **2026-10-28.** Out: Garruk's Uprising, Hellkite Tyrant. In: Combat Celebrant (proxy), Smothering Tithe (proxy). JD's choice, not simulated: Celebrant is a second Helm of the Host infinite-combat creature at three mana (each fresh hasty token exerts, untaps the team and adds a combat); Tithe's Treasures pay for Godo and the equip and turn on Puresteel Paladin's metalcraft. 17 Game Changers.
 - **2026-10-28.** Out: Godless Shrine (a proxy). In: Gaea's Cradle (proxy). JD's choice, not simulated: taps for {G} per creature; the white-black pair loses least (Scrubland, Marsh Flats and the five-colour lands stay). The Forest stays for Rampant Growth. 16 Game Changers.
 - **2026-10-27.** Out: Assassin's Trophy (the proxy). In: Kindred Dominance. JD's choice, not simulated: the deck's first board wipe (name Dragon; one-sided with Maskwood Nexus out). The real Assassin's Trophy from Seph/Atraxa goes to Tymna/Thrasios.
@@ -731,8 +732,9 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ## Thanos, the Mad Titan — Five-Colour cEDH Turbo
 
-`decklists/JD/thanos-five-colour-turbo.md`. Not in the simulator yet.
+Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against Tier 6 (cEDH).
 
 ### Changes
 
+- **2026-10-30.** Into the simulator (JD, 10/30): deck key `thanos` takes Scion's seat at t6, its plan file and its tests; Thanos's power-up modeled (impls/t6_thanos.rs). The Scion list moved to `decklists/pool/retired/` (a test seat only). No list change.
 - **2026-10-30.** New deck (JD, 10/30): the Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as commander. Out: Scion of the Ur-Dragon, Ancient Copper Dragon, Korvold, Fae-Cursed King, Prismari, the Inspiration (copy targets for Scion, dead without him). In: Fierce Guardianship, Deflecting Swat, Deadly Rollick (free while you control your commander). Not simulated; the Scion deck stays as the baseline.

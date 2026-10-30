@@ -80,9 +80,16 @@ commander = "Karn, Legacy Reforged"
 ident = ""
 tiers = ["t4", "t5"]
 
-[scion]
-file = "JD/scion-ur-dragon-turbo.md"
-name = "Scion"
-commander = "Scion of the Ur-Dragon"
+[thanos]
+file = "JD/thanos-five-colour-turbo.md"
+name = "Thanos"
+commander = "Thanos, the Mad Titan"
 ident = "WUBRG"
 tiers = ["t6"]
+
+[urdragon]
+file = "JD/ur-dragon-equipment.md"
+name = "The Ur-Dragon"
+commander = "The Ur-Dragon"
+ident = "WUBRG"
+tiers = ["t5"]

@@ -97,7 +97,9 @@ pub fn style(g: &Game, key: &str) -> Style {
 // --- scion
 /// JD's Tier 6 decks: they play through the outside decks' AI and the Tier 6 table rules (so they are not in
 /// `MAIN_STYLES`, which would switch on the hand-written main-deck plans and switch off the combo lines), with their
-/// own style. Scion is a turbo deck: the default temperature and aggression (its attacks are Scion's own, for
+/// own style. --- thanos: Thanos (Scion's seat since 2026-10-30) takes the same style from its plan file
+/// (`data/plans/thanos.toml` `[style]`); this entry keeps the retired Scion test seat as it was. Scion is a turbo
+/// deck: the default temperature and aggression (its attacks are Scion's own, for
 /// Copper Dragon's Treasures), and less caution than the pool's 0.5, so it spends its mana on its plan instead of
 /// passing with a counterspell up.
 pub const T6_JD_STYLES: [(&str, Style); 1] = [("scion", st(1.0, 0.6, 0.35))];

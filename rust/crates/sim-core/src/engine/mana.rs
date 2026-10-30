@@ -368,11 +368,13 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
     let mut used = vec![0u32; u.len()];
     let mut col = vec![String::new(); u.len()];
     let mut order: Vec<char> = pips.chars().collect();
-    order.sort_by_key(|&c| (0..u.len()).filter(|&i| u[i].cols.has(c)).map(|i| rem[i]).sum::<u32>()); // stable
+    // --- thanos: a {C} pip (colourless mana, not generic: Thanos's power-up) is paid only by a colourless unit
+    let fits = |w: &Unit, c: char| if c == 'C' { w.cols.is_empty() } else { w.cols.has(c) };
+    order.sort_by_key(|&c| (0..u.len()).filter(|&i| fits(&u[i], c)).map(|i| rem[i]).sum::<u32>()); // stable
     for c in order {
         let mut best: Option<(usize, (bool, u32))> = None;
         for (i, w) in u.iter().enumerate() {
-            if rem[i] > 0 && w.cols.has(c) {
+            if rem[i] > 0 && fits(w, c) {
                 let k = (w.src == Source::Treasure, w.cols.count());
                 if best.is_none_or(|b| k < b.1) {
                     best = Some((i, k));
