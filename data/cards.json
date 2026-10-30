@@ -2980,7 +2980,7 @@
       "type": "creature",
       "controller": "you",
       "other": false,
-      "subtype": "nontoken"
+      "nontoken": true
      },
      "pow": 1,
      "tgh": 1
@@ -127805,7 +127805,7 @@
       "type": "creature",
       "controller": "you",
       "other": true,
-      "subtype": "nontoken"
+      "nontoken": true
      },
      "pow": 1,
      "tgh": 1

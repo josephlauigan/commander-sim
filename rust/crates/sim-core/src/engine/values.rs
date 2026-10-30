@@ -47,7 +47,7 @@ pub fn equipped(g: &Game, m: PermId, t: Tag) -> bool {
     let owner = g.perm(m).owner;
     g.player(owner).perms.iter().any(|&e| {
         let x = g.perm(e);
-        x.attached == Some(m) && x.cd.is_some_and(|c| g.db.get(c).tag(t))
+        x.attached == Some(m) && !x.neutered && x.cd.is_some_and(|c| g.db.get(c).tag(t))
     })
 }
 

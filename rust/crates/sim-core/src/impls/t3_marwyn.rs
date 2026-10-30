@@ -626,15 +626,9 @@ fn lodge_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
     if lodge_amount(g, p, l) > 1 { Colors::from_letters("G") } else { Colors::NONE }
 }
 
-/// Yavimaya, Cradle of Growth on any battlefield (and not a plain Mountain under Blood Moon): every land is a Forest
-pub fn yavimaya_out(g: &Game) -> bool {
-    crate::engine::chars::lands_are(g, 'G', true) // the table of named effects (layer 4)
-}
-
 /// is land l a Forest (by name, by type, or by Yavimaya)?
 pub fn is_forest(g: &Game, l: PermId) -> bool {
-    let d = g.db.get(g.perm(l).card());
-    &*d.name == "Forest" || d.has_subtype("forest") || yavimaya_out(g)
+    crate::engine::chars::land_types(g, l).has('G') // Blood Moon, Yavimaya: layer 4
 }
 
 // ================================================================== Yeva, Nature's Herald

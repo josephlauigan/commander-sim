@@ -63,13 +63,12 @@ fn anthems_counters_and_equipment_add_up() {
     let sword = perm(&mut g, P0, "Sword of Feast and Famine"); // +2/+2, protection from black and green
     attach(&mut g, sword, elves);
     let c = chars::chars(&g, elves);
-    // Always Watching's anthem is compiled with the filter subtype "nontoken" (a parse slip): it misses (Stage C)
-    assert_eq!((c.power, c.toughness), (7, 7), "1 + 2 counters + 1 + 1 + 2");
+    assert_eq!((c.power, c.toughness), (8, 8), "1 + 2 counters + 1 + 1 + 1 + 2");
     assert!(c.creature && c.types.has(Types::CREATURE));
     assert_eq!(kws(&g, elves), ["vigilance"]);
     assert_eq!(c.colors, Colors::from_letters("G"));
     // the Archdruid gets the other anthems but not its own
-    assert_eq!((chars::power(&g, druid), chars::toughness(&g, druid)), (3, 3));
+    assert_eq!((chars::power(&g, druid), chars::toughness(&g, druid)), (4, 4));
     // the Sword is not a creature: no anthem, no power from the board
     assert!(!chars::is_creature(&g, sword));
     agree(&g);
@@ -211,10 +210,91 @@ fn yavimaya_and_urborg_make_every_land_a_forest_and_a_swamp() {
     let mut g = game();
     let island = lands(&mut g, P0, "Island", 1, false)[0];
     assert!(!sim_core::impls::t3_marwyn::is_forest(&g, island));
-    assert!(!chars::lands_are(&g, 'G', true) && !chars::lands_are(&g, 'B', false));
+    assert!(!chars::lands_are(&g, 'G') && !chars::lands_are(&g, 'B'));
     lands(&mut g, P1, "Yavimaya, Cradle of Growth", 1, false);
     lands(&mut g, P1, "Urborg, Tomb of Yawgmoth", 1, false);
     assert!(sim_core::impls::t3_marwyn::is_forest(&g, island), "any player's Yavimaya");
-    assert!(chars::lands_are(&g, 'G', true) && chars::lands_are(&g, 'B', false));
+    assert!(chars::lands_are(&g, 'G') && chars::lands_are(&g, 'B'));
+    agree(&g);
+}
+
+// ------------------------------------------------------------------ Stage C: layer fixes
+#[test]
+fn always_watching_pumps_nontoken_creatures_only() {
+    // its anthem used to be compiled with the subtype "nontoken" and pumped nobody
+    let mut g = game();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    let tok = token(&mut g, P0, 2);
+    perm(&mut g, P0, "Always Watching");
+    assert_eq!((chars::power(&g, elves), chars::toughness(&g, elves)), (2, 2));
+    assert_eq!(chars::power(&g, tok), 2, "a token is not pumped");
+    assert_eq!(kws(&g, tok), ["vigilance"], "but every creature has vigilance");
+    agree(&g);
+}
+
+#[test]
+fn a_source_that_lost_its_abilities_changes_nothing() {
+    // layer 6 before layer 7: Darksteel Mutation / Kenrith's Transformation on an anthem creature, Tidebinder ...
+    let mut g = game();
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    let druid = perm(&mut g, P0, "Elvish Archdruid"); // compiled anthem
+    let striker = perm(&mut g, P0, "Thornfist Striker"); // tagged anthem
+    let watching = perm(&mut g, P0, "Always Watching"); // compiled anthem and keyword
+    let sword = perm(&mut g, P0, "Sword of Feast and Famine"); // tagged equipment
+    attach(&mut g, sword, elves);
+    assert_eq!(chars::power(&g, elves), 1 + 1 + 1 + 1 + 2);
+    assert_eq!(kws(&g, elves), ["vigilance"]);
+    g.perm_mut(druid).neutered = true;
+    assert_eq!(chars::power(&g, elves), 5, "the Archdruid's anthem is gone");
+    g.perm_mut(striker).neutered = true;
+    assert_eq!(chars::power(&g, elves), 4, "Thornfist's anthem is gone");
+    g.perm_mut(watching).neutered = true;
+    assert_eq!(chars::power(&g, elves), 3, "Always Watching's anthem is gone");
+    assert!(kws(&g, elves).is_empty(), "and its vigilance");
+    g.perm_mut(sword).neutered = true;
+    assert_eq!(chars::power(&g, elves), 1, "the Sword's +2/+2 is gone");
+    assert!(!values::prot_colors(&g, elves).has('G'), "and its protection");
+    agree(&g);
+}
+
+#[test]
+fn under_blood_moon_a_nonbasic_land_is_only_a_mountain() {
+    let mut g = game();
+    let pool = lands(&mut g, P0, "Breeding Pool", 1, false)[0];
+    let forest = lands(&mut g, P0, "Forest", 1, false)[0];
+    assert_eq!(chars::land_types(&g, pool), Colors::from_letters("UG"));
+    assert!(sim_core::impls::t3_marwyn::is_forest(&g, pool));
+    perm(&mut g, P1, "Blood Moon");
+    assert_eq!(chars::land_types(&g, pool), Colors::from_letters("R"), "a Mountain only");
+    assert!(!sim_core::impls::t3_marwyn::is_forest(&g, pool), "no longer a Forest");
+    assert_eq!(chars::land_types(&g, forest), Colors::from_letters("G"), "a basic keeps its type");
+}
+
+#[test]
+fn urborg_and_yavimaya_stop_under_blood_moon_and_feed_the_land_type_rules() {
+    let mut g = game();
+    let island = lands(&mut g, P0, "Island", 1, false)[0];
+    lands(&mut g, P1, "Urborg, Tomb of Yawgmoth", 1, false);
+    lands(&mut g, P1, "Yavimaya, Cradle of Growth", 1, false);
+    assert_eq!(chars::land_types(&g, island), Colors::from_letters("UBG"), "an Island, a Swamp and a Forest");
+    perm(&mut g, P0, "Blood Moon");
+    assert!(!chars::lands_are(&g, 'B'), "Urborg is a plain Mountain: no Swamps (it used to keep going)");
+    assert!(!chars::lands_are(&g, 'G'));
+    assert_eq!(chars::land_types(&g, island), Colors::from_letters("U"));
+}
+
+#[test]
+fn a_base_pt_equipment_overrides_adelines_power() {
+    // 7a (Adeline: power = creatures you control) then 7b (Wrecking Ball Arm: base 7/7) then 7c
+    let mut g = game();
+    let adeline = perm(&mut g, P0, "Adeline, Resplendent Cathar");
+    token(&mut g, P0, 1);
+    token(&mut g, P0, 1);
+    assert_eq!(chars::power(&g, adeline), 3, "three creatures");
+    let arm = perm(&mut g, P0, "Wrecking Ball Arm");
+    attach(&mut g, arm, adeline);
+    assert_eq!((chars::power(&g, adeline), chars::toughness(&g, adeline)), (7, 7));
+    g.perm_mut(adeline).plus = 1;
+    assert_eq!(chars::power(&g, adeline), 8);
     agree(&g);
 }

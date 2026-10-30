@@ -22,7 +22,16 @@ all 923-935.
       their sites (cloud::base_pt, steelshaper_bonus gone; loses_flying, yavimaya_out, urborg are wrappers). Tests: 3 more
       in tests/chars.rs. Checks: 0 warnings; 3635 passed / 0 failed / 3 ignored; practice 104; cardgen clean;
       clone_cost 2.96-3.05; chars_cost power 276-295, has_type 25-28, all 911-956 ns (base 923-935).
-- [ ] Stage C: layer fixes (neutered sources' statics; Blood Moon vs land types and Urborg; Adeline vs base P/T)
+- [x] Stage C (committed): neutered sources' statics and tagged equipment; Always Watching / Thraben Watcher nontoken
+      parse (cardgen); `chars::land_types` (Blood Moon over printed types, Urborg stops under Blood Moon, Yavimaya and
+      Urborg feed check lands); Adeline vs base P/T. Tests: 5 more in tests/chars.rs (16). Checks: 0 warnings; 3640
+      passed / 0 failed / 3 ignored; practice 104; export changes 2 cards in cards.json; validate, 0 doubles,
+      paths_known empty; clone_cost 2.95 / 3.02; chars_cost all 911-930 ns.
+
+## Next (follow-ups, not in this PR)
+See "What does not fit yet" in chars-design.md: the keyword booleans on `Perm` (`fly` ...), set-P/T effects written
+in place, `pump`, face-down colours/types, creature lists missing land creatures, `dsl::statics` for other kinds still
+reads neutered sources (cost reducers etc.).
 
 ## Notes
 - Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase3-chars/`

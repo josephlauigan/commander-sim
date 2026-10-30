@@ -1392,8 +1392,11 @@ static STATICS: &[(&str, StaticFn)] = &[
             return None;
         }
         let mut filter = obj! {"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()};
-        if !m.gs(2).trim().is_empty() {
-            filter.set("subtype", m.gs(2).trim());
+        // Phase 3: "nontoken creatures you control get ..." (Always Watching) is a nontoken filter, not a subtype
+        match m.gs(2).trim() {
+            "" => {}
+            "nontoken" => filter.set("nontoken", true),
+            s => filter.set("subtype", s),
         }
         Some(eff(obj! {"type" => "static", "static" => "anthem", "filter" => filter, "pow" => int(m.gs(3)),
         "tgh" => int(m.gs(4)), "per" => per}))
@@ -1405,8 +1408,11 @@ static STATICS: &[(&str, StaticFn)] = &[
     }),
     (r"^(other )?([a-z ]*?)creatures you control get \+(\d+)/\+(\d+)(?: and have ([a-z, ]+))?$", |m| {
         let mut filter = obj! {"type" => "creature", "controller" => "you", "other" => m.g(1).is_some()};
-        if !m.gs(2).trim().is_empty() {
-            filter.set("subtype", m.gs(2).trim());
+        // Phase 3: "nontoken creatures you control get ..." (Always Watching) is a nontoken filter, not a subtype
+        match m.gs(2).trim() {
+            "" => {}
+            "nontoken" => filter.set("nontoken", true),
+            s => filter.set("subtype", s),
         }
         let mut v = vec![
             obj! {"type" => "static", "static" => "anthem", "filter" => filter, "pow" => int(m.gs(3)), "tgh" => int(m.gs(4))},

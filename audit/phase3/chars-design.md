@@ -98,3 +98,20 @@ get and hard to see. `chars()` is for tests, logs and practice displays.
   power, Adeline's count. A list question, not a characteristics one (Phase 3 follow-up: one battlefield list).
 - Protection (`prot_colors`), untargetability and indestructible stay in `values` (they read `has_keyword`).
 - Cards not on the battlefield (`galadriel::card_is`, `epow_card`) have their own readers.
+
+## Done (Stages A-C)
+
+- Stage A (d145332d): `engine/chars.rs`; the old readers are thin wrappers; `tests/chars.rs` compares `chars` with
+  them on the tricky boards. Results identical (3632 passed).
+- Stage B (45fad881): `chars::NAMED`, looked up once per card at load (`CardDef::named`, so a reader compares one
+  enum, not names); the name checks in `cloud` (Hammer, base P/T, Steelshaper), `t3_marwyn` (Yavimaya),
+  `common` (Urborg), `values` (Maskwood) and the Insignia check are gone. Results identical (3635 passed).
+- Stage C: the three layer bugs above are fixed, plus a fourth found by the Stage A tests: Always Watching and
+  Thraben Watcher's anthem was compiled with the filter subtype "nontoken" and pumped nobody (cardgen now writes
+  `nontoken: true`). Land types read one function, `chars::land_types` (check lands' enter rules, Cabal Coffers /
+  Crypt Ghast's Swamps, forestwalk and Forest counts, Krenko's Mountains). A neutered Equipment (tagged ones) gives
+  no bonus or protection either (`values::equipped`).
+
+Speed after Stage C (`chars_cost`, ns per permanent): is_creature 1.5, power 283-348, toughness 236-238, has_type 25,
+subtypes 15, colors_of 1.4, has_kw 398-402, all seven 911-930 (base 923-935): no slower. `has_type` 22 -> 25 ns
+(Maskwood through the table). `clone_cost` 2.95-3.02 µs (base 2.95-3.04).

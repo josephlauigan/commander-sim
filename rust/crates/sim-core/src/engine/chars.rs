@@ -235,7 +235,7 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     if !dsl::active(g) {
         return false;
     }
-    if let Some(cd) = x.cd {
+    if let Some(cd) = x.cd.filter(|_| !x.neutered) {
         for a in g.db.get(cd).abilities.iter() {
             if let Ability::Static { kind, keyword, .. } = a {
                 match kind.as_str() {
@@ -251,6 +251,7 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     for (q, src, ab, i) in dsl::statics(g, "keyword") {
         if let Ability::Static { keyword, filter, .. } = &ab[i]
             && keyword.as_deref() == Some(kw)
+            && !g.perm(src).neutered // layer 6: a source that lost its abilities grants nothing
             && (cre || dsl::noncreature_ok(filter.as_ref())) // Tier 3 (aurelia): "permanents you control have" (Avacyn)
             && dsl::matches(g, q, m, filter.as_ref(), Some(src))
         {
@@ -260,6 +261,7 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     for (_, src, ab, i) in dsl::statics(g, "equip_keyword") {
         if let Ability::Static { keyword, .. } = &ab[i]
             && keyword.as_deref() == Some(kw)
+            && !g.perm(src).neutered
             && g.perm(src).attached == Some(m)
         {
             return true;
@@ -274,7 +276,8 @@ pub fn power(g: &Game, m: PermId) -> i32 {
     let x = g.perm(m);
     let p = x.owner;
     let mut v = x.pow + x.plus + static_bonus(g, m);
-    if card_tag(g, m, Tag::Adeline) {
+    if card_tag(g, m, Tag::Adeline) && equipped_base(g, m).is_none() {
+        // 7a (Adeline's power) is overridden by a 7b base from an Equipment (Wrecking Ball Arm)
         let n = g.player(p).perms.iter().filter(|&&o| is_creature(g, o) && !g.perm(o).phased).count() as i32;
         v = n + x.plus + static_bonus(g, m);
     }
@@ -339,6 +342,7 @@ pub fn static_bonus(g: &Game, m: PermId) -> i32 {
         let y = g.perm(o);
         if o != m
             && !y.phased
+            && !y.neutered // layer 6: an anthem that lost its abilities
             && let Some(c) = y.cd
             && let Some(a) = g.db.get(c).tags.int(Tag::Anth)
         {
@@ -386,7 +390,7 @@ pub fn pt_changes(g: &Game, m: PermId) -> (i32, i32) {
         for src in q.perms.iter().copied().chain(dsl::land_sources(g, q.id)) {
             let s = g.perm(src);
             let Some(cd) = s.cd else { continue };
-            if s.phased || s.owner != q.id {
+            if s.phased || s.owner != q.id || s.neutered {
                 continue;
             }
             for a in g.db.get(cd).abilities.iter() {
@@ -428,7 +432,7 @@ pub fn pt_changes(g: &Game, m: PermId) -> (i32, i32) {
     let shaped = equipped_lords(g, m); // Auriok Steelshaper
     dp += shaped;
     dt += shaped;
-    if let Some(cd) = x.cd {
+    if let Some(cd) = x.cd.filter(|_| !x.neutered) {
         for a in g.db.get(cd).abilities.iter() {
             if let Ability::Static { kind, per, pow, tgh, base0, .. } = a
                 && kind == "self_scaling"
@@ -498,18 +502,35 @@ fn is_fx(g: &Game, m: PermId, fx: NamedFx) -> bool {
 fn equipment_fx(g: &Game, m: PermId) -> impl Iterator<Item = NamedFx> + '_ {
     g.player(g.perm(m).owner).perms.iter().filter_map(move |&e| {
         let x = g.perm(e);
-        if x.attached != Some(m) || !x.on_bf || !crate::impls::cloud::is_equipment(g, e) {
+        if x.attached != Some(m) || !x.on_bf || x.neutered || !crate::impls::cloud::is_equipment(g, e) {
             return None;
         }
         g.db.get(x.cd?).named
     })
 }
 
-/// some player's land (not a plain Mountain under Blood Moon, when `moon` asks) makes every land this basic type
-pub fn lands_are(g: &Game, ch: char, moon: bool) -> bool {
-    g.players.iter().filter(|q| q.alive).any(|q| {
-        q.lands.iter().any(|&l| is_fx(g, l, NamedFx::LandsAre(ch)) && !(moon && crate::engine::mana::moon_land(g, l)))
-    })
+/// some player's land makes every land this basic type (Yavimaya, Urborg); not one that is a plain Mountain under
+/// Blood Moon: it has lost that ability (layer 4 depends on layer 6 here)
+pub fn lands_are(g: &Game, ch: char) -> bool {
+    g.players
+        .iter()
+        .filter(|q| q.alive)
+        .any(|q| q.lands.iter().any(|&l| is_fx(g, l, NamedFx::LandsAre(ch)) && !crate::engine::mana::moon_land(g, l)))
+}
+
+/// layer 4: land l's basic land types (WUBRG letters: Plains, Island, Swamp, Mountain, Forest). Blood Moon makes a
+/// nonbasic land a Mountain only (its printed types go); Yavimaya and Urborg add Forest and Swamp to every land.
+pub fn land_types(g: &Game, l: PermId) -> Colors {
+    if crate::engine::mana::moon_land(g, l) {
+        return Colors::from_letters("R");
+    }
+    let mut t = g.perm(l).cd.map_or(Colors::NONE, |c| g.db.get(c).land_types);
+    for (ch, s) in [('G', "G"), ('B', "B")] {
+        if lands_are(g, ch) {
+            t = t.union(Colors::from_letters(s));
+        }
+    }
+    t
 }
 
 /// m loses keyword kw to an Equipment on it (layer 6: Colossus Hammer)
