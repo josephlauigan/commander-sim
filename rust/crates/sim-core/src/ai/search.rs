@@ -21,7 +21,7 @@ use crate::ids::{CardId, PlayerId};
 use crate::pysum::PySum;
 use crate::rng::Rng;
 use crate::settings::AiMode;
-use crate::state::{Game, Step};
+use crate::state::{Game, SearchCost, Step};
 use crate::sym::Sym;
 use crate::tag::Tag;
 use std::cell::RefCell;
@@ -82,6 +82,24 @@ fn decision_seed(g: &mut Game, parts: &str) -> u64 {
     g.search_n += 1;
     let name = format!("search:{}:{}:{parts}", g.search_n, g.round);
     Rng::named(&name).next_u64() >> 16
+}
+
+// --- phase4-search
+/// `f` is one look-ahead decision of p's (of `kind`): its decision and the playout steps it took go to p's
+/// `SearchCost` (only read by the reports: play is unchanged)
+pub(crate) fn booked<T>(g: &mut Game, p: PlayerId, kind: usize, f: impl FnOnce(&mut Game) -> T) -> T {
+    let (n0, w0) = (g.search_n, g.search_work);
+    let r = f(g);
+    let (dn, dw) = (g.search_n > n0, g.search_work - w0);
+    let c = &mut g.player_mut(p).search_cost;
+    c.n[kind] += dn as u32;
+    c.steps[kind] += dw;
+    r
+}
+
+/// --- phase4-search: the per-decision diagnostic (`AI_SEARCH_DIAG`) is on for p's decisions
+fn diag_for(g: &Game, p: PlayerId) -> bool {
+    super::ismcts::diag_on() && super::values::generic_deck(g, p)
 }
 
 // ------------------------------------------------------------------ copying a game
@@ -594,7 +612,14 @@ fn find(opts: &[Opt], label: &str, n: usize) -> Option<usize> {
 /// In a practice game the result is recorded on the game's tape, or taken off it when the game is being replayed.
 pub fn choose(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usize> {
     if g.search_tape.0.is_none() {
-        return choose_inner(g, p, post, opts);
+        let st = diag_for(g, p).then(|| super::ismcts::stakes(g, p, opts)); // --- phase4-search: stats only
+        let w0 = g.search_work;
+        let r = booked(g, p, SearchCost::MAIN, |g| choose_inner(g, p, post, opts));
+        if let (Some(s), Some(i)) = (st, r) {
+            let top = (0..opts.len()).fold(0, |b, k| if opts[k].utility > opts[b].utility { k } else { b });
+            super::ismcts::diag(g, p, "main", &s, i != top, g.search_work - w0);
+        }
+        return r;
     }
     if !opts.iter().any(|o| o.act.is_some()) {
         return None;
@@ -893,7 +918,13 @@ fn play_on_after_phase(g2: &mut Game, p2: PlayerId, hold: Option<CardId>, kept: 
 /// search.choose_attack: at the first combat of p's turn: (defender, 'filtered' | 'all' | 'none') by look-ahead
 pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     if g.search_tape.0.is_none() {
-        return choose_attack_inner(g, p);
+        let st = diag_for(g, p).then(|| (super::ismcts::stakes(g, p, &[]), brain::choose_defender(&mut clone(g), p)));
+        let w0 = g.search_work;
+        let r = booked(g, p, SearchCost::ATTACK, |g| choose_attack_inner(g, p));
+        if let (Some((s, d)), Some(plan)) = (st, r) {
+            super::ismcts::diag(g, p, "attack", &s, plan != (d, "filtered"), g.search_work - w0); // --- phase4-search
+        }
+        return r;
     }
     if g.opps(p).next().is_none() {
         return None;
@@ -994,7 +1025,13 @@ pub fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: 
 /// by look-ahead to the end of q's next turn
 pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool {
     if g.search_tape.0.is_none() {
-        return choose_counter_inner(g, q, p, c);
+        let st = diag_for(g, q).then(|| super::ismcts::stakes(g, q, &[]));
+        let w0 = g.search_work;
+        let r = booked(g, q, SearchCost::COUNTER, |g| choose_counter_inner(g, q, p, c));
+        if let Some(s) = st {
+            super::ismcts::diag(g, q, "counter", &s, r, g.search_work - w0); // --- phase4-search: "changed" = countered
+        }
+        return r;
     }
     let (res, replayed) = taped(g, "counter", |g| Taped::Counter(choose_counter_inner(g, q, p, c)));
     if replayed {
