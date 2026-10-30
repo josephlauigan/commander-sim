@@ -29,7 +29,7 @@ survive to attack, so protect him (see Protection), and note that he is always a
 is removed.
 
 ### Game plan
-- **Turns 1 to 3.** Develop cheap looters and discard fodder (Rummaging Goblin, Sawblade Scamp, Rank Rat, Blightspeaker),
+- **Turns 1 to 3.** Develop cheap looters and discard fodder (Rummaging Goblin, Sawblade Scamp, Blightspeaker),
   play mana rocks (Arcane Signet, Sisay's Ring, Lotus Petal) and a land every turn.
   Keep the cards that want to be discarded in hand rather than playing them out.
 - **Turns 4 to 6.** Land Kefka (with Lightning Greaves for two triggers in one turn), keep attacking when it is
@@ -69,7 +69,7 @@ the table. With four Wizards (Kefka and Niv-Mizzet count) he flips into Trance K
 Wizard damage. Cast him before a spell-heavy turn.
 
 ### Pressure on their hands
-**Rank Rat** and **Cackling Fiend** each make every opponent discard a card when they enter. **Intellect Devourer**
+**Cackling Fiend** makes every opponent discard a card when it enters. **Intellect Devourer**
 makes each opponent exile a card from hand and lets you play it, spending mana as though it were any colour.
 Opponents low on cards discard their best one to Kefka.
 
@@ -84,6 +84,10 @@ Rapturous Moment refunds five.
   (each creature or artifact of yours that dies drains one opponent, and Treasure you crack counts).
 - **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter,
   Corroding Dragonstorm, Grab the Prize, Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
+- **Price of Progress** ({1}{R}, instant) deals 2 damage to each player for each nonbasic land they control. Kefka runs
+  24 basics, so it costs you little, and on your turn with Kefka flipped each opponent's loss draws you that many cards:
+  three opponents with four nonbasics each is 24 damage and 24 cards. Not with Fiery Emancipation out unless it kills:
+  tripled, it can draw you out of cards (see Key lines).
 - **Combat:** a flying 5/7 that hits for 5 draws you 5.
 
 ### Tutors
@@ -123,6 +127,10 @@ pings at creatures (or at yourself) and stop. Niv also taps to draw, which start
 you draw becomes 3 damage (to each opponent with the Crawler), so the flipped Kefka's loop needs a third of the
 library, and Grapeshot copies and Lightning Bolt hit three times as hard. Cast it once the Crawler or Niv is out or in
 hand, or after the flip; otherwise it waits (six mana is a whole turn).
+
+**Price of Progress after the flip** is a burst of cards: every point each opponent loses draws you one. With Fiery
+Emancipation out the damage triples, and so do the draws (often 60 or more), which can empty your library. Cast it
+then only if it kills the table, or with the Crawler or Niv out so the draws finish the loop before you run out.
 
 **Bribery** ({3}{U}{U}) puts the best creature from an opponent's library onto your battlefield: a bomb or a combo
 creature on your side, and one fewer in their deck. Pick the opponent whose deck holds the biggest threat.
@@ -186,7 +194,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (25).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rank Rat, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Stinkweed Imp, Susurian Voidborn, Viashino Fangtail
+**Creatures (24).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Stinkweed Imp, Susurian Voidborn, Viashino Fangtail
 
 **Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Underworld Breach
 
@@ -194,7 +202,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
 
-**Instants (14).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
+**Instants (15).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Price of Progress, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
 **Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Underground River, 6 Island, 5 Mountain, 13 Swamp
 
@@ -245,9 +253,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Night's Whisper
 1 Niv-Mizzet, the Firemind
 1 Pongify
+1 Price of Progress
 1 Profane Tutor
 1 Psychosis Crawler
-1 Rank Rat
 1 Rapturous Moment
 1 Reality Shift
 1 Rummaging Goblin

@@ -9134,6 +9134,62 @@
    "spell_prio": false
   },
   {
+   "name": "Baleful Mastery",
+   "types": "I",
+   "generic": 3,
+   "pips": "B",
+   "tags": {
+    "rem": "exile",
+    "tgt": "cp"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "exile",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "cp"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "You may pay {1}{B} rather than pay ~'s mana cost.",
+    "If the {1}{B} cost was paid, an opponent draws a card."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Baleful Strix",
    "types": "AC",
    "generic": 0,
@@ -44393,7 +44449,10 @@
    "dsl": null,
    "start_loyalty": null,
    "kws": [],
-   "subtypes": [],
+   "subtypes": [
+    "archer",
+    "human"
+   ],
    "protfrom": "",
    "ward": 0,
    "identity": null,
@@ -93024,6 +93083,42 @@
    "game_changer": false,
    "source": "scryfall",
    "unparsed": [],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Price of Progress",
+   "types": "I",
+   "generic": 1,
+   "pips": "R",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "R",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "~ deals damage to each player equal to twice the number of nonbasic lands that player controls."
+   ],
    "derived": {
     "cmc": 2,
     "land": false,

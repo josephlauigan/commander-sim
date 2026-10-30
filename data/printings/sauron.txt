@@ -1,4 +1,3 @@
-1 Aggravated Assault (sld) 2691
 1 Arcane Denial (all) 22a
 1 Arcane Signet (p30m) 1P
 1 Barad-dûr (ltr) 425
@@ -29,7 +28,6 @@
 1 Force of Will (dmr) 418
 1 Foreboding Ruins (voc) 174
 1 Frostboil Snarl (msc) 246
-1 Go for the Throat (f11) 11
 1 Grave Titan (ecc) 74
 1 Haunted Ridge (fra) 398
 1 Inexorable Tide (som) 35
@@ -76,10 +74,8 @@
 1 The Ozolith (iko) 237
 1 Treno, Dark City (fin) 290
 1 Undermine (scd) 254
-1 Urabrask, Heretic Praetor (snc) 468
 1 Urza, Lord High Artificer (fca) 5
 1 Vandalblast (fic) 298
 1 Vision, Synthezoid Avenger (msc) 119
-1 Vraska, Betrayal's Sting (one) 442
 1 War Machine, Avenging Arsenal (msc) 63
 1 Whispersilk Cloak (m10) 221
