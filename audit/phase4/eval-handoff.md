@@ -69,3 +69,23 @@ The case barely happens on t3 since the ai-eval margin rule (the look-ahead over
 standard errors): stop is picked in 3% of main-1 hold decisions either way, and when it is, the mana really stays up.
 The learned evaluation doesn't change it measurably (main 2: 2 of 31 against 4 of 35 decisions). The hold bonus keeps
 its meaning because the mapping puts the learned value on today's scale (same odds, same number).
+
+## Final checks (head)
+
+- `cargo build --release --all-targets -j 22`: 0 warnings. `cargo test --release --no-fail-fast -j 22`: 3692 passed,
+  0 failed. `cardgen validate`: all decks passed. `all_decks adaptive 3` and `lookahead 1`: rc=0 (lookahead 21 games
+  in 70.4 s; PR 3: 77.2 s).
+- Defaults (no env, 300 games, binary at 4747f616) = the learned arm (binary B, `AI_EVAL=1`) byte for byte on t1, t2,
+  t3, t4, t5, all rc=0 (`F/head-tN.txt` vs `F/arm-tN.txt`). Later commits change only comments, tests and docs.
+- The raw recordings (220 MB) are deleted; the model file keeps their hash (`5c51874b0ca6d03d`). To refit: rerun
+  `record.sh` (same seeds, same binary as the recording: `bin/commander-sim-headA`, AI_EVAL unset there = today's
+  evaluation), then `eval_train`.
+
+## Next (not in this PR)
+
+- Refit after each big change (the recording is ~2 h of look-ahead games at 5,000 a tier; `record.sh`). The positions
+  were recorded with today's evaluation playing: a refit on games played with the learned evaluation is the next
+  step (one round of the fit-play loop).
+- Richer features (the plan brief's "later"): per-card output, open mana and held interaction, the stack of threats
+  each opponent shows.
+- JD's decks and Tier 6 move in Phase 4's last step (they keep today's evaluation; `values::generic_deck` gates both).
