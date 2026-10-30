@@ -13,7 +13,7 @@ Brief: `rust/agents/phase4-eval.md`. Design: `audit/phase4/eval-design.md`. Bran
 - [x] Recording t1-t5: `record.sh` (5000 games a tier, seeds 1,000,000 + 100,000 per tier; data `rec/data/tN/`, 220 MB; all rc=0; 24,992 games, 830,119 positions).
 - [x] Training (`train2.txt`): held-out (4,990 games) log loss / Brier / AUC: baseline 0.4963 / 0.1608 / 0.7168, logistic 0.4781 / 0.1547 / 0.7424, logistic + 600 trees 0.4617 / 0.1492 / 0.7675 (kept). Model committed.
 - [x] Stage A: see Identity (and binary B unset = base on t1, `A/B-unset-t1.txt`).
-- [x] Stage B: `chainB.sh` -> `stageB.sh` (binary `bin/commander-sim-B`, 0d1c-model commit; outputs `B/tN-{old,A,B}.txt`; all 15 arms rc=0).
+- [x] Stage B: `chainB.sh` -> `stageB.sh` (binary `bin/commander-sim-B`, acb20670, the fitted model; outputs `B/tN-{old,A,B}.txt`; all 15 arms rc=0).
 - [x] Stage C (4747f616): learned is the default for every generic-policy deck. Hold-mana check and final checks below.
 
 ## Gotchas
