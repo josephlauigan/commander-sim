@@ -1960,7 +1960,9 @@ fn noncre(d: &CardDef) -> bool {
 /// cardimpl._eot: +dp/+dt until end of turn
 pub fn eot(g: &mut Game, m: PermId, dp: i32, dt: i32) {
     let x = &mut g.perm_mut(m).eot_pt;
-    *x = (x.0 + dp, x.1 + dt);
+    // --- urdragon: saturating: Thrakkus the Butcher doubling each Dragon once per Thrakkus (Miirym's token copies)
+    // overflowed i32 in three t5 games
+    *x = (x.0.saturating_add(dp), x.1.saturating_add(dt));
 }
 
 /// m is a card with type t (`m.cd is not None and t in m.cd.types`)
