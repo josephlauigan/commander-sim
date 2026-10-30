@@ -168,7 +168,7 @@ const SIDE: [(&str, usize); 13] = [
 const MEAN: [(&str, usize); 5] =
     [("life", LIFE), ("board", BOARD), ("power", POWER), ("hand", HAND), ("threat", THREAT)];
 
-pub const NF: usize = 2 * SIDE.len() + MEAN.len() + 6 + 4 + 3 + 1;
+pub const NF: usize = 2 * SIDE.len() + MEAN.len() + 6 + 4 + 3 + 2;
 
 /// the feature names, in order (the model file must list the same)
 pub fn names() -> Vec<String> {
@@ -178,15 +178,27 @@ pub fn names() -> Vec<String> {
     for s in ["live_opps", "str_minus_top", "str_minus_mean", "life_minus_low", "cmd_dealt", "low_life"] {
         v.push(s.into());
     }
-    for s in ["turns", "turns_x_board", "turns_x_hand", "turns_x_combo", "seat1", "seat2", "seat3", "old_raw"] {
+    for s in
+        ["turns", "turns_x_board", "turns_x_hand", "turns_x_combo", "seat1", "seat2", "seat3", "old_raw", "old_eval"]
+    {
         v.push(s.into());
     }
     v
 }
 
+/// a signed log: the heavy-tailed terms (a board of 40 tokens) read on a log scale
+fn sq(x: f64) -> f64 {
+    x.signum() * x.abs().ln_1p()
+}
+
+/// seat k's term i as a feature reads it: life clamped as `strength` does, the heavy-tailed terms on a log scale
 fn term(r: &Raw, k: usize, i: usize) -> f64 {
     let x = r.v[k * PER + i] as f64;
-    if i == LIFE { x.clamp(0.0, 60.0) } else { x }
+    match i {
+        LIFE => x.clamp(0.0, 60.0),
+        BOARD | POWER | THREAT | HAND_WORTH | CREATURES | TREASURES => sq(x),
+        _ => x,
+    }
 }
 
 /// the model's inputs (None when no opponent is alive: `evaluate` scores that as a win)
@@ -214,8 +226,8 @@ pub fn features(r: &Raw) -> Option<[f64; NF]> {
     let me_str = term(r, 0, STRENGTH);
     let low = opps.iter().map(|&k| term(r, k, LIFE)).fold(f64::INFINITY, f64::min);
     put(&mut x, n);
-    put(&mut x, me_str - term(r, top, STRENGTH));
-    put(&mut x, me_str - opps.iter().map(|&k| term(r, k, STRENGTH)).sum::<f64>() / n);
+    put(&mut x, sq(me_str - term(r, top, STRENGTH)));
+    put(&mut x, sq(me_str - opps.iter().map(|&k| term(r, k, STRENGTH)).sum::<f64>() / n));
     put(&mut x, term(r, 0, LIFE) - low);
     put(&mut x, opps.iter().map(|&k| term(r, k, CMD_FROM_ME)).fold(0.0, f64::max));
     put(&mut x, low);
@@ -227,7 +239,8 @@ pub fn features(r: &Raw) -> Option<[f64; NF]> {
     for s in 1..=3 {
         put(&mut x, f64::from(u8::from(r.seat as usize == s)));
     }
-    put(&mut x, r.old as f64);
+    put(&mut x, sq(r.old as f64));
+    put(&mut x, 95.0 * (r.old as f64 / 100.0).tanh());
     Some(x)
 }
 
@@ -250,12 +263,32 @@ pub struct Meta {
     pub note: String,
 }
 
-/// the baseline logistic on today's raw term: p = σ(a + b·raw), the mapping's reference
+/// the baseline logistic on today's `evaluate`: p = σ(a + b·evaluate), the mapping's reference
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Map {
     pub a: f64,
     pub b: f64,
+}
+
+/// a depth-3 regression tree on the features (boosted on top of the logistic): node k splits on
+/// `x[feat[k]] > cut[k]` (right) for k in 0..7, children 2k+1 and 2k+2; `leaf` holds the 8 values (nodes 7..15)
+#[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct Tree {
+    pub feat: Vec<usize>,
+    pub cut: Vec<f64>,
+    pub leaf: Vec<f64>,
+}
+
+impl Tree {
+    pub fn eval(&self, x: &[f64; NF]) -> f64 {
+        let mut k = 0;
+        for _ in 0..3 {
+            k = 2 * k + 1 + usize::from(x[self.feat[k]] > self.cut[k]);
+        }
+        self.leaf[k - 7]
+    }
 }
 
 #[derive(serde::Deserialize, serde::Serialize, Clone, Debug)]
@@ -268,6 +301,9 @@ pub struct Model {
     pub mean: Vec<f64>,
     pub sd: Vec<f64>,
     pub weight: Vec<f64>,
+    /// boosted trees added to the logistic's log-odds (none: the logistic alone)
+    #[serde(default)]
+    pub tree: Vec<Tree>,
 }
 
 impl Model {
@@ -277,13 +313,14 @@ impl Model {
         for i in 0..NF {
             z += self.weight[i] * (x[i] - self.mean[i]) / self.sd[i];
         }
-        z
+        z + self.tree.iter().map(|t| t.eval(x)).sum::<f64>()
     }
 
-    /// `evaluate`'s scale: the raw term today's evaluation gives to the same odds, squashed as today
+    /// `evaluate`'s scale: the value today's `evaluate` gives to the same odds (by the baseline fit
+    /// p = σ(a + b·evaluate)), kept below 95 by the same kind of squashing (`95 tanh(e / 95)`: about e near 0)
     pub fn scale(&self, z: f64) -> f64 {
-        let r = (z - self.map.a) / self.map.b;
-        95.0 * (r / 100.0).tanh()
+        let e = (z - self.map.a) / self.map.b;
+        95.0 * (e / 95.0).tanh()
     }
 }
 
@@ -301,7 +338,13 @@ pub fn parse_model(text: &str) -> Result<Model, String> {
     if m.mean.len() != NF || m.sd.len() != NF || m.weight.len() != NF {
         return Err(format!("model file: mean, sd and weight need {NF} numbers each"));
     }
-    let all = m.mean.iter().chain(&m.sd).chain(&m.weight).chain([&m.bias, &m.map.a, &m.map.b]);
+    for t in &m.tree {
+        if t.feat.len() != 7 || t.cut.len() != 7 || t.leaf.len() != 8 || t.feat.iter().any(|&f| f >= NF) {
+            return Err("model file: a tree needs 7 splits (features in range) and 8 leaves".into());
+        }
+    }
+    let trees = m.tree.iter().flat_map(|t| t.cut.iter().chain(&t.leaf));
+    let all = m.mean.iter().chain(&m.sd).chain(&m.weight).chain([&m.bias, &m.map.a, &m.map.b]).chain(trees);
     if all.into_iter().any(|x| !x.is_finite()) {
         return Err("model file: a number is not finite".into());
     }
