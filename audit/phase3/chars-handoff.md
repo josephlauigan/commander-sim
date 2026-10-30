@@ -17,8 +17,11 @@ all 923-935.
       3632 passed / 0 failed / 3 ignored (221 binaries); practice 104; export/validate/audit clean; clone_cost 2.93 / 2.97;
       chars_cost is_creature 1.5, power 281-342, toughness 233, has_type 22, subtypes 15, colors_of 1.4, has_kw
       415-428, all 941-945 ns (same as base, within noise); a whole `chars()` 7.98-8.10 µs.
-- [ ] Stage B: `chars::NAMED` table (Maskwood, Yavimaya, Urborg, Colossus Hammer, Wrecking Ball Arm / Hulkbuster,
-      Commander's Insignia, Steelshaper), name checks deleted at their sites
+- [x] Stage B (committed): `chars::NAMED` table (Maskwood, Yavimaya, Urborg, Colossus Hammer, Wrecking Ball Arm / Hulkbuster,
+      Commander's Insignia, Steelshaper), looked up once per card at load (`CardDef::named`); name checks deleted at
+      their sites (cloud::base_pt, steelshaper_bonus gone; loses_flying, yavimaya_out, urborg are wrappers). Tests: 3 more
+      in tests/chars.rs. Checks: 0 warnings; 3635 passed / 0 failed / 3 ignored; practice 104; cardgen clean;
+      clone_cost 2.96-3.05; chars_cost power 276-295, has_type 25-28, all 911-956 ns (base 923-935).
 - [ ] Stage C: layer fixes (neutered sources' statics; Blood Moon vs land types and Urborg; Adeline vs base P/T)
 
 ## Notes

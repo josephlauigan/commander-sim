@@ -262,22 +262,9 @@ pub fn evasion_blocked(g: &Game, b: PermId, a: PermId) -> bool {
     false
 }
 
-/// the equipped creature loses flying (Colossus Hammer)
+/// the equipped creature loses flying (Colossus Hammer): `chars::loses_keyword`, from the table of named effects
 pub fn loses_flying(g: &Game, m: PermId) -> bool {
-    equipment_on(g, m).iter().any(|&e| name_of(g, e) == "Colossus Hammer")
-}
-
-/// base power and toughness an Equipment sets on its creature (Wrecking Ball Arm 7/7, Hulkbuster Armor 9/9), the
-/// largest of those on it
-pub fn base_pt(g: &Game, m: PermId) -> Option<(i32, i32)> {
-    equipment_on(g, m)
-        .iter()
-        .filter_map(|&e| match name_of(g, e) {
-            "Wrecking Ball Arm" => Some((7, 7)),
-            "Hulkbuster Armor" => Some((9, 9)),
-            _ => None,
-        })
-        .max()
+    crate::engine::chars::loses_keyword(g, m, "flying")
 }
 
 /// attackers marked "must be blocked if able" (Magitek Scythe) get a blocker if any can block them: `ai_blocks` calls
@@ -600,22 +587,6 @@ fn squire_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
         label: format!("Brass Squire: attach {} to {}", name_of(g, e), name_of(g, to)),
         act: Some(Action::Ability { src, f: squire_go, arg: 0 }),
     }])
-}
-
-/// Auriok Steelshaper: as long as it is equipped, each Soldier and Knight you control gets +1/+1 (read by `dsl::pt`)
-pub fn steelshaper_bonus(g: &Game, m: PermId) -> i32 {
-    // count the equipped Steelshapers first (almost always none, a name compare per permanent); only then pay for the
-    // subtype lookup of m
-    let n = g
-        .player(owner(g, m))
-        .perms
-        .iter()
-        .filter(|&&s| name_of(g, s) == STEELSHAPER && live(g, s) && !equipment_on(g, s).is_empty())
-        .count() as i32;
-    if n == 0 || !(has_type(g, m, "soldier") || has_type(g, m, "knight")) {
-        return 0;
-    }
-    n
 }
 
 // ------------------------------------------------------------------ Puresteel Paladin

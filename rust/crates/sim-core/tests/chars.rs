@@ -176,3 +176,45 @@ fn a_neutered_permanent_has_its_abilities_off() {
     assert!(!c.abilities_on && c.keywords.is_empty());
     agree(&g);
 }
+
+// ------------------------------------------------------------------ Stage B: the table of named effects
+#[test]
+fn the_named_effects_are_one_table() {
+    use chars::{NAMED, NamedFx, named_fx};
+    assert_eq!(named_fx("Maskwood Nexus"), Some(NamedFx::AllCreatureTypes));
+    assert_eq!(named_fx("Colossus Hammer"), Some(NamedFx::EquippedLoses("flying")));
+    assert_eq!(named_fx("Llanowar Elves"), None);
+    for n in NAMED {
+        assert!(sim_core::testkit::db().id(n.name).is_some(), "{} is in cards.json", n.name);
+    }
+}
+
+#[test]
+fn colossus_hammer_takes_flying_and_wrecking_ball_arm_sets_base_pt() {
+    let mut g = game();
+    let angel = perm(&mut g, P0, "Serra Angel");
+    let elves = perm(&mut g, P0, "Llanowar Elves");
+    let hammer = perm(&mut g, P0, "Colossus Hammer");
+    let arm = perm(&mut g, P0, "Wrecking Ball Arm");
+    attach(&mut g, hammer, angel);
+    attach(&mut g, arm, elves);
+    assert_eq!(kws(&g, angel), ["vigilance"], "the Hammer takes flying");
+    assert!(sim_core::impls::cloud::loses_flying(&g, angel));
+    assert_eq!((chars::power(&g, elves), chars::toughness(&g, elves)), (7, 7), "base 7/7");
+    g.perm_mut(elves).plus = 1;
+    assert_eq!(chars::power(&g, elves), 8, "counters apply on top of the base");
+    agree(&g);
+}
+
+#[test]
+fn yavimaya_and_urborg_make_every_land_a_forest_and_a_swamp() {
+    let mut g = game();
+    let island = lands(&mut g, P0, "Island", 1, false)[0];
+    assert!(!sim_core::impls::t3_marwyn::is_forest(&g, island));
+    assert!(!chars::lands_are(&g, 'G', true) && !chars::lands_are(&g, 'B', false));
+    lands(&mut g, P1, "Yavimaya, Cradle of Growth", 1, false);
+    lands(&mut g, P1, "Urborg, Tomb of Yawgmoth", 1, false);
+    assert!(sim_core::impls::t3_marwyn::is_forest(&g, island), "any player's Yavimaya");
+    assert!(chars::lands_are(&g, 'G', true) && chars::lands_are(&g, 'B', false));
+    agree(&g);
+}

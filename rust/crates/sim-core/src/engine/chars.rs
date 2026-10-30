@@ -22,7 +22,7 @@
 use crate::cards::{Colors, Types};
 use crate::dsl::model::Ability;
 use crate::dsl::{self, DslCtx};
-use crate::engine::values::{card_name, card_tag, equipped, has, norn_vs};
+use crate::engine::values::{card_tag, equipped, has, norn_vs};
 use crate::ids::{PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
@@ -158,7 +158,7 @@ pub fn subtypes(g: &Game, m: PermId) -> Vec<Sym> {
 
 /// Maskwood Nexus: p's creatures are every creature type
 pub fn maskwood(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some("Maskwood Nexus"))
+    g.player(p).perms.iter().any(|&m| !g.perm(m).phased && is_fx(g, m, NamedFx::AllCreatureTypes))
 }
 
 /// m (a creature) is every creature type: Maskwood Nexus, or Mirror Entity's "all types" this turn
@@ -197,7 +197,7 @@ pub fn abilities_on(g: &Game, m: PermId) -> bool {
 /// Does m have keyword kw (lower case)? Python's `dsl.has_kw`.
 pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     let x = g.perm(m);
-    if kw == "flying" && crate::impls::cloud::loses_flying(g, m) {
+    if loses_keyword(g, m, kw) {
         return false; // Colossus Hammer
     }
     if x.eot_kw.contains(&kw) {
@@ -343,7 +343,7 @@ pub fn static_bonus(g: &Game, m: PermId) -> i32 {
             && let Some(a) = g.db.get(c).tags.int(Tag::Anth)
         {
             // auto-tagged anthems (Commander's Insignia: +1/+1 for each time the commander was cast from the command zone)
-            b += if &*g.db.get(c).name == "Commander's Insignia" {
+            b += if g.db.get(c).named == Some(NamedFx::PerCommandCast) {
                 crate::impls::t0_zurgo::command_casts(g, p)
             } else {
                 a
@@ -421,11 +421,11 @@ pub fn pt_changes(g: &Game, m: PermId) -> (i32, i32) {
             }
         }
     }
-    if let Some((bp, bt)) = crate::impls::cloud::base_pt(g, m) {
+    if let Some((bp, bt)) = equipped_base(g, m) {
         dp += bp - x.pow; // Wrecking Ball Arm, Hulkbuster Armor: base power and toughness
         dt += bt - x.tgh;
     }
-    let shaped = crate::impls::cloud::steelshaper_bonus(g, m); // Auriok Steelshaper
+    let shaped = equipped_lords(g, m); // Auriok Steelshaper
     dp += shaped;
     dt += shaped;
     if let Some(cd) = x.cd {
@@ -443,4 +443,109 @@ pub fn pt_changes(g: &Game, m: PermId) -> (i32, i32) {
         }
     }
     (dp, dt)
+}
+
+// ================================================================== the named effects (one table)
+/// What a card's presence does to other permanents' characteristics, beyond its compiled abilities and tags.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NamedFx {
+    /// layer 4: its controller's creatures are every creature type (Maskwood Nexus)
+    AllCreatureTypes,
+    /// layer 4: every land is this basic land type too (WUBRG letter: Yavimaya G, Urborg B)
+    LandsAre(char),
+    /// layer 6: the creature it equips loses this keyword (Colossus Hammer: flying)
+    EquippedLoses(&'static str),
+    /// layer 7b: the creature it equips has this base power and toughness (Wrecking Ball Arm, Hulkbuster Armor)
+    EquippedBase(i32, i32),
+    /// layer 7c: its auto-tagged anthem is +1/+1 per time its controller cast the commander from the command zone
+    /// (Commander's Insignia)
+    PerCommandCast,
+    /// layer 7c: while it is equipped, its controller's Soldiers and Knights get +1/+1 (Auriok Steelshaper)
+    EquippedLord,
+}
+
+/// A card name, the layer its effect applies in, and the effect.
+#[derive(Debug, Clone, Copy)]
+pub struct Named {
+    pub name: &'static str,
+    pub layer: &'static str,
+    pub fx: NamedFx,
+}
+
+/// The cards whose characteristic-changing effect is read by name (each was a name check at its use site).
+pub const NAMED: [Named; 8] = [
+    Named { name: "Maskwood Nexus", layer: "4", fx: NamedFx::AllCreatureTypes },
+    Named { name: "Yavimaya, Cradle of Growth", layer: "4", fx: NamedFx::LandsAre('G') },
+    Named { name: "Urborg, Tomb of Yawgmoth", layer: "4", fx: NamedFx::LandsAre('B') },
+    Named { name: "Colossus Hammer", layer: "6", fx: NamedFx::EquippedLoses("flying") },
+    Named { name: "Wrecking Ball Arm", layer: "7b", fx: NamedFx::EquippedBase(7, 7) },
+    Named { name: "Hulkbuster Armor", layer: "7b", fx: NamedFx::EquippedBase(9, 9) },
+    Named { name: "Commander's Insignia", layer: "7c", fx: NamedFx::PerCommandCast },
+    Named { name: "Auriok Steelshaper", layer: "7c", fx: NamedFx::EquippedLord },
+];
+
+/// the named effect of a card, if it has one
+pub fn named_fx(name: &str) -> Option<NamedFx> {
+    NAMED.iter().find(|n| n.name == name).map(|n| n.fx)
+}
+
+/// permanent m's named effect is `fx`
+fn is_fx(g: &Game, m: PermId, fx: NamedFx) -> bool {
+    g.perm(m).cd.is_some_and(|c| g.db.get(c).named == Some(fx))
+}
+
+/// the named effects of the Equipment attached to m (among its controller's permanents)
+fn equipment_fx(g: &Game, m: PermId) -> impl Iterator<Item = NamedFx> + '_ {
+    g.player(g.perm(m).owner).perms.iter().filter_map(move |&e| {
+        let x = g.perm(e);
+        if x.attached != Some(m) || !x.on_bf || !crate::impls::cloud::is_equipment(g, e) {
+            return None;
+        }
+        g.db.get(x.cd?).named
+    })
+}
+
+/// some player's land (not a plain Mountain under Blood Moon, when `moon` asks) makes every land this basic type
+pub fn lands_are(g: &Game, ch: char, moon: bool) -> bool {
+    g.players.iter().filter(|q| q.alive).any(|q| {
+        q.lands.iter().any(|&l| is_fx(g, l, NamedFx::LandsAre(ch)) && !(moon && crate::engine::mana::moon_land(g, l)))
+    })
+}
+
+/// m loses keyword kw to an Equipment on it (layer 6: Colossus Hammer)
+pub fn loses_keyword(g: &Game, m: PermId, kw: &str) -> bool {
+    NAMED.iter().any(|n| matches!(n.fx, NamedFx::EquippedLoses(k) if k == kw))
+        && equipment_fx(g, m).any(|f| matches!(f, NamedFx::EquippedLoses(k) if k == kw))
+}
+
+/// the base power and toughness an Equipment sets on m (layer 7b: Wrecking Ball Arm 7/7, Hulkbuster Armor 9/9), the
+/// largest of those on it
+pub fn equipped_base(g: &Game, m: PermId) -> Option<(i32, i32)> {
+    equipment_fx(g, m)
+        .filter_map(|f| match f {
+            NamedFx::EquippedBase(p, t) => Some((p, t)),
+            _ => None,
+        })
+        .max()
+}
+
+/// layer 7c, Auriok Steelshaper: as long as it is equipped, each Soldier and Knight you control gets +1/+1
+fn equipped_lords(g: &Game, m: PermId) -> i32 {
+    // count the equipped Steelshapers first (almost always none, a name compare per permanent); only then pay for the
+    // subtype lookup of m
+    let pl = g.player(g.perm(m).owner);
+    let n = pl
+        .perms
+        .iter()
+        .filter(|&&s| {
+            is_fx(g, s, NamedFx::EquippedLord)
+                && g.perm(s).on_bf
+                && !g.perm(s).phased
+                && !crate::impls::cloud::equipment_on(g, s).is_empty()
+        })
+        .count() as i32;
+    if n == 0 || !(has_subtype(g, m, "soldier") || has_subtype(g, m, "knight")) {
+        return 0;
+    }
+    n
 }

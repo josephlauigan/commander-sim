@@ -53,7 +53,6 @@ const REALMWALKER: &str = "Realmwalker";
 const THREE_TREE: &str = "Three Tree City";
 const MANTLE: &str = "Umbral Mantle";
 const LODGE: &str = "Wirewood Lodge";
-const YAVIMAYA: &str = "Yavimaya, Cradle of Growth";
 const YEVA: &str = "Yeva, Nature's Herald";
 const EZURI: &str = "Ezuri, Renegade Leader";
 const MARWYN: &str = "Marwyn, the Nurturer";
@@ -629,9 +628,7 @@ fn lodge_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
 
 /// Yavimaya, Cradle of Growth on any battlefield (and not a plain Mountain under Blood Moon): every land is a Forest
 pub fn yavimaya_out(g: &Game) -> bool {
-    g.players.iter().filter(|q| q.alive).any(|q| {
-        q.lands.iter().any(|&l| &*g.db.get(g.perm(l).card()).name == YAVIMAYA && !crate::engine::mana::moon_land(g, l))
-    })
+    crate::engine::chars::lands_are(g, 'G', true) // the table of named effects (layer 4)
 }
 
 /// is land l a Forest (by name, by type, or by Yavimaya)?

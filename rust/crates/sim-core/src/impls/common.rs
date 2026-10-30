@@ -2959,10 +2959,7 @@ fn circle(g: &Game, p: PlayerId, _m: PermId) -> u32 {
 /// common._urborg: Urborg, Tomb of Yawgmoth (Approximate): every land counts as a Swamp for Cabal Coffers and Crypt
 /// Ghast
 fn urborg(g: &Game) -> bool {
-    g.players
-        .iter()
-        .filter(|q| q.alive)
-        .any(|q| q.lands.iter().any(|&l| &*g.db.get(g.perm(l).card()).name == "Urborg, Tomb of Yawgmoth"))
+    crate::engine::chars::lands_are(g, 'B', false) // the table of named effects (layer 4)
 }
 
 fn is_swamp(g: &Game, l: PermId) -> bool {
