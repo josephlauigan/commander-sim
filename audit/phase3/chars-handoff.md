@@ -37,3 +37,16 @@ reads neutered sources (cost reducers etc.).
 - Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase3-chars/`
   (`checks.sh <tag>`: build, export/validate/audit, tests, practice, clone_cost; logs `<tag>-*.log`).
 - `dsl::statics` and `dsl::noncreature_ok` are `pub(crate)` now (chars reads them).
+
+## Decks that play a card whose behaviour changed in Stage C (for the recalibration after Phase 4; no sims run)
+- Abilities lost stop the source's anthems / keywords / equipment bonus (the neutering cards): Darksteel Mutation
+  (light-paws t1, sythis t2, zur t5, JD's thrasios [t5]); Kenrith's Transformation (sythis t2, marwyn t3);
+  Reprobation (light-paws t1). Tishana's Tidebinder is in no deck.
+- Always Watching and Thraben Watcher now pump: giada t0.
+- Blood Moon makes nonbasic duals Mountains only (no Forest / Swamp counts): krenko t4 (the only Blood Moon deck;
+  it touches the decks at its table with Cabal Coffers, Crypt Ghast, check lands or forestwalk).
+- Urborg stops under Blood Moon; Yavimaya / Urborg's types now count for check lands' "control a Forest / Swamp":
+  Urborg in lord-windgrace t2, meren t2, tergrid t3, edgar t4, yawgmoth t5; Yavimaya in lord-windgrace t2, marwyn t3,
+  chulane t4.
+- Adeline vs Wrecking Ball Arm / Hulkbuster Armor: no deck plays both.
+- Tiers touched: t0, t1, t2, t3, t4, t5; JD's decks: thrasios only.
