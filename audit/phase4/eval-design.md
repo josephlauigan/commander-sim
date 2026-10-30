@@ -52,27 +52,34 @@ Per position, x (the evaluated seat is "me"; "opp" = the live opponents):
   live opponent;
 - time: own turns (and turns x my board, turns x my hand, turns x combo: the worth of a card or a board changes
   through the game);
-- seat: my seat in turn order (0-3, as three indicators), today's raw `evaluate` term (`s - 0.6 max - 0.4 mean + 12
-  dead`).
+- seat: my seat in turn order (0-3, as three indicators); today's raw `evaluate` term (`s - 0.6 max - 0.4 mean + 12
+  dead`) and today's `evaluate` (after the tanh).
 
 The tier is not a feature: it is the same for every option of a decision, so it would only move the constant.
 Every feature is standardised by the fitted data's mean and standard deviation (stored with the model).
 
 ## Model
 
-L2-regularised logistic regression, fitted by Newton's method on the weighted log loss (the penalty picked on the
-held-out games from 1e-4 .. 1e1). A small boosted-tree model (depth 3, ~200 trees) is fitted for comparison only: it
-replaces the logistic only if it beats it clearly on held-out log loss (by more than 0.005 per position), and costs
-little at play. The baseline is today's `evaluate` mapped through a fitted logistic (`p = σ(a + b·evaluate)`, fitted
-on the same games), so it is scored on the same probability scale. Held-out scores: weighted log loss, Brier and AUC,
-overall and by tier.
+L2-regularised logistic regression, fitted by Newton's method (with step halving) on the weighted log loss; the
+penalty is picked from 1e-5 .. 1e-1 on validation games (seed % 5 == 1) of a fit on the other fitted games, then the
+model is refitted on all fitted games. Boosted depth-3 trees are tried on top of the logistic's log-odds (rounds
+picked on the validation games, learning rate 0.05): they are kept only if the logistic plus trees beats the logistic
+alone by more than 0.005 held-out log loss (a tree is three comparisons at play). The baseline is today's `evaluate`
+through a fitted logistic (`p = σ(a + b·evaluate)`, fitted on the same games), so it is scored on the same
+probability scale. Held-out scores: weighted log loss, Brier and AUC, overall and by tier.
+
+A trial on the 600 identity-check games showed the raw terms are heavy-tailed: today's evaluation through its tanh
+scored 0.500 log loss, its raw term (no tanh) 0.529, and a logistic on the raw features 0.527. So the board, power,
+threat, hand worth, creatures, Treasures and the strength differences enter on a signed log scale
+(`sign(x) ln(1 + |x|)`), and today's `evaluate` itself (after the tanh) is a feature beside its raw term. The trial
+then gave 0.490 (logistic), 0.486 (with trees).
 
 ## The mapping onto `evaluate`'s scale
 
-The model gives z (the log-odds that I win). The baseline fit on today's raw term r (`p = σ(a_r + b_r·r)`) says which
-raw term today's evaluation gives to the same odds: r' = (z - a_r) / b_r. The learned value is `95 tanh(r' / 100)`,
-today's own squashing. So:
-- it is monotone in z (b_r > 0, checked by the loader) and stays below 95 < `WIN_FLOOR` (96);
+The model gives z (the log-odds that I win). The baseline fit (`p = σ(a + b·evaluate)`) says which value today's
+evaluation gives to the same odds: e' = (z - a) / b. The learned value is `95 tanh(e' / 95)` (about e' for the
+usual values, -40 .. 40; never 95). So:
+- it is monotone in z (b > 0, checked by the loader) and stays below 95 < `WIN_FLOOR` (96);
 - a position today's evaluation and the model rate equally likely to win gets about the same number, so the hold
   bonus (about +3), the -50 for a failed option and the margin's noise keep their meaning.
 
