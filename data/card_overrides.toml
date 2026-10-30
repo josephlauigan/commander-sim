@@ -3536,6 +3536,7 @@ status = "Full"
 note = "names a creature type as it enters: those creatures get +1/+1; {T}: one mana of any colour"
 
 ["Pawn of Ulamog"]
+pool_remove_tags = ["tok", "tokp"] # the tok tag made a 0/0 as it entered, which died at once for the death payoffs; the card makes its Spawn when a creature of yours dies (impls/common.rs `dies`) (Phase 2)
 dsl = []
 status = "Full"
 note = "a 0/1 Spawn when a nontoken creature of yours dies (sacrifice: {C})"
@@ -3925,6 +3926,7 @@ status = "Full"
 note = "no maximum hand size"
 
 ["Requiem Angel"]
+tags = "pow=5 bomb=5 fly" # without tok: the tok tag made a 1/1 flier as it entered (no deck plays it, so pool_remove_tags would not apply); the card makes its Spirits when your creatures die (impls/common.rs `dies`) (Phase 2)
 dsl = []
 status = "Full"
 note = ""
@@ -4287,6 +4289,7 @@ status = "Full"
 note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage"
 
 ["Sifter of Skulls"]
+pool_remove_tags = ["tok", "tokp"] # the tok tag made a 1/1 as it entered; the card makes its Scion when a creature of yours dies (impls/common.rs `dies`) (Phase 2)
 dsl = []
 status = "Full"
 note = "a 1/1 Scion when a nontoken creature of yours dies (sacrifice: {C})"
@@ -8777,6 +8780,7 @@ status = "Full"
 note = "{G/P} (the engine pays 2 life when no green mana is free); puts a graveyard card on top of its owner's library: the AI takes the best nonland card of its own graveyard (a creature first) and casts it only when one is there (t6_green2)"
 
 ["Sowing Mycospawn"]
+pool_remove_tags = ["lr"] # the lr tag fetched a basic as the spell resolved, on top of the cast trigger's land (impls/t6_green2.rs `self_cast`): two lands (Phase 2)
 status = "Partial"
 note = "3/3 body; the cast trigger (even if the spell is countered) fetches a land onto the battlefield (Gaea's Cradle with two creatures out, else the land adding the most new colours) and shuffles; missing: kicker {1}{C} and its exile-target-land half (written as t6_green2::mycospawn_kicked, not yet called) and devoid colourlessness"
 
@@ -8917,6 +8921,7 @@ status = "Partial"
 note = "evoke {R/G}{R/G} from hand, sacrificed on entry: the AI pays {R}{R} for 3 damage (when it kills a creature worth 3+ or finishes a player) or {G}{G} for a land from the library (Gaea's Cradle / Talon Gates not yet held) and 2 life; a normal cast is priced {3}{R}{R} in the card data so it always deals 3 damage and never searches; the stock data gained 2 life unconditionally, so the generic ability is cleared; missing: the hybrid cost choice on a normal cast (engine-needs-green1.md)"
 
 ["Springheart Nantuko"]
+pool_remove_tags = ["tok", "tokp"] # the tok tag made a 1/1 as it entered; the card makes its Insect on landfall (impls/t6_green1.rs) (Phase 2)
 status = "Partial"
 note = "1/1 body; landfall creates a 1/1 green Insect (the unattached branch); missing: bestow {1}{G} (+1/+1) and the {1}{G} token copy of the enchanted creature (the Eternal Witness loop), see rust/agents/engine-needs-green1.md"
 ["Disruptor Flute"]
@@ -9214,6 +9219,7 @@ note = "{T}: {C}; {1}: becomes a 2/2 Assembly-Worker artifact creature (the AI a
 status = "Approximate"
 note = "{T}: {C}; {2}: becomes a 2/2 Assembly-Worker artifact creature (animated to attack when open, and to block a dangerous attack; it counts for Karn); not modeled: {1},{T}: target attacking Assembly-Worker gets +2/+2"
 ["Karn, Scion of Urza"]
+tags = "leg" # the tok tags made a 0/0 Construct as it entered (and it died at once); the card code's -2 makes the real one (impls/karn_engines.rs) (Phase 2; a tags override, as pool_remove_tags skips the cards of JD's decks)
 status = "Full"
 note = "loyalty 5. +1 reveals the top two cards: an opponent chooses which goes to your hand (the AI opponent gives the card you want less), the other is exiled with a silver counter. -1 puts the best silver-counter card from exile into your hand. -2 makes a 0/0 Construct artifact token that gets +1/+1 per artifact you control. Silver counters outlive the planeswalker (a later Karn can fetch them). impls/karn_engines.rs"
 
@@ -9804,3 +9810,6 @@ dsl = [] # "remove a gold counter" is a cost the interpreter can't pay (pay_abil
 
 ["Flare of Malice"]
 paths_ok = "the hand-written resolve does the card; the compiled spell, each opponent sacrifices a creature or planeswalker (not the greatest mana value), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
+
+["Battle Angels of Tyr"]
+pool_remove_tags = ["treas"] # the Scryfall treas tag made a Treasure as it entered; the card's Treasure is the combat-damage trigger (impls/t3_aurelia.rs), when that player has more lands (Phase 2)

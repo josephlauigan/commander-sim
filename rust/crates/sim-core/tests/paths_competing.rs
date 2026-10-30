@@ -339,3 +339,88 @@ fn desperate_ritual_adds_exactly_three_red() {
     cast::resolve(&mut g, P0, c, &Ctx::default(), "hand").unwrap();
     assert_eq!((g.player(P0).floating.r, g.player(P0).floating.any), (r + 3, any), "{{R}}{{R}}{{R}}, once");
 }
+
+// ======================================================== split lines that were doubles (found by the splits pass)
+/// p's tokens on the battlefield
+fn tokens(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).token).collect()
+}
+
+#[test]
+fn the_dies_token_makers_make_nothing_as_they_enter_and_one_token_per_death() {
+    for n in ["Requiem Angel", "Sifter of Skulls", "Pawn of Ulamog"] {
+        let mut g = tbl("teysa-orzhov-aristocrats");
+        perm(&mut g, P0, n);
+        assert!(tokens(&g, P0).is_empty(), "{n}: no token as it enters (the tok tag is gone)");
+        let bear = perm(&mut g, P0, "Llanowar Elves");
+        sim_core::engine::zones::die(&mut g, bear, "destroy").unwrap();
+        stack::flush_triggers(&mut g).unwrap();
+        stack::settle_stack(&mut g).unwrap();
+        assert_eq!(tokens(&g, P0).len(), 1, "{n}: one token for the creature that died");
+    }
+}
+
+#[test]
+fn springheart_nantuko_makes_its_insect_on_landfall_only() {
+    let mut g = tbl("rograkh-thrasios-creature-combo");
+    let m = perm(&mut g, P0, "Springheart Nantuko");
+    assert!(tokens(&g, P0).is_empty(), "no 1/1 as it enters");
+    let f = g.registry.get(card(&g, "Springheart Nantuko")).and_then(|i| i.landfall).expect("landfall");
+    f(&mut g, m, P0).unwrap();
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(tokens(&g, P0).len(), 1, "one Insect per land");
+}
+
+#[test]
+fn battle_angels_of_tyr_makes_a_treasure_only_on_combat_damage() {
+    let mut g = tbl("aurelia-boros-extra-combats");
+    let m = perm(&mut g, P0, "Battle Angels of Tyr");
+    assert!(tokens(&g, P0).is_empty(), "no Treasure as it enters (the Scryfall treas tag is gone)");
+    lands(&mut g, P1, "Plains", 3, false);
+    let f = g.registry.get(card(&g, "Battle Angels of Tyr")).and_then(|i| i.combat_damage).expect("combat_damage");
+    f(&mut g, m, P0, m, P1, 4).unwrap();
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(tokens(&g, P0).len(), 1, "one Treasure: that player has the most lands");
+}
+
+#[test]
+fn karn_scion_of_urza_enters_without_a_construct_and_doubling_season_doubles_its_loyalty_once() {
+    let mut g = tbl("karn");
+    let k = perm(&mut g, P0, "Karn, Scion of Urza");
+    assert!(tokens(&g, P0).is_empty(), "no 0/0 Construct as it enters (the -2 makes it)");
+    assert_eq!(g.perm(k).loyalty, Some(5));
+    let mut g = tbl("atraxa-infect");
+    perm(&mut g, P0, "Doubling Season");
+    let k = perm(&mut g, P0, "Karn, Scion of Urza");
+    assert_eq!(g.perm(k).loyalty, Some(10), "5 doubled once, not 20");
+}
+
+#[test]
+fn sakura_tribe_elder_finds_one_basic_when_sacrificed_and_none_as_it_resolves() {
+    let mut g = tbl("tatyova-simic-landfall");
+    set_library(&mut g, P0, &["Forest", "Forest", "Island"]);
+    let c = take(&mut g, P0, "Sakura-Tribe Elder");
+    cast::resolve(&mut g, P0, c, &Ctx::default(), "hand").unwrap();
+    assert!(g.player(P0).lands.is_empty(), "no land as it resolves (the lr tag is gone)");
+    let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("on the battlefield");
+    let o = perm_opts(&mut g, m, P0, None);
+    assert_eq!(o.len(), 1, "sacrificed at the end of an opponent's turn");
+    assert!(go(&mut g, P0, &o[0]));
+    assert!(!g.perm(m).on_bf);
+    assert_eq!(g.player(P0).lands.len(), 1, "one basic land");
+    assert_eq!(g.player(P0).library.len(), 2);
+}
+
+#[test]
+fn sowing_mycospawn_puts_one_land_onto_the_battlefield() {
+    let mut g = tbl("rograkh-thrasios-creature-combo");
+    lands(&mut g, P0, "Forest", 4, false);
+    set_library(&mut g, P0, &["Forest", "Island", "Mountain", "Plains"]);
+    let c = hand(&mut g, P0, &["Sowing Mycospawn"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    stack::flush_triggers(&mut g).unwrap();
+    stack::settle_stack(&mut g).unwrap();
+    assert!(g.player(P0).perms.iter().any(|&m| g.perm(m).cd == Some(c) && g.perm(m).on_bf), "it resolved");
+    assert_eq!(g.player(P0).lands.len(), 5, "the cast trigger's land, and no second one from the lr tag");
+    assert_eq!(g.player(P0).library.len(), 3);
+}

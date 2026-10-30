@@ -1016,19 +1016,6 @@ fn tekuthal(g: &Game, src: Src, p: PlayerId) -> i32 {
     (p == g.perm(src).owner) as i32
 }
 
-/// planeswalkers enter with double loyalty (tokens and counters are its compiled replacements)
-fn doubling(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m != src
-        && g.perm(m).owner == g.perm(src).owner
-        && g.perm(m).loyalty.is_some()
-        && card_is(g, m, Types::PLANESWALKER)
-    {
-        let x = g.perm_mut(m);
-        x.loyalty = x.loyalty.map(|l| l * 2);
-    }
-    Ok(())
-}
-
 fn plan_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
     35
 }
@@ -1828,9 +1815,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Inexorable Tide")?.cast = Some(tide);
     r.card(db, "Thrummingbird")?.combat_damage = Some(thrum);
     r.card(db, "Tekuthal, Inquiry Dominus")?.proliferate_extra = Some(tekuthal);
-    let c = r.card(db, "Doubling Season")?;
-    c.etb = Some(doubling);
-    at_once(c, Event::Etb, true);
     let c = r.card(db, "Contentious Plan")?;
     c.resolve = Some(contentious_plan);
     c.prio = Some(plan_prio);

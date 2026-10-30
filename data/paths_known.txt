@@ -15,7 +15,6 @@ split | Archfiend of Sorrows
 split | Arid Mesa
 split | Arrest
 split | Batterskull
-split | Battle Angels of Tyr
 split | Beastmaster Ascension
 split | Blade of the Bloodchief
 split | Blighted Woodland
@@ -39,7 +38,6 @@ split | Contagion Engine
 split | Cryogen Relic
 split | Daze
 split | Docent of Perfection // Final Iteration
-split | Doubling Season
 split | Dour Port-Mage
 split | Dragonlord Dromoka
 split | Dragoon's Lance
@@ -75,7 +73,6 @@ split | Icetill Explorer
 split | Inferno Titan
 split | Iroas, God of Victory
 split | Jungle Hollow
-split | Karn, Scion of Urza
 split | Kasmina's Transmutation
 split | Knight of the Ebon Legion
 split | Koma, Cosmos Serpent
@@ -102,7 +99,6 @@ split | Nyxborn Behemoth
 split | Orysa, Tide Choreographer
 split | Otawara, Soaring City
 split | Paladin Class
-split | Pawn of Ulamog
 split | Polluted Delta
 split | Postmortem Professor
 split | Prismatic Vista
@@ -110,10 +106,8 @@ split | Prison Sentence
 split | Radiant Fountain
 split | Rain of Riches
 split | Reliquary Tower
-split | Requiem Angel
 split | Rhys the Exiled
 split | Room of Refuge
-split | Sakura-Tribe Elder
 split | Samurai's Katana
 split | Sandwurm Convergence
 split | Sangromancer
@@ -121,15 +115,12 @@ split | Scalding Tarn
 split | Scoured Barrens
 split | Seraph Sanctuary
 split | Shield of Kaldra
-split | Sifter of Skulls
 split | Sinister Hideout
 split | Skemfar Elderhall
 split | Skyclave Apparition
 split | Smaug the Magnificent
 split | Snapback
 split | Soul of Windgrace
-split | Sowing Mycospawn
-split | Springheart Nantuko
 split | Squire's Lightblade
 split | Starbreach Whale
 split | Sting, the Glinting Dagger
