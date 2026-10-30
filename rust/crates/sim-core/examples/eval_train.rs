@@ -419,7 +419,8 @@ fn main() {
         let g = |v: &[f64]| k.iter().map(|&j| v[j]).collect::<Vec<f64>>();
         let (a, b) = (scores(&g(&pb), &g(&yte), &g(&wte)), scores(&g(&pl), &g(&yte), &g(&wte)));
         println!(
-            "  t{t}: baseline logloss {:.4} brier {:.4} auc {:.4} | learned logloss {:.4} brier {:.4} auc {:.4} ({} positions)",
+            "  t{t}: baseline logloss {:.4} brier {:.4} auc {:.4} | learned logloss {:.4} brier {:.4} auc {:.4} \
+             ({} positions)",
             a.0,
             a.1,
             a.2,
@@ -508,7 +509,8 @@ fn main() {
             baseline_brier: sb.1,
             baseline_auc: sb.2,
             note: format!(
-                "fitted by examples/eval_train.rs; held out: seed % 5 == 0; baseline: evaluate through a fitted logistic; {note}"
+                "fitted by examples/eval_train.rs; held out: seed % 5 == 0; baseline: evaluate through a fitted \
+                 logistic; {note}"
             ),
         },
         map: Map { a: be[0], b: be[1] },

@@ -23,18 +23,21 @@ search changes (rollouts, margin, hold and ramp bonuses).
   weighted 1 / (the seat's recorded positions in that game): every (game, seat) counts once in the fit and in the
   scores.
 - **Games:** look-ahead AI (it plays the games whose outcome the evaluation predicts), loose, tiers t1-t5, seeds from
-  1,000,000 (outside the paired tests' 500000-501999), 5,000 games a tier (t1 from seed 1,000,000, t2 from 1,100,000, ... t5 from 1,400,000).
+  1,000,000 (outside the paired tests' 500000-501999),
+  5,000 games a tier (t1 from seed 1,000,000, t2 from 1,100,000, ... t5 from 1,400,000).
 - **Split:** by game: seed % 5 == 0 held out (20%), the rest fitted. No game is on both sides.
 
 ## Recorded per position (`AI_EVAL_RECORD=<dir>`)
 
-One fixed-size binary record (little-endian): seed (u64), seat (u8), label (u8: 1 won, 0 lost or draw), own turns
-(u16), round (u16), today's `evaluate` (f32), then 16 numbers for each of 4 seats in turn order from the evaluated
+One fixed-size binary record (little-endian): seed (u64), seat (u8), label (u8: 1 won, 0 lost or draw), seats at
+the table (u8), a pad byte, own turns (u16), round (u16), today's raw term (f32, `search::raw_term`, before the
+tanh), then 16 numbers for each of 4 seats in turn order from the evaluated
 seat (an empty seat is all 0): alive, life, board (`strength`'s board term: `pval` plus output), power, hand, lands,
 Treasures, combo progress, `strength`, threat (PR 3's `values::threat` summed over the seat's permanents), the most
 commander damage it has taken from one commander, poison, plan distance (`planner::distance`, the fewest missing
 piece groups over the deck's catalogue lines, capped at 6), hand worth (PR 3's `values::worth` of each card in hand,
-summed), creatures, and the commander damage it has taken from the evaluated seat. 276 bytes a record; one file per thread under the directory (`<dir>/rec-<pid>-<n>.bin`),
+summed), creatures, and the commander damage it has taken from the evaluated seat. 276 bytes a
+record; one file per thread under the directory (`<dir>/rec-<pid>-<n>.bin`),
 written a whole game at a time. Budget: 5,000 games x 5 tiers x ~35 positions = about 0.9M records, about 0.25 GB.
 
 The recorder only reads the game (no random numbers, no caches that play reads): the output is byte-identical with
