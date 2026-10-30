@@ -122,14 +122,14 @@ fn early_stopping_fires_on_a_dominant_candidate() {
     let keys: Vec<(String, usize)> = (0..5).map(|k| (format!("c{k}"), 0)).collect();
     let noise = |j: u64| [3.0, -2.0, 1.0, -4.0, 2.0][j as usize % 5];
     // candidate 2 is 40 points ahead of the rest on every copy
-    let s = ismcts::search_root(&mut g, P0, keys.clone(), Some(0), 2.36, |_, k, j| {
+    let s = ismcts::search_root(&mut g, P0, keys.clone(), Some(0), 2.36, 24, |_, k, j| {
         noise(j) + if k == 2 { 50.0 } else { 10.0 }
     });
     let n: usize = s.vals.iter().map(|v| v.len()).sum();
     assert_eq!(ismcts::pick(&s.vals, Some(0), 2.36), 2);
     assert!(n <= 5 * 4, "{n} playouts");
     // no candidate ahead: it runs on (to the hopeless stop against the top or the cap), and keeps the top
-    let s = ismcts::search_root(&mut g, P0, keys, Some(0), 2.36, |_, k, j| noise(j + k as u64));
+    let s = ismcts::search_root(&mut g, P0, keys, Some(0), 2.36, 24, |_, k, j| noise(j + k as u64));
     let m: usize = s.vals.iter().map(|v| v.len()).sum();
     assert!(m > n, "{m} against {n}");
     assert_eq!(ismcts::pick(&s.vals, Some(0), 2.36), 0);

@@ -358,6 +358,7 @@ pub fn search_root(
     keys: Vec<(String, usize)>,
     ti: Option<usize>,
     z: f64,
+    cap: u32,
     mut play: impl FnMut(&mut Game, usize, u64) -> f64,
 ) -> Searched {
     let kn = knobs();
@@ -378,11 +379,11 @@ pub fn search_root(
             k
         } else {
             let ucb = |k: usize| mean(&vals[k]) + kn.c * ((total as f64).ln() / n[k] as f64).sqrt();
-            let mut k = (0..nk).filter(|&k| n[k] < kn.max_visits).reduce(|a, b| if ucb(b) > ucb(a) { b } else { a });
+            let mut k = (0..nk).filter(|&k| n[k] < cap).reduce(|a, b| if ucb(b) > ucb(a) { b } else { a });
             // the pick is held to the margin against the policy's top: keep the two compared on the same copies
             if let (Some(kk), Some(t)) = (k, ti) {
                 let l = leader(&vals);
-                if kk == l && l != t && n[t] < n[l] && n[t] < kn.max_visits {
+                if kk == l && l != t && n[t] < n[l] && n[t] < cap {
                     k = Some(t);
                 }
             }
@@ -469,7 +470,7 @@ pub fn choose_main(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Optio
     let ti = cands.iter().position(|c| c.0 == top_u);
     let z = super::search::margin_z(&g.settings.search);
     let keys: Vec<(String, usize)> = cands.iter().map(|c| c.1.clone()).collect();
-    let s = search_root(g, p, keys, ti, z, |g, k, r| {
+    let s = search_root(g, p, keys, ti, z, kn.max_visits, |g, k, r| {
         let (i, (label, n)) = (&cands[k].0, &cands[k].1);
         let (v, kept) = playout_main_kept(g, p, post, label, *n, base_seed, r, hold.map(|h| h.0));
         let extra = if v < WIN_FLOOR {
@@ -509,7 +510,9 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     let base_seed = super::search::decision_seed(g, &parts);
     let keys: Vec<(String, usize)> = cands.iter().map(|c| (format!("atk:{}:{}", c.0.0, c.1), 0)).collect();
     let z = super::search::margin_z(&g.settings.search);
-    let s = search_root(g, p, keys, None, z, |g, k, r| super::search::playout_attack(g, p, cands[k], base_seed, r));
+    let cap = g.settings.search.rollouts; // today's count at most: an attack's plans are many and close
+    let s =
+        search_root(g, p, keys, None, z, cap, |g, k, r| super::search::playout_attack(g, p, cands[k], base_seed, r));
     let means: Vec<f64> = s.vals.iter().map(|v| mean(v)).collect();
     let mut best = leader(&s.vals);
     if !super::is_main(g.player(p).key) {
@@ -525,8 +528,10 @@ pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool
     let parts = format!("{}:ctr", g.player(q).key);
     let base_seed = super::search::decision_seed(g, &parts);
     let keys = vec![("ctr:yes".to_string(), 0), ("ctr:no".to_string(), 0)];
+    let cap = g.settings.search.rollouts; // today's count at most
     let z = super::search::margin_z(&g.settings.search);
-    let s =
-        search_root(g, q, keys, None, z, |g, k, r| super::search::playout_counter(g, q, p, c, k == 0, base_seed, r));
+    let s = search_root(g, q, keys, None, z, cap, |g, k, r| {
+        super::search::playout_counter(g, q, p, c, k == 0, base_seed, r)
+    });
     mean(&s.vals[0]) > mean(&s.vals[1])
 }

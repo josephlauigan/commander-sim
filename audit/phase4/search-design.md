@@ -75,7 +75,9 @@ the ramp bonus (0 by default). A candidate that can't be played in a copy scores
 **The budget.** A per-decision limit in **playout steps** (the engine's work counter, `search_work`), not wall
 clock: seeded runs stay reproducible. **6,000 steps** a decision (today's main decisions average 2,500-4,000 and
 reach 8,000-10,000 at the 90th percentile, when adaptive rollouts run to 24). The playout that crosses the budget
-finishes. A candidate gets at most 24 playouts (today's adaptive cap).
+finishes. A main-phase candidate gets at most 24 playouts (today's adaptive cap); an attack plan or a counter choice at
+most 6 (today's count: a first trial at 24 doubled the attack cost on t1, 43k to 84k steps a game, as the seven
+plans are close and rarely separate).
 
 **Early stopping.** Once every root candidate has its 2 playouts, after each playout:
 - a candidate clearly ahead: the leader's paired difference with every other candidate (on their shared copies)
