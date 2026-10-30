@@ -1,6 +1,7 @@
 //! The turn (Python's `ais.py` "turn structure" section and the turn loop): lands entering tapped or not, playing
 //! lands, upkeep, the end step, the five steps of a turn, mulligans, and a whole game.
 
+use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::{EnterRule, Types};
@@ -418,7 +419,7 @@ pub fn landfall_draws(g: &Game, p: PlayerId) -> i32 {
         .iter()
         .filter(|&&m| matches!(card_name(g, m), Some("Tatyova, Benthic Druid" | "Aesi, Tyrant of Gyre Strait")))
         .count() as i32;
-    if n == 0 { 0 } else { n * (1 + crate::engine::hooks::total_trigger_copies(g, p, "landfall", None)) }
+    if n == 0 { 0 } else { n * (1 + repl::trigger_copies(g, p, "landfall", None)) }
 }
 
 /// additional land drops (Exploration, Azusa ...) from hand, the top of the library (Oracle of Mul Daya) or the
@@ -576,7 +577,7 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
             }
             if t.has(Tag::Upkprolif) {
                 if let Some(a) = army_of(g, p) {
-                    crate::cardcode::put_plus(g, a, 1);
+                    repl::put_plus(g, a, 1);
                 }
                 lose_life(g, p, 1, Some(p), "other", None)?;
             }
@@ -771,7 +772,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         if trigger_window(g, p, Some(src), "proliferate", None)? {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    crate::cardcode::put_plus(g, m, 1);
+                    repl::put_plus(g, m, 1);
                 }
             }
         }

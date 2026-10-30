@@ -1,5 +1,6 @@
 //! Life, damage to players, state-based checks and elimination (engine.py: lose_life ... eliminate).
 
+use crate::engine::repl;
 use crate::engine::hooks;
 use crate::engine::values::chasm;
 use crate::flow::Res;
@@ -115,7 +116,7 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
         return Ok(());
     }
     // the life gain step: Erebos and the "can't gain life" statics, Angel of Vitality, Cleric Class, The Wind Crystal
-    let Some(n) = crate::engine::repl::life_gain(g, p, n) else { return Ok(()) };
+    let Some(n) = repl::life_gain(g, p, n) else { return Ok(()) };
     g.player_mut(p).life += n;
     // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
     if n > 0 {

@@ -5,6 +5,7 @@
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, n_ench, oring_exile, oring_return};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
 use super::t1::count_type;
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::fire_trigger;
@@ -333,7 +334,7 @@ fn soulherder(g: &mut Game, src: Src, p: PlayerId) -> Res {
 fn soulherder_grow(g: &mut Game, src: Src, m: PermId) -> Res {
     let o = owner(g, src);
     if g.is_creature(m) && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(1.0))? {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1331,7 +1332,7 @@ fn constellation(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && trigger_window(g, o, Some(src), "constellation: draw a card", None)?
     {
         if cname(g, src) == "Setessan Champion" {
-            crate::cardcode::put_plus(g, src, 1); // and a +1/+1 counter
+            repl::put_plus(g, src, 1); // and a +1/+1 counter
         }
         draw(g, o, 1, false)?;
     }

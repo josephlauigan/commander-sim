@@ -22,6 +22,7 @@
 //! - **Drown in Ichor**: -4/-4 on the best opposing creature it kills, then proliferate. Left out: the shrink on a
 //!   creature it doesn't kill.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::values::{etgh, pval, untargetable};
@@ -113,7 +114,7 @@ fn brokers_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
             continue;
         }
         if g.is_creature(m) {
-            crate::cardcode::put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
         if g.db.get(g.perm(m).cd.unwrap_or(CardId(0))).types.has(Types::PLANESWALKER)
             && let Some(l) = g.perm(m).loyalty
@@ -142,7 +143,7 @@ fn engine_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let Some(q) = g.opps(o).max_by(|&a, &b| score(g, a).total_cmp(&score(g, b))) else { return Ok(()) };
     for x in g.player(q).perms.clone() {
         if live(g, x) && g.is_creature(x) {
-            crate::cardcode::put_plus(g, x, -1);
+            repl::put_plus(g, x, -1);
             if etgh(g, x) <= 0 {
                 die(g, x, intern("sba"))?;
             }
@@ -204,10 +205,7 @@ fn canker_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Phyresis Outbreak
 fn outbreak_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in g.opps(p).collect::<Vec<_>>() {
-        if !crate::engine::values::melira(g, q) {
-            let k = crate::cardcode::vorinclex(g, p, 1);
-            g.player_mut(q).poison += k as u32;
-        }
+        repl::give_poison(g, p, q, 1, repl::Path::POISON); // Melira, Vorinclex
         let x = g.player(q).poison as i32;
         for m in g.player(q).perms.clone() {
             if live(g, m) && g.is_creature(m) && etgh(g, m) <= x {
@@ -273,10 +271,7 @@ fn bite_resolve(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
         crate::engine::removal::apply_removal(g, Some(p), t, "destroy", Some(c))?;
     }
     for q in g.opps(p).collect::<Vec<_>>() {
-        if !crate::engine::values::melira(g, q) {
-            let k = crate::cardcode::vorinclex(g, p, 1);
-            g.player_mut(q).poison += k as u32;
-        }
+        repl::give_poison(g, p, q, 1, repl::Path::POISON); // Melira, Vorinclex
     }
     crate::engine::life::check_state(g)?;
     Ok(intern("gy"))

@@ -3,7 +3,8 @@
 //!
 //!   - `fire`: triggered abilities (enters, dies, attacks, cast, draw, upkeep ...), put on the stack as known triggers
 //!   - `resolve_spell`: instants and sorceries
-//!   - `pt`, `has_kw`, `protection`, `cost_delta`, `token_mult`, `counter_mult`, `no_lifegain`: static abilities
+//!   - `pt`, `has_kw`, `protection`, `cost_delta`, `no_lifegain`: static abilities (the token and counter doublers are
+//!     read by `engine::repl`)
 //!   - `ability_options`: activated, loyalty and equip abilities as choices for the AI
 //!   - `card_value`, `value_of`: how much the AI wants to cast a card it has no hand-written priority for
 
@@ -13,6 +14,7 @@ use crate::cards::{Colors, Types};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::values::{colors_of, epow, etgh, has, has_type, protected_from, pval, threat, untargetable};
 use crate::engine::zones::{self, Enter, Tokens, max_by, min_by};
 use crate::flow::Res;
@@ -751,20 +753,15 @@ fn run(
             }
         }
         "counters" => {
-            if crate::impls::t45_heliod_zur::solemnity(g) {
+            if repl::solemnity(g) {
                 return Ok(()); // --- Tiers 4/5 (heliod-zur): Solemnity
             }
-            let k = n(g, ctx) * counter_mult(g, p);
+            let k = n(g, ctx);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
-                // Hardened Scales: one more on a creature you control (before any doubling)
-                let extra = if k > 0 && g.is_creature(m) {
-                    crate::cardcode::scales(g, g.perm(m).owner) * counter_mult(g, p)
-                } else {
-                    0
-                };
-                let tot = crate::cardcode::vorinclex(g, p, k + extra);
-                g.perm_mut(m).plus += tot; // Vorinclex
+                // the counters step: Hardened Scales (before any doubling), the doublers, Vorinclex
+                let tot = repl::counters(g, p, On::Perm(m), Ctr::Plus, k, Path::DSL);
+                g.perm_mut(m).plus += tot;
                 crate::impls::t0_captain::counters_put(g, m, tot); // Captain Marvel
             }
         }
@@ -927,11 +924,10 @@ fn run(
             // doubles the ones you give)
             let k = if e.n.is_some() { n(g, ctx).max(0) } else { 1 };
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
-                if k == 0 || crate::engine::values::melira(g, q) {
+                if k == 0 || !repl::poison_ok(g, q) {
                     continue;
                 }
-                let k = crate::cardcode::vorinclex(g, p, k);
-                g.player_mut(q).poison += k as u32;
+                let k = repl::give_poison(g, p, q, k, Path::VORINCLEX);
                 crate::glog!(g, "    {} gets {} poison counter(s)", g.player(q).name, k);
             }
             crate::engine::life::check_state(g)?;
@@ -939,8 +935,9 @@ fn run(
         "double_counters" => {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                    crate::cardcode::put_plus(g, m, g.perm(m).plus + extra); // doubling puts that many more (Hardened Scales, Vorinclex)
+                    // doubling puts that many more (Hardened Scales, then Vorinclex)
+                    let k = repl::counters(g, p, On::Perm(m), Ctr::Plus, g.perm(m).plus, Path::SCALES);
+                    repl::put_plus(g, m, k);
                 }
             }
         }
@@ -1427,10 +1424,10 @@ fn trigger_copies(g: &Game, q: PlayerId, src: PermId, event: &str, kw: &Fired) -
         n += 1;
     }
     if event == "dies" {
-        n += crate::engine::hooks::total_trigger_copies(g, q, "dies", kw.perm);
+        n += repl::trigger_copies(g, q, "dies", kw.perm);
     }
     if event == "etb" {
-        n += crate::engine::hooks::total_trigger_copies(g, q, "etb", kw.perm);
+        n += repl::trigger_copies(g, q, "etb", kw.perm);
     }
     n
 }
@@ -1704,11 +1701,6 @@ pub fn cost_delta(g: &Game, p: PlayerId, c: CardId) -> i32 {
     delta
 }
 
-/// token doublers
-pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
-    crate::engine::repl::token_mult(g, p)
-}
-
 /// m's own toxic N (compiled from "toxic N" on its keyword line): poison counters to a player it deals combat
 /// damage to, on top of the damage
 pub fn toxic_amount(g: &Game, m: PermId) -> i32 {
@@ -1722,11 +1714,6 @@ pub fn toxic_amount(g: &Game, m: PermId) -> i32 {
             _ => None,
         })
         .sum()
-}
-
-/// counter doublers
-pub fn counter_mult(g: &Game, p: PlayerId) -> i32 {
-    crate::engine::repl::counter_mult(g, p)
 }
 
 /// "players can't gain life" statics of other players
@@ -2206,7 +2193,11 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     if g.perm(src).loyalty_used == Some(stamp) || !g.perm(src).on_bf {
         return Ok(false);
     }
-    let loyalty = if *loyalty > 0 { crate::cardcode::vorinclex(g, p, *loyalty) } else { *loyalty }; // Vorinclex
+    let loyalty = if *loyalty > 0 {
+        repl::counters(g, p, On::Perm(src), Ctr::Loyalty, *loyalty, Path::VORINCLEX)
+    } else {
+        *loyalty
+    };
     let x = g.perm_mut(src);
     x.loyalty_used = Some(stamp);
     x.loyalty = Some(x.loyalty.unwrap_or(0) + loyalty);
@@ -2383,13 +2374,6 @@ fn color_letter(w: &str) -> Option<char> {
         "green" => Some('G'),
         _ => None,
     }
-}
-
-/// the life p gains instead of n: "you gain that much life plus N instead" (Cleric Class) first, then "twice that much
-/// life instead" (The Wind Crystal, Boon Reflection): the player orders the replacements, and adding before doubling
-/// gains the most
-pub fn lifegain_mod(g: &Game, p: PlayerId, n: i32) -> i32 {
-    crate::engine::repl::lifegain_mod(g, p, n)
 }
 
 /// "creatures your opponents control enter tapped" (Authority of the Consuls): does m, entering under p's control,

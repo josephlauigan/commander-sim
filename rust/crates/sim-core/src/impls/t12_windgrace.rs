@@ -41,6 +41,7 @@
 //! - Worldsoul's Rage: X (all spare mana, tag `tokx`) damage to the best target; then up to X land cards from hand
 //!   and graveyard onto the battlefield tapped.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::hooks::hooked;
@@ -130,7 +131,7 @@ fn land_gy_payoffs(g: &Game, p: PlayerId) -> i32 {
 
 /// Spelunking: "Lands you control enter untapped." (Game::add_land and turn::land_enters_tapped ask)
 pub fn lands_enter_untapped(g: &Game, p: PlayerId) -> bool {
-    crate::engine::repl::spelunking(g, p)
+    repl::spelunking(g, p)
 }
 
 /// --- casual speed: the land-drop choice (turn::land_score): Lotus Field with fewer than two other lands sacrifices

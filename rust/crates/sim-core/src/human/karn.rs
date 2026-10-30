@@ -9,6 +9,7 @@
 
 use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, cards, choices, legal, mana};
+use crate::engine::repl;
 use crate::cards::{Colors, Types};
 use crate::engine::stack::{ability_window, ability_window_card};
 use crate::engine::values::{epow, untargetable};
@@ -500,7 +501,7 @@ fn ballista_grow(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 4, "");
     crate::glog!(g, "  {} activates Walking Ballista (+1/+1 counter)", g.player(p).name);
     if ability_window(g, p, Some(m), "+1/+1 counter", None, None)? && live(g, m) {
-        crate::cardcode::put_plus(g, m, 1);
+        repl::put_plus(g, m, 1);
     }
     Ok(None)
 }

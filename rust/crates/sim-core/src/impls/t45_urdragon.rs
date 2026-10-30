@@ -44,6 +44,7 @@
 //!   battlefield, the rest to the bottom in a random order.
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
@@ -416,7 +417,7 @@ fn call_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let mut got: Vec<PermId> = vec![];
     for &(_, m) in &picks {
         if live(g, m) {
-            crate::cardcode::put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
             if !got.contains(&m) {
                 got.push(m);
             }

@@ -4,9 +4,7 @@
 //! with Doubling Season, Hardened Scales and Vorinclex for player 0. Not a sim: one fixed board, asked again and again.
 //!     cargo run --release -p sim-core --example repl_cost
 
-use sim_core::cardcode;
-use sim_core::dsl;
-use sim_core::engine::values;
+use sim_core::engine::repl;
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::state::Game;
 use sim_core::sym::intern;
@@ -60,21 +58,21 @@ fn run(g: &Game, label: &str) {
     let p0 = PlayerId(0);
     time("+1/+1 counters", &|m| {
         let o = g.perm(m).owner;
-        let k = 2 * dsl::counter_mult(g, o);
-        let k = k + if g.is_creature(m) { cardcode::scales(g, o) * dsl::counter_mult(g, o) } else { 0 };
-        cardcode::vorinclex(g, p0, k) as i64
+        let k = 2 * repl::counter_mult(g, o);
+        let k = k + if g.is_creature(m) { repl::scales(g, o) * repl::counter_mult(g, o) } else { 0 };
+        repl::vorinclex(g, p0, k) as i64
     });
     time("-1/-1 counters", &|m| {
         let o = g.perm(m).owner;
-        if values::melira(g, o) { 0 } else { cardcode::vorinclex(g, p0, -1) as i64 }
+        if repl::melira(g, o) { 0 } else { repl::vorinclex(g, p0, -1) as i64 }
     });
     time("poison", &|m| {
         let o = g.perm(m).owner;
-        if values::melira(g, o) { 0 } else { cardcode::vorinclex(g, p0, 1) as i64 }
+        if repl::melira(g, o) { 0 } else { repl::vorinclex(g, p0, 1) as i64 }
     });
-    time("tokens", &|m| dsl::token_mult(g, g.perm(m).owner) as i64);
-    time("damage", &|m| values::no_damage(g, m) as i64);
-    time("life gain", &|m| dsl::lifegain_mod(g, g.perm(m).owner, 3) as i64);
+    time("tokens", &|m| repl::token_mult(g, g.perm(m).owner) as i64);
+    time("damage", &|m| repl::no_damage(g, m) as i64);
+    time("life gain", &|m| repl::lifegain_mod(g, g.perm(m).owner, 3) as i64);
 }
 
 fn main() {

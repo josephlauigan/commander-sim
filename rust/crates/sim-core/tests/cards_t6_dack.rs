@@ -316,7 +316,7 @@ fn gideon_plus_locks_the_best_opposing_creatures_damage_and_gains_loyalty() {
         panic!("not an ability")
     }
     assert_eq!(g.perm(gideon).loyalty, Some(4));
-    assert!(sim_core::cardcode::dovin_blocked(&g, titan), "Grave Titan's combat damage is prevented");
+    assert!(sim_core::engine::repl::dovin(&g, titan), "Grave Titan's combat damage is prevented");
 }
 
 #[test]

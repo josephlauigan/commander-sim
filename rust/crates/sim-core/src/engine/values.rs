@@ -105,11 +105,6 @@ pub fn has_type(g: &Game, m: PermId, t: &str) -> bool {
 }
 
 // ------------------------------------------------------------------ protection and targeting
-/// all damage that would be dealt to m is prevented (Cho-Manno, Revolutionary)
-pub fn no_damage(g: &Game, m: PermId) -> bool {
-    crate::engine::repl::no_damage(g, m)
-}
-
 /// Shadowspear's activation this turn, against a permanent of a player other than the active one
 fn spear_on(g: &Game, m: PermId) -> bool {
     g.spear == Some(g.turn_stamp()) && g.active != Some(g.perm(m).owner)
@@ -275,11 +270,6 @@ pub fn add_cmd_dmg(g: &mut Game, d: PlayerId, p: PlayerId, a: PermId, dmg: i32) 
     let second = is_second_cmd(g, p, a);
     let pl = g.player_mut(d);
     if second { pl.cmd2_dmg[p.index()] += dmg } else { pl.cmd_dmg[p.index()] += dmg }
-}
-
-/// Melira, Sylvok Outcast: p can't get poison counters, and p's creatures can't have -1/-1 counters put on them
-pub fn melira(g: &Game, p: PlayerId) -> bool {
-    crate::engine::repl::melira(g, p)
 }
 
 /// Glacial Chasm

@@ -4,6 +4,7 @@
 
 use super::brain::Situation;
 use super::{Style, decks, plans};
+use crate::engine::repl;
 use crate::cards::Types;
 use crate::engine::cast::{castable, discard_worst, on_cast, sac_fodder};
 use crate::engine::combat::can_block;
@@ -813,7 +814,7 @@ fn krasis(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::engine::life::gain(g, p, x / 2)?;
     draw(g, p, (x / 2) as u32, false)?;
     let m = enter(g, p, c, Enter { was_cast: true, ..Enter::default() })?;
-    crate::cardcode::put_plus(g, m, x);
+    repl::put_plus(g, m, x);
     Ok(true)
 }
 

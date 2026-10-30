@@ -4,7 +4,8 @@
 use sim_core::engine::combat::{self, double_strike, first_strike};
 use sim_core::engine::life::lose_life;
 use sim_core::engine::removal::apply_removal;
-use sim_core::engine::values::{indestructible, no_damage};
+use sim_core::engine::repl::no_damage;
+use sim_core::engine::values::indestructible;
 use sim_core::engine::{cast, zones};
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::impls::t3_aurelia as t3;

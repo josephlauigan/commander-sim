@@ -21,6 +21,7 @@
 //! of this file.
 
 use super::partials::at_once;
+use crate::engine::repl;
 use crate::ai::decks::{pay_card, protect_response};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
@@ -30,7 +31,7 @@ use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{
-    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, indestructible, maskwood as maskwood_on, no_damage,
+    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, indestructible, maskwood as maskwood_on,
     once_per_turn, protected_from, pval, subtypes, untargetable,
 };
 use crate::engine::zones::{
@@ -436,7 +437,7 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         "counters" => {
             for x in g.player(o).perms.clone() {
                 if g.is_creature(x) && !g.perm(x).phased {
-                    crate::cardcode::add_counters(g, x, 1);
+                    repl::add_counters(g, x, 1);
                 }
             }
         }
@@ -902,7 +903,7 @@ pub fn attack_answers(g: &Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Vec
         if n == "Ballista Squad" {
             let have = total_mana(g, d, false) as i32 - 1;
             for &a in atk {
-                if !controls(g, p, a) || untargetable(g, a) || protected_from(g, a, w) || no_damage(g, a) {
+                if !controls(g, p, a) || untargetable(g, a) || protected_from(g, a, w) || repl::no_damage(g, a) {
                     continue;
                 }
                 let x = etgh(g, a);
@@ -942,7 +943,7 @@ fn ballista_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, x: u32) -> Re
     crate::glog!(g, "  {} activates Ballista Squad: {x} damage to {}", pname(g, p), name_of(g, t));
     if ability_window(g, p, Some(src), &format!("{x} damage to {}", name_of(g, t)), Some(5.0), Some(t))?
         && on_bf(g, t)
-        && !no_damage(g, t)
+        && !repl::no_damage(g, t)
         && etgh(g, t) <= x as i32
     {
         apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;
@@ -1546,7 +1547,7 @@ pub fn formation(g: &mut Game, p: PlayerId, addendum: bool) {
         if g.is_creature(m) && !g.perm(m).phased {
             add_kw(g, m, "indestructible");
             if addendum {
-                crate::cardcode::add_counters(g, m, 1);
+                repl::add_counters(g, m, 1);
                 add_kw(g, m, "vigilance");
             }
         }

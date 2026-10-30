@@ -16,6 +16,7 @@
 //!     (`divine_visitation`, read by `make_tokens`), which also apply to the token copies made here,
 //!   - "a creature token leaves the battlefield" (`token_left`, called by `zones::leave`): Zurgo, Twilight Drover.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
@@ -129,7 +130,7 @@ pub fn token_left(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     for q in all {
         for d in named(g, q, "Twilight Drover") {
             if g.perm(d).on_bf {
-                crate::cardcode::add_counters(g, d, 1);
+                repl::add_counters(g, d, 1);
             }
         }
     }
@@ -283,7 +284,7 @@ fn myriad_copies(g: &mut Game, p: PlayerId, m: PermId, q: PlayerId) -> Res<Vec<P
         if divine_visitation(g, p) {
             made = make_tokens(g, p, Tokens { attacking: true, sick: false, ..Tokens::new(1, 4) })?;
         } else {
-            for _ in 0..crate::dsl::token_mult(g, p) {
+            for _ in 0..repl::token_mult(g, p) {
                 if let Some(t) = enter_token_copy(g, p, cd)? {
                     let x = g.perm_mut(t);
                     x.tapped = true;
@@ -478,7 +479,7 @@ fn angel_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let spec = Tokens { color: Some(Colors::NONE), types: vec!["servo", "artifact"], ..Tokens::new(2, 1) };
         make_tokens(g, o, spec)?;
     } else {
-        crate::cardcode::add_counters(g, src, 2);
+        repl::add_counters(g, src, 2);
     }
     Ok(())
 }
@@ -818,7 +819,7 @@ fn kaya_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     }
     let toks = token_creatures(g, p);
     if let Some(t) = max_by(&toks, |m| epow(g, m) as f64) {
-        crate::cardcode::add_counters(g, t, 1);
+        repl::add_counters(g, t, 1);
     }
     Ok(())
 }
@@ -1207,7 +1208,7 @@ fn devourer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let n = if g.died_count.0 == Some(g.turn_stamp()) { g.died_count.1 as i32 } else { 0 };
     if n > 0 {
-        crate::cardcode::add_counters(g, m, n);
+        repl::add_counters(g, m, n);
     }
     Ok(())
 }

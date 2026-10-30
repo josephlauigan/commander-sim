@@ -342,8 +342,8 @@ fn spiders_are_the_only_creatures_that_still_deal_combat_damage() {
     let s = token(&mut g, P0, 1);
     g.perm_mut(s).ttypes.push("spider");
     g.fog_spiders = Some(g.turn_stamp());
-    assert!(sim_core::cardcode::damage_prevented(&g, a));
-    assert!(!sim_core::cardcode::damage_prevented(&g, s));
+    assert!(sim_core::engine::repl::source_prevented(&g, a));
+    assert!(!sim_core::engine::repl::source_prevented(&g, s));
 }
 
 // ------------------------------------------------------------------ Infestation Expert

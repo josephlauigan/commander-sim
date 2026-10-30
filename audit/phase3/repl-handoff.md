@@ -20,7 +20,17 @@ life gain 358-368 / 373-374.
       Checks: 0 warnings; 3649 passed / 0 failed / 3 ignored (222 binaries); practice 104; cardgen clean; clone_cost
       2.93 / 3.01; repl_cost +1/+1 350 / 344, -1/-1 112 / 115, poison 112 / 115, tokens 180-185 / 235-237, damage 1.2,
       life gain 358-360 / 373-381 (same as base, within noise).
-- [ ] Stage B: call sites call the step; old helpers gone
+- [x] Stage B (committed): every site calls the step for its event kind (`repl::put_plus/add_counters/counters/
+      give_poison/poison_ok/minus_ok/enter_counters/tokens/token_mult/no_damage/source_prevented/dovin/tajic_prevents/
+      no_graveyard/hushed/trigger_copies/enters_tapped/labman/solemnity`); the old helpers are deleted
+      (`cardcode::scales/vorinclex/put_plus/add_counters/damage_prevented/dovin_blocked/tajic_protects`,
+      `values::melira/no_damage`, `t45_heliod_zur::solemnity`, `dsl::token_mult/counter_mult/lifegain_mod`,
+      `zones::hushed`, `hooks::enters_tapped`, `partials::tajic_protects`). Tests moved to the new paths.
+      Checks: 0 warnings; 3649 passed / 0 failed / 3 ignored; practice 104; cardgen clean; clone_cost 2.86 / 2.90;
+      repl_cost +1/+1 344 / 337-344, -1/-1 112-114 / 115, poison 112 / 115, tokens 182-190 / 229-236, damage 1.4,
+      life gain 353-359 / 375-378 (same as base).
+      Left for Stage C (each changes results): `zones::amass` and `sweepers` read Mauhúr with `values::has` (abilities
+      on); the direct `.plus +=` writes in `t12_isshin`, `common` (enter copy), `legends`.
 - [ ] Stage C: coverage and order fixes, tests, decks touched
 
 ## Notes

@@ -6,12 +6,13 @@
 //!   the least life), else the most valuable creature or planeswalker X damage kills (an opposing flier or reach
 //!   creature that could block Smaug counts extra), else the opponent with the least life. X = 0 does nothing.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::dsl::has_kw;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{etgh, indestructible, no_damage, pval, untargetable};
+use crate::engine::values::{etgh, indestructible, pval, untargetable};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::ids::{PermId, PlayerId};
@@ -25,7 +26,7 @@ pub fn smaug_target(g: &Game, p: PlayerId, x: i32) -> Option<(PermId, i32)> {
     for q in g.opps(p) {
         for &m in &g.player(q).perms {
             let pm = g.perm(m);
-            if !pm.on_bf || pm.phased || untargetable(g, m) || no_damage(g, m) || indestructible(g, m) {
+            if !pm.on_bf || pm.phased || untargetable(g, m) || repl::no_damage(g, m) || indestructible(g, m) {
                 continue;
             }
             let walker = pm.cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));

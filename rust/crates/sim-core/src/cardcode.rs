@@ -2,6 +2,7 @@
 //! `cards/impl/*.py` that the engine calls by name (Blood Moon, Plaza of Heroes, regeneration, Treasures ...).
 //! The engine calls these exactly where the Python does; each delegates to the ported card code (`impls/*`, `ai/*`).
 
+use crate::engine::repl;
 use crate::engine::hooks;
 use crate::flow::Res;
 use crate::hooks::{CardImpl, Event, Opt};
@@ -123,27 +124,6 @@ pub fn self_cost(g: &Game, p: PlayerId, c: crate::ids::CardId) -> i32 {
         "Embercleave" => crate::impls::rules2::embercleave_cost(g, p),
         _ => imp_of(g, c).and_then(|i| i.self_cost).map_or(0, |f| f(g, p, c)),
     }
-}
-
-/// Hardened Scales: how many extra +1/+1 counters each placement on one of p's creatures gets: `repl::scales`
-pub fn scales(g: &Game, p: PlayerId) -> i32 {
-    crate::engine::repl::scales(g, p)
-}
-
-/// Vorinclex, Monstrous Raider: `n` counters (negative: -1/-1 counters) that `actor` would put: `repl::vorinclex`
-pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
-    crate::engine::repl::vorinclex(g, actor, n)
-}
-
-/// put `n` +1/+1 counters (negative: -1/-1) on m, as its owner would (Solemnity, Vorinclex): `repl::put_plus`
-pub fn put_plus(g: &mut Game, m: PermId, n: i32) {
-    crate::engine::repl::put_plus(g, m, n)
-}
-
-/// mine.add_counters: +1/+1 counters on m; Mauhúr: one more on an Army, Goblin or Orc you control; Hardened Scales:
-/// one more on a creature you control: `repl::add_counters`
-pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
-    crate::engine::repl::add_counters(g, m, n)
 }
 
 /// rules.revolt: a permanent of p's left the battlefield this turn
@@ -478,11 +458,6 @@ pub fn removal_taxes(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym
     crate::impls::rules::removal_taxes(g, actor, m, kind)
 }
 
-/// partials.tajic_protects: Tajic prevents noncombat damage to its controller's other creatures
-pub fn tajic_protects(g: &Game, m: PermId) -> bool {
-    !g.unpreventable() && crate::impls::partials::tajic_protects(g, m)
-}
-
 /// Skyclave Apparition remembers what it exiled (its owner gets an Illusion when it leaves: partials)
 pub fn apparition_note(g: &mut Game, src: PermId, cd: Option<CardId>, owner: PlayerId) {
     crate::impls::partials::apparition_note(g, src, cd, owner)
@@ -533,16 +508,6 @@ pub fn ring_blocked(g: &Game, p: PlayerId, a: PermId, b: PermId) -> bool {
     crate::impls::mine::ring_blocked(g, p, a, b)
 }
 
-/// mine.damage_prevented (Old Fat Spider's chapter II)
-pub fn damage_prevented(g: &Game, m: PermId) -> bool {
-    crate::engine::repl::source_prevented(g, m)
-}
-
-/// rules.dovin_blocked: Dovin's -1: damage to and from m is prevented
-pub fn dovin_blocked(g: &Game, m: PermId) -> bool {
-    !g.unpreventable() && crate::impls::rules::dovin_blocked(g, m)
-}
-
 /// rules2.prot_vs (protection from creatures, from Demons and Dragons)
 pub fn prot_vs(g: &Game, m: PermId, from: PermId) -> bool {
     crate::impls::rules2::prot_vs(g, m, from)
@@ -575,7 +540,7 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
             continue;
         }
         if x.name == "Raging Ravine" {
-            put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
         } else if x.name == "Hive of the Eye Tyrant" && !g.player(d).gy.is_empty() {
             let mut best: Option<(CardId, (bool, u32))> = None;
             for &c in &g.player(d).gy {
@@ -608,14 +573,14 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
         let leader = g.player(d).life >= top;
         let Some(c) = g.perm(m).cd else {
             if grant && leader {
-                add_counters(g, m, 1); // a token attacking the life leader (the Army)
+                repl::add_counters(g, m, 1); // a token attacking the life leader (the Army)
             }
             continue;
         };
         let d_ = g.db.get(c);
         let (dethrone, battle_cry, mentor) = (d_.has_kw("dethrone"), d_.has_kw("battle cry"), d_.has_kw("mentor"));
         if grant && !dethrone && leader {
-            add_counters(g, m, 1);
+            repl::add_counters(g, m, 1);
         }
         if battle_cry {
             for &x in atk {
@@ -632,11 +597,11 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
                 .filter(|&x| x != m && g.perm(x).on_bf && g.perm(x).owner == p && epow(g, x) < pm)
                 .collect();
             if let Some(x) = crate::engine::zones::max_by(&lesser, |x| epow(g, x) as f64) {
-                put_plus(g, x, 1);
+                repl::put_plus(g, x, 1);
             }
         }
         if dethrone && leader {
-            add_counters(g, m, 1);
+            repl::add_counters(g, m, 1);
         }
     }
     if atk.len() == 1 {

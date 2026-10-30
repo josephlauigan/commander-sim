@@ -7,12 +7,13 @@
 //! creature is not tracked (as for every damage effect in the engine), so a creature is hit when the damage is at
 //! least its toughness.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{army_of, epow, etgh, has_type, indestructible, no_damage, pval, subtypes, untargetable};
+use crate::engine::values::{army_of, epow, etgh, has_type, indestructible, pval, subtypes, untargetable};
 use crate::engine::zones::{Tokens, amass, die, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
@@ -119,12 +120,12 @@ impl Sweep {
         }
         match self.kind {
             "fear" => !of_type(g, m, self.ty) && etgh(g, m) <= 3,
-            "brutal" => !g.perm(m).army && etgh(g, m) <= self.power && !no_damage(g, m) && !indestructible(g, m),
+            "brutal" => !g.perm(m).army && etgh(g, m) <= self.power && !repl::no_damage(g, m) && !indestructible(g, m),
             "ignite" => {
                 self.src.is_some_and(|s| s != m)
                     && self.power > 0
                     && etgh(g, m) <= self.power
-                    && !no_damage(g, m)
+                    && !repl::no_damage(g, m)
                     && !indestructible(g, m)
             }
             _ => false,
@@ -242,7 +243,7 @@ fn titan_damage(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     for &q in &opps {
         for &m in &g.player(q).perms {
             let x = g.perm(m);
-            if !x.on_bf || x.phased || untargetable(g, m) || no_damage(g, m) || indestructible(g, m) {
+            if !x.on_bf || x.phased || untargetable(g, m) || repl::no_damage(g, m) || indestructible(g, m) {
                 continue;
             }
             let walker = x.cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));

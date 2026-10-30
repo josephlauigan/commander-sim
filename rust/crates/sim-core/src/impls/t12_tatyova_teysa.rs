@@ -27,6 +27,7 @@
 //! - Teysa, Orzhov Scion: sacrifice three white creatures: exile target creature; another black creature of yours
 //!   dies: a 1/1 white Spirit with flying.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
@@ -269,8 +270,9 @@ fn loot_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Mossborn Hydra
 /// This creature enters with a +1/+1 counter on it (Hardened Scales adds its own).
 fn hydra_as(g: &mut Game, p: PlayerId, m: PermId) -> Res {
-    let n = 1 + crate::cardcode::scales(g, p);
-    crate::cardcode::put_plus(g, m, n);
+    use crate::engine::repl::{Ctr, On, Path, counters};
+    let n = counters(g, p, On::Perm(m), Ctr::Plus, 1, Path::SCALES); // Hardened Scales
+    repl::put_plus(g, m, n);
     Ok(())
 }
 

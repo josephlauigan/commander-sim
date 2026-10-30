@@ -1,6 +1,7 @@
 //! Card definitions (Python's `engine.CD`): immutable, one per card name, shared by every copy in every game.
 //! Built from the Python export (`export::RawCard`) once per process.
 
+use crate::engine::repl;
 use crate::export::{RawCard, TagValue};
 use crate::ids::CardId;
 use crate::tag::{TAG_COUNT, Tag, TagKind};
@@ -244,7 +245,7 @@ pub struct CardDef {
     pub named: Option<crate::engine::chars::NamedFx>,
     /// its replacement effect from the table of named replacement effects (`engine::repl::NAMED`, `TAGGED`), looked up
     /// once at load
-    pub repl: Option<crate::engine::repl::ReplFx>,
+    pub repl: Option<repl::ReplFx>,
     pub id: CardId,
     pub name: Box<str>,
     pub types: Types,
@@ -330,7 +331,7 @@ impl CardDef {
             id,
             name: r.name.as_str().into(),
             named: crate::engine::chars::named_fx(&r.name),
-            repl: crate::engine::repl::fx_of(&r.name, &tags),
+            repl: repl::fx_of(&r.name, &tags),
             types,
             generic: r.generic,
             pips: r.pips.as_str().into(),

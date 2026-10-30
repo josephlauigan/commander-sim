@@ -15,6 +15,7 @@
 //! Tests: tests/cards_bites.rs.
 
 use super::partials::eot_kw;
+use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::engine::cast::{castable, is_casts};
 use crate::engine::mana::{can_pay, cost_of};
@@ -80,7 +81,7 @@ fn pump(g: &mut Game, m: PermId, dp: i32, dt: i32) {
 }
 
 fn plus_counter(g: &mut Game, m: PermId, n: i32) {
-    crate::cardcode::add_counters(g, m, n);
+    repl::add_counters(g, m, n);
 }
 
 // ------------------------------------------------------------------ crime (Hardbristle Bandit)

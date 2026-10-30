@@ -25,6 +25,7 @@
 //! - Umbral Mantle: the combo with a mana creature making four or more (Marwyn grows by itself) and Ezuri: infinite
 //!   mana and infinite overruns win before combat. Its plain +2/+2 pump outside the loop is not used.
 
+use crate::engine::repl;
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable};
@@ -132,7 +133,7 @@ pub fn on_tapped(g: &mut Game, m: PermId) -> Res {
     }
     if once_per_turn(g, o, intern(&format!("dionus_{}", m.0))) {
         g.perm_mut(m).tapped = false;
-        crate::cardcode::put_plus(g, m, 1);
+        repl::put_plus(g, m, 1);
         crate::glog!(g, "    Dionus untaps {} and puts a +1/+1 counter on it", g.perm(m).name);
     }
     Ok(())
@@ -152,7 +153,7 @@ fn kill_target(g: &Game, p: PlayerId, n: i32) -> Option<PermId> {
         .opps(p)
         .flat_map(|q| g.player(q).perms.iter().copied())
         .filter(|&t| live(g, t) && g.is_creature(t) && !untargetable(g, t) && etgh(g, t) <= n)
-        .filter(|&t| !crate::engine::values::no_damage(g, t))
+        .filter(|&t| !repl::no_damage(g, t))
         .collect();
     max_by(&ts, |t| pval(g, t))
 }
@@ -554,7 +555,7 @@ fn kick_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     };
     if named(g, m, JORAGA) {
         // enters with a +1/+1 counter for each time it was kicked
-        crate::cardcode::put_plus(g, m, k as i32);
+        repl::put_plus(g, m, k as i32);
         crate::glog!(g, "    Joraga Warcaller enters with {k} +1/+1 counter(s)");
     } else {
         // squad: when it enters, a token copy for each time the cost was paid

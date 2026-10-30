@@ -19,6 +19,7 @@
 //! Creatures that return a creature (Matterbending Mage, Rescue, Fear of Isolation) pick the best
 //! enter-the-battlefield creature (`best_own_etb`) unless an opponent's creature is the better target.
 
+use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::lose_life;
@@ -90,8 +91,10 @@ fn is_artifact(g: &Game, m: PermId) -> bool {
     g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))
 }
 
+/// the +1/+1 counters one counter on m becomes through the counter doublers (the counters step)
 fn counter_mult(g: &Game, m: PermId) -> i32 {
-    crate::dsl::counter_mult(g, g.perm(m).owner)
+    use crate::engine::repl::{Ctr, On, Path, counters};
+    counters(g, g.perm(m).owner, On::Perm(m), Ctr::Plus, 1, Path::MULT)
 }
 
 // ================================================================== the Ring
@@ -164,7 +167,7 @@ fn evolve(g: &mut Game, src: Src, m: PermId) -> Res {
     }
     if trigger_window(g, o, Some(src), "evolve: a +1/+1 counter", Some(2.0))? && live(g, src) && greater(g) {
         let k = counter_mult(g, src);
-        crate::cardcode::add_counters(g, src, k);
+        repl::add_counters(g, src, k);
     }
     Ok(())
 }
@@ -402,7 +405,7 @@ fn rescue_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         bounce(g, t)?;
         if art && live(g, src) {
             let k = counter_mult(g, src);
-            crate::cardcode::add_counters(g, src, k);
+            repl::add_counters(g, src, k);
         }
     }
     Ok(())
@@ -534,7 +537,7 @@ fn tabulator_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     }
     if trigger_window(g, o, Some(src), "increment: a +1/+1 counter", Some(2.0))? && live(g, src) {
         let k = counter_mult(g, src);
-        crate::cardcode::add_counters(g, src, k);
+        repl::add_counters(g, src, k);
     }
     Ok(())
 }

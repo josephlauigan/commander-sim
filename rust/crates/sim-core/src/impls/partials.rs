@@ -2,6 +2,7 @@
 //! (the Tier 1 and Sauron cards for M5, the rest in phase 6: `register_phase6`).
 
 use super::common;
+use crate::engine::repl;
 use crate::cardcode;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, casts_this_turn, on_cast};
@@ -158,11 +159,6 @@ fn pay_cost(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
 fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (gn, pips) = cost_of(g, p, c);
     can_pay(g, p, gn, &pips, false)
-}
-
-/// partials.tajic_protects: Tajic prevents noncombat damage to its controller's other creatures
-pub fn tajic_protects(g: &Game, m: PermId) -> bool {
-    crate::engine::repl::tajic(g, m)
 }
 
 // ======================================================== Brutal Hordechief: you choose how they block
@@ -542,7 +538,7 @@ fn hero_heroic(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && g.perm(m).attached == Some(src)
         && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(2.0))?
     {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1072,7 +1068,7 @@ fn mystic_grow(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
         && of_type(g, m, Types::ENCHANTMENT)
         && trigger_window(g, o, Some(src), "a +1/+1 counter", Some(2.0))?
     {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -1253,7 +1249,7 @@ fn tide_free(g: &mut Game, _src: Src, m: PermId) -> Res {
 /// creatures that tap for mana get that many +1/+1 counters (once each turn)
 fn tyvar(g: &mut Game, src: Src, p: PlayerId, m: PermId, amt: u32) -> Res {
     if g.perm(src).owner == p && g.is_creature(m) && once_per_turn(g, p, intern(&format!("tyvar{}", m.0))) {
-        crate::cardcode::put_plus(g, m, amt as i32);
+        repl::put_plus(g, m, amt as i32);
     }
     Ok(())
 }
@@ -1290,7 +1286,7 @@ pub fn deal_noncombat(g: &mut Game, _src_owner: PlayerId, m: PermId, n: i32) -> 
     if !g.perm(m).on_bf {
         return Ok(());
     }
-    if tajic_protects(g, m) {
+    if repl::tajic(g, m) {
         crate::glog!(g, "    damage to {} is prevented (Tajic)", g.perm(m).name);
         return Ok(());
     }

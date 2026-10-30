@@ -3,8 +3,6 @@
 //! Vorinclex, Melira with infect and wither, Rest in Peace and a dying creature with a dies trigger, Solemnity with an
 //! undying creature, damage prevention. Seat 0 plays the sauron deck, seat 1 the seph deck.
 
-use sim_core::cardcode;
-use sim_core::dsl;
 use sim_core::engine::repl::{self, Ctr, On, Path, ReplFx};
 use sim_core::engine::{life, values, zones};
 use sim_core::ids::{PermId, PlayerId};
@@ -66,8 +64,8 @@ fn old_add(g: &Game, m: PermId, n: i32) -> i32 {
 
 /// the old ability-language `counters` amount for actor p on m
 fn old_dsl_counters(g: &Game, p: PlayerId, m: PermId, n: i32) -> i32 {
-    let k = n * dsl::counter_mult(g, p);
-    let extra = if k > 0 && g.is_creature(m) { old_scales(g, g.perm(m).owner) * dsl::counter_mult(g, p) } else { 0 };
+    let k = n * repl::counter_mult(g, p);
+    let extra = if k > 0 && g.is_creature(m) { old_scales(g, g.perm(m).owner) * repl::counter_mult(g, p) } else { 0 };
     old_vorinclex(g, p, k + extra)
 }
 
@@ -81,10 +79,10 @@ fn old_hushed(g: &Game) -> bool {
 /// every old counters reader agrees with the step on this table
 fn agree(g: &Game) {
     for p in [P0, P1] {
-        assert_eq!(cardcode::scales(g, p), old_scales(g, p));
-        assert_eq!(values::melira(g, p), old_melira(g, p));
+        assert_eq!(repl::scales(g, p), old_scales(g, p));
+        assert_eq!(repl::melira(g, p), old_melira(g, p));
         for n in [-5, -3, -1, 1, 2, 3, 7] {
-            assert_eq!(cardcode::vorinclex(g, p, n), old_vorinclex(g, p, n), "vorinclex {p:?} {n}");
+            assert_eq!(repl::vorinclex(g, p, n), old_vorinclex(g, p, n), "vorinclex {p:?} {n}");
             for q in [P0, P1] {
                 for &m in &g.player(q).perms {
                     let new = repl::counters(g, p, On::Perm(m), Ctr::Plus, n, Path::DSL);
@@ -99,7 +97,7 @@ fn agree(g: &Game) {
         }
     }
     assert_eq!(repl::solemnity(g), old_solemnity(g));
-    assert_eq!(zones::hushed(g), old_hushed(g));
+    assert_eq!(repl::hushed(g), old_hushed(g));
 }
 
 // ------------------------------------------------------------------ the table
@@ -154,7 +152,7 @@ fn doubling_season_scales_and_vorinclex_agree_with_the_old_helpers() {
     assert_eq!(repl::counters(&g, P1, On::Perm(theirs), Ctr::Plus, 3, Path::DSL), 2);
     // add_counters: Scales, then put_plus's Vorinclex by the owner (Doubling Season by name doesn't apply)
     let before = g.perm(elves).plus;
-    cardcode::add_counters(&mut g, elves, 1);
+    repl::add_counters(&mut g, elves, 1);
     assert_eq!(g.perm(elves).plus - before, old_vorinclex(&g, P0, 1 + 2));
 }
 
@@ -175,7 +173,7 @@ fn melira_stops_poison_and_minus_counters_from_infect_and_wither() {
     let mine = perm(&mut g, P1, "Llanowar Elves");
     perm(&mut g, P1, "Melira, Sylvok Outcast");
     agree(&g);
-    assert!(values::melira(&g, P1) && !values::melira(&g, P0));
+    assert!(repl::melira(&g, P1) && !repl::melira(&g, P0));
     assert!(!zones::minus_counter(&mut g, mine, 1), "no -1/-1 counter on Melira's side");
     assert_eq!(g.perm(mine).plus, 0);
     assert_eq!(repl::counters(&g, P0, On::Player(P1), Ctr::Poison, 3, Path::POISON), 0);
@@ -184,7 +182,7 @@ fn melira_stops_poison_and_minus_counters_from_infect_and_wither() {
     let melira = g.player(P1).perms.iter().copied().find(|&m| g.perm(m).name.contains("Melira")).unwrap();
     g.perm_mut(melira).phased = true;
     agree(&g);
-    assert!(!values::melira(&g, P1));
+    assert!(!repl::melira(&g, P1));
 }
 
 #[test]
@@ -193,7 +191,7 @@ fn solemnity_and_an_undying_creature() {
     perm(&mut g, P0, "Solemnity");
     agree(&g);
     let bear = perm(&mut g, P0, "Butcher Ghoul"); // undying
-    cardcode::put_plus(&mut g, bear, 2);
+    repl::put_plus(&mut g, bear, 2);
     assert_eq!(g.perm(bear).plus, 0, "Solemnity: no counters");
     zones::die(&mut g, bear, "destroy").unwrap();
     // undying returns it with no counter (Solemnity), so it can return again
@@ -225,10 +223,10 @@ fn hushbringer_is_read_through_the_table() {
     agree(&g);
     let h = perm(&mut g, P1, "Hushbringer");
     agree(&g);
-    assert!(zones::hushed(&g));
+    assert!(repl::hushed(&g));
     g.perm_mut(h).neutered = true;
     agree(&g);
-    assert!(!zones::hushed(&g));
+    assert!(!repl::hushed(&g));
 }
 
 // ------------------------------------------------------------------ damage
@@ -237,12 +235,12 @@ fn damage_prevention_cho_manno_and_tajic() {
     let mut g = game();
     let cho = perm(&mut g, P0, "Cho-Manno, Revolutionary");
     let elves = perm(&mut g, P0, "Llanowar Elves");
-    assert!(values::no_damage(&g, cho) && !values::no_damage(&g, elves));
+    assert!(repl::no_damage(&g, cho) && !repl::no_damage(&g, elves));
     g.perm_mut(cho).neutered = true;
-    assert!(!values::no_damage(&g, cho), "abilities lost: no prevention");
+    assert!(!repl::no_damage(&g, cho), "abilities lost: no prevention");
     g.perm_mut(cho).neutered = false;
     let tajic = perm(&mut g, P0, "Tajic, Legion's Edge");
-    assert!(cardcode::tajic_protects(&g, elves) && !cardcode::tajic_protects(&g, tajic));
+    assert!(repl::tajic_prevents(&g, elves) && !repl::tajic_prevents(&g, tajic));
     // life: gain goes through the step (no gain effects out: unchanged)
     let before = g.player(P0).life;
     life::gain(&mut g, P0, 3).unwrap();
@@ -259,5 +257,5 @@ fn token_doublers_through_the_step() {
     perm(&mut g, P0, "Doubling Season");
     assert_eq!(repl::tokens(&g, P0, 2), 8);
     assert_eq!(repl::tokens(&g, P1, 2), 2);
-    assert_eq!(dsl::token_mult(&g, P0), 4);
+    assert_eq!(repl::token_mult(&g, P0), 4);
 }

@@ -150,7 +150,9 @@ fn vorinclex_mods(g: &Game, actor: PlayerId, mods: &mut Mods) {
     }
 }
 
-/// Solemnity is out (any player's, abilities on)
+/// Solemnity is out (any player's, abilities on): players can't get counters, and counters can't be put on
+/// artifacts, creatures, enchantments or lands. Loyalty counters still go on; lore, charge and other kept counters
+/// are left out
 pub fn solemnity(g: &Game) -> bool {
     g.players.iter().any(|q| {
         q.perms.iter().any(|&m| {
@@ -275,6 +277,8 @@ impl Mods {
 pub struct Path(pub u8);
 
 impl Path {
+    /// no effect (a placement no replacement reaches yet)
+    pub const NONE: Path = Path(0);
     /// Solemnity stops them
     pub const SOLEMN: Path = Path(1);
     /// Vorinclex, by the actor
@@ -388,6 +392,35 @@ pub fn add_counters(g: &mut Game, m: PermId, n: i32) {
     put_plus(g, m, n);
 }
 
+/// p can get poison counters (not under Melira or Solemnity)
+pub fn poison_ok(g: &Game, p: PlayerId) -> bool {
+    !melira(g, p)
+}
+
+/// -1/-1 counters can be put on m (not on Melira's side, not under Solemnity)
+pub fn minus_ok(g: &Game, m: PermId) -> bool {
+    !melira(g, g.perm(m).owner)
+}
+
+/// The poison step: `actor` gives q `n` poison counters through the effects `path` applies; returns how many q got
+pub fn give_poison(g: &mut Game, actor: PlayerId, q: PlayerId, n: i32, path: Path) -> i32 {
+    let k = counters(g, actor, On::Player(q), Ctr::Poison, n, path);
+    if k > 0 {
+        g.player_mut(q).poison += k as u32;
+    }
+    k
+}
+
+/// The enter step's counters for m, entering under p's control: (its loyalty, undying's +1/+1 counter, the +1/+1
+/// counters it enters with), from its starting loyalty and the counters it would enter with (`plus`; persist -1).
+/// Doubling Season doubles the loyalty; Hardened Scales adds to `plus`; Vorinclex; Solemnity stops the +1/+1 ones.
+pub fn enter_counters(g: &Game, p: PlayerId, loyalty: Option<i32>, plus: i32) -> (i32, i32, i32) {
+    let doubling = doubling_season(g, p);
+    let s = if plus > 0 { scales(g, p) } else { 0 };
+    let v = |n: i32| vorinclex(g, p, n);
+    let l = v(loyalty.map_or(0, |l| if doubling { l * 2 } else { l }));
+    if solemnity(g) { (l, 0, 0) } else { (l, v(1), v(plus + s)) }
+}
 // ================================================================== tokens
 /// Tokens: how many tokens p makes when it would make n (Kaya, Geist Hunter; the compiled doublers)
 pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
@@ -436,6 +469,16 @@ pub fn source_prevented(g: &Game, m: PermId) -> bool {
 pub fn tajic(g: &Game, m: PermId) -> bool {
     let o = g.perm(m).owner;
     g.player(o).perms.iter().any(|&x| x != m && !g.perm(x).phased && is(g, x, ReplFx::Tajic))
+}
+
+/// Tajic's prevention, unless damage can't be prevented (Impractical Joke): noncombat damage to m
+pub fn tajic_prevents(g: &Game, m: PermId) -> bool {
+    !g.unpreventable() && tajic(g, m)
+}
+
+/// Dovin, Hand of Control's -1: damage to and from m is prevented
+pub fn dovin(g: &Game, m: PermId) -> bool {
+    !g.unpreventable() && crate::impls::rules::dovin_blocked(g, m)
 }
 
 // ================================================================== life
@@ -506,7 +549,11 @@ pub fn trigger_copies(g: &Game, p: PlayerId, kind: Sym, x: Option<PermId>) -> i3
 /// "enters tapped" replacements: does a permanent entering under p's control enter tapped (m None: a Treasure,
 /// Food or Clue)?
 pub fn enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
-    hooks::enters_tapped(g, p, m)
+    crate::dsl::opp_enters_tapped(g, p, m) // --- Tiers 4/5 (heliod-zur): Authority of the Consuls (compiled)
+        || (!g.hooks.is_empty()
+            && hooks::hooked(g, Event::EntersTapped)
+                .iter()
+                .any(|(src, imp)| (imp.enters_tapped.unwrap())(g, *src, p, m)))
 }
 
 /// Spelunking: p's lands enter untapped

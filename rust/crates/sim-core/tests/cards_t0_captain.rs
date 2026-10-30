@@ -509,10 +509,10 @@ fn captain_marvel_copies_counters_put_on_another_creature() {
     let mut g = tbl();
     let cm = perm(&mut g, P0, "Captain Marvel, Apex Avenger");
     let t = token(&mut g, P0, 2);
-    sim_core::cardcode::put_plus(&mut g, t, 2);
+    sim_core::engine::repl::put_plus(&mut g, t, 2);
     assert_eq!((plus(&g, t), plus(&g, cm)), (2, 2));
     let kree = perm(&mut g, P0, "Captain Mar-Vell, Space-Born");
-    sim_core::cardcode::put_plus(&mut g, kree, 1);
+    sim_core::engine::repl::put_plus(&mut g, kree, 1);
     assert_eq!(plus(&g, cm), 2, "a Kree doesn't count");
 }
 
@@ -553,7 +553,7 @@ fn avenge_destroys_all_creatures_and_gains_one_life_for_each() {
 fn shang_chi_pays_off_at_the_next_draw_when_other_counters_reached_ten() {
     let mut g = tbl();
     let s = perm(&mut g, P0, "Shang-Chi and the Ten Rings");
-    sim_core::cardcode::put_plus(&mut g, s, 10);
+    sim_core::engine::repl::put_plus(&mut g, s, 10);
     let life = g.player(P0).life;
     sim_core::engine::zones::draw(&mut g, P0, 1, false).unwrap();
     assert_eq!(g.player(P0).life, life + 5);

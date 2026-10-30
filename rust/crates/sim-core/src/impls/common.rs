@@ -10,13 +10,14 @@
 
 use crate::cards::{CardDb, CardDef, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
-use crate::engine::hooks::{fire_trigger, hooked, total_trigger_copies};
+use crate::engine::hooks::{fire_trigger, hooked};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::values::{epow, etgh, has_type, melira, once_per_turn, protected_from, pval, stopped, untargetable};
+use crate::engine::values::{epow, etgh, has_type, once_per_turn, protected_from, pval, stopped, untargetable};
 use crate::engine::zones::{
     Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, exile_perm, leave, make_tokens, max_by, mill, min_by,
     sac_worth, searchable, to_zone_card,
@@ -724,7 +725,7 @@ fn bombard(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
 }
 
 fn feeder(g: &mut Game, _p: PlayerId, src: PermId, _m: PermId) -> Res {
-    crate::cardcode::put_plus(g, src, 1);
+    repl::put_plus(g, src, 1);
     Ok(())
 }
 
@@ -820,7 +821,7 @@ pub fn death_value(g: &Game, p: PlayerId, m: Option<PermId>) -> f64 {
         .collect();
     let drain = names.iter().map(|n| lookup(&DEATH_DRAIN, n)).psum() + drain_tags(g, p);
     let draw_ = names.iter().map(|n| lookup(&DEATH_DRAW, n)).psum();
-    let copies = 1 + if g.hooks.is_empty() { 0 } else { total_trigger_copies(g, p, "dies", m) };
+    let copies = 1 + if g.hooks.is_empty() { 0 } else { repl::trigger_copies(g, p, "dies", m) };
     let mut edict_v = 0.0;
     let k = names.iter().filter(|n| EDICTS.contains(n)).count() as f64;
     if k > 0.0 {
@@ -964,7 +965,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
     let mut drain_per =
         pl.perms.iter().filter(|&&x| g.perm(x).cd.is_some()).map(|&x| lookup(&DEATH_DRAIN, card_name(g, x))).psum()
             + drain_tags(g, p);
-    drain_per *= (1 + if g.hooks.is_empty() { 0 } else { total_trigger_copies(g, p, "dies", None) }) as f64;
+    drain_per *= (1 + if g.hooks.is_empty() { 0 } else { repl::trigger_copies(g, p, "dies", None) }) as f64;
     let lethal = drain_per != 0.0 && g.opps(p).all(|q| g.player(q).life as f64 <= drain_per * fod.len() as f64);
     let m = min_by(&fod, |x| sac_worth(g, x)).unwrap();
     let x = g.perm(m);
@@ -1692,7 +1693,8 @@ fn walker_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
     let x = g.perm_mut(src);
     x.loyalty_used = Some(stamp);
     x.data.set(DataKey::LoyaltyN, Val::Int(n));
-    let delta = if delta > 0 { crate::cardcode::vorinclex(g, p, delta) } else { delta }; // Vorinclex
+    let delta =
+        if delta > 0 { repl::counters(g, p, On::Perm(src), Ctr::Loyalty, delta, Path::VORINCLEX) } else { delta };
     let x = g.perm_mut(src);
     x.loyalty = Some(x.loyalty.unwrap_or(0) + delta); // Doubling Season leaves loyalty costs alone
     crate::glog!(g, "  {} uses {} ({:+}): {}", player_name(g, p), card_name(g, src), delta, ab.label);
@@ -2841,7 +2843,7 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         hooked(g, Event::ProliferateExtra).iter().map(|(src, imp)| (imp.proliferate_extra.unwrap())(g, *src, p)).sum()
     };
     let times = times as i32 * (1 + extra); // Tekuthal
-    let dbl = if crate::engine::repl::doubling_season_any(g, p) { 2 } else { 1 };
+    let dbl = if repl::doubling_season_any(g, p) { 2 } else { 1 };
     for _ in 0..times.max(0) {
         let mut sagas = vec![];
         for m in g.player(p).perms.clone() {
@@ -2850,13 +2852,13 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
                 continue;
             }
             if x.plus > 0 {
-                let extra = if g.is_creature(m) { crate::cardcode::scales(g, p) } else { 0 };
-                crate::cardcode::put_plus(g, m, dbl + extra); // Hardened Scales
+                let k = repl::counters(g, p, On::Perm(m), Ctr::Plus, dbl, Path::SCALES); // Hardened Scales
+                repl::put_plus(g, m, k);
             }
             if card_is(g, m, Types::PLANESWALKER)
                 && let Some(l) = g.perm(m).loyalty
             {
-                g.perm_mut(m).loyalty = Some(l + crate::cardcode::vorinclex(g, p, dbl));
+                g.perm_mut(m).loyalty = Some(l + repl::counters(g, p, On::Perm(m), Ctr::Loyalty, dbl, Path::VORINCLEX));
             }
             if g.perm(m).data.get(DataKey::Lore).is_some()
                 && let Some(saga) = g.perm(m).cd.and_then(|c| g.registry.get(c)).and_then(|i| i.saga)
@@ -2896,8 +2898,9 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         let mut poisoned = false;
         for q in opps(g, p) {
             for m in g.player(q).perms.clone() {
-                if g.is_creature(m) && g.perm(m).plus < 0 && !crate::impls::t45_heliod_zur::solemnity(g) {
-                    let k = crate::cardcode::vorinclex(g, p, -1); // Vorinclex: doubled for its controller, halved for opponents
+                if g.is_creature(m) && g.perm(m).plus < 0 {
+                    // Solemnity; Vorinclex: doubled for its controller, halved for opponents
+                    let k = repl::counters(g, p, On::Perm(m), Ctr::Plus, -1, Path::SOLEMN | Path::VORINCLEX);
                     if k == 0 {
                         continue;
                     }
@@ -2908,10 +2911,8 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
                 }
             }
             // the fix: opponents' poison counters
-            if g.player(q).poison > 0 && !melira(g, q) {
-                let k = crate::cardcode::vorinclex(g, p, 1);
-                g.player_mut(q).poison += k as u32;
-                poisoned |= k > 0;
+            if g.player(q).poison > 0 {
+                poisoned |= repl::give_poison(g, p, q, 1, Path::POISON) > 0; // Melira, Vorinclex
             }
         }
         if poisoned {
@@ -3334,7 +3335,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
 /// nonartifact spell" (engine.mana_units offers it only when an artifact is being paid for)
 pub fn make_powerstone(g: &mut Game, p: PlayerId, n: u32, tapped: bool) -> Res {
     let ps = g.db.id("Powerstone").expect("Powerstone: an engine-made card (cards.rs)");
-    for _ in 0..n * crate::dsl::token_mult(g, p) {
+    for _ in 0..n * repl::token_mult(g, p) {
         let m = enter(g, p, ps, Enter::default())?;
         let x = g.perm_mut(m);
         x.token = true;

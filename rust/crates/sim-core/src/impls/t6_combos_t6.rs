@@ -21,6 +21,7 @@
 //! Deadpool + Forbidden Orchard and the Mana Vault starter, Rograkh's Badgermole, Springheart/Vibrance lines.
 
 use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
+use crate::engine::repl;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
@@ -567,7 +568,7 @@ fn ddr_plan(g: &Game, p: PlayerId, in_line: bool) -> Option<Plan> {
     if ioreth.is_none() {
         // an Ioreth still to come enters tapped under Blind Obedience (and the like): its untap can't start the loop
         // this turn (the line went, fetched Ioreth tapped and stopped)
-        if crate::engine::hooks::enters_tapped(g, p, None) {
+        if repl::enters_tapped(g, p, None) {
             return None;
         }
         plan.add(get_piece(g, p, &[IORETH])?);

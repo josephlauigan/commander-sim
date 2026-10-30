@@ -14,6 +14,7 @@
 //! 15 keeps the AI out of one-round kill range and above the 10 the existing Phyrexian rule uses, while each
 //! paid pip is worth a whole mana. Tests: tests/cards_krrik.rs.
 
+use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
@@ -69,7 +70,7 @@ fn krrik_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if caster != x.owner || !x.on_bf || x.phased || !g.db.get(c).colors.has('B') {
         return Ok(());
     }
-    crate::cardcode::add_counters(g, src, 1);
+    repl::add_counters(g, src, 1);
     crate::glog!(g, "    K'rrik grows (a black spell was cast)");
     Ok(())
 }

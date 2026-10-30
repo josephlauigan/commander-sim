@@ -65,7 +65,7 @@ fn scales_adds_one_to_landfall_counters_and_two_scales_stack() {
     // a second Scales in the graveyard does nothing; two on the battlefield add two
     let s1 = perm(&mut g2, P0, "Hardened Scales");
     let _ = s1;
-    assert_eq!(sim_core::cardcode::scales(&g2, P0), 1);
+    assert_eq!(sim_core::engine::repl::scales(&g2, P0), 1);
 }
 
 #[test]
@@ -789,9 +789,9 @@ fn vorinclex_doubles_proliferate_and_a_persist_counter_and_halves_the_opponents(
 #[test]
 fn vorinclex_helper_math() {
     let mut g = game();
-    assert_eq!(sim_core::cardcode::vorinclex(&g, P0, 3), 3);
+    assert_eq!(sim_core::engine::repl::vorinclex(&g, P0, 3), 3);
     perm(&mut g, P1, VORINCLEX);
-    assert_eq!(sim_core::cardcode::vorinclex(&g, P0, 3), 1);
-    assert_eq!(sim_core::cardcode::vorinclex(&g, P1, 3), 6);
-    assert_eq!(sim_core::cardcode::vorinclex(&g, P0, -3), -1);
+    assert_eq!(sim_core::engine::repl::vorinclex(&g, P0, 3), 1);
+    assert_eq!(sim_core::engine::repl::vorinclex(&g, P1, 3), 6);
+    assert_eq!(sim_core::engine::repl::vorinclex(&g, P0, -3), -1);
 }

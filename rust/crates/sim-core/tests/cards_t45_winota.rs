@@ -4,7 +4,7 @@
 use sim_core::ai::pool;
 use sim_core::engine::cast::{self, castable};
 use sim_core::engine::combat::can_block;
-use sim_core::engine::hooks::total_trigger_copies;
+use sim_core::engine::repl::trigger_copies as total_trigger_copies;
 use sim_core::engine::life::lose_life;
 use sim_core::engine::mana::land_colors_now;
 use sim_core::engine::removal::apply_removal;

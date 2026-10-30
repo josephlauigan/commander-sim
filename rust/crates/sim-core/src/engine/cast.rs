@@ -1,6 +1,7 @@
 //! Casting: costs beyond mana, what may be cast, what happens on a cast (cast triggers, magecraft, copies), casting a
 //! card through the stack, and resolving it (engine.py's "casting" section, cast_card, resolve).
 
+use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
@@ -394,7 +395,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if !creature {
         for m in g.player(p).perms.clone() {
             if g.perm(m).on_bf && g.perm(m).data.truthy(DataKey::WeirdToken) {
-                crate::cardcode::put_plus(g, m, 1); // Spellgorger Weird made by Ral and the Implicit Maze
+                repl::put_plus(g, m, 1); // Spellgorger Weird made by Ral and the Implicit Maze
             }
         }
     }
@@ -460,7 +461,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         if trigger_window(g, p, Some(src), "counters on your Army", None)?
             && let Some(a) = army_of(g, p)
         {
-            crate::cardcode::put_plus(g, a, find(g, p, Tag::Prolifall).len() as i32);
+            repl::put_plus(g, a, find(g, p, Tag::Prolifall).len() as i32);
         }
     }
     if has(g, p, Tag::Birgi) {
@@ -471,7 +472,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if !creature && let Some(a) = army_of(g, p) {
         for x in find(g, p, Tag::Prolif) {
             if trigger_window(g, p, Some(x), "a counter on your Army", None)? && g.perm(a).on_bf {
-                cardcode::add_counters(g, a, 1);
+                repl::add_counters(g, a, 1);
             }
         }
     }

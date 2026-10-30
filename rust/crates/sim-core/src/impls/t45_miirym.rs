@@ -19,13 +19,14 @@
 //!   The AI's target: an opponent it kills, else the best non-Dragon creature it kills, else the opponent with the
 //!   least life. Left out: a person controlling it gets the AI's choice.
 
+use crate::engine::repl;
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::castable;
 use crate::engine::mana::{can_pay, cost_of};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{card_name, epow, etgh, has_type, no_damage, pval, untargetable};
+use crate::engine::values::{card_name, epow, etgh, has_type, pval, untargetable};
 use crate::engine::zones::{draw, enter_token_copy_with, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -272,7 +273,7 @@ pub fn wrathful_deal(g: &mut Game, p: PlayerId, n: i32) -> Res {
                 && g.is_creature(m)
                 && !has_type(g, m, "dragon")
                 && !untargetable(g, m)
-                && !no_damage(g, m)
+                && !repl::no_damage(g, m)
                 && etgh(g, m) <= n * mult
         })
         .collect();
@@ -311,7 +312,7 @@ pub fn wrathful_wipe(g: &Game, n: i32) -> Vec<(PlayerId, i32)> {
         if k == 0 {
             continue;
         }
-        let hit = dragons_of(g, q.id).into_iter().filter(|&m| !no_damage(g, m)).count();
+        let hit = dragons_of(g, q.id).into_iter().filter(|&m| !repl::no_damage(g, m)).count();
         out.extend(std::iter::repeat_n((q.id, n), k * hit));
     }
     out

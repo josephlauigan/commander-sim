@@ -5,6 +5,7 @@
 //! mana through `land_cols`, `dyn_mana_land` and `on_tap_land` (see impls/lands.rs).
 
 use super::lands::{can_pay_without, pay_without};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
@@ -12,7 +13,7 @@ use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window_card, counter_window};
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{etgh, no_damage, pval, threat, untargetable};
+use crate::engine::values::{etgh, pval, threat, untargetable};
 use crate::engine::zones::max_by;
 use crate::engine::zones::{Tokens, die, make_tokens, min_by};
 use crate::flow::Res;
@@ -761,7 +762,7 @@ fn smash_need(g: &Game, m: PermId) -> Option<i32> {
         return None;
     }
     if g.is_creature(m) {
-        return if no_damage(g, m) { None } else { Some(etgh(g, m).max(1)) };
+        return if repl::no_damage(g, m) { None } else { Some(etgh(g, m).max(1)) };
     }
     x.loyalty.map(|l| l.max(1))
 }

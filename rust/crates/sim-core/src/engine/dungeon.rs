@@ -10,6 +10,7 @@
 //! - Runestone Caverns: the top two cards are put into the hand (instead of exile-and-play); Mad Wizard's Lair draws
 //!   three but the free cast is not made.
 
+use crate::engine::repl;
 use crate::cards::Colors;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::values::epow;
@@ -177,7 +178,7 @@ fn run_fx(g: &mut Game, p: PlayerId, fx: Fx) -> Res {
                 .filter(|&m| g.perm(m).on_bf && g.is_creature(m))
                 .max_by_key(|&m| epow(g, m));
             if let Some(m) = best {
-                crate::cardcode::add_counters(g, m, 1);
+                repl::add_counters(g, m, 1);
             }
         }
         Fx::Drain => {

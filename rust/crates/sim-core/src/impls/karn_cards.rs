@@ -11,6 +11,7 @@
 //!   Hellkite, Triplicate Titan, Cityscape Leveler, Spine of Ish Sah, Portal to Phyrexia, Unstable Obelisk and Ugin.
 
 use super::common::{WalkerAb, best_opp_nonland, make_powerstone, walker};
+use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay};
@@ -403,7 +404,7 @@ fn liberator_cast(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
         return Ok(());
     }
     if trigger_window(g, p, Some(src), "+1/+1 counter", Some(2.0))? && live(g, src) {
-        crate::cardcode::put_plus(g, src, 1);
+        repl::put_plus(g, src, 1);
         crate::glog!(g, "    Liberator grows (+1/+1 counter)");
     }
     Ok(())
@@ -456,7 +457,7 @@ pub(crate) fn overseer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> 
     if ability_window(g, p, Some(src), "+1/+1 counter on each artifact creature", None, None)? {
         let ms = art_creatures(g, p);
         for &m in &ms {
-            crate::cardcode::put_plus(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
         crate::glog!(g, "    Steel Overseer: +1/+1 counter on {} artifact creature(s)", ms.len());
         g.bf_ver += 1;
