@@ -6,8 +6,10 @@
 # Only the keep rule has an opinion (was impls/t6_plan_scion.rs keep, the Rograkh/Silas turbo rule with this list's
 # rituals, tutors, payoffs and engines; PROVISIONAL until JD decides the mulligans, D11). Cast priority, wish list,
 # hold-up and go-now leave every decision to the shared Tier 6 table rules and the generic AI.
+# Paired test (t6, --deck scion, 2000 games): byte-identical to the hand code (Scion 30.1%, CI 28.1-32.1, both arms):
+# t6_plan_scion.rs deleted.
 deck = "scion"
-default = "hand"
+default = "plan"
 
 [sets]
 tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Crop Rotation"]
