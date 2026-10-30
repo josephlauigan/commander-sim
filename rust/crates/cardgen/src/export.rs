@@ -209,7 +209,8 @@ pub fn export(inp: &Inputs) -> Result<Exported, String> {
     })
 }
 
-/// Fetch what the cache lacks (unless offline), then export; writes the files into `out`.
+/// Fetch what the cache lacks (unless offline), then export; refuse a card that runs through two paths
+/// (`paths::guard`), else write the files into `out`.
 pub fn run(project: &Project, out: &std::path::Path, offline: bool) -> Result<(usize, usize), String> {
     let mut inp = Inputs::load(project)?;
     if !offline {
@@ -220,6 +221,10 @@ pub fn run(project: &Project, out: &std::path::Path, offline: bool) -> Result<(u
         }
     }
     let e = export(&inp)?;
+    // Phase 2, one card model: a card that runs through two paths is refused before anything is written
+    for note in crate::paths::guard(&inp, &e.cards_json)? {
+        eprintln!("{note}");
+    }
     std::fs::create_dir_all(out).map_err(|e| e.to_string())?;
     for (f, body) in [("cards.json", &e.cards_json), ("decks.json", &e.decks_json)] {
         std::fs::write(out.join(f), body).map_err(|e| format!("{f}: {e}"))?;

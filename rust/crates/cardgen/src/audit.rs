@@ -476,13 +476,17 @@ pub fn mine_report(a: &Audit) -> String {
 /// The engine's card database and card-code registry, built in memory from the inputs as `cardgen export` would
 /// write them (no file is read back): the real registry, so every way a card gets code is counted.
 pub fn engine_db(inp: &Inputs) -> Result<(sim_core::cards::CardDb, sim_core::hooks::Registry), String> {
+    engine_db_from(&crate::export::export(inp)?.cards_json)
+}
+
+/// The same, from a cards.json text already built (`cardgen export` checks the file it is about to write)
+pub fn engine_db_from(cards_json: &str) -> Result<(sim_core::cards::CardDb, sim_core::hooks::Registry), String> {
     use sim_core::export::RawCard;
     #[derive(serde::Deserialize)]
     struct File {
         cards: Vec<RawCard>,
     }
-    let exported = crate::export::export(inp)?;
-    let raw: File = serde_json::from_str(&exported.cards_json).map_err(|e| e.to_string())?;
+    let raw: File = serde_json::from_str(cards_json).map_err(|e| e.to_string())?;
     let db = sim_core::cards::CardDb::from_raw(&raw.cards)?;
     let reg = sim_core::impls::registry(&db)?;
     Ok((db, reg))

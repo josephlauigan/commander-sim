@@ -287,6 +287,104 @@ pub fn all_paths(
     out
 }
 
+/// the file of doubles that were in the data when `cardgen export` started refusing them (a list that only shrinks)
+pub const KNOWN_FILE: &str = "paths_known.txt";
+
+impl Class {
+    pub fn from_name(s: &str) -> Option<Class> {
+        [Class::Hard, Class::Shadowed, Class::Competing, Class::Split, Class::SplitOk].into_iter().find(|c| c.name() == s)
+    }
+}
+
+/// `data/paths_known.txt`: card -> its known class ("class | card" lines; `#` comments)
+pub fn load_known(p: &crate::data::Project) -> Result<BTreeMap<String, Class>, String> {
+    let path = p.data(KNOWN_FILE);
+    let text = crate::data::read(&path)?;
+    let mut out = BTreeMap::new();
+    for (i, l) in text.lines().enumerate() {
+        let l = l.trim();
+        if l.is_empty() || l.starts_with('#') {
+            continue;
+        }
+        let bad = || format!("{}:{}: expected \"class | card\": {l}", path.display(), i + 1);
+        let (c, n) = l.split_once(" | ").ok_or_else(bad)?;
+        let c = Class::from_name(c.trim()).filter(|c| matches!(c, Class::Shadowed | Class::Competing | Class::Split));
+        out.insert(n.trim().to_string(), c.ok_or_else(bad)?);
+    }
+    Ok(out)
+}
+
+/// The guard's verdict: the cards that run through two paths and are neither declared (`paths_ok`) nor a known double
+/// of the same class (a hard double is never accepted from the known list), and the known-list lines that are stale
+/// (the card is no longer that double, or no longer in the card data).
+pub fn check<'a>(
+    all: &'a BTreeMap<String, CardPaths>,
+    known: &BTreeMap<String, Class>,
+) -> (Vec<&'a CardPaths>, Vec<(String, Class)>) {
+    let new = all
+        .values()
+        .filter(|c| matches!(c.class, Some(Class::Hard | Class::Shadowed | Class::Competing | Class::Split)))
+        .filter(|c| c.class == Some(Class::Hard) || known.get(&c.name) != c.class.as_ref())
+        .collect();
+    let stale = known
+        .iter()
+        .filter(|(n, k)| all.get(*n).and_then(|c| c.class) != Some(**k))
+        .map(|(n, k)| (n.clone(), *k))
+        .collect();
+    (new, stale)
+}
+
+/// the refusal: each card, its class and its two paths, and how to fix it
+pub fn refusal(new: &[&CardPaths]) -> String {
+    let j = |v: &[String]| if v.is_empty() { "-".to_string() } else { v.join(" ") };
+    let js = |v: &[&str]| if v.is_empty() { "-".to_string() } else { v.join(" ") };
+    let mut o = format!(
+        "refused: {} card(s) run through two paths (Phase 2, one card model); nothing was written\n",
+        new.len()
+    );
+    for c in new {
+        let what: Vec<&str> = c.doubles.iter().map(|(_, w)| w.as_str()).collect();
+        o += &format!(
+            "  {} [{}]: {}\n      dsl: {} | tags: {} | rule: {} | ai: {}\n",
+            c.name,
+            c.class.map_or("-", |x| x.name()),
+            what.join("; "),
+            j(&c.dsl),
+            j(&c.tags),
+            js(&c.rule),
+            js(&c.ai)
+        );
+    }
+    o += "Fix each card one of three ways:\n\
+          \x20 - delete one path: the card-code slot (sim-core/src/impls) or the compiled ability / executing tag;\n\
+          \x20 - a `dsl` override in data/card_overrides.toml: `dsl = []` (card code alone) or the abilities without \
+          the doubled one;\n\
+          \x20 - if the two paths do different parts of the card on purpose: `paths_ok = \"why\"` on its override.\n\
+          (`cardgen audit --paths` lists every card's paths; data/paths_known.txt only shrinks: don't add to it.)";
+    o
+}
+
+/// `cardgen export`'s guard, on the cards.json text it is about to write: Err(the refusal) on a new double; Ok(notes
+/// on stale known-list lines)
+pub fn guard(inp: &Inputs, cards_json: &str) -> Result<Vec<String>, String> {
+    let (db, reg) = crate::audit::engine_db_from(cards_json)?;
+    let built = inp.build();
+    let au = Audit::new(inp, &built.cards)?;
+    let all = all_paths(&db, &reg, &au, inp, &paths_ok(inp));
+    let known = load_known(&inp.project)?;
+    let (new, stale) = check(&all, &known);
+    if !new.is_empty() {
+        return Err(refusal(&new));
+    }
+    Ok(stale
+        .iter()
+        .map(|(n, k)| {
+            let now = all.get(n).and_then(|c| c.class).map_or("no double", |c| c.name());
+            format!("note: data/{KNOWN_FILE}: {n} is listed as {} but is now {now}: delete its line", k.name())
+        })
+        .collect())
+}
+
 /// Path 5's inventory: string literals in sim-core's `engine/`, `ai/` and `cardcode.rs` (test modules left out) that
 /// are a card's exact name. (file, literals, distinct names) per file.
 pub fn name_literals(inp: &Inputs, db: &CardDb) -> Result<Vec<(String, usize, BTreeSet<String>)>, String> {

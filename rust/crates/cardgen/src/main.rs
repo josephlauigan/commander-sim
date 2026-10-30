@@ -2,7 +2,8 @@ use cardgen::data::Project;
 use std::path::PathBuf;
 
 const USAGE: &str = "usage:
-  cardgen export [--out DIR] [--offline]        write data/cards.json and data/decks.json
+  cardgen export [--out DIR] [--offline]        write data/cards.json and data/decks.json; refuses (writes
+                                                nothing) a card that runs through two paths, see audit --paths
   cardgen audit [--deck KEY | --cards FILE | --mine | --md FILE | --hooks [--all]]
   cardgen audit --paths [--deck KEY] [--md FILE]
                                                 how faithfully the cards are modeled; what is left to port;
