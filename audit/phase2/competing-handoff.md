@@ -29,4 +29,4 @@ after #163 and #164), not pushed.
 - [x] tests (`sim-core/tests/paths_competing.rs`, 21)
 - [x] `audit/phase2/paths-after-competing.md`; `documents/realism.md`
 - [x] cargo test 3616 passed, 0 failed; build --all-targets 0 warnings (after the merge, b1604152)
-- [ ] sims: before running (scratchpad/phase2-competing/before, base = origin/phase2-coverage); after to run
+- [x] sims: none, by JD's choice (2026-10-29); the before runs (t0-t3 done) were stopped, no after runs

@@ -226,7 +226,8 @@ table takes `scored = false` for that.
   first (the permanent arena or the characteristics pass)? Pause new card work during the card-model move?
 
 **Phase 2, one card model** (2026-10-29; the Commander Spellbook part is a separate PR). The gate "no double-modeled
-cards" is **not passed yet**: hard doubles are 0, and the rest are frozen.
+cards" **passes** (PR 5a, 2026-10-29): `cardgen audit --paths` finds 0 hard, shadowed, competing or undeclared split
+doubles, `data/paths_known.txt` is empty, and every card on two paths has a `paths_ok` reason (209 cards).
 
 - `cardgen audit --paths` (PR #153) lists every path a card reaches the sim by (compiled abilities, executing tags,
   card-code rule and AI slots) and classes the doubles. PR #161 removed every hard double (21 -> 0) and declared 29
