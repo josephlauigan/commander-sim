@@ -1,8 +1,9 @@
 //! --- phase4-eval: the learned evaluation (`audit/phase4/eval-design.md`).
 //!
 //! `search::evaluate` scores a playout's last position. For a generic-policy deck with the learned evaluation on
-//! (`AI_EVAL`), a position short of a win or a loss is scored by a logistic model fitted on recorded games: the
-//! estimate that the evaluated seat goes on to win, mapped onto `evaluate`'s scale (below 95, monotone).
+//! (`AI_EVAL`, on by default), a position short of a win or a loss is scored by a model fitted on recorded games (a
+//! logistic regression plus boosted trees): the estimate that the evaluated seat goes on to win, mapped onto
+//! `evaluate`'s scale (below 95, monotone).
 //!
 //! - `raw`: the numbers read from a position (per seat, in turn order from the evaluated seat). The recorder writes
 //!   them, and the model reads its features from them, so training and play share one reading.
@@ -29,11 +30,14 @@ fn mode() -> &'static Mode {
     M.get_or_init(|| parse_mode(std::env::var("AI_EVAL").ok().as_deref()))
 }
 
-/// `AI_EVAL`: unset or `0` today's evaluation, `1` learned for every generic-policy deck, `a,b` for those keys
+/// `AI_EVAL`: unset or `1` learned for every generic-policy deck, `0` today's evaluation, `a,b` learned for those keys.
+/// Stage C: the learned evaluation is the default for every generic-policy deck (the paired tests were level on t1-t5
+/// in both halves, `audit/phase4/eval-handoff.md`); `0` keeps today's for a measurement arm. JD's decks and Tier 6
+/// always keep today's (`values::generic_deck`).
 fn parse_mode(v: Option<&str>) -> Mode {
     match v.map(str::trim) {
-        None | Some("") | Some("0") => Mode::Keys(vec![]),
-        Some("1") => Mode::All,
+        None | Some("") | Some("1") => Mode::All,
+        Some("0") => Mode::Keys(vec![]),
         Some(list) => Mode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()),
     }
 }
@@ -473,7 +477,8 @@ mod tests {
 
     #[test]
     fn modes() {
-        assert!(matches!(parse_mode(None), Mode::Keys(k) if k.is_empty()));
+        assert!(matches!(parse_mode(None), Mode::All));
+        assert!(matches!(parse_mode(Some("")), Mode::All));
         assert!(matches!(parse_mode(Some("0")), Mode::Keys(k) if k.is_empty()));
         assert!(matches!(parse_mode(Some("1")), Mode::All));
         assert!(matches!(parse_mode(Some("a, b")), Mode::Keys(k) if k == ["a", "b"]));
