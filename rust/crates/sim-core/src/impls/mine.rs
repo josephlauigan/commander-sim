@@ -555,11 +555,12 @@ pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
             continue;
         }
         if g.perm(m).plus > 0 {
-            repl::add_counters(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
         let walker = g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));
         if walker && let Some(l) = g.perm(m).loyalty {
-            g.perm_mut(m).loyalty = Some(l + 1);
+            let k = repl::counters(g, p, repl::On::Perm(m), repl::Ctr::Loyalty, 1, repl::Path::ALL);
+            g.perm_mut(m).loyalty = Some(l + k);
         }
     }
     for q in g.opps(p).collect::<Vec<_>>() {
@@ -568,7 +569,9 @@ pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
         }
         for m in g.player(q).perms.clone() {
             if g.is_creature(m) && g.perm(m).plus < 0 {
-                g.perm_mut(m).plus -= 1;
+                if repl::put_counters(g, p, m, -1) == 0 {
+                    continue; // Melira, Solemnity
+                }
                 if etgh(g, m) <= 0 {
                     die(g, m, "sba")?;
                 }
@@ -3447,7 +3450,7 @@ pub fn helm_hexproof(g: &Game, m: PermId) -> bool {
 /// names Orc: each other Orc (and every new Orc Army) enters with an additional +1/+1 counter
 fn mimic(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src && g.perm(m).owner == g.perm(src).owner && g.is_creature(m) && orcish(g, m) {
-        repl::add_counters(g, m, 1);
+        repl::put_plus(g, m, 1);
     }
     Ok(())
 }

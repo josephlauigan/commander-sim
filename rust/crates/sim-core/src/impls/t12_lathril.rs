@@ -679,7 +679,7 @@ fn tyvar_plus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
 
 fn tyvar_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let Some(t) = tyvar_target(g, p) else { return Ok(()) };
-    repl::add_counters(g, t, 1);
+    repl::put_plus(g, t, 1);
     let x = g.perm_mut(t);
     x.tapped = false;
     if !x.eot_kw.contains(&"deathtouch") {

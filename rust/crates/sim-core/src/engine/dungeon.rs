@@ -178,7 +178,7 @@ fn run_fx(g: &mut Game, p: PlayerId, fx: Fx) -> Res {
                 .filter(|&m| g.perm(m).on_bf && g.is_creature(m))
                 .max_by_key(|&m| epow(g, m));
             if let Some(m) = best {
-                repl::add_counters(g, m, 1);
+                repl::put_plus(g, m, 1);
             }
         }
         Fx::Drain => {

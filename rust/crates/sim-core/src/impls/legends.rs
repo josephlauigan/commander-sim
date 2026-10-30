@@ -594,8 +594,8 @@ fn blessing(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     let turns = g.player(p).turns as i64;
+    repl::put_plus(g, t, 1); // the counters step (Stage C: was a direct write)
     let x = g.perm_mut(t);
-    x.plus += 1;
     x.data.set(DataKey::IndestrUntil, Val::List(vec![Val::Player(p), Val::Int(turns)])); // engine.indestructible
     crate::glog!(
         g,
@@ -1318,7 +1318,7 @@ fn hydra_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         shuffle_library(g, o);
     }
     if on(g, o, src) {
-        repl::add_counters(g, src, x); // Hardened Scales applies
+        repl::put_plus(g, src, x); // Hardened Scales applies
         if etgh(g, src) <= 0 {
             die(g, src, "sba")?;
         }

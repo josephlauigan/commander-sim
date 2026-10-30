@@ -989,7 +989,7 @@ fn shield_resolve(g: &mut Game, _p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym>
 
 /// yshtola.shield: a +1/+1 counter, lifelink and indestructible until end of turn
 pub fn shield(g: &mut Game, m: PermId) {
-    repl::add_counters(g, m, 1);
+    repl::put_plus(g, m, 1);
     add_eot_kw(g, m, "indestructible");
     add_eot_kw(g, m, "lifelink");
     crate::glog!(g, "    Take Up the Shield: {} gets a +1/+1 counter, lifelink and indestructible", g.perm(m).name);

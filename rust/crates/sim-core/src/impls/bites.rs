@@ -81,7 +81,7 @@ fn pump(g: &mut Game, m: PermId, dp: i32, dt: i32) {
 }
 
 fn plus_counter(g: &mut Game, m: PermId, n: i32) {
-    repl::add_counters(g, m, n);
+    repl::put_plus(g, m, n);
 }
 
 // ------------------------------------------------------------------ crime (Hardbristle Bandit)

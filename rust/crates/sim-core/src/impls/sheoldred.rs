@@ -71,7 +71,7 @@ fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 }
 
 fn plus_counter(g: &mut Game, m: PermId, n: i32) {
-    repl::add_counters(g, m, n);
+    repl::put_plus(g, m, n);
 }
 
 fn flipped(g: &Game, m: PermId) -> bool {

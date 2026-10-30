@@ -2040,7 +2040,7 @@ fn narsil_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
     let n = if city_blessing(g, p) { 2 } else { 1 };
     let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
     for m in mine {
-        repl::add_counters(g, m, n);
+        repl::put_plus(g, m, n);
     }
     Ok(vec![])
 }

@@ -1,7 +1,8 @@
 //! How long asking the replacement effects takes (Phase 3, the replacement step): counters placed, poison given,
 //! tokens made, damage prevented and life gained, over every permanent of the `chars_cost` mid-game table (four
 //! players, 8 lands and 15 permanents each, the ability language on), first with no replacement effect in play, then
-//! with Doubling Season, Hardened Scales and Vorinclex for player 0. Not a sim: one fixed board, asked again and again.
+//! with Doubling Season, Hardened Scales and Vorinclex for player 0 (Stage C: the counters rows ask `repl::counters`,
+//! the step every site calls). Not a sim: one fixed board, asked again and again.
 //!     cargo run --release -p sim-core --example repl_cost
 
 use sim_core::engine::repl;
@@ -56,20 +57,11 @@ fn run(g: &Game, label: &str) {
         println!("{label:8} {what:14} {:7.1} ns per ask ({keep})", t.elapsed().as_secs_f64() / reads * 1e9);
     };
     let p0 = PlayerId(0);
-    time("+1/+1 counters", &|m| {
-        let o = g.perm(m).owner;
-        let k = 2 * repl::counter_mult(g, o);
-        let k = k + if g.is_creature(m) { repl::scales(g, o) * repl::counter_mult(g, o) } else { 0 };
-        repl::vorinclex(g, p0, k) as i64
-    });
-    time("-1/-1 counters", &|m| {
-        let o = g.perm(m).owner;
-        if repl::melira(g, o) { 0 } else { repl::vorinclex(g, p0, -1) as i64 }
-    });
-    time("poison", &|m| {
-        let o = g.perm(m).owner;
-        if repl::melira(g, o) { 0 } else { repl::vorinclex(g, p0, 1) as i64 }
-    });
+    // the counters step (Stage C): what every site calls; the base measured the old helpers composed the same way
+    use repl::{Ctr, On, Path};
+    time("+1/+1 counters", &|m| repl::counters(g, p0, On::Perm(m), Ctr::Plus, 2, Path::ALL) as i64);
+    time("-1/-1 counters", &|m| repl::counters(g, p0, On::Perm(m), Ctr::Plus, -1, Path::ALL) as i64);
+    time("poison", &|m| repl::counters(g, p0, On::Player(g.perm(m).owner), Ctr::Poison, 1, Path::POISON) as i64);
     time("tokens", &|m| repl::token_mult(g, g.perm(m).owner) as i64);
     time("damage", &|m| repl::no_damage(g, m) as i64);
     time("life gain", &|m| repl::lifegain_mod(g, g.perm(m).owner, 3) as i64);

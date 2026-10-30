@@ -2136,11 +2136,13 @@ fn spark(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let x = g.perm_mut(n);
     x.data = d;
     x.phys = own_cd;
+    // the counters step (Stage C: these were direct writes): an additional +1/+1 or loyalty counter
     if creature {
-        x.plus += 1;
+        repl::put_plus(g, n, 1);
     }
-    if let Some(l) = x.loyalty {
-        x.loyalty = Some(l + 1);
+    if let Some(l) = g.perm(n).loyalty {
+        let k = repl::counters(g, o, On::Perm(n), Ctr::Loyalty, 1, Path::ALL);
+        g.perm_mut(n).loyalty = Some(l + k);
     }
     crate::glog!(g, "    Spark Double copies {}", g.db.get(best_cd).name);
     Ok(())
@@ -2843,7 +2845,6 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         hooked(g, Event::ProliferateExtra).iter().map(|(src, imp)| (imp.proliferate_extra.unwrap())(g, *src, p)).sum()
     };
     let times = times as i32 * (1 + extra); // Tekuthal
-    let dbl = if repl::doubling_season_any(g, p) { 2 } else { 1 };
     for _ in 0..times.max(0) {
         let mut sagas = vec![];
         for m in g.player(p).perms.clone() {
@@ -2852,13 +2853,12 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
                 continue;
             }
             if x.plus > 0 {
-                let k = repl::counters(g, p, On::Perm(m), Ctr::Plus, dbl, Path::SCALES); // Hardened Scales
-                repl::put_plus(g, m, k);
+                repl::put_counters(g, p, m, 1); // the counters step: Doubling Season, Hardened Scales, Vorinclex
             }
             if card_is(g, m, Types::PLANESWALKER)
                 && let Some(l) = g.perm(m).loyalty
             {
-                g.perm_mut(m).loyalty = Some(l + repl::counters(g, p, On::Perm(m), Ctr::Loyalty, dbl, Path::VORINCLEX));
+                g.perm_mut(m).loyalty = Some(l + repl::counters(g, p, On::Perm(m), Ctr::Loyalty, 1, Path::ALL));
             }
             if g.perm(m).data.get(DataKey::Lore).is_some()
                 && let Some(saga) = g.perm(m).cd.and_then(|c| g.registry.get(c)).and_then(|i| i.saga)
@@ -2872,19 +2872,21 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
             let d = &g.perm(l).data;
             let charge = d.get(DataKey::Charge).map(Val::int);
             let kept = d.int(DataKey::Counters);
+            let k = repl::counters(g, p, On::Perm(l), Ctr::Other, 1, Path::ALL) as i64; // Solemnity, Doubling Season
             if VIVID.contains(&&*g.db.get(g.perm(l).card()).name) && charge.unwrap_or(2) > 0 {
-                g.perm_mut(l).data.set(DataKey::Charge, Val::Int(charge.unwrap_or(2) + dbl as i64));
+                g.perm_mut(l).data.set(DataKey::Charge, Val::Int(charge.unwrap_or(2) + k));
             }
             if kept > 0 {
-                g.perm_mut(l).data.set(DataKey::Counters, Val::Int(kept + dbl as i64));
+                g.perm_mut(l).data.set(DataKey::Counters, Val::Int(kept + k));
             }
         }
+        let k = repl::counters(g, p, On::Kept(p), Ctr::Other, 1, Path::ALL); // the Incubator, The Ozolith
         let pl = g.player_mut(p);
         if pl.incubator > 0 {
-            pl.incubator += dbl;
+            pl.incubator += k;
         }
         if pl.ozolith_counters > 0 {
-            pl.ozolith_counters += dbl;
+            pl.ozolith_counters += k;
         }
         for (m, add_lore) in sagas {
             // a lore counter: that chapter triggers (Summon: Bahamut)
@@ -2899,12 +2901,10 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         for q in opps(g, p) {
             for m in g.player(q).perms.clone() {
                 if g.is_creature(m) && g.perm(m).plus < 0 {
-                    // Solemnity; Vorinclex: doubled for its controller, halved for opponents
-                    let k = repl::counters(g, p, On::Perm(m), Ctr::Plus, -1, Path::SOLEMN | Path::VORINCLEX);
-                    if k == 0 {
+                    // the counters step: Solemnity, Melira, the controller's doublers, Vorinclex
+                    if repl::put_counters(g, p, m, -1) == 0 {
                         continue;
                     }
-                    g.perm_mut(m).plus += k;
                     if etgh(g, m) <= 0 {
                         die(g, m, "sba")?;
                     }

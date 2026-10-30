@@ -223,7 +223,7 @@ fn cauldron_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     g.perm_mut(src).tapped = true;
     g.player_mut(q).gy.retain(|&x| x != c);
     g.player_mut(q).exile.push(c);
-    repl::add_counters(g, t, 1);
+    repl::put_plus(g, t, 1);
     crate::glog!(g, "  Agatha's Soul Cauldron exiles {}, +1/+1 counter on {}", g.db.get(c).name, g.perm(t).name);
     Ok(true)
 }

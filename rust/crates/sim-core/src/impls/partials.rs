@@ -1286,7 +1286,7 @@ pub fn deal_noncombat(g: &mut Game, _src_owner: PlayerId, m: PermId, n: i32) -> 
     if !g.perm(m).on_bf {
         return Ok(());
     }
-    if repl::tajic(g, m) {
+    if repl::tajic_prevents(g, m) {
         crate::glog!(g, "    damage to {} is prevented (Tajic)", g.perm(m).name);
         return Ok(());
     }

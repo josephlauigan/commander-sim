@@ -138,10 +138,10 @@ fn cap_team(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         add_kw(g, m, "vigilance");
         add_kw(g, m, "haste");
         g.perm_mut(m).sick = false;
-        repl::add_counters(g, m, 1);
+        repl::put_plus(g, m, 1);
     }
     if live(g, src) {
-        repl::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -431,7 +431,7 @@ fn love_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dm
         return Ok(());
     }
     if trigger_window(g, p, Some(src), "+1/+1 counter", Some(4.0))? && live(g, a) {
-        repl::add_counters(g, a, 1);
+        repl::put_plus(g, a, 1);
     }
     Ok(())
 }
@@ -443,7 +443,7 @@ fn hercules_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Play
         && trigger_window(g, p, Some(src), "+1/+1 counter, indestructible", Some(5.0))?
         && live(g, src)
     {
-        repl::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
         add_kw(g, src, "indestructible");
     }
     Ok(vec![])
@@ -456,7 +456,7 @@ fn hercules_damaged(g: &mut Game, m: PermId, dmg: i32) {
         && card_name(g, m) == Some(HERCULES)
         && once_per_turn(g, owner(g, m), intern(&format!("herc_{}", m.0)))
     {
-        repl::add_counters(g, m, dmg);
+        repl::put_plus(g, m, dmg);
         crate::glog!(g, "    Hercules gets {} +1/+1 counters", dmg);
     }
 }
@@ -580,7 +580,7 @@ fn she_hulk_blocks(
     }
     for (a, n) in blocked {
         if live(g, a) {
-            repl::add_counters(g, a, n);
+            repl::put_plus(g, a, n);
         }
     }
     Ok(())
@@ -973,7 +973,7 @@ pub fn sac_finish(g: &mut Game) -> Res {
         g.player(p).perms.iter().copied().filter(|&m| m != t && live(g, m) && g.is_creature(m)).collect();
     if let Some(m) = max_by(&others, |m| pval(g, m)) {
         if plus > 0 {
-            repl::add_counters(g, m, plus);
+            repl::put_plus(g, m, plus);
         }
         draw(g, p, 1, false)?;
         crate::glog!(

@@ -130,7 +130,7 @@ pub fn token_left(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     for q in all {
         for d in named(g, q, "Twilight Drover") {
             if g.perm(d).on_bf {
-                repl::add_counters(g, d, 1);
+                repl::put_plus(g, d, 1);
             }
         }
     }
@@ -479,7 +479,7 @@ fn angel_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let spec = Tokens { color: Some(Colors::NONE), types: vec!["servo", "artifact"], ..Tokens::new(2, 1) };
         make_tokens(g, o, spec)?;
     } else {
-        repl::add_counters(g, src, 2);
+        repl::put_plus(g, src, 2);
     }
     Ok(())
 }
@@ -819,7 +819,7 @@ fn kaya_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     }
     let toks = token_creatures(g, p);
     if let Some(t) = max_by(&toks, |m| epow(g, m) as f64) {
-        repl::add_counters(g, t, 1);
+        repl::put_plus(g, t, 1);
     }
     Ok(())
 }
@@ -1208,7 +1208,7 @@ fn devourer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let n = if g.died_count.0 == Some(g.turn_stamp()) { g.died_count.1 as i32 } else { 0 };
     if n > 0 {
-        repl::add_counters(g, m, n);
+        repl::put_plus(g, m, n);
     }
     Ok(())
 }

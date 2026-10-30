@@ -317,7 +317,7 @@ pub(crate) fn face_up_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
                 && live(g, m)
             {
                 bounce(g, t)?;
-                repl::add_counters(g, m, 1);
+                repl::put_plus(g, m, 1);
             }
         }
         GATEKEEPER => {
@@ -472,7 +472,7 @@ fn ennis_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
         && exiled_this_turn(g)
         && trigger_window(g, p, Some(src), "a +1/+1 counter", Some(1.0))?
     {
-        repl::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }

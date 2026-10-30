@@ -437,7 +437,7 @@ fn alliance(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         "counters" => {
             for x in g.player(o).perms.clone() {
                 if g.is_creature(x) && !g.perm(x).phased {
-                    repl::add_counters(g, x, 1);
+                    repl::put_plus(g, x, 1);
                 }
             }
         }
@@ -1547,7 +1547,7 @@ pub fn formation(g: &mut Game, p: PlayerId, addendum: bool) {
         if g.is_creature(m) && !g.perm(m).phased {
             add_kw(g, m, "indestructible");
             if addendum {
-                repl::add_counters(g, m, 1);
+                repl::put_plus(g, m, 1);
                 add_kw(g, m, "vigilance");
             }
         }

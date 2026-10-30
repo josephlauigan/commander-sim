@@ -270,9 +270,7 @@ fn loot_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Mossborn Hydra
 /// This creature enters with a +1/+1 counter on it (Hardened Scales adds its own).
 fn hydra_as(g: &mut Game, p: PlayerId, m: PermId) -> Res {
-    use crate::engine::repl::{Ctr, On, Path, counters};
-    let n = counters(g, p, On::Perm(m), Ctr::Plus, 1, Path::SCALES); // Hardened Scales
-    repl::put_plus(g, m, n);
+    repl::put_counters(g, p, m, 1); // the counters step (Hardened Scales adds its own)
     Ok(())
 }
 

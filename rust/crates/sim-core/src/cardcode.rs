@@ -573,14 +573,14 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
         let leader = g.player(d).life >= top;
         let Some(c) = g.perm(m).cd else {
             if grant && leader {
-                repl::add_counters(g, m, 1); // a token attacking the life leader (the Army)
+                repl::put_plus(g, m, 1); // a token attacking the life leader (the Army)
             }
             continue;
         };
         let d_ = g.db.get(c);
         let (dethrone, battle_cry, mentor) = (d_.has_kw("dethrone"), d_.has_kw("battle cry"), d_.has_kw("mentor"));
         if grant && !dethrone && leader {
-            repl::add_counters(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
         if battle_cry {
             for &x in atk {
@@ -601,7 +601,7 @@ pub fn keyword_attack(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) ->
             }
         }
         if dethrone && leader {
-            repl::add_counters(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
     }
     if atk.len() == 1 {

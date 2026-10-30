@@ -444,7 +444,7 @@ fn tez_zero(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let Some((t, _)) = tez_untap_target(g, p, src) else { return Ok(()) };
     g.perm_mut(t).tapped = false;
     if is_artifact(g, t) && g.is_creature(t) {
-        repl::add_counters(g, t, 1);
+        repl::put_plus(g, t, 1);
     }
     crate::glog!(g, "    Tezzeret untaps {}", g.perm(t).name);
     Ok(())

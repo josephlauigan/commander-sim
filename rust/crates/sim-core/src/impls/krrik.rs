@@ -70,7 +70,7 @@ fn krrik_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if caster != x.owner || !x.on_bf || x.phased || !g.db.get(c).colors.has('B') {
         return Ok(());
     }
-    repl::add_counters(g, src, 1);
+    repl::put_plus(g, src, 1);
     crate::glog!(g, "    K'rrik grows (a black spell was cast)");
     Ok(())
 }

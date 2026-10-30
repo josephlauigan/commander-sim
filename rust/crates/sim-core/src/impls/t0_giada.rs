@@ -143,7 +143,7 @@ fn giada_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src && owner(g, m) == owner(g, src) && p == owner(g, src) && g.is_creature(m) && is_angel(g, m) {
         let n = angels_before(g, p, &[m]);
         if n > 0 {
-            repl::add_counters(g, m, n);
+            repl::put_plus(g, m, n);
         }
     }
     Ok(())
@@ -156,7 +156,7 @@ fn giada_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
     let n = angels_before(g, p, toks);
     for &m in toks {
         if m != src && live(g, m) && is_angel(g, m) && n > 0 {
-            repl::add_counters(g, m, n);
+            repl::put_plus(g, m, n);
         }
     }
     Ok(())
@@ -385,7 +385,7 @@ fn defy_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 
 /// put n +1/+1 counters on m; Exemplar of Light draws (once each turn) when they land on it
 fn put_counters(g: &mut Game, m: PermId, n: i32) -> Res {
-    repl::add_counters(g, m, n);
+    repl::put_plus(g, m, n);
     exemplar_counters(g, m)
 }
 

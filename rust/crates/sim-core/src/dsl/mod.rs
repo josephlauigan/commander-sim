@@ -759,10 +759,8 @@ fn run(
             let k = n(g, ctx);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
-                // the counters step: Hardened Scales (before any doubling), the doublers, Vorinclex
-                let tot = repl::counters(g, p, On::Perm(m), Ctr::Plus, k, Path::DSL);
-                g.perm_mut(m).plus += tot;
-                crate::impls::t0_captain::counters_put(g, m, tot); // Captain Marvel
+                // the counters step: Hardened Scales, the controller's doublers, Vorinclex (Captain Marvel)
+                repl::put_counters(g, p, m, k);
             }
         }
         "pump" => {
@@ -935,9 +933,8 @@ fn run(
         "double_counters" => {
             for m in g.player(p).perms.clone() {
                 if g.perm(m).plus > 0 {
-                    // doubling puts that many more (Hardened Scales, then Vorinclex)
-                    let k = repl::counters(g, p, On::Perm(m), Ctr::Plus, g.perm(m).plus, Path::SCALES);
-                    repl::put_plus(g, m, k);
+                    // doubling puts that many more (the counters step: Hardened Scales, Vorinclex ...)
+                    repl::put_counters(g, p, m, g.perm(m).plus);
                 }
             }
         }

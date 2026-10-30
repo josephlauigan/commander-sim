@@ -1026,7 +1026,7 @@ fn adversary_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     pay(g, p, 2 * k, &"R".repeat(k as usize), false)?;
-    repl::add_counters(g, m, k as i32);
+    repl::put_plus(g, m, k as i32);
     for (_, x) in cands.into_iter().take(k as usize) {
         if g.over || !g.player(p).alive || !remove_card(&mut g.player_mut(p).gy, x) {
             continue;
@@ -1336,7 +1336,7 @@ fn pteramander_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool
     }
     pay(g, p, gn, "U", false)?;
     if ability_window(g, p, Some(src), "adapt 4", None, None)? && g.perm(src).on_bf && g.perm(src).plus == 0 {
-        repl::add_counters(g, src, 4);
+        repl::put_plus(g, src, 4);
     }
     Ok(true)
 }

@@ -246,6 +246,9 @@ pub struct CardDef {
     /// its replacement effect from the table of named replacement effects (`engine::repl::NAMED`, `TAGGED`), looked up
     /// once at load
     pub repl: Option<repl::ReplFx>,
+    /// the product of its compiled `counters` replacements' multipliers (Doubling Season: 2; 1 for most cards), read
+    /// by the counters step
+    pub counters_mult: i32,
     pub id: CardId,
     pub name: Box<str>,
     pub types: Types,
@@ -327,6 +330,10 @@ impl CardDef {
             Some(s) => Some(s.parse::<i32>().map_err(|_| at(format!("starting loyalty {s:?}")))?),
         };
         let tags = Tags::from_raw(&r.tags).map_err(at)?;
+        let abilities: std::sync::Arc<[crate::dsl::model::Ability]> = match &r.dsl {
+            Some(v) => crate::dsl::model::parse(v).map_err(|e| at(format!("abilities: {e}")))?.into(),
+            None => std::sync::Arc::from(Vec::new()),
+        };
         Ok(CardDef {
             id,
             name: r.name.as_str().into(),
@@ -347,10 +354,8 @@ impl CardDef {
             bomb: r.bomb,
             colors: Colors::from_letters(&r.pips),
             identity: r.identity.as_deref().map(Colors::from_letters),
-            abilities: match &r.dsl {
-                Some(v) => crate::dsl::model::parse(v).map_err(|e| at(format!("abilities: {e}")))?.into(),
-                None => std::sync::Arc::from(Vec::new()),
-            },
+            counters_mult: repl::counters_mult_of(&abilities),
+            abilities,
             start_loyalty,
             kws: r.kws.iter().map(|s| s.as_str().into()).collect(),
             subtypes: r.subtypes.iter().map(|s| s.as_str().into()).collect(),

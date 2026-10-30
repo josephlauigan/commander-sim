@@ -104,7 +104,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         if has(g, p, Tag::Ironman)
             && let Some(a) = army_of(g, p)
         {
-            repl::add_counters(g, a, 1);
+            repl::put_plus(g, a, 1);
         }
         if g.dsl_on {
             crate::dsl::fire(g, "draw", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
@@ -168,7 +168,6 @@ pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
 
 /// amass n: put +1/+1 counters on p's Army, making a 0/0 Orc Army first if there is none
 pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
-    let bonus = if has(g, p, Tag::Mauhur) { 1 } else { 0 };
     let a = match army_of(g, p) {
         Some(a) => a,
         None => {
@@ -187,7 +186,7 @@ pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
             a
         }
     };
-    repl::put_plus(g, a, n + bonus);
+    repl::put_plus(g, a, n); // the counters step: Mauhúr's one more, Hardened Scales, doublers
     Ok(())
 }
 
@@ -1069,9 +1068,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let born = g.enter_no;
     let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
-    // the enter step's counters: Doubling Season doubles a planeswalker's loyalty (once: the old `etb` hook in
-    // impls/t3.rs doubled it again), Hardened Scales, Vorinclex, Solemnity
-    let (v_loy, v_undying, v_plus) = repl::enter_counters(g, p, loyalty, plus);
+    // the enter step's counters (614.1c): Doubling Season doubles a planeswalker's loyalty (once: the old `etb` hook
+    // in impls/t3.rs doubled it again), undying's counter and the counters it enters with; Scales, Vorinclex, Solemnity
+    let (v_loy, v_undying, v_plus) = repl::enter_counters(g, p, m, loyalty, plus);
     let x = g.perm_mut(m);
     x.orig = how.orig.unwrap_or(p);
     x.sick = how.sick && !haste;

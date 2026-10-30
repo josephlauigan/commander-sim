@@ -29,20 +29,20 @@ then does the event as changed.
 
 `repl::NAMED`: the cards whose replacement effect the engine knew by name, each with its event kind and effect
 (`ReplFx`), like `chars::NAMED`. It is looked up once per card at load (`CardDef::repl`), together with the tags that
-are replacement or prohibition effects (`melira`, `mauhur`, `nodmg`, `erebos`), so a step compares one small enum per
+are replacement or prohibition effects (`melira`, `mauhur`, `nodmg`; `TAGGED`), so a step compares one small enum per
 permanent and never a name.
 
 | card                                   | kind      | effect                                                        |
 |----------------------------------------|-----------|---------------------------------------------------------------|
 | Hardened Scales                        | Counters  | +1 on +1/+1 counters put on a creature you control            |
 | Vorinclex, Monstrous Raider            | Counters  | twice the counters you put; half (down) an opponent puts      |
-| Doubling Season                        | Counters  | (by name: planeswalkers' loyalty, proliferate) twice          |
+| Doubling Season                        | Counters  | by name until Stage C (loyalty, proliferate); then its compiled doubler only |
 | Solemnity                              | Counters  | no counters on players, artifacts, creatures, enchantments, lands |
 | Melira, Sylvok Outcast (tag)           | Counters  | no poison for you, no -1/-1 counters on your creatures        |
 | Mauhúr, Uruk-hai Captain (tag)         | Counters  | +1 on +1/+1 counters on your Army, Goblin or Orc              |
 | Academy Manufactor                     | Tokens    | a Treasure, Food or Clue is one of each instead               |
-| Cho-Manno (tag), Iroas, Tajic          | Damage    | damage to it / your attackers / your other creatures (noncombat) prevented |
-| Erebos, God of the Dead (tag)          | LifeGain  | opponents can't gain life                                     |
+| Cho-Manno (tag), Tajic (Iroas: own reader) | Damage | damage to it / your attackers / your other creatures (noncombat) prevented |
+| Erebos, God of the Dead (tag, read by `life_gain`, not in the table yet) | LifeGain | opponents can't gain life |
 | Hushbringer                            | Trigger   | creatures entering or dying trigger nothing                   |
 | Laboratory Maniac, Jace, Wielder of Mysteries | Draw | drawing from an empty library wins instead              |
 | Spelunking                             | Enter     | your lands enter untapped                                     |
@@ -160,6 +160,51 @@ Trigger: `hooks::total_trigger_copies` (12 callers: Panharmonicon, Teysa, Isshin
   damage to creatures (Fiery, Gisela, Stagger, Flare Star) stays at those sites. Only the prevention is one step.
 - Destroy replacements (regeneration, indestructible, Umbra armor, Welding Jar) stay in `zones::die`.
 - Panharmonicon / Teysa are not replacements (603.2d) but share the trigger step; Hushbringer and Narset are "can't".
-- Counters moved between permanents, kept counters on lands (`DataKey::Counters`, charge) and Sagas' lore are not
-  counters events.
+- Counters moved between permanents and Sagas' lore counters are not counters events. Kept counters (a land's
+  `DataKey::Counters` and charge counters, the Incubator, The Ozolith) are, for proliferate only (`Ctr::Other`).
+- Gisela's halving is applied after Fiery Emancipation / Stagger (the player hit would halve first): damage
+  amounts stay at their sites (see above), so the order fix waits for a damage event.
+- Mimic's extra counter on a new Orc Army, and Vraska's "nine poison counters" (a set, not a placement), stay direct.
+- Two Academy Manufactors still make one of each kind once (the step reads "any").
+- Erebos and Iroas read their own tag / card id, not `CardDef::repl` (no name compare either).
 - Notion Thief's steal chain and the draw replacements keep their fixed order (no pool deck plays two).
+
+## Done (Stages A-C)
+
+- Stage A (e50a8466): `engine/repl.rs` (event kinds, `NAMED` + `TAGGED`, `CardDef::repl`, the counters step with a
+  `Path` per old site so each kept its own coverage, `Mods`), the old helpers read through it; `tests/repl.rs`
+  compares the readers with the old bodies. Results identical (3649 passed).
+- Stage B (d15e2de9): every site calls the step for its event kind; the old helpers are deleted. Results identical
+  (3649 passed).
+- Stage C: bugs 1-6 above fixed except Gisela's order (doesn't fit): one counters path (`repl::put_counters`,
+  `Path::ALL`) for every placement by an effect (put_plus, add_counters, the ability language, enters with counters,
+  undying, proliferate, card code's direct writes in Breena, Hydaelyn and Spark Double); Doubling Season by its
+  compiled doubler, the permanent's controller's (its name entry is gone); the affected controller orders the
+  effects (`repl::ordered`: the AI the best for itself, a person asked, `replacement_order`); every table entry
+  stops when its abilities are lost (`src_on`), and the compiled doublers too; infect and Phyrexian Unlife poison
+  through the poison step; Solemnity covers kept counters and players; Tajic's prevention respects "can't be
+  prevented" everywhere. One pass over the battlefield per counters ask (`gather`), the doublers' product kept on
+  the card at load (`CardDef::counters_mult`). 3655 passed.
+
+Speed after Stage C (`repl_cost`, ns per ask, empty / doublers; the counters rows ask the step): +1/+1 74-107 /
+76-81 (base 328-334 / 342-346), -1/-1 47-74 / 68-70 (112-115 / 115-116), poison 46-56 (one run 108) / 51-52 (112-115 / 115-116), tokens
+173-179 / 225-233 (186-196 / 228-245), damage 1.4, life gain 354-356 / 376-377 (358-368 / 373-374): faster or the
+same. `clone_cost` 2.89-3.03 µs (base 2.95-3.13).
+
+## Decks that play a card whose behaviour changed in Stage C (for the recalibration after Phase 4; no sims run)
+
+- Doubling Season (now doubles every counter placement on its controller's permanents, by the controller) and
+  Vorinclex (order, abilities lost, infect poison): atraxa-infect t3. Every deck at a t3 table with it is touched
+  when atraxa puts counters on their permanents or theirs meet its Vorinclex (JD's sheoldred, sauron, seph, kefka,
+  cloud, veyran play t3).
+- Solemnity (kept counters, Incubator / Ozolith, artifact / creature planeswalkers, the direct writes now stopped)
+  and Phyrexian Unlife (Vorinclex): zur t5 (JD's karn, thrasios, yshtola play t5).
+- Mauhúr, Uruk-hai Captain: one more counter on Armies, Goblins and Orcs on every placement (it was add_counters
+  and amass only): JD's sauron.
+- Spark Double (miirym t5), Breena (isshin t1), Hydaelyn (no deck): their counters go through the step (the same
+  unless a doubler, Scales or Solemnity is out).
+- Abilities lost now stop Anointed Procession (edgar t4), Parallel Lives (miirym t5), Academy Manufactor (korvold t3,
+  prosper t4), Laboratory Maniac (chulane t4); only under Darksteel Mutation / Kenrith's Transformation / Reprobation
+  (light-paws t1, sythis t2, marwyn t3, zur t5, JD's thrasios).
+- No pool or JD deck plays Hardened Scales, Melira, Topiary Lecturer or Vinelasher Kudzu.
+- Tiers touched: t1, t2, t3, t4, t5; JD's decks: sauron directly (Mauhúr); the rest only through t3 / t5 opponents.

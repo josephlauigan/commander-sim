@@ -413,7 +413,8 @@ fn liberator_cast(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
 /// **Blightsteel Colossus**'s infect: combat damage to a player is that many poison counters instead of life loss.
 /// Called by `engine/combat.rs` for a creature with infect; true if it was applied.
 pub fn infect_hit(g: &mut Game, a: PermId, d: PlayerId, dmg: i32) -> Res {
-    g.player_mut(d).poison += dmg.max(0) as u32;
+    // the poison step (Stage C): Melira stops them, Vorinclex doubles or halves them
+    repl::give_poison(g, g.perm(a).owner, d, dmg.max(0), repl::Path::POISON);
     crate::glog!(
         g,
         "    {} deals {} to {}: {} poison counters (infect)",

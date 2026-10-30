@@ -31,7 +31,20 @@ life gain 358-368 / 373-374.
       life gain 353-359 / 375-378 (same as base).
       Left for Stage C (each changes results): `zones::amass` and `sweepers` read Mauhúr with `values::has` (abilities
       on); the direct `.plus +=` writes in `t12_isshin`, `common` (enter copy), `legends`.
-- [ ] Stage C: coverage and order fixes, tests, decks touched
+- [x] Stage C (committed): one counters path (`repl::put_counters`, `Path::ALL`) for every placement by an effect;
+      Doubling Season by its compiled doubler, by the permanent's controller (name entry gone); 616.1 order by the
+      affected controller (`repl::ordered`; a person is asked, kind `replacement_order`); abilities lost stop every
+      entry (`src_on`) and the compiled counter / token doublers; infect and Phyrexian Unlife poison through the
+      step; Solemnity on kept counters and players; direct writes (Breena, Hydaelyn, Spark Double) through the step;
+      Tajic respects unpreventable; one pass per counters ask (`gather`, `CardDef::counters_mult`). Tests: 6 more in
+      tests/repl.rs (15). Checks: 0 warnings; 3655 passed / 0 failed / 3 ignored (222 binaries); practice 104;
+      cardgen clean (0 doubles, paths_known empty, no data change); clone_cost 2.89-3.03; repl_cost (step) +1/+1
+      74-107 / 76-81, -1/-1 47-74 / 68-70, poison 46-56 / 51-52, tokens 173-181 / 225-233, life gain 354-367 /
+      366-377: faster than base or the same. Decks touched: `repl-design.md`, last section.
+
+## Next (follow-ups, not in this PR)
+See "What doesn't fit (yet)" in repl-design.md: a damage event (amounts and Gisela's order), destroy replacements,
+Erebos / Iroas into the table, two Manufactors, Mimic's Army counter.
 
 ## Notes
 - Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/phase3-repl/`

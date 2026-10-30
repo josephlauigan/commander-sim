@@ -472,7 +472,7 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if !creature && let Some(a) = army_of(g, p) {
         for x in find(g, p, Tag::Prolif) {
             if trigger_window(g, p, Some(x), "a counter on your Army", None)? && g.perm(a).on_bf {
-                repl::add_counters(g, a, 1);
+                repl::put_plus(g, a, 1);
             }
         }
     }

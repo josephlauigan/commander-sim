@@ -166,7 +166,7 @@ fn widow_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     }
     let key = intern(&format!("widow{}{}", src.0, g.player(p).key));
     if once_per_turn(g, o, key) {
-        repl::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
         draw(g, o, 1, false)?;
     }
     Ok(())
@@ -228,7 +228,7 @@ fn abigale_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     super::mine::cast_copy_with(g, p, None, None, false, 2.0, &mut |g| {
         if g.perm(t).on_bf {
             crate::glog!(g, "    Heroic Stanza: a +1/+1 counter on {}", g.perm(t).name);
-            repl::add_counters(g, t, 1);
+            repl::put_plus(g, t, 1);
         }
         Ok(())
     })?;
@@ -244,7 +244,7 @@ fn colony_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     }
     let spent = g.db.get(c).cmc as i32;
     if spent > epow(g, src).min(etgh(g, src)) && trigger_window(g, caster, Some(src), "increment", None)? {
-        repl::add_counters(g, src, 1);
+        repl::put_plus(g, src, 1);
     }
     Ok(())
 }
@@ -289,7 +289,7 @@ fn falcon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
         ..Tokens::new(dmg as u32, 1)
     };
     make_tokens(g, p, spec)?;
-    repl::add_counters(g, src, 1);
+    repl::put_plus(g, src, 1);
     Ok(())
 }
 
@@ -429,7 +429,7 @@ fn fates_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) 
     }
     for m in g.player(p).perms.clone() {
         if g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m) {
-            repl::add_counters(g, m, 1);
+            repl::put_plus(g, m, 1);
         }
     }
     Ok("gy")
@@ -772,7 +772,7 @@ fn charm_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &crate::state::Ctx) 
         best.map_or((3, None), |(_, m, t)| (m, t))
     };
     match (mode, target) {
-        (1, Some(t)) if g.perm(t).on_bf => repl::add_counters(g, t, 2),
+        (1, Some(t)) if g.perm(t).on_bf => repl::put_plus(g, t, 2),
         (2, Some(t)) if g.perm(t).on_bf && g.is_creature(t) && epow(g, t) <= 2 => {
             apply_removal(g, Some(p), t, "exile", Some(c))?;
         }
@@ -1901,7 +1901,7 @@ pub fn unlife_infect(g: &mut Game, p: PlayerId, n: i32) -> bool {
         return false;
     }
     if repl::poison_ok(g, p) {
-        repl::give_poison(g, p, p, n, repl::Path::NONE); // (no actor: Vorinclex left out)
+        repl::give_poison(g, p, p, n, repl::Path::POISON); // Unlife's controller puts them: Vorinclex
         crate::glog!(g, "    {} gets {} poison counters (Phyrexian Unlife)", g.player(p).name, n);
     }
     true
