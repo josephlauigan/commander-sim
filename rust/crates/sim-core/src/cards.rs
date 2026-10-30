@@ -240,6 +240,8 @@ impl EnterRule {
 
 #[derive(Debug, Clone)]
 pub struct CardDef {
+    /// its effect from the table of named characteristic effects (`engine::chars::NAMED`), looked up once at load
+    pub named: Option<crate::engine::chars::NamedFx>,
     pub id: CardId,
     pub name: Box<str>,
     pub types: Types,
@@ -323,6 +325,7 @@ impl CardDef {
         Ok(CardDef {
             id,
             name: r.name.as_str().into(),
+            named: crate::engine::chars::named_fx(&r.name),
             types,
             generic: r.generic,
             pips: r.pips.as_str().into(),

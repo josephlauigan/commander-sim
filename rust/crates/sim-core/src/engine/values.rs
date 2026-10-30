@@ -4,6 +4,7 @@
 use crate::cardcode;
 use crate::cards::Colors;
 use crate::dsl;
+use crate::engine::chars;
 use crate::ids::{PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::state::{DataKey, Game, Val};
@@ -46,7 +47,7 @@ pub fn equipped(g: &Game, m: PermId, t: Tag) -> bool {
     let owner = g.perm(m).owner;
     g.player(owner).perms.iter().any(|&e| {
         let x = g.perm(e);
-        x.attached == Some(m) && x.cd.is_some_and(|c| g.db.get(c).tag(t))
+        x.attached == Some(m) && !x.neutered && x.cd.is_some_and(|c| g.db.get(c).tag(t))
     })
 }
 
@@ -64,100 +65,21 @@ pub fn card_name(g: &Game, m: PermId) -> Option<&str> {
 }
 
 // ------------------------------------------------------------------ power and toughness
-/// anthems and equipment that change a creature's size
+/// anthems and equipment that change a creature's size (layer 7c, `chars::static_bonus`)
 pub fn static_bonus(g: &Game, m: PermId) -> i32 {
-    if !g.is_creature(m) {
-        return 0;
-    }
-    let x = g.perm(m);
-    let p = x.owner;
-    let tagged = |t: Tag| card_tag(g, m, t);
-    let mut b = 0;
-    if x.data.truthy(crate::state::DataKey::Role) {
-        b += 1; // a Monster Role
-    }
-    if has(g, p, Tag::Anthem2) && !tagged(Tag::Anthem2) {
-        b += 2; // Elesh Norn, Grand Cenobite
-    }
-    if has(g, p, Tag::Anthemnh) && !tagged(Tag::Anthemnh) && !tagged(Tag::Human) {
-        b += 1; // Mikaeus
-    }
-    if has(g, p, Tag::Warleader) {
-        b += 1; // Warleader's Call
-    }
-    if x.orig != p && has(g, p, Tag::Garland) {
-        b += 2; // Garland: creatures you don't own
-    }
-    for &o in &g.player(p).perms {
-        let y = g.perm(o);
-        if o != m
-            && !y.phased
-            && let Some(c) = y.cd
-            && let Some(a) = g.db.get(c).tags.int(Tag::Anth)
-        {
-            // auto-tagged anthems (Commander's Insignia: +1/+1 for each time the commander was cast from the command zone)
-            b += if &*g.db.get(c).name == "Commander's Insignia" {
-                crate::impls::t0_zurgo::command_casts(g, p)
-            } else {
-                a
-            };
-        }
-    }
-    if equipped(g, m, Tag::Flail) {
-        b += crate::impls::tymna_cards::colors_among(g, p).count() as i32; // Conqueror's Flail: +1/+1 per colour among your permanents
-    }
-    if equipped(g, m, Tag::Animist) {
-        b += 1;
-    }
-    if equipped(g, m, Tag::Nim) {
-        b += 2; // Nim Deathmantle
-    }
-    if equipped(g, m, Tag::Helm) {
-        b += 2; // Champion's Helm
-    }
-    b
+    chars::static_bonus(g, m)
 }
 
-/// m's power now (Python's `epow`)
+/// m's power now (Python's `epow`): `chars::power`
+#[inline]
 pub fn epow(g: &Game, m: PermId) -> i32 {
-    let x = g.perm(m);
-    let p = x.owner;
-    let mut v = x.pow + x.plus + static_bonus(g, m);
-    if card_tag(g, m, Tag::Adeline) {
-        let n = g.player(p).perms.iter().filter(|&&o| g.is_creature(o) && !g.perm(o).phased).count() as i32;
-        v = n + x.plus + static_bonus(g, m);
-    }
-    if equipped(g, m, Tag::Sword) {
-        v += 2;
-    }
-    if norn_vs(g, p) {
-        v -= 2;
-    }
-    v += dsl::pt(g, m).0;
-    v -= crate::impls::blue_cards::weakened(g, m); // Mouth of the Storm
-    let pl = g.player(p);
-    let cre = g.is_creature(m);
-    if pl.pump != 0 && cre {
-        v = v.max(pl.pump);
-    }
-    if cre {
-        v += pl.pumpadd;
-    }
-    v.max(0)
+    chars::power(g, m)
 }
 
-/// m's toughness now (Python's `etgh`)
+/// m's toughness now (Python's `etgh`): `chars::toughness`
+#[inline]
 pub fn etgh(g: &Game, m: PermId) -> i32 {
-    let x = g.perm(m);
-    let mut v = x.tgh + x.plus + static_bonus(g, m);
-    v += dsl::pt(g, m).1;
-    if equipped(g, m, Tag::Sword) {
-        v += 2;
-    }
-    if norn_vs(g, x.owner) {
-        v -= 2;
-    }
-    v
+    chars::toughness(g, m)
 }
 
 pub fn board_power(g: &Game, p: PlayerId) -> i32 {
@@ -165,79 +87,21 @@ pub fn board_power(g: &Game, p: PlayerId) -> i32 {
 }
 
 // ------------------------------------------------------------------ types
-pub const ALL_TYPES: [&str; 19] = [
-    "human",
-    "warrior",
-    "shaman",
-    "wizard",
-    "elf",
-    "goblin",
-    "ninja",
-    "rogue",
-    "zombie",
-    "angel",
-    "demon",
-    "dragon",
-    "soldier",
-    "knight",
-    "cleric",
-    "faerie",
-    "elemental",
-    "druid",
-    "spirit",
-];
-pub const NONCREATURE_TYPES: [&str; 9] =
-    ["aura", "equipment", "vehicle", "saga", "treasure", "food", "clue", "curse", "shrine"];
+pub use crate::engine::chars::{ALL_TYPES, NONCREATURE_TYPES, maskwood};
 
-/// m's subtypes (lower case): printed for Scryfall-built cards, set on tokens by their maker (Python's `subtypes`)
+/// m's subtypes (lower case): `chars::subtypes`
 pub fn subtypes(g: &Game, m: PermId) -> Vec<Sym> {
-    let x = g.perm(m);
-    if let Some(s) = x.exc.only_subtype {
-        return vec![s]; // a copy that has only this creature type (Preston's Illusions)
-    }
-    let Some(c) = x.cd else { return x.ttypes.clone() };
-    let d = g.db.get(c);
-    let mut s: Vec<Sym> = d.subtypes.iter().map(|t| crate::sym::intern(t)).collect();
-    if d.has_kw("changeling") {
-        s.extend(ALL_TYPES.iter().copied());
-    }
-    if s.is_empty() {
-        for (t, k) in
-            [(Tag::Human, "human"), (Tag::Warrior, "warrior"), (Tag::Shaman, "shaman"), (Tag::Wizard, "wizard")]
-        {
-            if d.tag(t) {
-                s.push(k);
-            }
-        }
-    }
-    for t in &x.ttypes {
-        if !s.contains(t) {
-            s.push(t);
-        }
-    }
-    s
+    chars::subtypes(g, m)
 }
 
-/// m's card types, including those a copy has in addition (Copy Artifact's enchantment); a token has creature
+/// m's card types, including those a copy has in addition: `chars::card_types`
 pub fn ptypes(g: &Game, m: PermId) -> crate::cards::Types {
-    let x = g.perm(m);
-    let base = x.cd.map_or(crate::cards::Types::CREATURE, |c| g.db.get(c).types);
-    crate::cards::Types::union(base, x.exc.add_types)
+    chars::card_types(g, m)
 }
 
-/// Maskwood Nexus: p's creatures are every creature type
-pub fn maskwood(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some("Maskwood Nexus"))
-}
-
-/// m has subtype t (Mirror Entity and Maskwood Nexus make creatures every type)
+/// m has subtype t (Mirror Entity and Maskwood Nexus make creatures every type): `chars::has_subtype`
 pub fn has_type(g: &Game, m: PermId, t: &str) -> bool {
-    if subtypes(g, m).contains(&t) {
-        return true;
-    }
-    g.is_creature(m)
-        && !NONCREATURE_TYPES.contains(&t)
-        && (maskwood(g, g.perm(m).owner) || g.perm(m).eot_kw.contains(&"all types"))
+    chars::has_subtype(g, m, t)
 }
 
 // ------------------------------------------------------------------ protection and targeting
@@ -323,17 +187,10 @@ pub fn player_hexproof(g: &Game, q: PlayerId) -> bool {
     crate::engine::hooks::any_player_hexproof(g, q)
 }
 
-/// a permanent's colours (cards: coloured mana symbols in the cost; tokens: their token colour)
+/// a permanent's colours: `chars::colors`
+#[inline]
 pub fn colors_of(g: &Game, m: PermId) -> Colors {
-    let x = g.perm(m);
-    if let Some(c) = x.exc.colors {
-        return c;
-    }
-    match x.cd {
-        Some(c) if g.db.get(c).kws.iter().any(|k| &**k == "devoid") => Colors::NONE, // Spawn-Gang Commander
-        Some(c) => g.db.get(c).colors,
-        None => x.colors,
-    }
+    chars::colors(g, m)
 }
 
 /// colours m has protection from: Sword of Feast and Famine (B, G), printed protection, equipment and Auras

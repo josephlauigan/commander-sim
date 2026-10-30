@@ -39,7 +39,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::combat::has_haste;
 use crate::engine::control::{Duration, gain_control};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, moon_land, pay};
+use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{card_name, has_type, pval, subtypes, threat};
 use crate::engine::zones::{Enter, Tokens, die, enter, make_tokens, max_by, min_by, sac_worth};
@@ -236,10 +236,7 @@ fn king_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 
 /// a Mountain of q's: a land with the type, or a nonbasic one under Blood Moon
 fn has_mountain(g: &Game, q: PlayerId) -> bool {
-    g.player(q).lands.iter().any(|&l| {
-        let lt = &g.perm(l);
-        lt.on_bf && (moon_land(g, l) || g.db.get(lt.card()).land_types.intersects(Colors::from_letters("R")))
-    })
+    g.player(q).lands.iter().any(|&l| g.perm(l).on_bf && crate::engine::chars::land_types(g, l).has('R')) // layer 4
 }
 
 /// mountainwalk (Goblin King, any player's): b can't block the Goblin a while b's controller controls a Mountain

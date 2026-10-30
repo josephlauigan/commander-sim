@@ -16,6 +16,7 @@
 
 pub mod altcost;
 pub mod cast;
+pub mod chars;
 pub mod combat;
 pub mod control;
 pub mod dungeon;

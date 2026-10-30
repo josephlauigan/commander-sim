@@ -55,13 +55,9 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
     false
 }
 
-/// the basic land types of a land on the battlefield: under Blood Moon a nonbasic land is only a Mountain
+/// the basic land types of a land on the battlefield (Blood Moon, Yavimaya, Urborg): layer 4 of the characteristics pass
 fn land_types(g: &Game, l: PermId) -> crate::cards::Colors {
-    if crate::engine::mana::moon_land(g, l) {
-        crate::cards::Colors::from_letters("R")
-    } else {
-        g.db.get(g.perm(l).card()).land_types
-    }
+    crate::engine::chars::land_types(g, l)
 }
 
 fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool {

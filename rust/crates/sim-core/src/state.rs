@@ -1663,13 +1663,10 @@ impl Game {
         id
     }
 
-    /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
+    /// Is m a creature now (Python's `Perm.creature`): layer 4 of the characteristics pass, `chars::is_creature`.
+    #[inline]
     pub fn is_creature(&self, m: PermId) -> bool {
-        let m = self.perm(m);
-        ((m.token && m.cd.is_none_or(|c| self.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
-            || m.cd.is_some_and(|c| self.db.get(c).creature)
-            || m.data.truthy(DataKey::Anim))
-            && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
+        crate::engine::chars::is_creature(self, m)
     }
 }
 
