@@ -186,6 +186,7 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
 pub fn discard_n(g: &mut Game, p: PlayerId, n: u32) -> Res {
     for _ in 0..n {
         let hand = g.player(p).hand.clone();
+        let hand = crate::ai::rules::spare_tutored(g, p, &hand).unwrap_or(hand); // --- phase4-rules
         let Some(c) = discard_choice(g, p, &hand, 0) else { return Ok(()) };
         discard_cards(g, p, &[c])?;
     }

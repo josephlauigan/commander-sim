@@ -798,6 +798,9 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     for &ctr in &g.player(q).hand {
         let d = g.db.get(ctr);
         let t = &d.tags;
+        if !crate::ai::rules::followup_ok(g, q, ctr) {
+            continue; // --- phase4-rules: a Pact whose upkeep (with every debt owed) can't be paid
+        }
         if &*d.name == "Venser, Shaper Savant"
             && g.settings.counter_threshold(g.player(q).key).is_none()
             && !t.has(Tag::Ctr)
