@@ -98,3 +98,7 @@ buying the Stone). Raw: `2026-10-18-mind-stone/mind-stone-quick-STOPPED-t1only.t
   as an instant answer (cast 73-79% of draws vs the Arrest's 76-84%) and stuck in hand more; the 1/1 it gives the
   opponent and its {2}{W} cost make it no better than the Arrest here. Y'shtola is the other home being tested.
 Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Buster Sword: Partial -> Full (draw, then a free spell up to the damage). No new number yet.

@@ -44,3 +44,7 @@ Finishing blows: Kinnan 22.4% of games, Miirym 15.8%, Urza 14.4%, Yawgmoth 13.6%
 ## Next to try
 - Loosen the mulligan (`pieces = 0`).
 - Give the plan file cast priorities for Helm, the Celebrant and the tutors.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Dragonlord Ojutai: Partial -> Full (hexproof while untapped, the combat-damage dig). Nicol Bolas, the Ravager: Partial -> Approximate (the flip to the Arisen; an Arisen that leaves is a planeswalker card in the graveyard). Still Partial: Peter Parker's Camera. No new number yet.

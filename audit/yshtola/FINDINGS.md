@@ -94,3 +94,7 @@ don't name it (generic priority), so a re-test should check that first. JD decid
 **Prison Sentence => Stroke of Midnight: T5 -2.6 (noise ±4.3, no big downgrade).** Cast in 80% of draws (Prison
 Sentence 67%), but it doesn't change her losses (fast combo: Kinnan, Urza, Zur, Winota). Cloud is the other home
 (-1.4 there); JD has one copy. Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Venat, Heart of Hydaelyn // Hydaelyn: Partial -> Full. Its card code had never run (registered under a name not in the data); before this the deck played it as a 3/3 that drew on every legendary spell. No new number yet.

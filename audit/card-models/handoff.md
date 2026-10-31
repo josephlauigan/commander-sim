@@ -115,3 +115,33 @@ Baseline: origin/main's binary (copied to the scratch dir) with origin/main's ca
    Traitors: run thanos once without and once with commit 5df4413b to separate it). Scripts that did this:
    scratch dir `run-base.sh` / `run-after.sh` (COMMANDER_SIM_DATA points a frozen binary at frozen data).
 4. Update `audit/<deck>/FINDINGS.md` for each (model status, the number and why it moved).
+
+## 10-31: no sims (JD) — what moved, for Phase 4's recalibration
+
+JD: no sims of any kind until Phase 4's recalibration, so step 5 is cancelled. The runs that had started (yshtola,
+kefka, sauron, urdragon; both arms) were stopped or are void, and no FINDINGS numbers were written. Merged origin/main
+19af564c (ghave-deck) on 10-30 and regenerated the data files.
+
+Every card or rule this branch changed, and who plays it (data/decks.json after the merge):
+
+| Change | JD decks (their tiers) | Pool decks |
+| --- | --- | --- |
+| Venat, Heart of Hydaelyn // Hydaelyn (its card code was dead before) | yshtola (t5) | - |
+| Glimpse the Unthinkable (compiled; AI picks who mills) | kefka (t3); seph (t3-t4) until ghave-wire retires it | - |
+| Price of Progress | kefka (t3) | - |
+| Baleful Mastery ({1}{B} alternative cost) | sauron (t3-t4) | - |
+| Orim's Chant (attack lock when kicked; a person's kicker) | thanos (t6) | t6 dack-fayden, kraum-tymna |
+| Treasure Vault ({X}{X} ability now used) | karn (t4-t5) | t4 prosper, t5 kinnan-simic |
+| Dragonlord Ojutai | urdragon (t5) | - |
+| Nicol Bolas, the Ravager (the flip) | urdragon (t5) | - |
+| Gemstone Caverns (opening hand) | thanos (t6) | **all six t6 decks** |
+| Tinder Wall | thanos (t6) | - |
+| Buster Sword | cloud (t1-t3) | - |
+| City of Traitors (sacrificed by any played land) | - | t6 dack-fayden, kraum-tymna, rograkh-silas |
+| {X} activation cost (Crypt Rats, Fiend Artisan get a real X) | - | t2 meren (Fiend Artisan); Crypt Rats in no current list |
+| "target player mills N" target choice (Grinding Station) | kefka via Glimpse | t6 rograkh-silas |
+| token multiplier saturates instead of overflowing (repl::token_mult; seen at t5) | any | any |
+
+So the tiers whose games changed: t1-t3 (Buster Sword via cloud; t2 meren), t3-t4 (sauron, kefka), t4-t5 (karn,
+prosper, kinnan-simic), t5 (yshtola, urdragon), and t6 (thanos and every t6 deck: Gemstone Caverns, plus Orim's
+Chant and City of Traitors).
