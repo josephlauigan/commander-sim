@@ -52,9 +52,9 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     crate::impls::t45_krenko::speed_up(g, p); // --- Tiers 4/5 (krenko): an opponent of the active player lost life
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
-    pl.life -= n;
+    pl.life = pl.life.saturating_sub(n); // --- urdragon: a huge power (Thrakkus doublings) can pass i32
     let before = pl.lost_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
-    pl.lost_turn = Some((st, before + n)); // Bloodsoaked Insight, Archfiend, Y'shtola
+    pl.lost_turn = Some((st, before.saturating_add(n))); // Bloodsoaked Insight, Archfiend, Y'shtola
     if !g.hooks.is_empty() && n > 0 {
         hooks::fire_trigger(g, Event::LoseLife, Call::Life { p, n })?;
     }

@@ -23,7 +23,8 @@ use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
 /// the `wipe=` kinds this module owns
-pub const KINDS: [&str; 4] = ["fear", "brutal", "ignite", "dust"];
+/// --- urdragon: "dominance" is Kindred Dominance (destroy every creature not of the chosen type)
+pub const KINDS: [&str; 5] = ["fear", "brutal", "ignite", "dust", "dominance"];
 
 pub fn is_kind(kind: &str) -> bool {
     KINDS.contains(&kind)
@@ -55,6 +56,13 @@ fn live_creatures(g: &Game) -> Vec<(PlayerId, PermId)> {
 /// Crippling Fear's creature type: the one that leaves the caster the most (opposing value lost minus 1.2 times its own
 /// value lost). Orc is tried first, so a tie keeps the Army safe.
 pub fn fear_type(g: &Game, caster: PlayerId) -> Sym {
+    type_choice(g, caster, Some(3))
+}
+
+/// --- urdragon: the creature type a "creatures not of the chosen type" sweeper names: the one that leaves the caster
+/// the most (opposing value lost minus 1.2 times its own), counting only creatures with toughness up to `cap`
+/// (Crippling Fear's -3/-3; None: every one, Kindred Dominance destroys them)
+pub fn type_choice(g: &Game, caster: PlayerId, cap: Option<i32>) -> Sym {
     let cs = live_creatures(g);
     let mut cands: Vec<Sym> = vec!["orc"];
     for &(_, m) in &cs {
@@ -66,7 +74,7 @@ pub fn fear_type(g: &Game, caster: PlayerId) -> Sym {
     }
     let score = |t: Sym| -> f64 {
         cs.iter()
-            .filter(|&&(_, m)| !of_type(g, m, t) && etgh(g, m) <= 3)
+            .filter(|&&(_, m)| !of_type(g, m, t) && cap.is_none_or(|c| etgh(g, m) <= c))
             .map(|&(q, m)| if q == caster { -1.2 * pval(g, m) } else { pval(g, m) })
             .sum()
     };
@@ -86,6 +94,7 @@ impl Sweep {
         let mut s = Sweep { kind, ty: "", src: None, power: 0 };
         match kind {
             "fear" => s.ty = fear_type(g, caster),
+            "dominance" => s.ty = type_choice(g, caster, None), // --- urdragon
             "brutal" => {
                 let bonus = if crate::engine::values::has(g, caster, Tag::Mauhur) { 1 } else { 0 };
                 s.power = match army_of(g, caster) {
@@ -120,6 +129,7 @@ impl Sweep {
         }
         match self.kind {
             "fear" => !of_type(g, m, self.ty) && etgh(g, m) <= 3,
+            "dominance" => !of_type(g, m, self.ty), // --- urdragon: destroyed (indestructible ones survive, `die`)
             "brutal" => !g.perm(m).army && etgh(g, m) <= self.power && !repl::no_damage(g, m) && !indestructible(g, m),
             "ignite" => {
                 self.src.is_some_and(|s| s != m)
@@ -176,8 +186,8 @@ pub fn resolve(g: &mut Game, p: PlayerId, kind: Sym) -> Res {
         amass(g, p, 2)?; // "Amass Zombies 2": a Zombie Army, here the Orc Army; then the Army deals damage
     }
     let rule = Sweep::new(g, p, kind, true);
-    if kind == "fear" {
-        crate::glog!(g, "    Crippling Fear names {}", rule.ty);
+    if kind == "fear" || kind == "dominance" {
+        crate::glog!(g, "    {} names {}", if kind == "fear" { "Crippling Fear" } else { "Kindred Dominance" }, rule.ty);
     }
     if kind == "ignite" && rule.src.is_none() {
         return Ok(()); // no creature of yours to deal the damage

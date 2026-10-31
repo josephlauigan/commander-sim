@@ -1,5 +1,4 @@
 1 Abrade (soa) 37
-1 Aetherflux Reservoir (plst) KLD-192
 1 Alania, Divergent Storm (blb) 327
 1 An Offer You Can't Refuse (fdn) 160
 1 Arcane Signet (soc) 127
@@ -68,7 +67,6 @@
 1 Splatter Technique (sos) 231
 1 Stock Up (soa) 24
 1 Storm-Kiln Artist (cmm) 260
-1 Talrand, Sky Summoner (cmm) 673
 1 Temple of Epiphany (soc) 412
 1 Terramorphic Expanse (sos) 265
 1 Think Twice (tsr) 92
@@ -79,5 +77,4 @@
 1 Unsummon (leb) 87
 1 Veyran, Voice of Duality (sld) 1915
 1 Vibrant Outburst (sos) 240
-1 Visions of Beyond (sld) 1670
 1 Young Pyromancer (2x2) 364

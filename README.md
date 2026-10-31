@@ -39,7 +39,7 @@ commander-sim --deck sauron --pool t3 --swap "A=>B" --ai adaptive       # the sa
 commander-sim --deck sauron --pool t4 --analyze                         # how it wins and loses there
 commander-sim --deck sauron --pool t3 --trace 7                         # play-by-play of game 7
 commander-sim --all-decks --pool all                                    # every deck against its own tiers
-commander-sim --goldfish scion,t6 --games 2000                          # each deck alone against three inert seats
+commander-sim --goldfish thanos,t6 --games 2000                         # each deck alone against three inert seats
 commander-sim --deck sauron --cards                                     # every card: tags, abilities, Game Changers
 commander-sim --realism --pool t6 --games 2200                          # the sim against real-game targets
 commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml   # the same with the AI's values from a file
@@ -62,7 +62,7 @@ cardgen validate                                                        # check 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
 - `--deck`: `seph`, `veyran`, `sauron`, `galadriel`, `yshtola`, `alela`, `kefka`, `sheoldred`, `cloud`,
-  `thrasios`, `karn` or `scion`.
+  `thrasios`, `karn`, `thanos` or `urdragon`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -96,12 +96,12 @@ the same opponents and draws.
 
 | JD's decks | Tiers |
 | --- | --- |
-| yshtola, thrasios | t5 |
+| yshtola, thrasios, urdragon | t5 |
 | sheoldred, sauron, seph | t3-t4 |
 | kefka | t3 |
 | cloud, veyran | t1-t3 |
 | karn | t4-t5 |
-| scion | t6 |
+| thanos | t6 |
 | alela (Avery's) | t1 |
 | galadriel (Avery's) | t1-t2 |
 

@@ -245,9 +245,13 @@ mod tests {
     }
 
     fn rules(sim: &Sim, deck: &str, out: &str, inn: &str, tier: &str) -> AiRule {
+        rules_at(sim, deck, out, inn, tier, 500000)
+    }
+
+    fn rules_at(sim: &Sim, deck: &str, out: &str, inn: &str, tier: &str, seed: u64) -> AiRule {
         let swaps = vec![(out.to_string(), inn.to_string())];
         let var = crate::swap_in_place(&sim.mine[deck], &swaps);
-        ai_rules(sim, deck, &var, &[inn.to_string()], &sim.pool_keys(tier), 500000).unwrap().remove(0)
+        ai_rules(sim, deck, &var, &[inn.to_string()], &sim.pool_keys(tier), seed).unwrap().remove(0)
     }
 
     fn args(extra: &[&str]) -> Args {
@@ -257,12 +261,13 @@ mod tests {
     }
 
     /// a Kefka card whose priority is 0 on a plain board and that is no instant: the same shape as Bribery before the
-    /// audit gave it an arm in kefka_prio
+    /// audit gave it an arm in kefka_prio. Seed 500002: with the 10/30 list, seed 500000 reaches a board by round 7
+    /// where Kefka can escape two cards with 5 mana, and kefka_prio rightly ranks Breach 56 there
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
         let out = s.mine["kefka"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
-        let r = rules(&s, "kefka", &out, "Underworld Breach", "t3");
+        let r = rules_at(&s, "kefka", &out, "Underworld Breach", "t3", 500002);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
         assert_eq!(r.line(), "WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it");

@@ -102,7 +102,7 @@ fn without_the_bonus_the_lookahead_taps_out() {
 /// seats: every playout of both the combo and the held line wins
 fn oracle_ready_in_a_goldfish() -> Game {
     let mut g =
-        table(&["scion", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"]);
+        table(&["thanos", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"]);
     set_ai(&mut g, AiMode::Lookahead);
     for i in 1..4 {
         let q = PlayerId(i);

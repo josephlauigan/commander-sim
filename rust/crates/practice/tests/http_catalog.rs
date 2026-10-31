@@ -28,10 +28,11 @@ fn test_your_decks() {
             "karn",
             "kefka",
             "sauron",
-            "scion",
             "seph",
             "sheoldred",
+            "thanos",
             "thrasios",
+            "urdragon",
             "veyran",
             "yshtola"
         ]

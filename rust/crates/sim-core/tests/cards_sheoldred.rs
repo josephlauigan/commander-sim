@@ -973,8 +973,8 @@ fn trim_library(g: &mut Game, p: PlayerId, n: usize) {
 
 #[test]
 fn howling_mine_draws_an_extra_card_in_every_players_draw_step_while_untapped() {
-    // (the seph seat dredges instead of drawing, so the opponent here is veyran)
-    let game = || table(&["sheoldred", "veyran"]);
+    // (the seph seat dredges instead of drawing, and veyran casts Frantic Search in its draw step, so the opponent here is karn)
+    let game = || table(&["sheoldred", "karn"]);
     let mut g = game();
     let mine = perm(&mut g, P0, MINE);
     g.active = Some(P1);

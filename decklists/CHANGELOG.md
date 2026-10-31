@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Karn, Kefka, Sauron, Seph/Atraxa, Sheoldred, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
+JD's decks: Cloud, Karn, Kefka, Sauron, Seph/Atraxa, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -79,6 +79,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Rank Rat. In: Price of Progress. JD's swap (10/30), not simulated: Rank Rat -> Price of Progress (with Kefka flipped, each opponent's life loss on your turn draws you that many cards). Price of Progress is unmodeled.
 - **2026-10-27.** Out: Rhystic Study. In: Stinkweed Imp. JD's choice (2026-10-27), not simulated: Rhystic Study goes to Seph/Atraxa; Stinkweed Imp (binder) takes the slot: discard fodder that dredges back. Two Game Changers, still Bracket 4 (the two-card win).
 - **2026-10-19.** Out: Hallway Heckler. In: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied. Out: Hallway Heckler. In: Kuja, Genome Sorcerer. JD approved 10/19: +2.2 at T3 (30.2% -> 32.5%, ±2.4; 2,000 paired games, look-ahead, loose; audit/kefka/2026-10-19-kuja/). Kuja's Wizard tokens double the deck's burn damage (2.7 -> 5.7 per game).
 - **2026-10-18.** Out: Feed the Swarm. In: Marvin, Murderous Mimic. Feed the Swarm -> Marvin, Murderous Mimic: +0.2 at T3 in the coarse pass (copies Niv-Mizzet's draw, Fangtail, Blightspeaker, Rummaging Goblin).
@@ -114,6 +115,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Aggravated Assault, Go for the Throat, Urabrask, Heretic Praetor, Vraska, Betrayal's Sting. In: Baleful Mastery, Faerie Mastermind, Mana Drain, Torment of Hailfire. JD's swaps (10/30), not simulated: Aggravated Assault -> Torment of Hailfire, Go for the Throat -> Baleful Mastery, Urabrask, Heretic Praetor -> Faerie Mastermind, Vraska, Betrayal's Sting -> Mana Drain.
 - **2026-10-18.** Out: Spell Pierce. In: Urza, Lord High Artificer. Matched to the physical deck (JD's list, 2026-10-18): Urza, Lord High Artificer in for Spell Pierce (tested +0.5, noise, on branch adnaus).
 - **2026-10-18.** Out: Slaughter Pact. In: Force of Will. Band calibration 10/18 (JD approved): Slaughter Pact=>Force of Will
 - **2026-10-13 (package C).** Out: Bedevil. In: Sheoldred, the Apocalypse. JD's package C: Bedevil out (to bulk), Sheoldred, the Apocalypse in (JD's own spare copy): every opponent draw from Jace's Archivist's wheel costs 2 life. Measured +2.7 over all tiers (T1 +5.0, T2 +4.8, T3 +0.6, T4 +2.8, T5 +0.2; look-ahead, loose, 500 paired games per tier; audit/jd-packages/2026-10-13/). Not a Game Changer: still two, Bracket 3.
@@ -454,6 +456,7 @@ Deck key `veyran`, `decklists/JD/veyran-izzet-spellslinger.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Aetherflux Reservoir, Talrand, Sky Summoner, Visions of Beyond. In: Birgi, God of Storytelling, Firebrand Archer, Frantic Search. JD's swaps (10/30), not simulated: Aetherflux Reservoir -> Firebrand Archer, Talrand, Sky Summoner -> Birgi, God of Storytelling, Visions of Beyond -> Frantic Search.
 - **2026-10-18.** Out: Evacuation, Venser, Shaper Savant. In: Consecrated Sphinx, Mystical Tutor. Band calibration 10/18 (JD approved): Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
 - **2026-10-13.** Out: Jeska's Will. In: Flux Channeler. JD's choice: Jeska's Will moves to Kefka; Flux Channeler (from Sauron) takes the slot. Measured -2.1 over all tiers (T1 -3.9, T2 -4.5, T3 -0.4, T4 -0.9, T5 -0.8; look-ahead, loose, 1,000 paired games per tier; `audit/sauron/2026-10-12-weakness/sofi-veyran/`). No Game Changers left. The deck lost some big-turn fuel (Jeska's Will gave four to seven mana and three more spells for one card) and gained a cheap Wizard body with a proliferate trigger.
 - **2026-10-12.** Out: Return the Favor (to bulk). In: Triple Triad (new). JD's choice: each upkeep, every player exiles their top card; you may play yours and every cheaper one free, and free instants and sorceries still trigger Veyran. A partial test (Tiers 1-3, 1,000 paired games each: +0.5, +0.9, -2.1, all within noise) was stopped early.
@@ -710,17 +713,28 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Assassin's Trophy, Shield of Kaldra. In: Disenchant, Smothering Tithe. JD's swaps (10/30), not simulated: Assassin's Trophy -> Disenchant, Shield of Kaldra -> Smothering Tithe (2 Game Changers, still Bracket 3).
 - **2026-10-27.** Out: Disenchant. In: Assassin's Trophy. JD's choice (2026-10-27), not simulated: Assassin's Trophy (from Seph/Atraxa) for Disenchant.
 - **2026-10-24.** Out: Avenge. In: Flickering Hound. Avenge -> Flickering Hound (JD's choice, 2026-10-24; the Hound moves over from Seph/Atraxa). Avenge was stuck in hand in 75% of the games it was drawn (10/19 analysis, T5) and a wipe that hits the deck's own 30 creatures; Austere Command stays as the reset. The Hound flickers a creature on every creature cast: Sunblast Angel, Grave Titan, Sun Titan, Coiling Oracle. Not simulated.
 
 ## The Ur-Dragon — Five-Colour Dragons and Equipment
 
-`decklists/JD/ur-dragon-equipment.md`. Not in the simulator yet.
+Deck key `urdragon`, `decklists/JD/ur-dragon-equipment.md`. Simulated against Tier 5 (band 1).
 
 ### Changes
 
+- **2026-10-30.** Into the simulator (JD, 10/30): deck key `urdragon`, tier t5, played from its plan file (`data/plans/urdragon.toml`: the Godo + Helm of the Host lines, Combat Celebrant + Helm, Dualcaster Mage + Twinflame). Kindred Dominance and Kaldra Compleat's living weapon modeled. No list change.
 - **2026-10-28.** Out: Garruk's Uprising, Hellkite Tyrant. In: Combat Celebrant (proxy), Smothering Tithe (proxy). JD's choice, not simulated: Celebrant is a second Helm of the Host infinite-combat creature at three mana (each fresh hasty token exerts, untaps the team and adds a combat); Tithe's Treasures pay for Godo and the equip and turn on Puresteel Paladin's metalcraft. 17 Game Changers.
 - **2026-10-28.** Out: Godless Shrine (a proxy). In: Gaea's Cradle (proxy). JD's choice, not simulated: taps for {G} per creature; the white-black pair loses least (Scrubland, Marsh Flats and the five-colour lands stay). The Forest stays for Rampant Growth. 16 Game Changers.
 - **2026-10-27.** Out: Assassin's Trophy (the proxy). In: Kindred Dominance. JD's choice, not simulated: the deck's first board wipe (name Dragon; one-sided with Maskwood Nexus out). The real Assassin's Trophy from Seph/Atraxa goes to Tymna/Thrasios.
 - **2026-10-25.** Out: Arcane Sanctum, Arcane Signet, Battlefield Forge, Cinder Glade, Counterspell, Dragonskull Summit, Exotic Orchard, Fabled Passage, Gamble, Game Trail, Heroic Intervention, Jetmir's Garden, Karplusan Forest, Ketria Triome, Lightning Bolt, Mountain, Plains, Rootbound Crag, Spara's Headquarters, Ziatora's Proving Ground. In: Badlands, Bayou, Flooded Strand, Force of Negation, Godless Shrine, Grand Abolisher, Grim Monolith, Hallowed Fountain, Imperial Seal, Mana Drain, Marsh Flats, Plateau, Polluted Delta, Scrubland, Taiga, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave. Proxy upgrades (JD, 10/25): 9 original duals, 4 fetch lands and 3 shock lands for the Triomes, tapped and painland duals, Fabled Passage, Exotic Orchard and three basics; Mana Drain for Counterspell, Grand Abolisher for Heroic Intervention, Grim Monolith for Arcane Signet, Imperial Seal for Gamble, Force of Negation for Lightning Bolt.
 - **2026-10-25.** New deck (JD, 10/25): five-colour Godo + Helm of the Host combo with Equipment and Dragons; Gilgamesh, Master-at-Arms in the 99.
+
+## Thanos, the Mad Titan — Five-Colour cEDH Turbo
+
+Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against Tier 6 (cEDH).
+
+### Changes
+
+- **2026-10-30.** Into the simulator (JD, 10/30): deck key `thanos` takes Scion's seat at t6, its plan file and its tests; Thanos's power-up modeled (impls/t6_thanos.rs). The Scion list moved to `decklists/pool/retired/` (a test seat only). No list change.
+- **2026-10-30.** New deck (JD, 10/30): the Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as commander. Out: Scion of the Ur-Dragon, Ancient Copper Dragon, Korvold, Fae-Cursed King, Prismari, the Inspiration (copy targets for Scion, dead without him). In: Fierce Guardianship, Deflecting Swat, Deadly Rollick (free while you control your commander). Not simulated; the Scion deck stays as the baseline.

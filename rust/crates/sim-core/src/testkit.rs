@@ -95,6 +95,15 @@ fn retired_decks() -> Vec<RawDeck> {
             "B",
             include_str!("../../../../decklists/pool/retired/sephiroth-fs-wipe-steal.md"),
         ),
+        // --- thanos: JD's Scion deck, retired 2026-10-30 (Thanos took its seat): the tests of Scion's card code
+        // (t6_scion.rs, t6_combos_scion.rs) still seat it with its real list, and that code still keys on "scion"
+        listed(
+            "scion",
+            "Scion",
+            "Scion of the Ur-Dragon",
+            "WUBRG",
+            include_str!("../../../../decklists/pool/retired/scion-ur-dragon-turbo.md"),
+        ),
     ]
 }
 
