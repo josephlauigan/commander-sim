@@ -136064,33 +136064,15 @@
    "tags": {
     "leg": true,
     "wizard": true,
-    "pow": "3"
+    "pow": "3",
+    "tgh": "3"
    },
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "cast",
-     "who": "you",
-     "spell": "legendary",
-     "nth": null
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
-   "kws": [
-    "blessing of light",
-    "indestructible",
-    "transform"
-   ],
+   "kws": [],
    "subtypes": [
     "elder",
     "wizard"
@@ -136099,11 +136081,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever you cast a legendary spell, draw a card. This ability triggers only once each turn.   [partly: this ability triggers only once each turn]",
-    "Hero's Sundering — {7}, {T}: Exile target nonland permanent. Transform ~. Activate only as a sorcery."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

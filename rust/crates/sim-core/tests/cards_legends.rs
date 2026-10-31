@@ -3,8 +3,8 @@
 //! Marchesa class (marchesa.py's cards). The tests seat the card on a plain table (`jodah_table`): no deck's own AI is
 //! under test here.
 //!
-//! Skipped: the VenatTymna class's Venat tests (Venat, Heart of Hydaelyn is not in data/cards.json: no list runs it,
-//! and the Python fetches its card data on demand), the Marchesa class's Nim Deathmantle tests (Sephiroth's card code,
+//! Skipped: the VenatTymna class's Venat tests (Venat's are in tests/cards_jd_models.rs, under the card's full name),
+//! the Marchesa class's Nim Deathmantle tests (Sephiroth's card code,
 //! mine.py, ported with Sephiroth) and its Tezzeret's Gambit / Last Gasp tests (tag-only cards of the Y'shtola and
 //! Alela decks). The Burglar Rat's second enter trigger (Marchesa's return) waits for t3.py's port
 //! (ignored). One assertion is left out: Unclaimed Territory's named type cached on the land

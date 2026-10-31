@@ -5385,7 +5385,7 @@ dsl = []
 status = "Full"
 note = "in response to a blue or black counterspell: your spells can't be countered this turn, draw a card"
 
-["Venat, Heart of Hydaelyn"]
+["Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"]
 tags = "leg wizard pow=3 tgh=3"
 kws = []
 dsl = []

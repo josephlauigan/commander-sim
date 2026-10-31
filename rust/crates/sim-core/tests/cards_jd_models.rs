@@ -1,0 +1,114 @@
+//! The Partial and Unmodeled cards of JD's decks, modelled in the card-models PRs (10-30): each test checks the
+//! card's Oracle behaviour, and the AI's use of it where that matters. JD's decks sit only at their own tiers' tables.
+
+use sim_core::engine::{cast, hooks, values};
+use sim_core::hooks::{Call, Event, Opt};
+use sim_core::ids::{CardId, PermId, PlayerId};
+use sim_core::state::{Ctx, Game};
+use sim_core::testkit::*;
+
+const P0: PlayerId = PlayerId(0);
+const P1: PlayerId = PlayerId(1);
+const P2: PlayerId = PlayerId(2);
+
+fn options(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>) -> Vec<Opt> {
+    let c = g.perm(src).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, src, p, post).unwrap()
+}
+
+fn run(g: &mut Game, p: PlayerId, o: &Opt) -> bool {
+    sim_core::ai::act::perform(g, p, o.act.as_ref().unwrap()).unwrap()
+}
+
+fn fire(g: &mut Game, e: Event, p: PlayerId) {
+    hooks::fire_trigger(g, e, Call::Player { p }).unwrap();
+}
+
+#[allow(dead_code)]
+fn cast_from_hand(g: &mut Game, p: PlayerId, name: &str) -> bool {
+    let c = hand(g, p, &[name])[0];
+    cast::cast_card(g, p, c, "hand", Ctx::default()).unwrap()
+}
+
+fn pt(g: &Game, m: PermId) -> (i32, i32) {
+    (values::epow(g, m), values::etgh(g, m))
+}
+
+#[allow(dead_code)]
+fn ids(g: &Game, names: &[&str]) -> Vec<CardId> {
+    names.iter().map(|n| card(g, n)).collect()
+}
+
+// ======================================================== Y'shtola: Venat, Heart of Hydaelyn // Hydaelyn
+const VENAT: &str = "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal";
+
+/// Y'shtola at a t5 table
+fn yshtola_table() -> Game {
+    table(&["yshtola", "zur-esper-enchantment-control", "miirym-temur-dragons"])
+}
+
+#[test]
+fn venat_has_its_card_code() {
+    let g = yshtola_table();
+    let c = card(&g, VENAT);
+    let imp = g.registry.get(c).expect("Venat's card code is registered under the deck's spelling");
+    assert!(imp.cast.is_some() && imp.options.is_some() && imp.grant_kw.is_some() && imp.crew.is_some());
+    assert!(!g.db.get(c).has_dsl(), "the compiled draw trigger would draw a second card");
+}
+
+#[test]
+fn venat_draws_on_the_first_legendary_spell_each_turn() {
+    let mut g = yshtola_table();
+    g.active = Some(P0);
+    perm(&mut g, P0, VENAT);
+    let cs = hand(&mut g, P0, &["Sol Ring", "Gonti, Lord of Luxury", "Grand Arbiter Augustin IV"]);
+    let draws = |g: &Game| g.player(P0).stats.get("jr_venat_draws").copied().unwrap_or(0);
+    let lib = g.player(P0).library.len();
+    cast::cast_card(&mut g, P0, cs[0], "hand", Ctx::default()).unwrap(); // not legendary: nothing
+    assert_eq!((draws(&g), g.player(P0).library.len()), (0, lib));
+    cast::cast_card(&mut g, P0, cs[1], "hand", Ctx::default()).unwrap();
+    assert_eq!((draws(&g), g.player(P0).library.len()), (1, lib - 1));
+    cast::cast_card(&mut g, P0, cs[2], "hand", Ctx::default()).unwrap(); // only once each turn
+    assert_eq!((draws(&g), g.player(P0).library.len()), (1, lib - 1));
+}
+
+#[test]
+fn heros_sundering_exiles_the_best_opposing_permanent_and_transforms() {
+    let mut g = yshtola_table();
+    g.active = Some(P0);
+    let v = perm(&mut g, P0, VENAT);
+    g.perm_mut(v).sick = false;
+    lands(&mut g, P0, "Plains", 7, false);
+    let big = perm(&mut g, P1, "Consecrated Sphinx");
+    perm(&mut g, P2, "Sol Ring");
+    let o = options(&mut g, v, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(o[0].label.contains("Consecrated Sphinx"), "{}", o[0].label);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(!g.perm(big).on_bf);
+    assert!(g.perm(v).tapped);
+    assert_eq!(pt(&g, v), (4, 4));
+    assert!(values::indestructible(&g, v));
+    assert!(options(&mut g, v, P0, Some(false)).is_empty(), "Hydaelyn has no Sundering");
+}
+
+#[test]
+fn hydaelyn_blesses_a_legend_at_combat_and_draws() {
+    let mut g = yshtola_table();
+    g.active = Some(P0);
+    let v = perm(&mut g, P0, VENAT);
+    g.perm_mut(v).sick = false;
+    lands(&mut g, P0, "Plains", 7, false);
+    perm(&mut g, P1, "Consecrated Sphinx");
+    let o = options(&mut g, v, P0, Some(false));
+    run(&mut g, P0, &o[0]);
+    let gonti = perm(&mut g, P0, "Gonti, Lord of Luxury");
+    let n = g.player(P0).hand.len();
+    fire(&mut g, Event::Crew, P0);
+    assert_eq!(g.perm(gonti).plus, 1);
+    assert!(values::indestructible(&g, gonti));
+    assert_eq!(g.player(P0).hand.len(), n + 1);
+    fire(&mut g, Event::Crew, P0); // once each turn
+    assert_eq!(g.perm(gonti).plus, 1);
+}
