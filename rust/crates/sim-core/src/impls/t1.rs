@@ -1309,6 +1309,9 @@ pub fn tutor_named(
             pl.seen.insert(c);
         }
         pl.stat("tutored", 1);
+        if to == "hand" {
+            crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
+        }
     }
     shuffle_library(g, p);
     Ok(cands)

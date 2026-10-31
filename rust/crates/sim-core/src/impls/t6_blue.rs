@@ -134,6 +134,7 @@ fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
             pl.stat("tutored", 1);
             pl.seen.insert(c);
             crate::glog!(g, "    {} tutors {} (Demonic Counsel)", g.player(p).name, g.db.get(c).name);
+            crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
         }
     }
     shuffle_library(g, p);
@@ -345,6 +346,7 @@ fn drift_transmute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
             pl.stat("tutored", 1);
             pl.seen.insert(t);
             crate::glog!(g, "    {} reveals {} (transmute)", g.player(p).name, g.db.get(t).name);
+            crate::ai::rules::mark_tutored(g, p, t); // --- phase4-rules
         }
     }
     shuffle_library(g, p);
