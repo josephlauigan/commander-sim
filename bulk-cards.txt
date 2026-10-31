@@ -176,6 +176,7 @@
 1x Cranial Ram (mh3)
 1x Crawlspace (dmr)
 2x Crowd's Favor (m15)
+1x Crumbling Necropolis (ddh)
 1x Crushing Canopy (vow)
 2x Crux of Fate (fic)
 1x Cryoclasm (csp)
@@ -187,7 +188,7 @@
 3x Curtain of Light (sok)
 1x Cut Propulsion (eoe)
 1x Dakkon, Shadow Slayer
-1x Dark Endurance (eoe)
+2x Dark Endurance (eoe)
 1x Dark Inquiry (rix)
 1x Dark Matter Manipulator (fra)
 1x Deadapult (dmr)
@@ -257,6 +258,7 @@
 1x Emmara, Soul of the Accord (scd)
 2x Empty the Warrens (tsr)
 1x Encouraging Aviator (sos)
+1x Encrust
 2x End of the Hunt (sos)
 1x End-Raze Forerunners (blc)
 1x Ennis, Debate Moderator
@@ -274,6 +276,7 @@
 2x Evolving Wilds (fic, m15, dbl)
 1x Exhibition Tidecaller (sos)
 1x Exit Specialist (mkm)
+1x Exotic Orchard (ltc)
 1x Expel the Unworthy (mh3)
 1x Experimental Augury (one)
 1x Explorer's Scope
@@ -328,6 +331,7 @@
 1x Freya Crescent (fin)
 1x Frogmyr Enforcer (mh3)
 2x Frontline War-Rager (eoe)
+1x Frostboil Snarl (msc)
 1x Fugitive Wizard (m15)
 1x Funeral Charm (tsb)
 1x Furious Bellow (dmu)
@@ -442,6 +446,7 @@
 1x Irrigated Farmland (msc)
 1x It Doesn't Add Up (mkm)
 4x Item Shopkeep (fin)
+1x Izzet Boilerworks (c20)
 1x Jace, Reality Sculptor (fra)
 1x Jailbreak Scheme (otj)
 1x Jarvis, Earth's Mightiest Butler (msc)
@@ -542,6 +547,7 @@
 1x Mine Raider (otj)
 3x Miner's Bane (m15, list)
 1x Ministrant of Obligation (rvr)
+1x Mishra's Bauble (brr)
 3x Mnemonic Wall (roe, c13)
 2x Mogg War Marshal (list, dmr)
 1x Molten Note (sos)
@@ -561,6 +567,7 @@
 1x Mystic Monastery (msc)
 1x Nael, Avizoa Aeronaut (dmu)
 1x Necromantic Selection (c14)
+1x Night's Whisper
 1x Nim Deathmantle (som)
 1x Nightveil Predator (grn)
 1x Nightwind Glider (list)
@@ -610,7 +617,7 @@
 1x Plea for Guidance (bng)
 1x Plummet (list)
 1x Pompous Gadabout (mkm)
-1x Port Town (msc)
+2x Port Town (msc)
 1x Postmortem Professor (sos)
 1x Pothole Mole (dft)
 2x Potioner's Trove (sos)
@@ -784,6 +791,7 @@
 2x Slash of Light (fin)
 1x Slaughter Pact
 1x Slayers' Stronghold (fic)
+1x Sleight of Hand (soa)
 1x Smallpox (soa)
 1x Smaug's Fury (hob)
 5x Smite (roe)
@@ -806,7 +814,7 @@
 2x Spectator Seating (msc)
 1x Spectral Lynx (dmr)
 1x Speed, Young Avenger (msh)
-1x Spell Pierce
+2x Spell Pierce
 2x Spellbook Seeker (sos)
 1x Spellgorger Weird (war)
 1x Sphinx of New Prahv (rvr)
@@ -848,6 +856,7 @@
 1x Summoned Dromedary (sos)
 1x Summoning Materia (fic)
 3x Sun Sentinel (m19, rix)
+1x Sunblast Angel (ddi)
 1x Sunscorched Divide (fic)
 1x Suplex (fin)
 1x Sure Strike (xln)
@@ -934,6 +943,7 @@
 1x Ultimecia, Temporal Threat (fin)
 1x Unbreakable Formation
 1x Unburial Rites (2x2)
+1x Unclaimed Territory (msc)
 1x Unctus, Grand Metatect (ppone)
 4x Undercity Dire Rat (fin)
 1x Undercover Crocodelf (mkm)
@@ -999,8 +1009,10 @@
 1x Wildgrowth Archaic (sos)
 2x Wilt in the Heat (sos)
 2x Wind Drake (kld)
+1x Windborn Muse
 1x Winter Soldier, Reborn Avenger (msc)
 1x Wisdom of Ages (sos)
+1x Witherbloom Charm (sos)
 1x Woe Strider (clb)
 1x Wooded Ridgeline (fic)
 2x Woodwork Prodigy (fra)

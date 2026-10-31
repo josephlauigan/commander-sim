@@ -12,7 +12,7 @@ turn, to fast combo, and to falling behind on mana.
 | | |
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
-| **Bracket** | 3 (2 Game Changers: Worldly Tutor, Smothering Tithe); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
+| **Bracket** | 3 (3 Game Changers: Worldly Tutor, Smothering Tithe, Gifts Ungiven); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
 | **Simulator** | deck key `thrasios`, matched tier T5; built from the retired Tymna/Kraum deck |
 
 ## Strategy
@@ -57,8 +57,7 @@ Tymna, so it can't also block. The attack taxes fix that:
 - **Crawlspace**: no more than two creatures can attack you each combat, which shuts down token swarms and extra-combat
   decks.
 - **Elspeth**'s −3 destroys every creature with power 4 or more (yours too: count your Titans and Angels first);
-  **Sunblast Angel** destroys every tapped creature when it enters (yours too, so cast it before you attack, after an
-  opponent's big attack); **Austere Command** is the full reset (choose creatures with mana value 3 or less and 4 or
+  **Austere Command** is the full reset (choose creatures with mana value 3 or less and 4 or
   more: your attack taxes and rocks survive).
 
 ### The Basalt Monolith + Rings of Brighthearth combo
@@ -108,19 +107,24 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 ### Removal and interaction
 
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
-**Skyclave Apparition**, **Witherbloom Charm** (destroy a nonland permanent with mana value 2 or less, or sacrifice a
-permanent to draw two, or gain 5), **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial** is the one counterspell, and **Aven
+**Skyclave Apparition**, **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
+**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial** and **Swan Song** ({U}: counter an enchantment, instant or sorcery; its
+controller gets a 2/2 Bird) are the counterspells, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
-reuses an enters effect (a Titan, Skyclave Apparition). **Dark Endurance** ({1}{B}: +2/+0 and indestructible), **Blossoming
-Defense** ({G}: +2/+2 and hexproof) and **Lightning Greaves** protect Tymna.
+reuses an enters effect (a Titan, Skyclave Apparition, Atraxa). **Swan Song**, **Blossoming Defense** ({G}: +2/+2 and
+hexproof) and **Lightning Greaves** protect Tymna.
 
 ### Ramp and card advantage beyond the commanders
 
 **Avacyn's Pilgrim** and **Faeburrow Elder** (taps for one mana of each colour among your permanents) ramp and fix;
 **Coiling Oracle** and **Paradox Surveyor** find lands or cards when they enter; **Fact or Fiction** digs.
+**Atraxa, Grand Unifier** ({3}{G}{W}{U}{B}, 7/7 flying, vigilance, deathtouch, lifelink) reveals the top ten when she
+enters and keeps one card of each type: usually five or six cards. Restoration Angel can't blink her (she's an Angel).
+**Gifts Ungiven** ({3}{U}, instant) names four cards with different names; an opponent puts two in your hand and two in
+your graveyard. Name the combo (Basalt Monolith, Rings of Brighthearth, Walking Ballista) plus Worldly Tutor, and any
+split leaves a way to it; Sun Titan returns a Monolith or Ballista from the graveyard.
 **Smothering Tithe** (a Game Changer) makes a Treasure whenever an opponent draws unless they pay {2}: steady mana for
-Thrasios's {4} activations and the six-drop finishers. **Worldly Tutor** (the other Game Changer) puts a creature on
+Thrasios's {4} activations and the six-drop finishers. **Worldly Tutor** (another Game Changer; Gifts Ungiven is the third) puts a creature on
 top of the library, such as the Ballista when the combo is out, Dromoka or a Titan.
 
 ### How it wins
@@ -136,7 +140,7 @@ or the Basalt Monolith + Rings of Brighthearth loop into Walking Ballista, from 
   stops anything cast on your turn.
 - **Wipes.** The defense is mostly enchantments and artifacts, which survive creature wipes; rebuild the attackers with
   the Titans and Elspeth.
-- **Commander removal.** Tymna dies to everything; Greaves, Dark Endurance and Blossoming Defense protect her, and the
+- **Commander removal.** Tymna dies to everything; Greaves, Swan Song and Blossoming Defense protect her, and the
   command zone makes her a three-mana recast plus tax.
 
 ## Key lines
@@ -147,7 +151,8 @@ or the Basalt Monolith + Rings of Brighthearth loop into Walking Ballista, from 
   total; **Worldly Tutor** or Diabolic Tutor finds the missing piece.
 - **Crawlspace + Ghostly Prison:** at most two attackers, each costing {2}.
 - **Sun Titan on a dead Tymna or a destroyed attack tax:** it comes back every attack.
-- **Sunblast Angel after an opponent's alpha strike:** every tapped attacker dies.
+- **Gifts Ungiven at an opponent's end step** for the Monolith combo pieces and Worldly Tutor: any split leaves a way to
+  the combo.
 
 **Mulligan:** keep 3+ lands that make at least three of the four colours, with a rock, a mana creature or a turn-2 or
 turn-3 commander. A hand that can't cast a commander by turn 3 or 4 is a mulligan.
@@ -158,19 +163,20 @@ turn-3 commander. A hand that can't cast a commander by turn 3 or 4 is a mulliga
 rocks and creatures: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Curiosity**, **Talisman of
 Unity**, **Avacyn's Pilgrim**, **Faeburrow Elder**.
 
-- **Any colour:** Command Tower, Exotic Orchard, Unclaimed Territory (name **Human**).
+- **Any colour:** Command Tower.
+- **Original duals** (untapped, no cost): Tundra (W/U), Tropical Island (G/U). **Shock lands** (pay 2 life or they enter
+  tapped): Hallowed Fountain (W/U), Breeding Pool (G/U).
 - **Checklands** (untapped with a basic of the right type): Isolated Chapel (W/B), Drowned Catacomb (U/B), Glacial
   Fortress (W/U), Sunpetal Grove (G/W).
 - **Other two-colour lands:** Brushland, Caves of Koilos, Llanowar Wastes and Underground River (pain lands), Deathcap
-  Glade (G/B, untapped with two or more other lands), Port Town (reveal a basic), Yavimaya Coast (pain land), Breeding
-  Pool (shock land: pay 2 life or it enters tapped), Undergrowth Stadium (B/G, untapped with two or more opponents).
+  Glade (G/B, untapped with two or more other lands), Yavimaya Coast (pain land), Undergrowth Stadium (B/G, untapped with two or more opponents).
 
-**Card draw:** Tymna, Thrasios, Coiling Oracle, Paradox Surveyor, Fact or Fiction, Witherbloom Charm.
-**Tutors:** Worldly Tutor, Diabolic Tutor.
+**Card draw:** Tymna, Thrasios, Coiling Oracle, Paradox Surveyor, Fact or Fiction, Atraxa.
+**Tutors:** Worldly Tutor, Diabolic Tutor, Gifts Ungiven.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with two Game Changers, **Worldly Tutor** and **Smothering Tithe**. No mass land destruction and no extra turns. **Basalt Monolith +
+**Bracket 3,** with three Game Changers, **Worldly Tutor**, **Smothering Tithe** and **Gifts Ungiven**. No mass land destruction and no extra turns. **Basalt Monolith +
 Rings of Brighthearth** makes unlimited colourless mana; with Walking Ballista it wins the game, which is a two-card
 infinite mana loop that Bracket 3 normally leaves out: tell the table about it, and about the attack taxes (Ghostly
 Prison, Propaganda, Crawlspace, Windborn Muse, Archon of Absolution, Baird), Aven Mindcensor, Dragonlord Dromoka and
@@ -180,7 +186,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Thrasios, Triton Hero
 
-**Creatures (31).** Adeline, Resplendent Cathar, Archon of Absolution, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Nightwind Glider, Paradox Surveyor, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, Sunblast Angel, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
+**Creatures (31).** Adeline, Resplendent Cathar, Archon of Absolution, Atraxa, Grand Unifier, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Nightwind Glider, Paradox Surveyor, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -188,11 +194,11 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Smothering Tithe
 
-**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Dark Endurance, Disenchant, Fact or Fiction, Path to Exile, Swords to Plowshares, Witherbloom Charm, Worldly Tutor
+**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Disenchant, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
 **Sorceries (2).** Austere Command, Diabolic Tutor
 
-**Lands (38).** Breeding Pool, Brushland, Caves of Koilos, Command Tower, Deathcap Glade, Drowned Catacomb, Exotic Orchard, Glacial Fortress, Isolated Chapel, Llanowar Wastes, Port Town, Sunpetal Grove, Unclaimed Territory, Underground River, Undergrowth Stadium, Yavimaya Coast, 6 Island, 7 Plains, 6 Swamp, 3 Forest
+**Lands (38).** Breeding Pool, Brushland, Caves of Koilos, Command Tower, Deathcap Glade, Drowned Catacomb, Glacial Fortress, Hallowed Fountain, Isolated Chapel, Llanowar Wastes, Sunpetal Grove, Tropical Island, Tundra, Underground River, Undergrowth Stadium, Yavimaya Coast, 6 Island, 7 Plains, 6 Swamp, 3 Forest
 
 ## Import list (100)
 
@@ -201,6 +207,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Arcane Denial
 1 Arcane Signet
 1 Archon of Absolution
+1 Atraxa, Grand Unifier
 1 Austere Command
 1 Avacyn's Pilgrim
 1 Aven Mindcensor
@@ -218,7 +225,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Command Tower
 1 Conqueror's Flail
 1 Crawlspace
-1 Dark Endurance
 1 Darksteel Mutation
 1 Dauthi Voidwalker
 1 Deathcap Glade
@@ -228,15 +234,16 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Drowned Catacomb
 1 Elenda, the Dusk Rose
 1 Elspeth, Sun's Champion
-1 Exotic Orchard
 1 Fact or Fiction
 1 Faeburrow Elder
 1 Falcon and Redwing
 1 Fellwar Stone
 1 Flickering Hound
 1 Ghostly Prison
+1 Gifts Ungiven
 1 Glacial Fortress
 1 Grave Titan
+1 Hallowed Fountain
 1 Helm of Kaldra
 1 Hero of Bladehold
 1 Isolated Chapel
@@ -249,7 +256,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Orzhov Signet
 1 Paradox Surveyor
 1 Path to Exile
-1 Port Town
 1 Propaganda
 1 Resplendent Angel
 1 Restoration Angel
@@ -258,21 +264,21 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Smothering Tithe
 1 Sphinx of New Prahv
 1 Sun Titan
-1 Sunblast Angel
 1 Sunpetal Grove
+1 Swan Song
 1 Swords to Plowshares
 1 Talisman of Curiosity
 1 Talisman of Unity
 1 The Wasp, Winsome Avenger
 1 Thrasios, Triton Hero
+1 Tropical Island
+1 Tundra
 1 Tymna the Weaver
-1 Unclaimed Territory
 1 Underground River
 1 Undergrowth Stadium
 1 Vampire Nighthawk
 1 Walking Ballista
 1 Windborn Muse
-1 Witherbloom Charm
 1 Worldly Tutor
 1 Yavimaya Coast
 6 Island

@@ -49004,6 +49004,100 @@
    "spell_prio": false
   },
   {
+   "name": "Ghave, Guru of Spores",
+   "types": "C",
+   "generic": 2,
+   "pips": "WBG",
+   "tags": {
+    "leg": true,
+    "shaman": true,
+    "pow": "0",
+    "tgh": "0"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters with five +1/+1 counters on it"
+    },
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "1",
+      "other": "remove a +1/+1 counter from a creature you control"
+     },
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "saproling"
+       ],
+       "color": "G"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    },
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "1",
+      "sac": "creature"
+     },
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "fungus",
+    "shaman"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ghost Quarter",
    "types": "L",
    "generic": 0,

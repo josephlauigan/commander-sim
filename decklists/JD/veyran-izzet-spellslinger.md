@@ -24,7 +24,7 @@ Veyran is a fragile engine, and he is removed often. The token makers keep worki
 
 ### Game plan
 
-**Early turns (1–3).** Play a cheap engine: **Young Pyromancer** or **Third Path Iconoclast** on turn 2, **Guttersnipe**, **Kessig Flamebreather** or **Firebrand Archer** on turn 2 or 3, **Harmonic Prodigy**, and a rock (**Sol Ring**, **Arcane Signet**, **Fellwar Stone**). Veyran on turn 3 is fine if you can protect him; otherwise build the board first and let the cheap spells (cantrips, burn, counters) trigger the engines at half strength. Keep a counterspell or **Spell Pierce** up when you can.
+**Early turns (1–3).** Play a cheap engine: **Young Pyromancer** or **Third Path Iconoclast** on turn 2, **Guttersnipe**, **Kessig Flamebreather** or **Firebrand Archer** on turn 2 or 3, **Harmonic Prodigy**, and a rock (**Sol Ring**, **Arcane Signet**, **Fellwar Stone**). Veyran on turn 3 is fine if you can protect him; otherwise build the board first and let the cheap spells (cantrips, burn, counters) trigger the engines at half strength. Keep a counterspell or **Arcane Denial** up when you can.
 
 **Middle turns (4–6).** Deploy the engines before the chain: **Storm-Kiln Artist**, **Birgi, God of Storytelling**, **Murmuring Mystic**, **Archmage Emeritus**, **Ral, Storm Conduit**, **Alania, Divergent Storm**, and **Veyran** himself if he is not out yet, with **Lightning Greaves** down first. Cast cheap spells at the end of the turn to build tokens, and keep **Propaganda** and a counter ready against creature decks.
 
@@ -70,7 +70,7 @@ With one of these out, a four-spell turn leaves eight tokens. The token makers k
 
 - **Lightning Greaves** gives shroud and haste, and its equip is {0}, so you can move it to a new threat for free.
 - **Triple Triad** ({3}{R}{R}{R}) gives a free card every upkeep: each player exiles their top card, and you may play yours and every exiled card with lower mana value free. Free instants and sorceries are still cast, so they trigger Veyran and the magecraft cards.
-- **Spell Pierce** ({U}) counters a noncreature spell unless its controller pays {2}: a cheap answer to the removal spell aimed at Veyran, or the counter aimed at your big turn.
+- **Arcane Denial** ({1}{U}) counters any spell; its controller may draw up to two cards at their next upkeep and you draw one. A cheap answer to the removal spell aimed at Veyran, the wipe, or the counter aimed at your big turn; the cards it gives away matter less than the spell it stops.
 - **Old Fat Spider Can't See Me** (a Saga) gives a creature of yours hexproof while it stays (chapter I), later prevents a creature's damage, and draws two cards on chapters III and IV.
 - **Unsummon** and **Banishing Betrayal** can save your own creature from removal by returning it to your hand, and **Counterspell**, **An Offer You Can't Refuse** and **Mystic Confluence** stop the removal itself.
 
@@ -80,7 +80,7 @@ With one of these out, a four-spell turn leaves eight tokens. The token makers k
 
 ### Interaction and burn
 
-- **Four ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Spell Pierce and Mystic Confluence (counter unless its controller pays {3}, bounce a creature, or draw: choose three).
+- **Four ways to stop a spell:** Counterspell, An Offer You Can't Refuse, Arcane Denial and Mystic Confluence (counter unless its controller pays {3}, bounce a creature, or draw: choose three).
 - **Spot removal:** Abrade (3 damage to a creature, or destroy an artifact), Burst Lightning, Lightning Bolt, Lightning Strike, Vibrant Outburst (3 damage and a tap), Chaos Warp, Banishing Betrayal and Prismari Charm.
 - **Unsummon**: a one-mana bounce that also saves one of your own creatures.
 
@@ -106,7 +106,7 @@ Every one is also a magecraft trigger, so expect to hold up mana less often and 
 ### Weak spots and how to play around them
 
 - **Creature decks.** The deck loses most to decks that attack with many creatures. Land Propaganda early, hold Blasphemous Act, and keep the cheap interaction for the biggest attacker.
-- **Board wipes.** The tokens die to them. Rebuild with the next few spells, and keep Spell Pierce up for the wipe when you can.
+- **Board wipes.** The tokens die to them. Rebuild with the next few spells, and keep Arcane Denial up for the wipe when you can.
 - **Veyran removed.** Put Lightning Greaves down before or with Veyran, not after he has already eaten removal, and keep the engines that don't need him in play.
 - **Graveyard hate.** Eris, Mizzix's Mastery, Emeritus of Ideation and Flashback all want the graveyard. If an opponent exiles it, lean on the pingers, the token makers and the cards in hand instead.
 - **Slow or clunky hands.** The list is top-heavy and has only three rocks. Keep hands with lands and a cheap engine (a pinger, Young Pyromancer, Third Path Iconoclast), and don't keep a hand of six-drops.
@@ -119,7 +119,7 @@ Every one is also a magecraft trigger, so expect to hold up mana less often and 
 
 **Rite of the Dragoncaller** makes a 5/5 flier per instant or sorcery, doubled by Veyran.
 
-**Going wide.** Without a big turn available, cast cheap spells to build a token board and attack. Under Fiery Emancipation every 1/1 hits for 3. Board wipes are the risk: rebuild with the next few spells, and keep Spell Pierce up for the wipe when you can.
+**Going wide.** Without a big turn available, cast cheap spells to build a token board and attack. Under Fiery Emancipation every 1/1 hits for 3. Board wipes are the risk: rebuild with the next few spells, and keep Arcane Denial up for the wipe when you can.
 
 **Mizzix's Mastery** on River's Rebuke or a large Crackle with Power is the single-card blowout.
 
@@ -135,7 +135,7 @@ Four tutors, each pointing somewhere different. **Solve the Equation only finds 
 - **Need a board → Imperial Recruiter for Young Pyromancer or Third Path Iconoclast.**
 - **Need mana for the chain → Imperial Recruiter for Storm-Kiln Artist.**
 - **Need more cards → Imperial Recruiter for Archmage Emeritus.**
-- **Veyran keeps dying → Fabricate for Lightning Greaves**, or Solve the Equation for Spell Pierce.
+- **Veyran keeps dying → Fabricate for Lightning Greaves**, or Solve the Equation for Arcane Denial.
 - **A creature deck is attacking you → cast Propaganda early.** It's an enchantment, so no tutor here finds it.
 - **Veyran needs protection → Fabricate for Lightning Greaves** before the long turn.
 - **Need to protect a big turn → Solve the Equation for a counter** (or Mystical Tutor for it, a turn slower, at one mana).
@@ -196,7 +196,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (6).** Fiery Emancipation, Old Fat Spider Can't See Me, Propaganda, Rite of the Dragoncaller, Thousand-Year Storm, Triple Triad
 
-**Instants (21).** Abrade, An Offer You Can't Refuse, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Flashback, Frantic Search, Lightning Bolt, Lightning Strike, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Prismari Charm, Quick Study, Spell Pierce, Think Twice, Unsummon, Vibrant Outburst
+**Instants (21).** Abrade, An Offer You Can't Refuse, Arcane Denial, Banishing Betrayal, Burst Lightning, Chaos Warp, Counterspell, Deduce, Dreams of Laguna, Flashback, Frantic Search, Lightning Bolt, Lightning Strike, Mystic Confluence, Mystical Tutor, Plunder the Trollshaws, Prismari Charm, Quick Study, Think Twice, Unsummon, Vibrant Outburst
 
 **Sorceries (11).** Blasphemous Act, Crackle with Power, Expressive Iteration, Fabricate, Flow State, Light Up the Stage, Mizzix's Mastery, River's Rebuke, Solve the Equation, Splatter Technique, Stock Up
 
@@ -208,6 +208,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Abrade
 1 Alania, Divergent Storm
 1 An Offer You Can't Refuse
+1 Arcane Denial
 1 Arcane Signet
 1 Archmage Emeritus
 1 Ash Barrens
@@ -271,7 +272,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sol Ring
 1 Solve the Equation
 1 Spectacle Summit
-1 Spell Pierce
 1 Splatter Technique
 1 Stock Up
 1 Storm-Kiln Artist
