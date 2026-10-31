@@ -9,7 +9,8 @@ Brief: `rust/agents/phase4-rules.md`. Design: `audit/phase4/rules-design.md`. Br
 - [x] `ai/rules.rs`: switch `AI_RULES` (+ `AI_RULES_DECKS` for a half), the three guards, hooks (c886c9b1).
 - [x] Tests `rust/crates/sim-core/tests/rules_guards.rs` (14, all pass).
 - [x] Design, switch, tests, recalibration list (design sections 2-5).
-- [ ] Final checks (below).
+- [x] Final checks at c886c9b1: `cargo build --release --all-targets -j 8` 0 warnings; `cargo test --release
+      --no-fail-fast -j 8` 3748 passed, 0 failed; `cardgen validate` all decks passed. No sims (JD).
 
 ## Hooks (all one-liners, `--- phase4-rules`)
 
