@@ -4,6 +4,7 @@
 //! through `cardcode.rs`. Also ais.py's `breach_gc_options` (Breach escapes, Panoptic Mirror, Lion's Eye Diamond,
 //! Bolas's Citadel), which every deck reaches.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use super::lands::{can_pay_without, pay_without};
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -708,7 +709,7 @@ fn urabrask(g: &mut Game, src: Src, p: PlayerId) -> Res {
 pub fn kefka_wheel(g: &mut Game, p: PlayerId) -> Res {
     let mut discarded = vec![];
     let mut alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-    let own_plan = g.player(p).key == "kefka";
+    let own_plan = hand_key(g, p) == "kefka";
     // CR 101.4: the players choose in APNAP order (the active player first, then in turn order); each sees the
     // choices made before theirs, so the Kefka deck counts the pile only so far (kefka.rs)
     if let Some(start) = g.active.and_then(|a| alive.iter().position(|&q| q == a)) {
@@ -1402,7 +1403,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
     if g.opps(p).next().is_none() {
         return Ok(false);
     }
-    if g.player(p).key != "sauron" && !crate::ai::decks::breach_pieces(g, p) {
+    if hand_key(g, p) != "sauron" && !crate::ai::decks::breach_pieces(g, p) {
         return Ok(false); // any deck holding the pieces may run the line (cheap check first)
     }
     let st = line_state(g, p);
@@ -3617,7 +3618,7 @@ fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> crate::cards::Colors {
 /// p's creature cards share. Python works it out once and keeps it (on the player, and on the land as `ctype`); the
 /// land's colours are asked without a way to keep it here, so it is worked out each time from the same cards.
 pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
-    if g.player(p).key == "sauron" {
+    if hand_key(g, p) == "sauron" {
         return "orc";
     }
     let pl = g.player(p);
@@ -4415,7 +4416,7 @@ pub fn ephemerate_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> Res<b
 /// the best enters-the-battlefield effect (Archon of Cruelty, Grave Titan); kept in hand while it is the only
 /// protection for a bomb
 fn ephemerate_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if !crate::ai::is_main(g.player(p).key) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "W", false) {
+    if !crate::ai::is_main(hand_key(g, p)) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "W", false) {
         return Ok(vec![]);
     }
     let cands: Vec<(f64, PermId)> = g
@@ -4498,7 +4499,7 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
 fn momentary_blink_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     let from_hand = g.player(p).hand.contains(&c);
     let (gn, pips) = if from_hand { (1, "W") } else { (3, "U") };
-    if !crate::ai::is_main(g.player(p).key) || !can_pay(g, p, gn, pips, false) {
+    if !crate::ai::is_main(hand_key(g, p)) || !can_pay(g, p, gn, pips, false) {
         return Ok(vec![]);
     }
     let cands: Vec<(f64, PermId)> = g

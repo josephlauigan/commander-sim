@@ -27,6 +27,7 @@ fn fliers(g: &mut Game) -> Vec<PermId> {
 
 #[test]
 fn each_opponent_gets_a_flier_while_tymna_is_out() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl("thrasios");
     perm(&mut g, P0, "Tymna the Weaver");
     let f = fliers(&mut g);
@@ -41,6 +42,7 @@ fn each_opponent_gets_a_flier_while_tymna_is_out() {
 
 #[test]
 fn the_cheapest_attacker_is_sent_and_a_ground_creature_stays() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl("thrasios");
     perm(&mut g, P0, "Tymna the Weaver");
     let f = fliers(&mut g);
@@ -57,6 +59,7 @@ fn the_cheapest_attacker_is_sent_and_a_ground_creature_stays() {
 
 #[test]
 fn an_opponent_with_a_flying_blocker_gets_no_attacker() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl("thrasios");
     perm(&mut g, P0, "Tymna the Weaver");
     let f = fliers(&mut g);
@@ -91,6 +94,7 @@ fn nothing_changes_without_tymna_or_for_other_decks() {
 
 #[test]
 fn reconnaissance_mission_also_spreads() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl("thrasios");
     perm(&mut g, P0, "Reconnaissance Mission");
     let f = fliers(&mut g);
@@ -100,6 +104,7 @@ fn reconnaissance_mission_also_spreads() {
 
 #[test]
 fn priorities_follow_the_plan() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl("thrasios");
     let h = hand(&mut g, P0, &["Falcon and Redwing", "Lyra Dawnbringer", "Bastion Protector", "Birds of Paradise"]);
     let (falcon, lyra, bastion, birds) = (h[0], h[1], h[2], h[3]);
@@ -122,6 +127,7 @@ fn priorities_follow_the_plan() {
 
 #[test]
 fn equipment_is_cast_after_the_creatures_but_never_left_in_the_hand() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl("thrasios");
     let h = hand(
         &mut g,

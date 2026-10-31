@@ -1,0 +1,39 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). Avery's Alela, Artful Provocateur deck (Esper artifacts and enchantments: each one
+# cast makes a 1/1 flying Faerie, Alela pumps the fliers, Wispdrinker Vampire drains with each Faerie). Written in
+# Phase 4 PR 7 from its hand AI, which runs when AI_HAND is on: impls/alela.rs `alela_prio` (the generic priority, the
+# commander at 85 or more, Felidar Retreat, plus `faerie_bonus` for an artifact or enchantment spell while Alela is
+# out) and `alela_protect` (Angelic Shield bounces a valuable creature out of removal).
+# Left out (the schema can't express it): `faerie_bonus` (+10, +16 with Wispdrinker Vampire, added to the generic
+# priority of every artifact and enchantment while Alela is out: a prio rule replaces the generic value instead of
+# adding to it); Angelic Shield's sacrifice save (card-code timing, not a hold); `greaves_options` (move Lightning
+# Greaves off Alela before one of the deck's Auras targets her). The hand AI has no tutor wish list.
+deck = "alela"
+default = "plan"
+
+# Alela costs four: cast at 85 or more
+[commander]
+prio = 85
+
+# Alela's Faeries are the plan: Wispdrinker Vampire drains with each one
+[[line]]
+name = "Alela + Wispdrinker Vampire (each Faerie drains)"
+kind = "drain"
+pieces = [["Alela, Artful Provocateur"], ["Wispdrinker Vampire"]]
+
+# Cast priorities (alela_prio), the first rule selecting a card decides; the rest keep the generic priority
+[[prio]]
+commander = true
+value = 85
+
+# Felidar Retreat: a 2/2 Cat for each land still to come
+[[prio]]
+cards = ["Felidar Retreat"]
+when = ["turn<=6"]
+value = 50
+else = 30
+
+# Clever Concealment phases out the board in response to removal or a wipe
+[[hold]]
+card = "Clever Concealment"
+protects = ["commander", "Wispdrinker Vampire"]

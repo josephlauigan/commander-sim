@@ -392,6 +392,7 @@ fn plaza_any_colour_for_legendary_spells_only() {
 // ======================================================== lands
 #[test]
 fn unclaimed_territory_names_the_commonest_creature_type() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["winota-boros-humans-cheat", "veyran"]);
     assert_eq!(J::territory_type(&g, P0), "human"); // Winota's Humans
     let gs = table(&["sauron", "veyran"]);

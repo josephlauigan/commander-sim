@@ -20,6 +20,7 @@ fn on(g: &Game, m: sim_core::ids::PermId) -> bool {
 
 #[test]
 fn lagrella_is_cast_when_opponents_have_creatures_and_not_valued_zero() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for key in ["thrasios"] {
         let mut g = tbl(key);
         let c = hand(&mut g, P0, &["Lagrella, the Magpie"])[0];
@@ -72,6 +73,7 @@ fn witherbloom_charm_is_offered_as_a_hand_play() {
 
 #[test]
 fn the_partner_decks_answer_removal_and_wipes_with_their_white_spells() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for key in ["thrasios"] {
         // Shardmage's Rescue: hexproof for a creature that targeted removal is aimed at
         let mut g = tbl(key);

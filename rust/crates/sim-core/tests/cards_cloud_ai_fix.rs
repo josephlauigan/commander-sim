@@ -39,6 +39,7 @@ fn prio(g: &mut Game, name: &str) -> i32 {
 
 #[test]
 fn helm_and_feast_and_famine_equip_and_work() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for (n, cost) in [("Champion's Helm", 1), ("Sword of Feast and Famine", 2)] {
         let mut g = game();
         let cl = cloud_board(&mut g, 3);
@@ -128,6 +129,7 @@ fn tutor_skips_pieces_in_hand() {
 
 #[test]
 fn equipping_shield_of_kaldra_beats_stop() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     set_library(&mut g, P0, &vec!["Plains"; 30]);
     cloud_board(&mut g, 4);

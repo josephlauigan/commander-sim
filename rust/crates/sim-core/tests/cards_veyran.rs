@@ -143,6 +143,7 @@ const BURN: [&str; 2] = ["Lightning Bolt", "Burst Lightning"];
 
 #[test]
 fn twinflame_copies_with_haste_until_the_end_step() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let (mut g, opts) = twinflame(4, &["Guttersnipe", "Veyran, Voice of Duality"], &BURN);
     act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap();
     let copies = tokens(&g, P0);
@@ -163,6 +164,7 @@ fn twinflame_strive_cost() {
 
 #[test]
 fn twinflame_skips_legends_and_idle_copies() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let (_, opts) = twinflame(4, &["Veyran, Voice of Duality"], &BURN);
     assert!(opts.is_empty()); // a copy of a legend dies to the legend rule
     let (_, opts) = twinflame(2, &["Guttersnipe"], &BURN);
@@ -407,6 +409,7 @@ fn visions_of_beyond_draws_three_with_a_big_graveyard() {
 
 #[test]
 fn deflecting_swat_turns_removal_back_on_its_caster() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // "If you control a commander, you may cast this spell without paying its mana cost. You may choose new targets
     //  for target spell or ability."
     let mut g = table(&["veyran", "seph"]);
@@ -424,6 +427,7 @@ fn deflecting_swat_turns_removal_back_on_its_caster() {
 
 #[test]
 fn slip_out_the_back_saves_a_key_creature() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["veyran", "seph"]);
     lands(&mut g, P0, "Island", 1, false);
     let vey = perm(&mut g, P0, "Veyran, Voice of Duality");
@@ -509,6 +513,7 @@ fn veyran_priorities() {
 
 #[test]
 fn veyran_fires_aetherflux_at_51_life() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["veyran", "seph", "sauron"]);
     perm(&mut g, P0, "Aetherflux Reservoir");
     g.player_mut(P0).life = 51;
@@ -520,6 +525,7 @@ fn veyran_fires_aetherflux_at_51_life() {
 
 #[test]
 fn recruiter_fetches_by_what_the_board_lacks() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let pick = |g: &Game| decks::tutor_pick(g, P0, "cre2").map(|c| g.db.get(c).name.to_string()).unwrap();
     let mut g = table(&["veyran", "seph"]);
     assert_eq!(pick(&g), "Guttersnipe", "no pinger: damage first");
@@ -568,6 +574,7 @@ fn lightning_greaves_comes_before_veyran() {
 
 #[test]
 fn fabricate_fetches_greaves_first_then_aetherflux() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["veyran", "seph"]);
     g.player_mut(P0).library =
         ["Aetherflux Reservoir", "Sol Ring", "Lightning Greaves"].iter().map(|n| card(&g, n)).collect();
@@ -606,6 +613,7 @@ fn mystical_tutor_finds_a_wipe_when_the_table_outboards_us() {
 
 #[test]
 fn solve_the_equation_needs_a_real_target() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["veyran", "seph"]);
     g.player_mut(P0).library = ["Stock Up", "Blasphemous Act"].iter().map(|n| card(&g, n)).collect();
     hand(&mut g, P0, &["Lightning Bolt", "Burst Lightning", "Counterspell", "Island"]);

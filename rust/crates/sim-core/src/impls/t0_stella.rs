@@ -947,7 +947,9 @@ fn mastery_pool(g: &Game, p: PlayerId) -> Vec<CardId> {
 /// offered it): overloaded ({5}{R}{R}{R}) with four or more spells to copy, or for {3}{R} on the best one. Your own
 /// decks' brains (Veyran) make this choice themselves.
 fn mastery_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || crate::ai::is_main(g.player(p).key) || !g.player(p).hand.contains(&c) {
+    if post.is_none() || g.active != Some(p) || crate::ai::is_main(crate::ai::hand_key(g, p)) // --- phase4-hand-off
+        || !g.player(p).hand.contains(&c)
+    {
         return Ok(vec![]);
     }
     let pool = mastery_pool(g, p);

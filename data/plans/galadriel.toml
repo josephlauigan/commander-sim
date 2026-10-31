@@ -1,0 +1,116 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). Avery's Galadriel, Light of Valinor deck (Bant creatures: the Ramosian / Lin Sivvi
+# Rebel searchers chain into each other, the creature-count engines and anthems turn the board into damage). Written
+# in Phase 4 PR 7 from its hand AI, which runs when AI_HAND is on: impls/galadriel.rs `galadriel_prio` (cast
+# priorities), `galadriel_protect` and `galadriel_wipe_response` (Unbreakable Formation, Make a Stand, Rootborn
+# Defenses, Eerie Interlude). The hand AI has no tutor wish list and no win line: the engines below are its top
+# priorities after the searchers.
+# Left out (the schema can't express it): Abduction / Bribery / Crackdown / Flicker target values (generic priority),
+# the per-searcher base values (one rule: 73 while no searcher is out, else 63), the Ballista Squad and Lawbringer
+# attack responses, the pre-combat taps, the removal and wipes' own decisions (0 here, as in the hand code).
+deck = "galadriel"
+default = "plan"
+# card engines the tutors want (Recruiter of the Guard, Beast Whisperer's draws)
+engines = ["Lin Sivvi, Defiant Hero", "Cathars' Crusade", "Kindred Discovery", "Mentor of the Meek", "Welcoming Vampire"]
+
+# Galadriel: 84 from turn 3 on (66 before: the prio rule below)
+[commander]
+prio = 84
+
+[sets]
+searchers = ["Ramosian Sergeant", "Ramosian Lieutenant", "Ramosian Captain", "Defiant Vanguard", "Ramosian Commander",
+    "Lin Sivvi, Defiant Hero"]
+
+# Cast priorities (galadriel_prio), the first rule selecting a card decides
+[[prio]]
+commander = true
+when = ["turn>=3"]
+value = 84
+else = 66
+
+# held for their window: the counter, the indestructible spells, Eerie Interlude; removal and wipes through their
+# own decisions
+[[prio]]
+cards = ["Counterspell", "Unbreakable Formation", "Make a Stand", "Rootborn Defenses", "Eerie Interlude",
+    "Path to Exile", "Swords to Plowshares", "Beast Within", "Generous Gift", "Cyclonic Rift", "Austere Command",
+    "Farewell", "River's Rebuke", "Return to Dust"]
+value = 0
+
+# rocks and dorks early, not late
+[[prio]]
+cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Patchwork Banner", "Elvish Mystic", "Fyndhorn Elves",
+    "Llanowar Elves", "Elvish Archdruid", "Springleaf Drum"]
+when = ["turn<=5"]
+value = 82
+else = 30
+
+[[prio]]
+cards = ["Cultivate", "Farhaven Elf", "Shared Roots"]
+when = ["turn<=5"]
+value = 78
+else = 25
+
+[[prio]]
+cards = ["Lin Sivvi, Defiant Hero"]
+value = 74
+
+# the searchers are the engine: first while none is out
+[[prio]]
+cards = ["Ramosian Sergeant", "Ramosian Lieutenant", "Ramosian Captain", "Defiant Vanguard", "Ramosian Commander"]
+when = ["bf:searchers<1"]
+value = 73
+else = 63
+
+[[prio]]
+cards = ["Adeline, Resplendent Cathar"]
+value = 73
+
+[[prio]]
+cards = ["Cathars' Crusade", "Panharmonicon"]
+when = ["creatures>=2", "commander-out"]
+value = 72
+else = 50
+
+[[prio]]
+cards = ["Kindred Discovery", "Vanquisher's Banner", "Tocasia's Welcome", "Beast Whisperer", "Welcoming Vampire",
+    "Mentor of the Meek"]
+value = 70
+
+[[prio]]
+cards = ["Bribery"]
+value = 68
+
+[[prio]]
+cards = ["Elspeth, Sun's Champion"]
+value = 66
+
+[[prio]]
+cards = ["Recruiter of the Guard"]
+value = 65
+
+[[prio]]
+cards = ["Shamanic Revelation"]
+when = ["creatures>=4"]
+value = 60
+else = 15
+
+[[prio]]
+cards = ["Door of Destinies", "Maskwood Nexus"]
+value = 58
+
+# protection held for removal at a key creature or a wipe (galadriel_protect, galadriel_wipe_response)
+[[hold]]
+card = "Unbreakable Formation"
+protects = ["commander", "Lin Sivvi, Defiant Hero", "Adeline, Resplendent Cathar"]
+
+[[hold]]
+card = "Make a Stand"
+protects = ["commander", "Lin Sivvi, Defiant Hero", "Adeline, Resplendent Cathar"]
+
+[[hold]]
+card = "Rootborn Defenses"
+protects = ["commander", "Lin Sivvi, Defiant Hero", "Adeline, Resplendent Cathar"]
+
+[[hold]]
+card = "Eerie Interlude"
+protects = ["commander", "Lin Sivvi, Defiant Hero", "Adeline, Resplendent Cathar"]

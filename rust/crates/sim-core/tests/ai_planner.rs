@@ -241,6 +241,7 @@ fn with_a_counter_visible_and_go_ok_false_the_planner_does_not_go() {
 /// Tier 6 table in the first measurement)
 #[test]
 fn the_plan_slot_keeps_a_card_in_hand_against_the_planner() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&[
         "dack-fayden-white-stax",
         "kraum-tymna-blue-breach-midrange",

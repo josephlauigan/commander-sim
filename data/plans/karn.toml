@@ -1,0 +1,41 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Karn, Legacy Reforged deck (colourless artifacts, key `karn`, tiers t4-t5).
+# Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `karn::karn_prio` (the prio rules),
+# `karn::combo_this_turn` (the combo line), `karn::search_pick` (the Tron line: the missing Tron piece first).
+# Left out (the schema can't express it): Karn held while the Basalt + Rings + Ballista win is castable this turn; the
+# sweepers' gates (Oblivion Stone / Nevinyrral's Disk when behind, All Is Dust / Ugin by the coloured permanents
+# across the table); Greaves / Boots' middle value while Karn is coming (`karn_soon`); the Tron land drop first
+# (`land_adjust`); the Baubles held on the battlefield (`hold_ability`); the Factory / Foundry blocks
+# (`block_response`); the land search's fallbacks after Tron (Workshops, Factories, Wastes); `search_bonus`.
+deck = "karn"
+default = "plan"
+
+# win lines, best first: the tutors want the first missing piece of the closest one
+[[line]]
+name = "Power Artifact / Rings of Brighthearth + Monolith"
+combo = "Power Artifact / Rings of Brighthearth + Monolith"
+
+# Tron: the land searches (Expedition Map, Urza's Cave) take the missing piece
+[[line]]
+name = "Tron"
+kind = "value"
+pieces = [["Urza's Mine"], ["Urza's Power Plant"], ["Urza's Tower"]]
+
+# Cast priorities (was karn_prio): Karn as early as possible (130 - 3 x tax in the hand code, scaled under 90); the
+# shroud / hexproof Equipment once he is out; cheap artifacts first (each is one more {C} from Karn every turn)
+[[prio]]
+commander = true
+when = ["turn>=1"]
+value = 90
+per_tax = -3
+else = 0
+
+[[prio]]
+cards = ["Lightning Greaves", "Swiftfoot Boots"]
+when = ["commander-out"]
+value = 88
+else = 30
+
+[[prio]]
+cards = ["Sol Ring", "Mind Stone", "Mox Opal", "Mana Vault", "Everflowing Chalice", "Thought Vessel", "Grim Monolith", "Urza's Bauble", "Wayfarer's Bauble", "Liquimetal Torque", "Mazemind Tome", "Soul-Guide Lantern", "Skullclamp"]
+value = 74

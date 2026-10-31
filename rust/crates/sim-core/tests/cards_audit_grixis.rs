@@ -20,6 +20,7 @@ fn sauron_table() -> sim_core::state::Game {
 
 #[test]
 fn sauron_tutor_fetches_the_ozolith_once_an_army_is_growing() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = sauron_table();
     zones::amass(&mut g, P0, 4).unwrap();
     assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "The Ozolith")));
@@ -38,6 +39,7 @@ fn sauron_tutor_never_takes_the_old_list_or_a_lone_assault() {
 
 #[test]
 fn sauron_tutor_gets_evasion_for_a_huge_army_then_the_combat_free_finisher() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Aggravated Assault left the list on 10/30: with evasion out and 8 lands, the tutor goes to Torment of Hailfire
     let mut g = sauron_table();
     perm(&mut g, P0, "The Ozolith");
@@ -70,6 +72,7 @@ fn sauron_tutor_fetches_sol_ring_when_short_of_mana() {
 
 #[test]
 fn sauron_does_not_sweep_away_its_own_army() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = sauron_table();
     perm(&mut g, P0, "Sauron, the Dark Lord");
     zones::amass(&mut g, P0, 3).unwrap(); // Sauron (7) is the source, the 3-power Army would die
@@ -84,6 +87,7 @@ fn sauron_does_not_sweep_away_its_own_army() {
 
 #[test]
 fn sauron_force_of_will_pitches_a_draw_spell_not_the_engine_creature() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["sauron", "veyran"]);
     let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
     g.player_mut(P0).library.extend(h);
@@ -112,6 +116,7 @@ fn sauron_holds_mana_up_for_two_counters_more_than_for_one() {
 
 #[test]
 fn sauron_gives_an_opponent_cards_with_cost_of_brilliance_when_bowmasters_is_out() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::ai::brain;
     let mut g = sauron_table();
     let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
@@ -129,6 +134,7 @@ fn sauron_gives_an_opponent_cards_with_cost_of_brilliance_when_bowmasters_is_out
 
 #[test]
 fn sauron_wheels_with_the_archivist_for_kaervek_or_sauron_when_short_of_cards() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = sauron_table();
     g.player_mut(P0).hand.clear();
     assert!(!decks::archivist_worth(&g, P0));
@@ -164,6 +170,7 @@ fn kefka_keeps_protection_over_a_land() {
 
 #[test]
 fn kefka_tutors_fetch_the_crawler_for_a_flipped_kefka_else_the_breach_line() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::state::{DataKey, Val};
     let mut g = kefka_hand(&[]);
     assert_eq!(&*g.db.get(decks::tutor_pick(&g, P0, "any").unwrap()).name, "Underworld Breach");
@@ -180,6 +187,7 @@ fn kefka_tutors_fetch_the_crawler_for_a_flipped_kefka_else_the_breach_line() {
 
 #[test]
 fn kefka_counts_mana_leak_into_open_mana_as_a_weak_counter() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "veyran"]);
     let leak = card(&g, "Mana Leak");
     let denial = card(&g, "Arcane Denial");
@@ -192,6 +200,7 @@ fn kefka_counts_mana_leak_into_open_mana_as_a_weak_counter() {
 
 #[test]
 fn kefka_suspends_profane_tutor_on_an_empty_turn() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::ai::brain;
     let mut g = table(&["kefka", "veyran"]);
     let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();

@@ -604,7 +604,7 @@ fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res
     if !atk.contains(&src) {
         return Ok(vec![]);
     }
-    if g.player(p).key == "yshtola" {
+    if crate::ai::hand_key(g, p) == "yshtola" {
         // Zur in your Y'shtola deck (cards/impl/zur.py)
         if !trigger_window(g, p, Some(src), "search for an enchantment", Some(5.0))? {
             return Ok(vec![]);

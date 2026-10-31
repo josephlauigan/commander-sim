@@ -286,5 +286,5 @@ fn cloudshift_hold(g: &Game, p: PlayerId) -> bool {
 
 /// ai/brain.rs card_utility: the brago deck keeps c in hand for now
 pub fn hold(g: &Game, p: PlayerId, c: CardId) -> bool {
-    g.player(p).key == DECK && named(g, c, CLOUDSHIFT) && cloudshift_hold(g, p)
+    crate::ai::hand_key(g, p) == DECK && named(g, c, CLOUDSHIFT) && cloudshift_hold(g, p)
 }

@@ -32,10 +32,11 @@ fn mode() -> &'static Mode {
     })
 }
 
-/// a generic-policy deck (not one of JD's decks, not Tier 6)
+/// a generic-policy deck (not one of JD's decks playing its hand AI, not Tier 6)
 pub fn generic_deck(g: &Game, p: PlayerId) -> bool {
     let pl = g.player(p);
-    !super::is_main(pl.key) && !super::jd_deck(pl.key) && !pl.t6 && !crate::impls::t6_plans::is_t6_key(pl.key)
+    let hand = (super::is_main(pl.key) || super::jd_deck(pl.key)) && super::hand_ai_key(pl.key); // --- phase4-hand-off
+    !hand && !pl.t6 && !crate::impls::t6_plans::is_t6_key(pl.key)
 }
 
 /// does p decide with derived values?

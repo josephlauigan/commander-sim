@@ -12,6 +12,7 @@
 //! The temperature sets how human the AI is: low is near-optimal and predictable, high is looser. Each deck also has
 //! a play style (aggression, caution) that shifts the utilities.
 
+use super::hand_key; // --- phase4-hand-off
 use super::{act, decks, explain, gumbel_order, is_main, pool, sample, search, sig, style, temp};
 use crate::cards::Types;
 use crate::engine::altcost;
@@ -237,7 +238,7 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     let caution = style(g, pl.key).caution;
     let near = s.combo_near || s.cmdr_combo;
     let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * near as i32 as f64;
-    if !is_main(pl.key) || pl.key == "sauron" {
+    if !is_main(hand_key(g, p)) || hand_key(g, p) == "sauron" {
         // outside decks (and Sauron, a counter shell around one Army): three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
         v = v.max(1.5 + 2.5 * caution * n.min(2) as f64);
@@ -280,12 +281,12 @@ pub fn draws_cards(g: &Game, c: CardId) -> bool {
 pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f64> {
     let pl = g.player(p);
     let d = g.db.get(c);
-    let main = is_main(pl.key);
+    let main = is_main(hand_key(g, p));
     let mut base = decks::deck_prio_f(g, p, c);
     if crate::impls::cc_brago::hold(g, p, c) {
         return None; // --- casual combos (brago): Cloudshift needs a target and waits for the Kitten loop
     }
-    if pl.key == "cloud" && crate::impls::cloud::strands_equipment(g, p, c) {
+    if hand_key(g, p) == "cloud" && crate::impls::cloud::strands_equipment(g, p, c) {
         return None; // hold the Equipment until a creature can carry it
     }
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
@@ -319,7 +320,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     // (a ritual is no answer: Dark Ritual is cast by the storm line, and from the graveyard under Yawgmoth's Will)
     let ritual = d.abilities.iter().any(|a| matches!(a, crate::dsl::model::Ability::Spell { effects } if effects.iter().any(|e| e.kind == "add_mana")));
     let held_kind = !ritual && (d.instant || d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::Ctr) || d.tag(Tag::Prot));
-    if base <= 0.0 && d.has_dsl() && !hand_written && !(super::jd_deck(pl.key) && held_kind) {
+    if base <= 0.0 && d.has_dsl() && !hand_written && !(super::jd_deck(hand_key(g, p)) && held_kind) {
         base = crate::dsl::card_value(g, p, c) * 10.0;
     }
     if base <= 0.0 {
@@ -347,7 +348,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if pl.is_commander(c) && !pl.hand.contains(&c) {
         u -= 0.35 * pl.tax_of(c) as f64; // recasting gets pricier each time (no tax from hand)
     }
-    if (d.instant || d.sorcery) && pl.key == "veyran" {
+    if (d.instant || d.sorcery) && hand_key(g, p) == "veyran" {
         // each spell fires every magecraft payoff (doubled by Veyran): casting is value in itself
         const PAY: [Tag; 7] =
             [Tag::Ping, Tag::Dragoncaller, Tag::Mystic, Tag::Spelldraw, Tag::Aether, Tag::Spelltok, Tag::Kiln];
@@ -364,7 +365,7 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
     }
-    if pl.key == "veyran" && !pl.is_commander(c) {
+    if hand_key(g, p) == "veyran" && !pl.is_commander(c) {
         u += veyran_sequence(g, p, c);
     }
     Some(u)
@@ -485,7 +486,7 @@ pub fn do_cast(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>) -> Res<b
 pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx0: Ctx) -> Res<bool> {
     let db = g.db.clone();
     let d = db.get(c);
-    let main = is_main(g.player(p).key);
+    let main = is_main(hand_key(g, p));
     // Seph FS has no reanimation plan of its own: it casts a hand-tagged reanimation spell (Dread Return) like any
     // other by its priority, and the spell resolves through seph_rean_resolve (the best creature card)
     let sephfs_rean = g.player(p).key == "sephfs" && d.tag(Tag::Rean);
@@ -622,7 +623,7 @@ fn rem_spec(g: &Game, c: CardId) -> (&str, &str, bool) {
 /// brain.removal_options
 pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
     let mut out = vec![];
-    let main = is_main(g.player(p).key);
+    let main = is_main(hand_key(g, p));
     let caution = style(g, g.player(p).key).caution;
     for &c in &g.player(p).hand {
         let d = g.db.get(c);
@@ -680,7 +681,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
             continue; // outside decks: no removal on trivial targets
         }
         // the yshtola seat: spot removal only on targets worth it; her MV3+ spells are also her trigger
-        let ysh_bonus = if g.player(p).key == "yshtola" {
+        let ysh_bonus = if hand_key(g, p) == "yshtola" {
             match crate::impls::yshtola::removal_adjust(g, p, c, super::values::pval_for(g, p, best)) {
                 Some(b) => b,
                 None => continue,
@@ -731,7 +732,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
-    if g.player(d).key == "karn" {
+    if hand_key(g, d) == "karn" {
         crate::impls::karn::block_response(g, d, p, atk)?; // Mishra's Factory and Foundry animate to block
     }
     if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
@@ -759,7 +760,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         .collect();
     // Galadriel's permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
     let answers =
-        if g.player(d).key == "galadriel" { crate::impls::galadriel::attack_answers(g, d, p, atk) } else { vec![] };
+        if hand_key(g, d) == "galadriel" { crate::impls::galadriel::attack_answers(g, d, p, atk) } else { vec![] };
     if (rem.is_empty() && answers.is_empty()) || atk.is_empty() {
         return Ok(false);
     }
@@ -789,7 +790,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             }
             let pen = if alt { 1.5 * altcost::lost(g, d, c, None) } else { 0.0 };
             let mut v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
-            if g.player(d).key == "yshtola" {
+            if hand_key(g, d) == "yshtola" {
                 match crate::impls::yshtola::removal_adjust(g, d, c, pval(g, m)) {
                     Some(b) => v += b,
                     None => continue,
@@ -866,7 +867,7 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
         return Ok(false);
     }
     let t = temp(g, p);
-    let live = if g.player(p).key == "yshtola" {
+    let live = if hand_key(g, p) == "yshtola" {
         let top = live.iter().map(|x| x.0).fold(0.0, f64::max);
         live.into_iter().filter(|x| x.0 >= 0.5 * top).collect() // no sampling of a target far below the best
     } else {
@@ -924,7 +925,7 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         if ol <= 0.0 {
             continue; // hits nothing of theirs (Nibelheim Aflame with no creature of ours)
         }
-        let ysh = g.player(p).key == "yshtola";
+        let ysh = hand_key(g, p) == "yshtola";
         // yshtola: Teferi's Protection held up behind the wipe phases her own permanents out, so it costs her nothing
         let swing = if ysh && crate::impls::yshtola::teferis_first(g, p, c, kind) { ol } else { ol - 1.2 * ml };
         let mut u = swing / 2.2 - 2.5 + 2.0 * s.danger.min(1.5);
@@ -958,7 +959,7 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
     if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
-    let teferi = g.player(p).key == "yshtola"
+    let teferi = hand_key(g, p) == "yshtola"
         && g.db.get(c).tags.str(Tag::Wipe).is_some_and(|k| crate::impls::yshtola::teferis_first(g, p, c, k));
     if alt {
         if !altcost::pay_alt(g, p, c, None)? {
@@ -979,7 +980,7 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 /// brain.special_options: the plays your decks' own plans add. Only legal plays are listed, so the distribution is
 /// over real choices.
 pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> Res<Vec<Opt>> {
-    match g.player(p).key {
+    match hand_key(g, p) {
         "sauron" => decks::sauron_options(g, p, s, post),
         "veyran" => super::veyran::options(g, p, s, post),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
@@ -1125,8 +1126,7 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
             o.extend(f(g, c, p, post)?);
         }
     }
-    let key = g.player(p).key;
-    if !is_main(key) || GENERIC_PLAYS.contains(&key) {
+    if !is_main(hand_key(g, p)) || GENERIC_PLAYS.contains(&hand_key(g, p)) {
         o.extend(pool::special_options(g, p, s, post)?);
     } else if g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);
@@ -1174,8 +1174,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let s = Situation::new(g, p);
     let (hold_card, hold_v) = hold_value(g, p, &s);
     let mut opts = vec![];
-    let key = g.player(p).key;
-    let main = is_main(key);
+    let main = is_main(hand_key(g, p));
     let rsv = if !main && !post { pool::combat_reserve(g, p) } else { None };
     let mut cands: Vec<CardId> = g.player(p).hand.clone();
     let mut zoned: Vec<CardId> = g.player(p).cmds_in_zone().collect();
@@ -1408,7 +1407,7 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
             u += 4.0 + 2.0 * aggr; // go for the kill
         }
         u += 0.15 * g.player(p).grudge.get(&g.player(q).key).copied().unwrap_or(0.0); // hit back whoever hit you
-        if !is_main(key) {
+        if !is_main(hand_key(g, p)) {
             u += pool::ninja_defender_bonus(g, p, q);
         }
         u += crate::impls::newcards_b::stagger_bonus(g, p, q); // Lightning, Army of One

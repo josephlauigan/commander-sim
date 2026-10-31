@@ -39,6 +39,7 @@ fn helm_opts(g: &mut Game, helm: PermId, post: Option<bool>) -> Vec<Opt> {
 
 #[test]
 fn aurelia_puts_helm_of_the_host_on_aurelia_before_combat() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl(AURELIA);
     let helm = perm(&mut g, P0, "Helm of the Host");
     let valk = perm(&mut g, P0, "Youthful Valkyrie");
@@ -60,6 +61,7 @@ fn aurelia_puts_helm_of_the_host_on_aurelia_before_combat() {
 
 #[test]
 fn helm_goes_on_combat_celebrant_without_aurelia_and_only_for_the_aurelia_deck() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl(AURELIA);
     let helm = perm(&mut g, P0, "Helm of the Host");
     let cel = perm(&mut g, P0, "Combat Celebrant");

@@ -1,0 +1,169 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Y'shtola, Night's Blessed deck (Esper: each noncreature spell of mana value 3+
+# drains the table for 2; Sanguine Bond and Marauding Blight-Priest turn the life gained into more drain; stax and
+# pillowfort hold the table; Exsanguinate / Debt to the Deathless finish). Written in Phase 4 PR 7 from its hand AI,
+# which runs when AI_HAND is on: impls/yshtola.rs `yshtola_prio` / `yshtola_named_prio` (cast priorities),
+# `tutor_pick` (the tutor wish list) and `yshtola_protect` (with zur::zur_protect: Restoration Angel; Teferi's
+# Protection before a wipe).
+# Left out (the schema can't express it): `trigger_bonus` (each MV 3+ noncreature spell's drain value, added to most
+# priorities), the lethal test for the X drains in `tutor_pick` (the X drains are wished for last here), the Zur lock targets, Hostage Taker / Skyclave / Massacre Wurm / Prayer of
+# Binding target values, Necropotence / Sphinx / Tithe / One Ring helpers (generic priority), the X-spell options,
+# Champion's Helm equip, the removal-target and chump rules in brain.rs / combat.rs.
+deck = "yshtola"
+default = "plan"
+# card engines the tutors want once no line wants a card
+engines = ["Sanguine Bond", "Rhystic Study", "Necropotence"]
+
+# Y'shtola costs four: cast her from turn 2 on, over everything
+[commander]
+prio = 90
+turn = 2
+
+# win lines, best first
+[[line]]
+name = "Y'shtola + Sanguine Bond / Marauding Blight-Priest (every drain drains again)"
+kind = "drain"
+pieces = [["Y'shtola, Night's Blessed"], ["Sanguine Bond", "Marauding Blight-Priest"]]
+
+# Tutor wishes (yshtola::tutor_pick), best score first, ahead of the lines' pieces
+# Greaves for a Y'shtola that keeps getting removed (tax 4+, not on the battlefield or in the command zone)
+[[wish]]
+cards = ["Lightning Greaves"]
+when = ["not commander-out & not commander-zone & tax>=4"]
+score = 90
+
+[[wish]]
+cards = ["Sanguine Bond"]
+score = 85
+
+[[wish]]
+cards = ["Necropotence"]
+when = ["turn<=6 & life>=25"]
+score = 80
+
+# under attack: the table's power at 12 or more
+[[wish]]
+cards = ["Propaganda"]
+when = ["opp-power>=12 & not out:Propaganda"]
+score = 75
+
+[[wish]]
+cards = ["Marauding Blight-Priest"]
+score = 70
+
+[[wish]]
+cards = ["Ill-Gotten Inheritance"]
+score = 60
+
+[[wish]]
+cards = ["Prison Sentence"]
+score = 58
+
+[[wish]]
+cards = ["Arrest"]
+score = 56
+
+[[wish]]
+cards = ["Propaganda"]
+score = 54
+
+# the X drains last (the hand AI moves them first once the table is in range of X: not expressible)
+[[wish]]
+cards = ["Exsanguinate", "Debt to the Deathless"]
+score = 50
+
+# Cast priorities (yshtola_named_prio), the first rule selecting a card decides
+[[prio]]
+commander = true
+when = ["turn>=2"]
+value = 90
+else = 60
+
+[[prio]]
+cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Coalition Relic", "Talisman of Progress"]
+when = ["turn<=5"]
+value = 82
+else = 30
+
+[[prio]]
+cards = ["Sanguine Bond"]
+value = 76
+
+# Propaganda: one is enough; sooner when the table hits hard
+[[prio]]
+cards = ["Propaganda"]
+when = ["out:Propaganda"]
+value = 30
+
+[[prio]]
+cards = ["Propaganda"]
+when = ["opp-power>=12"]
+value = 62
+else = 44
+
+[[prio]]
+cards = ["Marauding Blight-Priest"]
+value = 62
+
+[[prio]]
+cards = ["Lightning Greaves"]
+when = ["commander-out"]
+value = 58
+else = 25
+
+[[prio]]
+cards = ["The Eternal Wanderer"]
+value = 58
+
+[[prio]]
+cards = ["Polluted Bonds"]
+when = ["turn<=8"]
+value = 56
+else = 38
+
+[[prio]]
+cards = ["Bribery"]
+value = 56
+
+[[prio]]
+cards = ["Ill-Gotten Inheritance", "Zur the Enchanter"]
+value = 54
+
+[[prio]]
+cards = ["Dark Petition", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor"]
+value = 52
+
+[[prio]]
+cards = ["Thief of Sanity"]
+value = 52
+
+[[prio]]
+cards = ["Mystic Remora"]
+when = ["turn<=4"]
+value = 40
+else = 8
+
+[[prio]]
+cards = ["Esper Sentinel"]
+when = ["turn<=4"]
+value = 46
+else = 30
+
+# the X drains have their own cast options
+[[prio]]
+cards = ["Exsanguinate", "Debt to the Deathless"]
+value = 0
+
+# Restoration Angel is held for flash (25): it blinks Y'shtola out of removal
+[[prio]]
+cards = ["Restoration Angel"]
+value = 25
+
+# protection held, not cast proactively
+[[hold]]
+card = "Restoration Angel"
+protects = ["commander"]
+
+[[hold]]
+card = "Teferi's Protection"
+protects = ["commander", "Sanguine Bond"]

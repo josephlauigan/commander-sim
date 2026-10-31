@@ -83,6 +83,7 @@ fn purge_is_offered_on_a_big_creature_and_counted_as_cast() {
 
 #[test]
 fn purge_on_a_small_creature_waits_for_the_flip() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Eternal Witness: worth under 3, power 2
     let mut g = table2();
     lands(&mut g, P0, "Swamp", 3, false);
@@ -106,6 +107,7 @@ fn purge_on_a_small_creature_waits_for_the_flip() {
 // ======================================================== Psychosis Crawler and Niv-Mizzet: the priority ladder
 #[test]
 fn the_crawler_is_cast_before_the_flip_and_held_only_when_the_flipped_loop_would_deck_us() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     fill_library(&mut g, P0, 60);
     hand(&mut g, P0, &[CRAWLER]);
@@ -140,6 +142,7 @@ fn the_crawler_now_beats_ordinary_five_drops_in_the_main_phase() {
 
 #[test]
 fn niv_mizzet_is_cast_like_the_crawler_and_never_held() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     fill_library(&mut g, P0, 60);
     hand(&mut g, P0, &[NIV]);
@@ -155,6 +158,7 @@ fn niv_mizzet_is_cast_like_the_crawler_and_never_held() {
 
 #[test]
 fn triskelion_and_rapturous_moment_priorities() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     hand(&mut g, P0, &["Triskelion", "Rapturous Moment", "Duress", "Forest"]);
     // Kefka's enter trigger redraws what it discards: a fixed library keeps the test off the decklist's shuffle
@@ -195,6 +199,7 @@ fn niv_with_a_long_library_pings_faces_and_the_loop_runs() {
 
 #[test]
 fn niv_with_a_short_library_holds_the_face_pings() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = niv_table(40, 20);
     assert!(!kefka::niv_safe(&g, P0));
     assert!(kefka::loop_guard(&g, P0));
@@ -215,6 +220,7 @@ fn niv_with_a_short_library_still_finishes_a_player_on_one_life() {
 
 #[test]
 fn the_crawler_guard_holds_a_bolt_from_a_face_when_the_loop_would_deck_us() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     kefka_out(&mut g, P0, true);
     hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
@@ -238,6 +244,7 @@ fn the_flip_waits_for_the_crawler_but_not_for_niv() {
 // ======================================================== the cards Veyran's deck brings
 #[test]
 fn deflecting_swat_protects_kefka_from_a_removal_spell() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "seph"]);
     let archon = perm(&mut g, P1, "Archon of Cruelty");
     let k = kefka_out(&mut g, P0, false);
@@ -251,6 +258,7 @@ fn deflecting_swat_protects_kefka_from_a_removal_spell() {
 
 #[test]
 fn slip_out_the_back_phases_kefka_out_of_a_removal_spell() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Island", 1, false);
     let k = kefka_out(&mut g, P0, false);
@@ -262,6 +270,7 @@ fn slip_out_the_back_phases_kefka_out_of_a_removal_spell() {
 
 #[test]
 fn underworld_breach_is_cast_with_a_full_graveyard_and_escapes_a_discarded_spell() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     lands(&mut g, P0, "Mountain", 4, false);
     lands(&mut g, P0, "Swamp", 4, false);
@@ -343,6 +352,7 @@ fn mystic_confluence_draw_three_is_offered_at_the_end_of_an_opponents_turn_and_c
 
 #[test]
 fn the_wheel_keeps_deflecting_swat_over_a_land() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Swat has no tag, so it was worth 0 to the discard choice and went to Kefka's trigger before anything else
     let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Swamp", 3, false);
@@ -356,6 +366,7 @@ fn the_wheel_keeps_deflecting_swat_over_a_land() {
 
 #[test]
 fn deflecting_swat_redirects_destroy_and_shuffle_removal_and_fizzles_without_a_target() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for (spell, kind) in [("Murder", "destroy"), ("Chaos Warp", "tuck")] {
         let mut g = table(&["kefka", "seph"]);
         let archon = perm(&mut g, P1, "Archon of Cruelty");

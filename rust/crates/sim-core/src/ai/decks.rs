@@ -1,6 +1,7 @@
 //! Your decks' AI pieces from Python's `ais.py`: cast priorities (Sauron's in full; the others in phase 6), tutor
 //! targets, Disruptor Flute's name, the wipe evaluation and mode choice, and the answers to removal and wipes.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use super::brain::{Situation, removal_risk};
 use super::{is_main, plans, pool};
 use crate::cards::Types;
@@ -47,7 +48,7 @@ fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
 // ------------------------------------------------------------------ cast priorities
 /// ais.deck_prio: the deck's cast priority for a card (0-90)
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let v = match g.player(p).key {
+    let v = match hand_key(g, p) {
         "sauron" => sauron_prio(g, p, c),
         "veyran" => super::veyran::veyran_prio(g, p, c),
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
@@ -79,7 +80,7 @@ pub fn deck_prio_f(g: &Game, p: PlayerId, c: CardId) -> f64 {
     if let Some(v) = crate::impls::t6_plans::prio(g, p, c) {
         return v; // a Tier 6 deck's own plan slot
     }
-    match g.player(p).key {
+    match hand_key(g, p) {
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c),
         _ => deck_prio(g, p, c) as f64,
     }
@@ -507,7 +508,7 @@ pub fn helm_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// much smaller
 pub fn archivist_worth(g: &Game, p: PlayerId) -> bool {
     let most = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0);
-    let sauron_payoff = g.player(p).key == "sauron"
+    let sauron_payoff = hand_key(g, p) == "sauron"
         && (has(g, p, Tag::Kaervek) || (has(g, p, Tag::Sauron) && g.player(p).hand.len() <= 2 && most >= 4)); // refilled opponents cast into Kaervek and Sauron
     sauron_payoff || has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) || (g.player(p).hand.len() <= 1 && most >= 4) // Sheoldred: every opponent draw costs 2 life
 }
@@ -718,7 +719,7 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let okn: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| ok(c)).collect();
     let first = |ns: &[&str]| -> Option<CardId> { ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c)) };
     let pl = g.player(p);
-    match pl.key {
+    match hand_key(g, p) {
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
         "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
         "kraum" | "thrasios" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
@@ -770,7 +771,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         return Some(c);
     }
     let okk = tutor_ok_known(kind);
-    let main = is_main(g.player(p).key);
+    let main = is_main(hand_key(g, p));
     if !main && let Some(c) = pool::tutor_pick(g, p, |c| tutor_ok(g, okk, c)) {
         return Some(c); // outside deck: its wish list
     }
@@ -1105,7 +1106,7 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
                 v *= 0.5; // bounced cards can be recast
             }
             if q == p {
-                if pm.army && g.player(p).key == "sauron" && !has(g, p, Tag::Ozolith) {
+                if pm.army && hand_key(g, p) == "sauron" && !has(g, p, Tag::Ozolith) {
                     v *= 3.0; // the deck is one big Army: a sweep that kills it (Nibelheim Aflame) costs the plan, not a body
                 }
                 ml += v;
@@ -1211,7 +1212,7 @@ pub fn protect_response(
         return Ok(true);
     }
     if g.humans.get(owner).is_some()
-        || !is_main(g.player(owner).key)
+        || !is_main(hand_key(g, owner))
         || silenced(g, owner)
         || !g.perm(m).on_bf
     {
@@ -1231,7 +1232,7 @@ fn protect_main(
     if g.humans.get(owner).is_some() {
         return Ok(false); // practice mode: the person protects in their own window
     }
-    let key = g.player(owner).key;
+    let key = hand_key(g, owner);
     if !is_main(key) {
         if silenced(g, owner) {
             return Ok(false);
@@ -1337,7 +1338,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if q == caster || silenced(g, q) || g.humans.get(q).is_some() {
         return Ok(None);
     }
-    let key = g.player(q).key;
+    let key = hand_key(g, q);
     if !is_main(key) {
         if matches!(key, "thrasios" | "kraum")
             && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
@@ -1397,7 +1398,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
 /// spell worth `value`. True if it did.
 pub fn sauron_grounds_response(g: &mut Game, seph: PlayerId, value: f64) -> Res<bool> {
     for q in g.opps(seph).collect::<Vec<_>>() {
-        if g.player(q).key != "sauron" || value < 6.0 || g.humans.get(q).is_some() {
+        if hand_key(g, q) != "sauron" || value < 6.0 || g.humans.get(q).is_some() {
             continue;
         }
         let gl = g.player(q).lands.iter().copied().find(|&l| {

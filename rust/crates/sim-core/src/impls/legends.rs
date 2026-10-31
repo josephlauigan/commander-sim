@@ -11,6 +11,7 @@
 //! Plaza of Heroes' and Unclaimed Territory's colours (Python's mine.plaza_colors and territory_colors, which
 //! engine._land_cols calls by name) are here too.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -1612,7 +1613,7 @@ fn purge(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
     let Some(t) = max_by(&tg, |m| pval(g, m) + 0.2 * epow(g, m) as f64) else { return Ok(vec![]) };
     // Kefka, Ruler of Ruin: the life lost on your turn draws that many cards, so the power it deals is card draw
     let draws =
-        if g.player(p).key == "kefka" && crate::impls::kefka::flipped(g, p) { epow(g, t).clamp(0, 6) } else { 0 };
+        if hand_key(g, p) == "kefka" && crate::impls::kefka::flipped(g, p) { epow(g, t).clamp(0, 6) } else { 0 };
     if pval(g, t) < 3.0 && draws < 2 {
         return Ok(vec![]);
     }
@@ -1655,7 +1656,7 @@ fn profane(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     }
     // Kefka: {1}{B} on an empty turn is the card's best use, so it waits only for a real 1-2 mana play
     let cheap = g.player(p).hand.iter().any(|&x| x != c && !g.db.get(x).land && g.db.get(x).cmc <= 2);
-    let u = if g.player(p).key == "kefka" && !cheap { 4.0 } else { 2.2 };
+    let u = if hand_key(g, p) == "kefka" && !cheap { 4.0 } else { 2.2 };
     Ok(vec![plan(u, "suspend Profane Tutor".into(), profane_go, c.0 as i64)])
 }
 
@@ -1746,7 +1747,7 @@ fn jar(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>>
         return Ok(vec![]);
     }
     // the sheoldred deck with Sheoldred out: seven cards for everyone is 14 life gained and 14 lost by each opponent
-    if g.player(p).key == "sheoldred" && super::sheoldred::sheoldred_out(g, p) {
+    if hand_key(g, p) == "sheoldred" && super::sheoldred::sheoldred_out(g, p) {
         return Ok(vec![ability(8.0, "Memory Jar (Sheoldred)".into(), src, jar_go, 0)]);
     }
     if g.player(p).hand.len() > 2 || total_mana(g, p, false) < 3 {
@@ -1876,7 +1877,7 @@ fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
 /// share (Sauron's deck names Orc). Python caches it on the player and the land; it is worked out each time here (the
 /// same answer unless p's cards change hands)
 pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
-    if g.player(p).key == "sauron" {
+    if hand_key(g, p) == "sauron" {
         return "orc"; // mine.TERRITORY_TYPE
     }
     let pl = g.player(p);

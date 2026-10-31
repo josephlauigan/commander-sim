@@ -612,6 +612,7 @@ fn conquerors_flail_stops_opponents_casting_spells_on_your_turn_only_while_attac
 
 #[test]
 fn conquerors_flail_is_equipped_by_the_kraum_seat_before_combat() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_table();
     lands(&mut g, P0, "Plains", 3, false);
     let flail = perm(&mut g, P0, "Conqueror's Flail");
@@ -771,6 +772,7 @@ fn tutor(g: &Game) -> String {
 
 #[test]
 fn the_kraum_seat_tutors_for_a_land_when_short_of_mana() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_table();
     g.player_mut(P0).turns = 4;
     lands(&mut g, P0, "Plains", 2, false);
@@ -780,6 +782,7 @@ fn the_kraum_seat_tutors_for_a_land_when_short_of_mana() {
 
 #[test]
 fn the_kraum_seat_tutors_for_a_board_wipe_when_far_behind_on_board() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_table();
     g.player_mut(P0).turns = 6;
     lands(&mut g, P0, "Plains", 6, false);
@@ -791,6 +794,7 @@ fn the_kraum_seat_tutors_for_a_board_wipe_when_far_behind_on_board() {
 
 #[test]
 fn the_kraum_seat_tutors_for_a_finisher_not_the_flail_when_ahead() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // audit 10/18: the Flail was fetched every time; the finisher castable by next turn comes first
     let mut g = kraum_table();
     g.player_mut(P0).turns = 6;
@@ -818,6 +822,7 @@ fn best_equip_target(g: &Game, e: PermId) -> Option<PermId> {
 
 #[test]
 fn evasion_equipment_goes_on_the_creature_that_cannot_get_through_on_its_own() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_table();
     lands(&mut g, P0, "Plains", 4, false);
     let flier = perm(&mut g, P0, "Nightwind Glider");
@@ -858,6 +863,7 @@ fn the_other_seats_equip_choice_is_unchanged() {
 
 #[test]
 fn tymnas_spread_uses_the_creature_a_kitesail_makes_fly() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::impls::tymna_partners::spread;
     let mut g = table(&["thrasios", "veyran", "seph", "galadriel"]);
     perm(&mut g, P0, "Tymna the Weaver");
@@ -1585,6 +1591,7 @@ fn lightning_stagger_doubles_all_damage_to_the_player_and_their_permanents_until
 
 #[test]
 fn cecil_and_lightning_are_cast_early_cheap_attackers() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["thrasios", "veyran", "seph"]);
     for n in ["Cecil, Dark Knight", "Lightning, Army of One"] {
         let c = card(&g, n);

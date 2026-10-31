@@ -58,6 +58,7 @@ fn only_the_hold_line_gets_the_bonus() {
 /// counterspell to hold for, and a resolved Sheoldred is the stronger play (JD accepted it, 2026-10-29, rollouts.md)
 #[test]
 fn with_adaptive_rollouts_the_lookahead_casts_sheoldred_over_holding() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     ad_nauseam_and_a_creature(&mut g);
     set_hold_w(&mut g, 1.0);
@@ -85,6 +86,7 @@ fn at_six_rollouts_the_lookahead_keeps_ad_nauseams_mana_up() {
 
 #[test]
 fn without_the_bonus_the_lookahead_taps_out() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     ad_nauseam_and_a_creature(&mut g);
     set_hold_w(&mut g, 0.0);

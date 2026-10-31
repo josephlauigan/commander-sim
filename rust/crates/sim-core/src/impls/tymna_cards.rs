@@ -10,6 +10,7 @@
 //!   `ai::decks::protect_response` / `wipe_response`.
 //! - Tymna the Weaver herself is in `legends.rs`.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use super::partials::eot_kw;
 use crate::engine::pool::Kind;
 use crate::engine::repl;
@@ -1188,7 +1189,7 @@ fn blocked_by(g: &Game, p: PlayerId, e: Option<&str>, m: PermId) -> usize {
 /// creature already connects, or already flies); the pieces that add size and keywords go on a creature that connects
 /// anyway, since its hit is the card Tymna draws.
 pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
-    if !matches!(g.player(p).key, "kraum" | "thrasios") {
+    if !matches!(hand_key(g, p), "kraum" | "thrasios") {
         return 0.0;
     }
     let name = name_of(g, e);
@@ -1222,7 +1223,7 @@ pub fn equip_holder_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
 
 /// the utility the kraum seat gives equipping `e` to `m` (added to the generic equip option's)
 pub fn equip_utility_value(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
-    if !matches!(g.player(p).key, "kraum" | "thrasios") {
+    if !matches!(hand_key(g, p), "kraum" | "thrasios") {
         return 0.0;
     }
     // capped so that casting a creature (priority 66 and up, utility 6.6 and up) still comes before an equip
@@ -1241,7 +1242,7 @@ fn best_wearer(g: &Game, p: PlayerId, e: PermId) -> Option<PermId> {
 /// The Nim Deathmantle equip picks its wearer with `equip_holder_value` (in mine.rs).
 pub fn kraum_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let mut out = vec![];
-    if !matches!(g.player(p).key, "kraum" | "thrasios") || crate::human::is_human(g, p) || post {
+    if !matches!(hand_key(g, p), "kraum" | "thrasios") || crate::human::is_human(g, p) || post {
         return Ok(out);
     }
     for e in g.player(p).perms.clone() {
@@ -1969,7 +1970,7 @@ fn endurance_protect(
     actor: Option<PlayerId>,
 ) -> Res<bool> {
     const ENDURANCE: &str = "Dark Endurance";
-    if !matches!(g.player(owner_p).key, "kraum" | "thrasios")
+    if !matches!(hand_key(g, owner_p), "kraum" | "thrasios")
         || actor.is_none()
         || actor == Some(owner_p)
         || !(kind == "destroy" || kind.starts_with("dmg"))
@@ -2012,7 +2013,7 @@ pub fn cast_endurance(g: &mut Game, owner_p: PlayerId, c: CardId, m: PermId) -> 
 /// Dark Endurance for a commander a destroy sweeper would kill (the thrasios and kraum seats): indestructible until the
 /// end of the turn. A commander the sweeper can't kill (indestructible already, or tokens only) is left alone.
 fn endurance_wipe(g: &mut Game, q: PlayerId) -> Res {
-    if !matches!(g.player(q).key, "kraum" | "thrasios") || silenced(g, q) {
+    if !matches!(hand_key(g, q), "kraum" | "thrasios") || silenced(g, q) {
         return Ok(());
     }
     let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == "Dark Endurance") else {
@@ -2035,7 +2036,7 @@ fn endurance_wipe(g: &mut Game, q: PlayerId) -> Res {
 /// targeted removal (any kind: hexproof fizzles it) aimed at a commander or a permanent worth 4 or more; edicts and
 /// sweepers don't target. Mana kept for it: `tymna_partners::protection_held`. The combat use is `combat_trick`.
 fn blossom_protect(g: &mut Game, p: PlayerId, m: PermId, kind: Sym, actor: Option<PlayerId>) -> Res<bool> {
-    if g.player(p).key != "thrasios"
+    if hand_key(g, p) != "thrasios"
         || actor.is_none()
         || actor == Some(p)
         || matches!(&*kind, "edict" | "wipe" | "sacrifice")

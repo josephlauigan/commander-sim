@@ -31,6 +31,7 @@ fn kefka_holds_yawgmoths_will_into_an_empty_or_thin_graveyard() {
 
 #[test]
 fn kefka_casts_yawgmoths_will_for_a_storm_card_and_replays_the_line() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Swamp", 4, false);
     hand(&mut g, P0, &["Yawgmoth's Will"]);
@@ -48,6 +49,7 @@ fn kefka_casts_yawgmoths_will_for_a_storm_card_and_replays_the_line() {
 
 #[test]
 fn kefka_casts_yawgmoths_will_for_three_cheap_spells() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Swamp", 7, false);
     hand(&mut g, P0, &["Yawgmoth's Will"]);
@@ -57,6 +59,7 @@ fn kefka_casts_yawgmoths_will_for_three_cheap_spells() {
 
 #[test]
 fn kefkas_mystical_tutor_finds_the_storm_card_for_a_waiting_breach() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::ai::decks::tutor_pick_named;
     let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Underworld Breach");

@@ -4,6 +4,7 @@
 //! The choices the heuristic AI makes here (which player to attack, which creatures stay home, chump blocks) are
 //! `ai.rs`'s; the look-ahead's attack plan comes in M4.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
@@ -66,7 +67,7 @@ pub fn blockable(g: &Game, q: PlayerId, a: PermId) -> bool {
 
 /// Veyran's small creature tokens: the next spell replaces them, so they block freely
 pub fn spare_tokens(g: &Game, d: PlayerId, cands: &[PermId]) -> Vec<PermId> {
-    if g.player(d).key != "veyran" {
+    if hand_key(g, d) != "veyran" {
         return vec![];
     }
     cands.iter().copied().filter(|&x| g.perm(x).token && !g.perm(x).army && epow(g, x) <= 2).collect()
@@ -536,7 +537,7 @@ pub fn ai_blocks(
                 min_by(&spare, |x| pval(g, x)).unwrap() // chump with a spare token
             } else if ap >= 2 && rng.random() < ai::chump_prob(g, d, incoming) {
                 let mut cs = cands.clone();
-                if g.player(d).key == "yshtola" && incoming < g.player(d).life {
+                if hand_key(g, d) == "yshtola" && incoming < g.player(d).life {
                     cs.retain(|&x| !g.perm(x).is_cmd); // Y'shtola is the engine: she chumps only to live
                     if cs.is_empty() {
                         continue;
@@ -1112,7 +1113,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 None => ai::choose_defender(g, p),
             };
             let groups = if plan.is_some_and(|x| x.1 == "all") {
-                let all_atk = if g.player(p).key == "cloud" {
+                let all_atk = if hand_key(g, p) == "cloud" {
                     crate::impls::cloud::all_out_trim(g, p, all_atk, d)
                 } else {
                     all_atk
@@ -1316,7 +1317,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
 /// attacks: attacking doesn't tap it, so it still taps for mana and blocks (Giada, Font of Hope: 2/2 flying,
 /// vigilance, lifelink, never attacked)
 fn vig_utility(g: &Game, p: PlayerId, m: PermId) -> bool {
-    !ai::is_main(g.player(p).key) && (g.perm(m).vig || kw(g, m, "vigilance"))
+    !ai::is_main(hand_key(g, p)) && (g.perm(m).vig || kw(g, m, "vigilance"))
 }
 
 fn untap_creatures(g: &mut Game, p: PlayerId) {

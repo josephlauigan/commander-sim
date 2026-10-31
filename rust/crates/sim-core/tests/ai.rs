@@ -147,6 +147,7 @@ fn a_tutor_moves_one_card_from_library_to_hand() {
 
 #[test]
 fn sauron_tutors_for_the_missing_half_of_the_combo() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Sauron out and no Ozolith yet (the list has no Sword any more): the tutor finds the Ozolith, not the Assault
     let mut g = table(&["sauron", "veyran"]);
     lands(&mut g, P0, "Island", 6, false);

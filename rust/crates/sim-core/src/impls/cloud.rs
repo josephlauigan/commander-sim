@@ -15,6 +15,7 @@
 //! The plan: Cloud on turn 2, his search by need (`cloud_pick`), every Equipment onto Cloud (`holder_bonus` biases
 //! `dsl::equip_options`), the protection pieces kept for him (`cloud_protect`).
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
@@ -179,7 +180,7 @@ pub fn best_holder(g: &Game, p: PlayerId) -> Option<PermId> {
 
 /// the extra weight the cloud deck gives a creature as the target of an equip (read by `dsl::equip_options`)
 pub fn holder_bonus(g: &Game, p: PlayerId, m: PermId) -> f64 {
-    if g.player(p).key != KEY {
+    if hand_key(g, p) != KEY {
         return 0.0;
     }
     if name_of(g, m) == CLOUD { 20.0 } else { 0.0 }
@@ -187,7 +188,7 @@ pub fn holder_bonus(g: &Game, p: PlayerId, m: PermId) -> f64 {
 
 /// the extra utility the cloud deck gives equipping this piece to m (read by `dsl::equip_options`)
 pub fn equip_utility_bonus(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
-    if g.player(p).key != KEY {
+    if hand_key(g, p) != KEY {
         return 0.0;
     }
     let mut u = 0.0;
@@ -210,7 +211,7 @@ pub fn equip_utility_bonus(g: &Game, p: PlayerId, e: PermId, m: PermId) -> f64 {
 
 /// an Equipment (attached to something other than Cloud) the cloud deck wants to move onto Cloud
 pub fn wants_move(g: &Game, p: PlayerId, e: PermId) -> bool {
-    g.player(p).key == KEY && cloud_of(g, p).is_some_and(|c| g.perm(e).attached != Some(c))
+    hand_key(g, p) == KEY && cloud_of(g, p).is_some_and(|c| g.perm(e).attached != Some(c))
 }
 
 fn metalcraft(g: &Game, p: PlayerId) -> bool {
@@ -1419,7 +1420,7 @@ fn plaza_protect(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
 /// (equip {1}) and Sword of Feast and Famine (equip {2}).
 pub fn cloud_special(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
     let mut out = vec![];
-    if g.player(p).key != KEY || crate::human::is_human(g, p) {
+    if hand_key(g, p) != KEY || crate::human::is_human(g, p) {
         return Ok(out);
     }
     for e in g.player(p).perms.clone() {
@@ -1562,7 +1563,7 @@ fn likely_loss(g: &Game, cl: PermId, defs: &[PlayerId]) -> bool {
 /// the look-ahead may not pick "no attack" when an equipped Cloud (trigger Equipment) can attack and isn't a likely
 /// loss (search::choose_attack_inner)
 pub fn must_attack(g: &Game, p: PlayerId) -> bool {
-    if g.player(p).key != KEY {
+    if hand_key(g, p) != KEY {
         return false;
     }
     let Some(cl) = cloud_of(g, p) else { return false };
@@ -1678,7 +1679,7 @@ fn carries_itself(name: &str) -> bool {
 /// carry it, and no creature to cast with it this turn. Not when it is the only use of the mana (nothing else in the
 /// hand can be cast with it).
 pub fn strands_equipment(g: &Game, p: PlayerId, c: CardId) -> bool {
-    if g.player(p).key != KEY || !is_equipment_card(g, c) || carries_itself(card_name(g, c)) {
+    if hand_key(g, p) != KEY || !is_equipment_card(g, c) || carries_itself(card_name(g, c)) {
         return false;
     }
     if creatures_out(g, p) > 0 {
@@ -1824,7 +1825,7 @@ pub fn keep_hand(g: &Game, p: PlayerId) -> bool {
 /// Cloud wearing Equipment is not sent home by Stormfront Riders (bulk_white::riders_etb): the Equipment falls off and
 /// every re-equip costs mana. Only the cloud deck; Riders returns anything else (or itself) first.
 pub fn riders_spare(g: &Game, m: PermId) -> bool {
-    g.player(owner(g, m)).key == KEY && name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty()
+    hand_key(g, owner(g, m)) == KEY && name_of(g, m) == CLOUD && !equipment_on(g, m).is_empty()
 }
 
 // ------------------------------------------------------------------ double strike package (cloud-ds)
@@ -1965,7 +1966,7 @@ pub fn register_ds(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// The pick is Cloud's own search order; with no Equipment left, the best Aura.
 fn open_the_armory(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<crate::sym::Sym> {
     let human = crate::human::is_human(g, p);
-    let pick = if human || g.player(p).key != KEY { None } else { cloud_pick(g, p) };
+    let pick = if human || hand_key(g, p) != KEY { None } else { cloud_pick(g, p) };
     let ok = |g: &Game, c: CardId| g.db.get(c).has_subtype("equipment") || g.db.get(c).has_subtype("aura");
     let got = super::t1::tutor_named(g, p, &|g, c| ok(g, c) && (human || pick.is_none_or(|k| k == c)), 1, "hand")?;
     for c in got {

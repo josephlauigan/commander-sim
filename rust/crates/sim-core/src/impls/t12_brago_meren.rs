@@ -48,6 +48,7 @@
 //! Combos (chained into combos::all): Peregrine Drake + Deadeye Navigator (a two-card infinite: mana and blinks), and
 //! Peregrine Drake + Archaeomancer + Ghostly Flicker; both win through Agent of Treachery (every permanent stolen).
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::control::{Duration, gain_control};
@@ -765,7 +766,7 @@ fn can_return(g: &Game, p: PlayerId) -> bool {
 }
 
 fn buried_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if crate::ai::is_main(g.player(p).key) || crate::human::is_human(g, p) || !g.player(p).hand.contains(&c) {
+    if crate::ai::is_main(hand_key(g, p)) || crate::human::is_human(g, p) || !g.player(p).hand.contains(&c) {
         return Ok(vec![]);
     }
     if post.is_some() && g.active != Some(p) {
@@ -790,7 +791,7 @@ fn buried_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// Search your library for up to three creature cards, put them into your graveyard, then shuffle.
 fn buried_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    if crate::ai::is_main(g.player(p).key) || crate::human::is_human(g, p) {
+    if crate::ai::is_main(hand_key(g, p)) || crate::human::is_human(g, p) {
         crate::ai::seph_fill_resolve(g, p, "buried", ctx)?; // JD's decks: their own plan
         return Ok("gy");
     }

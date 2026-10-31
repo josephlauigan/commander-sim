@@ -10,6 +10,7 @@
 
 pub mod model;
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{Colors, Types};
 use crate::engine::pool::Kind;
 use crate::engine::life::{check_state, gain, lose_life};
@@ -1302,7 +1303,7 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
     let tapped = e.tapped == Some(true);
     for _ in 0..k {
         // the karn deck's nonbasic land searches (Expedition Map, Urza's Cave) take the land it wants (`karn::search_pick`)
-        let karn_pick = f.basic == Some(false) && crate::impls::karn::is_deck(g.player(p).key);
+        let karn_pick = f.basic == Some(false) && crate::impls::karn::is_deck(hand_key(g, p));
         if f.kind.as_deref() == Some("land") && to == "battlefield" && !karn_pick {
             zones::land_ramp(g, p, 1, tapped)?;
             continue;
@@ -2013,7 +2014,7 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
                 m != src
                     && matches(g, p, m, Some(&f), None)
                     && (g.perm(m).token || pval(g, m) < 3.0)
-                    && (!crate::ai::is_main(g.player(p).key)
+                    && (!crate::ai::is_main(hand_key(g, p))
                         || (!g.perm(m).is_cmd
                             && !crate::engine::values::no_sac(g, m)
                             && !crate::impls::common::is_payoff(g, m)))

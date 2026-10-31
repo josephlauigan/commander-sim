@@ -68,7 +68,7 @@ fn name_of(g: &Game, m: PermId) -> &str {
 }
 
 fn is_kefka(g: &Game, p: PlayerId) -> bool {
-    g.player(p).key == "kefka"
+    crate::ai::hand_key(g, p) == "kefka"
 }
 
 // ------------------------------------------------------------------ kefka's state

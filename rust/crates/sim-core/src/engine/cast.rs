@@ -613,7 +613,7 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
     if crate::human::is_human(g, p) {
         return crate::human::choices::discard(g, p, n as usize, "Discard a card");
     }
-    if g.player(p).key == "kefka" {
+    if crate::ai::hand_key(g, p) == "kefka" {
         return crate::impls::kefka::discard_n(g, p, n);
     }
     let keep = ai::discard_keep(g, p);

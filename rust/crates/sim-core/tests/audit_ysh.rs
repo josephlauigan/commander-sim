@@ -28,6 +28,7 @@ fn gy(g: &mut Game, p: PlayerId, names: &[&str]) {
 // ---------------------------------------------------------------- Dark Endurance
 #[test]
 fn dark_endurance_saves_tymna_from_destroy_removal() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_tbl();
     lands(&mut g, P0, "Swamp", 2, false);
     let t = perm(&mut g, P0, "Tymna the Weaver");
@@ -73,6 +74,7 @@ fn dark_endurance_is_only_for_the_tymna_partner_seats() {
 // ---------------------------------------------------------------- Underworld Breach
 #[test]
 fn breach_is_cast_when_a_card_can_be_escaped_and_kept_when_not() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_tbl();
     g.active = Some(P0);
     lands(&mut g, P0, "Mountain", 1, false);
@@ -93,6 +95,7 @@ fn breach_is_cast_when_a_card_can_be_escaped_and_kept_when_not() {
 // ---------------------------------------------------------------- Baird
 #[test]
 fn baird_is_valued_like_the_pillowfort_cards() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_tbl();
     let hero = hand(&mut g, P0, &["Baird, Steward of Argive", "Hero of Bladehold"]);
     for q in [P1, PlayerId(2), PlayerId(3)] {
@@ -106,6 +109,7 @@ fn baird_is_valued_like_the_pillowfort_cards() {
 // ---------------------------------------------------------------- Diabolic Tutor
 #[test]
 fn diabolic_tutor_finds_a_finisher_not_the_flail() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = kraum_tbl();
     lands(&mut g, P0, "Plains", 6, false);
     perm(&mut g, P0, "Aven Mindcensor");
@@ -195,6 +199,7 @@ fn a_trigger_that_makes_four_is_worth_more() {
 
 #[test]
 fn farewell_is_cast_with_teferis_protection_held_up_behind_it() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = ysh_tbl();
     g.active = Some(P0);
     lands(&mut g, P0, "Plains", 9, false);
@@ -227,6 +232,7 @@ fn farewell_without_the_mana_for_teferis_is_not_planned_around_it() {
 
 #[test]
 fn the_thrasios_seat_casts_dark_endurance_for_tymna_too() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Tymna/Thrasios plays Dark Endurance like the kraum seat (thrasios deck, 10/19)
     let mut g = table(&["thrasios", "galadriel", "veyran", "seph"]);
     lands(&mut g, P0, "Swamp", 2, false);

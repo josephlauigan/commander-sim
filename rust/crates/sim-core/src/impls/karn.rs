@@ -19,6 +19,7 @@
 //!   an artifact, so one more {C} a turn), `land_adjust` (the missing Tron piece), `search_pick` (the land that
 //!   Expedition Map and Urza's Cave fetch).
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::total_mana;
 use crate::engine::removal::apply_removal;
@@ -206,7 +207,7 @@ fn missing_tron(g: &Game, p: PlayerId) -> Vec<&'static str> {
 /// engine::turn::land_score: a Tron land is worth playing first while the set isn't whole (the land drop that
 /// completes it most of all); Urza's Workshop once the artifacts turn it on
 pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    if !is_deck(g.player(p).key) {
+    if !is_deck(hand_key(g, p)) {
         return 0.0;
     }
     let n = &*g.db.get(c).name;
@@ -223,7 +224,7 @@ pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
 /// the land a search (Expedition Map, Urza's Cave) takes: the Tron piece the deck lacks, then a land that does
 /// something, else Wastes
 pub fn search_pick(g: &Game, p: PlayerId, cands: &[CardId]) -> Option<CardId> {
-    if !is_deck(g.player(p).key) {
+    if !is_deck(hand_key(g, p)) {
         return None;
     }
     let named = |n: &str| cands.iter().copied().find(|&c| &*g.db.get(c).name == n);
@@ -298,7 +299,7 @@ fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// untapped Factories and Foundries (as many as the attackers call for) to block when the attack is dangerous.
 /// True if one was.
 pub fn block_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
-    if !is_deck(g.player(d).key) {
+    if !is_deck(hand_key(g, d)) {
         return Ok(false);
     }
     let incoming: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).owner == p).map(|&m| epow(g, m)).sum();
@@ -428,7 +429,7 @@ pub fn karn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 /// `dsl::ability_options`: the Baubles stay on the battlefield while Karn is out or coming (each is an artifact, so one
 /// more {C} for Karn's mana every turn), unless the hand has run dry
 pub fn hold_ability(g: &Game, p: PlayerId, card: &str) -> bool {
-    is_deck(g.player(p).key)
+    is_deck(hand_key(g, p))
         && matches!(card, "Mishra's Bauble" | "Urza's Bauble" | "Wayfarer's Bauble")
         && karn_soon(g, p)
         && g.player(p).hand.len() >= 2

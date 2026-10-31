@@ -349,6 +349,7 @@ fn puresteel_paladin_makes_equip_free_with_three_artifacts() {
 
 #[test]
 fn the_equip_option_uses_the_changed_cost_and_picks_cloud() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 3, false);
     let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
@@ -656,6 +657,7 @@ fn destroy(g: &mut Game, m: PermId) {
 
 #[test]
 fn take_up_the_shield_saves_cloud_from_a_destroy_spell() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 2, false);
     let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
@@ -668,6 +670,7 @@ fn take_up_the_shield_saves_cloud_from_a_destroy_spell() {
 
 #[test]
 fn zack_fair_saves_cloud_and_gives_him_the_equipment_and_counters() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 2, false);
     let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
@@ -692,6 +695,7 @@ fn a_creature_that_is_not_worth_it_is_left_to_die() {
 
 #[test]
 fn unbreakable_formation_answers_a_destroy_spell_when_nothing_cheaper_is_there() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 3, false);
     let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");

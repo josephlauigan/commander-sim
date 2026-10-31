@@ -2020,7 +2020,7 @@ pub fn alela_protect(
 /// Greaves on Alela gives her shroud, so the deck's own Aura (or Daydream) can't target her. When the hand holds one
 /// that wants Alela, the AI first moves the Greaves (equip {0}) to the best other creature.
 fn greaves_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.perm(src).owner != p || g.player(p).key != "alela" || post != Some(false) || g.active != Some(p) {
+    if g.perm(src).owner != p || crate::ai::hand_key(g, p) != "alela" || post != Some(false) || g.active != Some(p) {
         return Ok(vec![]);
     }
     let Some(am) = alela_perm(g, p) else { return Ok(vec![]) };

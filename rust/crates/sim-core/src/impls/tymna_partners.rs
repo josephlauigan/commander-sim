@@ -3,6 +3,7 @@
 //! zone with the generic commander priority. The decks' own AI plans are written later: for now both use the
 //! default priority.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::mana::can_pay;
 use crate::engine::values::card_name;
 use crate::ids::{CardId, PlayerId};
@@ -79,12 +80,12 @@ fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         return base.max(66);
     }
-    if pl.key == "thrasios"
+    if hand_key(g, p) == "thrasios"
         && let Some(v) = combo_prio(g, p, &d.name)
     {
         return v;
     }
-    if matches!(pl.key, "kraum" | "thrasios") {
+    if matches!(hand_key(g, p), "kraum" | "thrasios") {
         if t.has(Tag::Breach) && !d.creature {
             return breach_prio(g, p);
         }
@@ -215,7 +216,7 @@ pub fn spread(
     groups: Vec<(PlayerId, Vec<PermId>)>,
     pool: &[PermId],
 ) -> Vec<(PlayerId, Vec<PermId>)> {
-    if !matches!(g.player(p).key, "thrasios" | "kraum") || !hit_engine_out(g, p) {
+    if !matches!(hand_key(g, p), "thrasios" | "kraum") || !hit_engine_out(g, p) {
         return groups;
     }
     let hit = |a: PermId| epow(g, a) * if double_strike(g, a) { 2 } else { 1 } * fiery(g, p);
@@ -282,7 +283,7 @@ pub fn spread(
 /// Thrasios on turn 4.4-4.7, Tymna on 5.0-5.2 and Kraum on 6.8-7.1 when each was castable about 1.3 turns earlier.
 /// `opts` are the main-phase options; returns the index of the commander cast.
 pub fn commander_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
-    if !matches!(g.player(p).key, "thrasios" | "kraum") {
+    if !matches!(hand_key(g, p), "thrasios" | "kraum") {
         return None;
     }
     let (i, o) =
@@ -325,7 +326,7 @@ fn can_pay_r(g: &Game, p: PlayerId, cg: u32, cp: &str) -> bool {
 /// mana unspent (0.4-0.7 activations a game), so the ability is left out of the search and made when the search's
 /// best play among the others is "stop": the spare mana is spent after everything else the deck wanted to do.
 pub fn thrasios_sink(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<usize> {
-    if !matches!(g.player(p).key, "thrasios" | "kraum") {
+    if !matches!(hand_key(g, p), "thrasios" | "kraum") {
         return None;
     }
     opts.iter().position(|o| o.act.is_some() && o.label.starts_with("Thrasios:"))
@@ -336,7 +337,7 @@ pub fn thrasios_sink(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Optio
 /// Blossoming Defense (thrasios), while a commander or a creature worth 4 or more is out to protect. (Not part of
 /// `brain::hold_value`: there the look-ahead's hold bonus beat casting two creatures with ten lands in play.)
 pub fn protection_held(g: &Game, p: PlayerId, c: CardId) -> bool {
-    let key = g.player(p).key;
+    let key = hand_key(g, p);
     if !matches!(key, "thrasios" | "kraum") {
         return false;
     }
@@ -356,7 +357,7 @@ pub fn protection_held(g: &Game, p: PlayerId, c: CardId) -> bool {
 /// worth 3 or more), or that would win a trade it was losing against a blocker worth 3 or more. `assign` is the
 /// (attacker, blocker) pairs. First strike and trample are not worked through: those blocks are left alone.
 pub fn combat_trick(g: &mut Game, p: PlayerId, atk: &[PermId], assign: &[(PermId, PermId)]) -> crate::flow::Res {
-    let key = g.player(p).key;
+    let key = hand_key(g, p);
     if !matches!(key, "thrasios" | "kraum") || crate::human::is_human(g, p) {
         return Ok(());
     }
@@ -457,7 +458,7 @@ fn combo_piece(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
 }
 
 pub fn combo_tutor_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
-    if g.player(p).key != "thrasios" {
+    if hand_key(g, p) != "thrasios" {
         return None;
     }
     combo_piece(g, p, okn)

@@ -21,6 +21,7 @@
 //! lock_worth, zur_protect, zur_wipe_response) come from `impls/zur.rs`, through the small `zur` module at the end of
 //! this file.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::engine::pool::Kind;
 use crate::ai::decks::{helm_equip, helm_target, necro_prio, pay_card, sphinx_prio};
@@ -345,7 +346,7 @@ fn x_option(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec
     if post.is_none()
         || g.active != Some(p)
         || !hand_has(g, p, c)
-        || !matches!(g.player(p).key, "yshtola" | "sheoldred" | "sauron")
+        || !matches!(hand_key(g, p), "yshtola" | "sheoldred" | "sauron")
     {
         return Ok(vec![]);
     }
@@ -999,7 +1000,7 @@ pub fn shield(g: &mut Game, m: PermId) {
 // ======================================================== Champion's Helm (the AI equips it on Y'shtola)
 fn helm(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != g.perm(src).owner
-        || g.player(p).key != "yshtola"
+        || hand_key(g, p) != "yshtola"
         || human(g, p)
         || post.is_none()
         || !can_pay(g, p, 1, "", false)

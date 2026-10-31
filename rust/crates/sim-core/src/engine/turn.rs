@@ -1125,7 +1125,7 @@ fn step_end(g: &mut Game, p: PlayerId) -> Res {
 /// the AI's keep rule for p's current hand: 2 to 5 lands (Cloud's deck has its own, `cloud::keep_hand`)
 pub fn keeps_hand(g: &Game, p: PlayerId) -> bool {
     let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
-    if g.player(p).key == "cloud" {
+    if crate::ai::hand_key(g, p) == "cloud" {
         return crate::impls::cloud::keep_hand(g, p);
     }
     if let Some(k) = crate::impls::t6_plans::keep(g, p) {

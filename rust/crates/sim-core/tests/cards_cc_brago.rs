@@ -172,6 +172,7 @@ fn held_back(g: &Game) -> bool {
 
 #[test]
 fn cloudshift_needs_a_creature_worth_blinking() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = brago();
     hand(&mut g, P0, &["Cloudshift"]);
     assert!(held_back(&g), "no target: not cast");
@@ -181,6 +182,7 @@ fn cloudshift_needs_a_creature_worth_blinking() {
 
 #[test]
 fn cloudshift_is_kept_for_the_kitten_loop() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = brago();
     hand(&mut g, P0, &["Cloudshift", "Archaeomancer"]);
     perm(&mut g, P0, "Mulldrifter");

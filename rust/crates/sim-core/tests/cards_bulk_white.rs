@@ -330,6 +330,7 @@ fn shardmage_s_rescue_hexproof_ends_with_the_turn() {
 
 #[test]
 fn cho_manno_s_blessing_gives_protection_from_the_spells_colour() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let cloud = perm(&mut g, P0, "Cloud, Midgar Mercenary");
     g.perm_mut(cloud).is_cmd = true;
@@ -347,6 +348,7 @@ fn cho_manno_s_blessing_gives_protection_from_the_spells_colour() {
 
 #[test]
 fn patriot_gives_hexproof_in_response_to_removal() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let _pat = perm(&mut g, P0, "Patriot, Shield Wielder");
     let cloud = perm(&mut g, P0, "Cloud, Midgar Mercenary");
@@ -375,6 +377,7 @@ fn patriot_pumps_the_biggest_attacker_before_combat() {
 
 #[test]
 fn ultimate_magic_holy_saves_the_board_from_a_wrath() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let a = perm(&mut g, P0, "Exalted Angel");
     let b = perm(&mut g, P0, "Helitrooper");

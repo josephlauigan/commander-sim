@@ -591,6 +591,7 @@ fn susurian_voidborn_drains_for_each_treasure_cracked() {
 
 #[test]
 fn susurian_voidborn_warp_is_cast_for_b_exiled_at_the_end_step_and_recast_later() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     lands(&mut g, P0, "Swamp", 1, false);
     hand(&mut g, P0, &["Susurian Voidborn"]);
@@ -686,6 +687,7 @@ fn kefkas_wheel_for_the_kefka_deck_picks_a_new_type_after_the_opponents() {
 
 #[test]
 fn the_flip_option_is_offered_at_eight_mana_and_ranks_with_the_plays_that_matter() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     lands(&mut g, P0, "Swamp", 8, false);
     perm(&mut g, P0, KEFKA);
@@ -696,6 +698,7 @@ fn the_flip_option_is_offered_at_eight_mana_and_ranks_with_the_plays_that_matter
 
 #[test]
 fn the_flip_with_the_crawler_out_waits_for_a_library_that_outlasts_the_table() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     lands(&mut g, P0, "Swamp", 8, false);
     perm(&mut g, P0, KEFKA);
@@ -711,6 +714,7 @@ fn the_flip_with_the_crawler_out_waits_for_a_library_that_outlasts_the_table() {
 
 #[test]
 fn the_crawler_is_held_after_the_flip_when_the_loop_would_deck_us() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     flipped_kefka(&mut g, P0);
     let c = card(&g, "Psychosis Crawler");
@@ -782,6 +786,7 @@ fn the_discard_choice_keeps_a_held_crawler() {
 
 #[test]
 fn scarlet_spider_and_embrace_are_held_for_kefkas_trigger() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table2();
     lands(&mut g, P0, "Mountain", 4, false);
     lands(&mut g, P0, "Swamp", 4, false);
@@ -881,6 +886,7 @@ fn marvin_uses_nivs_draw_only_while_niv_is_out() {
 
 #[test]
 fn marvin_is_cast_sooner_with_a_creature_to_copy_and_the_ai_taps_him() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "veyran"]);
     fill_library(&mut g, P0, 10);
     let c = card(&g, "Marvin, Murderous Mimic");
