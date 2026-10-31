@@ -15,7 +15,7 @@ Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a
 ## State
 
 - [x] 1. Identity (300 games t1-t5): origin/main vs stack `AI_HAND=1 AI_RULES=0`: t1, t2, t4, t5 byte for byte; t3 moved by card models 2 commit 13e01e84 (Atraxa: Dreamtide Whale, Norn's Decree), bisected with `pre-src` (a9766cf8) and `mid-src` (a9766cf8 + bad6c75a), both = main. Results file section 1.
-- [~] 2. Stage B and the t2 lean done (results section 2; all level). `rest.sh` runs q2b (t1 half B: old, ref, `AI_SEARCH_OPP=1`), then q3 (rules), then q4 (hand), logs `q2b.log`, `q3.log`, `q4.log`, `rest.log`.
-- [ ] 3. `AI_RULES`.
-- [ ] 4. `AI_HAND`.
+- [x] 2. Stage B, t2 lean, t1 lean (results section 2): all level.
+- [x] 3. `AI_RULES`: all level (results section 3).
+- [~] 4. `AI_HAND`: q4 running (log q4.log).
 - [ ] 5. Results table.
