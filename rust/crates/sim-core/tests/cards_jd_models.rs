@@ -177,3 +177,75 @@ fn price_of_progress_is_worth_casting_only_when_the_opponents_pay_more() {
     let bad = sim_core::dsl::card_value(&g, P0, c);
     assert!(good > 3.0 && bad < good, "{good} {bad}");
 }
+
+// ======================================================== Sauron: Baleful Mastery
+/// Sauron at a t3 table
+fn sauron_table() -> Game {
+    table(&["sauron", "korvold-jund-sacrifice", "aurelia-boros-extra-combats"])
+}
+
+fn hands(g: &Game) -> Vec<usize> {
+    [P0, P1, P2].iter().map(|&q| g.player(q).hand.len()).collect()
+}
+
+#[test]
+fn baleful_mastery_short_of_mana_pays_one_b_and_an_opponent_draws() {
+    let mut g = sauron_table();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Baleful Mastery"])[0];
+    lands(&mut g, P0, "Swamp", 2, false);
+    let t = token(&mut g, P1, 6); // (not Consecrated Sphinx: it would draw two on the opponent's draw)
+    let before = hands(&g);
+    assert!(sim_core::ai::brain::cast_removal(&mut g, P0, c, &[t], 0, None).unwrap());
+    assert!(!g.perm(t).on_bf);
+    let after = hands(&g);
+    assert_eq!(after[0], before[0] - 1);
+    assert_eq!(after[1] + after[2], before[1] + before[2] + 1, "one opponent draws a card");
+}
+
+#[test]
+fn baleful_mastery_with_the_mana_pays_full_and_nobody_draws() {
+    let mut g = sauron_table();
+    g.active = Some(P0);
+    let c = hand(&mut g, P0, &["Baleful Mastery"])[0];
+    lands(&mut g, P0, "Swamp", 4, false);
+    let t = perm(&mut g, P1, "Consecrated Sphinx");
+    let before = hands(&g);
+    assert!(sim_core::ai::brain::cast_removal(&mut g, P0, c, &[t], 0, None).unwrap());
+    assert!(!g.perm(t).on_bf);
+    let after = hands(&g);
+    assert_eq!((after[1], after[2]), (before[1], before[2]));
+    assert!(g.player(P0).lands.iter().all(|&m| g.perm(m).tapped), "{{3}}{{B}} paid");
+}
+
+// ======================================================== Thanos: Orim's Chant
+/// Thanos at a t6 table
+fn thanos_table() -> Game {
+    table(&["thanos", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"])
+}
+
+fn chant(g: &mut Game, kicks: u32, turn: PlayerId) {
+    g.active = Some(turn);
+    let c = hand(g, P0, &["Orim's Chant"])[0];
+    cast::cast_card(g, P0, c, "hand", Ctx { face: Some(P1), kicks, ..Ctx::default() }).unwrap();
+}
+
+#[test]
+fn orims_chant_locks_the_target_player_out_of_spells() {
+    let mut g = thanos_table();
+    chant(&mut g, 0, P0);
+    assert!(cast::spell_locked(&g, P1, card(&g, "Sol Ring")));
+    assert!(!cast::spell_locked(&g, P2, card(&g, "Sol Ring")));
+    assert!(!sim_core::impls::t6_stax::attack_lock(&g));
+}
+
+#[test]
+fn kicked_orims_chant_stops_every_attack_this_turn() {
+    let mut g = thanos_table();
+    chant(&mut g, 1, P1); // cast in P1's turn, before its combat
+    assert!(sim_core::impls::t6_stax::attack_lock(&g));
+    token(&mut g, P1, 9);
+    let life: Vec<i32> = [P0, P2].iter().map(|&q| g.player(q).life).collect();
+    sim_core::engine::combat::combat(&mut g, P1).unwrap();
+    assert_eq!(life, [P0, P2].iter().map(|&q| g.player(q).life).collect::<Vec<_>>());
+}

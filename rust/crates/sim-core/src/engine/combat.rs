@@ -1022,6 +1022,10 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         if !g.hooks.is_empty() && ncomb == 1 {
             fire_trigger(g, Event::Crew, Call::Player { p })?;
         }
+        if crate::impls::t6_stax::attack_lock(g) {
+            crate::glog!(g, "  creatures can't attack this turn (kicked Orim's Chant)");
+            break;
+        }
         let human = crate::human::is_human(g, p);
         if human && !g.hooks.is_empty() {
             // practice mode: the beginning of combat comes before attackers are declared (Ardenn moving Equipment,

@@ -60,16 +60,16 @@ fn silence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
 
 
 /// the turn flag a kicked Orim's Chant sets on its caster: creatures can't attack this turn (the engine's attack
-/// declaration should return no attackers for anyone while it is set)
+/// declaration returns no attackers for anyone while it is set: `combat::combat`)
 pub fn attack_lock(g: &Game) -> bool {
     g.players.iter().any(|q| flag_now(g, q.id, "stax_no_attack"))
 }
 
 /// **Orim's Chant** ({W} instant, kicker {W}): target player can't cast spells this turn; if kicked, creatures can't
 /// attack this turn. The target is the face the spell was aimed at, else the opponent with the most cards in hand.
-/// Partial: the lock is real; the kicker needs the engine to offer and pay it (a
-/// kicked cast sets `ctx.kicks`, which nothing does yet), and the no-attack rule needs an attack check
-/// (engine-needs-stax.md). Kicked, the flag `attack_lock` is set. The AI never casts it (priority 0).
+/// Kicked (`ctx.kicks`: a person is asked, human/specs.rs), it sets the turn flag `attack_lock`, which `combat::combat`
+/// reads: no attackers this turn. Its priority is 0: the AI casts it unkicked, before a winning line
+/// (`t6_table::protect_before_go`).
 fn chant_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let target = ctx.face.or_else(|| max_by(&opps, |o| g.player(o).hand.len() as f64));

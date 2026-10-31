@@ -9004,8 +9004,8 @@ status = "Full"
 note = "opponents can't cast spells this turn: the engine cast lock (LockKind::AllSpells) on each opponent, flash creatures included (castable, cast_card); the AI never casts it (priority 0, deck plan's call)"
 
 ["Orim's Chant"]
-status = "Partial"
-note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); missing: the kicker (a cost choice) and 'creatures can't attack' (a kicked resolve sets t6_stax::attack_lock, nothing reads it); the AI never casts it"
+status = "Full"
+note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); kicked ({W} more), creatures can't attack this turn (combat::combat reads t6_stax::attack_lock: no attackers for anyone). A person is asked for the kicker; the AI casts it unkicked, on its own turn before a winning line (t6_table::protect_before_go), and never kicks it (stopping an opponent's attack is not an AI use yet)"
 
 ["Mandate of Peace"]
 status = "Partial"
@@ -10140,3 +10140,7 @@ paths_ok = "compiled: the +1/+1 for other enchantment creatures; card code: the 
 ["Price of Progress"]
 status = "Full"
 note = "compiled: damage to each player (its caster too) equal to twice the nonbasic lands that player controls (the count is read for each player). The AI values it by the opponents' damage less its own, and highly when it kills"
+
+["Baleful Mastery"]
+status = "Full"
+note = "compiled: exile target creature or planeswalker. Card code (impls/card_models.rs): the alternative cost {1}{B} (altcost slot); paid that way, an opponent (the least threatening) draws a card as it resolves, before the exile. The AI pays {1}{B} only when {3}{B} can't be paid"

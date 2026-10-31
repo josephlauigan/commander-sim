@@ -53,6 +53,8 @@ pub enum Ask {
     Scout,
     /// Comet Storm: kicks, X, and one distinct target for each
     Comet,
+    /// a kicker of these coloured pips, from what is left in the pool; `ctx.kicks` = 1 if paid (Orim's Chant)
+    Kick(&'static str),
 }
 
 const SPLATTER: &[(&str, &str)] =
@@ -77,6 +79,7 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Victimize" => &[Ask::Gy { n: 2, min: 2, max_cmc: None, pw: false }, Ask::Sac],
         "Daydream" => &[Ask::Target(Tk::OwnCreature)],
         "Scout the City" => &[Ask::Scout],
+        "Orim's Chant" => &[Ask::Target(Tk::Player), Ask::Kick("W")],
         _ => return None,
     })
 }
@@ -284,7 +287,7 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
                 costs.discard = Some(hand[k]);
                 ctx.x = !g.db.get(hand[k]).land as i32;
             }
-            Ask::X | Ask::Comet => {} // after the mana is paid (choose_post)
+            Ask::X | Ask::Comet | Ask::Kick(_) => {} // after the mana is paid (choose_post)
         }
     }
     Ok(Pre::Ok(costs))
@@ -320,6 +323,15 @@ pub fn choose_post(g: &mut Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res {
                 };
                 mana::pay_from_pool(g, p, x, "");
                 ctx.x = x as i32;
+            }
+            Ask::Kick(pips) => {
+                let ok = mana::cost_problem(g, p, 0, pips).is_none();
+                let pr = format!("{name}: pay the kicker {{{pips}}}?");
+                let labels = vec![format!("kick it ({{{pips}}})"), "no kicker".to_string()];
+                if ok && choices::choose(g, p, "choose", &pr, &labels, None, None)? == Some(0) {
+                    mana::pay_from_pool(g, p, 0, pips);
+                    ctx.kicks = 1;
+                }
             }
             Ask::Comet => {
                 // {X}{R}{R}, multikicker {1}: X damage to each of 1 + kicks distinct targets

@@ -9170,10 +9170,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "You may pay {1}{B} rather than pay ~'s mana cost.",
-    "If the {1}{B} cost was paid, an opponent draws a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -87544,9 +87541,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target player can't cast spells this turn. If ~ was kicked, creatures can't attack this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
