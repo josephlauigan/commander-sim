@@ -1333,6 +1333,10 @@ pub fn parse_cost(s: &str) -> Option<Obj> {
             if !ms.is_empty() {
                 cost.set("mana", ms);
             }
+            let xs = x.matches("{x}").count();
+            if xs > 0 {
+                cost.set("x", xs as i64); // an {X} activation cost (Treasure Vault's {X}{X})
+            }
             if x.contains("{e}") {
                 cost.set("energy", true);
             }

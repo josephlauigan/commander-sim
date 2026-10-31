@@ -1,4 +1,4 @@
-//! The     executeard ability language's interpreter (Python's `cards/dsl.py`): compiled abilities (`model.rs`) run by the
+//! The card ability language's interpreter (Python's `cards/dsl.py`): compiled abilities (`model.rs`) run by the
 //! engine. Hand-tagged cards keep the engine's own code; both kinds play together in one game.
 //!
 //!   - `fire`: triggered abilities (enters, dies, attacks, cast, draw, upkeep ...), put on the stack as known triggers
@@ -70,6 +70,8 @@ thread_local! {
     static X_FALLBACKS: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
     /// the mana value of the permanent the last paid ability cost sacrificed (0 if none): `activate` hands it to the ability
     static LAST_SAC_MV: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
+    /// the X the last paid ability cost with an {X} chose (0 if none): `activate` hands it to the effects
+    static LAST_X: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
 }
 
 /// Reads and clears this thread's count of "X" amounts that ran as the stand-in 3. Cardgen's audit flags the cards
@@ -1966,11 +1968,20 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     // Phase 3: a land whose ability costs {T} can't also tap for the mana that pays it
     let land = g.player(p).lands.contains(&src);
     let land_tap = land && cost.tap == Some(true);
-    let payable = if land_tap {
-        crate::impls::lands::can_pay_without(g, p, src, gn, &pips)
-    } else {
-        can_pay(g, p, gn, &pips, false)
+    let can = |g: &mut Game, n: u32| {
+        if land_tap { crate::impls::lands::can_pay_without(g, p, src, n, &pips) } else { can_pay(g, p, n, &pips, false) }
     };
+    let mut gn = gn;
+    if let Some(k) = cost.x.filter(|&k| k > 0) {
+        // an {X} cost: the largest X the mana pays (at least 1: X = 0 does nothing worth a card)
+        let xv = (1..=30u32).take_while(|&x| can(&mut *g, gn + k * x)).last().unwrap_or(0);
+        if xv == 0 {
+            return Ok(false);
+        }
+        gn += k * xv;
+        LAST_X.with(|c| c.set(xv as i32));
+    }
+    let payable = can(g, gn);
     if !payable {
         return Ok(false);
     }
@@ -2014,6 +2025,20 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         }
     }
     Ok(true)
+}
+
+/// an effect with its "X" amounts read as the X paid (for valuing an {X} ability before it is activated)
+fn x_paid(mut e: Effect, x: i32) -> Effect {
+    let fix = |n: &mut Option<Num>| {
+        if matches!(n, Some(Num::Name(s)) if s == "X") {
+            *n = Some(Num::Int(x));
+        }
+    };
+    fix(&mut e.n);
+    fix(&mut e.pow);
+    fix(&mut e.tgh);
+    e.modes = e.modes.into_iter().map(|m| m.into_iter().map(|f| x_paid(f, x)).collect()).collect();
+    e
 }
 
 /// (round, player): activated abilities count per round per player, loyalty once per round (Python's (g.round, p.key))
@@ -2079,6 +2104,17 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
                     if !pay_ability_cost(g, p, src, cost, true)? {
                         continue;
                     }
+                    // an {X} cost: valued at the X the mana pays now; at the end of the turn before yours the mana
+                    // would go unused, so only the fixed part of the cost counts
+                    let xv = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
+                    let with_x: Vec<Effect>;
+                    let effects: &[Effect] = if xv > 0 {
+                        with_x = effects.iter().cloned().map(|e| x_paid(e, xv)).collect();
+                        &with_x
+                    } else {
+                        effects
+                    };
+                    let x_cost = if sorcery_ok { 0.25 * (cost.x.unwrap_or(0) as i32 * xv) as f64 } else { 0.0 };
                     let mut cost_v: f64 = 0.25
                         * cost
                             .mana
@@ -2090,6 +2126,7 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
                     if cost.sac.as_deref() == Some("self") {
                         cost_v += 1.5;
                     }
+                    cost_v += x_cost;
                     let mut u = value_of(g, p, effects, None) - cost_v;
                     if let Some(mn) = ai_min {
                         u = u.max(*mn); // card data can insist the AI uses it
@@ -2154,7 +2191,9 @@ fn cost_text(cost: &model::Cost) -> String {
     let mut parts = vec![];
     if let Some(m) = cost.mana.as_deref() {
         let (gn, pips) = crate::engine::cast::parse_cost(m);
-        let mut s = if gn > 0 || pips.is_empty() { format!("{{{gn}}}") } else { String::new() };
+        let xs = "{X}".repeat(cost.x.unwrap_or(0) as usize);
+        let mut s = if gn > 0 || (pips.is_empty() && xs.is_empty()) { format!("{{{gn}}}") } else { String::new() };
+        s.insert_str(0, &xs);
         for ch in pips.chars() {
             s.push_str(&format!("{{{ch}}}"));
         }
@@ -2201,6 +2240,7 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
         return Ok(false);
     }
     let sacrificed_mv = LAST_SAC_MV.with(|c| c.take()); // before the stack window runs other costs
+    let paid_x = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
     let stamp = round_stamp(g, p);
     let e = g.player_mut(p).act_uses.entry((src, idx)).or_insert((stamp, 0));
     *e = if e.0 == stamp { (stamp, e.1 + 1) } else { (stamp, 1) };
@@ -2211,6 +2251,9 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
         return Ok(true); // countered (mana abilities skip the stack)
     }
     let mut dctx = DslCtx { sacrificed_mv, ..DslCtx::base() };
+    if cost.x.is_some() {
+        (dctx.x, dctx.x_default) = (paid_x, false);
+    }
     execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     Ok(true)
 }
