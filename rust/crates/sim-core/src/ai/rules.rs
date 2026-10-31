@@ -9,9 +9,11 @@
 //!   alone: no draw, no mana, no search) is not cast while another piece of the line is neither held nor findable by a
 //!   tutor p holds and can cast now.
 //!
-//! The switch `AI_RULES`: unset or `0` none (today's play), `1` all three for every AI player, or a list of guard names
-//! (`followup,tutored,combo`); `AI_RULES_DECKS=a,b` limits them to those decks' players (a paired test's half). With a
-//! guard off its calls return before they read the game, change it or draw a random number.
+//! The switch `AI_RULES`: unset, empty or `1` all three for every AI player (the default since the stage 1 paired
+//! tests: all ten halves t1-t5 and all five JD decks tried level, `audit/recal/pairs-2026-10-31.md` section 3), `0`
+//! none (the old play), or a list of guard names (`followup,tutored,combo`); `AI_RULES_DECKS=a,b` limits them to those
+//! decks' players (a paired test's half). With a guard off its calls return before they read the game, change it or
+//! draw a random number.
 
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PlayerId};
@@ -30,11 +32,12 @@ pub enum Guard {
 
 pub const ALL: u8 = 7;
 
-/// `AI_RULES` read as a mask of guards: unset, empty or `0` none; `1` all; else guard names separated by commas
+/// `AI_RULES` read as a mask of guards: unset, empty or `1` all (the default); `0` none; else guard names separated by
+/// commas
 pub fn parse_mode(v: Option<&str>) -> u8 {
     match v.map(str::trim) {
-        None | Some("") | Some("0") => 0,
-        Some("1") => ALL,
+        Some("0") => 0,
+        None | Some("") | Some("1") => ALL,
         Some(list) => list.split(',').map(str::trim).filter(|s| !s.is_empty()).fold(0, |m, s| {
             m | match s {
                 "followup" => Guard::Followup as u8,

@@ -123,21 +123,48 @@ pub const HAND_OFF_PLANS: [&str; 13] = [
     "dack-fayden-white-stax",
 ];
 
+/// the switchable decks that play their hand-written AI when `AI_HAND` is unset: those whose hand AI beat the generic
+/// policy in the stage 1 paired tests (`audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9 over
+/// t3-t4, cloud +6.6 over t1-t3), and Dack, held on pending a check of its -13.9 there; every other switchable deck
+/// plays the generic policy and its plan file by default
+pub const HAND_KEEP: [&str; 4] = ["yshtola", "sheoldred", "cloud", "dack-fayden-white-stax"];
+
 enum HandMode {
     Off,
     All,
     Keys(Vec<String>),
 }
 
-fn hand_mode() -> &'static HandMode {
-    static M: std::sync::OnceLock<HandMode> = std::sync::OnceLock::new();
-    M.get_or_init(|| match std::env::var("AI_HAND").ok().as_deref().map(str::trim) {
-        None | Some("") | Some("0") => HandMode::Off,
+/// `AI_HAND`: unset or empty the hand AI on for `HAND_KEEP` only (the default); `0` off for every switchable deck;
+/// `1` on for all of them; else the deck keys, separated by commas, whose hand AI is on
+fn parse_hand(v: Option<&str>) -> HandMode {
+    match v.map(str::trim) {
+        None | Some("") => HandMode::Keys(HAND_KEEP.iter().map(|s| s.to_string()).collect()),
+        Some("0") => HandMode::Off,
         Some("1") => HandMode::All,
         Some(list) => {
             HandMode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect())
         }
-    })
+    }
+}
+
+fn hand_mode() -> &'static HandMode {
+    static M: std::sync::OnceLock<HandMode> = std::sync::OnceLock::new();
+    M.get_or_init(|| parse_hand(std::env::var("AI_HAND").ok().as_deref()))
+}
+
+fn hand_wants(m: &HandMode, key: &str) -> bool {
+    match m {
+        HandMode::Off => false,
+        HandMode::All => true,
+        HandMode::Keys(k) => k.iter().any(|x| x == key),
+    }
+}
+
+/// does `AI_HAND` read as `v` turn switchable deck `key`'s hand AI on? (`parse_hand`; `force_hand` and the decks
+/// that are not switchable are not consulted)
+pub fn hand_switch_wants(v: Option<&str>, key: &str) -> bool {
+    hand_wants(&parse_hand(v), key)
 }
 
 thread_local! {
@@ -160,8 +187,8 @@ impl Drop for HandGuard {
     }
 }
 
-/// does this deck play its hand-written AI? A switchable deck: as `AI_HAND` (or `force_hand`) says, off by default;
-/// any other key: yes (the pool decks have nothing to switch; the retired test seats keep theirs)
+/// does this deck play its hand-written AI? A switchable deck: as `AI_HAND` (or `force_hand`) says, by default on for
+/// `HAND_KEEP` only; any other key: yes (the pool decks have nothing to switch; the retired test seats keep theirs)
 pub fn hand_ai_key(key: &str) -> bool {
     if !HAND_DECKS.contains(&key) {
         return true;
@@ -169,11 +196,7 @@ pub fn hand_ai_key(key: &str) -> bool {
     if let Some(f) = HAND_FORCE.with(|f| f.get()) {
         return f;
     }
-    match hand_mode() {
-        HandMode::Off => false,
-        HandMode::All => true,
-        HandMode::Keys(k) => k.iter().any(|x| x == key),
-    }
+    hand_wants(hand_mode(), key)
 }
 
 /// does seat p play its deck's hand-written AI?
