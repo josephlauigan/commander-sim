@@ -125,9 +125,9 @@ pub const HAND_OFF_PLANS: [&str; 13] = [
 
 /// the switchable decks that play their hand-written AI when `AI_HAND` is unset: those whose hand AI beat the generic
 /// policy in the stage 1 paired tests (`audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9 over
-/// t3-t4, cloud +6.6 over t1-t3), and Dack, held on pending a check of its -13.9 there; every other switchable deck
-/// plays the generic policy and its plan file by default
-pub const HAND_KEEP: [&str; 4] = ["yshtola", "sheoldred", "cloud", "dack-fayden-white-stax"];
+/// t3-t4, cloud +6.6 over t1-t3); every other switchable deck plays the generic policy and its plan file by default
+/// (Dack too: its hand AI held Dack until about round 6, -12.4 on Tier 6 after the flip fix, `audit/recal/dack-check.md`)
+pub const HAND_KEEP: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
 
 enum HandMode {
     Off,
