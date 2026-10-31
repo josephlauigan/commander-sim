@@ -440,8 +440,8 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     decks::wipe_response(g, q, kind, caster)
 }
 
-/// ais.seph_fill_resolve: a spell that fills the graveyard resolves (Entomb, Buried Alive, Unmarked Grave, Grisly
-/// Salvage; Deadly Dispute's Treasure).
+/// ais.seph_fill_resolve: a spell that fills the graveyard resolves (Entomb, Buried Alive, Unmarked Grave, Glimpse,
+/// Grisly Salvage; Deadly Dispute's Treasure).
 pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Res {
     use crate::engine::zones::{add_treasure, agent_for, agent_take};
     use crate::tag::Tag;
@@ -511,6 +511,8 @@ pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Re
             }
         }
         "dispute" => add_treasure(g, p, 1)?,
+        // Glimpse the Unthinkable: "target player mills ten cards"; the reanimator targets itself
+        "glimpse" => crate::engine::zones::mill(g, p, 10)?,
         _ => {}
     }
     if searches {

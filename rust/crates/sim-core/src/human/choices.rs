@@ -610,6 +610,14 @@ pub fn fill(g: &mut Game, p: PlayerId, kind: &str) -> Res {
             crate::glog!(g, "  {} reveals five with Grisly Salvage", name);
         }
         "dispute" => zones::add_treasure(g, p, 1)?,
+        "glimpse" => {
+            // Glimpse the Unthinkable: target player mills ten cards
+            let qs: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+            let labels: Vec<String> =
+                qs.iter().map(|&q| if q == p { "yourself".to_string() } else { g.player(q).name.to_string() }).collect();
+            let k = choose(g, p, "target", "Glimpse the Unthinkable: which player mills ten?", &labels, None, None)?;
+            zones::mill(g, k.map_or(p, |k| qs[k]), 10)?;
+        }
         _ => {}
     }
     Ok(())

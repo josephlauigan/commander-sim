@@ -50336,24 +50336,22 @@
    "types": "S",
    "generic": 0,
    "pips": "UB",
-   "tags": {},
+   "tags": {
+    "fill": "glimpse"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
    "dsl": null,
    "start_loyalty": null,
-   "kws": [
-    "mill"
-   ],
+   "kws": [],
    "subtypes": [],
    "protfrom": "",
    "ward": 0,
-   "identity": "BU",
-   "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target player mills ten cards."
-   ],
+   "identity": null,
+   "game_changer": null,
+   "source": "manual",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

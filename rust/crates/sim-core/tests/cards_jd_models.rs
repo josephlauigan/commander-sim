@@ -112,3 +112,36 @@ fn hydaelyn_blesses_a_legend_at_combat_and_draws() {
     fire(&mut g, Event::Crew, P0); // once each turn
     assert_eq!(g.perm(gonti).plus, 1);
 }
+
+// ======================================================== Sephiroth: Glimpse the Unthinkable
+/// Sephiroth at a t3 table
+fn seph_table() -> Game {
+    table(&["seph", "korvold-jund-sacrifice", "tergrid-mono-black-disruption"])
+}
+
+#[test]
+fn glimpse_fills_the_graveyard_when_the_plan_wants_it() {
+    let mut g = seph_table();
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    let glimpse = hand(&mut g, P0, &["Glimpse the Unthinkable", "Animate Dead"])[0];
+    lands(&mut g, P0, "Watery Grave", 2, false);
+    let (lib, gy) = (g.player(P0).library.len(), g.player(P0).gy.len());
+    assert!(sim_core::ai::seph::seph_fill(&mut g, P0).unwrap());
+    let pl = g.player(P0);
+    assert!(!pl.hand.contains(&glimpse));
+    assert_eq!(pl.library.len(), lib - 10);
+    assert_eq!(pl.gy.len(), gy + 11, "ten milled cards and Glimpse itself");
+}
+
+#[test]
+fn glimpse_waits_without_a_way_to_reanimate() {
+    let mut g = seph_table();
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Glimpse the Unthinkable"]);
+    lands(&mut g, P0, "Watery Grave", 2, false);
+    let lib = g.player(P0).library.len();
+    let _ = sim_core::ai::seph::seph_fill(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).library.len(), lib);
+}
