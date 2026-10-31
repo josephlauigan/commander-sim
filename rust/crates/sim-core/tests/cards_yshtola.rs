@@ -718,6 +718,7 @@ fn the_cards_of_her_list_her_rules_dont_name() {
         "Go for the Throat",
         "Path to Exile",
         "Rhystic Study",
+        "Sphere of Safety",
         "Teferi's Protection",
         "Teleportation Circle",
         "Your Fate Ends Here",

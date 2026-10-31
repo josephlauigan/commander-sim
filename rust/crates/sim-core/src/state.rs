@@ -661,7 +661,7 @@ pub struct Player {
     /// Enlightened Tutor), top last: p knows them until the library is shuffled or they are drawn (`tutors::known_top`)
     pub known_top: Vec<CardId>,
     /// --- phase4-rules: the cards a tutor of this player's found, with the turn number (`ai::rules::mark_tutored`;
-    /// empty unless `AI_RULES` turns the tutored guard on)
+    /// empty while `AI_RULES` has the tutored guard off; it is on by default)
     pub tutored: Vec<(CardId, u32)>,
     /// --- ai-planner: the card the line planner chose for the tutor being cast (`ai::planner`); a tutor takes it
     /// when it meets the tutor's own restriction, else picks as usual. Set only around the planner's cast

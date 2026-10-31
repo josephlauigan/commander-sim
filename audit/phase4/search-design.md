@@ -202,8 +202,9 @@ byte for byte on t1-t5 (all rc=0). Per game, all generic seats together:
 ### The design
 
 All three are searched only for a generic-policy deck on ISMCTS (`ismcts::on`), in the real game, with the
-look-ahead on and within its per-game caps (`search::enabled`), behind `AI_SEARCH_B` (unset or `0`: PR 5's
-behaviour; `1` every such deck; a key list). A decision is a root search (`search_root`, PR 5's): the candidates
+look-ahead on and within its per-game caps (`search::enabled`), behind `AI_SEARCH_B` (unset, empty or `1`: every
+such deck, the default since the stage 1 paired tests, `audit/recal/pairs-2026-10-31.md` section 2; `0`: PR 5's
+behaviour; a key list). A decision is a root search (`search_root`, PR 5's): the candidates
 get 2 playouts each on shared copies, then UCB, at most 6 playouts a candidate (`rollouts`, as attacks and
 counters, for cost) and the 6,000-step budget, early stopping as PR 5's. The pick is held to the margin against the
 heuristic's own answer on 6 shared copies (`AI_SEARCH_PAIRS`): the search overrules the heuristic only on evidence.
@@ -282,6 +283,11 @@ games); `AI_SEARCH_B=1` twice on t1 = the same output. The later `AI_SEARCH_OPP`
 default-off by code reading and `tests/ismcts_b.rs::off_by_default_is_pr5` (no sim).
 
 **Stage B and C: not run.** Part (b) stays behind `AI_SEARCH_B`, default off; PR 5's ISMCTS stays the default.
+
+**Defaults since the recalibration's stage 1** (`audit/recal/pairs-2026-10-31.md` section 2): `AI_SEARCH_B` unset =
+on for every generic-policy deck on ISMCTS (all ten halves t1-t5 level, mean +0.49, CPU +0.0% to +3.7%); `0` = PR
+5's behaviour. `AI_SEARCH_OPP` unset = on (opponent nodes; level with PR 5's ISMCTS on t2 B and t1 B, +1.5 / +0.3,
+7% cheaper on t1); `0` = off. `AI_SEARCH_ATK_MIN` keeps its default (`min_visits`).
 
 **To run at recalibration** (2000 games an arm, seeds 500000-501999, loose, look-ahead, one `--jobs` for all arms):
 1. Stage B, each tier t1-t5: PR 5's head (no env) against `AI_SEARCH_B=<half A keys>` and `AI_SEARCH_B=<half B

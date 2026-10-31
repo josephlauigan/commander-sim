@@ -5,6 +5,9 @@
 - The main agent runs on **Opus 5.5** (`claude-opus-5-5`), set in `.claude/settings.json`.
 - **Every subagent runs on Sonnet 5.5** (`claude-sonnet-5-5`), set by `CLAUDE_CODE_SUBAGENT_MODEL` in the same file.
   Don't override it: leave the Agent tool's `model` unset (or pass `"sonnet"`).
+- **Every subagent runs at high effort** (JD, 2026-11-01): pass `effort: "high"` on every Agent call, workflow
+  agents included. No setting does this for subagents alone (`CLAUDE_CODE_EFFORT_LEVEL` would also change the main
+  session), so it goes on each call.
 
 ## Checking subagents' work
 

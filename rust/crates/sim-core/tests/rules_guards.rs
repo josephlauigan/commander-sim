@@ -1,5 +1,7 @@
 //! --- phase4-rules: the three generic rule checks (`ai/rules.rs`, `audit/phase4/rules-design.md`) on hand-built
-//! positions, with the switch forced on this thread; each guard also keeps today's choice with the switch off.
+//! positions, with the switch forced on this thread; each guard also keeps today's choice with the switch off. The
+//! switch is on by default since the recalibration's stage 1, so every test's baseline forces it off (`AI_RULES=0`,
+//! the old play) on its thread: `game` sets it and `with` puts it back.
 
 use sim_core::ai::rules::{self, ALL, Guard};
 use sim_core::hooks::{Action, Opt};
@@ -14,7 +16,9 @@ const P1: PlayerId = PlayerId(1);
 const T5: [&str; 4] =
     ["urza-mono-blue-artifacts", "kinnan-simic-mana-combo", "zur-esper-enchantment-control", "miirym-temur-dragons"];
 
+/// the table, with the switch forced off on this thread (the test's baseline)
 fn game(keys: &[&str]) -> Game {
+    rules::force(Some(0));
     let mut g = table(keys);
     g.round = 4;
     for pl in &mut g.players {
@@ -23,11 +27,11 @@ fn game(keys: &[&str]) -> Game {
     g
 }
 
-/// runs f with these guards forced on, then puts the switch back
+/// runs f with these guards forced on, then puts the switch back off
 fn with<T>(mask: u8, f: impl FnOnce() -> T) -> T {
     rules::force(Some(mask));
     let r = f();
-    rules::force(None);
+    rules::force(Some(0));
     r
 }
 
@@ -37,22 +41,30 @@ fn cast_opt(c: CardId) -> Opt {
 
 // ------------------------------------------------------------------ the switch
 #[test]
-fn the_switch_reads_names_and_defaults_off() {
-    assert_eq!(rules::parse_mode(None), 0);
-    assert_eq!(rules::parse_mode(Some("")), 0);
-    assert_eq!(rules::parse_mode(Some("0")), 0);
+fn the_switch_reads_names_and_defaults_on() {
+    assert_eq!(rules::parse_mode(None), ALL, "unset: all three (the stage 1 default)");
+    assert_eq!(rules::parse_mode(Some("")), ALL);
+    assert_eq!(rules::parse_mode(Some("0")), 0, "0: none, the old play");
     assert_eq!(rules::parse_mode(Some("1")), ALL);
     assert_eq!(rules::parse_mode(Some("followup")), Guard::Followup as u8);
     assert_eq!(rules::parse_mode(Some("tutored, combo")), Guard::Tutored as u8 | Guard::Combo as u8);
     let g = game(&T5);
-    // the test thread has no override: AI_RULES is unset in the test run, so every guard is off
-    assert!(
-        !rules::on(&g, P0, Guard::Followup) && !rules::on(&g, P0, Guard::Tutored) && !rules::on(&g, P0, Guard::Combo)
-    );
+    let all_off = |g: &Game| {
+        !rules::on(g, P0, Guard::Followup) && !rules::on(g, P0, Guard::Tutored) && !rules::on(g, P0, Guard::Combo)
+    };
+    assert!(all_off(&g), "forced off");
+    // no override on the thread: with AI_RULES unset in the test run, every guard is on
+    rules::force(None);
+    if std::env::var("AI_RULES").is_err() {
+        assert!(
+            rules::on(&g, P0, Guard::Followup) && rules::on(&g, P0, Guard::Tutored) && rules::on(&g, P0, Guard::Combo)
+        );
+    }
     with(Guard::Combo as u8, || {
         assert!(rules::on(&g, P0, Guard::Combo));
         assert!(!rules::on(&g, P0, Guard::Followup));
     });
+    assert!(all_off(&g), "with puts the switch back off");
 }
 
 #[test]

@@ -2,7 +2,7 @@
 
 Brief: `rust/agents/phase4-rules.md`. JD's plan, AI point 6: stop a class of mistakes with one generic guard each,
 not one card at a time. Three guards, behind `AI_RULES` (default off: nothing can be measured until the
-recalibration after Phase 4).
+recalibration after Phase 4; on by default since its stage 1, section 3 below).
 
 ## 1. Survey
 
@@ -93,7 +93,7 @@ Manamorphose (makes mana, draws), Ad Nauseam (draws) and the tutors (Consultatio
 ## 2. Design
 
 One module, `ai/rules.rs`. Each guard is one function, called from as few places as possible; every guard first
-asks `rules::on(g, p, guard)`, which with `AI_RULES` unset returns false before it reads the game.
+asks `rules::on(g, p, guard)`, which with the guard off (`AI_RULES=0`) returns false before it reads the game.
 
 ### 2a. Follow-up: `followup_ok(g, p, c)` (+ the compiled-cost dry run in `filter_options`)
 
@@ -148,10 +148,12 @@ end of `brain::main_options` and once in `brain::end_of_turn_window`; and `engin
 
 ## 3. The switch
 
-`AI_RULES`: unset, empty or `0` = no guard (today's play, the default); `1` = all three; a list of names
+`AI_RULES`: unset or empty = all three (**the default** since the stage 1 paired tests: all ten halves t1-t5 and all
+five JD decks tried level, `audit/recal/pairs-2026-10-31.md` section 3); `0` = no guard (the old play, this PR's
+default until then); `1` = all three; a list of names
 (`followup`, `tutored`, `combo`, comma-separated) = those. `AI_RULES_DECKS=a,b` (optional) limits the guards to the
 players of those decks: one half of a paired test. People (practice mode) are never guarded. Each guard's first step
-is `rules::on`, which reads the mask before anything else, so with the switch unset every hook returns before it
+is `rules::on`, which reads the mask before anything else, so with the switch at `0` every hook returns before it
 reads the game, changes it or draws a random number: `filter_options` returns at once, `followup_ok` and `combo_ok`
 return true, `mark_tutored` does nothing (`Player::tutored` stays empty), `tutored` is false and `spare_tutored` None.
 Tests force the guards on one thread with `rules::force(Some(mask))` (as `ai/ismcts.rs`'s `FORCE`). When a guard
@@ -159,7 +161,7 @@ drops a menu option it counts `rules|followup` or `rules|combo` in the player's 
 
 ## 4. Tests (`rust/crates/sim-core/tests/rules_guards.rs`, 14)
 
-- switch: parsing (unset / `0` / `1` / names; an unknown name panics); default off on the test thread.
+- switch: parsing (unset / `0` / `1` / names; an unknown name panics); default on (unset = all three) and `0` off.
 - follow-up: Pact of Negation with two Islands is not picked as a counter (today: picked); with five tapped Islands it
   is; with a Pact already owed five are not enough (today: five lands pass); a Slaughter Pact debt counts with it;
   Diabolic Intent and Culling the Weak with no creature are filtered (switch off: kept), and offered once a creature

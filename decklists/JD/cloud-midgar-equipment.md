@@ -8,7 +8,7 @@ another carrier, to survive.
 | | |
 |---|---|
 | **Commander** | Cloud, Midgar Mercenary ({W}{W}, 2/1, white) |
-| **Bracket** | 3 (2 Game Changers: Smothering Tithe, Enlightened Tutor) |
+| **Bracket** | 3 (3 Game Changers: Smothering Tithe, Enlightened Tutor, Teferi's Protection) |
 | **Simulator** | deck key `cloud`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -68,6 +68,8 @@ to blink them.
 ### Free equips
 - **Ardenn, Intrepid Archaeologist** moves any number of Equipment onto one permanent at the start of each combat.
 - **Kor Outfitter** attaches one Equipment when it enters.
+- **Forge Anew** ({2}{W}, enchantment) returns an Equipment from your graveyard to the battlefield when it enters; on
+  your turn you equip at instant speed, and the first equip each turn costs {0}.
 - **Armory Automaton** attaches any number of Equipment to itself when it enters or attacks.
 - **Armored Skyhunter** flies; whenever it attacks it looks at the top six cards and puts an Equipment onto the
   battlefield, attached to a creature (Cloud) if you like.
@@ -108,10 +110,10 @@ that creature indestructible.
   creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
   Bastion Protector (commander creatures get +2/+2 and indestructible).
-- **Answer in response.** **Galadriel's Dismissal** ({W}, instant) phases Cloud out in response to removal; his
-  Equipment phases out with him and comes back still attached at your next turn.
-- **Protect the team.** Kicked ({2}{W} more), Galadriel's Dismissal phases out every creature you control, an answer
-  to a board wipe. Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
+- **Answer in response.** **Teferi's Protection** ({2}{W}, instant): until your next turn your life total can't
+  change, you have protection from everything, and every permanent you control phases out. Cloud keeps his Equipment
+  attached through removal, a board wipe or a lethal attack, and it all comes back at your next turn.
+- **Protect the team.** Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
   power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
 
 ### Removal
@@ -119,7 +121,7 @@ that creature indestructible.
   it gets better later), Stand Up for Yourself (power 3 or more), Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less) and Stroke of Midnight ({2}{W} instant: destroys any nonland permanent, and its controller gets a 1/1 Human).
 - **Artifacts and enchantments:** Disenchant.
-- **Attack limits and taxes:** **Sphere of Safety** ({4}{W}, enchantment: opponents pay {X} for each creature that attacks you, X being the number of enchantments you control; with Court of Ardenvale and Smothering Tithe, that is usually 1 to 3) and **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With these too,
+- **Attack limits and taxes:** **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With her too,
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
   Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
   protection from white).
@@ -139,7 +141,7 @@ that creature indestructible.
 - **Board wipes.** Don't overcommit creatures when you already have enough power. Keep Elspeth's Soldiers
   and the backup carriers in hand when the table has wiped before.
 - **Artifact and enchantment removal.** Spread the Equipment across several carriers (Balan and Ardenn can
-  re-attach after a loss) and recur them with Cid.
+  re-attach after a loss) and recur them with Cid or Forge Anew.
 - **Cloud dead, command zone.** Remember the {2} commander tax; use the backup carriers first.
 - **Small bodies.** Giver of Runes, Grand Abolisher and Bastion Protector keep the board safe; Thalia and
   Skyclave Apparition slow the table down.
@@ -147,7 +149,7 @@ that creature indestructible.
 ## Key lines
 
 - **Turn 2 Cloud:** search a Sword or Champion's Helm; turn three cast and equip it and attack with protection up
-  (Swiftfoot Boots, Giver of Runes or Galadriel's Dismissal).
+  (Swiftfoot Boots, Giver of Runes or Teferi's Protection).
 - **Best opening:** Sol Ring on turn one, Cloud on turn two, then cast and equip a Sword on turn three.
 - **Mulligan:** keep hands with two lands (or a land and Sol Ring) and a play of two mana or less. Throw back hands that
   can not make {W}{W} by turn three.
@@ -155,7 +157,7 @@ that creature indestructible.
   and a Sword, attach all, and attack.
 - **Winds of Abandon:** {1}{W} exiles one creature that is not yours (its controller fetches a basic land); at six mana
   overload it ({4}{W}{W}) to exile every creature you do not control, a one-sided wipe that leaves your Equipment and carriers.
-- **Removal in response to an equip:** have Giver of Runes, Zack Fair, Galadriel's Dismissal or Swiftfoot Boots ready.
+- **Removal in response to an equip:** have Giver of Runes, Zack Fair, Teferi's Protection or Swiftfoot Boots ready.
 
 ## Tutor targets by board state
 
@@ -165,7 +167,7 @@ that creature indestructible.
 - **Cloud's search, facing removal:** Swiftfoot Boots or Champion's Helm.
 - **Enlightened Tutor** (puts the card on top, so cast it at the end of an opponent's turn; it finds an artifact or
   enchantment): a Sword if you are missing one, Smothering Tithe when opponents draw a lot, Court of Ardenvale
-  when you need card advantage, or Sphere of Safety when you need a tax.
+  when you need card advantage, or Forge Anew to bring back an Equipment that was destroyed.
 
 ## Mana and consistency
 
@@ -173,12 +175,12 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Sphere of Safety, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
+Interaction: Wrath of God, Day of Judgment, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
 Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 11 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with two Game Changers: **Smothering Tithe** and **Enlightened Tutor**. The deck has no combo that wins
+**Bracket 3,** with three Game Changers: **Smothering Tithe**, **Enlightened Tutor** and **Teferi's Protection**. The deck has no combo that wins
 on its own. Tell the table before the game that:
 
 - the deck has two tutors (Cloud and Enlightened Tutor) but no game-winning combo;
@@ -190,13 +192,13 @@ on its own. Tell the table before the game that:
 
 **Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Windborn Muse, Zack Fair
 
-**Enchantments (3).** Court of Ardenvale, Smothering Tithe, Sphere of Safety
+**Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
 **Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
-**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Galadriel's Dismissal, Stand Up for Yourself, Stroke of Midnight
+**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Stroke of Midnight, Teferi's Protection
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -237,9 +239,9 @@ on its own. Tell the table before the game that:
 1 Fate of the Sun-Cryst
 1 Fellwar Stone
 1 Fireshrieker
+1 Forge Anew
 1 Forum Familiar
 1 Fumigate
-1 Galadriel's Dismissal
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
@@ -261,7 +263,6 @@ on its own. Tell the table before the game that:
 1 Smothering Tithe
 1 Sol Ring
 1 Solemn Simulacrum
-1 Sphere of Safety
 1 Sram, Senior Edificer
 1 Stand Up for Yourself
 1 Stroke of Midnight
@@ -270,6 +271,7 @@ on its own. Tell the table before the game that:
 1 Sword of Fire and Ice
 1 Sword of Hearth and Home
 1 Sword of Kaldra
+1 Teferi's Protection
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel
