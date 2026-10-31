@@ -3,18 +3,13 @@
 //! drop, the late tutor wish list.
 
 use sim_core::ai::{self, decks};
-use sim_core::engine::{removal, values};
-use sim_core::ids::{CardId, PermId, PlayerId};
+use sim_core::ids::{CardId, PlayerId};
 use sim_core::impls::mine;
-use sim_core::state::{Ctx, Game};
+use sim_core::state::Game;
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
-
-fn named(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
-    g.player(p).perms.iter().copied().find(|&m| values::card_name(g, m) == Some(name))
-}
 
 fn to_gy(g: &mut Game, name: &str) -> CardId {
     let c = take(g, P0, name);

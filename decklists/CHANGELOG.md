@@ -756,3 +756,12 @@ Deck key `ghave`, `decklists/JD/ghave-abzan-aristocrats.md`, tiers t3-t4 (Seph's
 ### Changes
 
 - **2026-10-30.** New deck (JD, 10/30): the Seph/Atraxa reanimator rebuilt around Ghave, Guru of Spores (W/B/G). Out: Atraxa, Grand Unifier (the old commander), Displacer Kitten, Arcane Denial, Swan Song, Gifts Ungiven, Rhystic Study, Glimpse the Unthinkable, Muldrotha, the Gravetide, Teleportation Circle, Conjurer's Closet, Buried Alive, Underground River, Underground Sea, Watery Grave, Tropical Island, Hallowed Fountain, Tundra, 2 Island. In: Ghave, Guru of Spores (commander), Yawgmoth, Thran Physician, Worldly Tutor, Cathars' Crusade, Cruel Celebrant, Pitiless Plunderer, Sylvan Library, Heroic Intervention, Doubling Season, Zulaport Cutthroat, Eladamri's Call, Gaea's Cradle, Indatha Triome, Woodland Cemetery, Isolated Chapel, Sunpetal Grove, Brushland, Llanowar Wastes, Sandsteppe Citadel (proxies where JD doesn't own them). Ghave + an altar + Cathars' Crusade or Doubling Season are four new infinite combos; the Mikaeus and Nim Deathmantle loops stay. 5 Game Changers (Demonic Tutor, Vampiric Tutor, Worldly Tutor, Aura Shards, Gaea's Cradle). Not simulated.
+
+### Results
+
+- **2026-10-31.** First sim, Seph's seat (loose, look-ahead, 2,000 games per tier, seeds 500000-501999): **t3 12.3%
+  (CI 11.0-13.9), t4 11.3% (CI 10.0-12.8), 11.8% over t3-t4**; goldfish median kill own turn 10 (combo 54%, damage
+  41%). Seph/Atraxa's last numbers on the same seeds (its list and hand AI, before the rename): t3 22.1%, t4 17.6%,
+  goldfish median 11. Ghave plays from its plan file with no deck AI; the first combo attempt comes in only 6-8% of
+  games at the table, so it mostly dies (to Tergrid, Aurelia, Edgar, Krenko) before a loop. Details: the ghave
+  FINDINGS (audit/ghave/).

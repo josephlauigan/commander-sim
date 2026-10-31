@@ -3,7 +3,7 @@
 The Seph/Atraxa reanimator (`decklists/pool/retired/sephiroth-phyrexian-reanimator.md`) rebuilt around Ghave, Guru of Spores (JD's
 choice, 10/30). The blue cards are out and the deck leans into sacrifice: Ghave makes Saprolings out of +1/+1 counters
 and counters out of creatures, so he is a sacrifice outlet and a combo piece from the command zone. The reanimation
-package stays as the fast start. Not simulated yet.
+package stays as the fast start. First sim (10/31, 2,000 games per tier): 12.3% vs t3, 11.3% vs t4 (see the CHANGELOG).
 
 | | |
 |---|---|

@@ -31,9 +31,17 @@
 - Combo catalogue (impls/ghave.rs COMBOS, chained last in combos::all): Ghave + altar + Crusade/DS + payoff; Ghave + Ashnod + Crusade/DS + Triskelion; Mikaeus + Triskelion; Mikaeus + Finks + free outlet + payoff; Nim + Ashnod + Grave Titan + payoff; Finks + Crusade + free outlet + payoff (mine.rs `loops_now`: seph_loops without the key gate).
 - Plan file data/plans/ghave.toml (style = Seph's, commander prio/turn, the six lines, prio rules, Heroic Intervention hold, mulligan 2-5 lands).
 
-## Next
-1. Build, fix tests, `cargo test --release --no-fail-fast -j 8`, warnings.
-2. cardgen export/validate. 3. Sims (ghave t3/t4/goldfish; seph baseline numbers in scratchpad). 4. FINDINGS.md, CHANGELOG sim line.
+## Status (2026-10-31)
+- `cargo build --release --all-targets -j 8`: 0 warnings. `cargo test --release --no-fail-fast -j 8`: 3699 passed, 0
+  failed (practice included). `cardgen export`: no diff; `cardgen validate`: all decks passed.
+- Sims (loose, 2000 games, seeds 500000-501999, rc=0): ghave t3 12.3% (CI 11.0-13.9), t4 11.3% (CI 10.0-12.8),
+  goldfish median kill 10. Seph on origin/main, same seeds: t3 22.1%, t4 17.6%, goldfish median 11.
+- FINDINGS.md: the harness refuses report files from subagents; its text is in the final report for the caller to
+  commit as audit/ghave/FINDINGS.md.
+
+## Next (not done)
+1. `--analyze` at t3/t4; plan rules for the reanimation start (fill then reanimate), a Grand Abolisher hold.
+2. Mulligan rule with pieces.
 
 ## Gotchas
 - Two other agents share the machine: --jobs 8 / -j 8, one sim at a time.
