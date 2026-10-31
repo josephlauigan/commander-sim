@@ -122,3 +122,29 @@ about two thirds; early stopping and the budget's cap on the long tail should ta
   (`AI_SEARCH=<half's keys>`), 2000 games a pair arm, seeds 500000-501999, look-ahead, loose; games/s and playout
   steps a game for both arms.
 - **C:** default where level or better; else today's stays, with why.
+
+## Revisions after the first Stage B arms (t1, 2000 games, paired against `AI_SEARCH=0`)
+
+The first binary (cfbd9ec3: the stakes test above, a close call at 0.5) leaned down on both t1 halves: A -3.2
+[-8.5, +2.1], B -3.6 [-7.2, +0.0], at 21-25% fewer playout steps a game. Ablations on t1 half B (Lathril,
+Tatyova; the table's steps a game, all seats; today's 228,753):
+
+| arm | half B delta (95% CI) | steps / game |
+|---|---|---|
+| first run (close 0.5, overrule on 2 copies) | -3.6 [-7.2, +0.0] | 171,542 |
+| + overrule only on 6 shared copies (3868adee) | -3.7 [-7.3, -0.1] | 172,852 |
+| + no stakes test (`AI_SEARCH_GATE=0`) | -1.5 [-5.2, +2.2] | 205,423 |
+| + no tree below the root (`AI_SEARCH_DEPTH=1`, stakes test on) | -4.5 [-8.1, -0.9] | 170,987 |
+| + close call unlimited (`AI_SEARCH_CLOSE=1e6`) | -1.8 [-5.5, +1.9] | 204,871 |
+
+- The stakes test's close-call rule cost about 2 points: a clear policy favourite among several real options is
+  still a decision the look-ahead improves (Tatyova lost most: -2.9 [-5.4, -0.4]). **Changed:** every decision with
+  two or more real options is searched; one real option is searched only when something is at stake (the facts
+  above). That skips 4.4 main decisions a game on t1 (6%), cheap ones, at the same cost as searching everything.
+- **Kept:** the look-ahead overrules the policy's top play only on 6 or more shared copies (`AI_SEARCH_PAIRS`, the
+  pick and the clear-leader stop against the top): today's margin never decided on fewer, and a t-test on 2 copies
+  passes noise.
+- The tree below the root helps a little (depth 1 is 2.7 points under depth 3 with the same stakes test, inside the
+  noise): kept.
+- Stage B's second run (binary D, 02b729d2) uses these defaults; its t1 half B arm is the `CLOSE=1e6` arm above (the
+  same rule: a finite gap is always below 1e6).
