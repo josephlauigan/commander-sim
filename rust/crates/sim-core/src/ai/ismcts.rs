@@ -109,12 +109,14 @@ fn mode() -> &'static Mode {
     M.get_or_init(|| parse_mode(std::env::var("AI_SEARCH").ok().as_deref()))
 }
 
-/// `AI_SEARCH`: `0` today's look-ahead, `1` ISMCTS for every generic-policy deck, `a,b` ISMCTS for those keys;
-/// unset: today's (Stage A). JD's decks and Tier 6 always keep today's (`values::generic_deck`).
+/// `AI_SEARCH`: unset or `1` ISMCTS for every generic-policy deck, `0` today's look-ahead, `a,b` ISMCTS for those
+/// keys. Stage C: ISMCTS is the default (the paired tests were level on t1-t5 in both halves at 5-24% fewer playout
+/// steps a game, `audit/phase4/search-handoff.md`); `0` keeps today's for a measurement arm. JD's decks and Tier 6
+/// always keep today's (`values::generic_deck`).
 fn parse_mode(v: Option<&str>) -> Mode {
     match v.map(str::trim) {
-        None | Some("") | Some("0") => Mode::Off,
-        Some("1") => Mode::All,
+        Some("0") => Mode::Off,
+        None | Some("") | Some("1") => Mode::All,
         Some(list) => Mode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()),
     }
 }

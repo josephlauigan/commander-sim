@@ -435,12 +435,14 @@ impl Perm {
 // ------------------------------------------------------------------ players
 // --- phase4-search
 /// a seat's look-ahead cost in one game, by kind (`MAIN`, `ATTACK`, `COUNTER`): decisions searched and the engine
-/// steps their playouts took; `policy` counts the decisions the search's stakes test left to the policy
+/// steps their playouts took, and the playouts; `policy` counts the decisions the search's stakes test left to the policy
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct SearchCost {
     pub n: [u32; 3],
     pub steps: [u64; 3],
     pub policy: [u32; 3],
+    /// playouts the searched decisions ran
+    pub playouts: [u64; 3],
 }
 
 impl SearchCost {

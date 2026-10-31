@@ -290,6 +290,7 @@ pub fn search_cost_line(games: &[GameOut]) -> String {
                 t.n[k] += p.search_cost.n[k];
                 t.steps[k] += p.search_cost.steps[k];
                 t.policy[k] += p.search_cost.policy[k];
+                t.playouts[k] += p.search_cost.playouts[k];
             }
         }
     }
@@ -297,14 +298,17 @@ pub fn search_cost_line(games: &[GameOut]) -> String {
         let d: Vec<String> = c.n.iter().map(|&x| format!("{:.1}", x as f64 / n)).collect();
         let s: Vec<String> = c.steps.iter().map(|&x| format!("{:.0}", x as f64 / n)).collect();
         let q: Vec<String> = c.policy.iter().map(|&x| format!("{:.1}", x as f64 / n)).collect();
+        let o: Vec<String> = c.playouts.iter().map(|&x| format!("{:.0}", x as f64 / n)).collect();
         format!(
-            "decisions {:.1} ({}), steps {:.0} ({}), policy {:.1} ({})",
+            "decisions {:.1} ({}), steps {:.0} ({}), policy {:.1} ({}), playouts {:.0} ({})",
             c.n.iter().sum::<u32>() as f64 / n,
             d.join("/"),
             c.steps.iter().sum::<u64>() as f64 / n,
             s.join("/"),
             c.policy.iter().sum::<u32>() as f64 / n,
-            q.join("/")
+            q.join("/"),
+            c.playouts.iter().sum::<u64>() as f64 / n,
+            o.join("/")
         )
     };
     format!(

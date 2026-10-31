@@ -88,12 +88,13 @@ pub(crate) fn decision_seed(g: &mut Game, parts: &str) -> u64 {
 /// `f` is one look-ahead decision of p's (of `kind`): its decision and the playout steps it took go to p's
 /// `SearchCost` (only read by the reports: play is unchanged)
 pub(crate) fn booked<T>(g: &mut Game, p: PlayerId, kind: usize, f: impl FnOnce(&mut Game) -> T) -> T {
-    let (n0, w0) = (g.search_n, g.search_work);
+    let (n0, w0, k0) = (g.search_n, g.search_work, stats().playouts);
     let r = f(g);
     let (dn, dw) = (g.search_n > n0, g.search_work - w0);
     let c = &mut g.player_mut(p).search_cost;
     c.n[kind] += dn as u32;
     c.steps[kind] += dw;
+    c.playouts[kind] += stats().playouts - k0;
     r
 }
 
