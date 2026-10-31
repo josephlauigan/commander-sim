@@ -10155,3 +10155,20 @@ dsl = [{ type = "static", static = "equip_bonus", pow = 3, tgh = 2 }, { type = "
 status = "Full"
 note = "compiled: equipped creature gets +3/+2, equip {2}. Card code (impls/card_models.rs): when the equipped creature deals combat damage to a player, draw a card, then cast a spell from hand with mana value up to that damage free (the AI takes a permanent, or an instant or sorcery worth casting free, highest mana value first; a person picks or declines)"
 paths_ok = "compiled: the +3/+2 and equip {2}; card code: the combat-damage draw and free spell (card_models.rs buster_hit)"
+
+["Nicol Bolas, the Ravager"]
+status = "Approximate"
+note = "4/4 flying; compiled: when he enters, each opponent discards a card. Card code (impls/card_models.rs): {4}{U}{B}{R}, as a sorcery: exile him and return him transformed (the AI does it in its main phase when it can pay): he comes back as the card data's double-faced entry, Nicol Bolas, the Arisen. Left out: the Arisen that leaves the battlefield is a planeswalker card in the graveyard, not the creature front"
+
+["Nicol Bolas, the Ravager // Nicol Bolas, the Arisen"]
+types = "P"
+tags = "leg"
+loyalty = "7"
+dsl = [
+  { type = "loyalty", loyalty = 2, effects = [{ do = "draw", n = 2, who = "you" }] },
+  { type = "loyalty", loyalty = -3, effects = [{ do = "damage", n = 10, to = { sel = "target", filter = { type = "cp" } } }] },
+  { type = "loyalty", loyalty = -4, effects = [{ do = "reanimate", from = "any", filter = { type = "cp" } }] },
+  { type = "loyalty", loyalty = -12, effects = [{ do = "exile_library", who = "target_player" }] },
+]
+status = "Full"
+note = "the back face of Nicol Bolas, the Ravager (JD's list plays the front; card_models.rs enters this card when he transforms): a 7-loyalty planeswalker. +2: draw two; -3: 10 damage to target creature or planeswalker; -4: a creature or planeswalker card from any graveyard onto the battlefield under your control; -12: exile all but the bottom card of target player's library (exile_library)"

@@ -84411,32 +84411,68 @@
   },
   {
    "name": "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen",
-   "types": "C",
+   "types": "P",
    "generic": 1,
    "pips": "UBR",
    "tags": {
-    "leg": true,
-    "pow": "4",
-    "fly": true
+    "leg": true
    },
-   "pow": 4,
-   "tgh": 4,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
-     "type": "triggered",
+     "type": "loyalty",
+     "loyalty": 2,
      "effects": [
       {
-       "do": "discard",
-       "n": 1,
-       "who": "each_opponent"
+       "do": "draw",
+       "n": 2,
+       "who": "you"
       }
-     ],
-     "event": "etb",
-     "source": "self"
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -3,
+     "effects": [
+      {
+       "do": "damage",
+       "n": 10,
+       "to": {
+        "sel": "target",
+        "filter": {
+         "type": "cp"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -4,
+     "effects": [
+      {
+       "do": "reanimate",
+       "from": "any",
+       "filter": {
+        "type": "cp"
+       }
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -12,
+     "effects": [
+      {
+       "do": "exile_library",
+       "who": "target_player"
+      }
+     ]
     }
    ],
-   "start_loyalty": null,
+   "start_loyalty": "7",
    "kws": [
     "flying",
     "transform"
@@ -84449,14 +84485,12 @@
    "ward": 0,
    "identity": "BRU",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{4}{U}{B}{R}: Exile ~, then return him to the battlefield transformed under his owner's control. Activate only as a sorcery."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
-    "creature": true,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true

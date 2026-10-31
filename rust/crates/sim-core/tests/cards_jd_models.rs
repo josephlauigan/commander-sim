@@ -382,3 +382,38 @@ fn buster_sword_draws_then_casts_a_spell_up_to_the_damage_free() {
     assert!(!pl.hand.contains(&cs[0]), "Sol Ring cast free");
     assert!(pl.perms.iter().any(|&m| g.perm(m).cd == Some(cs[0])));
 }
+
+// ======================================================== The Ur-Dragon: Nicol Bolas, the Ravager
+#[test]
+fn nicol_bolas_transforms_into_the_arisen() {
+    let mut g = urdragon_table();
+    g.active = Some(P0);
+    let b = perm(&mut g, P0, "Nicol Bolas, the Ravager");
+    lands(&mut g, P0, "Command Tower", 7, false);
+    let o = options(&mut g, b, P0, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert!(!g.perm(b).on_bf);
+    let back = card(&g, sim_core::impls::card_models::ARISEN);
+    let a = *g.player(P0).perms.iter().find(|&&m| g.perm(m).cd == Some(back)).expect("the Arisen is out");
+    assert!(!g.is_creature(a));
+    // +2: draw two (its loyalty abilities are compiled)
+    let lib = g.player(P0).library.len();
+    let opts = sim_core::dsl::ability_options(&mut g, P0, true).unwrap();
+    let plus = opts.iter().find(|o| o.label.ends_with("+2")).expect("+2 offered");
+    assert!(run(&mut g, P0, plus));
+    assert_eq!(g.player(P0).library.len(), lib - 2);
+    assert_eq!(g.perm(a).loyalty, Some(9));
+}
+
+#[test]
+fn the_arisen_ultimate_leaves_one_card() {
+    let mut g = urdragon_table();
+    g.active = Some(P0);
+    let a = perm(&mut g, P0, sim_core::impls::card_models::ARISEN);
+    g.perm_mut(a).loyalty = Some(12);
+    let opts = sim_core::dsl::ability_options(&mut g, P0, true).unwrap();
+    let ult = opts.iter().find(|o| o.label.ends_with("-12")).expect("-12 offered");
+    assert!(run(&mut g, P0, ult));
+    assert!([P1, P2].iter().any(|&q| g.player(q).library.len() == 1));
+}

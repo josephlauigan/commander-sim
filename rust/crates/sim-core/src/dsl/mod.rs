@@ -902,6 +902,18 @@ fn run(
                 zones::mill(g, q, k.max(0) as usize)?;
             }
         }
+        "exile_library" => {
+            // "exile all but the bottom card of target player's library" (Nicol Bolas, the Arisen)
+            for q in players(g, p, Some(e.who.as_deref().unwrap_or("target_player")), ctx) {
+                let lib = std::mem::take(&mut g.player_mut(q).library);
+                let mut it = lib.into_iter();
+                let bottom = it.next();
+                for c in it {
+                    g.player_mut(q).exile.push(c);
+                }
+                g.player_mut(q).library.extend(bottom);
+            }
+        }
         "sacrifice" => {
             let mut f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
             f.controller = None;
@@ -1779,6 +1791,7 @@ fn eff_value(kind: &str) -> f64 {
         "ring_tempt" => 0.8, // --- Tiers 4/5 (winota)
         "add_mana" => 0.5,
         "mill" => 0.1,
+        "exile_library" => 8.0, // a library of one card: that player is out at the next draw but one
         _ => 0.3,
     }
 }

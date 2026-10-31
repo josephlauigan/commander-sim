@@ -3,12 +3,13 @@
 
 use crate::cards::CardDb;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::trigger_window;
+use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::threat;
+use crate::engine::zones::Enter;
 use crate::engine::zones::{draw, min_by};
 use crate::flow::Res;
-use crate::hooks::{AltCost, Registry, Src};
+use crate::hooks::{Action, AltCost, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
@@ -181,6 +182,45 @@ fn buster_hit(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, dmg:
     }
     Ok(())
 }
+
+// ------------------------------------------------------------------ Nicol Bolas, the Ravager (The Ur-Dragon)
+const RAVAGER: &str = "Nicol Bolas, the Ravager";
+/// the back face: the card data's double-faced entry, made a 7-loyalty planeswalker with the Arisen's abilities by its
+/// override (data/card_overrides.toml)
+pub const ARISEN: &str = "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen";
+
+/// "{4}{U}{B}{R}: Exile Nicol Bolas, then return him to the battlefield transformed under his owner's control.
+/// Activate only as a sorcery." The AI flips him in its main phase when it can pay: a 7-loyalty walker that draws two
+/// a turn is worth more than the 4/4 body
+fn bolas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if post.is_none() || g.active != Some(p) || x.owner != p || x.phased || !can_pay(g, p, 4, "UBR", false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 4.5,
+        label: "Nicol Bolas transforms".into(),
+        act: Some(Action::Ability { src, f: bolas_flip, arg: 0 }),
+    }])
+}
+
+fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 4, "UBR", false) {
+        return Ok(false);
+    }
+    let Some(back) = g.db.id(ARISEN) else { return Ok(false) };
+    pay(g, p, 4, "UBR", false)?;
+    g.player_mut(p).stat("jr_bolas_flip", 1);
+    crate::glog!(g, "  {} activates Nicol Bolas: exile him, return him transformed", g.player(p).name);
+    if !ability_window(g, p, Some(src), "exile Nicol Bolas, return him transformed", None, None)? || !g.perm(src).on_bf
+    {
+        return Ok(true);
+    }
+    crate::engine::zones::leave(g, src)?;
+    crate::engine::zones::enter(g, p, back, Enter::default())?;
+    crate::glog!(g, "    Nicol Bolas, the Arisen enters with 7 loyalty");
+    Ok(true)
+}
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, BALEFUL)?;
@@ -190,5 +230,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.grant_kw = Some(ojutai_hexproof);
     c.combat_damage = Some(ojutai_hit);
     r.card(db, BUSTER)?.combat_damage = Some(buster_hit);
+    r.card(db, RAVAGER)?.options = Some(bolas_options);
     Ok(())
 }
