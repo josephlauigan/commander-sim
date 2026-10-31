@@ -25,6 +25,9 @@ search cost line and diagnostics on `OUT.err`; `half.sh OLD NEW "Name;Name"`; `p
   `AI_SEARCH=0` arms are config-free: `B/t1-old`, `B/t2-old` are reused). Suspect: the clear-leader stop and the pick
   could overrule the top play on 2 shared copies (a 1-df t-test). Fix 3868adee (binary C): 6 shared copies against
   the top (`AI_SEARCH_PAIRS`). Ablations on t1 half B with C (`abl.sh`, `X/`): pairs 6; + gate off; + depth 1.
+- Jobs back to 22 (coordinator, 2026-10-30 ~18:20, the other agent finished): `sim.sh` defaults to 22 again, cargo
+  `-j 22`. Arms run so far at 12: `B/t1-old`, `B/t2-old`, `B1/*`, `X/t1-B-pairs6`; the output doesn't depend on
+  `--jobs` (checked above), so paired and byte-for-byte comparisons across them stand; only games/s differ.
 - The machine is shared (another agent's sims): games/s are noisy across arms; `OUT.cpu` (user+sys CPU seconds, from
   t2-old on) and the steps a game are the steadier cost numbers.
 - [ ] Stage C.
