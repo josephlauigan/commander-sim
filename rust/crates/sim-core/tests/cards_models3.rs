@@ -277,6 +277,7 @@ fn paladin_class_level_two_gives_your_creatures_plus_one_plus_one() {
     let b = token(&mut g, P0, 1);
     let theirs = token(&mut g, P1, 2);
     let (pa, ta, pb, pt) = (epow(&g, a), etgh(&g, a), epow(&g, b), epow(&g, theirs));
+    assert_eq!(pb, 1, "level 1: no anthem yet");
     lands(&mut g, P0, "Plains", 3, false);
     let o = options_of(&mut g, P0, pc).into_iter().find(|o| o.label.contains("level 2")).expect("level 2 offered");
     assert!(run(&mut g, o, P0));

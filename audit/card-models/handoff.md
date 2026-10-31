@@ -259,7 +259,7 @@ Card code: `rust/crates/sim-core/src/impls/card_models3.rs`. No sims were run (c
 | Magda, Brazen Outlaw | Partial | Full (becomes-tapped event) | t4 prosper, t6 sisay |
 | Astral Cornucopia | Unmodeled | Full (X cast as a hand option, charge counters, proliferate) | t3 atraxa-infect |
 | Angel's Grace | Partial | Approximate (an opponent's alternate win still ends the game: ai/mod.rs `win` is off limits) | t6 dack-fayden |
-| Paladin Class | Partial | Full (level 2 anthem) | t6 dack-fayden |
+| Paladin Class | Partial | Full (level 2 anthem, level-gated; the compiled anthem, on from level 1, is dropped) | t6 dack-fayden |
 | Mandate of Peace | Partial | Full (only during combat; the AI casts it against a lethal / half-life attack) | t6 dack-fayden |
 | Get Lost | Partial | Approximate (any of the three targets; no Map tokens) | t6 dack-fayden |
 | Innkeeper's Talent | Partial | Full (combat counter, levels 2 and 3) | t3 atraxa-infect |

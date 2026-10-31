@@ -8950,9 +8950,10 @@ status = "Partial"
 note = "+1 stops the opposing creature's combat damage until your next turn (Dovin's lock); 0: 4/4 indestructible creature until end of turn (damage to him is not prevented); 0: emblem is recorded but the can't-lose rule is not read by the engine"
 
 ["Paladin Class"]
-paths_ok = "compiled: the level 2 anthem (on at every level: no level gate yet); card code: the tax, the level-ups and the level 3 attack trigger (t6_dack.rs)"
-status = "Partial"
-note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries; level 3 pumps your best attacker +1/+1 per other attacker and gives double strike; the level 2 +1/+1 for your creatures is not applied"
+dsl = []
+paths_ok = "card code: the tax, the level-ups, the level 2 anthem (paladin_pt, level-gated; the compiled anthem was on at every level and is dropped) and the level 3 attack trigger (t6_dack.rs)"
+status = "Full"
+note = "level 1 taxes opposing spells on your turn by {1}; level 2 ({2}{W}) and 3 ({4}{W}) are bought as sorceries (the AI with two creatures); level 2: creatures you control get +1/+1 (creature_pt, t6_dack::paladin_pt, card-models-3); level 3: whenever you attack, your best attacker gets +1/+1 per other attacker and double strike until end of turn"
 
 ["Oboro Breezecaller"]
 status = "Full"
@@ -10225,5 +10226,6 @@ status = "Full"
 note = "loyalty 4 (compleated: the engine pays {G/W/P} with mana, so it enters with all four); +1: reveal the top card, a creature or planeswalker card to hand, else the AI bottoms it unless it is worth 4 or a land it needs; -3: three +1/+1 counters, all on the best infect or toxic creature, else one each on the three with the most power, and they gain vigilance until end of turn; -6: the emblem 'whenever you cast a creature or planeswalker spell, target opponent gets two poison counters' (rules::emblem_cast; card_models3.rs, card-models-3)"
 
 ["Ixhel, Scion of Atraxa"]
+paths_ok = "compiled: toxic 2; card code: the corrupted end-step trigger (card_models3::ixhel_end)"
 status = "Full"
 note = "flying, vigilance, toxic 2 (compiled); corrupted: at the beginning of your end step each opponent with three or more poison counters exiles their top card face down, and you may play it for as long as it stays exiled with mana of any type (held in your hand as a card taken from them, yshtola::take_card; card_models3::ixhel_end, card-models-3)"
