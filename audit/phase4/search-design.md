@@ -148,3 +148,8 @@ Tatyova; the table's steps a game, all seats; today's 228,753):
   noise): kept.
 - Stage B's second run (binary D, 02b729d2) uses these defaults; its t1 half B arm is the `CLOSE=1e6` arm above (the
   same rule: a finite gap is always below 1e6).
+
+## Stage C
+
+Level on t1-t5 in both halves (`search-handoff.md`): ISMCTS is the default for generic-policy decks; `AI_SEARCH=0`
+keeps today's. The switch's default changed accordingly (unset = ISMCTS).

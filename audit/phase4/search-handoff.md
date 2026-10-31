@@ -30,7 +30,7 @@ search cost line and diagnostics on `OUT.err`; `half.sh OLD NEW "Name;Name"`; `p
   `--jobs` (checked above), so paired and byte-for-byte comparisons across them stand; only games/s differ.
 - The machine is shared (another agent's sims): games/s are noisy across arms; `OUT.cpu` (user+sys CPU seconds, from
   t2-old on) and the steps a game are the steadier cost numbers.
-- [ ] Stage C.
+- [x] Stage C (below).
 - [ ] Part (b): blocks, protection, wipe responses (not started).
 
 ## Gotchas
@@ -68,3 +68,32 @@ first ran at 12 jobs on a shared machine; their speed is from a rerun at 22 (`Bs
 - Cost: steps a game fall 5-24% on the table with 2-3 of the 5 decks on ISMCTS, CPU 0-26% (t2 A the most).
   Wall-clock games/s is noisy (the last slow games of a run set it; t3's ISMCTS arms read slower while their CPU
   time is 6-9% lower). The full-table cost (every seat on ISMCTS) is in the final checks below.
+
+## Stage C
+
+All ten pairs are level, so by the brief's rule ISMCTS is the default for every generic-policy deck (Stage C commit
+4f749acf). `AI_SEARCH=0` keeps today's look-ahead (a
+measurement arm); JD's decks and Tier 6 always keep it (`values::generic_deck`). For JD: the lean is down (7 of 10
+deltas below 0, mean -0.85; Meren -3.7 [-6.3, -1.1]), so it is level at a lower cost, not better. If that lean is
+judged real, `AI_SEARCH=0` (or flipping `parse_mode`'s default) restores today's search with no other change.
+
+## Final checks (head)
+
+- Defaults (no env, 300 games, the head binary) = the ISMCTS arm (binary D, `AI_SEARCH=1`) byte for byte on t1, t2,
+  t3, t4, t5, all rc=0 (`F/head-tN.txt` vs `F/arm-tN.txt`). Later commits change only docs.
+- Full-table cost with every seat on ISMCTS (head, 300 games) against today's (`M/`, design table): steps a game t1
+  174,366 vs 226,711 (-23%), t2 269,998 vs 398,275 (-32%), t3 141,626 vs 165,907 (-15%), t4 171,661 vs 203,809
+  (-16%), t5 156,125 vs 181,116 (-14%); decisions a game 59 / 88 / 57 / 62 / 69 (today 73 / 107 / 68 / 70 / 72), of
+  which played from the policy 11.7 / 17.1 / 13.2 / 7.1 / 4.0; about 2,200-3,300 playouts a game.
+- `cargo build --release --all-targets -j 22`: 0 warnings. `cargo test --release --no-fail-fast -j 22`: 3697
+  passed, 0 failed. `cardgen validate`: all decks passed. `all_decks adaptive 3` rc=0; `lookahead 1` rc=0 (21 games in
+  49.6 s; PR 4: 70.4 s).
+- t5 skips 1-7 games an arm on an internal simulator error ("WARNING: N game(s) hit an internal simulator error"),
+  in the old arms too and in PR 4's: not from this PR.
+
+## Not done / next
+
+- Part (b) (blocks, protection and wipe responses as searched decisions): **not started**.
+- Ideas for the lean: the tree below the root explores the decider's later choices once a node has 5+ visits
+  (widen 0.5); a slower widening, or opponent nodes at the first reply, are the obvious next ablations. The
+  ablation table is in the design doc.
