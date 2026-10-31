@@ -551,6 +551,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: nothing. In: Urborg, Tomb of Yawgmoth. Y'shtola: Urborg, Tomb of Yawgmoth in for a Swamp (every land taps for black).
 - **2026-10-28.** Out: Plains (8 -> 7). In: Serra's Sanctum. JD's choice, not simulated: taps for {W} per enchantment, and the deck has 15, removal Auras on opponents' creatures included. Not yet owned; the Y'shtola printings file is unchanged.
 - **2026-10-27.** Out: Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse. In: Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Tundra, Underground Sea, Watery Grave. Mana upgrade (JD): 9 slow, conditional and basic-fetch lands out for three original duals, three shocks and three fetches. JD's choice, not simulated.
 - **2026-10-19.** Out: Curiosity. In: Orcish Bowmasters. Curiosity -> Orcish Bowmasters: +2.5 at T5 (loose, 2,000 games per list, noise ±2.3), the first Y'shtola swap past the noise. Bowmasters is cast in 81% of the games it is drawn (Curiosity 68%), damage +2.3 a game, plan online +2.4 points; the ping and the Orc Army pick off fast decks' mana creatures. JD buys a second copy (the Sauron copy stays).

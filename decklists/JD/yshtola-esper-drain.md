@@ -118,13 +118,13 @@ Zur can find Arrest, Bound in Silence, Encrust, Luminous Bonds, Memory Trap, Mys
 
 The list is exactly 100 cards.
 
-37 lands (14 nonbasic, 7 Plains, 7 Island, 9 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 15 enchantments it taps for three or more by the mid-game.
+37 lands (15 nonbasic, 7 Plains, 7 Island, 8 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 15 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Massacre Wurm and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps).
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | White lands | 15 | 7 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
 | Blue lands | 14 | 7 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
-| Black lands | 16 | 9 Swamp plus Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
+| Black lands | 16 (all 37 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
 | Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
 | Always enter tapped | 0 | no land always enters tapped |
 | Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
@@ -183,7 +183,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Night's Whisper, Read the Bones, Tezzeret's Gambit
 
-**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Watery Grave, 7 Plains, 7 Island, 9 Swamp
+**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Watery Grave, 7 Plains, 7 Island, 8 Swamp
 
 ## Import list (100)
 
@@ -259,6 +259,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Underground River
 1 Underground Sea
 1 Urborg Syphon-Mage
+1 Urborg, Tomb of Yawgmoth
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
 1 Watery Grave
 1 Windborn Muse
@@ -267,5 +268,5 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Zur the Enchanter
 7 Island
 7 Plains
-9 Swamp
+8 Swamp
 ```
