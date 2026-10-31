@@ -15,9 +15,11 @@
 - Tests: tests/cards_thanos.rs, tests/cards_urdragon_jd.rs.
 
 ## Next
-1. build + tests (rc=0), cmp binary; commit.
-2. Sims: `--deck thanos --pool t6` 2000, `--deck urdragon --pool t5` 2000, goldfish both (--jobs 12, one at a time).
-3. FINDINGS (audit/thanos, audit/urdragon), deck docs' Simulator lines, report.
+1. Done on the rebased binary (rc=0 each, seeds from 500000, --jobs 12): thanos t6 29.6% (CI 27.6-31.6; Scion
+   30.1%), urdragon t5 19.1% (CI 17.4-20.9), goldfish thanos median kill 11 (Oracle 76%), urdragon median 9
+   (damage 62%, combo 31%). FINDINGS.md files: the harness refuses report files from subagents; their text is in
+   the final report for the caller to commit.
+2. Open: urdragon mulligan rule (pieces = 1 sends 16.6% of goldfish hands to 5 or fewer cards).
 
 ## Gotchas
 - Another agent runs sims: --jobs 12 / -j 12, one sim at a time.
